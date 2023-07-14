@@ -1,0 +1,58 @@
+{
+  "node_info": {
+    "protocol_version": {
+      "p2p": "8",
+      "block": "12",
+      "app": "1"
+    },
+    "id": "0d84c49a11bcae2f389e157c68eb00f41c9b04d4",
+    "listen_addr": "192.168.65.2:46656",
+    "ProTxHash": "6314A8A81E6566D6EA8E8E21EAA7D3FAC4CEC9722BB8809F4425B01BF12BFD6C",
+    "network": "dashmate_local_24",
+    "version": "0.11.2",
+    "channels": "402021222330386061626300",
+    "moniker": "local_1",
+    "other": {
+      "tx_index": "on",
+      "rpc_address": "tcp://0.0.0.0:46657"
+    }
+  },
+  "application_info": {
+    "version": "1"
+  },
+  "sync_info": {
+    "latest_block_hash": "B953D1930C578644CB012A51EDE20A3722116B2B04F3C17103F5E180B0EDAD6F",
+    "latest_app_hash": "AD2CA11F9CD1CCA7AFB411FE7646A1B86BE2B96986FABF79E80E38F5D97CE6C9",
+    "latest_block_height": "81",
+    "latest_block_time": "2023-06-12T13:35:38.171257212Z",
+    "earliest_block_hash": "A7425CD14EE8E3D372A4649F62599DA79DD2ADF5F57363B451DB4B0510593374",
+    "earliest_app_hash": "6FF87659EAA4D9D28C7B98761EBFA4C47DE0DC40221568E38D01DDE8304F476F",
+    "earliest_block_height": "1",
+    "earliest_block_time": "2023-06-12T10:28:12.318Z",
+    "max_peer_block_height": "81",
+    "catching_up": false,
+    "total_synced_time": "0",
+    "remaining_time": "0",
+    "total_snapshots": "0",
+    "chunk_process_avg_time": "0",
+    "snapshot_height": "0",
+    "snapshot_chunks_count": "0",
+    "snapshot_chunks_total": "0",
+    "backfilled_blocks": "0",
+    "backfill_blocks_total": "0"
+  },
+  "validator_info": {
+    "pro_tx_hash": "6314A8A81E6566D6EA8E8E21EAA7D3FAC4CEC9722BB8809F4425B01BF12BFD6C",
+    "voting_power": 100
+  },
+  "light_client_info": {
+    "primaryID": "",
+    "witnessesID": null,
+    "number_of_peers": "0",
+    "last_trusted_height": "0",
+    "last_trusted_hash": "",
+    "latest_block_time": "0001-01-01T00:00:00Z",
+    "trusting_period": "",
+    "trusted_block_expired": false
+  }
+}

@@ -1,0 +1,13 @@
+.block_details {
+    background-color: #1a4049;
+    padding: 20px;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+}
+
+.block_details_item {
+    display: flex;
+    justify-content: space-between;
+}
+

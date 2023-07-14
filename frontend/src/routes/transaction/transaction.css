@@ -1,0 +1,13 @@
+.transaction_details {
+    display: flex;
+    flex-flow: column;
+    background-color: #492f1a;
+    padding: 20px;
+}
+
+.transaction_details_item {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    min-width: 800px;
+}

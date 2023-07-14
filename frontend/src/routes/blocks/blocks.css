@@ -1,0 +1,14 @@
+.block_list {
+    background-color: #1a4049;
+    padding: 20px;
+}
+
+.block_list_item a {
+    text-decoration: none;
+    color: white;
+}
+
+.block_list_item a:hover {
+    text-decoration: none;
+    color: gray;
+}
