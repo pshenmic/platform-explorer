@@ -2,7 +2,8 @@ const express = require('express');
 const fetch = require('node-fetch')
 const app = express();
 const cors = require('cors')
-const BASE_URL = 'http://127.0.0.1:46657'
+
+const BASE_URL = process.env.BASE_URL
 
 app.use(cors())
 

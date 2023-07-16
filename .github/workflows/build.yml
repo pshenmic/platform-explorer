@@ -63,4 +63,4 @@ jobs:
           script: |
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master && docker stop $(docker ps -f name=platform-explorer -q)
             docker rm $(docker ps -af name=platform-explorer -q)
-            docker run -d -p 3005:3005 --restart always --name platform-explorer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master
+            docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master
