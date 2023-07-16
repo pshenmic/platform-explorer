@@ -11,10 +11,6 @@
   "author": "pshenmic <pshenmic@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5",
-    "create-react-app": "^5.0.1",
-    "express": "^4.18.2",
-    "node-fetch": "^2.6.11"
   },
   "private": true,
   "workspaces": [
