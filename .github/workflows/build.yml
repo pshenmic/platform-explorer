@@ -37,9 +37,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push API package Docker image
         uses: docker/build-push-action@v4
         with:
-          context: ./api
+          context: ./packages/api
           push: ${{ github.event_name != 'pull_request' }}
           tags: platform-explorer:latest
