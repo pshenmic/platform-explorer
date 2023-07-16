@@ -8,21 +8,28 @@ const BASE_URL = process.env.BASE_URL
 app.use(cors())
 
 const call = async (path, method, body) => {
-    console.log(`${BASE_URL}/${path}`)
-    const response = await fetch(`${BASE_URL}/${path}`, {
-        method,
-        body,
-        headers: {
-            'content-type': 'application/json'
-        }
-    })
+    console.log(`Request for the ${BASE_URL}/${path}`)
 
-    if (response.status === 200) {
-        return response.json()
-    } else {
-        const text = await response.text()
-        console.error(text)
-        throw new Error(`Unknown return status ${response.status} from tenderdash`)
+    try {
+        const response = await fetch(`${BASE_URL}/${path}`, {
+            method,
+            body,
+            headers: {
+                'content-type': 'application/json'
+            }
+        })
+
+        if (response.status === 200) {
+            return response.json()
+        } else {
+            const text = await response.text()
+            console.error(text)
+            // todo throw and handle error
+            return null
+        }
+    } catch (e) {
+        console.error(e)
+        return null
     }
 }
 
