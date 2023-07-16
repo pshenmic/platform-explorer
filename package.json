@@ -4,14 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start-api": "yarn workspace api start",
+    "start-frontend": "yarn workspace frontend start",
+    "dev": "npm-run-all --parallel start next"
   },
-  "author": "",
+  "author": "pshenmic <pshenmic@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "create-react-app": "^5.0.1",
     "express": "^4.18.2",
     "node-fetch": "^2.6.11"
-  }
+  },
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": "git@github.com:pshenmic/platform-explorer.git"
 }
