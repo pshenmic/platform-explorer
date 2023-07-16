@@ -61,6 +61,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker pull $DOCKER_REGISTRY/$DOCKER_REPOSITORY:$TAG && docker stop $(docker ps -f name=platform-explorer -q)
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master && docker stop $(docker ps -f name=platform-explorer -q)
             docker rm $(docker ps -af name=platform-explorer -q)
             docker run -d -p 3005:3005 --restart always --name platform-explorer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master
