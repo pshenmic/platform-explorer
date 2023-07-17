@@ -35,7 +35,7 @@ const call = async (path, method, body) => {
     }
 }
 
-function errorHandler(err, req, res) {
+function errorHandler(err, req, res, next) {
     if (err instanceof ServiceNotAvailableError) {
         res.status(403)
         return res.send({error: 'tenderdash backend is not available'})
