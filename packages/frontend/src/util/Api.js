@@ -3,7 +3,7 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL
 const call = async (path, method, body) => {
     try {
         const response = await fetch(`${BASE_URL}/${path}`, {
-            signal: AbortSignal.timeout(3000),
+            signal: AbortSignal.timeout(10000),
             method,
             body
         })
