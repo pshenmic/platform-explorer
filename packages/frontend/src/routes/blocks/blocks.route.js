@@ -12,7 +12,10 @@ function Blocks({blocks}) {
 }
 
 export async function loader({params}) {
-    const blocks = await Api.getBlocks();
+    const {blocksCount} = await Api.getStatus();
+
+    const blocks = await Api.getBlocks(blocksCount - 30, blocksCount);
+
     return {blocks};
 }
 
