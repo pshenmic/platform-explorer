@@ -2,12 +2,14 @@ const express = require('express');
 const fetch = require('node-fetch')
 const app = express();
 const cors = require('cors')
-const cache = require('./src/cache')
-const Worker = require('./src/worker')
+const Dash = require('dash')
 const crypto = require('crypto')
+
+const cache = require('./src/cache')
 
 const BASE_URL = process.env.BASE_URL
 const BLOCK_TIME = 3 * 1000;
+
 app.use(cors())
 
 class ServiceNotAvailableError extends Error {
@@ -24,6 +26,8 @@ class ServiceNotAvailableError extends Error {
 const hash = (data) => {
     return crypto.createHash('sha1').update(data).digest('hex');
 }
+
+const client = new Dash.Client()
 
 const call = async (path, method, body) => {
     console.log(`Request for the ${BASE_URL}/${path}`)
@@ -104,7 +108,7 @@ app.get('/block/:hash', async (req, res, next) => {
     try {
         const cached = cache.get('block_' + hash)
 
-        if ((new Date().getTime() - cached?.time) > cached?.timeout) {
+        if (cached) {
             return res.send(cached)
         }
 
@@ -192,7 +196,14 @@ app.get('/transaction/:txHash', async (req, res, next) => {
 
         const transaction = await call(`tx?hash=${txHash}`, 'GET')
 
-        cache.set('transaction_' + txHash)
+        try {
+            const stateTransition = await client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(transaction.tx, 'base64'));
+
+            Object.assign(transaction, stateTransition.toJSON())
+        } catch (e) {
+        }
+
+        cache.set('transaction_' + txHash, transaction)
 
         res.send(transaction)
     } catch (e) {
@@ -251,6 +262,6 @@ app.get('/search', async (req, res, next) => {
 
 app.use(errorHandler)
 
-app.listen(3005)
+client.platform.initialize().then(() => app.listen(3005))
 
 console.log('Api started')

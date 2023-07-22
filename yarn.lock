@@ -2491,9 +2491,9 @@
   "version" "13.13.52"
 
 "@types/node@^18.15.11":
-  "integrity" "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA=="
-  "resolved" "https://registry.npmjs.org/@types/node/-/node-18.16.19.tgz"
-  "version" "18.16.19"
+  "integrity" "sha512-GXZxEtOxYGFchyUzxvKI14iff9KZ2DI+A6a37o6EQevtg6uO9t+aUZKcaC1Te5Ng1OnLM7K9NVVj+FbecD9cJg=="
+  "resolved" "https://registry.npmjs.org/@types/node/-/node-18.17.0.tgz"
+  "version" "18.17.0"
 
 "@types/normalize-package-data@^2.4.0":
   "integrity" "sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw=="
@@ -4393,6 +4393,25 @@
   "resolved" "https://registry.npmjs.org/damerau-levenshtein/-/damerau-levenshtein-1.0.8.tgz"
   "version" "1.0.8"
 
+"dash@^3.24.15":
+  "integrity" "sha512-hLAzKW7BYbBGoWD3Ryd59CTgZGgRkOSKMKY/XgOe7pAhYElZdiMioQXlMV+3I66+zAYeLv2IxKDHee18W9n/Fw=="
+  "resolved" "https://registry.npmjs.org/dash/-/dash-3.24.15.tgz"
+  "version" "3.24.15"
+  dependencies:
+    "@dashevo/bls" "~1.2.9"
+    "@dashevo/dapi-client" "0.24.15"
+    "@dashevo/dashcore-lib" "~0.20.9"
+    "@dashevo/dashpay-contract" "0.24.15"
+    "@dashevo/dpns-contract" "0.24.15"
+    "@dashevo/dpp" "0.24.15"
+    "@dashevo/grpc-common" "0.24.15"
+    "@dashevo/masternode-reward-shares-contract" "0.24.15"
+    "@dashevo/wallet-lib" "7.24.15"
+    "@dashevo/wasm-dpp" "0.24.15"
+    "bs58" "^4.0.1"
+    "node-inspect-extracted" "^1.0.8"
+    "winston" "^3.2.1"
+
 "data-uri-to-buffer@^4.0.0":
   "integrity" "sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A=="
   "resolved" "https://registry.npmjs.org/data-uri-to-buffer/-/data-uri-to-buffer-4.0.1.tgz"
@@ -5596,6 +5615,7 @@
     "node-fetch" "^3.3.1"
     "react" "^18.2.0"
     "react-dom" "^18.2.0"
+    "react-paginate" "^8.2.0"
     "react-router-dom" "^6.12.1"
     "react-scripts" "5.0.1"
     "web-vitals" "^2.1.4"
