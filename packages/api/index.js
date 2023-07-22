@@ -26,6 +26,8 @@ const hash = (data) => {
 }
 
 const call = async (path, method, body) => {
+    console.log(`Request for the ${BASE_URL}/${path}`)
+
     try {
         const response = await fetch(`${BASE_URL}/${path}`, {
             method,
@@ -118,30 +120,27 @@ app.get('/block/:hash', async (req, res, next) => {
 
 app.get('/blocks', async (req, res, next) => {
     try {
-        const {from, to} = req.query
+        const {page, limit, order} = req.query
 
-        let query = `block_search?query=`
+        let query = 'block_search?query=block.height>=1'
 
-        if (from) {
-            query += `block.height>${from}`
+        if (page) {
+            query += '&page=' + page
+        }
+
+        if (limit) {
+            query += '&per_page=' + limit
         } else {
-            query += `block.height>1`
+            query += '&per_page=' + 30
         }
 
-        if (to) {
-            query += `%20AND%20block.height<${to}`
-        }
-
-        const cached = cache.get('block_search' + hash(query))
-
-        if (cached) {
-            return res.send(cached)
+        if (order) {
+            query += '&order=' + order
+        } else {
+            query += '&order=desc'
         }
 
         const blocks = await call(query, 'GET')
-
-        cache.set('block_search' + hash(query), blocks)
-
         res.send(blocks);
     } catch (e) {
         next(e)
@@ -175,6 +174,7 @@ app.get('/transactions', async (req, res, next) => {
         cache.set('tx_search_' + hash(query))
 
         res.send(transactions);
+
     } catch (e) {
         next(e)
     }
@@ -195,6 +195,43 @@ app.get('/transaction/:txHash', async (req, res, next) => {
         cache.set('transaction_' + txHash)
 
         res.send(transaction)
+    } catch (e) {
+        next(e)
+    }
+});
+
+app.get('/search', async (req, res, next) => {
+    try {
+        const {query} = req.query;
+
+        // todo validate
+        if (!query) {
+            return res.status(400).send({error: '`?query=` missing'})
+        }
+
+        if ( /^[0-9]/.test(query)) {
+            const block = await call(`block?height=${query}`, 'GET')
+
+            if (!block.code) {
+                return res.send({block})
+            }
+        }
+
+        // search blocks
+        const block = await call(`block_by_hash?hash=${query}`, 'GET')
+
+        if (!block.code && block.block_id.hash) {
+            return res.send({block})
+        }
+
+        // search transactions
+        const transaction = await call(`tx?hash=${query}`, 'GET')
+
+        if (!transaction.code) {
+            return res.send({transaction})
+        }
+
+        res.status(404).send({message: 'not found'})
     } catch (e) {
         next(e)
     }

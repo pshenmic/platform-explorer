@@ -37,22 +37,16 @@ const getTransaction = (txHash) => {
     return call(`transaction/${txHash}`, 'GET')
 }
 
-const getBlocks = (fromHeight, toHeight) => {
-    let query = 'blocks'
-
-    if (fromHeight) {
-        query += `?from=${fromHeight}`
-    }
-
-    if (toHeight) {
-        query += `&to=${toHeight}`
-    }
-
-    return call(query, 'GET')
+const getBlocks = (page = 1, limit = 30) => {
+    return call(`blocks?page=${page}&limit=${limit}`, 'GET')
 }
 
 const getStatus = () => {
     return call(`status`, 'GET')
 }
 
-export {getStatus, getBlocks, getBlockByHash, getTransactions, getTransaction}
+const search = (query) => {
+    return call(`search?query=${query}`, 'GET')
+}
+
+export {getStatus, getBlocks, getBlockByHash, getTransactions, getTransaction, search}
