@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, useLoaderData} from "react-router-dom";
+import { Link, useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
 import './block.css'
 
@@ -11,6 +11,8 @@ export async function loader({params}) {
 
 function BlockRoute() {
     const {block} = useLoaderData();
+
+    const txs = block?.block?.data?.txs;
 
     return (
         <div className="container">
@@ -43,6 +45,19 @@ function BlockRoute() {
                     <span>L1 Locked Height:</span>
                     <span>{block.block.header.core_chain_locked_height}</span>
                 </div>
+                <div className={"block_details_item"}>
+                    <span>Transactions count:</span>
+                    <span>{txs ? txs.length : 0}</span>
+                </div>
+
+                {txs ? <div className={"block_transactions_list"}>
+                    <ul>
+                        {txs.map((hash) =>
+                            <li key={hash}>
+                                <Link to={`/transaction/${hash}`}>tha fuck</Link>
+                            </li>)}
+                    </ul>
+                </div> : null}
             </div>
         </div>
     );
