@@ -209,10 +209,18 @@ app.get('/search', async (req, res, next) => {
             return res.status(400).send({error: '`?query=` missing'})
         }
 
+        const cached = cache.get('search_' + hash(query))
+
+        if (cached) {
+            return res.send(cached)
+        }
+
         if ( /^[0-9]/.test(query)) {
             const block = await call(`block?height=${query}`, 'GET')
 
             if (!block.code) {
+                cache.set('search_' + hash(query), {block})
+
                 return res.send({block})
             }
         }
@@ -221,6 +229,8 @@ app.get('/search', async (req, res, next) => {
         const block = await call(`block_by_hash?hash=${query}`, 'GET')
 
         if (!block.code && block.block_id.hash) {
+            cache.set('search_' + hash(query), {block})
+
             return res.send({block})
         }
 
@@ -228,6 +238,8 @@ app.get('/search', async (req, res, next) => {
         const transaction = await call(`tx?hash=${query}`, 'GET')
 
         if (!transaction.code) {
+            cache.set('search_' + hash(query), {transaction})
+
             return res.send({transaction})
         }
 
