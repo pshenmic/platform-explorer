@@ -63,3 +63,28 @@ code {
 .modal_close:hover {
   cursor: pointer;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+}
+
+.page-item {
+  border-style: ridge;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 14pt;
+}
+
+.page-link {
+  position: relative;
+}
+
+.disabled {
+  cursor: not-allowed;
+}
+
+.active {
+  background-color: rgba(57, 175, 159, 0.55);
+}
