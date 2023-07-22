@@ -2,12 +2,27 @@ const express = require('express');
 const fetch = require('node-fetch')
 const app = express();
 const cors = require('cors')
+const cache = require('./src/cache')
+const Worker = require('./src/worker')
+const crypto = require('crypto')
 
 const BASE_URL = process.env.BASE_URL
-
+const BLOCK_TIME = 3 * 1000;
 app.use(cors())
 
 class ServiceNotAvailableError extends Error {
+}
+
+// const worker = new Worker()
+// worker.setHandler(async () => {
+//     try {
+//     } catch (e) {
+//     }
+// })
+// worker.start(3000)
+
+const hash = (data) => {
+    return crypto.createHash('sha1').update(data).digest('hex');
 }
 
 const call = async (path, method, body) => {
@@ -50,6 +65,12 @@ function errorHandler(err, req, res, next) {
 
 app.get('/status', async (req, res, next) => {
     try {
+        const cached = cache.get('status')
+
+        if (cached) {
+            return res.send(cached)
+        }
+
         const {sync_info, node_info} = await call('status', 'GET')
         const {latest_block_height} = sync_info
         const {network, protocol_version} = node_info
@@ -60,7 +81,18 @@ app.get('/status', async (req, res, next) => {
         const blockVersion = protocol_version.block
         const blocksCount = latest_block_height
 
-        res.send({network, appVersion, p2pVersion, blockVersion, blocksCount, tenderdashVersion});
+        const status = {
+            network,
+            appVersion,
+            p2pVersion,
+            blockVersion,
+            blocksCount,
+            tenderdashVersion
+        }
+
+        cache.set('status', status, BLOCK_TIME)
+
+        res.send(status);
     } catch (e) {
         next(e)
     }
@@ -70,7 +102,16 @@ app.get('/block/:hash', async (req, res, next) => {
     const {hash} = req.params;
 
     try {
+        const cached = cache.get('block_' + hash)
+
+        if ((new Date().getTime() - cached?.time) > cached?.timeout) {
+            return res.send(cached)
+        }
+
         const block = await call(`block_by_hash?hash=${hash}`, 'GET')
+
+        cache.set('block_' + hash, block);
+
         res.send(block);
     } catch (e) {
         next(e)
@@ -108,7 +149,29 @@ app.get('/blocks', async (req, res, next) => {
 
 app.get('/transactions', async (req, res, next) => {
     try {
+        const {from, to} = req.query
+
+        let query = `tx_search?query=`
+
+        if (from) {
+            query += `tx.height>${from}`
+        } else {
+            query += `tx.height>1`
+        }
+
+        if (to) {
+            query += `%20AND%20tx.height<${to}`
+        }
+
+        const cached = cache.get('tx_search_' + hash(query))
+
+        if (cached) {
+            return res.send(cached)
+        }
+
         const transactions = await call(`tx_search?query=tx.height>1`, 'GET')
+
+        cache.set('tx_search_' + hash(query))
 
         res.send(transactions);
 
@@ -121,9 +184,17 @@ app.get('/transaction/:txHash', async (req, res, next) => {
     try {
         const {txHash} = req.params;
 
-        const tx = await call(`tx?hash=${txHash}`, 'GET')
+        const cached = cache.get('transaction_' + txHash)
 
-        res.send(tx)
+        if (cached) {
+            return res.send(cached)
+        }
+
+        const transaction = await call(`tx?hash=${txHash}`, 'GET')
+
+        cache.set('transaction_' + txHash)
+
+        res.send(transaction)
     } catch (e) {
         next(e)
     }
@@ -138,10 +209,18 @@ app.get('/search', async (req, res, next) => {
             return res.status(400).send({error: '`?query=` missing'})
         }
 
+        const cached = cache.get('search_' + hash(query))
+
+        if (cached) {
+            return res.send(cached)
+        }
+
         if ( /^[0-9]/.test(query)) {
             const block = await call(`block?height=${query}`, 'GET')
 
             if (!block.code) {
+                cache.set('search_' + hash(query), {block})
+
                 return res.send({block})
             }
         }
@@ -150,6 +229,8 @@ app.get('/search', async (req, res, next) => {
         const block = await call(`block_by_hash?hash=${query}`, 'GET')
 
         if (!block.code && block.block_id.hash) {
+            cache.set('search_' + hash(query), {block})
+
             return res.send({block})
         }
 
@@ -157,6 +238,8 @@ app.get('/search', async (req, res, next) => {
         const transaction = await call(`tx?hash=${query}`, 'GET')
 
         if (!transaction.code) {
+            cache.set('search_' + hash(query), {transaction})
+
             return res.send({transaction})
         }
 
@@ -170,3 +253,4 @@ app.use(errorHandler)
 
 app.listen(3005)
 
+console.log('Api started')

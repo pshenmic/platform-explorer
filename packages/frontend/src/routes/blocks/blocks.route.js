@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {Form, Link, useLoaderData} from "react-router-dom";
+import React, {useState} from 'react';
+import { Link, useLoaderData } from "react-router-dom";
 import * as Api from "../../util/Api";
 import './blocks.css'
 import ReactPaginate from "react-paginate";
@@ -16,7 +16,9 @@ function Blocks({blocks}) {
 
 export async function loader({params}) {
     const {blocksCount} = await Api.getStatus();
-    const blocks = await Api.getBlocks();
+
+    const blocks = await Api.getBlocks(blocksCount - 30, blocksCount);
+
     return {blocks, blocksCount};
 }
 
