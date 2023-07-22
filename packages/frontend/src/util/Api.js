@@ -45,4 +45,8 @@ const getStatus = () => {
     return call(`status`, 'GET')
 }
 
-export {getStatus, getBlocks, getBlockByHash, getTransactions, getTransaction}
+const search = (query) => {
+    return call(`search?query=${query}`, 'GET')
+}
+
+export {getStatus, getBlocks, getBlockByHash, getTransactions, getTransaction, search}

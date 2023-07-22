@@ -108,7 +108,8 @@ app.get('/blocks', async (req, res, next) => {
 
 app.get('/transactions', async (req, res, next) => {
     try {
-        const transactions = await call(`tx_search?query=tx.height>=1`, 'GET')
+        const transactions = await call(`tx_search?query=tx.height>1`, 'GET')
+
         res.send(transactions);
 
     } catch (e) {
@@ -121,7 +122,45 @@ app.get('/transaction/:txHash', async (req, res, next) => {
         const {txHash} = req.params;
 
         const tx = await call(`tx?hash=${txHash}`, 'GET')
+
         res.send(tx)
+    } catch (e) {
+        next(e)
+    }
+});
+
+app.get('/search', async (req, res, next) => {
+    try {
+        const {query} = req.query;
+
+        // todo validate
+        if (!query) {
+            return res.status(400).send({error: '`?query=` missing'})
+        }
+
+        if ( /^[0-9]/.test(query)) {
+            const block = await call(`block?height=${query}`, 'GET')
+
+            if (!block.code) {
+                return res.send({block})
+            }
+        }
+
+        // search blocks
+        const block = await call(`block_by_hash?hash=${query}`, 'GET')
+
+        if (!block.code && block.block_id.hash) {
+            return res.send({block})
+        }
+
+        // search transactions
+        const transaction = await call(`tx?hash=${query}`, 'GET')
+
+        if (!transaction.code) {
+            return res.send({transaction})
+        }
+
+        res.status(404).send({message: 'not found'})
     } catch (e) {
         next(e)
     }

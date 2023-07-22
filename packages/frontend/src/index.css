@@ -25,6 +25,45 @@ code {
   padding: 50px;
 }
 
+.modal {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  top: 0;
+  left: 0;
+}
+
+.modal_container {
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal_message {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  height: 30%;
+  min-width: 300px;
+  color: black;
+  background-color: rgb(101, 80, 11);
+}
+
+.modal_close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 20pt;
+  padding: 10px;
+}
+
+.modal_close:hover {
+  cursor: pointer;
+}
+
 .pagination {
   display: flex;
   justify-content: center;
