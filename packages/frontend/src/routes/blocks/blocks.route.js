@@ -3,6 +3,7 @@ import { Link, useLoaderData } from "react-router-dom";
 import * as Api from "../../util/Api";
 import './blocks.css'
 import ReactPaginate from "react-paginate";
+const blocksPerPage = 30;
 
 function Blocks({blocks}) {
     return blocks.map((block) =>
@@ -17,14 +18,12 @@ function Blocks({blocks}) {
 export async function loader({params}) {
     const {blocksCount} = await Api.getStatus();
 
-    const blocks = await Api.getBlocks(blocksCount - 30, blocksCount);
+    const blocks = await Api.getBlocks(1, blocksPerPage);
 
     return {blocks, blocksCount};
 }
 
 function BlocksRoute() {
-    const blocksPerPage = 30;
-
     const {blocks: defaultBlocks, blocksCount} = useLoaderData()
     const [blocks, setBlocks] = useState(defaultBlocks.blocks)
 
