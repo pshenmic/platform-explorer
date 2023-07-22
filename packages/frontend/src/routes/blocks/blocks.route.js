@@ -5,7 +5,7 @@ import './blocks.css'
 import ReactPaginate from "react-paginate";
 
 function Blocks({blocks}) {
-    return blocks.blocks.map((block) =>
+    return blocks.map((block) =>
         <div className={"block_list_item"}>
             <span>Block </span>
             <Link to={`/block/${block.block_id.hash}`}>{block.block_id.hash}</Link>
