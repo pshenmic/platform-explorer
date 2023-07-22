@@ -79,7 +79,27 @@ app.get('/block/:hash', async (req, res, next) => {
 
 app.get('/blocks', async (req, res, next) => {
     try {
-        const blocks = await call(`block_search?query=block.height>1`, 'GET')
+        const {page, limit, order} = req.query
+
+        let query = 'block_search?query=block.height>=1'
+
+        if (page) {
+            query += '&page=' + page
+        }
+
+        if (limit) {
+            query += '&per_page=' + limit
+        } else {
+            query += '&per_page=' + 30
+        }
+
+        if (order) {
+            query += '&order=' + order
+        } else {
+            query += '&order=desc'
+        }
+
+        const blocks = await call(query, 'GET')
         res.send(blocks);
     } catch (e) {
         next(e)
@@ -88,7 +108,7 @@ app.get('/blocks', async (req, res, next) => {
 
 app.get('/transactions', async (req, res, next) => {
     try {
-        const transactions = await call(`tx_search?query=tx.height>1`, 'GET')
+        const transactions = await call(`tx_search?query=tx.height>=1`, 'GET')
         res.send(transactions);
 
     } catch (e) {
