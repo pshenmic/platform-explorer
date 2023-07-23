@@ -49,15 +49,6 @@ function BlockRoute() {
                     <span>Transactions count:</span>
                     <span>{txs ? txs.length : 0}</span>
                 </div>
-
-                {txs ? <div className={"block_transactions_list"}>
-                    <ul>
-                        {txs.map((hash) =>
-                            <li key={hash}>
-                                <Link to={`/transaction/${hash}`}>tha fuck</Link>
-                            </li>)}
-                    </ul>
-                </div> : null}
             </div>
         </div>
     );
