@@ -34,33 +34,33 @@ function TransactionRoute() {
         <div className={"container"}>
             <div className={"transaction_details"}>
                 <div className={"transaction_details_item"}>
-                    <span>Hash:</span>
-                    <span>{transaction.hash}</span>
+                    <span className={"transaction_details_item__title"}>Hash:</span>
+                    <span className={"transaction_details_item__value"}>{transaction.hash}</span>
                 </div>
                 <div className={"transaction_details_item"}>
-                    <span>Height:</span>
-                    <span>{transaction.height}</span>
+                    <span className={"transaction_details_item__title"}>Height:</span>
+                    <span className={"transaction_details_item__value"}>{transaction.height}</span>
                 </div>
                 <div className={"transaction_details_item"}>
-                    <span>Index:</span>
-                    <span>{transaction.index}</span>
+                    <span className={"transaction_details_item__title"}>Index:</span>
+                    <span className={"transaction_details_item__value"}>{transaction.index}</span>
                 </div>
 
                 {transaction.type ? <div className={"transaction_details_item"}>
-                    <span>State Transition Type:</span>
-                    <span>{transaction.type} ({getTransitionTypeString(transaction.type)})</span>
+                    <span className={"transaction_details_item__title"}>State Transition Type:</span>
+                    <span className={"transaction_details_item__value"}>{transaction.type} ({getTransitionTypeString(transaction.type)})</span>
                 </div> : <div>
                     Failed to decode State Transition
                 </div>}
 
                 {transaction.identityId ? <div className={"transaction_details_item"}>
-                    <span>Identity:</span>
-                    <span>{transaction.identityId}</span>
+                    <span className={"transaction_details_item__title"}>Identity:</span>
+                    <span className={"transaction_details_item__value"}>{transaction.identityId}</span>
                 </div> : null}
 
                 {transaction.signature ? <div className={"transaction_details_item"}>
-                    <span>Signature:</span>
-                    <span>{transaction.signature}</span>
+                    <span className={"transaction_details_item__title"}>Signature:</span>
+                    <span className={"transaction_details_item__value"}>{transaction.signature}</span>
                 </div> : null}
 
             </div>

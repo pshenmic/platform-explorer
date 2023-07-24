@@ -8,6 +8,13 @@
 .transaction_details_item {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    min-width: 800px;
+}
+
+.transaction_details_item__title {
+  margin-right: 8px;
+}
+
+.transaction_details_item__value {
+  word-break: break-all;
+  text-align: right;
 }

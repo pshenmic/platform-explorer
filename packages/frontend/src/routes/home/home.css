@@ -17,13 +17,13 @@
     flex-flow: column;
     background-color: #492f1a;
     padding: 10px;
-    min-width: 300px;
     color: wheat;
 }
 
 .last_transactions_item {
     padding-top: 5px;
     color: black;
+    word-break: break-all;
 }
 
 .last_transactions_item a {
@@ -35,4 +35,11 @@
 .last_transactions_item a:hover {
     color: white;
     text-decoration: underline;
+}
+
+@media screen and (max-width: 350px) {
+  .status {
+      width: calc(100% - 20px);
+      min-width: auto;
+  }
 }
