@@ -7,7 +7,7 @@
 .block_list_item a {
     text-decoration: none;
     color: white;
-        word-break: break-all;
+    word-break: break-all;
 }
 
 .block_list_item a:hover {
