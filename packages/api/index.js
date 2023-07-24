@@ -116,6 +116,12 @@ app.get('/block/:hash', async (req, res, next) => {
 
         const block = await call(`block_by_hash?hash=${hash}`, 'GET')
 
+        if (block?.block?.data?.txs?.length) {
+            const txHashes = block.block.data.txs.map(tx => crypto.createHash('sha256').update(Buffer.from(tx, 'base64')).digest('hex').toUpperCase())
+
+            Object.assign(block, {txHashes})
+        }
+
         cache.set('block_' + hash, block);
 
         res.send(block);
