@@ -11,3 +11,60 @@
     flex-wrap: wrap;
     min-width: 800px;
 }
+
+
+.transaction_details_item_transaction {
+    padding: 10px;
+    justify-content: center;
+    width: 100%;
+}
+
+.transaction_raw {
+    word-break: break-all;
+    background-color: rgba(138, 53, 17, 0.8);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.tooltip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.loader {
+    border: 10px solid rgba(243, 243, 243, 0.9); /* Light grey */
+    border-top: 10px solid rgba(169, 134, 45, 0.6); /* Blue */
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.disable {
+    display: none;
+}
+.disable_color {
+    color: rgba(0, 0, 0, 0);
+}
+
+.state_transition {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.state_transition_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

@@ -4,6 +4,7 @@ const app = express();
 const cors = require('cors')
 const Dash = require('dash')
 const crypto = require('crypto')
+const bodyParser = require('body-parser')
 
 const cache = require('./src/cache')
 
@@ -11,6 +12,7 @@ const BASE_URL = process.env.BASE_URL
 const BLOCK_TIME = 3 * 1000;
 
 app.use(cors())
+const jsonParser = bodyParser.json()
 
 class ServiceNotAvailableError extends Error {
 }
@@ -196,13 +198,6 @@ app.get('/transaction/:txHash', async (req, res, next) => {
 
         const transaction = await call(`tx?hash=${txHash}`, 'GET')
 
-        try {
-            const stateTransition = await client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(transaction.tx, 'base64'));
-
-            Object.assign(transaction, stateTransition.toJSON())
-        } catch (e) {
-        }
-
         cache.set('transaction_' + txHash, transaction)
 
         res.send(transaction)
@@ -226,7 +221,7 @@ app.get('/search', async (req, res, next) => {
             return res.send(cached)
         }
 
-        if ( /^[0-9]/.test(query)) {
+        if (/^[0-9]/.test(query)) {
             const block = await call(`block?height=${query}`, 'GET')
 
             if (!block.code) {
@@ -257,6 +252,33 @@ app.get('/search', async (req, res, next) => {
         res.status(404).send({message: 'not found'})
     } catch (e) {
         next(e)
+    }
+});
+
+app.post('/transaction/decode', jsonParser, async (req, res, next) => {
+    try {
+        const {base64} = req.body;
+
+        const cached = cache.get('decoded_' + base64)
+
+        if (cached) {
+            return res.send(cached)
+        }
+
+        const stateTransition = await client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(base64, 'base64'));
+
+        cache.set('decoded_' + base64, stateTransition)
+
+        res.send(stateTransition)
+    } catch (e) {
+        if (e?.constructor?.name === 'InvalidStateTransitionError') {
+            const [error] = e.getErrors()
+            const {code, message} = error
+
+            return res.status(500).send({error: message, code})
+        }
+
+        res.status(500).send({error: e.message})
     }
 });
 
