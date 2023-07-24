@@ -14,7 +14,7 @@ const StateTransitionEnum = {
 
 const getTransitionTypeString = (id) => {
     const [stateTransitionType] = Object.entries(StateTransitionEnum)
-        .filter(([key, value]) => StateTransitionEnum[key] === id ? value : null)
+        .filter(([key]) => StateTransitionEnum[key] === id)
         .map(([key,]) => key)
 
     return stateTransitionType ?? 'UNKNOWN'
@@ -49,8 +49,6 @@ function TransactionRoute() {
                 setDecodingError(e.message)
             })
             .finally(() => setDecoding(false))
-
-        console.log(tx)
     }
 
     const [decoding, setDecoding] = useState(false)
@@ -97,10 +95,6 @@ function TransactionRoute() {
                                             <span>State Transitions:</span>
                                             <span>{decodedST.transitions.length}</span>
                                         </div> : null}
-                                    <div className={"state_transition_item"}>
-                                        <span>Owner ID:</span>
-                                        <span>12312</span>
-                                    </div>
                                 </div>
                                 : null}
 
