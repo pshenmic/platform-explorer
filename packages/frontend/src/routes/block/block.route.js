@@ -12,7 +12,7 @@ export async function loader({params}) {
 function BlockRoute() {
     const {block} = useLoaderData();
 
-    const txs = block?.block?.data?.txs;
+    const txHashes = block?.txHashes;
 
     return (
         <div className="container">
@@ -43,8 +43,18 @@ function BlockRoute() {
                 </div>
                 <div className={"block_details_item"}>
                     <span className={"block_details_item__title"}>Transactions count:</span>
-                    <span className={"block_details_item__value"}>{txs ? txs.length : 0}</span>
+                    <span className={"block_details_item__value"}>{txHashes ? txHashes.length : 0}</span>
                 </div>
+
+                {txHashes ? <div className={"block_transactions_list"}>
+                    <ul>
+                        {txHashes.map((hash, i) =>
+                            <li key={hash}>
+                                <Link className={"block_transaction_link"} to={`/transaction/${hash}`}>{hash}</Link>
+                            </li>)}
+
+                    </ul>
+                </div> : null}
             </div>
         </div>
     );

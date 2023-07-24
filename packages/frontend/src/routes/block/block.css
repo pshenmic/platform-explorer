@@ -19,3 +19,40 @@
   word-break: break-all;
   text-align: right;
 }
+
+.block_transactions_list {
+    margin: 20px;
+    border: 3px groove black;
+    word-break: break-all;
+}
+
+.block_transactions_list:hover {
+}
+
+.block_transactions_list > ul {
+    list-style: none;
+    padding-left: 0;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.block_transactions_list > ul > li {
+    padding: 10px;
+}
+
+.block_transactions_list > ul > li:hover {
+    background-color: rgb(41, 102, 117);
+}
+
+.block_transactions_list > ul:hover {
+}
+
+.block_transaction_link {
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+
+/*.block_transaction_link:hover {*/
+/*    background-color: rgba(26, 64, 73, 0.41);*/
+/*}*/
