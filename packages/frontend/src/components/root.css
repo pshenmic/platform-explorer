@@ -59,6 +59,8 @@
         width: 100%;
         margin: 0;
         padding: 14px;
+        min-width: auto;
+        box-sizing: border-box;
     }
     .topnav input[type=text] {
         border: 1px solid #ccc;

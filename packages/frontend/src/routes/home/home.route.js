@@ -11,9 +11,11 @@ export async function loader({}) {
 
 
 function Transactions({transactions}) {
-    return transactions.txs.map((tx) => <div className={"last_transactions_item"}>
-        <Link to={`transaction/${tx.hash}`}>{tx.hash}</Link>
-    </div>)
+    return transactions.txs.map((tx) =>
+        <div key={tx.hash} className={"last_transactions_item"}>
+            <Link to={`transaction/${tx.hash}`}>{tx.hash}</Link>
+        </div>
+    )
 }
 
 function HomeRoute() {

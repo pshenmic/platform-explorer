@@ -22,7 +22,7 @@ code {
   margin: 0;
   align-items: center;
   flex-flow: column;
-  padding: 50px;
+  padding: 10px;
 }
 
 .modal {
@@ -68,6 +68,7 @@ code {
   display: flex;
   justify-content: center;
   list-style: none;
+  padding: 0;
 }
 
 .page-item {
@@ -87,4 +88,11 @@ code {
 
 .active {
   background-color: rgba(57, 175, 159, 0.55);
+}
+
+@media screen and (max-width: 786px) {
+  .page-item:not(.active):not(.page-item--previous):not(.page-item--next) {
+    display: none;
+  }
+
 }
