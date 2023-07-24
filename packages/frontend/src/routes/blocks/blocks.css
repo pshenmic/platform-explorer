@@ -1,11 +1,13 @@
 .block_list {
     background-color: #1a4049;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 .block_list_item a {
     text-decoration: none;
     color: white;
+    word-break: break-all;
 }
 
 .block_list_item a:hover {

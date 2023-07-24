@@ -7,7 +7,7 @@ const blocksPerPage = 30;
 
 function Blocks({blocks}) {
     return blocks.map((block) =>
-        <div className={"block_list_item"}>
+        <div key={block.block_id.hash} className={"block_list_item"}>
             <span>Block </span>
             <Link to={`/block/${block.block_id.hash}`}>{block.block_id.hash}</Link>
             <span> ({block.block.header.height})</span>
@@ -48,9 +48,9 @@ function BlocksRoute() {
                     previousLabel="< previous"
                     pageClassName="page-item"
                     pageLinkClassName="page-link"
-                    previousClassName="page-item"
+                    previousClassName="page-item page-item--previous"
                     previousLinkClassName="page-link"
-                    nextClassName="page-item"
+                    nextClassName="page-item page-item--next"
                     nextLinkClassName="page-link"
                     breakClassName="page-item"
                     breakLinkClassName="page-link"
