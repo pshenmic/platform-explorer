@@ -91,10 +91,6 @@ code {
 }
 
 @media screen and (max-width: 786px) {
-  .pagination {
-
-  }
-
   .page-item:not(.active):not(.page-item--previous):not(.page-item--next) {
     display: none;
   }
