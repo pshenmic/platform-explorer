@@ -73,23 +73,6 @@ function TransactionRoute() {
                     <span className={"transaction_details_item__value"}>{transaction.index}</span>
                 </div>
 
-                {transaction.type ? <div className={"transaction_details_item"}>
-                    <span className={"transaction_details_item__title"}>State Transition Type:</span>
-                    <span className={"transaction_details_item__value"}>{transaction.type} ({getTransitionTypeString(transaction.type)})</span>
-                </div> : <div>
-                    Failed to decode State Transition
-                </div>}
-
-                {transaction.identityId ? <div className={"transaction_details_item"}>
-                    <span className={"transaction_details_item__title"}>Identity:</span>
-                    <span className={"transaction_details_item__value"}>{transaction.identityId}</span>
-                </div> : null}
-
-                {transaction.signature ? <div className={"transaction_details_item"}>
-                    <span className={"transaction_details_item__title"}>Signature:</span>
-                    <span className={"transaction_details_item__value"}>{transaction.signature}</span>
-                </div> : null}
-
                 <div className={"transaction_details_item"}>
                     <div className={"transaction_details_item_transaction"}>
                         <div className={"transaction_raw"} onClick={() => decodeTx(transaction.tx)}

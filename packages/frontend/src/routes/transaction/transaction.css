@@ -3,6 +3,7 @@
     flex-flow: column;
     background-color: #492f1a;
     padding: 20px;
+    max-width: 800px;
 }
 
 .transaction_details_item {
@@ -18,7 +19,6 @@
   word-break: break-all;
   text-align: right;
 }
-
 
 .transaction_details_item_transaction {
     padding: 10px;
