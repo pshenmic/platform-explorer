@@ -2,7 +2,7 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL
 
 const fetchWrapper = (url, options) => {
     return new Promise((resolve, reject) => {
-        setTimeout(() => reject('RPC_TIMEOUT'), 500)
+        setTimeout(() => reject('RPC_TIMEOUT'), 10000)
 
         fetch(url, options).catch(reject).then(resolve)
     })
