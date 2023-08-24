@@ -1,9 +1,16 @@
 const BASE_URL = process.env.REACT_APP_API_BASE_URL
 
+const fetchWrapper = (url, options) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => reject('RPC_TIMEOUT'), 500)
+
+        fetch(url, options).catch(reject).then(resolve)
+    })
+}
+
 const call = async (path, method, body) => {
     try {
-        const response = await fetch(`${BASE_URL}/${path}`, {
-            signal: AbortSignal.timeout(10000),
+        const response = await fetchWrapper(`${BASE_URL}/${path}`, {
             method,
             headers: {
                 'content-type': 'application/json'
@@ -30,7 +37,7 @@ const call = async (path, method, body) => {
             throw new Error('Unknown status code: ' + response.status)
         }
     } catch (e) {
-        if (e.name === 'AbortError') {
+        if (e === 'RPC_TIMEOUT') {
             throw new Error('Request to Tenderdash RPC is timed out')
         }
 
