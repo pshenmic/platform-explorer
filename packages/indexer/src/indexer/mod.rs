@@ -67,8 +67,9 @@ impl Indexer {
                         StateTransition::IdentityTopUp(_) => "IdentityTopUp",
                         StateTransition::IdentityCreditWithdrawal(_) => "DataContractCreate",
                         StateTransition::IdentityUpdate(_) => "IdentityUpdate",
+                        StateTransition::IdentityCreditTransfer(_) => "IdentityCreditTransfer"
                     }
-                    Err(e) => "UnknownStateTransition (BatchDocument)"
+                    Err(e) => "UnknownStateTransition"
                 };
                 println!("{} happened at block height {}", &st_type, &block_height);
             }
