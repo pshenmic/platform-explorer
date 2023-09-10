@@ -2,9 +2,12 @@ use dpp::state_transition::StateTransition;
 use crate::decoder::decoder::StateTransitionDecoder;
 use base64::{Engine as _, engine::{general_purpose}};
 use crate::models::{PlatformExplorerSearchResponse, PlatformExplorerStatusResponse};
+use crate::processor::psql::PSQLProcessor;
+use crate::processor::STProcessorLike;
 
 pub struct Indexer {
     decoder: StateTransitionDecoder,
+    processor: PSQLProcessor,
 }
 
 /**
@@ -15,8 +18,9 @@ It sync up with the network and sends incoming state transitions events to the l
 impl Indexer {
     pub fn new() -> Indexer {
         let decoder = StateTransitionDecoder::new();
+        let processor = PSQLProcessor::new();
 
-        return Indexer { decoder };
+        return Indexer { decoder, processor };
     }
 
     pub async fn start(&self) {
@@ -60,7 +64,10 @@ impl Indexer {
 
                 let st_type = match st_result {
                     Ok(st) => match st {
-                        StateTransition::DataContractCreate(_) => "DataContractCreate",
+                        StateTransition::DataContractCreate(state_transition) => {
+                            self.processor.handle_data_contract_create(state_transition).await;
+                            "DataContractCreate"
+                        }
                         StateTransition::DataContractUpdate(_) => "DataContractUpdate",
                         StateTransition::DocumentsBatch(_) => "DocumentsBatch",
                         StateTransition::IdentityCreate(_) => "IdentityCreate",

@@ -17,6 +17,8 @@ async-trait = { version = "0.1"}
 anyhow = { version = "1.0"}
 mockall = { version="0.11.3", optional=true}
 base64 = "0.21.2"
+deadpool-postgres = "0.10.5"
+refinery = { version = "0.8.10", features = ["postgres"] }
 
 [features]
 default = ["fixtures-and-mocks"]
