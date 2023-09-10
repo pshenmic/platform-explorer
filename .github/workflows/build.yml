@@ -88,6 +88,7 @@ jobs:
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
             docker run -d --name postgres -e POSTGRES_PASSWORD=indexer -e POSTGRES_USER=indexer -e POSTGRES_DB=indexer -p 5432:5432 postgres
+            sleep 10
             docker run --rm -e DATABASE_URL=postgres://indexer:indexer@172.17.0.1:5432/indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer refinery migrate -e DATABASE_URL -p /app/migrations -t 1
             docker run -d --restart always --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer cargo run
             docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
