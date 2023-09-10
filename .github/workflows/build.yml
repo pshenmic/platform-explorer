@@ -13,7 +13,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  build_api:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -40,12 +40,48 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
 
       - name: Build and push API package Docker image
         uses: docker/build-push-action@v4
         with:
           context: ./packages/api
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  build_indexer:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
+
+      - name: Build and push API package Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./packages/indexer
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -61,9 +97,13 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master && docker stop $(docker ps -f name=platform-explorer -q)
-            docker rm $(docker ps -af name=platform-explorer -q)
-            docker stop postgress && docker rm postgres
+            docker stop $(docker ps -f name=platform-explorer-api -q)
+            docker stop $(docker ps -f name=platform-explorer-indexer -q)
+            docker rm platform-explorer-api platform-explorer-indexer
+            docker stop postgres && docker rm postgres
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
             docker run -d --name postgres -e POSTGRES_PASSWORD=indexer -e POSTGRES_USER=indexer -e POSTGRES_DB=indexer -p 5432:5432 postgres
             DATABASE_URL=postgres://indexer:indexer@127.0.0.1:5432/indexer refinery migrate -e DATABASE_URL -p ./migrations -t 1
-            docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master
+            docker run -d --restart always --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
+            docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api

@@ -17,7 +17,7 @@ impl PSQLProcessor {
     pub fn new() -> PSQLProcessor {
         let mut cfg = Config::new();
 
-        cfg.host = Some("localhost".to_string());
+        cfg.host = Some("172.17.0.1".to_string());
         cfg.dbname = Some("indexer".to_string());
         cfg.user = Some("indexer".to_string());
         cfg.password = Some("indexer".to_string());
