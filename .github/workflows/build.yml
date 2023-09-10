@@ -91,4 +91,4 @@ jobs:
             sleep 10
             docker run --rm -e DATABASE_URL=postgres://indexer:indexer@172.17.0.1:5432/indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer refinery migrate -e DATABASE_URL -p /app/migrations -t 1
             docker run -d --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer cargo run
-            docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
+            docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
