@@ -8,8 +8,8 @@ RUN git clone --branch fix/rs-dpp-import https://github.com/dashevo/platform
 WORKDIR /app
 COPY Cargo.lock /app
 COPY Cargo.toml /app
+COPY migrations /app/migrations
 COPY src /app/src
 
 RUN cargo build
-
-CMD ["cargo", "run"]
+RUN cargo install refinery_cli
