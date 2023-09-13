@@ -1,3 +1,4 @@
+use deadpool_postgres::tokio_postgres::Row;
 use serde::{Deserialize};
 
 #[derive(Debug, Deserialize)]
@@ -41,4 +42,20 @@ pub struct BlockWrapper {
 #[derive(Debug, Deserialize)]
 pub struct PlatformExplorerSearchResponse {
     pub block: BlockWrapper,
+}
+
+#[derive(Clone)]
+pub struct TDBlockHeader {
+    pub hash: String,
+    pub block_height: i32,
+    pub tx_count: i32,
+}
+
+pub struct TDBlock {
+    pub header: TDBlockHeader,
+    pub txs: Vec<String>,
+}
+
+pub struct PlatformStateTransition {
+
 }
