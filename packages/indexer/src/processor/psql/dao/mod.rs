@@ -16,7 +16,7 @@ impl PostgresDAO {
     pub fn new() -> PostgresDAO {
         let mut cfg = Config::new();
 
-        cfg.host = Some("127.0.0.1".to_string());
+        cfg.host = Some("172.0.0.1".to_string());
         cfg.dbname = Some("indexer".to_string());
         cfg.user = Some("indexer".to_string());
         cfg.password = Some("indexer".to_string());
