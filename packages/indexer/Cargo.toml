@@ -19,6 +19,7 @@ mockall = { version="0.11.3", optional=true}
 base64 = "0.21.2"
 deadpool-postgres = "0.10.5"
 refinery = { version = "0.8.10", features = ["postgres"] }
+sha256 = "1.4.0"
 
 [features]
 default = ["fixtures-and-mocks"]

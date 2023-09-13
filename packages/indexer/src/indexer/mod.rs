@@ -1,35 +1,69 @@
+use std::any::Any;
+use std::cell::Cell;
+use std::sync::{Arc, Mutex};
+use std::time::Duration;
 use dpp::state_transition::StateTransition;
-use crate::decoder::decoder::StateTransitionDecoder;
 use base64::{Engine as _, engine::{general_purpose}};
-use crate::models::{PlatformExplorerSearchResponse, PlatformExplorerStatusResponse};
+use futures::stream;
+use tokio::{task, time};
+use tokio::time::{Instant, Interval};
+use crate::models::{PlatformExplorerSearchResponse, PlatformExplorerStatusResponse, TDBlock, TDBlockHeader};
 use crate::processor::psql::PSQLProcessor;
-use crate::processor::STProcessorLike;
 
 pub struct Indexer {
-    decoder: StateTransitionDecoder,
     processor: PSQLProcessor,
+    last_block_height: Cell<i32>,
 }
 
-/**
-Indexer is responsible for indexing platform chain data.
-Indexer is responsible for indexing platform chain data.
-It sync up with the network and sends incoming state transitions events to the lower level
- **/
 impl Indexer {
     pub fn new() -> Indexer {
-        let decoder = StateTransitionDecoder::new();
         let processor = PSQLProcessor::new();
 
-        return Indexer { decoder, processor };
+        return Indexer { processor, last_block_height: Cell::new(2030) };
     }
 
     pub async fn start(&self) {
-        self.init().await;
+        println!("Indexer loop started");
 
-        println!("Indexer started");
+        let mut interval = time::interval(Duration::from_millis(3000));
+
+        loop {
+            interval.tick().await;
+
+            let current_block_height:i32 = self.last_block_height.get();
+            let last_block_height:i32 = self.fetch_last_block().await;
+
+            let diff = last_block_height.clone() - current_block_height.clone();
+
+            if diff > 0 {
+                for block_height in current_block_height..last_block_height+1 {
+                    self.index_block(block_height).await;
+                }
+            }
+        }
     }
 
-    async fn init(&self) {
+    async fn index_block(&self, block_height: i32) {
+        let url = format!("https://platform-explorer-api.rd.dash.org/search?query={}", &block_height);
+
+        let resp = reqwest::get(url)
+            .await
+            .unwrap()
+            .json::<PlatformExplorerSearchResponse>()
+            .await
+            .unwrap();
+
+        let txs = resp.block.block.data.txs;
+        let hash = resp.block.block_id.hash;
+
+        let block = TDBlock{txs: txs.clone(), header: TDBlockHeader{hash: hash.clone(), block_height: block_height.clone(), tx_count: txs.len() as i32 }};
+
+        self.processor.handle_block(block).await;
+
+        self.last_block_height.set(block_height);
+    }
+
+    async fn fetch_last_block(&self) -> i32 {
         let resp = reqwest::get("https://platform-explorer-api.rd.dash.org/status")
             .await
             .unwrap()
@@ -37,50 +71,9 @@ impl Indexer {
             .await
             .unwrap();
 
-
         let blocks_count = resp.blocks_count.parse::<i32>().unwrap();
-        println!("Latest platform block: {}", &blocks_count);
 
-        for _i in 1..blocks_count {
-            let url = format!("https://platform-explorer-api.rd.dash.org/search?query={}", _i);
-
-            let resp = reqwest::get(url)
-                .await
-                .unwrap()
-                .json::<PlatformExplorerSearchResponse>()
-                .await
-                .unwrap();
-
-            let txs = resp.block.block.data.txs;
-            let block_height = resp.block.block.header.height;
-
-            if txs.len() == usize::try_from(0).unwrap() {
-                println!("No platform transactions at block height {}", &block_height);
-            }
-
-            for tx_base_64 in txs.iter() {
-                let bytes = general_purpose::STANDARD.decode(tx_base_64).unwrap();
-                let st_result = self.decoder.decode(bytes).await;
-
-                let st_type = match st_result {
-                    Ok(st) => match st {
-                        StateTransition::DataContractCreate(state_transition) => {
-                            self.processor.handle_data_contract_create(state_transition).await;
-                            "DataContractCreate"
-                        }
-                        StateTransition::DataContractUpdate(_) => "DataContractUpdate",
-                        StateTransition::DocumentsBatch(_) => "DocumentsBatch",
-                        StateTransition::IdentityCreate(_) => "IdentityCreate",
-                        StateTransition::IdentityTopUp(_) => "IdentityTopUp",
-                        StateTransition::IdentityCreditWithdrawal(_) => "DataContractCreate",
-                        StateTransition::IdentityUpdate(_) => "IdentityUpdate",
-                        StateTransition::IdentityCreditTransfer(_) => "IdentityCreditTransfer"
-                    }
-                    Err(e) => "UnknownStateTransition"
-                };
-                println!("{} happened at block height {}", &st_type, &block_height);
-            }
-        }
+        return blocks_count;
     }
 }
 
