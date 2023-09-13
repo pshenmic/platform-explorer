@@ -1,3 +1,4 @@
+use std::env;
 use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, RecyclingMethod, Runtime, tokio_postgres, Transaction};
 use deadpool_postgres::tokio_postgres::{Error, IsolationLevel, NoTls, Row};
 use dpp::platform_value::string_encoding::Encoding;
@@ -16,10 +17,15 @@ impl PostgresDAO {
     pub fn new() -> PostgresDAO {
         let mut cfg = Config::new();
 
-        cfg.host = Some("172.0.0.1".to_string());
-        cfg.dbname = Some("indexer".to_string());
-        cfg.user = Some("indexer".to_string());
-        cfg.password = Some("indexer".to_string());
+        let postgres_host = env::var("POSTGRES_HOST").expect("You've not set the POSTGRES_HOST");
+        let postgres_db = env::var("POSTGRES_DB").expect("You've not set the POSTGRES_DB");
+        let postgres_user = env::var("POSTGRES_USER").expect("You've not set the POSTGRES_USER");
+        let postgres_pass = env::var("POSTGRES_PASS").expect("You've not set the POSTGRES_HOST");
+
+        cfg.host = Some(postgres_host);
+        cfg.dbname = Some(postgres_db);
+        cfg.user = Some(postgres_user);
+        cfg.password = Some(postgres_pass);
         cfg.manager = Some(ManagerConfig { recycling_method: RecyclingMethod::Fast });
 
         let connection_pool = cfg.create_pool(Some(Runtime::Tokio1), NoTls).unwrap();

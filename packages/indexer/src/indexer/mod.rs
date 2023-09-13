@@ -19,7 +19,7 @@ impl Indexer {
     pub fn new() -> Indexer {
         let processor = PSQLProcessor::new();
 
-        return Indexer { processor, last_block_height: Cell::new(2030) };
+        return Indexer { processor, last_block_height: Cell::new(1) };
     }
 
     pub async fn start(&self) {
