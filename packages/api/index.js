@@ -61,7 +61,7 @@ const init = async () => {
     Routes({fastify, mainController, blockController, transactionController})
 
     fastify.setErrorHandler(errorHandler)
-    fastify.listen({port: 3005, listenTextResolver: (address) => console.log(`Platform indexer API has started on the ${address}`)});
+    fastify.listen({ host: "0.0.0.0", port: 3005, listenTextResolver: (address) => console.log(`Platform indexer API has started on the ${address}`)});
 }
 
 
