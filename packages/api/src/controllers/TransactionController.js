@@ -3,24 +3,30 @@ const {hash} = require("../utils")
 const TenderdashRPC = require("../tenderdashRpc");
 
 class TransactionController {
-    constructor(client) {
+    constructor(client, knex) {
         this.client = client
+        this.knex = knex
     }
 
     getTransactions = async (request, response) => {
         const {from, to} = request.query
 
-        const query = `${from}_${to}`
+        const rows = await this.knex.select(
+            'blocks.id as block_id', 'blocks.block_height as block_height', 'state_transitions.hash as hash',
+            'state_transitions.type as type'
+        )
+            .from('state_transitions')
+            .leftJoin('blocks', 'blocks.id', 'state_transitions.block_id')
+            .where( (builder) => {
+                if (from && to) {
+                    builder.where('block_height', '<', to);
+                    builder.where('block_height', '>', from);
+                }
+            })
+            .limit(30)
+            .orderBy('blocks.id', 'desc')
 
-        const cached = cache.get('tx_search_' + hash(query))
-
-        if (cached) {
-            return response.send(cached)
-        }
-
-        const transactions = await TenderdashRPC.getTransactions(from, to)
-
-        cache.set('tx_search_' + hash(query))
+        const transactions = rows.map(({hash, block_height, type}) =>({hash, blockHeight: block_height, type}))
 
         response.send(transactions);
     }
@@ -28,17 +34,18 @@ class TransactionController {
     getTransactionByHash = async (request, reply) => {
         const {txHash} = request.params;
 
-        const cached = cache.get('transaction_' + txHash)
+        const [row] = await this.knex('state_transitions')
+            .select('state_transitions.hash as hash', 'state_transitions.data as data', 'state_transitions.index as index', 'blocks.block_height as block_height',)
+            .where('state_transitions.hash', txHash)
+            .leftJoin('blocks', 'blocks.id', 'state_transitions.block_id')
 
-        if (cached) {
-            return reply.send(cached)
+        if (row) {
+            const {hash, data, block_height, index } = row
+
+            return reply.send({hash, data, blockHeight: block_height, index})
         }
 
-        const transaction = await TenderdashRPC.getTransactionByHash(txHash)
-
-        cache.set('transaction_' + txHash, transaction)
-
-        reply.send(transaction)
+        reply.status(404).send({message: 'not found'})
     }
 
     decode = async (request, reply) => {

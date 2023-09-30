@@ -1,4 +1,5 @@
 require('dotenv').config()
+const { attachPaginate } = require('knex-paginate');
 
 const Dash = require('dash')
 const Fastify = require('fastify')
@@ -42,7 +43,7 @@ const init = async () => {
 
     worker.setHandler(async () => {
         try {
-            status = await TenderdashRPC.getStatus()
+            status = true
         } catch (e) {
         }
     })
@@ -54,9 +55,25 @@ const init = async () => {
         // put your options here
     })
 
-    const mainController = new MainController()
-    const blockController = new BlockController()
-    const transactionController = new TransactionController(client)
+    const knex = require('knex')({
+        client: 'pg',
+        connection: {
+            host: process.env["POSTGRES_HOST"],
+            port: process.env["POSTGRES_PORT"],
+            user: process.env["POSTGRES_USER"],
+            database: process.env["POSTGRES_NAME"],
+            password: process.env["POSTGRES_PASS"],
+            ssl: process.env["POSTGRES_SSL"] ? { rejectUnauthorized: false } : false,
+        }
+    });
+
+    await knex.raw('select 1+1');
+
+    attachPaginate();
+
+    const mainController = new MainController(knex)
+    const blockController = new BlockController(knex)
+    const transactionController = new TransactionController(client, knex)
 
     Routes({fastify, mainController, blockController, transactionController})
 

@@ -1,47 +1,57 @@
-use deadpool_postgres::tokio_postgres::Row;
+use std::time::SystemTime;
+use chrono::{DateTime, NaiveDate, NaiveDateTime, TimeZone, Utc};
 use serde::{Deserialize};
 
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct PlatformExplorerStatusResponse {
-    pub network: String,
-    pub app_version: String,
-    pub p2p_version: String,
-    pub block_version: String,
-    pub blocks_count: String,
-    pub tenderdash_version: String,
+#[derive(Deserialize)]
+pub struct TenderdashRPCStatusResponse {
+    pub sync_info: TenderdashSyncInfo
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
+pub struct TenderdashSyncInfo {
+    pub latest_block_height: String
+}
+
+#[derive(Deserialize)]
+pub struct TenderdashBlockResponse {
+    pub block: BlockWrapper,
+}
+
+#[derive(Deserialize)]
 pub struct BlockId {
     pub hash: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 pub struct BlockData {
     pub txs: Vec<String>,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct BlockHeader {
-    pub height: String,
+#[derive(Deserialize)]
+pub struct BlockHeaderVersion {
+    pub block: String,
+    pub app: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
+pub struct BlockHeader {
+    pub height: String,
+    pub version: BlockHeaderVersion ,
+    pub chain_id: String,
+    pub core_chain_locked_height: String,
+    pub timestamp: DateTime<Utc>
+}
+
+#[derive(Deserialize)]
 pub struct Block {
     pub header: BlockHeader,
     pub data: BlockData,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 pub struct BlockWrapper {
     pub block_id: BlockId,
     pub block: Block,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct PlatformExplorerSearchResponse {
-    pub block: BlockWrapper,
 }
 
 #[derive(Clone)]
@@ -49,6 +59,7 @@ pub struct TDBlockHeader {
     pub hash: String,
     pub block_height: i32,
     pub tx_count: i32,
+    pub timestamp: DateTime<Utc>
 }
 
 pub struct TDBlock {

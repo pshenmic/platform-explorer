@@ -11,7 +11,7 @@ export async function loader({}) {
 
 
 function Transactions({transactions}) {
-    return transactions.txs.map((tx) =>
+    return transactions.map((tx) =>
         <div key={tx.hash} className={"last_transactions_item"}>
             <Link to={`transaction/${tx.hash}`}>{tx.hash}</Link>
         </div>

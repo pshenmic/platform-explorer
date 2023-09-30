@@ -58,8 +58,8 @@ const getTransaction = (txHash) => {
     return call(`transaction/${txHash}`, 'GET')
 }
 
-const getBlocks = (page = 1, limit = 30) => {
-    return call(`blocks?page=${page}&limit=${limit}`, 'GET')
+const getBlocks = (fromBlock, toBlock) => {
+    return call(`blocks?from=${fromBlock}&to=${toBlock}`, 'GET')
 }
 
 const getStatus = () => {

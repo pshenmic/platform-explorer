@@ -1,26 +1,24 @@
-const {BLOCK_TIME} = require("../constants");
-const cache = require("../cache");
-const {hash} = require("../utils");
-const TenderdashRPC = require("../tenderdashRpc");
-
 class MainController {
-    constructor() {
+    constructor(knex) {
+        this.knex = knex;
     }
 
-    async getStatus(request, response) {
-        const cached = cache.get('status')
+     getStatus = async (request, response) => {
+         const [result] = await this.knex('blocks').max('block_height')
 
-        if (cached) {
-            return response.send(cached)
-        }
+         const {max} = result
 
-        const status = await TenderdashRPC.getStatus()
-
-        cache.set('status', status, BLOCK_TIME)
-
-        response.send(status);
+         response.send({
+             network: "dash-testnet-25",
+             appVersion: "1",
+             p2pVersion: "8",
+             blockVersion: "13",
+             blocksCount: max,
+             tenderdashVersion: "0.13.1"
+         });
     }
-    async search(request, response) {
+
+    search = async (request, response) => {
         const {query} = request.query;
 
         // todo validate
@@ -28,44 +26,37 @@ class MainController {
             return response.status(400).send({error: '`?query=` missing'})
         }
 
-        const cached = cache.get('search_' + hash(query))
+        if (/^[0-9]$/.test(query)) {
+            // search blocks by height
+            const [row] = await this.knex('blocks').select('hash', 'block_height').where('block_height', query)
 
-        if (cached) {
-            return response.send(cached)
-        }
+            if (row) {
+                const {hash, block_height} = row
 
-        if (/^[0-9]/.test(query)) {
-            const block = await TenderdashRPC.getBlockByHeight(query)
-
-            if (!block.code) {
-                cache.set('search_' + hash(query), {block})
-
-                return response.send({block})
+                return response.send({hash: hash, height: block_height})
             }
         }
 
         // search blocks
-        const block = await TenderdashRPC.getBlockByHash(query)
+        const [row] = await this.knex('blocks').select('hash', 'block_height').where('hash', query)
 
-        if (!block.code && block.block_id.hash) {
-            cache.set('search_' + hash(query), {block})
+        if (row) {
+            const {hash, block_height} = row
 
-            return response.send({block})
+            return response.send({hash: hash, height: block_height})
         }
 
         // search transactions
-        const transaction = await TenderdashRPC.getTransactionByHash(query)
+        const [stRow] = await this.knex('state_transitions').select('hash').where('hash', query)
 
-        if (!transaction.code) {
-            cache.set('search_' + hash(query), {transaction})
+        if (stRow) {
+            const {hash} = stRow
 
-            return response.send({transaction})
+            return response.send({hash})
         }
 
         response.status(404).send({message: 'not found'})
     }
-
-
 }
 
 module.exports = MainController

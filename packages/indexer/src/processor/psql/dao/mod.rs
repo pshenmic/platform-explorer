@@ -1,5 +1,5 @@
 use std::env;
-use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, RecyclingMethod, Runtime, tokio_postgres, Transaction};
+use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres, Transaction};
 use deadpool_postgres::tokio_postgres::{Error, IsolationLevel, NoTls, Row};
 use dpp::platform_value::string_encoding::Encoding;
 use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
@@ -33,16 +33,16 @@ impl PostgresDAO {
         return PostgresDAO { connection_pool };
     }
 
-    pub async fn create_state_transition(&self, block_id: i32, st_type: i32, bytes: Vec<u8>) {
+    pub async fn create_state_transition(&self, block_id: i32, st_type: i32, index:i32, bytes: Vec<u8>) {
         let data = general_purpose::STANDARD.encode(&bytes);
         let hash = digest(bytes.clone()).to_uppercase();
 
-        let query = "INSERT INTO state_transitions(hash, data, type, block_id) VALUES ($1, $2, $3, $4);";
+        let query = "INSERT INTO state_transitions(hash, data, type, index, block_id) VALUES ($1, $2, $3, $4, $5);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
 
-        client.query(&stmt, &[&hash, &data, &st_type, &block_id]).await.unwrap();
+        client.query(&stmt, &[&hash, &data, &st_type, &index, &block_id]).await.unwrap();
     }
 
     pub async fn create_data_contract(&self, state_transition: DataContractCreateTransition) {
@@ -60,8 +60,8 @@ impl PostgresDAO {
         return 0;
     }
 
-    pub async fn get_block_header_by_height(&self, block_height: i32) -> Option<TDBlockHeader> {
-        let client = self.connection_pool.get().await.unwrap();
+    pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<TDBlockHeader>, PoolError> {
+        let client = self.connection_pool.get().await?;
 
         let stmt = client.prepare_cached("SELECT hash,block_height FROM blocks where block_height = $1;").await.unwrap();
 
@@ -76,7 +76,7 @@ impl PostgresDAO {
 
         let block = blocks.first();
 
-        return block.cloned();
+        return Ok(block.cloned());
     }
 
     pub async fn create_block(&self, block_header: TDBlockHeader) -> i32 {
