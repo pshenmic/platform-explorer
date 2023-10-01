@@ -6,6 +6,8 @@ mod decoder;
 mod models;
 mod processor;
 
+extern crate chrono;
+
 #[tokio::main]
 async fn main() {
     dotenv().ok(); // This line loads the environment variables from the ".env" file

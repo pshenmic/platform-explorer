@@ -1,6 +1,7 @@
 use std::time::SystemTime;
-use chrono::{DateTime, NaiveDate, NaiveDateTime, TimeZone, Utc};
-use serde::{Deserialize};
+use chrono::{DateTime, NaiveDateTime, Utc};
+use serde::{Deserialize, Deserializer, Serialize};
+use time::serde::iso8601;
 
 #[derive(Deserialize)]
 pub struct TenderdashRPCStatusResponse {
@@ -27,19 +28,21 @@ pub struct BlockData {
     pub txs: Vec<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct BlockHeaderVersion {
-    pub block: String,
     pub app: String,
+    pub block: String
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct BlockHeader {
     pub height: String,
     pub version: BlockHeaderVersion ,
     pub chain_id: String,
-    pub core_chain_locked_height: String,
-    pub timestamp: DateTime<Utc>
+    pub core_chain_locked_height: i32,
+    #[serde(rename = "time")]
+    #[serde(with = "my_date_format")]
+    pub timestamp: NaiveDateTime
 }
 
 #[derive(Deserialize)]
@@ -59,7 +62,11 @@ pub struct TDBlockHeader {
     pub hash: String,
     pub block_height: i32,
     pub tx_count: i32,
-    pub timestamp: DateTime<Utc>
+    pub timestamp: NaiveDateTime,
+    pub block_version: i32,
+    pub app_version: i32,
+    pub l1_locked_height: i32,
+    pub chain: String,
 }
 
 pub struct TDBlock {
@@ -69,4 +76,30 @@ pub struct TDBlock {
 
 pub struct PlatformStateTransition {
 
+}
+
+
+mod my_date_format {
+    use chrono::{Utc, TimeZone, ParseResult, NaiveDateTime, DateTime};
+    use serde::{self, Deserialize, Serializer, Deserializer};
+
+    const FORMAT: &'static str = "%Y-%m-%dT%H:%M:%SZ";
+
+    pub fn serialize<S>(date: &NaiveDateTime, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+    {
+        let s = format!("{}", date.format(FORMAT));
+        serializer.serialize_str(&s)
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<NaiveDateTime, D::Error>
+        where
+            D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        let parsed = DateTime::parse_from_rfc3339(&s).naive_utc();
+
+        Ok(parsed)
+    }
 }

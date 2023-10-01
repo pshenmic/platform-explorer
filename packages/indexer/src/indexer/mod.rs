@@ -6,6 +6,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use dpp::state_transition::StateTransition;
 use base64::{Engine as _, engine::{general_purpose}};
+use chrono::{DateTime, Utc};
 use futures::stream;
 use tokio::{task, time};
 use tokio::time::{Instant, Interval};
@@ -73,13 +74,16 @@ impl Indexer {
 
                         match result {
                             Ok(_) => {
-                                println!("Succesfully indexed block with height {}", block_height);
+                                println!("Successfully indexed block with height {}", block_height);
                                 break;
                             }
                             Err(err) => {
                                 match err {
                                     ProcessorError::DatabaseError => {
                                         println!("Database error occurred while indexing block height {}", block_height);
+                                    }
+                                    ProcessorError::UnexpectedError => {
+                                        println!("Unexpected processor error happened at block height {}", block_height);
                                     }
                                 }
                             }
@@ -110,14 +114,24 @@ impl Indexer {
 
         let txs = resp.block.data.txs;
         let hash = resp.block_id.hash;
+        let timestamp = resp.block.header.timestamp;
+        let block_version = resp.block.header.version.block.parse::<i32>()?;
+        let app_version = resp.block.header.version.app.parse::<i32>()?;
+        let l1_locked_height = resp.block.header.core_chain_locked_height;
+        let chain = resp.block.header.chain_id;
 
         let block = TDBlock {
             txs: txs.clone(),
             header: TDBlockHeader {
                 hash: hash.clone(),
+                chain,
                 block_height:
                 block_height.clone(),
                 tx_count: txs.len() as i32,
+                timestamp,
+                block_version,
+                app_version,
+                l1_locked_height
             },
         };
 

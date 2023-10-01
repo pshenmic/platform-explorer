@@ -2,6 +2,7 @@ mod dao;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
+use std::num::ParseIntError;
 use std::ops::DerefMut;
 use dpp::state_transition::{StateTransition, StateTransitionLike, StateTransitionType};
 use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres, Transaction};
@@ -17,7 +18,8 @@ use dpp::state_transition::StateTransition::DataContractCreate;
 use crate::decoder::decoder::StateTransitionDecoder;
 
 pub enum ProcessorError {
-    DatabaseError
+    DatabaseError,
+    UnexpectedError
 }
 
 impl From<PoolError> for ProcessorError {
@@ -29,7 +31,15 @@ impl From<PoolError> for ProcessorError {
 
 impl From<reqwest::Error> for ProcessorError {
     fn from(value: reqwest::Error) -> Self {
-        todo!()
+        println!("{}", value);
+        ProcessorError::UnexpectedError
+    }
+}
+
+impl From<ParseIntError> for ProcessorError {
+    fn from(value: ParseIntError) -> Self {
+        println!("{}", value);
+        ProcessorError::UnexpectedError
     }
 }
 

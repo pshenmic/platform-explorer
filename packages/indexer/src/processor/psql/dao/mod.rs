@@ -8,6 +8,7 @@ use dpp::state_transition::{StateTransition, StateTransitionType};
 use crate::models::{TDBlock, TDBlockHeader};
 use sha256::{digest, try_digest};
 use base64::{Engine as _, engine::{general_purpose}};
+use chrono::{DateTime, Utc};
 
 pub struct PostgresDAO {
     connection_pool: Pool,
@@ -63,7 +64,7 @@ impl PostgresDAO {
     pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<TDBlockHeader>, PoolError> {
         let client = self.connection_pool.get().await?;
 
-        let stmt = client.prepare_cached("SELECT hash,block_height FROM blocks where block_height = $1;").await.unwrap();
+        let stmt = client.prepare_cached("SELECT hash,block_height,timestamp,block_version,app_version,l1_locked_height,chain FROM blocks where block_height = $1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[&block_height])
             .await.unwrap();
@@ -82,9 +83,9 @@ impl PostgresDAO {
     pub async fn create_block(&self, block_header: TDBlockHeader) -> i32 {
         let client = self.connection_pool.get().await.unwrap();
 
-        let stmt = client.prepare_cached("INSERT INTO blocks(block_height, hash) VALUES ($1, $2) RETURNING id;").await.unwrap();
+        let stmt = client.prepare_cached("INSERT INTO blocks(hash, block_height, timestamp, block_version, app_version, l1_locked_height, chain) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;").await.unwrap();
 
-        let rows = client.query(&stmt, &[&block_header.block_height, &block_header.hash]).await.unwrap();
+        let rows = client.query(&stmt, &[&block_header.hash, &block_header.block_height, &block_header.timestamp, &block_header.block_version, &block_header.app_version, &block_header.l1_locked_height, &block_header.chain]).await.unwrap();
 
         let block_id: i32 = rows[0].get(0);
 
@@ -94,10 +95,15 @@ impl PostgresDAO {
 
 impl From<Row> for TDBlockHeader {
     fn from(row: Row) -> Self {
-        // id,hash,block_height
+        // hash,block_height,timestamp,block_version,app_version,l1_locked_height,chain
         let hash: String = row.get(0);
         let block_height: i32 = row.get(1);
+        let timestamp = row.get(2);
+        let block_version: i32 = row.get(3);
+        let app_version: i32 = row.get(4);
+        let l1_locked_height: i32 = row.get(5);
+        let chain = row.get(6);
 
-        return TDBlockHeader { hash, block_height, tx_count: 0 };
+        return TDBlockHeader { hash, block_height, tx_count: 0 , timestamp, block_version, app_version, l1_locked_height, chain};
     }
 }
