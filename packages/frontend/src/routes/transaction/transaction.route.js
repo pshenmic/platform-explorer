@@ -70,6 +70,14 @@ function TransactionRoute() {
                     <span className={"transaction_details_item__title"}>Index:</span>
                     <span className={"transaction_details_item__value"}>{transaction.index}</span>
                 </div>
+                <div className={"transaction_details_item"}>
+                    <span className={"transaction_details_item__title"}>Type:</span>
+                    <span className={"transaction_details_item__value"}>{getTransitionTypeString(transaction.type)}</span>
+                </div>
+                <div className={"transaction_details_item"}>
+                    <span className={"transaction_details_item__title"}>Timestamp:</span>
+                    <span className={"transaction_details_item__value"}>{transaction.timestamp}</span>
+                </div>
 
                 <div className={"transaction_details_item"}>
                     <div className={"transaction_details_item_transaction"}>

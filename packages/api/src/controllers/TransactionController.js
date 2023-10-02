@@ -1,6 +1,5 @@
 const cache = require("../cache");
-const {hash} = require("../utils")
-const TenderdashRPC = require("../tenderdashRpc");
+const Transaction = require("../models/Transaction");
 
 class TransactionController {
     constructor(client, knex) {
@@ -11,13 +10,12 @@ class TransactionController {
     getTransactions = async (request, response) => {
         const {from, to} = request.query
 
-        const rows = await this.knex.select(
-            'blocks.id as block_id', 'blocks.block_height as block_height', 'state_transitions.hash as hash',
-            'state_transitions.type as type'
-        )
+        const rows = await this.knex
+            .select('state_transitions.hash as hash', 'state_transitions.data as data', 'state_transitions.type as type',
+                'state_transitions.index as index', 'blocks.block_height as block_height', 'blocks.timestamp as timestamp')
             .from('state_transitions')
             .leftJoin('blocks', 'blocks.id', 'state_transitions.block_id')
-            .where( (builder) => {
+            .where((builder) => {
                 if (from && to) {
                     builder.where('block_height', '<', to);
                     builder.where('block_height', '>', from);
@@ -26,7 +24,7 @@ class TransactionController {
             .limit(30)
             .orderBy('blocks.id', 'desc')
 
-        const transactions = rows.map(({hash, block_height, type}) =>({hash, blockHeight: block_height, type}))
+        const transactions = rows.map((row) => Transaction.fromJSON(row))
 
         response.send(transactions);
     }
@@ -35,14 +33,13 @@ class TransactionController {
         const {txHash} = request.params;
 
         const [row] = await this.knex('state_transitions')
-            .select('state_transitions.hash as hash', 'state_transitions.data as data', 'state_transitions.index as index', 'blocks.block_height as block_height',)
+            .select('state_transitions.hash as hash', 'state_transitions.data as data', 'state_transitions.type as type',
+                'state_transitions.index as index', 'blocks.block_height as block_height', 'blocks.timestamp as timestamp')
             .where('state_transitions.hash', txHash)
             .leftJoin('blocks', 'blocks.id', 'state_transitions.block_id')
 
         if (row) {
-            const {hash, data, block_height, index } = row
-
-            return reply.send({hash, data, blockHeight: block_height, index})
+            return reply.send(Transaction.fromJSON(row))
         }
 
         reply.status(404).send({message: 'not found'})
