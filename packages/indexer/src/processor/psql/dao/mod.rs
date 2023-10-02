@@ -1,4 +1,5 @@
 use std::env;
+use std::time::SystemTime;
 use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres, Transaction};
 use deadpool_postgres::tokio_postgres::{Error, IsolationLevel, NoTls, Row};
 use dpp::platform_value::string_encoding::Encoding;
@@ -86,7 +87,7 @@ impl PostgresDAO {
 
         let stmt = client.prepare_cached("INSERT INTO blocks(hash, block_height, timestamp, block_version, app_version, l1_locked_height, chain) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;").await.unwrap();
 
-        let rows = client.query(&stmt, &[&block_header.hash, &block_header.block_height, &block_header.timestamp, &block_header.block_version, &block_header.app_version, &block_header.l1_locked_height, &block_header.chain]).await.unwrap();
+        let rows = client.query(&stmt, &[&block_header.hash, &block_header.block_height, &SystemTime::from(block_header.timestamp), &block_header.block_version, &block_header.app_version, &block_header.l1_locked_height, &block_header.chain]).await.unwrap();
 
         let block_id: i32 = rows[0].get(0);
 
@@ -94,17 +95,3 @@ impl PostgresDAO {
     }
 }
 
-impl From<Row> for BlockHeader {
-    fn from(row: Row) -> Self {
-        // hash,block_height,timestamp,block_version,app_version,l1_locked_height,chain
-        let hash: String = row.get(0);
-        let block_height: i32 = row.get(1);
-        let timestamp = row.get(2);
-        let block_version: i32 = row.get(3);
-        let app_version: i32 = row.get(4);
-        let l1_locked_height: i32 = row.get(5);
-        let chain = row.get(6);
-
-        return BlockHeader { hash, block_height, tx_count: 0 , timestamp, block_version, app_version, l1_locked_height, chain};
-    }
-}
