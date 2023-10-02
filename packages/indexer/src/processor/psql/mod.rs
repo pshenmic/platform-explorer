@@ -1,8 +1,11 @@
 mod dao;
 
+use std::error::Error;
+use std::fmt::{Display, Formatter};
+use std::num::ParseIntError;
 use std::ops::DerefMut;
 use dpp::state_transition::{StateTransition, StateTransitionLike, StateTransitionType};
-use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, RecyclingMethod, Runtime, tokio_postgres, Transaction};
+use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres, Transaction};
 use dpp::dashcore::bech32::ToBase32;
 use dpp::platform_value::string_encoding::Encoding;
 use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
@@ -13,6 +16,33 @@ use base64::{Engine as _, engine::{general_purpose}};
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::StateTransition::DataContractCreate;
 use crate::decoder::decoder::StateTransitionDecoder;
+use crate::entities::block::Block;
+
+pub enum ProcessorError {
+    DatabaseError,
+    UnexpectedError
+}
+
+impl From<PoolError> for ProcessorError {
+    fn from(value: PoolError) -> Self {
+        println!("{}", value);
+        ProcessorError::DatabaseError
+    }
+}
+
+impl From<reqwest::Error> for ProcessorError {
+    fn from(value: reqwest::Error) -> Self {
+        println!("{}", value);
+        ProcessorError::UnexpectedError
+    }
+}
+
+impl From<ParseIntError> for ProcessorError {
+    fn from(value: ParseIntError) -> Self {
+        println!("{}", value);
+        ProcessorError::UnexpectedError
+    }
+}
 
 pub struct PSQLProcessor {
     decoder: StateTransitionDecoder,
@@ -37,7 +67,7 @@ impl PSQLProcessor {
         return block;
     }
 
-    pub async fn handle_st(&self, block_id: i32, state_transition: StateTransition) -> () {
+    pub async fn handle_st(&self, block_id: i32, index: i32,state_transition: StateTransition) -> () {
         let mut st_type: i32 = 999;
         let mut bytes: Vec<u8> = Vec::new();
 
@@ -94,11 +124,11 @@ impl PSQLProcessor {
             }
         }
 
-        self.dao.create_state_transition(block_id, st_type, bytes).await;
+        self.dao.create_state_transition(block_id, st_type, index, bytes).await;
     }
 
-    pub async fn handle_block(&self, block: TDBlock) -> () {
-        let processed = self.dao.get_block_header_by_height(block.header.block_height.clone()).await;
+    pub async fn handle_block(&self, block: Block) -> Result<(), ProcessorError> {
+        let processed = self.dao.get_block_header_by_height(block.header.block_height.clone()).await?;
 
         match processed {
             None => {
@@ -112,19 +142,22 @@ impl PSQLProcessor {
                     println!("No platform transactions at block height {}", block_height.clone());
                 }
 
-                for tx_base_64 in block.txs.iter() {
+                for (i, tx_base_64) in block.txs.iter().enumerate() {
                     let bytes = general_purpose::STANDARD.decode(tx_base_64).unwrap();
                     let st_result = self.decoder.decode(bytes).await;
 
                     let state_transition = st_result.unwrap();
 
-                    self.handle_st(block_id, state_transition).await;
+                    self.handle_st(block_id, i as i32, state_transition).await;
 
-                    println!("Processed DataContractCreate at height {}", block_height)
+                    println!("Processed DataContractCreate at height {}", block_height);
                 }
+
+                Ok(())
             }
             Some(st) => {
                 println!("Block at the height {} has been already processed", &block.header.block_height);
+                Ok(())
             }
         }
     }

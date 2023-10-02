@@ -64,18 +64,26 @@ function TransactionRoute() {
                 </div>
                 <div className={"transaction_details_item"}>
                     <span className={"transaction_details_item__title"}>Height:</span>
-                    <span className={"transaction_details_item__value"}>{transaction.height}</span>
+                    <span className={"transaction_details_item__value"}>{transaction.blockHeight}</span>
                 </div>
                 <div className={"transaction_details_item"}>
                     <span className={"transaction_details_item__title"}>Index:</span>
                     <span className={"transaction_details_item__value"}>{transaction.index}</span>
                 </div>
+                <div className={"transaction_details_item"}>
+                    <span className={"transaction_details_item__title"}>Type:</span>
+                    <span className={"transaction_details_item__value"}>{getTransitionTypeString(transaction.type)}</span>
+                </div>
+                <div className={"transaction_details_item"}>
+                    <span className={"transaction_details_item__title"}>Timestamp:</span>
+                    <span className={"transaction_details_item__value"}>{transaction.timestamp}</span>
+                </div>
 
                 <div className={"transaction_details_item"}>
                     <div className={"transaction_details_item_transaction"}>
-                        <div className={"transaction_raw"} onClick={() => decodeTx(transaction.tx)}
+                        <div className={"transaction_raw"} onClick={() => decodeTx(transaction.data)}
                              style={{'cursor': decodedST ? 'auto' : 'pointer'}}>
-                            {!decoding && !decodingError && !decodedST ? <span>{transaction.tx}</span> : null}
+                            {!decoding && !decodingError && !decodedST ? <span>{transaction.data}</span> : null}
                             {decodedST ?
                                 <div className={"state_transition"}>
                                     <div className={"state_transition_item"}>

@@ -5,6 +5,9 @@ mod indexer;
 mod decoder;
 mod models;
 mod processor;
+mod entities;
+
+extern crate chrono;
 
 #[tokio::main]
 async fn main() {

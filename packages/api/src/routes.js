@@ -5,7 +5,7 @@
  * @param blockController {BlockController}
  * @param transactionController {TransactionController}
  */
-module.exports = ({fastify, mainController, blockController, transactionController}) => {
+module.exports = ({fastify, mainController, blockController, transactionController, dataContractsController}) => {
     const routes = [
         {
             path: '/status',
@@ -31,6 +31,16 @@ module.exports = ({fastify, mainController, blockController, transactionControll
             path: '/transaction/:txHash',
             method: 'GET',
             handler: transactionController.getTransactionByHash
+        },
+        {
+            path: '/dataContracts',
+            method: 'GET',
+            handler: dataContractsController.getDataContracts
+        },
+        {
+            path: '/dataContract/:identifier',
+            method: 'GET',
+            handler: dataContractsController.getDataContractByIdentifier
         },
         {
             path: '/search',

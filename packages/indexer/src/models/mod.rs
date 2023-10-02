@@ -1,61 +1,83 @@
-use deadpool_postgres::tokio_postgres::Row;
-use serde::{Deserialize};
+use std::time::SystemTime;
+use chrono::{DateTime, NaiveDateTime, Utc};
+use serde::{Deserialize, Deserializer, Serialize};
+use time::serde::iso8601;
 
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct PlatformExplorerStatusResponse {
-    pub network: String,
-    pub app_version: String,
-    pub p2p_version: String,
-    pub block_version: String,
-    pub blocks_count: String,
-    pub tenderdash_version: String,
+#[derive(Deserialize)]
+pub struct TenderdashRPCStatusResponse {
+    pub sync_info: TenderdashSyncInfo
 }
 
-#[derive(Debug, Deserialize)]
-pub struct BlockId {
-    pub hash: String,
+#[derive(Deserialize)]
+pub struct TenderdashSyncInfo {
+    pub latest_block_height: String
 }
 
-#[derive(Debug, Deserialize)]
-pub struct BlockData {
-    pub txs: Vec<String>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct BlockHeader {
-    pub height: String,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Block {
-    pub header: BlockHeader,
-    pub data: BlockData,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct BlockWrapper {
-    pub block_id: BlockId,
-    pub block: Block,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct PlatformExplorerSearchResponse {
+#[derive(Deserialize)]
+pub struct TenderdashBlockResponse {
     pub block: BlockWrapper,
 }
 
-#[derive(Clone)]
-pub struct TDBlockHeader {
+#[derive(Deserialize)]
+pub struct TDBlockId {
     pub hash: String,
-    pub block_height: i32,
-    pub tx_count: i32,
 }
 
-pub struct TDBlock {
-    pub header: TDBlockHeader,
+#[derive(Deserialize)]
+pub struct TDBlockData {
     pub txs: Vec<String>,
 }
 
-pub struct PlatformStateTransition {
+#[derive(Deserialize)]
+pub struct TDBlockHeaderVersion {
+    pub app: String,
+    pub block: String
+}
 
+#[derive(Deserialize)]
+pub struct TDBlockHeader {
+    pub height: String,
+    pub version: TDBlockHeaderVersion ,
+    pub chain_id: String,
+    pub core_chain_locked_height: i32,
+    #[serde(rename = "time")]
+    #[serde(with = "from_iso8601")]
+    pub timestamp: DateTime<Utc>
+}
+
+#[derive(Deserialize)]
+pub struct TDBlock {
+    pub header: TDBlockHeader,
+    pub data: TDBlockData,
+}
+
+#[derive(Deserialize)]
+pub struct BlockWrapper {
+    pub block_id: TDBlockId,
+    pub block: TDBlock,
+}
+
+mod from_iso8601 {
+    use chrono::{Utc, TimeZone, ParseResult, NaiveDateTime, DateTime};
+    use serde::{self, Deserialize, Serializer, Deserializer};
+
+    const FORMAT: &'static str = "%Y-%m-%dT%H:%M:%SZ";
+
+    pub fn serialize<S>(date: &DateTime<Utc>, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+    {
+        let s = format!("{}", date.format(FORMAT));
+        serializer.serialize_str(&s)
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
+        where
+            D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        let parsed = DateTime::parse_from_rfc3339(&s).unwrap().with_timezone(&Utc);
+
+        Ok(parsed)
+    }
 }

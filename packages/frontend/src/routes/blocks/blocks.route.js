@@ -1,16 +1,17 @@
 import React, {useState} from 'react';
-import { Link, useLoaderData } from "react-router-dom";
+import {Link, useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
 import './blocks.css'
 import ReactPaginate from "react-paginate";
+
 const blocksPerPage = 30;
 
 function Blocks({blocks}) {
     return blocks.map((block) =>
-        <div key={block.block_id.hash} className={"block_list_item"}>
+        <div key={block.header.hash} className={"block_list_item"}>
             <span>Block </span>
-            <Link to={`/block/${block.block_id.hash}`}>{block.block_id.hash}</Link>
-            <span> ({block.block.header.height})</span>
+            <Link to={`/block/${block.header.hash}`}>{block.header.hash}</Link>
+            <span> ({block.header.height})</span>
         </div>
     )
 }
@@ -18,21 +19,23 @@ function Blocks({blocks}) {
 export async function loader({params}) {
     const {blocksCount} = await Api.getStatus();
 
-    const blocks = await Api.getBlocks(1, blocksPerPage);
+    const blocks = await Api.getBlocks(blocksCount - blocksPerPage, blocksCount);
 
     return {blocks, blocksCount};
 }
 
 function BlocksRoute() {
     const {blocks: defaultBlocks, blocksCount} = useLoaderData()
-    const [blocks, setBlocks] = useState(defaultBlocks.blocks)
+    const [blocks, setBlocks] = useState(defaultBlocks)
 
-    const pageCount = Math.ceil(blocksCount / 30)
+    const pageCount = Math.ceil(blocksCount / blocksPerPage)
 
     const handlePageClick = async ({selected}) => {
-        const updated = await Api.getBlocks(selected + 1, blocksPerPage);
-        setBlocks(updated.blocks)
+        const fromBlock = blocksCount - ((selected+1) * blocksPerPage)
+        const toBlock = blocksCount - (((selected+1) - 1) * blocksPerPage)
+        const updated = await Api.getBlocks(fromBlock, toBlock);
 
+        setBlocks(updated)
     }
 
     return (

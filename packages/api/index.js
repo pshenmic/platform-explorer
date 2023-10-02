@@ -9,10 +9,10 @@ const ServiceNotAvailableError = require("./src/errors/ServiceNotAvailableError"
 const MainController = require("./src/controllers/MainController");
 const TransactionController = require("./src/controllers/TransactionController");
 const BlockController = require("./src/controllers/BlockController");
-const TenderdashRPC = require("./src/tenderdashRpc");
 const packageVersion = require('./package.json').version
 const Worker = require('./src/worker/index')
 const {BLOCK_TIME} = require("./src/constants");
+const DataContractsController = require("./src/controllers/DataContractsController");
 
 function errorHandler(err, req, reply) {
     if (err instanceof ServiceNotAvailableError) {
@@ -42,7 +42,7 @@ const init = async () => {
 
     worker.setHandler(async () => {
         try {
-            status = await TenderdashRPC.getStatus()
+            status = true
         } catch (e) {
         }
     })
@@ -54,11 +54,26 @@ const init = async () => {
         // put your options here
     })
 
-    const mainController = new MainController()
-    const blockController = new BlockController()
-    const transactionController = new TransactionController(client)
+    const knex = require('knex')({
+        client: 'pg',
+        connection: {
+            host: process.env["POSTGRES_HOST"],
+            port: process.env["POSTGRES_PORT"],
+            user: process.env["POSTGRES_USER"],
+            database: process.env["POSTGRES_NAME"],
+            password: process.env["POSTGRES_PASS"],
+            ssl: process.env["POSTGRES_SSL"] ? { rejectUnauthorized: false } : false,
+        }
+    });
 
-    Routes({fastify, mainController, blockController, transactionController})
+    await knex.raw('select 1+1');
+
+    const mainController = new MainController(knex)
+    const blockController = new BlockController(knex)
+    const transactionController = new TransactionController(client, knex)
+    const dataContractsController = new DataContractsController(knex)
+
+    Routes({fastify, mainController, blockController, transactionController, dataContractsController})
 
     fastify.setErrorHandler(errorHandler)
     fastify.listen({ host: "0.0.0.0", port: 3005, listenTextResolver: (address) => console.log(`Platform indexer API has started on the ${address}`)});

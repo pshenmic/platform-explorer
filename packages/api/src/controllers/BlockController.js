@@ -1,37 +1,80 @@
-const crypto = require("crypto");
-const cache = require("../cache");
-const TenderdashRPC = require("../tenderdashRpc");
+const Block = require("../models/block");
+const BlockHeader = require("../models/BlockHeader");
 
 class BlockController {
-    constructor() {
+    constructor(knex) {
+        this.knex = knex
     }
 
-    async getBlockByHash(request, response) {
-        const {hash} = request.params;
+    getBlockByHash = async (request, response) => {
+        const results = await this.knex
+            .select('blocks.id', 'blocks.hash as hash', 'state_transitions.hash as st_hash',
+                'blocks.block_height as height', 'blocks.timestamp as timestamp',
+                'blocks.block_version as block_version', 'blocks.app_version as app_version',
+                'blocks.l1_locked_height as l1_locked_height', 'blocks.chain as chain')
+            .from('blocks')
+            .leftJoin('state_transitions', 'state_transitions.block_id', 'blocks.id')
+            .where('blocks.hash', request.params.hash);
 
-        const cached = cache.get('block_' + hash)
+        const [block] = results
 
-        if (cached) {
-            return response.send(cached)
+        if (!block) {
+            return response.status(400).send()
         }
 
-        const block = await TenderdashRPC.getBlockByHash(hash);
+        const txs = results.reduce((acc, value) => {
+            if (value.st_hash) {
+                return [...acc, value.st_hash]
+            }
 
-        if (block?.block?.data?.txs?.length) {
-            const txHashes = block.block.data.txs.map(tx => crypto.createHash('sha256').update(Buffer.from(tx, 'base64')).digest('hex').toUpperCase())
+            return acc
+        }, [])
 
-            Object.assign(block, {txHashes})
-        }
-
-        cache.set('block_' + hash, block);
-
-        response.send(block);
+        response.send(Block.fromJSON({header: block, txs}));
     }
 
-    async getBlocks(request, response) {
-        const {page, limit, order} = request.query
+    getBlocks = async (request, response) => {
+        const {from, to, order = 'desc'} = request.query
 
-        const blocks = await TenderdashRPC.getBlocks(page, limit, order)
+        const subquery = this.knex('blocks')
+            .select('blocks.id', 'blocks.hash as hash',
+                'blocks.block_height as height', 'blocks.timestamp as timestamp',
+                'blocks.block_version as block_version', 'blocks.app_version as app_version',
+                'blocks.l1_locked_height as l1_locked_height', 'blocks.chain as chain').as('blocks')
+            .where(function () {
+                if (from && to) {
+                    this.where('block_height', '>=', from)
+                    this.where('block_height', '<=', to)
+                }
+            })
+            .limit(30)
+            .orderBy('id', order);
+
+        const rows = await this.knex(subquery)
+            .select('blocks.hash as hash',
+                'height', 'timestamp',
+                'block_version', 'app_version',
+                'l1_locked_height', 'chain', 'state_transitions.hash as st_hash')
+            .leftJoin('state_transitions', 'state_transitions.block_id', 'blocks.id')
+            .groupBy('blocks.hash', 'height', 'blocks.timestamp', 'block_version', 'app_version',
+                'l1_locked_height', 'chain', 'state_transitions.hash')
+            .orderBy('height', 'desc')
+
+        // map-reduce Blocks with Transactions
+        const blocksMap = rows.reduce((blocks, row) => {
+            const block = blocks[row.hash]
+            const {st_hash} = row
+            const txs = block?.txs || []
+
+            if (st_hash) {
+                txs.push(st_hash)
+            }
+
+            return {...blocks, [row.hash]: {...row, txs}}
+        }, {})
+
+        const blocks = Object
+            .keys(blocksMap).map(blockHash => Block.fromJSON({header: blocksMap[blockHash], txs: blocksMap[blockHash].txs}))
 
         response.send(blocks);
     }
