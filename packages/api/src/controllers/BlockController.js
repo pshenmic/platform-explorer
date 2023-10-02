@@ -1,5 +1,4 @@
-const Block = require("../models/block");
-const BlockHeader = require("../models/BlockHeader");
+const Block = require('../models/Block');
 
 class BlockController {
     constructor(knex) {
