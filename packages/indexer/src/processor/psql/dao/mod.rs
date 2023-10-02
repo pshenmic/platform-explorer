@@ -9,6 +9,7 @@ use crate::models::{TDBlock, TDBlockHeader};
 use sha256::{digest, try_digest};
 use base64::{Engine as _, engine::{general_purpose}};
 use chrono::{DateTime, Utc};
+use crate::entities::block_header::BlockHeader;
 
 pub struct PostgresDAO {
     connection_pool: Pool,
@@ -61,7 +62,7 @@ impl PostgresDAO {
         return 0;
     }
 
-    pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<TDBlockHeader>, PoolError> {
+    pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<BlockHeader>, PoolError> {
         let client = self.connection_pool.get().await?;
 
         let stmt = client.prepare_cached("SELECT hash,block_height,timestamp,block_version,app_version,l1_locked_height,chain FROM blocks where block_height = $1;").await.unwrap();
@@ -69,18 +70,18 @@ impl PostgresDAO {
         let rows: Vec<Row> = client.query(&stmt, &[&block_height])
             .await.unwrap();
 
-        let blocks: Vec<TDBlockHeader> = rows
+        let blocks: Vec<BlockHeader> = rows
             .into_iter()
             .map(|row| {
                 row.into()
-            }).collect::<Vec<TDBlockHeader>>();
+            }).collect::<Vec<BlockHeader>>();
 
         let block = blocks.first();
 
         return Ok(block.cloned());
     }
 
-    pub async fn create_block(&self, block_header: TDBlockHeader) -> i32 {
+    pub async fn create_block(&self, block_header: BlockHeader) -> i32 {
         let client = self.connection_pool.get().await.unwrap();
 
         let stmt = client.prepare_cached("INSERT INTO blocks(hash, block_height, timestamp, block_version, app_version, l1_locked_height, chain) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;").await.unwrap();
@@ -93,7 +94,7 @@ impl PostgresDAO {
     }
 }
 
-impl From<Row> for TDBlockHeader {
+impl From<Row> for BlockHeader {
     fn from(row: Row) -> Self {
         // hash,block_height,timestamp,block_version,app_version,l1_locked_height,chain
         let hash: String = row.get(0);
@@ -104,6 +105,6 @@ impl From<Row> for TDBlockHeader {
         let l1_locked_height: i32 = row.get(5);
         let chain = row.get(6);
 
-        return TDBlockHeader { hash, block_height, tx_count: 0 , timestamp, block_version, app_version, l1_locked_height, chain};
+        return BlockHeader { hash, block_height, tx_count: 0 , timestamp, block_version, app_version, l1_locked_height, chain};
     }
 }

@@ -10,6 +10,8 @@ use chrono::{DateTime, Utc};
 use futures::stream;
 use tokio::{task, time};
 use tokio::time::{Instant, Interval};
+use crate::entities::block::Block;
+use crate::entities::block_header::BlockHeader;
 use crate::models::{BlockWrapper, TDBlock, TDBlockHeader, TenderdashBlockResponse, TenderdashRPCStatusResponse};
 use crate::processor::psql::{ProcessorError, PSQLProcessor};
 
@@ -117,22 +119,21 @@ impl Indexer {
         let timestamp = resp.block.header.timestamp;
         let block_version = resp.block.header.version.block.parse::<i32>()?;
         let app_version = resp.block.header.version.app.parse::<i32>()?;
-        let l1_locked_height = resp.block.header.core_chain_locked_height;
+        let core_chain_locked_height = resp.block.header.core_chain_locked_height;
         let chain = resp.block.header.chain_id;
 
-        let block = TDBlock {
-            txs: txs.clone(),
-            header: TDBlockHeader {
-                hash: hash.clone(),
-                chain,
-                block_height:
-                block_height.clone(),
+        let block = Block {
+            header: BlockHeader {
+                hash,
+                block_height: block_height.clone(),
                 tx_count: txs.len() as i32,
                 timestamp,
                 block_version,
                 app_version,
-                l1_locked_height
+                l1_locked_height: core_chain_locked_height,
+                chain
             },
+            txs
         };
 
         self.processor.handle_block(block).await?;

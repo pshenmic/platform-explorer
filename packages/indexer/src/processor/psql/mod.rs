@@ -16,6 +16,7 @@ use base64::{Engine as _, engine::{general_purpose}};
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::StateTransition::DataContractCreate;
 use crate::decoder::decoder::StateTransitionDecoder;
+use crate::entities::block::Block;
 
 pub enum ProcessorError {
     DatabaseError,
@@ -126,7 +127,7 @@ impl PSQLProcessor {
         self.dao.create_state_transition(block_id, st_type, index, bytes).await;
     }
 
-    pub async fn handle_block(&self, block: TDBlock) -> Result<(), ProcessorError> {
+    pub async fn handle_block(&self, block: Block) -> Result<(), ProcessorError> {
         let processed = self.dao.get_block_header_by_height(block.header.block_height.clone()).await?;
 
         match processed {

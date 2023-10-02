@@ -19,73 +19,51 @@ pub struct TenderdashBlockResponse {
 }
 
 #[derive(Deserialize)]
-pub struct BlockId {
+pub struct TDBlockId {
     pub hash: String,
 }
 
 #[derive(Deserialize)]
-pub struct BlockData {
+pub struct TDBlockData {
     pub txs: Vec<String>,
 }
 
-#[derive(Deserialize, Serialize)]
-pub struct BlockHeaderVersion {
+#[derive(Deserialize)]
+pub struct TDBlockHeaderVersion {
     pub app: String,
     pub block: String
 }
 
-#[derive(Deserialize, Serialize)]
-pub struct BlockHeader {
+#[derive(Deserialize)]
+pub struct TDBlockHeader {
     pub height: String,
-    pub version: BlockHeaderVersion ,
+    pub version: TDBlockHeaderVersion ,
     pub chain_id: String,
     pub core_chain_locked_height: i32,
     #[serde(rename = "time")]
-    #[serde(with = "my_date_format")]
-    pub timestamp: NaiveDateTime
+    #[serde(with = "from_iso8601")]
+    pub timestamp: DateTime<Utc>
 }
 
 #[derive(Deserialize)]
-pub struct Block {
-    pub header: BlockHeader,
-    pub data: BlockData,
+pub struct TDBlock {
+    pub header: TDBlockHeader,
+    pub data: TDBlockData,
 }
 
 #[derive(Deserialize)]
 pub struct BlockWrapper {
-    pub block_id: BlockId,
-    pub block: Block,
+    pub block_id: TDBlockId,
+    pub block: TDBlock,
 }
 
-#[derive(Clone)]
-pub struct TDBlockHeader {
-    pub hash: String,
-    pub block_height: i32,
-    pub tx_count: i32,
-    pub timestamp: NaiveDateTime,
-    pub block_version: i32,
-    pub app_version: i32,
-    pub l1_locked_height: i32,
-    pub chain: String,
-}
-
-pub struct TDBlock {
-    pub header: TDBlockHeader,
-    pub txs: Vec<String>,
-}
-
-pub struct PlatformStateTransition {
-
-}
-
-
-mod my_date_format {
+mod from_iso8601 {
     use chrono::{Utc, TimeZone, ParseResult, NaiveDateTime, DateTime};
     use serde::{self, Deserialize, Serializer, Deserializer};
 
     const FORMAT: &'static str = "%Y-%m-%dT%H:%M:%SZ";
 
-    pub fn serialize<S>(date: &NaiveDateTime, serializer: S) -> Result<S::Ok, S::Error>
+    pub fn serialize<S>(date: &DateTime<Utc>, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: Serializer,
     {
@@ -93,12 +71,12 @@ mod my_date_format {
         serializer.serialize_str(&s)
     }
 
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<NaiveDateTime, D::Error>
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
         where
             D: Deserializer<'de>,
     {
         let s = String::deserialize(deserializer)?;
-        let parsed = DateTime::parse_from_rfc3339(&s).naive_utc();
+        let parsed = DateTime::parse_from_rfc3339(&s).unwrap().with_timezone(&Utc);
 
         Ok(parsed)
     }
