@@ -1,5 +1,4 @@
 require('dotenv').config()
-const { attachPaginate } = require('knex-paginate');
 
 const Dash = require('dash')
 const Fastify = require('fastify')
@@ -10,7 +9,6 @@ const ServiceNotAvailableError = require("./src/errors/ServiceNotAvailableError"
 const MainController = require("./src/controllers/MainController");
 const TransactionController = require("./src/controllers/TransactionController");
 const BlockController = require("./src/controllers/BlockController");
-const TenderdashRPC = require("./src/tenderdashRpc");
 const packageVersion = require('./package.json').version
 const Worker = require('./src/worker/index')
 const {BLOCK_TIME} = require("./src/constants");
@@ -69,8 +67,6 @@ const init = async () => {
     });
 
     await knex.raw('select 1+1');
-
-    attachPaginate();
 
     const mainController = new MainController(knex)
     const blockController = new BlockController(knex)
