@@ -14,6 +14,7 @@ const TenderdashRPC = require("./src/tenderdashRpc");
 const packageVersion = require('./package.json').version
 const Worker = require('./src/worker/index')
 const {BLOCK_TIME} = require("./src/constants");
+const DataContractsController = require("./src/controllers/DataContractsController");
 
 function errorHandler(err, req, reply) {
     if (err instanceof ServiceNotAvailableError) {
@@ -74,8 +75,9 @@ const init = async () => {
     const mainController = new MainController(knex)
     const blockController = new BlockController(knex)
     const transactionController = new TransactionController(client, knex)
+    const dataContractsController = new DataContractsController(knex)
 
-    Routes({fastify, mainController, blockController, transactionController})
+    Routes({fastify, mainController, blockController, transactionController, dataContractsController})
 
     fastify.setErrorHandler(errorHandler)
     fastify.listen({ host: "0.0.0.0", port: 3005, listenTextResolver: (address) => console.log(`Platform indexer API has started on the ${address}`)});

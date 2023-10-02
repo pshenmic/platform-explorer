@@ -40,6 +40,11 @@ export default function RootComponent() {
                     return navigate(`/transaction/${searchResult?.transaction.hash}`)
                 }
 
+                if (searchResult?.identifier) {
+                    setSearchQuery("")
+                    return navigate(`/dataContract/${searchResult?.identifier}`)
+                }
+
 
                 showModalWindow('Not found', 6000)
             } catch (e) {

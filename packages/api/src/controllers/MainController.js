@@ -37,6 +37,16 @@ class MainController {
             }
         }
 
+        // check if base64 and 44 length for Identity ids
+        if (/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(query) && query.length === 44) {
+            // search blocks by height
+            const [row] = await this.knex('data_contracts').select('identifier').where('identifier', query)
+
+            if (row) {
+                return response.send({identifier: row.identifier})
+            }
+        }
+
         // search blocks
         const [row] = await this.knex('blocks').select('hash', 'block_height').where('hash', query)
 

@@ -62,6 +62,10 @@ const getBlocks = (fromBlock, toBlock) => {
     return call(`blocks?from=${fromBlock}&to=${toBlock}`, 'GET')
 }
 
+const getDataContractByIdentifier = (identifier) => {
+    return call(`dataContract/${identifier}`, 'GET')
+}
+
 const getStatus = () => {
     return call(`status`, 'GET')
 }
@@ -74,4 +78,4 @@ const decodeTx = (base64) => {
     return call(`transaction/decode`, 'POST', {base64})
 }
 
-export {getStatus, getBlocks, getBlockByHash, getTransactions, getTransaction, search, decodeTx}
+export {getStatus, getBlocks, getBlockByHash, getTransactions, getTransaction, search, decodeTx, getDataContractByIdentifier}
