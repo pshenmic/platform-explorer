@@ -9,7 +9,7 @@ export async function loader({params}) {
 
 function DataContractRoute() {
     const dataContract = useLoaderData()
-debugger
+
     return (
         <div className="container">
             <div className={""}>
