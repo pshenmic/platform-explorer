@@ -1,0 +1,23 @@
+.data_contracts_list {
+    color: white;
+    text-decoration: none;
+    background-color: #1a491c;
+}
+
+.data_contracts_item {
+    text-decoration: none;
+    padding: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: #1a491c;
+}
+
+.data_contracts_item a {
+    text-decoration: none;
+    color: white;
+}
+
+.data_contracts_item a:hover {
+    text-decoration: underline;
+    color: #76b2d2;
+}

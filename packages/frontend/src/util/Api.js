@@ -66,6 +66,10 @@ const getDataContractByIdentifier = (identifier) => {
     return call(`dataContract/${identifier}`, 'GET')
 }
 
+const getDataContracts = () => {
+    return call(`dataContracts`, 'GET')
+}
+
 const getStatus = () => {
     return call(`status`, 'GET')
 }
@@ -78,4 +82,4 @@ const decodeTx = (base64) => {
     return call(`transaction/decode`, 'POST', {base64})
 }
 
-export {getStatus, getBlocks, getBlockByHash, getTransactions, getTransaction, search, decodeTx, getDataContractByIdentifier}
+export {getStatus, getBlocks, getBlockByHash, getTransactions, getTransaction, search, decodeTx, getDataContractByIdentifier, getDataContracts}
