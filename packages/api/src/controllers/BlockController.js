@@ -10,7 +10,7 @@ class BlockController {
             .select('blocks.hash as hash', 'state_transitions.hash as st_hash',
                 'blocks.height as height', 'blocks.timestamp as timestamp',
                 'blocks.block_version as block_version', 'blocks.app_version as app_version',
-                'blocks.l1_locked_height as l1_locked_height', 'blocks.chain as chain')
+                'blocks.l1_locked_height as l1_locked_height')
             .from('blocks')
             .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
             .where('blocks.hash', request.params.hash);
@@ -39,7 +39,7 @@ class BlockController {
             .select('blocks.hash as hash',
                 'blocks.height as height', 'blocks.timestamp as timestamp',
                 'blocks.block_version as block_version', 'blocks.app_version as app_version',
-                'blocks.l1_locked_height as l1_locked_height', 'blocks.chain as chain').as('blocks')
+                'blocks.l1_locked_height as l1_locked_height').as('blocks')
             .where(function () {
                 if (from && to) {
                     this.where('height', '>=', from)
@@ -53,10 +53,10 @@ class BlockController {
             .select('blocks.hash as hash',
                 'height', 'timestamp',
                 'block_version', 'app_version',
-                'l1_locked_height', 'chain', 'state_transitions.hash as st_hash')
+                'l1_locked_height', 'state_transitions.hash as st_hash')
             .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
             .groupBy('blocks.hash', 'height', 'blocks.timestamp', 'block_version', 'app_version',
-                'l1_locked_height', 'chain', 'state_transitions.hash')
+                'l1_locked_height', 'state_transitions.hash')
             .orderBy('height', 'desc')
 
         // map-reduce Blocks with Transactions
