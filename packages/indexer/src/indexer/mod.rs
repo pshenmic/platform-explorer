@@ -125,7 +125,7 @@ impl Indexer {
         let block = Block {
             header: BlockHeader {
                 hash,
-                block_height: block_height.clone(),
+                height: block_height.clone(),
                 tx_count: txs.len() as i32,
                 timestamp,
                 block_version,

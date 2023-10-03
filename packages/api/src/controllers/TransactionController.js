@@ -12,9 +12,9 @@ class TransactionController {
 
         const rows = await this.knex
             .select('state_transitions.hash as hash', 'state_transitions.data as data', 'state_transitions.type as type',
-                'state_transitions.index as index', 'blocks.block_height as block_height', 'blocks.timestamp as timestamp')
+                'state_transitions.index as index', 'blocks.height as block_height', 'blocks.timestamp as timestamp')
             .from('state_transitions')
-            .leftJoin('blocks', 'blocks.id', 'state_transitions.block_id')
+            .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .where((builder) => {
                 if (from && to) {
                     builder.where('block_height', '<', to);
@@ -22,7 +22,7 @@ class TransactionController {
                 }
             })
             .limit(30)
-            .orderBy('blocks.id', 'desc')
+            .orderBy('blocks.height', 'desc')
 
         const transactions = rows.map((row) => Transaction.fromJSON(row))
 
@@ -34,7 +34,7 @@ class TransactionController {
 
         const [row] = await this.knex('state_transitions')
             .select('state_transitions.hash as hash', 'state_transitions.data as data', 'state_transitions.type as type',
-                'state_transitions.index as index', 'blocks.block_height as block_height', 'blocks.timestamp as timestamp')
+                'state_transitions.index as index', 'blocks.height as block_height', 'blocks.timestamp as timestamp')
             .where('state_transitions.hash', txHash)
             .leftJoin('blocks', 'blocks.id', 'state_transitions.block_id')
 

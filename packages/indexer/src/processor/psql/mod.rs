@@ -67,7 +67,7 @@ impl PSQLProcessor {
         return block;
     }
 
-    pub async fn handle_st(&self, block_id: i32, index: i32,state_transition: StateTransition) -> () {
+    pub async fn handle_st(&self, block_hash: String, index: i32,state_transition: StateTransition) -> () {
         let mut st_type: i32 = 999;
         let mut bytes: Vec<u8> = Vec::new();
 
@@ -124,19 +124,19 @@ impl PSQLProcessor {
             }
         }
 
-        self.dao.create_state_transition(block_id, st_type, index, bytes).await;
+        self.dao.create_state_transition(block_hash, st_type, index, bytes).await;
     }
 
     pub async fn handle_block(&self, block: Block) -> Result<(), ProcessorError> {
-        let processed = self.dao.get_block_header_by_height(block.header.block_height.clone()).await?;
+        let processed = self.dao.get_block_header_by_height(block.header.height.clone()).await?;
 
         match processed {
             None => {
                 // TODO IMPLEMENT PSQL TRANSACTION
 
-                let block_height = block.header.block_height.clone();
+                let block_height = block.header.height.clone();
 
-                let block_id = self.dao.create_block(block.header).await;
+                let block_hash = self.dao.create_block(block.header).await;
 
                 if block.txs.len() as i32 == 0 {
                     println!("No platform transactions at block height {}", block_height.clone());
@@ -148,7 +148,7 @@ impl PSQLProcessor {
 
                     let state_transition = st_result.unwrap();
 
-                    self.handle_st(block_id, i as i32, state_transition).await;
+                    self.handle_st(block_hash.clone(), i as i32, state_transition).await;
 
                     println!("Processed DataContractCreate at height {}", block_height);
                 }
@@ -156,7 +156,7 @@ impl PSQLProcessor {
                 Ok(())
             }
             Some(st) => {
-                println!("Block at the height {} has been already processed", &block.header.block_height);
+                println!("Block at the height {} has been already processed", &block.header.height);
                 Ok(())
             }
         }

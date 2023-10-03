@@ -7,12 +7,12 @@ class BlockController {
 
     getBlockByHash = async (request, response) => {
         const results = await this.knex
-            .select('blocks.id', 'blocks.hash as hash', 'state_transitions.hash as st_hash',
-                'blocks.block_height as height', 'blocks.timestamp as timestamp',
+            .select('blocks.hash as hash', 'state_transitions.hash as st_hash',
+                'blocks.height as height', 'blocks.timestamp as timestamp',
                 'blocks.block_version as block_version', 'blocks.app_version as app_version',
                 'blocks.l1_locked_height as l1_locked_height', 'blocks.chain as chain')
             .from('blocks')
-            .leftJoin('state_transitions', 'state_transitions.block_id', 'blocks.id')
+            .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
             .where('blocks.hash', request.params.hash);
 
         const [block] = results
@@ -36,25 +36,25 @@ class BlockController {
         const {from, to, order = 'desc'} = request.query
 
         const subquery = this.knex('blocks')
-            .select('blocks.id', 'blocks.hash as hash',
-                'blocks.block_height as height', 'blocks.timestamp as timestamp',
+            .select('blocks.hash as hash',
+                'blocks.height as height', 'blocks.timestamp as timestamp',
                 'blocks.block_version as block_version', 'blocks.app_version as app_version',
                 'blocks.l1_locked_height as l1_locked_height', 'blocks.chain as chain').as('blocks')
             .where(function () {
                 if (from && to) {
-                    this.where('block_height', '>=', from)
-                    this.where('block_height', '<=', to)
+                    this.where('height', '>=', from)
+                    this.where('height', '<=', to)
                 }
             })
             .limit(30)
-            .orderBy('id', order);
+            .orderBy('blocks.height', order);
 
         const rows = await this.knex(subquery)
             .select('blocks.hash as hash',
                 'height', 'timestamp',
                 'block_version', 'app_version',
                 'l1_locked_height', 'chain', 'state_transitions.hash as st_hash')
-            .leftJoin('state_transitions', 'state_transitions.block_id', 'blocks.id')
+            .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
             .groupBy('blocks.hash', 'height', 'blocks.timestamp', 'block_version', 'app_version',
                 'l1_locked_height', 'chain', 'state_transitions.hash')
             .orderBy('height', 'desc')
