@@ -2,23 +2,8 @@ import {useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
 import './transaction.css'
 import {useState} from "react";
-
-const StateTransitionEnum = {
-    DATA_CONTRACT_CREATE: 0,
-    DOCUMENTS_BATCH: 1,
-    IDENTITY_CREATE: 2,
-    IDENTITY_TOP_UP: 3,
-    DATA_CONTRACT_UPDATE: 4,
-    IDENTITY_UPDATE: 5,
-};
-
-const getTransitionTypeString = (id) => {
-    const [stateTransitionType] = Object.entries(StateTransitionEnum)
-        .filter(([key]) => StateTransitionEnum[key] === id)
-        .map(([key,]) => key)
-
-    return stateTransitionType ?? 'UNKNOWN'
-}
+import {getTransitionTypeString} from "../../util";
+import {StateTransitionEnum} from "../enums/state.transition.type";
 
 export async function loader({params}) {
     const {txHash} = params

@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import * as Api from "../../util/Api";
 import './home.css'
 import {Link, useLoaderData} from "react-router-dom";
+import {getTransitionTypeString} from '../../util/index'
 
 export async function loader({}) {
     const [status, transactions] = await Promise.all([Api.getStatus(), Api.getTransactions()])
@@ -13,7 +14,7 @@ export async function loader({}) {
 function Transactions({transactions}) {
     return transactions.map((tx) =>
         <div key={tx.hash} className={"last_transactions_item"}>
-            <Link to={`transaction/${tx.hash}`}>{tx.hash}</Link>
+            <Link to={`transaction/${tx.hash}`}>[{new Date(tx.timestamp).toLocaleString()}] {tx.hash} ({getTransitionTypeString(tx.type)})</Link>
         </div>
     )
 }

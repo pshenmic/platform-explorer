@@ -9,9 +9,9 @@ const blocksPerPage = 30;
 function Blocks({blocks}) {
     return blocks.map((block) =>
         <div key={block.header.hash} className={"block_list_item"}>
-            <span>Block </span>
-            <Link to={`/block/${block.header.hash}`}>{block.header.hash}</Link>
-            <span> ({block.header.height})</span>
+            <span>{block.header.height} </span>
+            <Link to={`/block/${block.header.hash}`}>[{new Date(block.header.timestamp).toLocaleString()}] {block.header.hash}</Link>
+            <span> ({block.txs.length})</span>
         </div>
     )
 }
