@@ -36,7 +36,7 @@ class TransactionController {
             .select('state_transitions.hash as hash', 'state_transitions.data as data', 'state_transitions.type as type',
                 'state_transitions.index as index', 'blocks.height as block_height', 'blocks.timestamp as timestamp')
             .where('state_transitions.hash', txHash)
-            .leftJoin('blocks', 'blocks.id', 'state_transitions.block_id')
+            .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
 
         if (row) {
             return reply.send(Transaction.fromJSON(row))
