@@ -120,7 +120,6 @@ impl Indexer {
         let block_version = resp.block.header.version.block.parse::<i32>()?;
         let app_version = resp.block.header.version.app.parse::<i32>()?;
         let core_chain_locked_height = resp.block.header.core_chain_locked_height;
-        let chain = resp.block.header.chain_id;
 
         let block = Block {
             header: BlockHeader {
@@ -131,7 +130,6 @@ impl Indexer {
                 block_version,
                 app_version,
                 l1_locked_height: core_chain_locked_height,
-                chain
             },
             txs
         };

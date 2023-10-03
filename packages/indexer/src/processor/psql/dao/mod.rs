@@ -66,7 +66,7 @@ impl PostgresDAO {
     pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<BlockHeader>, PoolError> {
         let client = self.connection_pool.get().await?;
 
-        let stmt = client.prepare_cached("SELECT hash,height,timestamp,block_version,app_version,l1_locked_height,chain FROM blocks where height = $1;").await.unwrap();
+        let stmt = client.prepare_cached("SELECT hash,height,timestamp,block_version,app_version,l1_locked_height FROM blocks where height = $1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[&block_height])
             .await.unwrap();
@@ -85,9 +85,9 @@ impl PostgresDAO {
     pub async fn create_block(&self, block_header: BlockHeader) -> String {
         let client = self.connection_pool.get().await.unwrap();
 
-        let stmt = client.prepare_cached("INSERT INTO blocks(hash, height, timestamp, block_version, app_version, l1_locked_height, chain) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING hash;").await.unwrap();
+        let stmt = client.prepare_cached("INSERT INTO blocks(hash, height, timestamp, block_version, app_version, l1_locked_height) VALUES ($1, $2, $3, $4, $5, $6) RETURNING hash;").await.unwrap();
 
-        let rows = client.query(&stmt, &[&block_header.hash, &block_header.height, &SystemTime::from(block_header.timestamp), &block_header.block_version, &block_header.app_version, &block_header.l1_locked_height, &block_header.chain]).await.unwrap();
+        let rows = client.query(&stmt, &[&block_header.hash, &block_header.height, &SystemTime::from(block_header.timestamp), &block_header.block_version, &block_header.app_version, &block_header.l1_locked_height]).await.unwrap();
 
         let block_hash:String = rows[0].get(0);
 
