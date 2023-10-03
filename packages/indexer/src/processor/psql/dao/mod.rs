@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::env;
 use std::time::SystemTime;
 use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres, Transaction};
@@ -10,6 +11,9 @@ use crate::models::{TDBlock, TDBlockHeader};
 use sha256::{digest, try_digest};
 use base64::{Engine as _, engine::{general_purpose}};
 use chrono::{DateTime, Utc};
+use dpp::platform_value::Value;
+use tokio_postgres::types::{Format, IsNull, ToSql, Type};
+use tokio_postgres::types::private::BytesMut;
 use crate::entities::block_header::BlockHeader;
 
 pub struct PostgresDAO {
@@ -52,11 +56,14 @@ impl PostgresDAO {
         let id = state_transition.data_contract().id();
         let id_str = id.to_string(Encoding::Base58);
 
-        let query = "INSERT INTO data_contracts(identifier) VALUES ($1);";
+        let schema = state_transition.data_contract().document_schemas().clone();
+        let schema_decoded = serde_json::to_value(schema).unwrap();
+
+        let query = "INSERT INTO data_contracts(identifier, schema) VALUES ($1, $2);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
-        client.query(&stmt, &[&id_str]).await.unwrap();
+        client.query(&stmt, &[&id_str, &schema_decoded]).await.unwrap();
     }
 
     pub async fn get_latest_block(&self) -> i32 {
@@ -94,4 +101,3 @@ impl PostgresDAO {
         return block_hash;
     }
 }
-
