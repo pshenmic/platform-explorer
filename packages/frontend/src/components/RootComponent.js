@@ -64,6 +64,7 @@ export default function RootComponent() {
             <div className="topnav">
                 <Link to="/">Home</Link>
                 <Link to="/blocks">Blocks</Link>
+                <Link to="/dataContracts">Data Contracts</Link>
                 <input value={searchQuery} type="text" placeholder="Search..." onChange={handleSearchInput}
                        onKeyPress={handleKeyPress}/>
                 <ModalWindow open={showModal} text={modalText} setShowModal={setShowModal}/>

@@ -17,6 +17,7 @@ import TransactionRoute, {
     loader as transactionLoader,
 } from "./routes/transaction/transaction.route";
 import DataContractRoute, {loader as dataContractLoader} from "./routes/dataContract/data.contract.route";
+import DataContractsRoute from "./routes/dataContracts/data.contracts.route";
 
 const router = createBrowserRouter([
     {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
                 path: "dataContract/:identifier",
                 element: <DataContractRoute/>,
                 loader: dataContractLoader,
+            },
+            {
+                path: "dataContracts",
+                element: <DataContractsRoute/>,
             },
         ]
     }
