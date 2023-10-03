@@ -1,7 +1,5 @@
-use std::ops::Deref;
-use std::sync::Arc;
 use dpp::state_transition::{StateTransition};
-use dpp::{NativeBlsModule, ProtocolError};
+use dpp::{ProtocolError};
 use dpp::state_transition::state_transition_factory::StateTransitionFactory;
 
 pub struct StateTransitionDecoder {

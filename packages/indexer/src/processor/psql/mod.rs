@@ -1,20 +1,12 @@
 mod dao;
 
-use std::error::Error;
-use std::fmt::{Display, Formatter};
 use std::num::ParseIntError;
-use std::ops::DerefMut;
-use dpp::state_transition::{StateTransition, StateTransitionLike, StateTransitionType};
-use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres, Transaction};
-use dpp::dashcore::bech32::ToBase32;
-use dpp::platform_value::string_encoding::Encoding;
-use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
+use dpp::state_transition::{StateTransition, StateTransitionLike};
+use deadpool_postgres::{ PoolError };
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
-use crate::models::{TDBlock, TDBlockHeader};
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use dpp::serialization::PlatformSerializable;
-use dpp::state_transition::StateTransition::DataContractCreate;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
 
@@ -59,12 +51,6 @@ impl PSQLProcessor {
 
     pub async fn handle_data_contract_create(&self, state_transition: DataContractCreateTransition) -> () {
         self.dao.create_data_contract(state_transition).await;
-    }
-
-    pub async fn get_latest_block(&self, state_transition: DataContractCreateTransition) -> i32 {
-        let block = self.dao.get_latest_block().await;
-
-        return block;
     }
 
     pub async fn handle_st(&self, block_hash: String, index: i32,state_transition: StateTransition) -> () {

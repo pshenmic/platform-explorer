@@ -1,4 +1,3 @@
-use std::io;
 use dotenv::dotenv;
 
 mod indexer;

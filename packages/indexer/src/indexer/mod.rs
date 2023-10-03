@@ -1,18 +1,10 @@
-use std::any::Any;
 use std::cell::Cell;
 use std::env;
-use std::error::Error;
-use std::sync::{Arc, Mutex};
 use std::time::Duration;
-use dpp::state_transition::StateTransition;
-use base64::{Engine as _, engine::{general_purpose}};
-use chrono::{DateTime, Utc};
-use futures::stream;
-use tokio::{task, time};
-use tokio::time::{Instant, Interval};
+use tokio::{time};
 use crate::entities::block::Block;
 use crate::entities::block_header::BlockHeader;
-use crate::models::{BlockWrapper, TDBlock, TDBlockHeader, TenderdashBlockResponse, TenderdashRPCStatusResponse};
+use crate::models::{BlockWrapper, TenderdashRPCStatusResponse};
 use crate::processor::psql::{ProcessorError, PSQLProcessor};
 
 pub enum IndexerError {

@@ -1,5 +1,5 @@
 use std::time::SystemTime;
-use chrono::{DateTime, NaiveDateTime, Utc};
+use chrono::{DateTime, Utc};
 use tokio_postgres::Row;
 
 #[derive(Clone)]

@@ -1,19 +1,13 @@
-use std::collections::BTreeMap;
+use std::collections::BTreeMa;
 use std::env;
 use std::time::SystemTime;
-use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres, Transaction};
-use deadpool_postgres::tokio_postgres::{Error, IsolationLevel, NoTls, Row};
+use deadpool_postgres::{Config, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres};
+use deadpool_postgres::tokio_postgres::{NoTls, Row};
 use dpp::platform_value::string_encoding::Encoding;
 use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
-use dpp::state_transition::{StateTransition, StateTransitionType};
-use crate::models::{TDBlock, TDBlockHeader};
-use sha256::{digest, try_digest};
+use sha256::{digest};
 use base64::{Engine as _, engine::{general_purpose}};
-use chrono::{DateTime, Utc};
-use dpp::platform_value::Value;
-use tokio_postgres::types::{Format, IsNull, ToSql, Type};
-use tokio_postgres::types::private::BytesMut;
 use crate::entities::block_header::BlockHeader;
 
 pub struct PostgresDAO {
@@ -64,10 +58,6 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
         client.query(&stmt, &[&id_str, &schema_decoded]).await.unwrap();
-    }
-
-    pub async fn get_latest_block(&self) -> i32 {
-        return 0;
     }
 
     pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<BlockHeader>, PoolError> {
