@@ -2,13 +2,14 @@
     color: white;
     text-decoration: none;
     background-color: #1a491c;
+    padding: 10px 5px;
 }
 
 .data_contracts_item {
     text-decoration: none;
-    padding: 5px;
-    margin-left: 10px;
-    margin-right: 10px;
+    padding: 4px;
+    text-align: left;
+    margin: 2px 10px;
     background-color: #1a492a;
 }
 
