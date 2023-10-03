@@ -19,7 +19,7 @@ class DataContractsController {
         const {identifier} = request.params
 
         const rows = await this.knex('data_contracts')
-            .select('data_contracts.identifier as identifier')
+            .select('data_contracts.identifier as identifier', 'data_contracts.schema as schema')
             .where('data_contracts.identifier', identifier);
 
         const [row] = rows
@@ -28,7 +28,7 @@ class DataContractsController {
             response.status(404).send({message: 'not found'})
         }
 
-        response.send({identifier: row.identifier});
+        response.send({identifier: row.identifier, schema: row.schema});
     }
 }
 

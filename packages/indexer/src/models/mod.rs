@@ -1,7 +1,5 @@
-use std::time::SystemTime;
-use chrono::{DateTime, NaiveDateTime, Utc};
-use serde::{Deserialize, Deserializer, Serialize};
-use time::serde::iso8601;
+use chrono::{DateTime, Utc};
+use serde::{Deserialize};
 
 #[derive(Deserialize)]
 pub struct TenderdashRPCStatusResponse {
@@ -58,7 +56,7 @@ pub struct BlockWrapper {
 }
 
 mod from_iso8601 {
-    use chrono::{Utc, TimeZone, ParseResult, NaiveDateTime, DateTime};
+    use chrono::{Utc, DateTime};
     use serde::{self, Deserialize, Serializer, Deserializer};
 
     const FORMAT: &'static str = "%Y-%m-%dT%H:%M:%SZ";

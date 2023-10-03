@@ -1,18 +1,10 @@
-use std::any::Any;
 use std::cell::Cell;
 use std::env;
-use std::error::Error;
-use std::sync::{Arc, Mutex};
 use std::time::Duration;
-use dpp::state_transition::StateTransition;
-use base64::{Engine as _, engine::{general_purpose}};
-use chrono::{DateTime, Utc};
-use futures::stream;
-use tokio::{task, time};
-use tokio::time::{Instant, Interval};
+use tokio::{time};
 use crate::entities::block::Block;
 use crate::entities::block_header::BlockHeader;
-use crate::models::{BlockWrapper, TDBlock, TDBlockHeader, TenderdashBlockResponse, TenderdashRPCStatusResponse};
+use crate::models::{BlockWrapper, TenderdashRPCStatusResponse};
 use crate::processor::psql::{ProcessorError, PSQLProcessor};
 
 pub enum IndexerError {
@@ -120,18 +112,16 @@ impl Indexer {
         let block_version = resp.block.header.version.block.parse::<i32>()?;
         let app_version = resp.block.header.version.app.parse::<i32>()?;
         let core_chain_locked_height = resp.block.header.core_chain_locked_height;
-        let chain = resp.block.header.chain_id;
 
         let block = Block {
             header: BlockHeader {
                 hash,
-                block_height: block_height.clone(),
+                height: block_height.clone(),
                 tx_count: txs.len() as i32,
                 timestamp,
                 block_version,
                 app_version,
                 l1_locked_height: core_chain_locked_height,
-                chain
             },
             txs
         };

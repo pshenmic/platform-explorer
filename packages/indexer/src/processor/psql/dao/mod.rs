@@ -1,15 +1,13 @@
+use std::collections::BTreeMa;
 use std::env;
 use std::time::SystemTime;
-use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres, Transaction};
-use deadpool_postgres::tokio_postgres::{Error, IsolationLevel, NoTls, Row};
+use deadpool_postgres::{Config, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres};
+use deadpool_postgres::tokio_postgres::{NoTls, Row};
 use dpp::platform_value::string_encoding::Encoding;
 use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
-use dpp::state_transition::{StateTransition, StateTransitionType};
-use crate::models::{TDBlock, TDBlockHeader};
-use sha256::{digest, try_digest};
+use sha256::{digest};
 use base64::{Engine as _, engine::{general_purpose}};
-use chrono::{DateTime, Utc};
 use crate::entities::block_header::BlockHeader;
 
 pub struct PostgresDAO {
@@ -36,37 +34,36 @@ impl PostgresDAO {
         return PostgresDAO { connection_pool };
     }
 
-    pub async fn create_state_transition(&self, block_id: i32, st_type: i32, index:i32, bytes: Vec<u8>) {
+    pub async fn create_state_transition(&self, block_hash: String, st_type: i32, index:i32, bytes: Vec<u8>) {
         let data = general_purpose::STANDARD.encode(&bytes);
         let hash = digest(bytes.clone()).to_uppercase();
 
-        let query = "INSERT INTO state_transitions(hash, data, type, index, block_id) VALUES ($1, $2, $3, $4, $5);";
+        let query = "INSERT INTO state_transitions(hash, data, type, index, block_hash) VALUES ($1, $2, $3, $4, $5);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
 
-        client.query(&stmt, &[&hash, &data, &st_type, &index, &block_id]).await.unwrap();
+        client.query(&stmt, &[&hash, &data, &st_type, &index, &block_hash]).await.unwrap();
     }
 
     pub async fn create_data_contract(&self, state_transition: DataContractCreateTransition) {
         let id = state_transition.data_contract().id();
         let id_str = id.to_string(Encoding::Base58);
 
-        let query = "INSERT INTO data_contracts(identifier) VALUES ($1);";
+        let schema = state_transition.data_contract().document_schemas().clone();
+        let schema_decoded = serde_json::to_value(schema).unwrap();
+
+        let query = "INSERT INTO data_contracts(identifier, schema) VALUES ($1, $2);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
-        client.query(&stmt, &[&id_str]).await.unwrap();
-    }
-
-    pub async fn get_latest_block(&self) -> i32 {
-        return 0;
+        client.query(&stmt, &[&id_str, &schema_decoded]).await.unwrap();
     }
 
     pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<BlockHeader>, PoolError> {
         let client = self.connection_pool.get().await?;
 
-        let stmt = client.prepare_cached("SELECT hash,block_height,timestamp,block_version,app_version,l1_locked_height,chain FROM blocks where block_height = $1;").await.unwrap();
+        let stmt = client.prepare_cached("SELECT hash,height,timestamp,block_version,app_version,l1_locked_height FROM blocks where height = $1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[&block_height])
             .await.unwrap();
@@ -82,16 +79,15 @@ impl PostgresDAO {
         return Ok(block.cloned());
     }
 
-    pub async fn create_block(&self, block_header: BlockHeader) -> i32 {
+    pub async fn create_block(&self, block_header: BlockHeader) -> String {
         let client = self.connection_pool.get().await.unwrap();
 
-        let stmt = client.prepare_cached("INSERT INTO blocks(hash, block_height, timestamp, block_version, app_version, l1_locked_height, chain) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;").await.unwrap();
+        let stmt = client.prepare_cached("INSERT INTO blocks(hash, height, timestamp, block_version, app_version, l1_locked_height) VALUES ($1, $2, $3, $4, $5, $6) RETURNING hash;").await.unwrap();
 
-        let rows = client.query(&stmt, &[&block_header.hash, &block_header.block_height, &SystemTime::from(block_header.timestamp), &block_header.block_version, &block_header.app_version, &block_header.l1_locked_height, &block_header.chain]).await.unwrap();
+        let rows = client.query(&stmt, &[&block_header.hash, &block_header.height, &SystemTime::from(block_header.timestamp), &block_header.block_version, &block_header.app_version, &block_header.l1_locked_height]).await.unwrap();
 
-        let block_id: i32 = rows[0].get(0);
+        let block_hash:String = rows[0].get(0);
 
-        return block_id;
+        return block_hash;
     }
 }
-

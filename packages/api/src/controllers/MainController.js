@@ -4,7 +4,7 @@ class MainController {
     }
 
      getStatus = async (request, response) => {
-         const [result] = await this.knex('blocks').max('block_height')
+         const [result] = await this.knex('blocks').max('height')
 
          const {max} = result
 

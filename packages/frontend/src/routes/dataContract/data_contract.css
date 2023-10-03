@@ -1,0 +1,14 @@
+.data_contract_identifier {
+    margin-top: 20px;
+    background-color: #1a491c;
+    padding: 10px;
+}
+
+.data_contract_schema {
+    margin-top: 20px;
+    background-color: #1a491c;
+    padding: 10px;
+    white-space: break-spaces;
+    height: 80%;
+}
+
