@@ -25,7 +25,6 @@ function DataContractsRoute() {
     const [loading, setLoading] = useState(null)
     const [error, setError] = useState(null)
 
-
     useEffect(() => {
         Api.getDataContracts()
             .then((dataContracts) => setDataContracts(dataContracts))
