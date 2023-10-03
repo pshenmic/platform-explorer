@@ -16,7 +16,7 @@ function DataContracts({dataContracts}) {
 
 function DataContract({dataContract}) {
     return <div className={"data_contracts_item"}>
-        <Link to={`/dataContracts/${dataContract.identifier}`}>{dataContract.identifier}</Link>
+        <Link to={`/dataContract/${dataContract.identifier}`}>{dataContract.identifier}</Link>
     </div>
 }
 
