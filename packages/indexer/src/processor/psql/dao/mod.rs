@@ -1,4 +1,3 @@
-use std::collections::BTreeMa;
 use std::env;
 use std::time::SystemTime;
 use deadpool_postgres::{Config, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres};
