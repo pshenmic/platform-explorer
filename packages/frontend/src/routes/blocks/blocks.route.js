@@ -11,8 +11,9 @@ function Blocks({blocks}) {
         <div key={block.header.hash} className={"block_list_item"}>
             <Link to={`/block/${block.header.hash}`}>
                 <span className={"block_list_item__height"}>{block.header.height} </span>
-                <span className={"block_list_item__timestamp"}>{new Date(block.header.timestamp).toLocaleString()}</span> <span className={"block_list_item__hash"}>{block.header.hash}</span>
-                <span className={"block_list_item__length"}> ({block.txs.length})</span>
+                <span className={"block_list_item__timestamp"}>{new Date(block.header.timestamp).toLocaleString()}</span>
+                <span className={"block_list_item__hash"}>{block.header.hash}</span>
+                <span className={"block_list_item__txs"}>({block.txs.length})</span>
             </Link>
         </div>
     )
