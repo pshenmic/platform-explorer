@@ -58,9 +58,8 @@
 
 .last_transactions_item__timestamp {
     font-style: normal;
-    margin-right: 6px;
+    margin-right: 16px;
     display: inline-block;
-    width: 170px;
     text-wrap: nowrap;
 }
 
@@ -71,7 +70,7 @@
 
 .last_transactions_item__type {
     color: white;
-    margin-left: 6px;
+    margin-left: 12px;
     text-wrap: nowrap;
 }
 

@@ -47,7 +47,7 @@
 }
 
 .block_list_item__timestamp {
-    margin-right: 6px;
+    margin-right: 16px;
     text-wrap: nowrap;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .block_list_item__length {
-    margin-left: 6px;
+    margin-left: 12px;
 }
 
 @media screen and (max-width: 620px) {
