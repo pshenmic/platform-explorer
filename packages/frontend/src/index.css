@@ -72,25 +72,59 @@ code {
 }
 
 .page-item {
-  border-style: ridge;
-  padding: 5px;
+  padding: 1px 4px 2px;
+  margin: 0 2px;
   cursor: pointer;
   font-size: 14pt;
+  -webkit-user-select: none;
+  -ms-user-select: none; 
+  text-align: center;
+  border-radius: 5px;
+}
+
+.page-item:hover:not(.disabled) {
+  background-color: #ffffff10;
+}
+
+.page-item--next,
+.page-item--previous {
+  display: inline-block;
+  width: 22px;
+  padding: 0px 2px 2px;
+  border: 1px solid #ffffff75;
+  border-radius: 5px;
+  user-select: none;
+}
+
+.page-item--next:hover:not(.disabled),
+.page-item--previous:hover:not(.disabled) {
+  border: 1px solid #ffffff;
+  background-color: #ffffff15;
 }
 
 .page-link {
   position: relative;
 }
 
-.disabled {
-  cursor: not-allowed;
+.page-item.disabled {
+  cursor: default;
+  opacity: .3;
 }
 
-.active {
+.active, .active:hover {
   background-color: rgba(57, 175, 159, 0.55);
 }
 
-@media screen and (max-width: 786px) {
+.page-item.active:hover {
+  cursor: default;
+}
+
+.page-item--break-link {
+  padding: 1px 2px 2px;
+  margin: 0;
+}
+
+@media screen and (max-width: 440px) {
   .page-item:not(.active):not(.page-item--previous):not(.page-item--next) {
     display: none;
   }

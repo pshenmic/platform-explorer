@@ -63,39 +63,6 @@ function TransactionRoute() {
                     <span className={"transaction_details_item__title"}>Timestamp:</span>
                     <span className={"transaction_details_item__value"}>{transaction.timestamp}</span>
                 </div>
-
-                <div className={"transaction_details_item"}>
-                    <div className={"transaction_details_item_transaction"}>
-                        <div className={"transaction_raw"} onClick={() => decodeTx(transaction.data)}
-                             style={{'cursor': decodedST ? 'auto' : 'pointer'}}>
-                            {!decoding && !decodingError && !decodedST ? <span>{transaction.data}</span> : null}
-                            {decodedST ?
-                                <div className={"state_transition"}>
-                                    <div className={"state_transition_item"}>
-                                        <span>Owner ID:</span>
-                                        <span>{decodedST.ownerId}</span>
-                                    </div>
-                                    <div className={"state_transition_item"}>
-                                        <span>State Transition Type:</span>
-                                        <span>{decodedST.type} ({getTransitionTypeString(decodedST.type)})</span>
-                                    </div>
-                                    <div className={"state_transition_item"}>
-                                        <span>Identity:</span>
-                                        <span>{decodedST.identityId}</span>
-                                    </div>
-                                    {decodedST.type === StateTransitionEnum.DOCUMENTS_BATCH ?
-                                        <div className={"state_transition_item"}>
-                                            <span>State Transitions:</span>
-                                            <span>{decodedST.transitions.length}</span>
-                                        </div> : null}
-                                </div>
-                                : null}
-
-                            <div className={decoding ? 'tooltip loader' : 'disable'}/>
-                            <span className={decodingError ? null : 'disable'}>{decodingError}</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     );

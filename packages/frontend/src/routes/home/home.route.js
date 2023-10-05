@@ -14,7 +14,11 @@ export async function loader({}) {
 function Transactions({transactions}) {
     return transactions.map((tx) =>
         <div key={tx.hash} className={"last_transactions_item"}>
-            <Link to={`transaction/${tx.hash}`}>[{new Date(tx.timestamp).toLocaleString()}] {tx.hash} ({getTransitionTypeString(tx.type)})</Link>
+            <Link to={`transaction/${tx.hash}`}>
+                <span className="last_transactions_item__timestamp">{new Date(tx.timestamp).toLocaleString("en-US")}</span> 
+                <span className="last_transactions_item__hash">{tx.hash}</span> 
+                <span className="last_transactions_item__type">({getTransitionTypeString(tx.type)})</span>
+            </Link>
         </div>
     )
 }
@@ -54,7 +58,7 @@ function HomeRoute() {
             </div>
 
             <div className="last_transactions">
-                <span>Last transactions</span>
+                <span className="last_transactions__title">Last transactions</span>
                 <Transactions transactions={transactions}/>
             </div>
         </div>
