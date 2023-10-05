@@ -1,6 +1,5 @@
 .block_list {
     background-color: #1a4049;
-    padding: 20px;
     box-sizing: border-box;
     border-radius: 16px;
     padding: 14px 20px;
@@ -56,7 +55,7 @@
     flex-grow: 1;
 }
 
-.bblock_list_item__txs {
+.block_list_item__txs {
     margin-left: 12px;
 }
 
@@ -70,7 +69,7 @@
         margin-right: 4px;
     }
 
-    .block_list_item__length {
+    .block_list_item__txs {
         order: 2;
         margin-left: 0;
         margin-right: 6px;
