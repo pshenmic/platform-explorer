@@ -30,6 +30,8 @@
     display: flex;
     flex-wrap: nowrap;
     width: 100%;
+    font-family: monospace;
+    font-size: 12pt;
 }
 
 .block_list_item a:hover,

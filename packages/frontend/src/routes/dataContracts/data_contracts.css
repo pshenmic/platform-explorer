@@ -8,6 +8,8 @@
     padding: 14px 20px;
     max-width: 100%;
     box-sizing: border-box;
+    font-family: monospace;
+    font-size: 12pt;
 }
 
 .data_contracts_item {

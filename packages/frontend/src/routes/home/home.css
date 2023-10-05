@@ -35,6 +35,8 @@
     margin-bottom: 2px;
     padding-bottom: 6px;
     border-bottom: 1px solid #ffffff14;
+    font-family: monospace;
+    font-size: 12pt;
 }
 
 .last_transactions_item:last-child {
