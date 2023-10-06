@@ -53,11 +53,13 @@ impl PostgresDAO {
         let schema = data_contract.schema;
         let schema_decoded = serde_json::to_value(schema).unwrap();
 
-        let query = "INSERT INTO data_contracts(identifier, schema) VALUES ($1, $2);";
+        let version = data_contract.version as i32;
+
+        let query = "INSERT INTO data_contracts(identifier, schema, version) VALUES ($1, $2, $3);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
-        client.query(&stmt, &[&id_str, &schema_decoded]).await.unwrap();
+        client.query(&stmt, &[&id_str, &schema_decoded, &version]).await.unwrap();
     }
 
     pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<BlockHeader>, PoolError> {

@@ -7,6 +7,7 @@ use dpp::state_transition::data_contract_create_transition::DataContractCreateTr
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use dpp::serialization::PlatformSerializable;
+use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
 use crate::entities::data_contract::DataContract;
@@ -56,6 +57,12 @@ impl PSQLProcessor {
         self.dao.create_data_contract(data_contract).await;
     }
 
+    pub async fn handle_data_contract_update(&self, state_transition: DataContractUpdateTransition) -> () {
+        let data_contract = DataContract::from(state_transition);
+
+        self.dao.create_data_contract(data_contract).await;
+    }
+
     pub async fn handle_st(&self, block_hash: String, index: i32,state_transition: StateTransition) -> () {
         let mut st_type: i32 = 999;
         let mut bytes: Vec<u8> = Vec::new();
@@ -67,13 +74,19 @@ impl PSQLProcessor {
                     st.clone()
                 )).unwrap();
 
-                self.handle_data_contract_create(st).await
+                self.handle_data_contract_create(st).await;
+
+                println!("Processed DataContractCreate at block hash {}", block_hash);
             }
             StateTransition::DataContractUpdate(st) => {
                 st_type = st.state_transition_type() as i32;
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractUpdate(
                     st.clone()
                 )).unwrap();
+
+                self.handle_data_contract_update(st).await;
+
+                println!("Processed DataContractUpdate at block hash {}", block_hash);
             }
             StateTransition::DocumentsBatch(st) => {
                 st_type = st.state_transition_type() as i32;
@@ -138,8 +151,6 @@ impl PSQLProcessor {
                     let state_transition = st_result.unwrap();
 
                     self.handle_st(block_hash.clone(), i as i32, state_transition).await;
-
-                    println!("Processed DataContractCreate at height {}", block_height);
                 }
 
                 Ok(())

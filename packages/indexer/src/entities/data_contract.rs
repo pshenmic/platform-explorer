@@ -40,3 +40,24 @@ impl From<DataContractCreateTransition> for DataContract {
     }
 }
 
+impl From<DataContractUpdateTransition> for DataContract {
+    fn from(state_transition: DataContractUpdateTransition) -> Self {
+
+        match state_transition {
+            DataContractUpdateTransition::V0(data_contract_update_transition) => {
+                let data_contract = data_contract_update_transition.data_contract;
+
+                match data_contract {
+                    DataContractInSerializationFormat::V0(data_contract) => {
+                        let id = data_contract.id;
+                        let version = data_contract.version;
+                        let schema = data_contract.document_schemas;
+
+                        return DataContract{ identifier: id, schema, version };
+                    }
+                }
+            }
+        }
+    }
+}
+
