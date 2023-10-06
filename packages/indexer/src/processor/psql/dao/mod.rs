@@ -67,7 +67,7 @@ impl PostgresDAO {
     pub async fn create_document(&self, document: Document, st_hash: String) -> Result<(), PoolError> {
         let id = document.identifier;
         let revision = document.revision;
-        let revision_u32 = revision as u32;
+        let revision_i32 = revision as i32;
         let data_contract_id = document.data_contract_identifier;
 
         let data = document.data.unwrap();
@@ -78,7 +78,7 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
 
-        client.query(&stmt, &[&id.to_string(Encoding::Base64), &revision_u32, &data_decoded, &document.deleted, &st_hash, &data_contract_id.to_string(Encoding::Base64) ]).await.unwrap();
+        client.query(&stmt, &[&id.to_string(Encoding::Base58), &revision_i32, &data_decoded, &document.deleted, &st_hash, &data_contract_id.to_string(Encoding::Base58)]).await.unwrap();
 
         Ok(())
     }
@@ -107,24 +107,7 @@ impl PostgresDAO {
 
         let stmt = client.prepare_cached("SELECT id,identifier,revision,deleted FROM blocks where identifier = $1;").await.unwrap();
 
-        let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base64)])
-            .await.unwrap();
-
-        let blocks: Vec<Document> = rows
-            .into_iter()
-            .map(|row| {
-                row.into()
-            }).collect::<Vec<Document>>();
-
-        Ok(blocks.first().cloned())
-    }
-
-    pub async fn delete_document_by_identifier(&self, identifier: Identifier) -> Result<Option<Document>, PoolError> {
-        let client = self.connection_pool.get().await?;
-
-        let stmt = client.prepare_cached("UPDATE id,identifier,revision FROM blocks where identifier = $1;").await.unwrap();
-
-        let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base64)])
+        let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base58)])
             .await.unwrap();
 
         let blocks: Vec<Document> = rows

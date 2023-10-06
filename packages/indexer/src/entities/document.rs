@@ -28,10 +28,10 @@ impl From<Row> for Document {
         let id: u32 = row.get(0);
 
         let identifier_str: String = row.get(1);
-        let identifier = Identifier::from_string(&identifier_str, Encoding::Base64).unwrap();
+        let identifier = Identifier::from_string(&identifier_str, Encoding::Base58).unwrap();
 
         let data_contract_identifier_str: String = row.get(2);
-        let data_contract_identifier = Identifier::from_string(&data_contract_identifier_str, Encoding::Base64).unwrap();
+        let data_contract_identifier = Identifier::from_string(&data_contract_identifier_str, Encoding::Base58).unwrap();
 
         let revision: u32 = row.get(3);
 

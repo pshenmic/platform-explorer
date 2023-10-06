@@ -6,7 +6,9 @@ use deadpool_postgres::{PoolError};
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
+use dpp::platform_value::string_encoding::Encoding;
 use dpp::serialization::PlatformSerializable;
+use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
 use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
 use dpp::state_transition::documents_batch_transition::{DocumentCreateTransition, DocumentReplaceTransition, DocumentsBatchTransition};
 use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransition;
@@ -56,7 +58,9 @@ impl PSQLProcessor {
     }
 
     pub async fn handle_data_contract_create(&self, state_transition: DataContractCreateTransition) -> () {
-        self.dao.create_data_contract(state_transition).await;
+        self.dao.create_data_contract(state_transition.clone()).await;
+
+        println!("Created data contract with identifier {}" , state_transition.clone().data_contract().id().to_string(Encoding::Base58))
     }
 
     pub async fn handle_documents_batch(&self, state_transition: DocumentsBatchTransition, st_hash: String) -> () {
@@ -65,17 +69,7 @@ impl PSQLProcessor {
         for (i, document_transition) in transitions.iter().enumerate() {
             let document = Document::from(document_transition.clone());
 
-            match document_transition.clone() {
-                DocumentTransition::Create(_) => {
-                    self.dao.create_document(document, st_hash.clone()).await;
-                }
-                DocumentTransition::Replace(_) => {
-                    self.dao.create_document(document, st_hash.clone()).await;
-                }
-                DocumentTransition::Delete(_) => {
-                    self.dao.delete_document_by_identifier(document.identifier).await;
-                }
-            }
+            self.dao.create_document(document, st_hash.clone()).await;
         }
     }
 
@@ -90,6 +84,8 @@ impl PSQLProcessor {
                     st.clone()
                 )).unwrap();
 
+                self.dao.create_state_transition(block_hash, st_type, index, bytes).await;
+
                 self.handle_data_contract_create(st).await
             }
             StateTransition::DataContractUpdate(st) => {
@@ -103,8 +99,10 @@ impl PSQLProcessor {
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DocumentsBatch(
                     st.clone()
                 )).unwrap();
-                let st_hash = digest(bytes.clone()).to_uppercase();
 
+                self.dao.create_state_transition(block_hash, st_type, index, bytes.clone()).await;
+
+                let st_hash = digest(bytes.clone()).to_uppercase();
                 self.handle_documents_batch(st, st_hash).await
             }
             StateTransition::IdentityCreate(st) => {
@@ -138,8 +136,6 @@ impl PSQLProcessor {
                 )).unwrap();
             }
         }
-
-        self.dao.create_state_transition(block_hash, st_type, index, bytes).await;
     }
 
     pub async fn handle_block(&self, block: Block) -> Result<(), ProcessorError> {
@@ -164,8 +160,6 @@ impl PSQLProcessor {
                     let state_transition = st_result.unwrap();
 
                     self.handle_st(block_hash.clone(), i as i32, state_transition).await;
-
-                    println!("Processed DataContractCreate at height {}", block_height);
                 }
 
                 Ok(())
