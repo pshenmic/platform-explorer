@@ -2,6 +2,9 @@
     margin-top: 20px;
     background-color: #1a491c;
     padding: 10px;
+    word-wrap: break-word;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .data_contract_schema {
@@ -10,5 +13,12 @@
     padding: 10px;
     white-space: break-spaces;
     height: 80%;
+    border-radius: 16px;
+    padding: 14px 20px;
+    word-wrap: break-word;
+    max-width: 100%;
+    box-sizing: border-box;
+    font-family: monospace;
+    font-size: 12pt;
 }
 
