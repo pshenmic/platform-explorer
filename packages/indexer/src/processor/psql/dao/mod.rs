@@ -6,7 +6,12 @@ use dpp::platform_value::string_encoding::Encoding;
 use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use sha256::{digest};
+use crate::entities::document::Document;
 use base64::{Engine as _, engine::{general_purpose}};
+use dpp::identifier::Identifier;
+use dpp::serialization::PlatformSerializable;
+use dpp::state_transition::documents_batch_transition::DocumentCreateTransition;
+use dpp::state_transition::StateTransition;
 use crate::entities::block_header::BlockHeader;
 
 pub struct PostgresDAO {
@@ -59,6 +64,25 @@ impl PostgresDAO {
         client.query(&stmt, &[&id_str, &schema_decoded]).await.unwrap();
     }
 
+    pub async fn create_document(&self, document: Document, st_hash: String) -> Result<(), PoolError> {
+        let id = document.identifier;
+        let revision = document.revision;
+        let revision_u32 = revision as u32;
+        let data_contract_id = document.data_contract_identifier;
+
+        let data = document.data.unwrap();
+        let data_decoded = serde_json::to_value(data).unwrap();
+
+        let query = "INSERT INTO documents(identifier,revision,data,state_transition_hash,data_contract_identifier) VALUES ($1, $2, $3, $4, $5);";
+
+        let client = self.connection_pool.get().await.unwrap();
+        let stmt = client.prepare_cached(query).await.unwrap();
+
+        client.query(&stmt, &[&id.to_string(Encoding::Base64), &revision_u32, &data_decoded, &st_hash, &data_contract_id.to_string(Encoding::Base64) ]).await.unwrap();
+
+        Ok(())
+    }
+
     pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<BlockHeader>, PoolError> {
         let client = self.connection_pool.get().await?;
 
@@ -76,6 +100,40 @@ impl PostgresDAO {
         let block = blocks.first();
 
         return Ok(block.cloned());
+    }
+
+    pub async fn get_document_by_identifier(&self, identifier: Identifier) -> Result<Option<Document>, PoolError> {
+        let client = self.connection_pool.get().await?;
+
+        let stmt = client.prepare_cached("SELECT id,identifier,revision FROM blocks where identifier = $1;").await.unwrap();
+
+        let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base64)])
+            .await.unwrap();
+
+        let blocks: Vec<Document> = rows
+            .into_iter()
+            .map(|row| {
+                row.into()
+            }).collect::<Vec<Document>>();
+
+        Ok(blocks.first().cloned())
+    }
+
+    pub async fn delete_document_by_identifier(&self, identifier: Identifier) -> Result<Option<Document>, PoolError> {
+        let client = self.connection_pool.get().await?;
+
+        let stmt = client.prepare_cached("UPDATE id,identifier,revision FROM blocks where identifier = $1;").await.unwrap();
+
+        let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base64)])
+            .await.unwrap();
+
+        let blocks: Vec<Document> = rows
+            .into_iter()
+            .map(|row| {
+                row.into()
+            }).collect::<Vec<Document>>();
+
+        Ok(blocks.first().cloned())
     }
 
     pub async fn create_block(&self, block_header: BlockHeader) -> String {

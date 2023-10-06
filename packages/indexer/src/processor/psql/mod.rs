@@ -2,17 +2,23 @@ mod dao;
 
 use std::num::ParseIntError;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
-use deadpool_postgres::{ PoolError };
+use deadpool_postgres::{PoolError};
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use dpp::serialization::PlatformSerializable;
+use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
+use dpp::state_transition::documents_batch_transition::{DocumentCreateTransition, DocumentReplaceTransition, DocumentsBatchTransition};
+use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransition;
+use sha256::digest;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
+use crate::entities::document::Document;
+use crate::processor::psql::ProcessorError::UnexpectedError;
 
 pub enum ProcessorError {
     DatabaseError,
-    UnexpectedError
+    UnexpectedError,
 }
 
 impl From<PoolError> for ProcessorError {
@@ -53,7 +59,27 @@ impl PSQLProcessor {
         self.dao.create_data_contract(state_transition).await;
     }
 
-    pub async fn handle_st(&self, block_hash: String, index: i32,state_transition: StateTransition) -> () {
+    pub async fn handle_documents_batch(&self, state_transition: DocumentsBatchTransition, st_hash: String) -> () {
+        let transitions = state_transition.transitions().clone();
+
+        for (i, document_transition) in transitions.iter().enumerate() {
+            let document = Document::from(document_transition.clone());
+
+            match document_transition.clone() {
+                DocumentTransition::Create(_) => {
+                    self.dao.create_document(document, st_hash.clone()).await;
+                }
+                DocumentTransition::Replace(_) => {
+                    self.dao.create_document(document, st_hash.clone()).await;
+                }
+                DocumentTransition::Delete(_) => {
+                    self.dao.delete_document_by_identifier(document.identifier).await;
+                }
+            }
+        }
+    }
+
+    pub async fn handle_st(&self, block_hash: String, index: i32, state_transition: StateTransition) -> () {
         let mut st_type: i32 = 999;
         let mut bytes: Vec<u8> = Vec::new();
 
@@ -77,6 +103,9 @@ impl PSQLProcessor {
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DocumentsBatch(
                     st.clone()
                 )).unwrap();
+                let st_hash = digest(bytes.clone()).to_uppercase();
+
+                self.handle_documents_batch(st, st_hash).await
             }
             StateTransition::IdentityCreate(st) => {
                 st_type = st.state_transition_type() as i32;
