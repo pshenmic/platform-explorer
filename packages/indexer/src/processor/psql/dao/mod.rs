@@ -73,12 +73,12 @@ impl PostgresDAO {
         let data = document.data.unwrap();
         let data_decoded = serde_json::to_value(data).unwrap();
 
-        let query = "INSERT INTO documents(identifier,revision,data,state_transition_hash,data_contract_identifier) VALUES ($1, $2, $3, $4, $5);";
+        let query = "INSERT INTO documents(identifier,revision,data,deleted,state_transition_hash,data_contract_identifier) VALUES ($1, $2, $3, $4, $5, $6);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
 
-        client.query(&stmt, &[&id.to_string(Encoding::Base64), &revision_u32, &data_decoded, &st_hash, &data_contract_id.to_string(Encoding::Base64) ]).await.unwrap();
+        client.query(&stmt, &[&id.to_string(Encoding::Base64), &revision_u32, &data_decoded, &document.deleted, &st_hash, &data_contract_id.to_string(Encoding::Base64) ]).await.unwrap();
 
         Ok(())
     }
@@ -105,7 +105,7 @@ impl PostgresDAO {
     pub async fn get_document_by_identifier(&self, identifier: Identifier) -> Result<Option<Document>, PoolError> {
         let client = self.connection_pool.get().await?;
 
-        let stmt = client.prepare_cached("SELECT id,identifier,revision FROM blocks where identifier = $1;").await.unwrap();
+        let stmt = client.prepare_cached("SELECT id,identifier,revision,deleted FROM blocks where identifier = $1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base64)])
             .await.unwrap();

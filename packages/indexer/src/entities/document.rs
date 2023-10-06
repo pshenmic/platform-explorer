@@ -19,6 +19,7 @@ pub struct Document {
     pub identifier: Identifier,
     pub data_contract_identifier: Identifier,
     pub data: Option<BTreeMap<String, Value>>,
+    pub deleted: bool,
     pub revision: Revision,
 }
 
@@ -34,7 +35,9 @@ impl From<Row> for Document {
 
         let revision: u32 = row.get(3);
 
-        return Document { id: Some(id), identifier, data: None, data_contract_identifier, revision: Revision::from(revision as u64) };
+        let deleted: bool = row.get(4);
+
+        return Document { id: Some(id), deleted, identifier, data: None, data_contract_identifier, revision: Revision::from(revision as u64) };
     }
 }
 
@@ -49,7 +52,7 @@ impl From<DocumentTransition> for Document {
                 let data_contract_identifier = base.data_contract_id();
                 let revision: Revision = Revision::from(0 as u64);
 
-                return Document { id: None, identifier, data: Some(data), data_contract_identifier, revision };
+                return Document { id: None, identifier, data: Some(data), data_contract_identifier, revision, deleted: false };
             }
             DocumentTransition::Replace(transition) => {
                 let base = transition.base().clone();
@@ -59,7 +62,7 @@ impl From<DocumentTransition> for Document {
                 let revision = transition.revision();
 
 
-                return Document { id: None, identifier, data: Some(data), data_contract_identifier, revision };
+                return Document { id: None, identifier, data: Some(data), data_contract_identifier, revision, deleted: false };
 
             }
             DocumentTransition::Delete(transition) => {
@@ -68,7 +71,7 @@ impl From<DocumentTransition> for Document {
                 let data_contract_identifier = base.data_contract_id();
                 let revision: Revision = Revision::from(0 as u64);
 
-                return Document { id: None, identifier, data: None, data_contract_identifier, revision };
+                return Document { id: None, identifier, data: None, data_contract_identifier, revision, deleted: true };
             }
         }
 
