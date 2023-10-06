@@ -14,7 +14,8 @@ function DataContractRoute() {
     return (
         <div className="container">
             <div className={"data_contract_identifier"}>
-                Identifier: {dataContract.identifier}
+                <span>Identifier: {dataContract.identifier}</span>
+                <span>Version: {dataContract.version}</span>
             </div>
             <div className={"data_contract_schema"}>
                 {JSON.stringify(dataContract.schema, null, 2)}

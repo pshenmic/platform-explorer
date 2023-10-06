@@ -5,6 +5,13 @@
     word-wrap: break-word;
     max-width: 100%;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.data_contract_identifier span {
+    padding: 10px;
 }
 
 .data_contract_schema {
