@@ -13,7 +13,6 @@ function BlockRoute() {
     const {block} = useLoaderData();
 
     const txHashes = block?.txs || [];
-    console.log(block)
 
     return (
         <div className="container">

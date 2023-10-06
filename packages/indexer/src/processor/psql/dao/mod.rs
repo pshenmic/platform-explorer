@@ -8,6 +8,7 @@ use dpp::state_transition::data_contract_create_transition::DataContractCreateTr
 use sha256::{digest};
 use base64::{Engine as _, engine::{general_purpose}};
 use crate::entities::block_header::BlockHeader;
+use crate::entities::data_contract::DataContract;
 
 pub struct PostgresDAO {
     connection_pool: Pool,
@@ -45,18 +46,20 @@ impl PostgresDAO {
         client.query(&stmt, &[&hash, &data, &st_type, &index, &block_hash]).await.unwrap();
     }
 
-    pub async fn create_data_contract(&self, state_transition: DataContractCreateTransition) {
-        let id = state_transition.data_contract().id();
+    pub async fn create_data_contract(&self, data_contract: DataContract) {
+        let id = data_contract.identifier;
         let id_str = id.to_string(Encoding::Base58);
 
-        let schema = state_transition.data_contract().document_schemas().clone();
+        let schema = data_contract.schema;
         let schema_decoded = serde_json::to_value(schema).unwrap();
 
-        let query = "INSERT INTO data_contracts(identifier, schema) VALUES ($1, $2);";
+        let version = data_contract.version as i32;
+
+        let query = "INSERT INTO data_contracts(identifier, schema, version) VALUES ($1, $2, $3);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
-        client.query(&stmt, &[&id_str, &schema_decoded]).await.unwrap();
+        client.query(&stmt, &[&id_str, &schema_decoded, &version]).await.unwrap();
     }
 
     pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<BlockHeader>, PoolError> {
