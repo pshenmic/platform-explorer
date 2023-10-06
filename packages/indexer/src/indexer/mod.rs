@@ -68,7 +68,6 @@ impl Indexer {
 
                         match result {
                             Ok(_) => {
-                                println!("Successfully indexed block with height {}", block_height);
                                 break;
                             }
                             Err(err) => {

@@ -9,6 +9,7 @@ use base64::{Engine as _, engine::{general_purpose}};
 use dpp::serialization::PlatformSerializable;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
+use crate::entities::data_contract::DataContract;
 
 pub enum ProcessorError {
     DatabaseError,
@@ -50,7 +51,9 @@ impl PSQLProcessor {
     }
 
     pub async fn handle_data_contract_create(&self, state_transition: DataContractCreateTransition) -> () {
-        self.dao.create_data_contract(state_transition).await;
+        let data_contract = DataContract::from(state_transition);
+
+        self.dao.create_data_contract(data_contract).await;
     }
 
     pub async fn handle_st(&self, block_hash: String, index: i32,state_transition: StateTransition) -> () {
