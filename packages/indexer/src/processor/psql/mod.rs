@@ -13,8 +13,10 @@ use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatch
 use dpp::state_transition::documents_batch_transition::{DocumentCreateTransition, DocumentReplaceTransition, DocumentsBatchTransition};
 use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransition;
 use sha256::digest;
+use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
+use crate::entities::data_contract::DataContract;
 use crate::entities::document::Document;
 use crate::processor::psql::ProcessorError::UnexpectedError;
 
@@ -58,9 +60,15 @@ impl PSQLProcessor {
     }
 
     pub async fn handle_data_contract_create(&self, state_transition: DataContractCreateTransition) -> () {
-        self.dao.create_data_contract(state_transition.clone()).await;
+        let data_contract = DataContract::from(state_transition);
 
-        println!("Created data contract with identifier {}" , state_transition.clone().data_contract().id().to_string(Encoding::Base58))
+        self.dao.create_data_contract(data_contract).await;
+    }
+
+    pub async fn handle_data_contract_update(&self, state_transition: DataContractUpdateTransition) -> () {
+        let data_contract = DataContract::from(state_transition);
+
+        self.dao.create_data_contract(data_contract).await;
     }
 
     pub async fn handle_documents_batch(&self, state_transition: DocumentsBatchTransition, st_hash: String) -> () {
@@ -83,16 +91,22 @@ impl PSQLProcessor {
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractCreate(
                     st.clone()
                 )).unwrap();
-
                 self.dao.create_state_transition(block_hash, st_type, index, bytes).await;
 
-                self.handle_data_contract_create(st).await
+                self.handle_data_contract_create(st).await;
+
+                println!("Processed DataContractCreate at block hash {}", block_hash);
             }
             StateTransition::DataContractUpdate(st) => {
                 st_type = st.state_transition_type() as i32;
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractUpdate(
                     st.clone()
                 )).unwrap();
+                self.dao.create_state_transition(block_hash, st_type, index, bytes).await;
+
+                self.handle_data_contract_update(st).await;
+
+                println!("Processed DataContractUpdate at block hash {}", block_hash);
             }
             StateTransition::DocumentsBatch(st) => {
                 st_type = st.state_transition_type() as i32;

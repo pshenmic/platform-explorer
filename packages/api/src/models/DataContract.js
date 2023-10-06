@@ -1,11 +1,13 @@
 module.exports = class DataContract {
     identifier
+    version
 
-    constructor(identifier) {
+    constructor(identifier, version) {
         this.identifier = identifier;
+        this.version = version;
     }
 
-    static fromJSON({identifier}) {
-        return new DataContract(identifier)
+    static fromJSON({identifier, version}) {
+        return new DataContract(identifier, version)
     }
 }
