@@ -25,7 +25,7 @@ pub struct Document {
 
 impl From<Row> for Document {
     fn from(row: Row) -> Self {
-        let id: u32 = row.get(0);
+        let id: i32 = row.get(0);
 
         let identifier_str: String = row.get(1);
         let identifier = Identifier::from_string(&identifier_str, Encoding::Base58).unwrap();
@@ -33,11 +33,11 @@ impl From<Row> for Document {
         let data_contract_identifier_str: String = row.get(2);
         let data_contract_identifier = Identifier::from_string(&data_contract_identifier_str, Encoding::Base58).unwrap();
 
-        let revision: u32 = row.get(3);
+        let revision: i32 = row.get(3);
 
         let deleted: bool = row.get(4);
 
-        return Document { id: Some(id), deleted, identifier, data: None, data_contract_identifier, revision: Revision::from(revision as u64) };
+        return Document { id: Some(id as u32), deleted, identifier, data: None, data_contract_identifier, revision: Revision::from(revision as u64) };
     }
 }
 
