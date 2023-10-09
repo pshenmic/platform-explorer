@@ -7,7 +7,7 @@ import GoToHeightForm from "./../../components/goToHeightForm/GoToHeightForm";
 import ItemsOnPageSelector from "./../../components/itemsOnPageSelector/ItemsOnPageSelector";
 
 
-const blocksPerPage = {
+const blocksPerPageConfig = {
     default: 25,
     values: [10, 25, 50, 75, 100]
 }
@@ -28,7 +28,7 @@ function Blocks({blocks}) {
 export async function loader({params}) {
     const {blocksCount} = await Api.getStatus();
 
-    const blocks = await Api.getBlocks(blocksCount - blocksPerPage.default, blocksCount);
+    const blocks = await Api.getBlocks(blocksCount - blocksPerPageConfig.default, blocksCount);
 
     return {blocks, blocksCount};
 }
@@ -36,7 +36,7 @@ export async function loader({params}) {
 function BlocksRoute() {
     const {blocks: defaultBlocks, blocksCount} = useLoaderData()
     const [blocks, setBlocks] = useState(defaultBlocks)
-    const [blocksPerPage, setBlocksPerPage] = useState(blocksPerPage.default);
+    const [blocksPerPage, setBlocksPerPage] = useState(blocksPerPageConfig.default);
     const [paginateActivePage, setPaginateActivePage] = useState(0);
     const [searchedHeight, setSearchedHeight] = useState(0);
     const [searchedHeightCorrection, setSearchedHeightCorrection] = useState(true);
@@ -127,8 +127,8 @@ function BlocksRoute() {
                 
                     <ItemsOnPageSelector
                         itemsOnPageSelectHandler={itemsOnPageSelectHandler}
-                        defaultValue={blocksPerPage.default}
-                        items={blocksPerPage.values}
+                        defaultValue={blocksPerPageConfig.default}
+                        items={blocksPerPageConfig.values}
                     />
                 </div>
             </div>
