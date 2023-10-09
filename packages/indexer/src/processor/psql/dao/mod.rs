@@ -135,7 +135,7 @@ impl PostgresDAO {
     pub async fn get_document_by_identifier(&self, identifier: Identifier) -> Result<Option<Document>, PoolError> {
         let client = self.connection_pool.get().await?;
 
-        let stmt = client.prepare_cached("SELECT id,identifier,revision,deleted FROM documents where identifier = $1 ORDER BY revision DESC LIMIT 1;").await.unwrap();
+        let stmt = client.prepare_cached("SELECT id,identifier,revision,deleted FROM documents where identifier = $1 ORDER BY id DESC LIMIT 1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base58)])
             .await.unwrap();
