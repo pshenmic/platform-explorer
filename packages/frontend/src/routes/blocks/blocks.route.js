@@ -1,10 +1,16 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Link, useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
 import './blocks.css'
 import ReactPaginate from "react-paginate";
+import GoToHeightForm from "./../../components/goToHeightForm/GoToHeightForm";
+import ItemsOnPageSelector from "./../../components/itemsOnPageSelector/ItemsOnPageSelector";
 
-const blocksPerPage = 30;
+
+const blocksPerPage = {
+    default: 25,
+    values: [10, 25, 50, 75, 100]
+}
 
 function Blocks({blocks}) {
     return blocks.map((block) =>
@@ -22,7 +28,7 @@ function Blocks({blocks}) {
 export async function loader({params}) {
     const {blocksCount} = await Api.getStatus();
 
-    const blocks = await Api.getBlocks(blocksCount - blocksPerPage, blocksCount);
+    const blocks = await Api.getBlocks(blocksCount - blocksPerPage.default, blocksCount);
 
     return {blocks, blocksCount};
 }
@@ -30,6 +36,10 @@ export async function loader({params}) {
 function BlocksRoute() {
     const {blocks: defaultBlocks, blocksCount} = useLoaderData()
     const [blocks, setBlocks] = useState(defaultBlocks)
+    const [blocksPerPage, setBlocksPerPage] = useState(blocksPerPage.default);
+    const [paginateActivePage, setPaginateActivePage] = useState(0);
+    const [searchedHeight, setSearchedHeight] = useState(0);
+    const [searchedHeightCorrection, setSearchedHeightCorrection] = useState(true);
 
     const pageCount = Math.ceil(blocksCount / blocksPerPage)
 
@@ -41,31 +51,86 @@ function BlocksRoute() {
         setBlocks(updated)
     }
 
+    const goToHeightInputChangeHandle = (e) => {
+        const [lastBlock] = defaultBlocks;
+        const lastBlockHeight = lastBlock.header.height;
+
+        setSearchedHeight(Number(e.target.value));
+
+        e.target.value.trim().length > 0 &&
+        (Number(e.target.value) > lastBlockHeight || Number(e.target.value) < 1) ?
+            setSearchedHeightCorrection(false): 
+            setSearchedHeightCorrection(true);
+    }
+
+    const goToHeight = async (e) => {
+        e.preventDefault();
+
+        const [lastBlock] = defaultBlocks;
+        const lastBlockHeight = lastBlock.header.height;
+
+        if (searchedHeightCorrection && searchedHeight !== 0) {
+            const page = Math.ceil((lastBlockHeight - searchedHeight) / blocksPerPage) - 1;
+            setPaginateActivePage(page);
+            handlePageClick({selected: page});
+        } 
+    }
+
+    const itemsOnPageSelectHandler = async (e) => setBlocksPerPage(Number(e.target.value));
+
+
+    useEffect(() => {
+        const [lastBlock] = defaultBlocks;
+        const lastBlockHeight = lastBlock.header.height;
+        const [lastBlockOnPage] = blocks;
+        const lastBlockOnPageHeight = lastBlockOnPage.header.height;
+        const page = Math.ceil((lastBlockHeight + 1 - lastBlockOnPageHeight) / blocksPerPage) - 1;
+
+        setPaginateActivePage(page);
+        handlePageClick({selected: page});
+    }, [blocksPerPage]);
+
     return (
         <div className="container">
             <div className={"block_list"}>
                 <span className="block_list__title">Last blocks</span>
 
                 <Blocks blocks={blocks}/>
-                <ReactPaginate
-                    breakLabel="..."
-                    nextLabel=">"
-                    onPageChange={handlePageClick}
-                    pageRangeDisplayed={2}
-                    marginPagesDisplayed={1}
-                    pageCount={pageCount}
-                    previousLabel="<"
-                    pageClassName="page-item"
-                    pageLinkClassName="page-link"
-                    previousClassName="page-item page-item--previous"
-                    previousLinkClassName="page-link"
-                    nextClassName="page-item page-item--next"
-                    nextLinkClassName="page-link"
-                    breakClassName="page-item  page-item--break-link"
-                    containerClassName="pagination"
-                    activeClassName="active"
-                    renderOnZeroPageCount={true}
-                />
+
+                <div className='list-navigation'>
+                    <GoToHeightForm
+                        goToHeightHandler={goToHeight}
+                        goToHeightInputChangeHandle={goToHeightInputChangeHandle}
+                        searchedHeightCorrection={searchedHeightCorrection}
+                    />
+
+                    <ReactPaginate 
+                        breakLabel="..."
+                        nextLabel=">"
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={2}
+                        marginPagesDisplayed={1}
+                        pageCount={pageCount}
+                        previousLabel="<"
+                        pageClassName="page-item"
+                        pageLinkClassName="page-link"
+                        previousClassName="page-item page-item--previous"
+                        previousLinkClassName="page-link"
+                        nextClassName="page-item page-item--next"
+                        nextLinkClassName="page-link"
+                        breakClassName="page-item  page-item--break-link"
+                        containerClassName="pagination"
+                        activeClassName="active"
+                        renderOnZeroPageCount={true}
+                        forcePage={paginateActivePage} 
+                    />
+                
+                    <ItemsOnPageSelector
+                        itemsOnPageSelectHandler={itemsOnPageSelectHandler}
+                        defaultValue={blocksPerPage.default}
+                        items={blocksPerPage.values}
+                    />
+                </div>
             </div>
         </div>
     );
