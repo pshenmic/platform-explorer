@@ -73,12 +73,11 @@ impl PostgresDAO {
     }
 
     pub async fn create_document(&self, document: Document, st_hash: String) -> Result<(), PoolError> {
-
         let id = document.identifier;
         let revision = document.revision;
         let revision_i32 = revision as i32;
 
-        let data_decoded = document.data.map(|data| serde_json::to_value(data).unwrap());
+        let data = document.data;
 
         let client = self.connection_pool.get().await.unwrap();
 
@@ -89,7 +88,7 @@ impl PostgresDAO {
 
         let stmt = client.prepare_cached(query).await.unwrap();
 
-        client.query(&stmt, &[&id.to_string(Encoding::Base58), &revision_i32, &data_decoded, &document.deleted, &st_hash, &data_contract_id]).await.unwrap();
+        client.query(&stmt, &[&id.to_string(Encoding::Base58), &revision_i32, &data, &document.deleted, &st_hash, &data_contract_id]).await.unwrap();
 
         println!("Created document {} [{} revision] [is_deleted {}]", document.identifier.to_string(Base58), revision_i32, document.deleted);
 
