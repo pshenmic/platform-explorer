@@ -4,16 +4,13 @@ const TransactionsDAO = require('../dao/TransactionsDAO')
 
 class MainController {
     constructor(knex) {
-        this.knex = knex
         this.blocksDAO = new BlocksDAO(knex)
         this.dataContractsDAO = new DataContractsDAO(knex)
         this.transactionsDAO = new TransactionsDAO(knex)
     }
 
      getStatus = async (request, response) => {
-         const [result] = await this.knex('blocks').max('height')
-
-         const {max} = result
+         const max = await this.blocksDAO.getMaxHeight()
 
          response.send({
              network: "dash-testnet-25",

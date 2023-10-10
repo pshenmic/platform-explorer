@@ -1,8 +1,20 @@
 const DataContract = require("../models/DataContract");
 
-module.exports = class BlockDAO {
+module.exports = class DataContractsDAO {
     constructor(knex) {
         this.knex = knex;
+    }
+
+    getDataContracts = async () => {
+        const subquery = this.knex('data_contracts')
+            .select(this.knex.raw('data_contracts.id as id, data_contracts.identifier as identifier, data_contracts.version as version, rank() over (partition by identifier order by version desc) rank'))
+            .as('data_contracts')
+
+        const rows = await this.knex(subquery)
+            .select('id', 'identifier', 'version', 'rank')
+            .where('rank', '=', 1)
+
+        return rows.map(dataContract => DataContract.fromRow(dataContract));
     }
 
     getDataContractByIdentifier = async (identifier) => {
