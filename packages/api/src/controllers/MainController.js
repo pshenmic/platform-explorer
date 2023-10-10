@@ -9,17 +9,17 @@ class MainController {
         this.transactionsDAO = new TransactionsDAO(knex)
     }
 
-     getStatus = async (request, response) => {
-         const max = await this.blocksDAO.getMaxHeight()
+    getStatus = async (request, response) => {
+        const max = await this.blocksDAO.getMaxHeight()
 
-         response.send({
-             network: "dash-testnet-25",
-             appVersion: "1",
-             p2pVersion: "8",
-             blockVersion: "13",
-             blocksCount: max,
-             tenderdashVersion: "0.13.1"
-         });
+        response.send({
+            network: "dash-testnet-25",
+            appVersion: "1",
+            p2pVersion: "8",
+            blockVersion: "13",
+            blocksCount: max,
+            tenderdashVersion: "0.13.1"
+        });
     }
 
     search = async (request, response) => {
@@ -35,7 +35,7 @@ class MainController {
             const block = await this.blocksDAO.getBlockByHeight(query)
 
             if (block) {
-                return response.send(block)
+                return response.send({block})
             }
         }
 
@@ -44,14 +44,14 @@ class MainController {
             const block = await this.blocksDAO.getBlockByHash(query)
 
             if (block) {
-                return response.send(block)
+                return response.send({block})
             }
 
             // search transactions
             const transaction = await this.transactionsDAO.getTransactionByHash(query)
 
             if (transaction) {
-                return response.send(transaction)
+                return response.send({transaction})
             }
         }
 
@@ -61,7 +61,7 @@ class MainController {
             const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(query)
 
             if (dataContract) {
-                return response.send(dataContract)
+                return response.send({dataContract})
             }
         }
 
