@@ -25,12 +25,12 @@ module.exports = ({fastify, mainController, blocksController, transactionsContro
         {
             path: '/transactions',
             method: 'GET',
-            handler: transactiosnController.getTransactions
+            handler: transactionsController.getTransactions
         },
         {
             path: '/transaction/:txHash',
             method: 'GET',
-            handler: transactionController.getTransactionByHash
+            handler: transactionsController.getTransactionByHash
         },
         {
             path: '/dataContracts',
