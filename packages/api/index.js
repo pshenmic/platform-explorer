@@ -7,8 +7,8 @@ const Routes = require('./src/routes')
 
 const ServiceNotAvailableError = require("./src/errors/ServiceNotAvailableError");
 const MainController = require("./src/controllers/MainController");
-const TransactionController = require("./src/controllers/TransactionController");
-const BlockController = require("./src/controllers/BlockController");
+const TransactionsController = require("./src/controllers/TransactionsController");
+const BlocksController = require("./src/controllers/BlocksController");
 const DocumentsController = require("./src/controllers/DocumentsController");
 const packageVersion = require('./package.json').version
 const Worker = require('./src/worker/index')
@@ -70,12 +70,12 @@ const init = async () => {
     await knex.raw('select 1+1');
 
     const mainController = new MainController(knex)
-    const blockController = new BlockController(knex)
-    const transactionController = new TransactionController(client, knex)
+    const blocksController = new BlocksController(knex)
+    const transactionsController = new TransactionsController(client, knex)
     const dataContractsController = new DataContractsController(knex)
     const documentsController = new DocumentsController(knex)
 
-    Routes({fastify, mainController, blockController, transactionController, dataContractsController, documentsController})
+    Routes({fastify, mainController, blocksController, transactionsController, dataContractsController, documentsController})
 
     fastify.setErrorHandler(errorHandler)
     fastify.listen({ host: "0.0.0.0", port: 3005, listenTextResolver: (address) => console.log(`Platform indexer API has started on the ${address}`)});

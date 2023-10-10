@@ -1,7 +1,7 @@
 const Block = require('../models/Block');
 const BlocksDAO = require('../dao/BlocksDAO');
 
-class BlockController {
+class BlocksController {
     constructor(knex) {
         this.knex = knex
         this.blocksDAO = new BlocksDAO(knex)
@@ -61,4 +61,4 @@ class BlockController {
     }
 }
 
-module.exports = BlockController
+module.exports = BlocksController

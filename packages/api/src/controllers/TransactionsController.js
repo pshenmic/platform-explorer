@@ -2,7 +2,7 @@ const cache = require("../cache");
 const Transaction = require("../models/Transaction");
 const TransactionsDAO = require("../dao/TransactionsDAO");
 
-class TransactionController {
+class TransactionsController {
     constructor(client, knex) {
         this.knex = knex
         this.client = client
@@ -60,4 +60,4 @@ class TransactionController {
     }
 }
 
-module.exports = TransactionController
+module.exports = TransactionsController
