@@ -9,6 +9,7 @@ const ServiceNotAvailableError = require("./src/errors/ServiceNotAvailableError"
 const MainController = require("./src/controllers/MainController");
 const TransactionController = require("./src/controllers/TransactionController");
 const BlockController = require("./src/controllers/BlockController");
+const DocumentsController = require("./src/controllers/DocumentsController");
 const packageVersion = require('./package.json').version
 const Worker = require('./src/worker/index')
 const {BLOCK_TIME} = require("./src/constants");
@@ -72,8 +73,9 @@ const init = async () => {
     const blockController = new BlockController(knex)
     const transactionController = new TransactionController(client, knex)
     const dataContractsController = new DataContractsController(knex)
+    const documentsController = new DocumentsController(knex)
 
-    Routes({fastify, mainController, blockController, transactionController, dataContractsController})
+    Routes({fastify, mainController, blockController, transactionController, dataContractsController, documentsController})
 
     fastify.setErrorHandler(errorHandler)
     fastify.listen({ host: "0.0.0.0", port: 3005, listenTextResolver: (address) => console.log(`Platform indexer API has started on the ${address}`)});

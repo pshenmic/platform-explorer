@@ -9,7 +9,7 @@ module.exports = class Block {
         this.txs = txs;
     }
 
-    static fromJSON({header, txs}) {
-        return new Block(BlockHeader.fromJSON(header), txs)
+    static fromRow({header, txs}) {
+        return new Block(BlockHeader.fromRow(header), txs)
     }
 }

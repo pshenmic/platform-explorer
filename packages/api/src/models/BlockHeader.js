@@ -15,7 +15,7 @@ module.exports = class BlockHeader {
         this.l1LockedHeight = l1LockedHeight;
     }
 
-    static fromJSON({hash, height, timestamp, block_version, app_version, l1_locked_height}) {
+    static fromRow({hash, height, timestamp, block_version, app_version, l1_locked_height}) {
         return new BlockHeader(hash, height, new Date(timestamp), block_version, app_version, l1_locked_height)
     }
 }
