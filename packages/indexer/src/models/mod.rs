@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+use dpp::state_transition::documents_batch_transition::{DocumentCreateTransition, DocumentDeleteTransition, DocumentReplaceTransition};
 use serde::{Deserialize};
 
 #[derive(Deserialize)]
@@ -53,6 +54,12 @@ pub struct TDBlock {
 pub struct BlockWrapper {
     pub block_id: TDBlockId,
     pub block: TDBlock,
+}
+
+enum DocumentTransition {
+    Create(DocumentCreateTransition),
+    Replace(DocumentReplaceTransition),
+    Delete(DocumentDeleteTransition),
 }
 
 mod from_iso8601 {

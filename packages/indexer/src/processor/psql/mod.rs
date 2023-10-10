@@ -2,19 +2,29 @@ mod dao;
 
 use std::num::ParseIntError;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
-use deadpool_postgres::{ PoolError };
+use deadpool_postgres::{PoolError};
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
+use dpp::data_contracts::SystemDataContract;
+use dpp::platform_value::string_encoding::Encoding;
+use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::serialization::PlatformSerializable;
+use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
+use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
+use dpp::state_transition::documents_batch_transition::{DocumentCreateTransition, DocumentReplaceTransition, DocumentsBatchTransition};
+use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransition;
+use sha256::digest;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
 use crate::entities::data_contract::DataContract;
+use crate::entities::document::Document;
+use crate::processor::psql::ProcessorError::UnexpectedError;
 
 pub enum ProcessorError {
     DatabaseError,
-    UnexpectedError
+    UnexpectedError,
 }
 
 impl From<PoolError> for ProcessorError {
@@ -63,7 +73,17 @@ impl PSQLProcessor {
         self.dao.create_data_contract(data_contract).await;
     }
 
-    pub async fn handle_st(&self, block_hash: String, index: i32,state_transition: StateTransition) -> () {
+    pub async fn handle_documents_batch(&self, state_transition: DocumentsBatchTransition, st_hash: String) -> () {
+        let transitions = state_transition.transitions().clone();
+
+        for (i, document_transition) in transitions.iter().enumerate() {
+            let document = Document::from(document_transition.clone());
+
+            self.dao.create_document(document, st_hash.clone()).await;
+        }
+    }
+
+    pub async fn handle_st(&self, block_hash: String, index: i32, state_transition: StateTransition) -> () {
         let mut st_type: i32 = 999;
         let mut bytes: Vec<u8> = Vec::new();
 
@@ -73,6 +93,7 @@ impl PSQLProcessor {
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractCreate(
                     st.clone()
                 )).unwrap();
+                self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
 
                 self.handle_data_contract_create(st).await;
 
@@ -83,6 +104,7 @@ impl PSQLProcessor {
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractUpdate(
                     st.clone()
                 )).unwrap();
+                self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
 
                 self.handle_data_contract_update(st).await;
 
@@ -93,6 +115,14 @@ impl PSQLProcessor {
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DocumentsBatch(
                     st.clone()
                 )).unwrap();
+
+                let st_hash = digest(bytes.clone()).to_uppercase();
+
+                self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes.clone()).await;
+
+                self.handle_documents_batch(st, st_hash).await;
+
+                println!("Processed DocumentsBatch at block hash {}", block_hash);
             }
             StateTransition::IdentityCreate(st) => {
                 st_type = st.state_transition_type() as i32;
@@ -125,8 +155,6 @@ impl PSQLProcessor {
                 )).unwrap();
             }
         }
-
-        self.dao.create_state_transition(block_hash, st_type, index, bytes).await;
     }
 
     pub async fn handle_block(&self, block: Block) -> Result<(), ProcessorError> {
@@ -135,8 +163,11 @@ impl PSQLProcessor {
         match processed {
             None => {
                 // TODO IMPLEMENT PSQL TRANSACTION
-
                 let block_height = block.header.height.clone();
+
+                if (block.header.height == 1) {
+                    self.handle_init_chain().await;
+                }
 
                 let block_hash = self.dao.create_block(block.header).await;
 
@@ -144,6 +175,7 @@ impl PSQLProcessor {
                     println!("No platform transactions at block height {}", block_height.clone());
                 }
 
+                println!("Processing block at height {}", block_height.clone());
                 for (i, tx_base_64) in block.txs.iter().enumerate() {
                     let bytes = general_purpose::STANDARD.decode(tx_base_64).unwrap();
                     let st_result = self.decoder.decode(bytes).await;
@@ -155,10 +187,43 @@ impl PSQLProcessor {
 
                 Ok(())
             }
-            Some(st) => {
+            Some(_) => {
                 println!("Block at the height {} has been already processed", &block.header.height);
                 Ok(())
             }
         }
+    }
+
+
+    pub async fn handle_init_chain(&self) -> () {
+        println!("Processing initChain");
+
+        let mut system_contract;
+        let mut data_contract;
+
+        system_contract = SystemDataContract::Withdrawals;
+        data_contract = DataContract::from(system_contract);
+        println!("Processing SystemDataContract::Withdrawals {}", data_contract.identifier.to_string(Base58));
+        self.dao.create_data_contract(data_contract).await;
+
+        system_contract = SystemDataContract::MasternodeRewards;
+        data_contract = DataContract::from(system_contract);
+        println!("Processing SystemDataContract::MasternodeRewards {}", data_contract.identifier.to_string(Base58));
+        self.dao.create_data_contract(data_contract).await;
+
+        system_contract = SystemDataContract::FeatureFlags;
+        data_contract = DataContract::from(system_contract);
+        println!("Processing SystemDataContract::FeatureFlags {}", data_contract.identifier.to_string(Base58));
+        self.dao.create_data_contract(data_contract).await;
+
+        system_contract = SystemDataContract::DPNS;
+        data_contract = DataContract::from(system_contract);
+        println!("Processing SystemDataContract::DPNS {}", data_contract.identifier.to_string(Base58));
+        self.dao.create_data_contract(data_contract).await;
+
+        system_contract = SystemDataContract::Dashpay;
+        data_contract = DataContract::from(system_contract);
+        println!("Processing SystemDataContract::Dashpay {}", data_contract.identifier.to_string(Base58));
+        self.dao.create_data_contract(data_contract).await;
     }
 }

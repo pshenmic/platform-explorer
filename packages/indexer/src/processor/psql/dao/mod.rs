@@ -6,7 +6,13 @@ use dpp::platform_value::string_encoding::Encoding;
 use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use sha256::{digest};
+use crate::entities::document::Document;
 use base64::{Engine as _, engine::{general_purpose}};
+use dpp::identifier::Identifier;
+use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
+use dpp::serialization::PlatformSerializable;
+use dpp::state_transition::documents_batch_transition::DocumentCreateTransition;
+use dpp::state_transition::StateTransition;
 use crate::entities::block_header::BlockHeader;
 use crate::entities::data_contract::DataContract;
 
@@ -44,6 +50,8 @@ impl PostgresDAO {
         let stmt = client.prepare_cached(query).await.unwrap();
 
         client.query(&stmt, &[&hash, &data, &st_type, &index, &block_hash]).await.unwrap();
+
+        println!("Created ST with hash {} from block with hash {}", &hash, &block_hash);
     }
 
     pub async fn create_data_contract(&self, data_contract: DataContract) {
@@ -60,6 +68,31 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
         client.query(&stmt, &[&id_str, &schema_decoded, &version]).await.unwrap();
+
+        println!("Created DataContract {} [{} version]", id_str, version);
+    }
+
+    pub async fn create_document(&self, document: Document, st_hash: String) -> Result<(), PoolError> {
+        let id = document.identifier;
+        let revision = document.revision;
+        let revision_i32 = revision as i32;
+
+        let data = document.data;
+
+        let client = self.connection_pool.get().await.unwrap();
+
+        let data_contract = self.get_data_contract_by_identifier(document.data_contract_identifier).await.unwrap().unwrap();
+        let data_contract_id = data_contract.id.unwrap() as i32;
+
+        let query = "INSERT INTO documents(identifier,revision,data,deleted,state_transition_hash,data_contract_id) VALUES ($1, $2, $3, $4, $5, $6);";
+
+        let stmt = client.prepare_cached(query).await.unwrap();
+
+        client.query(&stmt, &[&id.to_string(Encoding::Base58), &revision_i32, &data, &document.deleted, &st_hash, &data_contract_id]).await.unwrap();
+
+        println!("Created document {} [{} revision] [is_deleted {}]", document.identifier.to_string(Base58), revision_i32, document.deleted);
+
+        Ok(())
     }
 
     pub async fn get_block_header_by_height(&self, block_height: i32) -> Result<Option<BlockHeader>, PoolError> {
@@ -79,6 +112,40 @@ impl PostgresDAO {
         let block = blocks.first();
 
         return Ok(block.cloned());
+    }
+
+    pub async fn get_data_contract_by_identifier(&self, identifier: Identifier) -> Result<Option<DataContract>, PoolError> {
+        let client = self.connection_pool.get().await?;
+
+        let stmt = client.prepare_cached("SELECT id,identifier,version FROM data_contracts where identifier = $1 ORDER by version DESC LIMIT 1;").await.unwrap();
+
+        let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base58)])
+            .await.unwrap();
+
+        let blocks: Vec<DataContract> = rows
+            .into_iter()
+            .map(|row| {
+                row.into()
+            }).collect::<Vec<DataContract>>();
+
+        Ok(blocks.first().cloned())
+    }
+
+    pub async fn get_document_by_identifier(&self, identifier: Identifier) -> Result<Option<Document>, PoolError> {
+        let client = self.connection_pool.get().await?;
+
+        let stmt = client.prepare_cached("SELECT id,identifier,revision,deleted FROM documents where identifier = $1 ORDER BY id DESC LIMIT 1;").await.unwrap();
+
+        let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base58)])
+            .await.unwrap();
+
+        let blocks: Vec<Document> = rows
+            .into_iter()
+            .map(|row| {
+                row.into()
+            }).collect::<Vec<Document>>();
+
+        Ok(blocks.first().cloned())
     }
 
     pub async fn create_block(&self, block_header: BlockHeader) -> String {

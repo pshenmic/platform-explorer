@@ -15,7 +15,7 @@ module.exports = class Transaction {
         this.timestamp = timestamp;
     }
 
-    static fromJSON({hash, index, block_height, type, data, timestamp}) {
+    static fromRow({hash, index, block_height, type, data, timestamp}) {
         return new Transaction(hash, index, block_height, type, data, timestamp)
     }
 }
