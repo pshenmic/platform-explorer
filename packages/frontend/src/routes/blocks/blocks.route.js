@@ -44,7 +44,7 @@ function BlocksRoute() {
     const pageCount = Math.ceil(blocksCount / blocksPerPage)
 
     const handlePageClick = async ({selected}) => {
-        const fromBlock = blocksCount - ((selected+1) * blocksPerPage)
+        const fromBlock = blocksCount - ((selected+1) * blocksPerPage) + 1;
         const toBlock = blocksCount - (((selected+1) - 1) * blocksPerPage)
         const updated = await Api.getBlocks(fromBlock, toBlock);
 
@@ -70,14 +70,13 @@ function BlocksRoute() {
         const lastBlockHeight = lastBlock.header.height;
 
         if (searchedHeightCorrection && searchedHeight !== 0) {
-            const page = Math.ceil((lastBlockHeight - searchedHeight) / blocksPerPage) - 1;
+            const page = Math.ceil((lastBlockHeight - searchedHeight + 1) / blocksPerPage) - 1;
             setPaginateActivePage(page);
             handlePageClick({selected: page});
         } 
     }
 
     const itemsOnPageSelectHandler = async (e) => setBlocksPerPage(Number(e.target.value));
-
 
     useEffect(() => {
         const [lastBlock] = defaultBlocks;
