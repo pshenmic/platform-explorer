@@ -129,30 +129,40 @@ impl PSQLProcessor {
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreate(
                     st.clone()
                 )).unwrap();
+
+                self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
             }
             StateTransition::IdentityTopUp(st) => {
                 st_type = st.state_transition_type() as i32;
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityTopUp(
                     st.clone()
                 )).unwrap();
+
+                self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
             }
             StateTransition::IdentityCreditWithdrawal(st) => {
                 st_type = st.state_transition_type() as i32;
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreditWithdrawal(
                     st.clone()
                 )).unwrap();
+
+                self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
             }
             StateTransition::IdentityUpdate(st) => {
                 st_type = st.state_transition_type() as i32;
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityUpdate(
                     st.clone()
                 )).unwrap();
+
+                self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
             }
             StateTransition::IdentityCreditTransfer(st) => {
                 st_type = st.state_transition_type() as i32;
                 bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreditTransfer(
                     st.clone()
                 )).unwrap();
+
+                self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
             }
         }
     }
