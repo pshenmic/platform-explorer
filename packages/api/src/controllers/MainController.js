@@ -32,7 +32,7 @@ class MainController {
             return response.status(400).send({error: '`?query=` missing'})
         }
 
-        if (/^[0-9]$/.test(query)) {
+        if (/^[0-9]+$/.test(query)) {
             // search block by height
             const block = await this.blocksDAO.getBlockByHeight(query)
 
