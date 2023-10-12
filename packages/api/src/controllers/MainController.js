@@ -63,6 +63,12 @@ class MainController {
             if (dataContract) {
                 return response.send({dataContract})
             }
+            // search block by height
+            const document = await this.dataContractsDAO.getDataContractByIdentifier(query)
+
+            if (document) {
+                return response.send({document})
+            }
         }
 
         response.status(404).send({message: 'not found'})
