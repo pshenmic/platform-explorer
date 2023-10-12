@@ -1,11 +1,13 @@
 const BlocksDAO = require('../dao/BlocksDAO')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const TransactionsDAO = require('../dao/TransactionsDAO')
+const DocumentsDAO = require('../dao/DocumentsDAO')
 
 class MainController {
     constructor(knex) {
         this.blocksDAO = new BlocksDAO(knex)
         this.dataContractsDAO = new DataContractsDAO(knex)
+        this.documentsDAO = new DocumentsDAO(knex)
         this.transactionsDAO = new TransactionsDAO(knex)
     }
 
@@ -64,7 +66,7 @@ class MainController {
                 return response.send({dataContract})
             }
             // search block by height
-            const document = await this.dataContractsDAO.getDataContractByIdentifier(query)
+            const document = await this.documentsDAO.getDocumentByIdentifier(query)
 
             if (document) {
                 return response.send({document})
