@@ -75,7 +75,7 @@ const getDocumentByIdentifier = (identifier) => {
 }
 
 const getDocumentsByDataContract = (dataContractIdentifier) => {
-    return call(`dataContracts/${dataContractIdentifier}/documents`, 'GET')
+    return call(`dataContract/${dataContractIdentifier}/documents`, 'GET')
 }
 
 const getStatus = () => {

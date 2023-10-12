@@ -30,9 +30,9 @@ export default function RootComponent() {
 
                 if (searchResult?.block) {
                     // redirect to blocks
-                    console.log(searchResult?.block.block_id.hash)
+                    console.log(searchResult?.block.header.hash)
                     setSearchQuery("")
-                    return navigate(`/block/${searchResult?.block.block_id.hash}`)
+                    return navigate(`/block/${searchResult?.block.header.hash}`)
                 }
 
                 if (searchResult?.transaction) {
@@ -40,12 +40,16 @@ export default function RootComponent() {
                     return navigate(`/transaction/${searchResult?.transaction.hash}`)
                 }
 
-                if (searchResult?.identifier) {
+                if (searchResult?.dataContract) {
                     setSearchQuery("")
-                    return navigate(`/dataContract/${searchResult?.identifier}`)
+                    return navigate(`/dataContract/${searchResult?.dataContract.identifier}`)
                 }
-
-
+                
+                if (searchResult?.document) {
+                    setSearchQuery("")
+                    return navigate(`/document/${searchResult?.document.identifier}`)
+                }
+                
                 showModalWindow('Not found', 6000)
             } catch (e) {
                 showModalWindow('Not found', 6000)
