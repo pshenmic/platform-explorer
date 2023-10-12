@@ -11,10 +11,6 @@ export async function loader({params}) {
 
 function DocumentRoute() {
     const document = useLoaderData()
-    const decumentData = document.data;
-
-    console.log('document', document);
-
 
     return (
         <div className="container">

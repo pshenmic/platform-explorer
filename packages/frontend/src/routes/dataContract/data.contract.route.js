@@ -16,9 +16,7 @@ export async function loader({params}) {
 }
 
 function DataContractRoute() {
-    const dataContract = useLoaderData().dataContract
-    const documents = useLoaderData().documents
-    const [schemaVisibility, setSchemaVisibility] = useState(false)
+    const {dataContract, documents} = useLoaderData();
 
     return (
         <div className="container">

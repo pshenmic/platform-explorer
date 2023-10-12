@@ -40,14 +40,14 @@ export default function RootComponent() {
                     return navigate(`/transaction/${searchResult?.transaction.hash}`)
                 }
 
-                if (searchResult?.identifier) {
+                if (searchResult?.dataContract) {
                     setSearchQuery("")
-                    return navigate(`/dataContract/${searchResult?.identifier}`)
+                    return navigate(`/dataContract/${searchResult?.dataContract.identifier}`)
                 }
                 
                 if (searchResult?.document) {
                     setSearchQuery("")
-                    return navigate(`/document/${searchResult?.document}`)
+                    return navigate(`/document/${searchResult?.document.identifier}`)
                 }
                 
                 showModalWindow('Not found', 6000)
