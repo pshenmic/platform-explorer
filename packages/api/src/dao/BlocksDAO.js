@@ -59,10 +59,6 @@ module.exports = class BlockDAO {
             return acc
         }, [])
 
-        if (!block.length) {
-            return null
-        }
-
         return Block.fromRow({header: block, txs});
     }
 
