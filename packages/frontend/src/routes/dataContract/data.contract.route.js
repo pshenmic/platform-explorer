@@ -2,6 +2,7 @@ import React , {useState}from 'react';
 import {useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
 import {Link} from "react-router-dom";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import './data_contract.scss'
 import './documents_list_item.scss'
 
@@ -34,32 +35,36 @@ function DataContractRoute() {
                     </div>
                 </div>
 
-                <div className='data_contract__info_container'>
-                    <div className={schemaVisibility ? 'data_contract_schema': 'data_contract_schema data_contract_schema--hidden'}>
-                        <div className='data_contract_schema__head'>
-                            <div className='data_contract_schema__title'>Schema</div>
-                            <div className='data_contract_schema__hider'>
-                                <span className={schemaVisibility ? 'data_contract_schema__hide_btn': 'data_contract_schema__hide_btn disabled'}
-                                      onClick={()=>{setSchemaVisibility(false)}}>Hide</span>
 
-                                <span className={!schemaVisibility ? 'data_contract_schema__show_btn': 'data_contract_schema__show_btn disabled'}
-                                      onClick={()=>{setSchemaVisibility(true)}}>Show</span>
-                            </div>
+                <Tabs 
+                    selectedTabClassName="data_contract__tab--selected"
+                    className='data_contract__info_tabs'
+                    >
+
+                    <TabList className='data_contract__tabs-container'>
+                        <Tab className='data_contract__tab noselect'>Schema</Tab>
+                        <Tab className='data_contract__tab noselect'>Documents</Tab>
+                    </TabList>
+                    <TabPanel>
+                        <div className={'data_contract_schema'}>
+                            <div className={'data_contract_schema__info'}>{JSON.stringify(dataContract.schema, null, 2)}</div>
                         </div>
-                        <div className={schemaVisibility ? 'data_contract_schema__info' : 'data_contract_schema__info disabled'}>{JSON.stringify(dataContract.schema, null, 2)}</div>
-                    </div>
-                    
-                    <div className='documents_list'>
-                        <div className='documents_list__title'>Documents</div>
+                    </TabPanel>
+                    <TabPanel>
+                        <div className='documents_list'>
+                            {documents.map((document, key) => 
+                                <Link to={`/document/${document.identifier}`} key={key} 
+                                    className='documents_list_item'>
+                                    <span className='documents_list_item__identifier'>{document.identifier}</span>
+                                </Link>
+                            )}
 
-                        {documents.map((document, key) => 
-                            <Link to={`/document/${document.identifier}`} key={key} 
-                                className='documents_list_item'>
-                                <span className='documents_list_item__identifier'>{document.identifier}</span>
-                            </Link>
-                        )}
-                    </div>
-                </div>
+                            {documents.length === 0 &&
+                                <div className='documents_list__empty_message'>There are no documents created yet.</div>
+                            }
+                        </div>
+                    </TabPanel>
+                </Tabs>
             </div>
         </div>
     );

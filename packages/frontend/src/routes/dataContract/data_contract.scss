@@ -37,7 +37,6 @@
 }
 
 .data_contract_schema {
-    margin-top: 20px;
     background-color: #1a491c;
     padding: 10px;
     white-space: break-spaces;
@@ -49,53 +48,74 @@
     box-sizing: border-box;
     font-family: monospace;
     font-size: 12pt;
-    margin-right: 20px;
-    
-    &--hidden &__head {
-        margin-bottom: 0;
-    }
-
-    &__head {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 6px;
-    }
-
-    &__title {
-
-    }
-
-    &__hider {
-        margin-left: 12px;
-    }
-
-    &__hide_btn, &__show_btn  {
-        cursor: pointer;
-        border-bottom: 1px dashed;
-
-        &:hover {
-            color: gray;
-            border-bottom: none;
-        }
-    }
+    width: 100%;
 }
 
 .data_contract {
-    &__info_container {
+    width: 1000px;
+
+    &__info_tabs {
+        margin-top: 20px;
+    }
+
+    &__tabs-container {
         display: flex;
+        margin: 0;
+        padding-left: 0;
+        width: max-content;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    &__tab {
+        display: block;
+        background-color: #123513;
+        padding: 10px;
+        border-radius: 4px 4px 0 0;
+        
+        &:hover {
+            cursor: pointer;
+        }
+
+        &:not(&--selected):hover {
+            background-color:#1b451c;
+        }
+
+        &:focus-visible {
+            border: none;
+            outline: none;
+          }
+
+        &--selected {
+            background-color: #1a491c;
+            box-shadow: -1px 5px 6px #0000004a;
+            z-index: 1;
+        }
+    } 
+
+    &__info_tabs {
+        margin-top: 20px;
     }
 }
 
 .documents_list {
     height: max-content;
-    margin-top: 20px;
+    width: max-content;
+    min-width: 360px;
+    margin: 0 auto;
 
     &__title {
         margin-bottom: 6px;
     }
+
+    &__empty_message {
+        padding: 10px 0;
+    }
 }
 
-@media screen and (max-width: 980px) {
+
+
+@media screen and (max-width: 1020px) {
     .data_contract {
         width: 100%;
 
@@ -111,11 +131,14 @@
 
     .data_contract_schema {
         width: 100%;
-        margin-right: 0;
     }
 }
 
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 400px) {
+    .documents_list {
+        min-width: auto;
+    }
+
     .data_contract_identifier__info_item {
         flex-wrap: wrap;
     }
