@@ -44,8 +44,12 @@ export default function RootComponent() {
                     setSearchQuery("")
                     return navigate(`/dataContract/${searchResult?.identifier}`)
                 }
-
-
+                
+                if (searchResult?.document) {
+                    setSearchQuery("")
+                    return navigate(`/document/${searchResult?.document}`)
+                }
+                
                 showModalWindow('Not found', 6000)
             } catch (e) {
                 showModalWindow('Not found', 6000)
