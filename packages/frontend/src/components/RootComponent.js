@@ -30,9 +30,9 @@ export default function RootComponent() {
 
                 if (searchResult?.block) {
                     // redirect to blocks
-                    console.log(searchResult?.block.block_id.hash)
+                    console.log(searchResult?.block.header.hash)
                     setSearchQuery("")
-                    return navigate(`/block/${searchResult?.block.block_id.hash}`)
+                    return navigate(`/block/${searchResult?.block.header.hash}`)
                 }
 
                 if (searchResult?.transaction) {
