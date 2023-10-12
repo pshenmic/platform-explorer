@@ -1,0 +1,33 @@
+.documents_list {
+    background-color: #1a491c;
+    padding: 14px 20px;
+    border-radius: 16px;
+}
+
+.documents_list_item {
+    display: flex;
+    width: 100%;
+    color: #fff;
+    border-bottom: 1px solid #ffffff14;
+    padding: 4px 0;
+    margin-bottom: 2px;
+    padding-bottom: 6px;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: none;
+        color: gray;
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &__identifier {
+        word-wrap: break-word;
+        text-wrap: wrap;
+        word-break: break-all;
+        font-family: monospace;
+        font-size: 12pt;
+    }
+}

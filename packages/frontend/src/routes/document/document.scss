@@ -1,0 +1,27 @@
+.document {
+    background-color: #1a491c;
+    padding: 14px 20px;
+    border-radius: 16px;
+
+    &__info_item {
+        margin-bottom: 6px;
+        display: flex;
+    }
+
+    &__info_title {
+        margin-right: 6px;
+    }
+
+
+    &__data {
+        margin-top: 20px;
+        white-space: break-spaces;
+        height: 80%;
+        border-radius: 16px;
+        word-wrap: break-word;
+        max-width: 100%;
+        box-sizing: border-box;
+        font-family: monospace;
+        font-size: 12pt;
+    }
+}
