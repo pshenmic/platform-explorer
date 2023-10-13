@@ -1,0 +1,49 @@
+.go_to_height_form {
+    width: 115px;
+}
+
+.go_to_height_form__title {
+    margin-bottom: 4px;
+}
+
+.go_to_height_form__input,
+.go_to_height_form__input:focus {
+    width: 80px;
+    padding: 0 8px;
+    margin-right: 6px;
+    height: 29px;
+    box-sizing: border-box;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+.go_to_height_form__input::-webkit-outer-spin-button,
+.go_to_height_form__input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.go_to_height_form__input--incorrect {
+    /* border-color: #ffa1a1;
+    background-color: #ffa1a1; */
+    color: gray;
+}
+
+.go_to_height_form__button {
+    background-color: transparent;
+    border: 1px solid #ffffff75;
+    border-radius: 5px;
+    height: 29px;
+    color: #fff;
+}
+
+.go_to_height_form__button:disabled {
+    color: gray;
+}
+
+.go_to_height_form__button:hover:not(:disabled) {
+    border: 1px solid #ffffff;
+    background-color: #ffffff15;
+    cursor: pointer;
+}
