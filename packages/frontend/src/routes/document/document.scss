@@ -6,6 +6,11 @@
     &__info_item {
         margin-bottom: 6px;
         display: flex;
+        flex-wrap: wrap;
+    }
+
+    &__info_value {
+        word-break: break-all;
     }
 
     &__info_title {
@@ -24,6 +29,7 @@
         height: 80%;
         border-radius: 4px;
         word-wrap: break-word;
+        word-break: break-all;
         max-width: 100%;
         box-sizing: border-box;
         font-family: monospace;
