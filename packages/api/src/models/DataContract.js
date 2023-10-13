@@ -1,13 +1,15 @@
 module.exports = class DataContract {
     identifier
+    schema
     version
 
-    constructor(identifier, version) {
+    constructor(identifier, schema, version) {
         this.identifier = identifier;
+        this.schema = schema;
         this.version = version;
     }
 
-    static fromJSON({identifier, version}) {
-        return new DataContract(identifier, version)
+    static fromRow({identifier, schema, version}) {
+        return new DataContract(identifier, schema, version)
     }
 }

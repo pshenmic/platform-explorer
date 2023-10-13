@@ -2,10 +2,10 @@
  *
  * @param fastify {Fastify}
  * @param mainController {MainController}
- * @param blockController {BlockController}
- * @param transactionController {TransactionController}
+ * @param blockController {BlocksController}
+ * @param transactionsController {TransactionsController}
  */
-module.exports = ({fastify, mainController, blockController, transactionController, dataContractsController}) => {
+module.exports = ({fastify, mainController, blocksController, transactionsController, dataContractsController, documentsController}) => {
     const routes = [
         {
             path: '/status',
@@ -15,22 +15,22 @@ module.exports = ({fastify, mainController, blockController, transactionControll
         {
             path: '/block/:hash',
             method: 'GET',
-            handler: blockController.getBlockByHash
+            handler: blocksController.getBlockByHash
         },
         {
             path: '/blocks',
             method: 'GET',
-            handler: blockController.getBlocks
+            handler: blocksController.getBlocks
         },
         {
             path: '/transactions',
             method: 'GET',
-            handler: transactionController.getTransactions
+            handler: transactionsController.getTransactions
         },
         {
             path: '/transaction/:txHash',
             method: 'GET',
-            handler: transactionController.getTransactionByHash
+            handler: transactionsController.getTransactionByHash
         },
         {
             path: '/dataContracts',
@@ -43,6 +43,16 @@ module.exports = ({fastify, mainController, blockController, transactionControll
             handler: dataContractsController.getDataContractByIdentifier
         },
         {
+            path: '/dataContract/:identifier/documents',
+            method: 'GET',
+            handler: documentsController.getDocumentsByDataContract
+        },
+        {
+            path: '/document/:identifier',
+            method: 'GET',
+            handler: documentsController.getDocumentByIdentifier
+        },
+        {
             path: '/search',
             method: 'GET',
             handler: mainController.search
@@ -50,7 +60,7 @@ module.exports = ({fastify, mainController, blockController, transactionControll
         {
             path: '/transaction/decode',
             method: 'POST',
-            handler: transactionController.decode
+            handler: transactionsController.decode
         },
     ]
 

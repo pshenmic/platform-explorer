@@ -1,21 +1,27 @@
+const BlocksDAO = require('../dao/BlocksDAO')
+const DataContractsDAO = require('../dao/DataContractsDAO')
+const TransactionsDAO = require('../dao/TransactionsDAO')
+const DocumentsDAO = require('../dao/DocumentsDAO')
+
 class MainController {
     constructor(knex) {
-        this.knex = knex;
+        this.blocksDAO = new BlocksDAO(knex)
+        this.dataContractsDAO = new DataContractsDAO(knex)
+        this.documentsDAO = new DocumentsDAO(knex)
+        this.transactionsDAO = new TransactionsDAO(knex)
     }
 
-     getStatus = async (request, response) => {
-         const [result] = await this.knex('blocks').max('height')
+    getStatus = async (request, response) => {
+        const max = await this.blocksDAO.getMaxHeight()
 
-         const {max} = result
-
-         response.send({
-             network: "dash-testnet-25",
-             appVersion: "1",
-             p2pVersion: "8",
-             blockVersion: "13",
-             blocksCount: max,
-             tenderdashVersion: "0.13.1"
-         });
+        response.send({
+            network: "dash-testnet-26",
+            appVersion: "1",
+            p2pVersion: "8",
+            blockVersion: "13",
+            blocksCount: max,
+            tenderdashVersion: "0.13.2"
+        });
     }
 
     search = async (request, response) => {
@@ -26,43 +32,46 @@ class MainController {
             return response.status(400).send({error: '`?query=` missing'})
         }
 
-        if (/^[0-9]$/.test(query)) {
-            // search blocks by height
-            const [row] = await this.knex('blocks').select('hash', 'block_height').where('block_height', query)
+        if (/^[0-9]+$/.test(query)) {
+            // search block by height
+            const block = await this.blocksDAO.getBlockByHeight(query)
 
-            if (row) {
-                const {hash, block_height} = row
-
-                return response.send({hash: hash, height: block_height})
+            if (block) {
+                return response.send({block})
             }
         }
 
-        // check if base64 and 44 length for Identity ids
-        if (/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(query) && query.length === 44) {
-            // search blocks by height
-            const [row] = await this.knex('data_contracts').select('identifier').where('identifier', query)
+        if (/^[0-9A-F]{64,64}$/.test(query)) {
+            // search block by hash
+            const block = await this.blocksDAO.getBlockByHash(query)
 
-            if (row) {
-                return response.send({identifier: row.identifier})
+            if (block) {
+                return response.send({block})
+            }
+
+            // search transactions
+            const transaction = await this.transactionsDAO.getTransactionByHash(query)
+
+            if (transaction) {
+                return response.send({transaction})
             }
         }
 
-        // search blocks
-        const [row] = await this.knex('blocks').select('hash', 'block_height').where('hash', query)
+        // check for any Identifiers (data contracts, documents)
+        if (query.length >= 43 && query.length <= 44) {
+            // search data contracts
+            const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(query)
 
-        if (row) {
-            const {hash, block_height} = row
+            if (dataContract) {
+                return response.send({dataContract})
+            }
 
-            return response.send({hash: hash, height: block_height})
-        }
+            // search documents
+            const document = await this.documentsDAO.getDocumentByIdentifier(query)
 
-        // search transactions
-        const [stRow] = await this.knex('state_transitions').select('hash').where('hash', query)
-
-        if (stRow) {
-            const {hash} = stRow
-
-            return response.send({hash})
+            if (document) {
+                return response.send({document})
+            }
         }
 
         response.status(404).send({message: 'not found'})

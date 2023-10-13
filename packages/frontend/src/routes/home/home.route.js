@@ -5,9 +5,11 @@ import {Link, useLoaderData} from "react-router-dom";
 import {getTransitionTypeString} from '../../util/index'
 
 export async function loader({}) {
-    const [status, transactions] = await Promise.all([Api.getStatus(), Api.getTransactions()])
+    const [status, paginatedTransactions] = await Promise.all([Api.getStatus(), Api.getTransactions(1, 30, 'desc')])
 
-    return {status, transactions}
+    const {resultSet} = paginatedTransactions
+
+    return {status, transactions: resultSet}
 }
 
 
@@ -15,8 +17,8 @@ function Transactions({transactions}) {
     return transactions.map((tx) =>
         <div key={tx.hash} className={"last_transactions_item"}>
             <Link to={`transaction/${tx.hash}`}>
-                <span className="last_transactions_item__timestamp">{new Date(tx.timestamp).toLocaleString("en-US")}</span> 
-                <span className="last_transactions_item__hash">{tx.hash}</span> 
+                <span className="last_transactions_item__timestamp">{new Date(tx.timestamp).toLocaleString()}</span>
+                <span className="last_transactions_item__hash">{tx.hash}</span>
                 <span className="last_transactions_item__type">({getTransitionTypeString(tx.type)})</span>
             </Link>
         </div>

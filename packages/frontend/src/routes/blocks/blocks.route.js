@@ -7,9 +7,12 @@ import GoToHeightForm from "./../../components/goToHeightForm/GoToHeightForm";
 import ItemsOnPageSelector from "./../../components/itemsOnPageSelector/ItemsOnPageSelector";
 
 
-const blocksPerPageConfig = {
-    default: 25,
-    values: [10, 25, 50, 75, 100]
+const paginateConfig = { 
+    pageSize: {
+        default: 25,
+        values: [10, 25, 50, 75, 100],
+    },
+    defaultPage: 1
 }
 
 function Blocks({blocks}) {
@@ -25,42 +28,42 @@ function Blocks({blocks}) {
     )
 }
 
-export async function loader({params}) {
-    const {blocksCount} = await Api.getStatus();
+export async function loader() {
+    const [status, paginatedBlocks] = await Promise.all([Api.getStatus(), Api.getBlocks(1, paginateConfig.pageSize.default, 'desc')])
 
-    const blocks = await Api.getBlocks(blocksCount - blocksPerPageConfig.default, blocksCount);
+    const {blocksCount} = status
+    const {resultSet} = paginatedBlocks
 
-    return {blocks, blocksCount};
+    console.log('loader', {blocks: resultSet, blocksCount})
+
+    return {blocks: resultSet, blocksCount};
 }
 
 function BlocksRoute() {
     const {blocks: defaultBlocks, blocksCount} = useLoaderData()
     const [blocks, setBlocks] = useState(defaultBlocks)
-    const [blocksPerPage, setBlocksPerPage] = useState(blocksPerPageConfig.default);
-    const [paginateActivePage, setPaginateActivePage] = useState(0);
+    const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default);
+    const [currentPage, setCurrentPage] = useState(0);
     const [searchedHeight, setSearchedHeight] = useState(0);
     const [searchedHeightCorrection, setSearchedHeightCorrection] = useState(true);
 
-    const pageCount = Math.ceil(blocksCount / blocksPerPage)
+    const pageCount = Math.ceil(blocksCount / pageSize)
 
     const handlePageClick = async ({selected}) => {
-        const fromBlock = blocksCount - ((selected+1) * blocksPerPage) + 1;
-        const toBlock = blocksCount - (((selected+1) - 1) * blocksPerPage)
-        const updated = await Api.getBlocks(fromBlock, toBlock);
+        const {resultSet} = await Api.getBlocks(selected+1, pageSize, 'desc')
 
-        setBlocks(updated)
+        setBlocks(resultSet)
     }
 
     const goToHeightInputChangeHandle = (e) => {
-        const [lastBlock] = defaultBlocks;
-        const lastBlockHeight = lastBlock.header.height;
-
         setSearchedHeight(Number(e.target.value));
 
-        e.target.value.trim().length > 0 &&
-        (Number(e.target.value) > lastBlockHeight || Number(e.target.value) < 1) ?
-            setSearchedHeightCorrection(false): 
+        if (e.target.value.trim().length > 0 &&
+            (Number(e.target.value) > blocksCount || Number(e.target.value) < 1)) {
+            setSearchedHeightCorrection(false);
+        } else {
             setSearchedHeightCorrection(true);
+        }
     }
 
     const goToHeight = async (e) => {
@@ -70,24 +73,23 @@ function BlocksRoute() {
         const lastBlockHeight = lastBlock.header.height;
 
         if (searchedHeightCorrection && searchedHeight !== 0) {
-            const page = Math.ceil((lastBlockHeight - searchedHeight + 1) / blocksPerPage) - 1;
-            setPaginateActivePage(page);
+            const page = Math.ceil((lastBlockHeight - searchedHeight + 2) / pageSize) - 1;
+
+            setCurrentPage(page);
             handlePageClick({selected: page});
         } 
     }
-
-    const itemsOnPageSelectHandler = async (e) => setBlocksPerPage(Number(e.target.value));
 
     useEffect(() => {
         const [lastBlock] = defaultBlocks;
         const lastBlockHeight = lastBlock.header.height;
         const [lastBlockOnPage] = blocks;
         const lastBlockOnPageHeight = lastBlockOnPage.header.height;
-        const page = Math.ceil((lastBlockHeight + 1 - lastBlockOnPageHeight) / blocksPerPage) - 1;
+        const page = Math.ceil((lastBlockHeight + 1 - lastBlockOnPageHeight) / pageSize) - 1;
 
-        setPaginateActivePage(page);
+        setCurrentPage(page);
         handlePageClick({selected: page});
-    }, [blocksPerPage]);
+    }, [pageSize]);
 
     return (
         <div className="container">
@@ -121,13 +123,13 @@ function BlocksRoute() {
                         containerClassName="pagination"
                         activeClassName="active"
                         renderOnZeroPageCount={true}
-                        forcePage={paginateActivePage} 
+                        forcePage={currentPage} 
                     />
                 
                     <ItemsOnPageSelector
-                        itemsOnPageSelectHandler={itemsOnPageSelectHandler}
-                        defaultValue={blocksPerPageConfig.default}
-                        items={blocksPerPageConfig.values}
+                        itemsOnPageSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                        defaultValue={paginateConfig.pageSize.default}
+                        items={paginateConfig.pageSize.values}
                     />
                 </div>
             </div>
