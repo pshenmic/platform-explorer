@@ -18,7 +18,7 @@ const pagintationConfig = {
 export async function loader({params}) {
     const {identifier} = params
 
-    const [dataContract, defaultDocuments] = await Promise.all([
+    const [dataContract, documents] = await Promise.all([
         Api.getDataContractByIdentifier(identifier),
         Api.getDocumentsByDataContract(identifier, 
                                        pagintationConfig.defaultPage, 
@@ -27,12 +27,12 @@ export async function loader({params}) {
 
     return {
         dataContract,
-        defaultDocuments
+        documents
     };
 }
 
 function DataContractRoute() {
-    const {dataContract, defaultDocuments} = useLoaderData();
+    const {dataContract, documents: defaultDocuments} = useLoaderData();
     const [documents, setDocuments] = useState(defaultDocuments.resultSet)
     const pageCount = Math.ceil(defaultDocuments.pagination.total / pagintationConfig.itemsOnPage.default);
 
