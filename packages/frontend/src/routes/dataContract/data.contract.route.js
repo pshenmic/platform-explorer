@@ -7,7 +7,7 @@ import ReactPaginate from "react-paginate";
 import './data_contract.scss'
 import './documents_list_item.scss'
 
-const documentsPaginateConfig = {
+const pagintationConfig = {
     itemsOnPage: {
         default: 25,
         values: [10, 25, 50, 75, 100]
@@ -21,8 +21,8 @@ export async function loader({params}) {
     const [dataContract, documents] = await Promise.all([
         Api.getDataContractByIdentifier(identifier),
         Api.getDocumentsByDataContract(identifier, 
-                                       documentsPaginateConfig.defaultPage, 
-                                       documentsPaginateConfig.itemsOnPage.default + 1)
+                                       pagintationConfig.defaultPage, 
+                                       pagintationConfig.itemsOnPage.default + 1)
     ])
 
     return {
@@ -34,12 +34,12 @@ export async function loader({params}) {
 function DataContractRoute() {
     const {dataContract, documents} = useLoaderData();
     const [documentsList, setDocumentsList] = useState(documents.resultSet)
-    const pageCount = Math.ceil(documents.pagination.total / documentsPaginateConfig.itemsOnPage.default);
+    const pageCount = Math.ceil(documents.pagination.total / pagintationConfig.itemsOnPage.default);
 
     const handlePageClick = async ({selected}) => {
         const {resultSet} = await Api.getDocumentsByDataContract(dataContract.identifier, 
                                                                  selected  + 1, 
-                                                                 documentsPaginateConfig.itemsOnPage.default + 1)
+                                                                 pagintationConfig.itemsOnPage.default + 1)
         setDocumentsList(resultSet);
     }
 
