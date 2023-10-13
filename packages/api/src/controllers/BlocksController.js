@@ -19,9 +19,13 @@ class BlocksController {
     }
 
     getBlocks = async (request, response) => {
-        const {from, to, order = 'desc'} = request.query
+        const {page = 1, limit = 10, order = 'asc'} = request.query
 
-        const blocks = await this.blocksDAO.getBlocksPaginated(from, to, order)
+        if (order !== 'asc' && order !== 'desc') {
+            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+        }
+
+        const blocks = await this.blocksDAO.getBlocks(Number(page), Number(limit), order)
 
         response.send(blocks);
     }

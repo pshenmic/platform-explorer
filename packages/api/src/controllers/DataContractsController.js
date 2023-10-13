@@ -7,7 +7,13 @@ class DataContractsController {
     }
 
     getDataContracts = async (request, response) => {
-        const dataContracts = await this.dataContractsDAO.getDataContracts();
+        const {page = 1, limit = 10, order = 'asc'} = request.query
+
+        if (order !== 'asc' && order !== 'desc') {
+            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+        }
+
+        const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page), Number(limit), order);
 
         response.send(dataContracts)
     }

@@ -1,4 +1,5 @@
 const Block = require("../models/Block");
+const PaginatedResultSet = require("../models/PaginatedResultSet");
 
 module.exports = class BlockDAO {
     constructor(knex) {
@@ -62,23 +63,21 @@ module.exports = class BlockDAO {
         return Block.fromRow({header: block, txs});
     }
 
-    getBlocksPaginated = async (from, to, order = 'desc') => {
+    getBlocks = async (page, limit, order) => {
+        const fromRank = (page - 1) * limit
+        const toRank = fromRank + limit - 1
+
         const subquery = this.knex('blocks')
-            .select('blocks.hash as hash', 'blocks.height as height', 'blocks.timestamp as timestamp', 'blocks.block_version as block_version', 'blocks.app_version as app_version', 'blocks.l1_locked_height as l1_locked_height').as('blocks')
-            .where(function () {
-                if (from && to) {
-                    this.where('height', '>=', from)
-                    this.where('height', '<=', to)
-                }
-            })
-            .limit(30)
-            .orderBy('blocks.height', order);
+            .select(this.knex('blocks').count('height').as('total_count'), 'blocks.hash as hash', 'blocks.height as height', 'blocks.timestamp as timestamp', 'blocks.block_version as block_version', 'blocks.app_version as app_version', 'blocks.l1_locked_height as l1_locked_height').as('blocks')
+            .select(this.knex.raw(`rank() over (order by blocks.height ${order}) rank`))
 
         const rows = await this.knex(subquery)
-            .select('blocks.hash as hash', 'height', 'timestamp', 'block_version', 'app_version', 'l1_locked_height', 'state_transitions.hash as st_hash')
+            .select('rank', 'total_count', 'blocks.hash as hash', 'height', 'timestamp', 'block_version', 'app_version', 'l1_locked_height', 'state_transitions.hash as st_hash')
             .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
-            .groupBy('blocks.hash', 'height', 'blocks.timestamp', 'block_version', 'app_version', 'l1_locked_height', 'state_transitions.hash')
-            .orderBy('height', 'desc')
+            .whereBetween('rank', [fromRank, toRank])
+            .orderBy('blocks.height', order);
+
+        const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0;
 
         // map-reduce Blocks with Transactions
         const blocksMap = rows.reduce((blocks, row) => {
@@ -93,8 +92,10 @@ module.exports = class BlockDAO {
             return {...blocks, [row.hash]: {...row, txs}}
         }, {})
 
-        return Object.keys(blocksMap).map(blockHash => Block.fromRow({
-                header: blocksMap[blockHash], txs: blocksMap[blockHash].txs
-            }))
+        const resultSet = Object.keys(blocksMap).map(blockHash => Block.fromRow({
+            header: blocksMap[blockHash], txs: blocksMap[blockHash].txs
+        }))
+
+        return new PaginatedResultSet(resultSet, page, limit, totalCount)
     }
 }
