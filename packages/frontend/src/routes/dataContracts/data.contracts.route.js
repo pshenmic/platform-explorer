@@ -26,8 +26,8 @@ function DataContractsRoute() {
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        Api.getDataContracts()
-            .then((dataContracts) => setDataContracts(dataContracts))
+        Api.getDataContracts(1, 30)
+            .then((dataContracts) => setDataContracts(dataContracts.resultSet))
             .catch((err) => {
                 setError(err)
             })

@@ -5,9 +5,11 @@ import {Link, useLoaderData} from "react-router-dom";
 import {getTransitionTypeString} from '../../util/index'
 
 export async function loader({}) {
-    const [status, transactions] = await Promise.all([Api.getStatus(), Api.getTransactions()])
+    const [status, paginatedTransactions] = await Promise.all([Api.getStatus(), Api.getTransactions(1, 30, 'desc')])
 
-    return {status, transactions}
+    const {resultSet} = paginatedTransactions
+
+    return {status, transactions: resultSet}
 }
 
 

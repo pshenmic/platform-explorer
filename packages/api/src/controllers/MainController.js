@@ -57,15 +57,16 @@ class MainController {
             }
         }
 
-        // check if base64 and 44 length for Identity ids
-        if (/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(query) && query.length === 44) {
-            // search block by height
+        // check for any Identifiers (data contracts, documents)
+        if (query.length >= 43 && query.length <= 44) {
+            // search data contracts
             const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(query)
 
             if (dataContract) {
                 return response.send({dataContract})
             }
-            // search block by height
+
+            // search documents
             const document = await this.documentsDAO.getDocumentByIdentifier(query)
 
             if (document) {

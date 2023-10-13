@@ -25,14 +25,17 @@ module.exports = class TransactionsDAO {
         const toRank = fromRank + limit - 1
 
         const subquery = this.knex('state_transitions')
-            .select(this.knex('state_transitions').count('hash').as('total_count'), 'state_transitions.hash as hash', 'state_transitions.data as data', 'state_transitions.type as type',
-                'state_transitions.index as index')
+            .select(this.knex('state_transitions').count('hash').as('total_count'),
+                'state_transitions.hash as hash', 'state_transitions.data as data',
+                'state_transitions.type as type', 'state_transitions.index as index',
+                'state_transitions.block_hash as block_hash')
             .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
             .as('state_transitions')
 
         const rows = await this.knex(subquery)
-            .select('total_count', 'data', 'type', 'index', 'rank', 'state_transitions.hash as hash', 'blocks.height as block_height', 'blocks.timestamp as timestamp')
-            .leftJoin('blocks', 'blocks.hash', 'state_transitions.hash')
+            .select('total_count', 'data', 'type', 'index', 'rank', 'block_hash', 'state_transitions.hash as hash',
+                'blocks.height as block_height', 'blocks.timestamp as timestamp')
+            .leftJoin('blocks', 'blocks.hash', 'block_hash')
             .whereBetween('rank', [fromRank, toRank])
             .orderBy('block_height', order);
 

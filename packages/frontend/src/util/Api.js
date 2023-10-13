@@ -26,7 +26,7 @@ const call = async (path, method, body) => {
             let json
             try {
                 json = JSON.parse(text)
-            }catch (e) {
+            } catch (e) {
             }
 
             if (json?.error) {
@@ -50,32 +50,32 @@ const getBlockByHash = (hash) => {
     return call(`block/${hash}`, 'GET')
 }
 
-const getTransactions = () => {
-    return call(`transactions`, 'GET')
+const getTransactions = (page = 1, limit = 30, order = 'asc') => {
+    return call(`transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getTransaction = (txHash) => {
     return call(`transaction/${txHash}`, 'GET')
 }
 
-const getBlocks = (fromBlock, toBlock) => {
-    return call(`blocks?from=${fromBlock}&to=${toBlock}`, 'GET')
+const getBlocks = (page = 1, limit = 30, order = 'asc') => {
+    return call(`blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getDataContractByIdentifier = (identifier) => {
     return call(`dataContract/${identifier}`, 'GET')
 }
 
-const getDataContracts = () => {
-    return call(`dataContracts`, 'GET')
+const getDataContracts = (page = 1, limit = 30, order = 'asc') => {
+    return call(`dataContracts?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getDocumentByIdentifier = (identifier) => {
     return call(`document/${identifier}`, 'GET')
 }
 
-const getDocumentsByDataContract = (dataContractIdentifier) => {
-    return call(`dataContract/${dataContractIdentifier}/documents`, 'GET')
+const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc') => {
+    return call(`dataContract/${dataContractIdentifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getStatus = () => {
@@ -90,4 +90,16 @@ const decodeTx = (base64) => {
     return call(`transaction/decode`, 'POST', {base64})
 }
 
-export {getStatus, getBlocks, getBlockByHash, getTransactions, getTransaction, search, decodeTx, getDocumentsByDataContract, getDocumentByIdentifier, getDataContractByIdentifier, getDataContracts}
+export {
+    getStatus,
+    getBlocks,
+    getBlockByHash,
+    getTransactions,
+    getTransaction,
+    search,
+    decodeTx,
+    getDocumentsByDataContract,
+    getDocumentByIdentifier,
+    getDataContractByIdentifier,
+    getDataContracts
+}

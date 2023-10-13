@@ -19,12 +19,13 @@ function Blocks({blocks}) {
     )
 }
 
-export async function loader({params}) {
-    const {blocksCount} = await Api.getStatus();
+export async function loader() {
+    const [status, paginatedBlocks] = await Promise.all([Api.getStatus(), Api.getBlocks(1, 30, 'desc')])
 
-    const blocks = await Api.getBlocks(blocksCount - blocksPerPage, blocksCount);
+    const {blocksCount} = status
+    const {resultSet} = paginatedBlocks
 
-    return {blocks, blocksCount};
+    return {blocks: resultSet, blocksCount};
 }
 
 function BlocksRoute() {
@@ -34,11 +35,9 @@ function BlocksRoute() {
     const pageCount = Math.ceil(blocksCount / blocksPerPage)
 
     const handlePageClick = async ({selected}) => {
-        const fromBlock = blocksCount - ((selected+1) * blocksPerPage)
-        const toBlock = blocksCount - (((selected+1) - 1) * blocksPerPage)
-        const updated = await Api.getBlocks(fromBlock, toBlock);
+        const {resultSet} = await Api.getBlocks(selected+1, 30, 'desc')
 
-        setBlocks(updated)
+        setBlocks(resultSet)
     }
 
     return (

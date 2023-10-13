@@ -68,11 +68,16 @@ module.exports = class BlockDAO {
         const toRank = fromRank + limit - 1
 
         const subquery = this.knex('blocks')
-            .select(this.knex('blocks').count('height').as('total_count'), 'blocks.hash as hash', 'blocks.height as height', 'blocks.timestamp as timestamp', 'blocks.block_version as block_version', 'blocks.app_version as app_version', 'blocks.l1_locked_height as l1_locked_height').as('blocks')
+            .select(this.knex('blocks').count('height').as('total_count'),
+                'blocks.hash as hash', 'blocks.height as height', 'blocks.timestamp as timestamp',
+                'blocks.block_version as block_version', 'blocks.app_version as app_version',
+                'blocks.l1_locked_height as l1_locked_height')
             .select(this.knex.raw(`rank() over (order by blocks.height ${order}) rank`))
+            .as('blocks')
 
         const rows = await this.knex(subquery)
-            .select('rank', 'total_count', 'blocks.hash as hash', 'height', 'timestamp', 'block_version', 'app_version', 'l1_locked_height', 'state_transitions.hash as st_hash')
+            .select('rank', 'total_count', 'blocks.hash as hash', 'height', 'timestamp', 'block_version',
+                'app_version', 'l1_locked_height', 'state_transitions.hash as st_hash')
             .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
             .whereBetween('rank', [fromRank, toRank])
             .orderBy('blocks.height', order);

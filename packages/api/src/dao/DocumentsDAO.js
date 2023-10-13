@@ -8,14 +8,18 @@ module.exports = class DocumentsDAO {
 
     getDocumentByIdentifier = async (identifier) => {
         const subquery = this.knex('documents')
-            .select('documents.id as id', 'documents.identifier as identifier', 'data_contracts.identifier as data_contract_identifier', 'documents.data as data', 'documents.revision as revision', 'documents.state_transition_hash as state_transition_hash', 'documents.deleted as deleted')
+            .select('documents.id as id', 'documents.identifier as identifier',
+                'data_contracts.identifier as data_contract_identifier', 'documents.data as data',
+                'documents.revision as revision', 'documents.state_transition_hash as state_transition_hash',
+                'documents.deleted as deleted')
             .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
             .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
             .where('documents.identifier', '=', identifier)
             .as('documents')
 
         const rows = await this.knex(subquery)
-            .select('id', 'identifier', 'data_contract_identifier', 'data', 'revision', 'deleted', 'rank', 'state_transition_hash')
+            .select('id', 'identifier', 'data_contract_identifier', 'data',
+                'revision', 'deleted', 'rank', 'state_transition_hash')
             .limit(1);
 
         const [row] = rows
@@ -48,7 +52,7 @@ module.exports = class DocumentsDAO {
             .from('with_alias')
             .where('rank', '1')
             .orderBy('id', order)
-            .as('test')
+            .as('documents')
 
         const rows = await this.knex(filteredDocuments)
             .select('id', 'identifier', 'row_number', 'revision', 'data_contract_identifier', 'state_transition_hash', 'deleted', 'data', 'total_count')
