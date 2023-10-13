@@ -3,7 +3,6 @@ import {Link, useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
 import ReactPaginate from "react-paginate";
 import GoToHeightForm from "./../../components/goToHeightForm/GoToHeightForm";
-import ItemsOnPageSelector from "./../../components/itemsOnPageSelector/ItemsOnPageSelector";
 import PageSizeSelector from "./../../components/pageSizeSelector/PageSizeSelector";
 import './blocks.css'
 
