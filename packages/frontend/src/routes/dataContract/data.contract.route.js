@@ -1,29 +1,47 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
 import {Link} from "react-router-dom";
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
+import ReactPaginate from "react-paginate";
 import './data_contract.scss'
 import './documents_list_item.scss'
+
+const documentsPaginateConfig = {
+    itemsOnPage: {
+        default: 25,
+        values: [10, 25, 50, 75, 100]
+    },
+    defaultPage: 1
+}
 
 export async function loader({params}) {
     const {identifier} = params
 
-    const [dataContract, paginatedDocuments] = await Promise.all([
+    const [dataContract, documents] = await Promise.all([
         Api.getDataContractByIdentifier(identifier),
-        Api.getDocumentsByDataContract(identifier)
+        Api.getDocumentsByDataContract(identifier, 
+                                       documentsPaginateConfig.defaultPage, 
+                                       documentsPaginateConfig.itemsOnPage.default + 1)
     ])
-
-    const {resultSet} = paginatedDocuments
 
     return {
         dataContract,
-        documents: resultSet
+        documents
     };
 }
 
 function DataContractRoute() {
     const {dataContract, documents} = useLoaderData();
+    const [documentsList, setDocumentsList] = useState(documents.resultSet)
+    const pageCount = Math.ceil(documents.pagination.total / documentsPaginateConfig.itemsOnPage.default);
+
+    const handlePageClick = async ({selected}) => {
+        const {resultSet} = await Api.getDocumentsByDataContract(dataContract.identifier, 
+                                                                 selected  + 1, 
+                                                                 documentsPaginateConfig.itemsOnPage.default + 1)
+        setDocumentsList(resultSet);
+    }
 
     return (
         <div className="container">
@@ -45,7 +63,6 @@ function DataContractRoute() {
                     selectedTabClassName="data_contract__tab--selected"
                     className='data_contract__info_tabs'
                 >
-
                     <TabList className='data_contract__tabs-container'>
                         <Tab className='data_contract__tab noselect'>Schema</Tab>
                         <Tab className='data_contract__tab noselect'>Documents</Tab>
@@ -58,7 +75,7 @@ function DataContractRoute() {
                     </TabPanel>
                     <TabPanel>
                         <div className='documents_list'>
-                            {documents.map((document, key) =>
+                            {documentsList.map((document, key) =>
                                 <Link to={`/document/${document.identifier}`} key={key}
                                       className='documents_list_item'>
                                     <span className='documents_list_item__identifier'>{document.identifier}</span>
@@ -68,6 +85,26 @@ function DataContractRoute() {
                             {documents.length === 0 &&
                                 <div className='documents_list__empty_message'>There are no documents created yet.</div>
                             }
+
+                            <ReactPaginate
+                                breakLabel="..."
+                                nextLabel=">"
+                                onPageChange={handlePageClick}
+                                pageRangeDisplayed={2}
+                                marginPagesDisplayed={1}
+                                pageCount={pageCount}
+                                previousLabel="<"
+                                pageClassName="page-item"
+                                pageLinkClassName="page-link"
+                                previousClassName="page-item page-item--previous"
+                                previousLinkClassName="page-link"
+                                nextClassName="page-item page-item--next"
+                                nextLinkClassName="page-link"
+                                breakClassName="page-item  page-item--break-link"
+                                containerClassName="pagination"
+                                activeClassName="active"
+                                renderOnZeroPageCount={true}
+                            />
                         </div>
                     </TabPanel>
                 </Tabs>
