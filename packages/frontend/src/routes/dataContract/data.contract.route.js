@@ -18,7 +18,7 @@ const pagintationConfig = {
 export async function loader({params}) {
     const {identifier} = params
 
-    const [dataContract, documents] = await Promise.all([
+    const [dataContract, defaultDocuments] = await Promise.all([
         Api.getDataContractByIdentifier(identifier),
         Api.getDocumentsByDataContract(identifier, 
                                        pagintationConfig.defaultPage, 
@@ -27,20 +27,20 @@ export async function loader({params}) {
 
     return {
         dataContract,
-        documents
+        defaultDocuments
     };
 }
 
 function DataContractRoute() {
-    const {dataContract, documents} = useLoaderData();
-    const [documentsList, setDocumentsList] = useState(documents.resultSet)
-    const pageCount = Math.ceil(documents.pagination.total / pagintationConfig.itemsOnPage.default);
+    const {dataContract, defaultDocuments} = useLoaderData();
+    const [documents, setDocuments] = useState(defaultDocuments.resultSet)
+    const pageCount = Math.ceil(defaultDocuments.pagination.total / pagintationConfig.itemsOnPage.default);
 
     const handlePageClick = async ({selected}) => {
         const {resultSet} = await Api.getDocumentsByDataContract(dataContract.identifier, 
                                                                  selected  + 1, 
                                                                  pagintationConfig.itemsOnPage.default + 1)
-        setDocumentsList(resultSet);
+        setDocuments(resultSet);
     }
 
     return (
@@ -75,7 +75,7 @@ function DataContractRoute() {
                     </TabPanel>
                     <TabPanel>
                         <div className='documents_list'>
-                            {documentsList.map((document, key) =>
+                            {documents.map((document, key) =>
                                 <Link to={`/document/${document.identifier}`} key={key}
                                       className='documents_list_item'>
                                     <span className='documents_list_item__identifier'>{document.identifier}</span>
@@ -103,7 +103,7 @@ function DataContractRoute() {
                                 breakClassName="page-item  page-item--break-link"
                                 containerClassName="pagination"
                                 activeClassName="active"
-                                renderOnZeroPageCount={true}
+                                renderOnZeroPageCount={false}
                             />
                         </div>
                     </TabPanel>
