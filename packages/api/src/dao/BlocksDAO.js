@@ -74,7 +74,6 @@ module.exports = class BlockDAO {
         const rows = await this.knex(subquery)
             .select('rank', 'total_count', 'blocks.hash as hash', 'height', 'timestamp', 'block_version', 'app_version', 'l1_locked_height', 'state_transitions.hash as st_hash')
             .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
-            .groupBy('blocks.rank', 'blocks.total_count', 'blocks.hash', 'height', 'blocks.timestamp', 'block_version', 'app_version', 'l1_locked_height', 'state_transitions.hash')
             .whereBetween('rank', [fromRank, toRank])
             .orderBy('blocks.height', order);
 
