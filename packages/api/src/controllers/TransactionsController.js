@@ -9,9 +9,13 @@ class TransactionsController {
     }
 
     getTransactions = async (request, response) => {
-        const {from, to} = request.query
+        const {page = 1, limit = 10, order = 'asc'} = request.query
 
-        const transactions = await this.transactionsDAO.getTransactions(from, to)
+        if (order !== 'asc' && order !== 'desc') {
+            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+        }
+
+        const transactions = await this.transactionsDAO.getTransactions(Number(page), Number(limit), order)
 
         response.send(transactions);
     }

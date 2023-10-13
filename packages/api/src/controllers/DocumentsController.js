@@ -20,8 +20,13 @@ class DocumentsController {
 
     getDocumentsByDataContract = async (request, response) => {
         const {identifier} = request.params
+        const {page = 1, limit = 10, order = 'asc'} = request.query
 
-        const documents = await this.documentsDAO.getDocumentsByDataContract(identifier)
+        if (order !== 'asc' && order !== 'desc') {
+            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+        }
+
+        const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, Number(page), Number(limit), order)
 
         response.send(documents);
     }
