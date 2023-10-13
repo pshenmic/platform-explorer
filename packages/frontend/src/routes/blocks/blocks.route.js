@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {Link, useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
-import './blocks.css'
 import ReactPaginate from "react-paginate";
 import GoToHeightForm from "./../../components/goToHeightForm/GoToHeightForm";
 import ItemsOnPageSelector from "./../../components/itemsOnPageSelector/ItemsOnPageSelector";
+import PageSizeSelector from "./../../components/pageSizeSelector/PageSizeSelector";
+import './blocks.css'
 
 
 const paginateConfig = { 
@@ -29,66 +30,42 @@ function Blocks({blocks}) {
 }
 
 export async function loader() {
-    const [status, paginatedBlocks] = await Promise.all([Api.getStatus(), Api.getBlocks(1, paginateConfig.pageSize.default, 'desc')])
+    const paginatedBlocks = await Api.getBlocks(paginateConfig.defaultPage, paginateConfig.pageSize.default, 'desc')
+    const {resultSet, pagination} = paginatedBlocks
 
-    const {blocksCount} = status
-    const {resultSet} = paginatedBlocks
-
-    console.log('loader', {blocks: resultSet, blocksCount})
-
-    return {blocks: resultSet, blocksCount};
+    return {blocks: resultSet, total: pagination.total};
 }
 
 function BlocksRoute() {
-    const {blocks: defaultBlocks, blocksCount} = useLoaderData()
+    const {blocks: defaultBlocks, total} = useLoaderData()
     const [blocks, setBlocks] = useState(defaultBlocks)
-    const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [searchedHeight, setSearchedHeight] = useState(0);
-    const [searchedHeightCorrection, setSearchedHeightCorrection] = useState(true);
-
-    const pageCount = Math.ceil(blocksCount / pageSize)
+    const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
+    const [currentPage, setCurrentPage] = useState(0)
+    const [blockHeightToSearch, setBlockHeightToSearch] = useState(0)
+    const pageCount = Math.ceil(total / pageSize)
 
     const handlePageClick = async ({selected}) => {
         const {resultSet} = await Api.getBlocks(selected+1, pageSize, 'desc')
+        
+        setCurrentPage(selected)
 
         setBlocks(resultSet)
-    }
-
-    const goToHeightInputChangeHandle = (e) => {
-        setSearchedHeight(Number(e.target.value));
-
-        if (e.target.value.trim().length > 0 &&
-            (Number(e.target.value) > blocksCount || Number(e.target.value) < 1)) {
-            setSearchedHeightCorrection(false);
-        } else {
-            setSearchedHeightCorrection(true);
-        }
     }
 
     const goToHeight = async (e) => {
         e.preventDefault();
 
-        const [lastBlock] = defaultBlocks;
-        const lastBlockHeight = lastBlock.header.height;
+        const page = Math.ceil((total - blockHeightToSearch + 2) / pageSize) - 1;
 
-        if (searchedHeightCorrection && searchedHeight !== 0) {
-            const page = Math.ceil((lastBlockHeight - searchedHeight + 2) / pageSize) - 1;
+        setCurrentPage(page);
 
-            setCurrentPage(page);
-            handlePageClick({selected: page});
-        } 
+        handlePageClick({selected: page});
     }
 
     useEffect(() => {
-        const [lastBlock] = defaultBlocks;
-        const lastBlockHeight = lastBlock.header.height;
-        const [lastBlockOnPage] = blocks;
-        const lastBlockOnPageHeight = lastBlockOnPage.header.height;
-        const page = Math.ceil((lastBlockHeight + 1 - lastBlockOnPageHeight) / pageSize) - 1;
+        setCurrentPage(0);
 
-        setCurrentPage(page);
-        handlePageClick({selected: page});
+        handlePageClick({selected: 0});
     }, [pageSize]);
 
     return (
@@ -101,8 +78,10 @@ function BlocksRoute() {
                 <div className='list-navigation'>
                     <GoToHeightForm
                         goToHeightHandler={goToHeight}
-                        goToHeightInputChangeHandle={goToHeightInputChangeHandle}
-                        searchedHeightCorrection={searchedHeightCorrection}
+                        goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
+                        heightCorrection={(blockHeightToSearch.length > 0 &&
+                                           Number(blockHeightToSearch) <= total && 
+                                           Number(blockHeightToSearch) > 0)}
                     />
 
                     <ReactPaginate 
@@ -126,8 +105,8 @@ function BlocksRoute() {
                         forcePage={currentPage} 
                     />
                 
-                    <ItemsOnPageSelector
-                        itemsOnPageSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                    <PageSizeSelector
+                        PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
                         defaultValue={paginateConfig.pageSize.default}
                         items={paginateConfig.pageSize.values}
                     />
