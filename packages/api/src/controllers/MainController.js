@@ -15,12 +15,12 @@ class MainController {
         const max = await this.blocksDAO.getMaxHeight()
 
         response.send({
-            network: "dash-testnet-26",
+            network: "dash-testnet-28",
             appVersion: "1",
             p2pVersion: "8",
             blockVersion: "13",
             blocksCount: max,
-            tenderdashVersion: "0.13.2"
+            tenderdashVersion: "dashpay/tenderdash:proposeCurrentAppVersion2"
         });
     }
 
