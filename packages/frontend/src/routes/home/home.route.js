@@ -51,7 +51,7 @@ function HomeRoute() {
                 </div>
                 <div className="status_item">
                     <span>Tenderdash Version</span>
-                    <span>{tenderdashVersion}</span>
+                    <span style={{['padding-left']: '10px'}}>{tenderdashVersion}</span>
                 </div>
                 <div className="status_item">
                     <span>Blocks</span>
