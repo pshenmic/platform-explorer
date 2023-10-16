@@ -2,28 +2,39 @@
 
 ![image](assets/screenshot.png)
 
+Supports:
+
+* Data Contracts with schemas
+* Documents with data
+* Searching and listing APIs
+* Dash Platform v25+
+
 ## Initial setup
 
-This project currently relies only on the Tenderdash RPC.
-To access platform chain data, you will need an instance of tenderdash running.
-You can get it via starting your node with the `dashmate` (it can be testnet, devnet, or local dev node)
+Project requires an PostgreSQL and Tenderdash RPC.
 
-### 1) Start node
+To access Tenderdash RPC, you will need an instance running.
+You can get it via starting your node with the `dashmate` (testnet or local dev node)
+
+### 1) Start indexer
+
+Edit `packages/indexer/.env` and fill with your PostgreSQL credentials and Tenderdash RPC URL, then do:
+
 ```bash
-npm install -g dashmate
-dashmate setup # choose testnet evo fullnode f.e.
-dashmate start
-dashmate status platform
+cd packages/indexer
+cargo run
 ```
 
-Once core is synced, the tenderdash rpc will start accepting requests
+An indexer should start fetching blocks from the TD and continuously insert the data in the database
 
-### 2) Run backend (Optionally)
+### 2) Run backend
 
-Set `BASE_URL=http://YOUR_TENDERDASH_HOST:36657` in the `packages/api/.env`
+Edit `packages/api/.env` and fill with your PostgreSQL credentials, then do:
 
 ```
-$ yarn workspaces api start
+cd packages/api
+npm install
+npm start
 ```
 
 ### 3) Start frontend
@@ -34,5 +45,7 @@ Set `REACT_APP_API_BASE_URL=http://127.0.0.1:3005` in the `packages/frontend/.en
 
 Then:
 ```
-$ yarn workspaces frontend start
+cd packages/frontend
+npm install
+npm start
 ```
