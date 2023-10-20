@@ -15,7 +15,7 @@ class MainController {
         const max = await this.blocksDAO.getMaxHeight()
 
         response.send({
-            network: "dash-testnet-30",
+            network: "dash-testnet-33",
             appVersion: "1",
             p2pVersion: "8",
             blockVersion: "13",
