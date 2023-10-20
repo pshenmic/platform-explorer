@@ -74,16 +74,6 @@ export default function RootComponent() {
                 <ModalWindow open={showModal} text={modalText} setShowModal={setShowModal}/>
             </div>
             <Outlet/>
-
-            <div className={"modal"}>
-                <div className={"modal_container"}>
-                    <div className={"modal_message"} style={{padding: '20px'}}>
-                        Testnet is down for a moment<br/>
-                        <br/>
-                        Watch our discord #testnet channel<br/> for updates https://discord.gg/UbcUSse7
-                    </div>
-                </div>
-            </div>
         </div>
     );
 }
