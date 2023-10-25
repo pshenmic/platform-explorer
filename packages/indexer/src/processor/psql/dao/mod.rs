@@ -1,20 +1,17 @@
 use std::env;
 use std::time::SystemTime;
-use deadpool_postgres::{Config, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime, tokio_postgres};
+use deadpool_postgres::{Config, ManagerConfig, Pool, PoolError, RecyclingMethod, Runtime};
 use deadpool_postgres::tokio_postgres::{NoTls, Row};
 use dpp::platform_value::string_encoding::Encoding;
-use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
-use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use sha256::{digest};
 use crate::entities::document::Document;
 use base64::{Engine as _, engine::{general_purpose}};
 use dpp::identifier::Identifier;
-use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
-use dpp::serialization::PlatformSerializable;
-use dpp::state_transition::documents_batch_transition::DocumentCreateTransition;
-use dpp::state_transition::StateTransition;
+use dpp::platform_value::string_encoding::Encoding::{Base58};
 use crate::entities::block_header::BlockHeader;
 use crate::entities::data_contract::DataContract;
+use crate::entities::identity::Identity;
+use crate::entities::transfer::Transfer;
 
 pub struct PostgresDAO {
     connection_pool: Pool,
@@ -40,16 +37,18 @@ impl PostgresDAO {
         return PostgresDAO { connection_pool };
     }
 
-    pub async fn create_state_transition(&self, block_hash: String, st_type: i32, index:i32, bytes: Vec<u8>) {
+    pub async fn create_state_transition(&self, block_hash: String, st_type: u32, index: u32, bytes: Vec<u8>) {
         let data = general_purpose::STANDARD.encode(&bytes);
         let hash = digest(bytes.clone()).to_uppercase();
+        let st_type = st_type as i32;
+        let index_i32 = index as i32;
 
         let query = "INSERT INTO state_transitions(hash, data, type, index, block_hash) VALUES ($1, $2, $3, $4, $5);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
 
-        client.query(&stmt, &[&hash, &data, &st_type, &index, &block_hash]).await.unwrap();
+        client.query(&stmt, &[&hash, &data, &st_type, &index_i32, &block_hash]).await.unwrap();
 
         println!("Created ST with hash {} from block with hash {}", &hash, &block_hash);
     }
@@ -91,6 +90,43 @@ impl PostgresDAO {
         client.query(&stmt, &[&id.to_string(Encoding::Base58), &revision_i32, &data, &document.deleted, &st_hash, &data_contract_id]).await.unwrap();
 
         println!("Created document {} [{} revision] [is_deleted {}]", document.identifier.to_string(Base58), revision_i32, document.deleted);
+
+        Ok(())
+    }
+
+    pub async fn create_identity(&self, identity: Identity, st_hash: String) -> Result<(), PoolError> {
+        let identifier = identity.identifier;
+        let revision = identity.revision;
+        let revision_i32 = revision as i32;
+
+        let client = self.connection_pool.get().await.unwrap();
+
+        let query = "INSERT INTO identities(identifier,revision,state_transition_hash) VALUES ($1, $2, $3);";
+
+        let stmt = client.prepare_cached(query).await.unwrap();
+
+        client.query(&stmt, &[&identifier.to_string(Encoding::Base58), &revision_i32, &st_hash]).await.unwrap();
+
+        println!("Created Identity {}", identifier.to_string(Base58));
+
+        Ok(())
+    }
+
+    pub async fn create_transfer(&self, transfer: Transfer, st_hash: String) -> Result<(), PoolError> {
+        let amount = transfer.amount as i64;
+
+        let sender = transfer.sender.map(|t| { t.to_string(Base58)});
+        let recipient = transfer.recipient.map(|t| { t.to_string(Base58)});
+
+        let client = self.connection_pool.get().await.unwrap();
+
+        let query = "INSERT INTO transfers(amount,sender,recipient,state_transition_hash) VALUES ($1, $2, $3, $4);";
+
+        let stmt = client.prepare_cached(query).await.unwrap();
+
+        client.query(&stmt, &[&amount, &sender, &recipient, &st_hash]).await.unwrap();
+
+        println!("Created Transfer");
 
         Ok(())
     }
@@ -155,7 +191,7 @@ impl PostgresDAO {
 
         let rows = client.query(&stmt, &[&block_header.hash, &block_header.height, &SystemTime::from(block_header.timestamp), &block_header.block_version, &block_header.app_version, &block_header.l1_locked_height]).await.unwrap();
 
-        let block_hash:String = rows[0].get(0);
+        let block_hash: String = rows[0].get(0);
 
         return block_hash;
     }

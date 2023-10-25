@@ -7,20 +7,23 @@ use dpp::state_transition::data_contract_create_transition::DataContractCreateTr
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use dpp::data_contracts::SystemDataContract;
-use dpp::platform_value::string_encoding::Encoding;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::serialization::PlatformSerializable;
-use dpp::state_transition::data_contract_create_transition::accessors::DataContractCreateTransitionAccessorsV0;
 use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
-use dpp::state_transition::documents_batch_transition::{DocumentCreateTransition, DocumentReplaceTransition, DocumentsBatchTransition};
-use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransition;
+use dpp::state_transition::documents_batch_transition::{ DocumentsBatchTransition};
 use sha256::digest;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
+use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
+use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
+use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
+use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
+use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
 use crate::entities::data_contract::DataContract;
 use crate::entities::document::Document;
-use crate::processor::psql::ProcessorError::UnexpectedError;
+use crate::entities::identity::Identity;
+use crate::entities::transfer::Transfer;
 
 pub enum ProcessorError {
     DatabaseError,
@@ -76,23 +79,92 @@ impl PSQLProcessor {
     pub async fn handle_documents_batch(&self, state_transition: DocumentsBatchTransition, st_hash: String) -> () {
         let transitions = state_transition.transitions().clone();
 
-        for (i, document_transition) in transitions.iter().enumerate() {
+        for (_, document_transition) in transitions.iter().enumerate() {
             let document = Document::from(document_transition.clone());
 
             self.dao.create_document(document, st_hash.clone()).await;
         }
     }
 
-    pub async fn handle_st(&self, block_hash: String, index: i32, state_transition: StateTransition) -> () {
-        let mut st_type: i32 = 999;
-        let mut bytes: Vec<u8> = Vec::new();
+    pub async fn handle_identity_create(&self, state_transition: IdentityCreateTransition, st_hash: String) -> () {
+        let identity = Identity::from(state_transition);
+
+        self.dao.create_identity(identity, st_hash.clone()).await;
+    }
+
+    pub async fn handle_identity_update(&self, state_transition: IdentityUpdateTransition, st_hash: String) -> () {
+        let identity = Identity::from(state_transition);
+
+        self.dao.create_identity(identity, st_hash.clone()).await;
+    }
+
+    pub async fn handle_identity_top_up(&self, state_transition: IdentityTopUpTransition, st_hash: String) -> () {
+        let transfer = Transfer::from(state_transition);
+
+        self.dao.create_transfer(transfer, st_hash.clone()).await;
+    }
+
+    pub async fn handle_identity_credit_withdrawal(&self, state_transition: IdentityCreditWithdrawalTransition, st_hash: String) -> () {
+        let transfer = Transfer::from(state_transition);
+
+        self.dao.create_transfer(transfer, st_hash.clone()).await;
+    }
+
+    pub async fn handle_identity_credit_transfer(&self, state_transition: IdentityCreditTransferTransition, st_hash: String) -> () {
+        let transfer = Transfer::from(state_transition);
+
+        self.dao.create_transfer(transfer, st_hash.clone()).await;
+    }
+
+    pub async fn handle_st(&self, block_hash: String, index: u32, state_transition: StateTransition) -> () {
+        let st_type = match state_transition.clone() {
+            StateTransition::DataContractCreate(st) => st.state_transition_type() as u32,
+            StateTransition::DataContractUpdate(st) => st.state_transition_type() as u32,
+            StateTransition::DocumentsBatch(st) => st.state_transition_type() as u32,
+            StateTransition::IdentityCreate(st) => st.state_transition_type() as u32,
+            StateTransition::IdentityTopUp(st) => st.state_transition_type() as u32,
+            StateTransition::IdentityCreditWithdrawal(st) => st.state_transition_type() as u32,
+            StateTransition::IdentityUpdate(st) => st.state_transition_type() as u32,
+            StateTransition::IdentityCreditTransfer(st) => st.state_transition_type() as u32,
+        };
+
+        let bytes = match state_transition.clone() {
+            StateTransition::DataContractCreate(st) =>
+                PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractCreate(
+                    st.clone()
+                )).unwrap(),
+            StateTransition::DataContractUpdate(st) =>
+                PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractUpdate(
+                    st.clone()
+                )).unwrap(),
+            StateTransition::DocumentsBatch(st) =>
+                PlatformSerializable::serialize_to_bytes(&StateTransition::DocumentsBatch(
+                    st.clone()
+                )).unwrap(),
+            StateTransition::IdentityCreate(st) =>
+                PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreate(
+                    st.clone()
+                )).unwrap(),
+            StateTransition::IdentityTopUp(st) =>
+                PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityTopUp(
+                    st.clone()
+                )).unwrap(),
+            StateTransition::IdentityCreditWithdrawal(st) =>
+                PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreditWithdrawal(
+                    st.clone()
+                )).unwrap(),
+            StateTransition::IdentityUpdate(st) =>
+                PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityUpdate(
+                    st.clone()
+                )).unwrap(),
+            StateTransition::IdentityCreditTransfer(st) =>
+                PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreditTransfer(
+                    st.clone()
+                )).unwrap(),
+        };
 
         match state_transition {
             StateTransition::DataContractCreate(st) => {
-                st_type = st.state_transition_type() as i32;
-                bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractCreate(
-                    st.clone()
-                )).unwrap();
                 self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
 
                 self.handle_data_contract_create(st).await;
@@ -100,10 +172,6 @@ impl PSQLProcessor {
                 println!("Processed DataContractCreate at block hash {}", block_hash);
             }
             StateTransition::DataContractUpdate(st) => {
-                st_type = st.state_transition_type() as i32;
-                bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractUpdate(
-                    st.clone()
-                )).unwrap();
                 self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
 
                 self.handle_data_contract_update(st).await;
@@ -111,11 +179,6 @@ impl PSQLProcessor {
                 println!("Processed DataContractUpdate at block hash {}", block_hash);
             }
             StateTransition::DocumentsBatch(st) => {
-                st_type = st.state_transition_type() as i32;
-                bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::DocumentsBatch(
-                    st.clone()
-                )).unwrap();
-
                 let st_hash = digest(bytes.clone()).to_uppercase();
 
                 self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes.clone()).await;
@@ -125,44 +188,38 @@ impl PSQLProcessor {
                 println!("Processed DocumentsBatch at block hash {}", block_hash);
             }
             StateTransition::IdentityCreate(st) => {
-                st_type = st.state_transition_type() as i32;
-                bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreate(
-                    st.clone()
-                )).unwrap();
+                let st_hash = digest(bytes.clone()).to_uppercase();
 
                 self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
+
+                self.handle_identity_create(st, st_hash).await;
             }
             StateTransition::IdentityTopUp(st) => {
-                st_type = st.state_transition_type() as i32;
-                bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityTopUp(
-                    st.clone()
-                )).unwrap();
+                let st_hash = digest(bytes.clone()).to_uppercase();
 
                 self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
+
+                self.handle_identity_top_up(st, st_hash).await;
             }
             StateTransition::IdentityCreditWithdrawal(st) => {
-                st_type = st.state_transition_type() as i32;
-                bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreditWithdrawal(
-                    st.clone()
-                )).unwrap();
+                let st_hash = digest(bytes.clone()).to_uppercase();
 
-                self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
+                self.handle_identity_credit_withdrawal(st, st_hash).await;
             }
             StateTransition::IdentityUpdate(st) => {
-                st_type = st.state_transition_type() as i32;
-                bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityUpdate(
-                    st.clone()
-                )).unwrap();
+                let st_hash = digest(bytes.clone()).to_uppercase();
 
                 self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
+
+                self.handle_identity_update(st, st_hash).await;
+
             }
             StateTransition::IdentityCreditTransfer(st) => {
-                st_type = st.state_transition_type() as i32;
-                bytes = PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreditTransfer(
-                    st.clone()
-                )).unwrap();
+                let st_hash = digest(bytes.clone()).to_uppercase();
 
                 self.dao.create_state_transition(block_hash.clone(), st_type, index, bytes).await;
+
+                self.handle_identity_credit_transfer(st, st_hash).await;
             }
         }
     }
@@ -175,7 +232,7 @@ impl PSQLProcessor {
                 // TODO IMPLEMENT PSQL TRANSACTION
                 let block_height = block.header.height.clone();
 
-                if (block.header.height == 1) {
+                if block.header.height == 1 {
                     self.handle_init_chain().await;
                 }
 
@@ -192,7 +249,7 @@ impl PSQLProcessor {
 
                     let state_transition = st_result.unwrap();
 
-                    self.handle_st(block_hash.clone(), i as i32, state_transition).await;
+                    self.handle_st(block_hash.clone(), i as u32, state_transition).await;
                 }
 
                 Ok(())
@@ -203,7 +260,6 @@ impl PSQLProcessor {
             }
         }
     }
-
 
     pub async fn handle_init_chain(&self) -> () {
         println!("Processing initChain");

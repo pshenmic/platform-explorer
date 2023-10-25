@@ -513,7 +513,7 @@ dependencies = [
 [[package]]
 name = "dashcore"
 version = "0.30.0"
-source = "git+https://github.com/dashpay/rust-dashcore?branch=master#db8794eef7b0b03ee718cf07bb5a07e9b2b0e7c7"
+source = "git+https://github.com/dashpay/rust-dashcore?branch=master#d7beaf29203b961d2534e5199e466fcc6e006278"
 dependencies = [
  "anyhow",
  "bech32",
@@ -529,12 +529,12 @@ dependencies = [
 [[package]]
 name = "dashcore-private"
 version = "0.1.0"
-source = "git+https://github.com/dashpay/rust-dashcore?branch=master#db8794eef7b0b03ee718cf07bb5a07e9b2b0e7c7"
+source = "git+https://github.com/dashpay/rust-dashcore?branch=master#d7beaf29203b961d2534e5199e466fcc6e006278"
 
 [[package]]
 name = "dashcore_hashes"
 version = "0.12.0"
-source = "git+https://github.com/dashpay/rust-dashcore?branch=master#db8794eef7b0b03ee718cf07bb5a07e9b2b0e7c7"
+source = "git+https://github.com/dashpay/rust-dashcore?branch=master#d7beaf29203b961d2534e5199e466fcc6e006278"
 dependencies = [
  "dashcore-private",
  "rs-x11-hash",
@@ -706,9 +706,9 @@ dependencies = [
 
 [[package]]
 name = "ed25519"
-version = "2.2.2"
+version = "2.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60f6d271ca33075c88028be6f04d502853d63a5ece419d269c15315d4fc1cf1d"
+checksum = "115531babc129696a58c64a4fef0a8bf9e9698629fb97e9e40767d235cfbcd53"
 dependencies = [
  "pkcs8",
  "signature",
@@ -2113,7 +2113,7 @@ dependencies = [
  "rkyv_derive",
  "seahash",
  "tinyvec",
- "uuid 1.4.1",
+ "uuid 1.5.0",
 ]
 
 [[package]]
@@ -2292,9 +2292,9 @@ dependencies = [
 
 [[package]]
 name = "semver"
-version = "1.0.19"
+version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad977052201c6de01a8ef2aa3378c4bd23217a056337d1d6da40468d267a4fb0"
+checksum = "836fa6a3e1e547f9a2c4040802ec865b5d85f4014efe00555d7090a3dcaa1090"
 
 [[package]]
 name = "serde"
@@ -2848,9 +2848,9 @@ checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
 
 [[package]]
 name = "uuid"
-version = "1.4.1"
+version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79daa5ed5740825c40b389c5e50312b9c86df53fccd33f281df655642b43869d"
+checksum = "88ad59a7560b41a70d191093a945f0b87bc1deeda46fb237479708a1d6b6cdfc"
 
 [[package]]
 name = "vcpkg"
