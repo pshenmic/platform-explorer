@@ -12,26 +12,6 @@ pub struct Identity {
     pub revision: Revision,
     pub balance: Option<u64>,
 }
-//
-// impl From<Row> for Identity {
-//     fn from(row: Row) -> Self {
-//         let id: u32 = row.get(0);
-//
-//         let balance:u64 = row.get(1);
-//
-//         let identifier_str: String = row.get(1);
-//         let identifier = Identifier::from_string(&identifier_str, Encoding::Base58).unwrap();
-//
-//         let revision: i32 = row.get(3);
-//
-//         return Identity {
-//             id: Some(id),
-//             identifier,
-//             balance,
-//             revision: Revision::from(revision as u64)
-//         };
-//     }
-// }
 
 impl From<IdentityCreateTransition> for Identity {
     fn from(state_transition: IdentityCreateTransition) -> Self {
