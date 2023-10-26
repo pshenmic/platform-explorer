@@ -1,6 +1,5 @@
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding;
-use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::prelude::Revision;
 use dpp::state_transition::documents_batch_transition::document_base_transition::v0::v0_methods::DocumentBaseTransitionV0Methods;
 use dpp::state_transition::documents_batch_transition::document_create_transition::v0::v0_methods::DocumentCreateTransitionV0Methods;
@@ -14,7 +13,6 @@ use tokio_postgres::Row;
 pub struct Document {
     pub id: Option<u32>,
     pub identifier: Identifier,
-    pub owner: Option<Identifier>,
     pub data_contract_identifier: Identifier,
     pub data: Option<Value>,
     pub deleted: bool,
@@ -28,20 +26,17 @@ impl From<Row> for Document {
         let identifier_str: String = row.get(1);
         let identifier = Identifier::from_string(&identifier_str, Encoding::Base58).unwrap();
 
-        let owner: String = row.get(2);
-
-        let data_contract_identifier_str: String = row.get(3);
+        let data_contract_identifier_str: String = row.get(2);
         let data_contract_identifier = Identifier::from_string(&data_contract_identifier_str, Encoding::Base58).unwrap();
 
-        let revision: i32 = row.get(4);
+        let revision: i32 = row.get(3);
 
-        let deleted: bool = row.get(5);
+        let deleted: bool = row.get(4);
 
         return Document {
             id: Some(id as u32),
             deleted,
             identifier,
-            owner: Some(Identifier::from_string(&owner, Base58).unwrap()),
             data: None,
             data_contract_identifier,
             revision: Revision::from(revision as u64),
@@ -62,7 +57,6 @@ impl From<DocumentTransition> for Document {
 
                 return Document {
                     id: None,
-                    owner: None,
                     identifier,
                     data: Some(data_decoded),
                     data_contract_identifier,
@@ -80,7 +74,6 @@ impl From<DocumentTransition> for Document {
 
                 return Document {
                     id: None,
-                    owner: None,
                     identifier,
                     data: Some(data_decoded),
                     data_contract_identifier,
@@ -96,7 +89,6 @@ impl From<DocumentTransition> for Document {
 
                 return Document {
                     id: None,
-                    owner: None,
                     identifier,
                     data: None,
                     data_contract_identifier,

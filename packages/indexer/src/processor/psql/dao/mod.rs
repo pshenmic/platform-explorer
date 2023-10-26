@@ -37,45 +37,42 @@ impl PostgresDAO {
         return PostgresDAO { connection_pool };
     }
 
-    pub async fn create_state_transition(&self, block_hash: String, st_type: u32, index: u32, bytes: Vec<u8>) {
+    pub async fn create_state_transition(&self, block_hash: String, owner: Identifier, st_type: u32, index: u32, bytes: Vec<u8>) {
         let data = general_purpose::STANDARD.encode(&bytes);
         let hash = digest(bytes.clone()).to_uppercase();
         let st_type = st_type as i32;
         let index_i32 = index as i32;
 
-        let query = "INSERT INTO state_transitions(hash, data, type, index, block_hash) VALUES ($1, $2, $3, $4, $5);";
+        let query = "INSERT INTO state_transitions(hash, owner, data, type, index, block_hash) VALUES ($1, $2, $3, $4, $5, $6);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
 
-        client.query(&stmt, &[&hash, &data, &st_type, &index_i32, &block_hash]).await.unwrap();
+        client.query(&stmt, &[&hash, &owner.to_string(Base58), &data, &st_type, &index_i32, &block_hash]).await.unwrap();
 
         println!("Created ST with hash {} from block with hash {}", &hash, &block_hash);
     }
 
-    pub async fn create_data_contract(&self, data_contract: DataContract, owner: Identifier, st_hash: String) {
+    pub async fn create_data_contract(&self, data_contract: DataContract, st_hash: String) {
         let id = data_contract.identifier;
         let id_str = id.to_string(Encoding::Base58);
-        let owner_str = owner.to_string(Encoding::Base58);
 
         let schema = data_contract.schema;
         let schema_decoded = serde_json::to_value(schema).unwrap();
 
         let version = data_contract.version as i32;
 
-        let query = "INSERT INTO data_contracts(identifier, owner , schema, version, state_transition_hash) VALUES ($1, $2, $3, $4, $5);";
+        let query = "INSERT INTO data_contracts(identifier, schema, version, state_transition_hash) VALUES ($1, $2, $3, $4);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
 
-        println!("{}", &owner_str.len());
-
-        client.query(&stmt, &[&id_str, &owner_str, &schema_decoded, &version, &st_hash]).await.unwrap();
+        client.query(&stmt, &[&id_str, &schema_decoded, &version, &st_hash]).await.unwrap();
 
         println!("Created DataContract {} [{} version]", id_str, version);
     }
 
-    pub async fn create_document(&self, document: Document, owner: Identifier, st_hash: String) -> Result<(), PoolError> {
+    pub async fn create_document(&self, document: Document, st_hash: String) -> Result<(), PoolError> {
         let id = document.identifier;
         let revision = document.revision;
         let revision_i32 = revision as i32;
@@ -87,11 +84,11 @@ impl PostgresDAO {
         let data_contract = self.get_data_contract_by_identifier(document.data_contract_identifier).await.unwrap().unwrap();
         let data_contract_id = data_contract.id.unwrap() as i32;
 
-        let query = "INSERT INTO documents(identifier,owner,revision,data,deleted,state_transition_hash,data_contract_id) VALUES ($1, $2, $3, $4, $5, $6,$7);";
+        let query = "INSERT INTO documents(identifier,revision,data,deleted,state_transition_hash,data_contract_id) VALUES ($1, $2, $3, $4, $5, $6);";
 
         let stmt = client.prepare_cached(query).await.unwrap();
 
-        client.query(&stmt, &[&id.to_string(Encoding::Base58), &owner.to_string(Base58), &revision_i32, &data, &document.deleted, &st_hash, &data_contract_id]).await.unwrap();
+        client.query(&stmt, &[&id.to_string(Encoding::Base58), &revision_i32, &data, &document.deleted, &st_hash, &data_contract_id]).await.unwrap();
 
         println!("Created document {} [{} revision] [is_deleted {}]", document.identifier.to_string(Base58), revision_i32, document.deleted);
 
@@ -157,7 +154,7 @@ impl PostgresDAO {
     pub async fn get_data_contract_by_identifier(&self, identifier: Identifier) -> Result<Option<DataContract>, PoolError> {
         let client = self.connection_pool.get().await?;
 
-        let stmt = client.prepare_cached("SELECT id,owner,identifier,version FROM data_contracts where identifier = $1 ORDER by version DESC LIMIT 1;").await.unwrap();
+        let stmt = client.prepare_cached("SELECT id,identifier,version FROM data_contracts where identifier = $1 ORDER by version DESC LIMIT 1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base58)])
             .await.unwrap();
@@ -174,7 +171,7 @@ impl PostgresDAO {
     pub async fn get_document_by_identifier(&self, identifier: Identifier) -> Result<Option<Document>, PoolError> {
         let client = self.connection_pool.get().await?;
 
-        let stmt = client.prepare_cached("SELECT id,identifier,owner,revision,deleted FROM documents where identifier = $1 ORDER BY id DESC LIMIT 1;").await.unwrap();
+        let stmt = client.prepare_cached("SELECT id,identifier,revision,deleted FROM documents where identifier = $1 ORDER BY id DESC LIMIT 1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[&identifier.to_string(Encoding::Base58)])
             .await.unwrap();
