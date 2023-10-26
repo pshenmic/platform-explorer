@@ -1,5 +1,4 @@
 const cache = require("../cache");
-const Transaction = require("../models/Transaction");
 const TransactionsDAO = require("../dao/TransactionsDAO");
 
 class TransactionsController {
