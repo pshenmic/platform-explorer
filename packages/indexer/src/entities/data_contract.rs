@@ -2,7 +2,6 @@ use dpp::data_contract::serialized_version::DataContractInSerializationFormat;
 use dpp::data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding;
-use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
 use serde_json::Value;
@@ -48,7 +47,6 @@ impl From<DataContractUpdateTransition> for DataContract {
                 match data_contract {
                     DataContractInSerializationFormat::V0(data_contract) => {
                         let identifier = data_contract.id;
-                        let owner = data_contract.owner_id;
                         let version = data_contract.version;
                         let schema = data_contract.document_schemas;
                         let schema_decoded = serde_json::to_value(schema).unwrap();
@@ -81,12 +79,11 @@ impl From<SystemDataContract> for DataContract {
 impl From<Row> for DataContract {
     fn from(row: Row) -> Self {
         let id: i32 = row.get(0);
-        let owner: String = row.get(1);
 
-        let identifier_str: String = row.get(2);
+        let identifier_str: String = row.get(1);
         let identifier = Identifier::from_string(&identifier_str, Encoding::Base58).unwrap();
 
-        let version:i32 = row.get(3);
+        let version:i32 = row.get(2);
 
         return DataContract{
             id: Some(id as u32),
