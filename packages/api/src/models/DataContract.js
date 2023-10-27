@@ -3,6 +3,7 @@ module.exports = class DataContract {
     schema
     version
     txHash
+    timestamp
 
     constructor(identifier, schema, version, txHash, timestamp) {
         this.identifier = identifier;

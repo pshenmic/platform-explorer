@@ -3,8 +3,11 @@ module.exports = class Identity {
     revision
     balance
     timestamp
-    totalTxs
     txHash
+    totalTxs
+    totalTransfers
+    totalDocuments
+    totalDataContracts
 
     constructor(identifier, revision, balance, timestamp, totalTxs, totalDataContracts, totalDocuments, totalTransfers, txHash) {
         this.identifier = identifier;
