@@ -8,9 +8,9 @@ module.exports = class DocumentsDAO {
 
     getDocumentByIdentifier = async (identifier) => {
         const subquery = this.knex('documents')
-            .select('documents.id as id', 'documents.identifier as identifier',
-                'data_contracts.identifier as data_contract_identifier', 'documents.data as data',
-                'documents.revision as revision', 'documents.state_transition_hash as state_transition_hash',
+            .select('documents.id', 'documents.identifier as identifier',
+                'data_contracts.identifier as data_contract_identifier', 'documents.data as data_contract_data',
+                'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
                 'documents.deleted as deleted')
             .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
             .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
@@ -18,8 +18,10 @@ module.exports = class DocumentsDAO {
             .as('documents')
 
         const rows = await this.knex(subquery)
-            .select('id', 'identifier', 'data_contract_identifier', 'data',
-                'revision', 'deleted', 'rank', 'state_transition_hash')
+            .select('identifier', 'data_contract_identifier', 'data_contract_data',
+                'revision', 'deleted', 'rank', 'tx_hash', 'blocks.timestamp as timestamp')
+            .join('state_transitions', 'state_transitions.hash', 'tx_hash')
+            .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .limit(1);
 
         const [row] = rows
@@ -28,7 +30,10 @@ module.exports = class DocumentsDAO {
             return null
         }
 
-        return Document.fromRow(row);
+        return Document.fromRow({
+            ...row,
+            data: row.data_contract_data
+        });
     }
 
     getDocumentsByDataContract = async (identifier, page, limit, order) => {
@@ -37,8 +42,8 @@ module.exports = class DocumentsDAO {
 
         const subquery = this.knex('documents')
             .select('documents.id as id', 'documents.identifier as identifier',
-                'data_contracts.identifier as data_contract_identifier', 'documents.data as data',
-                'documents.revision as revision', 'documents.state_transition_hash as state_transition_hash',
+                'data_contracts.identifier as data_contract_identifier', 'documents.data as document_data',
+                'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
                 'documents.deleted as deleted')
             .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
             .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
@@ -46,7 +51,7 @@ module.exports = class DocumentsDAO {
 
         const filteredDocuments = this.knex.with('with_alias', subquery)
             .select('id', 'identifier', 'rank', 'revision', 'data_contract_identifier',
-                'state_transition_hash', 'deleted', 'data',
+                'tx_hash', 'deleted', 'document_data',
                 this.knex('with_alias').count('*').as('total_count').where('rank', '1'))
             .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
             .from('with_alias')
@@ -55,13 +60,15 @@ module.exports = class DocumentsDAO {
             .as('documents')
 
         const rows = await this.knex(filteredDocuments)
-            .select('id', 'identifier', 'row_number', 'revision', 'data_contract_identifier', 'state_transition_hash', 'deleted', 'data', 'total_count')
+            .select('identifier', 'row_number', 'revision', 'data_contract_identifier',
+                'tx_hash', 'deleted', 'document_data', 'total_count', 'blocks.timestamp as timestamp')
             .whereBetween('row_number', [fromRank, toRank])
-            .orderBy('id', order);
+            .join('state_transitions', 'tx_hash', 'state_transitions.hash')
+            .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
 
         const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0;
 
-        const resultSet = rows.map((row) => Document.fromRow(row));
+        const resultSet = rows.map((row) => Document.fromRow({...row, data: row.document_data}));
 
         return new PaginatedResultSet(resultSet, page, limit, totalCount)
     }

@@ -12,11 +12,11 @@ module.exports = class DataContractsDAO {
 
         const subquery = this.knex('data_contracts')
             .select('data_contracts.id as id', 'data_contracts.identifier as identifier',
-                'data_contracts.version as version')
+                'data_contracts.version as version', 'data_contracts.state_transition_hash as tx_hash')
             .select(this.knex.raw(`rank() over (partition by identifier order by version desc) rank`))
 
         const filteredContracts = this.knex.with('with_alias', subquery)
-            .select( 'id', 'identifier', 'version', 'rank',
+            .select( 'id', 'identifier', 'version', 'tx_hash', 'rank',
                 this.knex('with_alias').count('*').as('total_count').where('rank', '1'))
             .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
             .from('with_alias')
@@ -25,9 +25,11 @@ module.exports = class DataContractsDAO {
             .as('filtered_data_contracts')
 
         const rows = await this.knex(filteredContracts)
-            .select('total_count', 'id', 'identifier', 'version', 'row_number')
+            .select('total_count', 'identifier', 'version', 'row_number', 'filtered_data_contracts.tx_hash',
+                'blocks.timestamp as timestamp', 'blocks.hash as block_hash')
+            .join('state_transitions', 'state_transitions.hash', 'filtered_data_contracts.tx_hash')
+            .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .whereBetween('row_number', [fromRank, toRank])
-            .orderBy('id', order);
 
         const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0;
 
@@ -38,9 +40,12 @@ module.exports = class DataContractsDAO {
 
     getDataContractByIdentifier = async (identifier) => {
         const rows = await this.knex('data_contracts')
-            .select('data_contracts.identifier as identifier', 'data_contracts.schema as schema', 'data_contracts.version as version')
+            .select('data_contracts.identifier as identifier', 'data_contracts.schema as schema',
+                'data_contracts.version as version', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
+            .join('state_transitions', 'data_contracts.state_transition_hash', 'state_transitions.hash')
+            .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .where('data_contracts.identifier', identifier)
-            .orderBy('id', 'desc')
+            .orderBy('data_contracts.id', 'desc')
             .limit(1);
 
         const [row] = rows
