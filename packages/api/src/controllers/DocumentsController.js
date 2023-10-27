@@ -15,7 +15,7 @@ class DocumentsController {
             response.status(404).send({message: 'not found'})
         }
 
-        response.send(Document.fromRow(document));
+        response.send(document);
     }
 
     getDocumentsByDataContract = async (request, response) => {
