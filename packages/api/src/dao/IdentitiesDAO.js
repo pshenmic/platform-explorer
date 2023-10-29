@@ -65,6 +65,35 @@ module.exports = class IdentitiesDAO {
         return Identity.fromRow({...row, balance})
     }
 
+    getIdentities = async (page, limit, order) => {
+        const fromRank = (page - 1) * limit + 1
+        const toRank = fromRank + limit - 1
+
+        const subquery = this.knex('identities')
+            .select('identities.id', 'identities.identifier as identifier',
+                'identities.state_transition_hash as tx_hash', 'identities.revision as revision')
+            .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
+            .as('identities')
+
+        const filteredIdentities = this.knex(subquery)
+            .select('identifier', 'tx_hash', 'revision', 'rank')
+            .select(this.knex.raw(`rank() over (order by identities.id ${order}) row_number`))
+            .where('rank', 1)
+            .as('filtered_identities')
+
+        const rows = await this.knex(filteredIdentities)
+            .select('identifier', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number')
+            .select(this.knex('identities').count('*').as('total_count'))
+            .join('state_transitions', 'state_transitions.hash', 'tx_hash')
+            .join('blocks', 'state_transitions.block_hash', 'blocks.hash')
+            .whereBetween('row_number', [fromRank, toRank])
+            .orderBy('blocks.height', order)
+
+        const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0;
+
+        return new PaginatedResultSet(rows.map(row => Identity.fromRow(row)), page, limit, totalCount)
+    }
+
     getDataContractsByIdentity = async (identifier, page, limit, order) => {
         const fromRank = (page - 1) * limit + 1
         const toRank = fromRank + limit - 1

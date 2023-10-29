@@ -58,6 +58,11 @@ module.exports = ({fastify, mainController, blocksController, transactionsContro
             handler: identitiesController.getIdentityByIdentifier
         },
         {
+            path: '/identities',
+            method: 'GET',
+            handler: identitiesController.getIdentities
+        },
+        {
             path: '/identities/:identifier/transactions',
             method: 'GET',
             handler: identitiesController.getTransactionsByIdentity
