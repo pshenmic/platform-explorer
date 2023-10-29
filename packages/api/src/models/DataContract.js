@@ -6,11 +6,11 @@ module.exports = class DataContract {
     timestamp
 
     constructor(identifier, schema, version, txHash, timestamp) {
-        this.identifier = identifier;
-        this.schema = schema;
-        this.version = version;
-        this.txHash = txHash;
-        this.timestamp = timestamp;
+        this.identifier = identifier ?? null;
+        this.schema = schema ?? null;
+        this.version = version ?? null;
+        this.txHash = txHash ?? null;
+        this.timestamp = timestamp ?? null;
     }
 
     static fromRow({identifier, schema, version, tx_hash, timestamp}) {

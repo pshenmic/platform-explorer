@@ -10,15 +10,15 @@ module.exports = class Identity {
     totalDataContracts
 
     constructor(identifier, revision, balance, timestamp, totalTxs, totalDataContracts, totalDocuments, totalTransfers, txHash) {
-        this.identifier = identifier;
-        this.revision = revision;
-        this.balance = balance;
-        this.timestamp = timestamp;
-        this.totalTxs = totalTxs;
-        this.totalDocuments = totalDocuments;
-        this.totalDataContracts = totalDataContracts;
-        this.totalTransfers = totalTransfers;
-        this.txHash = txHash
+        this.identifier = identifier ?? null;
+        this.revision = revision ?? null;
+        this.balance = balance ?? null;
+        this.timestamp = timestamp ?? null;
+        this.totalTxs = totalTxs ?? null;
+        this.totalDocuments = totalDocuments ?? null;
+        this.totalDataContracts = totalDataContracts ?? null;
+        this.totalTransfers = totalTransfers ?? null;
+        this.txHash = txHash ?? null;
     }
 
     static fromRow({identifier, revision, balance, timestamp, total_txs, total_data_contracts, total_documents, total_transfers, tx_hash}) {

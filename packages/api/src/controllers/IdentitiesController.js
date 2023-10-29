@@ -16,6 +16,58 @@ class IdentitiesController {
 
         response.send(identity)
     }
+
+    getTransactionsByIdentity = async (request, response) => {
+        const {identifier} = request.params
+        const {page = 1, limit = 10, order = 'asc'} = request.query
+
+        if (order !== 'asc' && order !== 'desc') {
+            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+        }
+
+        const transactions = await this.identitiesDAO.getTransactionsByIdentity(identifier, Number(page), Number(limit), order)
+
+        response.send(transactions)
+    }
+
+    getDataContractsByIdentity = async (request, response) => {
+        const {identifier} = request.params
+        const {page = 1, limit = 10, order = 'asc'} = request.query
+
+        if (order !== 'asc' && order !== 'desc') {
+            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+        }
+
+        const dataContracts = await this.identitiesDAO.getDataContractsByIdentity(identifier, Number(page), Number(limit), order)
+
+        response.send(dataContracts)
+    }
+
+    getDocumentsByIdentity = async (request, response) => {
+        const {identifier} = request.params
+        const {page = 1, limit = 10, order = 'asc'} = request.query
+
+        if (order !== 'asc' && order !== 'desc') {
+            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+        }
+
+        const documents = await this.identitiesDAO.getDocumentsByIdentity(identifier, Number(page), Number(limit), order)
+
+        response.send(documents)
+    }
+
+    getTransfersByIdentity = async (request, response) => {
+        const {identifier} = request.params
+        const {page = 1, limit = 10, order = 'asc'} = request.query
+
+        if (order !== 'asc' && order !== 'desc') {
+            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+        }
+
+        const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page), Number(limit), order)
+
+        response.send(transfers)
+    }
 }
 
 module.exports = IdentitiesController
