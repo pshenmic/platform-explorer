@@ -15,12 +15,6 @@ module.exports = class BlockDAO {
     }
 
     getStats = async () => {
-        // total tx count
-        // total documents count
-        // total data contracts
-        // total transfers
-
-
         const blocksQuery = this.knex('blocks')
             .select('height', 'timestamp', 'block_version', 'app_version', 'l1_locked_height')
             .select(this.knex.raw('LAG(timestamp, 1) over (order by blocks.height asc) prev_timestamp'))
