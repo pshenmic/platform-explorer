@@ -42,10 +42,6 @@ function HomeRoute() {
                     <span>{appVersion}</span>
                 </div>
                 <div className="status_item">
-                    <span>P2P version</span>
-                    <span>{p2pVersion}</span>
-                </div>
-                <div className="status_item">
                     <span>Block version</span>
                     <span>{blockVersion}</span>
                 </div>
