@@ -1,0 +1,10 @@
+@use '../../styles/mixins.scss';
+
+.DataContractsListItem {
+    
+    @include mixins.def_list_item;
+
+    &__Identifier {
+
+    }
+}

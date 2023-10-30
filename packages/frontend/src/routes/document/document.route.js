@@ -3,6 +3,15 @@ import {useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
 import './document.scss'
 
+import { 
+    Box, 
+    Container,
+    TableContainer, Table, Thead, Tbody, Tr, Th, Td,
+    Heading, 
+    Flex,
+    Code 
+} from "@chakra-ui/react";
+
 export async function loader({params}) {
     const {identifier} = params
 
@@ -13,25 +22,68 @@ function DocumentRoute() {
     const document = useLoaderData()
 
     return (
-        <div className="container">
+        <Container 
+            maxW='container.xl' 
+            bg='gray.600' 
+            color='white'
+            _dark={{ bg: "gray.900" }}
+            mt={8}
+            mb={8}
+            className='DocumentPage'
+        >
+            <Flex 
+                w='100%' 
+                justifyContent='space-between'
+                wrap={["wrap", , , 'nowrap']}
+            >
 
-            <div className='document'>
-            <div className='document__info_item'>
-                    <div className='document__info_title'>Identifier:</div>
-                    <div className='document__info_value'>{document.identifier}</div>
-                </div>
+                <TableContainer 
+                    maxW='none'
+                    borderWidth='1px' borderRadius='lg'
+                    width={["100%", , , "50%"]}
+                    m={0}
+                >
+                    <Table variant='simple'>
+                        <Thead>
+                            <Tr>
+                                <Th>Document info</Th>
+                                <Th></Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            <Tr>
+                                <Td>Identifier</Td>
+                                <Td isNumeric>{document.identifier}</Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Revision</Td>
+                                <Td isNumeric>{document.revision}</Td>
+                            </Tr>
+                        </Tbody>
+                    </Table>
+                </TableContainer>
 
-                <div className='document__info_item'>
-                    <div className='document__info_title'>Revision:</div>
-                    <div className='document__info_value'>{document.revision}</div>
-                </div>
+                <Box w={5} h={5} />
+            
+                <Container 
+                    width={["100%", , ,"50%"]}
+                    maxW='none'
+                    borderWidth='1px' borderRadius='lg'
+                    className='InfoBlock'
+                >
+                    <Heading className='InfoBlock__Title' as='h1' size='sm'>Data</Heading>
 
-                <div className='document__data_title'>Data:</div>
-                <span className='document__data'>{JSON.stringify(document.data, null, 2)}</span>
+                    <Code 
+                        borderRadius='lg'
+                        className='DocumentPage__Code'
+                        w='100%'
+                    >
+                        {JSON.stringify(document.data, null, 2)}
+                    </Code>   
 
-            </div>
-
-        </div>
+                </Container>
+            </Flex>
+        </Container>
     );
 }
 

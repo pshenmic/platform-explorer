@@ -4,7 +4,12 @@ import * as Api from "../../util/Api";
 import ReactPaginate from "react-paginate";
 import GoToHeightForm from "./../../components/goToHeightForm/GoToHeightForm";
 import PageSizeSelector from "./../../components/pageSizeSelector/PageSizeSelector";
-import './blocks.css'
+import BlocksList from '../../components/blocks/BlocksList'
+
+import { 
+    Container,
+    Heading, 
+} from "@chakra-ui/react";
 
 
 const paginateConfig = { 
@@ -68,7 +73,70 @@ function BlocksRoute() {
     }, [pageSize]);
 
     return (
-        <div className="container">
+        <>
+
+
+        <Container 
+            maxW='container.xl' 
+            color='white'
+            mt={8}
+            mb={8}
+            className='BlocksPage'
+        >
+            <Container 
+                maxW='container.xl' 
+                _dark={{ color: "white" }}
+                borderWidth='1px' borderRadius='lg'
+                className='InfoBlock'
+            >
+                <Heading className='InfoBlock__Title' as='h1' size='sm'>Blocks</Heading>
+                <BlocksList items={blocks}/>
+
+
+                <div className='ListNavigation'>
+                    <GoToHeightForm
+                        goToHeightHandler={goToHeight}
+                        goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
+                        heightCorrection={(blockHeightToSearch.length > 0 &&
+                                           Number(blockHeightToSearch) <= total && 
+                                           Number(blockHeightToSearch) > 0)}
+                    />
+
+                    <ReactPaginate 
+                        breakLabel="..."
+                        nextLabel=">"
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={2}
+                        marginPagesDisplayed={1}
+                        pageCount={pageCount}
+                        previousLabel="<"
+                        pageClassName="page-item"
+                        pageLinkClassName="page-link"
+                        previousClassName="page-item page-item--previous"
+                        previousLinkClassName="page-link"
+                        nextClassName="page-item page-item--next"
+                        nextLinkClassName="page-link"
+                        breakClassName="page-item  page-item--break-link"
+                        containerClassName="pagination"
+                        activeClassName="active"
+                        renderOnZeroPageCount={true}
+                        forcePage={currentPage} 
+                    />
+                
+                    <PageSizeSelector
+                        PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                        defaultValue={paginateConfig.pageSize.default}
+                        items={paginateConfig.pageSize.values}
+                    />
+                </div>
+
+            </Container>
+        </Container>
+
+
+
+
+        {/* <div className="container">
             <div className={"block_list"}>
                 <span className="block_list__title">Last blocks</span>
 
@@ -111,7 +179,10 @@ function BlocksRoute() {
                     />
                 </div>
             </div>
-        </div>
+        </div> */}
+
+
+        </>
     );
 }
 

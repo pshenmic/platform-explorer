@@ -1,69 +1,143 @@
 import React from 'react';
 import * as Api from "../../util/Api";
 import './home.css'
-import {Link, useLoaderData} from "react-router-dom";
-import {getTransitionTypeString} from '../../util/index'
+import {useLoaderData} from "react-router-dom";
+import TransactionsList from '../../components/transactions/TransactionsList'
+import BlocksList from '../../components/blocks/BlocksList'
+
+import { 
+    Box, 
+    Text, 
+    Container,
+    Heading, 
+    Flex,
+    Stack,
+    StackDivider
+} from "@chakra-ui/react";
+
 
 export async function loader({}) {
-    const [status, paginatedTransactions] = await Promise.all([Api.getStatus(), Api.getTransactions(1, 30, 'desc')])
+    const [status, paginatedTransactions, paginatedBlocks] = await Promise.all([
+        Api.getStatus(), 
+        Api.getTransactions(1, 10, 'desc'),
+        Api.getBlocks(1, 10, 'desc')
+    ])
 
-    const {resultSet} = paginatedTransactions
+    const transactions = paginatedTransactions.resultSet
+    const blocks = paginatedBlocks.resultSet
 
-    return {status, transactions: resultSet}
-}
-
-
-function Transactions({transactions}) {
-    return transactions.map((tx) =>
-        <div key={tx.hash} className={"last_transactions_item"}>
-            <Link to={`transaction/${tx.hash}`}>
-                <span className="last_transactions_item__timestamp">{new Date(tx.timestamp).toLocaleString()}</span>
-                <span className="last_transactions_item__hash">{tx.hash}</span>
-                <span className="last_transactions_item__type">({getTransitionTypeString(tx.type)})</span>
-            </Link>
-        </div>
-    )
+    return {status, transactions, blocks}
 }
 
 function HomeRoute() {
-    const {status, transactions} = useLoaderData();
+    const {status, transactions, blocks} = useLoaderData();
 
     const {tenderdashVersion, network, appVersion, p2pVersion, blockVersion, blocksCount} = status
 
     return (
-        <div className="container">
-            <div className="status">
-                <div className="status_item">
-                    <span>Network</span>
-                    <span>{network}</span>
-                </div>
-                <div className="status_item">
-                    <span>App Version</span>
-                    <span>{appVersion}</span>
-                </div>
-                <div className="status_item">
-                    <span>P2P version</span>
-                    <span>{p2pVersion}</span>
-                </div>
-                <div className="status_item">
-                    <span>Block version</span>
-                    <span>{blockVersion}</span>
-                </div>
-                <div className="status_item">
-                    <span>Tenderdash Version</span>
-                    <span style={{['padding-left']: '10px'}}>{tenderdashVersion}</span>
-                </div>
-                <div className="status_item">
-                    <span>Blocks</span>
-                    <span>{blocksCount}</span>
-                </div>
-            </div>
+        <Container 
+            maxW='container.xl' 
+            _dark={{ color: "white" }}
+            padding={3}
+            mt={8}
+            className='data_contract'
+        >
+            <Container 
+                width='100%'
+                maxW='none'
+                mt={5}
+                mb={[10,,16]}
+                borderWidth={['1px' , , '0']} 
+                borderRadius='lg'
 
-            <div className="last_transactions">
-                <span className="last_transactions__title">Last transactions</span>
-                <Transactions transactions={transactions}/>
-            </div>
-        </div>
+            >
+                <Stack 
+                    direction={['column', , 'row']} 
+                    spacing='24px'
+                    divider={<StackDivider borderColor='gray.200' />}
+                >
+                    <Box w={['100%', , '33%']}>
+
+                        <Flex wrap={'wrap'}>
+                            <Text as={'b'} mr={4}>Network: </Text>
+                            <Box>{network}</Box>
+                        </Flex>
+
+                        <Flex wrap={'wrap'}>
+                            <Text as={'b'} mr={4}>Blocks:</Text>
+                            <Box>{blocksCount}</Box>
+                        </Flex>
+
+                    </Box>
+
+                    <Box w={['100%', , '33%']}>
+
+                        <Flex wrap={'wrap'}>
+                            <Text as={'b'} mr={4}>Block version:</Text>
+                            <Box>{blockVersion}</Box>
+                        </Flex>
+
+                        <Flex wrap={'wrap'}>
+                            <Text as={'b'} mr={4}>P2P version:</Text>
+                            <Box>{p2pVersion}</Box>
+                        </Flex>
+
+                    </Box>
+
+                    <Box w={['100%', , '33%']}>
+
+                        <Flex wrap={'wrap'}>
+                            <Text as={'b'} mr={4}>Tenderdash Version:</Text>
+                            <Box>{tenderdashVersion}</Box>
+                        </Flex>
+
+                        <Flex wrap={'wrap'}>
+                            <Text as={'b'} mr={4}>App Version:</Text>
+                            <Box>{appVersion}</Box>
+                        </Flex>
+
+                    </Box>
+
+                </Stack>
+            </Container>
+
+            <Flex 
+                w='100%' 
+                justifyContent='space-between'
+                wrap={["wrap", , , 'nowrap']}
+                mt={4}
+            >
+
+                <Container
+                    width={["100%", , ,"50%"]}
+                    maxW='none'
+                    m={0}
+                    borderWidth='1px' borderRadius='lg'
+                    className='InfoBlock'
+                >
+                    <Heading className='InfoBlock__Title' as='h1' size='sm'>Last blocks</Heading>
+
+                    <BlocksList items={blocks} size='s'/>
+
+                </Container>
+
+                <Box w={5} h={5} />
+
+                <Container
+                    width={["100%", , ,"50%"]}
+                    maxW='none'
+                    m={0}
+                    borderWidth='1px' borderRadius='lg'
+                    className='InfoBlock'
+                >
+                    <Heading className='InfoBlock__Title' as='h1' size='sm'>Last transaction</Heading>
+
+                    <TransactionsList items={transactions}/>
+
+                </Container>
+            
+            </Flex>
+        </Container>
     );
 }
 

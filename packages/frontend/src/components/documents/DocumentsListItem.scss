@@ -1,0 +1,18 @@
+@use '../../styles/mixins.scss';
+
+.DocumentsListItem {
+    @include mixins.def_list_item;
+
+    &__Identifier {
+        word-wrap: break-word;
+        text-wrap: wrap;
+        word-break: break-all;
+        font-family: monospace;
+        font-size: 12pt;
+
+        flex-grow: 1;
+        text-overflow: ellipsis;
+        overflow: hidden; 
+        white-space: nowrap;
+    }
+}

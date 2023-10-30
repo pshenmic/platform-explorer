@@ -78,6 +78,10 @@ const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30
     return call(`dataContract/${dataContractIdentifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
+const getIdentity = (identity_id) => {
+    return call(`identity/${identity_id}`, 'GET')
+}
+
 const getStatus = () => {
     return call(`status`, 'GET')
 }
@@ -101,5 +105,6 @@ export {
     getDocumentsByDataContract,
     getDocumentByIdentifier,
     getDataContractByIdentifier,
-    getDataContracts
+    getDataContracts,
+    getIdentity
 }

@@ -19,6 +19,9 @@ import TransactionRoute, {
 import DataContractRoute, {loader as dataContractLoader} from "./routes/dataContract/data.contract.route";
 import DataContractsRoute from "./routes/dataContracts/data.contracts.route";
 import DocumentRoute, {loader as documentLoader} from "./routes/document/document.route";
+import IdentityRoute, {loader as identityLoader} from "./routes/identity/identity.route";
+import IdentitiesRoute, {loader as identitiesLoader} from "./routes/identities/identities.route";
+
 
 const router = createBrowserRouter([
     {
@@ -60,6 +63,16 @@ const router = createBrowserRouter([
                 element: <DocumentRoute/>,
                 loader: documentLoader,
             },
+            {
+                path: "identities",
+                element: <IdentitiesRoute/>,
+                // loader: identitiesLoader,
+            },
+            {
+                path: "identity/:identifier",
+                element: <IdentityRoute/>,
+                // loader: identityLoader,
+            },
         ]
     }
 ]);
@@ -67,6 +80,8 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
+         {/* {localStorage.setItem('chakra-ui-color-mode', 'dark')} */}
+         
         <RouterProvider router={router}/>
     </React.StrictMode>
 );

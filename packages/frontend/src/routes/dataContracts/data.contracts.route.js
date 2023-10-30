@@ -1,24 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import './data_contracts.css'
 import * as Api from '../../util/Api'
-import {Link} from "react-router-dom";
+import DataContractsList from '../../components/dataContracts/DataContractsList'
 
-function DataContracts({dataContracts}) {
-    return <div className={"data_contracts_list"}>
-        {
-            dataContracts.map((dataContract) =>
-                <DataContract
-                    key={dataContract.identifier}
-                    dataContract={dataContract}/>)
-        }
-    </div>
-}
-
-function DataContract({dataContract}) {
-    return <div className={"data_contracts_item"}>
-        <Link to={`/dataContract/${dataContract.identifier}`}>{dataContract.identifier}</Link>
-    </div>
-}
+import { 
+    Container,
+    Heading, 
+} from "@chakra-ui/react"
 
 function DataContractsRoute() {
     const [dataContracts, setDataContracts] = useState(null)
@@ -34,11 +21,30 @@ function DataContractsRoute() {
             .finally(() => setLoading(false))
     }, [])
 
-    return (<div className="container">
-        {error && <div>Error {error}</div>}
-        {loading && <div>Loading data contracts from API</div>}
-        {dataContracts && <DataContracts dataContracts={dataContracts}/>}
-    </div>);
+    return (
+        <div className="container">
+            {error && <div>Error {error}</div>}
+            {loading && <div>Loading data contracts from API</div>}
+
+            {dataContracts && 
+                <Container 
+                    maxW='container.xl' 
+                    padding={3}
+                    mt={8}
+                    mb={4}
+                    borderWidth='1px' borderRadius='lg'
+                    className='InfoBlock'
+                > 
+
+                    <Heading className='InfoBlock__Title' as='h1' size='sm'>Data contracts</Heading>
+
+                    <DataContractsList items={dataContracts} size='l'/>
+
+                </Container>
+            }
+
+        </div>
+    );
 }
 
 export default DataContractsRoute;

@@ -1,0 +1,16 @@
+.InfoBlock {
+    position: relative;
+    padding: var(--chakra-space-3);
+    background-color: var(--chakra-colors-blackAlpha-200);
+    box-shadow: 3px 3px var(--chakra-colors-brand-deep);
+
+    &__Title {
+        background-color: var(--chakra-colors-brand-deep);
+        width: max-content;
+        padding: 8px 18px;
+        border-radius: 7px 0;
+        position: relative;
+        left: -12px;
+        top: -12px;
+    }
+}

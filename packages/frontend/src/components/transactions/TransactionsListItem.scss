@@ -1,0 +1,45 @@
+@use '../../styles/mixins.scss';
+
+.TransactionsListItem {
+    @include mixins.def_list_item;
+    
+    align-items: baseline;
+    flex-wrap: wrap;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &__Timestamp {
+        margin-right: 16px;
+    }
+
+    &__Identifier {
+        font-family: monospace;
+        font-size: 12pt;
+        flex-grow: 1;
+
+        text-overflow: ellipsis;
+        overflow: hidden; 
+        width: 160px; 
+        line-height: 24px;
+        white-space: nowrap;
+        margin-right: 16px;
+        
+    }
+
+    &__Type {
+
+    }
+
+    @media screen and (max-width: 600px) {
+        &__Type {
+            order: 2;
+        }
+
+        &__Identifier {
+            order: 3;
+            width: 100%;
+        }
+    }
+}

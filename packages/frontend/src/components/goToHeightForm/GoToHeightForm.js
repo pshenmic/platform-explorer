@@ -1,19 +1,19 @@
-import "./go_to_height_form.css";
+import "./GoToHeightForm.scss";
 
 // import React, {useState} from 'react';
 
 export default function GoToHeightForm({goToHeightHandler, goToHeightChangeHandle, heightCorrection}) {
 
     return (
-        <form className='go_to_height_form' onSubmit={goToHeightHandler}>
-            <div className='go_to_height_form__title'>Go to height</div>
+        <form className='GoToHeightForm' onSubmit={goToHeightHandler}>
+            <div className='GoToHeightForm__Title'>Go to height</div>
             <input 
-                className={heightCorrection ? 'go_to_height_form__input' : 'go_to_height_form__input  go_to_height_form__input--incorrect'}
+                className={heightCorrection ? 'GoToHeightForm__Input' : 'GoToHeightForm__Input  GoToHeightForm__Input--Incorrect'}
                 onInput={goToHeightChangeHandle}
                 type='number'
                 placeholder='Height'
             />
-            <button className='go_to_height_form__button' disabled={!heightCorrection}>go</button>
+            <button className='GoToHeightForm__Button' disabled={!heightCorrection}>go</button>
         </form>
     );
 }
