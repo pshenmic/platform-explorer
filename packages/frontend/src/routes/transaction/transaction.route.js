@@ -81,7 +81,7 @@ function TransactionRoute() {
                         </Tr>
                         <Tr>
                             <Td>Timestamp</Td>
-                            <Td >{transaction.timestamp}</Td>
+                            <Td >{new Date(transaction.timestamp).toLocaleString()}</Td>
                         </Tr>
 
                     </Tbody>

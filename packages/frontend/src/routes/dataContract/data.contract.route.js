@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Link} from "react-router-dom";
 import {useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
 import ReactPaginate from "react-paginate";
@@ -75,15 +76,17 @@ function DataContractRoute() {
                         </Tr>
                         <Tr>
                             <Td>Created</Td>
-                            <Td isNumeric>12.10.2023</Td>
-                        </Tr>
-                        <Tr>
-                            <Td>Last update</Td>
-                            <Td isNumeric>13.10.2023</Td>
+                            <Td isNumeric>{new Date(dataContract.timestamp).toLocaleString()}</Td>
                         </Tr>
                         <Tr>
                             <Td>Revision</Td>
                             <Td isNumeric>{dataContract.version}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Transaction</Td>
+                            <Td isNumeric>
+                                <Link to={`/transaction/${dataContract.txHash}`}>{dataContract.txHash}</Link>
+                            </Td>
                         </Tr>
 
                     </Tbody>
@@ -108,7 +111,7 @@ function DataContractRoute() {
                             <Box>
                                 <Box m={4}>
                                     <DocumentsList 
-                                        items={documents}
+                                        documents={documents}
                                         columnsCount={2}
                                     />
                                 </Box>

@@ -28,7 +28,7 @@ function DataContractsRoute() {
 
             {dataContracts && 
                 <Container 
-                    maxW='container.xl' 
+                    maxW='container.md' 
                     padding={3}
                     mt={8}
                     mb={4}
@@ -38,7 +38,7 @@ function DataContractsRoute() {
 
                     <Heading className='InfoBlock__Title' as='h1' size='sm'>Data contracts</Heading>
 
-                    <DataContractsList items={dataContracts} size='l'/>
+                    <DataContractsList dataContracts={dataContracts} size='l'/>
 
                 </Container>
             }

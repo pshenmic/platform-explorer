@@ -3,15 +3,20 @@ import './BlocksListItem.scss'
 import Identifier from '../Identifier'
 
 
-function BlocksListItem ({ hash, height = '', timestamp, txsLength, size = 'l' }) {
-    let hashMaxSymbols = -1;
+function BlocksListItem ({ block, size = 'l' }) {
+    const hash = block.header.hash
+    const height = block.header.height
+    const timestamp = block.header.timestamp
+    const txsLength = block.txs.length
+
+    let maxSymbols = -1;
 
     switch (size) {
         case 'm':
-            hashMaxSymbols = 6;
+            maxSymbols = 16;
             break;
         case 's':
-            hashMaxSymbols = 6;
+            maxSymbols = 12;
             break;
     }
 
@@ -27,14 +32,13 @@ function BlocksListItem ({ hash, height = '', timestamp, txsLength, size = 'l' }
                 </span>
             }
 
-
             {typeof hash === 'string' &&
                 <span className={"BlocksListItem__Hash"}>
-                    <Identifier value={hash} maxSymbols={hashMaxSymbols}/>
+                    <Identifier value={hash} maxSymbols={maxSymbols}/>
                 </span>
             }
 
-            {(typeof txsLength === 'number' || typeof txsLength === 'string') &&
+            {(typeof txsLength === 'number') &&
                 <span className={"BlocksListItem__Txs"}>
                     ({txsLength} txs)
                 </span>

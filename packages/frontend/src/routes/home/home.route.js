@@ -117,7 +117,7 @@ function HomeRoute() {
                 >
                     <Heading className='InfoBlock__Title' as='h1' size='sm'>Last blocks</Heading>
 
-                    <BlocksList items={blocks} size='s'/>
+                    <BlocksList blocks={blocks} size='m'/>
 
                 </Container>
 
@@ -132,7 +132,7 @@ function HomeRoute() {
                 >
                     <Heading className='InfoBlock__Title' as='h1' size='sm'>Last transaction</Heading>
 
-                    <TransactionsList items={transactions}/>
+                    <TransactionsList transactions={transactions} size='m'/>
 
                 </Container>
             

@@ -1,16 +1,21 @@
 import {Link} from "react-router-dom";
 import IdentitiesListItem from "./IdentitiesListItem";
+import './IdentitiesList.scss'
 
 
-function IdentitiesList({ items }) {
+function IdentitiesList({ identities }) {
     return (
-        <div className="identity_list">
-            {items.map((identity, key) =>
+        <div className="IdentitiesList">
+            {identities.map((identity, key) =>
                 <IdentitiesListItem
                     key={key}
-                    identifier={identity.identifier}
+                    identity={identity}
                 />
             )}
+            
+            {identities.length === 0 &&
+                <div className='IdentitiesList__EmptyMessage'>There are no identities created yet.</div>
+            }
         </div>
     );
 }

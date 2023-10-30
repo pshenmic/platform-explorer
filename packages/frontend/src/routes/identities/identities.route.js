@@ -59,9 +59,9 @@ function IdentitiesRoute({ cookies, children }) {
                 borderWidth='1px' borderRadius='lg'
                 className='InfoBlock'
             >
-                <Heading className='InfoBlock__Title' as='h1' size='sm' >Identitys list</Heading>
+                <Heading className='InfoBlock__Title' as='h1' size='sm' >Identities</Heading>
 
-                <IdentitiesList items={identities}/>
+                <IdentitiesList identities={identities}/>
 
             </Container>
         </Container>

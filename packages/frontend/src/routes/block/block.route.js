@@ -89,7 +89,7 @@ function BlockRoute() {
 
                     <div>
 
-                        <TransactionsList items={txHashes}/>
+                        <TransactionsList transactions={txHashes}/>
 
                     </div> 
                 </Container>

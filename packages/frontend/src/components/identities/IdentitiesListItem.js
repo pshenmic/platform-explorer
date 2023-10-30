@@ -3,7 +3,10 @@ import './IdentitiesListItem.scss'
 import Identifier from '../Identifier'
 
 
-function IdentitiesListItem ({identifier, size = 'l'}) {
+function IdentitiesListItem ({identity, size = 'l'}) {
+    const identifier = identity.identifier
+    const timestamp = identity.timestamp
+
     let maxSymbols = -1;
 
     switch (size) {
@@ -20,7 +23,12 @@ function IdentitiesListItem ({identifier, size = 'l'}) {
             <div className="IdentitiesListItem__Identifier">
                 <Identifier value={identifier} maxSymbols={maxSymbols}/>
             </div>
-            <div className="IdentitiesListItem__Balance">120</div>
+
+            {(size !== 's' && typeof timestamp === 'string') && 
+                <div className="IdentitiesListItem__Timestamp">
+                    {new Date(timestamp).toLocaleString()}
+                </div>
+            }
         </Link>
     );
 }

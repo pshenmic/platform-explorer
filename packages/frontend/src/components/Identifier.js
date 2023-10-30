@@ -1,19 +1,8 @@
 
 function Identifier ({value, maxSymbols = -1}) {
-
-    if (maxSymbols > 0 && maxSymbols < value.length) {
-        return (
-            <>
-                {value.slice(0, maxSymbols)}...{value.slice(value.length - maxSymbols, value.length)}
-            </>
-        );
-    } else {
-        return (
-            <>
-                {value}
-            </>
-        );
-    }
+    return maxSymbols === -1 && maxSymbols / 2 < value.length ? 
+        value : 
+        value.slice(0, Math.floor(maxSymbols / 2)) + '...' + value.slice(value.length - Math.floor(maxSymbols / 2), value.length);
 }
 
 export default Identifier;

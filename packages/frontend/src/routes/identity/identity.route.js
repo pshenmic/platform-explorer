@@ -148,20 +148,20 @@ function IdentityRoute({ cookies, children }) {
 
                                 <TabPanel>
                                     <Box>
-                                        <TransactionsList items={transactions}/>
+                                        <TransactionsList transactions={transactions} size='m'/>
                                     </Box>
                                 </TabPanel>
 
                                 <TabPanel>
                                     <Box>
-                                        <DocumentsList items={documents}/>
+                                        <DocumentsList documents={documents} size='m'/>
                                     </Box>
 
                                 </TabPanel>
 
                                 <TabPanel>
                                     <Box>
-                                        <DataContractsList items={dataContracts}/>
+                                        <DataContractsList dataContracts={dataContracts} size='m'/>
                                     </Box>
                                 </TabPanel>
 

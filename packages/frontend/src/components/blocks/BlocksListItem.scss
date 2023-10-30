@@ -10,10 +10,8 @@
     &__Hash {
         color: var(--chakra-colors-gray-200);
         flex-grow: 1;
-
         text-overflow: ellipsis;
         overflow: hidden;
-        line-height: 24px;
         white-space: nowrap;
     }
 

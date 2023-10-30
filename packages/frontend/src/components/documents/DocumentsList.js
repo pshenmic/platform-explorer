@@ -1,22 +1,22 @@
 import DocumentsListItem from "./DocumentsListItem";
 import './DocumentsList.scss'
 
-export default function DocumentsList({items = [], columnsCount = 1}) {
+export default function DocumentsList({documents = [], columnsCount = 1, size='l'}) {
     return (
         <div 
             className='DocumentsList'
             style={{
-                columnCount: items.length > 1 ? columnsCount : 1,
+                columnCount: documents.length > 1 ? columnsCount : 1,
             }}
         >
-            {items.map((document, key) =>
+            {documents.map((document, key) =>
                 <DocumentsListItem
                     key={key}
-                    identifier={document.identifier}
+                    document={document}
                 />
             )}
 
-            {items.length === 0 &&
+            {documents.length === 0 &&
                 <div className='DocumentsList__EmptyMessage'>There are no documents created yet.</div>
             }
         </div>

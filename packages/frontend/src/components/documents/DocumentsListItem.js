@@ -3,7 +3,9 @@ import Identifier from '../Identifier'
 import './DocumentsListItem.scss'
 
 
-export default function DocumentsListItem({identifier}) {
+export default function DocumentsListItem({document}) {
+    const identifier = document.identifier
+
     return (
         <Link 
             to={`/document/${identifier}`}

@@ -63,29 +63,33 @@ function BlocksRoute() {
 
     return (
         <Container 
-            maxW='container.xl' 
+            maxW='container.lg' 
             color='white'
             mt={8}
             mb={8}
             className='Blocks'
         >
             <Container 
-                maxW='container.xl' 
+                maxW='container.lg' 
                 _dark={{ color: "white" }}
                 borderWidth='1px' borderRadius='lg'
                 className='InfoBlock'
             >
                 <Heading className='InfoBlock__Title' as='h1' size='sm'>Blocks</Heading>
-                <BlocksList items={blocks}/>
+                <BlocksList blocks={blocks}/>
 
 
                 <div className='ListNavigation'>
                     <GoToHeightForm
                         goToHeightHandler={goToHeight}
                         goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
-                        heightCorrection={(blockHeightToSearch.length > 0 &&
-                                           Number(blockHeightToSearch) <= total && 
-                                           Number(blockHeightToSearch) > 0)}
+                        isValid = {()=> {
+                            return (
+                                blockHeightToSearch.length > 0 &&
+                                Number(blockHeightToSearch) <= total && 
+                                Number(blockHeightToSearch) > 0
+                            )}
+                        }
                     />
 
                     <ReactPaginate 

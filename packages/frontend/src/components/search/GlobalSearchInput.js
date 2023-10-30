@@ -26,7 +26,7 @@ function GlobalSearchInput () {
         }
     }
 
-    const goSearch = async () => {
+    const search = async () => {
         try {
             const searchResult = await Api.search(searchQuery)
 
@@ -59,7 +59,7 @@ function GlobalSearchInput () {
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
-            goSearch();
+            search();
         }
     }
 
@@ -81,7 +81,7 @@ function GlobalSearchInput () {
                     bg='gray.900'
                 />
                 <InputRightElement width='4.5rem'>
-                    <Button h='1.75rem' size='sm' onClick={goSearch}>
+                    <Button h='1.75rem' size='sm' onClick={search}>
                         <SearchIcon/>
                     </Button>
                 </InputRightElement>
