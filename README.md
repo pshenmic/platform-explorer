@@ -7,6 +7,8 @@
 
 ![a](https://github.com/pshenmic/platform-explorer/actions/workflows/build.yml/badge.svg)
 
+___
+
 ### **Platform Explorer**
 
 Index and explore Dash Platform (Evolution) chain data, continuously parsing blockchain in the background. 
@@ -34,8 +36,8 @@ dashmate status platform
 ```
 
 Once synced, your Tenderdash RPC will be accessible at http://127.0.0.1:36657
-
-### Running (only dev)
+___
+### Running
 
 #### _only dev mode is implemented atm_
 
