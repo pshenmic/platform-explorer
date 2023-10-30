@@ -5,6 +5,9 @@
     @include mixins.def_list_item;
 
     &__Identifier {
-
+        text-overflow: ellipsis;
+        overflow: hidden;
+        line-height: 24px;
+        white-space: nowrap;
     }
 }
