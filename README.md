@@ -7,7 +7,7 @@
 
 ![a](https://github.com/pshenmic/platform-explorer/actions/workflows/build.yml/badge.svg)
 
-###**Platform Explorer**
+### **Platform Explorer**
 
 Index and explore Dash Platform (Evolution) chain data, continuously parsing blockchain in the background. 
 
