@@ -2,6 +2,7 @@ const BlocksDAO = require('../dao/BlocksDAO')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const DocumentsDAO = require('../dao/DocumentsDAO')
+const TenderdashRPC = require("../tenderdashRpc");
 
 class MainController {
     constructor(knex) {
@@ -12,15 +13,27 @@ class MainController {
     }
 
     getStatus = async (request, response) => {
-        const max = await this.blocksDAO.getMaxHeight()
+        let stats
+        let tdStatus
+
+        try {
+            stats = await this.blocksDAO.getStats()
+            tdStatus = await TenderdashRPC.getStatus();
+        } catch (e) {
+
+        }
 
         response.send({
-            network: "dash-testnet-33",
-            appVersion: "1",
-            p2pVersion: "8",
-            blockVersion: "13",
-            blocksCount: max,
-            tenderdashVersion: "0.13.3"
+            appVersion: stats?.appVersion,
+            blockVersion: stats?.blockVersion,
+            blocksCount: stats?.topHeight,
+            blockTimeAverage: stats?.blockTimeAverage,
+            txCount: stats?.txCount,
+            transfersCount: stats?.transfersCount,
+            dataContractsCount: stats?.dataContractsCount,
+            documentsCount: stats?.documentsCount,
+            network: tdStatus?.network,
+            tenderdashVersion: tdStatus?.tenderdashVersion
         });
     }
 
