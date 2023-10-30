@@ -44,7 +44,7 @@ function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
-    <Box  px={4}>
+    <Box px={3}>
         <Flex 
           className='Navbar' 
           maxW='1980px' 
