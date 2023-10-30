@@ -14,6 +14,61 @@ module.exports = class BlockDAO {
         return max
     }
 
+    getStats = async () => {
+        const blocksQuery = this.knex('blocks')
+            .select('height', 'timestamp', 'block_version', 'app_version', 'l1_locked_height')
+            .select(this.knex.raw('LAG(timestamp, 1) over (order by blocks.height asc) prev_timestamp'))
+            .orderBy('height', 'desc')
+            .limit(10)
+
+        const diffQuery = this.knex.with('with_alias', blocksQuery)
+            .select('height', 'timestamp', 'prev_timestamp', 'block_version', 'app_version', 'l1_locked_height')
+            .select(this.knex.raw('timestamp - prev_timestamp as diff'))
+            .from('with_alias')
+            .as('blocks')
+
+        const averageQuery = this.knex(diffQuery)
+            .select('height', 'timestamp', 'prev_timestamp', 'diff', 'block_version', 'app_version', 'l1_locked_height')
+            .select(this.knex.raw('avg(diff) over () average'))
+            .limit(1)
+            .as('asdasd')
+
+        const final = await this.knex(averageQuery)
+            .select('height', 'timestamp', 'prev_timestamp', 'diff', 'block_version', 'app_version', 'l1_locked_height', 'average')
+            .select(this.knex.raw('extract (epoch from average) as average_seconds'))
+            .select(this.knex('state_transitions').count('*').as('tx_count'))
+            .select(this.knex('transfers').count('*').as('transfers_count'))
+            .select(this.knex('data_contracts').count('*').as('data_contracts_count'))
+            .select(this.knex('documents').count('*').as('documents_count'))
+            .limit(1)
+
+        const [result] = final
+
+        const {
+            height,
+            block_version,
+            app_version,
+            l1_locked_height,
+            average_seconds,
+            tx_count,
+            transfers_count,
+            data_contracts_count,
+            documents_count
+        } = result
+
+        return {
+            topHeight: height,
+            blockTimeAverage: average_seconds,
+            blockVersion: block_version,
+            appVersion: app_version,
+            l1LockedHeight: l1_locked_height,
+            txCount: tx_count,
+            transfersCount: transfers_count,
+            dataContractsCount: data_contracts_count,
+            documentsCount: documents_count
+        }
+    }
+
     getBlockByHash = async (blockHash) => {
         const results = await this.knex
             .select('blocks.hash as hash', 'state_transitions.hash as st_hash', 'blocks.height as height', 'blocks.timestamp as timestamp', 'blocks.block_version as block_version', 'blocks.app_version as app_version', 'blocks.l1_locked_height as l1_locked_height')

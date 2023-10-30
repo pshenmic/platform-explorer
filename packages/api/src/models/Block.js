@@ -5,8 +5,8 @@ module.exports = class Block {
     txs
 
     constructor(header, txs) {
-        this.header = header;
-        this.txs = txs;
+        this.header = header ?? null;
+        this.txs = txs ?? null;
     }
 
     static fromRow({header, txs}) {

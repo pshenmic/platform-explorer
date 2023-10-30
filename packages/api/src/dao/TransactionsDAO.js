@@ -8,8 +8,7 @@ module.exports = class TransactionsDAO {
 
     getTransactionByHash = async (hash) => {
         const [row] = await this.knex('state_transitions')
-            .select('state_transitions.hash as hash', 'state_transitions.data as data', 'state_transitions.type as type',
-                'state_transitions.index as index', 'blocks.height as block_height', 'blocks.timestamp as timestamp')
+            .select('state_transitions.hash as tx_hash', 'state_transitions.data as data', 'state_transitions.type as type', 'state_transitions.index as index', 'blocks.height as block_height', 'blocks.timestamp as timestamp')
             .where('state_transitions.hash', hash)
             .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
 
@@ -25,15 +24,14 @@ module.exports = class TransactionsDAO {
         const toRank = fromRank + limit - 1
 
         const subquery = this.knex('state_transitions')
-            .select(this.knex('state_transitions').count('hash').as('total_count'),
-                'state_transitions.hash as hash', 'state_transitions.data as data',
-                'state_transitions.type as type', 'state_transitions.index as index',
+            .select(this.knex('state_transitions').count('hash').as('total_count'), 'state_transitions.hash as tx_hash',
+                'state_transitions.data as data', 'state_transitions.type as type', 'state_transitions.index as index',
                 'state_transitions.block_hash as block_hash')
             .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
             .as('state_transitions')
 
         const rows = await this.knex(subquery)
-            .select('total_count', 'data', 'type', 'index', 'rank', 'block_hash', 'state_transitions.hash as hash',
+            .select('total_count', 'data', 'type', 'index', 'rank', 'block_hash', 'state_transitions.tx_hash as tx_hash',
                 'blocks.height as block_height', 'blocks.timestamp as timestamp')
             .leftJoin('blocks', 'blocks.hash', 'block_hash')
             .whereBetween('rank', [fromRank, toRank])
@@ -41,7 +39,7 @@ module.exports = class TransactionsDAO {
 
         const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0;
 
-        const resultSet =  rows.map((row) => Transaction.fromRow(row))
+        const resultSet = rows.map((row) => Transaction.fromRow(row))
 
         return new PaginatedResultSet(resultSet, page, limit, totalCount)
     }
