@@ -3,9 +3,7 @@ import TransactionsListItem from './TransactionsListItem'
 
 export default function TransactionsList({items = []}) {
     return (
-        <div 
-            className='transactions-list'
-        >
+        <div>
 
             {items.map((transaction, key) => {
                 if (typeof transaction === 'string') {
