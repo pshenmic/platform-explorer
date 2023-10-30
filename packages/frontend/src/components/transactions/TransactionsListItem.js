@@ -16,7 +16,7 @@ function TransactionsListItem({transaction, size='l'}) {
             maxSymbols = 16;
         break;
         case 's':
-            maxSymbols = 12;
+            maxSymbols = 8;
         break;
     }
 
@@ -24,7 +24,6 @@ function TransactionsListItem({transaction, size='l'}) {
         <Link 
             to={`/transaction/${hash}`}
             className='TransactionsListItem'
-
         >
 
             {typeof timestamp === 'string' &&

@@ -78,8 +78,28 @@ const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30
     return call(`dataContract/${dataContractIdentifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
-const getIdentity = (identity_id) => {
-    return call(`identity/${identity_id}`, 'GET')
+const getTransactionsByIdentity = (identifier) => {
+    return call(`identity/${identifier}/transactions`, 'GET')
+}
+
+const getDataContractsByIdentity = (identifier) => {
+    return call(`identity/${identifier}/dataContracts`, 'GET')
+}
+
+const getDocumentsByIdentity = (identifier) => {
+    return call(`identity/${identifier}/documents`, 'GET')
+}
+
+const getTransfersByIdentity = (identifier) => {
+    return call(`identity/${identifier}/documents`, 'GET')
+}
+
+const getIdentity = (identifier) => {
+    return call(`identity/${identifier}`, 'GET')
+}
+
+const getIdentities = () => {
+    return call(`identities`, 'GET')
 }
 
 const getStatus = () => {
@@ -106,5 +126,10 @@ export {
     getDocumentByIdentifier,
     getDataContractByIdentifier,
     getDataContracts,
-    getIdentity
+    getIdentities,
+    getIdentity,
+    getTransactionsByIdentity,
+    getDataContractsByIdentity,
+    getDocumentsByIdentity,
+    getTransfersByIdentity
 }

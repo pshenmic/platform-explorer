@@ -1,17 +1,15 @@
 import DocumentsListItem from "./DocumentsListItem";
 import './DocumentsList.scss'
 
-export default function DocumentsList({documents = [], columnsCount = 1, size='l'}) {
+export default function DocumentsList({documents = [], size='l'}) {
     return (
         <div 
             className='DocumentsList'
-            style={{
-                columnCount: documents.length > 1 ? columnsCount : 1,
-            }}
         >
             {documents.map((document, key) =>
                 <DocumentsListItem
                     key={key}
+                    size={size}
                     document={document}
                 />
             )}

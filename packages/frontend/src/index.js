@@ -66,12 +66,12 @@ const router = createBrowserRouter([
             {
                 path: "identities",
                 element: <IdentitiesRoute/>,
-                // loader: identitiesLoader,
+                loader: identitiesLoader,
             },
             {
                 path: "identity/:identifier",
                 element: <IdentityRoute/>,
-                // loader: identityLoader,
+                loader: identityLoader,
             },
         ]
     }

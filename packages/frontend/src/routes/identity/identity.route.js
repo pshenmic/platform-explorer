@@ -1,9 +1,11 @@
 import {useLoaderData} from "react-router-dom";
 import * as Api from "../../util/Api";
-import './identity.scss'
+import {Link} from "react-router-dom";
 import TransactionsList from "../../components/transactions/TransactionsList";
 import DocumentsList from "../../components/documents/DocumentsList";
 import DataContractsList from "../../components/dataContracts/DataContractsList";
+import Identifier from '../../components/Identifier'
+import './identity.scss'
 
 import { 
     Box, 
@@ -14,61 +16,34 @@ import {
 } from "@chakra-ui/react"
 
 
-const documents = [
-    {identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR'},
-    {identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR'},
-    {identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR'},
-    {identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR'},
-    {identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR'},
-    {identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR'},
-]
-
-const dataContracts = [
-    {identifier: 'H8nrKtTQcGAa8xXobuzyV31h3GjxrSzMtqPkWe2P927n'},
-    {identifier: 'H8nrKtTQcGAa8xXobuzyV31h3GjxrSzMtqPkWe2P927n'},
-    {identifier: 'H8nrKtTQcGAa8xXobuzyV31h3GjxrSzMtqPkWe2P927n'},
-    {identifier: 'H8nrKtTQcGAa8xXobuzyV31h3GjxrSzMtqPkWe2P927n'},
-    {identifier: 'H8nrKtTQcGAa8xXobuzyV31h3GjxrSzMtqPkWe2P927n'},
-    {identifier: 'H8nrKtTQcGAa8xXobuzyV31h3GjxrSzMtqPkWe2P927n'},
-]
-
-const transactions = [
-    {
-        hash: 'BF240D753F5878FFD7A8AD224B148936BB666C17433CACD4B11E1B2B4142E934', 
-        type: 'Documents batch',
-        timestamp: '10/23/2023, 10:52:29 PM'
-    },
-    {
-        hash: 'BF240D753F5878FFD7A8AD224B148936BB666C17433CACD4B11E1B2B4142E934', 
-        type: 'Transfer',
-        timestamp: '10/23/2023, 10:52:29 PM'
-    },
-    {
-        hash: 'BF240D753F5878FFD7A8AD224B148936BB666C17433CACD4B11E1B2B4142E934', 
-        type: 'Documents batch',
-        timestamp: '10/23/2023, 10:52:29 PM'
-    },
-    {
-        hash: 'BF240D753F5878FFD7A8AD224B148936BB666C17433CACD4B11E1B2B4142E934', 
-        type: 'Documents batch',
-        timestamp: '10/23/2023, 10:52:29 PM'
-    },
-    {
-        hash: 'BF240D753F5878FFD7A8AD224B148936BB666C17433CACD4B11E1B2B4142E934', 
-        type: 'Transfer',
-        timestamp: '10/23/2023, 10:52:29 PM'
-    },
-]
-
-
 export async function loader({params}) {
     const {identifier} = params
 
-    return await Api.getIdentity('BJ3WqMH4HyvZZAPW8srpq41ne6qhR1e4VMaU6HbSW7Dg');
+    const [identity, dataContracts, documents, transactions, transfers] = await Promise.all([
+        Api.getIdentity(identifier),
+        Api.getDataContractsByIdentity(identifier),
+        Api.getDocumentsByIdentity(identifier),
+        Api.getTransactionsByIdentity(identifier),
+        Api.getTransfersByIdentity(identifier),
+    ])
+
+    return {
+        identity,
+        dataContracts,
+        documents,
+        transactions,
+        transfers
+    };
 }
 
 function IdentityRoute({ cookies, children }) {
-    const identity = useLoaderData();
+    const {
+        identity, 
+        dataContracts,
+        documents, 
+        transactions,
+        transfers
+    } = useLoaderData();
 
     return (
         <div className="block identity">
@@ -97,32 +72,44 @@ function IdentityRoute({ cookies, children }) {
                             </Thead>
                             <Tbody>
                                 <Tr>
+                                    <Td>Identifier</Td>
+                                    <Td isNumeric>{identity.identifier}</Td>
+                                </Tr>
+                                <Tr>
                                     <Td>Balance</Td>
-                                    <Td isNumeric>1000 Credits</Td>
+                                    <Td isNumeric>{identity.balance} Credits</Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Created</Td>
-                                    <Td isNumeric>12.10.2023</Td>
+                                    <Td isNumeric>{new Date(identity.timestamp).toLocaleString()}</Td>
                                 </Tr>
                                 <Tr>
-                                    <Td>Updated</Td>
-                                    <Td isNumeric>13.10.2023</Td>
+                                    <Td>Transaction</Td>
+                                    <Td isNumeric>
+                                        <Link to={`/transaction/${identity.txHash}`}>
+                                            <Identifier value={identity.txHash} maxSymbols={16}/>
+                                        </Link>
+                                    </Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Revision</Td>
-                                    <Td isNumeric>1</Td>
+                                    <Td isNumeric>{identity.revision}</Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Transactions</Td>
-                                    <Td isNumeric>213</Td>
+                                    <Td isNumeric>{identity.totalTxs}</Td>
+                                </Tr>
+                                <Tr>
+                                    <Td>Transfers</Td>
+                                    <Td isNumeric>{identity.totalTransfers}</Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Documents</Td>
-                                    <Td isNumeric>123</Td>
+                                    <Td isNumeric>{identity.totalDocuments}</Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Data contracts</Td>
-                                    <Td isNumeric>1233</Td>
+                                    <Td isNumeric>{identity.totalDataContracts}</Td>
                                 </Tr>
                             </Tbody>
                         </Table>
@@ -148,20 +135,20 @@ function IdentityRoute({ cookies, children }) {
 
                                 <TabPanel>
                                     <Box>
-                                        <TransactionsList transactions={transactions} size='m'/>
+                                        <TransactionsList transactions={transactions.resultSet} size='s'/>
                                     </Box>
                                 </TabPanel>
 
                                 <TabPanel>
                                     <Box>
-                                        <DocumentsList documents={documents} size='m'/>
+                                        <DocumentsList documents={documents.resultSet} size='m'/>
                                     </Box>
 
                                 </TabPanel>
 
                                 <TabPanel>
                                     <Box>
-                                        <DataContractsList dataContracts={dataContracts} size='m'/>
+                                        <DataContractsList dataContracts={dataContracts.resultSet} size='m'/>
                                     </Box>
                                 </TabPanel>
 

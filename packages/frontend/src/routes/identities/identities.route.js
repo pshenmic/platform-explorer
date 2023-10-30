@@ -10,43 +10,14 @@ import {
 } from "@chakra-ui/react"
 
 
-const identities = [
-    {
-        identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR',
-        balance: 5582
-    },
-    {
-        identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR',
-        balance: 5582
-    },
-    {
-        identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR',
-        balance: 5582
-    },
-    {
-        identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR',
-        balance: 5582
-    },
-    {
-        identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR',
-        balance: 5582
-    },
-    {
-        identifier: 'G6qfN3v5EsQG2UkAyLAbj7HhiD3CWQYcLx58sZ9ZXUuR',
-        balance: 5582
-    },
-]
-
 export async function loader({params}) {
     const {identifier} = params
 
-    // const identity = await Api.getDocumentsByDataContract('BJ3WqMH4HyvZZAPW8srpq41ne6qhR1e4VMaU6HbSW7Dg');
-
-    return await Api.getIdentity('BJ3WqMH4HyvZZAPW8srpq41ne6qhR1e4VMaU6HbSW7Dg');
+    return await Api.getIdentities(identifier);
 }
 
-function IdentitiesRoute({ cookies, children }) {
-    // const identities = useLoaderData();
+function IdentitiesRoute() {
+    const identities = useLoaderData().resultSet;
 
     return (
         <Container 
