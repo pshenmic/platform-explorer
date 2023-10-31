@@ -34,7 +34,7 @@ function HomeRoute() {
 
     return (
         <Container 
-            maxW='container.xl' 
+            maxW='container.lg' 
             _dark={{ color: "white" }}
             padding={3}
             mt={8}
@@ -96,7 +96,7 @@ function HomeRoute() {
             </Container>
 
             <Container
-                maxW='none'
+                maxW='container.lg'
                 m={0}
                 borderWidth='1px' borderRadius='lg'
                 className='InfoBlock'
