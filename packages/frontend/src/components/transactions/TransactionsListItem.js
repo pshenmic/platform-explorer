@@ -1,24 +1,12 @@
-import './TransactionsListItem.scss'
 import {Link} from "react-router-dom";
-import Identifier from '../Identifier'
 import {getTransitionTypeString} from '../../util/index'
+import './TransactionsListItem.scss'
 
 
-function TransactionsListItem({transaction, size='l'}) {
+function TransactionsListItem({transaction}) {
     const hash = typeof transaction === 'object' ? transaction.hash : transaction;
     const timestamp = transaction.timestamp;
     const type = transaction.type;
-
-    let maxSymbols = -1;
-
-    switch (size) {
-        case 'm':
-            maxSymbols = 16;
-        break;
-        case 's':
-            maxSymbols = 8;
-        break;
-    }
 
     return (
         <Link 
@@ -34,7 +22,7 @@ function TransactionsListItem({transaction, size='l'}) {
             
             {typeof hash === 'string' &&
                 <div className='TransactionsListItem__Identifier'>
-                    <Identifier value={hash} maxSymbols={maxSymbols}/>
+                    {hash}
                 </div>
             }
 

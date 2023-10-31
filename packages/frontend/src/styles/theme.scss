@@ -14,3 +14,19 @@
         top: -12px;
     }
 }
+
+.Table {
+    a {
+        position: relative;
+        display: inline-block;
+        margin-bottom: -1px;
+        // color: var(--chakra-colors-brand-normal);
+        border-bottom: 1px solid;
+
+        &:hover {
+            // color: var(--chakra-colors-brand-deep);
+            color: var(--chakra-colors-gray-200);
+            border-bottom: none;
+        }
+    }
+}

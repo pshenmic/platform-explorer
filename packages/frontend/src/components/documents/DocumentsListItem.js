@@ -1,22 +1,10 @@
 import {Link} from "react-router-dom";
-import Identifier from '../Identifier'
 import './DocumentsListItem.scss'
 
 
-export default function DocumentsListItem({document, size='l'}) {
+export default function DocumentsListItem({document}) {
     const identifier = document.identifier
     const timestamp = document.timestamp
-
-    let maxSymbols = -1;
-
-    switch (size) {
-        case 'm':
-            maxSymbols = 16;
-        break;
-        case 's':
-            maxSymbols = 12;
-        break;
-    }
 
     return (
         <Link 
@@ -25,7 +13,7 @@ export default function DocumentsListItem({document, size='l'}) {
         >
 
             <div className='DocumentsListItem__Identifier'>
-                <Identifier value={identifier} maxSymbols={maxSymbols}/>
+                {identifier}
             </div>
 
             <div className='DocumentsListItem__Timestamp'>

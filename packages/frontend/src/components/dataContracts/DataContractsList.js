@@ -1,10 +1,11 @@
 import DataContractsListItem from './DataContractsListItem'
+import './DataContractsList.scss'
 
 
 function DataContractsList ({dataContracts = [], size = 'l'}) {
     return (
 
-        <div className='DataContractsList'>
+        <div  className={'DataContractsList ' + 'DataContractsList--Size' + size.toUpperCase()}>
 
             {dataContracts.map((dataContract, key) =>
                 <DataContractsListItem

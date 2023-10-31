@@ -21,12 +21,12 @@ function IdentitiesRoute() {
 
     return (
         <Container 
-            maxW='container.xl' 
+            maxW='container.md' 
             mt={8}
             className='IdentitiesPage'
         >
             <Container 
-                maxW='container.xl' 
+                maxW='container.md' 
                 borderWidth='1px' borderRadius='lg'
                 className='InfoBlock'
             >

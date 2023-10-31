@@ -1,4 +1,5 @@
 @use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
 
 .DocumentsListItem {
     @include mixins.def_list_item;
@@ -14,5 +15,27 @@
         text-overflow: ellipsis;
         overflow: hidden; 
         white-space: nowrap;
+    }
+
+    &__Timestamp {
+        text-wrap: nowrap;
+    }
+
+    .DocumentsList--SizeM & {
+        &__Identifier {
+            margin-right: 16px;
+        }
+    }
+
+    @media screen and (max-width: $breakpoint-sm) {
+        flex-wrap: wrap;
+
+        &__Identifier {
+            width: 100%;
+        }
+
+        &__Timestamp {
+            text-wrap: wrap;
+        }
     }
 }

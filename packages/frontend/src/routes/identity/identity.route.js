@@ -4,7 +4,6 @@ import {Link} from "react-router-dom";
 import TransactionsList from "../../components/transactions/TransactionsList";
 import DocumentsList from "../../components/documents/DocumentsList";
 import DataContractsList from "../../components/dataContracts/DataContractsList";
-import Identifier from '../../components/Identifier'
 import './identity.scss'
 
 import { 
@@ -62,8 +61,9 @@ function IdentityRoute({ cookies, children }) {
                         maxW='none'
                         borderWidth='1px' borderRadius='lg'
                         m={0}
+                        className="IdentityInfo"
                     >
-                        <Table variant='simple'>
+                        <Table variant='simple' className="Table">
                             <Thead>
                                 <Tr>
                                     <Th>Identity info</Th>
@@ -81,13 +81,9 @@ function IdentityRoute({ cookies, children }) {
                                 </Tr>
                                 <Tr>
                                     <Td>Created</Td>
-                                    <Td isNumeric>{new Date(identity.timestamp).toLocaleString()}</Td>
-                                </Tr>
-                                <Tr>
-                                    <Td>Transaction</Td>
-                                    <Td isNumeric>
+                                    <Td isNumeric> 
                                         <Link to={`/transaction/${identity.txHash}`}>
-                                            <Identifier value={identity.txHash} maxSymbols={16}/>
+                                            {new Date(identity.timestamp).toLocaleString()}
                                         </Link>
                                     </Td>
                                 </Tr>
@@ -135,7 +131,7 @@ function IdentityRoute({ cookies, children }) {
 
                                 <TabPanel>
                                     <Box>
-                                        <TransactionsList transactions={transactions.resultSet} size='s'/>
+                                        <TransactionsList transactions={transactions.resultSet} size='m'/>
                                     </Box>
                                 </TabPanel>
 
