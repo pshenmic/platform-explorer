@@ -1,11 +1,10 @@
-import {Link} from "react-router-dom";
-import IdentitiesListItem from "./IdentitiesListItem";
+import IdentitiesListItem from './IdentitiesListItem'
 import './IdentitiesList.scss'
 
 
 function IdentitiesList({ identities }) {
     return (
-        <div className="IdentitiesList">
+        <div className={'IdentitiesList'}>
             {identities.map((identity, key) =>
                 <IdentitiesListItem
                     key={key}
@@ -14,7 +13,7 @@ function IdentitiesList({ identities }) {
             )}
             
             {identities.length === 0 &&
-                <div className='IdentitiesList__EmptyMessage'>There are no identities created yet.</div>
+                <div className={'IdentitiesList__EmptyMessage'}>There are no identities created yet.</div>
             }
         </div>
     );

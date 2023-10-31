@@ -1,9 +1,8 @@
-import React from 'react';
-import * as Api from "../../util/Api";
+import React from 'react'
+import * as Api from '../../util/Api'
 import './home.css'
-import {useLoaderData} from "react-router-dom";
+import {useLoaderData} from 'react-router-dom'
 import TransactionsList from '../../components/transactions/TransactionsList'
-import BlocksList from '../../components/blocks/BlocksList'
 
 import { 
     Box, 
@@ -13,11 +12,11 @@ import {
     Flex,
     Stack,
     StackDivider
-} from "@chakra-ui/react";
+} from '@chakra-ui/react'
 
 
 export async function loader({}) {
-    const [status, paginatedTransactions, paginatedBlocks] = await Promise.all([
+    const [status, paginatedTransactions] = await Promise.all([
         Api.getStatus(), 
         Api.getTransactions(1, 25, 'desc')
     ])
@@ -39,7 +38,7 @@ function HomeRoute() {
             padding={3}
             mt={8}
             mb={4}
-            className='data_contract'
+            className={'data_contract'}
         >
             <Container 
                 width='100%'
@@ -99,9 +98,9 @@ function HomeRoute() {
                 maxW='container.lg'
                 m={0}
                 borderWidth='1px' borderRadius='lg'
-                className='InfoBlock'
+                className={'InfoBlock'}
             >
-                <Heading className='InfoBlock__Title' as='h1' size='sm'>Last transaction</Heading>
+                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Last transaction</Heading>
 
                 <TransactionsList transactions={transactions} />
 

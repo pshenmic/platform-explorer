@@ -29,7 +29,7 @@ function DocumentRoute() {
             _dark={{ bg: "gray.900" }}
             mt={8}
             mb={8}
-            className='DocumentPage'
+            className={'DocumentPage'}
         >
             <Flex 
                 w='100%' 
@@ -69,13 +69,13 @@ function DocumentRoute() {
                     width={["100%", , ,"50%"]}
                     maxW='none'
                     borderWidth='1px' borderRadius='lg'
-                    className='InfoBlock'
+                    className={'InfoBlock'}
                 >
-                    <Heading className='InfoBlock__Title' as='h1' size='sm'>Data</Heading>
+                    <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Data</Heading>
 
                     <Code 
                         borderRadius='lg'
-                        className='DocumentPage__Code'
+                        className={'DocumentPage__Code'}
                         w='100%'
                     >
                         {JSON.stringify(document.data, null, 2)}

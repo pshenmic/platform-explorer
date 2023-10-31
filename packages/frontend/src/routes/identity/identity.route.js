@@ -35,7 +35,7 @@ export async function loader({params}) {
     };
 }
 
-function IdentityRoute({ cookies, children }) {
+function IdentityRoute() {
     const {
         identity, 
         dataContracts,
@@ -45,7 +45,7 @@ function IdentityRoute({ cookies, children }) {
     } = useLoaderData();
 
     return (
-        <div className="block identity">
+        <div className={'identity'}>
             <Container 
                 maxW='container.xl' 
                 padding={3}
@@ -61,9 +61,9 @@ function IdentityRoute({ cookies, children }) {
                         maxW='none'
                         borderWidth='1px' borderRadius='lg'
                         m={0}
-                        className="IdentityInfo"
+                        className={'IdentityInfo'}
                     >
-                        <Table variant='simple' className="Table">
+                        <Table variant='simple' className={'Table'}>
                             <Thead>
                                 <Tr>
                                     <Th>Identity info</Th>
@@ -118,7 +118,7 @@ function IdentityRoute({ cookies, children }) {
                         maxW='none'
                         m={0}
                         borderWidth='1px' borderRadius='lg'
-                        className="InfoBlock"
+                        className={'InfoBlock'}
                     >
                         <Tabs>
                             <TabList>

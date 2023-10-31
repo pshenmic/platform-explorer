@@ -16,7 +16,7 @@ export default function DocumentsList({documents = [], size='l'}) {
             )}
 
             {documents.length === 0 &&
-                <div className='DocumentsList__EmptyMessage'>There are no documents created yet.</div>
+                <div className={'DocumentsList__EmptyMessage'}>There are no documents created yet.</div>
             }
 
         </div>

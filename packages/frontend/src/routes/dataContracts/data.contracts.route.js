@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react'
 import * as Api from '../../util/Api'
 import DataContractsList from '../../components/dataContracts/DataContractsList'
 
 import { 
     Container,
     Heading, 
-} from "@chakra-ui/react"
+} from '@chakra-ui/react'
 
 function DataContractsRoute() {
     const [dataContracts, setDataContracts] = useState(null)
@@ -22,7 +22,7 @@ function DataContractsRoute() {
     }, [])
 
     return (
-        <div className="container">
+        <div className={'container'}>
             {error && <div>Error {error}</div>}
             {loading && <div>Loading data contracts from API</div>}
 
@@ -33,10 +33,10 @@ function DataContractsRoute() {
                     mt={8}
                     mb={4}
                     borderWidth='1px' borderRadius='lg'
-                    className='InfoBlock'
+                    className={'InfoBlock'}
                 > 
 
-                    <Heading className='InfoBlock__Title' as='h1' size='sm'>Data contracts</Heading>
+                    <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Data contracts</Heading>
 
                     <DataContractsList dataContracts={dataContracts} size='l'/>
 

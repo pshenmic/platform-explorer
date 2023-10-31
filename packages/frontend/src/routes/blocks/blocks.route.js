@@ -1,16 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import {Link, useLoaderData} from "react-router-dom";
-import * as Api from "../../util/Api";
-import ReactPaginate from "react-paginate";
-import GoToHeightForm from "./../../components/goToHeightForm/GoToHeightForm";
-import PageSizeSelector from "./../../components/pageSizeSelector/PageSizeSelector";
+import React, {useState, useEffect} from 'react'
+import {Link, useLoaderData} from 'react-router-dom'
+import * as Api from '../../util/Api'
+import ReactPaginate from 'react-paginate'
+import GoToHeightForm from './../../components/goToHeightForm/GoToHeightForm'
+import PageSizeSelector from './../../components/pageSizeSelector/PageSizeSelector'
 import BlocksList from '../../components/blocks/BlocksList'
 import './Blocks.scss'
 
 import { 
     Container,
     Heading, 
-} from "@chakra-ui/react";
+} from '@chakra-ui/react'
 
 
 const paginateConfig = { 
@@ -67,19 +67,19 @@ function BlocksRoute() {
             color='white'
             mt={8}
             mb={8}
-            className='Blocks'
+            className={'Blocks'}
         >
             <Container 
                 maxW='container.lg' 
                 _dark={{ color: "white" }}
                 borderWidth='1px' borderRadius='lg'
-                className='InfoBlock'
+                className={'InfoBlock'}
             >
-                <Heading className='InfoBlock__Title' as='h1' size='sm'>Blocks</Heading>
+                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Blocks</Heading>
                 <BlocksList blocks={blocks}/>
 
 
-                <div className='ListNavigation'>
+                <div className={'ListNavigation'}>
                     <GoToHeightForm
                         goToHeightHandler={goToHeight}
                         goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}

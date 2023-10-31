@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
-import {Link} from "react-router-dom";
-import {useLoaderData} from "react-router-dom";
-import * as Api from "../../util/Api";
-import ReactPaginate from "react-paginate";
-import DocumentsList from "../../components/documents/DocumentsList";
+import React, {useState} from 'react'
+import {Link} from 'react-router-dom'
+import {useLoaderData} from 'react-router-dom'
+import * as Api from '../../util/Api'
+import ReactPaginate from 'react-paginate'
+import DocumentsList from '../../components/documents/DocumentsList'
 import './DataContract.scss'
 
 import { 
@@ -12,7 +12,7 @@ import {
     TableContainer, Table, Thead, Tbody, Tfoot, Tr, Th, Td,
     Tabs, TabList, TabPanels, Tab, TabPanel,
     Code 
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
 
 const pagintationConfig = {
@@ -56,7 +56,7 @@ function DataContractRoute() {
             maxW='container.xl' 
             padding={3}
             mt={8}
-            className='DataContract'
+            className={'DataContract'}
         >
             <TableContainer 
                 maxW='none'
@@ -98,7 +98,7 @@ function DataContractRoute() {
                 maxW='none'
                 mt={5}
                 borderWidth='1px' borderRadius='lg'
-                className='InfoBlock'
+                className={'InfoBlock'}
             >
                 <Tabs>
                     <TabList>

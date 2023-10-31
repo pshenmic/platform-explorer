@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import {Link} from 'react-router-dom'
 import {getTransitionTypeString} from '../../util/index'
 import './TransactionsListItem.scss'
 
@@ -11,23 +11,23 @@ function TransactionsListItem({transaction}) {
     return (
         <Link 
             to={`/transaction/${hash}`}
-            className='TransactionsListItem'
+            className={'TransactionsListItem'}
         >
 
             {typeof timestamp === 'string' &&
-                <div className='TransactionsListItem__Timestamp'>
+                <div className={'TransactionsListItem__Timestamp'}>
                     {new Date(timestamp).toLocaleString()}
                 </div>
             }
             
             {typeof hash === 'string' &&
-                <div className='TransactionsListItem__Identifier'>
+                <div className={'TransactionsListItem__Identifier'}>
                     {hash}
                 </div>
             }
 
             {typeof type === 'number' &&
-                <div className='TransactionsListItem__Type'>
+                <div className={'TransactionsListItem__Type'}>
                     ({getTransitionTypeString(type)})
                 </div>
             }

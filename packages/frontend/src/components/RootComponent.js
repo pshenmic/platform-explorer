@@ -7,7 +7,7 @@ import "../styles/theme.scss";
 import { ChakraProvider} from '@chakra-ui/react'
 
 
-export default function RootComponent({cookies}) {
+export default function RootComponent() {
 
     return (
         <ChakraProvider theme={theme}>

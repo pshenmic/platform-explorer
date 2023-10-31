@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import {Link} from 'react-router-dom';
 import './DataContractsListItem.scss'
 
 
@@ -8,19 +8,17 @@ function DataContractsListItem ({dataContract, size = 'l'}) {
     
     return (
         <>
-            {typeof identifier === 'string' &&
-                <Link to={`/dataContract/${identifier}`} className="DataContractsListItem">
-                    <div className="DataContractsListItem__Identifier">
-                        {identifier}
-                    </div>
+            <Link to={`/dataContract/${identifier}`} className={'DataContractsListItem'}>
+                <div className={'DataContractsListItem__Identifier'}>
+                    {identifier}
+                </div>
 
-                    {(size !== 's' && typeof timestamp === 'string') && 
-                        <div className="DataContractsListItem__Timestamp">
-                            {new Date(timestamp).toLocaleString()}
-                        </div>
-                    }
-                </Link>
-            }
+                {(size !== 's' && typeof timestamp === 'string') && 
+                    <div className={'DataContractsListItem__Timestamp'}>
+                        {new Date(timestamp).toLocaleString()}
+                    </div>
+                }
+            </Link>
         </>
     );
 }

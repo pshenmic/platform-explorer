@@ -6,7 +6,7 @@ import './BlocksList.scss'
 function BlocksList ({blocks = [], columnsCount = 1, size = 'l'}) {
     return( 
         <div 
-            className='BlocksList'
+            className={'BlocksList'}
             style={{
                 columnCount: blocks.length > 1 ? columnsCount : 1,
             }}
@@ -20,7 +20,7 @@ function BlocksList ({blocks = [], columnsCount = 1, size = 'l'}) {
             )}
 
             {blocks.length === 0 &&
-                <div className='documents_list__empty_message'>There are no documents created yet.</div>
+                <div className={'documents_list__empty_message'}>There are no documents created yet.</div>
             }
         </div>
     )

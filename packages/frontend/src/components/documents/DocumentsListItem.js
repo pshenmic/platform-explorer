@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import {Link} from 'react-router-dom';
 import './DocumentsListItem.scss'
 
 
@@ -9,14 +9,14 @@ export default function DocumentsListItem({document}) {
     return (
         <Link 
             to={`/document/${identifier}`}
-            className='DocumentsListItem'
+            className={'DocumentsListItem'}
         >
 
-            <div className='DocumentsListItem__Identifier'>
+            <div className={'DocumentsListItem__Identifier'}>
                 {identifier}
             </div>
 
-            <div className='DocumentsListItem__Timestamp'>
+            <div className={'DocumentsListItem__Timestamp'}>
                 {new Date(timestamp).toLocaleString()}
             </div>
 

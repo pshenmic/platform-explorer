@@ -1,13 +1,13 @@
-import React from 'react';
-import { useLoaderData} from "react-router-dom";
-import * as Api from "../../util/Api";
-import TransactionsList from "../../components/transactions/TransactionsList";
+import React from 'react'
+import { useLoaderData} from 'react-router-dom'
+import * as Api from '../../util/Api'
+import TransactionsList from '../../components/transactions/TransactionsList'
 
 import { 
     Container,
     TableContainer, Table, Thead, Tbody, Tr, Th, Td, 
     Heading, 
-} from "@chakra-ui/react"
+} from '@chakra-ui/react'
 
 
 export async function loader({params}) {
@@ -37,7 +37,7 @@ function BlockRoute() {
                 <Table variant='simple'>
                     <Thead>
                         <Tr>
-                            <Th><div className='Table__Title'>Block info</div></Th>
+                            <Th><div className={'Table__Title'}>Block info</div></Th>
                             <Th></Th>
                         </Tr>
                     </Thead>
@@ -82,10 +82,10 @@ function BlockRoute() {
                     maxW='none'
                     mt={5}
                     borderWidth='1px' borderRadius='lg'
-                    className='InfoBlock'
+                    className={'InfoBlock'}
                 >
 
-                    <Heading className='InfoBlock__Title' as='h1' size='sm'>Transactions</Heading>
+                    <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Transactions</Heading>
 
                     <div>
 

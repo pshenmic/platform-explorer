@@ -1,6 +1,5 @@
-import {Link} from "react-router-dom";
+import {Link} from 'react-router-dom';
 import './BlocksListItem.scss'
-import Identifier from '../Identifier'
 
 
 function BlocksListItem ({ block, size = 'l' }) {
@@ -9,37 +8,26 @@ function BlocksListItem ({ block, size = 'l' }) {
     const timestamp = block.header.timestamp
     const txsLength = block.txs.length
 
-    let maxSymbols = -1;
-
-    switch (size) {
-        case 'm':
-            maxSymbols = 16;
-            break;
-        case 's':
-            maxSymbols = 12;
-            break;
-    }
-
     return(
-        <Link to={`/block/${hash}`} className={"BlocksListItem"}>
+        <Link to={`/block/${hash}`} className={'BlocksListItem'}>
             {(size === 'l' && 
-                <span className={"BlocksListItem__Height"}>{height}</span>
+                <span className={'BlocksListItem__Height'}>{height}</span>
             )}
 
             {typeof timestamp === 'string' &&
-                <span className={"BlocksListItem__Timestamp"}>
+                <span className={'BlocksListItem__Timestamp'}>
                     {new Date(timestamp).toLocaleString()}
                 </span>
             }
 
             {typeof hash === 'string' &&
-                <span className={"BlocksListItem__Hash"}>
-                    <Identifier value={hash} maxSymbols={maxSymbols}/>
+                <span className={'BlocksListItem__Hash'}>
+                    {hash}
                 </span>
             }
 
             {(typeof txsLength === 'number') &&
-                <span className={"BlocksListItem__Txs"}>
+                <span className={'BlocksListItem__Txs'}>
                     ({txsLength} txs)
                 </span>
             }

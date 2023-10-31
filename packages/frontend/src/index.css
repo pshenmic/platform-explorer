@@ -113,8 +113,6 @@ code {
 }
 
 .active, .active:hover {
-  /* background-color: rgba(57, 175, 159, 0.55); */
-  /* background-color: var(--chakra-colors-brand-deep); */
   background-color: var(--chakra-colors-gray-800);
 }
 
