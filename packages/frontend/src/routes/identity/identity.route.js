@@ -129,28 +129,28 @@ function IdentityRoute({ cookies, children }) {
 
                             <TabPanels>
 
-                                <TabPanel>
+                                <TabPanel px={0}>
                                     <Box>
                                         <TransactionsList transactions={transactions.resultSet} size='m'/>
                                     </Box>
                                 </TabPanel>
 
-                                <TabPanel>
+                                <TabPanel px={0}>
                                     <Box>
                                         <DocumentsList documents={documents.resultSet} size='m'/>
                                     </Box>
 
                                 </TabPanel>
 
-                                <TabPanel>
+                                <TabPanel px={0}>
                                     <Box>
                                         <DataContractsList dataContracts={dataContracts.resultSet} size='m'/>
                                     </Box>
                                 </TabPanel>
 
-                                <TabPanel>
+                                <TabPanel px={0}>
                                     <Box>
-                                        credit transfers related to this identity (topup + transfer + withdrawals)
+                                        Credit transfers
                                     </Box>
                                 </TabPanel>
 
