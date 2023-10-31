@@ -6,7 +6,10 @@ function IdentitiesListItem ({identity}) {
     const {identifier, timestamp} = identity
 
     return (
-        <Link to={`/identity/${identifier}`} className={'IdentitiesListItem'}>
+        <Link 
+            to={`/identity/${identifier}`} 
+            className={'IdentitiesListItem'}
+        >
             <div className={'IdentitiesListItem__Identifier'}>
                 {identifier}
             </div>

@@ -7,7 +7,10 @@ function BlocksListItem ({ block }) {
     const {hash, height, timestamp} = header
 
     return(
-        <Link to={`/block/${hash}`} className={'BlocksListItem'}>
+        <Link 
+            to={`/block/${hash}`} 
+            className={'BlocksListItem'}
+        >
             {(typeof height === 'number' && 
                 <span className={'BlocksListItem__Height'}>{height}</span>
             )}

@@ -3,7 +3,7 @@ import {getTransitionTypeString} from '../../util/index'
 import './TransactionsListItem.scss'
 
 
-function TransactionsListItem({transaction}) {
+function TransactionsListItem({ transaction }) {
     const hash = typeof transaction === 'object' ? transaction.hash : transaction;
     const {timestamp, type} = transaction
 
