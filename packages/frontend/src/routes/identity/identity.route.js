@@ -57,7 +57,7 @@ function IdentityRoute({ cookies, children }) {
                     wrap={["wrap", , , 'nowrap']}
                 >
                     <TableContainer 
-                        width={["100%", , , "50%"]}
+                        width={["100%", , , "calc(50% - 10px)"]}
                         maxW='none'
                         borderWidth='1px' borderRadius='lg'
                         m={0}
@@ -114,7 +114,7 @@ function IdentityRoute({ cookies, children }) {
                     <Box w={5} h={5} />
 
                     <Container
-                        width={["100%", , ,"50%"]}
+                        width={["100%", , ,"calc(50% - 10px)"]}
                         maxW='none'
                         m={0}
                         borderWidth='1px' borderRadius='lg'
