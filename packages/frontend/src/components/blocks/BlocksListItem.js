@@ -1,16 +1,14 @@
-import {Link} from 'react-router-dom';
+import {Link} from 'react-router-dom'
 import './BlocksListItem.scss'
 
 
-function BlocksListItem ({ block, size = 'l' }) {
-    const hash = block.header.hash
-    const height = block.header.height
-    const timestamp = block.header.timestamp
-    const txsLength = block.txs.length
+function BlocksListItem ({ block }) {
+    const {header, txs} = block
+    const {hash, height, timestamp} = header
 
     return(
         <Link to={`/block/${hash}`} className={'BlocksListItem'}>
-            {(size === 'l' && 
+            {(typeof height === 'number' && 
                 <span className={'BlocksListItem__Height'}>{height}</span>
             )}
 
@@ -22,13 +20,13 @@ function BlocksListItem ({ block, size = 'l' }) {
 
             {typeof hash === 'string' &&
                 <span className={'BlocksListItem__Hash'}>
-                    {hash}
+                    {hash}  
                 </span>
             }
 
-            {(typeof txsLength === 'number') &&
+            {(typeof txs.length === 'number') &&
                 <span className={'BlocksListItem__Txs'}>
-                    ({txsLength} txs)
+                    ({txs.length} txs)
                 </span>
             }
             

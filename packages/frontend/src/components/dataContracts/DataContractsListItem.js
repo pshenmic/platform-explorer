@@ -2,9 +2,8 @@ import {Link} from 'react-router-dom';
 import './DataContractsListItem.scss'
 
 
-function DataContractsListItem ({dataContract, size = 'l'}) {
-    const identifier = dataContract.identifier
-    const timestamp = dataContract.timestamp
+function DataContractsListItem ({ dataContract }) {
+    const {identifier, timestamp} = dataContract
     
     return (
         <>
@@ -13,7 +12,7 @@ function DataContractsListItem ({dataContract, size = 'l'}) {
                     {identifier}
                 </div>
 
-                {(size !== 's' && typeof timestamp === 'string') && 
+                {(typeof timestamp === 'string') && 
                     <div className={'DataContractsListItem__Timestamp'}>
                         {new Date(timestamp).toLocaleString()}
                     </div>

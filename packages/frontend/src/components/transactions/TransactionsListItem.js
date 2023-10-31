@@ -5,8 +5,7 @@ import './TransactionsListItem.scss'
 
 function TransactionsListItem({transaction}) {
     const hash = typeof transaction === 'object' ? transaction.hash : transaction;
-    const timestamp = transaction.timestamp;
-    const type = transaction.type;
+    const {timestamp, type} = transaction
 
     return (
         <Link 

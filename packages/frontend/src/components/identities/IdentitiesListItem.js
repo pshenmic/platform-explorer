@@ -2,9 +2,8 @@ import {Link} from "react-router-dom";
 import './IdentitiesListItem.scss'
 
 
-function IdentitiesListItem ({identity, size = 'l'}) {
-    const identifier = identity.identifier
-    const timestamp = identity.timestamp
+function IdentitiesListItem ({identity}) {
+    const {identifier, timestamp} = identity
 
     return (
         <Link to={`/identity/${identifier}`} className={'IdentitiesListItem'}>
@@ -12,7 +11,7 @@ function IdentitiesListItem ({identity, size = 'l'}) {
                 {identifier}
             </div>
 
-            {(size !== 's' && typeof timestamp === 'string') && 
+            {(typeof timestamp === 'string') && 
                 <div className={'IdentitiesListItem__Timestamp'}>
                     {new Date(timestamp).toLocaleString()}
                 </div>

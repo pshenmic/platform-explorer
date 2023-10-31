@@ -3,8 +3,7 @@ import './DocumentsListItem.scss'
 
 
 export default function DocumentsListItem({document}) {
-    const identifier = document.identifier
-    const timestamp = document.timestamp
+    const {identifier, timestamp} = document
 
     return (
         <Link 
