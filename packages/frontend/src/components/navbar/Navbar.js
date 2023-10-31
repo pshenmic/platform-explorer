@@ -16,10 +16,10 @@ import './NavbarMobileMenu.scss'
 
 
 const links = [
-    {title:'Home', href:'/'}, 
-    {title:'Blocks', href:'/Blocks'}, 
-    {title:'Data Contracts', href:'/dataContracts'}, 
-    {title:'Identities', href:'/Identities'}, 
+    {title:'Home', href:'/'},
+    {title:'Blocks', href:'/blocks'},
+    {title:'Data Contracts', href:'/dataContracts'},
+    {title:'Identities', href:'/identities'},
 ]
 
 const NavLink = (props) => {
@@ -46,13 +46,13 @@ function Navbar() {
 
   return (
     <Box px={3}>
-        <Flex 
+        <Flex
           className={'Navbar'}
-          maxW='1980px' 
-          ml='auto' 
-          mr='auto' 
-          h={16} 
-          alignItems={'center'} 
+          maxW='1980px'
+          ml='auto'
+          mr='auto'
+          h={16}
+          alignItems={'center'}
           justifyContent={'space-between'}
         >
           <IconButton
