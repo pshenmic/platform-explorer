@@ -3,7 +3,12 @@ import * as Api from "../../util/Api";
 import './transaction.css'
 import {useState} from "react";
 import {getTransitionTypeString} from "../../util";
-import {StateTransitionEnum} from "../enums/state.transition.type";
+
+import { 
+    Container,
+    TableContainer, Table, Thead, Tbody, Tr, Th, Td
+} from "@chakra-ui/react"
+
 
 export async function loader({params}) {
     const {txHash} = params
@@ -41,30 +46,48 @@ function TransactionRoute() {
     const [decodedST, setDecodedST] = useState(null)
 
     return (
-        <div className={"container"}>
-            <div className={"transaction_details"}>
-                <div className={"transaction_details_item"}>
-                    <span className={"transaction_details_item__title"}>Hash:</span>
-                    <span className={"transaction_details_item__value"}>{transaction.hash}</span>
-                </div>
-                <div className={"transaction_details_item"}>
-                    <span className={"transaction_details_item__title"}>Height:</span>
-                    <span className={"transaction_details_item__value"}>{transaction.blockHeight}</span>
-                </div>
-                <div className={"transaction_details_item"}>
-                    <span className={"transaction_details_item__title"}>Index:</span>
-                    <span className={"transaction_details_item__value"}>{transaction.index}</span>
-                </div>
-                <div className={"transaction_details_item"}>
-                    <span className={"transaction_details_item__title"}>Type:</span>
-                    <span className={"transaction_details_item__value"}>{getTransitionTypeString(transaction.type)}</span>
-                </div>
-                <div className={"transaction_details_item"}>
-                    <span className={"transaction_details_item__title"}>Timestamp:</span>
-                    <span className={"transaction_details_item__value"}>{transaction.timestamp}</span>
-                </div>
-            </div>
-        </div>
+        <Container 
+            maxW='container.xl' 
+            p={3}
+            mt={8}
+        >
+            <TableContainer 
+                maxW='none'
+                borderWidth='1px' borderRadius='lg'
+            >
+                <Table variant='simple'>
+                    <Thead>
+                        <Tr>
+                            <Th>transaction info</Th>
+                            <Th></Th>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        <Tr>
+                            <Td>Hash</Td>
+                            <Td >{transaction.hash}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Height</Td>
+                            <Td >{transaction.blockHeight}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Index</Td>
+                            <Td >{transaction.index}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Type</Td>
+                            <Td >{getTransitionTypeString(transaction.type)}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Timestamp</Td>
+                            <Td >{new Date(transaction.timestamp).toLocaleString()}</Td>
+                        </Tr>
+
+                    </Tbody>
+                </Table>
+            </TableContainer>
+        </Container>
     );
 }
 

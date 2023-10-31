@@ -1,0 +1,66 @@
+@use '../../styles/mixins.scss';
+
+.BlocksListItem {
+    @include mixins.def_list_item;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &__Hash {
+        color: var(--chakra-colors-gray-200);
+        flex-grow: 1;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    &__Height {
+        font-weight: bold;
+        margin-right: 8px;
+        word-break: keep-all;
+    }
+    
+    &__Timestamp {
+        margin-right: 16px;
+        text-wrap: nowrap;
+    }
+
+    &__Txs {
+        margin-left: 12px;
+        text-wrap: nowrap;
+    } 
+
+
+    @media screen and (max-width: 620px) {
+        flex-wrap: wrap;
+    
+        &__Height {
+            order: 1;
+            margin-right: 4px;
+        }
+
+        &__Txs {
+            order: 2;
+            margin-left: 0;
+            margin-right: 6px;
+        }
+
+        &__Timestamp {
+            order: 3;
+        }
+
+        &__Hash {
+            order: 4;
+            flex-grow: unset;
+            margin-top: 2px;
+        }
+    }
+
+    @media screen and (max-width: 400px) {
+        &__Timestamp {
+            text-wrap: wrap;
+        }
+    }
+
+}

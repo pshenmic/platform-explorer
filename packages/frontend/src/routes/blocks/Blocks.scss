@@ -1,0 +1,73 @@
+.Blocks {
+    .ListNavigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .pagination {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    
+    .PageSizeSelector {
+        text-align: right;
+        width: 115px;
+    }
+    
+    @media screen and (max-width: 720px) {
+        .GoToHeightForm {
+            margin-right: 14px;
+        }
+    
+        .pagination {
+            order: 3;
+            flex-grow: 1;
+            justify-content: flex-end;
+        }
+    
+        .PageSizeSelector {
+            text-align: left;
+        }
+    }
+    
+    @media screen and (max-width: 680px) {
+        .list-navigation {
+            justify-content: center;
+            margin-top: 14px;
+        }
+    
+        .PageSizeSelector {
+            width: auto;
+        }
+    
+        .pagination {
+            order: -1;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+    }
+    
+    
+    @media screen and (max-width: 310px) {
+        .GoToHeightForm {
+            margin: 0;
+            width: 100%;
+        }
+    
+        .PageSizeSelector {
+            width: 100%;
+            text-align: center;
+            margin: 0 auto;
+        }
+    
+        .GoToHeightForm {
+            text-align: center;
+            margin-bottom: 4px;
+        }
+    }
+    
+}

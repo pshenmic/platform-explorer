@@ -1,0 +1,55 @@
+
+.GoToHeightForm {
+    width: 115px;
+
+    &__Title {
+        margin-bottom: 8px;
+    }
+
+    &__Input {
+        &, &:focus {
+            width: 80px;
+            padding: 0 8px;
+            margin-right: 6px;
+            height: 29px;
+            box-sizing: border-box;
+            border: 1px solid var(--chakra-colors-whiteAlpha-400);
+            border-radius: 5px;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+    
+        &--Incorrect {
+            border: 1px solid var(--chakra-colors-whiteAlpha-200);;
+
+            color: gray;
+        }
+    }
+
+    &__Button {
+        background-color: transparent;
+        border: 1px solid var(--chakra-colors-whiteAlpha-400);
+        border-radius: 5px;
+        height: 29px;
+        color: #fff;
+        padding: 0 4px;
+        
+        &:disabled {
+            color: gray;
+            cursor: default;
+        }
+
+        &:hover:not(:disabled) {
+            // border-color: var(--chakra-colors-whiteAlpha-400);
+            background-color: #ffffff15;
+            cursor: pointer;
+        }
+    }
+
+}
+

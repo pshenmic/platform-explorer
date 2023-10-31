@@ -1,11 +1,19 @@
-import React, {useState} from 'react';
-import {useLoaderData} from "react-router-dom";
-import * as Api from "../../util/Api";
-import {Link} from "react-router-dom";
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
-import ReactPaginate from "react-paginate";
-import './data_contract.scss'
-import './documents_list_item.scss'
+import React, {useState} from 'react'
+import {Link} from 'react-router-dom'
+import {useLoaderData} from 'react-router-dom'
+import * as Api from '../../util/Api'
+import ReactPaginate from 'react-paginate'
+import DocumentsList from '../../components/documents/DocumentsList'
+import './DataContract.scss'
+
+import { 
+    Box, 
+    Container,
+    TableContainer, Table, Thead, Tbody, Tfoot, Tr, Th, Td,
+    Tabs, TabList, TabPanels, Tab, TabPanel,
+    Code 
+} from '@chakra-ui/react';
+
 
 const pagintationConfig = {
     itemsOnPage: {
@@ -44,72 +52,112 @@ function DataContractRoute() {
     }
 
     return (
-        <div className="container">
-            <div className='data_contract'>
-                <div className={"data_contract_identifier"}>
-                    <div className='data_contract_identifier__info_item'>
-                        <span className={"data_contract_identifier__info_title"}>Identifier:</span>
-                        <span className={"data_contract_identifier__info_value"}>{dataContract.identifier}</span>
-                    </div>
+        <Container 
+            maxW='container.xl' 
+            padding={3}
+            mt={8}
+            className={'DataContract'}
+        >
+            <TableContainer 
+                maxW='none'
+                borderWidth='1px' borderRadius='lg'
+            >
+                <Table variant='simple'>
+                    <Thead>
+                        <Tr>
+                            <Th>Data contract info</Th>
+                            <Th></Th>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        <Tr>
+                            <Td>Identifier</Td>
+                            <Td isNumeric>{dataContract.identifier}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Created</Td>
+                            <Td isNumeric>{new Date(dataContract.timestamp).toLocaleString()}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Revision</Td>
+                            <Td isNumeric>{dataContract.version}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Transaction</Td>
+                            <Td isNumeric>
+                                <Link to={`/transaction/${dataContract.txHash}`}>{dataContract.txHash}</Link>
+                            </Td>
+                        </Tr>
 
-                    <div className={'data_contract_identifier__info_item'}>
-                        <span className={"data_contract_identifier__info_title"}>Version:</span>
-                        <span className={"data_contract_identifier__info_value"}>{dataContract.version}</span>
-                    </div>
-                </div>
+                    </Tbody>
+                </Table>
+            </TableContainer>
 
-
-                <Tabs
-                    selectedTabClassName="data_contract__tab--selected"
-                    className='data_contract__info_tabs'
-                >
-                    <TabList className='data_contract__tabs-container'>
-                        <Tab className='data_contract__tab noselect'>Schema</Tab>
-                        <Tab className='data_contract__tab noselect'>Documents</Tab>
+            <Container 
+                width='100%'
+                maxW='none'
+                mt={5}
+                borderWidth='1px' borderRadius='lg'
+                className={'InfoBlock'}
+            >
+                <Tabs>
+                    <TabList>
+                        <Tab>Documents</Tab>
+                        <Tab>Schema</Tab>
                     </TabList>
-                    <TabPanel>
-                        <div className={'data_contract_schema'}>
-                            <div
-                                className={'data_contract_schema__info'}>{JSON.stringify(dataContract.schema, null, 2)}</div>
-                        </div>
-                    </TabPanel>
-                    <TabPanel>
-                        <div className='documents_list'>
-                            {documents.map((document, key) =>
-                                <Link to={`/document/${document.identifier}`} key={key}
-                                      className='documents_list_item'>
-                                    <span className='documents_list_item__identifier'>{document.identifier}</span>
-                                </Link>
-                            )}
 
-                            {documents.length === 0 &&
-                                <div className='documents_list__empty_message'>There are no documents created yet.</div>
-                            }
+                    <TabPanels>
+                        <TabPanel>
+                            <Box>
+                                <Box m={4}>
+                                    <DocumentsList 
+                                        documents={documents}
+                                        columnsCount={2}
+                                    />
+                                </Box>
+                                <ReactPaginate
+                                    breakLabel="..."
+                                    nextLabel=">"
+                                    onPageChange={handlePageClick}
+                                    pageRangeDisplayed={2}
+                                    marginPagesDisplayed={1}
+                                    pageCount={pageCount}
+                                    previousLabel="<"
+                                    pageClassName="page-item"
+                                    pageLinkClassName="page-link"
+                                    previousClassName="page-item page-item--previous"
+                                    previousLinkClassName="page-link"
+                                    nextClassName="page-item page-item--next"
+                                    nextLinkClassName="page-link"
+                                    breakClassName="page-item  page-item--break-link"
+                                    containerClassName="pagination"
+                                    activeClassName="active"
+                                    renderOnZeroPageCount={false}
+                                />
+                            </Box>
+                        </TabPanel>
 
-                            <ReactPaginate
-                                breakLabel="..."
-                                nextLabel=">"
-                                onPageChange={handlePageClick}
-                                pageRangeDisplayed={2}
-                                marginPagesDisplayed={1}
-                                pageCount={pageCount}
-                                previousLabel="<"
-                                pageClassName="page-item"
-                                pageLinkClassName="page-link"
-                                previousClassName="page-item page-item--previous"
-                                previousLinkClassName="page-link"
-                                nextClassName="page-item page-item--next"
-                                nextLinkClassName="page-link"
-                                breakClassName="page-item  page-item--break-link"
-                                containerClassName="pagination"
-                                activeClassName="active"
-                                renderOnZeroPageCount={false}
-                            />
-                        </div>
-                    </TabPanel>
+                        <TabPanel>
+                            <Box>
+                                <div className={'DataContractSchema'}>
+                                    <Code 
+                                        className={'DataContractSchema__Code'}
+                                        borderRadius='lg'
+                                        p={4}
+                                        w='100%'
+                                    >
+                                        {JSON.stringify(dataContract.schema, null, 2)}
+                                    </Code>
+                                </div>
+                            </Box>
+                        </TabPanel>
+                    </TabPanels>
                 </Tabs>
-            </div>
-        </div>
+            </Container>
+
+        </Container>
+
+                
     );
 }
 

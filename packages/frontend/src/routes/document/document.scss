@@ -1,39 +1,5 @@
-.document {
-    background-color: #1a493e;
-    padding: 14px 20px;
-    border-radius: 16px;
-
-    &__info_item {
-        margin-bottom: 6px;
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    &__info_value {
-        word-break: break-all;
-    }
-
-    &__info_title {
-        margin-right: 6px;
-    }
-
-    &__data_title {
-        margin-top: 14px;
-    }
-
-    &__data {
-        display: block;
-        margin-top: 10px;
-        padding: 15px;
-        white-space: break-spaces;
-        height: 80%;
-        border-radius: 4px;
-        word-wrap: break-word;
-        word-break: break-all;
-        max-width: 100%;
-        box-sizing: border-box;
-        font-family: monospace;
-        font-size: 12pt;
-        background: #00000055;
+.DocumentPage {
+    &__Code {
+        width: 100%;
     }
 }

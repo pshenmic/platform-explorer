@@ -1,10 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import {Link, useLoaderData} from "react-router-dom";
-import * as Api from "../../util/Api";
-import ReactPaginate from "react-paginate";
-import GoToHeightForm from "./../../components/goToHeightForm/GoToHeightForm";
-import PageSizeSelector from "./../../components/pageSizeSelector/PageSizeSelector";
-import './blocks.css'
+import React, {useState, useEffect} from 'react'
+import {Link, useLoaderData} from 'react-router-dom'
+import * as Api from '../../util/Api'
+import ReactPaginate from 'react-paginate'
+import GoToHeightForm from './../../components/goToHeightForm/GoToHeightForm'
+import PageSizeSelector from './../../components/pageSizeSelector/PageSizeSelector'
+import BlocksList from '../../components/blocks/BlocksList'
+import './Blocks.scss'
+
+import { 
+    Container,
+    Heading, 
+} from '@chakra-ui/react'
 
 
 const paginateConfig = { 
@@ -15,18 +21,6 @@ const paginateConfig = {
     defaultPage: 1
 }
 
-function Blocks({blocks}) {
-    return blocks.map((block) =>
-        <div key={block.header.hash} className={"block_list_item"}>
-            <Link to={`/block/${block.header.hash}`}>
-                <span className={"block_list_item__height"}>{block.header.height} </span>
-                <span className={"block_list_item__timestamp"}>{new Date(block.header.timestamp).toLocaleString()}</span>
-                <span className={"block_list_item__hash"}>{block.header.hash}</span>
-                <span className={"block_list_item__txs"}>({block.txs.length} txs)</span>
-            </Link>
-        </div>
-    )
-}
 
 export async function loader() {
     const paginatedBlocks = await Api.getBlocks(paginateConfig.defaultPage, paginateConfig.pageSize.default, 'desc')
@@ -68,19 +62,34 @@ function BlocksRoute() {
     }, [pageSize]);
 
     return (
-        <div className="container">
-            <div className={"block_list"}>
-                <span className="block_list__title">Last blocks</span>
+        <Container 
+            maxW='container.lg' 
+            color='white'
+            mt={8}
+            mb={8}
+            className={'Blocks'}
+        >
+            <Container 
+                maxW='container.lg' 
+                _dark={{ color: "white" }}
+                borderWidth='1px' borderRadius='lg'
+                className={'InfoBlock'}
+            >
+                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Blocks</Heading>
+                <BlocksList blocks={blocks}/>
 
-                <Blocks blocks={blocks}/>
 
-                <div className='list-navigation'>
+                <div className={'ListNavigation'}>
                     <GoToHeightForm
                         goToHeightHandler={goToHeight}
                         goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
-                        heightCorrection={(blockHeightToSearch.length > 0 &&
-                                           Number(blockHeightToSearch) <= total && 
-                                           Number(blockHeightToSearch) > 0)}
+                        isValid = {()=> {
+                            return (
+                                blockHeightToSearch.length > 0 &&
+                                Number(blockHeightToSearch) <= total && 
+                                Number(blockHeightToSearch) > 0
+                            )}
+                        }
                     />
 
                     <ReactPaginate 
@@ -110,8 +119,9 @@ function BlocksRoute() {
                         items={paginateConfig.pageSize.values}
                     />
                 </div>
-            </div>
-        </div>
+
+            </Container>
+        </Container>
     );
 }
 

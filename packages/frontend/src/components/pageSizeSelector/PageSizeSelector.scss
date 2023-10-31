@@ -1,0 +1,14 @@
+.PageSizeSelector {
+    &__Title {
+        margin-bottom: 8px;
+    }
+
+    select {
+        width: 80px;
+        height: 29px;
+        box-sizing: border-box;
+        border: 1px solid var(--chakra-colors-whiteAlpha-200);
+        border-radius: 5px;
+        padding: 0 4px;
+    }
+}

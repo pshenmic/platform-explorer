@@ -31,6 +31,7 @@ code {
   right: 0;
   top: 0;
   left: 0;
+  z-index: 9999;
 }
 
 .modal_container {
@@ -112,7 +113,7 @@ code {
 }
 
 .active, .active:hover {
-  background-color: rgba(57, 175, 159, 0.55);
+  background-color: var(--chakra-colors-gray-800);
 }
 
 .page-item.active:hover {

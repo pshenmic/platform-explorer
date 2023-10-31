@@ -1,0 +1,60 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.TransactionsListItem {
+    @include mixins.def_list_item;
+
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &__Timestamp {
+        margin-right: 16px;
+        text-wrap: nowrap;
+    }
+
+    &__Identifier {
+        color: var(--chakra-colors-gray-200);
+        font-family: monospace;
+        font-size: 12pt;
+        flex-grow: 1;
+        text-overflow: ellipsis;
+        overflow: hidden; 
+        white-space: nowrap;
+        margin-right: 16px;
+    }
+
+    .TransactionsList--SizeS &,
+    .TransactionsList--SizeM & {
+        flex-wrap: wrap;
+
+        &__Timestamp {
+            flex-grow: 1;
+        }
+
+        &__Identifier {
+            order: 3;
+            width: 100%;
+            margin-right: 0;
+            margin-top: 2px;
+        }
+    }
+
+    &__Type {
+
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+        flex-wrap: wrap;
+        
+        &__Type {
+            order: 2;
+        }
+
+        &__Identifier {
+            order: 3;
+            width: 100%;
+        }
+    }
+}

@@ -1,7 +1,14 @@
-import React from 'react';
-import { Link, useLoaderData} from "react-router-dom";
-import * as Api from "../../util/Api";
-import './block.css'
+import React from 'react'
+import { useLoaderData} from 'react-router-dom'
+import * as Api from '../../util/Api'
+import TransactionsList from '../../components/transactions/TransactionsList'
+
+import { 
+    Container,
+    TableContainer, Table, Thead, Tbody, Tr, Th, Td, 
+    Heading, 
+} from '@chakra-ui/react'
+
 
 export async function loader({params}) {
     const {hash} = params
@@ -15,48 +22,80 @@ function BlockRoute() {
     const txHashes = block?.txs || [];
 
     return (
-        <div className="container">
-            <div className={"block_details"}>
-                <div className={"block_details_item"}>
-                    <span className={"block_details_item__title"}>Hash:</span>
-                    <span className={"block_details_item__value"}>{block.header.hash}</span>
-                </div>
-                <div className={"block_details_item"}>
-                    <span className={"block_details_item__title"}>Height:</span>
-                    <span className={"block_details_item__value"}>{block.header.height}</span>
-                </div>
-                <div className={"block_details_item"}>
-                    <span className={"block_details_item__title"}>Timestamp:</span>
-                    <span className={"block_details_item__value"}>{block.header.timestamp}</span>
-                </div>
-                <div className={"block_details_item"}>
-                    <span className={"block_details_item__title"}>Block Version:</span>
-                    <span className={"block_details_item__value"}>{block.header.blockVersion}</span>
-                </div>
-                <div className={"block_details_item"}>
-                    <span className={"block_details_item__title"}>App Version:</span>
-                    <span className={"block_details_item__value"}>{block.header.appVersion}</span>
-                </div>
-                <div className={"block_details_item"}>
-                    <span className={"block_details_item__title"}>L1 Locked Height:</span>
-                    <span className={"block_details_item__value"}>{block.header.l1LockedHeight}</span>
-                </div>
-                <div className={"block_details_item"}>
-                    <span className={"block_details_item__title"}>Transactions count:</span>
-                    <span className={"block_details_item__value"}>{txHashes.length}</span>
-                </div>
+        <Container 
+            maxW='container.xl' 
+            bg='gray.600' 
+            color='white'
+            _dark={{ bg: "gray.900" }}
+            mt={8}
+        >
 
-                {txHashes.length ? <div className={"block_transactions_list"}>
-                    <ul>
-                        {txHashes.map((hash) =>
-                            <li key={hash}>
-                                <Link className={"block_transaction_link"} to={`/transaction/${hash}`}>{hash}</Link>
-                            </li>)}
+            <TableContainer 
+                maxW='none'
+                borderWidth='1px' borderRadius='lg'
+            >
+                <Table variant='simple'>
+                    <Thead>
+                        <Tr>
+                            <Th><div className={'Table__Title'}>Block info</div></Th>
+                            <Th></Th>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        <Tr>
+                            <Td>Hash</Td>
+                            <Td>{block.header.hash}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Height</Td>
+                            <Td>{block.header.height}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Timestamp</Td>
+                            <Td>{new Date(block.header.timestamp).toLocaleString()}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Block Version</Td>
+                            <Td>{block.header.blockVersion}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>App Version</Td>
+                            <Td>{block.header.appVersion}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>L1 Locked Height</Td>
+                            <Td>{block.header.l1LockedHeight}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>Transactions count</Td>
+                            <Td>{txHashes.length}</Td>
+                        </Tr>
 
-                    </ul>
-                </div> : null}
-            </div>
-        </div>
+                    </Tbody>
+                </Table>
+            </TableContainer>
+
+
+            {txHashes.length ?  
+                <Container 
+                    width='100%'
+                    maxW='none'
+                    mt={5}
+                    borderWidth='1px' borderRadius='lg'
+                    className={'InfoBlock'}
+                >
+
+                    <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Transactions</Heading>
+
+                    <div>
+
+                        <TransactionsList transactions={txHashes}/>
+
+                    </div> 
+                </Container>
+           : null}
+
+        </Container>
     );
 }
 

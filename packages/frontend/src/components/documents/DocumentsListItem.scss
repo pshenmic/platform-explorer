@@ -1,0 +1,41 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.DocumentsListItem {
+    @include mixins.def_list_item;
+
+    &__Identifier {
+        word-wrap: break-word;
+        text-wrap: wrap;
+        word-break: break-all;
+        font-family: monospace;
+        font-size: 12pt;
+
+        flex-grow: 1;
+        text-overflow: ellipsis;
+        overflow: hidden; 
+        white-space: nowrap;
+    }
+
+    &__Timestamp {
+        text-wrap: nowrap;
+    }
+
+    .DocumentsList--SizeM & {
+        &__Identifier {
+            margin-right: 16px;
+        }
+    }
+
+    @media screen and (max-width: $breakpoint-sm) {
+        flex-wrap: wrap;
+
+        &__Identifier {
+            width: 100%;
+        }
+
+        &__Timestamp {
+            text-wrap: wrap;
+        }
+    }
+}
