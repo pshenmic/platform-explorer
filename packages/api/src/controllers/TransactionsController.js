@@ -1,5 +1,5 @@
-const cache = require("../cache");
 const TransactionsDAO = require("../dao/TransactionsDAO");
+const utils = require("../utils");
 
 class TransactionsController {
     constructor(client, knex) {
@@ -34,17 +34,9 @@ class TransactionsController {
     decode = async (request, reply) => {
         const {base64} = request.body;
 
-        const cached = cache.get('decoded_' + base64)
+        const decoded = await utils.decodeStateTransition(this.client, base64)
 
-        if (cached) {
-            return reply.send(cached)
-        }
-
-        const stateTransition = await this.client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(base64, 'base64'));
-
-        cache.set('decoded_' + base64, stateTransition)
-
-        reply.send(stateTransition)
+        reply.send(decoded)
     }
 }
 
