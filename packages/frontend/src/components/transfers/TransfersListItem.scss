@@ -1,0 +1,42 @@
+@use '../../styles/mixins.scss';
+
+.TransfersListItem {
+    @include mixins.def_list_item;
+
+    flex-wrap: wrap;
+    
+    &:hover {
+        cursor: default;
+    }
+
+    &__Amount {
+        flex-grow: 1;
+    }
+
+    &__Direction {
+        width: 48px;
+        display: inline-block;
+        text-align: center;
+    }
+
+    &__InfoLine {
+        width: 100%;
+        display: flex;
+    }
+
+    &__Counterparty {
+        color: var(--chakra-colors-gray-200);
+        font-family: monospace;
+        font-size: 12pt;
+        text-overflow: ellipsis;
+        overflow: hidden; 
+        white-space: nowrap;
+        margin-left: auto;
+
+        &:before {
+            content:  attr(title) ':';
+            margin-right: 4px;
+            color: var(--chakra-colors-gray-600);
+        }
+    }
+}

@@ -91,7 +91,7 @@ const getDocumentsByIdentity = (identifier) => {
 }
 
 const getTransfersByIdentity = (identifier) => {
-    return call(`identity/${identifier}/documents`, 'GET')
+    return call(`identity/${identifier}/transfers`, 'GET')
 }
 
 const getIdentity = (identifier) => {

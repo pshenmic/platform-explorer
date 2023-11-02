@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import TransactionsList from "../../components/transactions/TransactionsList";
 import DocumentsList from "../../components/documents/DocumentsList";
 import DataContractsList from "../../components/dataContracts/DataContractsList";
+import TransfersList from "../../components/transfers/TransfersList";
 import './identity.scss'
 
 import { 
@@ -120,11 +121,15 @@ function IdentityRoute() {
                         borderWidth='1px' borderRadius='lg'
                         className={'InfoBlock'}
                     >
-                        <Tabs>
-                            <TabList>
-                                <Tab>Transactions</Tab>
-                                <Tab>Documents</Tab>
-                                <Tab>Data contracts</Tab>
+                        <Tabs 
+                            defaultIndex={1}
+                            className={'IdentityData'}
+                        >
+                            <TabList className={'IdentityData__Tabs'}>
+                                <Tab className={'IdentityData__Tab'}>Transactions</Tab>
+                                <Tab className={'IdentityData__Tab'}>Transfers</Tab>
+                                <Tab className={'IdentityData__Tab'}>Documents</Tab>
+                                <Tab className={'IdentityData__Tab'}>Data contracts</Tab>
                             </TabList>
 
                             <TabPanels>
@@ -137,20 +142,19 @@ function IdentityRoute() {
 
                                 <TabPanel px={0}>
                                     <Box>
+                                        <TransfersList transfers={transfers.resultSet} identityId={identity.identifier}/>
+                                    </Box>
+                                </TabPanel>
+
+                                <TabPanel px={0}>
+                                    <Box>
                                         <DocumentsList documents={documents.resultSet} size='m'/>
                                     </Box>
-
                                 </TabPanel>
 
                                 <TabPanel px={0}>
                                     <Box>
                                         <DataContractsList dataContracts={dataContracts.resultSet} size='m'/>
-                                    </Box>
-                                </TabPanel>
-
-                                <TabPanel px={0}>
-                                    <Box>
-                                        Credit transfers
                                     </Box>
                                 </TabPanel>
 
