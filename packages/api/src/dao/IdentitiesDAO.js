@@ -190,11 +190,13 @@ module.exports = class IdentitiesDAO {
             .orWhere('transfers.recipient', '=', identifier)
 
         const rows = await this.knex.with('with_alias', subquery)
-            .select('id', 'amount', 'sender', 'recipient', 'rank')
+            .select('amount', 'sender', 'recipient', 'rank', 'tx_hash', 'blocks.timestamp as timestamp')
             .select(this.knex('with_alias').count('*').as('total_count'))
+            .join('state_transitions', 'state_transitions.hash', 'tx_hash')
+            .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .from('with_alias')
             .whereBetween('rank', [fromRank, toRank])
-            .orderBy('id', order)
+            .orderBy('blocks.height', order)
 
         const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0;
 
