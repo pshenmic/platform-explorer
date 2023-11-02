@@ -121,10 +121,7 @@ function IdentityRoute() {
                         borderWidth='1px' borderRadius='lg'
                         className={'InfoBlock'}
                     >
-                        <Tabs 
-                            defaultIndex={1}
-                            className={'IdentityData'}
-                        >
+                        <Tabs className={'IdentityData'}>
                             <TabList className={'IdentityData__Tabs'}>
                                 <Tab className={'IdentityData__Tab'}>Transactions</Tab>
                                 <Tab className={'IdentityData__Tab'}>Transfers</Tab>
