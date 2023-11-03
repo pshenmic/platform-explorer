@@ -2,11 +2,12 @@ import * as Api from '../../util/Api'
 import {Link, useLoaderData} from 'react-router-dom'
 import {useState, useEffect} from 'react'
 import {getTransitionTypeString} from '../../util'
-import './transaction.css'
+import './transaction.scss'
 
 import { 
     Container,
     TableContainer, Table, Thead, Tbody, Tr, Th, Td,
+    Heading
 } from '@chakra-ui/react'
 
 
@@ -21,26 +22,50 @@ export async function loader({params}) {
 function TransactionData({data}) {
     if (data === null) return <></>
 
-    if (data.type === 1) {
+    if (data.type === 0) {
         return (<>
-            {data.transitions.map((transition, key) => <Tbody key={'dc' + key}>
+            <Tbody>
                 <Tr>
                     <Td>Data contract</Td>
-                    <Td><Link to={`/dataContract/${transition.dataContractId}`}>{transition.dataContractId}</Link></Td>
+                    <Td><Link to={`/dataContract/${data.dataContractId}`}>{data.dataContractId}</Link></Td>
                 </Tr>
                 <Tr>
-                    <Td>Document</Td>
-                    <Td><Link to={`/document/${transition.id}`}>{transition.id}</Link></Td>
+                    <Td>Created by</Td>
+                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
-            </Tbody>)}
+            </Tbody>
         </>)
     }
 
-    if (data.type === 2 || data.type === 5) {
+    if (data.type === 1) {
+        return (<>
+            <Thead>
+                <Tr>
+                    <Th>Changed Documents</Th>
+                    <Th></Th>
+                </Tr>
+            </Thead>
+
+            {data.transitions.map((transition, key) => 
+                <Tbody className='TransactionData__DocumentsBatch' key={'dc' + key}>
+                    <Tr>
+                        <Td>Data contract</Td>
+                        <Td><Link to={`/dataContract/${transition.dataContractId}`}>{transition.dataContractId}</Link></Td>
+                    </Tr>
+                    <Tr>
+                        <Td>Document</Td>
+                        <Td><Link to={`/document/${transition.id}`}>{transition.id}</Link></Td>
+                    </Tr>
+                </Tbody>
+            )}
+        </>)
+    }
+
+    if (data.type === 2) {
         return (
             <Tbody>
                 <Tr>
-                    <Td>Identity</Td>
+                    <Td>Created identity</Td>
                     <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
@@ -51,19 +76,18 @@ function TransactionData({data}) {
         return (
             <Tbody>
                 <Tr>
-                    <Td>Identity</Td>
-                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
-                </Tr>
-
-                <Tr>
                     <Td>Amount</Td>
                     <Td>{data.amount} Credits</Td>
+                </Tr>
+                <Tr>
+                    <Td>Identity</Td>
+                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
         )
     }
 
-    if (data.type === 0 || data.type === 4) {
+    if (data.type === 4) {
         return (
             <Tbody>
                 <Tr>
@@ -79,6 +103,17 @@ function TransactionData({data}) {
         )
     }
 
+    if (data.type === 5) {
+        return (
+            <Tbody>
+                <Tr>
+                    <Td>Updated identity</Td>
+                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                </Tr>
+            </Tbody>
+        )
+    }
+
     if (data.type === 6) {
         return (<></>)
     }
@@ -87,16 +122,16 @@ function TransactionData({data}) {
         return (
             <Tbody>
                 <Tr>
+                    <Td>Amount</Td>
+                    <Td>{data.amount} Credits</Td>
+                </Tr>
+                <Tr>
                     <Td>Sender</Td>
                     <Td><Link to={`/identity/${data.senderId}`}>{data.senderId}</Link></Td>
                 </Tr>
                 <Tr>
                     <Td>Recipient</Td>
                     <Td><Link to={`/identity/${data.recipientId}`}>{data.recipientId}</Link></Td>
-                </Tr>
-                <Tr>
-                <Td>Amount</Td>
-                    <Td>{data.amount} Credits</Td>
                 </Tr>
             </Tbody>
         )
@@ -134,20 +169,19 @@ function TransactionRoute() {
     const [decodedST, setDecodedST] = useState(null)
 
     useEffect(() => {
-        console.log('data')
-        console.log(data)
         decodeTx(data)
     }, [])
 
     return (
         <Container 
-            maxW='container.xl' 
+            maxW='container.lg' 
             p={3}
             mt={8}
         >
             <TableContainer 
                 maxW='none'
                 borderWidth='1px' borderRadius='lg'
+                mb={4}
             >
                 <Table variant='simple' className='Table'>
                     <Thead>
@@ -177,13 +211,25 @@ function TransactionRoute() {
                             <Td>Timestamp</Td>
                             <Td>{new Date(timestamp).toLocaleString()}</Td>
                         </Tr>
-
                     </Tbody>
+                </Table>
+            </TableContainer>
+
+            <Container
+                maxW='container.lg'
+                m={0}
+                borderWidth='1px' borderRadius='lg'
+                className={'InfoBlock'}
+            >
+                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Transaction data</Heading>
+
+
+                <Table variant='simple' className='Table TransactionData'>
 
                     <TransactionData data={decodedST}/>
 
                 </Table>
-            </TableContainer>
+            </Container>
         </Container>
     )
 }
