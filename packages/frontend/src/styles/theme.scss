@@ -29,4 +29,12 @@
             border-bottom: none;
         }
     }
+
+    tr {
+        &:last-child {
+            td {
+                border-bottom: none;
+            }
+        }
+    }
 }
