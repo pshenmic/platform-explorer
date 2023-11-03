@@ -5,7 +5,7 @@ import './TransfersListItem.scss'
 
 
 function TransfersListItem({ transfer, identityId }) {
-    const { amount, recipient, sender } = transfer
+    const { amount, recipient, sender, timestamp } = transfer
 
     const counterparty = recipient === identityId ? sender : recipient
 
@@ -30,7 +30,7 @@ function TransfersListItem({ transfer, identityId }) {
             </span>
             
             <div className={'TransfersListItem__Timestamp'}>
-                {new Date().toLocaleString()}
+                {new Date(timestamp).toLocaleString()}
             </div>
 
             <div className={'TransfersListItem__InfoLine'}>
