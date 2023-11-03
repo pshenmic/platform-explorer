@@ -1,30 +1,118 @@
-import {useLoaderData} from "react-router-dom";
-import * as Api from "../../util/Api";
+import * as Api from '../../util/Api'
+import {Link, useLoaderData} from 'react-router-dom'
+import {useState, useEffect} from 'react'
+import {getTransitionTypeString} from '../../util'
 import './transaction.css'
-import {useState} from "react";
-import {getTransitionTypeString} from "../../util";
 
 import { 
     Container,
-    TableContainer, Table, Thead, Tbody, Tr, Th, Td
-} from "@chakra-ui/react"
+    TableContainer, Table, Thead, Tbody, Tr, Th, Td,
+} from '@chakra-ui/react'
 
 
 export async function loader({params}) {
-    const {txHash} = params
+    const { txHash } = params
 
-    const transaction = await Api.getTransaction(txHash);
+    const transaction = await Api.getTransaction(txHash)
 
-    return {transaction};
+    return { transaction }
+}
+
+function TransactionData({data}) {
+    if (data === null) return <></>
+
+    if (data.type === 1) {
+        return (<>
+            {data.transitions.map((transition, key) => <Tbody key={'dc' + key}>
+                <Tr>
+                    <Td>Data contract</Td>
+                    <Td><Link to={`/dataContract/${transition.dataContractId}`}>{transition.dataContractId}</Link></Td>
+                </Tr>
+                <Tr>
+                    <Td>Document</Td>
+                    <Td><Link to={`/document/${transition.id}`}>{transition.id}</Link></Td>
+                </Tr>
+            </Tbody>)}
+        </>)
+    }
+
+    if (data.type === 2 || data.type === 5) {
+        return (
+            <Tbody>
+                <Tr>
+                    <Td>Identity</Td>
+                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                </Tr>
+            </Tbody>
+        )
+    }
+
+    if (data.type === 3) {
+        return (
+            <Tbody>
+                <Tr>
+                    <Td>Identity</Td>
+                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                </Tr>
+
+                <Tr>
+                    <Td>Amount</Td>
+                    <Td>{data.amount} Credits</Td>
+                </Tr>
+            </Tbody>
+        )
+    }
+
+    if (data.type === 0 || data.type === 4) {
+        return (
+            <Tbody>
+                <Tr>
+                    <Td>Data contract</Td>
+                    <Td><Link to={`/dataContract/${data.dataContractId}`}>{data.dataContractId}</Link></Td>
+                </Tr>
+
+                <Tr>
+                    <Td>Updated by</Td>
+                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                </Tr>
+            </Tbody>
+        )
+    }
+
+    if (data.type === 6) {
+        return (<></>)
+    }
+
+    if (data.type === 7) {
+        return (
+            <Tbody>
+                <Tr>
+                    <Td>Sender</Td>
+                    <Td><Link to={`/identity/${data.senderId}`}>{data.senderId}</Link></Td>
+                </Tr>
+                <Tr>
+                    <Td>Recipient</Td>
+                    <Td><Link to={`/identity/${data.recipientId}`}>{data.recipientId}</Link></Td>
+                </Tr>
+                <Tr>
+                <Td>Amount</Td>
+                    <Td>{data.amount} Credits</Td>
+                </Tr>
+            </Tbody>
+        )
+    }
 }
 
 function TransactionRoute() {
-    const {transaction} = useLoaderData();
+    const { transaction } = useLoaderData()
+
+    const { hash, blockHeight, index, type, timestamp, data } = transaction
 
     const decodeTx = (tx) => {
-        if (decodedST) {
+        if (decodedST || decoding) {
             return
         }
+
         setDecoding(true)
         setDecodingError(false)
         setDecodedST(null)
@@ -45,6 +133,12 @@ function TransactionRoute() {
     const [decodingError, setDecodingError] = useState(null)
     const [decodedST, setDecodedST] = useState(null)
 
+    useEffect(() => {
+        console.log('data')
+        console.log(data)
+        decodeTx(data)
+    }, [])
+
     return (
         <Container 
             maxW='container.xl' 
@@ -55,7 +149,7 @@ function TransactionRoute() {
                 maxW='none'
                 borderWidth='1px' borderRadius='lg'
             >
-                <Table variant='simple'>
+                <Table variant='simple' className='Table'>
                     <Thead>
                         <Tr>
                             <Th>transaction info</Th>
@@ -65,30 +159,33 @@ function TransactionRoute() {
                     <Tbody>
                         <Tr>
                             <Td>Hash</Td>
-                            <Td >{transaction.hash}</Td>
+                            <Td>{hash}</Td>
                         </Tr>
                         <Tr>
                             <Td>Height</Td>
-                            <Td >{transaction.blockHeight}</Td>
+                            <Td>{blockHeight}</Td>
                         </Tr>
                         <Tr>
                             <Td>Index</Td>
-                            <Td >{transaction.index}</Td>
+                            <Td>{index}</Td>
                         </Tr>
                         <Tr>
                             <Td>Type</Td>
-                            <Td >{getTransitionTypeString(transaction.type)}</Td>
+                            <Td>{getTransitionTypeString(type)}</Td>
                         </Tr>
                         <Tr>
                             <Td>Timestamp</Td>
-                            <Td >{new Date(transaction.timestamp).toLocaleString()}</Td>
+                            <Td>{new Date(timestamp).toLocaleString()}</Td>
                         </Tr>
 
                     </Tbody>
+
+                    <TransactionData data={decodedST}/>
+
                 </Table>
             </TableContainer>
         </Container>
-    );
+    )
 }
 
-export default TransactionRoute;
+export default TransactionRoute
