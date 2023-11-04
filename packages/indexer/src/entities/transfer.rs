@@ -1,4 +1,5 @@
 use dpp::identifier::Identifier;
+use dpp::identity::state_transition::AssetLockProved;
 use dpp::state_transition::identity_credit_transfer_transition::accessors::IdentityCreditTransferTransitionAccessorsV0;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
 use dpp::state_transition::identity_credit_withdrawal_transition::accessors::IdentityCreditWithdrawalTransitionAccessorsV0;
@@ -18,12 +19,12 @@ impl From<IdentityTopUpTransition> for Transfer {
     fn from(state_transition: IdentityTopUpTransition) -> Self {
         let identifier = state_transition.identity_id().clone();
         let asset_lock = state_transition.asset_lock_proof().clone();
-        let vout_index = asset_lock.instant_lock_output_index().unwrap();
+        let vout_index = asset_lock.output_index();
+
         let tx_out = asset_lock
             .transaction()
             .unwrap().clone()
-            .output.get(vout_index)
-            .cloned().unwrap();
+            .output.get(vout_index as usize).cloned().unwrap();
         let amount = tx_out.value * 1000;
 
         return Transfer {
