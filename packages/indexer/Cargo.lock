@@ -513,7 +513,7 @@ dependencies = [
 [[package]]
 name = "dashcore"
 version = "0.30.0"
-source = "git+https://github.com/dashpay/rust-dashcore?branch=master#d7beaf29203b961d2534e5199e466fcc6e006278"
+source = "git+https://github.com/pshenmic/rust-dashcore?branch=master#43ffb72915ae55574ac44fcdbd47589e0c815b59"
 dependencies = [
  "anyhow",
  "bech32",
@@ -529,12 +529,12 @@ dependencies = [
 [[package]]
 name = "dashcore-private"
 version = "0.1.0"
-source = "git+https://github.com/dashpay/rust-dashcore?branch=master#d7beaf29203b961d2534e5199e466fcc6e006278"
+source = "git+https://github.com/pshenmic/rust-dashcore?branch=master#43ffb72915ae55574ac44fcdbd47589e0c815b59"
 
 [[package]]
 name = "dashcore_hashes"
 version = "0.12.0"
-source = "git+https://github.com/dashpay/rust-dashcore?branch=master#d7beaf29203b961d2534e5199e466fcc6e006278"
+source = "git+https://github.com/pshenmic/rust-dashcore?branch=master#43ffb72915ae55574ac44fcdbd47589e0c815b59"
 dependencies = [
  "dashcore-private",
  "rs-x11-hash",
@@ -1254,9 +1254,9 @@ dependencies = [
 
 [[package]]
 name = "integer-encoding"
-version = "3.0.4"
+version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8bb03732005da905c88227371639bf1ad885cc712789c011c31c5fb3ab3ccf02"
+checksum = "924df4f0e24e2e7f9cdd90babb0b96f93b20f3ecfa949ea9e6613756b8c8e1bf"
 
 [[package]]
 name = "ipnet"
