@@ -51,7 +51,7 @@ describe('Utils', () => {
             const decoded = await utils.decodeStateTransition(client, createIdentityMock.data)
 
             assert.deepEqual(decoded, {
-                identityId: '7Gw32yK4vhKw926wWmwVDdzQjqxBvXyLK4FbpibYxUwa',
+                identityId: '2Zaxnyr4RU3HdA2cExTuaiMfqJreijf9rFktrbCDek9B',
                 type: 2
             });
         });
@@ -60,9 +60,9 @@ describe('Utils', () => {
             const decoded = await utils.decodeStateTransition(client, identityTopUpMock.data)
 
             assert.deepEqual(decoded, {
-                identityId: 'CuB1Qf2ArA1gGFXyp1muQDcKhdMmrx5yAduZWwqHHKji',
+                identityId: 'FPPbXi8z67HApL9bDvEQYWLwjXhYSzNxoK7ZtKexqaFj',
                 type: 3,
-                amount: 12345678000
+                amount: 1000000000,
             });
         });
 
