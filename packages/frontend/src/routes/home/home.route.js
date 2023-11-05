@@ -87,7 +87,7 @@ function HomeRoute() {
 
                         <Flex wrap={'wrap'}>
                             <Text as={'b'} mr={4}>Average block time:</Text>
-                            <Box>{blockTimeAverage}</Box>
+                            <Box>{Math.ceil(blockTimeAverage)} sec.</Box>
                         </Flex>
 
                         <Flex wrap={'wrap'}>
