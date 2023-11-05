@@ -122,7 +122,18 @@ function TransactionData({data}) {
     }
 
     if (data.type === 6) {
-        return (<></>)
+        return (
+            <Tbody>
+                <Tr>
+                    <Td>Amount</Td>
+                    <Td>{data.amount} Credits</Td>
+                </Tr>
+                <Tr>
+                    <Td>Identity</Td>
+                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                </Tr>
+            </Tbody>
+        )
     }
 
     if (data.type === 7) {
