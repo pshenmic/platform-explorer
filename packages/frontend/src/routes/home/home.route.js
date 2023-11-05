@@ -29,7 +29,17 @@ export async function loader({}) {
 function HomeRoute() {
     const {status, transactions} = useLoaderData();
 
-    const {tenderdashVersion, network, appVersion, p2pVersion, blockVersion, blocksCount} = status
+    const {
+        tenderdashVersion, 
+        network, 
+        appVersion, 
+        blocksCount,
+        blockTimeAverage,
+        dataContractsCount,
+        documentsCount,
+        transfersCount,
+        txCount
+    } = status
 
     return (
         <Container 
@@ -66,9 +76,19 @@ function HomeRoute() {
                             <Box>{tenderdashVersion}</Box>
                         </Flex>
 
+                        <Flex wrap={'wrap'}>
+                            <Text as={'b'} mr={4}>App Version:</Text>
+                            <Box>{appVersion}</Box>
+                        </Flex>
+
                     </Box>
 
                     <Box w={['100%', , '33%']}>
+
+                        <Flex wrap={'wrap'}>
+                            <Text as={'b'} mr={4}>Average block time:</Text>
+                            <Box>{Math.ceil(blockTimeAverage)} sec.</Box>
+                        </Flex>
 
                         <Flex wrap={'wrap'}>
                             <Text as={'b'} mr={4}>Blocks:</Text>
@@ -76,8 +96,8 @@ function HomeRoute() {
                         </Flex>
 
                         <Flex wrap={'wrap'}>
-                            <Text as={'b'} mr={4}>Block version:</Text>
-                            <Box>{blockVersion}</Box>
+                            <Text as={'b'} mr={4}>Transactions:</Text>
+                            <Box>{txCount}</Box>
                         </Flex>
 
                     </Box>
@@ -85,10 +105,20 @@ function HomeRoute() {
                     <Box w={['100%', , '33%']}>
 
                         <Flex wrap={'wrap'}>
-                            <Text as={'b'} mr={4}>App Version:</Text>
-                            <Box>{appVersion}</Box>
+                            <Text as={'b'} mr={4}>Data contracts:</Text>
+                            <Box>{dataContractsCount}</Box>
                         </Flex>
 
+                        <Flex wrap={'wrap'}>
+                            <Text as={'b'} mr={4}>Documents:</Text>
+                            <Box>{documentsCount}</Box>
+                        </Flex>
+
+                        <Flex wrap={'wrap'}>
+                            <Text as={'b'} mr={4}>Transfers:</Text>
+                            <Box>{transfersCount}</Box>
+                        </Flex>
+                        
                     </Box>
 
                 </Stack>
