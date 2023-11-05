@@ -65,7 +65,7 @@ function TransactionData({data}) {
         return (
             <Tbody>
                 <Tr>
-                    <Td>Created identity</Td>
+                    <Td>Identity</Td>
                     <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
@@ -94,10 +94,13 @@ function TransactionData({data}) {
                     <Td>Data contract</Td>
                     <Td><Link to={`/dataContract/${data.dataContractId}`}>{data.dataContractId}</Link></Td>
                 </Tr>
-
                 <Tr>
-                    <Td>Updated by</Td>
+                    <Td>Owner</Td>
                     <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                </Tr>
+                <Tr>
+                    <Td>Version</Td>
+                    <Td>{data.version}</Td>
                 </Tr>
             </Tbody>
         )
@@ -107,8 +110,12 @@ function TransactionData({data}) {
         return (
             <Tbody>
                 <Tr>
-                    <Td>Updated identity</Td>
+                    <Td>Identity</Td>
                     <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                </Tr>
+                <Tr>
+                    <Td>Revision</Td>
+                    <Td>{data.revision}</Td>
                 </Tr>
             </Tbody>
         )
