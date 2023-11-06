@@ -38,7 +38,7 @@ function TransactionData({data}) {
                     <Td><Link to={`/dataContract/${data.dataContractId}`}>{data.dataContractId}</Link></Td>
                 </Tr>
                 <Tr>
-                    <Td>Created by</Td>
+                    <Td>Owner</Td>
                     <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
