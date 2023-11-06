@@ -23,7 +23,7 @@ export async function loader({params}) {
 function TransactionData({data}) {
     if (data === null) return <></>
 
-    if (data.type === StateTransitionEnum['DATA_CONTRACT_CREATE']) {
+    if (data.type === StateTransitionEnum.DATA_CONTRACT_CREATE) {
         return (<>
             <Thead>
                 <Tr>
@@ -45,7 +45,7 @@ function TransactionData({data}) {
         </>)
     }
 
-    if (data.type === StateTransitionEnum['DOCUMENTS_BATCH']) {
+    if (data.type === StateTransitionEnum.DOCUMENTS_BATCH) {
         return (<>
             <Thead>
                 <Tr>
@@ -69,7 +69,7 @@ function TransactionData({data}) {
         </>)
     }
 
-    if (data.type === StateTransitionEnum['IDENTITY_CREATE']) {
+    if (data.type === StateTransitionEnum.IDENTITY_CREATE) {
         return (<>
             <Thead>
                 <Tr>
@@ -87,7 +87,7 @@ function TransactionData({data}) {
         </>)
     }
 
-    if (data.type === StateTransitionEnum['IDENTITY_TOP_UP']) {
+    if (data.type === StateTransitionEnum.IDENTITY_TOP_UP) {
         return (<>
             <Thead>
                 <Tr>
@@ -109,7 +109,7 @@ function TransactionData({data}) {
         </>)
     }
 
-    if (data.type === StateTransitionEnum['DATA_CONTRACT_UPDATE']) {
+    if (data.type === StateTransitionEnum.DATA_CONTRACT_UPDATE) {
         return (<>
             <Thead>
                 <Tr>
@@ -135,7 +135,7 @@ function TransactionData({data}) {
         </>)
     }
 
-    if (data.type === StateTransitionEnum['IDENTITY_UPDATE']) {
+    if (data.type === StateTransitionEnum.IDENTITY_UPDATE) {
         return (<>
             <Thead>
                 <Tr>
@@ -157,7 +157,7 @@ function TransactionData({data}) {
         </>)
     }
 
-    if (data.type === StateTransitionEnum['IDENTITY_CREDIT_WITHDRAWAL']) {
+    if (data.type === StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL) {
         return (<>
             <Thead>
                 <Tr>
@@ -179,7 +179,7 @@ function TransactionData({data}) {
         </>)
     }
 
-    if (data.type === StateTransitionEnum['IDENTITY_CREDIT_TRANSFER']) {
+    if (data.type === StateTransitionEnum.IDENTITY_CREDIT_TRANSFER) {
         return (<>
             <Thead>
                 <Tr>
