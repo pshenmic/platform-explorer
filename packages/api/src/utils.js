@@ -25,6 +25,7 @@ const decodeStateTransition = async (client, base64) => {
     switch (decoded.type) {
         case StateTransitionEnum.DATA_CONTRACT_CREATE: {
             decoded.dataContractId = stateTransition.getDataContract().getId().toString()
+            decoded.identityId = stateTransition.getOwnerId().toString()
 
             break
         }

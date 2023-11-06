@@ -24,6 +24,7 @@ describe('Utils', () => {
             const decoded = await utils.decodeStateTransition(client, dataContractCreateMock.data)
 
             assert.deepEqual(decoded, {
+                identityId: '6tQX1wAZ3kbrxLL1VsVAk8sAFDp3fdWDFHgJ7dwFGViF',
                 dataContractId: '4xYD4cASeif5e1auCerLhXR8jvDAwshWUdspk3WiBwhE',
                 type: 0
             });
