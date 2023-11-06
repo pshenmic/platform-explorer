@@ -25,6 +25,13 @@ function TransactionData({data}) {
 
     if (data.type === StateTransitionEnum['DATA_CONTRACT_CREATE']) {
         return (<>
+            <Thead>
+                <Tr>
+                    <Th>Created data contract</Th>
+                    <Th></Th>
+                </Tr>
+            </Thead>
+
             <Tbody>
                 <Tr>
                     <Td>Data contract</Td>
@@ -42,7 +49,7 @@ function TransactionData({data}) {
         return (<>
             <Thead>
                 <Tr>
-                    <Th>Changed Documents</Th>
+                    <Th>Changed documents</Th>
                     <Th></Th>
                 </Tr>
             </Thead>
@@ -63,18 +70,32 @@ function TransactionData({data}) {
     }
 
     if (data.type === StateTransitionEnum['IDENTITY_CREATE']) {
-        return (
+        return (<>
+            <Thead>
+                <Tr>
+                    <Th>Created identity</Th>
+                    <Th></Th>
+                </Tr>
+            </Thead>
+
             <Tbody>
                 <Tr>
                     <Td>Identity</Td>
                     <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
-        )
+        </>)
     }
 
     if (data.type === StateTransitionEnum['IDENTITY_TOP_UP']) {
-        return (
+        return (<>
+            <Thead>
+                <Tr>
+                    <Th>Credit top up</Th>
+                    <Th></Th>
+                </Tr>
+            </Thead>
+
             <Tbody>
                 <Tr>
                     <Td>Amount</Td>
@@ -85,11 +106,18 @@ function TransactionData({data}) {
                     <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
-        )
+        </>)
     }
 
     if (data.type === StateTransitionEnum['DATA_CONTRACT_UPDATE']) {
-        return (
+        return (<>
+            <Thead>
+                <Tr>
+                    <Th>Updated data contract</Th>
+                    <Th></Th>
+                </Tr>
+            </Thead>
+            
             <Tbody>
                 <Tr>
                     <Td>Data contract</Td>
@@ -104,11 +132,18 @@ function TransactionData({data}) {
                     <Td>{data.version}</Td>
                 </Tr>
             </Tbody>
-        )
+        </>)
     }
 
     if (data.type === StateTransitionEnum['IDENTITY_UPDATE']) {
-        return (
+        return (<>
+            <Thead>
+                <Tr>
+                    <Th>Updated identity</Th>
+                    <Th></Th>
+                </Tr>
+            </Thead>
+
             <Tbody>
                 <Tr>
                     <Td>Identity</Td>
@@ -119,11 +154,18 @@ function TransactionData({data}) {
                     <Td>{data.revision}</Td>
                 </Tr>
             </Tbody>
-        )
+        </>)
     }
 
     if (data.type === StateTransitionEnum['IDENTITY_CREDIT_WITHDRAWAL']) {
-        return (
+        return (<>
+            <Thead>
+                <Tr>
+                    <Th>Credit withdrawal</Th>
+                    <Th></Th>
+                </Tr>
+            </Thead>
+
             <Tbody>
                 <Tr>
                     <Td>Amount</Td>
@@ -134,11 +176,18 @@ function TransactionData({data}) {
                     <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
-        )
+        </>)
     }
 
     if (data.type === StateTransitionEnum['IDENTITY_CREDIT_TRANSFER']) {
-        return (
+        return (<>
+            <Thead>
+                <Tr>
+                    <Th>Credit transfer</Th>
+                    <Th></Th>
+                </Tr>
+            </Thead>
+
             <Tbody>
                 <Tr>
                     <Td>Amount</Td>
@@ -153,7 +202,7 @@ function TransactionData({data}) {
                     <Td><Link to={`/identity/${data.recipientId}`}>{data.recipientId}</Link></Td>
                 </Tr>
             </Tbody>
-        )
+        </>)
     }
 }
 
@@ -175,7 +224,6 @@ function TransactionRoute() {
             .then((stateTransition) => {
                 setDecoding(false)
                 setDecodedST(stateTransition)
-                console.log(stateTransition)
             })
             .catch((e) => {
                 setDecodingError(e.message)
