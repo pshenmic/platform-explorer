@@ -75,3 +75,18 @@
     flex-direction: row;
     justify-content: space-between;
 }
+
+.TransactionData {
+    &__DocumentsBatch {
+        border-bottom: var(--chakra-borders-1px);
+        border-color: var(--chakra-colors-gray-700);
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    td {
+        border-bottom: none;
+    }
+}
