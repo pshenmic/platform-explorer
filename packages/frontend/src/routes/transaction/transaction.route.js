@@ -2,6 +2,7 @@ import * as Api from '../../util/Api'
 import {Link, useLoaderData} from 'react-router-dom'
 import {useState, useEffect} from 'react'
 import {getTransitionTypeString} from '../../util'
+import {StateTransitionEnum} from "../enums/state.transition.type"
 import './transaction.scss'
 
 import { 
@@ -22,7 +23,7 @@ export async function loader({params}) {
 function TransactionData({data}) {
     if (data === null) return <></>
 
-    if (data.type === 0) {
+    if (data.type === StateTransitionEnum['DATA_CONTRACT_CREATE']) {
         return (<>
             <Tbody>
                 <Tr>
@@ -37,7 +38,7 @@ function TransactionData({data}) {
         </>)
     }
 
-    if (data.type === 1) {
+    if (data.type === StateTransitionEnum['DOCUMENTS_BATCH']) {
         return (<>
             <Thead>
                 <Tr>
@@ -61,7 +62,7 @@ function TransactionData({data}) {
         </>)
     }
 
-    if (data.type === 2) {
+    if (data.type === StateTransitionEnum['IDENTITY_CREATE']) {
         return (
             <Tbody>
                 <Tr>
@@ -72,7 +73,7 @@ function TransactionData({data}) {
         )
     }
 
-    if (data.type === 3) {
+    if (data.type === StateTransitionEnum['IDENTITY_TOP_UP']) {
         return (
             <Tbody>
                 <Tr>
@@ -87,7 +88,7 @@ function TransactionData({data}) {
         )
     }
 
-    if (data.type === 4) {
+    if (data.type === StateTransitionEnum['DATA_CONTRACT_UPDATE']) {
         return (
             <Tbody>
                 <Tr>
@@ -106,7 +107,7 @@ function TransactionData({data}) {
         )
     }
 
-    if (data.type === 5) {
+    if (data.type === StateTransitionEnum['IDENTITY_UPDATE']) {
         return (
             <Tbody>
                 <Tr>
@@ -121,7 +122,7 @@ function TransactionData({data}) {
         )
     }
 
-    if (data.type === 6) {
+    if (data.type === StateTransitionEnum['IDENTITY_CREDIT_WITHDRAWAL']) {
         return (
             <Tbody>
                 <Tr>
@@ -136,7 +137,7 @@ function TransactionData({data}) {
         )
     }
 
-    if (data.type === 7) {
+    if (data.type === StateTransitionEnum['IDENTITY_CREDIT_TRANSFER']) {
         return (
             <Tbody>
                 <Tr>
