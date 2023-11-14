@@ -1,3 +1,4 @@
+use dpp::dashcore::Transaction;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::state_transition::identity_credit_transfer_transition::accessors::IdentityCreditTransferTransitionAccessorsV0;
@@ -21,17 +22,23 @@ impl From<IdentityTopUpTransition> for Transfer {
         let asset_lock = state_transition.asset_lock_proof().clone();
         let vout_index = asset_lock.output_index();
 
-        let tx_out = asset_lock
-            .transaction()
-            .unwrap().clone()
-            .output.get(vout_index as usize).cloned().unwrap();
-        let amount = tx_out.value * 1000;
+        let tx = asset_lock.transaction().cloned();
+
+        // todo why assetlock transaction could not have tx?
+        let amount = match tx {
+            None => 0,
+            Some(tx) => {
+                let tx_out = tx.output.get(vout_index as usize).cloned().unwrap();
+
+                tx_out.value * 1000
+            }
+        };
 
         return Transfer {
             id: None,
-            sender:None,
+            sender: None,
             recipient: Some(identifier),
-            amount
+            amount,
         };
     }
 }
@@ -45,7 +52,7 @@ impl From<IdentityCreditWithdrawalTransition> for Transfer {
             id: None,
             sender: Some(identifier),
             recipient: None,
-            amount
+            amount,
         };
     }
 }
@@ -60,7 +67,7 @@ impl From<IdentityCreditTransferTransition> for Transfer {
             id: None,
             sender: Some(sender),
             recipient: Some(recipient),
-            amount
+            amount,
         };
     }
 }
