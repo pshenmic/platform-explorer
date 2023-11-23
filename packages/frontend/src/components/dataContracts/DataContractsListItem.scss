@@ -16,7 +16,7 @@
     }
 
     &__Timestamp {
-        text-wrap: nowrap;
+        white-space: nowrap;
     }
 
     .DataContractsList--SizeS &,
@@ -34,7 +34,7 @@
         }
 
         &__Timestamp {
-            text-wrap: wrap;
+            white-space: wrap;
         }
     }
 }

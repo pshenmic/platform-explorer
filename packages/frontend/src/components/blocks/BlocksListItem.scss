@@ -23,12 +23,12 @@
     
     &__Timestamp {
         margin-right: 16px;
-        text-wrap: nowrap;
+        white-space: nowrap;
     }
 
     &__Txs {
         margin-left: 12px;
-        text-wrap: nowrap;
+        white-space: nowrap;
     } 
 
 
@@ -59,7 +59,7 @@
 
     @media screen and (max-width: 400px) {
         &__Timestamp {
-            text-wrap: wrap;
+            white-space: wrap;
         }
     }
 

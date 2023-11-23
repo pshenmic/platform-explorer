@@ -14,7 +14,7 @@
     }    
 
     &__Timestamp {
-        text-wrap: nowrap;
+        white-space: nowrap;
     }
 
     @media screen and (max-width: $breakpoint-sm) {
@@ -26,7 +26,7 @@
         }
 
         &__Timestamp {
-            text-wrap: wrap;
+            white-space: wrap;
         }
     }
 }
