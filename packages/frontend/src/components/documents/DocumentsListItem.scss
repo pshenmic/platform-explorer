@@ -6,7 +6,7 @@
 
     &__Identifier {
         word-wrap: break-word;
-        text-wrap: wrap;
+        white-space: wrap;
         word-break: break-all;
         font-family: monospace;
         font-size: 12pt;
@@ -18,7 +18,7 @@
     }
 
     &__Timestamp {
-        text-wrap: nowrap;
+        white-space: nowrap;
     }
 
     .DocumentsList--SizeM & {
@@ -35,7 +35,7 @@
         }
 
         &__Timestamp {
-            text-wrap: wrap;
+            white-space: wrap;
         }
     }
 }
