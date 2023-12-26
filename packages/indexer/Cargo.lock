@@ -544,16 +544,15 @@ dependencies = [
 
 [[package]]
 name = "dashpay-contract"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
- "lazy_static",
  "platform-value",
  "serde_json",
 ]
 
 [[package]]
 name = "data-contracts"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
  "dashpay-contract",
  "dpns-contract",
@@ -649,7 +648,7 @@ checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
 name = "dpns-contract"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
  "platform-value",
  "serde_json",
@@ -657,7 +656,7 @@ dependencies = [
 
 [[package]]
 name = "dpp"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -673,9 +672,9 @@ dependencies = [
  "ed25519-dalek",
  "enum-map",
  "env_logger",
- "futures",
  "getrandom",
  "hex",
+ "indexmap 2.1.0",
  "integer-encoding",
  "itertools",
  "json-patch",
@@ -688,7 +687,6 @@ dependencies = [
  "platform-serialization",
  "platform-serialization-derive",
  "platform-value",
- "platform-value-convertible",
  "platform-version",
  "platform-versioning",
  "rand",
@@ -696,8 +694,6 @@ dependencies = [
  "rust_decimal",
  "rust_decimal_macros",
  "serde",
- "serde-big-array",
- "serde_cbor",
  "serde_json",
  "serde_repr",
  "sha2",
@@ -827,7 +823,7 @@ checksum = "25cbce373ec4653f1a01a31e8a5e5ec0c622dc27ff9c4e6606eefef5cbbed4a5"
 
 [[package]]
 name = "feature-flags-contract"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
  "platform-value",
  "serde_json",
@@ -1051,9 +1047,9 @@ dependencies = [
 
 [[package]]
 name = "hashbrown"
-version = "0.14.0"
+version = "0.14.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c6201b9ff9fd90a5a3bac2e56a830d0caa509576f0e503818ee82c181b3437a"
+checksum = "290f1a1d9242c78d09ce40a5e87e7554ee637af1351968159f4952f028f75604"
 
 [[package]]
 name = "hermit-abi"
@@ -1244,12 +1240,13 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "2.0.0"
+version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d5477fe2230a79769d8dc68e0eabf5437907c0457a5614a9e8dddb67f65eb65d"
+checksum = "d530e1a18b1cb4c484e6e34556a0d948706958449fca0cab753d649f2bce3d1f"
 dependencies = [
  "equivalent",
- "hashbrown 0.14.0",
+ "hashbrown 0.14.3",
+ "serde",
 ]
 
 [[package]]
@@ -1398,7 +1395,7 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 
 [[package]]
 name = "masternode-reward-shares-contract"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
  "platform-value",
  "serde_json",
@@ -1741,7 +1738,7 @@ checksum = "26072860ba924cbfa98ea39c8c19b4dd6a4a25423dbdf219c1eca91aa0cf6964"
 
 [[package]]
 name = "platform-serialization"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
  "bincode",
  "platform-version",
@@ -1749,7 +1746,7 @@ dependencies = [
 
 [[package]]
 name = "platform-serialization-derive"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1759,45 +1756,35 @@ dependencies = [
 
 [[package]]
 name = "platform-value"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
  "base64 0.13.1",
  "bincode",
  "bs58",
  "ciborium",
  "hex",
+ "indexmap 2.1.0",
  "lazy_static",
  "platform-serialization",
  "platform-version",
  "rand",
  "regex",
  "serde",
- "serde_bytes",
  "serde_json",
  "thiserror",
  "treediff 4.0.2",
 ]
 
 [[package]]
-name = "platform-value-convertible"
-version = "0.25.13"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.31",
-]
-
-[[package]]
 name = "platform-version"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
- "bincode",
  "thiserror",
 ]
 
 [[package]]
 name = "platform-versioning"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2306,34 +2293,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde-big-array"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3323f09a748af288c3dc2474ea6803ee81f118321775bffa3ac8f7e65c5e90e7"
-dependencies = [
- "serde",
-]
-
-[[package]]
-name = "serde_bytes"
-version = "0.11.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab33ec92f677585af6d88c65593ae2375adde54efdbf16d597f2cbc7a6d368ff"
-dependencies = [
- "serde",
-]
-
-[[package]]
-name = "serde_cbor"
-version = "0.11.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2bef2ebfde456fb76bbcf9f59315333decc4fda0b2b44b420243c11e0f5ec1f5"
-dependencies = [
- "half",
- "serde",
-]
-
-[[package]]
 name = "serde_derive"
 version = "1.0.188"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2350,7 +2309,7 @@ version = "1.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2cc66a619ed80bf7a0f6b17dd063a84b88f6dea1813737cf469aef1d081142c2"
 dependencies = [
- "indexmap 2.0.0",
+ "indexmap 2.1.0",
  "itoa",
  "ryu",
  "serde",
@@ -2736,7 +2695,7 @@ version = "0.19.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b5bb770da30e5cbfde35a2d7b9b8a2c4b8ef89548a7a6aeab5c9a576e3e7421"
 dependencies = [
- "indexmap 2.0.0",
+ "indexmap 2.1.0",
  "serde",
  "serde_spanned",
  "toml_datetime",
@@ -3126,7 +3085,7 @@ dependencies = [
 
 [[package]]
 name = "withdrawals-contract"
-version = "0.25.13"
+version = "0.25.20"
 dependencies = [
  "num_enum",
  "platform-value",
