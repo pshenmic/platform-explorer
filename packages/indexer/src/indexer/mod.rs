@@ -125,7 +125,7 @@ impl Indexer {
                 println!("Transaction {} from block with hash {} is skipped because it's marked that in TXS_TO_SKIP environment", &tx_hash, &block_hash);
             }
 
-            return skip
+            return !skip
         }).cloned().collect::<Vec<String>>();
         let timestamp = resp.block.header.timestamp;
         let block_version = resp.block.header.version.block.parse::<i32>()?;
