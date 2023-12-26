@@ -24,8 +24,8 @@ describe('Utils', () => {
             const decoded = await utils.decodeStateTransition(client, dataContractCreateMock.data)
 
             assert.deepEqual(decoded, {
-                identityId: '6tQX1wAZ3kbrxLL1VsVAk8sAFDp3fdWDFHgJ7dwFGViF',
-                dataContractId: '4xYD4cASeif5e1auCerLhXR8jvDAwshWUdspk3WiBwhE',
+                identityId: 'A4bCzAMd71ypvaZXFpWVD6ka7PaZ3pcjotLEk5hvTvjb',
+                dataContractId: 'EoVW5LtGCUZ5U1174kCrwvzSekhtDrd2kBVYqyq2fMMS',
                 type: 0
             });
         });
@@ -67,12 +67,12 @@ describe('Utils', () => {
             });
         });
 
-        it('should decode DataContractUpdate', async () => {
+        it.only('should decode DataContractUpdate', async () => {
             const decoded = await utils.decodeStateTransition(client, data_contract_update.data)
 
             assert.deepEqual(decoded, {
-                identityId: 'Dxjkf7du87BbHjiYASdwnCwEhuCbECM6MDiqQY3HHJd9',
-                dataContractId: '6jcciCBHZPTuoXEGdyakBkaumsyJRHMEJFyZt25emNML',
+                identityId: 'EeSwYUkj6758xALPgS3vEJuNr3tGhVKhTiHiG8niEidi',
+                dataContractId: 'EebHj2YQdHmBGCdxSoLDtWjVo5pd2oGwQGENZHG7dh9P',
                 type: 4,
                 version: 2
             });

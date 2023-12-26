@@ -6,6 +6,7 @@ use crate::entities::block::Block;
 use crate::entities::block_header::BlockHeader;
 use crate::models::{BlockWrapper, TenderdashRPCStatusResponse};
 use crate::processor::psql::{ProcessorError, PSQLProcessor};
+use base64::{Engine as _, engine::{general_purpose}};
 
 pub enum IndexerError {
     BackendUrlError,
@@ -29,14 +30,22 @@ pub struct Indexer {
     processor: PSQLProcessor,
     last_block_height: Cell<i32>,
     backend_url: String,
+    txs_to_skip: Vec<String>
 }
 
 impl Indexer {
     pub fn new() -> Indexer {
         let processor = PSQLProcessor::new();
         let backend_url = env::var("BACKEND_URL").expect("You've not set the BACKEND_URL");
+        let txs_to_skip = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
 
-        return Indexer { processor, last_block_height: Cell::new(1), backend_url };
+        return Indexer {
+            processor,
+            last_block_height: Cell::new(1),
+            backend_url,
+            txs_to_skip: txs_to_skip.split(",")
+                .map(|s| { String::from(s) }).collect::<Vec<String>>(),
+        };
     }
 
     pub async fn start(&self) {
@@ -105,8 +114,19 @@ impl Indexer {
             .json::<BlockWrapper>()
             .await?;
 
-        let txs = resp.block.data.txs;
-        let hash = resp.block_id.hash;
+        let block_hash = resp.block_id.hash;
+        let txs = resp.block.data.txs.iter().filter(|base64_str| {
+            let bytes = general_purpose::STANDARD.decode(base64_str).unwrap();
+            let tx_hash = sha256::digest(bytes.clone()).to_uppercase();
+
+            let skip = self.txs_to_skip.contains(&format!("{}:{}", &block_hash, &tx_hash));
+
+            if skip {
+                println!("Transaction {} from block with hash {} is skipped because it's marked that in TXS_TO_SKIP environment", &tx_hash, &block_hash);
+            }
+
+            return skip
+        }).cloned().collect::<Vec<String>>();
         let timestamp = resp.block.header.timestamp;
         let block_version = resp.block.header.version.block.parse::<i32>()?;
         let app_version = resp.block.header.version.app.parse::<i32>()?;
@@ -114,7 +134,7 @@ impl Indexer {
 
         let block = Block {
             header: BlockHeader {
-                hash,
+                hash: block_hash,
                 height: block_height.clone(),
                 tx_count: txs.len() as i32,
                 timestamp,
