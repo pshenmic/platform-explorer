@@ -1,4 +1,4 @@
-FROM rust:1.73-bookworm
+FROM rust:1.74-bookworm
 
 RUN apt-get update && apt-get install -y cmake clang
 
