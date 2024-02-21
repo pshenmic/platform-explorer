@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^8.3.0",
-    "dash": "^3.25.20",
+    "dash": "^4.0.0-dev.5",
     "dotenv": "^16.3.1",
     "fastify": "^4.21.0",
     "knex": "^2.5.1",

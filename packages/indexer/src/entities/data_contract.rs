@@ -4,6 +4,7 @@ use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
+use dpp::version::PLATFORM_VERSIONS;
 use serde_json::Value;
 use tokio_postgres::Row;
 
@@ -61,8 +62,9 @@ impl From<DataContractUpdateTransition> for DataContract {
 
 impl From<SystemDataContract> for DataContract {
     fn from(data_contract: SystemDataContract) -> Self {
+        let platform_version = dpp::version::PLATFORM_VERSIONS.first().unwrap();
         let identifier = data_contract.id();
-        let source = data_contract.source().unwrap();
+        let source = data_contract.source(platform_version).unwrap();
         let schema = source.document_schemas;
         let schema_decoded = serde_json::to_value(schema).unwrap();
 
