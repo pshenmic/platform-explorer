@@ -8,6 +8,7 @@ const identityTopUpMock = require('./mocks/identity_top_up.json')
 const data_contract_update = require('./mocks/data_contract_update.json')
 const identityUpdateMock = require('./mocks/identity_update.json')
 const identityCreditTransfer = require('./mocks/identity_credit_transfer.json')
+const identityWithdrawal = require('./mocks/identity_withdrawal.json')
 const Dash = require("dash");
 
 
@@ -96,6 +97,19 @@ describe('Utils', () => {
                 recipientId: 'GxdRSLivPDeACYU8Z6JSNvtrRPX7QG715JoumnctbwWN',
                 amount: 9998363,
                 type: 7
+            });
+        });
+
+        it('should decode IdentityWithdrawal', async () => {
+            const decoded = await utils.decodeStateTransition(client, identityWithdrawal.data)
+
+            assert.deepEqual(decoded, {
+                senderId: 'FvqzjDyub72Hk51pcmJvd1JUACuor7vA3aJawiVG7Z17',
+                amount: 1000000,
+                nonce: 1,
+                outputScript: '76a9148dc5fd6be194390035cca6293a357bac8e3c35c588ac',
+                coreFeePerByte: 2,
+                type: 6
             });
         });
     });

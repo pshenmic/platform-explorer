@@ -75,6 +75,15 @@ const decodeStateTransition = async (client, base64) => {
 
             break
         }
+        case StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL: {
+            decoded.senderId = stateTransition.getIdentityId().toString()
+            decoded.amount = parseInt(stateTransition.getAmount())
+            decoded.nonce = parseInt(stateTransition.getNonce())
+            decoded.outputScript = stateTransition.getOutputScript().toString('hex')
+            decoded.coreFeePerByte = stateTransition.getCoreFeePerByte()
+
+            break
+        }
         default:
             throw new Error('Unknown state transition')
     }
