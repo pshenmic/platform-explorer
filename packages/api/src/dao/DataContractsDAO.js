@@ -42,8 +42,8 @@ module.exports = class DataContractsDAO {
         const rows = await this.knex('data_contracts')
             .select('data_contracts.identifier as identifier', 'data_contracts.schema as schema',
                 'data_contracts.version as version', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
-            .join('state_transitions', 'data_contracts.state_transition_hash', 'state_transitions.hash')
-            .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
+            .leftJoin('state_transitions', 'data_contracts.state_transition_hash', 'state_transitions.hash')
+            .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .where('data_contracts.identifier', identifier)
             .orderBy('data_contracts.id', 'desc')
             .limit(1);
