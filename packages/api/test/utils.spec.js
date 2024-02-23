@@ -24,8 +24,8 @@ describe('Utils', () => {
             const decoded = await utils.decodeStateTransition(client, dataContractCreateMock.data)
 
             assert.deepEqual(decoded, {
-                identityId: 'A4bCzAMd71ypvaZXFpWVD6ka7PaZ3pcjotLEk5hvTvjb',
-                dataContractId: 'EoVW5LtGCUZ5U1174kCrwvzSekhtDrd2kBVYqyq2fMMS',
+                identityId: 'GxdRSLivPDeACYU8Z6JSNvtrRPX7QG715JoumnctbwWN',
+                dataContractId: '5UFe5yoixK7BPs1FGoAoryP2PCpF2MD3EjGPGeiC5htJ',
                 type: 0
             });
         });
@@ -39,10 +39,10 @@ describe('Utils', () => {
                     {
                         action: 1,
                         createdAt: null,
-                        dataContractId: '3sdL7s2mLtNmczbQWGP6NZQy3HS43UKQHL1YGLDmPXhj',
-                        id: '4K3Kqdb4zsfVUCb6Tc4FjChK9CBU6NNAhQ7f1NMUeyqB',
+                        dataContractId: '7YYHis22sL45AhD8FHXopGSqeKLFNtRBvcXCFmVtypi2',
+                        id: 'Ep9bPJniRnkeq3ea7jZZb5tEnjrwQC5txhmEniqzaXZY',
                         revision: 3,
-                        updatedAt: new Date("2023-10-23T15:44:48.781Z")
+                        updatedAt: new Date("2024-02-22T05:04:03.203Z")
                     }
                 ]
             })
@@ -52,7 +52,7 @@ describe('Utils', () => {
             const decoded = await utils.decodeStateTransition(client, createIdentityMock.data)
 
             assert.deepEqual(decoded, {
-                identityId: '2Zaxnyr4RU3HdA2cExTuaiMfqJreijf9rFktrbCDek9B',
+                identityId: '8wM2pBXBumR1wEsfskV1ydrvBApkujH5hHRkhsWaA4sB',
                 type: 2
             });
         });
@@ -61,9 +61,9 @@ describe('Utils', () => {
             const decoded = await utils.decodeStateTransition(client, identityTopUpMock.data)
 
             assert.deepEqual(decoded, {
-                identityId: 'FPPbXi8z67HApL9bDvEQYWLwjXhYSzNxoK7ZtKexqaFj',
+                identityId: '4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF',
                 type: 3,
-                amount: 1000000000,
+                amount: 300000000,
             });
         });
 
@@ -71,8 +71,8 @@ describe('Utils', () => {
             const decoded = await utils.decodeStateTransition(client, data_contract_update.data)
 
             assert.deepEqual(decoded, {
-                identityId: 'EeSwYUkj6758xALPgS3vEJuNr3tGhVKhTiHiG8niEidi',
-                dataContractId: 'EebHj2YQdHmBGCdxSoLDtWjVo5pd2oGwQGENZHG7dh9P',
+                identityId: '5TPKmPh6xUzsX5SQRapC2tLyNt9PRWhzwkKVALtqsNrw',
+                dataContractId: 'Hj8bgkwKh7ABwy9okNQNpA2tw3ekxTehBRLuDzFqRpYu',
                 type: 4,
                 version: 2
             });
@@ -82,19 +82,19 @@ describe('Utils', () => {
             const decoded = await utils.decodeStateTransition(client, identityUpdateMock.data)
 
             assert.deepEqual(decoded, {
-                identityId: 'JCHZE1TDEWJbP9uPCJfv7GneD1y15KiAfda81DLTW1Ce',
+                identityId: '4NGALjtX2t3AXE3ZCqJiSmYuiWEY3ZPQNUBxNWWRrRSp',
                 type: 5,
-                revision: 1
+                revision: 2
             });
         });
 
-        it('should decode IdentityCreditWithdrawal', async () => {
+        it('should decode IdentityCreditTransfer', async () => {
             const decoded = await utils.decodeStateTransition(client, identityCreditTransfer.data)
 
             assert.deepEqual(decoded, {
-                senderId: 'HjPEFAs47nKW31zDRpP42dizumjmNAZJX5aAS2PbZo3k',
-                recipientId: '5bmapJVccVuNZuEacC2nPBuVkzG7PzzZrJPFFurQhHjv',
-                amount: 300000,
+                senderId: '4CpFVPyU95ZxNeDnRWfkpjUa9J72i3nZ4YPsTnpdUudu',
+                recipientId: 'GxdRSLivPDeACYU8Z6JSNvtrRPX7QG715JoumnctbwWN',
+                amount: 9998363,
                 type: 7
             });
         });
