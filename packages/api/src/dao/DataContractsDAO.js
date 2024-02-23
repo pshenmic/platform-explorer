@@ -27,8 +27,8 @@ module.exports = class DataContractsDAO {
         const rows = await this.knex(filteredContracts)
             .select('total_count', 'identifier', 'version', 'row_number', 'filtered_data_contracts.tx_hash',
                 'blocks.timestamp as timestamp', 'blocks.hash as block_hash')
-            .join('state_transitions', 'state_transitions.hash', 'filtered_data_contracts.tx_hash')
-            .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
+            .leftJoin('state_transitions', 'state_transitions.hash', 'filtered_data_contracts.tx_hash')
+            .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .whereBetween('row_number', [fromRank, toRank])
 
         const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0;
