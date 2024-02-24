@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "test": "node --test"
+    "test": "node --test",
+    "test:integration": "node --test test/integration/*.js"
   },
   "dependencies": {
     "@fastify/cors": "^8.3.0",
@@ -15,5 +16,8 @@
     "knex": "^2.5.1",
     "node-fetch": "^2.6.11",
     "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "supertest": "^6.3.4"
   }
 }
