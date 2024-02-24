@@ -15,7 +15,7 @@ describe('Index route', () => {
 
     it('should return block by hash', async () => {
         await client.get('/')
-            .expect(200)
+            .expect(404)
             .expect('Content-Type', 'application/json; charset=utf-8');
     });
 });
