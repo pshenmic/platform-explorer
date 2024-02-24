@@ -13,7 +13,7 @@ describe('Index route', () => {
         client = supertest(app.server)
     })
 
-    it('should return block by hash', async () => {
+    it('should return 404', async () => {
         await client.get('/')
             .expect(404)
             .expect('Content-Type', 'application/json; charset=utf-8');
