@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "node --test",
-    "test:integration": "node --test test/integration/*.js"
+    "test:integration": "node --test test/integration/*.js",
+    "test:load_dump": "node ./test/utils/execute_sql.js ./test/integration/dump/dash_testnet_28_2024_02_25.sql"
   },
   "dependencies": {
     "@fastify/cors": "^8.3.0",
