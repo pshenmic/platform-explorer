@@ -31,7 +31,6 @@ module.exports = class BlockDAO {
             .select('height', 'timestamp', 'prev_timestamp', 'diff', 'block_version', 'app_version', 'l1_locked_height')
             .select(this.knex.raw('avg(diff) over () average'))
             .limit(1)
-            .as('asdasd')
 
         const final = await this.knex(averageQuery)
             .select('height', 'timestamp', 'prev_timestamp', 'diff', 'block_version', 'app_version', 'l1_locked_height', 'average')
@@ -119,7 +118,7 @@ module.exports = class BlockDAO {
     }
 
     getBlocks = async (page, limit, order) => {
-        const fromRank = (page - 1) * limit
+        const fromRank = ((page - 1) * limit) + 1
         const toRank = fromRank + limit - 1
 
         const subquery = this.knex('blocks')
