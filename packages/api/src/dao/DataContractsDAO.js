@@ -7,7 +7,7 @@ module.exports = class DataContractsDAO {
     }
 
     getDataContracts = async (page, limit, order) => {
-        const fromRank = (page - 1) * limit
+        const fromRank = ((page - 1) * limit) + 1
         const toRank = fromRank + limit - 1
 
         const subquery = this.knex('data_contracts')

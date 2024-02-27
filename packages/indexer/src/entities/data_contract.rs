@@ -62,7 +62,7 @@ impl From<DataContractUpdateTransition> for DataContract {
 
 impl From<SystemDataContract> for DataContract {
     fn from(data_contract: SystemDataContract) -> Self {
-        let platform_version = dpp::version::PLATFORM_VERSIONS.first().unwrap();
+        let platform_version = PLATFORM_VERSIONS.first().unwrap();
         let identifier = data_contract.id();
         let source = data_contract.source(platform_version).unwrap();
         let schema = source.document_schemas;
