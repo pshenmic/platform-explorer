@@ -252,83 +252,76 @@ impl PSQLProcessor {
         }
     }
 
+    pub async fn process_system_data_contract(&self, system_data_contract: SystemDataContract) -> () {
+        let data_contract = DataContract::from(system_data_contract);
+        let identity = Identity::from(system_data_contract);
+        let data_contract_identifier = data_contract.identifier.clone();
+        let data_contract_owner = data_contract.owner.clone();
+
+        self.dao.create_identity(identity, None).await.unwrap();
+        self.dao.create_data_contract(data_contract, None).await;
+
+        match system_data_contract {
+            SystemDataContract::Withdrawals => {}
+            SystemDataContract::MasternodeRewards => {}
+            SystemDataContract::FeatureFlags => {}
+            SystemDataContract::DPNS => {
+                let dash_tld_document_values = platform_value!({
+                    "label" : "dash",
+                    "normalizedLabel" : "dash",
+                    "parentDomainName" : "",
+                    "normalizedParentDomainName" : "",
+                    "preorderSalt" : BinaryData::new(
+                        [
+                    224, 181, 8, 197, 163, 104, 37, 162, 6, 105, 58, 31, 65, 74, 161, 62, 219, 236, 244, 60, 65,
+                    227, 199, 153, 234, 158, 115, 123, 79, 154, 162, 38,
+                    ].to_vec()),
+                    "records" : {
+                        "dashAliasIdentityId" : data_contract_owner.to_string(Base58),
+                    },
+                    "subdomainRules": {
+                        "allowSubdomains": true,
+                    }
+                });
+
+                let dash_tld_document = Document {
+                    id: None,
+                    owner: Some(data_contract_owner),
+                    identifier: Identifier::from_bytes(&[
+                        215, 242, 197, 63, 70, 169, 23, 171, 110, 91, 57, 162, 215, 188, 38, 11, 100, 146, 137, 69, 55,
+                        68, 209, 224, 212, 242, 106, 141, 142, 255, 55, 207,
+                    ]).unwrap(),
+                    data_contract_identifier,
+                    data: Some(serde_json::to_value(dash_tld_document_values).unwrap()),
+                    deleted: false,
+                    revision: 0,
+                };
+
+                self.dao.create_document(dash_tld_document, None).await.unwrap();
+            }
+            SystemDataContract::Dashpay => {}
+        }
+    }
+
+
     pub async fn handle_init_chain(&self) -> () {
         println!("Processing initChain");
 
-        let mut system_contract;
-        let mut data_contract;
-        let mut identity;
+        println!("Processing SystemDataContract::Withdrawals");
+        self.process_system_data_contract(SystemDataContract::Withdrawals).await;
 
-        system_contract = SystemDataContract::Withdrawals;
-        data_contract = DataContract::from(system_contract);
-        identity = Identity::from(system_contract);
-        println!("Processing SystemDataContract::Withdrawals {}", data_contract.identifier.to_string(Base58));
-        self.dao.create_identity(identity, None).await.unwrap();
-        self.dao.create_data_contract(data_contract, None).await;
+        println!("Processing SystemDataContract::MasternodeRewards");
+        self.process_system_data_contract(SystemDataContract::MasternodeRewards).await;
 
-        system_contract = SystemDataContract::MasternodeRewards;
-        data_contract = DataContract::from(system_contract);
-        identity = Identity::from(system_contract);
-        println!("Processing SystemDataContract::MasternodeRewards {}", data_contract.identifier.to_string(Base58));
-        self.dao.create_identity(identity, None).await.unwrap();
-        self.dao.create_data_contract(data_contract, None).await;
+        println!("Processing SystemDataContract::FeatureFlags");
+        self.process_system_data_contract(SystemDataContract::FeatureFlags).await;
 
-        system_contract = SystemDataContract::FeatureFlags;
-        data_contract = DataContract::from(system_contract);
-        identity = Identity::from(system_contract);
-        println!("Processing SystemDataContract::FeatureFlags {}", data_contract.identifier.to_string(Base58));
-        self.dao.create_identity(identity, None).await.unwrap();
-        self.dao.create_data_contract(data_contract, None).await;
+        println!("Processing SystemDataContract::DPNS");
+        self.process_system_data_contract(SystemDataContract::DPNS).await;
 
-        system_contract = SystemDataContract::DPNS;
-        data_contract = DataContract::from(system_contract);
-        identity = Identity::from(system_contract);
+        println!("Processing SystemDataContract::Dashpay");
+        self.process_system_data_contract(SystemDataContract::Dashpay).await;
 
-        let dpns_identifier = data_contract.identifier.clone();
-        let dpns_owner = identity.owner.clone();
-
-        println!("Processing SystemDataContract::DPNS {}", data_contract.identifier.to_string(Base58));
-        self.dao.create_identity(identity, None).await.unwrap();
-        self.dao.create_data_contract(data_contract, None).await;
-
-        let document_stub_properties_value = platform_value!({
-            "label" : "dash",
-            "normalizedLabel" : "dash",
-            "parentDomainName" : "",
-            "normalizedParentDomainName" : "",
-            "preorderSalt" : BinaryData::new(
-                [
-            224, 181, 8, 197, 163, 104, 37, 162, 6, 105, 58, 31, 65, 74, 161, 62, 219, 236, 244, 60, 65,
-            227, 199, 153, 234, 158, 115, 123, 79, 154, 162, 38,
-            ].to_vec()),
-            "records" : {
-                "dashAliasIdentityId" : dpns_owner.to_string(Base58),
-            },
-            "subdomainRules": {
-                "allowSubdomains": true,
-            }
-        });
-
-        let document = Document{
-            id: None,
-            owner: Some(dpns_owner),
-            identifier: Identifier::from_bytes(&[
-                215, 242, 197, 63, 70, 169, 23, 171, 110, 91, 57, 162, 215, 188, 38, 11, 100, 146, 137, 69, 55,
-                68, 209, 224, 212, 242, 106, 141, 142, 255, 55, 207,
-            ]).unwrap(),
-            data_contract_identifier: dpns_identifier,
-            data: Some(serde_json::to_value(document_stub_properties_value).unwrap()),
-            deleted: false,
-            revision: 0,
-        };
-
-        self.dao.create_document(document, None).await.unwrap();
-
-        system_contract = SystemDataContract::Dashpay;
-        data_contract = DataContract::from(system_contract);
-        identity = Identity::from(system_contract);
-        println!("Processing SystemDataContract::Dashpay {}", data_contract.identifier.to_string(Base58));
-        self.dao.create_identity(identity, None).await.unwrap();
-        self.dao.create_data_contract(data_contract, None).await;
+        println!("Finished initChain processing");
     }
 }
