@@ -68,9 +68,10 @@ impl PostgresDAO {
         let schema_decoded = serde_json::to_value(schema).unwrap();
 
         let version = data_contract.version as i32;
+        let is_system = data_contract.is_system;
 
         let query = "INSERT INTO data_contracts(identifier, owner, schema, version, \
-        state_transition_hash) VALUES ($1, $2, $3, $4, $5);";
+        state_transition_hash, is_system) VALUES ($1, $2, $3, $4, $5, $6);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
@@ -80,7 +81,8 @@ impl PostgresDAO {
             &owner.to_string(Base58),
             &schema_decoded,
             &version,
-            &st_hash
+            &st_hash,
+            &is_system
         ]).await.unwrap();
 
         println!("Created DataContract {} [{} version]", id.to_string(Base58), version);
@@ -92,6 +94,7 @@ impl PostgresDAO {
         let revision_i32 = revision as i32;
 
         let data = document.data;
+        let is_system = document.is_system;
 
         let owner: Identifier = match document.owner {
             None => {
@@ -114,7 +117,7 @@ impl PostgresDAO {
         let data_contract_id = data_contract.id.unwrap() as i32;
 
         let query = "INSERT INTO documents(identifier,owner,revision,data,deleted,\
-        state_transition_hash,data_contract_id) VALUES ($1, $2, $3, $4, $5, $6, $7);";
+        state_transition_hash,data_contract_id,is_system) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
 
         let stmt = client.prepare_cached(query).await.unwrap();
 
@@ -125,7 +128,8 @@ impl PostgresDAO {
             &data,
             &document.deleted,
             &st_hash,
-            &data_contract_id
+            &data_contract_id,
+            &is_system
         ]).await.unwrap();
 
         println!("Created document {} [{} revision] [is_deleted {}]",
@@ -139,11 +143,12 @@ impl PostgresDAO {
         let revision = identity.revision;
         let revision_i32 = revision as i32;
         let owner = identity.owner;
+        let is_system = identity.is_system;
 
         let client = self.connection_pool.get().await.unwrap();
 
         let query = "INSERT INTO identities(identifier,owner,revision,\
-        state_transition_hash) VALUES ($1, $2, $3, $4);";
+        state_transition_hash,is_system) VALUES ($1, $2, $3, $4, $5);";
 
         let stmt = client.prepare_cached(query).await.unwrap();
 
@@ -151,7 +156,8 @@ impl PostgresDAO {
             &identifier.to_string(Base58),
             &owner.to_string(Base58),
             &revision_i32,
-            &st_hash
+            &st_hash,
+            &is_system
         ]).await.unwrap();
 
         println!("Created Identity {}", identifier.to_string(Base58));
@@ -203,7 +209,7 @@ impl PostgresDAO {
     pub async fn get_data_contract_by_identifier(&self, identifier: Identifier) -> Result<Option<DataContract>, PoolError> {
         let client = self.connection_pool.get().await?;
 
-        let stmt = client.prepare_cached("SELECT id,owner,identifier,version \
+        let stmt = client.prepare_cached("SELECT id,owner,identifier,version,is_system \
         FROM data_contracts where identifier = $1 ORDER by version DESC LIMIT 1;")
             .await.unwrap();
 

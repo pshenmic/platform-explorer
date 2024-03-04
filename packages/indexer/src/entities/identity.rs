@@ -12,7 +12,8 @@ pub struct Identity {
     pub identifier: Identifier,
     pub owner: Identifier,
     pub revision: Revision,
-    pub balance: Option<u64>
+    pub balance: Option<u64>,
+    pub is_system: bool
 }
 
 impl From<IdentityCreateTransition> for Identity {
@@ -22,7 +23,8 @@ impl From<IdentityCreateTransition> for Identity {
             identifier: state_transition.identity_id(),
             owner: state_transition.owner_id(),
             balance: None,
-            revision: Revision::from(0 as u64)
+            revision: Revision::from(0 as u64),
+            is_system: false,
         };
     }
 }
@@ -38,7 +40,8 @@ impl From<IdentityUpdateTransition> for Identity {
             identifier,
             owner,
             balance: None,
-            revision
+            revision,
+            is_system: false,
         };
     }
 }
@@ -55,7 +58,8 @@ impl From<SystemDataContract> for Identity {
             identifier,
             owner,
             revision: 0,
-            balance: None
+            balance: None,
+            is_system: true,
         }
     }
 }

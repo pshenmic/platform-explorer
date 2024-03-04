@@ -11,21 +11,21 @@ module.exports = class DataContractsDAO {
         const toRank = fromRank + limit - 1
 
         const subquery = this.knex('data_contracts')
-            .select('data_contracts.id as id', 'data_contracts.identifier as identifier',
+            .select('data_contracts.id as id', 'data_contracts.identifier as identifier', 'data_contracts.is_system as is_system',
                 'data_contracts.version as version', 'data_contracts.state_transition_hash as tx_hash')
             .select(this.knex.raw(`rank() over (partition by identifier order by version desc) rank`))
 
         const filteredContracts = this.knex.with('with_alias', subquery)
-            .select( 'id', 'identifier', 'version', 'tx_hash', 'rank',
+            .select( 'id', 'identifier', 'version', 'tx_hash', 'rank', 'is_system',
                 this.knex('with_alias').count('*').as('total_count').where('rank', '1'))
             .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
             .from('with_alias')
-            .where('rank',1)
+            .where('rank', 1)
             .orderBy('id', order)
             .as('filtered_data_contracts')
 
         const rows = await this.knex(filteredContracts)
-            .select('total_count', 'identifier', 'version', 'row_number', 'filtered_data_contracts.tx_hash',
+            .select('total_count', 'identifier', 'version', 'row_number', 'filtered_data_contracts.tx_hash', 'is_system',
                 'blocks.timestamp as timestamp', 'blocks.hash as block_hash')
             .leftJoin('state_transitions', 'state_transitions.hash', 'filtered_data_contracts.tx_hash')
             .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
@@ -40,7 +40,7 @@ module.exports = class DataContractsDAO {
 
     getDataContractByIdentifier = async (identifier) => {
         const rows = await this.knex('data_contracts')
-            .select('data_contracts.identifier as identifier', 'data_contracts.schema as schema',
+            .select('data_contracts.identifier as identifier', 'data_contracts.schema as schema', 'data_contracts.is_system as is_system',
                 'data_contracts.version as version', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
             .leftJoin('state_transitions', 'data_contracts.state_transition_hash', 'state_transitions.hash')
             .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')

@@ -12,13 +12,13 @@ module.exports = class IdentitiesDAO {
 
     getIdentityByIdentifier = async (identifier) => {
         const subquery = this.knex('identities')
-            .select('identities.id', 'identities.identifier as identifier', 'identities.state_transition_hash as tx_hash', 'identities.revision as revision')
+            .select('identities.id', 'identities.identifier as identifier', 'identities.state_transition_hash as tx_hash', 'identities.revision as revision', 'identities.is_system as is_system')
             .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
             .where('identities.identifier', '=', identifier)
             .as('all_identities')
 
         const lastRevisionIdentities = this.knex(subquery)
-            .select('identifier', 'revision', 'tx_hash', 'transfers.id as transfer_id', 'transfers.sender as sender', 'transfers.recipient as recipient', 'transfers.amount as amount')
+            .select('identifier', 'revision', 'tx_hash', 'is_system', 'transfers.id as transfer_id', 'transfers.sender as sender', 'transfers.recipient as recipient', 'transfers.amount as amount')
             .where('rank', 1)
             .leftJoin('transfers', 'transfers.recipient', 'identifier')
 
@@ -42,7 +42,7 @@ module.exports = class IdentitiesDAO {
             .where('state_transitions.owner', identifier)
 
         const rows = await this.knex.with('with_alias', lastRevisionIdentities)
-            .select('identifier', 'revision', 'transfer_id', 'sender', 'tx_hash', 'blocks.timestamp as timestamp', 'recipient', 'amount')
+            .select('identifier', 'revision', 'transfer_id', 'sender', 'tx_hash', 'is_system','blocks.timestamp as timestamp', 'recipient', 'amount')
             .join('state_transitions', 'state_transitions.hash', 'tx_hash')
             .join('blocks', 'state_transitions.block_hash', 'blocks.hash')
             .select(this.knex('with_alias').sum('amount').where('recipient', identifier).as('total_received'))
@@ -70,19 +70,19 @@ module.exports = class IdentitiesDAO {
         const toRank = fromRank + limit - 1
 
         const subquery = this.knex('identities')
-            .select('identities.id', 'identities.identifier as identifier',
+            .select('identities.id', 'identities.identifier as identifier', 'identities.is_system as is_system',
                 'identities.state_transition_hash as tx_hash', 'identities.revision as revision')
             .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
             .as('identities')
 
         const filteredIdentities = this.knex(subquery)
-            .select('identifier', 'tx_hash', 'revision', 'rank')
+            .select('identifier', 'tx_hash', 'revision', 'rank', 'is_system')
             .select(this.knex.raw(`rank() over (order by identities.id ${order}) row_number`))
             .where('rank', 1)
             .as('filtered_identities')
 
         const rows = await this.knex(filteredIdentities)
-            .select('identifier', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number')
+            .select('identifier', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system')
             .select(this.knex('identities').count('*').as('total_count'))
             .join('state_transitions', 'state_transitions.hash', 'tx_hash')
             .join('blocks', 'state_transitions.block_hash', 'blocks.hash')
@@ -105,7 +105,7 @@ module.exports = class IdentitiesDAO {
             .where('state_transitions.owner', '=', identifier)
 
         const filteredDataContracts = this.knex.with('with_alias', subquery)
-            .select('id', 'identifier', 'schema', 'version', 'tx_hash', 'rank')
+            .select('id', 'identifier', 'schema', 'version', 'tx_hash', 'rank', 'is_system')
             .select(this.knex('with_alias').count('*').where('rank', 1).as('total_count'))
             .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
             .from('with_alias')
@@ -113,7 +113,7 @@ module.exports = class IdentitiesDAO {
             .as('data_contracts')
 
         const rows = await this.knex(filteredDataContracts)
-            .select('identifier', 'schema', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'blocks.timestamp as timestamp')
+            .select('identifier', 'schema', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp')
             .join('state_transitions', 'state_transitions.hash', 'tx_hash')
             .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .whereBetween('row_number', [fromRank, toRank])

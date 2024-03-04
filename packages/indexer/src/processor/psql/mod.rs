@@ -295,6 +295,7 @@ impl PSQLProcessor {
                     data: Some(serde_json::to_value(dash_tld_document_values).unwrap()),
                     deleted: false,
                     revision: 0,
+                    is_system: true,
                 };
 
                 self.dao.create_document(dash_tld_document, None).await.unwrap();

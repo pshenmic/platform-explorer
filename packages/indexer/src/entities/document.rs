@@ -15,7 +15,8 @@ pub struct Document {
     pub data_contract_identifier: Identifier,
     pub data: Option<Value>,
     pub deleted: bool,
-    pub revision: Revision
+    pub revision: Revision,
+    pub is_system: bool
 }
 
 impl From<DocumentTransition> for Document {
@@ -36,7 +37,8 @@ impl From<DocumentTransition> for Document {
                     data: Some(data_decoded),
                     data_contract_identifier,
                     revision,
-                    deleted: false
+                    deleted: false,
+                    is_system: false,
                 };
             }
             DocumentTransition::Replace(transition) => {
@@ -54,7 +56,8 @@ impl From<DocumentTransition> for Document {
                     data: Some(data_decoded),
                     data_contract_identifier,
                     revision,
-                    deleted: false
+                    deleted: false,
+                    is_system: false,
                 };
             }
             DocumentTransition::Delete(transition) => {
@@ -70,7 +73,8 @@ impl From<DocumentTransition> for Document {
                     data: None,
                     data_contract_identifier,
                     revision,
-                    deleted: true
+                    deleted: true,
+                    is_system: false,
                 };
             }
         }
