@@ -1,19 +1,20 @@
 use dpp::data_contract::serialized_version::DataContractInSerializationFormat;
 use dpp::data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
-use dpp::platform_value::string_encoding::Encoding;
+use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
-use dpp::version::PLATFORM_VERSIONS;
 use serde_json::Value;
 use tokio_postgres::Row;
 
 #[derive(Clone)]
 pub struct DataContract {
     pub id: Option<u32>,
+    pub owner: Identifier,
     pub identifier: Identifier,
     pub schema: Option<Value>,
     pub version: u32,
+    pub state_transition_hash: Option<String>
 }
 
 impl From<DataContractCreateTransition> for DataContract {
@@ -27,10 +28,18 @@ impl From<DataContractCreateTransition> for DataContract {
                     DataContractInSerializationFormat::V0(data_contract) => {
                         let identifier = data_contract.id;
                         let version = data_contract.version;
+                        let owner = data_contract.owner_id;
                         let schema = data_contract.document_schemas;
                         let schema_decoded = serde_json::to_value(schema).unwrap();
 
-                        return DataContract{ id: None, identifier, schema: Some(schema_decoded), version };
+                        return DataContract {
+                            id: None,
+                            owner,
+                            identifier,
+                            schema: Some(schema_decoded),
+                            version,
+                            state_transition_hash: None,
+                        };
                     }
                 }
             }
@@ -49,10 +58,18 @@ impl From<DataContractUpdateTransition> for DataContract {
                     DataContractInSerializationFormat::V0(data_contract) => {
                         let identifier = data_contract.id;
                         let version = data_contract.version;
+                        let owner = data_contract.owner_id;
                         let schema = data_contract.document_schemas;
                         let schema_decoded = serde_json::to_value(schema).unwrap();
 
-                        return DataContract{ id: None, identifier, schema: Some(schema_decoded), version };
+                        return DataContract {
+                            id: None,
+                            owner,
+                            identifier,
+                            schema: Some(schema_decoded),
+                            version,
+                            state_transition_hash: None,
+                        };
                     }
                 }
             }
@@ -65,14 +82,17 @@ impl From<SystemDataContract> for DataContract {
         let platform_version = dpp::version::PLATFORM_VERSIONS.first().unwrap();
         let identifier = data_contract.id();
         let source = data_contract.source(platform_version).unwrap();
+        let owner = Identifier::from(source.owner_id_bytes);
         let schema = source.document_schemas;
         let schema_decoded = serde_json::to_value(schema).unwrap();
 
         return DataContract {
             id: None,
+            owner,
             identifier,
             schema: Some(schema_decoded),
-            version: 0
+            version: 0,
+            state_transition_hash: None,
         }
     }
 }
@@ -81,17 +101,17 @@ impl From<SystemDataContract> for DataContract {
 impl From<Row> for DataContract {
     fn from(row: Row) -> Self {
         let id: i32 = row.get(0);
+        let owner: String = row.get(1);
+        let identifier: String = row.get(2);
+        let version:i32 = row.get(3);
 
-        let identifier_str: String = row.get(1);
-        let identifier = Identifier::from_string(&identifier_str, Encoding::Base58).unwrap();
-
-        let version:i32 = row.get(2);
-
-        return DataContract{
+        return DataContract {
             id: Some(id as u32),
-            identifier,
+            owner: Identifier::from_string(owner.trim(), Base58).unwrap(),
+            identifier: Identifier::from_string(identifier.trim(), Base58).unwrap(),
             schema: None,
-            version: version as u32
+            version: version as u32,
+            state_transition_hash: None,
         }
     }
 }

@@ -20,7 +20,7 @@ impl From<reqwest::Error> for IndexerError {
     }
 }
 impl From<ProcessorError> for IndexerError {
-    fn from(value: ProcessorError) -> Self {
+    fn from(_: ProcessorError) -> Self {
         IndexerError::ProcessorError
     }
 }
