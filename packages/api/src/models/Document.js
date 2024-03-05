@@ -8,8 +8,9 @@ module.exports = class Document {
     timestamp
     isSystem
 
-    constructor(identifier, dataContractIdentifier, revision, txHash, deleted, data, timestamp, isSystem) {
+    constructor(identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, isSystem) {
         this.identifier = identifier ?? null;
+        this.identifier = owner ?? null;
         this.dataContractIdentifier = dataContractIdentifier ?? null;
         this.revision = revision ?? null;
         this.deleted = deleted ?? null;
@@ -20,7 +21,7 @@ module.exports = class Document {
         this.isSystem = isSystem ?? null;
     }
 
-    static fromRow({identifier, data_contract_identifier, revision, tx_hash, deleted, data, timestamp, is_system}) {
-        return new Document(identifier, data_contract_identifier, revision, tx_hash, deleted, data, timestamp, is_system)
+    static fromRow({identifier, owner, data_contract_identifier, revision, tx_hash, deleted, data, timestamp, is_system}) {
+        return new Document(identifier, owner, data_contract_identifier, revision, tx_hash, deleted, data, timestamp, is_system)
     }
 }

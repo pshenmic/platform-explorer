@@ -8,7 +8,7 @@ module.exports = class DocumentsDAO {
 
     getDocumentByIdentifier = async (identifier) => {
         const subquery = this.knex('documents')
-            .select('documents.id', 'documents.identifier as identifier',
+            .select('documents.id', 'documents.identifier as identifier', 'documents.owner as owner',
                 'data_contracts.identifier as data_contract_identifier', 'documents.data as data_contract_data',
                 'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
                 'documents.deleted as deleted', 'documents.is_system as is_system')
@@ -18,7 +18,7 @@ module.exports = class DocumentsDAO {
             .as('documents')
 
         const rows = await this.knex(subquery)
-            .select('identifier', 'data_contract_identifier', 'data_contract_data',
+            .select('identifier', 'owner', 'data_contract_identifier', 'data_contract_data',
                 'revision', 'deleted', 'rank', 'tx_hash', 'is_system', 'blocks.timestamp as timestamp')
             .join('state_transitions', 'state_transitions.hash', 'tx_hash')
             .join('blocks', 'blocks.hash', 'state_transitions.block_hash')

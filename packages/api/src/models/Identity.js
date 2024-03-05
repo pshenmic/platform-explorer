@@ -10,8 +10,9 @@ module.exports = class Identity {
     totalDataContracts
     isSystem
 
-    constructor(identifier, revision, balance, timestamp, totalTxs, totalDataContracts, totalDocuments, totalTransfers, txHash, isSystem) {
+    constructor(identifier, owner, revision, balance, timestamp, totalTxs, totalDataContracts, totalDocuments, totalTransfers, txHash, isSystem) {
         this.identifier = identifier ?? null;
+        this.owner = owner ?? null;
         this.revision = revision ?? null;
         this.balance = balance ?? null;
         this.timestamp = timestamp ?? null;
@@ -23,7 +24,7 @@ module.exports = class Identity {
         this.isSystem = isSystem ?? null;
     }
 
-    static fromRow({identifier, revision, balance, timestamp, total_txs, total_data_contracts, total_documents, total_transfers, tx_hash, is_system}) {
-        return new Identity(identifier, revision, balance, timestamp, total_txs, total_data_contracts, total_documents, total_transfers, tx_hash, is_system)
+    static fromRow({identifier, owner, revision, balance, timestamp, total_txs, total_data_contracts, total_documents, total_transfers, tx_hash, is_system}) {
+        return new Identity(identifier, owner, revision, balance, timestamp, total_txs, total_data_contracts, total_documents, total_transfers, tx_hash, is_system)
     }
 }
