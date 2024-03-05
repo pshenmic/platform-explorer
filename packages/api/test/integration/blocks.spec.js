@@ -3,6 +3,7 @@ const assert = require('node:assert').strict;
 const supertest = require('supertest')
 const server = require('../../src/server')
 
+const TOTAL_BLOCKS_COUNT = 3243
 
 describe('Blocks routes', () => {
     let app
@@ -38,7 +39,7 @@ describe('Blocks routes', () => {
 
     describe('getBlocks()', async () => {
         it('should return default set of blocks', async () => {
-           const {body} =  await client.get('/blocks')
+           const {body} = await client.get('/blocks')
                 .expect(200)
                 .expect('Content-Type', 'application/json; charset=utf-8');
 
@@ -57,7 +58,7 @@ describe('Blocks routes', () => {
 
             assert.equal(body.pagination.page, 1)
             assert.equal(body.pagination.limit, 10)
-            assert.equal(body.pagination.total, 1922)
+            assert.equal(body.pagination.total, TOTAL_BLOCKS_COUNT)
             assert.equal(body.resultSet.length, 10)
 
             assert.deepEqual(body.resultSet.map(e => e.header.hash), expectedBlockHashes)
@@ -71,26 +72,26 @@ describe('Blocks routes', () => {
                 .expect('Content-Type', 'application/json; charset=utf-8');
 
             const expectedBlockHashes = [
-                '692377011E01272735379494C15F87E3E0D6C3D77AB01A12CCDCFE64BF847EC8',
-                'CDC0CB55A84F16775AA9423519FC5F412EE1FE09300BA37D6FB6B32BB1ACB39B',
-                '7CA4AF52A4B3404C798F8706A589E457DA03155A4847A0017CEA3FCB882444E9',
-                '617EF27A274FFCACCA4CDB848CB071516AF22DD5F295CB970CC74AD33A76D4CA',
-                'E723FBFE5E1C5DB156F7B77BA7E832544E2F41C9273C2330C3BC95D00D98035C',
-                '8A9B5022E72507DE090D13E9521719030DA000785C0FEBD0B48733916229F00A',
-                '8CFD0171F09D80FFB685260B55A8F328F3CBF1761101691E56E0B3E15574DCC6',
-                'EF224BDF1248837795F5A926796B947741AC8E2ABE7F4515646A1959C3D36172',
-                'BDA6A692D4E02F7BA41003B5AA859566135BBA4556117C6BA96292F5BE057E88',
-                'BB6DF0ECA819051AD2930A639D6ED0EF669069FBE41A9ECB3AE3A163F1B1042F',
+                '7F7219D89141AF98460B9BEF1AA05990134EE586E67D16A0FAC92613B9E9379B',
+                '15C58CFA14DCE5D9B25FB35648AEB82EB2B3EFB180AFEC1250824096229F4052',
+                'CCE17308441B515620E283A0B6DEF228487090BA1D4D6ACBFBA574E8675C869F',
+                'DA4D2694C92BED84795D244514069C0FF6CB786088DEBB7425F49CBB2E3D69EF',
+                'E3D48931B900CAD53CBE01856C63A0D515D00EA098ED62088D259D79A4BC951E',
+                '5AC5566BFD929C59FBBC07866D60B8E71F062924A94D86B0AD9DF9A57870B9CF',
+                '2A3306DB5F0FDFC3DCA41CD12C62135E985391B27B3956F74124C8292B3A2C15',
+                '5204547B53FECE583773CB7CADE5BB2AAEBE55BC91C4E8D2820733E52D7CFE38',
+                '007D8194D86E72EEDFFC20B08374CADBA8EDC4140774296D20789334FC407E79',
+                '138FEF8EA987CD4F286488C01AC9DAC97D5279FD5EDFFDA0E85D9A88997EF9CB'
             ]
 
             assert.equal(body.pagination.page, 1)
             assert.equal(body.pagination.limit, 10)
-            assert.equal(body.pagination.total, 1922)
+            assert.equal(body.pagination.total, TOTAL_BLOCKS_COUNT)
             assert.equal(body.resultSet.length, 10)
 
             assert.deepEqual(body.resultSet.map(e => e.header.hash), expectedBlockHashes)
             assert.deepEqual(body.resultSet.map(e => e.header.height),
-                Array.from({length: 10}, (_, i) => Math.abs(i - 1922)))
+                Array.from({length: 10}, (_, i) => Math.abs(i - TOTAL_BLOCKS_COUNT)))
         });
 
         it('should allow to walk through pages', async () => {
@@ -113,7 +114,7 @@ describe('Blocks routes', () => {
 
             assert.equal(body.pagination.page, 3)
             assert.equal(body.pagination.limit, 10)
-            assert.equal(body.pagination.total, 1922)
+            assert.equal(body.pagination.total, TOTAL_BLOCKS_COUNT)
             assert.equal(body.resultSet.length, 10)
 
             assert.deepEqual(body.resultSet.map(e => e.header.hash), expectedBlockHashes)
@@ -138,7 +139,7 @@ describe('Blocks routes', () => {
 
             assert.equal(body.pagination.page, 1)
             assert.equal(body.pagination.limit, 7)
-            assert.equal(body.pagination.total, 1922)
+            assert.equal(body.pagination.total, TOTAL_BLOCKS_COUNT)
             assert.equal(body.resultSet.length, 7)
 
             assert.deepEqual(body.resultSet.map(e => e.header.hash), expectedBlockHashes)
@@ -163,7 +164,7 @@ describe('Blocks routes', () => {
 
             assert.equal(body.pagination.page, 4)
             assert.equal(body.pagination.limit, 7)
-            assert.equal(body.pagination.total, 1922)
+            assert.equal(body.pagination.total, TOTAL_BLOCKS_COUNT)
             assert.equal(body.resultSet.length, 7)
 
             assert.deepEqual(body.resultSet.map(e => e.header.hash), expectedBlockHashes)
@@ -177,23 +178,24 @@ describe('Blocks routes', () => {
                 .expect('Content-Type', 'application/json; charset=utf-8');
 
             const expectedBlockHashes = [
-                'B330C098C763EB768AC614B2A147A638BD9D6712D5F47FA6E8A6580FC73071B8',
-                'A34B24F3368D95BCDE158DC243BA41BA25F75B387CFCBB69EEA2634932999CEE',
-                'FFF87DF79E3C7D22A5D90F666559016AB2525A360ABA7F54A440C0B31E47EAFF',
-                '05676BC16E03A425802428870CF9BA4AD2ABC67CC0E402B71382AA03791FE54B',
-                'BF4EDC4853DFB576A9A428CEA565714C7CFD0DCF50234F93122C6B2407949DAD',
-                '141D72F15B49EFCA5CB39AA3B31899EE5ACBA84CBFD9BC18428C740925920C23',
-                'D499D646A5C7698230C3C5B109CE46A89DF3D79122726FA4B2A7E7A1BDA9A55E'
+                '0A284B9FD0D8537BE26DCF1FF8FE0F919A7062DFCDD7CB703C0756DBB9602E37',
+                '7FF07C707CCB67B4AA70836A9A28CC1A1A2130EDC63F7D09B10473CE0CB1CFF9',
+                '590A591CA8129A5FBF256F40B779C16F77AECD259004DD57A66FB55773110AAC',
+                '211B9C8A85B1042C213E7B4BBC3118EA69EA72622A0E4984BCBEC9F682B29010',
+                '9662FB7409983BE989E8DE7947B51955E8EC561201274819C7E1785730E8F75B',
+                'F71354E75EEF54DF19D5503C90F5085ED4C7D64AB463937263AABC75E9EB4C4F',
+                'BDC5C60C3003F20FB7186DD8B0719DD9A46C1A37C449F2D18E0D71BB51BDA86C'
             ]
 
             assert.equal(body.pagination.page, 4)
             assert.equal(body.pagination.limit, 7)
-            assert.equal(body.pagination.total, 1922)
+            assert.equal(body.pagination.total, TOTAL_BLOCKS_COUNT)
             assert.equal(body.resultSet.length, 7)
 
             assert.deepEqual(body.resultSet.map(e => e.header.hash), expectedBlockHashes)
             assert.deepEqual(body.resultSet.map(e => e.header.height),
-                Array.from({length: 7}, (_, i) => Math.abs(i - 1901)))
+                Array.from({length: 7}, (_, i) =>
+                    Math.abs(i - TOTAL_BLOCKS_COUNT + (body.pagination.limit * (body.pagination.page - 1)))))
         });
     });
 });
