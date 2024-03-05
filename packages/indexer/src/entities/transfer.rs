@@ -1,4 +1,3 @@
-use dpp::dashcore::Transaction;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::state_transition::identity_credit_transfer_transition::accessors::IdentityCreditTransferTransitionAccessorsV0;
@@ -13,7 +12,7 @@ pub struct Transfer {
     pub id: Option<u32>,
     pub sender: Option<Identifier>,
     pub recipient: Option<Identifier>,
-    pub amount: u64,
+    pub amount: u64
 }
 
 impl From<IdentityTopUpTransition> for Transfer {
@@ -38,7 +37,7 @@ impl From<IdentityTopUpTransition> for Transfer {
             id: None,
             sender: None,
             recipient: Some(identifier),
-            amount,
+            amount
         };
     }
 }
@@ -52,7 +51,7 @@ impl From<IdentityCreditWithdrawalTransition> for Transfer {
             id: None,
             sender: Some(identifier),
             recipient: None,
-            amount,
+            amount
         };
     }
 }
@@ -67,7 +66,7 @@ impl From<IdentityCreditTransferTransition> for Transfer {
             id: None,
             sender: Some(sender),
             recipient: Some(recipient),
-            amount,
+            amount
         };
     }
 }

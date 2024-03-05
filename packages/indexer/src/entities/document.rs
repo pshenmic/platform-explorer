@@ -1,5 +1,4 @@
 use dpp::identifier::Identifier;
-use dpp::platform_value::string_encoding::Encoding;
 use dpp::prelude::Revision;
 use dpp::state_transition::documents_batch_transition::document_base_transition::v0::v0_methods::DocumentBaseTransitionV0Methods;
 use dpp::state_transition::documents_batch_transition::document_create_transition::v0::v0_methods::DocumentCreateTransitionV0Methods;
@@ -7,41 +6,17 @@ use dpp::state_transition::documents_batch_transition::document_delete_transitio
 use dpp::state_transition::documents_batch_transition::document_replace_transition::v0::v0_methods::DocumentReplaceTransitionV0Methods;
 use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransition;
 use serde_json::Value;
-use tokio_postgres::Row;
 
 #[derive(Clone)]
 pub struct Document {
     pub id: Option<u32>,
     pub identifier: Identifier,
+    pub owner: Option<Identifier>,
     pub data_contract_identifier: Identifier,
     pub data: Option<Value>,
     pub deleted: bool,
     pub revision: Revision,
-}
-
-impl From<Row> for Document {
-    fn from(row: Row) -> Self {
-        let id: i32 = row.get(0);
-
-        let identifier_str: String = row.get(1);
-        let identifier = Identifier::from_string(&identifier_str, Encoding::Base58).unwrap();
-
-        let data_contract_identifier_str: String = row.get(2);
-        let data_contract_identifier = Identifier::from_string(&data_contract_identifier_str, Encoding::Base58).unwrap();
-
-        let revision: i32 = row.get(3);
-
-        let deleted: bool = row.get(4);
-
-        return Document {
-            id: Some(id as u32),
-            deleted,
-            identifier,
-            data: None,
-            data_contract_identifier,
-            revision: Revision::from(revision as u64),
-        };
-    }
+    pub is_system: bool
 }
 
 impl From<DocumentTransition> for Document {
@@ -58,10 +33,12 @@ impl From<DocumentTransition> for Document {
                 return Document {
                     id: None,
                     identifier,
+                    owner: None,
                     data: Some(data_decoded),
                     data_contract_identifier,
                     revision,
                     deleted: false,
+                    is_system: false,
                 };
             }
             DocumentTransition::Replace(transition) => {
@@ -75,10 +52,12 @@ impl From<DocumentTransition> for Document {
                 return Document {
                     id: None,
                     identifier,
+                    owner: None,
                     data: Some(data_decoded),
                     data_contract_identifier,
                     revision,
                     deleted: false,
+                    is_system: false,
                 };
             }
             DocumentTransition::Delete(transition) => {
@@ -90,10 +69,12 @@ impl From<DocumentTransition> for Document {
                 return Document {
                     id: None,
                     identifier,
+                    owner: None,
                     data: None,
                     data_contract_identifier,
                     revision,
                     deleted: true,
+                    is_system: false,
                 };
             }
         }

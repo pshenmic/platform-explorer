@@ -7,6 +7,8 @@ use dpp::state_transition::data_contract_create_transition::DataContractCreateTr
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use dpp::data_contracts::SystemDataContract;
+use dpp::identifier::Identifier;
+use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
@@ -67,13 +69,13 @@ impl PSQLProcessor {
     pub async fn handle_data_contract_create(&self, state_transition: DataContractCreateTransition, st_hash: String) -> () {
         let data_contract = DataContract::from(state_transition);
 
-        self.dao.create_data_contract(data_contract, st_hash).await;
+        self.dao.create_data_contract(data_contract, Some(st_hash)).await;
     }
 
     pub async fn handle_data_contract_update(&self, state_transition: DataContractUpdateTransition, st_hash: String) -> () {
         let data_contract = DataContract::from(state_transition);
 
-        self.dao.create_data_contract(data_contract, st_hash).await;
+        self.dao.create_data_contract(data_contract, Some(st_hash)).await;
     }
 
     pub async fn handle_documents_batch(&self, state_transition: DocumentsBatchTransition, st_hash: String) -> () {
@@ -82,38 +84,38 @@ impl PSQLProcessor {
         for (_, document_transition) in transitions.iter().enumerate() {
             let document = Document::from(document_transition.clone());
 
-            self.dao.create_document(document, st_hash.clone()).await;
+            self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
         }
     }
 
     pub async fn handle_identity_create(&self, state_transition: IdentityCreateTransition, st_hash: String) -> () {
         let identity = Identity::from(state_transition);
 
-        self.dao.create_identity(identity, st_hash.clone()).await;
+        self.dao.create_identity(identity, Some(st_hash.clone())).await.unwrap();
     }
 
     pub async fn handle_identity_update(&self, state_transition: IdentityUpdateTransition, st_hash: String) -> () {
         let identity = Identity::from(state_transition);
 
-        self.dao.create_identity(identity, st_hash.clone()).await;
+        self.dao.create_identity(identity, Some(st_hash.clone())).await.unwrap();
     }
 
     pub async fn handle_identity_top_up(&self, state_transition: IdentityTopUpTransition, st_hash: String) -> () {
         let transfer = Transfer::from(state_transition);
 
-        self.dao.create_transfer(transfer, st_hash.clone()).await;
+        self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
     }
 
     pub async fn handle_identity_credit_withdrawal(&self, state_transition: IdentityCreditWithdrawalTransition, st_hash: String) -> () {
         let transfer = Transfer::from(state_transition);
 
-        self.dao.create_transfer(transfer, st_hash.clone()).await;
+        self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
     }
 
     pub async fn handle_identity_credit_transfer(&self, state_transition: IdentityCreditTransferTransition, st_hash: String) -> () {
         let transfer = Transfer::from(state_transition);
 
-        self.dao.create_transfer(transfer, st_hash.clone()).await;
+        self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
     }
 
     pub async fn handle_st(&self, block_hash: String, index: u32, state_transition: StateTransition) -> () {
@@ -175,38 +177,38 @@ impl PSQLProcessor {
 
                 println!("Processed DataContractCreate at block hash {}", block_hash);
             }
-            StateTransition::DataContractUpdate(st) => {
-                self.handle_data_contract_update(st, st_hash).await;
+            StateTransition::DataContractUpdate(_st) => {
+                self.handle_data_contract_update(_st, st_hash).await;
 
                 println!("Processed DataContractUpdate at block hash {}", block_hash);
             }
-            StateTransition::DocumentsBatch(st) => {
-                self.handle_documents_batch(st, st_hash).await;
+            StateTransition::DocumentsBatch(_st) => {
+                self.handle_documents_batch(_st, st_hash).await;
 
                 println!("Processed DocumentsBatch at block hash {}", block_hash);
             }
-            StateTransition::IdentityCreate(st) => {
-                self.handle_identity_create(st, st_hash).await;
+            StateTransition::IdentityCreate(_st) => {
+                self.handle_identity_create(_st, st_hash).await;
 
                 println!("Processed IdentityCreate at block hash {}", block_hash);
             }
-            StateTransition::IdentityTopUp(st) => {
-                self.handle_identity_top_up(st, st_hash).await;
+            StateTransition::IdentityTopUp(_st) => {
+                self.handle_identity_top_up(_st, st_hash).await;
 
                 println!("Processed IdentityTopUp at block hash {}", block_hash);
             }
-            StateTransition::IdentityCreditWithdrawal(st) => {
-                self.handle_identity_credit_withdrawal(st, st_hash).await;
+            StateTransition::IdentityCreditWithdrawal(_st) => {
+                self.handle_identity_credit_withdrawal(_st, st_hash).await;
 
                 println!("Processed IdentityCreditWithdrawal at block hash {}", block_hash);
             }
-            StateTransition::IdentityUpdate(st) => {
-                self.handle_identity_update(st, st_hash).await;
+            StateTransition::IdentityUpdate(_st) => {
+                self.handle_identity_update(_st, st_hash).await;
 
                 println!("Processed IdentityUpdate at block hash {}", block_hash);
             }
-            StateTransition::IdentityCreditTransfer(st) => {
-                self.handle_identity_credit_transfer(st, st_hash).await;
+            StateTransition::IdentityCreditTransfer(_st) => {
+                self.handle_identity_credit_transfer(_st, st_hash).await;
 
                 println!("Processed IdentityCreditTransfer at block hash {}", block_hash);
             }
@@ -250,35 +252,77 @@ impl PSQLProcessor {
         }
     }
 
+    pub async fn process_system_data_contract(&self, system_data_contract: SystemDataContract) -> () {
+        let data_contract = DataContract::from(system_data_contract);
+        let identity = Identity::from(system_data_contract);
+        let data_contract_identifier = data_contract.identifier.clone();
+        let data_contract_owner = data_contract.owner.clone();
+
+        self.dao.create_identity(identity, None).await.unwrap();
+        self.dao.create_data_contract(data_contract, None).await;
+
+        match system_data_contract {
+            SystemDataContract::Withdrawals => {}
+            SystemDataContract::MasternodeRewards => {}
+            SystemDataContract::FeatureFlags => {}
+            SystemDataContract::DPNS => {
+                let dash_tld_document_values = platform_value!({
+                    "label" : "dash",
+                    "normalizedLabel" : "dash",
+                    "parentDomainName" : "",
+                    "normalizedParentDomainName" : "",
+                    "preorderSalt" : BinaryData::new(
+                        [
+                    224, 181, 8, 197, 163, 104, 37, 162, 6, 105, 58, 31, 65, 74, 161, 62, 219, 236, 244, 60, 65,
+                    227, 199, 153, 234, 158, 115, 123, 79, 154, 162, 38,
+                    ].to_vec()),
+                    "records" : {
+                        "dashAliasIdentityId" : data_contract_owner.to_string(Base58),
+                    },
+                    "subdomainRules": {
+                        "allowSubdomains": true,
+                    }
+                });
+
+                let dash_tld_document = Document {
+                    id: None,
+                    owner: Some(data_contract_owner),
+                    identifier: Identifier::from_bytes(&[
+                        215, 242, 197, 63, 70, 169, 23, 171, 110, 91, 57, 162, 215, 188, 38, 11, 100, 146, 137, 69, 55,
+                        68, 209, 224, 212, 242, 106, 141, 142, 255, 55, 207,
+                    ]).unwrap(),
+                    data_contract_identifier,
+                    data: Some(serde_json::to_value(dash_tld_document_values).unwrap()),
+                    deleted: false,
+                    revision: 0,
+                    is_system: true,
+                };
+
+                self.dao.create_document(dash_tld_document, None).await.unwrap();
+            }
+            SystemDataContract::Dashpay => {}
+        }
+    }
+
+
     pub async fn handle_init_chain(&self) -> () {
         println!("Processing initChain");
 
-        let mut system_contract;
-        let mut data_contract;
+        println!("Processing SystemDataContract::Withdrawals");
+        self.process_system_data_contract(SystemDataContract::Withdrawals).await;
 
-        system_contract = SystemDataContract::Withdrawals;
-        data_contract = DataContract::from(system_contract);
-        println!("Processing SystemDataContract::Withdrawals {}", data_contract.identifier.to_string(Base58));
-        self.dao.create_data_contract(data_contract, String::from("initChain")).await;
+        println!("Processing SystemDataContract::MasternodeRewards");
+        self.process_system_data_contract(SystemDataContract::MasternodeRewards).await;
 
-        system_contract = SystemDataContract::MasternodeRewards;
-        data_contract = DataContract::from(system_contract);
-        println!("Processing SystemDataContract::MasternodeRewards {}", data_contract.identifier.to_string(Base58));
-        self.dao.create_data_contract(data_contract, String::from("initChain")).await;
+        println!("Processing SystemDataContract::FeatureFlags");
+        self.process_system_data_contract(SystemDataContract::FeatureFlags).await;
 
-        system_contract = SystemDataContract::FeatureFlags;
-        data_contract = DataContract::from(system_contract);
-        println!("Processing SystemDataContract::FeatureFlags {}", data_contract.identifier.to_string(Base58));
-        self.dao.create_data_contract(data_contract, String::from("initChain")).await;
+        println!("Processing SystemDataContract::DPNS");
+        self.process_system_data_contract(SystemDataContract::DPNS).await;
 
-        system_contract = SystemDataContract::DPNS;
-        data_contract = DataContract::from(system_contract);
-        println!("Processing SystemDataContract::DPNS {}", data_contract.identifier.to_string(Base58));
-        self.dao.create_data_contract(data_contract, String::from("initChain")).await;
+        println!("Processing SystemDataContract::Dashpay");
+        self.process_system_data_contract(SystemDataContract::Dashpay).await;
 
-        system_contract = SystemDataContract::Dashpay;
-        data_contract = DataContract::from(system_contract);
-        println!("Processing SystemDataContract::Dashpay {}", data_contract.identifier.to_string(Base58));
-        self.dao.create_data_contract(data_contract, String::from("initChain")).await;
+        println!("Finished initChain processing");
     }
 }
