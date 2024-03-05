@@ -94,7 +94,7 @@ describe('Blocks routes', () => {
                 Array.from({length: 10}, (_, i) => Math.abs(i - TOTAL_BLOCKS_COUNT)))
         });
 
-        it('should allow to walk through pages', async () => {
+        it('should be able to walk through pages', async () => {
             const {body} =  await client.get('/blocks?page=3')
                 .expect(200)
                 .expect('Content-Type', 'application/json; charset=utf-8');
@@ -147,7 +147,7 @@ describe('Blocks routes', () => {
                 Array.from({length: 7}, (_, i) => i + 1))
         });
 
-        it('should return allow to walk through pages with custom page size', async () => {
+        it('should allow to walk through pages with custom page size', async () => {
            const {body} =  await client.get('/blocks?limit=7&page=4')
                 .expect(200)
                 .expect('Content-Type', 'application/json; charset=utf-8');
@@ -172,7 +172,7 @@ describe('Blocks routes', () => {
                 Array.from({length: 7}, (_, i) => i + 22))
         });
 
-        it('should return allow to walk through pages with custom page size desc', async () => {
+        it('should allow to walk through pages with custom page size desc', async () => {
            const {body} =  await client.get('/blocks?limit=7&page=4&order=desc')
                 .expect(200)
                 .expect('Content-Type', 'application/json; charset=utf-8');
