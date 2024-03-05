@@ -50,11 +50,9 @@ describe('DataContracts routes', () => {
                 .expect('Content-Type', 'application/json; charset=utf-8');
 
             assert.equal(body.resultSet.length, 10)
-            assert.equal(body.pagination.total, 53)
+            assert.equal(body.pagination.total, 75)
             assert.equal(body.pagination.page, 1)
             assert.equal(body.pagination.limit, 10)
-            console.log(body)
-
         });
     });
 });
