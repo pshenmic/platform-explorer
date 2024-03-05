@@ -1,5 +1,4 @@
 use chrono::{DateTime, Utc};
-use dpp::state_transition::documents_batch_transition::{DocumentCreateTransition, DocumentDeleteTransition, DocumentReplaceTransition};
 use serde::{Deserialize};
 
 #[derive(Deserialize)]
@@ -56,25 +55,9 @@ pub struct BlockWrapper {
     pub block: TDBlock,
 }
 
-enum DocumentTransition {
-    Create(DocumentCreateTransition),
-    Replace(DocumentReplaceTransition),
-    Delete(DocumentDeleteTransition),
-}
-
 mod from_iso8601 {
     use chrono::{Utc, DateTime};
-    use serde::{self, Deserialize, Serializer, Deserializer};
-
-    const FORMAT: &'static str = "%Y-%m-%dT%H:%M:%SZ";
-
-    pub fn serialize<S>(date: &DateTime<Utc>, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
-    {
-        let s = format!("{}", date.format(FORMAT));
-        serializer.serialize_str(&s)
-    }
+    use serde::{self, Deserialize, Deserializer};
 
     pub fn deserialize<'de, D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
         where
