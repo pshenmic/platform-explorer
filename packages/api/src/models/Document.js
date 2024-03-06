@@ -9,9 +9,9 @@ module.exports = class Document {
     isSystem
 
     constructor(identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, isSystem) {
-        this.identifier = identifier ?? null;
-        this.identifier = owner ?? null;
-        this.dataContractIdentifier = dataContractIdentifier ?? null;
+        this.identifier = identifier ? identifier.trim() : null;
+        this.owner = owner ?? null;
+        this.dataContractIdentifier = dataContractIdentifier ? dataContractIdentifier.trim() : null;
         this.revision = revision ?? null;
         this.deleted = deleted ?? null;
         this.data = data ?? null;

@@ -11,7 +11,7 @@ module.exports = class Identity {
     isSystem
 
     constructor(identifier, owner, revision, balance, timestamp, totalTxs, totalDataContracts, totalDocuments, totalTransfers, txHash, isSystem) {
-        this.identifier = identifier ?? null;
+        this.identifier = identifier ? identifier.trim() : null;
         this.owner = owner ?? null;
         this.revision = revision ?? null;
         this.balance = balance ?? null;

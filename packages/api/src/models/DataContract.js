@@ -8,7 +8,7 @@ module.exports = class DataContract {
     isSystem
 
     constructor(identifier, owner, schema, version, txHash, timestamp, isSystem) {
-        this.identifier = identifier ?? null;
+        this.identifier = identifier ? identifier.trim() : null;
         this.owner = owner ?? null;
         this.schema = schema ?? null;
         this.version = version ?? null;
