@@ -7,18 +7,6 @@ class TransactionsController {
         this.transactionsDAO = new TransactionsDAO(knex)
     }
 
-    getTransactions = async (request, response) => {
-        const {page = 1, limit = 10, order = 'asc'} = request.query
-
-        if (order !== 'asc' && order !== 'desc') {
-            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
-        }
-
-        const transactions = await this.transactionsDAO.getTransactions(Number(page), Number(limit), order)
-
-        response.send(transactions);
-    }
-
     getTransactionByHash = async (request, reply) => {
         const {txHash} = request.params;
 
@@ -31,6 +19,18 @@ class TransactionsController {
         reply.send(transaction)
     }
 
+
+    getTransactions = async (request, response) => {
+        const {page = 1, limit = 10, order = 'asc'} = request.query
+
+        if (order !== 'asc' && order !== 'desc') {
+            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+        }
+
+        const transactions = await this.transactionsDAO.getTransactions(Number(page), Number(limit), order)
+
+        response.send(transactions);
+    }
     decode = async (request, reply) => {
         const {base64} = request.body;
 
