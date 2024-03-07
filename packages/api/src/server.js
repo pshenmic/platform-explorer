@@ -29,18 +29,22 @@ function errorHandler(err, req, reply) {
     reply.send({error: err.message})
 }
 
+let client
+let knex
+let fastify
+
 module.exports = {
     start: async () => {
-        const client = new Dash.Client()
+        client = new Dash.Client()
         await client.platform.initialize()
 
-        const fastify = Fastify()
+        fastify = Fastify()
 
         await fastify.register(cors, {
             // put your options here
         })
 
-        const knex = require('knex')({
+        knex = require('knex')({
             client: 'pg',
             connection: {
                 host: process.env["POSTGRES_HOST"],
@@ -68,6 +72,12 @@ module.exports = {
         await fastify.ready()
 
         return fastify
+    },
+    stop: async () => {
+        console.log('Server stopped')
+
+        await fastify.close()
+        await knex.destroy()
     },
     listen: async (server) => {
         server.listen({
