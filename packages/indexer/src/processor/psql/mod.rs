@@ -15,6 +15,7 @@ use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatch
 use dpp::state_transition::documents_batch_transition::{DocumentsBatchTransition};
 use sha256::digest;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
+use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransitionV0Methods;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
@@ -83,6 +84,7 @@ impl PSQLProcessor {
 
         for (_, document_transition) in transitions.iter().enumerate() {
             let document = Document::from(document_transition.clone());
+
 
             self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
         }

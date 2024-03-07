@@ -4,7 +4,7 @@ use dpp::state_transition::documents_batch_transition::document_base_transition:
 use dpp::state_transition::documents_batch_transition::document_create_transition::v0::v0_methods::DocumentCreateTransitionV0Methods;
 use dpp::state_transition::documents_batch_transition::document_delete_transition::v0::v0_methods::DocumentDeleteTransitionV0Methods;
 use dpp::state_transition::documents_batch_transition::document_replace_transition::v0::v0_methods::DocumentReplaceTransitionV0Methods;
-use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransition;
+use dpp::state_transition::documents_batch_transition::document_transition::{DocumentTransition, DocumentTransitionV0Methods};
 use serde_json::Value;
 
 #[derive(Clone)]
@@ -21,6 +21,8 @@ pub struct Document {
 
 impl From<DocumentTransition> for Document {
     fn from(value: DocumentTransition) -> Self {
+        let revision = value.revision();
+
         match value {
             DocumentTransition::Create(transition) => {
                 let base = transition.base().clone();
@@ -28,7 +30,6 @@ impl From<DocumentTransition> for Document {
                 let data_decoded = serde_json::to_value(data).unwrap();
                 let identifier = base.id();
                 let data_contract_identifier = base.data_contract_id();
-                let revision: Revision = Revision::from(0 as u64);
 
                 return Document {
                     id: None,
@@ -36,7 +37,7 @@ impl From<DocumentTransition> for Document {
                     owner: None,
                     data: Some(data_decoded),
                     data_contract_identifier,
-                    revision,
+                    revision: revision.unwrap(),
                     deleted: false,
                     is_system: false,
                 };
@@ -47,7 +48,6 @@ impl From<DocumentTransition> for Document {
                 let data_decoded = serde_json::to_value(data).unwrap();
                 let identifier = base.id();
                 let data_contract_identifier = base.data_contract_id();
-                let revision = transition.revision();
 
                 return Document {
                     id: None,
@@ -55,7 +55,7 @@ impl From<DocumentTransition> for Document {
                     owner: None,
                     data: Some(data_decoded),
                     data_contract_identifier,
-                    revision,
+                    revision: revision.unwrap(),
                     deleted: false,
                     is_system: false,
                 };
@@ -72,7 +72,7 @@ impl From<DocumentTransition> for Document {
                     owner: None,
                     data: None,
                     data_contract_identifier,
-                    revision,
+                    revision: Revision::from(0 as u64),
                     deleted: true,
                     is_system: false,
                 };
