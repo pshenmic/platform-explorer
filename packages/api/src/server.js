@@ -1,7 +1,7 @@
 const Dash = require('dash')
 const Fastify = require('fastify')
 const cors = require('@fastify/cors')
-const Routes = require('.//routes')
+const Routes = require('./routes')
 
 const ServiceNotAvailableError = require("./errors/ServiceNotAvailableError");
 const MainController = require("./controllers/MainController");
