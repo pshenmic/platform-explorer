@@ -1,4 +1,4 @@
-const {describe, it, before} = require('node:test');
+const {describe, it, before, after} = require('node:test');
 const assert = require('node:assert').strict;
 const supertest = require('supertest')
 const server = require('../../src/server')
@@ -11,6 +11,10 @@ describe('Index route', () => {
     before(async () => {
         app = await server.start()
         client = supertest(app.server)
+    })
+
+    after(async () => {
+        await server.stop()
     })
 
     it('should return 404', async () => {
