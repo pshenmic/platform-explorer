@@ -20,7 +20,7 @@ class MainController {
             stats = await this.blocksDAO.getStats()
             tdStatus = await TenderdashRPC.getStatus();
         } catch (e) {
-
+            console.error(e)
         }
 
         response.send({
