@@ -6,14 +6,6 @@ module.exports = class BlockDAO {
         this.knex = knex;
     }
 
-    getMaxHeight = async () => {
-        const [result] = await this.knex('blocks').max('height')
-
-        const {max} = result
-
-        return max
-    }
-
     getStats = async () => {
         const blocksQuery = this.knex('blocks')
             .select('height', 'timestamp', 'block_version', 'app_version', 'l1_locked_height')
