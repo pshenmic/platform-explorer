@@ -17,31 +17,31 @@ describe('Transaction routes', () => {
         await server.stop()
     })
 
-    // describe('getTransactionByHash()', async () => {
-    //     it('should return transaction', async () => {
-    //         const {body} = await client.get('/transaction/9C1FDEBBBE17F030C94CC8A6D9BA175650216DB75D47796A569BD182B38D7D90')
-    //             .expect(200)
-    //             .expect('Content-Type', 'application/json; charset=utf-8');
-    //
-    //         const transaction = {
-    //             blockHash: '621F8745BF1061C2A3939B338D5249A80CDFECD8370EE3430604533EC485974E',
-    //             blockHeight: 85,
-    //             data: 'AgDtH24cRBIX1QTPTl4rR1SJBWPNRBDdoTHP0pc/A6z/3wEAAADjLhFl1E9upY8YpcHNcMpQ4EXhHpKZZHxfqK4dn36oqAIIcHJlb3JkZXLmaMZZr2au4ecsGG3ee1t+Ch1xKgnEDVch9iK/U8UxVTopHbTIJ3SfjMBDjVCEQMQPXYCafzwrvJeaVwJCLXfKAAABEHNhbHRlZERvbWFpbkhhc2gKICNyp5y3GXKYq2OgZzxLa0U4IgSrkdl4D7yN82e+WPiTAUEgA/daLTaz154CalNTTwoBWj/lZx9U6vdps8UYwDX55nEqrfLzOQKHc3DqdSvERDCO1Pchj9bM3vuyEybPIpWxAQ==',
-    //             hash: '9C1FDEBBBE17F030C94CC8A6D9BA175650216DB75D47796A569BD182B38D7D90',
-    //             index: 0,
-    //             timestamp: '2024-02-21T15:13:28.655Z',
-    //             type: 1
-    //         }
-    //
-    //         assert.deepEqual(transaction, body)
-    //     });
-    //
-    //     it('should return 404 if transaction not found', async () => {
-    //         await client.get('/transaction/fake')
-    //             .expect(404)
-    //             .expect('Content-Type', 'application/json; charset=utf-8');
-    //     });
-    // });
+    describe('getTransactionByHash()', async () => {
+        it('should return transaction', async () => {
+            const {body} = await client.get('/transaction/9C1FDEBBBE17F030C94CC8A6D9BA175650216DB75D47796A569BD182B38D7D90')
+                .expect(200)
+                .expect('Content-Type', 'application/json; charset=utf-8');
+
+            const transaction = {
+                blockHash: '621F8745BF1061C2A3939B338D5249A80CDFECD8370EE3430604533EC485974E',
+                blockHeight: 85,
+                data: 'AgDtH24cRBIX1QTPTl4rR1SJBWPNRBDdoTHP0pc/A6z/3wEAAADjLhFl1E9upY8YpcHNcMpQ4EXhHpKZZHxfqK4dn36oqAIIcHJlb3JkZXLmaMZZr2au4ecsGG3ee1t+Ch1xKgnEDVch9iK/U8UxVTopHbTIJ3SfjMBDjVCEQMQPXYCafzwrvJeaVwJCLXfKAAABEHNhbHRlZERvbWFpbkhhc2gKICNyp5y3GXKYq2OgZzxLa0U4IgSrkdl4D7yN82e+WPiTAUEgA/daLTaz154CalNTTwoBWj/lZx9U6vdps8UYwDX55nEqrfLzOQKHc3DqdSvERDCO1Pchj9bM3vuyEybPIpWxAQ==',
+                hash: '9C1FDEBBBE17F030C94CC8A6D9BA175650216DB75D47796A569BD182B38D7D90',
+                index: 0,
+                timestamp: '2024-02-21T15:13:28.655Z',
+                type: 1
+            }
+
+            assert.deepEqual(transaction, body)
+        });
+
+        it('should return 404 if transaction not found', async () => {
+            await client.get('/transaction/fake')
+                .expect(404)
+                .expect('Content-Type', 'application/json; charset=utf-8');
+        });
+    });
 
     describe('getTransactions()', async () => {
         it('should return default set of transactions', async () => {
