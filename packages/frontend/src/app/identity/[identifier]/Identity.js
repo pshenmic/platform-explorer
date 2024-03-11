@@ -1,11 +1,13 @@
-import {useLoaderData} from "react-router-dom";
-import * as Api from "../../util/Api";
-import {Link} from "react-router-dom";
-import TransactionsList from "../../components/transactions/TransactionsList";
-import DocumentsList from "../../components/documents/DocumentsList";
-import DataContractsList from "../../components/dataContracts/DataContractsList";
-import TransfersList from "../../components/transfers/TransfersList";
-import './identity.scss'
+'use client'
+
+import { useState, useEffect } from 'react'
+import * as Api from "../../../util/Api";
+import Link from 'next/link'
+import TransactionsList from "../../../components/transactions/TransactionsList";
+import DocumentsList from "../../../components/documents/DocumentsList";
+import DataContractsList from "../../../components/dataContracts/DataContractsList";
+import TransfersList from "../../../components/transfers/TransfersList";
+import './Identity.scss'
 
 import { 
     Box, 
@@ -16,9 +18,7 @@ import {
 } from "@chakra-ui/react"
 
 
-export async function loader({params}) {
-    const {identifier} = params
-
+export async function loader(identifier) {
     const [identity, dataContracts, documents, transactions, transfers] = await Promise.all([
         Api.getIdentity(identifier),
         Api.getDataContractsByIdentity(identifier),
@@ -33,19 +33,42 @@ export async function loader({params}) {
         documents,
         transactions,
         transfers
-    };
+    }
 }
 
-function IdentityRoute() {
-    const {
-        identity, 
-        dataContracts,
-        documents, 
-        transactions,
-        transfers
-    } = useLoaderData();
+function Identity({identifier}) {
+    const [identity, setIdentity] = useState({})
+    const [dataContracts, setDataContracts] = useState([])
+    const [documents, setDocuments] = useState([])
+    const [transactions, setTransactions] = useState([])
+    const [transfers, setTransfers] = useState([])
+    const [loading, setLoading] = useState(true)
 
-    return (
+
+    const fetchData = () => {
+        setLoading(true)
+
+        try {
+            loader(identifier).then((res) => {
+                
+                setIdentity(res.identity)
+                setDataContracts(res.dataContracts)
+                setDocuments(res.documents)
+                setTransactions(res.transactions)
+                setTransfers(res.transfers)
+                setLoading(false)
+
+            })
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+
+    useEffect(fetchData, [identifier])
+
+
+    if (!loading) return (
         <div className={'identity'}>
             <Container 
                 maxW='container.xl' 
@@ -83,7 +106,7 @@ function IdentityRoute() {
                                 <Tr>
                                     <Td>Created</Td>
                                     <Td isNumeric> 
-                                        <Link to={`/transaction/${identity.txHash}`}>
+                                        <Link href={`/transaction/${identity.txHash}`}>
                                             {new Date(identity.timestamp).toLocaleString()}
                                         </Link>
                                     </Td>
@@ -161,7 +184,7 @@ function IdentityRoute() {
                 </Flex>
             </Container>
         </div>
-    );
+    )
 }
 
-export default IdentityRoute;
+export default Identity

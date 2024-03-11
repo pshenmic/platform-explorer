@@ -1,4 +1,6 @@
-import React, {useEffect, useState} from 'react'
+'use client'
+
+import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import DataContractsList from '../../components/dataContracts/DataContractsList'
 
@@ -7,25 +9,30 @@ import {
     Heading, 
 } from '@chakra-ui/react'
 
-function DataContractsRoute() {
+
+function DataContractsLayout() {
     const [dataContracts, setDataContracts] = useState(null)
-    const [loading, setLoading] = useState(null)
-    const [error, setError] = useState(null)
+    const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        Api.getDataContracts(1, 30)
-            .then((dataContracts) => setDataContracts(dataContracts.resultSet))
-            .catch((err) => {
-                setError(err)
+    const fetchData = () => {
+        setLoading(true)
+
+        try {
+            Api.getDataContracts(1, 30).then((res) => {
+
+                setDataContracts(res.resultSet)
+                setLoading(false)
+
             })
-            .finally(() => setLoading(false))
-    }, [])
+        } catch(error) {
+            console.log(error)
+        }
+    }
 
-    return (
+    useEffect(fetchData, [])
+
+    if (!loading) return (
         <div className={'container'}>
-            {error && <div>Error {error}</div>}
-            {loading && <div>Loading data contracts from API</div>}
-
             {dataContracts && 
                 <Container 
                     maxW='container.md' 
@@ -44,7 +51,7 @@ function DataContractsRoute() {
             }
 
         </div>
-    );
+    )
 }
 
-export default DataContractsRoute;
+export default DataContractsLayout

@@ -1,19 +1,20 @@
-import React, {useState, useEffect} from 'react'
-import {Link, useLoaderData} from 'react-router-dom'
+'use client'
+
+import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import ReactPaginate from 'react-paginate'
-import GoToHeightForm from './../../components/goToHeightForm/GoToHeightForm'
-import PageSizeSelector from './../../components/pageSizeSelector/PageSizeSelector'
+import GoToHeightForm from '../../components/goToHeightForm/GoToHeightForm'
+import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import BlocksList from '../../components/blocks/BlocksList'
 import './Blocks.scss'
 
-import { 
+import {
     Container,
     Heading, 
 } from '@chakra-ui/react'
 
 
-const paginateConfig = { 
+const paginateConfig = {
     pageSize: {
         default: 25,
         values: [10, 25, 50, 75, 100],
@@ -29,39 +30,64 @@ export async function loader() {
     return {blocks: resultSet, total: pagination.total};
 }
 
-function BlocksRoute() {
-    const {blocks: defaultBlocks, total} = useLoaderData()
-    const [blocks, setBlocks] = useState(defaultBlocks)
+function Blocks() {
+    const [loading, setLoading] = useState(true)
+    const [blocks, setBlocks] = useState([])
+    const [total, setTotal] = useState(1)
     const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
     const [currentPage, setCurrentPage] = useState(0)
     const [blockHeightToSearch, setBlockHeightToSearch] = useState(0)
     const pageCount = Math.ceil(total / pageSize)
 
-    const handlePageClick = async ({selected}) => {
-        const {resultSet} = await Api.getBlocks(selected+1, pageSize, 'desc')
-        
-        setCurrentPage(selected)
+    
+    const fetchData = () => {
+        setLoading(true)
+        try {
+            loader().then((res) => {
 
-        setBlocks(resultSet)
+                setBlocks(res.blocks)
+                setTotal(res.total)
+                setLoading(false)
+
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        
     }
+
+    useEffect(fetchData, [])
+
+
+    const handlePageClick = async ({selected}) => {
+
+        const {resultSet} = await Api.getBlocks(selected+1, pageSize, 'desc')
+        setCurrentPage(selected)
+        setBlocks(resultSet)
+
+    }
+
 
     const goToHeight = async (e) => {
-        e.preventDefault();
 
-        const page = Math.ceil((total - blockHeightToSearch + 2) / pageSize) - 1;
+        e.preventDefault()
 
-        setCurrentPage(page);
-
-        handlePageClick({selected: page});
+        const page = Math.ceil((total - blockHeightToSearch + 2) / pageSize) - 1
+        setCurrentPage(page)
+        handlePageClick({selected: page})
+        
     }
 
+
     useEffect(() => {
-        setCurrentPage(0);
 
-        handlePageClick({selected: 0});
-    }, [pageSize]);
+        setCurrentPage(0)
+        handlePageClick({selected: 0})
 
-    return (
+    }, [pageSize])
+
+
+    if (!loading) return (
         <Container 
             maxW='container.lg' 
             color='white'
@@ -122,7 +148,7 @@ function BlocksRoute() {
 
             </Container>
         </Container>
-    );
+    )
 }
 
-export default BlocksRoute;
+export default Blocks

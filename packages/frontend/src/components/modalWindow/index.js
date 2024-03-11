@@ -1,5 +1,4 @@
-import "./root.css";
-import React, {useState} from 'react';
+import "./ModalWindow.scss"
 
 export default function ModalWindow({open, text, setShowModal}) {
 

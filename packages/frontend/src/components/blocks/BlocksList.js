@@ -1,4 +1,3 @@
-import {Link} from "react-router-dom";
 import BlocksListItem from './BlocksListItem'
 import './BlocksList.scss'
 

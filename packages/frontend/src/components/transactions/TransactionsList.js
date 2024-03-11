@@ -1,6 +1,7 @@
+'use client'
+
 import TransactionsListItem from './TransactionsListItem'
 import './TransactionsList.scss'
-
 
 export default function TransactionsList({transactions = [], size='l'}) {
     return (
@@ -22,5 +23,5 @@ export default function TransactionsList({transactions = [], size='l'}) {
 
         </div>
 
-    );
+    )
 }

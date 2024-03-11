@@ -1,7 +1,8 @@
-import React from 'react'
-import { useLoaderData} from 'react-router-dom'
-import * as Api from '../../util/Api'
-import TransactionsList from '../../components/transactions/TransactionsList'
+'use client'
+
+import { useState, useEffect } from 'react'
+import * as Api from '../../../util/Api'
+import TransactionsList from '../../../components/transactions/TransactionsList'
 
 import { 
     Container,
@@ -10,18 +11,33 @@ import {
 } from '@chakra-ui/react'
 
 
-export async function loader({params}) {
-    const {hash} = params
-    const block = await Api.getBlockByHash(hash);
-    return {block};
-}
+function Block({ hash }) {
+    const [block, setBlock] = useState({})
+    const [loading, setLoading] = useState(true)
 
-function BlockRoute() {
-    const {block} = useLoaderData();
+    
+    const fetchData = () => {
+        setLoading(true)
 
-    const txHashes = block?.txs || [];
+        try {
+            Api.getBlockByHash(hash).then((res) => {
 
-    return (
+                setBlock(res)
+                setLoading(false)
+
+            })
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+
+    useEffect(fetchData, [hash])
+
+    const txHashes = block?.txs || []
+    
+
+    if (!loading) return (
         <Container 
             maxW='container.xl' 
             bg='gray.600' 
@@ -96,7 +112,7 @@ function BlockRoute() {
            : null}
 
         </Container>
-    );
+    )
 }
 
-export default BlockRoute;
+export default Block

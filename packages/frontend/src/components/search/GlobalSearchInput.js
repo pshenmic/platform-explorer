@@ -1,14 +1,11 @@
-import React, {useState} from 'react';
-import {useNavigate} from "react-router-dom";
-import ModalWindow from "../ModalWindow";
+import { useState } from 'react'
+import ModalWindow from "../modalWindow"
 import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
 import { SearchIcon } from '@chakra-ui/icons'
-
+import { redirect } from 'next/navigation'
 
 function GlobalSearchInput () {
-    let navigate = useNavigate();
-        
     const [showModal, setShowModal] = useState(false)
     const [modalText, setModalText] = useState("false")
 
@@ -33,22 +30,22 @@ function GlobalSearchInput () {
             if (searchResult?.block) {
                 // redirect to blocks
                 setSearchQuery("")
-                return navigate(`/block/${searchResult?.block.header.hash}`)
+                redirect(`/block/${searchResult?.block.header.hash}`)
             }
 
             if (searchResult?.transaction) {
                 setSearchQuery("")
-                return navigate(`/transaction/${searchResult?.transaction.hash}`)
+                redirect(`/transaction/${searchResult?.transaction.hash}`)
             }
 
             if (searchResult?.dataContract) {
                 setSearchQuery("")
-                return navigate(`/dataContract/${searchResult?.dataContract.identifier}`)
+                redirect(`/dataContract/${searchResult?.dataContract.identifier}`)
             }
             
             if (searchResult?.document) {
                 setSearchQuery("")
-                return navigate(`/document/${searchResult?.document.identifier}`)
+                redirect(`/document/${searchResult?.document.identifier}`)
             }
             
             showModalWindow('Not found', 6000)

@@ -1,18 +1,19 @@
-import React, {useState} from 'react'
-import {Link} from 'react-router-dom'
-import {useLoaderData} from 'react-router-dom'
-import * as Api from '../../util/Api'
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import * as Api from '../../../util/Api'
 import ReactPaginate from 'react-paginate'
-import DocumentsList from '../../components/documents/DocumentsList'
+import DocumentsList from '../../../components/documents/DocumentsList'
 import './DataContract.scss'
 
-import { 
+import {
     Box, 
     Container,
     TableContainer, Table, Thead, Tbody, Tfoot, Tr, Th, Td,
     Tabs, TabList, TabPanels, Tab, TabPanel,
     Code 
-} from '@chakra-ui/react';
+} from '@chakra-ui/react'
 
 
 const pagintationConfig = {
@@ -23,9 +24,7 @@ const pagintationConfig = {
     defaultPage: 1
 }
 
-export async function loader({params}) {
-    const {identifier} = params
-
+export async function loader(identifier) {
     const [dataContract, documents] = await Promise.all([
         Api.getDataContractByIdentifier(identifier),
         Api.getDocumentsByDataContract(identifier, 
@@ -36,28 +35,56 @@ export async function loader({params}) {
     return {
         dataContract,
         documents
-    };
+    }
 }
 
-function DataContractRoute() {
-    const {dataContract, documents: defaultDocuments} = useLoaderData();
-    const [documents, setDocuments] = useState(defaultDocuments.resultSet)
-    const pageCount = Math.ceil(defaultDocuments.pagination.total / pagintationConfig.itemsOnPage.default);
+function DataContract({identifier}) {
+    const [dataContract, setDataContract] = useState({})
+    const [documents, setDocuments] = useState([])
+    const [pageCount, setPageCount] = useState(0)
+    const [loading, setLoading] = useState(true)
 
-    const handlePageClick = async ({selected}) => {
-        const {resultSet} = await Api.getDocumentsByDataContract(dataContract.identifier, 
-                                                                 selected  + 1, 
-                                                                 pagintationConfig.itemsOnPage.default + 1)
-        setDocuments(resultSet);
+    const fetchData = () => {
+        setLoading(true)
+
+        try {
+            loader(identifier).then((res) => {
+
+                setDataContract(res.dataContract)
+                setDocuments(res.documents.resultSet)
+                setPageCount(Math.ceil(res.documents.pagination.total / pagintationConfig.itemsOnPage.default))
+                setLoading(false)
+
+            })
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 
-    return (
+    useEffect(fetchData, [identifier])
+
+
+    const handlePageClick = async ({selected}) => {
+
+        Api.getDocumentsByDataContract(dataContract.identifier,
+                                       selected  + 1, 
+                                       pagintationConfig.itemsOnPage.default + 1)
+            .then((res) => {
+                setDocuments(res.resultSet)
+            })
+            
+    }
+
+
+    if (!loading) return (
         <Container 
             maxW='container.xl' 
             padding={3}
             mt={8}
             className={'DataContract'}
         >
+            
             <TableContainer 
                 maxW='none'
                 borderWidth='1px' borderRadius='lg'
@@ -85,7 +112,7 @@ function DataContractRoute() {
                         <Tr>
                             <Td>Transaction</Td>
                             <Td isNumeric>
-                                <Link to={`/transaction/${dataContract.txHash}`}>{dataContract.txHash}</Link>
+                                <Link href={`/transaction/${dataContract.txHash}`}>{dataContract.txHash}</Link>
                             </Td>
                         </Tr>
 
@@ -156,9 +183,7 @@ function DataContractRoute() {
             </Container>
 
         </Container>
-
-                
-    );
+    )
 }
 
-export default DataContractRoute;
+export default DataContract;

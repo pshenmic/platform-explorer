@@ -1,6 +1,7 @@
-import React from 'react';
-import {useLoaderData} from "react-router-dom";
-import * as Api from "../../util/Api";
+'use client'
+
+import { useState, useEffect } from 'react'
+import * as Api from "../../../util/Api"
 import './document.scss'
 
 import { 
@@ -10,18 +11,33 @@ import {
     Heading, 
     Flex,
     Code 
-} from "@chakra-ui/react";
+} from "@chakra-ui/react"
 
-export async function loader({params}) {
-    const {identifier} = params
 
-    return await Api.getDocumentByIdentifier(identifier);
-}
+function Document({identifier}) {
+    const [document, setDocument] = useState({})
+    const [loading, setLoading] = useState(true)
 
-function DocumentRoute() {
-    const document = useLoaderData()
+    const fetchData = () => {
+        setLoading(true)
 
-    return (
+        try {
+            Api.getDocumentByIdentifier(identifier).then((res) => {
+
+                setDocument(res)
+                setLoading(false)
+
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        
+    }
+
+    useEffect(fetchData, [identifier])
+    
+
+    if (!loading) return (
         <Container 
             maxW='container.xl' 
             bg='gray.600' 
@@ -84,7 +100,7 @@ function DocumentRoute() {
                 </Container>
             </Flex>
         </Container>
-    );
+    )
 }
 
-export default DocumentRoute;
+export default Document

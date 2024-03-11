@@ -1,15 +1,17 @@
-import {Link} from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
 import {getTransitionTypeString} from '../../util/index'
 import './TransactionsListItem.scss'
 
 
 function TransactionsListItem({ transaction }) {
-    const hash = typeof transaction === 'object' ? transaction.hash : transaction;
+    const hash = typeof transaction === 'object' ? transaction.hash : transaction
     const {timestamp, type} = transaction
 
     return (
         <Link 
-            to={`/transaction/${hash}`}
+            href={`/transaction/${hash}`}
             className={'TransactionsListItem'}
         >
 
@@ -35,4 +37,4 @@ function TransactionsListItem({ transaction }) {
     )
 }
 
-export default TransactionsListItem;
+export default TransactionsListItem

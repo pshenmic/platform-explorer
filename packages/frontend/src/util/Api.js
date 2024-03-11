@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_API_BASE_URL
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 const fetchWrapper = (url, options) => {
     return new Promise((resolve, reject) => {
@@ -40,6 +40,8 @@ const call = async (path, method, body) => {
         if (e === 'RPC_TIMEOUT') {
             throw new Error('Request to Tenderdash RPC is timed out')
         }
+
+        console.log(`${BASE_URL}/${path}`)
 
         console.error(e)
         throw new Error(e)

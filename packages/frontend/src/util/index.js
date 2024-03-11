@@ -1,4 +1,4 @@
-import {StateTransitionEnum} from "../routes/enums/state.transition.type";
+import {StateTransitionEnum} from "../app/enums/state.transition.type";
 
 const getTransitionTypeString = (id) => {
     const [stateTransitionType] = Object.entries(StateTransitionEnum)

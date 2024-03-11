@@ -1,9 +1,11 @@
-import * as Api from '../../util/Api'
-import {Link, useLoaderData} from 'react-router-dom'
+'use client'
+
+import * as Api from '../../../util/Api'
+import Link from 'next/link'
 import {useState, useEffect} from 'react'
-import {getTransitionTypeString} from '../../util'
-import {StateTransitionEnum} from "../enums/state.transition.type"
-import './transaction.scss'
+import {getTransitionTypeString} from '../../../util'
+import {StateTransitionEnum} from "../../enums/state.transition.type"
+import './Transaction.scss'
 
 import { 
     Container,
@@ -12,10 +14,8 @@ import {
 } from '@chakra-ui/react'
 
 
-export async function loader({params}) {
-    const { txHash } = params
-
-    const transaction = await Api.getTransaction(txHash)
+export async function loader(hash) {
+    const transaction = await Api.getTransaction(hash)
 
     return { transaction }
 }
@@ -35,11 +35,11 @@ function TransactionData({data}) {
             <Tbody>
                 <Tr>
                     <Td>Data contract</Td>
-                    <Td><Link to={`/dataContract/${data.dataContractId}`}>{data.dataContractId}</Link></Td>
+                    <Td><Link href={`/dataContract/${data.dataContractId}`}>{data.dataContractId}</Link></Td>
                 </Tr>
                 <Tr>
                     <Td>Owner</Td>
-                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                    <Td><Link href={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
         </>)
@@ -58,11 +58,11 @@ function TransactionData({data}) {
                 <Tbody className='TransactionData__DocumentsBatch' key={'dc' + key}>
                     <Tr>
                         <Td>Data contract</Td>
-                        <Td><Link to={`/dataContract/${transition.dataContractId}`}>{transition.dataContractId}</Link></Td>
+                        <Td><Link href={`/dataContract/${transition.dataContractId}`}>{transition.dataContractId}</Link></Td>
                     </Tr>
                     <Tr>
                         <Td>Document</Td>
-                        <Td><Link to={`/document/${transition.id}`}>{transition.id}</Link></Td>
+                        <Td><Link href={`/document/${transition.id}`}>{transition.id}</Link></Td>
                     </Tr>
                 </Tbody>
             )}
@@ -81,7 +81,7 @@ function TransactionData({data}) {
             <Tbody>
                 <Tr>
                     <Td>Identity</Td>
-                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                    <Td><Link href={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
         </>)
@@ -121,11 +121,11 @@ function TransactionData({data}) {
             <Tbody>
                 <Tr>
                     <Td>Data contract</Td>
-                    <Td><Link to={`/dataContract/${data.dataContractId}`}>{data.dataContractId}</Link></Td>
+                    <Td><Link href={`/dataContract/${data.dataContractId}`}>{data.dataContractId}</Link></Td>
                 </Tr>
                 <Tr>
                     <Td>Owner</Td>
-                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                    <Td><Link href={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
                 <Tr>
                     <Td>Version</Td>
@@ -147,7 +147,7 @@ function TransactionData({data}) {
             <Tbody>
                 <Tr>
                     <Td>Identity</Td>
-                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                    <Td><Link href={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
                 <Tr>
                     <Td>Revision</Td>
@@ -173,7 +173,7 @@ function TransactionData({data}) {
                 </Tr>
                 <Tr>
                     <Td>Identity</Td>
-                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                    <Td><Link href={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
         </>)
@@ -195,21 +195,23 @@ function TransactionData({data}) {
                 </Tr>
                 <Tr>
                     <Td>Sender</Td>
-                    <Td><Link to={`/identity/${data.senderId}`}>{data.senderId}</Link></Td>
+                    <Td><Link href={`/identity/${data.senderId}`}>{data.senderId}</Link></Td>
                 </Tr>
                 <Tr>
                     <Td>Recipient</Td>
-                    <Td><Link to={`/identity/${data.recipientId}`}>{data.recipientId}</Link></Td>
+                    <Td><Link href={`/identity/${data.recipientId}`}>{data.recipientId}</Link></Td>
                 </Tr>
             </Tbody>
         </>)
     }
 }
 
-function TransactionRoute() {
-    const { transaction } = useLoaderData()
-
-    const { hash, blockHeight, index, type, timestamp, data } = transaction
+function Transaction({hash}) {
+    const [transaction, setTransaction] = useState({})
+    const [loading, setLoading] = useState(true)
+    const [decoding, setDecoding] = useState(false)
+    const [decodingError, setDecodingError] = useState(null)
+    const [decodedST, setDecodedST] = useState(null)
 
     const decodeTx = (tx) => {
         if (decodedST || decoding) {
@@ -231,15 +233,27 @@ function TransactionRoute() {
             .finally(() => setDecoding(false))
     }
 
-    const [decoding, setDecoding] = useState(false)
-    const [decodingError, setDecodingError] = useState(null)
-    const [decodedST, setDecodedST] = useState(null)
+    const fetchData = () => {
+        setLoading(true)
 
-    useEffect(() => {
-        decodeTx(data)
-    }, [])
+        try {
+            loader(hash).then((res) => {
 
-    return (
+                setTransaction(res.transaction)
+                decodeTx(res.transaction.data)
+                setLoading(false)
+
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        
+    }
+
+    useEffect(fetchData, [hash])
+
+
+    if (!loading) return (
         <Container 
             maxW='container.lg' 
             p={3}
@@ -260,23 +274,23 @@ function TransactionRoute() {
                     <Tbody>
                         <Tr>
                             <Td>Hash</Td>
-                            <Td>{hash}</Td>
+                            <Td>{transaction.hash}</Td>
                         </Tr>
                         <Tr>
                             <Td>Height</Td>
-                            <Td>{blockHeight}</Td>
+                            <Td>{transaction.blockHeight}</Td>
                         </Tr>
                         <Tr>
                             <Td>Index</Td>
-                            <Td>{index}</Td>
+                            <Td>{transaction.index}</Td>
                         </Tr>
                         <Tr>
                             <Td>Type</Td>
-                            <Td>{getTransitionTypeString(type)}</Td>
+                            <Td>{getTransitionTypeString(transaction.type)}</Td>
                         </Tr>
                         <Tr>
                             <Td>Timestamp</Td>
-                            <Td>{new Date(timestamp).toLocaleString()}</Td>
+                            <Td>{new Date(transaction.timestamp).toLocaleString()}</Td>
                         </Tr>
                     </Tbody>
                 </Table>
@@ -301,4 +315,4 @@ function TransactionRoute() {
     )
 }
 
-export default TransactionRoute
+export default Transaction
