@@ -8,7 +8,9 @@ module.exports = class TransactionsDAO {
 
     getTransactionByHash = async (hash) => {
         const [row] = await this.knex('state_transitions')
-            .select('state_transitions.hash as tx_hash', 'state_transitions.data as data', 'state_transitions.type as type', 'state_transitions.index as index', 'blocks.height as block_height', 'blocks.hash as block_hash', 'blocks.timestamp as timestamp')
+            .select('state_transitions.hash as tx_hash', 'state_transitions.data as data',
+                'state_transitions.type as type', 'state_transitions.index as index', 'blocks.height as block_height',
+                'blocks.hash as block_hash', 'blocks.timestamp as timestamp')
             .where('state_transitions.hash', hash)
             .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
 

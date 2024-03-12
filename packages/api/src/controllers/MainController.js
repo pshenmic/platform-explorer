@@ -34,8 +34,8 @@ class MainController {
             transfersCount: stats?.transfersCount,
             dataContractsCount: stats?.dataContractsCount,
             documentsCount: stats?.documentsCount,
-            network: tdStatus?.network,
-            tenderdashVersion: tdStatus?.tenderdashVersion
+            network: tdStatus?.network ?? null,
+            tenderdashVersion: tdStatus?.tenderdashVersion ?? null
         });
     }
 

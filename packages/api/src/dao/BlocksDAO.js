@@ -21,12 +21,13 @@ module.exports = class BlockDAO {
             .as('blocks')
 
         const averageQuery = this.knex(diffQuery)
-            .select('diff')
+            .select('diff', 'height', 'block_version', 'app_version', 'l1_locked_height')
             .select(this.knex.raw('avg(diff) over () average'))
             .as('average_query')
 
         const final = await this.knex(averageQuery)
             .select('average')
+            .select('height', 'block_version', 'app_version', 'l1_locked_height', 'average')
             .select(this.knex.raw('extract (epoch from average) as average_seconds'))
             .select(this.knex('state_transitions').count('*').as('tx_count'))
             .select(this.knex('transfers').count('*').as('transfers_count'))
@@ -49,14 +50,14 @@ module.exports = class BlockDAO {
 
         return {
             topHeight: height,
-            blockTimeAverage: average_seconds,
-            blockVersion: block_version,
-            appVersion: app_version,
-            l1LockedHeight: l1_locked_height,
-            txCount: tx_count,
-            transfersCount: transfers_count,
-            dataContractsCount: data_contracts_count,
-            documentsCount: documents_count
+            blockTimeAverage: parseFloat(average_seconds),
+            blockVersion: parseInt(block_version),
+            appVersion: parseInt(app_version),
+            l1LockedHeight: parseInt(l1_locked_height),
+            txCount: parseInt(tx_count),
+            transfersCount: parseInt(transfers_count),
+            dataContractsCount: parseInt(data_contracts_count),
+            documentsCount: parseInt(documents_count)
         }
     }
 
