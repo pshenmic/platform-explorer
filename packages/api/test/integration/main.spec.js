@@ -77,8 +77,8 @@ describe('Other routes', () => {
 
         // prepare for get status
 
-        for (let i=1; i<10; i++) {
-            await fixtures.block(knex, {timestamp: new Date(block.timestamp.getTime() + 3000 * i) })
+        for (let i = 1; i < 10; i++) {
+            await fixtures.block(knex, {timestamp: new Date(block.timestamp.getTime() + 3000 * i)})
         }
     })
 

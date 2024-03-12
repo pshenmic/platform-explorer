@@ -12,15 +12,10 @@ const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
 const fixtures = {
     identifier: () => generateIdentifier(),
     block: async (knex, {hash, height, timestamp, block_version, app_version, l1_locked_height} = {}) => {
-        if (!height) {
-            const maxHeight = await knex('blocks').max('height');
-
-            height = parseInt(maxHeight[0].max || 0) + 1
-        }
 
         const row = {
             hash: hash ?? generateHash(),
-            height,
+            height: height ?? 1,
             timestamp: timestamp ?? new Date(),
             block_version: block_version ?? 13,
             app_version: app_version ?? 1,
