@@ -24,10 +24,7 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: test
           POSTGRES_PASSWORD: test
-          POSTGRES_DATABASE: test
-          POSTGRES_HOST: 127.0.0.1
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -48,7 +45,7 @@ jobs:
         run: cd packages/api && npm install
 
       - name: Run integration tests
-        run: cd packages/api && npm run test:integration
+        run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postges POSTGRES_PASS=test POSTGRES_DB=test npm run test:integration
 
   build_api:
     runs-on: ubuntu-latest

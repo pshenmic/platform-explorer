@@ -1,7 +1,3 @@
-const Block = require("../../src/models/Block");
-const BlockHeader = require("../../src/models/BlockHeader");
-const Transaction = require("../../src/models/Transaction");
-const data = Uint8Array.from([1, 2, 3]);
 const {base58} = require('@scure/base')
 const crypto = require('crypto')
 const {StateTransitionEnum} = require("../../src/constants");
