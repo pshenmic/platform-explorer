@@ -12,6 +12,7 @@ describe('DataContracts routes', () => {
     let client
     let knex
 
+    let block
     let identity;
     let dataContracts;
 
@@ -23,7 +24,8 @@ describe('DataContracts routes', () => {
         await fixtures.cleanup(knex)
 
         dataContracts = []
-        identity = await fixtures.identity(knex)
+        block = await fixtures.block(knex)
+        identity = await fixtures.identity(knex, {block_hash: block.hash})
 
         // first 5 system documents
         for (let i = 0; i < 5; i++) {
@@ -47,6 +49,7 @@ describe('DataContracts routes', () => {
 
     after(async () => {
         await server.stop()
+        await knex.destroy()
     })
 
     describe('getDataContracts()', async () => {

@@ -4,12 +4,14 @@ const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require("../utils/fixtures");
 const {getKnex} = require("../../src/utils");
+const {StateTransitionEnum} = require("../../src/constants");
 
 describe('Blocks routes', () => {
     let app
     let client
     let knex
 
+    let block
     let blocks
 
     before(async () => {
@@ -17,16 +19,19 @@ describe('Blocks routes', () => {
         client = supertest(app.server)
 
         knex = getKnex()
+        blocks = []
 
         await fixtures.cleanup(knex)
 
-        blocks = await Promise.all(Array
-            .from({length: 30})
-            .map((_, i) => fixtures.block(knex, {height: i + 1})))
+        for (let i = 1; i < 31; i++) {
+            block = await fixtures.block(knex, {height: i + 1})
+            blocks.push(block)
+        }
     })
 
     after(async () => {
         await server.stop()
+        await knex.destroy()
     })
 
     describe('getBlockByHash()', async () => {

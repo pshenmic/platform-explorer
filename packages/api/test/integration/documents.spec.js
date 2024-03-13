@@ -14,6 +14,7 @@ describe('Documents routes', () => {
 
     let identity
     let dataContract
+    let block
     let documents
 
     before(async () => {
@@ -26,9 +27,8 @@ describe('Documents routes', () => {
 
         documents = []
 
-        identity = await fixtures.identity(knex)
-
-        const block = await fixtures.block(knex, {height: 1})
+        block = await fixtures.block(knex, {height: 1})
+        identity = await fixtures.identity(knex, {block_hash: block.hash})
 
         const dataContractTransaction = await fixtures.transaction(knex, {
             block_hash: block.hash, type: StateTransitionEnum.DATA_CONTRACT_CREATE, owner: identity.identifier

@@ -23,16 +23,17 @@ describe('Transaction routes', () => {
 
         await fixtures.cleanup(knex);
 
-        identity = await fixtures.identity(knex)
+        block = await fixtures.block(knex, {height: 1})
+        identity = await fixtures.identity(knex, {block_hash: block.hash})
 
-        transactions = []
+        transactions = [{transaction: identity.transaction, block}]
 
-        for (let i = 0; i < 30; i++) {
+        for (let i = 1; i < 30; i++) {
             const block = await fixtures.block(knex, {height: i + 1})
 
             const transaction = await fixtures.transaction(knex, {
                 block_hash: block.hash,
-                data: 'mock_base64',
+                data: '{}',
                 type: StateTransitionEnum.DATA_CONTRACT_CREATE,
                 owner: identity.identifier
             })
@@ -57,7 +58,7 @@ describe('Transaction routes', () => {
             const expectedTransaction = {
                 blockHash: transaction.block.hash,
                 blockHeight: transaction.block.height,
-                data: 'mock_base64',
+                data: '{}',
                 hash: transaction.transaction.hash,
                 index: transaction.transaction.index,
                 timestamp: transaction.block.timestamp.toISOString(),
@@ -91,7 +92,7 @@ describe('Transaction routes', () => {
                 .map(transaction => ({
                 blockHash: transaction.block.hash,
                 blockHeight: transaction.block.height,
-                data: 'mock_base64',
+                data: '{}',
                 hash: transaction.transaction.hash,
                 index: transaction.transaction.index,
                 timestamp: transaction.block.timestamp.toISOString(),
@@ -118,7 +119,7 @@ describe('Transaction routes', () => {
                 .map(transaction => ({
                     blockHash: transaction.block.hash,
                     blockHeight: transaction.block.height,
-                    data: 'mock_base64',
+                    data: '{}',
                     hash: transaction.transaction.hash,
                     index: transaction.transaction.index,
                     timestamp: transaction.block.timestamp.toISOString(),
@@ -144,7 +145,7 @@ describe('Transaction routes', () => {
                 .map(transaction => ({
                     blockHash: transaction.block.hash,
                     blockHeight: transaction.block.height,
-                    data: 'mock_base64',
+                    data: '{}',
                     hash: transaction.transaction.hash,
                     index: transaction.transaction.index,
                     timestamp: transaction.block.timestamp.toISOString(),
@@ -171,7 +172,7 @@ describe('Transaction routes', () => {
                 .map(transaction => ({
                     blockHash: transaction.block.hash,
                     blockHeight: transaction.block.height,
-                    data: 'mock_base64',
+                    data: '{}',
                     hash: transaction.transaction.hash,
                     index: transaction.transaction.index,
                     timestamp: transaction.block.timestamp.toISOString(),

@@ -52,7 +52,7 @@ const fixtures = {
 
         return row
     },
-    identity: async (knex, {identifier, block_hash, revision, owner, is_system} = {}) => {
+    identity: async (knex, {identifier, block_hash, state_transition_hash, revision, owner, is_system} = {}) => {
         if (!identifier) {
             identifier = generateIdentifier()
         }
@@ -61,23 +61,27 @@ const fixtures = {
             throw Error("Block hash must be provided")
         }
 
-        const transaction = await fixtures.transaction(knex, {
-            block_hash,
-            owner: identifier,
-            type: StateTransitionEnum.IDENTITY_CREATE
-        })
+        let transaction
+
+        if (!state_transition_hash) {
+            transaction = await fixtures.transaction(knex, {
+                block_hash,
+                owner: identifier,
+                type: StateTransitionEnum.IDENTITY_CREATE
+            })
+        }
 
         const row = {
             identifier: identifier,
             revision: revision ?? 0,
-            state_transition_hash: transaction.hash,
+            state_transition_hash: state_transition_hash ?? transaction.hash,
             owner: owner ?? identifier,
             is_system: is_system ?? false,
         }
 
         const result = await knex('identities').insert(row).returning('id')
 
-        return {...row, txHash: transaction.hash, id: result[0].id, transaction}
+        return {...row, txHash: state_transition_hash ?? transaction.hash, id: result[0].id, transaction}
     },
     dataContract: async (knex, {identifier, schema, version, state_transition_hash, owner, is_system} = {}) => {
         if (!identifier) {

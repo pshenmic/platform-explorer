@@ -41,7 +41,8 @@ describe('Other routes', () => {
         })
         identity = await fixtures.identity(knex, {
             identifier: identityIdentifier,
-            state_transition_hash: identityTransaction.hash
+            state_transition_hash: identityTransaction.hash,
+            block_hash: block.hash
         })
 
         dataContractTransaction = await fixtures.transaction(knex, {
@@ -69,13 +70,12 @@ describe('Other routes', () => {
         // prepare for get status
 
         for (let i = 1; i < 10; i++) {
-            await fixtures.block(knex, {timestamp: new Date(block.timestamp.getTime() + 3000 * i)})
+            await fixtures.block(knex, {height: i+1, timestamp: new Date(block.timestamp.getTime() + 3000 * i)})
         }
     })
 
     after(async () => {
         await server.stop()
-        await fixtures.cleanup(knex)
         await knex.destroy()
     })
 
@@ -146,7 +146,7 @@ describe('Other routes', () => {
             const expectedDataContract = {
                 identifier: dataContract.identifier,
                 owner: identity.identifier.trim(),
-                schema: dataContract.schema,
+                schema: JSON.stringify(dataContract.schema),
                 version: 0,
                 txHash: dataContractTransaction.hash,
                 timestamp: block.timestamp.toISOString(),
