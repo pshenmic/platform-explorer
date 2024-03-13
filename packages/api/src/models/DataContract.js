@@ -9,7 +9,7 @@ module.exports = class DataContract {
 
     constructor(identifier, owner, schema, version, txHash, timestamp, isSystem) {
         this.identifier = identifier ? identifier.trim() : null;
-        this.owner = owner ?? null;
+        this.owner = owner ? owner.trim() : null;
         this.schema = schema ?? null;
         this.version = version ?? null;
         this.txHash = txHash ?? null;

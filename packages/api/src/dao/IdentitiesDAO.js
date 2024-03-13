@@ -44,8 +44,8 @@ module.exports = class IdentitiesDAO {
             .as('transfer_alias')
 
         const rows = await this.knex.with('with_alias', lastRevisionIdentities)
-            .select('identifier', 'with_alias.owner as owner','revision', 'transfer_id', 'sender',
-                'tx_hash', 'is_system','blocks.timestamp as timestamp', 'recipient', 'amount')
+            .select('identifier', 'with_alias.owner as owner', 'revision', 'transfer_id', 'sender',
+                'tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'recipient', 'amount')
             .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
             .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
             .select(this.knex('transfers').sum('amount').where('recipient', identifier).as('total_received'))
@@ -88,14 +88,29 @@ module.exports = class IdentitiesDAO {
         const rows = await this.knex(filteredIdentities)
             .select('identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system')
             .select(this.knex(filteredIdentities).count('*').as('total_count'))
+            .select(this.knex('state_transitions').count('*').where('owner', '=', 'identifier').as('total_txs'))
+            .select(this.knex('documents').count('*').where('owner', '=', 'identifier').as('total_documents'))
+            .select(this.knex('data_contracts').count('*').where('owner', '=', 'identifier').as('total_data_contracts'))
+            .select(this.knex('transfers').count('*').where('sender', '=', 'identifier').orWhere('recipient', '=', 'identifier').as('total_transfers'))
             .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
             .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
             .whereBetween('row_number', [fromRank, toRank])
             .orderBy('identity_id', order)
 
+        const [row] = rows
+
+        const balance = Number(row.total_received ?? 0) - Number(row.total_sent ?? 0)
+
         const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0;
 
-        return new PaginatedResultSet(rows.map(row => Identity.fromRow({...row, owner: row.identity_owner})), page, limit, totalCount)
+        return new PaginatedResultSet(rows.map(row => Identity.fromRow({
+            ...row,
+            owner: row.identity_owner,
+            total_data_contracts: parseInt(row.total_data_contracts),
+            total_documents: parseInt(row.total_documents),
+            total_txs: parseInt(row.total_txs),
+            balance
+        })), page, limit, totalCount)
     }
 
     getDataContractsByIdentity = async (identifier, page, limit, order) => {
@@ -119,8 +134,8 @@ module.exports = class IdentitiesDAO {
 
         const rows = await this.knex(filteredDataContracts)
             .select('identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp')
-            .join('state_transitions', 'state_transitions.hash', 'tx_hash')
-            .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
+            .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
+            .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .whereBetween('row_number', [fromRank, toRank])
             .orderBy('blocks.height ', order)
 

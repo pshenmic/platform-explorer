@@ -12,7 +12,7 @@ module.exports = class Identity {
 
     constructor(identifier, owner, revision, balance, timestamp, totalTxs, totalDataContracts, totalDocuments, totalTransfers, txHash, isSystem) {
         this.identifier = identifier ? identifier.trim() : null;
-        this.owner = owner ?? null;
+        this.owner = owner ? owner.trim() : null;
         this.revision = revision ?? null;
         this.balance = balance ?? null;
         this.timestamp = timestamp ?? null;

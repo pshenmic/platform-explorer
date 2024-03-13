@@ -13,6 +13,6 @@ module.exports = class Transfer {
     }
 
     static fromRow({amount, sender, recipient, timestamp}) {
-        return new Transfer(amount, sender, recipient, timestamp)
+        return new Transfer(parseInt(amount), sender, recipient, timestamp)
     }
 }
