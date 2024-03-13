@@ -46,7 +46,10 @@ jobs:
       - name: NPM install
         run: cd packages/api && npm install
 
-      - name: Migrate DB c
+      - name: Run unit tests
+        run: cd packages/api && npm run test:unit
+
+      - name: Migrate DB
         run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run db:migrate
 
       - name: Run integration tests

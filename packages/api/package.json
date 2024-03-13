@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "test": "node --test",
+    "test:unit": "node --test",
     "test:integration": "node --test --test-concurrency=1 test/integration/*.js",
     "db:migrate": "node ./test/utils/migrate.js ../indexer/migrations"
   },
