@@ -18,6 +18,6 @@ module.exports = class DataContract {
     }
 
     static fromRow({identifier, owner, schema, version, tx_hash, timestamp, is_system}) {
-        return new DataContract(identifier, owner, JSON.stringify(schema), version, tx_hash, timestamp, is_system)
+        return new DataContract(identifier, owner, schema ? JSON.stringify(schema) : null, version, tx_hash, timestamp, is_system)
     }
 }

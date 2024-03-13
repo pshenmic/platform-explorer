@@ -20,8 +20,8 @@ module.exports = class DocumentsDAO {
         const rows = await this.knex(subquery)
             .select('identifier', 'document_owner', 'data_contract_identifier', 'data_contract_data',
                 'revision', 'deleted', 'rank', 'tx_hash', 'is_system', 'blocks.timestamp as timestamp')
-            .join('state_transitions', 'state_transitions.hash', 'tx_hash')
-            .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
+            .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
+            .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .limit(1);
 
         const [row] = rows
@@ -57,15 +57,15 @@ module.exports = class DocumentsDAO {
             .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
             .from('with_alias')
             .where('rank', '1')
-            .orderBy('id', order)
             .as('documents')
 
         const rows = await this.knex(filteredDocuments)
-            .select('identifier', 'document_owner', 'row_number', 'revision', 'data_contract_identifier',
+            .select('documents.id as id', 'identifier', 'document_owner', 'row_number', 'revision', 'data_contract_identifier',
                 'tx_hash', 'deleted', 'document_data', 'total_count', 'is_system', 'blocks.timestamp as timestamp')
             .whereBetween('row_number', [fromRank, toRank])
-            .join('state_transitions', 'tx_hash', 'state_transitions.hash')
-            .join('blocks', 'blocks.hash', 'state_transitions.block_hash')
+            .leftJoin('state_transitions', 'tx_hash', 'state_transitions.hash')
+            .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+            .orderBy('id', order)
 
         const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0;
 

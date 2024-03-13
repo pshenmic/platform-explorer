@@ -105,10 +105,6 @@ const fixtures = {
             identifier = generateIdentifier()
         }
 
-        if (!state_transition_hash) {
-            throw new Error("state_transition_hash must be provided for document fixture")
-        }
-
         if (!owner) {
             throw new Error("owner must be provided for document fixture")
         }
@@ -129,9 +125,9 @@ const fixtures = {
         }
 
 
-        await knex('documents').insert(row).returning('id')
+        const result = await knex('documents').insert(row).returning('id')
 
-        return row
+        return {...row, id: result[0].id}
     },
     cleanup: async (knex) => {
         await knex.raw(`DELETE FROM identities`)

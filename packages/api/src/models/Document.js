@@ -22,6 +22,6 @@ module.exports = class Document {
     }
 
     static fromRow({identifier, owner, data_contract_identifier, revision, tx_hash, deleted, data, timestamp, is_system}) {
-        return new Document(identifier, owner, data_contract_identifier, revision, tx_hash, deleted, data, timestamp, is_system)
+        return new Document(identifier, owner, data_contract_identifier, revision, tx_hash, deleted, data ? JSON.stringify(data) : null, timestamp, is_system)
     }
 }

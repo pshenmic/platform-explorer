@@ -25,7 +25,7 @@ describe('DataContracts routes', () => {
         dataContracts = []
         identity = await fixtures.identity(knex)
 
-
+        // first 5 system documents
         for (let i = 0; i < 5; i++) {
             const dataContract = await fixtures.dataContract(knex, {
                 state_transition_hash: null,
