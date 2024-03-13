@@ -45,7 +45,7 @@ jobs:
           node-version: '20.x'
 
       - name: Run integration tests
-        run: npm run test:integration
+        run: cd packages/api && npm run test:integration
 
   build_api:
     runs-on: ubuntu-latest
