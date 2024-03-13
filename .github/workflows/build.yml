@@ -46,11 +46,11 @@ jobs:
       - name: NPM install
         run: cd packages/api && npm install
 
-      - name: Migrate DB schema
-        run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=test npm run db:migrate
+      - name: Migrate DB c
+        run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run db:migrate
 
       - name: Run integration tests
-        run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=test npm run test:integration
+        run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run test:integration
 
   build_api:
     runs-on: ubuntu-latest
