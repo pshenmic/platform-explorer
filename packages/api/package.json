@@ -7,7 +7,7 @@
     "start": "node index.js",
     "test": "node --test",
     "test:integration": "node --test --test-concurrency=1 test/integration/*.js",
-    "test:load_dump": "node ./test/utils/execute_sql.js ./test/integration/dump/dash_testnet-38_05_03_2024.sql"
+    "db:migrate": "node ./test/utils/migrate.js ../indexer/migrations"
   },
   "dependencies": {
     "@fastify/cors": "^8.3.0",
