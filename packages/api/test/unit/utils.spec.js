@@ -1,6 +1,6 @@
 const {describe, it, before} = require('node:test');
 const assert = require('node:assert').strict;
-const utils = require('../src/utils')
+const utils = require('../../src/utils')
 const createIdentityMock = require('./mocks/create_identity.json')
 const dataContractCreateMock = require('./mocks/data_contract_create.json')
 const documentsBatchMock = require('./mocks/documents_batch.json')
