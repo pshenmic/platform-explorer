@@ -10,6 +10,7 @@ const BlocksController = require("./controllers/BlocksController");
 const DocumentsController = require("./controllers/DocumentsController");
 const IdentitiesController = require("./controllers/IdentitiesController");
 const DataContractsController = require("./controllers/DataContractsController");
+const {getKnex} = require("./utils");
 
 function errorHandler(err, req, reply) {
     if (err instanceof ServiceNotAvailableError) {
@@ -44,17 +45,7 @@ module.exports = {
             // put your options here
         })
 
-        knex = require('knex')({
-            client: 'pg',
-            connection: {
-                host: process.env["POSTGRES_HOST"],
-                port: process.env["POSTGRES_PORT"],
-                user: process.env["POSTGRES_USER"],
-                database: process.env["POSTGRES_DB"],
-                password: process.env["POSTGRES_PASS"],
-                ssl: process.env["POSTGRES_SSL"] ? { rejectUnauthorized: false } : false,
-            }
-        });
+        knex = getKnex()
 
         await knex.raw('select 1+1');
 

@@ -3,6 +3,7 @@ const assert = require('node:assert').strict;
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require("../utils/fixtures");
+const {getKnex} = require("../../src/utils");
 
 describe('Blocks routes', () => {
     let app
@@ -15,17 +16,7 @@ describe('Blocks routes', () => {
         app = await server.start()
         client = supertest(app.server)
 
-        knex = require('knex')({
-            client: 'pg',
-            connection: {
-                host: process.env["POSTGRES_HOST"],
-                port: process.env["POSTGRES_PORT"],
-                user: process.env["POSTGRES_USER"],
-                database: process.env["POSTGRES_DB"],
-                password: process.env["POSTGRES_PASS"],
-                ssl: process.env["POSTGRES_SSL"] ? {rejectUnauthorized: false} : false,
-            }
-        });
+        knex = getKnex()
 
         await fixtures.cleanup(knex)
 

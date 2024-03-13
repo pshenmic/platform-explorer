@@ -74,10 +74,6 @@ const fixtures = {
             identifier = generateIdentifier()
         }
 
-        if (!state_transition_hash) {
-            throw new Error("state_transition_hash must be provided for dataContract fixture")
-        }
-
         if (!owner) {
             throw new Error("owner must be provided for dataContract fixture")
         }
@@ -88,7 +84,7 @@ const fixtures = {
             state_transition_hash,
             schema: schema ?? {},
             version: version ?? 0,
-            is_system: is_system ?? false
+            is_system: is_system === true
         }
 
         const result = await knex('data_contracts').insert(row).returning('id')
