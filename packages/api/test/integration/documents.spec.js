@@ -60,6 +60,7 @@ describe('Documents routes', () => {
     })
 
     after(async () => {
+        await knex.destroy()
         await server.stop()
     })
 
