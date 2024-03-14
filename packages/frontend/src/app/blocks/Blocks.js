@@ -23,13 +23,6 @@ const paginateConfig = {
 }
 
 
-export async function loader() {
-    const paginatedBlocks = await Api.getBlocks(paginateConfig.defaultPage, paginateConfig.pageSize.default, 'desc')
-    const {resultSet, pagination} = paginatedBlocks
-
-    return {blocks: resultSet, total: pagination.total};
-}
-
 function Blocks() {
     const [loading, setLoading] = useState(true)
     const [blocks, setBlocks] = useState([])
@@ -42,11 +35,15 @@ function Blocks() {
     
     const fetchData = () => {
         setLoading(true)
-        
-        loader().then((res) => {
 
-            setBlocks(res.blocks)
-            setTotal(res.total)
+        Api.getBlocks(
+            paginateConfig.defaultPage, 
+            paginateConfig.pageSize.default, 
+            'desc'
+        ).then((res) => {
+
+            setBlocks(res.resultSet)
+            setTotal(res.pagination.total)
 
         }).catch((error)=>{
 
