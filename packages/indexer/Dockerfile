@@ -3,7 +3,7 @@ FROM rust:1.76-bookworm
 RUN apt-get update && apt-get install -y cmake clang
 
 WORKDIR /
-RUN git clone --depth 1 --branch fix/asset-unlock-tx-size https://github.com/dashevo/platform
+RUN git clone --depth 1 https://github.com/dashevo/platform
 
 WORKDIR /app
 COPY Cargo.lock /app
