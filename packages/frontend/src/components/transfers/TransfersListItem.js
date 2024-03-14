@@ -1,4 +1,3 @@
-import {Link} from 'react-router-dom'
 import { Box, Tag } from '@chakra-ui/react'
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons'
 import './TransfersListItem.scss'

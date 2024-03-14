@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from "../../../util/Api"
-import './document.scss'
+import './Document.scss'
 
 import { 
     Box, 
