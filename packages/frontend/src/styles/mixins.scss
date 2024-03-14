@@ -16,4 +16,8 @@
         text-decoration: none;
         cursor: pointer;
     }
+
+    &:last-child {
+        border-bottom: none;
+    }
 }

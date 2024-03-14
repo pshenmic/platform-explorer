@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import DataContractsList from '../../components/dataContracts/DataContractsList'
+import ReactPaginate from 'react-paginate'
 
 import { 
     Container,
@@ -11,15 +12,21 @@ import {
 
 
 function DataContractsLayout() {
-    const [dataContracts, setDataContracts] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [dataContracts, setDataContracts] = useState(null)
+    const [total, setTotal] = useState(1)
+    const pageSize = 25
+    const [currentPage, setCurrentPage] = useState(0)
+    const pageCount = Math.ceil(total / pageSize)
+    
 
     const fetchData = () => {
         setLoading(true)
 
-        Api.getDataContracts(1, 30).then((res) => {
+        Api.getDataContracts(1, pageSize).then((res) => {
 
             setDataContracts(res.resultSet)
+            setTotal(res.pagination.total)
 
         }).catch((error) => {
 
@@ -33,6 +40,16 @@ function DataContractsLayout() {
     }
 
     useEffect(fetchData, [])
+
+    
+    const handlePageClick = async ({selected}) => {
+
+        const {resultSet} = await Api.getDataContracts(selected+1, pageSize, 'desc')
+        setCurrentPage(selected)
+        setDataContracts(resultSet)
+
+    }
+
 
     if (!loading) return (
         <div className={'container'}>
@@ -49,6 +66,32 @@ function DataContractsLayout() {
                     <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Data contracts</Heading>
 
                     <DataContractsList dataContracts={dataContracts} size='l'/>
+
+                    {pageCount > 1 && 
+                        <div className={'ListNavigation'}>
+                            <ReactPaginate 
+                                breakLabel="..."
+                                nextLabel=">"
+                                onPageChange={handlePageClick}
+                                pageRangeDisplayed={2}
+                                marginPagesDisplayed={1}
+                                pageCount={pageCount}
+                                previousLabel="<"
+                                pageClassName="page-item"
+                                pageLinkClassName="page-link"
+                                previousClassName="page-item page-item--previous"
+                                previousLinkClassName="page-link"
+                                nextClassName="page-item page-item--next"
+                                nextLinkClassName="page-link"
+                                breakClassName="page-item  page-item--break-link"
+                                containerClassName="pagination"
+                                activeClassName="active"
+                                renderOnZeroPageCount={true}
+                                forcePage={currentPage} 
+                            />
+                        </div>
+                    }
+
 
                 </Container>
             }
