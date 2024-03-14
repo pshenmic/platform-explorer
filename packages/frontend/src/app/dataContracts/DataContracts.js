@@ -17,16 +17,19 @@ function DataContractsLayout() {
     const fetchData = () => {
         setLoading(true)
 
-        try {
-            Api.getDataContracts(1, 30).then((res) => {
+        Api.getDataContracts(1, 30).then((res) => {
 
-                setDataContracts(res.resultSet)
-                setLoading(false)
+            setDataContracts(res.resultSet)
 
-            })
-        } catch(error) {
+        }).catch((error) => {
+
             console.log(error)
-        }
+
+        }).finally(() => {
+
+            setLoading(false)
+            
+        })
     }
 
     useEffect(fetchData, [])

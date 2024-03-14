@@ -48,21 +48,23 @@ function Identity({identifier}) {
     const fetchData = () => {
         setLoading(true)
 
-        try {
-            loader(identifier).then((res) => {
-                
-                setIdentity(res.identity)
-                setDataContracts(res.dataContracts)
-                setDocuments(res.documents)
-                setTransactions(res.transactions)
-                setTransfers(res.transfers)
-                setLoading(false)
+        loader(identifier).then((res) => {
+            
+            setIdentity(res.identity)
+            setDataContracts(res.dataContracts)
+            setDocuments(res.documents)
+            setTransactions(res.transactions)
+            setTransfers(res.transfers)
 
-            })
-        } catch (error) {
+        }).catch((error) => {
+
             console.log(error)
-        }
 
+        }).finally(() => {
+
+            setLoading(false)
+            
+        })
     }
 
     useEffect(fetchData, [identifier])

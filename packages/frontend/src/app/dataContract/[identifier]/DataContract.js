@@ -47,19 +47,21 @@ function DataContract({identifier}) {
     const fetchData = () => {
         setLoading(true)
 
-        try {
-            loader(identifier).then((res) => {
+        loader(identifier).then((res) => {
 
-                setDataContract(res.dataContract)
-                setDocuments(res.documents.resultSet)
-                setPageCount(Math.ceil(res.documents.pagination.total / pagintationConfig.itemsOnPage.default))
-                setLoading(false)
+            setDataContract(res.dataContract)
+            setDocuments(res.documents.resultSet)
+            setPageCount(Math.ceil(res.documents.pagination.total / pagintationConfig.itemsOnPage.default))
 
-            })
-        } catch (error) {
+        }).catch((error) => {
+
             console.log(error)
-        }
 
+        }).finally(() => {
+
+            setLoading(false)
+            
+        })
     }
 
     useEffect(fetchData, [identifier])

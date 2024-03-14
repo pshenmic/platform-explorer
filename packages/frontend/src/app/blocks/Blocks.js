@@ -42,18 +42,21 @@ function Blocks() {
     
     const fetchData = () => {
         setLoading(true)
-        try {
-            loader().then((res) => {
-
-                setBlocks(res.blocks)
-                setTotal(res.total)
-                setLoading(false)
-
-            })
-        } catch (error) {
-            console.log(error)
-        }
         
+        loader().then((res) => {
+
+            setBlocks(res.blocks)
+            setTotal(res.total)
+
+        }).catch((error)=>{
+
+            console.log(error)
+
+        }).finally(() => {
+
+            setLoading(false)
+            
+        }) 
     }
 
     useEffect(fetchData, [])

@@ -18,17 +18,19 @@ function Identities() {
     const fetchData = () => {
         setLoading(true)
 
-        try {
-            Api.getIdentities().then((identities) => {
+        Api.getIdentities().then((identities) => {
 
-                setIdentities(identities.resultSet)
-                setLoading(false)
+            setIdentities(identities.resultSet)
 
-            })
-        } catch(error) {
+        }).catch((error) => {
+
             console.log(error)
-        }
 
+        }).finally(() => {
+
+            setLoading(false)
+            
+        })
     }
 
     useEffect(fetchData, [])

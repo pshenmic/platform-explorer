@@ -34,18 +34,20 @@ function Home() {
     const fetchData = () => {
         setLoading(true)
 
-        try {
-            loader().then((res) => {
+        loader().then((res) => {
 
-                setStatus(res.status)
-                setTransactions(res.transactions)
-                setLoading(false)
+            setStatus(res.status)
+            setTransactions(res.transactions)
 
-            })
-        } catch(error) {
+        }).catch((error) => {
+
             console.log(error)
-        }
-        
+            
+        }).finally(() => {
+
+            setLoading(false)
+            
+        })
     }
 
     useEffect(fetchData, [])

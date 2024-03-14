@@ -19,17 +19,19 @@ function Block({ hash }) {
     const fetchData = () => {
         setLoading(true)
 
-        try {
-            Api.getBlockByHash(hash).then((res) => {
+        Api.getBlockByHash(hash).then((res) => {
 
-                setBlock(res)
-                setLoading(false)
+            setBlock(res)
 
-            })
-        } catch (error) {
+        }).catch((error)=>{
+
             console.log(error)
-        }
 
+        }).finally(() => {
+
+            setLoading(false)
+            
+        })
     }
 
     useEffect(fetchData, [hash])

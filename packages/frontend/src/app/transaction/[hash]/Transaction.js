@@ -236,18 +236,20 @@ function Transaction({hash}) {
     const fetchData = () => {
         setLoading(true)
 
-        try {
-            loader(hash).then((res) => {
+        loader(hash).then((res) => {
 
-                setTransaction(res.transaction)
-                decodeTx(res.transaction.data)
-                setLoading(false)
+            setTransaction(res.transaction)
+            decodeTx(res.transaction.data)
 
-            })
-        } catch (error) {
+        }).catch((error) => {
+
             console.log(error)
-        }
-        
+
+        }).finally(() => {
+
+            setLoading(false)
+
+        })
     }
 
     useEffect(fetchData, [hash])
