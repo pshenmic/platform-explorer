@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import ReactPaginate from 'react-paginate'
+import Pagination from '../../components/pagination'
 import GoToHeightForm from '../../components/goToHeightForm/GoToHeightForm'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import BlocksList from '../../components/blocks/BlocksList'
@@ -120,24 +120,9 @@ function Blocks() {
                         }
                     />
 
-                    <ReactPaginate 
-                        breakLabel="..."
-                        nextLabel=">"
+                    <Pagination 
                         onPageChange={handlePageClick}
-                        pageRangeDisplayed={2}
-                        marginPagesDisplayed={1}
                         pageCount={pageCount}
-                        previousLabel="<"
-                        pageClassName="page-item"
-                        pageLinkClassName="page-link"
-                        previousClassName="page-item page-item--previous"
-                        previousLinkClassName="page-link"
-                        nextClassName="page-item page-item--next"
-                        nextLinkClassName="page-link"
-                        breakClassName="page-item  page-item--break-link"
-                        containerClassName="pagination"
-                        activeClassName="active"
-                        renderOnZeroPageCount={true}
                         forcePage={currentPage} 
                     />
                 

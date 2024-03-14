@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import * as Api from '../../../util/Api'
-import ReactPaginate from 'react-paginate'
+import Pagination from '../../../components/pagination'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import './DataContract.scss'
 
@@ -41,8 +41,12 @@ export async function loader(identifier) {
 function DataContract({identifier}) {
     const [dataContract, setDataContract] = useState({})
     const [documents, setDocuments] = useState([])
-    const [pageCount, setPageCount] = useState(0)
+    const pageSize = pagintationConfig.itemsOnPage.default
+    const [total, setTotal] = useState(1)
+    const [currentPage, setCurrentPage] = useState(0)
+    const pageCount = Math.ceil(total / pageSize)
     const [loading, setLoading] = useState(true)
+
 
     const fetchData = () => {
         setLoading(true)
@@ -51,7 +55,7 @@ function DataContract({identifier}) {
 
             setDataContract(res.dataContract)
             setDocuments(res.documents.resultSet)
-            setPageCount(Math.ceil(res.documents.pagination.total / pagintationConfig.itemsOnPage.default))
+            setTotal(res.documents.pagination.total)
 
         }).catch((error) => {
 
@@ -67,7 +71,7 @@ function DataContract({identifier}) {
     useEffect(fetchData, [identifier])
 
 
-    const handlePageClick = async ({selected}) => {
+    const handlePageClick = ({selected}) => {
 
         Api.getDocumentsByDataContract(dataContract.identifier,
                                        selected  + 1, 
@@ -75,6 +79,8 @@ function DataContract({identifier}) {
             .then((res) => {
                 setDocuments(res.resultSet)
             })
+
+            setCurrentPage(selected)
             
     }
 
@@ -144,25 +150,14 @@ function DataContract({identifier}) {
                                         columnsCount={2}
                                     />
                                 </Box>
-                                <ReactPaginate
-                                    breakLabel="..."
-                                    nextLabel=">"
-                                    onPageChange={handlePageClick}
-                                    pageRangeDisplayed={2}
-                                    marginPagesDisplayed={1}
-                                    pageCount={pageCount}
-                                    previousLabel="<"
-                                    pageClassName="page-item"
-                                    pageLinkClassName="page-link"
-                                    previousClassName="page-item page-item--previous"
-                                    previousLinkClassName="page-link"
-                                    nextClassName="page-item page-item--next"
-                                    nextLinkClassName="page-link"
-                                    breakClassName="page-item  page-item--break-link"
-                                    containerClassName="pagination"
-                                    activeClassName="active"
-                                    renderOnZeroPageCount={false}
-                                />
+
+                                {pageCount > 1 && 
+                                    <Pagination
+                                        onPageChange={handlePageClick}
+                                        pageCount={pageCount}
+                                        forcePage={currentPage}
+                                    />
+                                }
                             </Box>
                         </TabPanel>
 

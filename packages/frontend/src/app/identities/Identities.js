@@ -3,7 +3,7 @@
 import {useEffect, useState} from 'react'
 import * as Api from '../../util/Api'
 import IdentitiesList from '../../components/identities/IdentitiesList'
-import ReactPaginate from 'react-paginate'
+import Pagination from '../../components/pagination'
 
 import { 
     Container,
@@ -46,7 +46,7 @@ function Identities() {
 
         const {resultSet} = await Api.getDataContracts(selected+1, pageSize, 'desc')
         setCurrentPage(selected)
-        setDataContracts(resultSet)
+        setIdentities(resultSet)
 
     }
 
@@ -68,24 +68,9 @@ function Identities() {
 
                     {pageCount > 1 && 
                         <div className={'ListNavigation'}>
-                            <ReactPaginate 
-                                breakLabel="..."
-                                nextLabel=">"
+                            <Pagination 
                                 onPageChange={handlePageClick}
-                                pageRangeDisplayed={2}
-                                marginPagesDisplayed={1}
                                 pageCount={pageCount}
-                                previousLabel="<"
-                                pageClassName="page-item"
-                                pageLinkClassName="page-link"
-                                previousClassName="page-item page-item--previous"
-                                previousLinkClassName="page-link"
-                                nextClassName="page-item page-item--next"
-                                nextLinkClassName="page-link"
-                                breakClassName="page-item  page-item--break-link"
-                                containerClassName="pagination"
-                                activeClassName="active"
-                                renderOnZeroPageCount={true}
                                 forcePage={currentPage} 
                             />
                         </div>
