@@ -41,8 +41,6 @@ const call = async (path, method, body) => {
             throw new Error('Request to Tenderdash RPC is timed out')
         }
 
-        console.log(`${BASE_URL}/${path}`)
-
         console.error(e)
         throw new Error(e)
     }

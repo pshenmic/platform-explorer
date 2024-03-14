@@ -44,6 +44,4 @@ export const theme = extendTheme( {
     }
 })
 
-  // localStorage.setItem('chakra-ui-color-mode', 'dark')
-
 export default theme
