@@ -1,12 +1,13 @@
 module.exports = class Transaction {
     hash
     index
+    blockHash
     blockHeight
     type
     data
     timestamp
 
-    constructor(hash, index, blockHeight, blockHash, type, data, timestamp) {
+    constructor(hash, index, blockHash, blockHeight, type, data, timestamp) {
         this.hash = hash ?? null;
         this.index = index ?? null;
         this.blockHash = blockHash ?? null;
@@ -16,7 +17,7 @@ module.exports = class Transaction {
         this.timestamp = timestamp ?? null;
     }
 
-    static fromRow({tx_hash, index, block_height, block_hash, type, data, timestamp}) {
-        return new Transaction(tx_hash, index, block_height, block_hash, type, data, timestamp)
+    static fromRow({tx_hash, index, block_hash, block_height, type, data, timestamp}) {
+        return new Transaction(tx_hash, index, block_hash, block_height, type, data, timestamp)
     }
 }

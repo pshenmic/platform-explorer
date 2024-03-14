@@ -5,15 +5,21 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "test": "node --test"
+    "test:unit": "node --test test/unit/*.spec.js",
+    "test:integration": "node --test --test-concurrency=1 test/integration/*.spec.js",
+    "db:migrate": "node ./test/utils/migrate.js ../indexer/migrations"
   },
   "dependencies": {
     "@fastify/cors": "^8.3.0",
-    "dash": "4.0.0-dev.5",
+    "@scure/base": "^1.1.5",
+    "dash": "4.0.0-dev.7",
     "dotenv": "^16.3.1",
     "fastify": "^4.21.0",
     "knex": "^2.5.1",
     "node-fetch": "^2.6.11",
     "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "supertest": "^6.3.4"
   }
 }

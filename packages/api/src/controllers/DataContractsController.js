@@ -6,18 +6,6 @@ class DataContractsController {
         this.dataContractsDAO = new DataContractsDAO(knex)
     }
 
-    getDataContracts = async (request, response) => {
-        const {page = 1, limit = 10, order = 'asc'} = request.query
-
-        if (order !== 'asc' && order !== 'desc') {
-            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
-        }
-
-        const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page), Number(limit), order);
-
-        response.send(dataContracts)
-    }
-
     getDataContractByIdentifier = async (request, response) => {
         const {identifier} = request.params
 
@@ -28,6 +16,18 @@ class DataContractsController {
         }
 
         response.send(dataContract);
+    }
+
+    getDataContracts = async (request, response) => {
+        const {page = 1, limit = 10, order = 'asc'} = request.query
+
+        if (order !== 'asc' && order !== 'desc') {
+            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+        }
+
+        const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page), Number(limit), order);
+
+        response.send(dataContracts)
     }
 }
 

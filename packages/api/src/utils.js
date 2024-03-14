@@ -1,15 +1,19 @@
 const crypto = require('crypto')
+const {StateTransitionEnum} = require("./constants");
 
-const StateTransitionEnum = {
-    DATA_CONTRACT_CREATE: 0,
-    DOCUMENTS_BATCH: 1,
-    IDENTITY_CREATE: 2,
-    IDENTITY_TOP_UP: 3,
-    DATA_CONTRACT_UPDATE: 4,
-    IDENTITY_UPDATE: 5,
-    IDENTITY_CREDIT_WITHDRAWAL:6,
-    IDENTITY_CREDIT_TRANSFER: 7
-};
+const getKnex = () => {
+    return require('knex')({
+        client: 'pg',
+        connection: {
+            host: process.env["POSTGRES_HOST"],
+            port: process.env["POSTGRES_PORT"],
+            user: process.env["POSTGRES_USER"],
+            database: process.env["POSTGRES_DB"],
+            password: process.env["POSTGRES_PASS"],
+            ssl: process.env["POSTGRES_SSL"] ? {rejectUnauthorized: false} : false,
+        }
+    });
+}
 
 const hash = (data) => {
     return crypto.createHash('sha1').update(data).digest('hex');
@@ -91,4 +95,4 @@ const decodeStateTransition = async (client, base64) => {
     return decoded;
 }
 
-module.exports = {hash, decodeStateTransition}
+module.exports = {hash, decodeStateTransition, getKnex}

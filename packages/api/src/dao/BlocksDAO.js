@@ -6,41 +6,33 @@ module.exports = class BlockDAO {
         this.knex = knex;
     }
 
-    getMaxHeight = async () => {
-        const [result] = await this.knex('blocks').max('height')
-
-        const {max} = result
-
-        return max
-    }
-
     getStats = async () => {
         const blocksQuery = this.knex('blocks')
             .select('height', 'timestamp', 'block_version', 'app_version', 'l1_locked_height')
             .select(this.knex.raw('LAG(timestamp, 1) over (order by blocks.height asc) prev_timestamp'))
+            .select(this.knex('blocks').max('height').as('max_height'))
             .orderBy('height', 'desc')
-            .limit(10)
 
         const diffQuery = this.knex.with('with_alias', blocksQuery)
-            .select('height', 'timestamp', 'prev_timestamp', 'block_version', 'app_version', 'l1_locked_height')
+            .select('max_height', 'height', 'timestamp', 'prev_timestamp', 'block_version', 'app_version', 'l1_locked_height')
             .select(this.knex.raw('timestamp - prev_timestamp as diff'))
             .from('with_alias')
+            .where(this.knex.raw('height > (max_height - 100)'))
             .as('blocks')
 
         const averageQuery = this.knex(diffQuery)
-            .select('height', 'timestamp', 'prev_timestamp', 'diff', 'block_version', 'app_version', 'l1_locked_height')
+            .select('diff', 'height', 'block_version', 'app_version', 'l1_locked_height')
             .select(this.knex.raw('avg(diff) over () average'))
-            .limit(1)
-            .as('asdasd')
+            .as('average_query')
 
         const final = await this.knex(averageQuery)
-            .select('height', 'timestamp', 'prev_timestamp', 'diff', 'block_version', 'app_version', 'l1_locked_height', 'average')
+            .select('average')
+            .select('height', 'block_version', 'app_version', 'l1_locked_height', 'average')
             .select(this.knex.raw('extract (epoch from average) as average_seconds'))
             .select(this.knex('state_transitions').count('*').as('tx_count'))
             .select(this.knex('transfers').count('*').as('transfers_count'))
             .select(this.knex('data_contracts').count('*').as('data_contracts_count'))
             .select(this.knex('documents').count('*').as('documents_count'))
-            .limit(1)
 
         const [result] = final
 
@@ -58,14 +50,14 @@ module.exports = class BlockDAO {
 
         return {
             topHeight: height,
-            blockTimeAverage: average_seconds,
-            blockVersion: block_version,
-            appVersion: app_version,
-            l1LockedHeight: l1_locked_height,
-            txCount: tx_count,
-            transfersCount: transfers_count,
-            dataContractsCount: data_contracts_count,
-            documentsCount: documents_count
+            blockTimeAverage: parseFloat(average_seconds),
+            blockVersion: parseInt(block_version),
+            appVersion: parseInt(app_version),
+            l1LockedHeight: parseInt(l1_locked_height),
+            txCount: parseInt(tx_count),
+            transfersCount: parseInt(transfers_count),
+            dataContractsCount: parseInt(data_contracts_count),
+            documentsCount: parseInt(documents_count)
         }
     }
 
@@ -119,7 +111,7 @@ module.exports = class BlockDAO {
     }
 
     getBlocks = async (page, limit, order) => {
-        const fromRank = (page - 1) * limit
+        const fromRank = ((page - 1) * limit) + 1
         const toRank = fromRank + limit - 1
 
         const subquery = this.knex('blocks')

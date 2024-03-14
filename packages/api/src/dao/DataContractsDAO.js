@@ -7,7 +7,7 @@ module.exports = class DataContractsDAO {
     }
 
     getDataContracts = async (page, limit, order) => {
-        const fromRank = (page - 1) * limit
+        const fromRank = ((page - 1) * limit) + 1
         const toRank = fromRank + limit - 1
 
         const subquery = this.knex('data_contracts')
@@ -22,15 +22,15 @@ module.exports = class DataContractsDAO {
             .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
             .from('with_alias')
             .where('rank', 1)
-            .orderBy('id', order)
             .as('filtered_data_contracts')
 
         const rows = await this.knex(filteredContracts)
-            .select('total_count', 'identifier', 'filtered_data_contracts.owner', 'version', 'row_number',
+            .select('filtered_data_contracts.id', 'total_count', 'identifier', 'filtered_data_contracts.owner', 'version', 'row_number',
                 'filtered_data_contracts.tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'blocks.hash as block_hash')
             .leftJoin('state_transitions', 'state_transitions.hash', 'filtered_data_contracts.tx_hash')
             .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
             .whereBetween('row_number', [fromRank, toRank])
+            .orderBy('filtered_data_contracts.id', order)
 
         const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0;
 
