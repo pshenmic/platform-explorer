@@ -68,7 +68,7 @@ function Blocks() {
     }
 
 
-    const goToHeight = async (e) => {
+    const goToHeight = (e) => {
 
         e.preventDefault()
 
