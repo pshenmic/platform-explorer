@@ -59,12 +59,14 @@ function Blocks() {
     useEffect(fetchData, [])
 
 
-    const handlePageClick = async ({selected}) => {
+    const handlePageClick = ({selected}) => {
 
-        const {resultSet} = await Api.getBlocks(selected+1, pageSize, 'desc')
-        setCurrentPage(selected)
-        setBlocks(resultSet)
+        Api.getBlocks(selected+1, pageSize, 'desc').then((res) => {
 
+            setCurrentPage(selected)
+            setBlocks(res.resultSet)
+
+        })
     }
 
 
