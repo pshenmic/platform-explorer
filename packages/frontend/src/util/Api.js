@@ -98,8 +98,8 @@ const getIdentity = (identifier) => {
     return call(`identity/${identifier}`, 'GET')
 }
 
-const getIdentities = () => {
-    return call(`identities`, 'GET')
+const getIdentities = (page = 1, limit = 30, order = 'asc') => {
+    return call(`identities?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getStatus = () => {
