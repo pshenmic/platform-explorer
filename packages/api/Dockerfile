@@ -3,6 +3,6 @@ COPY packages/api/index.js /app/index.js
 COPY packages/api/src /app/src
 COPY packages/indexer/migrations /app/migrations
 COPY package.json /app/package.json
-WORKDIR /app
+WORKDIR /app/packages/api
 RUN npm install
 CMD ["npm", "start"]
