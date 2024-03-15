@@ -31,63 +31,41 @@ function Blocks() {
     const [currentPage, setCurrentPage] = useState(0)
     const [blockHeightToSearch, setBlockHeightToSearch] = useState(0)
     const pageCount = Math.ceil(total / pageSize)
-
     
     const fetchData = () => {
         setLoading(true)
 
-        Api.getBlocks(
-            paginateConfig.defaultPage, 
-            paginateConfig.pageSize.default, 
-            'desc'
-        ).then((res) => {
-
-            setBlocks(res.resultSet)
-            setTotal(res.pagination.total)
-
-        }).catch((error)=>{
-
-            console.log(error)
-
-        }).finally(() => {
-
-            setLoading(false)
-            
-        }) 
+        Api.getBlocks(paginateConfig.defaultPage, paginateConfig.pageSize.default, 'desc')
+            .then((res) => {
+                setBlocks(res.resultSet)
+                setTotal(res.pagination.total)
+            })
+            .catch(console.log)
+            .finally(() => setLoading(false))
     }
 
     useEffect(fetchData, [])
 
-
     const handlePageClick = ({selected}) => {
-
-        Api.getBlocks(selected+1, pageSize, 'desc').then((res) => {
-
-            setCurrentPage(selected)
-            setBlocks(res.resultSet)
-
-        })
+        Api.getBlocks(selected+1, pageSize, 'desc')
+            .then((res) => {
+                setCurrentPage(selected)
+                setBlocks(res.resultSet)
+            })
     }
 
-
     const goToHeight = (e) => {
-
         e.preventDefault()
 
         const page = Math.ceil((total - blockHeightToSearch + 2) / pageSize) - 1
         setCurrentPage(page)
         handlePageClick({selected: page})
-        
     }
 
-
     useEffect(() => {
-
         setCurrentPage(0)
         handlePageClick({selected: 0})
-
     }, [pageSize])
-
 
     if (!loading) return (
         <Container 
@@ -105,7 +83,6 @@ function Blocks() {
             >
                 <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Blocks</Heading>
                 <BlocksList blocks={blocks}/>
-
 
                 <div className={'ListNavigation'}>
                     <GoToHeightForm

@@ -1,7 +1,7 @@
 import Transaction from'./Transaction'
 
 
-export async function generateMetadata({ params }) {
+export function generateMetadata({ params }) {
     return {
         title: 'Transaction #' + params.hash + ' — Dash Platform Explorer',
         description: '',
@@ -10,10 +10,8 @@ export async function generateMetadata({ params }) {
     }
 }
 
-async function TransactionRoute({params}) {
-
+function TransactionRoute({params}) {
     return <Transaction hash={params.hash}/>
-
 }
 
 export default TransactionRoute

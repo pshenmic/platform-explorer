@@ -18,38 +18,30 @@ function DataContractsLayout() {
     const pageSize = 25
     const [currentPage, setCurrentPage] = useState(0)
     const pageCount = Math.ceil(total / pageSize)
-    
 
     const fetchData = () => {
         setLoading(true)
 
-        Api.getDataContracts(1, pageSize).then((res) => {
-
-            setDataContracts(res.resultSet)
-            setTotal(res.pagination.total)
-
-        }).catch((error) => {
-
-            console.log(error)
-
-        }).finally(() => {
-
-            setLoading(false)
-            
-        })
+        Api.getDataContracts(1, pageSize)
+            .then((res) => {
+                setDataContracts(res.resultSet)
+                setTotal(res.pagination.total)
+            })
+            .catch(console.log)
+            .finally(() => {
+                setLoading(false)
+            })
     }
 
     useEffect(fetchData, [])
-
     
-    const handlePageClick = async ({selected}) => {
-
-        const {resultSet} = await Api.getDataContracts(selected+1, pageSize, 'desc')
-        setCurrentPage(selected)
-        setDataContracts(resultSet)
-
+    const handlePageClick = ({selected}) => {
+        Api.getDataContracts(selected+1, pageSize, 'desc')
+            .then((res) => {
+                setCurrentPage(selected)
+                setDataContracts(res.resultSet)
+            })
     }
-
 
     if (!loading) return (
         <div className={'container'}>

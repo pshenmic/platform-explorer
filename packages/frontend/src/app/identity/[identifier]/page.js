@@ -11,9 +11,7 @@ export async function generateMetadata({ params }) {
 }
 
 function IdentityRoute({ params }) {
-
     return <Identity identifier={params.identifier}/>
-
 }
 
 export default IdentityRoute;

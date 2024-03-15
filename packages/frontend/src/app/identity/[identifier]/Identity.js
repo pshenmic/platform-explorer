@@ -18,24 +18,6 @@ import {
 } from "@chakra-ui/react"
 
 
-export async function loader(identifier) {
-    const [identity, dataContracts, documents, transactions, transfers] = await Promise.all([
-        Api.getIdentity(identifier),
-        Api.getDataContractsByIdentity(identifier),
-        Api.getDocumentsByIdentity(identifier),
-        Api.getTransactionsByIdentity(identifier),
-        Api.getTransfersByIdentity(identifier),
-    ])
-
-    return {
-        identity,
-        dataContracts,
-        documents,
-        transactions,
-        transfers
-    }
-}
-
 function Identity({identifier}) {
     const [identity, setIdentity] = useState({})
     const [dataContracts, setDataContracts] = useState([])
@@ -44,31 +26,34 @@ function Identity({identifier}) {
     const [transfers, setTransfers] = useState([])
     const [loading, setLoading] = useState(true)
 
-
     const fetchData = () => {
         setLoading(true)
 
-        loader(identifier).then((res) => {
-            
-            setIdentity(res.identity)
-            setDataContracts(res.dataContracts)
-            setDocuments(res.documents)
-            setTransactions(res.transactions)
-            setTransfers(res.transfers)
-
-        }).catch((error) => {
-
-            console.log(error)
-
-        }).finally(() => {
-
-            setLoading(false)
-            
+        Promise.all([
+            Api.getIdentity(identifier),
+            Api.getDataContractsByIdentity(identifier),
+            Api.getDocumentsByIdentity(identifier),
+            Api.getTransactionsByIdentity(identifier),
+            Api.getTransfersByIdentity(identifier),
+        ])
+        .then(([
+            defaultIdentity, 
+            defaultDataContracts, 
+            defaultDocuments, 
+            defaultTransactions, 
+            defaultTransfers
+        ]) => {
+            setIdentity(defaultIdentity)
+            setDataContracts(defaultDataContracts)
+            setDocuments(defaultDocuments)
+            setTransactions(defaultTransactions)
+            setTransfers(defaultTransfers)
         })
+        .catch(console.log)
+        .finally(() => setLoading(false))
     }
 
     useEffect(fetchData, [identifier])
-
 
     if (!loading) return (
         <div className={'identity'}>

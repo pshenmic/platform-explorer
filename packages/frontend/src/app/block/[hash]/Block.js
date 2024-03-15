@@ -15,29 +15,18 @@ function Block({ hash }) {
     const [block, setBlock] = useState({})
     const [loading, setLoading] = useState(true)
 
-    
     const fetchData = () => {
         setLoading(true)
 
-        Api.getBlockByHash(hash).then((res) => {
-
-            setBlock(res)
-
-        }).catch((error)=>{
-
-            console.log(error)
-
-        }).finally(() => {
-
-            setLoading(false)
-            
-        })
+        Api.getBlockByHash(hash)
+        .then(setBlock)
+        .catch(console.log)
+        .finally(() => setLoading(false))
     }
 
     useEffect(fetchData, [hash])
 
     const txHashes = block?.txs || []
-    
 
     if (!loading) return (
         <Container 
@@ -47,7 +36,6 @@ function Block({ hash }) {
             _dark={{ bg: "gray.900" }}
             mt={8}
         >
-
             <TableContainer 
                 maxW='none'
                 borderWidth='1px' borderRadius='lg'
@@ -93,7 +81,6 @@ function Block({ hash }) {
                 </Table>
             </TableContainer>
 
-
             {txHashes.length ?  
                 <Container 
                     width='100%'
@@ -112,7 +99,6 @@ function Block({ hash }) {
                     </div> 
                 </Container>
            : null}
-
         </Container>
     )
 }

@@ -14,12 +14,6 @@ import {
 } from '@chakra-ui/react'
 
 
-export async function loader(hash) {
-    const transaction = await Api.getTransaction(hash)
-
-    return { transaction }
-}
-
 function TransactionData({data}) {
     if (data === null) return <></>
 
@@ -236,24 +230,16 @@ function Transaction({hash}) {
     const fetchData = () => {
         setLoading(true)
 
-        loader(hash).then((res) => {
-
-            setTransaction(res.transaction)
-            decodeTx(res.transaction.data)
-
-        }).catch((error) => {
-
-            console.log(error)
-
-        }).finally(() => {
-
-            setLoading(false)
-
-        })
+        Api.getTransaction(hash)
+            .then((res) => {
+                setTransaction(res)
+                decodeTx(res.data)
+            })
+            .catch(console.log)
+            .finally(() => setLoading(false))
     }
 
     useEffect(fetchData, [hash])
-
 
     if (!loading) return (
         <Container 

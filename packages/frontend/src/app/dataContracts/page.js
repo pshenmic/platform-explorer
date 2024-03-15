@@ -9,9 +9,7 @@ export const metadata = {
 }
 
 function DataContractsRoute() {
-
     return <DataContracts/>
-
 }
 
 export default DataContractsRoute;

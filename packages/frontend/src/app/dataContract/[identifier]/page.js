@@ -11,9 +11,7 @@ export async function generateMetadata({ params }) {
 }
 
 function DataContractRoute({params}) {
-
     return <DataContract identifier={params.identifier}/>
-
 }
 
 export default DataContractRoute

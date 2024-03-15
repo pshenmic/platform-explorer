@@ -15,17 +15,6 @@ import {
 } from '@chakra-ui/react'
 
 
-export async function loader() {
-    const [status, paginatedTransactions] = await Promise.all([
-        Api.getStatus(), 
-        Api.getTransactions(1, 25, 'desc')
-    ])
-
-    const transactions = paginatedTransactions.resultSet
-
-    return {status, transactions}
-}
-
 function Home() {
     const [loading, setLoading] = useState(true)
     const [status, setStatus] = useState(true)
@@ -34,20 +23,16 @@ function Home() {
     const fetchData = () => {
         setLoading(true)
 
-        loader().then((res) => {
-
-            setStatus(res.status)
-            setTransactions(res.transactions)
-
-        }).catch((error) => {
-
-            console.log(error)
-            
-        }).finally(() => {
-
-            setLoading(false)
-            
+        Promise.all([
+            Api.getStatus(), 
+            Api.getTransactions(1, 25, 'desc')
+        ])
+        .then(([status, paginatedTransactions]) => {
+            setStatus(status)
+            setTransactions(paginatedTransactions.resultSet)
         })
+        .catch(console.log)
+        .finally(() => setLoading(false))
     }
 
     useEffect(fetchData, [])

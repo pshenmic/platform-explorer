@@ -24,19 +24,6 @@ const pagintationConfig = {
     defaultPage: 1
 }
 
-export async function loader(identifier) {
-    const [dataContract, documents] = await Promise.all([
-        Api.getDataContractByIdentifier(identifier),
-        Api.getDocumentsByDataContract(identifier, 
-                                       pagintationConfig.defaultPage, 
-                                       pagintationConfig.itemsOnPage.default + 1)
-    ])
-
-    return {
-        dataContract,
-        documents
-    }
-}
 
 function DataContract({identifier}) {
     const [dataContract, setDataContract] = useState({})
@@ -47,43 +34,36 @@ function DataContract({identifier}) {
     const pageCount = Math.ceil(total / pageSize)
     const [loading, setLoading] = useState(true)
 
-
     const fetchData = () => {
         setLoading(true)
 
-        loader(identifier).then((res) => {
-
-            setDataContract(res.dataContract)
-            setDocuments(res.documents.resultSet)
-            setTotal(res.documents.pagination.total)
-
-        }).catch((error) => {
-
-            console.log(error)
-
-        }).finally(() => {
-
+        Promise.all([
+            Api.getDataContractByIdentifier(identifier),
+            Api.getDocumentsByDataContract(identifier, 
+                                           pagintationConfig.defaultPage, 
+                                           pagintationConfig.itemsOnPage.default + 1)
+        ])
+        .then(([defaultDataContract, defaultDocuments]) => {
+            setDataContract(defaultDataContract)
+            setDocuments(defaultDocuments.resultSet)
+            setTotal(defaultDocuments.pagination.total)
+        })            
+        .catch(console.log)
+        .finally(() => {
             setLoading(false)
-            
         })
     }
 
     useEffect(fetchData, [identifier])
 
-
     const handlePageClick = ({selected}) => {
-
         Api.getDocumentsByDataContract(dataContract.identifier,
                                        selected  + 1, 
                                        pagintationConfig.itemsOnPage.default + 1)
-            .then((res) => {
-                setDocuments(res.resultSet)
-            })
+            .then((res) => setDocuments(res.resultSet))
 
-            setCurrentPage(selected)
-            
+        setCurrentPage(selected)
     }
-
 
     if (!loading) return (
         <Container 
@@ -92,7 +72,6 @@ function DataContract({identifier}) {
             mt={8}
             className={'DataContract'}
         >
-            
             <TableContainer 
                 maxW='none'
                 borderWidth='1px' borderRadius='lg'
@@ -178,7 +157,6 @@ function DataContract({identifier}) {
                     </TabPanels>
                 </Tabs>
             </Container>
-
         </Container>
     )
 }

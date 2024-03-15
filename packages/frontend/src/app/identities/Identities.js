@@ -19,35 +19,26 @@ function Identities() {
     const [currentPage, setCurrentPage] = useState(0)
     const pageCount = Math.ceil(total / pageSize)
 
-
     const fetchData = () => {
         setLoading(true)
 
-        Api.getIdentities(1, pageSize).then((identities) => {
-
-            setIdentities(identities.resultSet)
-            setTotal(identities.pagination.total)
-
-        }).catch((error) => {
-
-            console.log(error)
-
-        }).finally(() => {
-
-            setLoading(false)
-            
-        })
+        Api.getIdentities(1, pageSize)
+            .then((identities) => {
+                setIdentities(identities.resultSet)
+                setTotal(identities.pagination.total)
+            })
+            .catch(console.log)
+            .finally(() => setLoading(false))
     }
 
     useEffect(fetchData, [])
 
-
-    const handlePageClick = async ({selected}) => {
-
-        const {resultSet} = await Api.getDataContracts(selected+1, pageSize, 'desc')
-        setCurrentPage(selected)
-        setIdentities(resultSet)
-
+    const handlePageClick = ({selected}) => {
+        Api.getDataContracts(selected+1, pageSize, 'desc')
+            .then((res) => {
+                setCurrentPage(selected)
+                setIdentities(res.resultSet)
+            })
     }
 
     return (

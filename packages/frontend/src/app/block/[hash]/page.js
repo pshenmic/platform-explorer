@@ -11,9 +11,7 @@ export async function generateMetadata({ params }) {
 }
 
 async function BlockRoute({ params }) {
-
     return <Block hash={params.hash}/>
-
 }
 
 export default BlockRoute

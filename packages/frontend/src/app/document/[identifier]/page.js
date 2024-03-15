@@ -11,9 +11,7 @@ export async function generateMetadata({ params }) {
 }
 
 function DocumentRoute({ params }) {
-
     return <Document identifier={params.identifier}/>
-
 }
 
 export default DocumentRoute

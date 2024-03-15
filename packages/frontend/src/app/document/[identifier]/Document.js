@@ -21,23 +21,15 @@ function Document({identifier}) {
     const fetchData = () => {
         setLoading(true)
 
-        Api.getDocumentByIdentifier(identifier).then((res) => {
-
-            setDocument(res)
-
-        }).catch ((error) => {
-            
-            console.log(error)
-
-        }).finally(() => {
-
-            setLoading(false)
-            
-        })
+        Api.getDocumentByIdentifier(identifier)
+            .then(setDocument)
+            .catch(console.log)
+            .finally(() => {
+                setLoading(false)
+            })
     }
 
     useEffect(fetchData, [identifier])
-    
 
     if (!loading) return (
         <Container 
