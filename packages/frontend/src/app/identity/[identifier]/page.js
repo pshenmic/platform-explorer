@@ -4,8 +4,8 @@ import Identity from "./Identity"
 export async function generateMetadata({ params }) {
     return {
         title: 'Identity #' + params.identifier + ' — Dash Platform Explorer',
-        description: '',
-        keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'Identity'],
+        description: 'Identity #' + params.identifier + ' on Dash Platform. The Identifier, Balance, Transactions, Transfers, Documents, Data contracts',
+        keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'Identity', 'Identifier', 'Balance', 'Transactions', 'Transfers', 'Documents', 'Data contracts'],
         applicationName: 'Dash Platform Explorer'
     }
 }

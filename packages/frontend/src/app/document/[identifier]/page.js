@@ -4,7 +4,7 @@ import Document from './Document'
 export async function generateMetadata({ params }) {
     return {
         title: 'Document #' + params.identifier + ' — Dash Platform Explorer',
-        description: '',
+        description: 'Document ' + params.identifier + ' on Dash Platform. The Data, Identifier, Revision.',
         keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'document'],
         applicationName: 'Dash Platform Explorer'
     }

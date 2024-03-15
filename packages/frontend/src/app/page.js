@@ -3,7 +3,7 @@ import Home from './home/Home'
 
 export const metadata = {
     title: 'Dashboard — Dash Platform Explorer',
-    description: '',
+    description: 'Dashboard of Dash Platform. The Last Transactions, Blocks, Transactions, Data contracts, Documents, Transfers, Average block time.',
     keywords: ['Dash', 'platform', 'explorer', 'blockchain'],
     applicationName: 'Dash Platform Explorer'
 }

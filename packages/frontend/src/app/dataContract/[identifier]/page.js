@@ -4,7 +4,7 @@ import DataContract from './DataContract'
 export async function generateMetadata({ params }) {
     return {
         title: 'Data Contract #' + params.identifier + ' — Dash Platform Explorer',
-        description: '',
+        description: 'Data Contract ' + params.identifier + 'on Dash Platform. The Schema, Documents, Date of Creation, Revision, Transaction.',
         keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'data contract'],
         applicationName: 'Dash Platform Explorer'
     }
