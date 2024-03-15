@@ -5,7 +5,7 @@ export async function generateMetadata({ params }) {
     return {
         title: 'Block #' + params.hash + ' — Dash Platform Explorer',
         description: 'Dash Platform Block Hash ' + params.hash + '. The Timestamp, Transactions count, Block Version.',
-        keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'block'],
+        keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'block', 'Timestamp', 'Transactions', 'Block'],
         applicationName: 'Dash Platform Explorer'
     }
 }
