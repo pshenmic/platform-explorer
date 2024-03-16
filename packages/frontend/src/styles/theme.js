@@ -23,9 +23,12 @@ export const theme = extendTheme( {
     },
     styles: {
       global: {
+        '*' : {
+          borderColor: 'gray.800'
+        },
         'html, body': {
           background: '#181d20',
-        },
+        }
       },
     },
     components: {
