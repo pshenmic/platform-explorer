@@ -78,8 +78,14 @@ function GlobalSearchInput () {
                     bg='gray.900'
                 />
                 <InputRightElement width='4.5rem'>
-                    <Button h='1.75rem' size='sm' onClick={search}>
-                        <SearchIcon/>
+                    <Button 
+                        h='1.75rem' 
+                        size='sm' 
+                        onClick={search}
+                        _hover={{bg:'whiteAlpha.300'}}
+                        bg={'whiteAlpha.200'}
+                    >
+                        <SearchIcon color={'whiteAlpha.900'}/>
                     </Button>
                 </InputRightElement>
             </InputGroup>
