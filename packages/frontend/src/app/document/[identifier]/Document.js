@@ -88,7 +88,7 @@ function Document({identifier}) {
                         className={'DocumentPage__Code'}
                         w='100%'
                     >
-                        {JSON.stringify(document.data, null, 2)}
+                        {JSON.stringify(JSON.parse(document.data), null, 2)}
                     </Code>   
 
                 </Container>

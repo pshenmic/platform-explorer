@@ -149,7 +149,7 @@ function DataContract({identifier}) {
                                         p={4}
                                         w='100%'
                                     >
-                                        {JSON.stringify(dataContract.schema, null, 2)}
+                                        {JSON.stringify(JSON.parse(dataContract.schema), null, 2)}
                                     </Code>
                                 </div>
                             </Box>
