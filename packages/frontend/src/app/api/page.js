@@ -1,5 +1,6 @@
 import Markdown from 'react-markdown'
 import content from './content.md'
+import './Api.scss'
 
 import {
     Container,
@@ -20,7 +21,7 @@ async function ApiRoute({ params }) {
             color='white'
             mt={8}
             mb={8}
-            className={'Blocks'}
+            className={'Api'}
         >
             <Container 
                 maxW='container.lg' 
