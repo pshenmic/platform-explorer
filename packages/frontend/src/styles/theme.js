@@ -91,12 +91,15 @@ export const theme = extendTheme( {
           background: 'gray.800',
           display: 'inline-block'
         },
-        a: {
-          color: 'brand.normal',
-          _hover : {
-            color: 'brand.deep',
-          }
 
+        Container: {
+          a: {
+            color: 'brand.normal',
+  
+            _hover : {
+              color: 'brand.deep',
+            }
+          }
         }
       },
     },
