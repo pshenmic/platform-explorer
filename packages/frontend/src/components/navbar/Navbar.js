@@ -20,6 +20,7 @@ const links = [
     {title:'Blocks', href:'/blocks'},
     {title:'Data Contracts', href:'/dataContracts'},
     {title:'Identities', href:'/identities'},
+    {title:'Api', href:'/api'},
 ]
 
 const NavLink = (props) => {
@@ -60,12 +61,12 @@ function Navbar() {
             size={'md'}
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
             aria-label={'Open Menu'}
-            display={{ md: 'none' }}
+            display={{ lg: 'none' }}
             onClick={isOpen ? onClose : onOpen}
           />
 
             <HStack spacing={8} alignItems={'center'}>
-                <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
+                <HStack as={'nav'} spacing={4} display={{ base: 'none', lg: 'flex' }}>
                 {links.map((link) => (
                     <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
                 ))}
