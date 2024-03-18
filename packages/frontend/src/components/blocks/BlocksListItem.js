@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom'
+import Link from 'next/link'
 import './BlocksListItem.scss'
 
 
@@ -8,7 +8,7 @@ function BlocksListItem ({ block }) {
 
     return(
         <Link 
-            to={`/block/${hash}`} 
+            href={`/block/${hash}`} 
             className={'BlocksListItem'}
         >
             {(typeof height === 'number' && 

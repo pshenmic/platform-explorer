@@ -6,7 +6,7 @@
     padding: 6px 8px;
     margin-bottom: 1px;
     line-height: 24px;
-    border-bottom: 1px solid var(--chakra-colors-chakra-border-color);
+    border-bottom: 1px solid var(--chakra-colors-gray-800);
     color:  var(--chakra-colors-gray-100);
     font-family: monospace;
     font-size: 12pt;
@@ -15,5 +15,9 @@
         background: var(--chakra-colors-whiteAlpha-50);
         text-decoration: none;
         cursor: pointer;
+    }
+
+    &:last-child {
+        border-bottom: none;
     }
 }

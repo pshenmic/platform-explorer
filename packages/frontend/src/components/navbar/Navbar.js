@@ -35,6 +35,7 @@ const NavLink = (props) => {
         textDecoration: 'none',
         bg: useColorModeValue('brand.deep', 'brand.deep'),
       }}
+      color={'white'}
       href={to}>
       {children}
     </Box>

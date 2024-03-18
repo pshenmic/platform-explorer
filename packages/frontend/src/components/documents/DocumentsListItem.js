@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom';
+import Link from 'next/link'
 import './DocumentsListItem.scss'
 
 
@@ -7,7 +7,7 @@ export default function DocumentsListItem({document}) {
 
     return (
         <Link 
-            to={`/document/${identifier}`}
+            href={`/document/${identifier}`}
             className={'DocumentsListItem'}
         >
 

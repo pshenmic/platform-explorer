@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom';
+import Link from 'next/link'
 import './DataContractsListItem.scss'
 
 
@@ -7,7 +7,7 @@ function DataContractsListItem ({ dataContract }) {
     
     return (
         <Link 
-            to={`/dataContract/${identifier}`} 
+            href={`/dataContract/${identifier}`} 
             className={'DataContractsListItem'}
         >
             <div className={'DataContractsListItem__Identifier'}>

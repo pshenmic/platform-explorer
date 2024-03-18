@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_API_BASE_URL
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 const fetchWrapper = (url, options) => {
     return new Promise((resolve, reject) => {
@@ -98,8 +98,8 @@ const getIdentity = (identifier) => {
     return call(`identity/${identifier}`, 'GET')
 }
 
-const getIdentities = () => {
-    return call(`identities`, 'GET')
+const getIdentities = (page = 1, limit = 30, order = 'asc') => {
+    return call(`identities?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getStatus = () => {

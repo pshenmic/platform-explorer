@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import Link from 'next/link'
 import './IdentitiesListItem.scss'
 
 
@@ -7,7 +7,7 @@ function IdentitiesListItem ({identity}) {
 
     return (
         <Link 
-            to={`/identity/${identifier}`} 
+            href={`/identity/${identifier}`} 
             className={'IdentitiesListItem'}
         >
             <div className={'IdentitiesListItem__Identifier'}>

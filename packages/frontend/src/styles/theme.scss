@@ -1,3 +1,7 @@
+* {
+    border-color: var(--chakra-colors-gray-800);
+}
+
 .InfoBlock {
     position: relative;
     padding: var(--chakra-space-3);
@@ -37,4 +41,21 @@
             }
         }
     }
+}
+
+.ListNavigation {
+    margin-top: 10px;
+}
+
+.disabled {
+    display: none;
+}
+  
+.noselect {
+    -webkit-touch-callout: none; 
+      -webkit-user-select: none;
+       -khtml-user-select: none;
+         -moz-user-select: none; 
+          -ms-user-select: none; 
+              user-select: none; 
 }

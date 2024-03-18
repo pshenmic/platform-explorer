@@ -1,21 +1,25 @@
-import {Outlet, Link} from "react-router-dom";
-import "./root.css";
-import React, {useState} from 'react';
-import Navbar from "../components/navbar/Navbar";
-import theme from "../styles/theme";
-import "../styles/theme.scss";
-import { ChakraProvider} from '@chakra-ui/react'
+'use client'
+
+import Navbar from '../components/navbar/Navbar'
+import { ChakraProvider, localStorageManager } from '@chakra-ui/react'
+import { useEffect } from "react";
+import theme from '../styles/theme'
+import '../styles/theme.scss'
 
 
-export default function RootComponent() {
+
+export default function RootComponent({ children }) {
+    useEffect(() => {
+        localStorage.setItem('chakra-ui-color-mode', theme.initialColorMode)
+      }, [])
 
     return (
-        <ChakraProvider theme={theme}>
+        <ChakraProvider theme={ theme } colorModeManager={localStorageManager}>
             
             <Navbar/>
 
-            <Outlet/>
+            { children }
 
         </ChakraProvider>
-    );
+    )
 }

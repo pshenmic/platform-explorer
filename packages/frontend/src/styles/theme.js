@@ -1,7 +1,11 @@
 import { extendTheme } from '@chakra-ui/react'
 
 export const theme = extendTheme( {
-    initialColorMode: 'light',
+    config: {
+      useSystemColorMode: false,
+      initialColorMode: 'dark',
+    },
+    initialColorMode: 'dark',
     useSystemColorMode: false,
     colors: {
       brand: {
@@ -23,9 +27,13 @@ export const theme = extendTheme( {
     },
     styles: {
       global: {
+        '*' : {
+          borderColor: 'gray.800'
+        },
         'html, body': {
           background: '#181d20',
-        },
+          color: 'white'
+        }
       },
     },
     components: {
@@ -42,8 +50,6 @@ export const theme = extendTheme( {
         }
       }
     }
-});
+})
 
-localStorage.setItem('chakra-ui-color-mode', 'dark');
-
-export default theme;
+export default theme

@@ -3,10 +3,6 @@
 .BlocksListItem {
     @include mixins.def_list_item;
 
-    &:last-child {
-        border-bottom: none;
-    }
-
     &__Hash {
         color: var(--chakra-colors-gray-200);
         flex-grow: 1;
