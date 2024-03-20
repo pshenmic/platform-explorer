@@ -21,29 +21,27 @@ describe('Utils', () => {
     })
 
     describe('decodeStateTransition()', () => {
-        // it('should decode DataContractCreate', async () => {
-        //     const decoded = await utils.decodeStateTransition(client, dataContractCreateMock.data)
-        //
-        //     assert.deepEqual(decoded, {
-        //         identityId: 'GxdRSLivPDeACYU8Z6JSNvtrRPX7QG715JoumnctbwWN',
-        //         dataContractId: '5UFe5yoixK7BPs1FGoAoryP2PCpF2MD3EjGPGeiC5htJ',
-        //         type: 0
-        //     });
-        // });
+        it('should decode DataContractCreate', async () => {
+            const decoded = await utils.decodeStateTransition(client, dataContractCreateMock.data)
+
+            assert.deepEqual(decoded, {
+                identityId: 'CYYsxRfqPQefANY7yjsSLVHtr4wNxW1zM6Ygmu2aKvCq',
+                dataContractId: 'J1rzMRxi2RqFZjpBCS93N3PSYtdMNaPNpNty9k3GtYRy',
+                type: 0
+            });
+        });
 
         it('should decode DocumentsBatch', async () => {
-            const decoded = await utils.decodeStateTransition(client, documentsBatchMock.data)
+            const decoded = await utils.decodeStateTransition(client, "AgCrhZtAwveRrwo9QITiR9MqJcHQHFHPUS0ewKXF/s/aogEAAAAb4QihbPKQQmYJ0J+5i90c2y+1HTU6QkLOH0g3pMmIyQEIcHJlb3JkZXLmaMZZr2au4ecsGG3ee1t+Ch1xKgnEDVch9iK/U8UxVfCoJzXeOElnkW/7iiSHA9PCSsQ86oIcaa7sYXNXFSW1ARBzYWx0ZWREb21haW5IYXNoCiBJjPigm6iNZsJXABN4cnRUdXCdvwHjgrKFV8L5kAgQZwABQR9Fti5v8aobfhQTmxxAAUmJrV2WNJKqnWsXasr63DHUqA2/o2QWYJs1hq7MDw6aNTZnKdHfoJGXgbxuRRcnenSp")
 
             assert.deepEqual(decoded, {
                 type: 1,
                 transitions: [
                     {
-                        action: 1,
-                        createdAt: null,
-                        dataContractId: '7YYHis22sL45AhD8FHXopGSqeKLFNtRBvcXCFmVtypi2',
-                        id: 'Ep9bPJniRnkeq3ea7jZZb5tEnjrwQC5txhmEniqzaXZY',
-                        revision: 3,
-                        updatedAt: new Date("2024-02-22T05:04:03.203Z")
+                        action: 0,
+                        dataContractId: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
+                        id: '2sq2fsVgNrrNKFyRgcLvT8SSVFmCLoMTUfNBY3yEdyeQ',
+                        revision: 1
                     }
                 ]
             })

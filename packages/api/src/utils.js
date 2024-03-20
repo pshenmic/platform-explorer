@@ -38,9 +38,7 @@ const decodeStateTransition = async (client, base64) => {
                 id: documentTransition.getId().toString(),
                 dataContractId: documentTransition.getDataContractId().toString(),
                 action: documentTransition.getAction(),
-                revision: documentTransition.getRevision(),
-                createdAt: documentTransition.getCreatedAt(),
-                updatedAt: documentTransition.getUpdatedAt()
+                revision: documentTransition.getRevision()
             }))
 
             break
