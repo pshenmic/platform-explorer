@@ -6,7 +6,7 @@ API is still under ongoing development, so refer to this page or repo documentat
 
 Production (testnet) live URL is [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
 
-Full list:
+Reference:
 
 * [Status](#status)
 * [Block by hash](#block-by-hash)
