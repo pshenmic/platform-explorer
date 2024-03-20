@@ -3,7 +3,7 @@ FROM rust:1.76-bookworm
 RUN apt-get update && apt-get install -y cmake clang
 
 WORKDIR /
-RUN git clone --depth 1 --branch v1.0.0-dev.7  https://github.com/dashevo/platform
+RUN git clone --depth 1 --branch v1.0.0-dev.9  https://github.com/dashevo/platform
 
 WORKDIR /app
 COPY Cargo.lock /app
