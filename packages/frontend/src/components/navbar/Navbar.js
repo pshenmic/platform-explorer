@@ -20,7 +20,7 @@ const links = [
     {title:'Blocks', href:'/blocks'},
     {title:'Data Contracts', href:'/dataContracts'},
     {title:'Identities', href:'/identities'},
-    {title:'Api', href:'/api'},
+    {title:'API', href:'/api'},
 ]
 
 const NavLink = (props) => {
