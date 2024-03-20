@@ -783,7 +783,7 @@ describe('Identities routes', () => {
         });
     });
 
-    describe('getTransferByIdentity()', async () => {
+    describe('getTransfersByIdentity()', async () => {
         it('should return default set of transfers by identity', async () => {
             block = await fixtures.block(knex, {height: 1})
             identity = await fixtures.identity(knex, {block_hash: block.hash})
