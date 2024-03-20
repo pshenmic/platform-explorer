@@ -31,7 +31,7 @@ docker run -d -p 3005:3005 --restart always --env-file .env ghcr.io/pshenmic/pla
 
 ## HTTP API
 
-Platform Exporer HTTP API allow you to query and check platform blockchain data programmatically with a REST interface. You can use it to build, test, or use in your applications. 
+Platform Explorer HTTP API allow you to query and see platform blockchain data programmatically with a REST interface via HTTP calls. You can use it to build, test, or improve your applications.
 
 API is still under ongoing development, so refer to this page or repo documentation for the most up-to-date latest specification.
 
