@@ -33,8 +33,23 @@ docker run -d -p 3005:3005 --restart always --env-file .env ghcr.io/pshenmic/pla
 
 ## HTTP API
 
-* [Status](#status)
+Full list:
 
+* [Status](#status)
+* [Block by hash](#block-by-hash)
+* [Blocks](#blocks)
+* [Transaction by hash](#transaction-by-hash)
+* [Transactions](#transactions)
+* [DataContract](#data-contract-by-identifier)
+* [Data contracts](#data-contracts)
+* [document](#document-by-identifier)
+* [documents by data contract](#documents-by-data-contract)
+* [Identity by identifier](#identity-by-identifier)
+* [Identities paged](#identities)
+* [Data Contracts by Identity](#data-contracts-by-identity)
+* [Documents by Identity](#documents-by-identity)
+* [Transactions By Identity](#transactions-by-identity)
+* [Transfers by Identity](#transfers-by-identity)
 
 ### Status
 Returns some basic stats
@@ -57,7 +72,6 @@ HTTP /status
 
 
 ### Block by hash
-
 Get a block by hash
 ```
 HTTP /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
@@ -78,7 +92,7 @@ HTTP /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 ```
 
 ### Blocks
-Return block set paged
+Return all blocks with pagination info
 ```
 HTTP /blocks
 
@@ -105,7 +119,6 @@ HTTP /blocks
 ```
 
 ### Transaction by hash
-
 Get a transaction (state transition) by hash
 ```
 HTTP /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
