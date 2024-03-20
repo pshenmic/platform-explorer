@@ -32,6 +32,10 @@ docker run -d -p 3005:3005 --restart always --env-file .env ghcr.io/pshenmic/pla
 ```
 
 ## HTTP API
+
+* [Status](#status)
+
+
 ### Status
 Returns some basic stats
 ```
