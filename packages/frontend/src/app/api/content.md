@@ -1,5 +1,10 @@
-
 ## HTTP API
+
+Platform Exporer HTTP API allow you to query and check platform blockchain data programmatically with a REST interface. You can use it to build, test, or use in your applications.
+
+API is still under ongoing development, so refer to this page or repo documentation for the most up-to-date latest specification.
+
+Production (testnet) live URL is [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
 
 Full list:
 
@@ -41,7 +46,7 @@ HTTP /status
 ### Block by hash
 Get a block by hash
 ```
-HTTP /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
+GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
 {
     {
@@ -61,7 +66,7 @@ HTTP /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 ### Blocks
 Return all blocks with pagination info
 ```
-HTTP /blocks
+GET /blocks
 
 {
     pagination: {
@@ -88,7 +93,7 @@ HTTP /blocks
 ### Transaction by hash
 Get a transaction (state transition) by hash
 ```
-HTTP /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
+GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
 {
     blockHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
