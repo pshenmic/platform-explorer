@@ -29,7 +29,7 @@ async function ApiRoute() {
                 borderWidth='1px' borderRadius='lg'
                 className={'InfoBlock'}
             >
-                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Dash Platform Explorer Api</Heading>
+                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Dash Platform Explorer API</Heading>
                 <Markdown>{content}</Markdown>
             </Container>
         </Container>
