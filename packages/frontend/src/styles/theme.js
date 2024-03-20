@@ -40,6 +40,13 @@ export const theme = extendTheme( {
       Container: {
         baseStyle: {
           p: 3,
+        },
+      },
+      Modal: {
+        baseStyle: {
+          dialog: {
+            background: 'gray.800'
+          }
         }
       },
       Code: {
