@@ -69,8 +69,7 @@ HTTP /status
     tenderdashVersion: "0.14.4"
 }
 ```
-
-
+---
 ### Block by hash
 Get a block by hash
 ```
@@ -90,7 +89,7 @@ HTTP /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
     }
 }
 ```
-
+---
 ### Blocks
 Return all blocks with pagination info
 ```
@@ -117,7 +116,7 @@ HTTP /blocks
     ]
 }
 ```
-
+---
 ### Transaction by hash
 Get a transaction (state transition) by hash
 ```
@@ -134,13 +133,13 @@ HTTP /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBE
 }
 ```
 
-Reponse codes:
+Response codes:
 ```
 200: OK
 404: Not found
 500: Internal Server Error
 ```
-
+---
 ### Transactions
 Return transaction set paged
 ```
@@ -170,7 +169,7 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
-
+---
 ### Data Contract by Identifier
 Return data contract by given identifier
 ```
@@ -192,7 +191,7 @@ Response codes:
 404: Not found
 500: Internal Server Error
 ```
-
+---
 ### Data Contracts
 Return dataContracts set paged
 ```
@@ -222,7 +221,7 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
-
+---
 ### Document by Identifier
 Return last revision of the document by given identifier
 ```
@@ -246,7 +245,7 @@ Response codes:
 404: Not found
 500: Internal Server Error
 ```
-
+---
 ### Documents by Data Contract
 Return all documents by the given data contract identifier
 ```
@@ -278,7 +277,7 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
-
+---
 ### Identity by Identifier
 Return identity by given identifier
 ```
@@ -304,7 +303,7 @@ Response codes:
 404: Not found
 500: Internal Server Error
 ```
-
+---
 ### Identities
 Return all identities paged
 ```
@@ -368,7 +367,7 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
-
+---
 ### Documents by Identity
 Return all documents by the given identity
 ```
@@ -400,7 +399,7 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
-
+---
 ### Transactions by Identity
 Return all transactions made by the given identity
 ```
@@ -430,7 +429,7 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
-
+---
 ### Transfers by Identity
 Return all transfers made by the given identity
 ```
