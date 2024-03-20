@@ -32,7 +32,8 @@ export const theme = extendTheme( {
         },
         'html, body': {
           background: '#181d20',
-          color: 'white'
+          color: 'white',
+          scrollBehavior: 'smooth'
         },
         h1: {
           fontSize: '4xl',

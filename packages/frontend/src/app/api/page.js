@@ -1,4 +1,4 @@
-import Markdown from 'react-markdown'
+import Markdown from '../../components/markdown'
 import content from './content.md'
 import './Api.scss'
 
