@@ -84,7 +84,10 @@ function Identity({identifier}) {
                             <Tbody>
                                 <Tr>
                                     <Td>Identifier</Td>
-                                    <Td isNumeric>{identity.identifier}</Td>
+                                    <Td isNumeric>
+                                        {identity.identifier}
+                                        {(identity.isSystem) && <><br/><div>system</div></>}
+                                    </Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Balance</Td>

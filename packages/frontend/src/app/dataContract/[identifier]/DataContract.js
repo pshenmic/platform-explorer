@@ -89,6 +89,15 @@ function DataContract({identifier}) {
                             <Td isNumeric>{dataContract.identifier}</Td>
                         </Tr>
                         <Tr>
+                            <Td>Owner</Td>
+                            <Td isNumeric>
+                                <Link href={`/identity/${dataContract.owner}`}>
+                                    {dataContract.owner}
+                                    {dataContract.isSystem && <><br/><div>system</div></>}
+                                </Link>
+                            </Td>
+                        </Tr>
+                        <Tr>
                             <Td>Created</Td>
                             <Td isNumeric>{new Date(dataContract.timestamp).toLocaleString()}</Td>
                         </Tr>

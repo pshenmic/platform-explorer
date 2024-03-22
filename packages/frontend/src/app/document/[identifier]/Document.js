@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import * as Api from "../../../util/Api"
 import './Document.scss'
 
@@ -64,6 +65,19 @@ function Document({identifier}) {
                             <Tr>
                                 <Td>Identifier</Td>
                                 <Td isNumeric>{document.identifier}</Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Owner</Td>
+                                <Td isNumeric>
+                                    <Link href={`/identity/${document.owner}`}>
+                                        {document.owner}
+                                        {(document.isSystem) && <><br/><div>system</div></>}
+                                    </Link>
+                                </Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Is system</Td>
+                                <Td isNumeric>{document.revision}</Td>
                             </Tr>
                             <Tr>
                                 <Td>Revision</Td>
