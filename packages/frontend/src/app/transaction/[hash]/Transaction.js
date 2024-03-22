@@ -97,7 +97,7 @@ function TransactionData({data}) {
                 </Tr>
                 <Tr>
                     <Td>Identity</Td>
-                    <Td><Link to={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                    <Td><Link href={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
                 </Tr>
             </Tbody>
         </>)
@@ -162,12 +162,24 @@ function TransactionData({data}) {
 
             <Tbody>
                 <Tr>
+                    <Td>Identity</Td>
+                    <Td><Link href={`/identity/${data.senderId}`}>{data.senderId}</Link></Td>
+                </Tr>
+                <Tr>
+                    <Td>Output script</Td>
+                    <Td>{data.outputScript}</Td>
+                </Tr>
+                <Tr>
                     <Td>Amount</Td>
                     <Td>{data.amount} Credits</Td>
                 </Tr>
                 <Tr>
-                    <Td>Identity</Td>
-                    <Td><Link href={`/identity/${data.identityId}`}>{data.identityId}</Link></Td>
+                    <Td>Core fee per byte</Td>
+                    <Td>{data.coreFeePerByte}</Td>
+                </Tr>
+                <Tr>
+                    <Td>Nonce</Td>
+                    <Td>{data.nonce}</Td>
                 </Tr>
             </Tbody>
         </>)
