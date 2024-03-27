@@ -91,8 +91,8 @@ function Identity({identifier}) {
                                     <Td isNumeric>{identity.balance} Credits</Td>
                                 </Tr>
                                 <Tr>
-                                    <Td>Created by</Td>
-                                    <Td isNumeric>{identity.isSystem ? 'System': 'User'}</Td>
+                                    <Td>System</Td>
+                                    <Td isNumeric>{identity.isSystem ? 'true': 'false'}</Td>
                                 </Tr>
                                 
                                 {!identity.isSystem && 

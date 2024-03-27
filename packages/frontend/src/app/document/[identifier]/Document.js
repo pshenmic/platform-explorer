@@ -73,8 +73,8 @@ function Document({identifier}) {
                                 </Td>
                             </Tr>
                             <Tr>
-                                <Td>Created by</Td>
-                                <Td isNumeric>{document.isSystem ? 'System': 'User'}</Td>
+                                <Td>System</Td>
+                                <Td isNumeric>{document.isSystem ? 'true': 'false'}</Td>
                             </Tr>
                             <Tr>
                                 <Td>Revision</Td>

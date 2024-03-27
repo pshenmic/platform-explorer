@@ -96,8 +96,8 @@ function DataContract({identifier}) {
                         </Tr>
 
                         <Tr>
-                            <Td>Created by</Td>
-                            <Td isNumeric>{dataContract.isSystem ? 'System': 'User'}</Td>
+                            <Td>System</Td>
+                            <Td isNumeric>{dataContract.isSystem ? 'true': 'false'}</Td>
                         </Tr>
 
                         {!dataContract.isSystem && 
