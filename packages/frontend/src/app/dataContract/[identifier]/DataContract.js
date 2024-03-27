@@ -91,27 +91,35 @@ function DataContract({identifier}) {
                         <Tr>
                             <Td>Owner</Td>
                             <Td isNumeric>
-                                <Link href={`/identity/${dataContract.owner}`}>
-                                    {dataContract.owner}
-                                    {dataContract.isSystem && <><br/><div>system</div></>}
-                                </Link>
+                                <Link href={`/identity/${dataContract.owner}`}>{dataContract.owner}</Link>
                             </Td>
                         </Tr>
+
                         <Tr>
-                            <Td>Created</Td>
-                            <Td isNumeric>{new Date(dataContract.timestamp).toLocaleString()}</Td>
+                            <Td>Created by</Td>
+                            <Td isNumeric>{dataContract.isSystem ? 'System': 'User'}</Td>
                         </Tr>
+
+                        {!dataContract.isSystem && 
+                            <Tr>
+                                <Td>Created</Td>
+                                <Td isNumeric>{new Date(dataContract.timestamp).toLocaleString()}</Td>
+                            </Tr>
+                        }
+
                         <Tr>
                             <Td>Revision</Td>
                             <Td isNumeric>{dataContract.version}</Td>
                         </Tr>
-                        <Tr>
-                            <Td>Transaction</Td>
-                            <Td isNumeric>
-                                <Link href={`/transaction/${dataContract.txHash}`}>{dataContract.txHash}</Link>
-                            </Td>
-                        </Tr>
 
+                        {!dataContract.isSystem && 
+                            <Tr>
+                                <Td>Transaction</Td>
+                                <Td isNumeric>
+                                    <Link href={`/transaction/${dataContract.txHash}`}>{dataContract.txHash}</Link>
+                                </Td>
+                            </Tr>
+                        }
                     </Tbody>
                 </Table>
             </TableContainer>

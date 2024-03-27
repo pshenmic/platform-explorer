@@ -69,15 +69,12 @@ function Document({identifier}) {
                             <Tr>
                                 <Td>Owner</Td>
                                 <Td isNumeric>
-                                    <Link href={`/identity/${document.owner}`}>
-                                        {document.owner}
-                                        {(document.isSystem) && <><br/><div>system</div></>}
-                                    </Link>
+                                    <Link href={`/identity/${document.owner}`}>{document.owner}</Link>
                                 </Td>
                             </Tr>
                             <Tr>
-                                <Td>Is system</Td>
-                                <Td isNumeric>{document.revision}</Td>
+                                <Td>Created by</Td>
+                                <Td isNumeric>{document.isSystem ? 'System': 'User'}</Td>
                             </Tr>
                             <Tr>
                                 <Td>Revision</Td>

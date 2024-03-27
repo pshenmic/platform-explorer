@@ -84,31 +84,40 @@ function Identity({identifier}) {
                             <Tbody>
                                 <Tr>
                                     <Td>Identifier</Td>
-                                    <Td isNumeric>
-                                        {identity.identifier}
-                                        {(identity.isSystem) && <><br/><div>system</div></>}
-                                    </Td>
+                                    <Td isNumeric>{identity.identifier}</Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Balance</Td>
                                     <Td isNumeric>{identity.balance} Credits</Td>
                                 </Tr>
                                 <Tr>
-                                    <Td>Created</Td>
-                                    <Td isNumeric> 
-                                        <Link href={`/transaction/${identity.txHash}`}>
-                                            {new Date(identity.timestamp).toLocaleString()}
-                                        </Link>
-                                    </Td>
+                                    <Td>Created by</Td>
+                                    <Td isNumeric>{identity.isSystem ? 'System': 'User'}</Td>
                                 </Tr>
+                                
+                                {!identity.isSystem && 
+                                    <Tr>
+                                        <Td>Created</Td>
+                                        <Td isNumeric> 
+                                            <Link href={`/transaction/${identity.txHash}`}>
+                                                {new Date(identity.timestamp).toLocaleString()}
+                                            </Link>
+                                        </Td>
+                                    </Tr>
+                                }
+
                                 <Tr>
                                     <Td>Revision</Td>
                                     <Td isNumeric>{identity.revision}</Td>
                                 </Tr>
-                                <Tr>
-                                    <Td>Transactions</Td>
-                                    <Td isNumeric>{identity.totalTxs}</Td>
-                                </Tr>
+
+                                {!identity.isSystem && 
+                                    <Tr>
+                                        <Td>Transactions</Td>
+                                        <Td isNumeric>{identity.totalTxs}</Td>
+                                    </Tr>
+                                }
+
                                 <Tr>
                                     <Td>Transfers</Td>
                                     <Td isNumeric>{identity.totalTransfers}</Td>
