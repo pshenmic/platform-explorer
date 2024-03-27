@@ -89,20 +89,37 @@ function DataContract({identifier}) {
                             <Td isNumeric>{dataContract.identifier}</Td>
                         </Tr>
                         <Tr>
-                            <Td>Created</Td>
-                            <Td isNumeric>{new Date(dataContract.timestamp).toLocaleString()}</Td>
+                            <Td>Owner</Td>
+                            <Td isNumeric>
+                                <Link href={`/identity/${dataContract.owner}`}>{dataContract.owner}</Link>
+                            </Td>
                         </Tr>
+
+                        <Tr>
+                            <Td>System</Td>
+                            <Td isNumeric>{dataContract.isSystem ? 'true': 'false'}</Td>
+                        </Tr>
+
+                        {!dataContract.isSystem && 
+                            <Tr>
+                                <Td>Created</Td>
+                                <Td isNumeric>{new Date(dataContract.timestamp).toLocaleString()}</Td>
+                            </Tr>
+                        }
+
                         <Tr>
                             <Td>Revision</Td>
                             <Td isNumeric>{dataContract.version}</Td>
                         </Tr>
-                        <Tr>
-                            <Td>Transaction</Td>
-                            <Td isNumeric>
-                                <Link href={`/transaction/${dataContract.txHash}`}>{dataContract.txHash}</Link>
-                            </Td>
-                        </Tr>
 
+                        {!dataContract.isSystem && 
+                            <Tr>
+                                <Td>Transaction</Td>
+                                <Td isNumeric>
+                                    <Link href={`/transaction/${dataContract.txHash}`}>{dataContract.txHash}</Link>
+                                </Td>
+                            </Tr>
+                        }
                     </Tbody>
                 </Table>
             </TableContainer>

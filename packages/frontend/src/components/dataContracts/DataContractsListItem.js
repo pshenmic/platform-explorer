@@ -3,7 +3,7 @@ import './DataContractsListItem.scss'
 
 
 function DataContractsListItem ({ dataContract }) {
-    const {identifier, timestamp} = dataContract
+    const {identifier, timestamp, isSystem} = dataContract
     
     return (
         <Link 
@@ -13,6 +13,8 @@ function DataContractsListItem ({ dataContract }) {
             <div className={'DataContractsListItem__Identifier'}>
                 {identifier}
             </div>
+
+            {isSystem && <div>SYSTEM</div>}
 
             {(typeof timestamp === 'string') && 
                 <div className={'DataContractsListItem__Timestamp'}>
