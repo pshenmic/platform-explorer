@@ -80,7 +80,7 @@ function Navbar() {
         </Flex>
 
         {isOpen ? (
-          <Box className={'NavbarMobileMenu'} pb={4} display={{ md: 'none' }}>
+          <Box className={'NavbarMobileMenu'} pb={4} display={{ lg: 'none' }}>
             <Stack as={'nav'} spacing={4}>
               {links.map((link) => (
                 <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
