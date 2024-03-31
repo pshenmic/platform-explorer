@@ -3,7 +3,7 @@ import './IdentitiesListItem.scss'
 
 
 function IdentitiesListItem ({identity}) {
-    const {identifier, timestamp} = identity
+    const {identifier, timestamp, isSystem} = identity
 
     return (
         <Link 
@@ -13,6 +13,8 @@ function IdentitiesListItem ({identity}) {
             <div className={'IdentitiesListItem__Identifier'}>
                 {identifier}
             </div>
+
+            {isSystem && <div>SYSTEM</div>}
 
             {(typeof timestamp === 'string') && 
                 <div className={'IdentitiesListItem__Timestamp'}>

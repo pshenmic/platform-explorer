@@ -92,13 +92,22 @@ export const theme = extendTheme( {
           background: 'gray.800',
           display: 'inline-block'
         },
-
         Container: {
           a: {
             color: 'brand.normal',
   
             _hover : {
               color: 'brand.deep',
+            }
+          }
+        },
+        Table: {
+          a: {
+            borderBottom: '1px solid',
+
+            _hover : {
+              borderBottom: 'none',
+              color: 'gray.200'
             }
           }
         }
