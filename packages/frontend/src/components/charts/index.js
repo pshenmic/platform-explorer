@@ -20,6 +20,7 @@ const LineGraph = ({
     const tooltip = useRef()
     const divTooltip = useRef()
     const graphicLine = useRef()
+    const focusPoint = useRef()
 
     useEffect(() => void d3.select(gx.current)
                            .call(d3.axisBottom(x)
@@ -56,6 +57,7 @@ const LineGraph = ({
                     .y0(y(0))
                     .y1((d) => y(d.y))
 
+    const bisect = d3.bisector(d => d.x).center
 
     function tooltipPosition(point) {
         const tooltipElement = d3.select(tooltip.current)
@@ -67,15 +69,18 @@ const LineGraph = ({
 
         tooltipElement.attr("transform", `translate(${xPos},${y(data[point].y)})`)
     }
-      
-
-    const bisect = d3.bisector(d => d.x).center
     
     function pointermoved(event) {
-        d3.select(divTooltip.current)
-        .style("display", "block")
-
         const i = bisect(data, x.invert(d3.pointer(event)[0]))
+
+        d3.select(divTooltip.current)
+            .style("display", "block")
+
+        d3.select(focusPoint.current)
+            .style("display", "block")
+            .selectAll("circle")
+            .attr("cx", x(data[i].x))
+            .attr("cy", y(data[i].y))
 
         d3.select(tooltip.current)
             .style("display", null)
@@ -125,6 +130,9 @@ const LineGraph = ({
     function pointerleft() {
         d3.select(tooltip.current)
             .style("display", "none")
+
+        d3.select(focusPoint.current)
+            .style("display", "none")
     }
 
     return (
@@ -151,6 +159,14 @@ const LineGraph = ({
                 <path ref={graphicLine} fill="none" stroke="#0e75b5" strokeWidth="3" d={line(data)}/>
 
                 <g ref={dots}></g>
+
+                <g ref={focusPoint}
+                    style={{
+                        display: 'none',
+                        opacity: '.8'
+                    }}>
+                    <circle r="2" fill='white' />
+                </g>
 
                 <g fill="white" stroke="currentColor" strokeWidth="2">
                     {data.map((d, i) => (<circle key={i} cx={x(i)} cy={y(d)} r="2.5" />))}
