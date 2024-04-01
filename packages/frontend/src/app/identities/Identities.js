@@ -34,7 +34,7 @@ function Identities() {
     useEffect(fetchData, [])
 
     const handlePageClick = ({selected}) => {
-        Api.getDataContracts(selected+1, pageSize, 'desc')
+        Api.getIdentities(selected+1, pageSize, 'desc')
             .then((res) => {
                 setCurrentPage(selected)
                 setIdentities(res.resultSet)
