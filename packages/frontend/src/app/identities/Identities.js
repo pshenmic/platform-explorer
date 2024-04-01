@@ -22,7 +22,7 @@ function Identities() {
     const fetchData = () => {
         setLoading(true)
 
-        Api.getIdentities(1, pageSize)
+        Api.getIdentities(1, pageSize, 'desc')
             .then((identities) => {
                 setIdentities(identities.resultSet)
                 setTotal(identities.pagination.total)
@@ -34,7 +34,7 @@ function Identities() {
     useEffect(fetchData, [])
 
     const handlePageClick = ({selected}) => {
-        Api.getDataContracts(selected+1, pageSize, 'desc')
+        Api.getIdentities(selected+1, pageSize, 'desc')
             .then((res) => {
                 setCurrentPage(selected)
                 setIdentities(res.resultSet)
