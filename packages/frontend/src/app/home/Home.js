@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsList from '../../components/transactions/TransactionsList'
-import {LinePlot} from '../../components/charts/index.js'
+import { LineGraph } from '../../components/charts/index.js'
 
 import { 
     Box, 
@@ -60,7 +60,6 @@ function Home() {
                     divider={<StackDivider borderColor='gray.700' />}
                 >
                     <Box w={['100%', , '33%']}>
-
                         <Flex wrap={'wrap'}>
                             <Text as={'b'} mr={4}>Network: </Text>
                             <Box>{status.network}</Box>
@@ -75,11 +74,9 @@ function Home() {
                             <Text as={'b'} mr={4}>App Version:</Text>
                             <Box>{status.appVersion}</Box>
                         </Flex>
-
                     </Box>
 
                     <Box w={['100%', , '33%']}>
-
                         <Flex wrap={'wrap'}>
                             <Text as={'b'} mr={4}>Average block time:</Text>
                             <Box>{Math.ceil(status.blockTimeAverage)} sec.</Box>
@@ -94,11 +91,9 @@ function Home() {
                             <Text as={'b'} mr={4}>Transactions:</Text>
                             <Box>{status.txCount}</Box>
                         </Flex>
-
                     </Box>
 
                     <Box w={['100%', , '33%']}>
-
                         <Flex wrap={'wrap'}>
                             <Text as={'b'} mr={4}>Data contracts:</Text>
                             <Box>{status.dataContractsCount}</Box>
@@ -113,9 +108,7 @@ function Home() {
                             <Text as={'b'} mr={4}>Transfers:</Text>
                             <Box>{status.transfersCount}</Box>
                         </Flex>
-                        
                     </Box>
-
                 </Stack>
             </Container>
 
@@ -131,19 +124,22 @@ function Home() {
                 >
                     <Heading as={'h2'} size={'sm'} px={2} my={0}>Average block time, sec</Heading>
                     
-                    <LinePlot
+                    <LineGraph
                         data={[
-                            {date: new Date('2024-01-01'), value: 120},
-                            {date: new Date('2024-02-02'), value: 110},
-                            {date: new Date('2024-03-02'), value: 230},
-                            {date: new Date('2024-04-02'), value: 0},
-                            {date: new Date('2024-05-02'), value: 200},
+                            {x: 10, y: 120},
+                            {x: 11, y: 110},
+                            {x: 12, y: 230},
+                            {x: 13, y: 0},
+                            {x: 14, y: 200},
+                            {x: 15, y: 250},
+                            {x: 16, y: 220},
+                            {x: 17, y: 210},
+                            {x: 18, y: 250}
                         ]}
                     />
                 </Container>
 
                 <Box w={10} h={10} />
-
 
                 <Container
                     my={5}
@@ -151,20 +147,18 @@ function Home() {
                 >
                     <Heading as={'h2'} size={'sm'} px={2} my={0}>Transaction history</Heading>
 
-                    <LinePlot
+                    <LineGraph
                         data={[
-                            {date: new Date('2024-01-01'), value: 120},
-                            {date: new Date('2024-02-02'), value: 110},
-                            {date: new Date('2024-03-02'), value: 230},
-                            {date: new Date('2024-04-02'), value: 0},
-                            {date: new Date('2024-05-02'), value: 200},
+                            {x: 10, y: 120},
+                            {x: 11, y: 50},
+                            {x: 13, y: 150},
+                            {x: 16, y: 100},
+                            {x: 17, y: 300},
+                            {x: 18, y: 250}
                         ]}
                     />
                 </Container>
-
             </Flex>
-
-                
 
             <Container
                 maxW='container.lg'
@@ -177,8 +171,6 @@ function Home() {
                 <TransactionsList transactions={transactions} />
 
             </Container>
-
-
         </Container>
     );
 }

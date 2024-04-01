@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import * as d3 from 'd3'
 import './charts.scss'
 
-const LinePlot = ({
+const LineGraph = ({
     data = [],
     width = 460,
     height = 150,
@@ -11,8 +11,8 @@ const LinePlot = ({
     marginBottom = 40,
     marginLeft = 40
 }) => {
-    const x = d3.scaleTime(d3.extent(data, d => d.date).reverse(), [width - marginLeft, marginRight])
-    const y = d3.scaleLinear(d3.extent(data, d => d.value), [height - marginBottom, marginTop])
+    const x = d3.scaleLinear(d3.extent(data, d => d.x).reverse(), [width - marginLeft, marginRight])
+    const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
 
     const gx = useRef()
     const gy = useRef()
@@ -26,7 +26,6 @@ const LinePlot = ({
                                 .tickSize(0)
                                 .tickPadding(10)
                                 .ticks(5)
-                                .tickFormat(d3.timeFormat("%m.%d"))
                             ), [gx, x])
 
     useEffect(() => void d3.select(gy.current)
@@ -40,37 +39,37 @@ const LinePlot = ({
                             .selectAll("dot")
                             .data(data)
                             .join("circle")
-                            .attr("cx", d => x(d.date))
-                            .attr("cy", d => y(d.value))
+                            .attr("cx", d => x(d.x))
+                            .attr("cy", d => y(d.y))
                             .attr("r", 4.0) 
                             .attr('class', 'chart-point')
                             .style("fill", "#0e75b5"), [gy, y])
 
     const line = d3.line()
-                    .x(d => x(d.date))
-                    .y(d => y(d.value))
+                    .x(d => x(d.x))
+                    .y(d => y(d.y))
                     .curve(d3.curveCardinal)
 
     const area = d3.area()
                     .curve(d3.curveCardinal)
-                    .x((d) => x(d.date))
+                    .x((d) => x(d.x))
                     .y0(y(0))
-                    .y1((d) => y(d.value))
+                    .y1((d) => y(d.y))
 
 
     function tooltipPosition(point) {
         const tooltipElement = d3.select(tooltip.current)
         const {width: tooltipWidth} = tooltipElement.node().getBoundingClientRect()
 
-        const xPos = x(data[point].date) + tooltipWidth < width ?
-                            x(data[point].date) + tooltipWidth / 2 + 15 :
-                            x(data[point].date) - tooltipWidth / 2 - 15 
+        const xPos = x(data[point].x) + tooltipWidth + 15 < width ?
+                            x(data[point].x) + tooltipWidth / 2 + 15 :
+                            x(data[point].x) - tooltipWidth / 2 - 15 
 
-        tooltipElement.attr("transform", `translate(${xPos},${y(data[point].value)})`)
+        tooltipElement.attr("transform", `translate(${xPos},${y(data[point].y)})`)
     }
       
 
-    const bisect = d3.bisector(d => d.date).center
+    const bisect = d3.bisector(d => d.x).center
     
     function pointermoved(event) {
         d3.select(divTooltip.current)
@@ -80,7 +79,7 @@ const LinePlot = ({
 
         d3.select(tooltip.current)
             .style("display", null)
-            .attr("transform", `translate(${x(data[i].date) + 100}, ${y(data[i].value)})`)
+            .attr("transform", `translate(${x(data[i].x) + 100}, ${y(data[i].y)})`)
 
         const path = d3.select(tooltip.current)
                         .selectAll("path")
@@ -96,7 +95,9 @@ const LinePlot = ({
                 .join("text")
                 .call(t => t
                     .selectAll("tspan")
-                    .data([data[i].date.toLocaleString(), data[i].value])
+                    .data([
+                        'Block Height: ' + data[i].x, 
+                        'Tx count: ' + data[i].y])
                     .join("tspan")
                     .attr("x", 0)
                     .attr("y", (_, i) => `${i * 1.1}em`)
@@ -164,7 +165,6 @@ const LinePlot = ({
     )
 }
 
-
 export {
-    LinePlot
+    LineGraph
 }
