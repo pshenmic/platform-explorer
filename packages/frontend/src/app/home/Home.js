@@ -122,21 +122,27 @@ function Home() {
                     my={5}
                     borderWidth='1px' borderRadius='lg'
                 >
-                    <Heading as={'h2'} size={'sm'} px={2} my={0}>Average block time, sec</Heading>
+                    <Heading as={'h2'} size={'sm'} px={2} my={0}>Average block time</Heading>
                     
-                    <LineGraph
-                        data={[
-                            {x: 10, y: 120},
-                            {x: 11, y: 110},
-                            {x: 12, y: 230},
-                            {x: 13, y: 0},
-                            {x: 14, y: 200},
-                            {x: 15, y: 250},
-                            {x: 16, y: 220},
-                            {x: 17, y: 210},
-                            {x: 18, y: 250}
-                        ]}
-                    />
+                    <Container my={3} p={0}>
+                        <LineGraph
+                            xLabel={'Block height'}
+                            yLabel={'Time, s'}
+                            width = {460}
+                            height = {180}
+                            data={[
+                                {x: 10, y: 120},
+                                {x: 11, y: 110},
+                                {x: 12, y: 230},
+                                {x: 13, y: 0},
+                                {x: 14, y: 200},
+                                {x: 15, y: 250},
+                                {x: 16, y: 220},
+                                {x: 17, y: 210},
+                                {x: 18, y: 250}
+                            ]}
+                        />
+                    </Container>
                 </Container>
 
                 <Box w={10} h={10} />
@@ -146,17 +152,22 @@ function Home() {
                     borderWidth='1px' borderRadius='lg'
                 >
                     <Heading as={'h2'} size={'sm'} px={2} my={0}>Transaction history</Heading>
-
-                    <LineGraph
-                        data={[
-                            {x: 10, y: 120},
-                            {x: 11, y: 50},
-                            {x: 13, y: 150},
-                            {x: 16, y: 100},
-                            {x: 17, y: 300},
-                            {x: 18, y: 250}
-                        ]}
-                    />
+                    <Container my={3} p={0}>
+                        <LineGraph
+                            xLabel={'Block height'}
+                            yLabel={'Transactions count'}
+                            width = {460}
+                            height = {180}
+                            data={[
+                                {x: 10, y: 1200},
+                                {x: 11, y: 500},
+                                {x: 13, y: 1500},
+                                {x: 16, y: 1000},
+                                {x: 17, y: 1000},
+                                {x: 18, y: 1500}
+                            ]}
+                        />
+                    </Container>
                 </Container>
             </Flex>
 

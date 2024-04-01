@@ -5,18 +5,19 @@ import './charts.scss'
 const LineGraph = ({
     data = [],
     width = 460,
-    height = 150,
+    xLabel = '',
+    yLabel = '',
+    height = 180,
     marginTop = 40,
     marginRight = 40,
     marginBottom = 40,
-    marginLeft = 40
+    marginLeft = 40,
 }) => {
-    const x = d3.scaleLinear(d3.extent(data, d => d.x).reverse(), [width - marginLeft, marginRight])
+    const x = d3.scaleLinear(d3.extent(data, d => d.x), [marginRight, width - marginLeft])
     const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
 
     const gx = useRef()
     const gy = useRef()
-    const dots = useRef()
     const tooltip = useRef()
     const divTooltip = useRef()
     const graphicLine = useRef()
@@ -27,24 +28,33 @@ const LineGraph = ({
                                 .tickSize(0)
                                 .tickPadding(10)
                                 .ticks(5)
-                            ), [gx, x])
+                            )
+                            .call((axis) => {
+                                const labelWidth = axis.select('.Axis__Label').node().getBBox().width
+
+                                axis.select('.Axis__Label')
+                                    .attr("transform", `translate(${width - labelWidth + 15}, 35)`)
+                            })
+                            , [gx, x])
 
     useEffect(() => void d3.select(gy.current)
                             .call(d3.axisLeft(y)
                                 .tickSize(0)
                                 .ticks(5)
                                 .tickPadding(10)
-                            ), [gy, y])
+                            )
+                            .call((axis) => {
+                                const labelWidth = axis.select('.Axis__Label').node().getBBox().width
 
-    useEffect(() => void d3.select(dots.current)
-                            .selectAll("dot")
-                            .data(data)
-                            .join("circle")
-                            .attr("cx", d => x(d.x))
-                            .attr("cy", d => y(d.y))
-                            .attr("r", 4.0) 
-                            .attr('class', 'chart-point')
-                            .style("fill", "#0e75b5"), [gy, y])
+                                axis.select('.Axis__Label')
+                                    .attr("transform", `translate(${labelWidth - 35}, 27)`)
+                            })
+                            , [gy, y])
+
+    useEffect(()=> void d3.select(gy.current)
+                            .select('.Axis_Label')
+                            .attr("transform", `translate(50,50)`)
+                            , [])
 
     const line = d3.line()
                     .x(d => x(d.x))
@@ -141,7 +151,8 @@ const LineGraph = ({
             height = {height}
             onMouseEnter = {pointermoved}    
             onMouseMove = {pointermoved}    
-            onMouseLeave = {pointerleft}    
+            onMouseLeave = {pointerleft}
+            overflow="visible"
         >   
             <g transform={`translate(15,-15)`}>
                 <defs>
@@ -149,16 +160,25 @@ const LineGraph = ({
                         <stop stopColor="#0F4D74" stopOpacity="0.3" offset="0%" />
                         <stop stopColor="#0E75B5" stopOpacity="0.3" offset="100%" />
                     </linearGradient>
+                    <clipPath id="clipPath">
+                        <rect x="25" y="30" width={width - 65} height={height - 70}></rect>
+                    </clipPath>
                 </defs>
 
-                <g className={'axis'} ref={gx} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}} transform={`translate(0,${height - marginBottom + 15})`} />
-                <g className={'axis'} ref={gy} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}} transform={`translate(${marginLeft - 15},0)`} />
-
-                <path fill="url(#AreaFill)" strokeWidth="3" d={area(data)}/>
-
+                <g className={'axis'} ref={gx} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}} transform={`translate(0,${height - marginBottom + 15})`} >
+                    <g><text className={'Axis__Label'} fill='white'>{xLabel}</text></g>
+                </g>
+                <g className={'axis'} ref={gy} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}} transform={`translate(${marginLeft - 15},0)`} >
+                    <g><text className={'Axis__Label'} fill='white'>{yLabel}</text></g>
+                </g>
+                <g width={100} height={100} overflow={'auto'}>
+                    <path fill="url(#AreaFill)" strokeWidth="3" d={area(data)} clipPath={'url(#clipPath)'}/>
+                </g>
                 <path ref={graphicLine} fill="none" stroke="#0e75b5" strokeWidth="3" d={line(data)}/>
 
-                <g ref={dots}></g>
+                <g fill='#0e75b5'>
+                    {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'chart-point'} />))}
+                </g>
 
                 <g ref={focusPoint}
                     style={{
@@ -168,14 +188,11 @@ const LineGraph = ({
                     <circle r="2" fill='white' />
                 </g>
 
-                <g fill="white" stroke="currentColor" strokeWidth="2">
-                    {data.map((d, i) => (<circle key={i} cx={x(i)} cy={y(d)} r="2.5" />))}
-                </g>
-
                 <g ref={tooltip} style={{
                         fontSize: '14px', 
                         fontFamily: 'Segoe UI Symbol'
-                    }}></g>
+                    }}>
+                </g>
             </g>
         </svg>
     )
