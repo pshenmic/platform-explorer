@@ -112,11 +112,14 @@ function Home() {
                 </Stack>
             </Container>
 
+
+            <Container maxW='container.lg' mb={[10,,16]}>
+
             <Flex 
                 w='100%' 
                 justifyContent='space-between'
                 wrap={["wrap", , , 'nowrap']}
-                mb={[10,,16]}
+                mb={5}
             >
                 <Container
                     my={5}
@@ -145,13 +148,14 @@ function Home() {
                     </Container>
                 </Container>
 
-                <Box w={10} h={10} />
+                <Box flexShrink={'0'} w={10} h={10} />
 
                 <Container
                     my={5}
                     borderWidth='1px' borderRadius='lg'
                 >
                     <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
+
                     <Container my={3} p={0}>
                         <LineGraph
                             xLabel={'Block height'}
@@ -170,6 +174,55 @@ function Home() {
                     </Container>
                 </Container>
             </Flex>
+
+            <Flex 
+                w='100%' 
+                justifyContent='space-between'
+                wrap={["wrap", , , 'nowrap']}
+                mb={[10,,16]}
+            >
+                <Container m={0} p={0} >
+                    <Container
+                        m={0}
+                        h={'100%'}
+                        borderWidth='1px' borderRadius='lg'
+                    >
+                        <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Most popular data contracts</Heading>
+
+                        {/* <DataContractsList dataContracts={dataContracts} size='l'/> */}
+
+                    </Container>
+                </Container>
+
+                <Box flexShrink={'0'} w={10} h={10} />
+
+                <Container p={0}>
+
+                    <Container
+                        borderWidth='1px' borderRadius='lg'
+                    >
+                        <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Most active Identity</Heading>
+
+                        {/* <IdentitiesList identities={identities}/> */}
+
+                    </Container>
+
+                    <Box w={10} h={10} />
+
+
+                    <Container
+                        borderWidth='1px' borderRadius='lg'
+                    >
+                        <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Richest Identity</Heading>
+
+                        {/* <IdentitiesList identities={identities}/> */}
+
+                    </Container>
+                </Container>
+            </Flex>
+
+            </Container>
+
 
             <Container
                 maxW='container.lg'
