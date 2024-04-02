@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import * as d3 from 'd3'
 import './charts.scss'
 
@@ -13,6 +13,7 @@ const LineGraph = ({
     marginBottom = 40,
     marginLeft = 40,
 }) => {
+    const [loading, setLoading] = useState(true)
     const x = d3.scaleLinear(d3.extent(data, d => d.x), [marginRight, width - marginLeft])
     const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
 
@@ -38,23 +39,41 @@ const LineGraph = ({
                             , [gx, x])
 
     useEffect(() => void d3.select(gy.current)
+                            .call((axis) => {
+                                const labelWidth = axis.select('.Axis__Label').node().getBBox().width
+
+                                // axis.select('.Axis__Label')
+                                //     .attr("transform", `translate(0, 27)`)
+                                //     // .attr("transform", `translate(${labelWidth - 35}, 27)`)
+                            })
+                            .select('.Axis__TickContainer')
                             .call(d3.axisLeft(y)
                                 .tickSize(0)
                                 .ticks(5)
                                 .tickPadding(10)
                             )
-                            .call((axis) => {
-                                const labelWidth = axis.select('.Axis__Label').node().getBBox().width
-
-                                axis.select('.Axis__Label')
-                                    .attr("transform", `translate(${labelWidth - 35}, 27)`)
-                            })
                             , [gy, y])
 
-    useEffect(()=> void d3.select(gy.current)
-                            .select('.Axis_Label')
-                            .attr("transform", `translate(50,50)`)
-                            , [])
+    if (d3.select(gy.current).node()) {
+        (() => {
+            const yAxisTicksWidth = d3.select(gy.current).select('.Axis__TickContainer').node().getBBox().width
+
+            d3.select(gy.current)
+            .select('.Axis__Label')
+            .attr("transform", `translate(${-yAxisTicksWidth}, ${marginTop - 15})`)
+
+            d3.select(gy.current)
+                .attr("transform", `translate(${yAxisTicksWidth}, 0)`)
+
+            x.range([
+                yAxisTicksWidth,
+                width - marginLeft
+            ])        
+        
+            if (loading) setLoading(false)
+        })()
+
+    }
 
     const line = d3.line()
                     .x(d => x(d.x))
@@ -146,55 +165,63 @@ const LineGraph = ({
     }
 
     return (
-        <svg 
-            width = {width} 
-            height = {height}
-            onMouseEnter = {pointermoved}    
-            onMouseMove = {pointermoved}    
-            onMouseLeave = {pointerleft}
-            overflow="visible"
-        >   
-            <g transform={`translate(15,-15)`}>
-                <defs>
-                    <linearGradient id="AreaFill" x1="0%" y1="100%" x2="0%" y2="0%">
-                        <stop stopColor="#0F4D74" stopOpacity="0.3" offset="0%" />
-                        <stop stopColor="#0E75B5" stopOpacity="0.3" offset="100%" />
-                    </linearGradient>
-                    <clipPath id="clipPath">
-                        <rect x="25" y="30" width={width - 65} height={height - 70}></rect>
-                    </clipPath>
-                </defs>
+        <div className={`ChartContainer ${!loading ? 'loaded' : ''}`}>
+            <svg 
+                width = {width} 
+                height = {height}
+                onMouseEnter = {pointermoved}    
+                onMouseMove = {pointermoved}    
+                onMouseLeave = {pointerleft}
+            >   
+                <svg x='15' y='-15' overflow={'visible'}>
+                    <g className={'axis'} ref={gx} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}} transform={`translate(0,${height - marginBottom + 15})`} >
+                        <g><text className={'Axis__Label'} fill='white'>{xLabel}</text></g>
+                    </g>
+                </svg>
 
-                <g className={'axis'} ref={gx} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}} transform={`translate(0,${height - marginBottom + 15})`} >
-                    <g><text className={'Axis__Label'} fill='white'>{xLabel}</text></g>
-                </g>
-                <g className={'axis'} ref={gy} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}} transform={`translate(${marginLeft - 15},0)`} >
-                    <g><text className={'Axis__Label'} fill='white'>{yLabel}</text></g>
-                </g>
-                <g width={100} height={100} overflow={'auto'}>
-                    <path fill="url(#AreaFill)" strokeWidth="3" d={area(data)} clipPath={'url(#clipPath)'}/>
-                </g>
-                <path ref={graphicLine} fill="none" stroke="#0e75b5" strokeWidth="3" d={line(data)}/>
+                <svg x='0' y='-15'>
+                    <g className={'axis'} ref={gy} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}}>  
+                        <g><text className={'Axis__Label'} fill='white'>{yLabel}</text></g>
+                        
+                        <g className={'Axis__TickContainer'} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}}></g>
+                    </g>
+                </svg>
+            
+                <g transform={`translate(15,-15)`}>
+                    <defs>
+                        <linearGradient id="AreaFill" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop stopColor="#0F4D74" stopOpacity="0.3" offset="0%" />
+                            <stop stopColor="#0E75B5" stopOpacity="0.3" offset="100%" />
+                        </linearGradient>
+                        <clipPath id="clipPath">
+                            <rect x="25" y="30" width={width - 65} height={height - 70}></rect>
+                        </clipPath>
+                    </defs>
 
-                <g fill='#0e75b5'>
-                    {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'chart-point'} />))}
-                </g>
+                    <path d={area(data)} fill="url(#AreaFill)" clipPath={'url(#clipPath)'}/>
+                    
+                    <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none" />
 
-                <g ref={focusPoint}
-                    style={{
-                        display: 'none',
-                        opacity: '.8'
-                    }}>
-                    <circle r="2" fill='white' />
-                </g>
+                    <g fill='#0e75b5'>
+                        {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'chart-point'} />))}
+                    </g>
 
-                <g ref={tooltip} style={{
-                        fontSize: '14px', 
-                        fontFamily: 'Segoe UI Symbol'
-                    }}>
+                    <g ref={focusPoint}
+                        style={{
+                            display: 'none',
+                            opacity: '.8'
+                        }}>
+                        <circle r="2" fill='white' />
+                    </g>
+
+                    <g ref={tooltip} style={{
+                            fontSize: '14px', 
+                            fontFamily: 'Segoe UI Symbol'
+                        }}>
+                    </g>
                 </g>
-            </g>
-        </svg>
+            </svg>
+        </div>
     )
 }
 
