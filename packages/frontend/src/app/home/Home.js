@@ -122,13 +122,13 @@ function Home() {
                     my={5}
                     borderWidth='1px' borderRadius='lg'
                 >
-                    <Heading as={'h2'} size={'sm'} px={2} my={0}>Average block time</Heading>
+                    <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6} >Average block time</Heading>
                     
                     <Container my={3} p={0}>
                         <LineGraph
                             xLabel={'Block height'}
                             yLabel={'Time, s'}
-                            width = {460}
+                            width = {448}
                             height = {180}
                             data={[
                                 {x: 10, y: 120},
@@ -151,12 +151,12 @@ function Home() {
                     my={5}
                     borderWidth='1px' borderRadius='lg'
                 >
-                    <Heading as={'h2'} size={'sm'} px={2} my={0}>Transaction history</Heading>
+                    <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
                     <Container my={3} p={0}>
                         <LineGraph
                             xLabel={'Block height'}
                             yLabel={'Transactions count'}
-                            width = {460}
+                            width = {448}
                             height = {180}
                             data={[
                                 {x: 10, y: 11111200},

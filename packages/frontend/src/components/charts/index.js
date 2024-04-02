@@ -34,18 +34,11 @@ const LineGraph = ({
                                 const labelWidth = axis.select('.Axis__Label').node().getBBox().width
 
                                 axis.select('.Axis__Label')
-                                    .attr("transform", `translate(${width - labelWidth + 15}, 35)`)
+                                    .attr("transform", `translate(${width - labelWidth + 15}, 40)`)
                             })
                             , [gx, x])
 
     useEffect(() => void d3.select(gy.current)
-                            .call((axis) => {
-                                const labelWidth = axis.select('.Axis__Label').node().getBBox().width
-
-                                // axis.select('.Axis__Label')
-                                //     .attr("transform", `translate(0, 27)`)
-                                //     // .attr("transform", `translate(${labelWidth - 35}, 27)`)
-                            })
                             .select('.Axis__TickContainer')
                             .call(d3.axisLeft(y)
                                 .tickSize(0)
@@ -172,6 +165,7 @@ const LineGraph = ({
                 onMouseEnter = {pointermoved}    
                 onMouseMove = {pointermoved}    
                 onMouseLeave = {pointerleft}
+                overflow={'visible'}
             >   
                 <svg x='15' y='-15' overflow={'visible'}>
                     <g className={'axis'} ref={gx} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}} transform={`translate(0,${height - marginBottom + 15})`} >
