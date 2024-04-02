@@ -160,12 +160,11 @@ const LineGraph = ({
     return (
         <div className={`ChartContainer ${!loading ? 'loaded' : ''}`}>
             <svg 
-                width = {width} 
-                height = {height}
                 onMouseEnter = {pointermoved}    
                 onMouseMove = {pointermoved}    
                 onMouseLeave = {pointerleft}
                 overflow={'visible'}
+                viewBox={`0 0 ${width} ${height}`}
             >   
                 <svg x='15' y='-15' overflow={'visible'}>
                     <g className={'axis'} ref={gx} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}} transform={`translate(0,${height - marginBottom + 15})`} >

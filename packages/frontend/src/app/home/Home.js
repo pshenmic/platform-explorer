@@ -128,7 +128,7 @@ function Home() {
                         <LineGraph
                             xLabel={'Block height'}
                             yLabel={'Time, s'}
-                            width = {448}
+                            width = {464}
                             height = {180}
                             data={[
                                 {x: 10, y: 120},
@@ -156,7 +156,7 @@ function Home() {
                         <LineGraph
                             xLabel={'Block height'}
                             yLabel={'Transactions count'}
-                            width = {448}
+                            width = {464}
                             height = {180}
                             data={[
                                 {x: 10, y: 11111200},
