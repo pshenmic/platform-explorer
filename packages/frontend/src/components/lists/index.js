@@ -3,7 +3,7 @@ import './SimpleList.scss'
 
 function SimpleListItem ({ item }) {
     const ItemContainer = ({ link, children }) => link ? 
-        <Link className={'SimpleListItem'}>{children}</Link> : 
+        <Link href={link} className={'SimpleListItem'}>{children}</Link> : 
         <div className={'SimpleListItem'}>{children}</div>
 
     return (

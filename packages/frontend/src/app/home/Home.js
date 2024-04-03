@@ -199,7 +199,8 @@ function Home() {
 
                             <SimpleList 
                                 items={dataContracts.map((dataContract, i) => ({
-                                    monospaceColumns: [dataContract.identifier, 10000 - i * 25]
+                                    monospaceColumns: [dataContract.identifier, 10000 - i * 25],
+                                    link: '/dataContract/' + dataContract.identifier
                                 }))}
                                 columns={['Identifier', 'Amount of txs']} 
                             />
@@ -220,7 +221,8 @@ function Home() {
                             <SimpleList 
                                 items={identities.map((identitiy, i) => ({
                                     monospaceTitles:[identitiy.identifier],
-                                    columns: ['I-name-' + i, 100 - i * 25]
+                                    columns: ['I-name-' + i, 100 - i * 25],
+                                    link: '/identity/' + identitiy.identifier
                                 }))}
                                 columns={['Identifier', 'Amount of txs']} 
                             />
@@ -237,7 +239,8 @@ function Home() {
                             <SimpleList 
                                 items={identities.map((identitiy, i) => ({
                                     monospaceTitles:[identitiy.identifier],
-                                    columns: ['I-name-' + i, 20000 - i * 1555]
+                                    columns: ['I-name-' + i, 20000 - i * 1555],
+                                    link: '/identity/' + identitiy.identifier
                                 }))}
                                 columns={['Identifier', 'Balance']} 
                             />
