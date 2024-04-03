@@ -15,6 +15,7 @@
 
 .SimpleListItem {
     @include mixins.def_list_item;
+
     display: block;
 
     &__Title {
@@ -29,6 +30,16 @@
     }
 
     &__Column {
+        max-width: 100%;
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+        margin-right: 16px;
+
+        &:last-child {
+            overflow-wrap: normal;
+            margin-right: 0;
+        }
+
         &--Monospace {
             font-family: monospace;
         }

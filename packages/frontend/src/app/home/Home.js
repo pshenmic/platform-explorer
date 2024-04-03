@@ -154,7 +154,7 @@ function Home() {
                         </Container>
                     </Container>
 
-                    <Box flexShrink={'0'} w={10} h={10} />
+                    <Box flexShrink={'0'} w={10} h={[0,,,10]} />
 
                     <Container
                         maxW={'none'}
@@ -185,10 +185,10 @@ function Home() {
                 <Flex 
                     w='100%' 
                     justifyContent='space-between'
-                    wrap={["wrap", , , 'nowrap']}
+                    wrap={["wrap", , 'nowrap']}
                     mb={[10,,16]}
                 >
-                    <Container m={0} p={0} maxW={'calc(50% - 20px)'}>
+                    <Container m={0} p={0} maxW={['100%',,'calc(50% - 20px)']}>
                         <Container
                             maxW={'100%'}
                             m={0}
@@ -211,7 +211,7 @@ function Home() {
 
                     <Box flexShrink={'0'} w={10} h={10} />
 
-                    <Container p={0} maxW={'calc(50% - 20px)'}>
+                    <Container p={0} maxW={['100%',,'calc(50% - 20px)']}>
 
                         <Container
                             maxW={'100%'}
