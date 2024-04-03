@@ -194,6 +194,7 @@ function Home() {
                             m={0}
                             h={'100%'}
                             borderWidth='1px' borderRadius='lg'
+                            className={'InfoBlock'}
                         >
                             <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Most popular data contracts</Heading>
 
@@ -215,6 +216,7 @@ function Home() {
                         <Container
                             maxW={'100%'}
                             borderWidth='1px' borderRadius='lg'
+                            className={'InfoBlock'}
                         >
                             <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Most active Identity</Heading>
 
@@ -233,6 +235,7 @@ function Home() {
                         <Container
                             maxW={'none'}
                             borderWidth='1px' borderRadius='lg'
+                            className={'InfoBlock'}
                         >
                             <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Richest Identity</Heading>
 
