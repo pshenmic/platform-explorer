@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsList from '../../components/transactions/TransactionsList'
 import { LineGraph } from '../../components/charts/index.js'
+import {SimpleList} from '../../components/lists'
 
 import { 
     Box, 
@@ -19,17 +20,24 @@ function Home() {
     const [loading, setLoading] = useState(true)
     const [status, setStatus] = useState(true)
     const [transactions, setTransactions] = useState([])
+    
+    const [dataContracts, setDataContracts] = useState([])
+    const [identities, setIdentities] = useState([])
 
     const fetchData = () => {
         setLoading(true)
 
         Promise.all([
             Api.getStatus(), 
-            Api.getTransactions(1, 25, 'desc')
+            Api.getTransactions(1, 25, 'desc'),
+            Api.getDataContracts(1, 10, 'desc'),
+            Api.getIdentities(1, 3, 'desc')
         ])
-        .then(([status, paginatedTransactions]) => {
+        .then(([status, paginatedTransactions, paginatedDataContracts, paginatedIdentities]) => {
             setStatus(status)
             setTransactions(paginatedTransactions.resultSet)
+            setDataContracts(paginatedDataContracts.resultSet)
+            setIdentities(paginatedIdentities.resultSet)
         })
         .catch(console.log)
         .finally(() => setLoading(false))
@@ -37,9 +45,9 @@ function Home() {
 
     useEffect(fetchData, [])
     
-    if (!loading) return (
+    if (!loading) return (<>
         <Container 
-            maxW='container.lg' 
+            maxW='container.xl' 
             color= {"white"} 
             padding={3}
             mt={8}
@@ -47,12 +55,11 @@ function Home() {
         >
             <Container 
                 width='100%'
-                maxW='none'
+                maxW='container.lg'
                 mt={5}
                 mb={[10,,16]}
                 borderWidth={['1px' , , '0']} 
                 borderRadius='lg'
-
             >
                 <Stack 
                     direction={['column', , 'row']} 
@@ -112,120 +119,135 @@ function Home() {
                 </Stack>
             </Container>
 
-
-            <Container maxW='container.lg' mb={[10,,16]}>
-
-            <Flex 
-                w='100%' 
-                justifyContent='space-between'
-                wrap={["wrap", , , 'nowrap']}
-                mb={5}
-            >
-                <Container
-                    my={5}
-                    borderWidth='1px' borderRadius='lg'
+            <Container p={0} maxW='container.xl' mb={[10,,16]}>
+                <Flex 
+                    w='100%' 
+                    justifyContent='space-between'
+                    wrap={["wrap", , , 'nowrap']}
+                    mb={5}
                 >
-                    <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6} >Average block time</Heading>
-                    
-                    <Container my={3} p={0}>
-                        <LineGraph
-                            xLabel={'Block height'}
-                            yLabel={'Time, s'}
-                            width = {464}
-                            height = {180}
-                            data={[
-                                {x: 10, y: 120},
-                                {x: 11, y: 110},
-                                {x: 12, y: 230},
-                                {x: 13, y: 0},
-                                {x: 14, y: 200},
-                                {x: 15, y: 250},
-                                {x: 16, y: 220},
-                                {x: 17, y: 210},
-                                {x: 18, y: 250}
-                            ]}
-                        />
+                    <Container
+                        maxW={'none'}
+                        my={5}
+                        borderWidth='1px' borderRadius='lg'
+                    >
+                        <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6} >Average block time</Heading>
+                        
+                        <Container my={3} p={0}>
+                            <LineGraph
+                                xLabel={'Block height'}
+                                yLabel={'Time, s'}
+                                width = {464}
+                                height = {180}
+                                data={[
+                                    {x: 10, y: 120},
+                                    {x: 11, y: 110},
+                                    {x: 12, y: 230},
+                                    {x: 13, y: 0},
+                                    {x: 14, y: 200},
+                                    {x: 15, y: 250},
+                                    {x: 16, y: 220},
+                                    {x: 17, y: 210},
+                                    {x: 18, y: 250}
+                                ]}
+                            />
+                        </Container>
                     </Container>
-                </Container>
 
-                <Box flexShrink={'0'} w={10} h={10} />
+                    <Box flexShrink={'0'} w={10} h={10} />
 
-                <Container
-                    my={5}
-                    borderWidth='1px' borderRadius='lg'
+                    <Container
+                        maxW={'none'}
+                        my={5}
+                        borderWidth='1px' borderRadius='lg'
+                    >
+                        <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
+
+                        <Container my={3} p={0}>
+                            <LineGraph
+                                xLabel={'Block height'}
+                                yLabel={'Transactions count'}
+                                width = {464}
+                                height = {180}
+                                data={[
+                                    {x: 10, y: 11111200},
+                                    {x: 11, y: 1111500},
+                                    {x: 13, y: 11111500},
+                                    {x: 16, y: 21111000},
+                                    {x: 17, y: 11111200},
+                                    {x: 18, y: 11111500}
+                                ]}
+                            />
+                        </Container>
+                    </Container>
+                </Flex>
+
+                <Flex 
+                    w='100%' 
+                    justifyContent='space-between'
+                    wrap={["wrap", , , 'nowrap']}
+                    mb={[10,,16]}
                 >
-                    <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
+                    <Container m={0} p={0} maxW={'calc(50% - 20px)'}>
+                        <Container
+                            maxW={'100%'}
+                            m={0}
+                            h={'100%'}
+                            borderWidth='1px' borderRadius='lg'
+                        >
+                            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Most popular data contracts</Heading>
 
-                    <Container my={3} p={0}>
-                        <LineGraph
-                            xLabel={'Block height'}
-                            yLabel={'Transactions count'}
-                            width = {464}
-                            height = {180}
-                            data={[
-                                {x: 10, y: 11111200},
-                                {x: 11, y: 1111500},
-                                {x: 13, y: 11111500},
-                                {x: 16, y: 21111000},
-                                {x: 17, y: 11111200},
-                                {x: 18, y: 11111500}
-                            ]}
-                        />
-                    </Container>
-                </Container>
-            </Flex>
+                            <SimpleList 
+                                items={dataContracts.map((dataContract, i) => ({
+                                    monospaceColumns: [dataContract.identifier, 10000 - i * 25]
+                                }))}
+                                columns={['Identifier', 'Amount of txs']} 
+                            />
 
-            <Flex 
-                w='100%' 
-                justifyContent='space-between'
-                wrap={["wrap", , , 'nowrap']}
-                mb={[10,,16]}
-            >
-                <Container m={0} p={0} >
-                    <Container
-                        m={0}
-                        h={'100%'}
-                        borderWidth='1px' borderRadius='lg'
-                    >
-                        <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Most popular data contracts</Heading>
-
-                        {/* <DataContractsList dataContracts={dataContracts} size='l'/> */}
-
-                    </Container>
-                </Container>
-
-                <Box flexShrink={'0'} w={10} h={10} />
-
-                <Container p={0}>
-
-                    <Container
-                        borderWidth='1px' borderRadius='lg'
-                    >
-                        <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Most active Identity</Heading>
-
-                        {/* <IdentitiesList identities={identities}/> */}
-
+                        </Container>
                     </Container>
 
-                    <Box w={10} h={10} />
+                    <Box flexShrink={'0'} w={10} h={10} />
 
+                    <Container p={0} maxW={'calc(50% - 20px)'}>
 
-                    <Container
-                        borderWidth='1px' borderRadius='lg'
-                    >
-                        <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Richest Identity</Heading>
+                        <Container
+                            maxW={'100%'}
+                            borderWidth='1px' borderRadius='lg'
+                        >
+                            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Most active Identity</Heading>
 
-                        {/* <IdentitiesList identities={identities}/> */}
+                            <SimpleList 
+                                items={identities.map((identitiy, i) => ({
+                                    monospaceTitles:[identitiy.identifier],
+                                    columns: ['I-name-' + i, 100 - i * 25]
+                                }))}
+                                columns={['Identifier', 'Amount of txs']} 
+                            />
+                        </Container>
 
+                        <Box w={10} h={10} />
+
+                        <Container
+                            maxW={'none'}
+                            borderWidth='1px' borderRadius='lg'
+                        >
+                            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Richest Identity</Heading>
+
+                            <SimpleList 
+                                items={identities.map((identitiy, i) => ({
+                                    monospaceTitles:[identitiy.identifier],
+                                    columns: ['I-name-' + i, 20000 - i * 1555]
+                                }))}
+                                columns={['Identifier', 'Balance']} 
+                            />
+                        </Container>
                     </Container>
-                </Container>
-            </Flex>
-
+                </Flex>
             </Container>
 
-
             <Container
-                maxW='container.lg'
+                maxW='container.xl'
                 m={0}
                 borderWidth='1px' borderRadius='lg'
                 className={'InfoBlock'}
@@ -233,10 +255,9 @@ function Home() {
                 <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Last transaction</Heading>
 
                 <TransactionsList transactions={transactions} />
-
             </Container>
         </Container>
-    );
+    </>);
 }
 
 export default Home;

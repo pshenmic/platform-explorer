@@ -1,0 +1,36 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.SimpleList {
+    &__ColumnTitles {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 8px;
+    }
+
+    &__ColumnTitle {
+        color: var(--chakra-colors-gray-200);
+    }
+}
+
+.SimpleListItem {
+    @include mixins.def_list_item;
+    display: block;
+
+    &__Title {
+        &--Monospace {
+            font-family: monospace;
+        }
+    }
+
+    &__ColumnsContainer {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__Column {
+        &--Monospace {
+            font-family: monospace;
+        }
+    }
+}
