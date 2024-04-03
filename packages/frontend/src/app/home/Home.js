@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef} from 'react'
 import * as Api from '../../util/Api'
 import TransactionsList from '../../components/transactions/TransactionsList'
 import { LineGraph } from '../../components/charts/index.js'
@@ -20,9 +20,9 @@ function Home() {
     const [loading, setLoading] = useState(true)
     const [status, setStatus] = useState(true)
     const [transactions, setTransactions] = useState([])
-    
     const [dataContracts, setDataContracts] = useState([])
     const [identities, setIdentities] = useState([])
+    const chartContainer = useRef()
 
     const fetchData = () => {
         setLoading(true)
@@ -133,12 +133,12 @@ function Home() {
                     >
                         <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6} >Average block time</Heading>
                         
-                        <Container my={3} p={0}>
+                        <Container my={3} p={0} maxW={'none'}>
                             <LineGraph
                                 xLabel={'Block height'}
                                 yLabel={'Time, s'}
-                                width = {464}
-                                height = {180}
+                                width = {chartContainer.current ? chartContainer.current.offsetWidth : 582}
+                                height = {220}
                                 data={[
                                     {x: 10, y: 120},
                                     {x: 11, y: 110},
@@ -163,12 +163,12 @@ function Home() {
                     >
                         <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
 
-                        <Container my={3} p={0}>
+                        <Container ref={chartContainer} my={3} p={0} maxW={'none'}>
                             <LineGraph
                                 xLabel={'Block height'}
                                 yLabel={'Transactions count'}
-                                width = {464}
-                                height = {180}
+                                width = {chartContainer.current ? chartContainer.current.offsetWidth : 582}
+                                height = {220}
                                 data={[
                                     {x: 10, y: 11111200},
                                     {x: 11, y: 1111500},
