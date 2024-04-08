@@ -1,0 +1,41 @@
+@import '../../styles/variables.scss';
+
+.TotalInfo {
+    background-color: var(--chakra-colors-blackAlpha-200);
+    border: 1px solid;
+    border-left: none;
+    border-right: none;
+    &__ContentContainer {
+        margin: 0 auto;
+    }
+
+    &__Divider {
+        width: 1px;
+        background-color: var(--chakra-colors-gray-800);
+    }
+
+    &__Item {
+        padding: 0 10px;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+        &__Item {
+            // width: 30%;
+            width: calc(50% - 1px);
+            display: flex;
+            justify-content: center;
+        }
+
+    }
+
+    @media screen and (max-width: 355px) {
+        &__ContentContainer {
+            width: min-content;
+        }
+
+        &__Item {
+            width: 100%;
+            justify-content: start;
+        }
+    }
+}

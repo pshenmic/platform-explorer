@@ -4,7 +4,8 @@ import { useState, useEffect, useRef} from 'react'
 import * as Api from '../../util/Api'
 import TransactionsList from '../../components/transactions/TransactionsList'
 import { LineGraph } from '../../components/charts/index.js'
-import {SimpleList} from '../../components/lists'
+import { SimpleList } from '../../components/lists'
+import TotalInfo from '../../components/​totalInfo'
 
 import { 
     Box, 
@@ -46,16 +47,25 @@ function Home() {
     useEffect(fetchData, [])
     
     if (!loading) return (<>
+
+        <TotalInfo
+            blocks={status.blocksCount}
+            transactions={status.txCount}
+            dataContracts={status.dataContractsCount}
+            documents={status.documentsCount}
+            transfers={status.transfersCount}
+        />
+    
         <Container 
-            maxW='container.xl' 
-            color= {"white"} 
+            maxW={'container.xl'} 
+            color={"white"} 
             padding={3}
             mt={8}
             mb={4}
         >
             <Container 
-                width='100%'
-                maxW='container.lg'
+                width={'100%'}
+                maxW={'container.lg'}
                 mt={5}
                 mb={[10,,16]}
                 borderWidth={['1px' , , '0']} 
@@ -63,8 +73,8 @@ function Home() {
             >
                 <Stack 
                     direction={['column', , 'row']} 
-                    spacing='24px'
-                    divider={<StackDivider borderColor='gray.700' />}
+                    spacing={'24px'}
+                    divider={<StackDivider borderColor={'gray.700'} />}
                 >
                     <Box w={['100%', , '33%']}>
                         <Flex wrap={'wrap'}>
@@ -119,17 +129,17 @@ function Home() {
                 </Stack>
             </Container>
 
-            <Container p={0} maxW='container.xl' mb={[10,,16]}>
+            <Container p={0} maxW={'container.xl'} mb={[10,,16]}>
                 <Flex 
-                    w='100%' 
-                    justifyContent='space-between'
+                    w={'100%'} 
+                    justifyContent={'space-between'}
                     wrap={["wrap", , , 'nowrap']}
                     mb={5}
                 >
                     <Container
                         maxW={'none'}
                         my={5}
-                        borderWidth='1px' borderRadius='lg'
+                        borderWidth={'1px'} borderRadius={'lg'}
                     >
                         <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6} >Average block time</Heading>
                         
@@ -159,7 +169,7 @@ function Home() {
                     <Container
                         maxW={'none'}
                         my={5}
-                        borderWidth='1px' borderRadius='lg'
+                        borderWidth={'1px'} borderRadius={'lg'}
                     >
                         <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
 
@@ -183,8 +193,8 @@ function Home() {
                 </Flex>
 
                 <Flex 
-                    w='100%' 
-                    justifyContent='space-between'
+                    w={'100%'} 
+                    justifyContent={'space-between'}
                     wrap={["wrap", , 'nowrap']}
                     mb={[10,,16]}
                 >
@@ -193,10 +203,10 @@ function Home() {
                             maxW={'100%'}
                             m={0}
                             h={'100%'}
-                            borderWidth='1px' borderRadius='lg'
+                            borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
                         >
-                            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Most popular data contracts</Heading>
+                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Most popular data contracts</Heading>
 
                             <SimpleList 
                                 items={dataContracts.map((dataContract, i) => ({
@@ -215,10 +225,10 @@ function Home() {
 
                         <Container
                             maxW={'100%'}
-                            borderWidth='1px' borderRadius='lg'
+                            borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
                         >
-                            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Most active Identity</Heading>
+                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Most active Identity</Heading>
 
                             <SimpleList 
                                 items={identities.map((identitiy, i) => ({
@@ -234,10 +244,10 @@ function Home() {
 
                         <Container
                             maxW={'none'}
-                            borderWidth='1px' borderRadius='lg'
+                            borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
                         >
-                            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Richest Identity</Heading>
+                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Richest Identity</Heading>
 
                             <SimpleList 
                                 items={identities.map((identitiy, i) => ({
@@ -253,17 +263,17 @@ function Home() {
             </Container>
 
             <Container
-                maxW='container.xl'
+                maxW={'container.xl'}
                 m={0}
-                borderWidth='1px' borderRadius='lg'
+                borderWidth={'1px'} borderRadius={'lg'}
                 className={'InfoBlock'}
             >
-                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Last transaction</Heading>
+                <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Last transaction</Heading>
 
                 <TransactionsList transactions={transactions} />
             </Container>
         </Container>
-    </>);
+    </>)
 }
 
-export default Home;
+export default Home
