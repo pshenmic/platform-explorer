@@ -18,6 +18,13 @@
         padding: 0 10px;
     }
 
+    @media screen and (max-width: $breakpoint-lg) {
+        &__Divider {
+            height: 40px;
+            margin: auto 0;
+        }
+    }
+    
     @media screen and (max-width: $breakpoint-md) {
         &__Item {
             // width: 30%;
@@ -25,7 +32,6 @@
             display: flex;
             justify-content: center;
         }
-
     }
 
     @media screen and (max-width: 355px) {
@@ -36,6 +42,10 @@
         &__Item {
             width: 100%;
             justify-content: start;
+        }
+
+        &__Divider {
+            display: none !important;
         }
     }
 }
