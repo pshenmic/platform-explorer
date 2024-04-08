@@ -18,35 +18,35 @@
 
     &--Blocks {
         &::before {
-            background: url('/images/block.svg') no-repeat center;
+            background: url('/images/icons/block.svg') no-repeat center;
             background-size: contain;
         }
     }
 
     &--Transactions {
         &::before {
-            background: url('/images/transactions.svg') no-repeat center;
+            background: url('/images/icons/transactions.svg') no-repeat center;
             background-size: contain;
         }
     }
 
     &--DataContracts {
         &::before {
-            background: url('/images/data-contract.svg') no-repeat center;
+            background: url('/images/icons/data-contract.svg') no-repeat center;
             background-size: contain;
         }
     }
 
     &--Documents {
         &::before {
-            background: url('/images/document.svg') no-repeat center;
+            background: url('/images/icons/document.svg') no-repeat center;
             background-size: contain;
         }
     }
 
     &--Transfers {
         &::before {
-            background: url('/images/transfers.svg') no-repeat center;
+            background: url('/images/icons/transfers.svg') no-repeat center;
             background-size: contain;
         }
     }
