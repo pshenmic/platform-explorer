@@ -101,6 +101,7 @@ function Home() {
                 mb={[10,,16]}
                 borderWidth={['1px' , , '0']} 
                 borderRadius='lg'
+                display={'none'}
             >
                 <Stack 
                     direction={['column', , 'row']} 
