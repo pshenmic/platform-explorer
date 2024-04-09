@@ -1,10 +1,14 @@
-const {describe, it, before, after} = require('node:test');
+const {describe, it, before, after, mock} = require('node:test');
 const assert = require('node:assert').strict;
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require("../utils/fixtures");
 const {StateTransitionEnum} = require("../../src/constants");
 const {getKnex} = require("../../src/utils");
+const tenderdashRpc = require('../../src/tenderdashRpc')
+
+const genesisTime = new Date(0)
+const blockDiffTime = 2 * 60 * 1000
 
 describe('Other routes', () => {
     let app
@@ -32,7 +36,7 @@ describe('Other routes', () => {
         // for the search() test
 
         const identityIdentifier = fixtures.identifier()
-        block = await fixtures.block(knex)
+        block = await fixtures.block(knex, {timestamp: new Date(genesisTime + blockDiffTime)})
 
         identityTransaction = await fixtures.transaction(knex, {
             block_hash: block.hash,
@@ -67,10 +71,11 @@ describe('Other routes', () => {
         })
 
 
+
         // prepare for get status
 
         for (let i = 1; i < 10; i++) {
-            await fixtures.block(knex, {height: i+1, timestamp: new Date(block.timestamp.getTime() + 3000 * i)})
+            await fixtures.block(knex, {height: i+1, timestamp: new Date(genesisTime.getTime() + blockDiffTime * i)})
         }
     })
 
@@ -181,15 +186,23 @@ describe('Other routes', () => {
 
     describe('getStatus()', async () => {
         it('should return status', async () => {
+            process.env.EPOCH_CHANGE_TIME = 60000
+            mock.method(tenderdashRpc, 'getGenesis', async () => ({genesis_time : new Date(0)}));
+
             const {body} = await client.get('/status')
                 .expect(200)
                 .expect('Content-Type', 'application/json; charset=utf-8');
 
             const expectedStats = {
+                epoch: {
+                    index: 18,
+                    startTime: "1970-01-01T00:18:00.000Z",
+                    endTime: "1970-01-01T00:19:00.000Z"
+                },
                 appVersion: block.app_version,
                 blockVersion: block.block_version,
                 blocksCount: 10,
-                blockTimeAverage: 3,
+                blockTimeAverage: 120,
                 txCount: 3,
                 transfersCount: 0,
                 dataContractsCount: 1,

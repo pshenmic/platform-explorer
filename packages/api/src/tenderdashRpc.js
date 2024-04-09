@@ -98,6 +98,12 @@ class TenderdashRPC {
         }
     }
 
+    static async getGenesis() {
+        const {genesis} = await call('genesis', 'GET')
+
+        return genesis
+    }
+
 }
 
 
