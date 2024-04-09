@@ -6,6 +6,10 @@ import TransactionsList from '../../components/transactions/TransactionsList'
 import { LineGraph } from '../../components/charts/index.js'
 import { SimpleList } from '../../components/lists'
 import TotalInfo from '../../components/​totalInfo'
+import NetworkStatus from '../../components/networkStatus'
+import Intro from '../../components/intro/index.js'
+import Markdown from '../../components/markdown'
+import introContent from './intro.md'
 
 import { 
     Box, 
@@ -45,8 +49,35 @@ function Home() {
     }
 
     useEffect(fetchData, [])
-    
+
     if (!loading) return (<>
+        <Container 
+            maxW={'container.xl'} 
+            color={"white"} 
+            padding={3}
+            mt={16}
+            mb={16}
+        >
+            <Flex 
+                justifyContent={'space-between'} 
+                alignItems={'center'}
+                wrap={['wrap',, 'nowrap']}
+            >
+                <Container maxW={'none'} p={0}>
+                    <Intro 
+                        title={'Platform Explorer'}
+                        contentSource={<Markdown>{introContent}</Markdown>}
+                        width=''
+                    />
+                </Container>
+                
+                <Box flexShrink={'0'} w={10} h={10} />
+                
+                <Container maxW={'none'} p={0}>
+                    <NetworkStatus/>
+                </Container>
+            </Flex>
+        </Container>
 
         <TotalInfo
             blocks={status.blocksCount}

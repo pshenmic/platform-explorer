@@ -1,0 +1,52 @@
+.NetworkStatus {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: min-content;
+    background-color: var(--chakra-colors-blackAlpha-200);
+    padding: var(--chakra-space-3);
+    padding-left: var(--chakra-space-5);
+
+    &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 8px;
+        border-radius: var(--chakra-radii-lg) 0 0 var(--chakra-radii-lg);
+        background-color: var(--chakra-colors-brand-deep);
+    }
+
+    &__InfoItem {
+        display: flex;
+        align-items: baseline;
+        margin-bottom: 15px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__Title {
+        font-size: 18px;
+        color: var(--chakra-colors-brand-deep);
+        margin-right: 12px;
+    }
+
+    &__Value {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    a {
+        text-decoration: underline;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}
