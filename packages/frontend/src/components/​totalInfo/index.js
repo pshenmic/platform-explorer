@@ -18,8 +18,8 @@ function TotalInfo ({blocks, transactions, dataContracts, documents, transfers})
             maxW={'none'}
             borderColor={'gray.800'}
             py={0}
-            mt={16}
-            mb={16}
+            mt={8}
+            mb={8}
         >
             <Flex 
                 className={'TotalInfo__ContentContainer'}

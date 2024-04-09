@@ -55,8 +55,8 @@ function Home() {
             maxW={'container.xl'} 
             color={"white"} 
             padding={3}
-            mt={16}
-            mb={16}
+            mt={8}
+            mb={8}
         >
             <Flex 
                 justifyContent={'space-between'} 
@@ -90,7 +90,7 @@ function Home() {
             maxW={'container.xl'} 
             color={"white"} 
             padding={3}
-            mt={8}
+            mt={0}
             mb={4}
         >
             <Container 
@@ -169,7 +169,7 @@ function Home() {
                 >
                     <Container
                         maxW={'none'}
-                        my={5}
+                        mb={5}
                         borderWidth={'1px'} borderRadius={'lg'}
                     >
                         <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6} >Average block time</Heading>
@@ -199,7 +199,7 @@ function Home() {
 
                     <Container
                         maxW={'none'}
-                        my={5}
+                        mb={5}
                         borderWidth={'1px'} borderRadius={'lg'}
                     >
                         <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
