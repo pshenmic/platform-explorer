@@ -11,9 +11,7 @@ function Intro ({title, contentSource}) {
 
             <Box my={6} w={16} h={'px'} background={'gray.700'} />
 
-            <Text>
-                {contentSource}
-            </Text>
+            <div>{contentSource}</div>
         </div>
     )
 }

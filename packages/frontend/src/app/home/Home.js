@@ -67,7 +67,6 @@ function Home() {
                     <Intro 
                         title={'Platform Explorer'}
                         contentSource={<Markdown>{introContent}</Markdown>}
-                        width=''
                     />
                 </Container>
                 

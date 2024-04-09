@@ -14,8 +14,9 @@ const LineGraph = ({
     marginLeft = 40,
 }) => {
     const [loading, setLoading] = useState(true)
-    const x = d3.scaleLinear(d3.extent(data, d => d.x), [marginRight, width - marginLeft])
+
     const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
+    const [x, setX] = useState(() => d3.scaleLinear(d3.extent(data, d => d.x), [marginRight, width - marginLeft]))
 
     const gx = useRef()
     const gy = useRef()
@@ -23,6 +24,17 @@ const LineGraph = ({
     const divTooltip = useRef()
     const graphicLine = useRef()
     const focusPoint = useRef()
+
+    const [line, setLine] = useState(() => d3.line()
+                                                .x(d => x(d.x))
+                                                .y(d => y(d.y))
+                                                .curve(d3.curveCardinal))
+
+    const [area, setArea] = useState(() => d3.area()
+                                                .curve(d3.curveCardinal)
+                                                .x((d) => x(d.x))
+                                                .y0(y(0))
+                                                .y1((d) => y(d.y)))
 
     useEffect(() => void d3.select(gx.current)
                            .call(d3.axisBottom(x)
@@ -47,37 +59,48 @@ const LineGraph = ({
                             )
                             , [gy, y])
 
-    if (d3.select(gy.current).node()) {
-        (() => {
-            const yAxisTicksWidth = d3.select(gy.current).select('.Axis__TickContainer').node().getBBox().width
+    const updateSize = () => {
+        if (!loading || !d3.select(gy.current).node()) return
 
-            d3.select(gy.current)
+        const yAxisTicksWidth = d3.select(gy.current).select('.Axis__TickContainer').node().getBBox().width
+
+        d3.select(gy.current)
             .select('.Axis__Label')
             .attr("transform", `translate(${-yAxisTicksWidth}, ${marginTop - 15})`)
 
-            d3.select(gy.current)
-                .attr("transform", `translate(${yAxisTicksWidth}, 0)`)
+        d3.select(gy.current)
+            .attr("transform", `translate(${yAxisTicksWidth}, 0)`)
 
-            x.range([
-                yAxisTicksWidth,
-                width - marginLeft
-            ])        
-        
-            if (loading) setLoading(false)
-        })()
+        setX(() => d3.scaleLinear(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginLeft]))
 
+        if (loading) setLoading(false)
     }
 
-    const line = d3.line()
-                    .x(d => x(d.x))
-                    .y(d => y(d.y))
-                    .curve(d3.curveCardinal)
+    useEffect(() => {
+        d3.select(gx.current)
+        .transition()
+        .duration(0)
+        .call(d3.axisBottom(x)
+            .tickSize(0)
+            .tickPadding(10)
+            .ticks(5)
+        )
 
-    const area = d3.area()
-                    .curve(d3.curveCardinal)
-                    .x((d) => x(d.x))
-                    .y0(y(0))
-                    .y1((d) => y(d.y))
+        setLine((d) => d3.line()
+                            .x(d => x(d.x))
+                            .y(d => y(d.y))
+                            .curve(d3.curveCardinal))
+
+        setArea ((d) => d3.area()
+                            .curve(d3.curveCardinal)
+                            .x((d) => x(d.x))
+                            .y0(y(0))
+                            .y1((d) => y(d.y)))
+    },[x])
+
+    useEffect(()=> {
+        updateSize()
+    }, [])
 
     const bisect = d3.bisector(d => d.x).center
 
@@ -85,7 +108,7 @@ const LineGraph = ({
         const tooltipElement = d3.select(tooltip.current)
         const {width: tooltipWidth} = tooltipElement.node().getBoundingClientRect()
 
-        const xPos = x(data[point].x) + tooltipWidth + 15 < width ?
+        const xPos = x(data[point].x) + tooltipWidth + 20 < width ?
                             x(data[point].x) + tooltipWidth / 2 + 15 :
                             x(data[point].x) - tooltipWidth / 2 - 15 
 
