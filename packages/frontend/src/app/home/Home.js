@@ -32,8 +32,8 @@ function Home() {
         Promise.all([
             Api.getStatus(), 
             Api.getTransactions(1, 3, 'desc'),
-            Api.getDataContracts(1, 10, 'desc'),
-            Api.getIdentities(1, 3, 'desc')
+            Api.getDataContracts(1, 8, 'desc'),
+            Api.getIdentities(1, 5, 'desc')
         ])
         .then(([status, paginatedTransactions, paginatedDataContracts, paginatedIdentities]) => {
             setStatus(status)
@@ -162,7 +162,8 @@ function Home() {
 
                             <SimpleList 
                                 items={dataContracts.map((dataContract, i) => ({
-                                    monospaceColumns: [dataContract.identifier, 10000 - i * 25],
+                                    monospaceTitles:[dataContract.identifier],
+                                    columns: ['I-name-' + i, 10000 - i * 25],
                                     link: '/dataContract/' + dataContract.identifier
                                 }))}
                                 columns={['Identifier', 'Amount of txs']} 
@@ -184,8 +185,7 @@ function Home() {
 
                             <SimpleList 
                                 items={identities.map((identitiy, i) => ({
-                                    monospaceTitles:[identitiy.identifier],
-                                    columns: ['I-name-' + i, 100 - i * 25],
+                                    columns: [identitiy.identifier, 100 - i * 25],
                                     link: '/identity/' + identitiy.identifier
                                 }))}
                                 columns={['Identifier', 'Amount of txs']} 
@@ -203,8 +203,7 @@ function Home() {
 
                             <SimpleList 
                                 items={identities.map((identitiy, i) => ({
-                                    monospaceTitles:[identitiy.identifier],
-                                    columns: ['I-name-' + i, 20000 - i * 1555],
+                                    columns: [identitiy.identifier, 20000 - i * 1555],
                                     link: '/identity/' + identitiy.identifier
                                 }))}
                                 columns={['Identifier', 'Balance']} 
