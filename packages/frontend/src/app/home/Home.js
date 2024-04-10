@@ -110,7 +110,7 @@ function Home() {
                                 xLabel={'Block height'}
                                 yLabel={'Transactions count'}
                                 width = {chartContainer.current ? chartContainer.current.offsetWidth : 582}
-                                height = {220}
+                                height = {chartContainer.current ? chartContainer.current.offsetHeight : 220}
                                 data={[
                                     {x: 10, y: 11111200},
                                     {x: 11, y: 1111500},

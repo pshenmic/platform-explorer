@@ -152,11 +152,7 @@ const LineGraph = ({
                     .attr("x", 0)
                     .attr("y", (_, i) => `${i * 1.1}em`)
                     .attr('fill', '#fff')
-                    .attr('fontFamily', 'monospace')
-                    .attr('style', {
-                        fontSize: '25px', 
-                        fontFamily: 'Segoe UI Symbol'
-                    })
+                    .attr('style', {fontSize: '25px'})
                     .text(d => d))
 
         const {width: w, height: h} = text.node().getBBox()
@@ -190,16 +186,16 @@ const LineGraph = ({
                 viewBox={`0 0 ${width} ${height}`}
             >   
                 <svg x='15' y='-15' overflow={'visible'}>
-                    <g className={'axis'} ref={gx} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}} transform={`translate(0,${height - marginBottom + 15})`} >
+                    <g className={'Axis'} ref={gx} style={{fontSize: '14px'}} transform={`translate(0,${height - marginBottom + 15})`} >
                         <g><text className={'Axis__Label'} fill='white'>{xLabel}</text></g>
                     </g>
                 </svg>
 
                 <svg x='0' y='-15'>
-                    <g className={'axis'} ref={gy} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}}>  
+                    <g className={'Axis'} ref={gy} style={{fontSize: '14px'}}>  
                         <g><text className={'Axis__Label'} fill='white'>{yLabel}</text></g>
                         
-                        <g className={'Axis__TickContainer'} style={{fontSize: '14px', fontFamily: 'Segoe UI Symbol'}}></g>
+                        <g className={'Axis__TickContainer'} style={{fontSize: '14px'}}></g>
                     </g>
                 </svg>
             

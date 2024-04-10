@@ -9,7 +9,10 @@
     }
 }
 
-.axis {
+.Axis {
+    font-family: var(--chakra-fonts-body);
+    font-size: 25px;
+
     .domain {
         opacity: .3;
     }
