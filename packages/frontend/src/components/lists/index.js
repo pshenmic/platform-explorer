@@ -14,7 +14,7 @@ function SimpleListItem ({ item }) {
             {item.monospaceTitles &&
                 <div className={'SimpleListItem__TitlesContainer SimpleListItem__TitlesContainer--Monospace'}>
                     {item.monospaceTitles.map((title, key) =>
-                        <div className={'SimpleListItem__ColumnTitle'} key={key}>{ title }</div>
+                        <div className={'SimpleListItem__Title'} key={key}>{ title }</div>
                     )}
                 </div>
             }
@@ -22,7 +22,7 @@ function SimpleListItem ({ item }) {
             {item.titles &&
                 <div className={'SimpleListItem__TitlesContainer'}>
                     {item.titles.map((title, key) =>
-                        <div className={'SimpleListItem__ColumnTitle'} key={key}>{ title }</div>
+                        <div className={'SimpleListItem__Title'} key={key}>{ title }</div>
                     )}
                 </div>
             }

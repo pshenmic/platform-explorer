@@ -10,15 +10,20 @@
 
     &__ColumnTitle {
         color: var(--chakra-colors-gray-200);
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
     }
 }
 
 .SimpleListItem {
     @include mixins.def_list_item;
-
+    
     display: block;
 
     &__Title {
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+
         &--Monospace {
             font-family: monospace;
         }

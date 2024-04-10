@@ -47,6 +47,25 @@ function Home() {
 
     useEffect(fetchData, [])
 
+    const transactionsChart = chartContainer.current ? <LineGraph
+                                                            xLabel={'Block height'}
+                                                            yLabel={'Transactions count'}
+                                                            width = {chartContainer.current ? chartContainer.current.offsetWidth : 582}
+                                                            height = {chartContainer.current ? chartContainer.current.offsetHeight : 220}
+                                                            data={[
+                                                                {x: 10, y: 11111200},
+                                                                {x: 11, y: 1111500},
+                                                                {x: 13, y: 11111500},
+                                                                {x: 16, y: 21111000},
+                                                                {x: 17, y: 11111200},
+                                                                {x: 18, y: 11111500}
+                                                            ]}
+                                                        /> : ''
+
+    if (chartContainer.current) {
+        console.log(chartContainer.current.offsetHeight)
+    }
+
     if (!loading) return (<>
         <Container 
             maxW={'container.xl'} 
@@ -97,31 +116,20 @@ function Home() {
                     wrap={["wrap", , , 'nowrap']}
                     mb={5}
                 >
-
-                    <Container
+                    <Flex
                         maxW={'none'}
+                        width={'100%'}
                         mb={5}
                         borderWidth={'1px'} borderRadius={'lg'}
+                        direction={'column'}
+                        p={3}
                     >
                         <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
 
-                        <Container ref={chartContainer} my={3} p={0} maxW={'none'}>
-                            <LineGraph
-                                xLabel={'Block height'}
-                                yLabel={'Transactions count'}
-                                width = {chartContainer.current ? chartContainer.current.offsetWidth : 582}
-                                height = {chartContainer.current ? chartContainer.current.offsetHeight : 220}
-                                data={[
-                                    {x: 10, y: 11111200},
-                                    {x: 11, y: 1111500},
-                                    {x: 13, y: 11111500},
-                                    {x: 16, y: 21111000},
-                                    {x: 17, y: 11111200},
-                                    {x: 18, y: 11111500}
-                                ]}
-                            />
+                        <Container flexGrow={'1'} ref={chartContainer} my={3} py={0} px={2} maxW={'none'}>
+                            {transactionsChart}
                         </Container>
-                    </Container>
+                    </Flex>
 
                     <Box flexShrink={'0'} w={10} h={[0,,,10]} />
 
