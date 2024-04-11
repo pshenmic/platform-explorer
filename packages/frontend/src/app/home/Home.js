@@ -24,6 +24,7 @@ function Home() {
     const [transactions, setTransactions] = useState([])
     const [dataContracts, setDataContracts] = useState([])
     const [identities, setIdentities] = useState([])
+    const [transactionsChart, setTransactionsChart] = useState('')
     const chartContainer = useRef()
 
     const fetchData = () => {
@@ -47,20 +48,22 @@ function Home() {
 
     useEffect(fetchData, [])
 
-    const transactionsChart = chartContainer.current ? <LineGraph
-                                                            xLabel={'Block height'}
-                                                            yLabel={'Transactions count'}
-                                                            width = {chartContainer.current ? chartContainer.current.offsetWidth : 582}
-                                                            height = {chartContainer.current ? chartContainer.current.offsetHeight : 220}
-                                                            data={[
-                                                                {x: 10, y: 11111200},
-                                                                {x: 11, y: 1111500},
-                                                                {x: 13, y: 11111500},
-                                                                {x: 16, y: 21111000},
-                                                                {x: 17, y: 11111200},
-                                                                {x: 18, y: 11111500}
-                                                            ]}
-                                                        /> : ''
+    useEffect(()=>{
+        setTransactionsChart(<LineGraph
+            xLabel={'Block height'}
+            yLabel={'Transactions count'}
+            width = {chartContainer.current ? chartContainer.current.offsetWidth : 582}
+            height = {chartContainer.current ? chartContainer.current.offsetHeight : 220}
+            data={[
+                {x: 10, y: 11111200},
+                {x: 11, y: 1111500},
+                {x: 13, y: 11111500},
+                {x: 16, y: 21111000},
+                {x: 17, y: 11111200},
+                {x: 18, y: 11111500}
+            ]}
+        />)
+    }, [])
 
     if (chartContainer.current) {
         console.log(chartContainer.current.offsetHeight)
