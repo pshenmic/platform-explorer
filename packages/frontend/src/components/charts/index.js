@@ -112,24 +112,23 @@ const LineGraph = ({
                             x(data[point].x) + tooltipWidth / 2 + 15 :
                             x(data[point].x) - tooltipWidth / 2 - 15 
 
-        tooltipElement.attr("transform", `translate(${xPos},${y(data[point].y)})`)
+        tooltipElement
+            .attr("transform", `translate(${xPos},${y(data[point].y)})`)
+            .transition()
+            .duration(0)
+            .style("transition", "all .15s")
+            .style("opacity", "1")
+            .style("visibility", "visible")
     }
     
     function pointermoved(event) {
         const i = bisect(data, x.invert(d3.pointer(event)[0]))
-
-        d3.select(divTooltip.current)
-            .style("display", "block")
 
         d3.select(focusPoint.current)
             .style("display", "block")
             .selectAll("circle")
             .attr("cx", x(data[i].x))
             .attr("cy", y(data[i].y))
-
-        d3.select(tooltip.current)
-            .style("display", null)
-            .attr("transform", `translate(${x(data[i].x) + 100}, ${y(data[i].y)})`)
 
         const path = d3.select(tooltip.current)
                         .selectAll("path")
@@ -170,7 +169,11 @@ const LineGraph = ({
 
     function pointerleft() {
         d3.select(tooltip.current)
-            .style("display", "none")
+            .transition()
+            .delay(1)
+            .style("opacity", 0)
+            .style("visibility", "none")
+            .style("transition", "all 0s")
 
         d3.select(focusPoint.current)
             .style("display", "none")
