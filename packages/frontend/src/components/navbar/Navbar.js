@@ -18,6 +18,7 @@ import './NavbarMobileMenu.scss'
 const links = [
     {title:'Home', href:'/'},
     {title:'Blocks', href:'/blocks'},
+    {title:'Transactions', href:'/transactions'},
     {title:'Data Contracts', href:'/dataContracts'},
     {title:'Identities', href:'/identities'},
     {title:'API', href:'/api'},
