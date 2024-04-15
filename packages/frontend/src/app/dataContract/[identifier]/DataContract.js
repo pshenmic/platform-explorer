@@ -146,14 +146,16 @@ function DataContract({identifier}) {
                                         columnsCount={2}
                                     />
                                 </Box>
-
-                                {pageCount > 1 && 
-                                    <Pagination
-                                        onPageChange={handlePageClick}
-                                        pageCount={pageCount}
-                                        forcePage={currentPage}
-                                    />
-                                }
+                                
+                                <div className={'ListNavigation'}>
+                                    {pageCount > 1 && 
+                                        <Pagination
+                                            onPageChange={handlePageClick}
+                                            pageCount={pageCount}
+                                            forcePage={currentPage}
+                                        />
+                                    }
+                                </div>
                             </Box>
                         </TabPanel>
 
