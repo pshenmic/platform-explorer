@@ -74,7 +74,7 @@ module.exports = class BlockDAO {
       return null
     }
 
-    const txs = results.reduce((acc, value) => value.st_hash ? [...acc, value.st_hash] : acc)
+    const txs = results.reduce((acc, value) => value.st_hash ? [...acc, value.st_hash] : acc, [])
 
     return Block.fromRow({ header: block, txs })
   }
@@ -92,7 +92,7 @@ module.exports = class BlockDAO {
       return null
     }
 
-    const txs = results.reduce((acc, value) => value.st_hash ? [...acc, value.st_hash] : acc)
+    const txs = results.reduce((acc, value) => value.st_hash ? [...acc, value.st_hash] : acc, [])
 
     return Block.fromRow({ header: block, txs })
   }
