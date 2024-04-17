@@ -133,7 +133,7 @@ jobs:
             docker stop $(docker ps -f name=platform-explorer-api -q)
             docker stop $(docker ps -f name=platform-explorer-indexer -q)
             docker rm platform-explorer-api platform-explorer-indexer
-            docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api --command npm run db:drop
+            docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api npm run db:drop
             docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer refinery migrate -e DATABASE_URL -p /app/migrations
             docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             sleep 3
