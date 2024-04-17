@@ -23,8 +23,8 @@ impl PostgresDAO {
         let postgres_host = env::var("POSTGRES_HOST").expect("You've not set the POSTGRES_HOST");
         let postgres_db = env::var("POSTGRES_DB").expect("You've not set the POSTGRES_DB");
         let postgres_port: u16 = env::var("POSTGRES_PORT").expect("You've not set the POSTGRES_PORT").parse().expect("Failed to parse POSTGRES_PORT env");
-        let postgres_user = env::var("POSTGRES_PORT").expect("You've not set the POSTGRES_PORT");
-        let postgres_pass = env::var("POSTGRES_PASS").expect("You've not set the POSTGRES_HOST");
+        let postgres_user = env::var("POSTGRES_USER").expect("You've not set the POSTGRES_USER");
+        let postgres_pass = env::var("POSTGRES_PASS").expect("You've not set the POSTGRES_PASS");
 
         cfg.host = Some(postgres_host);
         cfg.port = Some(postgres_port);
