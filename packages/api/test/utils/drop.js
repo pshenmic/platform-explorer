@@ -1,12 +1,4 @@
-const pg = require('pg')
-const fs = require('fs')
-const path = require('path')
 const { getKnex } = require('../../src/utils')
-
-console.log(process.argv)
-console.log(process.execArgv)
-
-postgres://pshenmic:<user password>@:6432/pshenmic_main
 
 const client = getKnex()
 
