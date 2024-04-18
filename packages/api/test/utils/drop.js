@@ -1,16 +1,15 @@
 const { getKnex } = require('../../src/utils')
 
-const client = getKnex()
+const knex = getKnex()
 
-client
-  .connect()
+const tables = ['transfers', 'documents', 'identities', 'data_contracts', 'state_transitions', 'blocks', 'refinery_schema_history']
+
+const sql = tables.reduce((acc, table) => acc + `DROP TABLE IF EXISTS ${table};`, '')
+
+knex.raw(sql)
   .then(async () => {
-    const tables = ['transfers', 'documents', 'identities', 'data_contracts', 'state_transitions', 'blocks', 'refinery_schema_history']
-
-    const sql = tables.reduce((acc, table) => acc + `DROP TABLE IF EXISTS ${table};`, '')
 
     console.log(sql)
-    await client.query(sql)
   })
   .then(() => console.log('Done'))
-  .finally(() => client.end())
+  .finally(() => knex.destroy())
