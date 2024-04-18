@@ -11,6 +11,7 @@ use crate::entities::block_header::BlockHeader;
 use crate::entities::data_contract::DataContract;
 use crate::entities::identity::Identity;
 use crate::entities::transfer::Transfer;
+use crate::entities::validator::Validator;
 
 pub struct PostgresDAO {
     connection_pool: Pool,
@@ -191,7 +192,7 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await?;
 
         let stmt = client.prepare_cached("SELECT hash,height,timestamp,\
-        block_version,app_version,l1_locked_height FROM blocks where height = $1;").await.unwrap();
+        block_version,app_version,l1_locked_height,validator FROM blocks where height = $1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[
             &block_height
@@ -247,8 +248,8 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await.unwrap();
 
         let stmt = client.prepare_cached("INSERT INTO blocks(hash, height, \
-        timestamp, block_version, app_version, l1_locked_height) \
-        VALUES ($1, $2, $3, $4, $5, $6) RETURNING hash;").await.unwrap();
+        timestamp, block_version, app_version, l1_locked_height, validator) \
+        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING hash;").await.unwrap();
 
         let rows = client.query(&stmt, &[
             &block_header.hash,
@@ -256,11 +257,48 @@ impl PostgresDAO {
             &SystemTime::from(block_header.timestamp),
             &block_header.block_version,
             &block_header.app_version,
-            &block_header.l1_locked_height
+            &block_header.l1_locked_height,
+            &block_header.proposer_pro_tx_hash
         ]).await.unwrap();
 
         let block_hash: String = rows[0].get(0);
 
         return block_hash;
+    }
+
+    pub async fn get_validator_by_pro_tx_hash(&self, pro_tx_hash: String) -> Result<Option<Validator>, PoolError> {
+        let client = self.connection_pool.get().await?;
+
+        let stmt = client.prepare_cached("SELECT pro_tx_hash \
+        FROM validators where pro_tx_hash = $1 LIMIT 1;")
+            .await.unwrap();
+
+        let rows: Vec<Row> = client.query(&stmt, &[
+            &pro_tx_hash
+        ]).await.unwrap();
+
+        let validators: Vec<Validator> = rows
+            .into_iter()
+            .map(|row| {
+                row.into()
+            }).collect::<Vec<Validator>>();
+
+        Ok(validators.first().cloned())
+    }
+
+
+    pub async fn create_validator(&self, validator: Validator) -> Result<(), PoolError> {
+        let client = self.connection_pool.get().await.unwrap();
+
+        let stmt = client.prepare_cached("INSERT INTO validators(pro_tx_hash) \
+        VALUES ($1);").await.unwrap();
+
+        client.query(&stmt, &[
+            &validator.pro_tx_hash,
+        ]).await.unwrap();
+
+        println!("Created Validator with proTxHash {}", &validator.pro_tx_hash);
+
+        Ok(())
     }
 }
