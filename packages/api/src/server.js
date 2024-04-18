@@ -10,6 +10,7 @@ const BlocksController = require("./controllers/BlocksController");
 const DocumentsController = require("./controllers/DocumentsController");
 const IdentitiesController = require("./controllers/IdentitiesController");
 const DataContractsController = require("./controllers/DataContractsController");
+const ValidatorsController = require('./controllers/ValidatorsController')
 const {getKnex} = require("./utils");
 
 function errorHandler(err, req, reply) {
@@ -55,8 +56,9 @@ module.exports = {
         const dataContractsController = new DataContractsController(knex)
         const documentsController = new DocumentsController(knex)
         const identitiesController = new IdentitiesController(knex)
+        const validatorsController = new ValidatorsController(knex)
 
-        Routes({fastify, mainController, blocksController, transactionsController, dataContractsController, documentsController, identitiesController})
+        Routes({fastify, mainController, blocksController, transactionsController, dataContractsController, documentsController, identitiesController, validatorsController})
 
         fastify.setErrorHandler(errorHandler)
 
