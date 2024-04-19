@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef} from 'react'
+import { useState, useEffect, createRef } from 'react'
 import * as Api from '../../util/Api'
 import { LineGraph } from '../../components/charts/index.js'
 import { SimpleList } from '../../components/lists'
@@ -10,6 +10,7 @@ import Intro from '../../components/intro/index.js'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { getTransitionTypeString } from '../../util/index'
+import ResizeObserver from 'resize-observer-polyfill'
 
 import { 
     Box, 
@@ -25,7 +26,46 @@ function Home() {
     const [dataContracts, setDataContracts] = useState([])
     const [identities, setIdentities] = useState([])
     const [transactionsChart, setTransactionsChart] = useState('')
-    const chartContainer = useRef()
+    const chartContainer = createRef()
+
+    const updateChartSize = () => {
+        setTransactionsChart('')
+
+        if (!chartContainer.current) return
+
+        let lastWidth = chartContainer.current.offsetWidth;
+
+        const setChart = () => {
+            setTimeout(() => {
+                if (!chartContainer.current) return
+
+                if (chartContainer.current.offsetWidth !== lastWidth) {
+                    lastWidth = chartContainer.current.offsetWidth
+                    setChart()
+                    return
+                }
+
+                setTransactionsChart(<LineGraph
+                    xLabel={'Block height'}
+                    yLabel={'Transactions count'}
+                    width = {chartContainer.current.offsetWidth}
+                    height = {chartContainer.current.offsetHeight}
+                    data={[
+                        {x: 10, y: 11111200},
+                        {x: 11, y: 1111500},
+                        {x: 13, y: 11111500},
+                        {x: 16, y: 21111000},
+                        {x: 17, y: 11111200},
+                        {x: 18, y: 11111500}
+                    ]}
+                />)
+            }, 100)
+        }
+
+        setChart()
+    }
+
+    const chartObserver = new ResizeObserver(updateChartSize)
 
     const fetchData = () => {
         setLoading(true)
@@ -48,26 +88,11 @@ function Home() {
 
     useEffect(fetchData, [])
 
-    useEffect(()=>{
-        setTransactionsChart(<LineGraph
-            xLabel={'Block height'}
-            yLabel={'Transactions count'}
-            width = {chartContainer.current ? chartContainer.current.offsetWidth : 582}
-            height = {chartContainer.current ? chartContainer.current.offsetHeight : 220}
-            data={[
-                {x: 10, y: 11111200},
-                {x: 11, y: 1111500},
-                {x: 13, y: 11111500},
-                {x: 16, y: 21111000},
-                {x: 17, y: 11111200},
-                {x: 18, y: 11111500}
-            ]}
-        />)
-    }, [])
-
-    if (chartContainer.current) {
-        console.log(chartContainer.current.offsetHeight)
-    }
+    useEffect(() => {
+        if (chartContainer.current && transactionsChart === '') {
+            chartObserver.observe(chartContainer.current)
+        }
+    },[chartContainer])
 
     if (!loading) return (<>
         <Container 
@@ -129,7 +154,16 @@ function Home() {
                     >
                         <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
 
-                        <Container flexGrow={'1'} ref={chartContainer} my={3} py={0} px={2} maxW={'none'}>
+                        <Container 
+                            minH={'220px'}
+                            height={["300px", , , 'auto']}
+                            ref={chartContainer}
+                            maxW={'none'}
+                            flexGrow={'1'} 
+                            my={3} 
+                            py={0} 
+                            px={2} 
+                        >
                             {transactionsChart}
                         </Container>
                     </Flex>
