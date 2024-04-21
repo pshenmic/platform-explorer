@@ -1,27 +1,79 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, createRef } from 'react'
 import * as d3 from 'd3'
 import './charts.scss'
+import { Container } from '@chakra-ui/react'
+
+
+const LineChart = ({data, xLabel='', yLabel=''}) => {
+    const chartContainer = useRef()
+    const [chartElement, setChartElement] = useState('')
+
+    const render = () => {
+        if (!chartContainer.current) return
+
+        setChartElement('')
+
+        let lastWidth = chartContainer.current.offsetWidth
+
+        const setupChart = () => {
+            setTimeout(() => {
+                if (!chartContainer.current) return
+
+                if (chartContainer.current.offsetWidth !== lastWidth) {
+                    lastWidth = chartContainer.current.offsetWidth
+                    setupChart()
+                    return
+                }
+
+                setChartElement(<LineGraph
+                    xLabel={xLabel}
+                    yLabel={yLabel}
+                    width = {chartContainer.current.offsetWidth}
+                    height = {chartContainer.current.offsetHeight}
+                    data={data}
+                />)
+            }, 100)
+        }
+
+        setupChart()
+    }
+
+    const chartObserver = new ResizeObserver(render)
+
+    useEffect(() => {
+        if (chartContainer.current && chartElement === '') 
+            chartObserver.observe(chartContainer.current)
+    },[chartContainer])
+
+    return <Container 
+                ref={chartContainer}
+                width={'100%'} 
+                height={'100%'} 
+                maxW={'none'} 
+                p={0} m={0}
+            >
+                {chartElement}
+            </Container>
+}
 
 const LineGraph = ({
     data = [],
     width = 460,
+    height = 180,
     xLabel = '',
     yLabel = '',
-    height = 180,
-    marginTop = 40,
-    marginRight = 40,
-    marginBottom = 40,
-    marginLeft = 40,
 }) => {
-    const [loading, setLoading] = useState(true)
-
+    const [loading, setLoading] = useState(true),
+            marginTop = 40,
+            marginRight = 40,
+            marginBottom = 40,
+            marginLeft = 40
+            
     const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
     const [x, setX] = useState(() => d3.scaleLinear(d3.extent(data, d => d.x), [marginRight, width - marginLeft]))
-
     const gx = useRef()
     const gy = useRef()
     const tooltip = useRef()
-    const divTooltip = useRef()
     const graphicLine = useRef()
     const focusPoint = useRef()
 
@@ -37,11 +89,14 @@ const LineGraph = ({
                                                 .y1((d) => y(d.y)))
 
     useEffect(() => void d3.select(gx.current)
-                           .call(d3.axisBottom(x)
-                                .tickSize(0)
-                                .tickPadding(10)
-                                .ticks(5)
-                            )
+                            .call((axis) => {
+                                axis.select('.Axis__TickContainer')
+                                    .call(d3.axisBottom(x)
+                                        .tickSize(0)
+                                        .tickPadding(10)
+                                        .ticks(5)
+                                    )
+                            })
                             .call((axis) => {
                                 const labelWidth = axis.select('.Axis__Label').node().getBBox().width
 
@@ -98,9 +153,7 @@ const LineGraph = ({
                             .y1((d) => y(d.y)))
     },[x])
 
-    useEffect(()=> {
-        updateSize()
-    }, [])
+    useEffect(updateSize, [])
 
     const bisect = d3.bisector(d => d.x).center
 
@@ -189,16 +242,16 @@ const LineGraph = ({
                 viewBox={`0 0 ${width} ${height}`}
             >   
                 <svg x='15' y='-15' overflow={'visible'}>
-                    <g className={'Axis'} ref={gx} style={{fontSize: '14px'}} transform={`translate(0,${height - marginBottom + 15})`} >
+                    <g className={'Axis'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
                         <g><text className={'Axis__Label'} fill='white'>{xLabel}</text></g>
+                        <g className={'Axis__TickContainer'}></g>
                     </g>
                 </svg>
 
                 <svg x='0' y='-15'>
-                    <g className={'Axis'} ref={gy} style={{fontSize: '14px'}}>  
+                    <g className={'Axis'} ref={gy} >  
                         <g><text className={'Axis__Label'} fill='white'>{yLabel}</text></g>
-                        
-                        <g className={'Axis__TickContainer'} style={{fontSize: '14px'}}></g>
+                        <g className={'Axis__TickContainer'}></g>
                     </g>
                 </svg>
             
@@ -218,22 +271,14 @@ const LineGraph = ({
                     <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none" />
 
                     <g fill='#0e75b5'>
-                        {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'chart-point'} />))}
+                        {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'Chart__Point'} />))}
                     </g>
 
-                    <g ref={focusPoint}
-                        style={{
-                            display: 'none',
-                            opacity: '.8'
-                        }}>
+                    <g ref={focusPoint} className={'Chart__FocusPoint'}>
                         <circle r="2" fill='white' />
                     </g>
 
-                    <g ref={tooltip} style={{
-                            fontSize: '14px', 
-                            fontFamily: 'Segoe UI Symbol'
-                        }}>
-                    </g>
+                    <g ref={tooltip} className={'Chart__Tooltip'}></g>
                 </g>
             </svg>
         </div>
@@ -241,5 +286,5 @@ const LineGraph = ({
 }
 
 export {
-    LineGraph
+    LineChart
 }

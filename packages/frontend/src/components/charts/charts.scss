@@ -9,6 +9,18 @@
     }
 }
 
+.Chart {
+    &__Tooltip {
+        font-size: 14px;
+        font-family: var(--chakra-fonts-body);
+    }
+
+    &__FocusPoint {
+        display: none;
+        opacity: .8;
+    }
+}
+
 .Axis {
     font-family: var(--chakra-fonts-body);
     font-size: 25px;
@@ -16,8 +28,13 @@
     .domain {
         opacity: .3;
     }
-}
 
-.Axis__Label {
-    opacity: .5;
+    &__Label {
+        font-size: 14px;
+        opacity: .5;
+    }
+
+    &__TickContainer {
+        font-size: 14px;
+    }
 }

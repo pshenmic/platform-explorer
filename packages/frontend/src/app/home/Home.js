@@ -2,7 +2,7 @@
 
 import { useState, useEffect, createRef } from 'react'
 import * as Api from '../../util/Api'
-import { LineGraph } from '../../components/charts/index.js'
+import { LineChart } from '../../components/charts/index.js'
 import { SimpleList } from '../../components/lists'
 import TotalInfo from '../../components/​totalInfo'
 import NetworkStatus from '../../components/networkStatus'
@@ -10,7 +10,6 @@ import Intro from '../../components/intro/index.js'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { getTransitionTypeString } from '../../util/index'
-import ResizeObserver from 'resize-observer-polyfill'
 
 import { 
     Box, 
@@ -25,47 +24,7 @@ function Home() {
     const [transactions, setTransactions] = useState([])
     const [dataContracts, setDataContracts] = useState([])
     const [identities, setIdentities] = useState([])
-    const [transactionsChart, setTransactionsChart] = useState('')
-    const chartContainer = createRef()
-
-    const updateChartSize = () => {
-        setTransactionsChart('')
-
-        if (!chartContainer.current) return
-
-        let lastWidth = chartContainer.current.offsetWidth;
-
-        const setChart = () => {
-            setTimeout(() => {
-                if (!chartContainer.current) return
-
-                if (chartContainer.current.offsetWidth !== lastWidth) {
-                    lastWidth = chartContainer.current.offsetWidth
-                    setChart()
-                    return
-                }
-
-                setTransactionsChart(<LineGraph
-                    xLabel={'Block height'}
-                    yLabel={'Transactions count'}
-                    width = {chartContainer.current.offsetWidth}
-                    height = {chartContainer.current.offsetHeight}
-                    data={[
-                        {x: 10, y: 11111200},
-                        {x: 11, y: 1111500},
-                        {x: 13, y: 11111500},
-                        {x: 16, y: 21111000},
-                        {x: 17, y: 11111200},
-                        {x: 18, y: 11111500}
-                    ]}
-                />)
-            }, 100)
-        }
-
-        setChart()
-    }
-
-    const chartObserver = new ResizeObserver(updateChartSize)
+    const [transactionHistory, setTransactionHistory] = useState([])
 
     const fetchData = () => {
         setLoading(true)
@@ -81,18 +40,20 @@ function Home() {
             setTransactions(paginatedTransactions.resultSet)
             setDataContracts(paginatedDataContracts.resultSet)
             setIdentities(paginatedIdentities.resultSet)
+            setTransactionHistory([
+                {x: 10, y: 11111200},
+                {x: 11, y: 1111500},
+                {x: 13, y: 11111500},
+                {x: 16, y: 21111000},
+                {x: 17, y: 11111200},
+                {x: 18, y: 11111500}
+            ])
         })
         .catch(console.log)
         .finally(() => setLoading(false))
     }
 
     useEffect(fetchData, [])
-
-    useEffect(() => {
-        if (chartContainer.current && transactionsChart === '') {
-            chartObserver.observe(chartContainer.current)
-        }
-    },[chartContainer])
 
     if (!loading) return (<>
         <Container 
@@ -153,18 +114,21 @@ function Home() {
                         p={3}
                     >
                         <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
-
+                        
                         <Container 
                             minH={'220px'}
-                            height={["300px", , , 'auto']}
-                            ref={chartContainer}
+                            height={["300px", , ,'auto']}
                             maxW={'none'}
                             flexGrow={'1'} 
                             my={3} 
                             py={0} 
                             px={2} 
                         >
-                            {transactionsChart}
+                            <LineChart
+                                data={transactionHistory}
+                                xLabel={'Block height'}
+                                yLabel={'Transactions count'}
+                            />
                         </Container>
                     </Flex>
 
@@ -213,14 +177,12 @@ function Home() {
                                 }))}
                                 columns={['Identifier', 'Amount of txs']} 
                             />
-
                         </Container>
                     </Container>
 
                     <Box flexShrink={'0'} w={10} h={10} />
 
                     <Container p={0} maxW={['100%',,'calc(50% - 20px)']}>
-
                         <Container
                             maxW={'100%'}
                             borderWidth={'1px'} borderRadius={'lg'}
