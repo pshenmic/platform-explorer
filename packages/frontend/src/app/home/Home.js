@@ -113,7 +113,7 @@ function Home() {
                         direction={'column'}
                         p={3}
                     >
-                        <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transaction history</Heading>
+                        <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transactions history</Heading>
                         
                         <Container 
                             minH={'220px'}
@@ -140,7 +140,7 @@ function Home() {
                         mb={5}
                         className={'InfoBlock'}
                     >
-                        <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Last transactions</Heading>
+                        <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Transactions</Heading>
 
                         <SimpleList 
                             items={transactions.map((transaction, i) => ({
@@ -167,12 +167,11 @@ function Home() {
                             borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
                         >
-                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Most popular data contracts</Heading>
+                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Trending Data Contracts</Heading>
 
                             <SimpleList 
                                 items={dataContracts.map((dataContract, i) => ({
-                                    monospaceTitles:[dataContract.identifier],
-                                    columns: ['I-name-' + i, 10000 - i * 25],
+                                    columns: [dataContract.identifier, 10000 - i * 25],
                                     link: '/dataContract/' + dataContract.identifier
                                 }))}
                                 columns={['Identifier', 'Amount of txs']} 
@@ -188,7 +187,7 @@ function Home() {
                             borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
                         >
-                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Most active Identity</Heading>
+                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Trending Identities</Heading>
 
                             <SimpleList 
                                 items={identities.map((identitiy, i) => ({
@@ -206,7 +205,7 @@ function Home() {
                             borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
                         >
-                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Richest Identity</Heading>
+                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Richlist</Heading>
 
                             <SimpleList 
                                 items={identities.map((identitiy, i) => ({
