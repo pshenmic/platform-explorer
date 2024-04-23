@@ -8,7 +8,6 @@ const sql = tables.reduce((acc, table) => acc + `DROP TABLE IF EXISTS ${table};`
 
 knex.raw(sql)
   .then(async () => {
-
     console.log(sql)
   })
   .then(() => console.log('Done'))
