@@ -131,14 +131,12 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
             docker stop $(docker ps -f name=platform-explorer-api -q)
             docker stop $(docker ps -f name=platform-explorer-indexer -q)
             docker rm platform-explorer-api platform-explorer-indexer
-            docker stop postgres && docker rm postgres
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
-            docker run -d --name postgres -e POSTGRES_PASSWORD=indexer -e POSTGRES_USER=indexer -e POSTGRES_DB=indexer -p 5432:5432 postgres
-            sleep 20
+            docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api npm run db:drop
             docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer refinery migrate -e DATABASE_URL -p /app/migrations
             docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             sleep 3
