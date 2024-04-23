@@ -46,6 +46,9 @@ jobs:
       - name: NPM install
         run: cd packages/api && npm install
 
+      - name: Check lint rules
+        run: cd packages/api && npm run lint
+
       - name: Run unit tests
         run: cd packages/api && npm run test:unit
 
