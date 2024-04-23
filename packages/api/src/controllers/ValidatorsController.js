@@ -24,9 +24,9 @@ class ValidatorsController {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    const identities = await this.validatorsDAO.getValidators(Number(page), Number(limit), order)
+    const validators = await this.validatorsDAO.getValidators(Number(page), Number(limit), order)
 
-    response.send(identities)
+    response.send(validators)
   }
 }
 
