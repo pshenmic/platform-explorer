@@ -48,18 +48,18 @@ module.exports = class TransactionsDAO {
 
   getHistorySeries = async (timespan) => {
     const interval = {
-      '1h': {offset: '1 hour', step: '5 minute'},
-      '24h': {offset: '24 hour', step: '2 hour'},
-      '3d': {offset: '3 day', step: '6 hour'},
-      '1w': {offset: '1 week', step: '14 hour'},
+      '1h': { offset: '1 hour', step: '5 minute' },
+      '24h': { offset: '24 hour', step: '2 hour' },
+      '3d': { offset: '3 day', step: '6 hour' },
+      '1w': { offset: '1 week', step: '14 hour' }
     }[timespan]
 
     const ranges = this.knex
-      .from(this.knex.raw(`generate_series(now() - interval \'${interval.offset}\', now(), interval  '${interval.step}') date_to`))
+      .from(this.knex.raw(`generate_series(now() - interval '${interval.offset}', now(), interval  '${interval.step}') date_to`))
       .select('date_to', this.knex.raw('LAG(date_to, 1) over (order by date_to asc) date_from'))
 
     const rows = await this.knex.with('ranges', ranges)
-      .select(this.knex.raw(`COALESCE(date_from, now() - interval \'${interval.offset}\') date_from`), 'date_to')
+      .select(this.knex.raw(`COALESCE(date_from, now() - interval '${interval.offset}') date_from`), 'date_to')
       .select(
         this.knex('state_transitions')
           .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')

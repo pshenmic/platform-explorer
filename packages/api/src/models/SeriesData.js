@@ -6,5 +6,4 @@ module.exports = class SeriesData {
     this.timestamp = timestamp ?? null
     this.data = data ?? null
   }
-
 }

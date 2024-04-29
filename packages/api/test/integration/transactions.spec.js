@@ -37,7 +37,7 @@ describe('Transaction routes', () => {
       })
 
       const transaction = await fixtures.transaction(knex, {
-        block_hash: block.hash, data: '{}', type: StateTransitionEnum.DATA_CONTRACT_CREATE, owner: identity.identifier,
+        block_hash: block.hash, data: '{}', type: StateTransitionEnum.DATA_CONTRACT_CREATE, owner: identity.identifier
       })
 
       transactions.push({ transaction, block })
