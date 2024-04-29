@@ -1,10 +1,10 @@
+use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::prelude::Revision;
 use dpp::state_transition::identity_create_transition::accessors::IdentityCreateTransitionAccessorsV0;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_update_transition::accessors::IdentityUpdateTransitionAccessorsV0;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
-use dpp::system_data_contracts::SystemDataContract;
 
 #[derive(Clone)]
 pub struct Identity {
