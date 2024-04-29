@@ -470,6 +470,12 @@ GET /transactions/history?timespan=1h
         data: {
           txs: 5
         }
+    },
+    {
+        timestamp: "2024-04-22T08:50:20.911Z",
+        data: {
+          txs: 13
+        }
     }, ...
 ]
 ```
