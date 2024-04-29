@@ -20,22 +20,17 @@ class MainController {
     let blocks
     let genesis
 
-    try {
-      [blocks, stats, genesis, tdStatus] = (await Promise.allSettled([
-        this.blocksDAO.getBlocks(1, 200, 'desc'),
-        this.blocksDAO.getStats(),
-        TenderdashRPC.getGenesis(),
-        TenderdashRPC.getStatus()
-      ])).map((e) => e.value ?? null)
-    } catch (e) {
-      console.error(e)
-    }
+    [blocks, stats, genesis, tdStatus] = (await Promise.allSettled([
+      this.blocksDAO.getBlocks(1, 1, 'desc'),
+      this.blocksDAO.getStats(),
+      TenderdashRPC.getGenesis(),
+      TenderdashRPC.getStatus()
+    ])).map((e) => e.value ?? null)
 
     let epoch
 
-    const [currentBlock, previousBlock] = blocks.resultSet
+    const [currentBlock] = blocks.resultSet
 
-    const previousBlocktime = previousBlock.header.timestamp.getTime()
     const currentBlocktime = currentBlock.header.timestamp.getTime()
     const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
     const genesisTime = new Date(genesis.genesis_time).getTime()
