@@ -1,34 +1,33 @@
-const Block = require('../models/Block');
-const BlocksDAO = require('../dao/BlocksDAO');
+const BlocksDAO = require('../dao/BlocksDAO')
 
 class BlocksController {
-    constructor(knex) {
-        this.blocksDAO = new BlocksDAO(knex)
+  constructor (knex) {
+    this.blocksDAO = new BlocksDAO(knex)
+  }
+
+  getBlockByHash = async (request, response) => {
+    const { hash } = request.params
+
+    const block = await this.blocksDAO.getBlockByHash(hash)
+
+    if (!block) {
+      return response.status(404).send({ message: 'not found' })
     }
 
-    getBlockByHash = async (request, response) => {
-        const {hash} = request.params
+    response.send(block)
+  }
 
-        const block = await this.blocksDAO.getBlockByHash(hash)
+  getBlocks = async (request, response) => {
+    const { page = 1, limit = 10, order = 'asc' } = request.query
 
-        if (!block) {
-            return response.status(404).send({message: 'not found'})
-        }
-
-        response.send(block);
+    if (order !== 'asc' && order !== 'desc') {
+      return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    getBlocks = async (request, response) => {
-        const {page = 1, limit = 10, order = 'asc'} = request.query
+    const blocks = await this.blocksDAO.getBlocks(Number(page), Number(limit), order)
 
-        if (order !== 'asc' && order !== 'desc') {
-            return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
-        }
-
-        const blocks = await this.blocksDAO.getBlocks(Number(page), Number(limit), order)
-
-        response.send(blocks);
-    }
+    response.send(blocks)
+  }
 }
 
 module.exports = BlocksController
