@@ -470,7 +470,7 @@ GET /transactions/history?timespan=1h
         data: {
           txs: 5
         }
-    }
+    }, ...
 ]
 ```
 Response codes:
