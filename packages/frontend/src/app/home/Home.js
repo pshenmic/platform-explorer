@@ -18,6 +18,93 @@ import {
     Flex,
 } from '@chakra-ui/react'
 
+const chartData = [
+    {
+      timestamp: "2024-04-22T08:45:20.911Z",
+      data: {
+        blockHeight: 1,
+        txs: 5
+      }
+    },
+    {
+      timestamp: "2024-04-23T08:50:20.911Z",
+      data: {
+        blockHeight: 6,
+        txs: 5
+      }
+    },
+    {
+      timestamp: "2024-04-24T08:55:20.911Z",
+      data: {
+        blockHeight: 11,
+        txs: 6
+      }
+    },
+    {
+      timestamp: "2024-04-25T09:00:20.911Z",
+      data: {
+        blockHeight: 16,
+        txs: 13
+      }
+    },
+    {
+      timestamp: "2024-04-26T09:05:20.911Z",
+      data: {
+        blockHeight: 21,
+        txs: 15
+      }
+    },
+    {
+      timestamp: "2024-04-27T09:10:20.911Z",
+      data: {
+        blockHeight: 26,
+        txs: 16
+      }
+    },
+    {
+      timestamp: "2024-04-28T09:15:20.911Z",
+      data: {
+        blockHeight: 31,
+        txs: 3
+      }
+    },
+    {
+      timestamp: "2024-04-29T09:20:20.911Z",
+      data: {
+        blockHeight: 36,
+        txs: 2
+      }
+    },
+    {
+      timestamp: "2024-04-30T09:25:20.911Z",
+      data: {
+        blockHeight: 41,
+        txs: 0
+      }
+    },
+    {
+      timestamp: "2024-05-01T09:30:20.911Z",
+      data: {
+        blockHeight: 46,
+        txs: 0
+      }
+    },
+    {
+      timestamp: "2024-05-02T09:35:20.911Z",
+      data: {
+        blockHeight: 51,
+        txs: 3
+      }
+    },
+    {
+      timestamp: "2024-05-03T09:40:20.911Z",
+      data: {
+        blockHeight: 56,
+        txs: 2
+      }
+    }
+];
+
 function Home() {
     const [loading, setLoading] = useState(true)
     const [status, setStatus] = useState(true)
@@ -40,14 +127,18 @@ function Home() {
             setTransactions(paginatedTransactions.resultSet)
             setDataContracts(paginatedDataContracts.resultSet)
             setIdentities(paginatedIdentities.resultSet)
-            setTransactionHistory([
-                {x: 10, y: 11111200},
-                {x: 11, y: 1111500},
-                {x: 13, y: 11111500},
-                {x: 16, y: 21111000},
-                {x: 17, y: 11111200},
-                {x: 18, y: 11111500}
-            ])
+            setTransactionHistory(chartData.map((item) => ({
+                    x: new Date(item.timestamp),
+                    y: item.data.txs,
+                    info: [
+                        {
+                            title: 'Block height',
+                            type: 'blocks',
+                            value: item.data.blockHeight
+                        },
+                    ]
+                }))
+            )
         })
         .catch(console.log)
         .finally(() => setLoading(false))
@@ -126,8 +217,15 @@ function Home() {
                         >
                             <LineChart
                                 data={transactionHistory}
-                                xLabel={'Block height'}
-                                yLabel={'Transactions count'}
+                                xLabel={{
+                                    type: 'date',
+                                    title: 'Date'
+                                }}
+                                yLabel={{
+                                    type: 'number',
+                                    title: 'Transactions count',
+                                    abbreviation: 'TXs'
+                                }}
                             />
                         </Container>
                     </Flex>

@@ -4,7 +4,7 @@ import './charts.scss'
 import { Container } from '@chakra-ui/react'
 
 
-const LineChart = ({data, xLabel='', yLabel=''}) => {
+const LineChart = ({data, xLabel={title: '', type: 'number'}, yLabel={title: '', type: 'number'}}) => {
     const chartContainer = useRef()
     const [chartElement, setChartElement] = useState('')
 
@@ -60,17 +60,24 @@ const LineGraph = ({
     data = [],
     width = 460,
     height = 180,
-    xLabel = '',
-    yLabel = '',
+    xLabel = {title: '', type: 'number'},
+    yLabel = {title: '', type: 'number'},
 }) => {
     const [loading, setLoading] = useState(true),
             marginTop = 40,
-            marginRight = 40,
-            marginBottom = 40,
+            marginRight = 30,
+            marginBottom = 45,
             marginLeft = 40
             
     const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
-    const [x, setX] = useState(() => d3.scaleLinear(d3.extent(data, d => d.x), [marginRight, width - marginLeft]))
+    const [x, setX] = useState(() => {
+        if (xLabel.type === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
+        if (xLabel.type === 'date') return d3.scaleTime(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
+    })
+    const xTickFormat = (() => {
+        if (xLabel.type === 'number') return d3.format(",.0f")
+        if (xLabel.type === 'date') return d3.timeFormat("%B %d")
+    })()
     const gx = useRef()
     const gy = useRef()
     const tooltip = useRef()
@@ -94,14 +101,14 @@ const LineGraph = ({
                                     .call(d3.axisBottom(x)
                                         .tickSize(0)
                                         .tickPadding(10)
-                                        .ticks(5)
+                                        .ticks(6)
                                     )
                             })
                             .call((axis) => {
-                                const labelWidth = axis.select('.Axis__Label').node().getBBox().width
+                                const labelSize = axis.select('.Axis__Label').node().getBBox()
 
                                 axis.select('.Axis__Label')
-                                    .attr("transform", `translate(${width - labelWidth + 15}, 40)`)
+                                    .attr("transform", `translate(${width - labelSize.width/2 - marginRight}, ${marginBottom})`)
                             })
                             , [gx, x])
 
@@ -110,7 +117,7 @@ const LineGraph = ({
                             .call(d3.axisLeft(y)
                                 .tickSize(0)
                                 .ticks(5)
-                                .tickPadding(10)
+                                .tickPadding(10)                           
                             )
                             , [gy, y])
 
@@ -126,8 +133,11 @@ const LineGraph = ({
         d3.select(gy.current)
             .attr("transform", `translate(${yAxisTicksWidth}, 0)`)
 
-        setX(() => d3.scaleLinear(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginLeft]))
-
+        setX(() => {    
+            if (xLabel.type === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
+            if (xLabel.type === 'date') return d3.scaleTime(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
+        })
+        
         if (loading) setLoading(false)
     }
 
@@ -138,7 +148,8 @@ const LineGraph = ({
         .call(d3.axisBottom(x)
             .tickSize(0)
             .tickPadding(10)
-            .ticks(5)
+            .ticks(6)
+            .tickFormat(xTickFormat)
         )
 
         setLine((d) => d3.line()
@@ -191,30 +202,51 @@ const LineGraph = ({
                             .attr('opacity', '.2')
                             .attr("stroke", "black")
     
+        const lineClass = (type) => {
+            if (type === 'blocks') return 'ChartTooltip__InfoLine--Blocks'
+            return ''
+        }
+
+        const infoLines = [];
+        
+        infoLines.push({
+            class: lineClass(), 
+            value: `${yLabel.abbreviation ? yLabel.abbreviation : yLabel.title}: ${data[i].y}`
+        })
+
+        infoLines.push({
+            class: lineClass(), 
+            value: `${xLabel.abbreviation ? xLabel.abbreviation : xLabel.title}: ${xTickFormat(data[i].x)}`
+        })
+
+        data[i].info.map((item) => {infoLines.push({
+            class: lineClass(item.type), 
+            value: `${item.title}: ${item.value}`
+        })})
+
         const text = d3.select(tooltip.current)
             .selectAll("text")
                 .data([,])
                 .join("text")
+                .attr('class', 'ChartTooltip__TextContainer')
                 .call(t => t
                     .selectAll("tspan")
-                    .data([
-                        'Block Height: ' + data[i].x, 
-                        'Tx count: ' + data[i].y])
+                    .data(infoLines)
                     .join("tspan")
+                    .attr('class', (infoLine, i) => `ChartTooltip__InfoLine ${infoLine.class}`)
                     .attr("x", 0)
-                    .attr("y", (_, i) => `${i * 1.1}em`)
+                    .attr("y", (_, i) => `${i * 1.3}em`)
                     .attr('fill', '#fff')
-                    .attr('style', {fontSize: '25px'})
-                    .text(d => d))
+                    .text(d => d.value))
 
-        const {width: w, height: h} = text.node().getBBox()
+        const {width: textW, height: textH} = text.node().getBBox()
 
-        text.attr("transform", `translate(${-w/2},${0})`)
+        text.attr("transform", `translate(${-textW/2},${-(textH-20)/2 + 5})`)
 
-        path.attr('d', `M${-w / 2 - 10}, ${-h/2 -10}
-                    H${w / 2 + 10}
-                    v${h + 20}
-                    h-${w + 20}
+        path.attr('d', `M${-textW / 2 - 10}, ${-textH/2 -10}
+                    H${textW / 2 + 10}
+                    v${textH + 20}
+                    h-${textW + 20}
                     z`)
     
         tooltipPosition(i)
@@ -243,14 +275,14 @@ const LineGraph = ({
             >   
                 <svg x='15' y='-15' overflow={'visible'}>
                     <g className={'Axis'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
-                        <g><text className={'Axis__Label'} fill='white'>{xLabel}</text></g>
+                        <g><text className={'Axis__Label'} fill='white'>{xLabel.title}</text></g>
                         <g className={'Axis__TickContainer'}></g>
                     </g>
                 </svg>
 
                 <svg x='0' y='-15'>
                     <g className={'Axis'} ref={gy} >  
-                        <g><text className={'Axis__Label'} fill='white'>{yLabel}</text></g>
+                        <g><text className={'Axis__Label'} fill='white'>{yLabel.title}</text></g>
                         <g className={'Axis__TickContainer'}></g>
                     </g>
                 </svg>
@@ -262,7 +294,7 @@ const LineGraph = ({
                             <stop stopColor="#0E75B5" stopOpacity="0.3" offset="100%" />
                         </linearGradient>
                         <clipPath id="clipPath">
-                            <rect x="25" y="30" width={width - 65} height={height - 70}></rect>
+                            <rect x="25" y="30" width={width - marginRight} height={height - 70}></rect>
                         </clipPath>
                     </defs>
 
@@ -278,7 +310,7 @@ const LineGraph = ({
                         <circle r="2" fill='white' />
                     </g>
 
-                    <g ref={tooltip} className={'Chart__Tooltip'}></g>
+                    <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'}></g>
                 </g>
             </svg>
         </div>

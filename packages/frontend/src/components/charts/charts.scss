@@ -21,6 +21,14 @@
     }
 }
 
+.ChartTooltip {
+    &__InfoLine {
+        &--Blocks {
+            opacity: .7;
+        }
+    }
+}
+
 .Axis {
     font-family: var(--chakra-fonts-body);
     font-size: 25px;
