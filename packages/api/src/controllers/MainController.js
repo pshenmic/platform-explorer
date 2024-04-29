@@ -15,19 +15,12 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    let stats
-    let tdStatus
-    let blocks
-    let genesis
-
-    [blocks, stats, genesis, tdStatus] = (await Promise.allSettled([
+    const [blocks, stats, genesis, tdStatus] = (await Promise.allSettled([
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
       TenderdashRPC.getGenesis(),
       TenderdashRPC.getStatus()
     ])).map((e) => e.value ?? null)
-
-    let epoch
 
     const [currentBlock] = blocks.resultSet
 
@@ -38,7 +31,7 @@ class MainController {
     const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
     const nextEpochTime = Math.floor(genesisTime + epochChangeTime * (epochIndex + 1))
 
-    epoch = {
+    const epoch = {
       index: epochIndex,
       startTime: new Date(startEpochTime),
       endTime: new Date(nextEpochTime)

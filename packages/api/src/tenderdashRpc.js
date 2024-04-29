@@ -102,7 +102,6 @@ class TenderdashRPC {
 
     return genesis
   }
-
 }
 
 module.exports = TenderdashRPC
