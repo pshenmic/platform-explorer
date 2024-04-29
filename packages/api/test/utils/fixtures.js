@@ -45,9 +45,9 @@ const fixtures = {
       index: index ?? 0
     }
 
-    await knex('state_transitions').insert(row)
+    const [result] = await knex('state_transitions').insert(row).returning('id')
 
-    return row
+    return { ...row, id: result.id }
   },
   identity: async (knex, { identifier, block_hash, state_transition_hash, revision, owner, is_system } = {}) => {
     if (!identifier) {
