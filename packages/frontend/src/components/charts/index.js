@@ -72,11 +72,17 @@ const LineGraph = ({
     const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
     const [x, setX] = useState(() => {
         if (xLabel.type === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
-        if (xLabel.type === 'date') return d3.scaleTime(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
+        if (xLabel.type === 'date' || xLabel.type === 'time') return d3.scaleTime(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
     })
     const xTickFormat = (() => {
         if (xLabel.type === 'number') return d3.format(",.0f")
         if (xLabel.type === 'date') return d3.timeFormat("%B %d")
+        if (xLabel.type === 'time') return d3.timeFormat("%H:%M")
+    })()
+    const xTickCount = (()=> {
+        if (xLabel.type === 'number') return 6
+        if (xLabel.type === 'date') return 6
+        if (xLabel.type === 'time') return d3.timeMinute.every(10)
     })()
     const gx = useRef()
     const gy = useRef()
@@ -101,7 +107,7 @@ const LineGraph = ({
                                     .call(d3.axisBottom(x)
                                         .tickSize(0)
                                         .tickPadding(10)
-                                        .ticks(6)
+                                        .ticks(xTickCount)
                                     )
                             })
                             .call((axis) => {
@@ -133,9 +139,9 @@ const LineGraph = ({
         d3.select(gy.current)
             .attr("transform", `translate(${yAxisTicksWidth}, 0)`)
 
-        setX(() => {    
+        setX(() => {
             if (xLabel.type === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
-            if (xLabel.type === 'date') return d3.scaleTime(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
+            if (xLabel.type === 'date' || xLabel.type === 'time') return d3.scaleTime(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
         })
         
         if (loading) setLoading(false)
@@ -148,7 +154,7 @@ const LineGraph = ({
         .call(d3.axisBottom(x)
             .tickSize(0)
             .tickPadding(10)
-            .ticks(6)
+            .ticks(xTickCount)
             .tickFormat(xTickFormat)
         )
 
