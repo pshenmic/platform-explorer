@@ -18,13 +18,17 @@ class IdentitiesController {
   }
 
   getIdentities = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
 
     if (order !== 'asc' && order !== 'desc') {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order)
+    if (orderBy !== 'block_height' && orderBy !== 'tx_count' && orderBy !== 'balance') {
+      return response.status(400).send({ message: `invalid order_by value ${order}. only 'block_height' or 'tx_count' or 'balance' is valid values` })
+    }
+
+    const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
 
     response.send(identities)
   }

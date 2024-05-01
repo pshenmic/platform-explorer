@@ -100,7 +100,7 @@ const fixtures = {
 
     const result = await knex('data_contracts').insert(row).returning('id')
 
-    return { ...row, id: result[0].id }
+    return { ...row, id: result[0].id, documents: [] }
   },
   document: async (knex, {
     identifier,
