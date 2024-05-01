@@ -1,11 +1,12 @@
 module.exports = class Validator {
-    proTxHash
+  proTxHash
 
-    constructor(proTxHash) {
-        this.proTxHash = proTxHash;
-    }
+  constructor (proTxHash) {
+    this.proTxHash = proTxHash
+  }
 
-    static fromRow({pro_tx_hash}) {
-        return new Validator(pro_tx_hash)
-    }
+  // eslint-disable-next-line camelcase
+  static fromRow ({ pro_tx_hash }) {
+    return new Validator(pro_tx_hash)
+  }
 }

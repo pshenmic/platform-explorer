@@ -163,12 +163,24 @@ const fixtures = {
 
     return { ...row, id: result[0].id }
   },
+  validator: async (knex, {
+    pro_tx_hash
+  } = {}) => {
+    const row = {
+      pro_tx_hash: pro_tx_hash ?? generateHash()
+    }
+
+    const [result] = await knex('validators').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
   cleanup: async (knex) => {
     await knex.raw('DELETE FROM identities')
     await knex.raw('DELETE FROM documents')
     await knex.raw('DELETE FROM data_contracts')
     await knex.raw('DELETE FROM transfers')
     await knex.raw('DELETE FROM state_transitions')
+    await knex.raw('DELETE FROM validators')
     await knex.raw('DELETE FROM blocks')
   }
 }

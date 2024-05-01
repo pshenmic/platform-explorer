@@ -24,15 +24,14 @@ module.exports = class ValidatorsDAO {
 
     const subquery = this.knex('validators')
       .select(this.knex('validators').count('pro_tx_hash').as('total_count'),
-        'validators.pro_tx_hash as pro_tx_hash')
-      .select(this.knex.raw(`rank() over (order by validators.pro_tx_hash ${order}) rank`))
+        'validators.pro_tx_hash as pro_tx_hash', 'id')
+      .select(this.knex.raw(`rank() over (order by id ${order}) rank`))
       .as('validators')
 
     const rows = await this.knex(subquery)
-      .select('rank', 'total_count', 'pro_tx_hash')
+      .select('id', 'rank', 'total_count', 'pro_tx_hash')
       .whereBetween('rank', [fromRank, toRank])
-      .orderBy('rank', order);
-
+      .orderBy('id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
