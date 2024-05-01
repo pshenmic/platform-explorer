@@ -76,7 +76,10 @@ function Block({ hash }) {
                             <Td>Transactions count</Td>
                             <Td>{txHashes.length}</Td>
                         </Tr>
-
+                        <Tr>
+                            <Td>Validator</Td>
+                            <Td>{block.header.validator}</Td>
+                        </Tr>
                     </Tbody>
                 </Table>
             </TableContainer>
