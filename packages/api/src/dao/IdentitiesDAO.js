@@ -84,7 +84,7 @@ module.exports = class IdentitiesDAO {
 
     const getRankString = () => {
       return orderByOptions.reduce((acc, value, index, arr) =>
-        acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, `order by`)
+        acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
     }
 
     const subquery = this.knex('identities')
