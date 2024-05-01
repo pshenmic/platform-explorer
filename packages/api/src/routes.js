@@ -4,8 +4,18 @@
  * @param mainController {MainController}
  * @param blockController {BlocksController}
  * @param transactionsController {TransactionsController}
+ * @param validatorsController {ValidatorsController}
  */
-module.exports = ({ fastify, mainController, blocksController, transactionsController, dataContractsController, documentsController, identitiesController }) => {
+module.exports = ({
+  fastify,
+  mainController,
+  blocksController,
+  transactionsController,
+  dataContractsController,
+  documentsController,
+  identitiesController,
+  validatorsController
+}) => {
   const routes = [
     {
       path: '/status',
@@ -96,6 +106,16 @@ module.exports = ({ fastify, mainController, blocksController, transactionsContr
       path: '/transactions/history',
       method: 'GET',
       handler: transactionsController.getTransactionHistory
+    },
+    {
+      path: '/validators',
+      method: 'GET',
+      handler: validatorsController.getValidators
+    },
+    {
+      path: '/validator/:proTxHash',
+      method: 'GET',
+      handler: validatorsController.getValidatorByProTxHash
     }
   ]
 

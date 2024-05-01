@@ -5,6 +5,7 @@ mod decoder;
 mod models;
 mod processor;
 mod entities;
+mod utils;
 
 extern crate chrono;
 

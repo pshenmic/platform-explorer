@@ -1,9 +1,16 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize};
+use crate::entities::validator::Validator;
 
 #[derive(Deserialize)]
 pub struct TenderdashRPCStatusResponse {
     pub sync_info: TenderdashSyncInfo
+}
+
+#[derive(Deserialize)]
+pub struct TenderdashRPCValidatorsResponse {
+    pub block_height: i32,
+    pub validators: Vec<TDValidator>
 }
 
 #[derive(Deserialize)]
@@ -12,8 +19,9 @@ pub struct TenderdashSyncInfo {
 }
 
 #[derive(Deserialize)]
-pub struct TenderdashBlockResponse {
-    pub block: BlockWrapper,
+pub struct TDValidator {
+    pub pro_tx_hash: String,
+    pub voting_power: String,
 }
 
 #[derive(Deserialize)]
@@ -40,7 +48,8 @@ pub struct TDBlockHeader {
     pub core_chain_locked_height: i32,
     #[serde(rename = "time")]
     #[serde(with = "from_iso8601")]
-    pub timestamp: DateTime<Utc>
+    pub timestamp: DateTime<Utc>,
+    pub proposer_pro_tx_hash: String
 }
 
 #[derive(Deserialize)]
@@ -50,7 +59,7 @@ pub struct TDBlock {
 }
 
 #[derive(Deserialize)]
-pub struct BlockWrapper {
+pub struct TenderdashRPCBlockResponse {
     pub block_id: TDBlockId,
     pub block: TDBlock,
 }
@@ -67,5 +76,18 @@ mod from_iso8601 {
         let parsed = DateTime::parse_from_rfc3339(&s).unwrap().with_timezone(&Utc);
 
         Ok(parsed)
+    }
+}
+
+impl TryFrom<TenderdashRPCValidatorsResponse> for Vec<Validator> {
+    type Error = ();
+
+    fn try_from(resp: TenderdashRPCValidatorsResponse) -> Result<Self, Self::Error> {
+        let validators: Vec<Validator> = resp.validators
+            .iter()
+            .map(|td_validator| { Validator { pro_tx_hash: td_validator.pro_tx_hash.clone() } })
+            .collect();
+
+        Ok(validators)
     }
 }

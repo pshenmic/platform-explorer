@@ -48,7 +48,8 @@ describe('Blocks routes', () => {
           timestamp: block.timestamp.toISOString(),
           blockVersion: block.block_version,
           appVersion: block.app_version,
-          l1LockedHeight: block.l1_locked_height
+          l1LockedHeight: block.l1_locked_height,
+          validator: block.validator
         },
         txs: []
       }
@@ -81,7 +82,8 @@ describe('Blocks routes', () => {
           timestamp: row.timestamp.toISOString(),
           blockVersion: row.block_version,
           appVersion: row.app_version,
-          l1LockedHeight: row.l1_locked_height
+          l1LockedHeight: row.l1_locked_height,
+          validator: row.validator
         },
         txs: []
       }))
@@ -109,7 +111,8 @@ describe('Blocks routes', () => {
             timestamp: row.timestamp.toISOString(),
             blockVersion: row.block_version,
             appVersion: row.app_version,
-            l1LockedHeight: row.l1_locked_height
+            l1LockedHeight: row.l1_locked_height,
+            validator: row.validator
           },
           txs: []
         }))
@@ -136,7 +139,8 @@ describe('Blocks routes', () => {
             timestamp: row.timestamp.toISOString(),
             blockVersion: row.block_version,
             appVersion: row.app_version,
-            l1LockedHeight: row.l1_locked_height
+            l1LockedHeight: row.l1_locked_height,
+            validator: row.validator
           },
           txs: []
         }))
@@ -163,7 +167,8 @@ describe('Blocks routes', () => {
             timestamp: row.timestamp.toISOString(),
             blockVersion: row.block_version,
             appVersion: row.app_version,
-            l1LockedHeight: row.l1_locked_height
+            l1LockedHeight: row.l1_locked_height,
+            validator: row.validator
           },
           txs: []
         }))
@@ -190,7 +195,8 @@ describe('Blocks routes', () => {
             timestamp: row.timestamp.toISOString(),
             blockVersion: row.block_version,
             appVersion: row.app_version,
-            l1LockedHeight: row.l1_locked_height
+            l1LockedHeight: row.l1_locked_height,
+            validator: row.validator
           },
           txs: []
         }))
@@ -218,7 +224,8 @@ describe('Blocks routes', () => {
             timestamp: row.timestamp.toISOString(),
             blockVersion: row.block_version,
             appVersion: row.app_version,
-            l1LockedHeight: row.l1_locked_height
+            l1LockedHeight: row.l1_locked_height,
+            validator: row.validator
           },
           txs: []
         }))
@@ -246,7 +253,8 @@ describe('Blocks routes', () => {
             timestamp: row.timestamp.toISOString(),
             blockVersion: row.block_version,
             appVersion: row.app_version,
-            l1LockedHeight: row.l1_locked_height
+            l1LockedHeight: row.l1_locked_height,
+            validator: row.validator
           },
           txs: []
         }))

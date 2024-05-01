@@ -4,3 +4,4 @@ pub mod data_contract;
 pub mod document;
 pub mod identity;
 pub mod transfer;
+pub mod validator;

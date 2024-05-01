@@ -117,7 +117,7 @@ impl From<Row> for DataContract {
             schema: None,
             version: version as u32,
             state_transition_hash: None,
-            is_system: false,
+            is_system,
         }
     }
 }

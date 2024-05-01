@@ -9,14 +9,15 @@ const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
 
 const fixtures = {
   identifier: () => generateIdentifier(),
-  block: async (knex, { hash, height, timestamp, block_version, app_version, l1_locked_height } = {}) => {
+  block: async (knex, { hash, height, timestamp, block_version, app_version, l1_locked_height, validator } = {}) => {
     const row = {
       hash: hash ?? generateHash(),
       height: height ?? 1,
       timestamp: timestamp ?? new Date(),
       block_version: block_version ?? 13,
       app_version: app_version ?? 1,
-      l1_locked_height: l1_locked_height ?? 1337
+      l1_locked_height: l1_locked_height ?? 1337,
+      validator: validator ?? (await fixtures.validator(knex)).pro_tx_hash
     }
 
     await knex('blocks').insert(row)
@@ -163,6 +164,17 @@ const fixtures = {
 
     return { ...row, id: result[0].id }
   },
+  validator: async (knex, {
+    pro_tx_hash
+  } = {}) => {
+    const row = {
+      pro_tx_hash: pro_tx_hash ?? generateHash()
+    }
+
+    const [result] = await knex('validators').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
   cleanup: async (knex) => {
     await knex.raw('DELETE FROM identities')
     await knex.raw('DELETE FROM documents')
@@ -170,6 +182,7 @@ const fixtures = {
     await knex.raw('DELETE FROM transfers')
     await knex.raw('DELETE FROM state_transitions')
     await knex.raw('DELETE FROM blocks')
+    await knex.raw('DELETE FROM validators')
   }
 }
 
