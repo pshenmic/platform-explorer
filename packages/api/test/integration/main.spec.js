@@ -154,7 +154,8 @@ describe('Other routes', () => {
         version: 0,
         txHash: dataContractTransaction.hash,
         timestamp: block.timestamp.toISOString(),
-        isSystem: false
+        isSystem: false,
+        documentsCount: 0
       }
 
       assert.deepEqual({ dataContract: expectedDataContract }, body)

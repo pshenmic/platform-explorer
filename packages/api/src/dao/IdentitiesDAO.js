@@ -152,7 +152,8 @@ module.exports = class IdentitiesDAO {
       .as('data_contracts')
 
     const rows = await this.knex(filteredDataContracts)
-      .select('identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp')
+      .select('data_contracts.id as id', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp')
+      .select(this.knex('documents').count('*').whereRaw('documents.data_contract_id = id').as('documents_count'))
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .whereBetween('row_number', [fromRank, toRank])

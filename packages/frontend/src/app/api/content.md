@@ -160,7 +160,8 @@ GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     version: 0,
     txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
     timestamp: "2024-03-18T10:13:54.150Z",
-    isSystem: false
+    isSystem: false,
+    documentsCount: 1337
 }
 ```
 Response codes:
@@ -192,7 +193,8 @@ GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
         version: 0,
         txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
         timestamp: "2024-03-18T10:13:54.150Z",
-        isSystem: false
+        isSystem: false,
+        documentsCount: 1337
     }, ...
     ]
 }
@@ -341,6 +343,7 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=
         txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
         timestamp: "2024-03-18T10:13:54.150Z",
         isSystem: false
+        documentsCount: 1337
     }, ...
     ]
 }
