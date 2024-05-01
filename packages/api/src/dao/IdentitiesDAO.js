@@ -48,8 +48,7 @@ module.exports = class IdentitiesDAO {
         'tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'recipient', 'amount')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
-      .select(this.knex('transfers').sum('amount').where('recipient', identifier).as('total_received'))
-      .select(this.knex('transfers').sum('amount').where('sender', identifier).as('total_sent'))
+      .select(this.knex.raw('COALESCE((select sum(amount) from transfers where recipient = identifier), 0) - COALESCE((select sum(amount) from transfers where sender = identifier), 0) as balance'))
       .select(this.knex('state_transitions').count('*').where('owner', identifier).as('total_txs'))
       .select(this.knex(documentsSubQuery).count('*').where('rank', 1).as('total_documents'))
       .select(this.knex(dataContractsSubQuery).count('*').where('rank', 1).as('total_data_contracts'))
@@ -63,9 +62,7 @@ module.exports = class IdentitiesDAO {
 
     const [row] = rows
 
-    const balance = Number(row.total_received ?? 0) - Number(row.total_sent ?? 0)
-
-    return Identity.fromRow({ ...row, balance })
+    return Identity.fromRow({ ...row })
   }
 
   getIdentities = async (page, limit, order, orderBy) => {
