@@ -47,23 +47,6 @@ impl TenderdashRpcApi {
         Ok(resp)
     }
 
-    async fn get_validators(&self) -> Result<Vec<Validator>, Error> {
-        let url = format!("{}/validators", self.backend_url);
-
-        let res = self.client
-            .get(url)
-            .send()
-            .await?;
-
-        let resp = res
-            .json::<TenderdashRPCValidatorsResponse>()
-            .await?;
-
-        let validators: Vec<Validator> = Vec::try_from(resp).unwrap();
-
-        Ok(validators)
-    }
-
     pub async fn get_validators_by_block_height(&self, block_height: i32) -> Result<Vec<Validator>, Error> {
         let url = format!("{}/validators?height={}", self.backend_url, block_height);
 
