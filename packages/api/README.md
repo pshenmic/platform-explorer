@@ -469,12 +469,16 @@ GET /transactions/history?timespan=1h
         timestamp: "2024-04-22T08:45:20.911Z",
         data: {
           txs: 5
+          blockHeight: 2,
+          blockHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
         }
     },
     {
         timestamp: "2024-04-22T08:50:20.911Z",
         data: {
-          txs: 13
+          txs: 13,
+          blockHeight: 7,
+          blockHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
         }
     }, ...
 ]
