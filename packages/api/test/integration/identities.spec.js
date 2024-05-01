@@ -358,7 +358,8 @@ describe('Identities routes', () => {
         schema: null,
         txHash: _dataContract.transaction.hash,
         timestamp: _dataContract.block.timestamp.toISOString(),
-        isSystem: false
+        isSystem: false,
+        documentsCount: 0
       }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -401,7 +402,8 @@ describe('Identities routes', () => {
           schema: null,
           txHash: _dataContract.transaction.hash,
           timestamp: _dataContract.block.timestamp.toISOString(),
-          isSystem: false
+          isSystem: false,
+          documentsCount: 0
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -444,7 +446,8 @@ describe('Identities routes', () => {
           schema: null,
           txHash: _dataContract.transaction.hash,
           timestamp: _dataContract.block.timestamp.toISOString(),
-          isSystem: false
+          isSystem: false,
+          documentsCount: 0
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -487,7 +490,8 @@ describe('Identities routes', () => {
           schema: null,
           txHash: _dataContract.transaction.hash,
           timestamp: _dataContract.block.timestamp.toISOString(),
-          isSystem: false
+          isSystem: false,
+          documentsCount: 0
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })

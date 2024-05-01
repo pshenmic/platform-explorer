@@ -101,7 +101,8 @@ describe('DataContracts routes', () => {
           version: 0,
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-          isSystem: dataContract.is_system
+          isSystem: dataContract.is_system,
+          documentsCount: 0
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -127,7 +128,8 @@ describe('DataContracts routes', () => {
           version: 0,
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-          isSystem: dataContract.is_system
+          isSystem: dataContract.is_system,
+          documentsCount: 0
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -153,7 +155,8 @@ describe('DataContracts routes', () => {
           version: 0,
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-          isSystem: dataContract.is_system
+          isSystem: dataContract.is_system,
+          documentsCount: 0
         }))
 
       assert.equal(body.resultSet.length, 6)
@@ -179,7 +182,8 @@ describe('DataContracts routes', () => {
           version: 0,
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-          isSystem: dataContract.is_system
+          isSystem: dataContract.is_system,
+          documentsCount: 0
         }))
 
       assert.equal(body.resultSet.length, 6)
@@ -207,7 +211,8 @@ describe('DataContracts routes', () => {
         version: 0,
         txHash: dataContract.is_system ? null : transaction.hash,
         timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-        isSystem: dataContract.is_system
+        isSystem: dataContract.is_system,
+        documentsCount: 0
       }))
 
     assert.equal(body.resultSet.length, 10)
@@ -233,7 +238,8 @@ describe('DataContracts routes', () => {
         version: 0,
         txHash: null,
         timestamp: null,
-        isSystem: true
+        isSystem: true,
+        documentsCount: 0
       }
 
       assert.deepEqual(body, expectedDataContract)
