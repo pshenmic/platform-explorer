@@ -192,7 +192,7 @@ describe('DataContracts routes', () => {
   })
 
   it('should return set sort by doc count (desc)', async () => {
-    const { body } = await client.get('/dataContracts?order=desc&order_by=doc_count')
+    const { body } = await client.get('/dataContracts?order=desc&order_by=documents_count')
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8')
 

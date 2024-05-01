@@ -24,8 +24,8 @@ class DataContractsController {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    if (orderBy !== 'block_height' && orderBy !== 'doc_count') {
-      return response.status(400).send({ message: `invalid order_by value ${order}. only 'block_height' or 'doc_count' is valid values` })
+    if (orderBy !== 'block_height' && orderBy !== 'documents_count') {
+      return response.status(400).send({ message: `invalid order_by value ${order}. only 'block_height' or 'documents_count' is valid values` })
     }
 
     const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page), Number(limit), order, orderBy)

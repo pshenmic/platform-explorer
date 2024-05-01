@@ -12,7 +12,7 @@ module.exports = class DataContractsDAO {
 
     const orderByOptions = [{ column: 'filtered_data_contracts.id', order }]
 
-    if (orderBy === 'doc_count') {
+    if (orderBy === 'documents_count') {
       orderByOptions.unshift({ column: 'documents_count', order })
     }
 
