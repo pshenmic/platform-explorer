@@ -116,18 +116,19 @@ function Home() {
                         mb={5}
                         borderWidth={'1px'} borderRadius={'lg'}
                         direction={'column'}
-                        p={2}
+                        p={3}
+                        pb={2}
                     >
-                        <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={2}>Transactions history</Heading>
+                        <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions history</Heading>
                         
                         <Container 
                             minH={'220px'}
                             height={["300px", , ,'auto']}
                             maxW={'none'}
                             flexGrow={'1'} 
-                            my={3} 
-                            py={0} 
-                            px={2} 
+                            mt={2}
+                            mb={4} 
+                            p={0} 
                         >
                             <LineChart
                                 data={transactionsHistory}
@@ -153,7 +154,7 @@ function Home() {
                         mb={5}
                         className={'InfoBlock'}
                     >
-                        <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Transactions</Heading>
+                        <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions</Heading>
 
                         <SimpleList 
                             items={transactions.map((transaction, i) => ({
@@ -180,7 +181,7 @@ function Home() {
                             borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
                         >
-                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Trending Data Contracts</Heading>
+                            <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Data Contracts</Heading>
 
                             <SimpleList 
                                 items={dataContracts.map((dataContract, i) => ({
@@ -200,7 +201,7 @@ function Home() {
                             borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
                         >
-                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Trending Identities</Heading>
+                            <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Identities</Heading>
 
                             <SimpleList 
                                 items={identities.map((identitiy, i) => ({
@@ -218,7 +219,7 @@ function Home() {
                             borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
                         >
-                            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Richlist</Heading>
+                            <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
 
                             <SimpleList 
                                 items={identities.map((identitiy, i) => ({
