@@ -166,9 +166,12 @@ Response codes:
 ```
 ---
 ### Data Contracts
-Return dataContracts set paged
+Return dataContracts set paged and order by block height or documents count.
+
+Valid `order_by` values are `block_height` or `documents_count`
+
 ```
-GET /dataContracts?page=1&limit=10&order=asc
+GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
 
 {
     pagination: {
@@ -278,9 +281,11 @@ Response codes:
 ```
 ---
 ### Identities
-Return all identities paged
+Return all identities paged and order by block height, tx count or balance.
+
+Valid `order_by` values are `block_height`, `tx_count` or `balance`
 ```
-GET /identities?page=1&limit=10&order=asc
+GET /identities?page=1&limit=10&order=asc&order_by=block_height
 
 {
     pagination: {
