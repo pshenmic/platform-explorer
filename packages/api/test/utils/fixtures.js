@@ -9,14 +9,15 @@ const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
 
 const fixtures = {
   identifier: () => generateIdentifier(),
-  block: async (knex, { hash, height, timestamp, block_version, app_version, l1_locked_height } = {}) => {
+  block: async (knex, { hash, height, timestamp, block_version, app_version, l1_locked_height, validator } = {}) => {
     const row = {
       hash: hash ?? generateHash(),
       height: height ?? 1,
       timestamp: timestamp ?? new Date(),
       block_version: block_version ?? 13,
       app_version: app_version ?? 1,
-      l1_locked_height: l1_locked_height ?? 1337
+      l1_locked_height: l1_locked_height ?? 1337,
+      validator: validator ?? (await fixtures.validator(knex)).pro_tx_hash
     }
 
     await knex('blocks').insert(row)
@@ -180,8 +181,8 @@ const fixtures = {
     await knex.raw('DELETE FROM data_contracts')
     await knex.raw('DELETE FROM transfers')
     await knex.raw('DELETE FROM state_transitions')
-    await knex.raw('DELETE FROM validators')
     await knex.raw('DELETE FROM blocks')
+    await knex.raw('DELETE FROM validators')
   }
 }
 
