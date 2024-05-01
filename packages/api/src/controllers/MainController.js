@@ -15,17 +15,30 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    let stats
-    let tdStatus
+    const [blocks, stats, genesis, tdStatus] = (await Promise.allSettled([
+      this.blocksDAO.getBlocks(1, 1, 'desc'),
+      this.blocksDAO.getStats(),
+      TenderdashRPC.getGenesis(),
+      TenderdashRPC.getStatus()
+    ])).map((e) => e.value ?? null)
 
-    try {
-      stats = await this.blocksDAO.getStats()
-      tdStatus = await TenderdashRPC.getStatus()
-    } catch (e) {
-      console.error(e)
+    const [currentBlock] = blocks.resultSet
+
+    const currentBlocktime = currentBlock.header.timestamp.getTime()
+    const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
+    const genesisTime = new Date(genesis.genesis_time).getTime()
+    const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
+    const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
+    const nextEpochTime = Math.floor(genesisTime + epochChangeTime * (epochIndex + 1))
+
+    const epoch = {
+      index: epochIndex,
+      startTime: new Date(startEpochTime),
+      endTime: new Date(nextEpochTime)
     }
 
     response.send({
+      epoch,
       appVersion: stats?.appVersion,
       blockVersion: stats?.blockVersion,
       blocksCount: stats?.topHeight,

@@ -56,11 +56,16 @@ Reference:
 * [Transfers by Identity](#transfers-by-identity)
 
 ### Status
-Returns some basic stats
+Returns basic stats and epoch info
 ```
 HTTP /status
 
 {
+   epoch: {
+        index: 3,
+        startTime: "2024-04-08T14:00:00.000Z",
+        endTime: "2024-04-09T14:00:00.000Z"
+    },
     appVersion: 1,
     blockVersion: 13,
     blocksCount: 10,
