@@ -16,6 +16,11 @@ module.exports = class DataContractsDAO {
       orderByOptions.unshift({ column: 'documents_count', order })
     }
 
+    const getRankString = () => {
+      return orderByOptions.reduce((acc, value, index, arr) =>
+        acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
+    }
+
     const subquery = this.knex('data_contracts')
       .select('data_contracts.id as id', 'data_contracts.identifier as identifier', 'data_contracts.owner as owner',
         'data_contracts.is_system as is_system', 'data_contracts.version as version',
@@ -25,7 +30,7 @@ module.exports = class DataContractsDAO {
     const filteredContracts = this.knex.with('with_alias', subquery)
       .select('id', 'owner', 'identifier', 'version', 'tx_hash', 'rank', 'is_system',
         this.knex('with_alias').count('*').as('total_count').where('rank', '1'))
-      .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
+      .select(this.knex.raw(`rank() over (${getRankString()}) row_number`))
       .from('with_alias')
       .where('rank', 1)
       .as('filtered_data_contracts')
