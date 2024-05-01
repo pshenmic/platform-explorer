@@ -48,8 +48,7 @@ module.exports = class IdentitiesDAO {
         'tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'recipient', 'amount')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
-      .select(this.knex('transfers').sum('amount').where('recipient', identifier).as('total_received'))
-      .select(this.knex('transfers').sum('amount').where('sender', identifier).as('total_sent'))
+      .select(this.knex.raw('COALESCE((select sum(amount) from transfers where recipient = identifier), 0) - COALESCE((select sum(amount) from transfers where sender = identifier), 0) as balance'))
       .select(this.knex('state_transitions').count('*').where('owner', identifier).as('total_txs'))
       .select(this.knex(documentsSubQuery).count('*').where('rank', 1).as('total_documents'))
       .select(this.knex(dataContractsSubQuery).count('*').where('rank', 1).as('total_data_contracts'))
@@ -63,43 +62,63 @@ module.exports = class IdentitiesDAO {
 
     const [row] = rows
 
-    const balance = Number(row.total_received ?? 0) - Number(row.total_sent ?? 0)
-
-    return Identity.fromRow({ ...row, balance })
+    return Identity.fromRow({ ...row })
   }
 
-  getIdentities = async (page, limit, order) => {
+  getIdentities = async (page, limit, order, orderBy) => {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
+
+    const orderByOptions = [{ column: 'identity_id', order }]
+
+    if (orderBy === 'tx_count') {
+      orderByOptions.unshift({ column: 'total_txs', order })
+    }
+
+    if (orderBy === 'balance') {
+      orderByOptions.unshift({ column: 'balance', order })
+    }
+
+    const getRankString = () => {
+      return orderByOptions.reduce((acc, value, index, arr) =>
+        acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
+    }
 
     const subquery = this.knex('identities')
       .select('identities.id as identity_id', 'identities.identifier as identifier', 'identities.owner as identity_owner',
         'identities.is_system as is_system', 'identities.state_transition_hash as tx_hash',
         'identities.revision as revision')
+      .select(this.knex.raw('COALESCE((select sum(amount) from transfers where recipient = identifier), 0) - COALESCE((select sum(amount) from transfers where sender = identifier), 0) as balance'))
+      .select(this.knex('state_transitions').count('*').whereRaw('owner = identifier').as('total_txs'))
       .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
       .as('identities')
 
     const filteredIdentities = this.knex(subquery)
-      .select('identity_id', 'identifier', 'identity_owner', 'tx_hash', 'revision', 'rank', 'is_system')
-      .select(this.knex.raw(`rank() over (order by identity_id ${order}) row_number`))
+      .select('balance', 'total_txs', 'identity_id', 'identifier', 'identity_owner', 'tx_hash', 'revision', 'rank', 'is_system')
+      .select(this.knex.raw(`row_number() over (${getRankString()}) row_number`))
       .where('rank', 1)
       .as('filtered_identities')
 
+    const documentsSubQuery = this.knex('documents')
+      .select('documents.id', 'documents.state_transition_hash', 'documents.owner as owner')
+      .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
+      .as('as_documents')
+
+    const dataContractsSubQuery = this.knex('data_contracts')
+      .select('data_contracts.id', 'data_contracts.state_transition_hash', 'data_contracts.owner as owner')
+      .select(this.knex.raw('rank() over (partition by data_contracts.identifier order by data_contracts.id desc) rank'))
+      .as('as_data_contracts')
+
     const rows = await this.knex(filteredIdentities)
-      .select('identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system')
+      .select('total_txs', 'balance', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system')
       .select(this.knex(filteredIdentities).count('*').as('total_count'))
-      .select(this.knex('state_transitions').count('*').where('owner', '=', 'identifier').as('total_txs'))
-      .select(this.knex('documents').count('*').where('owner', '=', 'identifier').as('total_documents'))
-      .select(this.knex('data_contracts').count('*').where('owner', '=', 'identifier').as('total_data_contracts'))
-      .select(this.knex('transfers').count('*').where('sender', '=', 'identifier').orWhere('recipient', '=', 'identifier').as('total_transfers'))
+      .select(this.knex(documentsSubQuery).count('*').whereRaw('owner = identifier and rank = 1').as('total_documents'))
+      .select(this.knex(dataContractsSubQuery).count('*').whereRaw('owner = identifier and rank = 1').as('total_data_contracts'))
+      .select(this.knex('transfers').count('*').whereRaw('sender = identifier or recipient = identifier').as('total_transfers'))
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
       .whereBetween('row_number', [fromRank, toRank])
-      .orderBy('identity_id', order)
-
-    const [row] = rows
-
-    const balance = Number(row.total_received ?? 0) - Number(row.total_sent ?? 0)
+      .orderBy(orderByOptions)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
@@ -109,7 +128,7 @@ module.exports = class IdentitiesDAO {
       total_data_contracts: parseInt(row.total_data_contracts),
       total_documents: parseInt(row.total_documents),
       total_txs: parseInt(row.total_txs),
-      balance
+      balance: parseInt(row.balance)
     })), page, limit, totalCount)
   }
 
