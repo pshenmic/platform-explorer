@@ -118,8 +118,6 @@ module.exports = class IdentitiesDAO {
       .whereBetween('row_number', [fromRank, toRank])
       .orderBy(orderByOptions)
 
-    const [row] = rows
-
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     return new PaginatedResultSet(rows.map(row => Identity.fromRow({
