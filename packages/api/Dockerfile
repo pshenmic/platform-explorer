@@ -1,4 +1,5 @@
 FROM node:20-alpine
+COPY packages/indexer/.env /app/.env
 COPY packages/api/index.js /app/index.js
 COPY packages/api/src /app/src
 COPY packages/api/test /app/test
