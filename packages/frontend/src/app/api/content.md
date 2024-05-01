@@ -434,3 +434,32 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
+### Transactions history
+Return a series data for the amount of transactions chart with variable timespan (1h, 24h, 3d, 1w)
+```
+GET /transactions/history?timespan=1h
+[
+    {
+        timestamp: "2024-04-22T08:45:20.911Z",
+        data: {
+          txs: 5
+          blockHeight: 2,
+          blockHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
+        }
+    },
+    {
+        timestamp: "2024-04-22T08:50:20.911Z",
+        data: {
+          txs: 13,
+          blockHeight: 7,
+          blockHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
+        }
+    }, ...
+]
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check timespan value
+500: Internal Server Error
+```
