@@ -75,11 +75,26 @@ module.exports = class TransactionsDAO {
           .limit(1)
           .as('block_hash')
       )
+      .select(
+        this.knex('blocks')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
+          .select('height')
+          .orderBy('height')
+          .limit(1)
+          .as('block_height')
+      )
       .from('ranges')
 
     return rows
       .slice(1)
-      .map(row => ({ timestamp: row.date_from, data: { txs: parseInt(row.tx_count) } }))
+      .map(row => ({
+        timestamp: row.date_from,
+        data: {
+          txs: parseInt(row.tx_count),
+          blockHeight: row.block_height,
+          blockHash: row.block_hash
+        }
+      }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
   }
 }

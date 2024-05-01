@@ -36,7 +36,7 @@ class TransactionsController {
 
     const possibleValues = ['1h', '24h', '3d', '1w']
 
-    if (['1h', '24h', '3d', '1w'].indexOf(timespan) === -1) {
+    if (possibleValues.indexOf(timespan) === -1) {
       return response.status(400)
         .send({ message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid` })
     }

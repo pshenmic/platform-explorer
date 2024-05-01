@@ -183,7 +183,7 @@ describe('Transaction routes', () => {
       assert.equal(body.pagination.limit, 3)
 
       const expectedTransactions = transactions
-        .sort((a, b) => a.block.height - b.block.height)
+        .sort((a, b) => a.transaction.id - b.transaction.id)
         .slice(6, 9)
         .map(transaction => ({
           blockHash: transaction.block.hash,
