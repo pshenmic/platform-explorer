@@ -56,11 +56,16 @@ Reference:
 * [Transfers by Identity](#transfers-by-identity)
 
 ### Status
-Returns some basic stats
+Returns basic stats and epoch info
 ```
 HTTP /status
 
 {
+   epoch: {
+        index: 3,
+        startTime: "2024-04-08T14:00:00.000Z",
+        endTime: "2024-04-09T14:00:00.000Z"
+    },
     appVersion: 1,
     blockVersion: 13,
     blocksCount: 10,
@@ -458,5 +463,34 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&li
 Response codes:
 ```
 200: OK
+500: Internal Server Error
+```
+### Transactions history
+Return a series data for the amount of transactions chart with variable timespan (1h, 24h, 3d, 1w)
+```
+GET /transactions/history?timespan=1h
+[
+    {
+        timestamp: "2024-04-22T08:45:20.911Z",
+        data: {
+          txs: 5
+          blockHeight: 2,
+          blockHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
+        }
+    },
+    {
+        timestamp: "2024-04-22T08:50:20.911Z",
+        data: {
+          txs: 13,
+          blockHeight: 7,
+          blockHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
+        }
+    }, ...
+]
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check timespan value
 500: Internal Server Error
 ```
