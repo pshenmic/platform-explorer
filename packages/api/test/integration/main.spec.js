@@ -94,7 +94,8 @@ describe('Other routes', () => {
           timestamp: block.timestamp.toISOString(),
           blockVersion: block.block_version,
           appVersion: block.app_version,
-          l1LockedHeight: block.l1_locked_height
+          l1LockedHeight: block.l1_locked_height,
+          validator: block.validator
         },
         txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
@@ -132,7 +133,8 @@ describe('Other routes', () => {
           timestamp: block.timestamp.toISOString(),
           blockVersion: block.block_version,
           appVersion: block.app_version,
-          l1LockedHeight: block.l1_locked_height
+          l1LockedHeight: block.l1_locked_height,
+          validator: block.validator
         },
         txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
