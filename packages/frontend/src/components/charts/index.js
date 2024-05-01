@@ -40,6 +40,8 @@ const LineChart = ({data, xLabel={title: '', type: 'number'}, yLabel={title: '',
 
     const chartObserver = new ResizeObserver(render)
 
+    useEffect(render, [data])
+
     useEffect(() => {
         if (chartContainer.current && chartElement === '') 
             chartObserver.observe(chartContainer.current)
@@ -70,20 +72,20 @@ const LineGraph = ({
             marginLeft = 40
             
     const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
+   
     const [x, setX] = useState(() => {
         if (xLabel.type === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
         if (xLabel.type === 'date' || xLabel.type === 'time') return d3.scaleTime(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
     })
+
     const xTickFormat = (() => {
         if (xLabel.type === 'number') return d3.format(",.0f")
         if (xLabel.type === 'date') return d3.timeFormat("%B %d")
         if (xLabel.type === 'time') return d3.timeFormat("%H:%M")
     })()
-    const xTickCount = (()=> {
-        if (xLabel.type === 'number') return 6
-        if (xLabel.type === 'date') return 6
-        if (xLabel.type === 'time') return d3.timeMinute.every(10)
-    })()
+
+    const xTickCount = 6
+
     const gx = useRef()
     const gy = useRef()
     const tooltip = useRef()
@@ -279,6 +281,15 @@ const LineGraph = ({
                 overflow={'visible'}
                 viewBox={`0 0 ${width} ${height}`}
             >   
+                <filter id="glow">
+                    <feColorMatrix type="matrix" values={`0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0`}/>
+                    <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+
                 <svg x='15' y='-15' overflow={'visible'}>
                     <g className={'Axis'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
                         <g><text className={'Axis__Label'} fill='white'>{xLabel.title}</text></g>
@@ -296,8 +307,8 @@ const LineGraph = ({
                 <g transform={`translate(15,-15)`}>
                     <defs>
                         <linearGradient id="AreaFill" x1="0%" y1="100%" x2="0%" y2="0%">
-                            <stop stopColor="#0F4D74" stopOpacity="0.3" offset="0%" />
-                            <stop stopColor="#0E75B5" stopOpacity="0.3" offset="100%" />
+                            <stop stopColor="#0F4D74" stopOpacity="0.02" offset="0%" />
+                            <stop stopColor="#0E75B5" stopOpacity="0.4" offset="100%" />
                         </linearGradient>
                         <clipPath id="clipPath">
                             <rect 
@@ -311,10 +322,10 @@ const LineGraph = ({
 
                     <path d={area(data)} fill="url(#AreaFill)" clipPath={'url(#clipPath)'}/>
                     
-                    <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none" />
+                    <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none" filter='url(#glow)' />
 
                     <g fill='#0e75b5'>
-                        {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'Chart__Point'} />))}
+                        {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'Chart__Point'}/>))}
                     </g>
 
                     <g ref={focusPoint} className={'Chart__FocusPoint'}>
