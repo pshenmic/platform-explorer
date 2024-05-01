@@ -34,10 +34,15 @@ function Home() {
             Api.getTransactions(1, 3, 'desc'),
             Api.getDataContracts(1, 8, 'desc'),
             Api.getIdentities(1, 5, 'desc'),
-            Api.getTransactionsHistory('1w')
+            Api.getTransactionsHistory('1w'),
+            Api.getBlocks(1, 1, 'desc'),
         ])
-        .then(([status, paginatedTransactions, paginatedDataContracts, paginatedIdentities, transactionsHistory]) => {
-            setStatus(status)
+        .then(([status, paginatedTransactions, paginatedDataContracts, paginatedIdentities, transactionsHistory, latestBlocks]) => {
+            const [latestBlock] = latestBlocks.resultSet
+            setStatus({
+                latestBlock,
+                ...status
+            })
             setTransactions(paginatedTransactions.resultSet)
             setDataContracts(paginatedDataContracts.resultSet)
             setIdentities(paginatedIdentities.resultSet)
@@ -83,7 +88,10 @@ function Home() {
                 <Box flexShrink={'0'} w={10} h={10} />
                 
                 <Container maxW={'none'} p={0}>
-                    <NetworkStatus/>
+                    <NetworkStatus network={{
+                        name: status.network,
+                        latestBlock: status.latestBlock
+                    }}/>
                 </Container>
             </Flex>
         </Container>

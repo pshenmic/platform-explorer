@@ -4,9 +4,12 @@ import { Tooltip } from '@chakra-ui/react'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
-const networkStatus = true;
+const getMinFromMs = (ms) => Math.floor((ms/1000)/60)
+const getSecFromMs = (ms) => Math.floor((ms/1000))
 
-function NetworkStatus ({}) {
+function NetworkStatus ({network}) {
+    const msFromLastBlock = new Date() - new Date(network.latestBlock.header.timestamp)
+    const networkStatus = getMinFromMs(msFromLastBlock) < 15
     const NetworkStatusIcon = networkStatus ? 
         <CheckCircleIcon color={'green.500'} ml={2}/>: 
         <WarningTwoIcon color={'yellow.400'} ml={2}/>
@@ -42,7 +45,7 @@ function NetworkStatus ({}) {
             <div className={'NetworkStatus__InfoItem'}>
                 <div className={'NetworkStatus__Title'}>Network:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>dash-testnet-42</span>
+                    <span>{network.name}</span>
                     
                     <Tooltip 
                         label={`${networkStatus ? 
@@ -63,7 +66,15 @@ function NetworkStatus ({}) {
             <div className={'NetworkStatus__InfoItem'}>
                 <div className={'NetworkStatus__Title'}>Latest block:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <Link href={'/block/16EF8CB61B23944C6BFCA637FF80B5A88A3FE22BC44C92615E23F9B711C83FF1'}>#445522, 5 Min. ago</Link>
+                    <Link href={`/block/${network.latestBlock.header.hash}`}>
+                        #{network.latestBlock.header.height}, 
+                        
+                        {getMinFromMs(msFromLastBlock) < 1 ? (
+                            <> {getSecFromMs(msFromLastBlock)} sec. ago</>
+                        ) : (
+                            <> {getMinFromMs(msFromLastBlock)} min. ago</>
+                        )}
+                    </Link>
                 </div>
             </div>
         </Container>
