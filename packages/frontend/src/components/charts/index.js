@@ -64,9 +64,9 @@ const LineGraph = ({
     yLabel = {title: '', type: 'number'},
 }) => {
     const [loading, setLoading] = useState(true),
-            marginTop = 40,
+            marginTop = yLabel.title ? 40 : 20,
             marginRight = 30,
-            marginBottom = 45,
+            marginBottom = xLabel.title ? 45 : 20,
             marginLeft = 40
             
     const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
@@ -161,10 +161,10 @@ const LineGraph = ({
         setLine((d) => d3.line()
                             .x(d => x(d.x))
                             .y(d => y(d.y))
-                            .curve(d3.curveCardinal))
+                            .curve(d3.curveBumpX))
 
         setArea ((d) => d3.area()
-                            .curve(d3.curveCardinal)
+                            .curve(d3.curveBumpX)
                             .x((d) => x(d.x))
                             .y0(y(0))
                             .y1((d) => y(d.y)))
@@ -300,7 +300,12 @@ const LineGraph = ({
                             <stop stopColor="#0E75B5" stopOpacity="0.3" offset="100%" />
                         </linearGradient>
                         <clipPath id="clipPath">
-                            <rect x="25" y="30" width={width - marginRight} height={height - 70}></rect>
+                            <rect 
+                                x={marginLeft - 10} 
+                                y={marginTop} 
+                                width={width - (marginLeft - 10 + marginRight)} 
+                                height={height - (marginTop + marginBottom)}
+                            ></rect>
                         </clipPath>
                     </defs>
 

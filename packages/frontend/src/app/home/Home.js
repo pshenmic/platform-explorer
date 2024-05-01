@@ -111,7 +111,7 @@ function Home() {
     const [transactions, setTransactions] = useState([])
     const [dataContracts, setDataContracts] = useState([])
     const [identities, setIdentities] = useState([])
-    const [transactionHistory, setTransactionHistory] = useState([])
+    const [transactionsHistory, settransactionsHistory] = useState([])
 
     const fetchData = () => {
         setLoading(true)
@@ -120,21 +120,22 @@ function Home() {
             Api.getStatus(), 
             Api.getTransactions(1, 3, 'desc'),
             Api.getDataContracts(1, 8, 'desc'),
-            Api.getIdentities(1, 5, 'desc')
+            Api.getIdentities(1, 5, 'desc'),
+            Api.getTransactionsHistory('1w')
         ])
-        .then(([status, paginatedTransactions, paginatedDataContracts, paginatedIdentities]) => {
+        .then(([status, paginatedTransactions, paginatedDataContracts, paginatedIdentities, transactionsHistory]) => {
             setStatus(status)
             setTransactions(paginatedTransactions.resultSet)
             setDataContracts(paginatedDataContracts.resultSet)
             setIdentities(paginatedIdentities.resultSet)
-            setTransactionHistory(chartData.map((item) => ({
+            settransactionsHistory(transactionsHistory.map((item) => ({
                     x: new Date(item.timestamp),
                     y: item.data.txs,
                     info: [
                         {
                             title: 'Block height',
                             type: 'blocks',
-                            value: item.data.blockHeight
+                            value: item.data.blockHeight ? item.data.blockHeight : '-' 
                         },
                     ]
                 }))
@@ -202,9 +203,9 @@ function Home() {
                         mb={5}
                         borderWidth={'1px'} borderRadius={'lg'}
                         direction={'column'}
-                        p={3}
+                        p={2}
                     >
-                        <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={6}>Transactions history</Heading>
+                        <Heading as={'h2'} size={'sm'} px={2} mt={0} mb={2}>Transactions history</Heading>
                         
                         <Container 
                             minH={'220px'}
@@ -216,15 +217,16 @@ function Home() {
                             px={2} 
                         >
                             <LineChart
-                                data={transactionHistory}
+                                data={transactionsHistory}
                                 xLabel={{
                                     type: 'date',
-                                    title: 'Date'
+                                    abbreviation: 'Date',
+                                    title: ''
                                 }}
                                 yLabel={{
                                     type: 'number',
-                                    title: 'Transactions count',
-                                    abbreviation: 'TXs'
+                                    title: '',
+                                    abbreviation: 'Txs'
                                 }}
                             />
                         </Container>

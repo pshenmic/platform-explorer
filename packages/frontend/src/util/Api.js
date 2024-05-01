@@ -50,6 +50,10 @@ const getBlockByHash = (hash) => {
     return call(`block/${hash}`, 'GET')
 }
 
+const getTransactionsHistory = (timespan = '24h') => {
+    return call(`transactions/history?timespan=${timespan}`, 'GET')
+}
+
 const getTransactions = (page = 1, limit = 30, order = 'asc') => {
     return call(`transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
@@ -118,6 +122,7 @@ export {
     getStatus,
     getBlocks,
     getBlockByHash,
+    getTransactionsHistory,
     getTransactions,
     getTransaction,
     search,
