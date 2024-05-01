@@ -65,7 +65,7 @@ const LineGraph = ({
 }) => {
     const [loading, setLoading] = useState(true),
             marginTop = yLabel.title ? 40 : 20,
-            marginRight = 30,
+            marginRight = 40,
             marginBottom = xLabel.title ? 45 : 20,
             marginLeft = 40
             
