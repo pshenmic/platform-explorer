@@ -7,8 +7,8 @@ import './NetworkStatus.scss'
 const getMinFromMs = (ms) => Math.floor((ms/1000)/60)
 const getSecFromMs = (ms) => Math.floor((ms/1000))
 
-function NetworkStatus ({network}) {
-    const msFromLastBlock = new Date() - new Date(network.latestBlock.header.timestamp)
+function NetworkStatus ({status}) {
+    const msFromLastBlock = new Date() - new Date(status.latestBlock.header.timestamp)
     const networkStatus = getMinFromMs(msFromLastBlock) < 15
     const NetworkStatusIcon = networkStatus ? 
         <CheckCircleIcon color={'green.500'} ml={2}/>: 
@@ -27,10 +27,10 @@ function NetworkStatus ({network}) {
             <div className={'NetworkStatus__InfoItem'}>
                 <div className={'NetworkStatus__Title'}>Epoch:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>#7</span>
+                    <span>#{status.epoch.index}</span>
                     
                     <Tooltip 
-                        label={'Next Epoch will started at 11/04/2024'}
+                        label={`Next Epoch will started at ${new Date(status.epoch.endTime).toLocaleDateString()}`}
                         aria-label={'A tooltip'} 
                         placement={'top'}
                         hasArrow 
@@ -45,7 +45,7 @@ function NetworkStatus ({network}) {
             <div className={'NetworkStatus__InfoItem'}>
                 <div className={'NetworkStatus__Title'}>Network:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{network.name}</span>
+                    <span>{status.network}</span>
                     
                     <Tooltip 
                         label={`${networkStatus ? 
@@ -66,8 +66,8 @@ function NetworkStatus ({network}) {
             <div className={'NetworkStatus__InfoItem'}>
                 <div className={'NetworkStatus__Title'}>Latest block:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <Link href={`/block/${network.latestBlock.header.hash}`}>
-                        #{network.latestBlock.header.height}, 
+                    <Link href={`/block/${status.latestBlock.header.hash}`}>
+                        #{status.latestBlock.header.height}, 
                         
                         {getMinFromMs(msFromLastBlock) < 1 ? (
                             <> {getSecFromMs(msFromLastBlock)} sec. ago</>

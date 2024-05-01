@@ -35,7 +35,7 @@ function Home() {
             Api.getDataContracts(1, 8, 'desc'),
             Api.getIdentities(1, 5, 'desc'),
             Api.getTransactionsHistory('1w'),
-            Api.getBlocks(1, 1, 'desc'),
+            Api.getBlocks(1, 1, 'desc')
         ])
         .then(([status, paginatedTransactions, paginatedDataContracts, paginatedIdentities, transactionsHistory, latestBlocks]) => {
             const [latestBlock] = latestBlocks.resultSet
@@ -88,10 +88,7 @@ function Home() {
                 <Box flexShrink={'0'} w={10} h={10} />
                 
                 <Container maxW={'none'} p={0}>
-                    <NetworkStatus network={{
-                        name: status.network,
-                        latestBlock: status.latestBlock
-                    }}/>
+                    <NetworkStatus status={status}/>
                 </Container>
             </Flex>
         </Container>
@@ -170,7 +167,7 @@ function Home() {
                                 columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
                                 link: '/transaction/' + transaction.hash
                             }))}
-                            columns={['Identifier', 'Amount of txs']} 
+                            columns={['Identifier']} 
                         />
                     </Container>
                 </Flex>
