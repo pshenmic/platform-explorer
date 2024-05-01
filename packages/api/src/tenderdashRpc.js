@@ -96,6 +96,12 @@ class TenderdashRPC {
       tenderdashVersion
     }
   }
+
+  static async getGenesis () {
+    const { genesis } = await call('genesis', 'GET')
+
+    return genesis
+  }
 }
 
 module.exports = TenderdashRPC
