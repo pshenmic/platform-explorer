@@ -243,7 +243,7 @@ describe('Identities routes', () => {
         identities.push({ identity, block })
       }
 
-      const { body } = await client.get('/identities?sort_by=tx_count&order=desc')
+      const { body } = await client.get('/identities?order_by=tx_count&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -253,7 +253,7 @@ describe('Identities routes', () => {
       assert.equal(body.pagination.limit, 10)
 
       const expectedIdentities = identities
-        .sort((a, b) => b.identity.id - a.identity.id)
+        .sort((a, b) => b.identity.transactions.length - a.identity.transactions.length || b.identity.id - a.identity.id)
         .slice(0, 10)
         .map((_identity) => ({
           identifier: _identity.identity.identifier,
