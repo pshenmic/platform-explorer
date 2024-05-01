@@ -91,6 +91,11 @@ module.exports = ({ fastify, mainController, blocksController, transactionsContr
       path: '/transaction/decode',
       method: 'POST',
       handler: transactionsController.decode
+    },
+    {
+      path: '/transactions/history',
+      method: 'GET',
+      handler: transactionsController.getTransactionHistory
     }
   ]
 
