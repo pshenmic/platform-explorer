@@ -92,13 +92,22 @@ export const theme = extendTheme( {
           background: 'gray.800',
           display: 'inline-block'
         },
-
         Container: {
           a: {
             color: 'brand.normal',
   
             _hover : {
               color: 'brand.deep',
+            }
+          }
+        },
+        Table: {
+          a: {
+            borderBottom: '1px solid',
+
+            _hover : {
+              borderBottom: 'none',
+              color: 'gray.200'
             }
           }
         }
@@ -108,6 +117,13 @@ export const theme = extendTheme( {
       Container: {
         baseStyle: {
           p: 3,
+        },
+      },
+      Modal: {
+        baseStyle: {
+          dialog: {
+            background: 'gray.800'
+          }
         }
       },
       Code: {

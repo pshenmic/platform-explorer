@@ -22,7 +22,7 @@ function DataContractsLayout() {
     const fetchData = () => {
         setLoading(true)
 
-        Api.getDataContracts(1, pageSize)
+        Api.getDataContracts(1, pageSize, 'desc')
             .then((res) => {
                 setDataContracts(res.resultSet)
                 setTotal(res.pagination.total)

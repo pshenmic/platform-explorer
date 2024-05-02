@@ -7,12 +7,14 @@
     "start": "node index.js",
     "test:unit": "node --test test/unit/*.spec.js",
     "test:integration": "node --test --test-concurrency=1 test/integration/*.spec.js",
-    "db:migrate": "node ./test/utils/migrate.js ../indexer/migrations"
+    "db:migrate": "node ./test/utils/migrate.js ../indexer/migrations",
+    "db:drop": "node ./test/utils/drop.js",
+    "lint": "standard ."
   },
   "dependencies": {
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
-    "dash": "4.0.0-dev.9",
+    "dash": "4.0.0-dev.10",
     "dotenv": "^16.3.1",
     "fastify": "^4.21.0",
     "knex": "^2.5.1",
@@ -20,6 +22,7 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
+    "standard": "^17.1.0",
     "supertest": "^6.3.4"
   }
 }

@@ -1,5 +1,5 @@
 use dpp::data_contract::serialized_version::DataContractInSerializationFormat;
-use dpp::data_contracts::SystemDataContract;
+use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
@@ -117,7 +117,7 @@ impl From<Row> for DataContract {
             schema: None,
             version: version as u32,
             state_transition_hash: None,
-            is_system: false,
+            is_system,
         }
     }
 }

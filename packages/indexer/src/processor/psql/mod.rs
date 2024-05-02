@@ -6,7 +6,7 @@ use deadpool_postgres::{PoolError};
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
-use dpp::data_contracts::SystemDataContract;
+use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::string_encoding::Encoding::Base58;
@@ -15,7 +15,6 @@ use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatch
 use dpp::state_transition::documents_batch_transition::{DocumentsBatchTransition};
 use sha256::digest;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
-use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransitionV0Methods;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
@@ -27,6 +26,7 @@ use crate::entities::data_contract::DataContract;
 use crate::entities::document::Document;
 use crate::entities::identity::Identity;
 use crate::entities::transfer::Transfer;
+use crate::entities::validator::Validator;
 
 pub enum ProcessorError {
     DatabaseError,
@@ -217,7 +217,19 @@ impl PSQLProcessor {
         }
     }
 
-    pub async fn handle_block(&self, block: Block) -> Result<(), ProcessorError> {
+    pub async fn handle_validator(&self, validator: Validator) -> Result<(), ProcessorError> {
+        let existing = self.dao.get_validator_by_pro_tx_hash(validator.pro_tx_hash.clone()).await?;
+
+        match existing {
+            None => {
+                self.dao.create_validator(validator).await?;
+                Ok(())
+            }
+            Some(_) => Ok(())
+        }
+    }
+
+    pub async fn handle_block(&self, block: Block, validators: Vec<Validator>) -> Result<(), ProcessorError> {
         let processed = self.dao.get_block_header_by_height(block.header.height.clone()).await?;
 
         match processed {
@@ -227,6 +239,10 @@ impl PSQLProcessor {
 
                 if block.header.height == 1 {
                     self.handle_init_chain().await;
+                }
+
+                for (_, validator) in validators.iter().enumerate() {
+                    self.handle_validator(validator.clone()).await?;
                 }
 
                 let block_hash = self.dao.create_block(block.header).await;
