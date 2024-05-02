@@ -38,13 +38,13 @@ function Home() {
     const convertTxsForChart = (transactionsHistory) => transactionsHistory.map((item) => ({
         x: new Date(item.timestamp),
         y: item.data.txs,
-        info: [
-            {
-                title: 'Block height',
-                type: 'blocks',
-                value: item.data.blockHeight ? item.data.blockHeight : '-' 
-            },
-        ]
+        // info: [
+        //     {
+        //         title: 'Block height',
+        //         type: 'blocks',
+        //         value: item.data.blockHeight ? item.data.blockHeight : '-' 
+        //     },
+        // ]
     }))
 
     const xLabelType = () => {
@@ -191,13 +191,13 @@ function Home() {
                                 data={transactionsHistory}
                                 xLabel={{
                                     type: xLabelType(),
-                                    abbreviation: 'Date',
+                                    abbreviation: '',
                                     title: ''
                                 }}
                                 yLabel={{
                                     type: 'number',
                                     title: '',
-                                    abbreviation: 'Txs'
+                                    abbreviation: 'txs'
                                 }}
                             />
                         </Container>

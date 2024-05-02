@@ -26,6 +26,15 @@
         &--Blocks {
             opacity: .7;
         }
+
+        &--Bold {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        &--Tiny {
+            font-size: 13px;
+        }
     }
 }
 

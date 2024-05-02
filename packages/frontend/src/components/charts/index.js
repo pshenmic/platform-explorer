@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, createRef } from 'react'
 import * as d3 from 'd3'
 import './charts.scss'
 import { Container } from '@chakra-ui/react'
+import theme from '../../styles/theme'
 
 
 const LineChart = ({data, xLabel={title: '', type: 'number'}, yLabel={title: '', type: 'number'}}) => {
@@ -85,7 +86,6 @@ const LineGraph = ({
     })()
 
     const xTickCount = 6
-
     const gx = useRef()
     const gy = useRef()
     const tooltip = useRef()
@@ -206,31 +206,47 @@ const LineGraph = ({
                         .selectAll("path")
                         .data([,])
                         .join("path")
-                            .attr("fill", "#fff")
-                            .attr('opacity', '.2')
-                            .attr("stroke", "black")
+                            // .attr("fill", tooltipBgColor)
+                            .attr("fill", theme.colors.gray['800'])
+                            .attr('opacity', '1')
+                            .attr("stroke", theme.colors.gray['700'])
     
-        const lineClass = (type) => {
-            if (type === 'blocks') return 'ChartTooltip__InfoLine--Blocks'
-            return ''
+        const lineClass = (styles) => {
+            if (typeof styles === 'string') styles = [styles]
+
+            let classStr = ''
+
+            styles.map((style) => {
+                if (style === 'blocks') classStr += ' ChartTooltip__InfoLine--Blocks'
+                if (style=== 'inline') classStr += ' ChartTooltip__InfoLine--Inline'
+                if (style=== 'bold') classStr += ' ChartTooltip__InfoLine--Bold'
+                if (style=== 'tiny') classStr += ' ChartTooltip__InfoLine--Tiny'
+             })
+
+             return classStr
         }
 
         const infoLines = [];
-        
+
         infoLines.push({
-            class: lineClass(), 
-            value: `${yLabel.abbreviation ? yLabel.abbreviation : yLabel.title}: ${data[i].y}`
+            styles: ['inline', 'tiny'], 
+            value: `${xTickFormat(data[i].x)}: `
         })
 
         infoLines.push({
-            class: lineClass(), 
-            value: `${xLabel.abbreviation ? xLabel.abbreviation : xLabel.title}: ${xTickFormat(data[i].x)}`
+            styles: ['inline', 'bold'], 
+            value: ` ${data[i].y} `
         })
 
-        data[i].info.map((item) => {infoLines.push({
-            class: lineClass(item.type), 
-            value: `${item.title}: ${item.value}`
-        })})
+        infoLines.push({
+            styles: ['inline', 'tiny'], 
+            value: ` ${yLabel.abbreviation}`
+        })
+
+        // data[i].info.map((item) => {infoLines.push({
+        //     styles: [item.type],
+        //     value: `${item.title}: ${item.value}`
+        // })})
 
         const text = d3.select(tooltip.current)
             .selectAll("text")
@@ -241,10 +257,11 @@ const LineGraph = ({
                     .selectAll("tspan")
                     .data(infoLines)
                     .join("tspan")
-                    .attr('class', (infoLine, i) => `ChartTooltip__InfoLine ${infoLine.class}`)
-                    .attr("x", 0)
-                    .attr("y", (_, i) => `${i * 1.3}em`)
-                    .attr('fill', '#fff')
+                    .attr('class', (infoLine, i) => `ChartTooltip__InfoLine ${lineClass(infoLine.styles)}`)
+                    // .attr("x", (infoLine, i) => `${!infoLine.styles.includes('inline') ? 0 : ''}`)
+                    // .attr("y", (infoLine, i) => `${!infoLine.styles.includes('inline') ? `${i * 1.3}em` : ''}`)
+                    // .attr("y", (_, i) => `${i * 1.3}em`)
+                    .attr('fill', (infoLine, i) => `${!infoLine.styles.includes('tiny') ? '#fff' : theme.colors.gray['100']}`)
                     .text(d => d.value))
 
         const {width: textW, height: textH} = text.node().getBBox()
@@ -281,7 +298,7 @@ const LineGraph = ({
                 overflow={'visible'}
                 viewBox={`0 0 ${width} ${height}`}
             >   
-                <filter id="glow">
+                <filter id="shadow">
                     <feColorMatrix type="matrix" values={`0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0`}/>
                     <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
                     <feMerge>
@@ -322,7 +339,7 @@ const LineGraph = ({
 
                     <path d={area(data)} fill="url(#AreaFill)" clipPath={'url(#clipPath)'}/>
                     
-                    <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none" filter='url(#glow)' />
+                    <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none" filter='url(#shadow)' />
 
                     <g fill='#0e75b5'>
                         {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'Chart__Point'}/>))}
@@ -332,7 +349,7 @@ const LineGraph = ({
                         <circle r="2" fill='white' />
                     </g>
 
-                    <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'}></g>
+                    <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'} filter='url(#shadow)'></g>
                 </g>
             </svg>
         </div>
