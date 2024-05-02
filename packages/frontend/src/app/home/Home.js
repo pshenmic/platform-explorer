@@ -271,7 +271,7 @@ function Home() {
                                     columns: [identitiy.identifier, identitiy.totalTxs],
                                     link: '/identity/' + identitiy.identifier
                                 }))}
-                                columns={['Identifier', 'Amount of txs']} 
+                                columns={['Identifier', 'Tx Count']}
                             />
                         </Container>
 

@@ -28,10 +28,10 @@ function NetworkStatus ({status}) {
                 <div className={'NetworkStatus__Title'}>Epoch:</div>
                 <div className={'NetworkStatus__Value'}>
                     <span>#{status.epoch.index}</span>
-                    
-                    <Tooltip 
-                        label={`Next Epoch will started at ${new Date(status.epoch.endTime).toLocaleDateString()}`}
-                        aria-label={'A tooltip'} 
+
+                    <Tooltip
+                        label={`Next epoch change at ${new Date(status.epoch.endTime).toLocaleDateString()}`}
+                        aria-label={'A tooltip'}
                         placement={'top'}
                         hasArrow 
                         bg={'gray.700'} 
@@ -46,12 +46,12 @@ function NetworkStatus ({status}) {
                 <div className={'NetworkStatus__Title'}>Network:</div>
                 <div className={'NetworkStatus__Value'}>
                     <span>{status.network}</span>
-                    
-                    <Tooltip 
-                        label={`${networkStatus ? 
-                            'The network works well' : 
-                            'Interruptions are observed, it will pass soon...'
-                        }`} 
+
+                    <Tooltip
+                        label={`${networkStatus ?
+                            'Network appears operational' :
+                            'Chain propagation degraded'
+                        }`}
                         aria-label={'Network status'}
                         placement={'top'}
                         hasArrow 
