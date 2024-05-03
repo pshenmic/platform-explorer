@@ -70,7 +70,7 @@ const getDataContractByIdentifier = (identifier) => {
     return call(`dataContract/${identifier}`, 'GET')
 }
 
-const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy = '') => {
+const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy) => {
     return call(`dataContracts?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
 
@@ -102,7 +102,7 @@ const getIdentity = (identifier) => {
     return call(`identity/${identifier}`, 'GET')
 }
 
-const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy ='') => {
+const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy) => {
     return call(`identities?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
 
