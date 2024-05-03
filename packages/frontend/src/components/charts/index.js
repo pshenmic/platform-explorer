@@ -307,12 +307,7 @@ const LineGraph = ({
                 viewBox={`0 0 ${width} ${height}`}
             >   
                 <filter id="shadow">
-                    <feColorMatrix type="matrix" values={`0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0`}/>
-                    <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
-                    <feMerge>
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
+                    <feDropShadow dx="0.2" dy="0.4" stdDeviation=".15" />
                 </filter>
 
                 <svg x='15' y='-15' overflow={'visible'}>
@@ -346,15 +341,17 @@ const LineGraph = ({
                     </defs>
 
                     <path d={area(data)} fill="url(#AreaFill)" clipPath={'url(#clipPath)'}/>
-                    
-                    <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none" filter='url(#shadow)' />
 
-                    <g fill='#0e75b5'>
-                        {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'Chart__Point'}/>))}
+                    <g filter='url(#shadow)'>
+                        <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none"/>
+
+                        <g fill='#0e75b5'>
+                            {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'Chart__Point'}/>))}
+                        </g>
                     </g>
-
+                    
                     <g ref={focusPoint} className={'Chart__FocusPoint'}>
-                        <circle r="2" fill='white' />
+                        <circle r="3" fill='white' />
                     </g>
 
                     <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'} filter='url(#shadow)'></g>
