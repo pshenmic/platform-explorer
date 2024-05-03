@@ -37,14 +37,7 @@ function Home() {
 
     const convertTxsForChart = (transactionsHistory) => transactionsHistory.map((item) => ({
         x: new Date(item.timestamp),
-        y: item.data.txs,
-        // info: [
-        //     {
-        //         title: 'Block height',
-        //         type: 'blocks',
-        //         value: item.data.blockHeight ? item.data.blockHeight : '-' 
-        //     },
-        // ]
+        y: item.data.txs
     }))
 
     const xLabelType = () => {
@@ -189,6 +182,7 @@ function Home() {
                         >
                             <LineChart
                                 data={transactionsHistory}
+                                timespan={transactionsTimespan}
                                 xLabel={{
                                     type: xLabelType(),
                                     abbreviation: '',

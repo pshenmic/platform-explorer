@@ -5,7 +5,25 @@ import { Container } from '@chakra-ui/react'
 import theme from '../../styles/theme'
 
 
-const LineChart = ({data, xLabel={title: '', type: 'number'}, yLabel={title: '', type: 'number'}}) => {
+function getDatesTicks(dates, numTicks) {
+    const sortedDates = dates.map(d => new Date(d)).sort((a, b) => a - b)
+    const [firstDate] = sortedDates
+    const lastDate = sortedDates[sortedDates.length - 1]
+    
+    const totalDuration = lastDate - firstDate
+    const intervalDuration = totalDuration / (numTicks + 1)
+  
+    let rangeDates = []
+  
+    for (let i = 1; i <= numTicks; i++) {
+      const tickDate = new Date(firstDate.getTime() + intervalDuration * i)
+      rangeDates.push(tickDate)
+    }
+
+    return [firstDate, ...rangeDates, lastDate]
+}
+
+const LineChart = ({data, timespan, xLabel={title: '', type: 'number'}, yLabel={title: '', type: 'number'}}) => {
     const chartContainer = useRef()
     const [chartElement, setChartElement] = useState('')
 
@@ -29,6 +47,7 @@ const LineChart = ({data, xLabel={title: '', type: 'number'}, yLabel={title: '',
                 setChartElement(<LineGraph
                     xLabel={xLabel}
                     yLabel={yLabel}
+                    timespan={timespan}
                     width = {chartContainer.current.offsetWidth}
                     height = {chartContainer.current.offsetHeight}
                     data={data}
@@ -61,6 +80,7 @@ const LineChart = ({data, xLabel={title: '', type: 'number'}, yLabel={title: '',
 
 const LineGraph = ({
     data = [],
+    timespan,
     width = 460,
     height = 180,
     xLabel = {title: '', type: 'number'},
@@ -71,21 +91,33 @@ const LineGraph = ({
             marginRight = 40,
             marginBottom = xLabel.title ? 45 : 20,
             marginLeft = 40
-            
+       
+    const xTickFormat = (() => {
+        if (xLabel.type === 'number') return d3.format(",.0f")
+        if (xLabel.type === 'date') return d3.timeFormat("%B %d")
+        if (xLabel.type === 'datetime') return d3.timeFormat("%B %d, %H:%M")
+        if (xLabel.type === 'time') return d3.timeFormat("%H:%M")
+    })()
+
     const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
    
     const [x, setX] = useState(() => {
         if (xLabel.type === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
-        if (xLabel.type === 'date' || xLabel.type === 'time') return d3.scaleTime(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
+        if (xLabel.type === 'date' || xLabel.type === 'time' || xLabel.type === 'datetime') return d3.scaleTime(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
     })
 
-    const xTickFormat = (() => {
-        if (xLabel.type === 'number') return d3.format(",.0f")
-        if (xLabel.type === 'date') return d3.timeFormat("%B %d")
-        if (xLabel.type === 'time') return d3.timeFormat("%H:%M")
+    const xTicksCount = (() => {
+        if (xLabel.type === 'number') return 6
+        if (xLabel.type === 'time') return 6
+        if (xLabel.type === 'date' || xLabel.type === 'datetime' ) {
+            if (typeof timespan === undefined) return 6
+            if (timespan === '1w') return 6
+            if (timespan === '3d') return 4
+            if (timespan === '24h') return 6
+            if (timespan === '1h') return 6
+        }
     })()
 
-    const xTickCount = 6
     const gx = useRef()
     const gy = useRef()
     const tooltip = useRef()
@@ -103,22 +135,34 @@ const LineGraph = ({
                                                 .y0(y(0))
                                                 .y1((d) => y(d.y)))
 
-    useEffect(() => void d3.select(gx.current)
-                            .call((axis) => {
-                                axis.select('.Axis__TickContainer')
-                                    .call(d3.axisBottom(x)
-                                        .tickSize(0)
-                                        .tickPadding(10)
-                                        .ticks(xTickCount)
-                                    )
-                            })
-                            .call((axis) => {
-                                const labelSize = axis.select('.Axis__Label').node().getBBox()
+    useEffect(() => {d3.select(gx.current)
+                        .call((axis) => {
+                            axis.select('.Axis__TickContainer')
+                                .call(d3.axisBottom(x)
+                                    .tickSize(0)
+                                    .tickPadding(10)
+                                    .tickFormat(xTickFormat)
+                                    .tickValues(getDatesTicks(data.map((d)=>d.x), xTicksCount - 2))
+                                )
+                        })
+                        .call((axis) => {
+                            const labelSize = axis.select('.Axis__Label').node().getBBox()
 
-                                axis.select('.Axis__Label')
-                                    .attr("transform", `translate(${width - labelSize.width/2 - marginRight}, ${marginBottom})`)
-                            })
-                            , [gx, x])
+                            axis.select('.Axis__Label')
+                                .attr("transform", `translate(${width - labelSize.width/2 - marginRight}, ${marginBottom})`)
+                        })
+
+                    setLine((d) => d3.line()
+                        .x(d => x(d.x))
+                        .y(d => y(d.y))
+                        .curve(d3.curveBumpX))
+
+                    setArea ((d) => d3.area()
+                        .curve(d3.curveBumpX)
+                        .x((d) => x(d.x))
+                        .y0(y(0))
+                        .y1((d) => y(d.y)))
+                    }, [gx, x])
 
     useEffect(() => void d3.select(gy.current)
                             .select('.Axis__TickContainer')
@@ -143,34 +187,11 @@ const LineGraph = ({
 
         setX(() => {
             if (xLabel.type === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
-            if (xLabel.type === 'date' || xLabel.type === 'time') return d3.scaleTime(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
+            if (xLabel.type === 'date' || xLabel.type === 'time' || xLabel.type === 'datetime') return d3.scaleTime(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
         })
         
         if (loading) setLoading(false)
     }
-
-    useEffect(() => {
-        d3.select(gx.current)
-        .transition()
-        .duration(0)
-        .call(d3.axisBottom(x)
-            .tickSize(0)
-            .tickPadding(10)
-            .ticks(xTickCount)
-            .tickFormat(xTickFormat)
-        )
-
-        setLine((d) => d3.line()
-                            .x(d => x(d.x))
-                            .y(d => y(d.y))
-                            .curve(d3.curveBumpX))
-
-        setArea ((d) => d3.area()
-                            .curve(d3.curveBumpX)
-                            .x((d) => x(d.x))
-                            .y0(y(0))
-                            .y1((d) => y(d.y)))
-    },[x])
 
     useEffect(updateSize, [])
 
@@ -206,7 +227,6 @@ const LineGraph = ({
                         .selectAll("path")
                         .data([,])
                         .join("path")
-                            // .attr("fill", tooltipBgColor)
                             .attr("fill", theme.colors.gray['800'])
                             .attr('opacity', '1')
                             .attr("stroke", theme.colors.gray['700'])
@@ -231,22 +251,13 @@ const LineGraph = ({
         infoLines.push({
             styles: ['inline', 'tiny'], 
             value: `${xTickFormat(data[i].x)}: `
-        })
-
-        infoLines.push({
+        }, {
             styles: ['inline', 'bold'], 
             value: ` ${data[i].y} `
-        })
-
-        infoLines.push({
+        }, {
             styles: ['inline', 'tiny'], 
             value: ` ${yLabel.abbreviation}`
         })
-
-        // data[i].info.map((item) => {infoLines.push({
-        //     styles: [item.type],
-        //     value: `${item.title}: ${item.value}`
-        // })})
 
         const text = d3.select(tooltip.current)
             .selectAll("text")
@@ -258,9 +269,6 @@ const LineGraph = ({
                     .data(infoLines)
                     .join("tspan")
                     .attr('class', (infoLine, i) => `ChartTooltip__InfoLine ${lineClass(infoLine.styles)}`)
-                    // .attr("x", (infoLine, i) => `${!infoLine.styles.includes('inline') ? 0 : ''}`)
-                    // .attr("y", (infoLine, i) => `${!infoLine.styles.includes('inline') ? `${i * 1.3}em` : ''}`)
-                    // .attr("y", (_, i) => `${i * 1.3}em`)
                     .attr('fill', (infoLine, i) => `${!infoLine.styles.includes('tiny') ? '#fff' : theme.colors.gray['100']}`)
                     .text(d => d.value))
 
