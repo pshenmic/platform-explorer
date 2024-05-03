@@ -8,7 +8,9 @@ const getMinFromMs = (ms) => Math.floor((ms/1000)/60)
 const getSecFromMs = (ms) => Math.floor((ms/1000))
 
 function NetworkStatus ({status}) {
-    const msFromLastBlock = new Date() - new Date(status.latestBlock.header.timestamp)
+    const msFromLastBlock = status.latestBlock !== undefined ? 
+                            new Date() - new Date(status.latestBlock.header.timestamp) :
+                            9999999999
     const networkStatus = getMinFromMs(msFromLastBlock) < 15
     const NetworkStatusIcon = networkStatus ? 
         <CheckCircleIcon color={'green.500'} ml={2}/>: 
@@ -27,25 +29,27 @@ function NetworkStatus ({status}) {
             <div className={'NetworkStatus__InfoItem'}>
                 <div className={'NetworkStatus__Title'}>Epoch:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>#{status.epoch.index}</span>
+                    <span>{status.epoch !== undefined ? `#${status.epoch.index}` : '-'}</span>
 
-                    <Tooltip
-                        label={`Next epoch change at ${new Date(status.epoch.endTime).toLocaleDateString()}`}
-                        aria-label={'A tooltip'}
-                        placement={'top'}
-                        hasArrow 
-                        bg={'gray.700'} 
-                        color={'white'}
-                    >
-                        <InfoIcon boxSize={4} color={'gray.600'} ml={2}/>
-                    </Tooltip>
+                    {status.epoch !== undefined &&
+                        <Tooltip
+                            label={`Next epoch change at ${new Date(status.epoch.endTime).toLocaleDateString()}`}
+                            aria-label={'A tooltip'}
+                            placement={'top'}
+                            hasArrow 
+                            bg={'gray.700'} 
+                            color={'white'}
+                        >
+                            <InfoIcon boxSize={4} color={'gray.600'} ml={2}/>
+                        </Tooltip>
+                    }
                 </div>
             </div>
 
             <div className={'NetworkStatus__InfoItem'}>
                 <div className={'NetworkStatus__Title'}>Network:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{status.network}</span>
+                    <span>{status.network !== undefined ? `${status.network}` : '-'}</span>
 
                     <Tooltip
                         label={`${networkStatus ?
@@ -65,17 +69,22 @@ function NetworkStatus ({status}) {
 
             <div className={'NetworkStatus__InfoItem'}>
                 <div className={'NetworkStatus__Title'}>Latest block:</div>
-                <div className={'NetworkStatus__Value'}>
-                    <Link href={`/block/${status.latestBlock.header.hash}`}>
-                        #{status.latestBlock.header.height}, 
-                        
-                        {getMinFromMs(msFromLastBlock) < 1 ? (
-                            <> {getSecFromMs(msFromLastBlock)} sec. ago</>
-                        ) : (
-                            <> {getMinFromMs(msFromLastBlock)} min. ago</>
-                        )}
-                    </Link>
-                </div>
+
+                {status.latestBlock !== undefined ? (
+                    <div className={'NetworkStatus__Value'}>
+                        <Link href={`/block/${status.latestBlock.header.hash}`}>
+                            #{status.latestBlock.header.height}, 
+                            
+                            {getMinFromMs(msFromLastBlock) < 1 ? (
+                                <> {getSecFromMs(msFromLastBlock)} sec. ago</>
+                            ) : (
+                                <> {getMinFromMs(msFromLastBlock)} min. ago</>
+                            )}
+                        </Link>
+                    </div>
+                ) : (
+                    <div>-</div>
+                )}
             </div>
         </Container>
     )
