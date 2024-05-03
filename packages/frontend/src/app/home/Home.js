@@ -27,13 +27,19 @@ const transactionsChartConfig = {
 
 function Home() {
     const [loading, setLoading] = useState(true)
-    const [status, setStatus] = useState(true)
-    const [transactions, setTransactions] = useState([])
+    const [status, setStatus] = useState({})
     const [dataContracts, setDataContracts] = useState([])
-    const [richestIdentities, setRichestIdentities] = useState([])
-    const [trendingIdentities, setTrendingIdentities] = useState([])
+    const [transactions, setTransactions] = useState({items:[], printCount: 8})
+    const [richestIdentities, setRichestIdentities] = useState({items:[], printCount: 5})
+    const [trendingIdentities, setTrendingIdentities] = useState({items:[], printCount: 6})
     const [transactionsHistory, setTransactionsHistory] = useState([])
     const [transactionsTimespan, setTransactionsTimespan] = useState(transactionsChartConfig.timespan.default)
+    const richListContainer = createRef()
+    const richListRef = createRef()
+    const trendingIdentitiesContainer = createRef()
+    const trendingIdentitiesList = createRef()
+    const transactionsContainer = createRef()
+    const transactionsList = createRef()
 
     const convertTxsForChart = (transactionsHistory) => transactionsHistory.map((item) => ({
         x: new Date(item.timestamp),
@@ -52,10 +58,10 @@ function Home() {
 
         Promise.all([
             Api.getStatus(), 
-            Api.getTransactions(1, 8, 'desc'),
+            Api.getTransactions(1, 10, 'desc'),
             Api.getDataContracts(1, 5, 'desc', 'documents_count'),
-            Api.getIdentities(1, 5, 'desc', 'balance'),
-            Api.getIdentities(1, 5, 'desc', 'tx_count'),
+            Api.getIdentities(1, 10, 'desc', 'balance'),
+            Api.getIdentities(1, 10, 'desc', 'tx_count'),
             Api.getTransactionsHistory(transactionsChartConfig.timespan.default),
             Api.getBlocks(1, 1, 'desc')
         ])
@@ -63,8 +69,8 @@ function Home() {
             status, 
             paginatedTransactions, 
             paginatedDataContracts, 
-            richestIdentities, 
-            trendingIdentities, 
+            paginatedRichestIdentities, 
+            paginatedTrendingIdentities, 
             transactionsHistory, 
             latestBlocks
         ]) => {
@@ -73,11 +79,20 @@ function Home() {
                 latestBlock,
                 ...status
             })
-            setTransactions(paginatedTransactions.resultSet)
             setDataContracts(paginatedDataContracts.resultSet)
-            setRichestIdentities(richestIdentities.resultSet)
-            setTrendingIdentities(trendingIdentities.resultSet)
             setTransactionsHistory(convertTxsForChart(transactionsHistory))
+            setTransactions({
+                ...transactions,
+                items:paginatedTransactions.resultSet
+            })
+            setRichestIdentities({
+                ...richestIdentities,
+                items: paginatedRichestIdentities.resultSet,
+            })
+            setTrendingIdentities({
+                ...trendingIdentities,
+                items: paginatedTrendingIdentities.resultSet,
+            })
         })
         .catch(console.log)
         .finally(() => setLoading(false))
@@ -92,6 +107,63 @@ function Home() {
             .catch(console.log)
             .finally(() => setLoading(false))
     }, [transactionsTimespan])
+
+    useEffect(() => {
+        if (trendingIdentitiesContainer.current !== null && 
+            trendingIdentitiesList.current !== null &&
+            trendingIdentities.printCount < trendingIdentities.items.length) {
+                const childNodes = trendingIdentitiesList.current.childNodes,
+                        lastElementHeight = childNodes[childNodes.length-1].getBoundingClientRect().height,
+                        bottomOffset = trendingIdentitiesContainer.current.getBoundingClientRect().bottom 
+                                        - trendingIdentitiesList.current.getBoundingClientRect().bottom,
+                        extraItems = Math.floor(bottomOffset / lastElementHeight)
+
+                console.log(trendingIdentities)
+
+                if (extraItems > 0) {
+                    setTrendingIdentities({
+                        ...trendingIdentities,
+                        printCount: trendingIdentities.printCount + extraItems
+                    })
+                }
+        }
+
+        if (richListContainer.current !== null && 
+            richListRef.current !== null &&
+            richestIdentities.printCount < richestIdentities.items.length) {
+                const childNodes = richListRef.current.childNodes,
+                        lastElementHeight = childNodes[childNodes.length-1].getBoundingClientRect().height,
+                        bottomOffset = richListContainer.current.getBoundingClientRect().bottom 
+                                        - richListRef.current.getBoundingClientRect().bottom,
+                        extraItems = Math.floor(bottomOffset / lastElementHeight)
+
+                if (extraItems > 0) {
+                    setRichestIdentities({
+                        ...richestIdentities,
+                        printCount: richestIdentities.printCount + extraItems
+                    })
+                }
+        }
+
+        if (transactionsContainer.current !== null && 
+            transactionsList.current !== null &&
+            transactions.printCount < transactions.items.length) {
+                const childNodes = transactionsList.current.childNodes,
+                        lastElementHeight = childNodes[childNodes.length-1].getBoundingClientRect().height,
+                        bottomOffset = transactionsContainer.current.getBoundingClientRect().bottom 
+                                        - transactionsList.current.getBoundingClientRect().bottom,
+                        extraItems = Math.floor(bottomOffset / lastElementHeight)
+
+                console.log(trendingIdentities)
+
+                if (extraItems > 0) {
+                    setTransactions({
+                        ...transactions,
+                        printCount: transactions.printCount + extraItems
+                    })
+                }
+        }
+    },[richListContainer, trendingIdentitiesContainer, transactionsContainer])
 
 
     if (!loading) return (<>
@@ -227,6 +299,7 @@ function Home() {
                     mb={[10,,16]}
                 >
                     <Container
+                        ref={transactionsContainer}
                         maxW={'100%'}
                         borderWidth={'1px'} borderRadius={'lg'}
                         mb={0}
@@ -235,12 +308,15 @@ function Home() {
                         <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions</Heading>
 
                         <SimpleList 
-                            items={transactions.map((transaction, i) => ({
-                                monospaceTitles:[transaction.hash],
-                                columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
-                                link: '/transaction/' + transaction.hash
-                            }))}
-                            columns={['Identifier']} 
+                            ref={transactionsList}
+                            items={transactions.items
+                                    .filter((item, i) => i < transactions.printCount)
+                                    .map((transaction, i) => ({
+                                        monospaceTitles:[transaction.hash],
+                                        columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
+                                        link: '/transaction/' + transaction.hash
+                                    }))}
+                            columns={[]} 
                         />
                     </Container>
 
@@ -253,6 +329,7 @@ function Home() {
                         width={'100%'}
                     >
                         <Container
+                            ref={trendingIdentitiesContainer}
                             maxW={'100%'}
                             borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
@@ -261,10 +338,13 @@ function Home() {
                             <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Identities</Heading>
 
                             <SimpleList 
-                                items={trendingIdentities.map((identitiy, i) => ({
-                                    columns: [identitiy.identifier, identitiy.totalTxs],
-                                    link: '/identity/' + identitiy.identifier
-                                }))}
+                                ref={trendingIdentitiesList}
+                                items={trendingIdentities.items
+                                        .filter((item, i) => i < trendingIdentities.printCount)
+                                        .map((identitiy, i) => ({
+                                            columns: [identitiy.identifier, identitiy.totalTxs],
+                                            link: '/identity/' + identitiy.identifier
+                                        }))}
                                 columns={['Identifier', 'Tx Count']}
                             />
                         </Container>
@@ -272,6 +352,7 @@ function Home() {
                         <Box w={10} h={10} />
 
                         <Container
+                            ref={richListContainer}
                             maxW={'none'}
                             borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
@@ -280,7 +361,10 @@ function Home() {
                             <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
 
                             <SimpleList 
-                                items={richestIdentities.map((identitiy, i) => ({
+                                ref={richListRef}
+                                items={richestIdentities.items
+                                    .filter((item, i) => i < richestIdentities.printCount)
+                                    .map((identitiy, i) => ({
                                     columns: [identitiy.identifier, identitiy.balance],
                                     link: '/identity/' + identitiy.identifier
                                 }))}

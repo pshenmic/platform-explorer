@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, createRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import * as d3 from 'd3'
 import './charts.scss'
 import { Container } from '@chakra-ui/react'

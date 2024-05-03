@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import './SimpleList.scss'
+import { forwardRef } from 'react';
 
 function SimpleListItem ({ item }) {
     const ItemContainer = ({ link, children }) => link ? 
@@ -46,9 +47,11 @@ function SimpleListItem ({ item }) {
     )
 }
 
-function SimpleList({ items, columns = [] }) {
+const SimpleList = forwardRef (function (props, ref) {
+    const {items, columns, ...otherProps } = props
+
     return (
-        <div className={'SimpleList'}>
+        <div className={'SimpleList'} ref={ref}>
 
             <div className={'SimpleList__ColumnTitles'}>
                 {columns.map((column, key) =>
@@ -64,6 +67,6 @@ function SimpleList({ items, columns = [] }) {
             )}
         </div>
     )
-}
+})
 
 export {SimpleList}
