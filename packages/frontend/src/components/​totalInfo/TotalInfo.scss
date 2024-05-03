@@ -27,7 +27,6 @@
     
     @media screen and (max-width: $breakpoint-md) {
         &__Item {
-            // width: 30%;
             width: calc(50% - 1px);
             display: flex;
             justify-content: center;

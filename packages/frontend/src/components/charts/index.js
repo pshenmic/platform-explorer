@@ -9,7 +9,6 @@ function getDatesTicks(dates, numTicks) {
     const sortedDates = dates.map(d => new Date(d)).sort((a, b) => a - b)
     const [firstDate] = sortedDates
     const lastDate = sortedDates[sortedDates.length - 1]
-    
     const totalDuration = lastDate - firstDate
     const intervalDuration = totalDuration / (numTicks + 1)
   
