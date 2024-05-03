@@ -100,57 +100,44 @@ function Home() {
             .finally(() => setLoading(false))
     }, [transactionsTimespan])
 
+    function adaptList (container, list, data, setDataFunc) {
+        if (container !== null && list !== null && data.printCount < data.items.length) {
+            const childNodes = list.childNodes,
+                    lastElementHeight = childNodes[childNodes.length-1].getBoundingClientRect().height,
+                    bottomOffset = container.getBoundingClientRect().bottom 
+                                    - list.getBoundingClientRect().bottom,
+                    extraItems = Math.floor(bottomOffset / lastElementHeight)
+
+            if (extraItems > 0) {
+                setDataFunc({
+                    ...data,
+                    printCount: data.printCount + extraItems
+                })
+            }
+        }
+    }
+
     useEffect(() => {
-        if (trendingIdentitiesContainer.current !== null && 
-            trendingIdentitiesList.current !== null &&
-            trendingIdentities.printCount < trendingIdentities.items.length) {
-                const childNodes = trendingIdentitiesList.current.childNodes,
-                        lastElementHeight = childNodes[childNodes.length-1].getBoundingClientRect().height,
-                        bottomOffset = trendingIdentitiesContainer.current.getBoundingClientRect().bottom 
-                                        - trendingIdentitiesList.current.getBoundingClientRect().bottom,
-                        extraItems = Math.floor(bottomOffset / lastElementHeight)
+        adaptList(
+            trendingIdentitiesContainer.current, 
+            trendingIdentitiesList.current,
+            trendingIdentities,
+            setTrendingIdentities
+        )
 
-                if (extraItems > 0) {
-                    setTrendingIdentities({
-                        ...trendingIdentities,
-                        printCount: trendingIdentities.printCount + extraItems
-                    })
-                }
-        }
+        adaptList(
+            richListContainer.current, 
+            richListRef.current,
+            richestIdentities,
+            setRichestIdentities
+        )
 
-        if (richListContainer.current !== null && 
-            richListRef.current !== null &&
-            richestIdentities.printCount < richestIdentities.items.length) {
-                const childNodes = richListRef.current.childNodes,
-                        lastElementHeight = childNodes[childNodes.length-1].getBoundingClientRect().height,
-                        bottomOffset = richListContainer.current.getBoundingClientRect().bottom 
-                                        - richListRef.current.getBoundingClientRect().bottom,
-                        extraItems = Math.floor(bottomOffset / lastElementHeight)
-
-                if (extraItems > 0) {
-                    setRichestIdentities({
-                        ...richestIdentities,
-                        printCount: richestIdentities.printCount + extraItems
-                    })
-                }
-        }
-
-        if (transactionsContainer.current !== null && 
-            transactionsList.current !== null &&
-            transactions.printCount < transactions.items.length) {
-                const childNodes = transactionsList.current.childNodes,
-                        lastElementHeight = childNodes[childNodes.length-1].getBoundingClientRect().height,
-                        bottomOffset = transactionsContainer.current.getBoundingClientRect().bottom 
-                                        - transactionsList.current.getBoundingClientRect().bottom,
-                        extraItems = Math.floor(bottomOffset / lastElementHeight)
-
-                if (extraItems > 0) {
-                    setTransactions({
-                        ...transactions,
-                        printCount: transactions.printCount + extraItems
-                    })
-                }
-        }
+        adaptList(
+            transactionsContainer.current, 
+            transactionsList.current,
+            transactions,
+            setTransactions
+        )
     },[richListContainer, trendingIdentitiesContainer, transactionsContainer])
 
 
