@@ -4,17 +4,23 @@ import { Tooltip } from '@chakra-ui/react'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
-const getMinFromMs = (ms) => Math.floor((ms/1000)/60)
-const getSecFromMs = (ms) => Math.floor((ms/1000))
 
 function NetworkStatus ({status}) {
-    const msFromLastBlock = status.latestBlock !== undefined ? 
-                            new Date() - new Date(status.latestBlock.header.timestamp) :
-                            9999999999
-    const networkStatus = getMinFromMs(msFromLastBlock) < 15
+    const msFromLastBlock = new Date() - new Date(status?.latestBlock?.header?.timestamp)
+    const networkStatus = msFromLastBlock && msFromLastBlock/1000/60 < 15
     const NetworkStatusIcon = networkStatus ? 
         <CheckCircleIcon color={'green.500'} ml={2}/>: 
         <WarningTwoIcon color={'yellow.400'} ml={2}/>
+
+    function getLastBlocktimeString () {
+        if (!status?.latestBlock?.header?.timestamp) return 'n/a'
+
+        if (msFromLastBlock < 60 * 1000) {
+            return `${Math.floor((msFromLastBlock/1000))} sec. ago`
+        } else {
+            return `${Math.floor((msFromLastBlock/1000)/60)} min. ago`
+        }
+    }
 
     return (
         <Container 
@@ -49,7 +55,7 @@ function NetworkStatus ({status}) {
             <div className={'NetworkStatus__InfoItem'}>
                 <div className={'NetworkStatus__Title'}>Network:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{status.network !== undefined ? `${status.network}` : '-'}</span>
+                    <span>{status.network !== undefined ? `${status.network}` : 'n/a'}</span>
 
                     <Tooltip
                         label={`${networkStatus ?
@@ -73,13 +79,7 @@ function NetworkStatus ({status}) {
                 {status.latestBlock !== undefined ? (
                     <div className={'NetworkStatus__Value'}>
                         <Link href={`/block/${status.latestBlock.header.hash}`}>
-                            #{status.latestBlock.header.height}, 
-                            
-                            {getMinFromMs(msFromLastBlock) < 1 ? (
-                                <> {getSecFromMs(msFromLastBlock)} sec. ago</>
-                            ) : (
-                                <> {getMinFromMs(msFromLastBlock)} min. ago</>
-                            )}
+                            #{status.latestBlock.header.height}, {getLastBlocktimeString()}
                         </Link>
                     </div>
                 ) : (
