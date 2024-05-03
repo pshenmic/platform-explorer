@@ -118,8 +118,6 @@ function Home() {
                                         - trendingIdentitiesList.current.getBoundingClientRect().bottom,
                         extraItems = Math.floor(bottomOffset / lastElementHeight)
 
-                console.log(trendingIdentities)
-
                 if (extraItems > 0) {
                     setTrendingIdentities({
                         ...trendingIdentities,
