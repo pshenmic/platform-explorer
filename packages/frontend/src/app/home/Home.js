@@ -49,7 +49,7 @@ function Home() {
     const fetchData = () => {
         setLoading(true)
 
-        Promise.all([
+        Promise.allSettled([
             Api.getStatus(), 
             Api.getTransactions(1, 10, 'desc'),
             Api.getDataContracts(1, 5, 'desc', 'documents_count'),
@@ -67,24 +67,24 @@ function Home() {
             transactionsHistory, 
             latestBlocks
         ]) => {
-            const [latestBlock] = latestBlocks.resultSet
+            const [latestBlock] = latestBlocks.value.resultSet
             setStatus({
                 latestBlock,
-                ...status
+                ...status.value
             })
-            setDataContracts(paginatedDataContracts.resultSet)
-            setTransactionsHistory(convertTxsForChart(transactionsHistory))
+            setDataContracts(paginatedDataContracts.value.resultSet)
+            setTransactionsHistory(convertTxsForChart(transactionsHistory.value))
             setTransactions({
                 ...transactions,
-                items:paginatedTransactions.resultSet
+                items:paginatedTransactions.value.resultSet
             })
             setRichestIdentities({
                 ...richestIdentities,
-                items: paginatedRichestIdentities.resultSet,
+                items: paginatedRichestIdentities.value.resultSet,
             })
             setTrendingIdentities({
                 ...trendingIdentities,
-                items: paginatedTrendingIdentities.resultSet,
+                items: paginatedTrendingIdentities.value.resultSet,
             })
         })
         .catch(console.log)
