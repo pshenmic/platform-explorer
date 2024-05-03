@@ -152,8 +152,6 @@ function Home() {
                                         - transactionsList.current.getBoundingClientRect().bottom,
                         extraItems = Math.floor(bottomOffset / lastElementHeight)
 
-                console.log(trendingIdentities)
-
                 if (extraItems > 0) {
                     setTransactions({
                         ...transactions,
