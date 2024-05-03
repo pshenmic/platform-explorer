@@ -23,7 +23,7 @@ function getDatesTicks(dates, numTicks) {
     return [firstDate, ...rangeDates, lastDate]
 }
 
-const LineChart = ({data, timespan, xLabel={title: '', type: 'number'}, yLabel={title: '', type: 'number'}}) => {
+const LineChart = ({data, timespan, xAxis={title: '', type: {axis: 'number'}}, yAxis={title: '', type: {axis: 'number'}}}) => {
     const chartContainer = useRef()
     const [chartElement, setChartElement] = useState('')
 
@@ -45,8 +45,8 @@ const LineChart = ({data, timespan, xLabel={title: '', type: 'number'}, yLabel={
                 }
 
                 setChartElement(<LineGraph
-                    xLabel={xLabel}
-                    yLabel={yLabel}
+                    xAxis={xAxis}
+                    yAxis={yAxis}
                     timespan={timespan}
                     width = {chartContainer.current.offsetWidth}
                     height = {chartContainer.current.offsetHeight}
@@ -83,33 +83,38 @@ const LineGraph = ({
     timespan,
     width = 460,
     height = 180,
-    xLabel = {title: '', type: 'number'},
-    yLabel = {title: '', type: 'number'},
+    xAxis = {title: '', type: {axis:'number'}},
+    yAxis = {title: '', type: {axis:'number'}},
 }) => {
     const [loading, setLoading] = useState(true),
-            marginTop = yLabel.title ? 40 : 20,
+            marginTop = yAxis.title ? 40 : 20,
             marginRight = 40,
-            marginBottom = xLabel.title ? 45 : 20,
-            marginLeft = 40
-       
+            marginBottom = xAxis.title ? 45 : 20,
+            marginLeft = 40,
+            xAxisFormatCode = typeof xAxis.type === 'string' ? xAxis.type : xAxis.type.axis
+    
+    const getFormatByCode = (code) => {
+        if (code === 'number') return d3.format(",.0f")
+        if (code === 'date') return d3.timeFormat("%B %d")
+        if (code === 'datetime') return d3.timeFormat("%B %d, %H:%M")
+        if (code === 'time') return d3.timeFormat("%H:%M")
+    }
+
     const xTickFormat = (() => {
-        if (xLabel.type === 'number') return d3.format(",.0f")
-        if (xLabel.type === 'date') return d3.timeFormat("%B %d")
-        if (xLabel.type === 'datetime') return d3.timeFormat("%B %d, %H:%M")
-        if (xLabel.type === 'time') return d3.timeFormat("%H:%M")
+        return getFormatByCode(xAxisFormatCode)
     })()
 
     const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
-   
+
     const [x, setX] = useState(() => {
-        if (xLabel.type === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
-        if (xLabel.type === 'date' || xLabel.type === 'time' || xLabel.type === 'datetime') return d3.scaleTime(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
+        if (xAxisFormatCode === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
+        if (xAxisFormatCode === 'date' || xAxisFormatCode === 'time' || xAxisFormatCode === 'datetime') return d3.scaleTime(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
     })
 
     const xTicksCount = (() => {
-        if (xLabel.type === 'number') return 6
-        if (xLabel.type === 'time') return 6
-        if (xLabel.type === 'date' || xLabel.type === 'datetime' ) {
+        if (xAxisFormatCode === 'number') return 6
+        if (xAxisFormatCode === 'time') return 6
+        if (xAxisFormatCode === 'date' || xAxisFormatCode === 'datetime' ) {
             if (typeof timespan === undefined) return 6
             if (timespan === '1w') return 6
             if (timespan === '3d') return 4
@@ -186,8 +191,8 @@ const LineGraph = ({
             .attr("transform", `translate(${yAxisTicksWidth}, 0)`)
 
         setX(() => {
-            if (xLabel.type === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
-            if (xLabel.type === 'date' || xLabel.type === 'time' || xLabel.type === 'datetime') return d3.scaleTime(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
+            if (xAxisFormatCode === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
+            if (xAxisFormatCode === 'date' || xAxisFormatCode === 'time' || xAxisFormatCode === 'datetime') return d3.scaleTime(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
         })
         
         if (loading) setLoading(false)
@@ -246,17 +251,19 @@ const LineGraph = ({
              return classStr
         }
 
-        const infoLines = [];
-
+        const infoLines = []
+        const xFormatCode = typeof xAxis.type.tooltip === 'string' ? xAxis.type.tooltip : xAxis.type.axis
+        const xFormat = getFormatByCode(xFormatCode)
+        
         infoLines.push({
             styles: ['inline', 'tiny'], 
-            value: `${xTickFormat(data[i].x)}: `
+            value: `${xFormat(data[i].x)}: `
         }, {
             styles: ['inline', 'bold'], 
             value: ` ${data[i].y} `
         }, {
             styles: ['inline', 'tiny'], 
-            value: ` ${yLabel.abbreviation}`
+            value: ` ${yAxis.abbreviation}`
         })
 
         const text = d3.select(tooltip.current)
@@ -312,14 +319,14 @@ const LineGraph = ({
 
                 <svg x='15' y='-15' overflow={'visible'}>
                     <g className={'Axis'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
-                        <g><text className={'Axis__Label'} fill='white'>{xLabel.title}</text></g>
+                        <g><text className={'Axis__Label'} fill='white'>{xAxis.title}</text></g>
                         <g className={'Axis__TickContainer'}></g>
                     </g>
                 </svg>
 
                 <svg x='0' y='-15'>
                     <g className={'Axis'} ref={gy} >  
-                        <g><text className={'Axis__Label'} fill='white'>{yLabel.title}</text></g>
+                        <g><text className={'Axis__Label'} fill='white'>{yAxis.title}</text></g>
                         <g className={'Axis__TickContainer'}></g>
                     </g>
                 </svg>

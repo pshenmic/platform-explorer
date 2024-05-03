@@ -46,13 +46,6 @@ function Home() {
         y: item.data.txs
     }))
 
-    const xLabelType = () => {
-        if (transactionsTimespan === '1h') return 'time'
-        if (transactionsTimespan === '24h') return 'time'
-        if (transactionsTimespan === '3d') return 'date'
-        if (transactionsTimespan === '1w') return 'date'
-    }
-
     const fetchData = () => {
         setLoading(true)
 
@@ -99,7 +92,6 @@ function Home() {
     }
 
     useEffect(fetchData, [])
-
 
     useEffect(() => {
         Api.getTransactionsHistory(transactionsTimespan)
@@ -251,12 +243,17 @@ function Home() {
                             <LineChart
                                 data={transactionsHistory}
                                 timespan={transactionsTimespan}
-                                xLabel={{
-                                    type: xLabelType(),
+                                xAxis={{
+                                    type: (() => {
+                                        if (transactionsTimespan === '1h') return {axis: 'time'}
+                                        if (transactionsTimespan === '24h') return {axis: 'time'}
+                                        if (transactionsTimespan === '3d') return {axis: 'date', tooltip: 'datetime'}
+                                        if (transactionsTimespan === '1w') return {axis: 'date'}
+                                    })(),
                                     abbreviation: '',
                                     title: ''
                                 }}
-                                yLabel={{
+                                yAxis={{
                                     type: 'number',
                                     title: '',
                                     abbreviation: 'txs'
