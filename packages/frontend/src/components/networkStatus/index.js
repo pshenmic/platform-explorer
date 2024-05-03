@@ -33,7 +33,7 @@ function NetworkStatus ({status}) {
 
                     {status.epoch !== undefined &&
                         <Tooltip
-                            label={`Next epoch change at ${new Date(status.epoch.endTime).toLocaleDateString()}`}
+                            label={`Next epoch change at ${new Date(status.epoch.endTime).toLocaleString()}`}
                             aria-label={'A tooltip'}
                             placement={'top'}
                             hasArrow 
