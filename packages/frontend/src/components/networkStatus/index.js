@@ -1,29 +1,27 @@
 import { InfoIcon, CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
-import { Container } from '@chakra-ui/react'
-import { Tooltip } from '@chakra-ui/react'
+import { Container, Tooltip } from '@chakra-ui/react'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
+function NetworkStatus ({ status }) {
+  const msFromLastBlock = new Date() - new Date(status?.latestBlock?.header?.timestamp)
+  const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
+  const NetworkStatusIcon = networkStatus
+    ? <CheckCircleIcon color={'green.500'} ml={2}/>
+    : <WarningTwoIcon color={'yellow.400'} ml={2}/>
 
-function NetworkStatus ({status}) {
-    const msFromLastBlock = new Date() - new Date(status?.latestBlock?.header?.timestamp)
-    const networkStatus = msFromLastBlock && msFromLastBlock/1000/60 < 15
-    const NetworkStatusIcon = networkStatus ? 
-        <CheckCircleIcon color={'green.500'} ml={2}/>: 
-        <WarningTwoIcon color={'yellow.400'} ml={2}/>
+  function getLastBlocktimeString () {
+    if (!status?.latestBlock?.header?.timestamp) return 'n/a'
 
-    function getLastBlocktimeString () {
-        if (!status?.latestBlock?.header?.timestamp) return 'n/a'
-
-        if (msFromLastBlock < 60 * 1000) {
-            return `${Math.floor((msFromLastBlock/1000))} sec. ago`
-        } else {
-            return `${Math.floor((msFromLastBlock/1000)/60)} min. ago`
-        }
+    if (msFromLastBlock < 60 * 1000) {
+      return `${Math.floor((msFromLastBlock / 1000))} sec. ago`
+    } else {
+      return `${Math.floor((msFromLastBlock / 1000) / 60)} min. ago`
     }
+  }
 
-    return (
-        <Container 
+  return (
+        <Container
             className={'NetworkStatus'}
             maxW={'100%'}
             m={0}
@@ -42,8 +40,8 @@ function NetworkStatus ({status}) {
                             label={`Next epoch change at ${new Date(status.epoch.endTime).toLocaleString()}`}
                             aria-label={'A tooltip'}
                             placement={'top'}
-                            hasArrow 
-                            bg={'gray.700'} 
+                            hasArrow
+                            bg={'gray.700'}
                             color={'white'}
                         >
                             <InfoIcon boxSize={4} color={'gray.600'} ml={2}/>
@@ -58,14 +56,14 @@ function NetworkStatus ({status}) {
                     <span>{status.network !== undefined ? `${status.network}` : 'n/a'}</span>
 
                     <Tooltip
-                        label={`${networkStatus ?
-                            'Network appears operational' :
-                            'Chain propagation degraded'
+                        label={`${networkStatus
+                            ? 'Network appears operational'
+                            : 'Chain propagation degraded'
                         }`}
                         aria-label={'Network status'}
                         placement={'top'}
-                        hasArrow 
-                        bg={'gray.700'} 
+                        hasArrow
+                        bg={'gray.700'}
                         color={'white'}
                     >
                         {NetworkStatusIcon}
@@ -76,18 +74,16 @@ function NetworkStatus ({status}) {
             <div className={'NetworkStatus__InfoItem'}>
                 <div className={'NetworkStatus__Title'}>Latest block:</div>
 
-                {status.latestBlock !== undefined ? (
-                    <div className={'NetworkStatus__Value'}>
+                {status.latestBlock !== undefined
+                  ? <div className={'NetworkStatus__Value'}>
                         <Link href={`/block/${status.latestBlock.header.hash}`}>
                             #{status.latestBlock.header.height}, {getLastBlocktimeString()}
                         </Link>
                     </div>
-                ) : (
-                    <div>-</div>
-                )}
+                  : <div>-</div>}
             </div>
         </Container>
-    )
+  )
 }
 
 export default NetworkStatus

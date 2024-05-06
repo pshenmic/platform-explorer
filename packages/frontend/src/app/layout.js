@@ -1,9 +1,8 @@
 import RootComponent from '../components/RootComponent'
 
-
-export default function RootLayout({ children }) {
+export default function RootLayout ({ children }) {
   return (
-    <html lang="en" data-theme="dark" style={{colorScheme: 'dark'}} >
+    <html lang="en" data-theme="dark" style={{ colorScheme: 'dark' }} >
       <body className={'chakra-ui-dark'}>
 
         <RootComponent>

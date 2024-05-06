@@ -9,75 +9,74 @@ import BlocksList from '../../components/blocks/BlocksList'
 import './Blocks.scss'
 
 import {
-    Container,
-    Heading, 
+  Container,
+  Heading
 } from '@chakra-ui/react'
 
-
 const paginateConfig = {
-    pageSize: {
-        default: 25,
-        values: [10, 25, 50, 75, 100],
-    },
-    defaultPage: 1
+  pageSize: {
+    default: 25,
+    values: [10, 25, 50, 75, 100]
+  },
+  defaultPage: 1
 }
 
+function Blocks () {
+  const [loading, setLoading] = useState(true)
+  const [blocks, setBlocks] = useState([])
+  const [total, setTotal] = useState(1)
+  const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [blockHeightToSearch, setBlockHeightToSearch] = useState(0)
+  const pageCount = Math.ceil(total / pageSize) ? Math.ceil(total / pageSize) : 1
 
-function Blocks() {
-    const [loading, setLoading] = useState(true)
-    const [blocks, setBlocks] = useState([])
-    const [total, setTotal] = useState(1)
-    const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
-    const [currentPage, setCurrentPage] = useState(0)
-    const [blockHeightToSearch, setBlockHeightToSearch] = useState(0)
-    const pageCount = Math.ceil(total / pageSize) ? Math.ceil(total / pageSize) : 1
-    
-    const fetchData = () => {
-        setLoading(true)
+  const fetchData = () => {
+    setLoading(true)
 
-        Api.getBlocks(paginateConfig.defaultPage, paginateConfig.pageSize.default, 'desc')
-            .then((res) => {
-                setBlocks(res.resultSet)
-                setTotal(res.pagination.total)
-            })
-            .catch(console.log)
-            .finally(() => setLoading(false))
-    }
+    Api.getBlocks(paginateConfig.defaultPage, paginateConfig.pageSize.default, 'desc')
+      .then((res) => {
+        setBlocks(res.resultSet)
+        setTotal(res.pagination.total)
+      })
+      .catch(console.log)
+      .finally(() => setLoading(false))
+  }
 
-    useEffect(fetchData, [])
+  useEffect(fetchData, [])
 
-    const handlePageClick = ({selected}) => {
-        Api.getBlocks(selected+1, pageSize, 'desc')
-            .then((res) => {
-                setCurrentPage(selected)
-                setBlocks(res.resultSet)
-            })
-    }
+  const handlePageClick = ({ selected }) => {
+    Api.getBlocks(selected + 1, pageSize, 'desc')
+      .then((res) => {
+        setCurrentPage(selected)
+        setBlocks(res.resultSet)
+      })
+  }
 
-    const goToHeight = (e) => {
-        e.preventDefault()
+  const goToHeight = (e) => {
+    e.preventDefault()
 
-        const page = Math.ceil((total - blockHeightToSearch + 2) / pageSize) - 1
-        setCurrentPage(page)
-        handlePageClick({selected: page})
-    }
+    const page = Math.ceil((total - blockHeightToSearch + 2) / pageSize) - 1
+    setCurrentPage(page)
+    handlePageClick({ selected: page })
+  }
 
-    useEffect(() => {
-        setCurrentPage(0)
-        handlePageClick({selected: 0})
-    }, [pageSize])
+  useEffect(() => {
+    setCurrentPage(0)
+    handlePageClick({ selected: 0 })
+  }, [pageSize])
 
-    if (!loading) return (
-        <Container 
-            maxW='container.lg' 
+  if (!loading) {
+    return (
+        <Container
+            maxW='container.lg'
             color='white'
             mt={8}
             mb={8}
             className={'Blocks'}
         >
-            <Container 
-                maxW='container.lg' 
-                _dark={{ color: "white" }}
+            <Container
+                maxW='container.lg'
+                _dark={{ color: 'white' }}
                 borderWidth='1px' borderRadius='lg'
                 className={'InfoBlock'}
             >
@@ -88,21 +87,21 @@ function Blocks() {
                     <GoToHeightForm
                         goToHeightHandler={goToHeight}
                         goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
-                        isValid = {()=> {
-                            return (
-                                blockHeightToSearch.length > 0 &&
-                                Number(blockHeightToSearch) <= total && 
-                                Number(blockHeightToSearch) > 0
-                            )}
-                        }
+                        isValid = {() => {
+                          return (
+                            blockHeightToSearch.length > 0 &&
+                            Number(blockHeightToSearch) <= total &&
+                            Number(blockHeightToSearch) > 0
+                          )
+                        }}
                     />
 
-                    <Pagination 
+                    <Pagination
                         onPageChange={handlePageClick}
                         pageCount={pageCount}
-                        forcePage={currentPage} 
+                        forcePage={currentPage}
                     />
-                
+
                     <PageSizeSelector
                         PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
                         defaultValue={paginateConfig.pageSize.default}
@@ -113,6 +112,7 @@ function Blocks() {
             </Container>
         </Container>
     )
+  }
 }
 
 export default Blocks

@@ -8,20 +8,19 @@ import {
   IconButton,
   useDisclosure,
   useColorModeValue,
-  Stack,
+  Stack
 } from '@chakra-ui/react'
 
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
 
-
 const links = [
-    {title:'Home', href:'/'},
-    {title:'Blocks', href:'/blocks'},
-    {title:'Transactions', href:'/transactions'},
-    {title:'Data Contracts', href:'/dataContracts'},
-    {title:'Identities', href:'/identities'},
-    {title:'API', href:'/api'},
+  { title: 'Home', href: '/' },
+  { title: 'Blocks', href: '/blocks' },
+  { title: 'Transactions', href: '/transactions' },
+  { title: 'Data Contracts', href: '/dataContracts' },
+  { title: 'Identities', href: '/identities' },
+  { title: 'API', href: '/api' }
 ]
 
 const NavLink = (props) => {
@@ -45,7 +44,7 @@ const NavLink = (props) => {
   )
 }
 
-function Navbar() {
+function Navbar () {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -80,17 +79,17 @@ function Navbar() {
             </Box>
         </Flex>
 
-        {isOpen ? (
-          <Box className={'NavbarMobileMenu'} pb={4} display={{ lg: 'none' }}>
-            <Stack as={'nav'} spacing={4}>
-              {links.map((link) => (
-                <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
-              ))}
-            </Stack>
-          </Box>
-        ) : null}
+        {isOpen
+          ? <Box className={'NavbarMobileMenu'} pb={4} display={{ lg: 'none' }}>
+              <Stack as={'nav'} spacing={4}>
+                {links.map((link) => (
+                  <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
+                ))}
+              </Stack>
+            </Box>
+          : null}
     </Box>
   )
 }
 
-export default Navbar;
+export default Navbar

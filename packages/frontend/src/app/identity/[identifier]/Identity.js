@@ -1,74 +1,74 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import * as Api from "../../../util/Api";
+import * as Api from '../../../util/Api'
 import Link from 'next/link'
-import TransactionsList from "../../../components/transactions/TransactionsList";
-import DocumentsList from "../../../components/documents/DocumentsList";
-import DataContractsList from "../../../components/dataContracts/DataContractsList";
-import TransfersList from "../../../components/transfers/TransfersList";
+import TransactionsList from '../../../components/transactions/TransactionsList'
+import DocumentsList from '../../../components/documents/DocumentsList'
+import DataContractsList from '../../../components/dataContracts/DataContractsList'
+import TransfersList from '../../../components/transfers/TransfersList'
 import './Identity.scss'
 
-import { 
-    Box, 
-    Container,
-    TableContainer, Table, Thead, Tbody, Tr, Th, Td,
-    Tabs, TabList, TabPanels, Tab, TabPanel,
-    Flex, 
-} from "@chakra-ui/react"
+import {
+  Box,
+  Container,
+  TableContainer, Table, Thead, Tbody, Tr, Th, Td,
+  Tabs, TabList, TabPanels, Tab, TabPanel,
+  Flex
+} from '@chakra-ui/react'
 
+function Identity ({ identifier }) {
+  const [identity, setIdentity] = useState({})
+  const [dataContracts, setDataContracts] = useState([])
+  const [documents, setDocuments] = useState([])
+  const [transactions, setTransactions] = useState([])
+  const [transfers, setTransfers] = useState([])
+  const [loading, setLoading] = useState(true)
 
-function Identity({identifier}) {
-    const [identity, setIdentity] = useState({})
-    const [dataContracts, setDataContracts] = useState([])
-    const [documents, setDocuments] = useState([])
-    const [transactions, setTransactions] = useState([])
-    const [transfers, setTransfers] = useState([])
-    const [loading, setLoading] = useState(true)
+  const fetchData = () => {
+    setLoading(true)
 
-    const fetchData = () => {
-        setLoading(true)
+    Promise.all([
+      Api.getIdentity(identifier),
+      Api.getDataContractsByIdentity(identifier),
+      Api.getDocumentsByIdentity(identifier),
+      Api.getTransactionsByIdentity(identifier),
+      Api.getTransfersByIdentity(identifier)
+    ])
+      .then(([
+        defaultIdentity,
+        defaultDataContracts,
+        defaultDocuments,
+        defaultTransactions,
+        defaultTransfers
+      ]) => {
+        setIdentity(defaultIdentity)
+        setDataContracts(defaultDataContracts)
+        setDocuments(defaultDocuments)
+        setTransactions(defaultTransactions)
+        setTransfers(defaultTransfers)
+      })
+      .catch(console.log)
+      .finally(() => setLoading(false))
+  }
 
-        Promise.all([
-            Api.getIdentity(identifier),
-            Api.getDataContractsByIdentity(identifier),
-            Api.getDocumentsByIdentity(identifier),
-            Api.getTransactionsByIdentity(identifier),
-            Api.getTransfersByIdentity(identifier),
-        ])
-        .then(([
-            defaultIdentity, 
-            defaultDataContracts, 
-            defaultDocuments, 
-            defaultTransactions, 
-            defaultTransfers
-        ]) => {
-            setIdentity(defaultIdentity)
-            setDataContracts(defaultDataContracts)
-            setDocuments(defaultDocuments)
-            setTransactions(defaultTransactions)
-            setTransfers(defaultTransfers)
-        })
-        .catch(console.log)
-        .finally(() => setLoading(false))
-    }
+  useEffect(fetchData, [identifier])
 
-    useEffect(fetchData, [identifier])
-
-    if (!loading) return (
+  if (!loading) {
+    return (
         <div className={'identity'}>
-            <Container 
-                maxW='container.xl' 
+            <Container
+                maxW='container.xl'
                 padding={3}
                 mt={8}
             >
-                <Flex 
-                    w='100%' 
+                <Flex
+                    w='100%'
                     justifyContent='space-between'
-                    wrap={["wrap", , , 'nowrap']}
+                    wrap={['wrap', , , 'nowrap']}
                 >
-                    <TableContainer 
-                        width={["100%", , , "calc(50% - 10px)"]}
+                    <TableContainer
+                        width={['100%', , , 'calc(50% - 10px)']}
                         maxW='none'
                         borderWidth='1px' borderRadius='lg'
                         m={0}
@@ -92,13 +92,13 @@ function Identity({identifier}) {
                                 </Tr>
                                 <Tr>
                                     <Td>System</Td>
-                                    <Td isNumeric>{identity.isSystem ? 'true': 'false'}</Td>
+                                    <Td isNumeric>{identity.isSystem ? 'true' : 'false'}</Td>
                                 </Tr>
-                                
-                                {!identity.isSystem && 
+
+                                {!identity.isSystem &&
                                     <Tr>
                                         <Td>Created</Td>
-                                        <Td isNumeric> 
+                                        <Td isNumeric>
                                             <Link href={`/transaction/${identity.txHash}`}>
                                                 {new Date(identity.timestamp).toLocaleString()}
                                             </Link>
@@ -111,7 +111,7 @@ function Identity({identifier}) {
                                     <Td isNumeric>{identity.revision}</Td>
                                 </Tr>
 
-                                {!identity.isSystem && 
+                                {!identity.isSystem &&
                                     <Tr>
                                         <Td>Transactions</Td>
                                         <Td isNumeric>{identity.totalTxs}</Td>
@@ -137,7 +137,7 @@ function Identity({identifier}) {
                     <Box w={5} h={5} />
 
                     <Container
-                        width={["100%", , ,"calc(50% - 10px)"]}
+                        width={['100%', , , 'calc(50% - 10px)']}
                         maxW='none'
                         m={0}
                         borderWidth='1px' borderRadius='lg'
@@ -184,6 +184,7 @@ function Identity({identifier}) {
             </Container>
         </div>
     )
+  }
 }
 
 export default Identity
