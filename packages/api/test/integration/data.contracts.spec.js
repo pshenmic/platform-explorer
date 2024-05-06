@@ -41,7 +41,7 @@ describe('DataContracts routes', () => {
       dataContracts.push({ transaction: null, block: null, dataContract })
     }
 
-    for (let i = 5; i < 35; i++) {
+    for (let i = 5; i < 29; i++) {
       const block = await fixtures.block(knex, { height: i + 1 })
       const transaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
@@ -69,15 +69,31 @@ describe('DataContracts routes', () => {
       owner: identity.identifier,
       schema: '{}'
     })
+    dataContract.documents = []
     dataContracts.push({ transaction: contractCreateTransaction, block: block2, dataContract })
 
-    // create random amount of documents
+    // create some documents in different data contract revisions
     for (let i = 0; i < 5; i++) {
+      const contractCreateTransaction = await fixtures.transaction(knex, {
+        block_hash: block2.hash,
+        type: StateTransitionEnum.DATA_CONTRACT_UPDATE,
+        owner: identity.identifier
+      })
+      const dataContract = await fixtures.dataContract(knex, {
+        state_transition_hash: contractCreateTransaction.hash,
+        owner: identity.identifier,
+        identifier: dataContracts[dataContracts.length - 1].dataContract.identifier,
+        version: dataContracts[dataContracts.length - 1].dataContract.version + 1,
+        schema: '{}',
+        documents: dataContracts[dataContracts.length - 1].dataContract.documents
+      })
       const document = await fixtures.document(knex, {
         data_contract_id: dataContract.id, owner: identity.identifier, is_system: true
       })
       dataContract.documents.push(document)
       documents.push({ transaction: null, block: null, dataContract, document })
+      dataContracts[dataContracts.length - 1].transaction = contractCreateTransaction
+      dataContracts[dataContracts.length - 1].dataContract = dataContract
     }
   })
 
@@ -102,7 +118,7 @@ describe('DataContracts routes', () => {
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
           isSystem: dataContract.is_system,
-          documentsCount: 0
+          documentsCount: dataContract.documents.length
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -125,11 +141,11 @@ describe('DataContracts routes', () => {
           identifier: dataContract.identifier,
           owner: identity.identifier,
           schema: null,
-          version: 0,
+          version: dataContract.version,
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
           isSystem: dataContract.is_system,
-          documentsCount: 0
+          documentsCount: dataContract.documents.length
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -156,7 +172,7 @@ describe('DataContracts routes', () => {
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
           isSystem: dataContract.is_system,
-          documentsCount: 0
+          documentsCount: dataContract.documents.length
         }))
 
       assert.equal(body.resultSet.length, 6)
@@ -183,7 +199,7 @@ describe('DataContracts routes', () => {
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
           isSystem: dataContract.is_system,
-          documentsCount: 0
+          documentsCount: dataContract.documents.length
         }))
 
       assert.equal(body.resultSet.length, 6)
@@ -193,46 +209,46 @@ describe('DataContracts routes', () => {
 
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
-  })
 
-  it('should return set sort by doc count (desc)', async () => {
-    const { body } = await client.get('/dataContracts?order=desc&order_by=documents_count')
-      .expect(200)
-      .expect('Content-Type', 'application/json; charset=utf-8')
+    it('should return set sort by doc count (desc)', async () => {
+      const { body } = await client.get('/dataContracts?order=desc&order_by=documents_count')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
 
-    const expectedDataContracts = dataContracts
-      .sort((a, b) => (b.dataContract.documents.length - a.dataContract.documents.length ||
-        b.dataContract.id - a.dataContract.id))
-      .slice(0, 10)
-      .map(({ transaction, dataContract, block }) => ({
-        identifier: dataContract.identifier,
-        owner: identity.identifier,
-        schema: null,
-        version: 0,
-        txHash: dataContract.is_system ? null : transaction.hash,
-        timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-        isSystem: dataContract.is_system,
-        documentsCount: 0
-      }))
+      const expectedDataContracts = dataContracts
+        .sort((a, b) => (b.dataContract.documents.length - a.dataContract.documents.length ||
+          b.dataContract.id - a.dataContract.id))
+        .slice(0, 10)
+        .map(({ transaction, dataContract, block }) => ({
+          identifier: dataContract.identifier,
+          owner: identity.identifier,
+          schema: null,
+          version: dataContract.version,
+          txHash: dataContract.is_system ? null : transaction.hash,
+          timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
+          isSystem: dataContract.is_system,
+          documentsCount: dataContract.documents.length
+        }))
 
-    assert.equal(body.resultSet.length, 10)
-    assert.equal(body.pagination.total, dataContracts.length)
-    assert.equal(body.pagination.page, 1)
-    assert.equal(body.pagination.limit, 10)
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, dataContracts.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
 
-    assert.deepEqual(body.resultSet, expectedDataContracts)
+      assert.deepEqual(body.resultSet, expectedDataContracts)
+    })
   })
 
   describe('getDataContractByIdentifier()', async () => {
     it('should return system data contract by identifier', async () => {
-      dataContracts.sort((a, b) => a.dataContract.id - b.dataContract.id)
+      const [dataContract] = dataContracts.sort((a, b) => a.dataContract.id - b.dataContract.id)
 
-      const { body } = await client.get(`/dataContract/${dataContracts[0].dataContract.identifier}`)
+      const { body } = await client.get(`/dataContract/${dataContract.dataContract.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedDataContract = {
-        identifier: dataContracts[0].dataContract.identifier,
+        identifier: dataContract.dataContract.identifier,
         owner: identity.identifier,
         schema: '{}',
         version: 0,
@@ -245,18 +261,27 @@ describe('DataContracts routes', () => {
       assert.deepEqual(body, expectedDataContract)
     })
 
-    // it('should return system data contract by identifier', async () => {
-    //     const {body} = await client.get('/dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec')
-    //         .expect(200)
-    //         .expect('Content-Type', 'application/json; charset=utf-8');
-    //
-    //     assert.equal(body.identifier, 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec')
-    //     assert.equal(body.txHash, null)
-    //     assert.equal(body.owner, '4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF')
-    //     assert.equal(body.version, 0)
-    //     assert.equal(body.timestamp, null)
-    //     assert.equal(body.isSystem, true)
-    // });
+    it('should return data contract by identifier', async () => {
+      const [dataContract] = dataContracts.sort((a, b) => b.dataContract.id - a.dataContract.id)
+
+      const { body } = await client.get(`/dataContract/${dataContract.dataContract.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDataContract = {
+        identifier: dataContract.dataContract.identifier,
+        owner: identity.identifier,
+        schema: '{}',
+        version: dataContract.dataContract.version,
+        txHash: dataContract.transaction.hash,
+        timestamp: dataContract.block.timestamp.toISOString(),
+        isSystem: false,
+        documentsCount: dataContract.dataContract.documents.length
+      }
+
+      assert.deepEqual(body, expectedDataContract)
+    })
+
     //
     // it('should return last revision of data contract by identifier', async () => {
     //     const {body} = await client.get('/dataContract/Gc7HqRGqmA4ZSafQ6zXeKH8Rh4AjNjjWsztotJDLpMXa')
