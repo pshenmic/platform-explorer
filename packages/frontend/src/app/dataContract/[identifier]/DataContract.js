@@ -108,6 +108,11 @@ function DataContract({identifier}) {
                         }
 
                         <Tr>
+                            <Td>Documents Count</Td>
+                            <Td isNumeric>{dataContract.documentsCount}</Td>
+                        </Tr>
+
+                        <Tr>
                             <Td>Revision</Td>
                             <Td isNumeric>{dataContract.version}</Td>
                         </Tr>
