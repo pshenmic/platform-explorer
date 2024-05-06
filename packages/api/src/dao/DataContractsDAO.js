@@ -21,15 +21,24 @@ module.exports = class DataContractsDAO {
         acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
     }
 
+    const sumDocuments = this.knex('documents')
+      .select('documents.id', 'data_contracts.identifier as dc_identifier', 'documents.data_contract_id')
+      .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
+      .as('sum_documents')
+
     const subquery = this.knex('data_contracts')
-      .select('data_contracts.id as id', 'data_contracts.identifier as identifier', 'data_contracts.owner as owner',
+      .select('data_contracts.id as id', 'data_contracts.identifier as identifier', 'data_contracts.identifier as my_identifier', 'data_contracts.owner as owner',
         'data_contracts.is_system as is_system', 'data_contracts.version as version',
         'data_contracts.state_transition_hash as tx_hash')
-      .select(this.knex('documents').count('*').whereRaw('documents.data_contract_id = id').as('documents_count'))
+      .select(this.knex(sumDocuments)
+        .count('*')
+        .whereRaw('data_contracts.identifier = sum_documents.dc_identifier')
+        .as('documents_count'))
       .select(this.knex.raw('rank() over (partition by identifier order by version desc) rank'))
 
     const filteredContracts = this.knex.with('filtered_data_contracts', subquery)
-      .select('id', 'owner', 'identifier', 'version', 'tx_hash', 'rank', 'is_system', 'documents_count',
+      .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
+      .select('id', 'owner', 'identifier', 'version', 'tx_hash', 'rank', 'is_system',
         this.knex('filtered_data_contracts').count('*').as('total_count').where('rank', '1'))
       .select(this.knex.raw(`rank() over (${getRankString()}) row_number`))
       .from('filtered_data_contracts')
@@ -56,7 +65,10 @@ module.exports = class DataContractsDAO {
       .select('data_contracts.identifier as identifier', 'data_contracts.owner as owner',
         'data_contracts.schema as schema', 'data_contracts.is_system as is_system',
         'data_contracts.version as version', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
-      .select(this.knex('documents').count('*').whereRaw('documents.data_contract_id = id').as('documents_count'))
+      .select(this.knex('documents').count('*')
+        .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
+        .whereRaw(`data_contracts.identifier = '${identifier}'`)
+        .as('documents_count'))
       .leftJoin('state_transitions', 'data_contracts.state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .where('data_contracts.identifier', identifier)

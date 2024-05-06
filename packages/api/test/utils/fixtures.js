@@ -81,7 +81,7 @@ const fixtures = {
 
     return { ...row, txHash: state_transition_hash ?? transaction.hash, id: result[0].id, transaction }
   },
-  dataContract: async (knex, { identifier, schema, version, state_transition_hash, owner, is_system } = {}) => {
+  dataContract: async (knex, { identifier, schema, version, state_transition_hash, owner, is_system, documents = [] } = {}) => {
     if (!identifier) {
       identifier = generateIdentifier()
     }
@@ -101,7 +101,7 @@ const fixtures = {
 
     const result = await knex('data_contracts').insert(row).returning('id')
 
-    return { ...row, id: result[0].id, documents: [] }
+    return { ...row, id: result[0].id, documents }
   },
   document: async (knex, {
     identifier,
