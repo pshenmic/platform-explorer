@@ -136,6 +136,11 @@ module.exports = class IdentitiesDAO {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
+    const sumDocuments = this.knex('documents')
+      .select('documents.id', 'data_contracts.identifier as dc_identifier', 'documents.data_contract_id')
+      .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
+      .as('sum_documents')
+
     const subquery = this.knex('data_contracts')
       .select('data_contracts.id', 'data_contracts.identifier as identifier', 'data_contracts.owner as data_contract_owner',
         'data_contracts.version as version', 'data_contracts.state_transition_hash as tx_hash',
@@ -149,11 +154,15 @@ module.exports = class IdentitiesDAO {
       .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
       .from('with_alias')
       .where('rank', 1)
-      .as('data_contracts')
+      .as('data_contractz')
 
     const rows = await this.knex(filteredDataContracts)
-      .select('data_contracts.id as id', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp')
-      .select(this.knex('documents').count('*').whereRaw('documents.data_contract_id = id').as('documents_count'))
+      .select('data_contractz.id as id', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp')
+      .select(this.knex(sumDocuments)
+        .count('*')
+        .whereRaw('sum_documents.dc_identifier = data_contractz.identifier')
+        .as('documents_count')
+      )
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .whereBetween('row_number', [fromRank, toRank])
