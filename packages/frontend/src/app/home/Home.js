@@ -74,18 +74,18 @@ function Home () {
         })
         setDataContracts(paginatedDataContracts.value.resultSet)
         setTransactionsHistory(convertTxsForChart(transactionsHistory.value))
-        setTransactions({
-          ...transactions,
+        setTransactions(state => ({
+          ...state,
           items: paginatedTransactions.value.resultSet
-        })
-        setRichestIdentities({
-          ...richestIdentities,
+        }))
+        setRichestIdentities(state => ({
+          ...state,
           items: paginatedRichestIdentities.value.resultSet
-        })
-        setTrendingIdentities({
-          ...trendingIdentities,
+        }))
+        setTrendingIdentities(state => ({
+          ...state,
           items: paginatedTrendingIdentities.value.resultSet
-        })
+        }))
       })
       .catch(console.log)
       .finally(() => setLoading(false))
@@ -137,7 +137,17 @@ function Home () {
       transactions,
       setTransactions
     )
-  }, [richListContainer, trendingIdentitiesContainer, transactionsContainer])
+  }, [
+    richListContainer,
+    trendingIdentitiesContainer,
+    transactionsContainer,
+    richListRef,
+    richestIdentities,
+    transactions,
+    transactionsList,
+    trendingIdentities,
+    trendingIdentitiesList
+  ])
 
   if (!loading) {
     return (<>
