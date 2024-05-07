@@ -36,7 +36,7 @@ function SimpleListItem ({ item }) {
             </div>
         }
 
-        {item.columns && 
+        {item.columns &&
             <div className={'SimpleListItem__ColumnsContainer'}>
                 {item.columns.map((column, key) =>
                     <div className={'SimpleListItem__Column'} key={key}>{ column }</div>
@@ -48,7 +48,7 @@ function SimpleListItem ({ item }) {
 }
 
 const SimpleList = forwardRef(function (props, ref) {
-  const { items, columns, ...otherProps } = props
+  const { items, columns } = props
 
   return (
     <div className={'SimpleList'} ref={ref}>
@@ -67,6 +67,8 @@ const SimpleList = forwardRef(function (props, ref) {
     </div>
   )
 })
+
+SimpleList.displayName = 'SimpleList'
 
 export {
   SimpleList

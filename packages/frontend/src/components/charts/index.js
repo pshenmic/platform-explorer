@@ -166,13 +166,15 @@ const LineGraph = ({
       .y1((d) => y(d.y)))
   }, [gx, x])
 
-  useEffect(() => void d3.select(gy.current)
-    .select('.Axis__TickContainer')
-    .call(d3.axisLeft(y)
-      .tickSize(0)
-      .ticks(5)
-      .tickPadding(10)
-    ), [gy, y])
+  useEffect(() => {
+    d3.select(gy.current)
+      .select('.Axis__TickContainer')
+      .call(d3.axisLeft(y)
+        .tickSize(0)
+        .ticks(5)
+        .tickPadding(10)
+      )
+  }, [gy, y])
 
   const updateSize = () => {
     if (!loading || !d3.select(gy.current).node()) return
@@ -237,7 +239,7 @@ const LineGraph = ({
 
       let classStr = ''
 
-      styles.map((style) => {
+      styles.forEach((style) => {
         if (style === 'blocks') classStr += ' ChartTooltip__InfoLine--Blocks'
         if (style === 'inline') classStr += ' ChartTooltip__InfoLine--Inline'
         if (style === 'bold') classStr += ' ChartTooltip__InfoLine--Bold'

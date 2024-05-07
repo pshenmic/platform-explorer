@@ -215,14 +215,12 @@ function Transaction ({ hash }) {
   const [transaction, setTransaction] = useState({})
   const [loading, setLoading] = useState(true)
   const [decoding, setDecoding] = useState(false)
-  const [decodingError, setDecodingError] = useState(null)
   const [decodedST, setDecodedST] = useState(null)
 
   const decodeTx = (tx) => {
     if (decodedST || decoding) return
 
     setDecoding(true)
-    setDecodingError(false)
     setDecodedST(null)
 
     Api.decodeTx(tx)
@@ -230,9 +228,7 @@ function Transaction ({ hash }) {
         setDecoding(false)
         setDecodedST(stateTransition)
       })
-      .catch((e) => {
-        setDecodingError(e.message)
-      })
+      .catch(console.log)
       .finally(() => setDecoding(false))
   }
 
