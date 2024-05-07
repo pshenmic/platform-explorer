@@ -9,9 +9,9 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l' }) {
         columnCount: blocks.length > 1 ? columnsCount : 1
       }}
     >
-        {blocks.map((block) =>
+        {blocks.map((block, i) =>
             <BlocksListItem
-                key={block.hash}
+                key={i}
                 block={block}
                 size={size}
             />

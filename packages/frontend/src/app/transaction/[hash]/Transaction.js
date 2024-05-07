@@ -2,7 +2,7 @@
 
 import * as Api from '../../../util/Api'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { getTransitionTypeString } from '../../../util'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
 import './Transaction.scss'
@@ -217,7 +217,7 @@ function Transaction ({ hash }) {
   const [decoding, setDecoding] = useState(false)
   const [decodedST, setDecodedST] = useState(null)
 
-  const decodeTx = (tx) => {
+  const decodeTx = useCallback((tx) => {
     if (decodedST || decoding) return
 
     setDecoding(true)
@@ -230,7 +230,7 @@ function Transaction ({ hash }) {
       })
       .catch(console.log)
       .finally(() => setDecoding(false))
-  }
+  }, [decodedST, decoding])
 
   const fetchData = () => {
     setLoading(true)
@@ -244,7 +244,7 @@ function Transaction ({ hash }) {
       .finally(() => setLoading(false))
   }
 
-  useEffect(fetchData, [hash])
+  useEffect(fetchData, [hash, decodeTx])
 
   if (!loading) {
     return (

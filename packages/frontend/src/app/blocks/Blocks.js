@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import * as Api from '../../util/Api'
 import Pagination from '../../components/pagination'
 import GoToHeightForm from '../../components/goToHeightForm/GoToHeightForm'
@@ -44,13 +44,13 @@ function Blocks () {
 
   useEffect(fetchData, [])
 
-  const handlePageClick = ({ selected }) => {
+  const handlePageClick = useCallback(({ selected }) => {
     Api.getBlocks(selected + 1, pageSize, 'desc')
       .then((res) => {
         setCurrentPage(selected)
         setBlocks(res.resultSet)
       })
-  }
+  }, [pageSize])
 
   const goToHeight = (e) => {
     e.preventDefault()
@@ -63,7 +63,7 @@ function Blocks () {
   useEffect(() => {
     setCurrentPage(0)
     handlePageClick({ selected: 0 })
-  }, [pageSize])
+  }, [pageSize, handlePageClick])
 
   if (!loading) {
     return (

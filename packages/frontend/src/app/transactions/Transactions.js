@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsList from '../../components/transactions/TransactionsList'
 import Pagination from '../../components/pagination'
@@ -41,20 +41,20 @@ function Transactions () {
       .finally(() => setLoading(false))
   }
 
-  useEffect(fetchData, [])
+  useEffect(fetchData, [pageSize])
 
-  useEffect(() => {
-    setCurrentPage(0)
-    handlePageClick({ selected: 0 })
-  }, [pageSize])
-
-  const handlePageClick = ({ selected }) => {
+  const handlePageClick = useCallback(({ selected }) => {
     Api.getTransactions(selected + 1, pageSize, 'desc')
       .then((res) => {
         setCurrentPage(selected)
         setTransactions(res.resultSet)
       })
-  }
+  }, [pageSize])
+
+  useEffect(() => {
+    setCurrentPage(0)
+    handlePageClick({ selected: 0 })
+  }, [pageSize, handlePageClick])
 
   return (
     <Container
