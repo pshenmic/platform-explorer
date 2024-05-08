@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import useResizeObserver from '@react-hook/resize-observer'
 import * as d3 from 'd3'
 import './charts.scss'
 import { Container } from '@chakra-ui/react'
@@ -23,17 +24,21 @@ function getDatesTicks (dates, numTicks) {
 const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number' } }, yAxis = { title: '', type: { axis: 'number' } } }) => {
   const chartContainer = useRef()
   const [chartElement, setChartElement] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const render = () => {
+  const render = useCallback(() => {
     if (!chartContainer.current) return
-
+    setLoading(true)
     setChartElement('')
 
     let lastWidth = chartContainer.current.offsetWidth
 
     const setupChart = () => {
       setTimeout(() => {
-        if (!chartContainer.current) return
+        if (!chartContainer.current) {
+          setLoading(false)
+          return
+        }
 
         if (chartContainer.current.offsetWidth !== lastWidth) {
           lastWidth = chartContainer.current.offsetWidth
@@ -49,19 +54,17 @@ const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number'
                     height = {chartContainer.current.offsetHeight}
                     data={data}
                 />)
+
+        setLoading(false)
       }, 100)
     }
 
     setupChart()
-  }
+  }, [data, timespan, xAxis, yAxis])
 
-  const chartObserver = new ResizeObserver(render)
+  useResizeObserver(chartContainer.current, render)
 
-  useEffect(render, [data])
-
-  useEffect(() => {
-    if (chartContainer.current && chartElement === '') chartObserver.observe(chartContainer.current)
-  }, [chartContainer])
+  useEffect(render, [data, render, data, timespan, xAxis, yAxis, loading])
 
   return <Container
             ref={chartContainer}
@@ -164,7 +167,7 @@ const LineGraph = ({
       .x((d) => x(d.x))
       .y0(y(0))
       .y1((d) => y(d.y)))
-  }, [gx, x])
+  }, [gx, x, data, width, xTicksCount, marginBottom])
 
   useEffect(() => {
     d3.select(gy.current)
@@ -196,7 +199,7 @@ const LineGraph = ({
     if (loading) setLoading(false)
   }
 
-  useEffect(updateSize, [])
+  useEffect(updateSize, [data, loading, marginTop, width, xAxisFormatCode])
 
   const bisect = d3.bisector(d => d.x).center
 
