@@ -73,7 +73,7 @@ function Transactions () {
                 <TransactionsList transactions={transactions}/>
 
                 <div className={'ListNavigation'}>
-                    <Box display={['none', , 'block']} width={'100px'}/>
+                    <Box display={['none', 'none', 'block']} width={'100px'}/>
 
                     {pageCount > 1 &&
                         <Pagination

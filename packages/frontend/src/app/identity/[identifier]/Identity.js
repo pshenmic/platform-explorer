@@ -65,10 +65,10 @@ function Identity ({ identifier }) {
                 <Flex
                     w='100%'
                     justifyContent='space-between'
-                    wrap={['wrap', , , 'nowrap']}
+                    wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
                 >
                     <TableContainer
-                        width={['100%', , , 'calc(50% - 10px)']}
+                        width={['100%', '100%', '100%', 'calc(50% - 10px)']}
                         maxW='none'
                         borderWidth='1px' borderRadius='lg'
                         m={0}
@@ -137,7 +137,7 @@ function Identity ({ identifier }) {
                     <Box w={5} h={5} />
 
                     <Container
-                        width={['100%', , , 'calc(50% - 10px)']}
+                        width={['100%', '100%', '100%', 'calc(50% - 10px)']}
                         maxW='none'
                         m={0}
                         borderWidth='1px' borderRadius='lg'

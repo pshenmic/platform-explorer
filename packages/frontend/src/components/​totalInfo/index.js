@@ -39,7 +39,7 @@ function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers 
                     </div>
                 </div>
 
-                <Box className={'TotalInfo__Divider'} display={['none', 'none', 'block', ,]}></Box>
+                <Box className={'TotalInfo__Divider'} display={['none', 'none', 'block']}></Box>
 
                 <div className='TotalInfo__Item'>
                     <div className={'TotalInfoItem TotalInfoItem--DataContracts'}>
@@ -48,7 +48,7 @@ function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers 
                     </div>
                 </div>
 
-                <Box className={'TotalInfo__Divider'} display={['block', 'block', 'block', ,]}></Box>
+                <Box className={'TotalInfo__Divider'} display={['block', 'block', 'block']}></Box>
 
                 <div className='TotalInfo__Item'>
                     <div className={'TotalInfoItem TotalInfoItem--Documents'}>
@@ -57,7 +57,7 @@ function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers 
                     </div>
                 </div>
 
-                <Box className={'TotalInfo__Divider'} display={['none', 'none', 'block', ,]}></Box>
+                <Box className={'TotalInfo__Divider'} display={['none', 'none', 'block']}></Box>
 
                 <div className='TotalInfo__Item'>
                     <div className={'TotalInfoItem TotalInfoItem--Transfers'}>

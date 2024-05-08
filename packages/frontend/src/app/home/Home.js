@@ -161,7 +161,7 @@ function Home () {
             <Flex
                 justifyContent={'space-between'}
                 alignItems={'center'}
-                wrap={['wrap', , 'nowrap']}
+                wrap={['wrap', 'wrap', 'nowrap']}
             >
                 <Container maxW={'none'} p={0}>
                     <Intro
@@ -193,11 +193,11 @@ function Home () {
             mt={0}
             mb={4}
         >
-            <Container p={0} maxW={'container.xl'} mb={[10, , 16]}>
+            <Container p={0} maxW={'container.xl'} mb={[10, 10, 16]}>
                 <Flex
                     w={'100%'}
                     justifyContent={'space-between'}
-                    wrap={['wrap', , , 'nowrap']}
+                    wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
                     mb={5}
                 >
                     <Flex
@@ -229,7 +229,7 @@ function Home () {
 
                         <Container
                             minH={'220px'}
-                            height={['300px', , , 'auto']}
+                            height={['300px', '300px', '300px', 'auto']}
                             maxW={'none'}
                             flexGrow={'1'}
                             mt={2}
@@ -258,9 +258,9 @@ function Home () {
                         </Container>
                     </Flex>
 
-                    <Box flexShrink={'0'} w={10} h={[0, , , 10]} />
+                    <Box flexShrink={'0'} w={10} h={[0, 0, 0, 10]} />
 
-                    <Container mb={5} p={0} maxW={['100%', , , 'calc(50% - 20px)']}>
+                    <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
                         <Container
                             maxW={'100%'}
                             m={0}
@@ -284,8 +284,8 @@ function Home () {
                 <Flex
                     w={'100%'}
                     justifyContent={'space-between'}
-                    wrap={['wrap', , 'nowrap']}
-                    mb={[10, , 16]}
+                    wrap={['wrap', 'wrap', 'nowrap']}
+                    mb={[10, 10, 16]}
                 >
                     <Container
                         ref={transactionsContainer}
@@ -314,7 +314,7 @@ function Home () {
                     <Flex
                         flexDirection={'column'}
                         p={0}
-                        maxW={['100%', , 'calc(50% - 20px)']}
+                        maxW={['100%', '100%', 'calc(50% - 20px)']}
                         width={'100%'}
                     >
                         <Container

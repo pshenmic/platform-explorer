@@ -84,7 +84,7 @@ function Block ({ hash }) {
                 </Table>
             </TableContainer>
 
-            { txHashes.length
+            {txHashes.length
               ? <Container
                 width='100%'
                 maxW='none'
@@ -98,7 +98,7 @@ function Block ({ hash }) {
                     <TransactionsList transactions={txHashes}/>
                 </div>
               </Container>
-              : null }
+              : null}
         </Container>
     )
   }

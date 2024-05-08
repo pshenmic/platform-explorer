@@ -2,8 +2,5 @@
   "extends": [
     "eslint-config-standard", 
     "next/core-web-vitals"
-  ],
-  "rules": {
-    "no-sparse-arrays": 0
-  }
+  ]
 }  

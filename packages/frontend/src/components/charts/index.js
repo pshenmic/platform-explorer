@@ -231,7 +231,7 @@ const LineGraph = ({
 
     const path = d3.select(tooltip.current)
       .selectAll('path')
-      .data([,])
+      .data([''])
       .join('path')
       .attr('fill', theme.colors.gray['800'])
       .attr('opacity', '1')
@@ -269,7 +269,7 @@ const LineGraph = ({
 
     const text = d3.select(tooltip.current)
       .selectAll('text')
-      .data([,])
+      .data([''])
       .join('text')
       .attr('class', 'ChartTooltip__TextContainer')
       .call(t => t
