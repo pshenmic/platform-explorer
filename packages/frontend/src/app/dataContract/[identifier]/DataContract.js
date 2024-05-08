@@ -8,71 +8,72 @@ import DocumentsList from '../../../components/documents/DocumentsList'
 import './DataContract.scss'
 
 import {
-    Box, 
-    Container,
-    TableContainer, Table, Thead, Tbody, Tfoot, Tr, Th, Td,
-    Tabs, TabList, TabPanels, Tab, TabPanel,
-    Code 
+  Box,
+  Container,
+  TableContainer, Table, Thead, Tbody, Tr, Th, Td,
+  Tabs, TabList, TabPanels, Tab, TabPanel,
+  Code
 } from '@chakra-ui/react'
 
-
 const pagintationConfig = {
-    itemsOnPage: {
-        default: 25,
-        values: [10, 25, 50, 75, 100]
-    },
-    defaultPage: 1
+  itemsOnPage: {
+    default: 25,
+    values: [10, 25, 50, 75, 100]
+  },
+  defaultPage: 1
 }
 
+function DataContract ({ identifier }) {
+  const [dataContract, setDataContract] = useState({})
+  const [documents, setDocuments] = useState([])
+  const pageSize = pagintationConfig.itemsOnPage.default
+  const [total, setTotal] = useState(1)
+  const [currentPage, setCurrentPage] = useState(0)
+  const pageCount = Math.ceil(total / pageSize)
+  const [loading, setLoading] = useState(true)
 
-function DataContract({identifier}) {
-    const [dataContract, setDataContract] = useState({})
-    const [documents, setDocuments] = useState([])
-    const pageSize = pagintationConfig.itemsOnPage.default
-    const [total, setTotal] = useState(1)
-    const [currentPage, setCurrentPage] = useState(0)
-    const pageCount = Math.ceil(total / pageSize)
-    const [loading, setLoading] = useState(true)
+  const fetchData = () => {
+    setLoading(true)
 
-    const fetchData = () => {
-        setLoading(true)
+    Promise.all([
+      Api.getDataContractByIdentifier(identifier),
+      Api.getDocumentsByDataContract(
+        identifier,
+        pagintationConfig.defaultPage,
+        pagintationConfig.itemsOnPage.default + 1)
+    ])
+      .then(([defaultDataContract, defaultDocuments]) => {
+        setDataContract(defaultDataContract)
+        setDocuments(defaultDocuments.resultSet)
+        setTotal(defaultDocuments.pagination.total)
+      })
+      .catch(console.log)
+      .finally(() => {
+        setLoading(false)
+      })
+  }
 
-        Promise.all([
-            Api.getDataContractByIdentifier(identifier),
-            Api.getDocumentsByDataContract(identifier, 
-                                           pagintationConfig.defaultPage, 
-                                           pagintationConfig.itemsOnPage.default + 1)
-        ])
-        .then(([defaultDataContract, defaultDocuments]) => {
-            setDataContract(defaultDataContract)
-            setDocuments(defaultDocuments.resultSet)
-            setTotal(defaultDocuments.pagination.total)
-        })            
-        .catch(console.log)
-        .finally(() => {
-            setLoading(false)
-        })
-    }
+  useEffect(fetchData, [identifier])
 
-    useEffect(fetchData, [identifier])
+  const handlePageClick = ({ selected }) => {
+    Api.getDocumentsByDataContract(
+      dataContract.identifier,
+      selected + 1,
+      pagintationConfig.itemsOnPage.default + 1)
+      .then((res) => setDocuments(res.resultSet))
 
-    const handlePageClick = ({selected}) => {
-        Api.getDocumentsByDataContract(dataContract.identifier,
-                                       selected  + 1, 
-                                       pagintationConfig.itemsOnPage.default + 1)
-            .then((res) => setDocuments(res.resultSet))
+    setCurrentPage(selected)
+  }
 
-        setCurrentPage(selected)
-    }
-
-    if (!loading) return (
-        <Container 
-            maxW='container.xl' 
+  if (!loading) {
+    return (
+        <Container
+            maxW='container.xl'
             padding={3}
             mt={8}
             className={'DataContract'}
         >
-            <TableContainer 
+            <TableContainer
                 maxW='none'
                 borderWidth='1px' borderRadius='lg'
             >
@@ -97,10 +98,10 @@ function DataContract({identifier}) {
 
                         <Tr>
                             <Td>System</Td>
-                            <Td isNumeric>{dataContract.isSystem ? 'true': 'false'}</Td>
+                            <Td isNumeric>{dataContract.isSystem ? 'true' : 'false'}</Td>
                         </Tr>
 
-                        {!dataContract.isSystem && 
+                        {!dataContract.isSystem &&
                             <Tr>
                                 <Td>Created</Td>
                                 <Td isNumeric>{new Date(dataContract.timestamp).toLocaleString()}</Td>
@@ -117,7 +118,7 @@ function DataContract({identifier}) {
                             <Td isNumeric>{dataContract.version}</Td>
                         </Tr>
 
-                        {!dataContract.isSystem && 
+                        {!dataContract.isSystem &&
                             <Tr>
                                 <Td>Transaction</Td>
                                 <Td isNumeric>
@@ -129,7 +130,7 @@ function DataContract({identifier}) {
                 </Table>
             </TableContainer>
 
-            <Container 
+            <Container
                 width='100%'
                 maxW='none'
                 mt={5}
@@ -146,14 +147,14 @@ function DataContract({identifier}) {
                         <TabPanel>
                             <Box>
                                 <Box m={4}>
-                                    <DocumentsList 
+                                    <DocumentsList
                                         documents={documents}
                                         columnsCount={2}
                                     />
                                 </Box>
-                                
+
                                 <div className={'ListNavigation'}>
-                                    {pageCount > 1 && 
+                                    {pageCount > 1 &&
                                         <Pagination
                                             onPageChange={handlePageClick}
                                             pageCount={pageCount}
@@ -167,7 +168,7 @@ function DataContract({identifier}) {
                         <TabPanel>
                             <Box>
                                 <div className={'DataContractSchema'}>
-                                    <Code 
+                                    <Code
                                         className={'DataContractSchema__Code'}
                                         borderRadius='lg'
                                         p={4}
@@ -183,6 +184,7 @@ function DataContract({identifier}) {
             </Container>
         </Container>
     )
+  }
 }
 
-export default DataContract;
+export default DataContract

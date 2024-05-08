@@ -2,56 +2,55 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import * as Api from "../../../util/Api"
+import * as Api from '../../../util/Api'
 import './Document.scss'
 
-import { 
-    Box, 
-    Container,
-    TableContainer, Table, Thead, Tbody, Tr, Th, Td,
-    Heading, 
-    Flex,
-    Code 
-} from "@chakra-ui/react"
+import {
+  Box,
+  Container,
+  TableContainer, Table, Thead, Tbody, Tr, Th, Td,
+  Heading,
+  Flex,
+  Code
+} from '@chakra-ui/react'
 
+function Document ({ identifier }) {
+  const [document, setDocument] = useState({})
+  const [loading, setLoading] = useState(true)
 
-function Document({identifier}) {
-    const [document, setDocument] = useState({})
-    const [loading, setLoading] = useState(true)
+  const fetchData = () => {
+    setLoading(true)
 
-    const fetchData = () => {
-        setLoading(true)
+    Api.getDocumentByIdentifier(identifier)
+      .then(setDocument)
+      .catch(console.log)
+      .finally(() => {
+        setLoading(false)
+      })
+  }
 
-        Api.getDocumentByIdentifier(identifier)
-            .then(setDocument)
-            .catch(console.log)
-            .finally(() => {
-                setLoading(false)
-            })
-    }
+  useEffect(fetchData, [identifier])
 
-    useEffect(fetchData, [identifier])
-
-    if (!loading) return (
-        <Container 
-            maxW='container.xl' 
-            bg='gray.600' 
+  if (!loading) {
+    return (
+        <Container
+            maxW='container.xl'
+            bg='gray.600'
             color='white'
-            _dark={{ bg: "gray.900" }}
+            _dark={{ bg: 'gray.900' }}
             mt={8}
             mb={8}
             className={'DocumentPage'}
         >
-            <Flex 
-                w='100%' 
+            <Flex
+                w='100%'
                 justifyContent='space-between'
-                wrap={["wrap", , , 'nowrap']}
+                wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
             >
-
-                <TableContainer 
+                <TableContainer
                     maxW='none'
                     borderWidth='1px' borderRadius='lg'
-                    width={["100%", , , "50%"]}
+                    width={['100%', '100%', '100%', '50%']}
                     m={0}
                 >
                     <Table variant='simple'>
@@ -74,7 +73,7 @@ function Document({identifier}) {
                             </Tr>
                             <Tr>
                                 <Td>System</Td>
-                                <Td isNumeric>{document.isSystem ? 'true': 'false'}</Td>
+                                <Td isNumeric>{document.isSystem ? 'true' : 'false'}</Td>
                             </Tr>
                             <Tr>
                                 <Td>Revision</Td>
@@ -85,27 +84,27 @@ function Document({identifier}) {
                 </TableContainer>
 
                 <Box w={5} h={5} />
-            
-                <Container 
-                    width={["100%", , ,"50%"]}
+
+                <Container
+                    width={['100%', '100%', '100%', '50%']}
                     maxW='none'
                     borderWidth='1px' borderRadius='lg'
                     className={'InfoBlock'}
                 >
                     <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Data</Heading>
 
-                    <Code 
+                    <Code
                         borderRadius='lg'
                         className={'DocumentPage__Code'}
                         w='100%'
                     >
                         {JSON.stringify(JSON.parse(document.data), null, 2)}
-                    </Code>   
-
+                    </Code>
                 </Container>
             </Flex>
         </Container>
     )
+  }
 }
 
 export default Document

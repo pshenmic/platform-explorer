@@ -11,158 +11,167 @@ import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { getTransitionTypeString } from '../../util/index'
 
-import { 
-    Box, 
-    Container,
-    Heading, 
-    Flex,
+import {
+  Box,
+  Container,
+  Heading,
+  Flex
 } from '@chakra-ui/react'
 
 const transactionsChartConfig = {
-    timespan: {
-        default: '1w',
-        values: ['1h', '24h', '3d', '1w'],
-    }
+  timespan: {
+    default: '1w',
+    values: ['1h', '24h', '3d', '1w']
+  }
 }
 
-function Home() {
-    const [loading, setLoading] = useState(true)
-    const [status, setStatus] = useState({})
-    const [dataContracts, setDataContracts] = useState([])
-    const [transactions, setTransactions] = useState({items:[], printCount: 8})
-    const [richestIdentities, setRichestIdentities] = useState({items:[], printCount: 5})
-    const [trendingIdentities, setTrendingIdentities] = useState({items:[], printCount: 6})
-    const [transactionsHistory, setTransactionsHistory] = useState([])
-    const [transactionsTimespan, setTransactionsTimespan] = useState(transactionsChartConfig.timespan.default)
-    const richListContainer = createRef()
-    const richListRef = createRef()
-    const trendingIdentitiesContainer = createRef()
-    const trendingIdentitiesList = createRef()
-    const transactionsContainer = createRef()
-    const transactionsList = createRef()
+function Home () {
+  const [loading, setLoading] = useState(true)
+  const [status, setStatus] = useState({})
+  const [dataContracts, setDataContracts] = useState([])
+  const [transactions, setTransactions] = useState({ items: [], printCount: 8 })
+  const [richestIdentities, setRichestIdentities] = useState({ items: [], printCount: 5 })
+  const [trendingIdentities, setTrendingIdentities] = useState({ items: [], printCount: 6 })
+  const [transactionsHistory, setTransactionsHistory] = useState([])
+  const [transactionsTimespan, setTransactionsTimespan] = useState(transactionsChartConfig.timespan.default)
+  const richListContainer = createRef()
+  const richListRef = createRef()
+  const trendingIdentitiesContainer = createRef()
+  const trendingIdentitiesList = createRef()
+  const transactionsContainer = createRef()
+  const transactionsList = createRef()
 
-    const convertTxsForChart = (transactionsHistory) => transactionsHistory.map((item) => ({
-        x: new Date(item.timestamp),
-        y: item.data.txs
-    }))
+  const convertTxsForChart = (transactionsHistory) => transactionsHistory.map((item) => ({
+    x: new Date(item.timestamp),
+    y: item.data.txs
+  }))
 
-    const fetchData = () => {
-        setLoading(true)
+  const fetchData = () => {
+    setLoading(true)
 
-        Promise.allSettled([
-            Api.getStatus(), 
-            Api.getTransactions(1, 10, 'desc'),
-            Api.getDataContracts(1, 5, 'desc', 'documents_count'),
-            Api.getIdentities(1, 10, 'desc', 'balance'),
-            Api.getIdentities(1, 10, 'desc', 'tx_count'),
-            Api.getTransactionsHistory(transactionsChartConfig.timespan.default),
-            Api.getBlocks(1, 1, 'desc')
-        ])
-        .then(([
-            status, 
-            paginatedTransactions, 
-            paginatedDataContracts, 
-            paginatedRichestIdentities, 
-            paginatedTrendingIdentities, 
-            transactionsHistory, 
-            latestBlocks
-        ]) => {
-            const [latestBlock] = latestBlocks.value.resultSet
-            setStatus({
-                latestBlock,
-                ...status.value
-            })
-            setDataContracts(paginatedDataContracts.value.resultSet)
-            setTransactionsHistory(convertTxsForChart(transactionsHistory.value))
-            setTransactions({
-                ...transactions,
-                items:paginatedTransactions.value.resultSet
-            })
-            setRichestIdentities({
-                ...richestIdentities,
-                items: paginatedRichestIdentities.value.resultSet,
-            })
-            setTrendingIdentities({
-                ...trendingIdentities,
-                items: paginatedTrendingIdentities.value.resultSet,
-            })
+    Promise.allSettled([
+      Api.getStatus(),
+      Api.getTransactions(1, 10, 'desc'),
+      Api.getDataContracts(1, 5, 'desc', 'documents_count'),
+      Api.getIdentities(1, 10, 'desc', 'balance'),
+      Api.getIdentities(1, 10, 'desc', 'tx_count'),
+      Api.getTransactionsHistory(transactionsChartConfig.timespan.default),
+      Api.getBlocks(1, 1, 'desc')
+    ])
+      .then(([
+        status,
+        paginatedTransactions,
+        paginatedDataContracts,
+        paginatedRichestIdentities,
+        paginatedTrendingIdentities,
+        transactionsHistory,
+        latestBlocks
+      ]) => {
+        const [latestBlock] = latestBlocks.value.resultSet
+        setStatus({
+          latestBlock,
+          ...status.value
         })
-        .catch(console.log)
-        .finally(() => setLoading(false))
+        setDataContracts(paginatedDataContracts.value.resultSet)
+        setTransactionsHistory(convertTxsForChart(transactionsHistory.value))
+        setTransactions(state => ({
+          ...state,
+          items: paginatedTransactions.value.resultSet
+        }))
+        setRichestIdentities(state => ({
+          ...state,
+          items: paginatedRichestIdentities.value.resultSet
+        }))
+        setTrendingIdentities(state => ({
+          ...state,
+          items: paginatedTrendingIdentities.value.resultSet
+        }))
+      })
+      .catch(console.log)
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(fetchData, [])
+
+  useEffect(() => {
+    Api.getTransactionsHistory(transactionsTimespan)
+      .then(res => setTransactionsHistory(convertTxsForChart(res)))
+      .catch(console.log)
+      .finally(() => setLoading(false))
+  }, [transactionsTimespan])
+
+  function adaptList (container, list, data, setDataFunc) {
+    if (container !== null && list !== null && data.printCount < data.items.length) {
+      const childNodes = list.childNodes
+      const lastElementHeight = childNodes[childNodes.length - 1].getBoundingClientRect().height
+      const bottomOffset = container.getBoundingClientRect().bottom - list.getBoundingClientRect().bottom
+      const extraItems = Math.floor(bottomOffset / lastElementHeight)
+
+      if (extraItems > 0) {
+        setDataFunc({
+          ...data,
+          printCount: data.printCount + extraItems
+        })
+      }
     }
+  }
 
-    useEffect(fetchData, [])
+  useEffect(() => {
+    adaptList(
+      trendingIdentitiesContainer.current,
+      trendingIdentitiesList.current,
+      trendingIdentities,
+      setTrendingIdentities
+    )
 
-    useEffect(() => {
-        Api.getTransactionsHistory(transactionsTimespan)
-            .then(res => setTransactionsHistory(convertTxsForChart(res)))
-            .catch(console.log)
-            .finally(() => setLoading(false))
-    }, [transactionsTimespan])
+    adaptList(
+      richListContainer.current,
+      richListRef.current,
+      richestIdentities,
+      setRichestIdentities
+    )
 
-    function adaptList (container, list, data, setDataFunc) {
-        if (container !== null && list !== null && data.printCount < data.items.length) {
-            const childNodes = list.childNodes,
-                    lastElementHeight = childNodes[childNodes.length-1].getBoundingClientRect().height,
-                    bottomOffset = container.getBoundingClientRect().bottom 
-                                    - list.getBoundingClientRect().bottom,
-                    extraItems = Math.floor(bottomOffset / lastElementHeight)
+    adaptList(
+      transactionsContainer.current,
+      transactionsList.current,
+      transactions,
+      setTransactions
+    )
+  }, [
+    richListContainer,
+    trendingIdentitiesContainer,
+    transactionsContainer,
+    richListRef,
+    richestIdentities,
+    transactions,
+    transactionsList,
+    trendingIdentities,
+    trendingIdentitiesList
+  ])
 
-            if (extraItems > 0) {
-                setDataFunc({
-                    ...data,
-                    printCount: data.printCount + extraItems
-                })
-            }
-        }
-    }
-
-    useEffect(() => {
-        adaptList(
-            trendingIdentitiesContainer.current, 
-            trendingIdentitiesList.current,
-            trendingIdentities,
-            setTrendingIdentities
-        )
-
-        adaptList(
-            richListContainer.current, 
-            richListRef.current,
-            richestIdentities,
-            setRichestIdentities
-        )
-
-        adaptList(
-            transactionsContainer.current, 
-            transactionsList.current,
-            transactions,
-            setTransactions
-        )
-    },[richListContainer, trendingIdentitiesContainer, transactionsContainer])
-
-
-    if (!loading) return (<>
-        <Container 
-            maxW={'container.xl'} 
-            color={"white"} 
+  if (!loading) {
+    return (<>
+        <Container
+            maxW={'container.xl'}
+            color={'white'}
             padding={3}
             mt={8}
             mb={8}
         >
-            <Flex 
-                justifyContent={'space-between'} 
+            <Flex
+                justifyContent={'space-between'}
                 alignItems={'center'}
-                wrap={['wrap',, 'nowrap']}
+                wrap={['wrap', 'wrap', 'nowrap']}
             >
                 <Container maxW={'none'} p={0}>
-                    <Intro 
+                    <Intro
                         title={'Platform Explorer'}
                         contentSource={<Markdown>{introContent}</Markdown>}
                     />
                 </Container>
-                
+
                 <Box flexShrink={'0'} w={10} h={10} />
-                
+
                 <Container maxW={'none'} p={0}>
                     <NetworkStatus status={status}/>
                 </Container>
@@ -176,19 +185,19 @@ function Home() {
             documents={status.documentsCount}
             transfers={status.transfersCount}
         />
-    
-        <Container 
-            maxW={'container.xl'} 
-            color={"white"} 
+
+        <Container
+            maxW={'container.xl'}
+            color={'white'}
             padding={3}
             mt={0}
             mb={4}
         >
-            <Container p={0} maxW={'container.xl'} mb={[10,,16]}>
-                <Flex 
-                    w={'100%'} 
+            <Container p={0} maxW={'container.xl'} mb={[10, 10, 16]}>
+                <Flex
+                    w={'100%'}
                     justifyContent={'space-between'}
-                    wrap={["wrap", , , 'nowrap']}
+                    wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
                     mb={5}
                 >
                     <Flex
@@ -208,50 +217,50 @@ function Home() {
                                 <span>Timeframe: </span>
                                 <select
                                     className={'ChartBlock__TimeframeSelector'}
-                                    onChange={(e)=> setTransactionsTimespan(e.target.value)} 
+                                    onChange={(e) => setTransactionsTimespan(e.target.value)}
                                     defaultValue={transactionsChartConfig.timespan.default}
                                 >
                                     {transactionsChartConfig.timespan.values.map(timespan => {
-                                        return <option value={timespan} key={'ts' + timespan}>{timespan}</option>;
+                                      return <option value={timespan} key={'ts' + timespan}>{timespan}</option>
                                     })}
                                 </select>
                             </div>
                         </div>
-                        
-                        <Container 
+
+                        <Container
                             minH={'220px'}
-                            height={["300px", , ,'auto']}
+                            height={['300px', '300px', '300px', 'auto']}
                             maxW={'none'}
-                            flexGrow={'1'} 
+                            flexGrow={'1'}
                             mt={2}
-                            mb={4} 
-                            p={0} 
+                            mb={4}
+                            p={0}
                         >
                             <LineChart
                                 data={transactionsHistory}
                                 timespan={transactionsTimespan}
                                 xAxis={{
-                                    type: (() => {
-                                        if (transactionsTimespan === '1h') return {axis: 'time'}
-                                        if (transactionsTimespan === '24h') return {axis: 'time'}
-                                        if (transactionsTimespan === '3d') return {axis: 'date', tooltip: 'datetime'}
-                                        if (transactionsTimespan === '1w') return {axis: 'date'}
-                                    })(),
-                                    abbreviation: '',
-                                    title: ''
+                                  type: (() => {
+                                    if (transactionsTimespan === '1h') return { axis: 'time' }
+                                    if (transactionsTimespan === '24h') return { axis: 'time' }
+                                    if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
+                                    if (transactionsTimespan === '1w') return { axis: 'date' }
+                                  })(),
+                                  abbreviation: '',
+                                  title: ''
                                 }}
                                 yAxis={{
-                                    type: 'number',
-                                    title: '',
-                                    abbreviation: 'txs'
+                                  type: 'number',
+                                  title: '',
+                                  abbreviation: 'txs'
                                 }}
                             />
                         </Container>
                     </Flex>
 
-                    <Box flexShrink={'0'} w={10} h={[0,,,10]} />
+                    <Box flexShrink={'0'} w={10} h={[0, 0, 0, 10]} />
 
-                    <Container mb={5} p={0} maxW={['100%',,,'calc(50% - 20px)']}>
+                    <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
                         <Container
                             maxW={'100%'}
                             m={0}
@@ -261,22 +270,22 @@ function Home() {
                         >
                             <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Data Contracts</Heading>
 
-                            <SimpleList 
+                            <SimpleList
                                 items={dataContracts.map((dataContract, i) => ({
-                                    columns: [dataContract.identifier, dataContract.documentsCount],
-                                    link: '/dataContract/' + dataContract.identifier
+                                  columns: [dataContract.identifier, dataContract.documentsCount],
+                                  link: '/dataContract/' + dataContract.identifier
                                 }))}
-                                columns={['Identifier', 'Documents Count']} 
+                                columns={['Identifier', 'Documents Count']}
                             />
                         </Container>
                     </Container>
                 </Flex>
 
-                <Flex 
-                    w={'100%'} 
+                <Flex
+                    w={'100%'}
                     justifyContent={'space-between'}
-                    wrap={["wrap", , 'nowrap']}
-                    mb={[10,,16]}
+                    wrap={['wrap', 'wrap', 'nowrap']}
+                    mb={[10, 10, 16]}
                 >
                     <Container
                         ref={transactionsContainer}
@@ -287,25 +296,25 @@ function Home() {
                     >
                         <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions</Heading>
 
-                        <SimpleList 
+                        <SimpleList
                             ref={transactionsList}
                             items={transactions.items
-                                    .filter((item, i) => i < transactions.printCount)
-                                    .map((transaction, i) => ({
-                                        monospaceTitles:[transaction.hash],
-                                        columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
-                                        link: '/transaction/' + transaction.hash
-                                    }))}
-                            columns={[]} 
+                              .filter((item, i) => i < transactions.printCount)
+                              .map((transaction, i) => ({
+                                monospaceTitles: [transaction.hash],
+                                columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
+                                link: '/transaction/' + transaction.hash
+                              }))}
+                            columns={[]}
                         />
                     </Container>
 
                     <Box flexShrink={'0'} w={10} h={10} />
 
-                    <Flex 
+                    <Flex
                         flexDirection={'column'}
-                        p={0} 
-                        maxW={['100%',,'calc(50% - 20px)']}
+                        p={0}
+                        maxW={['100%', '100%', 'calc(50% - 20px)']}
                         width={'100%'}
                     >
                         <Container
@@ -313,18 +322,18 @@ function Home() {
                             maxW={'100%'}
                             borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
-                            flexGrow={'1'} 
+                            flexGrow={'1'}
                         >
                             <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Identities</Heading>
 
-                            <SimpleList 
+                            <SimpleList
                                 ref={trendingIdentitiesList}
                                 items={trendingIdentities.items
-                                        .filter((item, i) => i < trendingIdentities.printCount)
-                                        .map((identitiy, i) => ({
-                                            columns: [identitiy.identifier, identitiy.totalTxs],
-                                            link: '/identity/' + identitiy.identifier
-                                        }))}
+                                  .filter((item, i) => i < trendingIdentities.printCount)
+                                  .map((identitiy, i) => ({
+                                    columns: [identitiy.identifier, identitiy.totalTxs],
+                                    link: '/identity/' + identitiy.identifier
+                                  }))}
                                 columns={['Identifier', 'Tx Count']}
                             />
                         </Container>
@@ -336,19 +345,19 @@ function Home() {
                             maxW={'none'}
                             borderWidth={'1px'} borderRadius={'lg'}
                             className={'InfoBlock'}
-                            flexGrow={'1'} 
+                            flexGrow={'1'}
                         >
                             <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
 
-                            <SimpleList 
+                            <SimpleList
                                 ref={richListRef}
                                 items={richestIdentities.items
-                                    .filter((item, i) => i < richestIdentities.printCount)
-                                    .map((identitiy, i) => ({
+                                  .filter((item, i) => i < richestIdentities.printCount)
+                                  .map((identitiy, i) => ({
                                     columns: [identitiy.identifier, identitiy.balance],
                                     link: '/identity/' + identitiy.identifier
-                                }))}
-                                columns={['Identifier', 'Balance']} 
+                                  }))}
+                                columns={['Identifier', 'Balance']}
                             />
                         </Container>
                     </Flex>
@@ -356,6 +365,7 @@ function Home() {
             </Container>
         </Container>
     </>)
+  }
 }
 
 export default Home
