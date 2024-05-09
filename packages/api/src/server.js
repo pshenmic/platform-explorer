@@ -1,6 +1,6 @@
 const Dash = require('dash')
 const Fastify = require('fastify')
-const metricsPlugin = require('fastify-metrics');
+const metricsPlugin = require('fastify-metrics')
 const cors = require('@fastify/cors')
 const Routes = require('./routes')
 
@@ -47,7 +47,7 @@ module.exports = {
       // put your options here
     })
 
-    await fastify.register(metricsPlugin, { endpoint: '/metrics' });
+    await fastify.register(metricsPlugin, { endpoint: '/metrics' })
 
     knex = getKnex()
 
