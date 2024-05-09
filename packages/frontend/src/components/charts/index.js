@@ -28,43 +28,26 @@ const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number'
 
   const render = useCallback(() => {
     if (!chartContainer.current) return
-    setLoading(true)
     setChartElement('')
+    setLoading(!loading)
+  }, [loading])
 
-    let lastWidth = chartContainer.current.offsetWidth
+  useEffect(() => {
+    if (chartElement !== '') return
 
-    const setupChart = () => {
-      setTimeout(() => {
-        if (!chartContainer.current) {
-          setLoading(false)
-          return
-        }
-
-        if (chartContainer.current.offsetWidth !== lastWidth) {
-          lastWidth = chartContainer.current.offsetWidth
-          setupChart()
-          return
-        }
-
-        setChartElement(<LineGraph
-                    xAxis={xAxis}
-                    yAxis={yAxis}
-                    timespan={timespan}
-                    width = {chartContainer.current.offsetWidth}
-                    height = {chartContainer.current.offsetHeight}
-                    data={data}
-                />)
-
-        setLoading(false)
-      }, 100)
-    }
-
-    setupChart()
-  }, [data, timespan, xAxis, yAxis])
+    setChartElement(<LineGraph
+      xAxis={xAxis}
+      yAxis={yAxis}
+      timespan={timespan}
+      width = {chartContainer.current.offsetWidth}
+      height = {chartContainer.current.offsetHeight}
+      data={data}
+    />)
+  }, [chartElement, loading, data, timespan, xAxis, yAxis])
 
   useResizeObserver(chartContainer.current, render)
 
-  useEffect(render, [data, render, data, timespan, xAxis, yAxis, loading])
+  useEffect(() => render, [data, render])
 
   return <Container
             ref={chartContainer}
