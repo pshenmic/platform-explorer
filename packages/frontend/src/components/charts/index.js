@@ -6,6 +6,8 @@ import { Container } from '@chakra-ui/react'
 import theme from '../../styles/theme'
 
 function getDatesTicks (dates, numTicks) {
+  if (!dates.length) return []
+
   const sortedDates = dates.map(d => new Date(d)).sort((a, b) => a - b)
   const [firstDate] = sortedDates
   const lastDate = sortedDates[sortedDates.length - 1]
