@@ -73,7 +73,7 @@ function Home () {
           ...status.value
         })
         setDataContracts(paginatedDataContracts.value.resultSet)
-        setTransactionsHistory(convertTxsForChart(transactionsHistory.value))
+        setTransactionsHistory(transactionsHistory.value ? convertTxsForChart(transactionsHistory.value) : [])
         setTransactions(state => ({
           ...state,
           items: paginatedTransactions.value?.resultSet
@@ -242,25 +242,27 @@ function Home () {
                             mb={4}
                             p={0}
                         >
+                          {transactionsHistory?.length > 0 &&
                             <LineChart
-                                data={transactionsHistory}
-                                timespan={transactionsTimespan}
-                                xAxis={{
-                                  type: (() => {
-                                    if (transactionsTimespan === '1h') return { axis: 'time' }
-                                    if (transactionsTimespan === '24h') return { axis: 'time' }
-                                    if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
-                                    if (transactionsTimespan === '1w') return { axis: 'date' }
-                                  })(),
-                                  abbreviation: '',
-                                  title: ''
-                                }}
-                                yAxis={{
-                                  type: 'number',
-                                  title: '',
-                                  abbreviation: 'txs'
-                                }}
+                              data={transactionsHistory}
+                              timespan={transactionsTimespan}
+                              xAxis={{
+                                type: (() => {
+                                  if (transactionsTimespan === '1h') return { axis: 'time' }
+                                  if (transactionsTimespan === '24h') return { axis: 'time' }
+                                  if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
+                                  if (transactionsTimespan === '1w') return { axis: 'date' }
+                                })(),
+                                abbreviation: '',
+                                title: ''
+                              }}
+                              yAxis={{
+                                type: 'number',
+                                title: '',
+                                abbreviation: 'txs'
+                              }}
                             />
+                          }
                         </Container>
                     </Flex>
 
