@@ -1,28 +1,27 @@
 import Link from 'next/link'
 import './IdentitiesListItem.scss'
 
+function IdentitiesListItem ({ identity }) {
+  const { identifier, timestamp, isSystem } = identity
 
-function IdentitiesListItem ({identity}) {
-    const {identifier, timestamp, isSystem} = identity
+  return (
+    <Link
+        href={`/identity/${identifier}`}
+        className={'IdentitiesListItem'}
+    >
+        <div className={'IdentitiesListItem__Identifier'}>
+            {identifier}
+        </div>
 
-    return (
-        <Link 
-            href={`/identity/${identifier}`} 
-            className={'IdentitiesListItem'}
-        >
-            <div className={'IdentitiesListItem__Identifier'}>
-                {identifier}
+        {isSystem && <div>SYSTEM</div>}
+
+        {(typeof timestamp === 'string') &&
+            <div className={'IdentitiesListItem__Timestamp'}>
+                {new Date(timestamp).toLocaleString()}
             </div>
-
-            {isSystem && <div>SYSTEM</div>}
-
-            {(typeof timestamp === 'string') && 
-                <div className={'IdentitiesListItem__Timestamp'}>
-                    {new Date(timestamp).toLocaleString()}
-                </div>
-            }
-        </Link>
-    );
+        }
+    </Link>
+  )
 }
 
-export default IdentitiesListItem;
+export default IdentitiesListItem

@@ -1,5 +1,6 @@
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
+use dpp::identity::state_transition::AssetLockProved;
 use dpp::prelude::Revision;
 use dpp::state_transition::identity_create_transition::accessors::IdentityCreateTransitionAccessorsV0;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
@@ -18,11 +19,27 @@ pub struct Identity {
 
 impl From<IdentityCreateTransition> for Identity {
     fn from(state_transition: IdentityCreateTransition) -> Self {
+        let asset_lock = state_transition.asset_lock_proof().clone();
+        let asset_lock_output_index = asset_lock.output_index();
+
+        let tx_option = asset_lock.transaction().clone();
+
+        let future = match tx_option {
+            None => Err("Transaction not found"),
+            Some(tx) => Ok(tx.clone()),
+        };
+
+        let transaction = future.expect("Could not get transaction from the future");
+
+        let outpoint = transaction.output.iter().nth(asset_lock_output_index as usize).expect("Could not find outpoint by index").clone();
+
+        let credits = outpoint.value * 1000;
+
         return Identity {
             id: None,
             identifier: state_transition.identity_id(),
             owner: state_transition.owner_id(),
-            balance: None,
+            balance: Some(credits),
             revision: Revision::from(0 as u64),
             is_system: false,
         };

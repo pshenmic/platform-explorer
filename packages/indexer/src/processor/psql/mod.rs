@@ -92,8 +92,15 @@ impl PSQLProcessor {
 
     pub async fn handle_identity_create(&self, state_transition: IdentityCreateTransition, st_hash: String) -> () {
         let identity = Identity::from(state_transition);
+        let transfer = Transfer {
+            id: None,
+            sender: None,
+            recipient: Some(identity.identifier),
+            amount: identity.balance.expect("Balance missing from identity")
+        };
 
         self.dao.create_identity(identity, Some(st_hash.clone())).await.unwrap();
+        self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
     }
 
     pub async fn handle_identity_update(&self, state_transition: IdentityUpdateTransition, st_hash: String) -> () {

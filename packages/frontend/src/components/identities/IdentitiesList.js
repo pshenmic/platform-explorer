@@ -1,9 +1,8 @@
 import IdentitiesListItem from './IdentitiesListItem'
 import './IdentitiesList.scss'
 
-
-function IdentitiesList({ identities }) {
-    return (
+function IdentitiesList ({ identities }) {
+  return (
         <div className={'IdentitiesList'}>
             {identities.map((identity, key) =>
                 <IdentitiesListItem
@@ -11,12 +10,12 @@ function IdentitiesList({ identities }) {
                     identity={identity}
                 />
             )}
-            
+
             {identities.length === 0 &&
                 <div className={'IdentitiesList__EmptyMessage'}>There are no identities created yet.</div>
             }
         </div>
-    );
+  )
 }
 
-export default IdentitiesList;
+export default IdentitiesList

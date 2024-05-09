@@ -1,54 +1,53 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import IdentitiesList from '../../components/identities/IdentitiesList'
 import Pagination from '../../components/pagination'
 
-import { 
-    Container,
-    Heading, 
+import {
+  Container,
+  Heading
 } from '@chakra-ui/react'
 
+function Identities () {
+  const [loading, setLoading] = useState(true)
+  const [identities, setIdentities] = useState([])
+  const [total, setTotal] = useState(1)
+  const pageSize = 25
+  const [currentPage, setCurrentPage] = useState(0)
+  const pageCount = Math.ceil(total / pageSize)
 
-function Identities() {
-    const [loading, setLoading] = useState(true)
-    const [identities, setIdentities] = useState([])
-    const [total, setTotal] = useState(1)
-    const pageSize = 25
-    const [currentPage, setCurrentPage] = useState(0)
-    const pageCount = Math.ceil(total / pageSize)
+  const fetchData = () => {
+    setLoading(true)
 
-    const fetchData = () => {
-        setLoading(true)
+    Api.getIdentities(1, pageSize, 'desc')
+      .then((identities) => {
+        setIdentities(identities.resultSet)
+        setTotal(identities.pagination.total)
+      })
+      .catch(console.log)
+      .finally(() => setLoading(false))
+  }
 
-        Api.getIdentities(1, pageSize, 'desc')
-            .then((identities) => {
-                setIdentities(identities.resultSet)
-                setTotal(identities.pagination.total)
-            })
-            .catch(console.log)
-            .finally(() => setLoading(false))
-    }
+  useEffect(fetchData, [])
 
-    useEffect(fetchData, [])
+  const handlePageClick = ({ selected }) => {
+    Api.getIdentities(selected + 1, pageSize, 'desc')
+      .then((res) => {
+        setCurrentPage(selected)
+        setIdentities(res.resultSet)
+      })
+  }
 
-    const handlePageClick = ({selected}) => {
-        Api.getIdentities(selected+1, pageSize, 'desc')
-            .then((res) => {
-                setCurrentPage(selected)
-                setIdentities(res.resultSet)
-            })
-    }
-
-    return (
-        <Container 
-            maxW='container.md' 
+  return (
+        <Container
+            maxW='container.md'
             mt={8}
             className={'IdentitiesPage'}
         >
-            <Container 
-                maxW='container.md' 
+            <Container
+                maxW='container.md'
                 borderWidth='1px' borderRadius='lg'
                 className={'InfoBlock'}
             >
@@ -57,12 +56,12 @@ function Identities() {
                 {!loading && <>
                     <IdentitiesList identities={identities}/>
 
-                    {pageCount > 1 && 
+                    {pageCount > 1 &&
                         <div className={'ListNavigation'}>
-                            <Pagination 
+                            <Pagination
                                 onPageChange={handlePageClick}
                                 pageCount={pageCount}
-                                forcePage={currentPage} 
+                                forcePage={currentPage}
                             />
                         </div>
                     }
@@ -70,7 +69,7 @@ function Identities() {
 
             </Container>
         </Container>
-    )
+  )
 }
 
 export default Identities

@@ -8,6 +8,7 @@
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@react-hook/resize-observer": "^1.2.6",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -25,6 +26,11 @@
     "resize-observer-polyfill": "^1.5.1",
     "sass": "^1.69.2",
     "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.2",
+    "eslint-config-standard": "^17.1.0"
   },
   "scripts": {
     "dev": "next dev",
