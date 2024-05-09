@@ -67,7 +67,7 @@ function Home () {
         transactionsHistory,
         latestBlocks
       ]) => {
-        const [latestBlock] = latestBlocks.value?.resultSet
+        const [latestBlock] = latestBlocks.value?.resultSet ? latestBlocks.value.resultSet : {}
         setStatus({
           latestBlock,
           ...status.value
@@ -77,14 +77,20 @@ function Home () {
         setTransactions(state => ({
           ...state,
           items: paginatedTransactions.value?.resultSet
+            ? paginatedTransactions.value.resultSet
+            : []
         }))
         setRichestIdentities(state => ({
           ...state,
           items: paginatedRichestIdentities.value?.resultSet
+            ? paginatedRichestIdentities.value.resultSet
+            : []
         }))
         setTrendingIdentities(state => ({
           ...state,
           items: paginatedTrendingIdentities.value?.resultSet
+            ? paginatedTrendingIdentities.value.resultSet
+            : []
         }))
       })
       .catch(console.log)
