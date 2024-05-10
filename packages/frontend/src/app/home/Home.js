@@ -208,6 +208,7 @@ function Home () {
             dataContracts={status.dataContractsCount}
             documents={status.documentsCount}
             transfers={status.transfersCount}
+            loading={!status.loaded}
         />
 
         <Container

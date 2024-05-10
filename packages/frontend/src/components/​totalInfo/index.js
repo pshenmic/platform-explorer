@@ -7,7 +7,7 @@ import {
   Flex
 } from '@chakra-ui/react'
 
-function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers }) {
+function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers, loading }) {
   return (
         <Container
             className={'TotalInfo'}
@@ -26,7 +26,7 @@ function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers 
                 <div className='TotalInfo__Item'>
                     <div className={'TotalInfoItem TotalInfoItem--Blocks'}>
                         <div className={'TotalInfoItem__Title'}>Blocks</div>
-                        <div className={'TotalInfoItem__Value'}>{`${blocks || '-'}`}</div>
+                        <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${blocks || '-'}`}</div>
                     </div>
                 </div>
 
@@ -35,7 +35,7 @@ function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers 
                 <div className='TotalInfo__Item'>
                     <div className={'TotalInfoItem TotalInfoItem--Transactions'}>
                         <div className={'TotalInfoItem__Title'}>Transactions</div>
-                        <div className={'TotalInfoItem__Value'}>{`${transactions || '-'}`}</div>
+                        <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${transactions || '-'}`}</div>
                     </div>
                 </div>
 
@@ -44,7 +44,7 @@ function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers 
                 <div className='TotalInfo__Item'>
                     <div className={'TotalInfoItem TotalInfoItem--DataContracts'}>
                         <div className={'TotalInfoItem__Title'}>Data Contracts</div>
-                        <div className={'TotalInfoItem__Value'}>{`${dataContracts || '-'}`}</div>
+                        <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${dataContracts || '-'}`}</div>
                     </div>
                 </div>
 
@@ -53,7 +53,7 @@ function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers 
                 <div className='TotalInfo__Item'>
                     <div className={'TotalInfoItem TotalInfoItem--Documents'}>
                         <div className={'TotalInfoItem__Title'}>Documents</div>
-                        <div className={'TotalInfoItem__Value'}>{`${documents || '-'}`}</div>
+                        <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${documents || '-'}`}</div>
                     </div>
                 </div>
 
@@ -62,7 +62,7 @@ function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers 
                 <div className='TotalInfo__Item'>
                     <div className={'TotalInfoItem TotalInfoItem--Transfers'}>
                         <div className={'TotalInfoItem__Title'}>Transfers</div>
-                        <div className={'TotalInfoItem__Value'}>{`${transfers || '-'}`}</div>
+                        <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${transfers || '-'}`}</div>
                     </div>
                 </div>
             </Flex>

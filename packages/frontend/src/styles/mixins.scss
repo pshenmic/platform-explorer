@@ -47,9 +47,9 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: black;
+        background-color: var(--chakra-colors-gray-900);
         border-radius: 5px;
-        opacity: .2;
+        opacity: 1;
     }
 
     &::after {
@@ -62,7 +62,7 @@
         height: 100%;
         background: linear-gradient(90deg, rgb(14 117 181) 0%, rgb(22 82 120) 100%);
         border-radius: 100px;
-        opacity: .05;
+        opacity: .1;
         animation: loading-line linear 3s infinite;
     }
 }
