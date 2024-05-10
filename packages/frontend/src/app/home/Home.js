@@ -3,7 +3,7 @@
 import { useState, useEffect, createRef } from 'react'
 import * as Api from '../../util/Api'
 import { LineChart } from '../../components/charts/index.js'
-import { SimpleList } from '../../components/lists'
+import { SimpleList, ListLoadingPreview } from '../../components/lists'
 import TotalInfo from '../../components/​totalInfo'
 import NetworkStatus from '../../components/networkStatus'
 import Intro from '../../components/intro/index.js'
@@ -28,7 +28,7 @@ const transactionsChartConfig = {
 function Home () {
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState({ loaded: false })
-  const [dataContracts, setDataContracts] = useState({ items: [], loaded: false })
+  const [dataContracts, setDataContracts] = useState({ items: [], printCount: 5, loaded: false })
   const [transactions, setTransactions] = useState({ items: [], printCount: 8, loaded: false })
   const [richestIdentities, setRichestIdentities] = useState({ items: [], printCount: 5, loaded: false })
   const [trendingIdentities, setTrendingIdentities] = useState({ items: [], printCount: 5, loaded: false })
@@ -65,7 +65,7 @@ function Home () {
             loaded: true
           }))
         }),
-      Api.getDataContracts(1, 5, 'desc', 'documents_count')
+      Api.getDataContracts(1, dataContracts.printCount, 'desc', 'documents_count')
         .then(paginatedDataContracts => setDataContracts(state => ({
           ...state,
           items: paginatedDataContracts?.resultSet || [],
@@ -296,14 +296,15 @@ function Home () {
                             className={'InfoBlock'}
                         >
                             <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Data Contracts</Heading>
-
-                            <SimpleList
-                                items={dataContracts.items.map((dataContract, i) => ({
-                                  columns: [dataContract.identifier, dataContract.documentsCount],
-                                  link: '/dataContract/' + dataContract.identifier
-                                }))}
-                                columns={['Identifier', 'Documents Count']}
-                            />
+                            {dataContracts.loaded
+                              ? <SimpleList
+                                    items={dataContracts.items.map((dataContract, i) => ({
+                                      columns: [dataContract.identifier, dataContract.documentsCount],
+                                      link: '/dataContract/' + dataContract.identifier
+                                    }))}
+                                    columns={['Identifier', 'Documents Count']}
+                                />
+                              : <ListLoadingPreview itemsCount={dataContracts.printCount}/>}
                         </Container>
                     </Container>
                 </Flex>
@@ -322,18 +323,19 @@ function Home () {
                         className={'InfoBlock'}
                     >
                         <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions</Heading>
-
-                        <SimpleList
-                            ref={transactionsList}
-                            items={transactions.items
-                              .filter((item, i) => i < transactions.printCount)
-                              .map((transaction, i) => ({
-                                monospaceTitles: [transaction.hash],
-                                columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
-                                link: '/transaction/' + transaction.hash
-                              }))}
-                            columns={[]}
-                        />
+                        {transactions.loaded
+                          ? <SimpleList
+                              ref={transactionsList}
+                              items={transactions.items
+                                .filter((item, i) => i < transactions.printCount)
+                                .map((transaction, i) => ({
+                                  monospaceTitles: [transaction.hash],
+                                  columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
+                                  link: '/transaction/' + transaction.hash
+                                }))}
+                              columns={[]}
+                          />
+                          : <ListLoadingPreview itemsCount={transactions.printCount}/>}
                     </Container>
 
                     <Box flexShrink={'0'} w={10} h={10} />
@@ -352,17 +354,18 @@ function Home () {
                             flexGrow={'1'}
                         >
                             <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Identities</Heading>
-
-                            <SimpleList
-                                ref={trendingIdentitiesList}
-                                items={trendingIdentities.items
-                                  .filter((item, i) => i < trendingIdentities.printCount)
-                                  .map((identitiy, i) => ({
-                                    columns: [identitiy.identifier, identitiy.totalTxs],
-                                    link: '/identity/' + identitiy.identifier
-                                  }))}
-                                columns={['Identifier', 'Tx Count']}
-                            />
+                            {trendingIdentities.loaded
+                              ? <SimpleList
+                                    ref={trendingIdentitiesList}
+                                    items={trendingIdentities.items
+                                      .filter((item, i) => i < trendingIdentities.printCount)
+                                      .map((identitiy, i) => ({
+                                        columns: [identitiy.identifier, identitiy.totalTxs],
+                                        link: '/identity/' + identitiy.identifier
+                                      }))}
+                                    columns={['Identifier', 'Tx Count']}
+                                />
+                              : <ListLoadingPreview itemsCount={trendingIdentities.printCount}/>}
                         </Container>
 
                         <Box w={10} h={10} />
@@ -375,17 +378,18 @@ function Home () {
                             flexGrow={'1'}
                         >
                             <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
-
-                            <SimpleList
-                                ref={richListRef}
-                                items={richestIdentities.items
-                                  .filter((item, i) => i < richestIdentities.printCount)
-                                  .map((identitiy, i) => ({
-                                    columns: [identitiy.identifier, identitiy.balance],
-                                    link: '/identity/' + identitiy.identifier
-                                  }))}
-                                columns={['Identifier', 'Balance']}
-                            />
+                            {richestIdentities.loaded
+                              ? <SimpleList
+                                    ref={richListRef}
+                                    items={richestIdentities.items
+                                      .filter((item, i) => i < richestIdentities.printCount)
+                                      .map((identitiy, i) => ({
+                                        columns: [identitiy.identifier, identitiy.balance],
+                                        link: '/identity/' + identitiy.identifier
+                                      }))}
+                                    columns={['Identifier', 'Balance']}
+                                />
+                              : <ListLoadingPreview itemsCount={richestIdentities.printCount}/>}
                         </Container>
                     </Flex>
                 </Flex>

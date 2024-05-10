@@ -24,6 +24,7 @@
 
 @mixin loading-line {
     overflow: hidden;
+    position: relative;
 
     @keyframes loading-line {
         0% {
@@ -65,4 +66,14 @@
         opacity: .1;
         animation: loading-line linear 3s infinite;
     }
+
+    $timeOffset: 0.5s;
+
+    @for $i from 1 through 10 {
+        &:nth-child(#{$i}n) {
+          &::after {
+            animation-delay: $i * $timeOffset;
+          }
+        }
+      }
 }
