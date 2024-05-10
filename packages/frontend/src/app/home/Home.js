@@ -26,13 +26,13 @@ const transactionsChartConfig = {
 }
 
 function Home () {
-  const [loading, setLoading] = useState(true)
-  const [status, setStatus] = useState({})
-  const [dataContracts, setDataContracts] = useState([])
-  const [transactions, setTransactions] = useState({ items: [], printCount: 8 })
-  const [richestIdentities, setRichestIdentities] = useState({ items: [], printCount: 5 })
-  const [trendingIdentities, setTrendingIdentities] = useState({ items: [], printCount: 6 })
-  const [transactionsHistory, setTransactionsHistory] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState({ loaded: false })
+  const [dataContracts, setDataContracts] = useState({ items: [], loaded: false })
+  const [transactions, setTransactions] = useState({ items: [], printCount: 8, loaded: false })
+  const [richestIdentities, setRichestIdentities] = useState({ items: [], printCount: 5, loaded: false })
+  const [trendingIdentities, setTrendingIdentities] = useState({ items: [], printCount: 5, loaded: false })
+  const [transactionsHistory, setTransactionsHistory] = useState({ items: [], loaded: false })
   const [transactionsTimespan, setTransactionsTimespan] = useState(transactionsChartConfig.timespan.default)
   const richListContainer = createRef()
   const richListRef = createRef()
@@ -47,52 +47,65 @@ function Home () {
   }))
 
   const fetchData = () => {
-    setLoading(true)
-
     Promise.allSettled([
-      Api.getStatus(),
-      Api.getTransactions(1, 10, 'desc'),
-      Api.getDataContracts(1, 5, 'desc', 'documents_count'),
-      Api.getIdentities(1, 10, 'desc', 'balance'),
-      Api.getIdentities(1, 10, 'desc', 'tx_count'),
-      Api.getTransactionsHistory(transactionsChartConfig.timespan.default),
+      Api.getStatus().then(res => {
+        setStatus(state => ({
+          ...state,
+          ...res,
+          loaded: true
+        }))
+      }),
+      Api.getTransactions(1, 10, 'desc')
+        .then(paginatedTransactions => {
+          setTransactions(state => ({
+            ...state,
+            items: paginatedTransactions?.resultSet
+              ? paginatedTransactions.resultSet
+              : [],
+            loaded: true
+          }))
+        }),
+      Api.getDataContracts(1, 5, 'desc', 'documents_count')
+        .then(paginatedDataContracts => setDataContracts(state => ({
+          ...state,
+          items: paginatedDataContracts?.resultSet || [],
+          loaded: true
+        }))),
+      Api.getIdentities(1, 10, 'desc', 'balance')
+        .then(paginatedRichestIdentities => {
+          setRichestIdentities(state => ({
+            ...state,
+            items: paginatedRichestIdentities?.resultSet
+              ? paginatedRichestIdentities.resultSet
+              : [],
+            loaded: true
+          }))
+        }),
+      Api.getIdentities(1, 10, 'desc', 'tx_count')
+        .then(paginatedTrendingIdentities => {
+          setTrendingIdentities(state => ({
+            ...state,
+            items: paginatedTrendingIdentities?.resultSet
+              ? paginatedTrendingIdentities.resultSet
+              : [],
+            loaded: true
+          }))
+        }),
+      Api.getTransactionsHistory(transactionsChartConfig.timespan.default)
+        .then(transactionsHistory => {
+          setTransactionsHistory(transactionsHistory ? convertTxsForChart(transactionsHistory) : [])
+        }),
       Api.getBlocks(1, 1, 'desc')
-    ])
-      .then(([
-        status,
-        paginatedTransactions,
-        paginatedDataContracts,
-        paginatedRichestIdentities,
-        paginatedTrendingIdentities,
-        transactionsHistory,
-        latestBlocks
-      ]) => {
-        const [latestBlock] = latestBlocks.value?.resultSet ? latestBlocks.value.resultSet : {}
-        setStatus({
-          latestBlock,
-          ...status.value
+        .then(latestBlocks => {
+          const [latestBlock] = latestBlocks?.resultSet ? latestBlocks.resultSet : {}
+
+          setStatus(state => ({
+            ...state,
+            latestBlock,
+            loaded: true
+          }))
         })
-        setDataContracts(paginatedDataContracts.value.resultSet)
-        setTransactionsHistory(transactionsHistory.value ? convertTxsForChart(transactionsHistory.value) : [])
-        setTransactions(state => ({
-          ...state,
-          items: paginatedTransactions.value?.resultSet
-            ? paginatedTransactions.value.resultSet
-            : []
-        }))
-        setRichestIdentities(state => ({
-          ...state,
-          items: paginatedRichestIdentities.value?.resultSet
-            ? paginatedRichestIdentities.value.resultSet
-            : []
-        }))
-        setTrendingIdentities(state => ({
-          ...state,
-          items: paginatedTrendingIdentities.value?.resultSet
-            ? paginatedTrendingIdentities.value.resultSet
-            : []
-        }))
-      })
+    ])
       .catch(console.log)
       .finally(() => setLoading(false))
   }
@@ -123,6 +136,11 @@ function Home () {
   }
 
   useEffect(() => {
+    if (!trendingIdentities.loaded ||
+        !richestIdentities.loaded ||
+        !transactions.loaded
+    ) return
+
     adaptList(
       trendingIdentitiesContainer.current,
       trendingIdentitiesList.current,
@@ -279,7 +297,7 @@ function Home () {
                             <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Data Contracts</Heading>
 
                             <SimpleList
-                                items={dataContracts.map((dataContract, i) => ({
+                                items={dataContracts.items.map((dataContract, i) => ({
                                   columns: [dataContract.identifier, dataContract.documentsCount],
                                   link: '/dataContract/' + dataContract.identifier
                                 }))}
