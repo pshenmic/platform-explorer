@@ -7,6 +7,7 @@ import { SimpleList, ListLoadingPreview } from '../../components/lists'
 import TotalInfo from '../../components/​totalInfo'
 import NetworkStatus from '../../components/networkStatus'
 import Intro from '../../components/intro/index.js'
+import { PulseLoader } from '../../components/loaders'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { getTransitionTypeString } from '../../util/index'
@@ -32,7 +33,7 @@ function Home () {
   const [transactions, setTransactions] = useState({ items: [], printCount: 8, loaded: false })
   const [richestIdentities, setRichestIdentities] = useState({ items: [], printCount: 5, loaded: false })
   const [trendingIdentities, setTrendingIdentities] = useState({ items: [], printCount: 5, loaded: false })
-  const [transactionsHistory, setTransactionsHistory] = useState({ items: [], loaded: false })
+  const [transactionsHistory, setTransactionsHistory] = useState({ data: [], loaded: false })
   const [transactionsTimespan, setTransactionsTimespan] = useState(transactionsChartConfig.timespan.default)
   const richListContainer = createRef()
   const richListRef = createRef()
@@ -93,7 +94,11 @@ function Home () {
         }),
       Api.getTransactionsHistory(transactionsChartConfig.timespan.default)
         .then(transactionsHistory => {
-          setTransactionsHistory(transactionsHistory ? convertTxsForChart(transactionsHistory) : [])
+          setTransactionsHistory(state => ({
+            ...state,
+            data: transactionsHistory ? convertTxsForChart(transactionsHistory) : [],
+            loaded: true
+          }))
         }),
       Api.getBlocks(1, 1, 'desc')
         .then(latestBlocks => {
@@ -114,7 +119,13 @@ function Home () {
 
   useEffect(() => {
     Api.getTransactionsHistory(transactionsTimespan)
-      .then(res => setTransactionsHistory(convertTxsForChart(res)))
+      .then(res => {
+        setTransactionsHistory(state => ({
+          ...state,
+          data: res ? convertTxsForChart(res) : [],
+          loaded: true
+        }))
+      })
       .catch(console.log)
       .finally(() => setLoading(false))
   }, [transactionsTimespan])
@@ -261,27 +272,30 @@ function Home () {
                             mb={4}
                             p={0}
                         >
-                          {transactionsHistory?.length > 0 &&
-                            <LineChart
-                              data={transactionsHistory}
-                              timespan={transactionsTimespan}
-                              xAxis={{
-                                type: (() => {
-                                  if (transactionsTimespan === '1h') return { axis: 'time' }
-                                  if (transactionsTimespan === '24h') return { axis: 'time' }
-                                  if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
-                                  if (transactionsTimespan === '1w') return { axis: 'date' }
-                                })(),
-                                abbreviation: '',
-                                title: ''
-                              }}
-                              yAxis={{
-                                type: 'number',
-                                title: '',
-                                abbreviation: 'txs'
-                              }}
-                            />
-                          }
+                          {transactionsHistory.loaded
+                            ? transactionsHistory.data?.length > 0 &&
+                              <LineChart
+                                data={transactionsHistory.data}
+                                timespan={transactionsTimespan}
+                                xAxis={{
+                                  type: (() => {
+                                    if (transactionsTimespan === '1h') return { axis: 'time' }
+                                    if (transactionsTimespan === '24h') return { axis: 'time' }
+                                    if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
+                                    if (transactionsTimespan === '1w') return { axis: 'date' }
+                                  })(),
+                                  abbreviation: '',
+                                  title: ''
+                                }}
+                                yAxis={{
+                                  type: 'number',
+                                  title: '',
+                                  abbreviation: 'txs'
+                                }}
+                              />
+                            : <Flex w={'100%'} h={'100%'} alignItems={'center'} justifyContent={'center'}>
+                                <PulseLoader/>
+                              </Flex>}
                         </Container>
                     </Flex>
 
@@ -335,7 +349,7 @@ function Home () {
                                 }))}
                               columns={[]}
                           />
-                          : <ListLoadingPreview itemsCount={transactions.printCount}/>}
+                          : <ListLoadingPreview itemsCount={Math.round(transactions.printCount * 1.5)}/>}
                     </Container>
 
                     <Box flexShrink={'0'} w={10} h={10} />
