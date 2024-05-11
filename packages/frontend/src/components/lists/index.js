@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import './SimpleList.scss'
-import { forwardRef, useRef } from 'react'
+import { forwardRef } from 'react'
 
 function SimpleListItem ({ item }) {
   const ItemContainer = ({ link, children }) => link
@@ -49,7 +49,6 @@ function SimpleListItem ({ item }) {
 
 const SimpleList = forwardRef(function (props, ref) {
   const { items, columns } = props
-  const listContainer = useRef()
 
   return (
     <div className={'SimpleList'} ref={ref}>
@@ -59,7 +58,7 @@ const SimpleList = forwardRef(function (props, ref) {
             )}
         </div>
 
-        <div ref={listContainer}>
+        <div>
             {items.map((item, key) =>
                 <SimpleListItem
                     key={key}
