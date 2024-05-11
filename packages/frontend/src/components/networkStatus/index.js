@@ -4,7 +4,6 @@ import Link from 'next/link'
 import './NetworkStatus.scss'
 
 function NetworkStatus ({ status }) {
-  const loading = status.loaded !== undefined ? !status.loaded : false
   const msFromLastBlock = new Date() - new Date(status?.latestBlock?.header?.timestamp)
   const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
   const NetworkStatusIcon = networkStatus
@@ -31,7 +30,7 @@ function NetworkStatus ({ status }) {
             h={'100%'}
             borderWidth={'1px'} borderRadius={'lg'}
         >
-            <div className={`NetworkStatus__InfoItem ${loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
+            <div className={`NetworkStatus__InfoItem ${!status.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Epoch:</div>
                 <div className={'NetworkStatus__Value'}>
                     <span>{status.epoch !== undefined ? `#${status.epoch.index}` : '-'}</span>
@@ -51,7 +50,7 @@ function NetworkStatus ({ status }) {
                 </div>
             </div>
 
-            <div className={`NetworkStatus__InfoItem ${loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
+            <div className={`NetworkStatus__InfoItem ${!status?.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Network:</div>
                 <div className={'NetworkStatus__Value'}>
                     <span>{status.network !== undefined ? `${status.network}` : 'n/a'}</span>
@@ -72,7 +71,7 @@ function NetworkStatus ({ status }) {
                 </div>
             </div>
 
-            <div className={`NetworkStatus__InfoItem ${loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
+            <div className={`NetworkStatus__InfoItem ${!status?.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Latest block:</div>
 
                 {status.latestBlock !== undefined
