@@ -27,7 +27,6 @@ const transactionsChartConfig = {
 }
 
 function Home () {
-  const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState({ loaded: false })
   const [dataContracts, setDataContracts] = useState({ items: [], printCount: 5, loaded: false })
   const [transactions, setTransactions] = useState({ items: [], printCount: 8, loaded: false })
@@ -65,13 +64,15 @@ function Home () {
               : [],
             loaded: true
           }))
-        }),
+        })
+        .catch(console.log),
       Api.getDataContracts(1, dataContracts.printCount, 'desc', 'documents_count')
         .then(paginatedDataContracts => setDataContracts(state => ({
           ...state,
           items: paginatedDataContracts?.resultSet || [],
           loaded: true
-        }))),
+        })))
+        .catch(console.log),
       Api.getIdentities(1, 10, 'desc', 'balance')
         .then(paginatedRichestIdentities => {
           setRichestIdentities(state => ({
@@ -81,7 +82,8 @@ function Home () {
               : [],
             loaded: true
           }))
-        }),
+        })
+        .catch(console.log),
       Api.getIdentities(1, 10, 'desc', 'tx_count')
         .then(paginatedTrendingIdentities => {
           setTrendingIdentities(state => ({
@@ -91,7 +93,8 @@ function Home () {
               : [],
             loaded: true
           }))
-        }),
+        })
+        .catch(console.log),
       Api.getTransactionsHistory(transactionsChartConfig.timespan.default)
         .then(transactionsHistory => {
           setTransactionsHistory(state => ({
@@ -99,7 +102,8 @@ function Home () {
             data: transactionsHistory ? convertTxsForChart(transactionsHistory) : [],
             loaded: true
           }))
-        }),
+        })
+        .catch(console.log),
       Api.getBlocks(1, 1, 'desc')
         .then(latestBlocks => {
           const [latestBlock] = latestBlocks?.resultSet ? latestBlocks.resultSet : {}
@@ -110,9 +114,8 @@ function Home () {
             loaded: true
           }))
         })
+        .catch(console.log)
     ])
-      .catch(console.log)
-      .finally(() => setLoading(false))
   }
 
   useEffect(fetchData, [])
@@ -127,7 +130,6 @@ function Home () {
         }))
       })
       .catch(console.log)
-      .finally(() => setLoading(false))
   }, [transactionsTimespan])
 
   function adaptList (container, list, data, setDataFunc) {
@@ -184,233 +186,231 @@ function Home () {
     trendingIdentitiesList
   ])
 
-  if (!loading) {
-    return (<>
-        <Container
-            maxW={'container.xl'}
-            color={'white'}
-            padding={3}
-            mt={8}
-            mb={8}
-        >
-            <Flex
-                justifyContent={'space-between'}
-                alignItems={'center'}
-                wrap={['wrap', 'wrap', 'nowrap']}
-            >
-                <Container maxW={'none'} p={0}>
-                    <Intro
-                        title={'Platform Explorer'}
-                        contentSource={<Markdown>{introContent}</Markdown>}
-                    />
-                </Container>
+  return (<>
+      <Container
+          maxW={'container.xl'}
+          color={'white'}
+          padding={3}
+          mt={8}
+          mb={8}
+      >
+          <Flex
+              justifyContent={'space-between'}
+              alignItems={'center'}
+              wrap={['wrap', 'wrap', 'nowrap']}
+          >
+              <Container maxW={'none'} p={0}>
+                  <Intro
+                      title={'Platform Explorer'}
+                      contentSource={<Markdown>{introContent}</Markdown>}
+                  />
+              </Container>
 
-                <Box flexShrink={'0'} w={10} h={10} />
+              <Box flexShrink={'0'} w={10} h={10} />
 
-                <Container maxW={'none'} p={0}>
-                    <NetworkStatus status={status}/>
-                </Container>
-            </Flex>
-        </Container>
+              <Container maxW={'none'} p={0}>
+                  <NetworkStatus status={status}/>
+              </Container>
+          </Flex>
+      </Container>
 
-        <TotalInfo
-            blocks={status.blocksCount}
-            transactions={status.txCount}
-            dataContracts={status.dataContractsCount}
-            documents={status.documentsCount}
-            transfers={status.transfersCount}
-            loading={!status.loaded}
-        />
+      <TotalInfo
+          blocks={status.blocksCount}
+          transactions={status.txCount}
+          dataContracts={status.dataContractsCount}
+          documents={status.documentsCount}
+          transfers={status.transfersCount}
+          loading={!status.loaded}
+      />
 
-        <Container
-            maxW={'container.xl'}
-            color={'white'}
-            padding={3}
-            mt={0}
-            mb={4}
-        >
-            <Container p={0} maxW={'container.xl'} mb={[10, 10, 16]}>
-                <Flex
-                    w={'100%'}
-                    justifyContent={'space-between'}
-                    wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
-                    mb={5}
-                >
-                    <Flex
-                        className={'ChartBlock'}
-                        maxW={'none'}
-                        width={'100%'}
-                        mb={5}
-                        borderWidth={'1px'} borderRadius={'lg'}
-                        direction={'column'}
-                        p={3}
-                        pb={2}
-                    >
-                        <div className={'ChartBlock__Head'}>
-                            <Heading className={'ChartBlock__Title'} as={'h2'} size={'sm'}>Transactions history</Heading>
+      <Container
+          maxW={'container.xl'}
+          color={'white'}
+          padding={3}
+          mt={0}
+          mb={4}
+      >
+          <Container p={0} maxW={'container.xl'} mb={[10, 10, 16]}>
+              <Flex
+                  w={'100%'}
+                  justifyContent={'space-between'}
+                  wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
+                  mb={5}
+              >
+                  <Flex
+                      className={'ChartBlock'}
+                      maxW={'none'}
+                      width={'100%'}
+                      mb={5}
+                      borderWidth={'1px'} borderRadius={'lg'}
+                      direction={'column'}
+                      p={3}
+                      pb={2}
+                  >
+                      <div className={'ChartBlock__Head'}>
+                          <Heading className={'ChartBlock__Title'} as={'h2'} size={'sm'}>Transactions history</Heading>
 
-                            <div className={'ChartBlock__TimeframeContainer'}>
-                                <span>Timeframe: </span>
-                                <select
-                                    className={'ChartBlock__TimeframeSelector'}
-                                    onChange={(e) => setTransactionsTimespan(e.target.value)}
-                                    defaultValue={transactionsChartConfig.timespan.default}
-                                >
-                                    {transactionsChartConfig.timespan.values.map(timespan => {
-                                      return <option value={timespan} key={'ts' + timespan}>{timespan}</option>
-                                    })}
-                                </select>
-                            </div>
-                        </div>
+                          <div className={'ChartBlock__TimeframeContainer'}>
+                              <span>Timeframe: </span>
+                              <select
+                                  className={'ChartBlock__TimeframeSelector'}
+                                  onChange={(e) => setTransactionsTimespan(e.target.value)}
+                                  defaultValue={transactionsChartConfig.timespan.default}
+                              >
+                                  {transactionsChartConfig.timespan.values.map(timespan => {
+                                    return <option value={timespan} key={'ts' + timespan}>{timespan}</option>
+                                  })}
+                              </select>
+                          </div>
+                      </div>
 
-                        <Container
-                            minH={'220px'}
-                            height={['300px', '300px', '300px', 'auto']}
-                            maxW={'none'}
-                            flexGrow={'1'}
-                            mt={2}
-                            mb={4}
-                            p={0}
-                        >
-                          {transactionsHistory.loaded
-                            ? transactionsHistory.data?.length > 0 &&
-                              <LineChart
-                                data={transactionsHistory.data}
-                                timespan={transactionsTimespan}
-                                xAxis={{
-                                  type: (() => {
-                                    if (transactionsTimespan === '1h') return { axis: 'time' }
-                                    if (transactionsTimespan === '24h') return { axis: 'time' }
-                                    if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
-                                    if (transactionsTimespan === '1w') return { axis: 'date' }
-                                  })(),
-                                  abbreviation: '',
-                                  title: ''
-                                }}
-                                yAxis={{
-                                  type: 'number',
-                                  title: '',
-                                  abbreviation: 'txs'
-                                }}
+                      <Container
+                          minH={'220px'}
+                          height={['300px', '300px', '300px', 'auto']}
+                          maxW={'none'}
+                          flexGrow={'1'}
+                          mt={2}
+                          mb={4}
+                          p={0}
+                      >
+                        {transactionsHistory.loaded
+                          ? transactionsHistory.data?.length > 0 &&
+                            <LineChart
+                              data={transactionsHistory.data}
+                              timespan={transactionsTimespan}
+                              xAxis={{
+                                type: (() => {
+                                  if (transactionsTimespan === '1h') return { axis: 'time' }
+                                  if (transactionsTimespan === '24h') return { axis: 'time' }
+                                  if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
+                                  if (transactionsTimespan === '1w') return { axis: 'date' }
+                                })(),
+                                abbreviation: '',
+                                title: ''
+                              }}
+                              yAxis={{
+                                type: 'number',
+                                title: '',
+                                abbreviation: 'txs'
+                              }}
+                            />
+                          : <Flex w={'100%'} h={'100%'} alignItems={'center'} justifyContent={'center'}>
+                              <PulseLoader/>
+                            </Flex>}
+                      </Container>
+                  </Flex>
+
+                  <Box flexShrink={'0'} w={10} h={[0, 0, 0, 10]} />
+
+                  <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
+                      <Container
+                          maxW={'100%'}
+                          m={0}
+                          h={'100%'}
+                          borderWidth={'1px'} borderRadius={'lg'}
+                          className={'InfoBlock'}
+                      >
+                          <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Data Contracts</Heading>
+                          {dataContracts.loaded
+                            ? <SimpleList
+                                  items={dataContracts.items.map((dataContract, i) => ({
+                                    columns: [dataContract.identifier, dataContract.documentsCount],
+                                    link: '/dataContract/' + dataContract.identifier
+                                  }))}
+                                  columns={['Identifier', 'Documents Count']}
                               />
-                            : <Flex w={'100%'} h={'100%'} alignItems={'center'} justifyContent={'center'}>
-                                <PulseLoader/>
-                              </Flex>}
-                        </Container>
-                    </Flex>
+                            : <ListLoadingPreview itemsCount={dataContracts.printCount}/>}
+                      </Container>
+                  </Container>
+              </Flex>
 
-                    <Box flexShrink={'0'} w={10} h={[0, 0, 0, 10]} />
+              <Flex
+                  w={'100%'}
+                  justifyContent={'space-between'}
+                  wrap={['wrap', 'wrap', 'nowrap']}
+                  mb={[10, 10, 16]}
+              >
+                  <Container
+                      ref={transactionsContainer}
+                      maxW={'100%'}
+                      borderWidth={'1px'} borderRadius={'lg'}
+                      mb={0}
+                      className={'InfoBlock'}
+                  >
+                      <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions</Heading>
+                      {transactions.loaded
+                        ? <SimpleList
+                            ref={transactionsList}
+                            items={transactions.items
+                              .filter((item, i) => i < transactions.printCount)
+                              .map((transaction, i) => ({
+                                monospaceTitles: [transaction.hash],
+                                columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
+                                link: '/transaction/' + transaction.hash
+                              }))}
+                            columns={[]}
+                        />
+                        : <ListLoadingPreview itemsCount={Math.round(transactions.printCount * 1.5)}/>}
+                  </Container>
 
-                    <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
-                        <Container
-                            maxW={'100%'}
-                            m={0}
-                            h={'100%'}
-                            borderWidth={'1px'} borderRadius={'lg'}
-                            className={'InfoBlock'}
-                        >
-                            <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Data Contracts</Heading>
-                            {dataContracts.loaded
-                              ? <SimpleList
-                                    items={dataContracts.items.map((dataContract, i) => ({
-                                      columns: [dataContract.identifier, dataContract.documentsCount],
-                                      link: '/dataContract/' + dataContract.identifier
+                  <Box flexShrink={'0'} w={10} h={10} />
+
+                  <Flex
+                      flexDirection={'column'}
+                      p={0}
+                      maxW={['100%', '100%', 'calc(50% - 20px)']}
+                      width={'100%'}
+                  >
+                      <Container
+                          ref={trendingIdentitiesContainer}
+                          maxW={'100%'}
+                          borderWidth={'1px'} borderRadius={'lg'}
+                          className={'InfoBlock'}
+                          flexGrow={'1'}
+                      >
+                          <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Identities</Heading>
+                          {trendingIdentities.loaded
+                            ? <SimpleList
+                                  ref={trendingIdentitiesList}
+                                  items={trendingIdentities.items
+                                    .filter((item, i) => i < trendingIdentities.printCount)
+                                    .map((identitiy, i) => ({
+                                      columns: [identitiy.identifier, identitiy.totalTxs],
+                                      link: '/identity/' + identitiy.identifier
                                     }))}
-                                    columns={['Identifier', 'Documents Count']}
-                                />
-                              : <ListLoadingPreview itemsCount={dataContracts.printCount}/>}
-                        </Container>
-                    </Container>
-                </Flex>
+                                  columns={['Identifier', 'Tx Count']}
+                              />
+                            : <ListLoadingPreview itemsCount={trendingIdentities.printCount}/>}
+                      </Container>
 
-                <Flex
-                    w={'100%'}
-                    justifyContent={'space-between'}
-                    wrap={['wrap', 'wrap', 'nowrap']}
-                    mb={[10, 10, 16]}
-                >
-                    <Container
-                        ref={transactionsContainer}
-                        maxW={'100%'}
-                        borderWidth={'1px'} borderRadius={'lg'}
-                        mb={0}
-                        className={'InfoBlock'}
-                    >
-                        <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions</Heading>
-                        {transactions.loaded
-                          ? <SimpleList
-                              ref={transactionsList}
-                              items={transactions.items
-                                .filter((item, i) => i < transactions.printCount)
-                                .map((transaction, i) => ({
-                                  monospaceTitles: [transaction.hash],
-                                  columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
-                                  link: '/transaction/' + transaction.hash
-                                }))}
-                              columns={[]}
-                          />
-                          : <ListLoadingPreview itemsCount={Math.round(transactions.printCount * 1.5)}/>}
-                    </Container>
+                      <Box w={10} h={10} />
 
-                    <Box flexShrink={'0'} w={10} h={10} />
-
-                    <Flex
-                        flexDirection={'column'}
-                        p={0}
-                        maxW={['100%', '100%', 'calc(50% - 20px)']}
-                        width={'100%'}
-                    >
-                        <Container
-                            ref={trendingIdentitiesContainer}
-                            maxW={'100%'}
-                            borderWidth={'1px'} borderRadius={'lg'}
-                            className={'InfoBlock'}
-                            flexGrow={'1'}
-                        >
-                            <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Identities</Heading>
-                            {trendingIdentities.loaded
-                              ? <SimpleList
-                                    ref={trendingIdentitiesList}
-                                    items={trendingIdentities.items
-                                      .filter((item, i) => i < trendingIdentities.printCount)
-                                      .map((identitiy, i) => ({
-                                        columns: [identitiy.identifier, identitiy.totalTxs],
-                                        link: '/identity/' + identitiy.identifier
-                                      }))}
-                                    columns={['Identifier', 'Tx Count']}
-                                />
-                              : <ListLoadingPreview itemsCount={trendingIdentities.printCount}/>}
-                        </Container>
-
-                        <Box w={10} h={10} />
-
-                        <Container
-                            ref={richListContainer}
-                            maxW={'none'}
-                            borderWidth={'1px'} borderRadius={'lg'}
-                            className={'InfoBlock'}
-                            flexGrow={'1'}
-                        >
-                            <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
-                            {richestIdentities.loaded
-                              ? <SimpleList
-                                    ref={richListRef}
-                                    items={richestIdentities.items
-                                      .filter((item, i) => i < richestIdentities.printCount)
-                                      .map((identitiy, i) => ({
-                                        columns: [identitiy.identifier, identitiy.balance],
-                                        link: '/identity/' + identitiy.identifier
-                                      }))}
-                                    columns={['Identifier', 'Balance']}
-                                />
-                              : <ListLoadingPreview itemsCount={richestIdentities.printCount}/>}
-                        </Container>
-                    </Flex>
-                </Flex>
-            </Container>
-        </Container>
-    </>)
-  }
+                      <Container
+                          ref={richListContainer}
+                          maxW={'none'}
+                          borderWidth={'1px'} borderRadius={'lg'}
+                          className={'InfoBlock'}
+                          flexGrow={'1'}
+                      >
+                          <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
+                          {richestIdentities.loaded
+                            ? <SimpleList
+                                  ref={richListRef}
+                                  items={richestIdentities.items
+                                    .filter((item, i) => i < richestIdentities.printCount)
+                                    .map((identitiy, i) => ({
+                                      columns: [identitiy.identifier, identitiy.balance],
+                                      link: '/identity/' + identitiy.identifier
+                                    }))}
+                                  columns={['Identifier', 'Balance']}
+                              />
+                            : <ListLoadingPreview itemsCount={richestIdentities.printCount}/>}
+                      </Container>
+                  </Flex>
+              </Flex>
+          </Container>
+      </Container>
+  </>)
 }
 
 export default Home
