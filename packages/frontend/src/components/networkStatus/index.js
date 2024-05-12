@@ -4,14 +4,14 @@ import Link from 'next/link'
 import './NetworkStatus.scss'
 
 function NetworkStatus ({ status }) {
-  const msFromLastBlock = new Date() - new Date(status?.latestBlock?.header?.timestamp)
+  const msFromLastBlock = new Date() - new Date(status?.data.latestBlock?.header?.timestamp)
   const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
   const NetworkStatusIcon = networkStatus
     ? <CheckCircleIcon color={'green.500'} ml={2}/>
     : <WarningTwoIcon color={'yellow.400'} ml={2}/>
 
   function getLastBlocktimeString () {
-    if (!status?.latestBlock?.header?.timestamp) return 'n/a'
+    if (!status?.data?.latestBlock?.header?.timestamp) return 'n/a'
 
     if (msFromLastBlock < 60 * 1000) {
       return `${Math.floor((msFromLastBlock / 1000))} sec. ago`
@@ -33,11 +33,11 @@ function NetworkStatus ({ status }) {
             <div className={`NetworkStatus__InfoItem ${!status.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Epoch:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{status.epoch !== undefined ? `#${status.epoch.index}` : '-'}</span>
+                    <span>{status.data.epoch !== undefined ? `#${status.data.epoch.index}` : '-'}</span>
 
-                    {status.epoch !== undefined &&
+                    {status.data.epoch !== undefined &&
                         <Tooltip
-                            label={`Next epoch change at ${new Date(status.epoch.endTime).toLocaleString()}`}
+                            label={`Next epoch change at ${new Date(status.data.epoch.endTime).toLocaleString()}`}
                             aria-label={'A tooltip'}
                             placement={'top'}
                             hasArrow
@@ -53,7 +53,7 @@ function NetworkStatus ({ status }) {
             <div className={`NetworkStatus__InfoItem ${!status?.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Network:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{status.network !== undefined ? `${status.network}` : 'n/a'}</span>
+                    <span>{status.data.network !== undefined ? `${status.data.network}` : 'n/a'}</span>
 
                     <Tooltip
                         label={`${networkStatus
@@ -74,10 +74,10 @@ function NetworkStatus ({ status }) {
             <div className={`NetworkStatus__InfoItem ${!status?.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Latest block:</div>
 
-                {status.latestBlock !== undefined
+                {status.data.latestBlock !== undefined
                   ? <div className={'NetworkStatus__Value'}>
-                        <Link href={`/block/${status.latestBlock.header.hash}`}>
-                            #{status.latestBlock.header.height}, {getLastBlocktimeString()}
+                        <Link href={`/block/${status.data.latestBlock.header.hash}`}>
+                            #{status.data.latestBlock.header.height}, {getLastBlocktimeString()}
                         </Link>
                     </div>
                   : <div className={'NetworkStatus__Value'}>-</div>}

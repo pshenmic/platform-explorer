@@ -25,13 +25,15 @@ const transactionsChartConfig = {
   }
 }
 
+const fetchErrorMessage = 'It looks like there was an error loading data. We\'ll fix it soon.'
+
 function Home () {
-  const [status, setStatus] = useState({ loaded: false })
-  const [dataContracts, setDataContracts] = useState({ items: [], printCount: 5, loaded: false })
-  const [transactions, setTransactions] = useState({ items: [], printCount: 8, loaded: false })
-  const [richestIdentities, setRichestIdentities] = useState({ items: [], printCount: 5, loaded: false })
-  const [trendingIdentities, setTrendingIdentities] = useState({ items: [], printCount: 5, loaded: false })
-  const [transactionsHistory, setTransactionsHistory] = useState({ data: [], loaded: false })
+  const [status, setStatus] = useState({ data: {}, loaded: false, error: false })
+  const [dataContracts, setDataContracts] = useState({ data: { items: [], printCount: 5 }, loaded: false, error: false })
+  const [transactions, setTransactions] = useState({ data: { items: [], printCount: 8 }, loaded: false, error: false })
+  const [richestIdentities, setRichestIdentities] = useState({ data: { items: [], printCount: 5 }, loaded: false, error: false })
+  const [trendingIdentities, setTrendingIdentities] = useState({ data: { items: [], printCount: 5 }, loaded: false, error: false })
+  const [transactionsHistory, setTransactionsHistory] = useState({ data: { items: [], printCount: 5 }, loaded: false, error: false })
   const [transactionsTimespan, setTransactionsTimespan] = useState(transactionsChartConfig.timespan.default)
   const richListContainer = createRef()
   const richListRef = createRef()
@@ -42,73 +44,150 @@ function Home () {
 
   const fetchData = () => {
     Promise.all([
-      Api.getStatus().then(res => {
-        setStatus(state => ({
+      Api.getStatus()
+        .then(res => setStatus(state => ({
           ...state,
-          ...res,
-          loaded: true
-        }))
-      }),
+          data: {
+            ...state.data,
+            ...res
+          },
+          loaded: true,
+          error: false
+        })))
+        .catch(res => setStatus(state => ({
+          ...state,
+          data: {
+            ...state.data,
+            error: res
+          },
+          loaded: true,
+          error: true
+        }))),
+
       Api.getTransactions(1, 10, 'desc')
-        .then(paginatedTransactions => {
-          setTransactions(state => ({
-            ...state,
+        .then(paginatedTransactions => setTransactions(state => ({
+          ...state,
+          data: {
+            ...state.data,
             items: paginatedTransactions?.resultSet
               ? paginatedTransactions.resultSet
-              : [],
-            loaded: true
-          }))
-        })
-        .catch(console.log),
-      Api.getDataContracts(1, dataContracts.printCount, 'desc', 'documents_count')
+              : []
+          },
+          loaded: true,
+          error: false
+        }))
+        )
+        .catch(res => setTransactions(state => ({
+          ...state,
+          data: {
+            ...state.data,
+            error: res
+          },
+          loaded: true,
+          error: true
+        }))),
+
+      Api.getDataContracts(1, dataContracts.data.printCount, 'desc', 'documents_count')
         .then(paginatedDataContracts => setDataContracts(state => ({
           ...state,
-          items: paginatedDataContracts?.resultSet || [],
-          loaded: true
+          data: {
+            ...state.data,
+            items: paginatedDataContracts?.resultSet || []
+          },
+          loaded: true,
+          error: false
         })))
-        .catch(console.log),
+        .catch(res => setDataContracts(state => ({
+          ...state,
+          data: {
+            ...state.data,
+            error: res
+          },
+          loaded: true,
+          error: true
+        }))),
+
       Api.getIdentities(1, 10, 'desc', 'balance')
-        .then(paginatedRichestIdentities => {
-          setRichestIdentities(state => ({
-            ...state,
+        .then(paginatedRichestIdentities => setRichestIdentities(state => ({
+          ...state,
+          data: {
+            ...state.data,
             items: paginatedRichestIdentities?.resultSet
               ? paginatedRichestIdentities.resultSet
-              : [],
-            loaded: true
-          }))
-        })
-        .catch(console.log),
+              : []
+          },
+          loaded: true,
+          error: false
+        })))
+        .catch(res => setRichestIdentities(state => ({
+          ...state,
+          data: {
+            ...state.data,
+            error: res
+          },
+          loaded: true,
+          error: true
+        }))),
+
       Api.getIdentities(1, 10, 'desc', 'tx_count')
-        .then(paginatedTrendingIdentities => {
-          setTrendingIdentities(state => ({
-            ...state,
+        .then(paginatedTrendingIdentities => setTrendingIdentities(state => ({
+          ...state,
+          data: {
+            ...state.data,
             items: paginatedTrendingIdentities?.resultSet
               ? paginatedTrendingIdentities.resultSet
-              : [],
-            loaded: true
-          }))
-        })
-        .catch(console.log),
+              : []
+          },
+          loaded: true,
+          error: false
+        })))
+        .catch(res => setTrendingIdentities(state => ({
+          ...state,
+          data: {
+            ...state.res,
+            error: res
+          },
+          loaded: true,
+          error: true
+        }))),
+
       Api.getTransactionsHistory(transactionsChartConfig.timespan.default)
-        .then(transactionsHistory => {
-          setTransactionsHistory(state => ({
-            ...state,
-            data: transactionsHistory,
-            loaded: true
-          }))
-        })
-        .catch(console.log),
+        .then(transactionsHistory => setTransactionsHistory(state => ({
+          ...state,
+          data: transactionsHistory,
+          loaded: true,
+          error: false
+        })))
+        .catch(res => setTransactionsHistory(state => ({
+          ...state,
+          data: res,
+          loaded: true,
+          error: true
+        }))),
+
       Api.getBlocks(1, 1, 'desc')
         .then(latestBlocks => {
           const [latestBlock] = latestBlocks?.resultSet ? latestBlocks.resultSet : {}
 
           setStatus(state => ({
             ...state,
-            latestBlock,
-            loaded: true
+            data: {
+              ...state.data,
+              latestBlock
+            },
+            loaded: true,
+            error: false
           }))
         })
-        .catch(console.log)
+        .catch(res => setStatus(state => ({
+          ...state,
+          data: {
+            ...state.data,
+            latestBlock: res
+          },
+          loaded: true,
+          error: true
+        })))
     ])
       .then()
       .catch(console.log)
@@ -136,10 +215,13 @@ function Home () {
       const extraItems = Math.floor(bottomOffset / lastElementHeight)
 
       if (extraItems > 0) {
-        setDataFunc({
-          ...data,
-          printCount: data.printCount + extraItems
-        })
+        setDataFunc(state => ({
+          ...state,
+          data: {
+            ...state.data,
+            printCount: data.printCount + extraItems
+          }
+        }))
       }
     }
   }
@@ -153,21 +235,21 @@ function Home () {
     adaptList(
       trendingIdentitiesContainer.current,
       trendingIdentitiesList.current,
-      trendingIdentities,
+      trendingIdentities.data,
       setTrendingIdentities
     )
 
     adaptList(
       richListContainer.current,
       richListRef.current,
-      richestIdentities,
+      richestIdentities.data,
       setRichestIdentities
     )
 
     adaptList(
       transactionsContainer.current,
       transactionsList.current,
-      transactions,
+      transactions.data,
       setTransactions
     )
   }, [
@@ -211,12 +293,12 @@ function Home () {
       </Container>
 
       <TotalInfo
-          blocks={status.blocksCount}
-          transactions={status.txCount}
-          dataContracts={status.dataContractsCount}
-          documents={status.documentsCount}
-          transfers={status.transfersCount}
-          loading={!status.loaded}
+        blocks={status.data?.blocksCount}
+        transactions={status.data?.txCount}
+        dataContracts={status.data?.dataContractsCount}
+        documents={status.data?.documentsCount}
+        transfers={status.data?.transfersCount}
+        loading={!status.loaded}
       />
 
       <Container
@@ -313,14 +395,16 @@ function Home () {
                       >
                           <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Data Contracts</Heading>
                           {dataContracts.loaded
-                            ? <SimpleList
-                                  items={dataContracts.items.map((dataContract, i) => ({
-                                    columns: [dataContract.identifier, dataContract.documentsCount],
-                                    link: '/dataContract/' + dataContract.identifier
-                                  }))}
-                                  columns={['Identifier', 'Documents Count']}
-                              />
-                            : <ListLoadingPreview itemsCount={dataContracts.printCount}/>}
+                            ? !dataContracts.error
+                                ? <SimpleList
+                                    items={dataContracts.data.items.map((dataContract, i) => ({
+                                      columns: [dataContract.identifier, dataContract.documentsCount],
+                                      link: '/dataContract/' + dataContract.identifier
+                                    }))}
+                                    columns={['Identifier', 'Documents Count']}
+                                  />
+                                : <>{fetchErrorMessage}</>
+                            : <ListLoadingPreview itemsCount={dataContracts.data.printCount}/>}
                       </Container>
                   </Container>
               </Flex>
@@ -340,18 +424,20 @@ function Home () {
                   >
                       <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions</Heading>
                       {transactions.loaded
-                        ? <SimpleList
-                            ref={transactionsList}
-                            items={transactions.items
-                              .filter((item, i) => i < transactions.printCount)
-                              .map((transaction, i) => ({
-                                monospaceTitles: [transaction.hash],
-                                columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
-                                link: '/transaction/' + transaction.hash
-                              }))}
-                            columns={[]}
-                        />
-                        : <ListLoadingPreview itemsCount={Math.round(transactions.printCount * 1.5)}/>}
+                        ? !transactions.error 
+                          ? <SimpleList
+                              ref={transactionsList}
+                              items={transactions.data.items
+                                .filter((item, i) => i < transactions.data.printCount)
+                                .map((transaction, i) => ({
+                                  monospaceTitles: [transaction.hash],
+                                  columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
+                                  link: '/transaction/' + transaction.hash
+                                }))}
+                              columns={[]}
+                            />
+                          : <>{fetchErrorMessage}</>
+                        : <ListLoadingPreview itemsCount={Math.round(transactions.data.printCount * 1.5)}/>}
                   </Container>
 
                   <Box flexShrink={'0'} w={10} h={10} />
@@ -371,17 +457,19 @@ function Home () {
                       >
                           <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Identities</Heading>
                           {trendingIdentities.loaded
-                            ? <SimpleList
+                            ? !trendingIdentities.error 
+                              ? <SimpleList
                                   ref={trendingIdentitiesList}
-                                  items={trendingIdentities.items
-                                    .filter((item, i) => i < trendingIdentities.printCount)
+                                  items={trendingIdentities.data.items
+                                    .filter((item, i) => i < trendingIdentities.data.printCount)
                                     .map((identitiy, i) => ({
                                       columns: [identitiy.identifier, identitiy.totalTxs],
                                       link: '/identity/' + identitiy.identifier
                                     }))}
                                   columns={['Identifier', 'Tx Count']}
-                              />
-                            : <ListLoadingPreview itemsCount={trendingIdentities.printCount}/>}
+                                />
+                              : <>{fetchErrorMessage}</>
+                            : <ListLoadingPreview itemsCount={trendingIdentities.data.printCount}/>}
                       </Container>
 
                       <Box w={10} h={10} />
@@ -395,17 +483,19 @@ function Home () {
                       >
                           <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
                           {richestIdentities.loaded
-                            ? <SimpleList
+                            ? !richestIdentities.error 
+                              ? <SimpleList
                                   ref={richListRef}
-                                  items={richestIdentities.items
-                                    .filter((item, i) => i < richestIdentities.printCount)
+                                  items={richestIdentities.data.items
+                                    .filter((item, i) => i < richestIdentities.data.printCount)
                                     .map((identitiy, i) => ({
                                       columns: [identitiy.identifier, identitiy.balance],
                                       link: '/identity/' + identitiy.identifier
                                     }))}
                                   columns={['Identifier', 'Balance']}
                               />
-                            : <ListLoadingPreview itemsCount={richestIdentities.printCount}/>}
+                              : <>{fetchErrorMessage}</>
+                            : <ListLoadingPreview itemsCount={richestIdentities.data.printCount}/>}
                       </Container>
                   </Flex>
               </Flex>
