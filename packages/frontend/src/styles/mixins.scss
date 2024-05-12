@@ -77,3 +77,79 @@
         }
       }
 }
+
+@mixin loading-container {
+    @keyframes loading-process {
+        from {
+            opacity: 0;
+            left: -100%;
+            z-index: 6;
+        }
+        50% {
+            opacity: .25;
+        }
+        to {
+            z-index: 6;
+            left: 100%;
+        }
+    }
+    
+    @keyframes loading-bg {
+        from {
+            z-index: 5;
+            opacity: 0;
+        }
+        15% {
+            opacity: 1;
+        }
+        85% {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+            z-index: 5;
+        }
+    }
+    
+    @keyframes loading-container {
+        from {
+            overflow: hidden;
+        }
+        to {
+            overflow: hidden;
+        }
+    }
+
+    overflow: hidden;
+    position: relative;
+    animation: 1s loading-container infinite;
+
+    &::before {
+        animation: 1s loading-bg infinite;
+    }
+
+    &::after {
+        animation: 1s loading-process infinite;
+    }
+    
+    &::before, &::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        opacity: 0;
+        left: 0;
+        z-index: -1;
+    }
+
+    &::before {
+        background-color: var(--chakra-colors-gray-900);
+    }
+
+    &::after {
+        background: linear-gradient(90deg, transparent 0%, rgb(14 117 181) 50%, transparent 100%);
+        width: 100%;
+        height: 100%;
+    }
+}

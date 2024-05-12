@@ -41,11 +41,6 @@ function Home () {
   const transactionsContainer = createRef()
   const transactionsList = createRef()
 
-  const convertTxsForChart = (transactionsHistory) => transactionsHistory.map((item) => ({
-    x: new Date(item.timestamp),
-    y: item.data.txs
-  }))
-
   const fetchData = () => {
     Promise.allSettled([
       Api.getStatus().then(res => {
@@ -99,7 +94,7 @@ function Home () {
         .then(transactionsHistory => {
           setTransactionsHistory(state => ({
             ...state,
-            data: transactionsHistory ? convertTxsForChart(transactionsHistory) : [],
+            data: transactionsHistory,
             loaded: true
           }))
         })
@@ -125,7 +120,7 @@ function Home () {
       .then(res => {
         setTransactionsHistory(state => ({
           ...state,
-          data: res ? convertTxsForChart(res) : [],
+          data: res,
           loaded: true
         }))
       })
@@ -274,9 +269,12 @@ function Home () {
                           p={0}
                       >
                         {transactionsHistory.loaded
-                          ? transactionsHistory.data?.length > 0 &&
+                          ? transactionsHistory.data?.length &&
                             <LineChart
-                              data={transactionsHistory.data}
+                              data={transactionsHistory.data.map((item) => ({
+                                x: new Date(item.timestamp),
+                                y: item.data.txs
+                              }))}
                               timespan={transactionsTimespan}
                               xAxis={{
                                 type: (() => {
@@ -294,9 +292,11 @@ function Home () {
                                 abbreviation: 'txs'
                               }}
                             />
-                          : <Flex w={'100%'} h={'100%'} alignItems={'center'} justifyContent={'center'}>
-                              <PulseLoader/>
-                            </Flex>}
+                          : <Container
+                              w={'100%'}
+                              h={'100%'}
+                              className={'ChartBlock__Loader'}>
+                            </Container>}
                       </Container>
                   </Flex>
 

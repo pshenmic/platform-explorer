@@ -1,15 +1,22 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
 .ChartContainer {
+    &.loading {
+        @include mixins.loading-container;
+    }
+}
+
+.Chart {
     visibility: hidden;
     opacity: 0;
-    transition: all .1s;
+    transition: all 1s;
 
     &.loaded {
         visibility: visible;
         opacity: 1;
     }
-}
 
-.Chart {
     &__Tooltip {
         font-size: 14px;
         font-family: var(--chakra-fonts-body);

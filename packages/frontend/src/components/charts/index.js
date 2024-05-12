@@ -26,26 +26,29 @@ function getDatesTicks (dates, numTicks) {
 const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number' } }, yAxis = { title: '', type: { axis: 'number' } } }) => {
   const chartContainer = useRef()
   const [chartElement, setChartElement] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const render = useCallback(() => {
+    setLoading(true)
     if (!chartContainer.current) return
     setChartElement('')
-    setLoading(!loading)
-  }, [loading])
+  }, [])
 
   useEffect(() => {
-    if (chartElement !== '') return
+    if (chartElement) {
+      setTimeout(() => setLoading(false), 1000)
+      return
+    }
 
     setChartElement(<LineGraph
       xAxis={xAxis}
       yAxis={yAxis}
       timespan={timespan}
-      width = {chartContainer.current.offsetWidth}
-      height = {chartContainer.current.offsetHeight}
+      width={chartContainer.current.offsetWidth}
+      height={chartContainer.current.offsetHeight}
       data={data}
     />)
-  }, [chartElement, loading, data, timespan, xAxis, yAxis])
+  }, [chartElement, data, timespan, xAxis, yAxis])
 
   useResizeObserver(chartContainer.current, render)
 
@@ -57,6 +60,7 @@ const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number'
             height={'100%'}
             maxW={'none'}
             p={0} m={0}
+            className={`ChartContainer ${loading ? 'loading' : ''}`}
         >
             {chartElement}
         </Container>
@@ -291,66 +295,66 @@ const LineGraph = ({
   }
 
   return (
-        <div className={`ChartContainer ${!loading ? 'loaded' : ''}`}>
-            <svg
-                onMouseEnter = {pointermoved}
-                onMouseMove = {pointermoved}
-                onMouseLeave = {pointerleft}
-                overflow={'visible'}
-                viewBox={`0 0 ${width} ${height}`}
-            >
-                <filter id="shadow">
-                    <feDropShadow dx="0.2" dy="0.4" stdDeviation=".15" />
-                </filter>
+    <div className={`Chart ${!loading ? 'loaded' : ''}`}>
+        <svg
+            onMouseEnter = {pointermoved}
+            onMouseMove = {pointermoved}
+            onMouseLeave = {pointerleft}
+            overflow={'visible'}
+            viewBox={`0 0 ${width} ${height}`}
+        >
+            <filter id="shadow">
+                <feDropShadow dx="0.2" dy="0.4" stdDeviation=".15" />
+            </filter>
 
-                <svg x='15' y='-15' overflow={'visible'}>
-                    <g className={'Axis'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
-                        <g><text className={'Axis__Label'} fill='white'>{xAxis.title}</text></g>
-                        <g className={'Axis__TickContainer'}></g>
-                    </g>
-                </svg>
-
-                <svg x='0' y='-15'>
-                    <g className={'Axis'} ref={gy} >
-                        <g><text className={'Axis__Label'} fill='white'>{yAxis.title}</text></g>
-                        <g className={'Axis__TickContainer'}></g>
-                    </g>
-                </svg>
-
-                <g transform={'translate(15,-15)'}>
-                    <defs>
-                        <linearGradient id="AreaFill" x1="0%" y1="100%" x2="0%" y2="0%">
-                            <stop stopColor="#0F4D74" stopOpacity="0.02" offset="0%" />
-                            <stop stopColor="#0E75B5" stopOpacity="0.4" offset="100%" />
-                        </linearGradient>
-                        <clipPath id="clipPath">
-                            <rect
-                                x={marginLeft - 10}
-                                y={marginTop}
-                                width={width - (marginLeft - 10 + marginRight)}
-                                height={height - (marginTop + marginBottom)}
-                            ></rect>
-                        </clipPath>
-                    </defs>
-
-                    <path d={area(data)} fill="url(#AreaFill)" clipPath={'url(#clipPath)'}/>
-
-                    <g filter='url(#shadow)'>
-                        <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none"/>
-
-                        <g fill='#0e75b5'>
-                            {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'Chart__Point'}/>))}
-                        </g>
-                    </g>
-
-                    <g ref={focusPoint} className={'Chart__FocusPoint'}>
-                        <circle r="3" fill='white' />
-                    </g>
-
-                    <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'} filter='url(#shadow)'></g>
+            <svg x='15' y='-15' overflow={'visible'}>
+                <g className={'Axis'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
+                    <g><text className={'Axis__Label'} fill='white'>{xAxis.title}</text></g>
+                    <g className={'Axis__TickContainer'}></g>
                 </g>
             </svg>
-        </div>
+
+            <svg x='0' y='-15'>
+                <g className={'Axis'} ref={gy} >
+                    <g><text className={'Axis__Label'} fill='white'>{yAxis.title}</text></g>
+                    <g className={'Axis__TickContainer'}></g>
+                </g>
+            </svg>
+
+            <g transform={'translate(15,-15)'}>
+                <defs>
+                    <linearGradient id="AreaFill" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop stopColor="#0F4D74" stopOpacity="0.02" offset="0%" />
+                        <stop stopColor="#0E75B5" stopOpacity="0.4" offset="100%" />
+                    </linearGradient>
+                    <clipPath id="clipPath">
+                        <rect
+                            x={marginLeft - 10}
+                            y={marginTop}
+                            width={width - (marginLeft - 10 + marginRight)}
+                            height={height - (marginTop + marginBottom)}
+                        ></rect>
+                    </clipPath>
+                </defs>
+
+                <path d={area(data)} fill="url(#AreaFill)" clipPath={'url(#clipPath)'}/>
+
+                <g filter='url(#shadow)'>
+                    <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none"/>
+
+                    <g fill='#0e75b5'>
+                        {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'Chart__Point'}/>))}
+                    </g>
+                </g>
+
+                <g ref={focusPoint} className={'Chart__FocusPoint'}>
+                    <circle r="3" fill='white' />
+                </g>
+
+                <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'} filter='url(#shadow)'></g>
+            </g>
+        </svg>
+    </div>
   )
 }
 
