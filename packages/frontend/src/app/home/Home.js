@@ -424,8 +424,8 @@ function Home () {
                   >
                       <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions</Heading>
                       {transactions.loaded
-                        ? !transactions.error 
-                          ? <SimpleList
+                        ? !transactions.error
+                            ? <SimpleList
                               ref={transactionsList}
                               items={transactions.data.items
                                 .filter((item, i) => i < transactions.data.printCount)
@@ -436,7 +436,7 @@ function Home () {
                                 }))}
                               columns={[]}
                             />
-                          : <>{fetchErrorMessage}</>
+                            : <>{fetchErrorMessage}</>
                         : <ListLoadingPreview itemsCount={Math.round(transactions.data.printCount * 1.5)}/>}
                   </Container>
 
@@ -457,8 +457,8 @@ function Home () {
                       >
                           <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Identities</Heading>
                           {trendingIdentities.loaded
-                            ? !trendingIdentities.error 
-                              ? <SimpleList
+                            ? !trendingIdentities.error
+                                ? <SimpleList
                                   ref={trendingIdentitiesList}
                                   items={trendingIdentities.data.items
                                     .filter((item, i) => i < trendingIdentities.data.printCount)
@@ -468,7 +468,7 @@ function Home () {
                                     }))}
                                   columns={['Identifier', 'Tx Count']}
                                 />
-                              : <>{fetchErrorMessage}</>
+                                : <>{fetchErrorMessage}</>
                             : <ListLoadingPreview itemsCount={trendingIdentities.data.printCount}/>}
                       </Container>
 
@@ -483,8 +483,8 @@ function Home () {
                       >
                           <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
                           {richestIdentities.loaded
-                            ? !richestIdentities.error 
-                              ? <SimpleList
+                            ? !richestIdentities.error
+                                ? <SimpleList
                                   ref={richListRef}
                                   items={richestIdentities.data.items
                                     .filter((item, i) => i < richestIdentities.data.printCount)
@@ -493,8 +493,8 @@ function Home () {
                                       link: '/identity/' + identitiy.identifier
                                     }))}
                                   columns={['Identifier', 'Balance']}
-                              />
-                              : <>{fetchErrorMessage}</>
+                                />
+                                : <>{fetchErrorMessage}</>
                             : <ListLoadingPreview itemsCount={richestIdentities.data.printCount}/>}
                       </Container>
                   </Flex>
