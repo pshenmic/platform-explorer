@@ -110,8 +110,8 @@ function Home () {
         })
         .catch(console.log)
     ])
-    .then()
-    .catch(console.log)
+      .then()
+      .catch(console.log)
   }
 
   useEffect(fetchData, [])
