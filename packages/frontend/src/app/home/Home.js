@@ -41,7 +41,7 @@ function Home () {
   const transactionsList = createRef()
 
   const fetchData = () => {
-    Promise.allSettled([
+    Promise.all([
       Api.getStatus().then(res => {
         setStatus(state => ({
           ...state,
@@ -110,6 +110,8 @@ function Home () {
         })
         .catch(console.log)
     ])
+    .then()
+    .catch(console.log)
   }
 
   useEffect(fetchData, [])
