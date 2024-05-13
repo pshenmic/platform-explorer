@@ -52,17 +52,6 @@ module.exports = {
       endpoint: '/metrics'
     })
 
-    new fastify.metrics.client.Gauge({
-      name: 'platform_explorer_api_block_height',
-      help: 'The latest block height in the API',
-      async collect() {
-        const blockDAO = new BlocksDAO(knex)
-        const { resultSet: [block] } = await blockDAO.getBlocks(1, 1, 'desc')
-
-        this.set(block.header.height)
-      }
-    })
-
     knex = getKnex()
 
     await knex.raw('select 1+1')
@@ -87,6 +76,18 @@ module.exports = {
     })
 
     fastify.setErrorHandler(errorHandler)
+
+    // eslint-disable-next-line no-new
+    new fastify.metrics.client.Gauge({
+      name: 'platform_explorer_api_block_height',
+      help: 'The latest block height in the API',
+      async collect () {
+        const blockDAO = new BlocksDAO(knex)
+        const { resultSet: [block] } = await blockDAO.getBlocks(1, 1, 'desc')
+
+        this.set(block.header.height)
+      }
+    })
 
     await fastify.ready()
 
