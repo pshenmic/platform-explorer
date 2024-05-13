@@ -108,7 +108,6 @@ function Home () {
         })
         .catch(err => fetchHandlerError(setStatus, err))
     ])
-      .then()
       .catch(console.log)
   }
 
