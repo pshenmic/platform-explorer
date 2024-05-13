@@ -10,6 +10,7 @@ import Intro from '../../components/intro/index.js'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { getTransitionTypeString } from '../../util/index'
+import { InfoIcon, CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
 
 import {
   Box,
@@ -35,7 +36,7 @@ function ErrorMessageBlock () {
       flexDirection={'column'}
       opacity={0.5}
     >
-      <div>Error loading data</div>
+      <div><WarningTwoIcon color={'#ddd'} mr={2} mt={-1}/>Error loading data</div>
     </Flex>
   )
 }
