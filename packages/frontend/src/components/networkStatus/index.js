@@ -4,7 +4,7 @@ import Link from 'next/link'
 import './NetworkStatus.scss'
 
 function NetworkStatus ({ status }) {
-  const msFromLastBlock = new Date() - new Date(status?.data.latestBlock?.header?.timestamp)
+  const msFromLastBlock = new Date() - new Date(status?.data?.latestBlock?.header?.timestamp)
   const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
   const NetworkStatusIcon = networkStatus
     ? <CheckCircleIcon color={'green.500'} ml={2}/>
