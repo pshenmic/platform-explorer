@@ -33,7 +33,7 @@ function NetworkStatus ({ status }) {
             <div className={`NetworkStatus__InfoItem ${!status.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Epoch:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{status.data.epoch !== undefined ? `#${status.data.epoch.index}` : '-'}</span>
+                    <span>{status?.data?.epoch !== undefined ? `#${status.data.epoch.index}` : '-'}</span>
 
                     {status.data.epoch !== undefined &&
                         <Tooltip
@@ -53,7 +53,7 @@ function NetworkStatus ({ status }) {
             <div className={`NetworkStatus__InfoItem ${!status?.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Network:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{status.data.network !== undefined ? `${status.data.network}` : 'n/a'}</span>
+                    <span>{status?.data?.network !== undefined ? `${status.data.network}` : 'n/a'}</span>
 
                     <Tooltip
                         label={`${networkStatus
@@ -74,7 +74,7 @@ function NetworkStatus ({ status }) {
             <div className={`NetworkStatus__InfoItem ${!status?.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Latest block:</div>
 
-                {status.data.latestBlock !== undefined
+                {status?.data?.latestBlock !== undefined
                   ? <div className={'NetworkStatus__Value'}>
                         <Link href={`/block/${status.data.latestBlock.header.hash}`}>
                             #{status.data.latestBlock.header.height}, {getLastBlocktimeString()}
