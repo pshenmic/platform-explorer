@@ -36,7 +36,7 @@ function ErrorMessageBlock () {
       opacity={0.5}
     >
       <div>It looks like there was an error loading data.</div>
-      <div>Sorry... We'll fix it soon.</div>
+      <div>Sorry... We&apos;ll fix it soon.</div>
     </Flex>
   )
 }
