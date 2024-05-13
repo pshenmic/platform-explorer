@@ -95,7 +95,10 @@ function Home () {
         .then(res => setData(setTransactionsHistory, res, true)),
 
       Api.getBlocks(1, 1, 'desc')
-        .then(latestBlocks => setData(setStatus, { latestBlocks }))
+        .then(res => {
+          const [latestBlock] = res.resultSet
+          setData(setStatus, { latestBlock })
+        })
         .catch(latestBlocks => setData(setStatus, { latestBlocks }, true))
     ])
       .then()
