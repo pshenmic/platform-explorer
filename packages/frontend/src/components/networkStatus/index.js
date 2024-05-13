@@ -35,7 +35,7 @@ function NetworkStatus ({ status }) {
                 <div className={'NetworkStatus__Value'}>
                     <span>{status?.data?.epoch !== undefined ? `#${status.data.epoch.index}` : '-'}</span>
 
-                    {status.data.epoch !== undefined &&
+                    {status?.data?.epoch !== undefined &&
                         <Tooltip
                             label={`Next epoch change at ${new Date(status.data.epoch.endTime).toLocaleString()}`}
                             aria-label={'A tooltip'}
