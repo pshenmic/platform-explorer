@@ -90,10 +90,6 @@ function Home () {
         .then(paginatedTrendingIdentities => setData(setTrendingIdentities, paginatedTrendingIdentities))
         .catch(res => setData(setTrendingIdentities, res, true)),
 
-      Api.getTransactionsHistory(transactionsChartConfig.timespan.default)
-        .then(transactionsHistory => setData(setTransactionsHistory, { resultSet: transactionsHistory }))
-        .then(res => setData(setTransactionsHistory, res, true)),
-
       Api.getBlocks(1, 1, 'desc')
         .then(res => {
           const [latestBlock] = res.resultSet
