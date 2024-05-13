@@ -25,7 +25,21 @@ const transactionsChartConfig = {
   }
 }
 
-const fetchErrorMessage = 'It looks like there was an error loading data. We\'ll fix it soon.'
+function ErrorMessageBlock () {
+  return (
+    <Flex
+      flexGrow={1}
+      w={'100%'}
+      justifyContent={'center'}
+      alignItems={'center'}
+      flexDirection={'column'}
+      opacity={0.5}
+    >
+      <div>It looks like there was an error loading data.</div>
+      <div>Sorry... We'll fix it soon.</div>
+    </Flex>
+  )
+}
 
 function Home () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
@@ -232,7 +246,7 @@ function Home () {
                           </div>
                       </div>
 
-                      <Container
+                      <Flex
                           minH={'220px'}
                           height={['300px', '300px', '300px', 'auto']}
                           maxW={'none'}
@@ -240,6 +254,7 @@ function Home () {
                           mt={2}
                           mb={4}
                           p={0}
+                          flexDirection={'column'}
                       >
                         {!transactionsHistory.loading
                           ? (!transactionsHistory.error && transactionsHistory.data?.resultSet?.length)
@@ -265,24 +280,25 @@ function Home () {
                                   abbreviation: 'txs'
                                 }}
                               />
-                              : <>{fetchErrorMessage}</>
+                              : <ErrorMessageBlock/>
                           : <Container
                             w={'100%'}
                             h={'100%'}
                             className={'ChartBlock__Loader'}>
                           </Container>}
-                      </Container>
+                      </Flex>
                   </Flex>
 
                   <Box flexShrink={'0'} w={10} h={[0, 0, 0, 10]} />
 
                   <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
-                      <Container
+                      <Flex
                           maxW={'100%'}
                           m={0}
                           h={'100%'}
                           borderWidth={'1px'} borderRadius={'lg'}
                           className={'InfoBlock'}
+                          flexDirection={'column'}
                       >
                           <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Data Contracts</Heading>
                           {!dataContracts.loading
@@ -294,9 +310,9 @@ function Home () {
                                     }))}
                                     columns={['Identifier', 'Documents Count']}
                                   />
-                                : <>{fetchErrorMessage}</>
+                                : <ErrorMessageBlock/>
                             : <ListLoadingPreview itemsCount={dataContracts.props.printCount}/>}
-                      </Container>
+                      </Flex>
                   </Container>
               </Flex>
 
@@ -306,12 +322,14 @@ function Home () {
                   wrap={['wrap', 'wrap', 'nowrap']}
                   mb={[10, 10, 16]}
               >
-                  <Container
+                  <Flex
                       ref={transactionsContainer}
                       maxW={'100%'}
                       borderWidth={'1px'} borderRadius={'lg'}
                       mb={0}
                       className={'InfoBlock'}
+                      flexDirection={'column'}
+                      flexGrow={1}
                   >
                       <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions</Heading>
                       {!transactions.loading
@@ -327,9 +345,9 @@ function Home () {
                                 }))}
                               columns={[]}
                             />
-                            : <>{fetchErrorMessage}</>
+                            : <ErrorMessageBlock/>
                         : <ListLoadingPreview itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
-                  </Container>
+                  </Flex>
 
                   <Box flexShrink={'0'} w={10} h={10} />
 
@@ -339,12 +357,13 @@ function Home () {
                       maxW={['100%', '100%', 'calc(50% - 20px)']}
                       width={'100%'}
                   >
-                      <Container
+                      <Flex
                           ref={trendingIdentitiesContainer}
                           maxW={'100%'}
                           borderWidth={'1px'} borderRadius={'lg'}
                           className={'InfoBlock'}
                           flexGrow={'1'}
+                          flexDirection={'column'}
                       >
                           <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Identities</Heading>
                           {!trendingIdentities.loading
@@ -359,18 +378,19 @@ function Home () {
                                     }))}
                                   columns={['Identifier', 'Tx Count']}
                                 />
-                                : <>{fetchErrorMessage}</>
+                                : <ErrorMessageBlock/>
                             : <ListLoadingPreview itemsCount={trendingIdentities.props.printCount}/>}
-                      </Container>
+                      </Flex>
 
                       <Box w={10} h={10} />
 
-                      <Container
+                      <Flex
                           ref={richListContainer}
                           maxW={'none'}
                           borderWidth={'1px'} borderRadius={'lg'}
                           className={'InfoBlock'}
                           flexGrow={'1'}
+                          flexDirection={'column'}
                       >
                           <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
                           {!richestIdentities.loading
@@ -385,9 +405,9 @@ function Home () {
                                     }))}
                                   columns={['Identifier', 'Balance']}
                                 />
-                                : <>{fetchErrorMessage}</>
+                                : <ErrorMessageBlock/>
                             : <ListLoadingPreview itemsCount={richestIdentities.props.printCount}/>}
-                      </Container>
+                      </Flex>
                   </Flex>
               </Flex>
           </Container>
