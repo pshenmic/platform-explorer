@@ -96,50 +96,52 @@ function Home () {
       .catch(res => setData(setTransactionsHistory, res, false))
   }, [transactionsTimespan])
 
-  function adaptList (container, list, data, setDataFunc) {
-    if (container !== null && list !== null && data.props.printCount < data.data?.resultSet?.length) {
-      const childNodes = list.childNodes
-      const lastElementHeight = childNodes[childNodes.length - 1].getBoundingClientRect().height
-      const bottomOffset = container.getBoundingClientRect().bottom - list.getBoundingClientRect().bottom
-      const extraItems = Math.floor(bottomOffset / lastElementHeight)
+  function adaptList (container, listBlock, data, setDataFunc) {
+    if (!container || !listBlock || data?.props.printCount >= data?.data?.resultSet?.length) return
 
-      if (extraItems > 0) {
-        setDataFunc(state => ({
-          ...state,
-          props: {
-            printCount: data.props.printCount + extraItems
-          }
-        }))
-      }
+    const childNodes = listBlock.childNodes
+    const [listContainer] = Object.entries(childNodes)
+      .filter(([i, element]) => element.className.split(' ').includes('SimpleList__List'))
+      .map(([i, element]) => element)
+    const lastElementHeight = listContainer.childNodes[listContainer.childNodes.length - 1].getBoundingClientRect().height
+    const bottomOffset = container.getBoundingClientRect().bottom - listBlock.getBoundingClientRect().bottom
+    const extraItems = Math.floor(bottomOffset / lastElementHeight)
+
+    if (extraItems > 0) {
+      setDataFunc(state => ({
+        ...state,
+        props: {
+          printCount: state.props.printCount + extraItems
+        }
+      }))
     }
   }
 
   useEffect(() => {
-    if (trendingIdentities.loading ||
-        richestIdentities.loading ||
-        transactions.loading
-    ) return
+    if (!trendingIdentities.loading && !richestIdentities.loading) {
+      adaptList(
+        trendingIdentitiesContainer.current,
+        trendingIdentitiesList.current,
+        trendingIdentities,
+        setTrendingIdentities
+      )
 
-    adaptList(
-      trendingIdentitiesContainer.current,
-      trendingIdentitiesList.current,
-      trendingIdentities,
-      setTrendingIdentities
-    )
+      adaptList(
+        richListContainer.current,
+        richListRef.current,
+        richestIdentities,
+        setRichestIdentities
+      )
+    }
 
-    adaptList(
-      richListContainer.current,
-      richListRef.current,
-      richestIdentities,
-      setRichestIdentities
-    )
-
-    adaptList(
-      transactionsContainer.current,
-      transactionsList.current,
-      transactions,
-      setTransactions
-    )
+    if (!transactions.loading) {
+      adaptList(
+        transactionsContainer.current,
+        transactionsList.current,
+        transactions,
+        setTransactions
+      )
+    }
   }, [
     richListContainer,
     trendingIdentitiesContainer,

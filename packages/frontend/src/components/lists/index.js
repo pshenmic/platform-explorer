@@ -58,7 +58,7 @@ const SimpleList = forwardRef(function (props, ref) {
             )}
         </div>
 
-        <div>
+        <div className={'SimpleList__List'}>
             {items.map((item, key) =>
                 <SimpleListItem
                     key={key}
