@@ -40,6 +40,7 @@ function DataContractsLayout () {
         setCurrentPage(selected)
         setDataContracts(res.resultSet)
       })
+      .catch(console.log)
   }
 
   if (!loading) {

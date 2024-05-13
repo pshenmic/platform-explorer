@@ -38,6 +38,7 @@ function Identities () {
         setCurrentPage(selected)
         setIdentities(res.resultSet)
       })
+      .catch(console.log)
   }
 
   return (
