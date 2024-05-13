@@ -81,30 +81,30 @@ function Home () {
     Promise.all([
       Api.getStatus()
         .then(res => fetchHandlerSuccess(setStatus, res))
-        .catch(res => fetchHandlerError(setStatus, res)),
+        .catch(err => fetchHandlerError(setStatus, err)),
 
       Api.getTransactions(1, 10, 'desc')
         .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
-        .catch(res => fetchHandlerError(setTransactions, res)),
+        .catch(err => fetchHandlerError(setTransactions, err)),
 
       Api.getDataContracts(1, dataContracts.props.printCount, 'desc', 'documents_count')
         .then(paginatedDataContracts => fetchHandlerSuccess(setDataContracts, paginatedDataContracts))
-        .catch(res => fetchHandlerError(setDataContracts, res)),
+        .catch(err => fetchHandlerError(setDataContracts, err)),
 
       Api.getIdentities(1, 10, 'desc', 'balance')
         .then(paginatedRichestIdentities => fetchHandlerSuccess(setRichestIdentities, paginatedRichestIdentities))
-        .catch(res => fetchHandlerError(setRichestIdentities, res)),
+        .catch(err => fetchHandlerError(setRichestIdentities, err)),
 
       Api.getIdentities(1, 10, 'desc', 'tx_count')
         .then(paginatedTrendingIdentities => fetchHandlerSuccess(setTrendingIdentities, paginatedTrendingIdentities))
-        .catch(res => fetchHandlerError(setTrendingIdentities, res)),
+        .catch(err => fetchHandlerError(setTrendingIdentities, err)),
 
       Api.getBlocks(1, 1, 'desc')
         .then(res => {
           const [latestBlock] = res.resultSet
           fetchHandlerSuccess(setStatus, { latestBlock })
         })
-        .catch(latestBlocks => fetchHandlerError(setStatus, { latestBlocks }))
+        .catch(err => fetchHandlerError(setStatus, err))
     ])
       .then()
       .catch(console.log)
@@ -115,7 +115,7 @@ function Home () {
   useEffect(() => {
     Api.getTransactionsHistory(transactionsTimespan)
       .then(res => fetchHandlerSuccess(setTransactionsHistory, { resultSet: res }))
-      .catch(res => fetchHandlerError(setTransactionsHistory, res))
+      .catch(err => fetchHandlerError(setTransactionsHistory, err))
   }, [transactionsTimespan])
 
   function adaptList (container, listBlock, data, setDataFunc) {
