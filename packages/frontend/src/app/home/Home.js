@@ -56,7 +56,7 @@ function Home () {
   const transactionsContainer = createRef()
   const transactionsList = createRef()
 
-  function setData (setter, data, error = false) {
+  function fetchHandlerSuccess (setter, data) {
     setter(state => ({
       ...state,
       data: {
@@ -64,38 +64,47 @@ function Home () {
         ...data
       },
       loading: false,
-      error
+      error: false
+    }))
+  }
+
+  function fetchHandlerError (setter, data) {
+    setter(state => ({
+      ...state,
+      data,
+      loading: false,
+      error: true
     }))
   }
 
   const fetchData = () => {
     Promise.all([
       Api.getStatus()
-        .then(res => setData(setStatus, res))
-        .catch(res => setData(setStatus, res, true)),
+        .then(res => fetchHandlerSuccess(setStatus, res))
+        .catch(res => fetchHandlerError(setStatus, res)),
 
       Api.getTransactions(1, 10, 'desc')
-        .then(paginatedTransactions => setData(setTransactions, paginatedTransactions))
-        .catch(res => setData(setTransactions, res, true)),
+        .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
+        .catch(res => fetchHandlerError(setTransactions, res)),
 
       Api.getDataContracts(1, dataContracts.props.printCount, 'desc', 'documents_count')
-        .then(paginatedDataContracts => setData(setDataContracts, paginatedDataContracts))
-        .catch(res => setData(setDataContracts, res, true)),
+        .then(paginatedDataContracts => fetchHandlerSuccess(setDataContracts, paginatedDataContracts))
+        .catch(res => fetchHandlerError(setDataContracts, res)),
 
       Api.getIdentities(1, 10, 'desc', 'balance')
-        .then(paginatedRichestIdentities => setData(setRichestIdentities, paginatedRichestIdentities))
-        .catch(res => setData(setRichestIdentities, res, true)),
+        .then(paginatedRichestIdentities => fetchHandlerSuccess(setRichestIdentities, paginatedRichestIdentities))
+        .catch(res => fetchHandlerError(setRichestIdentities, res)),
 
       Api.getIdentities(1, 10, 'desc', 'tx_count')
-        .then(paginatedTrendingIdentities => setData(setTrendingIdentities, paginatedTrendingIdentities))
-        .catch(res => setData(setTrendingIdentities, res, true)),
+        .then(paginatedTrendingIdentities => fetchHandlerSuccess(setTrendingIdentities, paginatedTrendingIdentities))
+        .catch(res => fetchHandlerError(setTrendingIdentities, res)),
 
       Api.getBlocks(1, 1, 'desc')
         .then(res => {
           const [latestBlock] = res.resultSet
-          setData(setStatus, { latestBlock })
+          fetchHandlerSuccess(setStatus, { latestBlock })
         })
-        .catch(latestBlocks => setData(setStatus, { latestBlocks }, true))
+        .catch(latestBlocks => fetchHandlerError(setStatus, { latestBlocks }))
     ])
       .then()
       .catch(console.log)
@@ -105,8 +114,8 @@ function Home () {
 
   useEffect(() => {
     Api.getTransactionsHistory(transactionsTimespan)
-      .then(res => setData(setTransactionsHistory, { resultSet: res }))
-      .catch(res => setData(setTransactionsHistory, res, false))
+      .then(res => fetchHandlerSuccess(setTransactionsHistory, { resultSet: res }))
+      .catch(res => fetchHandlerError(setTransactionsHistory, res))
   }, [transactionsTimespan])
 
   function adaptList (container, listBlock, data, setDataFunc) {
