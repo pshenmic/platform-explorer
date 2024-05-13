@@ -97,7 +97,7 @@ function Home () {
   }, [transactionsTimespan])
 
   function adaptList (container, list, data, setDataFunc) {
-    if (container !== null && list !== null && data.printCount < data.length) {
+    if (container !== null && list !== null && data.props.printCount < data.data?.resultSet?.length) {
       const childNodes = list.childNodes
       const lastElementHeight = childNodes[childNodes.length - 1].getBoundingClientRect().height
       const bottomOffset = container.getBoundingClientRect().bottom - list.getBoundingClientRect().bottom
@@ -107,7 +107,7 @@ function Home () {
         setDataFunc(state => ({
           ...state,
           props: {
-            printCount: props.printCount + extraItems
+            printCount: data.props.printCount + extraItems
           }
         }))
       }
@@ -123,21 +123,21 @@ function Home () {
     adaptList(
       trendingIdentitiesContainer.current,
       trendingIdentitiesList.current,
-      trendingIdentities.props,
+      trendingIdentities,
       setTrendingIdentities
     )
 
     adaptList(
       richListContainer.current,
       richListRef.current,
-      richestIdentities.props,
+      richestIdentities,
       setRichestIdentities
     )
 
     adaptList(
       transactionsContainer.current,
       transactionsList.current,
-      transactions.props,
+      transactions,
       setTransactions
     )
   }, [
@@ -240,7 +240,7 @@ function Home () {
                           p={0}
                       >
                         {!transactionsHistory.loading
-                            ? (!transactionsHistory.error && transactionsHistory.data?.resultSet?.length)
+                          ? (!transactionsHistory.error && transactionsHistory.data?.resultSet?.length)
                               ? <LineChart
                                 data={transactionsHistory.data.resultSet.map((item) => ({
                                   x: new Date(item.timestamp),
@@ -263,12 +263,12 @@ function Home () {
                                   abbreviation: 'txs'
                                 }}
                               />
-                            : <>{fetchErrorMessage}</>
+                              : <>{fetchErrorMessage}</>
                           : <Container
-                              w={'100%'}
-                              h={'100%'}
-                              className={'ChartBlock__Loader'}>
-                            </Container>}
+                            w={'100%'}
+                            h={'100%'}
+                            className={'ChartBlock__Loader'}>
+                          </Container>}
                       </Container>
                   </Flex>
 
