@@ -61,6 +61,7 @@ function DataContract ({ identifier }) {
       selected + 1,
       pagintationConfig.itemsOnPage.default + 1)
       .then((res) => setDocuments(res.resultSet))
+      .catch(console.log)
 
     setCurrentPage(selected)
   }

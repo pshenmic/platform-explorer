@@ -50,6 +50,7 @@ function Blocks () {
         setCurrentPage(selected)
         setBlocks(res.resultSet)
       })
+      .catch(console.log)
   }, [pageSize])
 
   const goToHeight = (e) => {

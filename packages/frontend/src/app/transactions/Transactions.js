@@ -49,6 +49,7 @@ function Transactions () {
         setCurrentPage(selected)
         setTransactions(res.resultSet)
       })
+      .catch(console.log)
   }, [pageSize])
 
   useEffect(() => {

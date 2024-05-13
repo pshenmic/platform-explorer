@@ -1,3 +1,5 @@
+@use '../../styles/mixins.scss';
+
 .NetworkStatus {
     position: relative;
     display: flex;
@@ -21,12 +23,25 @@
     }
 
     &__InfoItem {
+        position: relative;
         display: flex;
         margin-bottom: 15px;
 
         &:last-child {
             margin-bottom: 0;
         }
+
+        &--Loading {
+            @include mixins.loading-line;
+
+            opacity: .5;
+            border-radius: 5px;
+        }
+    }
+
+    &__InfoItem--Loading &__Value,
+    &__InfoItem--Loading &__Title {
+        opacity: 0;
     }
 
     &__Title {
