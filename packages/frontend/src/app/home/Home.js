@@ -69,9 +69,11 @@ function Home () {
   }
 
   function fetchHandlerError (setter, data) {
+    console.error(data)
+
     setter(state => ({
       ...state,
-      data,
+      data: null,
       loading: false,
       error: true
     }))
