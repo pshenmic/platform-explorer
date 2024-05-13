@@ -46,75 +46,75 @@ const call = async (path, method, body) => {
 }
 
 const getBlockByHash = (hash) => {
-  return call(`blocks/${hash}`, 'GET')
+  return call(`block/${hash}`, 'GET')
 }
 
 const getTransactionsHistory = (timespan = '24h') => {
-  return call(`transactionss/history?timespan=${timespan}`, 'GET')
+  return call(`transactions/history?timespan=${timespan}`, 'GET')
 }
 
 const getTransactions = (page = 1, limit = 30, order = 'asc') => {
-  return call(`transactionss?page=${page}&limit=${limit}&order=${order}`, 'GET')
+  return call(`transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getTransaction = (txHash) => {
-  return call(`transactions/${txHash}`, 'GET')
+  return call(`transaction/${txHash}`, 'GET')
 }
 
 const getBlocks = (page = 1, limit = 30, order = 'asc') => {
-  return call(`blockss?page=${page}&limit=${limit}&order=${order}`, 'GET')
+  return call(`blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getDataContractByIdentifier = (identifier) => {
-  return call(`dataContracts/${identifier}`, 'GET')
+  return call(`dataContract/${identifier}`, 'GET')
 }
 
 const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy) => {
-  return call(`dataContractss?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
+  return call(`dataContracts?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
 
 const getDocumentByIdentifier = (identifier) => {
-  return call(`documents/${identifier}`, 'GET')
+  return call(`document/${identifier}`, 'GET')
 }
 
 const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc') => {
-  return call(`dataContracts/${dataContractIdentifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
+  return call(`dataContract/${dataContractIdentifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getTransactionsByIdentity = (identifier) => {
-  return call(`identitsy/${identifier}/transactions`, 'GET')
+  return call(`identity/${identifier}/transactions`, 'GET')
 }
 
 const getDataContractsByIdentity = (identifier) => {
-  return call(`identitsy/${identifier}/dataContracts`, 'GET')
+  return call(`identity/${identifier}/dataContracts`, 'GET')
 }
 
 const getDocumentsByIdentity = (identifier) => {
-  return call(`identitsy/${identifier}/documents`, 'GET')
+  return call(`identity/${identifier}/documents`, 'GET')
 }
 
 const getTransfersByIdentity = (identifier) => {
-  return call(`identitys/${identifier}/transfers`, 'GET')
+  return call(`identity/${identifier}/transfers`, 'GET')
 }
 
 const getIdentity = (identifier) => {
-  return call(`identitys/${identifier}`, 'GET')
+  return call(`identity/${identifier}`, 'GET')
 }
 
 const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy) => {
-  return call(`identitiess?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
+  return call(`identities?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
 
 const getStatus = () => {
-  return call('statuss', 'GET')
+  return call('status', 'GET')
 }
 
 const search = (query) => {
-  return call(`searcsh?query=${query}`, 'GET')
+  return call(`search?query=${query}`, 'GET')
 }
 
 const decodeTx = (base64) => {
-  return call('transactiosn/decode', 'POST', { base64 })
+  return call('transaction/decode', 'POST', { base64 })
 }
 
 export {
