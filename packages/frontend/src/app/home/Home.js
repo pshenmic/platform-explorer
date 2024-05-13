@@ -68,8 +68,8 @@ function Home () {
     }))
   }
 
-  function fetchHandlerError (setter, data) {
-    console.error(data)
+  function fetchHandlerError (setter, error) {
+    console.error(error)
 
     setter(state => ({
       ...state,
