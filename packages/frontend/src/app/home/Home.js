@@ -10,7 +10,7 @@ import Intro from '../../components/intro/index.js'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { getTransitionTypeString } from '../../util/index'
-import { InfoIcon, CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
+import { WarningTwoIcon } from '@chakra-ui/icons'
 
 import {
   Box,
