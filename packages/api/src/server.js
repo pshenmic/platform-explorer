@@ -13,6 +13,7 @@ const IdentitiesController = require('./controllers/IdentitiesController')
 const DataContractsController = require('./controllers/DataContractsController')
 const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
+const BlocksDAO = require('./dao/BlocksDAO')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -47,7 +48,20 @@ module.exports = {
       // put your options here
     })
 
-    await fastify.register(metricsPlugin, { endpoint: '/metrics' })
+    await fastify.register(metricsPlugin, {
+      endpoint: '/metrics'
+    })
+
+    new fastify.metrics.client.Gauge({
+      name: 'platform_explorer_api_block_height',
+      help: 'The latest block height in the API',
+      async collect() {
+        const blockDAO = new BlocksDAO(knex)
+        const { resultSet: [block] } = await blockDAO.getBlocks(1, 1, 'desc')
+
+        this.set(block.header.height)
+      }
+    })
 
     knex = getKnex()
 
