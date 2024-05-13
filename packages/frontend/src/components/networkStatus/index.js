@@ -30,7 +30,7 @@ function NetworkStatus ({ status }) {
             h={'100%'}
             borderWidth={'1px'} borderRadius={'lg'}
         >
-            <div className={`NetworkStatus__InfoItem ${!status.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
+            <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Epoch:</div>
                 <div className={'NetworkStatus__Value'}>
                     <span>{status?.data?.epoch !== undefined ? `#${status.data.epoch.index}` : '-'}</span>
@@ -50,7 +50,7 @@ function NetworkStatus ({ status }) {
                 </div>
             </div>
 
-            <div className={`NetworkStatus__InfoItem ${!status?.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
+            <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Network:</div>
                 <div className={'NetworkStatus__Value'}>
                     <span>{status?.data?.network !== undefined ? `${status.data.network}` : 'n/a'}</span>
@@ -71,16 +71,16 @@ function NetworkStatus ({ status }) {
                 </div>
             </div>
 
-            <div className={`NetworkStatus__InfoItem ${!status?.loaded ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
+            <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Latest block:</div>
 
-                {status?.data?.latestBlock !== undefined
+                {status?.data?.latestBlock?.header !== undefined
                   ? <div className={'NetworkStatus__Value'}>
                         <Link href={`/block/${status.data.latestBlock.header.hash}`}>
                             #{status.data.latestBlock.header.height}, {getLastBlocktimeString()}
                         </Link>
                     </div>
-                  : <div className={'NetworkStatus__Value'}>-</div>}
+                  : <div className={'NetworkStatus__Value'}>n/a</div>}
             </div>
         </Container>
   )
