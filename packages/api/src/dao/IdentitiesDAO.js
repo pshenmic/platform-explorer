@@ -100,12 +100,12 @@ module.exports = class IdentitiesDAO {
 
     const documentsSubQuery = this.knex('documents')
       .select('id', 'identifier')
-      .whereRaw(`documents.owner = with_alias.identifier`)
+      .whereRaw('documents.owner = with_alias.identifier')
       .as('as_documents')
 
     const dataContractsSubQuery = this.knex('data_contracts')
       .select('id', 'identifier')
-      .whereRaw(`data_contracts.owner = with_alias.identifier`)
+      .whereRaw('data_contracts.owner = with_alias.identifier')
       .as('as_data_contracts')
 
     const rows = await this.knex.with('with_alias', filteredIdentities)
