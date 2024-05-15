@@ -6,6 +6,8 @@ import Pagination from '../../components/pagination'
 import GoToHeightForm from '../../components/goToHeightForm/GoToHeightForm'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import BlocksList from '../../components/blocks/BlocksList'
+import { ListLoadingPreview } from '../../components/lists'
+import { ErrorMessageBlock } from '../../components/Errors'
 import './Blocks.scss'
 
 import {
@@ -22,36 +24,39 @@ const paginateConfig = {
 }
 
 function Blocks () {
-  const [loading, setLoading] = useState(true)
-  const [blocks, setBlocks] = useState([])
+  const [blocks, setBlocks] = useState({ data: {}, loading: true, error: false })
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(0)
   const [blockHeightToSearch, setBlockHeightToSearch] = useState(0)
   const pageCount = Math.ceil(total / pageSize) ? Math.ceil(total / pageSize) : 1
 
-  const fetchData = () => {
-    setLoading(true)
+  const fetchData = (page, count) => {
+    setBlocks(state => ({ ...state, loading: true }))
 
-    Api.getBlocks(paginateConfig.defaultPage, paginateConfig.pageSize.default, 'desc')
-      .then((res) => {
-        setBlocks(res.resultSet)
+    Api.getBlocks(page, count, 'desc')
+      .then(res => {
+        setBlocks({
+          data: res,
+          loading: false,
+          error: false
+        })
         setTotal(res.pagination.total)
       })
-      .catch(console.log)
-      .finally(() => setLoading(false))
+      .catch(err => {
+        console.error(err)
+
+        setBlocks({
+          data: null,
+          loading: false,
+          error: true
+        })
+      })
   }
 
-  useEffect(fetchData, [])
+  useEffect(() => fetchData(paginateConfig.defaultPage, paginateConfig.pageSize.default), [])
 
-  const handlePageClick = useCallback(({ selected }) => {
-    Api.getBlocks(selected + 1, pageSize, 'desc')
-      .then((res) => {
-        setCurrentPage(selected)
-        setBlocks(res.resultSet)
-      })
-      .catch(console.log)
-  }, [pageSize])
+  const handlePageClick = useCallback(({ selected }) => fetchData(selected + 1, pageSize), [pageSize])
 
   const goToHeight = (e) => {
     e.preventDefault()
@@ -66,54 +71,58 @@ function Blocks () {
     handlePageClick({ selected: 0 })
   }, [pageSize, handlePageClick])
 
-  if (!loading) {
-    return (
-        <Container
-            maxW='container.lg'
-            color='white'
-            mt={8}
-            mb={8}
-            className={'Blocks'}
-        >
-            <Container
-                maxW='container.lg'
-                _dark={{ color: 'white' }}
-                borderWidth='1px' borderRadius='lg'
-                className={'InfoBlock'}
-            >
-                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Blocks</Heading>
-                <BlocksList blocks={blocks}/>
+  return (
+      <Container
+          maxW='container.lg'
+          color='white'
+          mt={8}
+          mb={8}
+          className={'Blocks'}
+      >
+          <Container
+              maxW='container.lg'
+              _dark={{ color: 'white' }}
+              borderWidth='1px' borderRadius='lg'
+              className={'InfoBlock'}
+          >
+              <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Blocks</Heading>
 
-                <div className={'ListNavigation'}>
-                    <GoToHeightForm
-                        goToHeightHandler={goToHeight}
-                        goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
-                        isValid = {() => {
-                          return (
-                            blockHeightToSearch.length > 0 &&
-                            Number(blockHeightToSearch) <= total &&
-                            Number(blockHeightToSearch) > 0
-                          )
-                        }}
-                    />
+              {!blocks.error
+                ? <>
+                    {!blocks.loading
+                      ? <BlocksList blocks={blocks.data.resultSet}/>
+                      : <ListLoadingPreview itemsCount={pageSize}/>
+                    }
+                  </>
+                : <Container h={20}><ErrorMessageBlock/></Container>}
 
-                    <Pagination
-                        onPageChange={handlePageClick}
-                        pageCount={pageCount}
-                        forcePage={currentPage}
-                    />
-
-                    <PageSizeSelector
-                        PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                        defaultValue={paginateConfig.pageSize.default}
-                        items={paginateConfig.pageSize.values}
-                    />
-                </div>
-
-            </Container>
-        </Container>
-    )
-  }
+              <div className={'ListNavigation'}>
+                  <GoToHeightForm
+                      goToHeightHandler={goToHeight}
+                      goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
+                      isValid={() => {
+                        return (
+                          blockHeightToSearch.length > 0 &&
+                          Number(blockHeightToSearch) <= total &&
+                          Number(blockHeightToSearch) > 0
+                        )
+                      }}
+                      disabled={blocks.error}
+                  />
+                  <Pagination
+                      onPageChange={handlePageClick}
+                      pageCount={pageCount}
+                      forcePage={currentPage}
+                  />
+                  <PageSizeSelector
+                      PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                      defaultValue={paginateConfig.pageSize.default}
+                      items={paginateConfig.pageSize.values}
+                  />
+              </div>
+          </Container>
+      </Container>
+  )
 }
 
 export default Blocks

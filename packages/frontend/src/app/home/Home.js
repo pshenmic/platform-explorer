@@ -10,7 +10,7 @@ import Intro from '../../components/intro/index.js'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { getTransitionTypeString } from '../../util/index'
-import { WarningTwoIcon } from '@chakra-ui/icons'
+import { ErrorMessageBlock } from '../../components/Errors'
 
 import {
   Box,
@@ -26,20 +26,20 @@ const transactionsChartConfig = {
   }
 }
 
-function ErrorMessageBlock () {
-  return (
-    <Flex
-      flexGrow={1}
-      w={'100%'}
-      justifyContent={'center'}
-      alignItems={'center'}
-      flexDirection={'column'}
-      opacity={0.5}
-    >
-      <div><WarningTwoIcon color={'#ddd'} mr={2} mt={-1}/>Error loading data</div>
-    </Flex>
-  )
-}
+// function ErrorMessageBlock () {
+//   return (
+//     <Flex
+//       flexGrow={1}
+//       w={'100%'}
+//       justifyContent={'center'}
+//       alignItems={'center'}
+//       flexDirection={'column'}
+//       opacity={0.5}
+//     >
+//       <div><WarningTwoIcon color={'#ddd'} mr={2} mt={-1}/>Error loading data</div>
+//     </Flex>
+//   )
+// }
 
 function Home () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
