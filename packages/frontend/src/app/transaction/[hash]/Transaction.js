@@ -228,8 +228,6 @@ function Transaction ({ hash }) {
   }, [])
 
   const fetchData = () => {
-    console.log('fetch')
-
     setTransaction(state => ({ ...state, loading: true }))
 
     Api.getTransaction(hash)
@@ -309,7 +307,7 @@ function Transaction ({ hash }) {
                 </Table>
               : <Container h={20}><ErrorMessageBlock/></Container>}
         </TableContainer>
-        
+
         {!transaction.error &&
           <Container
             maxW='container.lg'
