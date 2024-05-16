@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { useState, useEffect, useCallback } from 'react'
 import { getTransitionTypeString } from '../../../util'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
+import { LoadingLine } from '../../../components/loading'
+import { ErrorMessageBlock } from '../../../components/Errors'
+import { ListLoadingPreview } from '../../../components/lists'
 import './Transaction.scss'
 
 import {
@@ -212,101 +215,119 @@ function TransactionData ({ data }) {
 }
 
 function Transaction ({ hash }) {
-  const [transaction, setTransaction] = useState({})
-  const [loading, setLoading] = useState(true)
-  const [decoding, setDecoding] = useState(false)
+  const [transaction, setTransaction] = useState({ data: {}, loading: true, error: false })
   const [decodedST, setDecodedST] = useState(null)
+  const tdTitleWidth = 250
 
   const decodeTx = useCallback((tx) => {
-    if (decodedST || decoding) return
-
-    setDecoding(true)
-    setDecodedST(null)
-
     Api.decodeTx(tx)
       .then((stateTransition) => {
-        setDecoding(false)
         setDecodedST(stateTransition)
       })
       .catch(console.log)
-      .finally(() => setDecoding(false))
-  }, [decodedST, decoding])
+  }, [])
 
   const fetchData = () => {
-    setLoading(true)
+    console.log('fetch')
+
+    setTransaction(state => ({ ...state, loading: true }))
 
     Api.getTransaction(hash)
       .then((res) => {
-        setTransaction(res)
+        setTransaction({ data: res, loading: false, error: false })
         decodeTx(res.data)
       })
-      .catch(console.log)
-      .finally(() => setLoading(false))
+      .catch(err => {
+        console.error(err)
+        setTransaction({ data: null, loading: false, error: true })
+      })
   }
 
   useEffect(fetchData, [hash, decodeTx])
 
-  if (!loading) {
-    return (
-        <Container
-            maxW='container.lg'
-            p={3}
-            mt={8}
+  return (
+    <Container
+        maxW='container.lg'
+        p={3}
+        mt={8}
+    >
+        <TableContainer
+            maxW='none'
+            borderWidth='1px' borderRadius='lg'
+            mb={4}
         >
-            <TableContainer
-                maxW='none'
-                borderWidth='1px' borderRadius='lg'
-                mb={4}
-            >
-                <Table variant='simple' className='Table'>
-                    <Thead>
-                        <Tr>
-                            <Th>transaction info</Th>
-                            <Th></Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        <Tr>
-                            <Td>Hash</Td>
-                            <Td>{transaction.hash}</Td>
-                        </Tr>
-                        <Tr>
-                            <Td>Height</Td>
-                            <Td>{transaction.blockHeight}</Td>
-                        </Tr>
-                        <Tr>
-                            <Td>Index</Td>
-                            <Td>{transaction.index}</Td>
-                        </Tr>
-                        <Tr>
-                            <Td>Type</Td>
-                            <Td>{getTransitionTypeString(transaction.type)}</Td>
-                        </Tr>
-                        <Tr>
-                            <Td>Timestamp</Td>
-                            <Td>{new Date(transaction.timestamp).toLocaleString()}</Td>
-                        </Tr>
-                    </Tbody>
+            {!transaction.error
+              ? <Table variant='simple' className='Table'>
+                <Thead>
+                    <Tr>
+                        <Th>transaction info</Th>
+                        <Th></Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    <Tr>
+                        <Td w={tdTitleWidth}>Hash</Td>
+                        <Td>
+                            {!transaction.loading
+                              ? transaction.data.hash
+                              : <LoadingLine/>}
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Td w={tdTitleWidth}>Height</Td>
+                        <Td>
+                            {!transaction.loading
+                              ? transaction.data.blockHeight
+                              : <LoadingLine/>}
+                            </Td>
+                    </Tr>
+                    <Tr>
+                        <Td w={tdTitleWidth}>Index</Td>
+                        <Td>
+                            {!transaction.loading
+                              ? transaction.data.index
+                              : <LoadingLine/>}
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Td w={tdTitleWidth}>Type</Td>
+                        <Td>
+                            {!transaction.loading
+                              ? getTransitionTypeString(transaction.data.type)
+                              : <LoadingLine/>}
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Td w={tdTitleWidth}>Timestamp</Td>
+                        <Td>
+                            {!transaction.loading
+                              ? new Date(transaction.data.timestamp).toLocaleString()
+                              : <LoadingLine/>}
+                        </Td>
+                    </Tr>
+                </Tbody>
                 </Table>
-            </TableContainer>
+              : <Container h={20}><ErrorMessageBlock/></Container>}
+        </TableContainer>
+        
+        {!transaction.error &&
+          <Container
+            maxW='container.lg'
+            m={0}
+            borderWidth='1px' borderRadius='lg'
+            className={'InfoBlock'}
+          >
+            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Transaction data</Heading>
 
-            <Container
-                maxW='container.lg'
-                m={0}
-                borderWidth='1px' borderRadius='lg'
-                className={'InfoBlock'}
-            >
-                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Transaction data</Heading>
-
-                <Table variant='simple' className='Table TransactionData'>
-
+            {(!transaction.loading && decodedST)
+              ? <Table variant='simple' className='Table TransactionData'>
                     <TransactionData data={decodedST}/>
-
                 </Table>
-            </Container>
-        </Container>
-    )
-  }
+              : <ListLoadingPreview itemsCount={3}/>}
+          </Container>
+        }
+    </Container>
+  )
 }
 
 export default Transaction
