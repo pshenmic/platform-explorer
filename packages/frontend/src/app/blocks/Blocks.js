@@ -36,21 +36,12 @@ function Blocks () {
 
     Api.getBlocks(page, count, 'desc')
       .then(res => {
-        setBlocks({
-          data: res,
-          loading: false,
-          error: false
-        })
+        setBlocks({ data: res, loading: false, error: false })
         setTotal(res.pagination.total)
       })
       .catch(err => {
         console.error(err)
-
-        setBlocks({
-          data: null,
-          loading: false,
-          error: true
-        })
+        setBlocks({ data: null, loading: false, error: true })
       })
   }
 

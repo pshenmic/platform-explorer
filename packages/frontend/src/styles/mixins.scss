@@ -75,7 +75,13 @@
             animation-delay: $i * $timeOffset;
           }
         }
-      }
+
+        Tr:nth-child(#{$i}n) & {
+            &::after {
+                animation-delay: $i * $timeOffset;
+            }
+        }
+    }
 }
 
 @mixin loading-container {

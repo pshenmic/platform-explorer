@@ -21,8 +21,6 @@
     display: block;
 
     &--Loading {
-        @include mixins.loading-line;
-        
         border: none;
         opacity: .5;
         border-radius: 5px;
