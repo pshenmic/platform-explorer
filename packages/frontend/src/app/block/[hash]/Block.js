@@ -51,8 +51,9 @@ function Block ({ hash }) {
                 <Tbody>
                     <Tr>
                         <Td w={tdTitleWidth}>Hash</Td>
-                        <Td>{!block.loading
-                              ? !block.error
+                        <Td>
+                          {!block.loading
+                            ? !block.error
                                 ? block.data.header.hash
                                 : 'error'
                             : <LoadingLine/>}
@@ -60,8 +61,9 @@ function Block ({ hash }) {
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Height</Td>
-                        <Td>{!block.loading
-                              ? !block.error
+                        <Td>
+                          {!block.loading
+                            ? !block.error
                                 ? block.data.header.height
                                 : 'error'
                             : <LoadingLine/>}
@@ -69,8 +71,9 @@ function Block ({ hash }) {
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Timestamp</Td>
-                        <Td>{!block.loading
-                              ? !block.error
+                        <Td>
+                          {!block.loading
+                            ? !block.error
                                 ? new Date(block.data.header.timestamp).toLocaleString()
                                 : 'error'
                             : <LoadingLine/>}
@@ -78,8 +81,9 @@ function Block ({ hash }) {
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Block Version</Td>
-                        <Td>{!block.loading
-                              ? !block.error
+                        <Td>
+                          {!block.loading
+                            ? !block.error
                                 ? block.data.header.blockVersion
                                 : 'error'
                             : <LoadingLine/>}
@@ -87,8 +91,9 @@ function Block ({ hash }) {
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>App Version</Td>
-                        <Td>{!block.loading
-                              ? !block.error
+                        <Td>
+                          {!block.loading
+                            ? !block.error
                                 ? block.data.header.appVersion
                                 : 'error'
                             : <LoadingLine/>}
@@ -96,8 +101,9 @@ function Block ({ hash }) {
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>L1 Locked Height</Td>
-                        <Td>{!block.loading
-                              ? !block.error
+                        <Td>
+                          {!block.loading
+                            ? !block.error
                                 ? block.data.header.l1LockedHeight
                                 : 'error'
                             : <LoadingLine/>}
@@ -105,8 +111,9 @@ function Block ({ hash }) {
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Transactions count</Td>
-                        <Td>{!block.loading
-                              ? !block.error
+                        <Td>
+                          {!block.loading
+                            ? !block.error
                                 ? txHashes.length
                                 : 'error'
                             : <LoadingLine/>}
@@ -114,8 +121,9 @@ function Block ({ hash }) {
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Validator</Td>
-                        <Td>{!block.loading
-                              ? !block.error
+                        <Td>
+                          {!block.loading
+                            ? !block.error
                                 ? block.data.header.validator
                                 : 'error'
                             : <LoadingLine/>}
@@ -126,7 +134,7 @@ function Block ({ hash }) {
         </TableContainer>
 
         {txHashes.length
-            ? <Container
+          ? <Container
             width='100%'
             maxW='none'
             mt={5}
@@ -139,7 +147,7 @@ function Block ({ hash }) {
                     <TransactionsList transactions={txHashes}/>
                 </div>
             </Container>
-            : null}
+          : null}
     </Container>
   )
 }
