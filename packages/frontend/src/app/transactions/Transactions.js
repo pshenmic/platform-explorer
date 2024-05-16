@@ -44,9 +44,12 @@ function Transactions () {
       })
   }
 
-  useEffect(() => fetchData(paginateConfig.defaultPage, paginateConfig.pageSize.default), [pageSize])
+  useEffect(() => fetchData(paginateConfig.defaultPage, pageSize), [pageSize])
 
-  const handlePageClick = useCallback(({ selected }) => fetchData(selected + 1, pageSize), [pageSize])
+  const handlePageClick = useCallback(({ selected }) => {
+    setCurrentPage(selected)
+    fetchData(selected + 1, pageSize)
+  }, [pageSize])
 
   useEffect(() => {
     setCurrentPage(0)
