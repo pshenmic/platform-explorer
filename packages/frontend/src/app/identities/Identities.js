@@ -22,7 +22,6 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-
 function Identities () {
   const [identities, setIdentities] = useState({ data: {}, loading: true, error: false })
   const [total, setTotal] = useState(1)
@@ -35,12 +34,12 @@ function Identities () {
 
     Api.getIdentities(page, count, 'desc')
       .then(identities => {
-        setIdentities({ data: identities, loading: false, error: false})
+        setIdentities({ data: identities, loading: false, error: false })
         setTotal(identities.pagination.total)
       })
       .catch(err => {
         console.error(err)
-        setIdentities({ data: null, loading: false, error: true})
+        setIdentities({ data: null, loading: false, error: true })
       })
   }
 
@@ -55,7 +54,6 @@ function Identities () {
     setCurrentPage(0)
     handlePageClick({ selected: 0 })
   }, [pageSize, handlePageClick])
-
 
   return (
         <Container
