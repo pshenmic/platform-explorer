@@ -47,7 +47,10 @@ function Blocks () {
 
   useEffect(() => fetchData(paginateConfig.defaultPage, paginateConfig.pageSize.default), [])
 
-  const handlePageClick = useCallback(({ selected }) => fetchData(selected + 1, pageSize), [pageSize])
+  const handlePageClick = useCallback(({ selected }) => {
+    setCurrentPage(selected)
+    fetchData(selected + 1, pageSize)
+  }, [pageSize])
 
   const goToHeight = (e) => {
     e.preventDefault()
