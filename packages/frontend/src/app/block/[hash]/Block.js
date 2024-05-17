@@ -54,65 +54,49 @@ function Block ({ hash }) {
                     <Tr>
                         <Td w={tdTitleWidth}>Hash</Td>
                         <Td>
-                          {!block.loading
-                            ? block.data.header.hash
-                            : <LoadingLine/>}
+                          <LoadingLine loading={block.loading}>{block.data?.header?.hash}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Height</Td>
                         <Td>
-                          {!block.loading
-                            ? block.data.header.height
-                            : <LoadingLine/>}
+                          <LoadingLine loading={block.loading}>{block.data?.header?.height}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Timestamp</Td>
                         <Td>
-                          {!block.loading
-                            ? new Date(block.data.header.timestamp).toLocaleString()
-                            : <LoadingLine/>}
+                          <LoadingLine loading={block.loading}>{new Date(block.data?.header?.timestamp).toLocaleString()}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Block Version</Td>
                         <Td>
-                          {!block.loading
-                            ? block.data.header.blockVersion
-                            : <LoadingLine/>}
+                          <LoadingLine loading={block.loading}>{block.data?.header?.blockVersion}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>App Version</Td>
                         <Td>
-                          {!block.loading
-                            ? block.data.header.appVersion
-                            : <LoadingLine/>}
+                          <LoadingLine loading={block.loading}>{block.data?.header?.appVersion}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>L1 Locked Height</Td>
                         <Td>
-                          {!block.loading
-                            ? block.data.header.l1LockedHeight
-                            : <LoadingLine/>}
+                          <LoadingLine loading={block.loading}>{block.data?.header?.l1LockedHeight}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Transactions count</Td>
                         <Td>
-                          {!block.loading
-                            ? txHashes.length
-                            : <LoadingLine/>}
+                          <LoadingLine loading={block.loading}>{txHashes?.length}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Validator</Td>
                         <Td>
-                          {!block.loading
-                            ? block.data.header.validator
-                            : <LoadingLine/>}
+                          <LoadingLine loading={block.loading}>{block.data?.header?.validator}</LoadingLine>
                         </Td>
                     </Tr>
                 </Tbody>

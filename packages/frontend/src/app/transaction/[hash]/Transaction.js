@@ -266,41 +266,33 @@ function Transaction ({ hash }) {
                     <Tr>
                         <Td w={tdTitleWidth}>Hash</Td>
                         <Td>
-                            {!transaction.loading
-                              ? transaction.data.hash
-                              : <LoadingLine/>}
+                            <LoadingLine loading={transaction.loading}>{transaction.data?.hash}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Height</Td>
                         <Td>
-                            {!transaction.loading
-                              ? transaction.data.blockHeight
-                              : <LoadingLine/>}
-                            </Td>
+                            <LoadingLine loading={transaction.loading}>{transaction.data?.blockHeight}</LoadingLine>
+                        </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Index</Td>
                         <Td>
-                            {!transaction.loading
-                              ? transaction.data.index
-                              : <LoadingLine/>}
+                            <LoadingLine loading={transaction.loading}>{transaction.data?.index}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Type</Td>
                         <Td>
-                            {!transaction.loading
-                              ? getTransitionTypeString(transaction.data.type)
-                              : <LoadingLine/>}
+                            <LoadingLine loading={transaction.loading}>
+                                {transaction.data?.type && getTransitionTypeString(transaction.data?.type)}
+                            </LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Timestamp</Td>
                         <Td>
-                            {!transaction.loading
-                              ? new Date(transaction.data.timestamp).toLocaleString()
-                              : <LoadingLine/>}
+                            <LoadingLine loading={transaction.loading}>{transaction.data?.timestamp && new Date(transaction.data?.timestamp).toLocaleString()}</LoadingLine>
                         </Td>
                     </Tr>
                 </Tbody>

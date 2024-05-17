@@ -65,33 +65,27 @@ function Document ({ identifier }) {
                             <Tr>
                                 <Td w={tdTitleWidth}>Identifier</Td>
                                 <Td>
-                                  {!document.loading
-                                    ? document.data.identifier
-                                    : <LoadingLine/>}
+                                    <LoadingLine loading={document.loading}>{document.data?.identifier}</LoadingLine>
                                 </Td>
                             </Tr>
                             <Tr>
                                 <Td w={tdTitleWidth}>Owner</Td>
                                 <Td>
-                                  {!document.loading
-                                    ? <Link href={`/identity/${document.data.owner}`}>{document.data.owner}</Link>
-                                    : <LoadingLine/>}
+                                    <LoadingLine loading={document.loading}>
+                                        <Link href={`/identity/${document.data?.owner}`}>{document.data?.owner}</Link>
+                                    </LoadingLine>
                                 </Td>
                             </Tr>
                             <Tr>
                                 <Td w={tdTitleWidth}>System</Td>
                                 <Td>
-                                  {!document.loading
-                                    ? document.data.isSystem ? 'true' : 'false'
-                                    : <LoadingLine/>}
+                                    <LoadingLine loading={document.loading}>{document.data?.isSystem ? 'true' : 'false'}</LoadingLine>
                                 </Td>
                             </Tr>
                             <Tr>
                                 <Td w={tdTitleWidth}>Revision</Td>
                                 <Td>
-                                  {!document.loading
-                                    ? document.data.revision
-                                    : <LoadingLine/>}
+                                    <LoadingLine loading={document.loading}>{document.data?.revision}</LoadingLine>
                                 </Td>
                             </Tr>
                         </Tbody>
@@ -111,15 +105,15 @@ function Document ({ identifier }) {
             >
                 <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Data</Heading>
                   {!document.error
-                    ? !document.loading
-                        ? <Code
+                    ? <LoadingBlock loading={document.loading}>
+                        <Code
                             borderRadius={'lg'}
                             className={'DocumentPage__Code'}
                             w={'100%'}
-                          >
-                            {JSON.stringify(JSON.parse(document.data.data), null, 2)}
-                          </Code>
-                        : <LoadingBlock/>
+                        >
+                            {!document.loading && JSON.stringify(JSON.parse(document.data?.data), null, 2)}
+                        </Code>
+                      </LoadingBlock>
                     : <ErrorMessageBlock h={40}/>}
             </Container>
         </Flex>

@@ -75,7 +75,7 @@ function Identity ({ identifier }) {
                       ? <Table variant='simple' className={'Table'}>
                             <Thead>
                                 <Tr>
-                                    <Th>Identity info</Th>
+                                    <Th pr={0}>Identity info</Th>
                                     <Th></Th>
                                 </Tr>
                             </Thead>
@@ -83,25 +83,19 @@ function Identity ({ identifier }) {
                                 <Tr>
                                     <Td w={tdTitleWidth}>Identifier</Td>
                                     <Td isNumeric>
-                                      {!identity.loading
-                                        ? identity.data.identifier
-                                        : <LoadingLine/>}
+                                        <LoadingLine loading={identity.loading}>{identity.data?.identifier}</LoadingLine>
                                     </Td>
                                 </Tr>
                                 <Tr>
                                     <Td w={tdTitleWidth}>Balance</Td>
                                     <Td isNumeric>
-                                      {!identity.loading
-                                        ? <>{identity.data.balance} Credits</>
-                                        : <LoadingLine/>}
+                                        <LoadingLine loading={identity.loading}>{identity.data?.balance} Credits</LoadingLine>
                                     </Td>
                                 </Tr>
                                 <Tr>
                                     <Td w={tdTitleWidth}>System</Td>
                                     <Td isNumeric>
-                                      {!identity.loading
-                                        ? identity.data.isSystem ? 'true' : 'false'
-                                        : <LoadingLine/>}
+                                        <LoadingLine loading={identity.loading}>{identity.data?.isSystem ? 'true' : 'false'}</LoadingLine>
                                     </Td>
                                 </Tr>
 
@@ -109,11 +103,11 @@ function Identity ({ identifier }) {
                                     <Tr>
                                         <Td w={tdTitleWidth}>Created</Td>
                                         <Td isNumeric>
-                                          {!identity.loading
-                                            ? <Link href={`/transaction/${identity.data.txHash}`}>
-                                                {new Date(identity.data.timestamp).toLocaleString()}
-                                            </Link>
-                                            : <LoadingLine/>}
+                                            <LoadingLine loading={identity.loading}>
+                                                <Link href={`/transaction/${identity.data?.txHash}`}>
+                                                    {identity.data?.timestamp && new Date(identity.data?.timestamp).toLocaleString()}
+                                                </Link>
+                                            </LoadingLine>
                                         </Td>
                                     </Tr>
                                 }
@@ -121,19 +115,15 @@ function Identity ({ identifier }) {
                                 <Tr>
                                     <Td w={tdTitleWidth}>Revision</Td>
                                     <Td isNumeric>
-                                      {!identity.loading
-                                        ? identity.data.revision
-                                        : <LoadingLine/>}
+                                        <LoadingLine loading={identity.loading}>{identity.data?.revision}</LoadingLine>
                                     </Td>
                                 </Tr>
 
-                                {!identity.isSystem &&
+                                {!identity.data?.isSystem &&
                                     <Tr>
                                         <Td w={tdTitleWidth}>Transactions</Td>
                                         <Td isNumeric>
-                                          {!identity.loading
-                                            ? identity.data.totalTxs
-                                            : <LoadingLine/>}
+                                            <LoadingLine loading={identity.loading}>{identity.data?.totalTxs}</LoadingLine>
                                         </Td>
                                     </Tr>
                                 }
@@ -141,25 +131,19 @@ function Identity ({ identifier }) {
                                 <Tr>
                                     <Td w={tdTitleWidth}>Transfers</Td>
                                     <Td isNumeric>
-                                      {!identity.loading
-                                        ? identity.data.totalTransfers
-                                        : <LoadingLine/>}
+                                        <LoadingLine loading={identity.loading}>{identity.data?.totalTransfers}</LoadingLine>
                                     </Td>
                                 </Tr>
                                 <Tr>
                                     <Td w={tdTitleWidth}>Documents</Td>
                                     <Td isNumeric>
-                                      {!identity.loading
-                                        ? identity.data.totalDocuments
-                                        : <LoadingLine/>}
+                                        <LoadingLine loading={identity.loading}>{identity.data?.totalDocuments}</LoadingLine>
                                     </Td>
                                 </Tr>
                                 <Tr>
                                     <Td w={tdTitleWidth}>Data contracts</Td>
                                     <Td isNumeric>
-                                      {!identity.loading
-                                        ? identity.data.totalDataContracts
-                                        : <LoadingLine/>}
+                                        <LoadingLine loading={identity.loading}>{identity.data?.totalDataContracts}</LoadingLine>
                                     </Td>
                                 </Tr>
                             </Tbody>

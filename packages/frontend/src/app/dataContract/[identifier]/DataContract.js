@@ -99,60 +99,50 @@ function DataContract ({ identifier }) {
                     <Tr>
                         <Td w={tdTitleWidth}>Identifier</Td>
                         <Td>
-                            {!dataContract.loading
-                              ? dataContract.data.identifier
-                              : <LoadingLine/>}
+                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.identifier}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Owner</Td>
                         <Td>
-                            {!dataContract.loading
-                              ? <Link href={`/identity/${dataContract.data.owner}`}>{dataContract.data.owner}</Link>
-                              : <LoadingLine/>}
+                            <LoadingLine loading={dataContract.loading}>
+                              <Link href={`/identity/${dataContract.data?.owner}`}>{dataContract.data?.owner}</Link>
+                            </LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>System</Td>
                         <Td>
-                          {!dataContract.loading
-                            ? dataContract.data.isSystem ? 'true' : 'false'
-                            : <LoadingLine/>}
+                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.isSystem ? 'true' : 'false'}</LoadingLine>
                         </Td>
                     </Tr>
-                    {!dataContract.data.isSystem &&
+                    {!dataContract.data?.isSystem &&
                         <Tr>
                             <Td w={tdTitleWidth}>Created</Td>
                             <Td>
-                              {!dataContract.loading
-                                ? new Date(dataContract.data.timestamp).toLocaleString()
-                                : <LoadingLine/>}
+                                <LoadingLine loading={dataContract.loading}>{new Date(dataContract.data?.timestamp).toLocaleString()}</LoadingLine>
                             </Td>
                         </Tr>
                     }
                     <Tr>
                         <Td w={tdTitleWidth}>Documents Count</Td>
                         <Td>
-                          {!dataContract.loading
-                            ? dataContract.data.documentsCount
-                            : <LoadingLine/>}
+                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.documentsCount}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Revision</Td>
                         <Td>
-                          {!dataContract.loading
-                            ? dataContract.data.version
-                            : <LoadingLine/>}
+                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.version}</LoadingLine>
                         </Td>
                     </Tr>
-                    {!dataContract.data.isSystem &&
+                    {!dataContract.data?.isSystem &&
                         <Tr w={tdTitleWidth}>
                             <Td>Transaction</Td>
                             <Td>
-                              {!dataContract.loading
-                                ? <Link href={`/transaction/${dataContract.data.txHash}`}>{dataContract.data.txHash}</Link>
-                                : <LoadingLine/>}
+                                <LoadingLine loading={dataContract.loading}>
+                                    <Link href={`/transaction/${dataContract.data?.txHash}`}>{dataContract.data?.txHash}</Link>
+                                </LoadingLine>
                             </Td>
                         </Tr>
                     }
@@ -201,18 +191,18 @@ function DataContract ({ identifier }) {
                     <TabPanel>
                         <Box>
                           {!dataContract.error
-                            ? !dataContract.loading
-                                ? <div className={'DataContractSchema'}>
-                                    <Code
-                                        className={'DataContractSchema__Code'}
-                                        borderRadius={'lg'}
-                                        p={4}
-                                        w={'100%'}
-                                    >
-                                        {JSON.stringify(JSON.parse(dataContract.data.schema), null, 2)}
+                            ? <LoadingBlock loading={dataContract.loading}>
+                                  <div className={'DataContractSchema'}>
+                                      <Code
+                                          className={'DataContractSchema__Code'}
+                                          borderRadius={'lg'}
+                                          p={4}
+                                          w={'100%'}
+                                      >
+                                          {dataContract.data?.schema && JSON.stringify(JSON.parse(dataContract.data?.schema), null, 2)}
                                     </Code>
                                   </div>
-                                : <LoadingBlock h={'250px'}/>
+                              </LoadingBlock>
                             : <Container h={20}><ErrorMessageBlock/></Container>
                           }
                         </Box>
