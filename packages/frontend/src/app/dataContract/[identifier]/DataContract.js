@@ -5,9 +5,8 @@ import Link from 'next/link'
 import * as Api from '../../../util/Api'
 import Pagination from '../../../components/pagination'
 import DocumentsList from '../../../components/documents/DocumentsList'
-import { LoadingLine, LoadingBlock } from '../../../components/loading'
+import { LoadingLine, LoadingBlock, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { ListLoadingPreview } from '../../../components/lists'
 import './DataContract.scss'
 
 import {
@@ -175,7 +174,7 @@ function DataContract ({ identifier }) {
                                         columnsCount={2}
                                     />
                                 </Box>
-                                : <ListLoadingPreview itemsCount={5}/>
+                                : <LoadingList itemsCount={5}/>
                             : <Container h={20}><ErrorMessageBlock/></Container>
                             }
                             <div className={'ListNavigation ListNavigation--Center'}>

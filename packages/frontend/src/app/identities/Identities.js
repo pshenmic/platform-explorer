@@ -5,7 +5,7 @@ import * as Api from '../../util/Api'
 import IdentitiesList from '../../components/identities/IdentitiesList'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
-import { ListLoadingPreview } from '../../components/lists'
+import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 
 import {
@@ -71,7 +71,7 @@ function Identities () {
                 {!identities.error
                   ? !identities.loading
                       ? <IdentitiesList identities={identities.data.resultSet}/>
-                      : <ListLoadingPreview itemsCount={pageSize}/>
+                      : <LoadingList itemsCount={pageSize}/>
                   : <ErrorMessageBlock/>
                 }
 

@@ -1,6 +1,7 @@
 import { Container } from '@chakra-ui/react'
 import './LoadingLine.scss'
 import './LoadingBlock.scss'
+import './LoadingList.scss'
 
 function LoadingLine ({ children, loading, w = '100%', h = '20px', className = '' }) {
   if (children === undefined || loading) {
@@ -18,7 +19,16 @@ function LoadingBlock ({ children, loading, w = '100%', h = '100%', className = 
   return <>{children}</>
 }
 
+const LoadingList = ({ itemsCount }) => {
+  return (
+    <div className={'LoadingList'}>
+        {Array.from(Array(itemsCount)).map((e, i) => <LoadingLine h={9} className={'LoadingList__Item'} key={i}/>)}
+    </div>
+  )
+}
+
 export {
   LoadingLine,
-  LoadingBlock
+  LoadingBlock,
+  LoadingList
 }

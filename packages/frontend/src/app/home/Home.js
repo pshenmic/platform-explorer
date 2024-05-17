@@ -3,7 +3,7 @@
 import { useState, useEffect, createRef } from 'react'
 import * as Api from '../../util/Api'
 import { LineChart } from '../../components/charts/index.js'
-import { SimpleList, ListLoadingPreview } from '../../components/lists'
+import { SimpleList } from '../../components/lists'
 import TotalInfo from '../../components/​totalInfo'
 import NetworkStatus from '../../components/networkStatus'
 import Intro from '../../components/intro/index.js'
@@ -11,7 +11,7 @@ import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { getTransitionTypeString, fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { ErrorMessageBlock } from '../../components/Errors'
-import { LoadingBlock } from '../../components/loading'
+import { LoadingBlock, LoadingList } from '../../components/loading'
 
 import {
   Box,
@@ -279,7 +279,7 @@ function Home () {
                                     columns={['Identifier', 'Documents Count']}
                                   />
                                 : <ErrorMessageBlock/>
-                            : <ListLoadingPreview itemsCount={dataContracts.props.printCount}/>}
+                            : <LoadingList itemsCount={dataContracts.props.printCount}/>}
                       </Flex>
                   </Container>
               </Flex>
@@ -314,7 +314,7 @@ function Home () {
                               columns={[]}
                             />
                             : <ErrorMessageBlock/>
-                        : <ListLoadingPreview itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
+                        : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
                   </Flex>
 
                   <Box flexShrink={'0'} w={10} h={10} />
@@ -347,7 +347,7 @@ function Home () {
                                   columns={['Identifier', 'Tx Count']}
                                 />
                                 : <ErrorMessageBlock/>
-                            : <ListLoadingPreview itemsCount={trendingIdentities.props.printCount}/>}
+                            : <LoadingList itemsCount={trendingIdentities.props.printCount}/>}
                       </Flex>
 
                       <Box w={10} h={10} />
@@ -374,7 +374,7 @@ function Home () {
                                   columns={['Identifier', 'Balance']}
                                 />
                                 : <ErrorMessageBlock/>
-                            : <ListLoadingPreview itemsCount={richestIdentities.props.printCount}/>}
+                            : <LoadingList itemsCount={richestIdentities.props.printCount}/>}
                       </Flex>
                   </Flex>
               </Flex>

@@ -5,7 +5,7 @@ import * as Api from '../../util/Api'
 import TransactionsList from '../../components/transactions/TransactionsList'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
-import { ListLoadingPreview } from '../../components/lists'
+import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 
 import {
@@ -71,7 +71,7 @@ function Transactions () {
             {!transactions.error
               ? !transactions.loading
                   ? <TransactionsList transactions={transactions.data.resultSet}/>
-                  : <ListLoadingPreview itemsCount={pageSize}/>
+                  : <LoadingList itemsCount={pageSize}/>
               : <Container h={20}><ErrorMessageBlock/></Container>
             }
 

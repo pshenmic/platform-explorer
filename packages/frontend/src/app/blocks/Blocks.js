@@ -6,7 +6,7 @@ import Pagination from '../../components/pagination'
 import GoToHeightForm from '../../components/goToHeightForm/GoToHeightForm'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import BlocksList from '../../components/blocks/BlocksList'
-import { ListLoadingPreview } from '../../components/lists'
+import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import './Blocks.scss'
 
@@ -85,7 +85,7 @@ function Blocks () {
                 ? <>
                     {!blocks.loading
                       ? <BlocksList blocks={blocks.data.resultSet}/>
-                      : <ListLoadingPreview itemsCount={pageSize}/>
+                      : <LoadingList itemsCount={pageSize}/>
                     }
                   </>
                 : <Container h={20}><ErrorMessageBlock/></Container>}

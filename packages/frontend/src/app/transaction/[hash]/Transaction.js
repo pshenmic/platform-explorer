@@ -5,9 +5,8 @@ import Link from 'next/link'
 import { useState, useEffect, useCallback } from 'react'
 import { getTransitionTypeString } from '../../../util'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
-import { LoadingLine } from '../../../components/loading'
+import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { ListLoadingPreview } from '../../../components/lists'
 import './Transaction.scss'
 
 import {
@@ -313,7 +312,7 @@ function Transaction ({ hash }) {
               ? <Table variant='simple' className='Table TransactionData'>
                     <TransactionData data={decodedST}/>
                 </Table>
-              : <ListLoadingPreview itemsCount={3}/>}
+              : <LoadingList itemsCount={3}/>}
           </Container>
         }
     </Container>

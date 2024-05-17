@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import './SimpleList.scss'
 import { forwardRef } from 'react'
-import { LoadingLine } from '../../components/loading'
 
 function SimpleListItem ({ item }) {
   const ItemContainer = ({ link, children }) => link
@@ -73,15 +72,6 @@ const SimpleList = forwardRef(function (props, ref) {
 
 SimpleList.displayName = 'SimpleList'
 
-const ListLoadingPreview = ({ itemsCount }) => {
-  return (
-    <div className={'SimpleList'}>
-        {Array.from(Array(itemsCount)).map((e, i) => <LoadingLine h={9} className={'SimpleListItem--Loading'} key={i}/>)}
-    </div>
-  )
-}
-
 export {
-  SimpleList,
-  ListLoadingPreview
+  SimpleList
 }

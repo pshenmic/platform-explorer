@@ -8,9 +8,8 @@ import DocumentsList from '../../../components/documents/DocumentsList'
 import DataContractsList from '../../../components/dataContracts/DataContractsList'
 import TransfersList from '../../../components/transfers/TransfersList'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import { LoadingLine } from '../../../components/loading'
+import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { ListLoadingPreview } from '../../../components/lists'
 import './Identity.scss'
 
 import {
@@ -178,7 +177,7 @@ function Identity ({ identifier }) {
                               {!transactions.error
                                 ? !transactions.loading
                                     ? <TransactionsList transactions={transactions.data.resultSet} size='m'/>
-                                    : <ListLoadingPreview itemsCount={9}/>
+                                    : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
 
@@ -186,7 +185,7 @@ function Identity ({ identifier }) {
                               {!transfers.error
                                 ? !transfers.loading
                                     ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.identifier}/>
-                                    : <ListLoadingPreview itemsCount={9}/>
+                                    : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
 
@@ -194,7 +193,7 @@ function Identity ({ identifier }) {
                               {!documents.error
                                 ? !documents.loading
                                     ? <DocumentsList documents={documents.data.resultSet} size='m'/>
-                                    : <ListLoadingPreview itemsCount={9}/>
+                                    : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
 
@@ -202,7 +201,7 @@ function Identity ({ identifier }) {
                               {!dataContracts.error
                                 ? !dataContracts.loading
                                     ? <DataContractsList dataContracts={dataContracts.data.resultSet} size='m'/>
-                                    : <ListLoadingPreview itemsCount={9}/>
+                                    : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
                         </TabPanels>

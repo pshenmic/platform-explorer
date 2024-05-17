@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import * as Api from '../../util/Api'
 import DataContractsList from '../../components/dataContracts/DataContractsList'
 import Pagination from '../../components/pagination'
-import { ListLoadingPreview } from '../../components/lists'
+import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 
@@ -67,7 +67,7 @@ function DataContractsLayout () {
                 ? !dataContracts.error
                     ? <DataContractsList dataContracts={dataContracts.data.resultSet} size='l'/>
                     : <Container h={20}><ErrorMessageBlock/></Container>
-                : <ListLoadingPreview itemsCount={pageSize}/>}
+                : <LoadingList itemsCount={pageSize}/>}
 
               <div className={'ListNavigation'}>
                   <Box display={['none', 'none', 'block']} width={'100px'}/>
