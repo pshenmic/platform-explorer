@@ -7,7 +7,6 @@ import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { ListLoadingPreview } from '../../components/lists'
 import { ErrorMessageBlock } from '../../components/Errors'
-import './Transactions.scss'
 
 import {
   Container,
