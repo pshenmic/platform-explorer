@@ -12,6 +12,7 @@ import introContent from './intro.md'
 import { getTransitionTypeString } from '../../util/index'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { LoadingBlock } from '../../components/loading'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 
 import {
   Box,
@@ -41,29 +42,6 @@ function Home () {
   const trendingIdentitiesList = createRef()
   const transactionsContainer = createRef()
   const transactionsList = createRef()
-
-  function fetchHandlerSuccess (setter, data) {
-    setter(state => ({
-      ...state,
-      data: {
-        ...state.data,
-        ...data
-      },
-      loading: false,
-      error: false
-    }))
-  }
-
-  function fetchHandlerError (setter, error) {
-    console.error(error)
-
-    setter(state => ({
-      ...state,
-      data: null,
-      loading: false,
-      error: true
-    }))
-  }
 
   const fetchData = () => {
     Promise.all([
