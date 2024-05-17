@@ -9,10 +9,9 @@ import NetworkStatus from '../../components/networkStatus'
 import Intro from '../../components/intro/index.js'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
-import { getTransitionTypeString } from '../../util/index'
+import { getTransitionTypeString, fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { LoadingBlock } from '../../components/loading'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 
 import {
   Box,
