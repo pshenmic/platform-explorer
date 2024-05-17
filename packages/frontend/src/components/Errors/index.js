@@ -1,12 +1,12 @@
 import { WarningTwoIcon } from '@chakra-ui/icons'
 import { Flex } from '@chakra-ui/react'
 
-function ErrorMessageBlock () {
+function ErrorMessageBlock ({ w = '100%', h = '100%' }) {
   return (
     <Flex
       flexGrow={1}
-      w={'100%'}
-      h={'100%'}
+      w={w}
+      h={h}
       justifyContent={'center'}
       alignItems={'center'}
       flexDirection={'column'}
