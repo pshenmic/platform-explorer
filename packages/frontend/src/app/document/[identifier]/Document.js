@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import * as Api from '../../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import { LoadingLine } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { LoadingBlock } from '../../../components/loading'
+import { LoadingLine, LoadingBlock } from '../../../components/loading'
 
 import './Document.scss'
 
@@ -56,48 +55,48 @@ function Document ({ identifier }) {
             >
                 {!document.error
                   ? <Table variant={'simple'}>
-                    <Thead>
-                        <Tr>
-                            <Th pr={0}>Document info</Th>
-                            <Th></Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        <Tr>
-                            <Td w={tdTitleWidth}>Identifier</Td>
-                            <Td>
-                              {!document.loading
-                                ? document.data.identifier
-                                : <LoadingLine/>}
-                            </Td>
-                        </Tr>
-                        <Tr>
-                            <Td w={tdTitleWidth}>Owner</Td>
-                            <Td>
-                              {!document.loading
-                                ? <Link href={`/identity/${document.data.owner}`}>{document.data.owner}</Link>
-                                : <LoadingLine/>}
-                            </Td>
-                        </Tr>
-                        <Tr>
-                            <Td w={tdTitleWidth}>System</Td>
-                            <Td>
-                              {!document.loading
-                                ? document.data.isSystem ? 'true' : 'false'
-                                : <LoadingLine/>}
-                            </Td>
-                        </Tr>
-                        <Tr>
-                            <Td w={tdTitleWidth}>Revision</Td>
-                            <Td>
-                              {!document.loading
-                                ? document.data.revision
-                                : <LoadingLine/>}
-                            </Td>
-                        </Tr>
-                    </Tbody>
-                </Table>
-                : <ErrorMessageBlock/>}
+                        <Thead>
+                            <Tr>
+                                <Th pr={0}>Document info</Th>
+                                <Th></Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            <Tr>
+                                <Td w={tdTitleWidth}>Identifier</Td>
+                                <Td>
+                                  {!document.loading
+                                    ? document.data.identifier
+                                    : <LoadingLine/>}
+                                </Td>
+                            </Tr>
+                            <Tr>
+                                <Td w={tdTitleWidth}>Owner</Td>
+                                <Td>
+                                  {!document.loading
+                                    ? <Link href={`/identity/${document.data.owner}`}>{document.data.owner}</Link>
+                                    : <LoadingLine/>}
+                                </Td>
+                            </Tr>
+                            <Tr>
+                                <Td w={tdTitleWidth}>System</Td>
+                                <Td>
+                                  {!document.loading
+                                    ? document.data.isSystem ? 'true' : 'false'
+                                    : <LoadingLine/>}
+                                </Td>
+                            </Tr>
+                            <Tr>
+                                <Td w={tdTitleWidth}>Revision</Td>
+                                <Td>
+                                  {!document.loading
+                                    ? document.data.revision
+                                    : <LoadingLine/>}
+                                </Td>
+                            </Tr>
+                        </Tbody>
+                    </Table>
+                  : <ErrorMessageBlock/>}
             </TableContainer>
 
             <Box w={5} h={5} />
@@ -111,16 +110,16 @@ function Document ({ identifier }) {
                 flexDirection={'column'}
             >
                 <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Data</Heading>
-                  {!document.error 
+                  {!document.error
                     ? !document.loading
-                      ? <Code
+                        ? <Code
                             borderRadius={'lg'}
                             className={'DocumentPage__Code'}
                             w={'100%'}
-                        >
+                          >
                             {JSON.stringify(JSON.parse(document.data.data), null, 2)}
-                        </Code>
-                      : <LoadingBlock/>
+                          </Code>
+                        : <LoadingBlock/>
                     : <ErrorMessageBlock h={40}/>}
             </Container>
         </Flex>
