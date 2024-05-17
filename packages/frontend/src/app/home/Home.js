@@ -228,32 +228,32 @@ function Home () {
                           p={0}
                           flexDirection={'column'}
                       >
-                        {!transactionsHistory.loading
-                          ? (!transactionsHistory.error && transactionsHistory.data?.resultSet?.length)
-                              ? <LineChart
-                                data={transactionsHistory.data.resultSet.map((item) => ({
-                                  x: new Date(item.timestamp),
-                                  y: item.data.txs
-                                }))}
-                                timespan={transactionsTimespan}
-                                xAxis={{
-                                  type: (() => {
-                                    if (transactionsTimespan === '1h') return { axis: 'time' }
-                                    if (transactionsTimespan === '24h') return { axis: 'time' }
-                                    if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
-                                    if (transactionsTimespan === '1w') return { axis: 'date' }
-                                  })(),
-                                  abbreviation: '',
-                                  title: ''
-                                }}
-                                yAxis={{
-                                  type: 'number',
-                                  title: '',
-                                  abbreviation: 'txs'
-                                }}
+                        <LoadingBlock loading={transactionsHistory.loading}>
+                          {(!transactionsHistory.error && transactionsHistory.data?.resultSet?.length)
+                            ? <LineChart
+                                  data={transactionsHistory.data.resultSet.map((item) => ({
+                                    x: new Date(item.timestamp),
+                                    y: item.data.txs
+                                  }))}
+                                  timespan={transactionsTimespan}
+                                  xAxis={{
+                                    type: (() => {
+                                      if (transactionsTimespan === '1h') return { axis: 'time' }
+                                      if (transactionsTimespan === '24h') return { axis: 'time' }
+                                      if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
+                                      if (transactionsTimespan === '1w') return { axis: 'date' }
+                                    })(),
+                                    abbreviation: '',
+                                    title: ''
+                                  }}
+                                  yAxis={{
+                                    type: 'number',
+                                    title: '',
+                                    abbreviation: 'txs'
+                                  }}
                               />
-                              : <ErrorMessageBlock/>
-                          : <LoadingBlock/>}
+                            : <ErrorMessageBlock/>}
+                        </LoadingBlock>
                       </Flex>
                   </Flex>
 
