@@ -50,6 +50,10 @@
     align-items: flex-end;
     flex-wrap: wrap;
     margin-top: 16px;
+
+    &--Center {
+        justify-content: center;
+    }
 }
 
 .disabled {

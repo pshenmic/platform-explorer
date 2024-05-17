@@ -11,6 +11,7 @@ import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { getTransitionTypeString } from '../../util/index'
 import { ErrorMessageBlock } from '../../components/Errors'
+import { LoadingBlock } from '../../components/loading'
 
 import {
   Box,
@@ -275,11 +276,7 @@ function Home () {
                                 }}
                               />
                               : <ErrorMessageBlock/>
-                          : <Container
-                            w={'100%'}
-                            h={'100%'}
-                            className={'ChartBlock__Loader'}>
-                          </Container>}
+                          : <LoadingBlock/>}
                       </Flex>
                   </Flex>
 
