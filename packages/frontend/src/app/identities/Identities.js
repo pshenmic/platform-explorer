@@ -43,7 +43,7 @@ function Identities () {
       })
   }
 
-  useEffect(() => fetchData(paginateConfig.defaultPage, paginateConfig.pageSize.default), [pageSize])
+  useEffect(() => fetchData(paginateConfig.defaultPage, pageSize), [pageSize])
 
   const handlePageClick = useCallback(({ selected }) => {
     setCurrentPage(selected)
