@@ -1,45 +1,61 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import * as Api from '../../util/Api'
 import IdentitiesList from '../../components/identities/IdentitiesList'
 import Pagination from '../../components/pagination'
+import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
+import { ListLoadingPreview } from '../../components/lists'
+import { ErrorMessageBlock } from '../../components/Errors'
 
 import {
   Container,
-  Heading
+  Heading,
+  Box
 } from '@chakra-ui/react'
 
+const paginateConfig = {
+  pageSize: {
+    default: 25,
+    values: [10, 25, 50, 75, 100]
+  },
+  defaultPage: 1
+}
+
+
 function Identities () {
-  const [loading, setLoading] = useState(true)
-  const [identities, setIdentities] = useState([])
+  const [identities, setIdentities] = useState({ data: {}, loading: true, error: false })
   const [total, setTotal] = useState(1)
-  const pageSize = 25
+  const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(0)
   const pageCount = Math.ceil(total / pageSize)
 
-  const fetchData = () => {
-    setLoading(true)
+  const fetchData = (page, count) => {
+    setIdentities(state => ({ ...state, loading: true }))
 
-    Api.getIdentities(1, pageSize, 'desc')
-      .then((identities) => {
-        setIdentities(identities.resultSet)
+    Api.getIdentities(page, count, 'desc')
+      .then(identities => {
+        setIdentities({ data: identities, loading: false, error: false})
         setTotal(identities.pagination.total)
       })
-      .catch(console.log)
-      .finally(() => setLoading(false))
-  }
-
-  useEffect(fetchData, [])
-
-  const handlePageClick = ({ selected }) => {
-    Api.getIdentities(selected + 1, pageSize, 'desc')
-      .then((res) => {
-        setCurrentPage(selected)
-        setIdentities(res.resultSet)
+      .catch(err => {
+        console.error(err)
+        setIdentities({ data: null, loading: false, error: true})
       })
-      .catch(console.log)
   }
+
+  useEffect(() => fetchData(paginateConfig.defaultPage, paginateConfig.pageSize.default), [pageSize])
+
+  const handlePageClick = useCallback(({ selected }) => {
+    setCurrentPage(selected)
+    fetchData(selected + 1, pageSize)
+  }, [pageSize])
+
+  useEffect(() => {
+    setCurrentPage(0)
+    handlePageClick({ selected: 0 })
+  }, [pageSize, handlePageClick])
+
 
   return (
         <Container
@@ -52,22 +68,28 @@ function Identities () {
                 borderWidth='1px' borderRadius='lg'
                 className={'InfoBlock'}
             >
-                <Heading className={'InfoBlock__Title'} as='h1' size='sm' >Identities</Heading>
+                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Identities</Heading>
 
-                {!loading && <>
-                    <IdentitiesList identities={identities}/>
+                {!identities.error
+                  ? !identities.loading
+                      ? <IdentitiesList identities={identities.data.resultSet}/>
+                      : <ListLoadingPreview itemsCount={pageSize}/>
+                  : <ErrorMessageBlock/>
+                }
 
-                    {pageCount > 1 &&
-                        <div className={'ListNavigation'}>
-                            <Pagination
-                                onPageChange={handlePageClick}
-                                pageCount={pageCount}
-                                forcePage={currentPage}
-                            />
-                        </div>
-                    }
-                </>}
-
+                <div className={'ListNavigation'}>
+                    <Box display={['none', 'none', 'block']} width={'100px'}/>
+                    <Pagination
+                        onPageChange={handlePageClick}
+                        pageCount={pageCount}
+                        forcePage={currentPage}
+                    />
+                    <PageSizeSelector
+                        PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                        defaultValue={paginateConfig.pageSize.default}
+                        items={paginateConfig.pageSize.values}
+                    />
+                </div>
             </Container>
         </Container>
   )
