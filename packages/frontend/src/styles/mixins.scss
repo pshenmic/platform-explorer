@@ -67,14 +67,14 @@
         animation: loading-line linear 3s infinite;
     }
 
-    $timeOffset: 0.5s;
-
     Tr & {
         &::before {
             background-color: var(--chakra-colors-gray-800);
             opacity: .2;
         }
     }
+
+    $timeOffset: 0.5s;
 
     @for $i from 1 through 10 {
         &:nth-child(#{$i}n) {
