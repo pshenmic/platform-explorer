@@ -8,6 +8,7 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import BlocksList from '../../components/blocks/BlocksList'
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import './Blocks.scss'
 
 import {
@@ -36,13 +37,10 @@ function Blocks () {
 
     Api.getBlocks(page, count, 'desc')
       .then(res => {
-        setBlocks({ data: res, loading: false, error: false })
+        fetchHandlerSuccess(setBlocks, res)
         setTotal(res.pagination.total)
       })
-      .catch(err => {
-        console.error(err)
-        setBlocks({ data: null, loading: false, error: true })
-      })
+      .catch(err => fetchHandlerError(setBlocks, err))
   }
 
   useEffect(() => fetchData(paginateConfig.defaultPage, paginateConfig.pageSize.default), [])

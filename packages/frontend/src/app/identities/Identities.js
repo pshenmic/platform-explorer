@@ -7,6 +7,7 @@ import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 
 import {
   Container,
@@ -33,14 +34,11 @@ function Identities () {
     setIdentities(state => ({ ...state, loading: true }))
 
     Api.getIdentities(page, count, 'desc')
-      .then(identities => {
-        setIdentities({ data: identities, loading: false, error: false })
-        setTotal(identities.pagination.total)
+      .then(res => {
+        fetchHandlerSuccess(setIdentities, res)
+        setTotal(res.pagination.total)
       })
-      .catch(err => {
-        console.error(err)
-        setIdentities({ data: null, loading: false, error: true })
-      })
+      .catch(err => fetchHandlerError(setIdentities, err))
   }
 
   useEffect(() => fetchData(paginateConfig.defaultPage, pageSize), [pageSize])

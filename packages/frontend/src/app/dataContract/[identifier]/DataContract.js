@@ -7,6 +7,7 @@ import Pagination from '../../../components/pagination'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import { LoadingLine, LoadingBlock, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import './DataContract.scss'
 
 import {
@@ -37,23 +38,17 @@ function DataContract ({ identifier }) {
   const fetchData = () => {
     Promise.all([
       Api.getDataContractByIdentifier(identifier)
-        .then(res => setDataContract({ data: res, loading: false, error: false }))
-        .catch(err => {
-          console.error(err)
-          setDataContract({ data: null, loading: false, error: true })
-        }),
+        .then(res => fetchHandlerSuccess(setDataContract, res))
+        .catch(err => fetchHandlerError(setDataContract, err)),
       Api.getDocumentsByDataContract(
         identifier,
         pagintationConfig.defaultPage,
         pagintationConfig.itemsOnPage.default)
         .then(res => {
-          setDocuments({ data: res, loading: false, error: false })
+          fetchHandlerSuccess(setDocuments, res)
           setTotal(res.pagination.total)
         })
-        .catch(err => {
-          console.error(err)
-          setDocuments({ data: null, loading: false, error: true })
-        })
+        .catch(err => fetchHandlerError(setDocuments, err))
     ])
       .catch(console.error)
   }

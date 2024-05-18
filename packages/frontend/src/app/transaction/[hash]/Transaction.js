@@ -3,7 +3,7 @@
 import * as Api from '../../../util/Api'
 import Link from 'next/link'
 import { useState, useEffect, useCallback } from 'react'
-import { getTransitionTypeString } from '../../../util'
+import { getTransitionTypeString, fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
@@ -231,13 +231,10 @@ function Transaction ({ hash }) {
 
     Api.getTransaction(hash)
       .then((res) => {
-        setTransaction({ data: res, loading: false, error: false })
+        fetchHandlerSuccess(setTransaction, res)
         decodeTx(res.data)
       })
-      .catch(err => {
-        console.error(err)
-        setTransaction({ data: null, loading: false, error: true })
-      })
+      .catch(err => fetchHandlerError(setTransaction, err))
   }
 
   useEffect(fetchData, [hash, decodeTx])

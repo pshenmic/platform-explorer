@@ -5,6 +5,7 @@ import * as Api from '../../../util/Api'
 import TransactionsList from '../../../components/transactions/TransactionsList'
 import { LoadingLine } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 
 import {
   Container,
@@ -21,11 +22,8 @@ function Block ({ hash }) {
     setBlock(state => ({ ...state, loading: true }))
 
     Api.getBlockByHash(hash)
-      .then(res => setBlock({ data: res, loading: false, error: false }))
-      .catch(err => {
-        console.error(err)
-        setBlock({ data: null, loading: false, error: true })
-      })
+      .then(res => fetchHandlerSuccess(setBlock, res))
+      .catch(err => fetchHandlerError(setBlock, err))
   }
 
   useEffect(fetchData, [hash])

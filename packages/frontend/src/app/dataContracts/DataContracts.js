@@ -7,6 +7,7 @@ import Pagination from '../../components/pagination'
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 
 import {
   Container,
@@ -34,13 +35,10 @@ function DataContractsLayout () {
 
     Api.getDataContracts(page, count, 'desc')
       .then(res => {
-        setDataContracts({ data: res, loading: false, error: false })
+        fetchHandlerSuccess(setDataContracts, res)
         setTotal(res.pagination.total)
       })
-      .catch(err => {
-        console.error(err)
-        setDataContracts({ data: null, loading: false, error: true })
-      })
+      .catch(err => fetchHandlerError(setDataContracts, err))
   }
 
   useEffect(() => fetchData(paginateConfig.defaultPage, pageSize), [pageSize])

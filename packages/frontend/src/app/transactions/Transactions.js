@@ -7,6 +7,7 @@ import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 
 import {
   Container,
@@ -34,13 +35,10 @@ function Transactions () {
 
     Api.getTransactions(page, count, 'desc')
       .then((res) => {
-        setTransactions({ data: res, loading: false, error: false })
+        fetchHandlerSuccess(setTransactions, res)
         setTotal(res.pagination.total)
       })
-      .catch(err => {
-        console.error(err)
-        setTransactions({ data: null, loading: false, error: true })
-      })
+      .catch(err => fetchHandlerError(setTransactions, err))
   }
 
   useEffect(() => fetchData(paginateConfig.defaultPage, pageSize), [pageSize])
