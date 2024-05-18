@@ -73,19 +73,21 @@ function Transactions () {
               : <Container h={20}><ErrorMessageBlock/></Container>
             }
 
-            <div className={'ListNavigation'}>
-              <Box display={['none', 'none', 'block']} width={'100px'}/>
-              <Pagination
-                  onPageChange={handlePageClick}
-                  pageCount={pageCount}
-                  forcePage={currentPage}
-              />
-              <PageSizeSelector
-                  PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                  defaultValue={paginateConfig.pageSize.default}
-                  items={paginateConfig.pageSize.values}
-              />
-            </div>
+            {transactions.data?.resultSet &&
+              <div className={'ListNavigation'}>
+                <Box display={['none', 'none', 'block']} width={'100px'}/>
+                <Pagination
+                    onPageChange={handlePageClick}
+                    pageCount={pageCount}
+                    forcePage={currentPage}
+                />
+                <PageSizeSelector
+                    PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                    defaultValue={paginateConfig.pageSize.default}
+                    items={paginateConfig.pageSize.values}
+                />
+              </div>
+            }
         </Container>
     </Container>
   )

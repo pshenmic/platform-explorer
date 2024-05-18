@@ -54,25 +54,26 @@ function Identities () {
   }, [pageSize, handlePageClick])
 
   return (
-        <Container
-            maxW='container.md'
-            mt={8}
-            className={'IdentitiesPage'}
-        >
-            <Container
-                maxW='container.md'
-                borderWidth='1px' borderRadius='lg'
-                className={'InfoBlock'}
-            >
-                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Identities</Heading>
+      <Container
+          maxW='container.md'
+          mt={8}
+          className={'IdentitiesPage'}
+      >
+          <Container
+              maxW='container.md'
+              borderWidth='1px' borderRadius='lg'
+              className={'InfoBlock'}
+          >
+              <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Identities</Heading>
 
-                {!identities.error
-                  ? !identities.loading
-                      ? <IdentitiesList identities={identities.data.resultSet}/>
-                      : <LoadingList itemsCount={pageSize}/>
-                  : <ErrorMessageBlock/>
-                }
+              {!identities.error
+                ? !identities.loading
+                    ? <IdentitiesList identities={identities.data.resultSet}/>
+                    : <LoadingList itemsCount={pageSize}/>
+                : <ErrorMessageBlock h={20}/>
+              }
 
+              {identities.data?.resultSet &&
                 <div className={'ListNavigation'}>
                     <Box display={['none', 'none', 'block']} width={'100px'}/>
                     <Pagination
@@ -86,8 +87,9 @@ function Identities () {
                         items={paginateConfig.pageSize.values}
                     />
                 </div>
-            </Container>
-        </Container>
+              }
+          </Container>
+      </Container>
   )
 }
 

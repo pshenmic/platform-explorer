@@ -172,13 +172,15 @@ function DataContract ({ identifier }) {
                                 : <LoadingList itemsCount={5}/>
                             : <Container h={20}><ErrorMessageBlock/></Container>
                             }
-                            <div className={'ListNavigation ListNavigation--Center'}>
-                                <Pagination
-                                    onPageChange={handlePageClick}
-                                    pageCount={pageCount}
-                                    forcePage={currentPage}
-                                />
-                            </div>
+                            {documents.data?.resultSet &&
+                                <div className={'ListNavigation ListNavigation--Center'}>
+                                    <Pagination
+                                        onPageChange={handlePageClick}
+                                        pageCount={pageCount}
+                                        forcePage={currentPage}
+                                    />
+                                </div>
+                            }
                         </Box>
                     </TabPanel>
 

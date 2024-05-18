@@ -88,30 +88,32 @@ function Blocks () {
                   </>
                 : <Container h={20}><ErrorMessageBlock/></Container>}
 
-              <div className={'ListNavigation'}>
-                  <GoToHeightForm
-                      goToHeightHandler={goToHeight}
-                      goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
-                      isValid={() => {
-                        return (
-                          blockHeightToSearch.length > 0 &&
-                          Number(blockHeightToSearch) <= total &&
-                          Number(blockHeightToSearch) > 0
-                        )
-                      }}
-                      disabled={blocks.error}
-                  />
-                  <Pagination
-                      onPageChange={handlePageClick}
-                      pageCount={pageCount}
-                      forcePage={currentPage}
-                  />
-                  <PageSizeSelector
-                      PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                      defaultValue={paginateConfig.pageSize.default}
-                      items={paginateConfig.pageSize.values}
-                  />
-              </div>
+              {blocks.data?.resultSet &&
+                <div className={'ListNavigation'}>
+                    <GoToHeightForm
+                        goToHeightHandler={goToHeight}
+                        goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
+                        isValid={() => {
+                          return (
+                            blockHeightToSearch.length > 0 &&
+                            Number(blockHeightToSearch) <= total &&
+                            Number(blockHeightToSearch) > 0
+                          )
+                        }}
+                        disabled={blocks.error}
+                    />
+                    <Pagination
+                        onPageChange={handlePageClick}
+                        pageCount={pageCount}
+                        forcePage={currentPage}
+                    />
+                    <PageSizeSelector
+                        PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                        defaultValue={paginateConfig.pageSize.default}
+                        items={paginateConfig.pageSize.values}
+                    />
+                </div>
+              }
           </Container>
       </Container>
   )
