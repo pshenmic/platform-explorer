@@ -56,7 +56,7 @@ function DataContract ({ identifier }) {
   useEffect(fetchData, [identifier])
 
   const handlePageClick = ({ selected }) => {
-    setDataContract(state => ({ ...state, loading: true }))
+    setDocuments(state => ({ ...state, loading: true }))
     setCurrentPage(selected)
 
     Api.getDocumentsByDataContract(
@@ -169,7 +169,7 @@ function DataContract ({ identifier }) {
                                         columnsCount={2}
                                     />
                                 </Box>
-                                : <LoadingList itemsCount={5}/>
+                                : <LoadingList itemsCount={9}/>
                             : <Container h={20}><ErrorMessageBlock/></Container>
                             }
                             {documents.data?.resultSet &&
