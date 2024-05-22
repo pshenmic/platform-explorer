@@ -1,3 +1,7 @@
+import Markdown from '../../components/markdown'
+import Intro from '../../components/intro/index.js'
+import introContent from './intro.md'
+import { Container } from '@chakra-ui/react'
 import Blocks from './Blocks'
 
 export const metadata = {
@@ -8,7 +12,20 @@ export const metadata = {
 }
 
 async function BlocksRoute () {
-  return <Blocks/>
+  return <>
+    <Container
+      maxW={'container.lg'}
+      color={'white'}
+      mt={8}
+      mb={0}
+    >
+        <Intro
+            title={'Blocks'}
+            contentSource={<Markdown>{introContent}</Markdown>}
+        />
+    </Container>
+    <Blocks/>
+  </>
 }
 
 export default BlocksRoute

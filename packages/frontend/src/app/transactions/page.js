@@ -1,4 +1,10 @@
 import Transactions from './Transactions'
+import Intro from '../../components/intro/index.js'
+import Markdown from '../../components/markdown'
+import introContent from './intro.md'
+import {
+  Container
+} from '@chakra-ui/react'
 
 export const metadata = {
   title: 'Transactions — Dash Platform Explorer',
@@ -8,7 +14,20 @@ export const metadata = {
 }
 
 function TransactionsRoute () {
-  return <Transactions/>
+  return <>
+    <Container
+      maxW={'container.lg'}
+      color={'white'}
+      mt={8}
+      mb={0}
+    >
+        <Intro
+            title={'Transactions'}
+            contentSource={<Markdown>{introContent}</Markdown>}
+        />
+    </Container>
+    <Transactions/>
+  </>
 }
 
 export default TransactionsRoute

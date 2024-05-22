@@ -1,4 +1,8 @@
 import DataContracts from './DataContracts'
+import Intro from '../../components/intro/index.js'
+import Markdown from '../../components/markdown'
+import introContent from './intro.md'
+import { Container } from '@chakra-ui/react'
 
 export const metadata = {
   title: 'Data Contracts — Dash Platform Explorer',
@@ -8,7 +12,20 @@ export const metadata = {
 }
 
 function DataContractsRoute () {
-  return <DataContracts/>
+  return <>
+    <Container
+      maxW={'container.lg'}
+      color={'white'}
+      mt={8}
+      mb={0}
+    >
+        <Intro
+            title={'Data contracts'}
+            contentSource={<Markdown>{introContent}</Markdown>}
+        />
+    </Container>
+    <DataContracts/>
+  </>
 }
 
 export default DataContractsRoute
