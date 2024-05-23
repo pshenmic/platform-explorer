@@ -43,7 +43,7 @@ ___
 
 ### Indexer
 
-Verify `packages/indexer/.env` with your PostgreSQL credentials and Tenderdash RPC URL, then do:
+Verify `packages/indexer/.env` with your PostgreSQL credentials and Core RPC URL, Tenderdash RPC URL, then do:
 ```bash
 cd packages/indexer
 cargo run
