@@ -1,11 +1,16 @@
+use std::env;
+use std::error::Error;
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
-use dpp::prelude::Revision;
+use dpp::prelude::{AssetLockProof, Revision};
 use dpp::state_transition::identity_create_transition::accessors::IdentityCreateTransitionAccessorsV0;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_update_transition::accessors::IdentityUpdateTransitionAccessorsV0;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
+use dashcore_rpc::{Auth, Client, RpcApi};
+use dpp::dashcore::{Transaction, Txid};
+use crate::indexer::IndexerError;
 
 #[derive(Clone)]
 pub struct Identity {
@@ -22,14 +27,26 @@ impl From<IdentityCreateTransition> for Identity {
         let asset_lock = state_transition.asset_lock_proof().clone();
         let asset_lock_output_index = asset_lock.output_index();
 
-        let tx_option = asset_lock.transaction().clone();
+        let transaction = match asset_lock {
+            AssetLockProof::Instant(instant_lock) => instant_lock.transaction,
+            AssetLockProof::Chain(chain_lock) => {
+                let tx_hash = chain_lock.out_point.txid.to_string();
+                let block_height = chain_lock.core_chain_locked_height;
 
-        let future = match tx_option {
-            None => Err("Transaction not found"),
-            Some(tx) => Ok(tx.clone()),
+                let core_rpc_host: String = env::var("CORE_RPC_HOST").expect("You've not set the CORE_RPC_HOST").parse().expect("Failed to parse CORE_RPC_HOST env");
+                let core_rpc_port: String = env::var("CORE_RPC_PORT").expect("You've not set the CORE_RPC_PORT").parse().expect("Failed to parse CORE_RPC_PORT env");
+                let core_rpc_user: String = env::var("CORE_RPC_USER").expect("You've not set the CORE_RPC_USER").parse().expect("Failed to parse CORE_RPC_USER env");
+                let core_rpc_password: String = env::var("CORE_RPC_PASSWORD").expect("You've not set the CORE_RPC_PASSWORD").parse().expect("Failed to parse CORE_RPC_PASSWORD env");
+
+                let rpc = Client::new(&format!("{}:{}", core_rpc_host, &core_rpc_port),
+                                      Auth::UserPass(core_rpc_user, core_rpc_password)).unwrap();
+
+                let block_hash = rpc.get_block_hash(block_height).unwrap();
+                let transaction = rpc.get_raw_transaction(&Txid::from_hex(&tx_hash).unwrap(), Some(&block_hash)).unwrap();
+
+                transaction
+            }
         };
-
-        let transaction = future.expect("Could not get transaction from the future");
 
         let outpoint = transaction.output.iter().nth(asset_lock_output_index as usize).expect("Could not find outpoint by index").clone();
 
