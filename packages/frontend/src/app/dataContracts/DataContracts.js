@@ -48,7 +48,7 @@ function DataContractsLayout () {
         <div className={'container'}>
             {dataContracts &&
                 <Container
-                    maxW='container.md'
+                    maxW='container.lg'
                     padding={3}
                     mt={8}
                     mb={4}
