@@ -7,7 +7,7 @@ import {
   Flex,
   Box
 } from '@chakra-ui/react'
-import RichList from '../../components/lists/RichList'
+import { RichList } from '../../components/identities'
 
 export const metadata = {
   title: 'Identities — Dash Platform Explorer',
