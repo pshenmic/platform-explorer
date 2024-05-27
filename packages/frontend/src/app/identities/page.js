@@ -1,10 +1,13 @@
 import Identities from './Identities'
-import Intro from '../../components/intro/index.js'
+import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import {
-  Container
+  Container,
+  Flex,
+  Box
 } from '@chakra-ui/react'
+import RichList from '../../components/lists/RichList'
 
 export const metadata = {
   title: 'Identities — Dash Platform Explorer',
@@ -21,10 +24,24 @@ function IdentitiesRoute () {
       mt={8}
       mb={0}
     >
-        <Intro
-            title={'Identities'}
-            contentSource={<Markdown>{introContent}</Markdown>}
-        />
+      <Flex
+          justifyContent={'space-between'}
+          alignItems={'center'}
+          wrap={['wrap', 'wrap', 'nowrap']}
+      >
+          <Container maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
+            <Intro
+              title={'Identities'}
+              contentSource={<Markdown>{introContent}</Markdown>}
+            />
+          </Container>
+
+          <Box flexShrink={'0'} w={10} h={10} />
+
+          <Container maxW={'none'} p={0}>
+            <RichList printCount={5}/>
+          </Container>
+      </Flex>
     </Container>
     <Identities/>
   </>

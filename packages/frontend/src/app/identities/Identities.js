@@ -43,12 +43,12 @@ function Identities () {
 
   return (
         <Container
-            maxW='container.md'
+            maxW='container.lg'
             mt={8}
             className={'IdentitiesPage'}
         >
             <Container
-                maxW='container.md'
+                maxW='container.lg'
                 borderWidth='1px' borderRadius='lg'
                 className={'InfoBlock'}
             >
