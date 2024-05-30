@@ -67,6 +67,13 @@
         animation: loading-line linear 3s infinite;
     }
 
+    Tr & {
+        &::before {
+            background-color: var(--chakra-colors-gray-800);
+            opacity: .2;
+        }
+    }
+
     $timeOffset: 0.5s;
 
     @for $i from 1 through 10 {
@@ -75,7 +82,13 @@
             animation-delay: $i * $timeOffset;
           }
         }
-      }
+
+        Tr:nth-child(#{$i}n) & {
+            &::after {
+                animation-delay: $i * $timeOffset;
+            }
+        }
+    }
 }
 
 @mixin loading-container {

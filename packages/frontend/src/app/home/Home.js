@@ -3,14 +3,15 @@
 import { useState, useEffect, createRef } from 'react'
 import * as Api from '../../util/Api'
 import { LineChart } from '../../components/charts/index.js'
-import { SimpleList, ListLoadingPreview } from '../../components/lists'
+import { SimpleList } from '../../components/lists'
 import TotalInfo from '../../components/​totalInfo'
 import NetworkStatus from '../../components/networkStatus'
 import Intro from '../../components/intro/index.js'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
-import { getTransitionTypeString } from '../../util/index'
-import { WarningTwoIcon } from '@chakra-ui/icons'
+import { getTransitionTypeString, fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { ErrorMessageBlock } from '../../components/Errors'
+import { LoadingBlock, LoadingList } from '../../components/loading'
 
 import {
   Box,
@@ -24,21 +25,6 @@ const transactionsChartConfig = {
     default: '1w',
     values: ['1h', '24h', '3d', '1w']
   }
-}
-
-function ErrorMessageBlock () {
-  return (
-    <Flex
-      flexGrow={1}
-      w={'100%'}
-      justifyContent={'center'}
-      alignItems={'center'}
-      flexDirection={'column'}
-      opacity={0.5}
-    >
-      <div><WarningTwoIcon color={'#ddd'} mr={2} mt={-1}/>Error loading data</div>
-    </Flex>
-  )
 }
 
 function Home () {
@@ -55,29 +41,6 @@ function Home () {
   const trendingIdentitiesList = createRef()
   const transactionsContainer = createRef()
   const transactionsList = createRef()
-
-  function fetchHandlerSuccess (setter, data) {
-    setter(state => ({
-      ...state,
-      data: {
-        ...state.data,
-        ...data
-      },
-      loading: false,
-      error: false
-    }))
-  }
-
-  function fetchHandlerError (setter, error) {
-    console.error(error)
-
-    setter(state => ({
-      ...state,
-      data: null,
-      loading: false,
-      error: true
-    }))
-  }
 
   const fetchData = () => {
     Promise.all([
@@ -265,36 +228,32 @@ function Home () {
                           p={0}
                           flexDirection={'column'}
                       >
-                        {!transactionsHistory.loading
-                          ? (!transactionsHistory.error && transactionsHistory.data?.resultSet?.length)
-                              ? <LineChart
-                                data={transactionsHistory.data.resultSet.map((item) => ({
-                                  x: new Date(item.timestamp),
-                                  y: item.data.txs
-                                }))}
-                                timespan={transactionsTimespan}
-                                xAxis={{
-                                  type: (() => {
-                                    if (transactionsTimespan === '1h') return { axis: 'time' }
-                                    if (transactionsTimespan === '24h') return { axis: 'time' }
-                                    if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
-                                    if (transactionsTimespan === '1w') return { axis: 'date' }
-                                  })(),
-                                  abbreviation: '',
-                                  title: ''
-                                }}
-                                yAxis={{
-                                  type: 'number',
-                                  title: '',
-                                  abbreviation: 'txs'
-                                }}
+                        <LoadingBlock loading={transactionsHistory.loading}>
+                          {(!transactionsHistory.error && transactionsHistory.data?.resultSet?.length)
+                            ? <LineChart
+                                  data={transactionsHistory.data.resultSet.map((item) => ({
+                                    x: new Date(item.timestamp),
+                                    y: item.data.txs
+                                  }))}
+                                  timespan={transactionsTimespan}
+                                  xAxis={{
+                                    type: (() => {
+                                      if (transactionsTimespan === '1h') return { axis: 'time' }
+                                      if (transactionsTimespan === '24h') return { axis: 'time' }
+                                      if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
+                                      if (transactionsTimespan === '1w') return { axis: 'date' }
+                                    })(),
+                                    abbreviation: '',
+                                    title: ''
+                                  }}
+                                  yAxis={{
+                                    type: 'number',
+                                    title: '',
+                                    abbreviation: 'txs'
+                                  }}
                               />
-                              : <ErrorMessageBlock/>
-                          : <Container
-                            w={'100%'}
-                            h={'100%'}
-                            className={'ChartBlock__Loader'}>
-                          </Container>}
+                            : <ErrorMessageBlock/>}
+                        </LoadingBlock>
                       </Flex>
                   </Flex>
 
@@ -320,7 +279,7 @@ function Home () {
                                     columns={['Identifier', 'Documents Count']}
                                   />
                                 : <ErrorMessageBlock/>
-                            : <ListLoadingPreview itemsCount={dataContracts.props.printCount}/>}
+                            : <LoadingList itemsCount={dataContracts.props.printCount}/>}
                       </Flex>
                   </Container>
               </Flex>
@@ -355,7 +314,7 @@ function Home () {
                               columns={[]}
                             />
                             : <ErrorMessageBlock/>
-                        : <ListLoadingPreview itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
+                        : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
                   </Flex>
 
                   <Box flexShrink={'0'} w={10} h={10} />
@@ -388,7 +347,7 @@ function Home () {
                                   columns={['Identifier', 'Tx Count']}
                                 />
                                 : <ErrorMessageBlock/>
-                            : <ListLoadingPreview itemsCount={trendingIdentities.props.printCount}/>}
+                            : <LoadingList itemsCount={trendingIdentities.props.printCount}/>}
                       </Flex>
 
                       <Box w={10} h={10} />
@@ -415,7 +374,7 @@ function Home () {
                                   columns={['Identifier', 'Balance']}
                                 />
                                 : <ErrorMessageBlock/>
-                            : <ListLoadingPreview itemsCount={richestIdentities.props.printCount}/>}
+                            : <LoadingList itemsCount={richestIdentities.props.printCount}/>}
                       </Flex>
                   </Flex>
               </Flex>
