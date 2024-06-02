@@ -73,7 +73,7 @@ function Transactions () {
               : <Container h={20}><ErrorMessageBlock/></Container>
             }
 
-            {transactions.data?.resultSet &&
+            {transactions.data?.resultSet?.length > 0 &&
               <div className={'ListNavigation'}>
                 <Box display={['none', 'none', 'block']} width={'100px'}/>
                 <Pagination

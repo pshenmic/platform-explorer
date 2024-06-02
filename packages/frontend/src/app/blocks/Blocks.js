@@ -88,7 +88,7 @@ function Blocks () {
                   </>
                 : <Container h={20}><ErrorMessageBlock/></Container>}
 
-              {blocks.data?.resultSet &&
+              {blocks.data?.resultSet?.length > 0 &&
                 <div className={'ListNavigation'}>
                     <GoToHeightForm
                         goToHeightHandler={goToHeight}
