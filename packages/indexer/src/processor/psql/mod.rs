@@ -1,5 +1,6 @@
 mod dao;
 
+use std::convert::identity;
 use std::num::ParseIntError;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
 use deadpool_postgres::{PoolError};
@@ -8,18 +9,21 @@ use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
-use dpp::platform_value::{platform_value, BinaryData};
+use dpp::platform_value::{platform_value, BinaryData, Value};
+use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
 use dpp::state_transition::documents_batch_transition::{DocumentsBatchTransition};
 use sha256::digest;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
+use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransitionV0Methods;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
 use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
+use dpp::util::json_value::JsonValueExt;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
 use crate::entities::data_contract::DataContract;
@@ -84,6 +88,43 @@ impl PSQLProcessor {
 
         for (_, document_transition) in transitions.iter().enumerate() {
             let document = Document::from(document_transition.clone());
+            let document_type = document_transition.document_type_name();
+
+            if document_type == "domain" && document_transition.data_contract_id() == SystemDataContract::DPNS.id() {
+                let label = document_transition
+                    .data()
+                    .unwrap()
+                    .get_str_at_path("label")
+                    .unwrap();
+
+                let normalizedParentDomainName = document_transition
+                    .data()
+                    .unwrap()
+                    .get_str_at_path("normalizedParentDomainName")
+                    .unwrap();
+
+                let primary_alias = document_transition
+                    .data()
+                    .unwrap()
+                    .get_optional_at_path("records.dashUniqueIdentityId").unwrap();
+
+                let identity_identifier = match primary_alias {
+                    None => {
+                        document_transition
+                            .data()
+                            .unwrap()
+                            .get_optional_at_path("records.dashAliasIdentityId").unwrap()
+                            .expect("Could not find dashAliasIdentityId")
+                    }
+                    Some(value) => value
+                };
+
+                let identity_identifier = Identifier::from_bytes(&identity_identifier.clone().into_identifier_bytes().unwrap()).unwrap().to_string(Base58);
+                let identity = self.dao.get_identity_by_identifier(identity_identifier.clone()).await.unwrap().expect(&format!("Could not find identity with identifier {}", identity_identifier));
+                let alias = format!("{}.{}", label, normalizedParentDomainName);
+
+                self.dao.create_identity_alias(identity, alias).await.unwrap();
+            }
 
 
             self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
@@ -96,7 +137,7 @@ impl PSQLProcessor {
             id: None,
             sender: None,
             recipient: Some(identity.identifier),
-            amount: identity.balance.expect("Balance missing from identity")
+            amount: identity.balance.expect("Balance missing from identity"),
         };
 
         self.dao.create_identity(identity, Some(st_hash.clone())).await.unwrap();
