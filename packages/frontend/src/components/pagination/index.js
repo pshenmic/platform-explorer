@@ -3,6 +3,8 @@ import './pagination.scss'
 import ReactPaginate from 'react-paginate'
 
 function Pagination ({ onPageChange, pageCount, forcePage }) {
+  pageCount = Math.max(pageCount, 1)
+
   return (
         <ReactPaginate
             breakLabel="..."

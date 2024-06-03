@@ -73,7 +73,7 @@ function Identities () {
                 : <ErrorMessageBlock h={20}/>
               }
 
-              {identities.data?.resultSet &&
+              {identities.data?.resultSet?.length > 0 &&
                 <div className={'ListNavigation'}>
                     <Box display={['none', 'none', 'block']} width={'100px'}/>
                     <Pagination

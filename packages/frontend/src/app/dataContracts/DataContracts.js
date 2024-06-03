@@ -67,19 +67,21 @@ function DataContractsLayout () {
                     : <Container h={20}><ErrorMessageBlock/></Container>
                 : <LoadingList itemsCount={pageSize}/>}
 
-              <div className={'ListNavigation'}>
-                  <Box display={['none', 'none', 'block']} width={'100px'}/>
-                  <Pagination
-                      onPageChange={handlePageClick}
-                      pageCount={pageCount}
-                      forcePage={currentPage}
-                  />
-                  <PageSizeSelector
-                      PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                      defaultValue={paginateConfig.pageSize.default}
-                      items={paginateConfig.pageSize.values}
-                  />
-              </div>
+              {dataContracts.data?.resultSet?.length > 0 &&
+                <div className={'ListNavigation'}>
+                    <Box display={['none', 'none', 'block']} width={'100px'}/>
+                    <Pagination
+                        onPageChange={handlePageClick}
+                        pageCount={pageCount}
+                        forcePage={currentPage}
+                    />
+                    <PageSizeSelector
+                        PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                        defaultValue={paginateConfig.pageSize.default}
+                        items={paginateConfig.pageSize.values}
+                    />
+                </div>
+              }
           </Container>
       }
     </div>

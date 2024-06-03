@@ -172,7 +172,7 @@ function DataContract ({ identifier }) {
                                 : <LoadingList itemsCount={9}/>
                             : <Container h={20}><ErrorMessageBlock/></Container>
                             }
-                            {documents.data?.resultSet &&
+                            {documents.data?.resultSet?.length > 0 &&
                                 <div className={'ListNavigation ListNavigation--Center'}>
                                     <Pagination
                                         onPageChange={handlePageClick}
