@@ -1,5 +1,4 @@
 use std::env;
-use std::error::Error;
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
@@ -9,8 +8,7 @@ use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_update_transition::accessors::IdentityUpdateTransitionAccessorsV0;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
 use dashcore_rpc::{Auth, Client, RpcApi};
-use dpp::dashcore::{Transaction, Txid};
-use crate::indexer::IndexerError;
+use dpp::dashcore::{Txid};
 
 #[derive(Clone)]
 pub struct Identity {
