@@ -27,6 +27,7 @@ use crate::entities::document::Document;
 use crate::entities::identity::Identity;
 use crate::entities::transfer::Transfer;
 use crate::entities::validator::Validator;
+use crate::models::{TransactionResult, TransactionStatus};
 
 pub enum ProcessorError {
     DatabaseError,
@@ -127,7 +128,7 @@ impl PSQLProcessor {
         self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
     }
 
-    pub async fn handle_st(&self, block_hash: String, index: u32, state_transition: StateTransition) -> () {
+    pub async fn handle_st(&self, block_hash: String, index: u32, state_transition: StateTransition, tx_result: TransactionResult) -> () {
         let owner = state_transition.owner_id();
 
         let st_type = match state_transition.clone() {
@@ -178,7 +179,16 @@ impl PSQLProcessor {
 
         let st_hash = digest(bytes.clone()).to_uppercase();
 
-        self.dao.create_state_transition(block_hash.clone(), owner, st_type, index, bytes).await;
+        let tx_result_status = tx_result.status.clone();
+
+        self.dao.create_state_transition(block_hash.clone(), owner, st_type, index, bytes, tx_result.gas_used, tx_result.status, tx_result.error).await;
+
+        match tx_result_status {
+            TransactionStatus::FAIL => {
+                return;
+            }
+            TransactionStatus::SUCCESS => {}
+        }
 
         match state_transition {
             StateTransition::DataContractCreate(st) => {
@@ -259,13 +269,13 @@ impl PSQLProcessor {
                 }
 
                 println!("Processing block at height {}", block_height.clone());
-                for (i, tx_base_64) in block.txs.iter().enumerate() {
-                    let bytes = general_purpose::STANDARD.decode(tx_base_64).unwrap();
+                for (i, tx) in block.txs.iter().enumerate() {
+                    let bytes = general_purpose::STANDARD.decode(tx.data.clone()).unwrap();
                     let st_result = self.decoder.decode(bytes).await;
 
                     let state_transition = st_result.unwrap();
 
-                    self.handle_st(block_hash.clone(), i as u32, state_transition).await;
+                    self.handle_st(block_hash.clone(), i as u32, state_transition, tx.clone()).await;
                 }
 
                 Ok(())

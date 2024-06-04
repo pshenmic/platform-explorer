@@ -1,3 +1,4 @@
+use std::fmt;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize};
 use crate::entities::validator::Validator;
@@ -59,9 +60,35 @@ pub struct TDBlock {
 }
 
 #[derive(Deserialize)]
+pub struct TDTxResult {
+    pub code: Option<u32>,
+    pub info: Option<String>,
+    pub gas_used: u64,
+}
+
+#[derive(Deserialize)]
 pub struct TenderdashRPCBlockResponse {
     pub block_id: TDBlockId,
     pub block: TDBlock,
+}
+#[derive(Deserialize)]
+pub struct TenderdashRPCBlockResultsResponse {
+    pub txs_results: Option<Vec<TDTxResult>>,
+}
+
+#[derive(Clone)]
+pub enum TransactionStatus {
+    FAIL,
+    SUCCESS,
+}
+
+#[derive(Clone)]
+pub struct TransactionResult {
+    pub data: String,
+    pub gas_used: u64,
+    pub status: TransactionStatus,
+    pub code: Option<u32>,
+    pub error: Option<String>
 }
 
 mod from_iso8601 {
