@@ -20,15 +20,6 @@
     
     display: block;
 
-    &--Loading {
-        @include mixins.loading-line;
-        
-        border: none;
-        opacity: .5;
-        border-radius: 5px;
-        margin-bottom: 8px;
-    }
-
     &__Title {
         word-wrap: break-word;
         overflow-wrap: anywhere;

@@ -1,5 +1,4 @@
 use std::env;
-use std::error::Error;
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
@@ -117,6 +116,4 @@ impl From<Row> for Identity {
         };
     }
 }
-
-
 

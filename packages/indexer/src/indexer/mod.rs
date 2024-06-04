@@ -6,11 +6,13 @@ use crate::entities::block::Block;
 use crate::entities::block_header::BlockHeader;
 use crate::processor::psql::{ProcessorError, PSQLProcessor};
 use base64::{Engine as _, engine::{general_purpose}};
+use crate::decoder::decoder::StateTransitionDecoder;
+use crate::models::{TransactionResult, TransactionStatus};
 use crate::utils::TenderdashRpcApi;
 
 pub enum IndexerError {
     BackendUrlError,
-    ProcessorError
+    ProcessorError,
 }
 
 impl From<reqwest::Error> for IndexerError {
@@ -19,6 +21,7 @@ impl From<reqwest::Error> for IndexerError {
         IndexerError::BackendUrlError
     }
 }
+
 impl From<ProcessorError> for IndexerError {
     fn from(_: ProcessorError) -> Self {
         IndexerError::ProcessorError
@@ -29,8 +32,9 @@ impl From<ProcessorError> for IndexerError {
 pub struct Indexer {
     tenderdash_rpc: TenderdashRpcApi,
     processor: PSQLProcessor,
+    decoder: StateTransitionDecoder,
     last_block_height: Cell<i32>,
-    txs_to_skip: Vec<String>
+    txs_to_skip: Vec<String>,
 }
 
 impl Indexer {
@@ -38,10 +42,12 @@ impl Indexer {
         let processor = PSQLProcessor::new();
         let backend_url = env::var("BACKEND_URL").expect("You've not set the BACKEND_URL");
         let txs_to_skip = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
+        let decoder = StateTransitionDecoder::new();
 
         return Indexer {
             tenderdash_rpc: TenderdashRpcApi::new(backend_url),
             processor,
+            decoder,
             last_block_height: Cell::new(1),
             txs_to_skip: txs_to_skip.split(",")
                 .map(|s| { String::from(s) }).collect::<Vec<String>>(),
@@ -62,16 +68,16 @@ impl Indexer {
                 Ok(last_block_height) => last_block_height,
                 Err(err) => {
                     println!("{}", err);
-                    continue
+                    continue;
                 }
             };
 
-            let current_block_height:i32 = self.last_block_height.get();
+            let current_block_height: i32 = self.last_block_height.get();
 
             let diff = last_block_height.clone() - current_block_height.clone();
 
             if diff > 0 {
-                for block_height in current_block_height..last_block_height+1 {
+                for block_height in current_block_height..last_block_height + 1 {
                     loop {
                         let result = self.index_block(block_height.clone()).await;
 
@@ -98,13 +104,41 @@ impl Indexer {
         }
     }
 
-    async fn index_block(&self, block_height: i32) -> Result<(), ProcessorError>{
+    async fn index_block(&self, block_height: i32) -> Result<(), ProcessorError> {
         let block = self.tenderdash_rpc.get_block_by_height(block_height.clone()).await?;
+        let block_results = self.tenderdash_rpc.get_block_results_by_height(block_height.clone()).await?;
         let validators = self.tenderdash_rpc.get_validators_by_block_height(block_height.clone()).await?;
 
         let block_hash = block.block_id.hash;
-        let txs = block.block.data.txs.iter().filter(|base64_str| {
-            let bytes = general_purpose::STANDARD.decode(base64_str).unwrap();
+
+        let transactions = block.block.data.txs.iter().enumerate().map(|(i, tx_string)| {
+            let tx_results = block_results.txs_results.as_ref().unwrap();
+            let tx_result = tx_results.get(i).expect(&format!("tx result at index {} should exist", i)).clone();
+
+            return match tx_result.code {
+                None => {
+                    TransactionResult {
+                        data: tx_string.clone(),
+                        gas_used: tx_result.gas_used.clone(),
+                        status: TransactionStatus::SUCCESS,
+                        code: None,
+                        error: None,
+                    }
+                }
+                Some(_) => {
+                    TransactionResult {
+                        data: tx_string.clone(),
+                        gas_used: tx_result.gas_used.clone(),
+                        status: TransactionStatus::FAIL,
+                        code: tx_result.code.clone(),
+                        error: tx_result.info.clone(),
+                    }
+                }
+            };
+        }).collect::<Vec<TransactionResult>>();
+
+        let txs = transactions.into_iter().filter(|tx| {
+            let bytes = general_purpose::STANDARD.decode(tx.data.clone()).unwrap();
             let tx_hash = sha256::digest(bytes.clone()).to_uppercase();
 
             let skip = self.txs_to_skip.contains(&format!("{}:{}", &block_hash, &tx_hash));
@@ -113,8 +147,9 @@ impl Indexer {
                 println!("Transaction {} from block with hash {} is skipped because it's marked that in TXS_TO_SKIP environment", &tx_hash, &block_hash);
             }
 
-            return !skip
-        }).cloned().collect::<Vec<String>>();
+            return !skip;
+        }).collect::<Vec<TransactionResult>>();
+
         let timestamp = block.block.header.timestamp;
         let block_version = block.block.header.version.block.parse::<i32>()?;
         let app_version = block.block.header.version.app.parse::<i32>()?;
@@ -131,7 +166,7 @@ impl Indexer {
                 l1_locked_height: core_chain_locked_height,
                 proposer_pro_tx_hash: block.block.header.proposer_pro_tx_hash,
             },
-            txs
+            txs,
         };
 
         self.processor.handle_block(block, validators).await?;

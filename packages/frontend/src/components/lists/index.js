@@ -72,15 +72,6 @@ const SimpleList = forwardRef(function (props, ref) {
 
 SimpleList.displayName = 'SimpleList'
 
-const ListLoadingPreview = ({ itemsCount }) => {
-  return (
-    <div className={'SimpleList'}>
-        {Array.from(Array(itemsCount)).map((e, i) => <div className={'SimpleListItem SimpleListItem--Loading'} key={i}>{i}</div>)}
-    </div>
-  )
-}
-
 export {
-  SimpleList,
-  ListLoadingPreview
+  SimpleList
 }

@@ -1,7 +1,7 @@
 use std::time::Duration;
 use reqwest::{Client, Error};
 use crate::entities::validator::Validator;
-use crate::models::{TenderdashRPCBlockResponse, TenderdashRPCStatusResponse, TenderdashRPCValidatorsResponse};
+use crate::models::{TenderdashRPCBlockResponse, TenderdashRPCBlockResultsResponse, TenderdashRPCStatusResponse, TenderdashRPCValidatorsResponse};
 
 pub struct TenderdashRpcApi {
     client: Client,
@@ -42,6 +42,20 @@ impl TenderdashRpcApi {
 
         let resp = res
             .json::<TenderdashRPCBlockResponse>()
+            .await?;
+
+        Ok(resp)
+    }
+    pub async fn get_block_results_by_height(&self, block_height: i32) -> Result<TenderdashRPCBlockResultsResponse, Error> {
+        let url = format!("{}/block_results?height={}", self.backend_url, block_height);
+
+        let res = self.client
+            .get(url)
+            .send()
+            .await?;
+
+        let resp = res
+            .json::<TenderdashRPCBlockResultsResponse>()
             .await?;
 
         Ok(resp)
