@@ -119,7 +119,7 @@ impl Indexer {
                 None => {
                     TransactionResult {
                         data: tx_string.clone(),
-                        gas_used: tx_result.clone().gas_used,
+                        gas_used: tx_result.gas_used.clone(),
                         status: TransactionStatus::SUCCESS,
                         code: None,
                         error: None,
@@ -128,7 +128,7 @@ impl Indexer {
                 Some(_) => {
                     TransactionResult {
                         data: tx_string.clone(),
-                        gas_used: tx_result.clone().gas_used,
+                        gas_used: tx_result.gas_used.clone(),
                         status: TransactionStatus::FAIL,
                         code: tx_result.code.clone(),
                         error: tx_result.info.clone(),

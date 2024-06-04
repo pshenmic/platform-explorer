@@ -1,4 +1,3 @@
-use std::fmt;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize};
 use crate::entities::validator::Validator;
