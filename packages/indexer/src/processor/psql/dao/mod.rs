@@ -177,6 +177,23 @@ impl PostgresDAO {
         Ok(())
     }
 
+    pub async fn create_identity_alias(&self, identity: Identity, alias: String) -> Result<(), PoolError> {
+        let client = self.connection_pool.get().await.unwrap();
+
+        let query = "INSERT INTO identity_aliases(identity_identifier,alias) VALUES ($1, $2);";
+
+        let stmt = client.prepare_cached(query).await.unwrap();
+
+        client.query(&stmt, &[
+            &identity.identifier.to_string(Base58),
+            &alias,
+        ]).await.unwrap();
+
+        println!("Created Identity Alias {} -> {}", identity.identifier.to_string(Base58), alias);
+
+        Ok(())
+    }
+
     pub async fn create_transfer(&self, transfer: Transfer, st_hash: String) -> Result<(), PoolError> {
         let amount = transfer.amount as i64;
 
@@ -293,6 +310,26 @@ impl PostgresDAO {
             }).collect::<Vec<Validator>>();
 
         Ok(validators.first().cloned())
+    }
+
+    pub async fn get_identity_by_identifier(&self, identifier: String) -> Result<Option<Identity>, PoolError> {
+        let client = self.connection_pool.get().await?;
+
+        let stmt = client.prepare_cached("SELECT id, owner, identifier, revision, \
+        is_system FROM identities where identifier = $1 LIMIT 1;")
+            .await.unwrap();
+
+        let rows: Vec<Row> = client.query(&stmt, &[
+            &identifier
+        ]).await.unwrap();
+
+        let identities: Vec<Identity> = rows
+            .into_iter()
+            .map(|row| {
+                row.into()
+            }).collect::<Vec<Identity>>();
+
+        Ok(identities.first().cloned())
     }
 
 
