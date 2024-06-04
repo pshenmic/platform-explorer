@@ -3,3 +3,5 @@ CREATE TABLE identity_aliases (
     identity_identifier varchar(44) NOT NULL,
     alias varchar(64) NOT NULL
 );
+
+CREATE UNIQUE INDEX identity_aliases_alias ON identity_aliases(alias);
