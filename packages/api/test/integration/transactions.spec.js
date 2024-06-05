@@ -33,11 +33,14 @@ describe('Transaction routes', () => {
 
     // error tx
     const errorTx = await fixtures.transaction(knex, {
-      block_hash: block.hash, data: '{}', type: StateTransitionEnum.DOCUMENTS_BATCH,
+      block_hash: block.hash,
+      data: '{}',
+      type: StateTransitionEnum.DOCUMENTS_BATCH,
       owner: identity.identifier,
-      error: 'fake_err', status: 'FAIL'
+      error: 'fake_err',
+      status: 'FAIL'
     })
-    transactions.push({transaction: errorTx, block})
+    transactions.push({ transaction: errorTx, block })
 
     for (let i = 2; i < 30; i++) {
       const block = await fixtures.block(knex, {
@@ -99,7 +102,7 @@ describe('Transaction routes', () => {
     })
 
     it('should error transaction', async () => {
-      const [,transaction] = transactions
+      const [, transaction] = transactions
       const { body } = await client.get(`/transaction/${transaction.transaction.hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')

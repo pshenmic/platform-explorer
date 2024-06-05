@@ -10,7 +10,7 @@ module.exports = class TransactionsDAO {
   getTransactionByHash = async (hash) => {
     const [row] = await this.knex('state_transitions')
       .select('state_transitions.hash as tx_hash', 'state_transitions.data as data',
-        'state_transitions.gas_used as gas_used','state_transitions.status as status','state_transitions.error as error',
+        'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
         'state_transitions.type as type', 'state_transitions.index as index', 'blocks.height as block_height',
         'blocks.hash as block_hash', 'blocks.timestamp as timestamp')
       .where('state_transitions.hash', hash)
@@ -30,7 +30,7 @@ module.exports = class TransactionsDAO {
     const subquery = this.knex('state_transitions')
       .select(this.knex('state_transitions').count('hash').as('total_count'), 'state_transitions.hash as tx_hash',
         'state_transitions.data as data', 'state_transitions.type as type', 'state_transitions.index as index',
-        'state_transitions.gas_used as gas_used','state_transitions.status as status','state_transitions.error as error',
+        'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
         'state_transitions.block_hash as block_hash', 'state_transitions.id as id')
       .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
       .as('state_transitions')
