@@ -31,7 +31,15 @@ describe('Transaction routes', () => {
 
     transactions = [{ transaction: identity.transaction, block }]
 
-    for (let i = 1; i < 30; i++) {
+    // error tx
+    const errorTx = await fixtures.transaction(knex, {
+      block_hash: block.hash, data: '{}', type: StateTransitionEnum.DOCUMENTS_BATCH,
+      owner: identity.identifier,
+      error: 'fake_err', status: 'FAIL'
+    })
+    transactions.push({transaction: errorTx, block})
+
+    for (let i = 2; i < 30; i++) {
       const block = await fixtures.block(knex, {
         height: i + 1, timestamp: new Date(startDate.getTime() + i * 1000 * 60)
       })
@@ -81,7 +89,32 @@ describe('Transaction routes', () => {
         hash: transaction.transaction.hash,
         index: transaction.transaction.index,
         timestamp: transaction.block.timestamp.toISOString(),
-        type: transaction.transaction.type
+        type: transaction.transaction.type,
+        gasUsed: transaction.transaction.gas_used,
+        status: transaction.transaction.status,
+        error: transaction.transaction.error
+      }
+
+      assert.deepEqual(expectedTransaction, body)
+    })
+
+    it('should error transaction', async () => {
+      const [,transaction] = transactions
+      const { body } = await client.get(`/transaction/${transaction.transaction.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedTransaction = {
+        blockHash: transaction.block.hash,
+        blockHeight: transaction.block.height,
+        data: '{}',
+        hash: transaction.transaction.hash,
+        index: transaction.transaction.index,
+        timestamp: transaction.block.timestamp.toISOString(),
+        type: transaction.transaction.type,
+        gasUsed: 0,
+        status: 'FAIL',
+        error: 'fake_err'
       }
 
       assert.deepEqual(expectedTransaction, body)
@@ -114,7 +147,10 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
@@ -140,7 +176,10 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
@@ -166,7 +205,10 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
@@ -192,7 +234,10 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
