@@ -755,7 +755,10 @@ describe('Identities routes', () => {
           blockHeight: _transaction.block.height,
           type: i === 0 ? StateTransitionEnum.IDENTITY_CREATE : StateTransitionEnum.DOCUMENTS_BATCH,
           data: null,
-          timestamp: _transaction.block.timestamp.toISOString()
+          timestamp: _transaction.block.timestamp.toISOString(),
+          gasUsed: _transaction.transaction.gas_used,
+          status: _transaction.transaction.status,
+          error: _transaction.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -795,7 +798,10 @@ describe('Identities routes', () => {
           blockHeight: _transaction.block.height,
           type: StateTransitionEnum.DOCUMENTS_BATCH,
           data: null,
-          timestamp: _transaction.block.timestamp.toISOString()
+          timestamp: _transaction.block.timestamp.toISOString(),
+          gasUsed: _transaction.transaction.gas_used,
+          status: _transaction.transaction.status,
+          error: _transaction.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -835,7 +841,10 @@ describe('Identities routes', () => {
           blockHeight: _transaction.block.height,
           type: StateTransitionEnum.DOCUMENTS_BATCH,
           data: null,
-          timestamp: _transaction.block.timestamp.toISOString()
+          timestamp: _transaction.block.timestamp.toISOString(),
+          gasUsed: _transaction.transaction.gas_used,
+          status: _transaction.transaction.status,
+          error: _transaction.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -875,7 +884,10 @@ describe('Identities routes', () => {
           blockHeight: _transaction.block.height,
           type: StateTransitionEnum.DOCUMENTS_BATCH,
           data: null,
-          timestamp: _transaction.block.timestamp.toISOString()
+          timestamp: _transaction.block.timestamp.toISOString(),
+          gasUsed: _transaction.transaction.gas_used,
+          status: _transaction.transaction.status,
+          error: _transaction.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)

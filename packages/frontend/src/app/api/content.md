@@ -97,6 +97,9 @@ GET /blocks
 ---
 ### Transaction by hash
 Get a transaction (state transition) by hash
+
+Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
+
 ```
 GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
@@ -107,7 +110,10 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
     hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
     index: 0,
     timestamp: "2024-03-18T10:13:54.150Z",
-    type: 0
+    type: 0,
+    gasUsed: 1337000,
+    status: "SUCCESS",
+    error: null
 }
 ```
 
@@ -120,6 +126,9 @@ Response codes:
 ---
 ### Transactions
 Return transaction set paged
+
+Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
+
 ```
 GET /transactions?=1&limit=10&order=asc
 
@@ -137,7 +146,10 @@ GET /transactions?=1&limit=10&order=asc
         hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
         index: 0,
         timestamp: "2024-03-18T10:13:54.150Z",
-        type: 0
+        type: 0,
+        gasUsed: 1337000,
+        status: "SUCCESS",
+        error: null
     }, ...
     ]
 }
@@ -388,6 +400,9 @@ Response codes:
 ---
 ### Transactions by Identity
 Return all transactions made by the given identity
+
+Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
+
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
 
@@ -406,6 +421,9 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1
         type: 0,
         data: null,
         timestamp: "2024-03-18T10:13:54.150Z",
+        gasUsed: 1337000,
+        status: "SUCCESS",
+        error: null
     }, ...
     ]
 }

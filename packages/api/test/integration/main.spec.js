@@ -115,7 +115,10 @@ describe('Other routes', () => {
         blockHeight: block.height,
         type: dataContractTransaction.type,
         data: JSON.stringify(dataContractTransaction.data),
-        timestamp: block.timestamp.toISOString()
+        timestamp: block.timestamp.toISOString(),
+        gasUsed: dataContractTransaction.gas_used,
+        status: dataContractTransaction.status,
+        error: dataContractTransaction.error
       }
 
       assert.deepEqual({ transaction: expectedTransaction }, body)
