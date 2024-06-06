@@ -64,15 +64,6 @@ HTTP /status
          }
     }     
 }
-    
-    
-    
-    tenderdashVersion: "0.14.4"
-    platformVersion: "v1.0.0-dev.12"
-    apiHeight: 420,
-    maxPeerHeight: 1337,
-    tenderdashChainHeight: 1337,
-}
 ```
 ---
 ### Block by hash
