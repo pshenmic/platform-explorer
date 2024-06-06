@@ -60,8 +60,8 @@ class MainController {
       tenderdash: {
         version: tdStatus?.version ?? null,
         block: {
-          height: tdStatus?.highestBlock.height,
-          timestamp: tdStatus?.highestBlock.timestamp
+          height: tdStatus?.highestBlock?.height ?? null,
+          timestamp: tdStatus?.highestBlock?.timestamp ?? null
         }
       }
     })
