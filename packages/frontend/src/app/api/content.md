@@ -35,16 +35,15 @@ HTTP /status
         startTime: "2024-04-08T14:00:00.000Z",
         endTime: "2024-04-09T14:00:00.000Z"
     },
-    appVersion: 1,
-    blockVersion: 13,
-    blocksCount: 10,
-    blockTimeAverage: 3,
-    txCount: 3,
+    transactionsCount: 3,
     transfersCount: 0,
     dataContractsCount: 1,
     documentsCount: 1,
     network: "dash-testnet-40",
     tenderdashVersion: "0.14.4"
+    platformVersion: "v1.0.0-dev.12"
+    maxPeerHeight: 1337,
+    tenderdashChainHeight: 420,
 }
 ```
 ---

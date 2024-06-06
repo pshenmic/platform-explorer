@@ -7,54 +7,23 @@ module.exports = class BlockDAO {
   }
 
   getStats = async () => {
-    const blocksQuery = this.knex('blocks')
-      .select('height', 'timestamp', 'block_version', 'app_version', 'l1_locked_height')
-      .select(this.knex.raw('LAG(timestamp, 1) over (order by blocks.height asc) prev_timestamp'))
-      .select(this.knex('blocks').max('height').as('max_height'))
-      .orderBy('height', 'desc')
-
-    const diffQuery = this.knex.with('with_alias', blocksQuery)
-      .select('max_height', 'height', 'timestamp', 'prev_timestamp', 'block_version', 'app_version', 'l1_locked_height')
-      .select(this.knex.raw('timestamp - prev_timestamp as diff'))
-      .from('with_alias')
-      .where(this.knex.raw('height > (max_height - 100)'))
-      .as('blocks')
-
-    const averageQuery = this.knex(diffQuery)
-      .select('diff', 'height', 'block_version', 'app_version', 'l1_locked_height')
-      .select(this.knex.raw('avg(diff) over () average'))
-      .as('average_query')
-
-    const final = await this.knex(averageQuery)
-      .select('average')
-      .select('height', 'block_version', 'app_version', 'l1_locked_height', 'average')
-      .select(this.knex.raw('extract (epoch from average) as average_seconds'))
+    const rows = await this.knex
       .select(this.knex('state_transitions').count('*').as('tx_count'))
       .select(this.knex('transfers').count('*').as('transfers_count'))
       .select(this.knex('data_contracts').count('*').as('data_contracts_count'))
       .select(this.knex('documents').count('*').as('documents_count'))
 
-    const [result] = final
+    const [row] = rows
 
     const {
-      height,
-      block_version: blockVersion,
-      app_version: appVersion,
-      l1_locked_height: l1LockedHeight,
-      average_seconds: averageSeconds,
       tx_count: txCount,
       transfers_count: transfersCount,
       data_contracts_count: dataContractsCount,
       documents_count: documentsCount
-    } = result
+    } = row
 
     return {
-      topHeight: height,
-      blockTimeAverage: parseFloat(averageSeconds),
-      blockVersion: parseInt(blockVersion),
-      appVersion: parseInt(appVersion),
-      l1LockedHeight: parseInt(l1LockedHeight),
-      txCount: parseInt(txCount),
+      transactionsCount: parseInt(txCount),
       transfersCount: parseInt(transfersCount),
       dataContractsCount: parseInt(dataContractsCount),
       documentsCount: parseInt(documentsCount)
