@@ -6,8 +6,7 @@ import './NetworkStatus.scss'
 function NetworkStatus ({ status }) {
   const msFromLastBlock = new Date() - new Date(status?.data?.latestBlock?.header?.timestamp)
   const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
-  const apiStatus = status?.data?.apiHeight &&
-    status?.data?.tenderdashChainHeight &&
+  const apiStatus = typeof status?.data?.apiHeight === 'number' &&
     status?.data?.apiHeight === status?.data?.tenderdashChainHeight
 
   const NetworkStatusIcon = networkStatus
