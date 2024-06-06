@@ -6,7 +6,8 @@ import './NetworkStatus.scss'
 function NetworkStatus ({ status }) {
   const msFromLastBlock = new Date() - new Date(status?.data?.tenderdash?.block?.timestamp)
   const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
-  const apiStatus = status?.data?.api?.block?.timestamp === status?.data?.tenderdash?.block?.timestamp
+  const apiStatus = typeof status?.data?.api?.block?.timestamp === 'string' &&
+    status?.data?.api?.block?.timestamp === status?.data?.tenderdash?.block?.timestamp
 
   const NetworkStatusIcon = networkStatus
     ? <CheckCircleIcon color={'green.500'} ml={2}/>
