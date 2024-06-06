@@ -60,14 +60,14 @@ function NetworkStatus ({ status }) {
             <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Platform version:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{status?.data?.platform?.version !== undefined ? `#${status.data.platform.version}` : '-'}</span>
+                    <span>{status?.data?.platform?.version !== undefined ? `v${status.data.platform.version}` : '-'}</span>
                 </div>
             </div>
 
             <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Tenderdash version:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{status?.data?.tenderdash?.version !== undefined ? `#${status.data.tenderdash.version}` : '-'}</span>
+                    <span>{status?.data?.tenderdash?.version !== undefined ? `v${status.data.tenderdash.version}` : '-'}</span>
                 </div>
             </div>
 
