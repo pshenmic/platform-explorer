@@ -57,6 +57,20 @@ function NetworkStatus ({ status }) {
             </div>
 
             <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
+                <div className={'NetworkStatus__Title'}>Platform version:</div>
+                <div className={'NetworkStatus__Value'}>
+                    <span>{status?.data?.platform?.version !== undefined ? `#${status.data.platform.version}` : '-'}</span>
+                </div>
+            </div>
+
+            <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
+                <div className={'NetworkStatus__Title'}>Tenderdash version:</div>
+                <div className={'NetworkStatus__Value'}>
+                    <span>{status?.data?.tenderdash?.version !== undefined ? `#${status.data.tenderdash.version}` : '-'}</span>
+                </div>
+            </div>
+
+            <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <Flex mr={6}>
                   <div className={'NetworkStatus__Title'}>Network:</div>
                   <div className={'NetworkStatus__Value'}>
