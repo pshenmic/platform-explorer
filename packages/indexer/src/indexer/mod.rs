@@ -48,7 +48,7 @@ impl Indexer {
             tenderdash_rpc: TenderdashRpcApi::new(backend_url),
             processor,
             decoder,
-            last_block_height: Cell::new(1),
+            last_block_height: Cell::new(0),
             txs_to_skip: txs_to_skip.split(",")
                 .map(|s| { String::from(s) }).collect::<Vec<String>>(),
         };
@@ -74,10 +74,8 @@ impl Indexer {
 
             let current_block_height: i32 = self.last_block_height.get();
 
-            let diff = last_block_height.clone() - current_block_height.clone();
-
-            if diff > 0 {
-                for block_height in current_block_height..last_block_height + 1 {
+            if last_block_height > current_block_height {
+                for block_height in current_block_height + 1..last_block_height {
                     loop {
                         let result = self.index_block(block_height.clone()).await;
 
