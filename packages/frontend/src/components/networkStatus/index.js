@@ -98,7 +98,7 @@ function NetworkStatus ({ status }) {
                       <Tooltip
                           label={`${apiStatus
                               ? 'API appears operational'
-                              : 'API works intermittently'
+                              : 'API indexing disrupted'
                           }`}
                           aria-label={'API status'}
                           placement={'top'}
