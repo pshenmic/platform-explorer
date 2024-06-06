@@ -48,7 +48,7 @@ class MainController {
       platformVersion: tdStatus?.platformVersion ?? null,
       apiHeight: currentBlock?.header?.height ?? null,
       maxPeerHeight: tdStatus?.maxPeerHeight ?? null,
-      tenderdashChainHeight: tdStatus?.tenderdashChainHeight ?? null,
+      tenderdashChainHeight: tdStatus?.tenderdashChainHeight ?? null
     })
   }
 

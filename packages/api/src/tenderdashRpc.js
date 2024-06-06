@@ -1,7 +1,7 @@
 const fetch = require('node-fetch')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 
-const PLATFORM_VERSION = '1' + require('../package.json').dependencies['dash'].substr(1);
+const PLATFORM_VERSION = '1' + require('../package.json').dependencies.dash.substring(1)
 const BASE_URL = process.env.BASE_URL
 
 const call = async (path, method, body) => {
@@ -90,7 +90,7 @@ class TenderdashRPC {
       tenderdashVersion,
       platformVersion: PLATFORM_VERSION,
       maxPeerHeight,
-      tenderdashChainHeight,
+      tenderdashChainHeight
     }
   }
 

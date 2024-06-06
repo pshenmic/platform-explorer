@@ -219,7 +219,7 @@ describe('Other routes', () => {
         tenderdashChainHeight: mockTDStatus.tenderdashChainHeight,
         tenderdashVersion: mockTDStatus.tenderdashVersion,
         platformVersion: mockTDStatus.platformVersion,
-        maxPeerHeight: mockTDStatus.maxPeerHeight,
+        maxPeerHeight: mockTDStatus.maxPeerHeight
       }
 
       assert.deepEqual(body, expectedStats)
