@@ -81,11 +81,11 @@ function NetworkStatus ({ status }) {
                   <div className={'NetworkStatus__Title NetworkStatus__Title--Api'}>API:</div>
                   <div className={'NetworkStatus__Value'}>
                       <Tooltip
-                          label={`${networkStatus
+                          label={`${apiStatus
                               ? 'API appears operational'
                               : 'API works intermittently'
                           }`}
-                          aria-label={'Network status'}
+                          aria-label={'API status'}
                           placement={'top'}
                           hasArrow
                           bg={'gray.700'}
