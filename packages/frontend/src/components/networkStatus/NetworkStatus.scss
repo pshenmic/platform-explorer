@@ -25,6 +25,7 @@
     &__InfoItem {
         position: relative;
         display: flex;
+        flex-wrap: wrap;
         margin-bottom: 15px;
 
         &:last-child {
@@ -48,6 +49,10 @@
         font-size: 18px;
         color: var(--chakra-colors-brand-deep);
         margin-right: 12px;
+
+        &--Api {
+            margin-right: 2px;
+        }
     }
 
     &__Value {

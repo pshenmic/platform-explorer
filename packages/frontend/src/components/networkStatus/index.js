@@ -1,14 +1,22 @@
 import { InfoIcon, CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
-import { Container, Tooltip } from '@chakra-ui/react'
+import { Container, Tooltip, Flex } from '@chakra-ui/react'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
 function NetworkStatus ({ status }) {
   const msFromLastBlock = new Date() - new Date(status?.data?.latestBlock?.header?.timestamp)
   const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
+  const apiStatus = status?.data?.apiHeight === status?.data?.tenderdashChainHeight
+
   const NetworkStatusIcon = networkStatus
     ? <CheckCircleIcon color={'green.500'} ml={2}/>
     : <WarningTwoIcon color={'yellow.400'} ml={2}/>
+
+  const ApiStatusIcon = apiStatus
+    ? <CheckCircleIcon color={'green.500'} ml={2}/>
+    : <WarningTwoIcon color={'yellow.400'} ml={2}/>
+
+  console.log('status', status)
 
   function getLastBlocktimeString () {
     if (!status?.data?.latestBlock?.header?.timestamp) return 'n/a'
@@ -51,24 +59,44 @@ function NetworkStatus ({ status }) {
             </div>
 
             <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
-                <div className={'NetworkStatus__Title'}>Network:</div>
-                <div className={'NetworkStatus__Value'}>
-                    <span>{status?.data?.network !== undefined ? `${status.data.network}` : 'n/a'}</span>
+                <Flex mr={6}>
+                  <div className={'NetworkStatus__Title'}>Network:</div>
+                  <div className={'NetworkStatus__Value'}>
+                      <span>{status?.data?.network !== undefined ? `${status.data.network}` : 'n/a'}</span>
 
-                    <Tooltip
-                        label={`${networkStatus
-                            ? 'Network appears operational'
-                            : 'Chain propagation degraded'
-                        }`}
-                        aria-label={'Network status'}
-                        placement={'top'}
-                        hasArrow
-                        bg={'gray.700'}
-                        color={'white'}
-                    >
-                        {NetworkStatusIcon}
-                    </Tooltip>
-                </div>
+                      <Tooltip
+                          label={`${networkStatus
+                              ? 'Network appears operational'
+                              : 'Chain propagation degraded'
+                          }`}
+                          aria-label={'Network status'}
+                          placement={'top'}
+                          hasArrow
+                          bg={'gray.700'}
+                          color={'white'}
+                      >
+                          {NetworkStatusIcon}
+                      </Tooltip>
+                  </div>
+                </Flex>
+                <Flex>
+                  <div className={'NetworkStatus__Title NetworkStatus__Title--Api'}>API:</div>
+                  <div className={'NetworkStatus__Value'}>
+                      <Tooltip
+                          label={`${networkStatus
+                              ? 'API appears operational'
+                              : 'API works intermittently'
+                          }`}
+                          aria-label={'Network status'}
+                          placement={'top'}
+                          hasArrow
+                          bg={'gray.700'}
+                          color={'white'}
+                      >
+                          {ApiStatusIcon}
+                      </Tooltip>
+                  </div>
+                </Flex>
             </div>
 
             <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
