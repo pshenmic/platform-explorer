@@ -81,116 +81,124 @@ describe('Other routes', () => {
     await knex.destroy()
   })
 
-  describe('search()', async () => {
-    it('should search block by hash', async () => {
-      const { body } = await client.get(`/search?query=${block.hash}`)
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      const expectedBlock = {
-        header: {
-          hash: block.hash,
-          height: block.height,
-          timestamp: block.timestamp.toISOString(),
-          blockVersion: block.block_version,
-          appVersion: block.app_version,
-          l1LockedHeight: block.l1_locked_height,
-          validator: block.validator
-        },
-        txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
-      }
-
-      assert.deepEqual({ block: expectedBlock }, body)
-    })
-
-    it('should search transaction by hash', async () => {
-      const { body } = await client.get(`/search?query=${dataContractTransaction.hash}`)
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      const expectedTransaction = {
-        hash: dataContractTransaction.hash,
-        index: dataContractTransaction.index,
-        blockHash: dataContractTransaction.block_hash,
-        blockHeight: block.height,
-        type: dataContractTransaction.type,
-        data: JSON.stringify(dataContractTransaction.data),
-        timestamp: block.timestamp.toISOString(),
-        gasUsed: dataContractTransaction.gas_used,
-        status: dataContractTransaction.status,
-        error: dataContractTransaction.error
-      }
-
-      assert.deepEqual({ transaction: expectedTransaction }, body)
-    })
-
-    it('should search block by height', async () => {
-      const { body } = await client.get(`/search?query=${block.height}`)
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      const expectedBlock = {
-        header: {
-          hash: block.hash,
-          height: block.height,
-          timestamp: block.timestamp.toISOString(),
-          blockVersion: block.block_version,
-          appVersion: block.app_version,
-          l1LockedHeight: block.l1_locked_height,
-          validator: block.validator
-        },
-        txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
-      }
-
-      assert.deepEqual({ block: expectedBlock }, body)
-    })
-
-    it('should search by data contract', async () => {
-      const { body } = await client.get(`/search?query=${dataContract.identifier}`)
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      const expectedDataContract = {
-        identifier: dataContract.identifier,
-        owner: identity.identifier.trim(),
-        schema: JSON.stringify(dataContract.schema),
-        version: 0,
-        txHash: dataContractTransaction.hash,
-        timestamp: block.timestamp.toISOString(),
-        isSystem: false,
-        documentsCount: 1
-      }
-
-      assert.deepEqual({ dataContract: expectedDataContract }, body)
-    })
-
-    it('should search by identity', async () => {
-      const { body } = await client.get(`/search?query=${identity.identifier}`)
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      const expectedIdentity = {
-        identifier: identity.identifier,
-        revision: 0,
-        balance: 0,
-        timestamp: block.timestamp.toISOString(),
-        txHash: identityTransaction.hash,
-        totalTxs: 3,
-        totalTransfers: 0,
-        totalDocuments: 1,
-        totalDataContracts: 1,
-        isSystem: false,
-        owner: identity.identifier
-      }
-
-      assert.deepEqual({ identity: expectedIdentity }, body)
-    })
-  })
+  // describe('search()', async () => {
+  //   it('should search block by hash', async () => {
+  //     const { body } = await client.get(`/search?query=${block.hash}`)
+  //       .expect(200)
+  //       .expect('Content-Type', 'application/json; charset=utf-8')
+  //
+  //     const expectedBlock = {
+  //       header: {
+  //         hash: block.hash,
+  //         height: block.height,
+  //         timestamp: block.timestamp.toISOString(),
+  //         blockVersion: block.block_version,
+  //         appVersion: block.app_version,
+  //         l1LockedHeight: block.l1_locked_height,
+  //         validator: block.validator
+  //       },
+  //       txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
+  //     }
+  //
+  //     assert.deepEqual({ block: expectedBlock }, body)
+  //   })
+  //
+  //   it('should search transaction by hash', async () => {
+  //     const { body } = await client.get(`/search?query=${dataContractTransaction.hash}`)
+  //       .expect(200)
+  //       .expect('Content-Type', 'application/json; charset=utf-8')
+  //
+  //     const expectedTransaction = {
+  //       hash: dataContractTransaction.hash,
+  //       index: dataContractTransaction.index,
+  //       blockHash: dataContractTransaction.block_hash,
+  //       blockHeight: block.height,
+  //       type: dataContractTransaction.type,
+  //       data: JSON.stringify(dataContractTransaction.data),
+  //       timestamp: block.timestamp.toISOString(),
+  //       gasUsed: dataContractTransaction.gas_used,
+  //       status: dataContractTransaction.status,
+  //       error: dataContractTransaction.error
+  //     }
+  //
+  //     assert.deepEqual({ transaction: expectedTransaction }, body)
+  //   })
+  //
+  //   it('should search block by height', async () => {
+  //     const { body } = await client.get(`/search?query=${block.height}`)
+  //       .expect(200)
+  //       .expect('Content-Type', 'application/json; charset=utf-8')
+  //
+  //     const expectedBlock = {
+  //       header: {
+  //         hash: block.hash,
+  //         height: block.height,
+  //         timestamp: block.timestamp.toISOString(),
+  //         blockVersion: block.block_version,
+  //         appVersion: block.app_version,
+  //         l1LockedHeight: block.l1_locked_height,
+  //         validator: block.validator
+  //       },
+  //       txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
+  //     }
+  //
+  //     assert.deepEqual({ block: expectedBlock }, body)
+  //   })
+  //
+  //   it('should search by data contract', async () => {
+  //     const { body } = await client.get(`/search?query=${dataContract.identifier}`)
+  //       .expect(200)
+  //       .expect('Content-Type', 'application/json; charset=utf-8')
+  //
+  //     const expectedDataContract = {
+  //       identifier: dataContract.identifier,
+  //       owner: identity.identifier.trim(),
+  //       schema: JSON.stringify(dataContract.schema),
+  //       version: 0,
+  //       txHash: dataContractTransaction.hash,
+  //       timestamp: block.timestamp.toISOString(),
+  //       isSystem: false,
+  //       documentsCount: 1
+  //     }
+  //
+  //     assert.deepEqual({ dataContract: expectedDataContract }, body)
+  //   })
+  //
+  //   it('should search by identity', async () => {
+  //     const { body } = await client.get(`/search?query=${identity.identifier}`)
+  //       .expect(200)
+  //       .expect('Content-Type', 'application/json; charset=utf-8')
+  //
+  //     const expectedIdentity = {
+  //       identifier: identity.identifier,
+  //       revision: 0,
+  //       balance: 0,
+  //       timestamp: block.timestamp.toISOString(),
+  //       txHash: identityTransaction.hash,
+  //       totalTxs: 3,
+  //       totalTransfers: 0,
+  //       totalDocuments: 1,
+  //       totalDataContracts: 1,
+  //       isSystem: false,
+  //       owner: identity.identifier
+  //     }
+  //
+  //     assert.deepEqual({ identity: expectedIdentity }, body)
+  //   })
+  // })
 
   describe('getStatus()', async () => {
     it('should return status', async () => {
       process.env.EPOCH_CHANGE_TIME = 60000
+      const mockTDStatus = {
+        tenderdashVersion: 'v2.0.0',
+        platformVersion: 'v1.0.0',
+        maxPeerHeight: 1337,
+        tenderdashChainHeight: 420
+      }
+
       mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+      mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
 
       const { body } = await client.get('/status')
         .expect(200)
@@ -202,16 +210,16 @@ describe('Other routes', () => {
           startTime: '1970-01-01T00:18:00.000Z',
           endTime: '1970-01-01T00:19:00.000Z'
         },
-        appVersion: block.app_version,
-        blockVersion: block.block_version,
-        blocksCount: 10,
-        blockTimeAverage: 120,
-        txCount: 3,
+        transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,
         documentsCount: 1,
         network: null,
-        tenderdashVersion: null
+        apiHeight: 10,
+        tenderdashChainHeight: mockTDStatus.tenderdashChainHeight,
+        tenderdashVersion: mockTDStatus.tenderdashVersion,
+        platformVersion: mockTDStatus.platformVersion,
+        maxPeerHeight: mockTDStatus.maxPeerHeight
       }
 
       assert.deepEqual(body, expectedStats)

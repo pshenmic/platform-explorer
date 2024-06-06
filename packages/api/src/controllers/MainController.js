@@ -39,16 +39,16 @@ class MainController {
 
     response.send({
       epoch,
-      appVersion: stats?.appVersion,
-      blockVersion: stats?.blockVersion,
-      blocksCount: stats?.topHeight,
-      blockTimeAverage: stats?.blockTimeAverage,
-      txCount: stats?.txCount,
+      transactionsCount: stats?.transactionsCount,
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
       documentsCount: stats?.documentsCount,
       network: tdStatus?.network ?? null,
-      tenderdashVersion: tdStatus?.tenderdashVersion ?? null
+      tenderdashVersion: tdStatus?.tenderdashVersion ?? null,
+      platformVersion: tdStatus?.platformVersion ?? null,
+      apiHeight: currentBlock?.header?.height ?? null,
+      maxPeerHeight: tdStatus?.maxPeerHeight ?? null,
+      tenderdashChainHeight: tdStatus?.tenderdashChainHeight ?? null
     })
   }
 

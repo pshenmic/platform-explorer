@@ -1,6 +1,7 @@
 const fetch = require('node-fetch')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 
+const PLATFORM_VERSION = '1' + require('../package.json').dependencies.dash.substring(1)
 const BASE_URL = process.env.BASE_URL
 
 const call = async (path, method, body) => {
@@ -79,21 +80,17 @@ class TenderdashRPC {
 
   static async getStatus () {
     const { sync_info: syncInfo, node_info: nodeInfo } = await call('status', 'GET')
-    const { latest_block_height: blocksCount } = syncInfo
-    const { network, protocol_version: protocolVersion } = nodeInfo
+    const { latest_block_height: tenderdashChainHeight, max_peer_block_height: maxPeerHeight } = syncInfo
+    const { network } = nodeInfo
 
     const tenderdashVersion = nodeInfo.version
-    const appVersion = protocolVersion.app
-    const p2pVersion = protocolVersion.p2p
-    const blockVersion = protocolVersion.block
 
     return {
       network,
-      appVersion,
-      p2pVersion,
-      blockVersion,
-      blocksCount,
-      tenderdashVersion
+      tenderdashVersion,
+      platformVersion: PLATFORM_VERSION,
+      maxPeerHeight,
+      tenderdashChainHeight
     }
   }
 
