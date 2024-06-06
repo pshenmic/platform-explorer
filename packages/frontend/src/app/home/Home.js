@@ -169,7 +169,7 @@ function Home () {
       </Container>
 
       <TotalInfo
-        blocks={status.data?.apiHeight}
+        blocks={status?.data?.api?.block?.height}
         transactions={status.data?.transactionsCount}
         dataContracts={status.data?.dataContractsCount}
         documents={status.data?.documentsCount}
