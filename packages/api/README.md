@@ -67,7 +67,7 @@ Returns basic stats and epoch info
 HTTP /status
 
 {
-   epoch: {
+    epoch: {
         index: 3,
         startTime: "2024-04-08T14:00:00.000Z",
         endTime: "2024-04-09T14:00:00.000Z"
@@ -77,11 +77,23 @@ HTTP /status
     dataContractsCount: 1,
     documentsCount: 1,
     network: "dash-testnet-40",
-    tenderdashVersion: "0.14.4"
-    platformVersion: "v1.0.0-dev.12"
-    apiHeight: 420,
-    maxPeerHeight: 1337,
-    tenderdashChainHeight: 1337,
+    api: {
+        version: "1.0.0",
+        block: {
+            height: 20153,
+            timestamp: "2024-06-06T21:50:20.949Z"
+        }
+    }
+    platform: {
+        version: "1.0.0-dev.12"
+    },
+    tenderdash: {
+        version: "0.14.0-dev.6",
+        block: {
+            height: 20154,
+            timestamp: "2024-06-06T21:53:27.947Z"
+         }
+    }     
 }
 ```
 ---
