@@ -26,6 +26,12 @@ Reference:
 
 ### Status
 Returns basic stats and epoch info
+
+* apiHeight - current height available in the API
+* maPeerHeight - max peer height seen in the network
+* tenderdashChainHeight - current blockchain height on the node
+
+
 ```
 HTTP /status
 
@@ -42,8 +48,9 @@ HTTP /status
     network: "dash-testnet-40",
     tenderdashVersion: "0.14.4"
     platformVersion: "v1.0.0-dev.12"
+    apiHeight: 420,
     maxPeerHeight: 1337,
-    tenderdashChainHeight: 420,
+    tenderdashChainHeight: 1337,
 }
 ```
 ---

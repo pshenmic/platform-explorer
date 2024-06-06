@@ -215,6 +215,7 @@ describe('Other routes', () => {
         dataContractsCount: 1,
         documentsCount: 1,
         network: null,
+        apiHeight: 10,
         tenderdashChainHeight: mockTDStatus.tenderdashChainHeight,
         tenderdashVersion: mockTDStatus.tenderdashVersion,
         platformVersion: mockTDStatus.platformVersion,
