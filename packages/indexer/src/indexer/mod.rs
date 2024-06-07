@@ -75,7 +75,7 @@ impl Indexer {
             let current_block_height: i32 = self.last_block_height.get();
 
             if last_block_height > current_block_height {
-                for block_height in current_block_height + 1..last_block_height {
+                for block_height in current_block_height + 1..last_block_height + 1 {
                     loop {
                         let result = self.index_block(block_height.clone()).await;
 
