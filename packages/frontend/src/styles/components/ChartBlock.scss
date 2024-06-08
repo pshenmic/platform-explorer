@@ -18,8 +18,4 @@
         border-bottom: 1px solid var(--chakra-colors-gray-700);
         padding: 2px 4px;
     }
-
-    &__Loader {
-        @include mixins.loading-container;
-    }
 }

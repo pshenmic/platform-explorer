@@ -1,4 +1,5 @@
 @use 'components/ChartBlock.scss';
+@import './variables.scss';
 
 * {
     border-color: var(--chakra-colors-gray-800);
@@ -50,6 +51,26 @@
     align-items: flex-end;
     flex-wrap: wrap;
     margin-top: 16px;
+
+    &--Center {
+        justify-content: center;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+        flex-direction: column;
+        align-items: center;
+
+        .PageSizeSelector {
+            margin-top: 10px;
+            margin-left: auto;
+        }
+    }
+
+    @media screen and (max-width: $breakpoint-sm) {
+        .PageSizeSelector {
+            margin: 10px auto 0;
+        }        
+    }
 }
 
 .disabled {

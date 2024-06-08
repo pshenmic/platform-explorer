@@ -57,25 +57,43 @@ Reference:
 
 ### Status
 Returns basic stats and epoch info
+
+* apiHeight - current height available in the API
+* maPeerHeight - max peer height seen in the network
+* tenderdashChainHeight - current blockchain height on the node
+
+
 ```
 HTTP /status
 
 {
-   epoch: {
+    epoch: {
         index: 3,
         startTime: "2024-04-08T14:00:00.000Z",
         endTime: "2024-04-09T14:00:00.000Z"
     },
-    appVersion: 1,
-    blockVersion: 13,
-    blocksCount: 10,
-    blockTimeAverage: 3,
-    txCount: 3,
+    transactionsCount: 3,
     transfersCount: 0,
     dataContractsCount: 1,
     documentsCount: 1,
     network: "dash-testnet-40",
-    tenderdashVersion: "0.14.4"
+    api: {
+        version: "1.0.0",
+        block: {
+            height: 20153,
+            timestamp: "2024-06-06T21:50:20.949Z"
+        }
+    }
+    platform: {
+        version: "1.0.0-dev.12"
+    },
+    tenderdash: {
+        version: "0.14.0-dev.6",
+        block: {
+            height: 20154,
+            timestamp: "2024-06-06T21:53:27.947Z"
+         }
+    }     
 }
 ```
 ---
@@ -128,6 +146,9 @@ GET /blocks
 ---
 ### Transaction by hash
 Get a transaction (state transition) by hash
+
+Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
+
 ```
 GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
@@ -138,7 +159,10 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
     hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
     index: 0,
     timestamp: "2024-03-18T10:13:54.150Z",
-    type: 0
+    type: 0,
+    gasUsed: 1337000,
+    status: "SUCCESS",
+    error: null
 }
 ```
 
@@ -151,6 +175,9 @@ Response codes:
 ---
 ### Transactions
 Return transaction set paged
+
+Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
+
 ```
 GET /transactions?=1&limit=10&order=asc
 
@@ -168,7 +195,10 @@ GET /transactions?=1&limit=10&order=asc
         hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
         index: 0,
         timestamp: "2024-03-18T10:13:54.150Z",
-        type: 0
+        type: 0,
+        gasUsed: 1337000,
+        status: "SUCCESS",
+        error: null
     }, ...
     ]
 }
@@ -419,6 +449,9 @@ Response codes:
 ---
 ### Transactions by Identity
 Return all transactions made by the given identity
+
+Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
+
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
 
@@ -437,6 +470,9 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1
         type: 0,
         data: null,
         timestamp: "2024-03-18T10:13:54.150Z",
+        gasUsed: 1337000,
+        status: "SUCCESS",
+        error: null
     }, ...
     ]
 }

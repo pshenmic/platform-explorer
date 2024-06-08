@@ -8,4 +8,31 @@ const getTransitionTypeString = (id) => {
   return stateTransitionType ?? 'UNKNOWN'
 }
 
-export { getTransitionTypeString }
+function fetchHandlerSuccess (setter, data) {
+  setter(state => ({
+    ...state,
+    data: {
+      ...state.data,
+      ...data
+    },
+    loading: false,
+    error: false
+  }))
+}
+
+function fetchHandlerError (setter, error) {
+  console.error(error)
+
+  setter(state => ({
+    ...state,
+    data: null,
+    loading: false,
+    error: true
+  }))
+}
+
+export {
+  getTransitionTypeString,
+  fetchHandlerSuccess,
+  fetchHandlerError
+}

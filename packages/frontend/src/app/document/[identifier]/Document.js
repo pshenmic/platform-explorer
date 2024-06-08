@@ -3,6 +3,10 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import * as Api from '../../../util/Api'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import { ErrorMessageBlock } from '../../../components/Errors'
+import { LoadingLine, LoadingBlock } from '../../../components/loading'
+
 import './Document.scss'
 
 import {
@@ -15,96 +19,106 @@ import {
 } from '@chakra-ui/react'
 
 function Document ({ identifier }) {
-  const [document, setDocument] = useState({})
-  const [loading, setLoading] = useState(true)
+  const [document, setDocument] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
+  const tdTitleWidth = 100
 
   const fetchData = () => {
-    setLoading(true)
+    setDocument(state => ({ ...state, loading: true }))
 
     Api.getDocumentByIdentifier(identifier)
-      .then(setDocument)
-      .catch(console.log)
-      .finally(() => {
-        setLoading(false)
-      })
+      .then(document => fetchHandlerSuccess(setDocument, document))
+      .catch(err => fetchHandlerError(setDocument, err))
   }
 
   useEffect(fetchData, [identifier])
 
-  if (!loading) {
-    return (
-        <Container
-            maxW='container.xl'
-            bg='gray.600'
-            color='white'
-            _dark={{ bg: 'gray.900' }}
-            mt={8}
-            mb={8}
-            className={'DocumentPage'}
+  return (
+    <Container
+        maxW={'container.xl'}
+        bg={'gray.600'}
+        color={'white'}
+        _dark={{ bg: 'gray.900' }}
+        mt={8}
+        mb={8}
+        className={'DocumentPage'}
+    >
+        <Flex
+            w={'100%'}
+            justifyContent={'space-between'}
+            wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
         >
-            <Flex
-                w='100%'
-                justifyContent='space-between'
-                wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
+            <TableContainer
+                maxW={'none'}
+                borderWidth={'1px'} borderRadius={'lg'}
+                width={['100%', '100%', '100%', '50%']}
+                m={0}
             >
-                <TableContainer
-                    maxW='none'
-                    borderWidth='1px' borderRadius='lg'
-                    width={['100%', '100%', '100%', '50%']}
-                    m={0}
-                >
-                    <Table variant='simple'>
+                {!document.error
+                  ? <Table variant={'simple'}>
                         <Thead>
                             <Tr>
-                                <Th>Document info</Th>
+                                <Th pr={0}>Document info</Th>
                                 <Th></Th>
                             </Tr>
                         </Thead>
                         <Tbody>
                             <Tr>
-                                <Td>Identifier</Td>
-                                <Td isNumeric>{document.identifier}</Td>
-                            </Tr>
-                            <Tr>
-                                <Td>Owner</Td>
-                                <Td isNumeric>
-                                    <Link href={`/identity/${document.owner}`}>{document.owner}</Link>
+                                <Td w={tdTitleWidth}>Identifier</Td>
+                                <Td>
+                                    <LoadingLine loading={document.loading}>{document.data?.identifier}</LoadingLine>
                                 </Td>
                             </Tr>
                             <Tr>
-                                <Td>System</Td>
-                                <Td isNumeric>{document.isSystem ? 'true' : 'false'}</Td>
+                                <Td w={tdTitleWidth}>Owner</Td>
+                                <Td>
+                                    <LoadingLine loading={document.loading}>
+                                        <Link href={`/identity/${document.data?.owner}`}>{document.data?.owner}</Link>
+                                    </LoadingLine>
+                                </Td>
                             </Tr>
                             <Tr>
-                                <Td>Revision</Td>
-                                <Td isNumeric>{document.revision}</Td>
+                                <Td w={tdTitleWidth}>System</Td>
+                                <Td>
+                                    <LoadingLine loading={document.loading}>{document.data?.isSystem ? 'true' : 'false'}</LoadingLine>
+                                </Td>
+                            </Tr>
+                            <Tr>
+                                <Td w={tdTitleWidth}>Revision</Td>
+                                <Td>
+                                    <LoadingLine loading={document.loading}>{document.data?.revision}</LoadingLine>
+                                </Td>
                             </Tr>
                         </Tbody>
                     </Table>
-                </TableContainer>
+                  : <ErrorMessageBlock/>}
+            </TableContainer>
 
-                <Box w={5} h={5} />
+            <Box w={5} h={5} />
 
-                <Container
-                    width={['100%', '100%', '100%', '50%']}
-                    maxW='none'
-                    borderWidth='1px' borderRadius='lg'
-                    className={'InfoBlock'}
-                >
-                    <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Data</Heading>
-
-                    <Code
-                        borderRadius='lg'
-                        className={'DocumentPage__Code'}
-                        w='100%'
-                    >
-                        {JSON.stringify(JSON.parse(document.data), null, 2)}
-                    </Code>
-                </Container>
-            </Flex>
-        </Container>
-    )
-  }
+            <Container
+                width={['100%', '100%', '100%', '50%']}
+                maxW={'none'}
+                borderWidth={'1px'} borderRadius={'lg'}
+                className={'InfoBlock'}
+                display={'flex'}
+                flexDirection={'column'}
+            >
+                <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Data</Heading>
+                  {!document.error
+                    ? <LoadingBlock loading={document.loading}>
+                        <Code
+                            borderRadius={'lg'}
+                            className={'DocumentPage__Code'}
+                            w={'100%'}
+                        >
+                            {!document.loading && JSON.stringify(JSON.parse(document.data?.data), null, 2)}
+                        </Code>
+                      </LoadingBlock>
+                    : <ErrorMessageBlock h={40}/>}
+            </Container>
+        </Flex>
+    </Container>
+  )
 }
 
 export default Document
