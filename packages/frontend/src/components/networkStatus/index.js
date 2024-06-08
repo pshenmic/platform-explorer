@@ -20,10 +20,13 @@ function NetworkStatus ({ status }) {
   function getLastBlocktimeString () {
     if (!status?.data?.latestBlock?.header?.timestamp) return 'n/a'
 
-    if (msFromLastBlock < 60 * 1000) {
-      return `${Math.floor((msFromLastBlock / 1000))} sec. ago`
+    const diff = new Date() - new Date(status?.data?.latestBlock?.header?.timestamp)
+
+    console.log()
+    if (diff < 60 * 1000) {
+      return `${Math.floor((diff / 1000))} sec. ago`
     } else {
-      return `${Math.floor((msFromLastBlock / 1000) / 60)} min. ago`
+      return `${Math.floor((diff / 1000) / 60)} min. ago`
     }
   }
 
