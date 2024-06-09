@@ -1,0 +1,19 @@
+@import '../../styles/variables.scss';
+
+.TotalCards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    &__Item {
+        width: calc(50% - 10px);
+        margin: 10px 0;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+        &__Item {
+            width: 100%;
+
+        }
+    }
+}
