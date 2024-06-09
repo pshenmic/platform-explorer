@@ -1,8 +1,9 @@
 import Markdown from '../../components/markdown'
 import Intro from '../../components/intro/index.js'
 import introContent from './intro.md'
-import { Container } from '@chakra-ui/react'
+import { Container, Flex, Box } from '@chakra-ui/react'
 import Blocks from './Blocks'
+import { BlocksTotal } from '../../components/blocks'
 
 export const metadata = {
   title: 'Blocks — Dash Platform Explorer',
@@ -14,16 +15,31 @@ export const metadata = {
 async function BlocksRoute () {
   return <>
     <Container
-      maxW={'container.lg'}
+      maxW={'container.xl'}
       color={'white'}
       mt={8}
       mb={0}
     >
-        <Intro
-            title={'Blocks'}
-            contentSource={<Markdown>{introContent}</Markdown>}
-        />
+      <Flex
+          justifyContent={'space-between'}
+          alignItems={'center'}
+          wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
+      >
+          <Container maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
+            <Intro
+                title={'Blocks'}
+                contentSource={<Markdown>{introContent}</Markdown>}
+            />
+          </Container>
+
+          <Box flexShrink={'0'} w={10} h={10} />
+
+          <Container maxW={'none'} p={0}>
+              <BlocksTotal/>
+          </Container>
+      </Flex>
     </Container>
+
     <Blocks/>
   </>
 }

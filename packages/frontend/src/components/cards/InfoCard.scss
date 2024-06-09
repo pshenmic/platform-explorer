@@ -1,0 +1,10 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.InfoCard {
+    border-width: 1px;
+    border-radius: $border-radius-def;
+    background: linear-gradient(135deg, #122127, #161B1D);
+    padding: 24px;
+    box-shadow: 4px 4px 5px rgba(0, 0, 0, .2);
+}

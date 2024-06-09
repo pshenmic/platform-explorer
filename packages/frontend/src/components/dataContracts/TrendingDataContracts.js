@@ -77,7 +77,8 @@ export default function TrendingDataContracts ({ printCount = 5, preload = 10, p
                 columns={['Identifier', 'Documents Count']}
                 />
               : <ErrorMessageBlock/>
-          : <ListLoadingPreview itemsCount={previewLines}/>}
+          : <ListLoadingPreview itemsCount={previewLines}/>
+        }
     </Flex>
   </>)
 }

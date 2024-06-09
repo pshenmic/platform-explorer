@@ -65,14 +65,14 @@ function Blocks () {
 
   return (
       <Container
-          maxW='container.lg'
+          maxW='container.xl'
           color='white'
           mt={8}
           mb={8}
           className={'Blocks'}
       >
           <Container
-              maxW='container.lg'
+              maxW='container.xl'
               _dark={{ color: 'white' }}
               borderWidth='1px' borderRadius='lg'
               className={'InfoBlock'}
