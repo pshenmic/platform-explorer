@@ -1,6 +1,6 @@
 'use client'
 
-import { TotalCards } from '../total'
+import TotalCards from '../total/TotalCards'
 import { SideBlock } from '../containers'
 
 export default function BlocksTotal () {
