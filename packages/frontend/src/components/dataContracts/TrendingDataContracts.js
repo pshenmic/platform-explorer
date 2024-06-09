@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import { SimpleList, ListLoadingPreview } from '../../components/lists'
+import { SimpleList } from '../../components/lists'
+import { LoadingList } from '../../components/loading'
 import { Heading, Flex } from '@chakra-ui/react'
 import { WarningTwoIcon } from '@chakra-ui/icons'
 
@@ -77,7 +78,7 @@ export default function TrendingDataContracts ({ printCount = 5, preload = 10, p
                 columns={['Identifier', 'Documents Count']}
                 />
               : <ErrorMessageBlock/>
-          : <ListLoadingPreview itemsCount={previewLines}/>
+          : <LoadingList itemsCount={previewLines}/>
         }
     </Flex>
   </>)
