@@ -1,6 +1,5 @@
 mod dao;
 
-use std::convert::identity;
 use std::num::ParseIntError;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
 use deadpool_postgres::{PoolError};
@@ -9,7 +8,7 @@ use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
-use dpp::platform_value::{platform_value, BinaryData, Value};
+use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::serialization::PlatformSerializable;
@@ -23,7 +22,6 @@ use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTr
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
 use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
-use dpp::util::json_value::JsonValueExt;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
 use crate::entities::data_contract::DataContract;
