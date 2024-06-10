@@ -74,6 +74,7 @@ export default function TransactionsHistory ({ height = '220px' }) {
         direction={'column'}
         p={3}
         pb={2}
+        background={'gray.900'}
     >
         <div className={'ChartBlock__Head'}>
             <Heading className={'ChartBlock__Title'} as={'h2'} size={'sm'}>Transactions history</Heading>
