@@ -34,9 +34,9 @@ export default function TopIdentities () {
         </Flex>
 
         {identities.map((identitie, i) => (
-            <Container p={0} mx={0} my={3} maxW={'none'}>
+            <Container p={0} mx={0} my={3} maxW={'none'} key={i}>
                 <Link href={`/identity/${identitie.identifier}`}>
-                    <InfoCard className={'IdentitieCard'} clickable={true} key={i}>
+                    <InfoCard className={'IdentitieCard'} clickable={true}>
                         <Flex alignItems={'center'} justifyContent={'space-between'}>
                             <Flex alignItems={'center'}>
                                 <div className={'IdentitieCard__Img'}></div>
