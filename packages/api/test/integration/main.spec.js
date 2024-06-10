@@ -16,6 +16,7 @@ describe('Other routes', () => {
   let knex
 
   let block
+  let blocks
   let identityTransaction
   let identity
   let dataContractTransaction
@@ -27,6 +28,7 @@ describe('Other routes', () => {
     client = supertest(app.server)
 
     knex = getKnex()
+    blocks = []
 
     await fixtures.cleanup(knex)
 
@@ -36,6 +38,7 @@ describe('Other routes', () => {
 
     const identityIdentifier = fixtures.identifier()
     block = await fixtures.block(knex, { timestamp: new Date(genesisTime + blockDiffTime) })
+    blocks.push(block)
 
     identityTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
@@ -72,7 +75,8 @@ describe('Other routes', () => {
     // prepare for get status
 
     for (let i = 1; i < 10; i++) {
-      await fixtures.block(knex, { height: i + 1, timestamp: new Date(block.timestamp.getTime() + blockDiffTime * i) })
+      const newBlock = await fixtures.block(knex, { height: i + 1, timestamp: new Date(block.timestamp.getTime() + blockDiffTime * i) })
+      blocks.push(newBlock)
     }
   })
 
@@ -115,7 +119,10 @@ describe('Other routes', () => {
         blockHeight: block.height,
         type: dataContractTransaction.type,
         data: JSON.stringify(dataContractTransaction.data),
-        timestamp: block.timestamp.toISOString()
+        timestamp: block.timestamp.toISOString(),
+        gasUsed: dataContractTransaction.gas_used,
+        status: dataContractTransaction.status,
+        error: dataContractTransaction.error
       }
 
       assert.deepEqual({ transaction: expectedTransaction }, body)
@@ -187,7 +194,16 @@ describe('Other routes', () => {
   describe('getStatus()', async () => {
     it('should return status', async () => {
       process.env.EPOCH_CHANGE_TIME = 60000
+      const mockTDStatus = {
+        version: 'v2.0.0',
+        highestBlock: {
+          height: 1337,
+          timestamp: new Date().toISOString()
+        }
+      }
+
       mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+      mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
 
       const { body } = await client.get('/status')
         .expect(200)
@@ -199,16 +215,28 @@ describe('Other routes', () => {
           startTime: '1970-01-01T00:18:00.000Z',
           endTime: '1970-01-01T00:19:00.000Z'
         },
-        appVersion: block.app_version,
-        blockVersion: block.block_version,
-        blocksCount: 10,
-        blockTimeAverage: 120,
-        txCount: 3,
+        transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,
         documentsCount: 1,
         network: null,
-        tenderdashVersion: null
+        api: {
+          version: require('../../package.json').version,
+          block: {
+            height: 10,
+            timestamp: blocks[blocks.length - 1].timestamp.toISOString()
+          }
+        },
+        platform: {
+          version: '1' + require('../../package.json').dependencies.dash.substring(1)
+        },
+        tenderdash: {
+          version: mockTDStatus?.version ?? null,
+          block: {
+            height: mockTDStatus?.highestBlock?.height,
+            timestamp: mockTDStatus?.highestBlock?.timestamp
+          }
+        }
       }
 
       assert.deepEqual(body, expectedStats)

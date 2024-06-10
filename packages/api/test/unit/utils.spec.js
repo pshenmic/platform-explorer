@@ -24,8 +24,8 @@ describe('Utils', () => {
       const decoded = await utils.decodeStateTransition(client, dataContractCreateMock.data)
 
       assert.deepEqual(decoded, {
-        identityId: 'CYYsxRfqPQefANY7yjsSLVHtr4wNxW1zM6Ygmu2aKvCq',
-        dataContractId: 'J1rzMRxi2RqFZjpBCS93N3PSYtdMNaPNpNty9k3GtYRy',
+        identityId: '7dwjL5frrkM69pv3BsKSQb4ELrMYmDeE11KNoDSefG6c',
+        dataContractId: 'GbGD5YbS9GVh7FSZjz3uUJpbrXo9ctbdKycfTqqg3Cmn',
         type: 0
       })
     })
@@ -69,8 +69,8 @@ describe('Utils', () => {
       const decoded = await utils.decodeStateTransition(client, dataContractUpdateMock.data)
 
       assert.deepEqual(decoded, {
-        identityId: '5TPKmPh6xUzsX5SQRapC2tLyNt9PRWhzwkKVALtqsNrw',
-        dataContractId: 'Hj8bgkwKh7ABwy9okNQNpA2tw3ekxTehBRLuDzFqRpYu',
+        identityId: '7dwjL5frrkM69pv3BsKSQb4ELrMYmDeE11KNoDSefG6c',
+        dataContractId: '8BzeH7dmyLHNzcCtG6DGowAkWyRgWEq15y88Zz2zBxVg',
         type: 4,
         version: 2
       })

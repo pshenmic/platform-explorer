@@ -5,6 +5,9 @@ const DocumentsDAO = require('../dao/DocumentsDAO')
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 
+const API_VERSION = require('../../package.json').version
+const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
+
 class MainController {
   constructor (knex) {
     this.blocksDAO = new BlocksDAO(knex)
@@ -39,16 +42,28 @@ class MainController {
 
     response.send({
       epoch,
-      appVersion: stats?.appVersion,
-      blockVersion: stats?.blockVersion,
-      blocksCount: stats?.topHeight,
-      blockTimeAverage: stats?.blockTimeAverage,
-      txCount: stats?.txCount,
+      transactionsCount: stats?.transactionsCount,
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
       documentsCount: stats?.documentsCount,
       network: tdStatus?.network ?? null,
-      tenderdashVersion: tdStatus?.tenderdashVersion ?? null
+      api: {
+        version: API_VERSION,
+        block: {
+          height: currentBlock?.header?.height,
+          timestamp: currentBlock?.header?.timestamp.toISOString()
+        }
+      },
+      platform: {
+        version: PLATFORM_VERSION
+      },
+      tenderdash: {
+        version: tdStatus?.version ?? null,
+        block: {
+          height: tdStatus?.highestBlock?.height ?? null,
+          timestamp: tdStatus?.highestBlock?.timestamp ?? null
+        }
+      }
     })
   }
 
