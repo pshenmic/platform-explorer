@@ -55,12 +55,12 @@ function Transactions () {
 
   return (
     <Container
-        maxW='container.lg'
+        maxW='container.xl'
         mt={8}
         className={'Transactions'}
     >
         <Container
-            maxW='container.lg'
+            maxW='container.xl'
             borderWidth='1px' borderRadius='lg'
             className={'InfoBlock'}
         >
