@@ -39,7 +39,7 @@ export default function BlocksTotal () {
           },
           {
             title: 'Transactions:',
-            value:  status?.data?.transactionsCount || '-',
+            value: status?.data?.transactionsCount || '-',
             icon: 'Transactions'
           }
         ]}
