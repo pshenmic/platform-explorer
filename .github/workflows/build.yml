@@ -11,6 +11,30 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  test_data_contract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: NPM install
+        run: cd packages/data-contract && npm install
+
+      - name: Check lint rules
+        run: cd packages/data-contract && npm run lint
+
   test_frontend:
     runs-on: ubuntu-latest
     permissions:
