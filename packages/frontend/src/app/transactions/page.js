@@ -15,7 +15,7 @@ export const metadata = {
 function TransactionsRoute () {
   return <>
     <Container
-      maxW={'container.lg'}
+      maxW={'container.xl'}
       color={'white'}
       mt={8}
       mb={0}
