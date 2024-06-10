@@ -12,16 +12,16 @@ async function main() {
     logInfo('Client Initialization')
     
     const schema = {
-        "labler": {
+        "dataContracts": {
             "type": "object",
             "properties": {
-                "contractId": {
+                "identifier": {
                     "type": "string",
                     "minLength": 43,
                     "maxLength": 44,
                     "position": 0
                 },
-                "shortName": {
+                "name": {
                     "type": "string",
                     "maxLength": 32,
                     "minLength": 3,
