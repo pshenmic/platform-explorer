@@ -1,6 +1,8 @@
 # Platform Explorer Data Contract
 
-A simple utility for deploying a date contract that stores identifiers and names/aliases for them
+A simple utility for deploying a date contract that stores identifiers and names/aliases for them.
+
+before launching, you need to enter your data in the `.env` file
 
 ---
 
