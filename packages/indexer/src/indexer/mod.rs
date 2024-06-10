@@ -103,42 +103,40 @@ impl Indexer {
             }
         }
     }
-
     async fn index_block(&self, block_height: i32) -> Result<(), ProcessorError> {
         let block = self.tenderdash_rpc.get_block_by_height(block_height.clone()).await?;
+        let block_results_response = self.tenderdash_rpc.get_block_results_by_height(block_height.clone()).await?;
         let validators = self.tenderdash_rpc.get_validators_by_block_height(block_height.clone()).await?;
 
+        let tx_results = block_results_response.txs_results.unwrap_or(vec![]);
         let block_hash = block.block_id.hash;
 
-        let transactions = future::try_join_all(block.block.data.txs.iter().enumerate().map(|(i, tx_string)| async {
-            let data = general_purpose::STANDARD.decode(tx_string.clone().as_bytes().to_vec()).expect("Could not decode tx string");
-            let hash = digest(data).to_uppercase();
-
-            let transaction = self.tenderdash_rpc.get_transaction_by_hash(hash).await?;
-            let tx_result = transaction.tx_result;
+        let transactions = block.block.data.txs.iter().enumerate().map(|(i, tx_string)| {
+            let tx_result = tx_results.get(i)
+                .expect(&format!("tx result at index {} should exist in block results of block with hash {}",
+                                 i, block.block_id.hash.clone())).clone();
 
             return match tx_result.code {
                 None => {
-                    Ok::<TransactionResult, reqwest::Error>(TransactionResult {
+                    TransactionResult {
                         data: tx_string.clone(),
                         gas_used: tx_result.gas_used.clone(),
                         status: TransactionStatus::SUCCESS,
                         code: None,
                         error: None,
-                    })
+                    }
                 }
                 Some(_) => {
-                    Ok(TransactionResult {
+                    TransactionResult {
                         data: tx_string.clone(),
                         gas_used: tx_result.gas_used.clone(),
                         status: TransactionStatus::FAIL,
                         code: tx_result.code.clone(),
                         error: tx_result.info.clone(),
-                    })
+                    }
                 }
             };
-        })
-        ).await.unwrap();
+        }).collect::<Vec<TransactionResult>>();
 
         let txs = transactions.into_iter().filter(|tx| {
             let bytes = general_purpose::STANDARD.decode(tx.data.clone()).unwrap();
