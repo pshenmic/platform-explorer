@@ -75,6 +75,12 @@ pub struct TenderdashRPCBlockResultsResponse {
     pub txs_results: Option<Vec<TDTxResult>>,
 }
 
+#[derive(Deserialize)]
+pub struct TenderdashRPCTransactionResponse {
+    pub hash: String,
+    pub tx_result: TDTxResult,
+}
+
 #[derive(Clone)]
 pub enum TransactionStatus {
     FAIL,
