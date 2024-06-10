@@ -10,7 +10,7 @@ function logInfo(...messages) {
 
 async function main() {
     logInfo('Client Initialization')
-    
+
     const schema = {
         "dataContracts": {
             "type": "object",
@@ -40,14 +40,12 @@ async function main() {
         network: 'testnet',
         wallet: {
             mnemonic: process.env.MNEMONIC,
-            ...process.env.skipSynchronizationBeforeHeight && {
-                unsafeOptions: {
-                    skipSynchronizationBeforeHeight: Number(process.env.skipSynchronizationBeforeHeight),
-                }
-            }
         },
     };
 
+    if (process.env.skipSynchronizationBeforeHeight) {
+        clientOpts.unsafeOptions = { skipSynchronizationBeforeHeight: Number(process.env.skipSynchronizationBeforeHeight), }
+    }
     const client = new Dash.Client(clientOpts);
 
     logInfo('Contract Deployment')

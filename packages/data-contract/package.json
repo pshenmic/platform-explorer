@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dataContract:deploy": "node index.js"
+    "dataContract:deploy": "node index.js",
+    "lint": "standard ."
   },
   "repository": {
     "type": "git",
@@ -17,8 +18,10 @@
   "homepage": "https://github.com/pshenmic/platform-explorer#readme",
   "description": "",
   "dependencies": {
-    "colors": "^1.4.0",
     "dash": "4.0.0-dev.12",
     "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "standard": "^17.1.0",
   }
 }
