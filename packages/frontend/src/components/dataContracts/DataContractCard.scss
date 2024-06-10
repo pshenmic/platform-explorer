@@ -1,0 +1,11 @@
+.DataContractCard {
+    &__Id {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__Img {
+        margin-right: 8px;
+    }
+}

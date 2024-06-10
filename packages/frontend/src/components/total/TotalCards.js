@@ -1,4 +1,4 @@
-import InfoCard from '../cards'
+import { InfoCard } from '../cards'
 import ValueBlock from './ValueBlock'
 import './TotalCards.scss'
 

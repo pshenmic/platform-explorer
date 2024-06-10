@@ -1,9 +1,11 @@
-import './InfoCard.scss'
+import InfoCard from './InfoCard'
+import { CardsGrid, CardsGridItems, CardsGridItem, CardsGridHeader, CardsGridTitle } from './CardsGrid'
 
-export default function InfoCard ({ children, className }) {
-  return (
-    <div className={`InfoCard ${className}`}>
-        {children}
-    </div>
-  )
+export {
+  InfoCard,
+  CardsGrid,
+  CardsGridItems,
+  CardsGridItem,
+  CardsGridHeader,
+  CardsGridTitle
 }

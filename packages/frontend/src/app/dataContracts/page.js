@@ -3,7 +3,7 @@ import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { Container, Flex, Box } from '@chakra-ui/react'
-import { TrendingDataContracts } from '../../components/dataContracts'
+import { TopDataContracts } from '../../components/dataContracts'
 
 export const metadata = {
   title: 'Data Contracts — Dash Platform Explorer',
@@ -15,7 +15,7 @@ export const metadata = {
 function DataContractsRoute () {
   return <>
     <Container
-      maxW={'container.lg'}
+      maxW={'container.xl'}
       color={'white'}
       px={0}
       mt={8}
@@ -24,19 +24,19 @@ function DataContractsRoute () {
       <Flex
           justifyContent={'space-between'}
           alignItems={'center'}
-          wrap={['wrap', 'wrap', 'nowrap']}
+          wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
       >
-          <Container maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
+          <Container flexShrink={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
             <Intro
               title={'Data contracts'}
               contentSource={<Markdown>{introContent}</Markdown>}
             />
           </Container>
 
-          <Box flexShrink={'0'} w={10} h={10} />
+          <Box flexShrink={'0'} w={10} h={[5, 5, 5, 10]} />
 
-          <Container maxW={'none'} p={0}>
-            <TrendingDataContracts printCount={5}/>
+          <Container flexShrink={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
+            <TopDataContracts/>
           </Container>
       </Flex>
     </Container>
