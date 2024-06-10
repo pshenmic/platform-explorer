@@ -1,8 +1,8 @@
 import './InfoCard.scss'
 
-export default function InfoCard ({ clickable, children, className }) {
+export default function InfoCard ({ clickable, loading, children, className }) {
   return (
-    <div className={`InfoCard ${className} ${clickable ? 'InfoCard--Clickable' : ''}`}>
+    <div className={`InfoCard ${className} ${clickable ? 'InfoCard--Clickable' : ''} ${loading ? 'InfoCard--Loading' : ''}`}>
         {children}
     </div>
   )

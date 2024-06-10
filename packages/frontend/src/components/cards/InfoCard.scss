@@ -17,4 +17,9 @@
             background: linear-gradient(135deg, var(--chakra-colors-gray-900), var(--chakra-colors-gray-900));
         }
     }
+
+    &--Loading {
+        @include mixins.loading-container;
+        height: 74px;
+    }
 }

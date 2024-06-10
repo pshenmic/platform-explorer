@@ -1,54 +1,68 @@
 'use client'
 
+import * as Api from '../../util/Api'
+import { useState, useEffect } from 'react'
 import { SideBlock } from '../containers'
 import { Flex, Box, Container } from '@chakra-ui/react'
 import Link from 'next/link'
 import { InfoCard } from '../cards'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { ErrorMessageBlock } from '../Errors'
 import './TopIdentitieCard.scss'
 import './TopIdentities.scss'
 
-const identities = [
-  {
-    name: 'DQ-Broderick-29645-backup.dash',
-    balance: 25001000000000,
-    identifier: '7JXCp9e9whJ64ViKJi4ppE9BTZB77rsPDaTMLYe59D8M'
-  },
-  {
-    name: 'DQ-Test-00000-backup.dash',
-    balance: 24009000000000,
-    identifier: '85T9pkLWY2WbHVE1k5PEvov8RJ1E9Y6QqfkCaSKfzioH'
-  },
-  {
-    name: 'DQ-Test-00000-backup.dash',
-    balance: 23001000000000,
-    identifier: 'BhgerQ1vMMGr6QdxBQ863q7QGwQcsaRtxzZqVJvPJ66f'
-  }
-]
+function Item ({ identitie, loading = false }) {
+  return (
+    <Container p={0} mx={0} my={3} maxW={'none'}>
+      {!loading
+        ? <Link href={`/identity/${identitie.identifier}`}>
+            <InfoCard className={'IdentitieCard'} clickable={true}>
+              <Flex alignItems={'center'} justifyContent={'space-between'}>
+                  <Flex alignItems={'center'}>
+                      <div className={'IdentitieCard__Img'}></div>
+                      <div className={'IdentitieCard__Name'}>DQ-Broderick-29645-backup.dash</div>
+                  </Flex>
+
+                  <div className={'IdentitieCard__Balance'}>{identitie.balance}</div>
+              </Flex>
+            </InfoCard>
+        </Link>
+        : <InfoCard className={'IdentitieCard'} loading={true}/>
+      }
+    </Container>
+  )
+}
 
 export default function TopIdentities () {
+  const [identities, setIdentities] = useState({ data: {}, loading: true, error: false })
+
+  const fetchData = () => {
+    Api.getIdentities(1, 3, 'desc', 'balance')
+      .then(res => { console.log('res', res); fetchHandlerSuccess(setIdentities, res) })
+      .catch(err => fetchHandlerError(setIdentities, err))
+  }
+
+  useEffect(fetchData, [])
+
   return (
     <SideBlock>
-        <Flex justifyContent={'space-between'} px={6} mb={4}>
-            <div>Top Identities:</div>
-            <Box color={'gray.500'}>Balance</Box>
-        </Flex>
+        {!identities.error
+          ? <>
+              <Flex justifyContent={'space-between'} px={6} mb={4}>
+                  <div>Top Identities:</div>
+                  <Box color={'gray.500'}>Balance</Box>
+              </Flex>
 
-        {identities.map((identitie, i) => (
-            <Container p={0} mx={0} my={3} maxW={'none'} key={i}>
-                <Link href={`/identity/${identitie.identifier}`}>
-                    <InfoCard className={'IdentitieCard'} clickable={true}>
-                        <Flex alignItems={'center'} justifyContent={'space-between'}>
-                            <Flex alignItems={'center'}>
-                                <div className={'IdentitieCard__Img'}></div>
-                                <div className={'IdentitieCard__Name'}>{identitie.name}</div>
-                            </Flex>
+              {!identities.loading
+                ? identities?.data?.resultSet?.length
+                  ? identities.data.resultSet.map((identitie, i) => <Item identitie={identitie} key={i}/>)
+                  : <ErrorMessageBlock h={250} text={'Identities not found'}/>
+                : Array.from({ length: 3 }, (x, i) => <Item loading={true} key={i}/>)
+              }
+            </>
+          : <ErrorMessageBlock h={250}/>
+        }
 
-                            <div className={'IdentitieCard__Balance'}>{identitie.balance}</div>
-                        </Flex>
-                    </InfoCard>
-                </Link>
-            </Container>
-        ))}
     </SideBlock>
   )
 }
