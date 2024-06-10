@@ -35,7 +35,7 @@ export default function TopDataContracts () {
           <CardsGridItems>
             {contracts.map((contract, i) => (
               <CardsGridItem className={'DataContractCard'} key={i}>
-                <Flex>
+                <Flex mb={1} alignItems={'center'}>
                   <div className={'DataContractCard__Img'}>X</div>
                   <div className={'DataContractCard__Name'}>{contract.name}</div>
                 </Flex>

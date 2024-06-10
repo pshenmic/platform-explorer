@@ -1,11 +1,24 @@
+@import '../../styles/variables.scss';
+
 .DataContractCard {
+    &__Img {
+        margin-right: 8px;
+        width: 22px;
+        height: 22px;
+        border-radius: $border-radius-def;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+    }
+
+    &__Name {
+        font-size: 18px;
+    }
+
     &__Id {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-
-    &__Img {
-        margin-right: 8px;
+        color: var(--chakra-colors-gray-500);
+        font-family: monospace;
+        font-size: 16px;
     }
 }
