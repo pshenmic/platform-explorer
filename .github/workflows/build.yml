@@ -168,7 +168,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
   deploy:
     runs-on: ubuntu-latest
-    needs: [build_api, build_indexer, test_frontend]
+    needs: [build_api, build_indexer, test_frontend, test_data_contract]
     if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     steps:
       - name: Deploy to the server
