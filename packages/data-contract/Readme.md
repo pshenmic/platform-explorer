@@ -1,20 +1,20 @@
-# Labler Data-Contract
+# Platform Explorer Data Contract
 
-Deploys a data contract on the dash network.
+A simple utility for deploying a date contract that stores identifiers and names/aliases for them
 
 ---
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 
 Insert your data in .env
 
 ---
 
-### Runing
+### Start
 
 ```
 npm install
-npm start
+npm run dataContract:deploy
 ```
