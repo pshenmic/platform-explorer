@@ -5,7 +5,7 @@ import './NetworkStatus.scss'
 
 function NetworkStatus ({ status }) {
   const msFromLastBlock = new Date() - new Date(status?.data?.tenderdash?.block?.timestamp)
-  const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 4
+  const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
   const apiStatus = typeof status?.data?.api?.block?.timestamp === 'string' &&
     status?.data?.api?.block?.timestamp === status?.data?.tenderdash?.block?.timestamp
 
