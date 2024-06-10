@@ -114,7 +114,7 @@ impl Indexer {
         let transactions = block.block.data.txs.iter().enumerate().map(|(i, tx_string)| {
             let tx_result = tx_results.get(i)
                 .expect(&format!("tx result at index {} should exist in block results of block with hash {}",
-                                 i, block.block_id.hash.clone())).clone();
+                                 i, &block_hash)).clone();
 
             return match tx_result.code {
                 None => {
