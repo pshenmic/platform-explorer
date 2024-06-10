@@ -24,7 +24,7 @@ const fixtures = {
 
     return row
   },
-  transaction: async (knex, { hash, data, type, index, block_hash, owner } = {}) => {
+  transaction: async (knex, { hash, data, type, index, block_hash, owner, gas_used, status, error } = {}) => {
     if (!block_hash) {
       throw new Error('block_hash must be provided for transaction fixture')
     }
@@ -43,7 +43,10 @@ const fixtures = {
       owner,
       hash: hash ?? generateHash(),
       data: data ?? {},
-      index: index ?? 0
+      index: index ?? 0,
+      gas_used: gas_used ?? 0,
+      status: status ?? 'SUCCESS',
+      error: error ?? null
     }
 
     const [result] = await knex('state_transitions').insert(row).returning('id')

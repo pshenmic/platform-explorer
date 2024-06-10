@@ -79,21 +79,16 @@ class TenderdashRPC {
 
   static async getStatus () {
     const { sync_info: syncInfo, node_info: nodeInfo } = await call('status', 'GET')
-    const { latest_block_height: blocksCount } = syncInfo
-    const { network, protocol_version: protocolVersion } = nodeInfo
-
-    const tenderdashVersion = nodeInfo.version
-    const appVersion = protocolVersion.app
-    const p2pVersion = protocolVersion.p2p
-    const blockVersion = protocolVersion.block
+    const { latest_block_height: latestBlockHeight, latest_block_time: latestBlockTime } = syncInfo
+    const { network, version } = nodeInfo
 
     return {
       network,
-      appVersion,
-      p2pVersion,
-      blockVersion,
-      blocksCount,
-      tenderdashVersion
+      version,
+      highestBlock: {
+        height: parseInt(latestBlockHeight),
+        timestamp: latestBlockTime
+      }
     }
   }
 

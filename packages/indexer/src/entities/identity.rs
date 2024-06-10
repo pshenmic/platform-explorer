@@ -1,5 +1,4 @@
 use std::env;
-use std::error::Error;
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
@@ -9,8 +8,9 @@ use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_update_transition::accessors::IdentityUpdateTransitionAccessorsV0;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
 use dashcore_rpc::{Auth, Client, RpcApi};
-use dpp::dashcore::{Transaction, Txid};
-use crate::indexer::IndexerError;
+use dpp::dashcore::{Txid};
+use dpp::platform_value::string_encoding::Encoding::Base58;
+use tokio_postgres::Row;
 
 #[derive(Clone)]
 pub struct Identity {
@@ -19,7 +19,7 @@ pub struct Identity {
     pub owner: Identifier,
     pub revision: Revision,
     pub balance: Option<u64>,
-    pub is_system: bool
+    pub is_system: bool,
 }
 
 impl From<IdentityCreateTransition> for Identity {
@@ -94,7 +94,26 @@ impl From<SystemDataContract> for Identity {
             revision: 0,
             balance: None,
             is_system: true,
-        }
+        };
+    }
+}
+
+impl From<Row> for Identity {
+    fn from(row: Row) -> Self {
+        let id: i32 = row.get(0);
+        let owner: String = row.get(1);
+        let identifier: String = row.get(2);
+        let revision: i32 = row.get(3);
+        let is_system: bool = row.get(4);
+
+        return Identity {
+            id: Some(id as u32),
+            owner: Identifier::from_string(&owner.trim(), Base58).unwrap(),
+            revision: Revision::from(revision as u64),
+            identifier: Identifier::from_string(&identifier.trim(), Base58).unwrap(),
+            is_system,
+            balance: None,
+        };
     }
 }
 
