@@ -2,9 +2,11 @@
 @import '../../styles/variables.scss';
 
 .InfoCard {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
     border-width: 1px;
     border-radius: $border-radius-def;
-    background: linear-gradient(135deg, #122127, #161B1D);
     padding: 24px;
     box-shadow: 4px 4px 5px rgba(0, 0, 0, .2);
 
@@ -14,12 +16,51 @@
         &:hover {
             cursor: pointer;
             box-shadow: 0px 0px 5px rgba(0, 0, 0, .1);
-            background: linear-gradient(135deg, var(--chakra-colors-gray-900), var(--chakra-colors-gray-900));
+
+            &::after {
+                opacity: 0;
+            }
         }
+    }
+
+    &--Clickable:hover &__HoverBg {
+        opacity: .15;
     }
 
     &--Loading {
         @include mixins.loading-container;
-        height: 74px;
+        min-height: 74px;
+    }
+
+    &::before, &::after {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+    &::after {
+        opacity: 1;
+        background: linear-gradient(135deg, #122127, #161B1D);
+        transition: opacity .1s;
+    }
+
+    &::before {
+        z-index: -3;
+        background: linear-gradient(135deg, var(--chakra-colors-gray-900), var(--chakra-colors-gray-900));
+    }
+
+    &__HoverBg {
+        position: absolute;
+        z-index: -2;
+        background: radial-gradient(circle at center, var(--chakra-colors-brand-deep) 0, transparent 50%);
+        transform: translate(-50%, -50%);
+        width: 400px;
+        height: 400px;
+        opacity: 0;
+        transition: opacity .3s;
     }
 }

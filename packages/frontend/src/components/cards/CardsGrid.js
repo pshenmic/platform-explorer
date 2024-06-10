@@ -17,8 +17,8 @@ function CardsGridItems ({ children, className }) {
   return <div className={`CardsGrid__Items ${className || ''}`}>{children}</div>
 }
 
-function CardsGridItem ({ children, className }) {
-  return <InfoCard className={`CardsGrid__Item ${className || ''}`}>{children}</InfoCard>
+function CardsGridItem ({ children, className, loading, clickable }) {
+  return <InfoCard className={`CardsGrid__Item ${className || ''}`} loading={loading} clickable={clickable}>{children || ''}</InfoCard>
 }
 
 export {

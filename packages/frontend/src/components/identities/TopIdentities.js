@@ -62,7 +62,6 @@ export default function TopIdentities () {
             </>
           : <ErrorMessageBlock h={250}/>
         }
-
     </SideBlock>
   )
 }

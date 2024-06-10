@@ -1,49 +1,64 @@
 'use client'
 
+import * as Api from '../../util/Api'
 import { SideBlock } from '../containers'
-import { Flex } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
+import { Flex, Box } from '@chakra-ui/react'
+import Link from 'next/link'
 import { CardsGrid, CardsGridItems, CardsGridItem, CardsGridHeader, CardsGridTitle } from '../cards'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { ErrorMessageBlock } from '../Errors'
 import './DataContractCard.scss'
 
-const contracts = [
-  {
-    name: 'Alice.dash',
-    id: 'B866247CC65C2D7C671EAD9A3D25B499B42A058E58AAF9ACDADE625C9FAA90FB'
-  },
-  {
-    name: 'Alice.dash',
-    id: 'B866247CC65C2D7C671EAD9A3D25B499B42A058E58AAF9ACDADE625C9FAA90FB'
-  },
-  {
-    name: 'Alice.dash',
-    id: 'B866247CC65C2D7C671EAD9A3D25B499B42A058E58AAF9ACDADE625C9FAA90FB'
-  },
-  {
-    name: 'Alice.dash',
-    id: 'B866247CC65C2D7C671EAD9A3D25B499B42A058E58AAF9ACDADE625C9FAA90FB'
-  }
-]
+function Item ({ dataContract, loading = false }) {
+  return (
+    <CardsGridItem className={'DataContractCard'} loading={loading} clickable={true}>
+      {!loading
+        ? <Link href={`/dataContract/${dataContract.identifier}`}>
+          <Flex mb={1} alignItems={'center'}>
+            <div className={'DataContractCard__Img'}></div>
+            <div className={'DataContractCard__Name'}>Alice.dash</div>
+          </Flex>
+          <div className={'DataContractCard__Id'}>{dataContract.identifier}</div>
+        </Link>
+        : <Box h={'55px'}/>
+      }
+    </CardsGridItem>
+  )
+}
 
 export default function TopDataContracts () {
+  const [dataContracts, setDataContracts] = useState({ data: {}, loading: true, error: false })
+
+  const fetchData = () => {
+    Api.getDataContracts(1, 4, 'desc', 'documents_count')
+      .then(res => fetchHandlerSuccess(setDataContracts, res))
+      .catch(err => fetchHandlerError(setDataContracts, err))
+  }
+
+  useEffect(fetchData, [])
+
   return (
     <SideBlock>
-        <CardsGrid>
-          <CardsGridHeader>
-            <CardsGridTitle>Top Contracts:</CardsGridTitle>
-          </CardsGridHeader>
+        {!dataContracts.error
+          ? <>
+              <CardsGrid>
+                <CardsGridHeader>
+                  <CardsGridTitle>Top Contracts:</CardsGridTitle>
+                </CardsGridHeader>
 
-          <CardsGridItems>
-            {contracts.map((contract, i) => (
-              <CardsGridItem className={'DataContractCard'} key={i}>
-                <Flex mb={1} alignItems={'center'}>
-                  <div className={'DataContractCard__Img'}></div>
-                  <div className={'DataContractCard__Name'}>{contract.name}</div>
-                </Flex>
-                <div className={'DataContractCard__Id'}>{contract.id}</div>
-              </CardsGridItem>
-            ))}
-          </CardsGridItems>
-        </CardsGrid>
+                <CardsGridItems>
+                  {!dataContracts.loading
+                    ? dataContracts?.data?.resultSet?.length
+                      ? dataContracts.data.resultSet.map((dataContract, i) => <Item dataContract={dataContract} key={i}/>)
+                      : <ErrorMessageBlock h={250} text={'Data Contracts not found'}/>
+                    : Array.from({ length: 4 }, (x, i) => <Item loading={true} key={i}/>)
+                  }
+                </CardsGridItems>
+              </CardsGrid>
+            </>
+          : <ErrorMessageBlock h={250}/>
+        }
     </SideBlock>
   )
 }
