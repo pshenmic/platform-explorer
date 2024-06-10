@@ -7,4 +7,14 @@
     background: linear-gradient(135deg, #122127, #161B1D);
     padding: 24px;
     box-shadow: 4px 4px 5px rgba(0, 0, 0, .2);
+
+    &--Clickable {
+        transition: all 1s;
+
+        &:hover {
+            cursor: pointer;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, .1);
+            background: linear-gradient(135deg, var(--chakra-colors-gray-900), var(--chakra-colors-gray-900));
+        }
+    }
 }

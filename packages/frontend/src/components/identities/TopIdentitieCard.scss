@@ -1,0 +1,17 @@
+@import '../../styles/variables.scss';
+
+.IdentitieCard {
+    &__Img {
+        width: 42px;
+        height: 42px;
+        border-radius: $border-radius-def;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+        margin: -10px 10px -10px 0;
+        background-color: var(--chakra-colors-gray-800);
+        flex-shrink: 0;
+    }
+
+    &__Balance {
+        color: var(--chakra-colors-gray-500);
+    }
+}
