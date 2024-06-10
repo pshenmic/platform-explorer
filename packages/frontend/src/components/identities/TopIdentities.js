@@ -38,7 +38,7 @@ export default function TopIdentities () {
 
   const fetchData = () => {
     Api.getIdentities(1, 3, 'desc', 'balance')
-      .then(res => { console.log('res', res); fetchHandlerSuccess(setIdentities, res) })
+      .then(res => fetchHandlerSuccess(setIdentities, res))
       .catch(err => fetchHandlerError(setIdentities, err))
   }
 
