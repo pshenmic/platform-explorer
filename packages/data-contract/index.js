@@ -29,24 +29,24 @@ async function main() {
                 }
             },
             "required": [
-                "shortName",
-                "contractId"
+                "identifier",
+                "name"
             ],
             "additionalProperties": false
         }
     };
 
-    let clientOpts = {
+    let options = {
         network: 'testnet',
         wallet: {
             mnemonic: process.env.MNEMONIC,
         },
     };
 
-    if (process.env.skipSynchronizationBeforeHeight) {
-        clientOpts.unsafeOptions = { skipSynchronizationBeforeHeight: Number(process.env.skipSynchronizationBeforeHeight), }
+    if (process.env.SKIP_SYNCHRONIZATION_BEFORE_HEIGHT) {
+        options.unsafeOptions = { skipSynchronizationBeforeHeight: Number(process.env.SKIP_SYNCHRONIZATION_BEFORE_HEIGHT), }
     }
-    const client = new Dash.Client(clientOpts);
+    const client = new Dash.Client(options);
 
     logInfo('Contract Deployment')
 
