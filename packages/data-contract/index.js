@@ -54,7 +54,7 @@ async function main () {
   const deployedContract = await client.platform.contracts.publish(contract, identity)
 
   logInfo('All Done!')
-  logInfo(`Contract deployed at: ${deployedContract.getDataContract().getId(client)}`)
+  logInfo(`Contract deployed at: ${deployedContract.getDataContract().getId()}`)
 }
 
 main().catch(console.error)
