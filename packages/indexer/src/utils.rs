@@ -1,7 +1,7 @@
 use std::time::Duration;
 use reqwest::{Client, Error};
 use crate::entities::validator::Validator;
-use crate::models::{TenderdashRPCBlockResponse, TenderdashRPCBlockResultsResponse, TenderdashRPCStatusResponse, TenderdashRPCValidatorsResponse};
+use crate::models::{TenderdashRPCBlockResponse, TenderdashRPCBlockResultsResponse, TenderdashRPCStatusResponse, TenderdashRPCTransactionResponse, TenderdashRPCValidatorsResponse};
 
 pub struct TenderdashRpcApi {
     client: Client,
@@ -56,6 +56,20 @@ impl TenderdashRpcApi {
 
         let resp = res
             .json::<TenderdashRPCBlockResultsResponse>()
+            .await?;
+
+        Ok(resp)
+    }
+    pub async fn get_transaction_by_hash(&self, hash: String) -> Result<TenderdashRPCTransactionResponse, Error> {
+        let url = format!("{}/tx?hash={}", self.backend_url, hash);
+
+        let res = self.client
+            .get(url)
+            .send()
+            .await?;
+
+        let resp = res
+            .json::<TenderdashRPCTransactionResponse>()
             .await?;
 
         Ok(resp)
