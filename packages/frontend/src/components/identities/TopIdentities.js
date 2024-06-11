@@ -6,7 +6,7 @@ import { SideBlock } from '../containers'
 import { Flex, Box, Container } from '@chakra-ui/react'
 import Link from 'next/link'
 import { InfoCard } from '../cards'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import { ErrorMessageBlock } from '../Errors'
 import ImageGenerator from '../imageGenerator'
 import './TopIdentitieCard.scss'
@@ -26,7 +26,7 @@ function Item ({ identitie, loading = false }) {
                       <div className={'IdentitieCard__Name'}>DQ-Broderick-29645-backup.dash</div>
                   </Flex>
 
-                  <div className={'IdentitieCard__Balance'}>{identitie.balance}</div>
+                  <div className={'IdentitieCard__Balance'}>{currencyRound(identitie.balance)}</div>
               </Flex>
             </InfoCard>
         </Link>
