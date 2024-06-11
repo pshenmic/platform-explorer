@@ -8,6 +8,7 @@
     &__Item {
         width: calc(50% - 10px);
         margin: 10px 0;
+        padding: 24px;
     }
 
     @media screen and (max-width: $breakpoint-md) {

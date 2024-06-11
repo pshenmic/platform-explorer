@@ -7,7 +7,7 @@
     overflow: hidden;
     border-width: 1px;
     border-radius: $border-radius-def;
-    padding: 24px;
+    padding: 16px;
     box-shadow: 4px 4px 5px rgba(0, 0, 0, .2);
 
     &--Clickable {
@@ -29,7 +29,7 @@
 
     &--Loading {
         @include mixins.loading-container;
-        min-height: 74px;
+        min-height: 58px;
     }
 
     &::before, &::after {
