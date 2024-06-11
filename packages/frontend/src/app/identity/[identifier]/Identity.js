@@ -10,6 +10,7 @@ import TransfersList from '../../../components/transfers/TransfersList'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
+import ImageGenerator from '../../../components/imageGenerator'
 import './Identity.scss'
 
 import {
@@ -75,14 +76,20 @@ function Identity ({ identifier }) {
                             <Thead>
                                 <Tr>
                                     <Th pr={0}>Identity info</Th>
-                                    <Th></Th>
+                                    <Th>
+                                        <div className={'IdentityInfo__Avatar'}>
+                                            <ImageGenerator className={'IdentitiesListItem__Avatar'} username={identifier} lightness={50} saturation={50} width={32} height={32}/>
+                                        </div>
+                                    </Th>
                                 </Tr>
                             </Thead>
                             <Tbody>
                                 <Tr>
                                     <Td w={tdTitleWidth}>Identifier</Td>
                                     <Td isNumeric>
-                                        <LoadingLine loading={identity.loading}>{identity.data?.identifier}</LoadingLine>
+                                        <LoadingLine loading={identity.loading}>
+                                            {identity.data?.identifier}
+                                            </LoadingLine>
                                     </Td>
                                 </Tr>
                                 <Tr>
