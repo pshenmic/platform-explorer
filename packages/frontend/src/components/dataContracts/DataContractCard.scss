@@ -1,13 +1,13 @@
+@use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
 .DataContractCard {
     &__Img {
+        @include mixins.avatar-container;
+
         margin-right: 8px;
-        width: 22px;
-        height: 22px;
-        border-radius: $border-radius-def;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
-        background-color: var(--chakra-colors-gray-800);
+        width: 28px;
+        height: 28px;
     }
 
     &__Name {

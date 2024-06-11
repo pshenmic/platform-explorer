@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { CardsGrid, CardsGridItems, CardsGridItem, CardsGridHeader, CardsGridTitle } from '../cards'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { ErrorMessageBlock } from '../Errors'
+import ImageGenerator from '../imageGenerator'
 import './DataContractCard.scss'
 
 function Item ({ dataContract, loading = false }) {
@@ -16,7 +17,9 @@ function Item ({ dataContract, loading = false }) {
       {!loading
         ? <Link href={`/dataContract/${dataContract.identifier}`}>
           <Flex mb={1} alignItems={'center'}>
-            <div className={'DataContractCard__Img'}></div>
+            <div className={'DataContractCard__Img'}>
+              <ImageGenerator username={dataContract.identifier} lightness={50} saturation={50} width={28} height={28}/>
+            </div>
             <div className={'DataContractCard__Name'}>Alice.dash</div>
           </Flex>
           <div className={'DataContractCard__Id'}>{dataContract.identifier}</div>

@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { InfoCard } from '../cards'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { ErrorMessageBlock } from '../Errors'
+import ImageGenerator from '../imageGenerator'
 import './TopIdentitieCard.scss'
 import './TopIdentities.scss'
 
@@ -19,7 +20,9 @@ function Item ({ identitie, loading = false }) {
             <InfoCard className={'IdentitieCard'} clickable={true}>
               <Flex alignItems={'center'} justifyContent={'space-between'}>
                   <Flex alignItems={'center'}>
-                      <div className={'IdentitieCard__Img'}></div>
+                      <div className={'IdentitieCard__Img'}>
+                        <ImageGenerator username={identitie.identifier} lightness={50} saturation={50} width={42} height={42} />
+                      </div>
                       <div className={'IdentitieCard__Name'}>DQ-Broderick-29645-backup.dash</div>
                   </Flex>
 
