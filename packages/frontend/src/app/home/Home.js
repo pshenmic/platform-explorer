@@ -209,7 +209,7 @@ function Home () {
                               <select
                                   className={'ChartBlock__TimeframeSelector'}
                                   onChange={(e) => setTransactionsTimespan(e.target.value)}
-                                  defaultValue={transactionsChartConfig.timespan.default}
+                                  value={transactionsTimespan}
                               >
                                   {transactionsChartConfig.timespan.values.map(timespan => {
                                     return <option value={timespan} key={'ts' + timespan}>{timespan}</option>
