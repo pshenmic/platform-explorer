@@ -163,7 +163,7 @@ function Home () {
               <Box flexShrink={'0'} w={10} h={10} />
 
               <Container maxW={'none'} p={0}>
-                  <NetworkStatus status={status}/>
+                  <NetworkStatus/>
               </Container>
           </Flex>
       </Container>
