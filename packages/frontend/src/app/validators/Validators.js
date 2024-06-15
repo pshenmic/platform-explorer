@@ -7,6 +7,8 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { Switcher } from '../../components/ui'
+
 import {
   Container,
   Box,
@@ -31,16 +33,17 @@ const paginateConfig = {
 function ValidatorsList () {
   return (
     <div className={'ValidatorsList'}>
-      <div className={'switch'}>
-        <label>
-          <input type="radio" name="active" value="active" checked />
-          Active
-        </label>
-        <label>
-          <input type="radio" name="active" value="inactive" />
-          Inactive
-        </label>
-      </div>
+      <Switcher
+        options={[
+          {
+            title: 'Active'
+          },
+          {
+            title: 'Inactive'
+          }
+        ]}
+        onChange={(e) => {console.log(e)}}
+      />
 
       <TableContainer>
         <Table size='md' className='Table'>
