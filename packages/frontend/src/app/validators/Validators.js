@@ -42,7 +42,7 @@ function ValidatorsList () {
             title: 'Inactive'
           }
         ]}
-        onChange={(e) => {console.log(e)}}
+        onChange={(e) => console.log(e)}
       />
 
       <TableContainer>
