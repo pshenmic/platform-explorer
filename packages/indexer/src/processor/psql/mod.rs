@@ -68,8 +68,8 @@ impl PSQLProcessor {
     pub fn new() -> PSQLProcessor {
         let dao = PostgresDAO::new();
         let decoder = StateTransitionDecoder::new();
-        let platform_explorer_identifier_string = env::var("PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").expect("You've not set the PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").parse().expect("Failed to parse PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER env");
-        let platform_explorer_identifier = Identifier::from_string(platform_explorer_identifier_string, Base58).unwrap();
+        let platform_explorer_identifier_string: String = env::var("PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").expect("You've not set the PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").parse().expect("Failed to parse PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER env");
+        let platform_explorer_identifier = Identifier::from_string(&platform_explorer_identifier_string, Base58).unwrap();
         return PSQLProcessor { decoder, dao, platform_explorer_identifier };
     }
 
