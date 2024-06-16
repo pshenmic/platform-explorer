@@ -353,6 +353,7 @@ describe('Identities routes', () => {
 
       const expectedDataContracts = dataContracts.slice(0, 10).map((_dataContract) => ({
         identifier: _dataContract.dataContract.identifier,
+        name: _dataContract.dataContract.name,
         owner: identity.identifier,
         version: 0,
         schema: null,
@@ -397,6 +398,7 @@ describe('Identities routes', () => {
         .slice(0, 10)
         .map((_dataContract) => ({
           identifier: _dataContract.dataContract.identifier,
+          name: _dataContract.dataContract.name,
           owner: identity.identifier,
           version: 0,
           schema: null,
@@ -441,6 +443,7 @@ describe('Identities routes', () => {
         .slice(5, 10)
         .map((_dataContract) => ({
           identifier: _dataContract.dataContract.identifier,
+          name: _dataContract.dataContract.name,
           owner: identity.identifier,
           version: 0,
           schema: null,
@@ -486,6 +489,7 @@ describe('Identities routes', () => {
         .map((_dataContract) => ({
           identifier: _dataContract.dataContract.identifier,
           owner: identity.identifier,
+          name: _dataContract.dataContract.name,
           version: 0,
           schema: null,
           txHash: _dataContract.transaction.hash,

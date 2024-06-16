@@ -1,5 +1,6 @@
 module.exports = class DataContract {
   identifier
+  name
   owner
   schema
   version
@@ -8,8 +9,9 @@ module.exports = class DataContract {
   isSystem
   documentsCount
 
-  constructor (identifier, owner, schema, version, txHash, timestamp, isSystem, documentsCount) {
+  constructor (identifier, name, owner, schema, version, txHash, timestamp, isSystem, documentsCount) {
     this.identifier = identifier ? identifier.trim() : null
+    this.name = name ? name.trim() : null
     this.owner = owner ? owner.trim() : null
     this.schema = schema ?? null
     this.version = version ?? null
@@ -20,7 +22,7 @@ module.exports = class DataContract {
   }
 
   // eslint-disable-next-line camelcase
-  static fromRow ({ identifier, owner, schema, version, tx_hash, timestamp, is_system, documents_count }) {
-    return new DataContract(identifier, owner, schema ? JSON.stringify(schema) : null, version, tx_hash, timestamp, is_system, Number(documents_count))
+  static fromRow ({ identifier, name, owner, schema, version, tx_hash, timestamp, is_system, documents_count }) {
+    return new DataContract(identifier, name, owner, schema ? JSON.stringify(schema) : null, version, tx_hash, timestamp, is_system, Number(documents_count))
   }
 }

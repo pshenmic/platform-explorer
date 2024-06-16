@@ -96,7 +96,7 @@ impl PSQLProcessor {
                     .get_str_at_path("label")
                     .unwrap();
 
-                let normalizedParentDomainName = document_transition
+                let normalized_parent_domain_name = document_transition
                     .data()
                     .unwrap()
                     .get_str_at_path("normalizedParentDomainName")
@@ -120,9 +120,37 @@ impl PSQLProcessor {
 
                 let identity_identifier = Identifier::from_bytes(&identity_identifier.clone().into_identifier_bytes().unwrap()).unwrap().to_string(Base58);
                 let identity = self.dao.get_identity_by_identifier(identity_identifier.clone()).await.unwrap().expect(&format!("Could not find identity with identifier {}", identity_identifier));
-                let alias = format!("{}.{}", label, normalizedParentDomainName);
+                let alias = format!("{}.{}", label, normalized_parent_domain_name);
 
                 self.dao.create_identity_alias(identity, alias).await.unwrap();
+            }
+
+            if document_type == "dataContracts" && document_transition.data_contract_id() == Identifier::from_string("8AoJWLcT4t1uFuWkeTfbeN2EuGuvX2nJsZMVpDsF4ASm", Base58).unwrap() {
+                let data_contract_identifier_str = document_transition
+                    .data()
+                    .unwrap()
+                    .get_str_at_path("identifier")
+                    .unwrap();
+
+                let data_contract_identifier = Identifier::from_string(data_contract_identifier_str, Base58).unwrap();
+
+                let data_contract_name = document_transition
+                    .data()
+                    .unwrap()
+                    .get_str_at_path("name")
+                    .unwrap();
+
+                let data_contract = self.dao.get_data_contract_by_identifier(data_contract_identifier).await
+                    .expect(&format!("Could not get DataContract with identifier {} from the database",
+                                     data_contract_identifier_str))
+                    .expect(&format!("Could not find DataContract with identifier {} in the database",
+                                     data_contract_identifier_str));
+
+                if data_contract.owner == state_transition.owner_id() {
+                    self.dao.set_data_contract_name(data_contract, String::from(data_contract_name)).await.unwrap();
+                } else {
+                    println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document.identifier.to_string(Base58));
+                }
             }
 
 
