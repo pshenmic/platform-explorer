@@ -1,5 +1,6 @@
 mod dao;
 
+use std::env;
 use std::num::ParseIntError;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
 use deadpool_postgres::{PoolError};
@@ -60,14 +61,16 @@ impl From<ParseIntError> for ProcessorError {
 pub struct PSQLProcessor {
     decoder: StateTransitionDecoder,
     dao: PostgresDAO,
+    platform_explorer_identifier: Identifier,
 }
 
 impl PSQLProcessor {
     pub fn new() -> PSQLProcessor {
         let dao = PostgresDAO::new();
         let decoder = StateTransitionDecoder::new();
-
-        return PSQLProcessor { decoder, dao };
+        let platform_explorer_identifier_string = env::var("PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").expect("You've not set the PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").parse().expect("Failed to parse PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER env");
+        let platform_explorer_identifier = Identifier::from_string(platform_explorer_identifier_string, Base58).unwrap();
+        return PSQLProcessor { decoder, dao, platform_explorer_identifier };
     }
 
     pub async fn handle_data_contract_create(&self, state_transition: DataContractCreateTransition, st_hash: String) -> () {
@@ -125,7 +128,7 @@ impl PSQLProcessor {
                 self.dao.create_identity_alias(identity, alias).await.unwrap();
             }
 
-            if document_type == "dataContracts" && document_transition.data_contract_id() == Identifier::from_string("8AoJWLcT4t1uFuWkeTfbeN2EuGuvX2nJsZMVpDsF4ASm", Base58).unwrap() {
+            if document_type == "dataContracts" && document_transition.data_contract_id() == self.platform_explorer_identifier {
                 let data_contract_identifier_str = document_transition
                     .data()
                     .unwrap()
@@ -145,6 +148,7 @@ impl PSQLProcessor {
                                      data_contract_identifier_str))
                     .expect(&format!("Could not find DataContract with identifier {} in the database",
                                      data_contract_identifier_str));
+
 
                 if data_contract.owner == state_transition.owner_id() {
                     self.dao.set_data_contract_name(data_contract, String::from(data_contract_name)).await.unwrap();

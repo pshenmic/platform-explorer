@@ -1,5 +1,3 @@
-use core::fmt;
-use std::any::Any;
 use dpp::data_contract::serialized_version::DataContractInSerializationFormat;
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
