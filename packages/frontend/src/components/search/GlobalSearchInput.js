@@ -27,34 +27,34 @@ function GlobalSearchInput () {
   const search = async () => {
     try {
       const searchResult = await Api.search(searchQuery)
+      
+      const searchRedirect = (url) => {
+        setSearchQuery('')
+        router.push(url)
+      }
 
       if (searchResult?.block) {
-        setSearchQuery('')
-        router.push(`/block/${searchResult?.block.header.hash}`)
+        searchRedirect(`/block/${searchResult?.block.header.hash}`)
         return
       }
 
       if (searchResult?.transaction) {
-        setSearchQuery('')
-        router.push(`/transaction/${searchResult?.transaction.hash}`)
+        searchRedirect(`/transaction/${searchResult?.transaction.hash}`)
         return
       }
 
       if (searchResult?.dataContract) {
-        setSearchQuery('')
-        router.push(`/dataContract/${searchResult?.dataContract.identifier}`)
+        searchRedirect(`/dataContract/${searchResult?.dataContract.identifier}`)
         return
       }
 
       if (searchResult?.document) {
-        setSearchQuery('')
-        router.push(`/document/${searchResult?.document.identifier}`)
+        searchRedirect(`/document/${searchResult?.document.identifier}`)
         return
       }
 
       if (searchResult?.identity) {
-        setSearchQuery('')
-        router.push(`/identity/${searchResult?.identity.identifier}`)
+        searchRedirect(`/identity/${searchResult?.identity.identifier}`)
         return
       }
 
