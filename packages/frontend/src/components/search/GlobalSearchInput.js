@@ -60,7 +60,8 @@ function GlobalSearchInput () {
 
       showModalWindow('Not found', 6000)
     } catch (e) {
-      showModalWindow('Not found', 6000)
+      console.error(e)
+      showModalWindow('Request error', 6000)
     }
   }
 
