@@ -27,7 +27,7 @@ function GlobalSearchInput () {
   const search = async () => {
     try {
       const searchResult = await Api.search(searchQuery)
-      
+
       const searchRedirect = (url) => {
         setSearchQuery('')
         router.push(url)
