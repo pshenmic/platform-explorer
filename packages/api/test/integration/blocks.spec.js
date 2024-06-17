@@ -28,14 +28,28 @@ describe('Blocks routes', () => {
       blocks.push(block)
     }
 
+
     // ? Duplicates for validator tests
+    let validator = (await fixtures.validator(knex)).pro_tx_hash
+
     for (let i = 31; i < 54; i++) {
       block = await fixtures.block(knex, {
-        validator: blocks[0].validator,
+        validator: validator,
         height: i + 1
       })
       blocks.push(block)
     }
+
+    validator = (await fixtures.validator(knex)).pro_tx_hash
+
+    for (let i = 54; i < 65; i++) {
+      block = await fixtures.block(knex, {
+        validator: validator,
+        height: i + 1
+      })
+      blocks.push(block)
+    }
+
   })
 
   after(async () => {
@@ -76,9 +90,8 @@ describe('Blocks routes', () => {
 
   describe('getBlockByValidator()', async () => {
     it('should return blocks by validator', async () => {
-      const [block] = blocks
-
-      const { body } = await client.get(`/block/validator/${block.validator}`)
+      const block = blocks[55]
+      const { body } = await client.get(`/validator/${block.validator}/blocks`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -104,9 +117,9 @@ describe('Blocks routes', () => {
     })
 
     it('should return default set of blocks order desc', async () => {
-      const [block] = blocks
+      const block = blocks[32]
 
-      const { body } = await client.get(`/block/validator/${block.validator}?order=desc`)
+      const { body } = await client.get(`/validator/${block.validator}/blocks?order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -133,15 +146,15 @@ describe('Blocks routes', () => {
     })
 
     it('should be able to walk through pages', async () => {
-      const [block] = blocks
+      const block = blocks[32]
 
-      const { body } = await client.get(`/block/validator/${block.validator}?page=2`)
+      const { body } = await client.get(`/validator/${block.validator}/blocks?page=2`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 10)
-      assert.equal(body.pagination.total, 24)
+      assert.equal(body.pagination.total, 23)
 
       const expectedBlocks = blocks
         .filter(a => a.validator === block.validator)
@@ -162,15 +175,15 @@ describe('Blocks routes', () => {
     })
 
     it('should return custom page size', async () => {
-      const [block] = blocks
+      const block = blocks[32]
 
-      const { body } = await client.get(`/block/validator/${block.validator}?limit=2`)
+      const { body } = await client.get(`/validator/${block.validator}/blocks?limit=2`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 2)
-      assert.equal(body.pagination.total, 24)
+      assert.equal(body.pagination.total, 23)
 
       const expectedBlocks = blocks
         .sort((a, b) => a.height - b.height)
@@ -192,15 +205,16 @@ describe('Blocks routes', () => {
     })
 
     it('should allow to walk through pages with custom page size', async () => {
-      const [block] = blocks
+      const block = blocks[32]
 
-      const { body } = await client.get(`/block/validator/${block.validator}?limit=2&page=2`)
+      const { body } = await client.get(`/validator/${block.validator}/blocks?limit=2&page=2`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 2)
-      assert.equal(body.pagination.total, 24)
+      assert.equal(body.pagination.total, 23)
+
       const expectedBlocks = blocks
         .filter(a => a.validator === block.validator)
         .sort((a, b) => a.height - b.height)
@@ -221,15 +235,15 @@ describe('Blocks routes', () => {
     })
 
     it('should allow to walk through pages with custom page size desc', async () => {
-      const [block] = blocks
+      const block = blocks[32]
 
-      const { body } = await client.get(`/block/validator/${block.validator}?limit=2&page=2&order=desc`)
+      const { body } = await client.get(`/validator/${block.validator}/blocks?limit=2&page=2&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 2)
-      assert.equal(body.pagination.total, 24)
+      assert.equal(body.pagination.total, 23)
 
       const expectedBlocks = blocks
         .sort((a, b) => b.height - a.height)
@@ -255,15 +269,15 @@ describe('Blocks routes', () => {
       const page = 4
       const limit = 7
 
-      const [block] = blocks
+      const block = blocks[32]
 
-      const { body } = await client.get(`/block/validator/${block.validator}?limit=${limit}&page=${page}&order=desc`)
+      const { body } = await client.get(`/validator/${block.validator}/blocks?limit=${limit}&page=${page}&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.pagination.page, page)
       assert.equal(body.pagination.limit, limit)
-      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.resultSet.length, 2)
 
       const expectedBlocks = blocks
         .sort((a, b) => b.height - a.height)
@@ -285,9 +299,9 @@ describe('Blocks routes', () => {
     })
 
     it('should return less items when there is none on the one bound', async () => {
-      const [block] = blocks
+      const block = blocks[32]
 
-      const { body } = await client.get(`/block/validator/${block.validator}?limit=20&page=99&order=desc`)
+      const { body } = await client.get(`/validator/${block.validator}/blocks?limit=20&page=99&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
       const expectedBlocks = []
@@ -470,7 +484,7 @@ describe('Blocks routes', () => {
     })
 
     it('should return less items when when it is out of bounds', async () => {
-      const page = 8
+      const page = 10
       const limit = 7
       const { body } = await client.get(`/blocks?limit=${limit}&page=${page}&order=desc`)
         .expect(200)
@@ -479,7 +493,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.page, page)
       assert.equal(body.pagination.limit, limit)
       assert.equal(body.pagination.total, blocks.length)
-      assert.equal(body.resultSet.length, 4)
+      assert.equal(body.resultSet.length, 1)
 
       const expectedBlocks = blocks
         .sort((a, b) => b.height - a.height)

@@ -28,7 +28,7 @@ module.exports = ({
       handler: blocksController.getBlockByHash
     },
     {
-      path: '/block/validator/:validator',
+      path: '/validator/:validator/blocks',
       method: 'GET',
       handler: blocksController.getBlockByValidator
     },
