@@ -14,7 +14,7 @@ describe('Blocks routes', () => {
   let blocks
 
   let validator
-  let validators
+  let blocksWithSameValidator
 
   before(async () => {
     app = await server.start()
@@ -22,7 +22,7 @@ describe('Blocks routes', () => {
 
     knex = getKnex()
     blocks = []
-    validators = []
+    blocksWithSameValidator = []
 
     await fixtures.cleanup(knex)
 
@@ -39,7 +39,7 @@ describe('Blocks routes', () => {
         validator: validatorForDuplicates.pro_tx_hash,
         height: i + 31
       })
-      validators.push(validator)
+      blocksWithSameValidator.push(validator)
     }
   })
 
@@ -81,7 +81,7 @@ describe('Blocks routes', () => {
 
   describe('getBlocksByValidator()', async () => {
     it('should return blocks by validator', async () => {
-      const [block] = validators.filter(v =>)
+      const [block] = blocksWithSameValidator.filter(v =>)
       const { body } = await client.get(`/validator/${block.validator}/blocks`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -108,7 +108,7 @@ describe('Blocks routes', () => {
     })
 
     it('should return default set of blocks order desc', async () => {
-      const [block] = validators
+      const [block] = blocksWithSameValidator
 
       const { body } = await client.get(`/validator/${block.validator}/blocks?order=desc`)
         .expect(200)
@@ -137,7 +137,7 @@ describe('Blocks routes', () => {
     })
 
     it('should be able to walk through pages', async () => {
-      const [block] = validators
+      const [block] = blocksWithSameValidator
 
       const { body } = await client.get(`/validator/${block.validator}/blocks?page=2`)
         .expect(200)
@@ -166,7 +166,7 @@ describe('Blocks routes', () => {
     })
 
     it('should return custom page size', async () => {
-      const [block] = validators
+      const [block] = blocksWithSameValidator
 
       const { body } = await client.get(`/validator/${block.validator}/blocks?limit=2`)
         .expect(200)
@@ -196,7 +196,7 @@ describe('Blocks routes', () => {
     })
 
     it('should allow to walk through pages with custom page size', async () => {
-      const [block] = validators
+      const [block] = blocksWithSameValidator
 
       const { body } = await client.get(`/validator/${block.validator}/blocks?limit=2&page=2`)
         .expect(200)
@@ -226,7 +226,7 @@ describe('Blocks routes', () => {
     })
 
     it('should allow to walk through pages with custom page size desc', async () => {
-      const [block] = validators
+      const [block] = blocksWithSameValidator
 
       const { body } = await client.get(`/validator/${block.validator}/blocks?limit=2&page=2&order=desc`)
         .expect(200)
@@ -260,7 +260,7 @@ describe('Blocks routes', () => {
       const page = 4
       const limit = 7
 
-      const [block] = validators
+      const [block] = blocksWithSameValidator
 
       const { body } = await client.get(`/validator/${block.validator}/blocks?limit=${limit}&page=${page}&order=desc`)
         .expect(200)
@@ -292,7 +292,7 @@ describe('Blocks routes', () => {
     })
 
     it('should return less items when there is none on the one bound', async () => {
-      const [block] = validators
+      const [block] = blocksWithSameValidator
 
       const { body } = await client.get(`/validator/${block.validator}/blocks?limit=23&page=2&order=desc`)
         .expect(200)
@@ -309,7 +309,7 @@ describe('Blocks routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
-      assert.equal(body.pagination.total, blocks.length + validators.length)
+      assert.equal(body.pagination.total, blocks.length + blocksWithSameValidator.length)
       assert.equal(body.resultSet.length, 10)
 
       const expectedBlocks = blocks
@@ -338,10 +338,10 @@ describe('Blocks routes', () => {
 
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
-      assert.equal(body.pagination.total, blocks.length + validators.length)
+      assert.equal(body.pagination.total, blocks.length + blocksWithSameValidator.length)
       assert.equal(body.resultSet.length, 10)
 
-      const expectedBlocks = [...blocks, ...validators]
+      const expectedBlocks = [...blocks, ...blocksWithSameValidator]
         .sort((a, b) => b.height - a.height)
         .slice(0, 10)
         .map(row => ({
@@ -367,7 +367,7 @@ describe('Blocks routes', () => {
 
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 10)
-      assert.equal(body.pagination.total, blocks.length + validators.length)
+      assert.equal(body.pagination.total, blocks.length + blocksWithSameValidator.length)
       assert.equal(body.resultSet.length, 10)
 
       const expectedBlocks = blocks
@@ -396,7 +396,7 @@ describe('Blocks routes', () => {
 
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 7)
-      assert.equal(body.pagination.total, blocks.length + validators.length)
+      assert.equal(body.pagination.total, blocks.length + blocksWithSameValidator.length)
       assert.equal(body.resultSet.length, 7)
 
       const expectedBlocks = blocks
@@ -425,7 +425,7 @@ describe('Blocks routes', () => {
 
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 7)
-      assert.equal(body.pagination.total, blocks.length + validators.length)
+      assert.equal(body.pagination.total, blocks.length + blocksWithSameValidator.length)
       assert.equal(body.resultSet.length, 7)
 
       const expectedBlocks = blocks
@@ -454,10 +454,10 @@ describe('Blocks routes', () => {
 
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 7)
-      assert.equal(body.pagination.total, blocks.length + validators.length)
+      assert.equal(body.pagination.total, blocks.length + blocksWithSameValidator.length)
       assert.equal(body.resultSet.length, 7)
 
-      const expectedBlocks = [...blocks, ...validators]
+      const expectedBlocks = [...blocks, ...blocksWithSameValidator]
         .sort((a, b) => b.height - a.height)
         .slice(7, 14)
         .map(row => ({
@@ -484,7 +484,7 @@ describe('Blocks routes', () => {
 
       assert.equal(body.pagination.page, 8)
       assert.equal(body.pagination.limit, limit)
-      assert.equal(body.pagination.total, blocks.length + validators.length)
+      assert.equal(body.pagination.total, blocks.length + blocksWithSameValidator.length)
       assert.equal(body.resultSet.length, 2)
 
       const expectedBlocks = blocks
