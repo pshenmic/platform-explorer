@@ -1,7 +1,7 @@
 const BlocksDAO = require('../dao/BlocksDAO')
 
 class BlocksController {
-  constructor(knex) {
+  constructor (knex) {
     this.blocksDAO = new BlocksDAO(knex)
   }
 

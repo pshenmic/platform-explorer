@@ -6,7 +6,6 @@ const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 
-
 describe('Blocks routes', () => {
   let app
   let client
@@ -29,7 +28,7 @@ describe('Blocks routes', () => {
       blocks.push(block)
     }
 
-    //? Duplicates for validator tests
+    // ? Duplicates for validator tests
     for (let i = 31; i < 54; i++) {
       block = await fixtures.block(knex, {
         validator: blocks[0].validator,
@@ -105,7 +104,6 @@ describe('Blocks routes', () => {
     })
 
     it('should return default set of blocks order desc', async () => {
-
       const [block] = blocks
 
       const { body } = await client.get(`/block/validator/${block.validator}?order=desc`)
@@ -133,7 +131,6 @@ describe('Blocks routes', () => {
         }))
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
-
 
     it('should be able to walk through pages', async () => {
       const [block] = blocks
@@ -220,6 +217,7 @@ describe('Blocks routes', () => {
           },
           txs: []
         }))
+      assert.deepEqual(expectedBlocks, body.resultSet)
     })
 
     it('should allow to walk through pages with custom page size desc', async () => {
