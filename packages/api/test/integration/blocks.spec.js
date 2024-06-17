@@ -91,7 +91,7 @@ describe('Blocks routes', () => {
 
   describe('getBlocksByValidator()', async () => {
     it('should return blocks by validator', async () => {
-      const [validator] = validators.sort((a, b) => b.pro_tx_hash - a.pro_tx_hash)
+      const [validator] = validators
       const { body } = await client.get(`/validator/${validator.pro_tx_hash}/blocks`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')

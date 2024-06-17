@@ -4,12 +4,13 @@ Api module provides a view for a database filled up with data with indexer.
 
 ### Start
 
-````
+```
 $ npm install
 $ npm start
-````
+```
 
 Environments:
+
 ```
 BASE_URL=http://127.0.0.1:36657 # Tenderdash RPC URL
 POSTGRES_HOST=127.0.0.1
@@ -20,11 +21,12 @@ DATABASE_URL=postgres://indexer:indexer@127.0.0.1/indexer
 BACKEND_URL=http://172.17.0.1:4000
 ```
 
-
 ### Deploy
 
 #### docker
+
 Prepare an .env file with all necessary environments and then start a docker container
+
 ```
 docker run -d -p 3005:3005 --restart always --env-file .env ghcr.io/pshenmic/platform-explorer:api
 ```
@@ -39,29 +41,29 @@ Production (testnet) live URL is [https://platform-explorer.pshenmic.dev](https:
 
 Reference:
 
-* [Status](#status)
-* [Block by hash](#block-by-hash)
-* [Blocks](#blocks)
-* [Transaction by hash](#transaction-by-hash)
-* [Transactions](#transactions)
-* [Data Contract](#data-contract-by-identifier)
-* [Data Contracts](#data-contracts)
-* [Document by Identifier](#document-by-identifier)
-* [Documents by Data Contract](#documents-by-data-contract)
-* [Identity by Identifier](#identity-by-identifier)
-* [Identities](#identities)
-* [Data Contracts by Identity](#data-contracts-by-identity)
-* [Documents by Identity](#documents-by-identity)
-* [Transactions By Identity](#transactions-by-identity)
-* [Transfers by Identity](#transfers-by-identity)
+- [Status](#status)
+- [Block by hash](#block-by-hash)
+- [Blocks](#blocks)
+- [Transaction by hash](#transaction-by-hash)
+- [Transactions](#transactions)
+- [Data Contract](#data-contract-by-identifier)
+- [Data Contracts](#data-contracts)
+- [Document by Identifier](#document-by-identifier)
+- [Documents by Data Contract](#documents-by-data-contract)
+- [Identity by Identifier](#identity-by-identifier)
+- [Identities](#identities)
+- [Data Contracts by Identity](#data-contracts-by-identity)
+- [Documents by Identity](#documents-by-identity)
+- [Transactions By Identity](#transactions-by-identity)
+- [Transfers by Identity](#transfers-by-identity)
 
 ### Status
+
 Returns basic stats and epoch info
 
-* apiHeight - current height available in the API
-* maPeerHeight - max peer height seen in the network
-* tenderdashChainHeight - current blockchain height on the node
-
+- apiHeight - current height available in the API
+- maPeerHeight - max peer height seen in the network
+- tenderdashChainHeight - current blockchain height on the node
 
 ```
 HTTP /status
@@ -93,12 +95,16 @@ HTTP /status
             height: 20154,
             timestamp: "2024-06-06T21:53:27.947Z"
          }
-    }     
+    }
 }
 ```
+
 ---
+
 ### Block by hash
+
 Get a block by hash
+
 ```
 GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
@@ -110,15 +116,52 @@ GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
             timestamp: "2024-03-18T10:13:54.150Z",
             blockVersion: 13,
             appVersion: 1,
+            validator: "B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18"
             l1LockedHeight: 1337
         },
         txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
     }
 }
 ```
+
 ---
+
+### Blocks by validator
+
+Return all blocks from validator with pagination info
+
+```
+GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks?page=1&limit=10&order=asc
+
+{
+    pagination: {
+        page: 1,
+        limit: 10,
+        total: 10
+    },
+    resultSet: [
+    {
+        header: {
+            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
+            height: 1337,
+            timestamp: "2024-03-18T10:13:54.150Z",
+            blockVersion: 13,
+            appVersion: 1,
+            validator: "B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18"
+            l1LockedHeight: 1337
+        },
+        txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
+    }, ...
+    ]
+}
+```
+
+---
+
 ### Blocks
+
 Return all blocks with pagination info
+
 ```
 GET /blocks
 
@@ -136,6 +179,7 @@ GET /blocks
             timestamp: "2024-03-18T10:13:54.150Z",
             blockVersion: 13,
             appVersion: 1,
+            validator: "B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18"
             l1LockedHeight: 1337
         },
         txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
@@ -143,8 +187,11 @@ GET /blocks
     ]
 }
 ```
+
 ---
+
 ### Transaction by hash
+
 Get a transaction (state transition) by hash
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
@@ -167,13 +214,17 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
 ```
 
 Response codes:
+
 ```
 200: OK
 404: Not found
 500: Internal Server Error
 ```
+
 ---
+
 ### Transactions
+
 Return transaction set paged
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
@@ -203,16 +254,21 @@ GET /transactions?=1&limit=10&order=asc
     ]
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 500: Internal Server Error
 ```
+
 ---
+
 ### Data Contract by Identifier
+
 Return data contract by given identifier
 
-* `name` field is nullable
+- `name` field is nullable
 
 ```
 GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
@@ -229,18 +285,23 @@ GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     documentsCount: 1337
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 404: Not found
 500: Internal Server Error
 ```
----
-### Data Contracts
-Return dataContracts set paged and order by block height or documents count. 
 
-* Valid `order_by` values are `block_height` or `documents_count`
-* `name` field is nullable
+---
+
+### Data Contracts
+
+Return dataContracts set paged and order by block height or documents count.
+
+- Valid `order_by` values are `block_height` or `documents_count`
+- `name` field is nullable
 
 ```
 GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
@@ -266,14 +327,20 @@ GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
     ]
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 500: Internal Server Error
 ```
+
 ---
+
 ### Document by Identifier
+
 Return last revision of the document by given identifier
+
 ```
 GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
@@ -289,15 +356,21 @@ GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     isSystem: false
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 404: Not found
 500: Internal Server Error
 ```
+
 ---
+
 ### Documents by Data Contract
+
 Return all documents by the given data contract identifier
+
 ```
 GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
 
@@ -322,14 +395,20 @@ GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&
     ]
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 500: Internal Server Error
 ```
+
 ---
+
 ### Identity by Identifier
+
 Return identity by given identifier
+
 ```
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
@@ -347,17 +426,23 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     isSystem: false
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 404: Not found
 500: Internal Server Error
 ```
+
 ---
+
 ### Identities
+
 Return all identities paged and order by block height, tx count or balance.
 
-* Valid `order_by` values are `block_height`, `tx_count` or `balance`
+- Valid `order_by` values are `block_height`, `tx_count` or `balance`
+
 ```
 GET /identities?page=1&limit=10&order=asc&order_by=block_height
 
@@ -384,16 +469,20 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
     ]
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 500: Internal Server Error
 ```
 
 ### Data contracts by Identity
+
 Return all data contracts by the given identity
 
-* `name` field is nullable
+- `name` field is nullable
+
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=1&limit=10&order=asc
 
@@ -418,14 +507,20 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=
     ]
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 500: Internal Server Error
 ```
+
 ---
+
 ### Documents by Identity
+
 Return all documents by the given identity
+
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
 
@@ -450,13 +545,18 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&li
     ]
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 500: Internal Server Error
 ```
+
 ---
+
 ### Transactions by Identity
+
 Return all transactions made by the given identity
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
@@ -486,14 +586,20 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1
     ]
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 500: Internal Server Error
 ```
+
 ---
+
 ### Transfers by Identity
+
 Return all transfers made by the given identity
+
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&limit=10&order=asc
 
@@ -513,13 +619,18 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&li
     ]
 }
 ```
+
 Response codes:
+
 ```
 200: OK
 500: Internal Server Error
 ```
+
 ### Transactions history
+
 Return a series data for the amount of transactions chart with variable timespan (1h, 24h, 3d, 1w)
+
 ```
 GET /transactions/history?timespan=1h
 [
@@ -541,7 +652,9 @@ GET /transactions/history?timespan=1h
     }, ...
 ]
 ```
+
 Response codes:
+
 ```
 200: OK
 400: Invalid input, check timespan value
