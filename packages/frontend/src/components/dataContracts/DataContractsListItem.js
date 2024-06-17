@@ -10,7 +10,7 @@ function DataContractsListItem ({ dataContract }) {
         className={'DataContractsListItem'}
     >
         <div className={'DataContractsListItem__Identifier'}>
-            { name ? `[${name}] ${identifier}` : `${identifier}`}
+          {name ? <b>{name}</b> : identifier}
         </div>
 
         {isSystem && <div>SYSTEM</div>}
