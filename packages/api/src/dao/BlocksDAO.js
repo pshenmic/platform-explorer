@@ -48,7 +48,7 @@ module.exports = class BlockDAO {
     return Block.fromRow({ header: block, txs })
   }
 
-  getBlockByValidator = async (validator, page, limit, order) => {
+  getBlocksByValidator = async (validator, page, limit, order) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
@@ -78,7 +78,6 @@ module.exports = class BlockDAO {
 
     const blocksMap = rows.reduce((blocks, row) => {
       const block = blocks[row.hash]
-      const { st_hash: txHash } = row
       const txs = block?.txs || []
 
       if (txHash) {

@@ -30,7 +30,7 @@ module.exports = ({
     {
       path: '/validator/:validator/blocks',
       method: 'GET',
-      handler: blocksController.getBlockByValidator
+      handler: blocksController.getBlocksByValidator
     },
     {
       path: '/blocks',
