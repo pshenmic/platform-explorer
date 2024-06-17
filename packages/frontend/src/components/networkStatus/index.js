@@ -1,9 +1,25 @@
+'use client'
+
+import * as Api from '../../util/Api'
+import { useState, useEffect, useCallback } from 'react'
 import { InfoIcon, CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
 import { Container, Tooltip, Flex } from '@chakra-ui/react'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
-function NetworkStatus ({ status }) {
+function NetworkStatus () {
+  const [status, setStatus] = useState({ data: {}, loading: true, error: false })
+
+  const fetchData = useCallback(() => {
+    Api.getStatus()
+      .then(res => fetchHandlerSuccess(setStatus, res))
+      .catch(err => fetchHandlerError(setStatus, err))
+      .finally(() => setTimeout(fetchData(), 60000))
+  }, [])
+
+  useEffect(fetchData, [fetchData])
+
   const msFromLastBlock = new Date() - new Date(status?.data?.tenderdash?.block?.timestamp)
   const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
   const apiStatus = typeof status?.data?.tenderdash?.block?.timestamp === 'string' &&
