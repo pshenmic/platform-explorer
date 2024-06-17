@@ -52,6 +52,12 @@ function GlobalSearchInput () {
         return
       }
 
+      if (searchResult?.identity) {
+        setSearchQuery('')
+        router.push(`/identity/${searchResult?.identity.identifier}`)
+        return
+      }
+
       showModalWindow('Not found', 6000)
     } catch (e) {
       showModalWindow('Not found', 6000)
