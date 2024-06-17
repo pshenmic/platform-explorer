@@ -156,6 +156,7 @@ describe('Other routes', () => {
 
       const expectedDataContract = {
         identifier: dataContract.identifier,
+        name: dataContract.name,
         owner: identity.identifier.trim(),
         schema: JSON.stringify(dataContract.schema),
         version: 0,

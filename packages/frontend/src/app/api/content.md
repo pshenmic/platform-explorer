@@ -180,11 +180,15 @@ Response codes:
 ---
 ### Data Contract by Identifier
 Return data contract by given identifier
+
+* `name` field is nullable
+
 ```
 GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
     identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+    name: "DPNS",
     owner: "4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF",
     schema: "{}",
     version: 0,
@@ -204,7 +208,8 @@ Response codes:
 ### Data Contracts
 Return dataContracts set paged and order by block height or documents count.
 
-Valid `order_by` values are `block_height` or `documents_count`
+* Valid `order_by` values are `block_height` or `documents_count`
+* `name` field is nullable
 
 ```
 GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
@@ -218,6 +223,7 @@ GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
     resultSet: [
     {
         identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+        name: "DPNS",
         owner: "4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF",
         schema: "{}",
         version: 0,
@@ -320,7 +326,7 @@ Response codes:
 ### Identities
 Return all identities paged and order by block height, tx count or balance.
 
-Valid `order_by` values are `block_height`, `tx_count` or `balance`
+* Valid `order_by` values are `block_height`, `tx_count` or `balance`
 ```
 GET /identities?page=1&limit=10&order=asc&order_by=block_height
 
@@ -355,6 +361,8 @@ Response codes:
 
 ### Data contracts by Identity
 Return all data contracts by the given identity
+
+* `name` field is nullable
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=1&limit=10&order=asc
 
@@ -367,6 +375,7 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=
     resultSet: [
     {
         identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+        name: "DPNS",
         owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
         version: 0,
         schema: null,

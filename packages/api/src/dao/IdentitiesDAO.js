@@ -146,14 +146,14 @@ module.exports = class IdentitiesDAO {
       .as('sum_documents')
 
     const subquery = this.knex('data_contracts')
-      .select('data_contracts.id', 'data_contracts.identifier as identifier', 'data_contracts.owner as data_contract_owner',
-        'data_contracts.version as version', 'data_contracts.state_transition_hash as tx_hash',
-        'data_contracts.is_system as is_system')
+      .select('data_contracts.id', 'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.owner as data_contract_owner', 'data_contracts.version as version',
+        'data_contracts.state_transition_hash as tx_hash', 'data_contracts.is_system as is_system')
       .select(this.knex.raw('rank() over (partition by data_contracts.identifier order by data_contracts.id desc) rank'))
       .where('owner', '=', identifier)
 
     const filteredDataContracts = this.knex.with('with_alias', subquery)
-      .select('id', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'is_system')
+      .select('id', 'identifier', 'name', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'is_system')
       .select(this.knex('with_alias').count('*').where('rank', 1).as('total_count'))
       .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
       .from('with_alias')
@@ -161,7 +161,7 @@ module.exports = class IdentitiesDAO {
       .as('data_contractz')
 
     const rows = await this.knex(filteredDataContracts)
-      .select('data_contractz.id as id', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp')
+      .select('data_contractz.id as id', 'name', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp')
       .select(this.knex(sumDocuments)
         .count('*')
         .whereRaw('sum_documents.dc_identifier = data_contractz.identifier')
