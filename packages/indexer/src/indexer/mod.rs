@@ -6,8 +6,6 @@ use crate::entities::block::Block;
 use crate::entities::block_header::BlockHeader;
 use crate::processor::psql::{ProcessorError, PSQLProcessor};
 use base64::{Engine as _, engine::{general_purpose}};
-use futures::future;
-use sha256::digest;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::utils::TenderdashRpcApi;
