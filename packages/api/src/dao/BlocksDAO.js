@@ -2,7 +2,7 @@ const Block = require('../models/Block')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 
 module.exports = class BlockDAO {
-  constructor (knex) {
+  constructor(knex) {
     this.knex = knex
   }
 
@@ -79,10 +79,6 @@ module.exports = class BlockDAO {
     const blocksMap = rows.reduce((blocks, row) => {
       const block = blocks[row.hash]
       const txs = block?.txs || []
-
-      if (txHash) {
-        txs.push(txHash)
-      }
 
       return { ...blocks, [row.hash]: { ...row, txs } }
     }, {})
