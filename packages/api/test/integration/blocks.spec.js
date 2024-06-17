@@ -34,21 +34,20 @@ describe('Blocks routes', () => {
 
 
     // ? Duplicates for validator tests
-    let validatorForDuplicates = (await fixtures.validator(knex))
-    validators.push(validatorForDuplicates)
+    validators.push((await fixtures.validator(knex)))
+    validators.push((await fixtures.validator(knex)))
+
     for (let i = 0; i < 15; i++) {
       validator = await fixtures.block(knex, {
-        validator: validatorForDuplicates.pro_tx_hash,
+        validator: validators[0].pro_tx_hash,
         height: i + 31
       })
       blocks.push(validator)
     }
 
-    validatorForDuplicates = (await fixtures.validator(knex))
-    validators.push(validatorForDuplicates)
     for (let i = 15; i < 30; i++) {
       validator = await fixtures.block(knex, {
-        validator: validatorForDuplicates.pro_tx_hash,
+        validator: validators[0].pro_tx_hash,
         height: i + 31
       })
       blocks.push(validator)
