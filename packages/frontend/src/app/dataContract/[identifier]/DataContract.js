@@ -97,6 +97,12 @@ function DataContract ({ identifier }) {
                         </Td>
                     </Tr>
                     <Tr>
+                        <Td w={tdTitleWidth}>Name</Td>
+                        <Td>
+                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
+                        </Td>
+                    </Tr>
+                    <Tr>
                         <Td w={tdTitleWidth}>Owner</Td>
                         <Td>
                             <LoadingLine loading={dataContract.loading}>

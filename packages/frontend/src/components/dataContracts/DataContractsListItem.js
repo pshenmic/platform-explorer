@@ -2,7 +2,7 @@ import Link from 'next/link'
 import './DataContractsListItem.scss'
 
 function DataContractsListItem ({ dataContract }) {
-  const { identifier, timestamp, isSystem } = dataContract
+  const { identifier, name, timestamp, isSystem } = dataContract
 
   return (
     <Link
@@ -10,7 +10,7 @@ function DataContractsListItem ({ dataContract }) {
         className={'DataContractsListItem'}
     >
         <div className={'DataContractsListItem__Identifier'}>
-            {identifier}
+          {name ? <b>{name}</b> : identifier}
         </div>
 
         {isSystem && <div>SYSTEM</div>}

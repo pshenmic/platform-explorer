@@ -1,0 +1,24 @@
+{
+  "dataContracts": {
+    "type": "object",
+    "properties": {
+      "identifier": {
+        "type": "string",
+        "minLength": 43,
+        "maxLength": 44,
+        "position": 0
+      },
+      "name": {
+        "type": "string",
+        "maxLength": 32,
+        "minLength": 3,
+        "position": 1
+      }
+    },
+    "required": [
+      "identifier",
+      "name"
+    ],
+    "additionalProperties": false
+  }
+}

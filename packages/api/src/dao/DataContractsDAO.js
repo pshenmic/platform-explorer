@@ -27,7 +27,8 @@ module.exports = class DataContractsDAO {
       .as('sum_documents')
 
     const subquery = this.knex('data_contracts')
-      .select('data_contracts.id as id', 'data_contracts.identifier as identifier', 'data_contracts.identifier as my_identifier', 'data_contracts.owner as owner',
+      .select('data_contracts.id as id', 'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.identifier as my_identifier', 'data_contracts.owner as owner',
         'data_contracts.is_system as is_system', 'data_contracts.version as version',
         'data_contracts.state_transition_hash as tx_hash')
       .select(this.knex(sumDocuments)
@@ -38,7 +39,7 @@ module.exports = class DataContractsDAO {
 
     const filteredContracts = this.knex.with('filtered_data_contracts', subquery)
       .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
-      .select('id', 'owner', 'identifier', 'version', 'tx_hash', 'rank', 'is_system',
+      .select('id', 'name', 'owner', 'identifier', 'version', 'tx_hash', 'rank', 'is_system',
         this.knex('filtered_data_contracts').count('*').as('total_count').where('rank', '1'))
       .select(this.knex.raw(`rank() over (${getRankString()}) row_number`))
       .from('filtered_data_contracts')
@@ -46,7 +47,7 @@ module.exports = class DataContractsDAO {
       .as('filtered_data_contracts')
 
     const rows = await this.knex(filteredContracts)
-      .select('filtered_data_contracts.documents_count', 'filtered_data_contracts.id', 'total_count', 'identifier', 'filtered_data_contracts.owner', 'version', 'row_number',
+      .select('filtered_data_contracts.documents_count', 'filtered_data_contracts.id', 'name', 'total_count', 'identifier', 'filtered_data_contracts.owner', 'version', 'row_number',
         'filtered_data_contracts.tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'blocks.hash as block_hash')
       .leftJoin('state_transitions', 'state_transitions.hash', 'filtered_data_contracts.tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
@@ -62,7 +63,7 @@ module.exports = class DataContractsDAO {
 
   getDataContractByIdentifier = async (identifier) => {
     const rows = await this.knex('data_contracts')
-      .select('data_contracts.identifier as identifier', 'data_contracts.owner as owner',
+      .select('data_contracts.identifier as identifier', 'data_contracts.name as name', 'data_contracts.owner as owner',
         'data_contracts.schema as schema', 'data_contracts.is_system as is_system',
         'data_contracts.version as version', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
       .select(this.knex('documents').count('*')
