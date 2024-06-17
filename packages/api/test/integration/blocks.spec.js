@@ -99,7 +99,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.limit, 10)
 
       const expectedBlocks = blocks
-        .filter(a => a.validator === block.validator)
+        .filter(row => row.validator === block.validator)
         .slice(0, 10)
         .map(row => ({
           header: {
@@ -127,7 +127,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.limit, 10)
 
       const expectedBlocks = blocks
-        .filter(a => a.validator === block.validator)
+        .filter(row => row.validator === block.validator)
         .sort((a, b) => b.height - a.height)
         .slice(0, 10)
         .map(row => ({
@@ -157,7 +157,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.total, 23)
 
       const expectedBlocks = blocks
-        .filter(a => a.validator === block.validator)
+        .filter(row => row.validator === block.validator)
         .slice(10, 20)
         .map(row => ({
           header: {
@@ -187,7 +187,7 @@ describe('Blocks routes', () => {
 
       const expectedBlocks = blocks
         .sort((a, b) => a.height - b.height)
-        .filter(a => a.validator === block.validator)
+        .filter(row => row.validator === block.validator)
         .slice(0, 2)
         .map(row => ({
           header: {
@@ -216,7 +216,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.total, 23)
 
       const expectedBlocks = blocks
-        .filter(a => a.validator === block.validator)
+        .filter(row => row.validator === block.validator)
         .sort((a, b) => a.height - b.height)
         .slice(2, 4)
         .map(row => ({
@@ -247,7 +247,7 @@ describe('Blocks routes', () => {
 
       const expectedBlocks = blocks
         .sort((a, b) => b.height - a.height)
-        .filter(a => a.validator === block.validator)
+        .filter(row => row.validator === block.validator)
         .slice(2, 4)
         .map(row => ({
           header: {
@@ -281,7 +281,7 @@ describe('Blocks routes', () => {
 
       const expectedBlocks = blocks
         .sort((a, b) => b.height - a.height)
-        .filter(a => a.validator === block.validator)
+        .filter(row => row.validator === block.validator)
         .slice((page - 1) * limit, (page - 1) * limit + limit)
         .map(row => ({
           header: {
@@ -301,7 +301,7 @@ describe('Blocks routes', () => {
     it('should return less items when there is none on the one bound', async () => {
       const block = blocks[32]
 
-      const { body } = await client.get(`/validator/${block.validator}/blocks?limit=20&page=99&order=desc`)
+      const { body } = await client.get(`/validator/${block.validator}/blocks?limit=23&page=2&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
       const expectedBlocks = []
