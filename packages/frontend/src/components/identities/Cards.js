@@ -1,0 +1,50 @@
+'use client'
+
+import { Flex, Container } from '@chakra-ui/react'
+import Link from 'next/link'
+import { InfoCard } from '../cards'
+import { currencyRound } from '../../util'
+import { ErrorMessageBlock } from '../Errors'
+import ImageGenerator from '../imageGenerator'
+import './IdentityCard.scss'
+
+function IdentityCard ({ identity, loading = false }) {
+  return (
+    <Container p={0} mx={0} my={3} maxW={'none'}>
+      {!loading
+        ? <Link href={`/identity/${identity.identifier}`}>
+            <InfoCard className={'IdentityCard'} clickable={true}>
+              <Flex alignItems={'center'} justifyContent={'space-between'}>
+                  <Flex alignItems={'center'}>
+                      <div className={'IdentityCard__Img'}>
+                        <ImageGenerator username={identity.identifier} lightness={50} saturation={50} width={42} height={42} />
+                      </div>
+                      <div className={'IdentityCard__Name'}>DQ-Broderick-29645-backup.dash</div>
+                  </Flex>
+
+                  <div className={'IdentityCard__Balance'}>{currencyRound(identity.balance)}</div>
+              </Flex>
+            </InfoCard>
+        </Link>
+        : <InfoCard className={'IdentityCard'} loading={true}/>
+      }
+    </Container>
+  )
+}
+
+function IdentitiesCards ({ items }) {
+  return (
+    !items.error
+      ? !items.loading
+          ? items?.data?.resultSet?.length
+            ? items.data.resultSet.map((identity, i) => <IdentityCard identity={identity} key={i}/>)
+            : <ErrorMessageBlock h={250} text={'Identities not found'}/>
+          : Array.from({ length: 3 }, (x, i) => <IdentityCard loading={true} key={i}/>)
+      : <ErrorMessageBlock h={250}/>
+  )
+}
+
+export {
+  IdentitiesCards,
+  IdentityCard
+}

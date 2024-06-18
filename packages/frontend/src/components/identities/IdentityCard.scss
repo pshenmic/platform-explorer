@@ -1,7 +1,7 @@
 @use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
-.IdentitieCard {
+.IdentityCard {
     &__Img {
         @include mixins.avatar-container;
 

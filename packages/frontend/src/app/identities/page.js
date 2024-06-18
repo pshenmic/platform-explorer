@@ -2,7 +2,7 @@ import Identities from './Identities'
 import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
-import { TopIdentities } from '../../components/identities'
+import Cards from './Cards'
 import {
   Container,
   Flex,
@@ -39,7 +39,7 @@ function IdentitiesRoute () {
           <Box flexShrink={'0'} w={10} h={[5, 5, 5, 10]}/>
 
           <Container maxW={'none'} p={0}>
-            <TopIdentities/>
+            <Cards/>
           </Container>
       </Flex>
     </Container>

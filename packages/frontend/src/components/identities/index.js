@@ -1,9 +1,10 @@
 import RichList from './RichList'
 import IdentitiesList from './IdentitiesList'
-import TopIdentities from './TopIdentities'
+import { IdentitiesCards, IdentityCard } from './Cards'
 
 export {
   RichList,
   IdentitiesList,
-  TopIdentities
+  IdentitiesCards,
+  IdentityCard
 }
