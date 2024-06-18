@@ -275,10 +275,12 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.limit, limit)
       assert.equal(body.resultSet.length, 1)
 
-      const expectedBlocks = blocks
-        .sort((a, b) => b.height - a.height)
+      const blocksFiltered = blocks
         .filter(block => block.validator === validator.pro_tx_hash)
-        .slice((page - 1) * limit, 15)
+        .sort((a, b) => b.height - a.height)
+
+      const expectedBlocks = blocksFiltered
+        .slice(blocksFiltered.length-1, 15)
         .map(row => ({
           header: {
             hash: row.hash,
