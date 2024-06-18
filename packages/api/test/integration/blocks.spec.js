@@ -31,7 +31,6 @@ describe('Blocks routes', () => {
       blocks.push(block)
     }
 
-
     // ? Duplicates for validator tests
     validators.push((await fixtures.validator(knex)))
     validators.push((await fixtures.validator(knex)))
