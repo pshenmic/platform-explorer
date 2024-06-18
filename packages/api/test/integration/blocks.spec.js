@@ -13,7 +13,6 @@ describe('Blocks routes', () => {
   let block
   let blocks
 
-  let validator
   let validators
 
   before(async () => {
@@ -35,18 +34,18 @@ describe('Blocks routes', () => {
     validators.push((await fixtures.validator(knex)))
 
     for (let i = 0; i < 15; i++) {
-      validator = await fixtures.block(knex, {
+      block = await fixtures.block(knex, {
         height: i + 31
       })
-      blocks.push(validator)
+      blocks.push(block)
     }
 
     for (let i = 15; i < 30; i++) {
-      validator = await fixtures.block(knex, {
+      block = await fixtures.block(knex, {
         validator: validators[0].pro_tx_hash,
         height: i + 31
       })
-      blocks.push(validator)
+      blocks.push(block)
     }
   })
 
