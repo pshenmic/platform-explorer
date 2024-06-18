@@ -31,13 +31,11 @@ describe('Blocks routes', () => {
       blocks.push(block)
     }
 
-    // ? Duplicates for validator tests
     validators.push((await fixtures.validator(knex)))
     validators.push((await fixtures.validator(knex)))
 
     for (let i = 0; i < 15; i++) {
       validator = await fixtures.block(knex, {
-        validator: validators[0].pro_tx_hash,
         height: i + 31
       })
       blocks.push(validator)
@@ -90,7 +88,7 @@ describe('Blocks routes', () => {
 
   describe('getBlocksByValidator()', async () => {
     it('should return blocks by validator', async () => {
-      const [validator] = validators
+      const [, validator] = validators
       const { body } = await client.get(`/validator/${validator.pro_tx_hash}/blocks`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -99,7 +97,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.limit, 10)
 
       const expectedBlocks = blocks
-        .filter(row => row.validator === validator.pro_tx_hash)
+        .filter(block => block.validator === validator.pro_tx_hash)
         .slice(0, 10)
         .map(row => ({
           header: {
@@ -127,7 +125,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.limit, 10)
 
       const expectedBlocks = blocks
-        .filter(row => row.validator === validator.pro_tx_hash)
+        .filter(block => block.validator === validator.pro_tx_hash)
         .sort((a, b) => b.height - a.height)
         .slice(0, 10)
         .map(row => ({
@@ -157,7 +155,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.total, 15)
 
       const expectedBlocks = blocks
-        .filter(row => row.validator === validator.pro_tx_hash)
+        .filter(block => block.validator === validator.pro_tx_hash)
         .slice(10, 20)
         .map(row => ({
           header: {
@@ -186,8 +184,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.total, 15)
 
       const expectedBlocks = blocks
-        .sort((a, b) => a.height - b.height)
-        .filter(row => row.validator === validator.pro_tx_hash)
+        .filter(block => block.validator === validator.pro_tx_hash)
         .slice(0, 2)
         .map(row => ({
           header: {
@@ -216,7 +213,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.total, 15)
 
       const expectedBlocks = blocks
-        .filter(row => row.validator === validator.pro_tx_hash)
+        .filter(block => block.validator === validator.pro_tx_hash)
         .sort((a, b) => a.height - b.height)
         .slice(2, 4)
         .map(row => ({
@@ -247,7 +244,7 @@ describe('Blocks routes', () => {
 
       const expectedBlocks = blocks
         .sort((a, b) => b.height - a.height)
-        .filter(row => row.validator === validator.pro_tx_hash)
+        .filter(block => block.validator === validator.pro_tx_hash)
         .slice(2, 4)
         .map(row => ({
           header: {
@@ -281,7 +278,7 @@ describe('Blocks routes', () => {
 
       const expectedBlocks = blocks
         .sort((a, b) => b.height - a.height)
-        .filter(row => row.validator === validator.pro_tx_hash)
+        .filter(block => block.validator === validator.pro_tx_hash)
         .slice((page - 1) * limit, 15)
         .map(row => ({
           header: {
@@ -320,7 +317,6 @@ describe('Blocks routes', () => {
       assert.equal(body.resultSet.length, 10)
 
       const expectedBlocks = blocks
-        .sort((a, b) => a.height - b.height)
         .slice(0, 10)
         .map(row => ({
           header: {
