@@ -79,7 +79,11 @@ class TenderdashRPC {
 
   static async getStatus () {
     const { sync_info: syncInfo, node_info: nodeInfo } = await call('status', 'GET')
-    const { latest_block_height: latestBlockHeight, latest_block_time: latestBlockTime } = syncInfo
+    const {
+      latest_block_height: latestBlockHeight,
+      latest_block_hash: latestBlockHash,
+      latest_block_time: latestBlockTime
+    } = syncInfo
     const { network, version } = nodeInfo
 
     return {
@@ -87,6 +91,7 @@ class TenderdashRPC {
       version,
       highestBlock: {
         height: parseInt(latestBlockHeight),
+        hash: latestBlockHash,
         timestamp: latestBlockTime
       }
     }
