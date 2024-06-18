@@ -1,9 +1,9 @@
 import TrendingDataContracts from './TrendingDataContracts'
 import DataContractsList from './DataContractsList'
-import { CardsBlock } from './Cards'
+import { DataContractCards } from './Cards'
 
 export {
   TrendingDataContracts,
   DataContractsList,
-  CardsBlock
+  DataContractCards
 }

@@ -1,6 +1,7 @@
 'use client'
 
-import { CardsBlock } from '../../components/dataContracts'
+import { SideBlock } from '../../components/containers'
+import { DataContractCards } from '../../components/dataContracts'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
@@ -16,5 +17,9 @@ export default function Cards () {
 
   useEffect(fetchData, [])
 
-  return <CardsBlock title={'Top Contracts:'} items={dataContracts}/>
+  return (
+    <SideBlock>
+      <DataContractCards title={'Top Contracts:'} items={dataContracts}/>
+    </SideBlock>
+  )
 }

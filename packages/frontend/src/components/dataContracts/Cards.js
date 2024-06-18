@@ -1,6 +1,5 @@
 'use client'
 
-import { SideBlock } from '../containers'
 import { Flex, Box } from '@chakra-ui/react'
 import Link from 'next/link'
 import { CardsGrid, CardsGridItems, CardsGridItem, CardsGridHeader, CardsGridTitle } from '../cards'
@@ -8,7 +7,7 @@ import { ErrorMessageBlock } from '../Errors'
 import ImageGenerator from '../imageGenerator'
 import './DataContractCard.scss'
 
-function Item ({ dataContract, loading = false }) {
+function DataContractCard ({ dataContract, loading = false }) {
   return (
     <CardsGridItem className={'DataContractCard'} loading={loading} clickable={true}>
       {!loading
@@ -27,32 +26,28 @@ function Item ({ dataContract, loading = false }) {
   )
 }
 
-function CardsBlock ({ title, items }) {
+function DataContractCards ({ title, items }) {
   return (
-    <SideBlock>
-        {!items.error
-          ? <>
-              <CardsGrid>
-                <CardsGridHeader>
-                  <CardsGridTitle>{title}</CardsGridTitle>
-                </CardsGridHeader>
+    !items.error
+      ? <CardsGrid>
+          <CardsGridHeader>
+            <CardsGridTitle>{title}</CardsGridTitle>
+          </CardsGridHeader>
 
-                <CardsGridItems>
-                  {!items.loading
-                    ? items?.data?.resultSet?.length
-                      ? items.data.resultSet.map((dataContract, i) => <Item dataContract={dataContract} key={i}/>)
-                      : <ErrorMessageBlock h={250} text={'Data Contracts not found'}/>
-                    : Array.from({ length: 4 }, (x, i) => <Item loading={true} key={i}/>)
-                  }
-                </CardsGridItems>
-              </CardsGrid>
-            </>
-          : <ErrorMessageBlock h={250}/>
-        }
-    </SideBlock>
+          <CardsGridItems>
+            {!items.loading
+              ? items?.data?.resultSet?.length
+                ? items.data.resultSet.map((dataContract, i) => <DataContractCard dataContract={dataContract} key={i}/>)
+                : <ErrorMessageBlock h={250} text={'Data Contracts not found'}/>
+              : Array.from({ length: 4 }, (x, i) => <DataContractCard loading={true} key={i}/>)
+            }
+          </CardsGridItems>
+        </CardsGrid>
+      : <ErrorMessageBlock h={250}/>
   )
 }
 
 export {
-  CardsBlock
+  DataContractCards
 }
+ 
