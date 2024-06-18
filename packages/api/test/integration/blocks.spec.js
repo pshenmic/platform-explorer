@@ -30,23 +30,31 @@ describe('Blocks routes', () => {
       blocks.push(block)
     }
 
-    validators.push((await fixtures.validator(knex)))
-    validators.push((await fixtures.validator(knex)))
+    for (let i = 0; i < 2; i++) {
+      const validator = await fixtures.validator(knex)
+      validators.push(validator)
+    }
 
-    for (let i = 0; i < 15; i++) {
+    for (let i = 31; i < 46; i++) {
+      const [validator] = validators
+
       block = await fixtures.block(knex, {
-        height: i + 31
+        validator: validator.pro_tx_hash,
+        height: i + 1
       })
       blocks.push(block)
     }
 
-    for (let i = 15; i < 30; i++) {
+    for (let i = 46; i < 61; i++) {
+      const [, validator] = validators
+
       block = await fixtures.block(knex, {
-        validator: validators[0].pro_tx_hash,
-        height: i + 31
+        validator: validator.pro_tx_hash,
+        height: i + 1
       })
       blocks.push(block)
     }
+
   })
 
   after(async () => {
@@ -110,6 +118,7 @@ describe('Blocks routes', () => {
           },
           txs: []
         }))
+
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
 
@@ -139,6 +148,7 @@ describe('Blocks routes', () => {
           },
           txs: []
         }))
+
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
 
@@ -168,6 +178,7 @@ describe('Blocks routes', () => {
           },
           txs: []
         }))
+
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
 
@@ -197,6 +208,7 @@ describe('Blocks routes', () => {
           },
           txs: []
         }))
+
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
 
@@ -227,6 +239,7 @@ describe('Blocks routes', () => {
           },
           txs: []
         }))
+
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
 
@@ -279,7 +292,10 @@ describe('Blocks routes', () => {
       const expectedBlocks = blocks
         .filter(block => block.validator === validator.pro_tx_hash)
         .sort((a, b) => b.height - a.height)
-        .slice(14, 15)
+        .slice(
+          blocks.filter(block => block.validator === validator.pro_tx_hash).length - 1,
+          15
+        )
         .map(row => ({
           header: {
             hash: row.hash,
@@ -292,6 +308,7 @@ describe('Blocks routes', () => {
           },
           txs: []
         }))
+
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
 
@@ -301,7 +318,9 @@ describe('Blocks routes', () => {
       const { body } = await client.get(`/validator/${validator.pro_tx_hash}/blocks?limit=23&page=2&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
+
       const expectedBlocks = []
+      
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
   })
