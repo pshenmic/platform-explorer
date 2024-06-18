@@ -62,14 +62,7 @@ function Home () {
 
       Api.getIdentities(1, 10, 'desc', 'tx_count')
         .then(paginatedTrendingIdentities => fetchHandlerSuccess(setTrendingIdentities, paginatedTrendingIdentities))
-        .catch(err => fetchHandlerError(setTrendingIdentities, err)),
-
-      Api.getBlocks(1, 1, 'desc')
-        .then(res => {
-          const [latestBlock] = res.resultSet
-          fetchHandlerSuccess(setStatus, { latestBlock })
-        })
-        .catch(err => fetchHandlerError(setStatus, err))
+        .catch(err => fetchHandlerError(setTrendingIdentities, err))
     ])
       .catch(console.log)
   }

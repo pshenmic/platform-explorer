@@ -35,11 +35,10 @@ function NetworkStatus () {
     : <WarningTwoIcon color={'yellow.400'} ml={2}/>
 
   function getLastBlocktimeString () {
-    if (!status?.data?.latestBlock?.header?.timestamp) return 'n/a'
+    if (!status?.data?.api?.block?.timestamp) return 'n/a'
 
-    const diff = new Date() - new Date(status?.data?.latestBlock?.header?.timestamp)
+    const diff = new Date() - new Date(status?.data?.api?.block?.timestamp)
 
-    console.log()
     if (diff < 60 * 1000) {
       return `${Math.floor((diff / 1000))} sec. ago`
     } else {
@@ -135,10 +134,10 @@ function NetworkStatus () {
             <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Latest block:</div>
 
-                {status?.data?.latestBlock?.header !== undefined
+                {status?.data?.api?.block?.height !== undefined
                   ? <div className={'NetworkStatus__Value'}>
-                        <Link href={`/block/${status.data.latestBlock.header.hash}`}>
-                            #{status.data.latestBlock.header.height}, {getLastBlocktimeString()}
+                        <Link href={`/block/${status?.data?.api?.block?.hash}`}>
+                            #{status?.data?.api?.block?.height}, {getLastBlocktimeString()}
                         </Link>
                     </div>
                   : <div className={'NetworkStatus__Value'}>n/a</div>}
