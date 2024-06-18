@@ -15,7 +15,7 @@ function NetworkStatus () {
     Api.getStatus()
       .then(res => fetchHandlerSuccess(setStatus, res))
       .catch(err => fetchHandlerError(setStatus, err))
-      .finally(() => setTimeout(fetchData(), 60000))
+      .finally(() => setTimeout(fetchData, 60000))
   }, [])
 
   useEffect(fetchData, [fetchData])
