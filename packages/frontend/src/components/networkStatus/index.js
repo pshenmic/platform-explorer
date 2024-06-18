@@ -12,9 +12,18 @@ function NetworkStatus () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
 
   const fetchData = useCallback(() => {
-    Api.getStatus()
-      .then(res => fetchHandlerSuccess(setStatus, res))
-      .catch(err => fetchHandlerError(setStatus, err))
+    Promise.all([
+      Api.getStatus()
+        .then(res => fetchHandlerSuccess(setStatus, res))
+        .catch(err => fetchHandlerError(setStatus, err)),
+
+      Api.getBlocks(1, 1, 'desc')
+        .then(res => {
+          const [latestBlock] = res.resultSet
+          fetchHandlerSuccess(setStatus, { latestBlock })
+        })
+        .catch(err => fetchHandlerError(setStatus, err))
+    ])
       .finally(() => setTimeout(fetchData(), 60000))
   }, [])
 
@@ -39,7 +48,6 @@ function NetworkStatus () {
 
     const diff = new Date() - new Date(status?.data?.latestBlock?.header?.timestamp)
 
-    console.log()
     if (diff < 60 * 1000) {
       return `${Math.floor((diff / 1000))} sec. ago`
     } else {
