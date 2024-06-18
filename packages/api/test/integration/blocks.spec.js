@@ -280,7 +280,7 @@ describe('Blocks routes', () => {
         .sort((a, b) => b.height - a.height)
 
       const expectedBlocks = blocksFiltered
-        .slice(blocksFiltered.length-1, 15)
+        .slice(blocksFiltered.length - 1, 15)
         .map(row => ({
           header: {
             hash: row.hash,
@@ -318,6 +318,7 @@ describe('Blocks routes', () => {
       assert.equal(body.resultSet.length, 10)
 
       const expectedBlocks = blocks
+        .sort((a, b) => a.height - b.height)
         .slice(0, 10)
         .map(row => ({
           header: {
