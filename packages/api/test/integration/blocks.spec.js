@@ -54,7 +54,6 @@ describe('Blocks routes', () => {
       })
       blocks.push(block)
     }
-
   })
 
   after(async () => {
@@ -288,7 +287,6 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.limit, limit)
       assert.equal(body.resultSet.length, 1)
 
-
       const expectedBlocks = blocks
         .filter(block => block.validator === validator.pro_tx_hash)
         .sort((a, b) => b.height - a.height)
@@ -320,7 +318,7 @@ describe('Blocks routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedBlocks = []
-      
+
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
   })
