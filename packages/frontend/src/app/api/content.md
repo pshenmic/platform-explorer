@@ -50,6 +50,7 @@ HTTP /status
         version: "1.0.0",
         block: {
             height: 20153,
+            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
             timestamp: "2024-06-06T21:50:20.949Z"
         }
     }
@@ -60,6 +61,7 @@ HTTP /status
         version: "0.14.0-dev.6",
         block: {
             height: 20154,
+            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
             timestamp: "2024-06-06T21:53:27.947Z"
          }
     }     
