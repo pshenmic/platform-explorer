@@ -3,7 +3,7 @@ import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { Container, Flex, Box } from '@chakra-ui/react'
-import { TopDataContracts } from '../../components/dataContracts'
+import Cards from './Cards'
 
 export const metadata = {
   title: 'Data Contracts — Dash Platform Explorer',
@@ -36,7 +36,7 @@ function DataContractsRoute () {
           <Box flexShrink={'0'} w={10} h={[5, 5, 5, 10]} />
 
           <Container flexShrink={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
-            <TopDataContracts/>
+            <Cards/>
           </Container>
       </Flex>
     </Container>

@@ -1,12 +1,9 @@
 'use client'
 
-import * as Api from '../../util/Api'
 import { SideBlock } from '../containers'
-import { useState, useEffect } from 'react'
 import { Flex, Box } from '@chakra-ui/react'
 import Link from 'next/link'
 import { CardsGrid, CardsGridItems, CardsGridItem, CardsGridHeader, CardsGridTitle } from '../cards'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { ErrorMessageBlock } from '../Errors'
 import ImageGenerator from '../imageGenerator'
 import './DataContractCard.scss'
@@ -30,30 +27,20 @@ function Item ({ dataContract, loading = false }) {
   )
 }
 
-export default function TopDataContracts () {
-  const [dataContracts, setDataContracts] = useState({ data: {}, loading: true, error: false })
-
-  const fetchData = () => {
-    Api.getDataContracts(1, 4, 'desc', 'documents_count')
-      .then(res => fetchHandlerSuccess(setDataContracts, res))
-      .catch(err => fetchHandlerError(setDataContracts, err))
-  }
-
-  useEffect(fetchData, [])
-
+function CardsBlock ({ title, items }) {
   return (
     <SideBlock>
-        {!dataContracts.error
+        {!items.error
           ? <>
               <CardsGrid>
                 <CardsGridHeader>
-                  <CardsGridTitle>Top Contracts:</CardsGridTitle>
+                  <CardsGridTitle>{title}</CardsGridTitle>
                 </CardsGridHeader>
 
                 <CardsGridItems>
-                  {!dataContracts.loading
-                    ? dataContracts?.data?.resultSet?.length
-                      ? dataContracts.data.resultSet.map((dataContract, i) => <Item dataContract={dataContract} key={i}/>)
+                  {!items.loading
+                    ? items?.data?.resultSet?.length
+                      ? items.data.resultSet.map((dataContract, i) => <Item dataContract={dataContract} key={i}/>)
                       : <ErrorMessageBlock h={250} text={'Data Contracts not found'}/>
                     : Array.from({ length: 4 }, (x, i) => <Item loading={true} key={i}/>)
                   }
@@ -64,4 +51,8 @@ export default function TopDataContracts () {
         }
     </SideBlock>
   )
+}
+
+export {
+  CardsBlock
 }
