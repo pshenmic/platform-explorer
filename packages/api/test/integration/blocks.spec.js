@@ -498,7 +498,7 @@ describe('Blocks routes', () => {
     })
 
     it('should return less items when when it is out of bounds', async () => {
-      const { body } = await client.get(`/blocks?limit=${limit}&page=9&order=desc`)
+      const { body } = await client.get('/blocks?limit=7&page=9&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
