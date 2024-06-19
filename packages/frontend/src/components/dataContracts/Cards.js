@@ -50,4 +50,3 @@ function DataContractCards ({ title, items }) {
 export {
   DataContractCards
 }
- 
