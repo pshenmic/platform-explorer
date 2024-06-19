@@ -291,7 +291,7 @@ describe('Blocks routes', () => {
         .filter(block => block.validator === validator.pro_tx_hash)
         .sort((a, b) => b.height - a.height)
         .slice(
-          blocks.filter(block => block.validator === validator.pro_tx_hash).length - 1,
+          14,
           15
         )
         .map(row => ({
