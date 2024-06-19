@@ -87,7 +87,7 @@ GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 ```
 ---
 ### Blocks by validator
-Get a blocks by validator with pagination info
+Return all blocks proposed by the specific validators
 ```
 GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
 
@@ -234,7 +234,7 @@ Response codes:
 ```
 ---
 ### Data Contracts
-Return dataContracts set paged and order by block height or documents count.
+Return dataContracts set paged and order by block height or documents count. 
 
 * Valid `order_by` values are `block_height` or `documents_count`
 * `name` field is nullable

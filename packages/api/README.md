@@ -118,7 +118,7 @@ GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 ```
 ---
 ### Blocks by validator
-Get a blocks by validator with pagination info
+Return all blocks proposed by the specific validators
 ```
 GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
 
