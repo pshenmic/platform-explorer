@@ -7,19 +7,12 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
-import { Switcher } from '../../components/ui'
+import { ValidatorsList } from '../../components/validators'
 
 import {
   Container,
   Box,
-  Heading,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer
+  Heading
 } from '@chakra-ui/react'
 
 const paginateConfig = {
@@ -28,53 +21,6 @@ const paginateConfig = {
     values: [10, 25, 50, 75, 100]
   },
   defaultPage: 1
-}
-
-function ValidatorsList () {
-  return (
-    <div className={'ValidatorsList'}>
-      <Switcher
-        options={[
-          {
-            title: 'Active'
-          },
-          {
-            title: 'Inactive'
-          }
-        ]}
-        onChange={(e) => console.log(e)}
-      />
-
-      <TableContainer>
-        <Table size='md' className='Table'>
-          <Thead>
-            <Tr>
-              <Th>proTxHash</Th>
-              <Th isNumeric>Last block height</Th>
-              <Th isNumeric>Blocks proposed</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              <Td>f92e66edc9c8da41de71073ef08d62c56f8752a3f4e29ced6c515e0b1c074a38</Td>
-              <Td isNumeric>13619</Td>
-              <Td isNumeric>1024</Td>
-            </Tr>
-            <Tr>
-              <Td>f92e66edc9c8da41de71073ef08d62c56f8752a3f4e29ced6c515e0b1c074a38</Td>
-              <Td isNumeric>13619</Td>
-              <Td isNumeric>1024</Td>
-            </Tr>
-            <Tr>
-              <Td>f92e66edc9c8da41de71073ef08d62c56f8752a3f4e29ced6c515e0b1c074a38</Td>
-              <Td isNumeric>13619</Td>
-              <Td isNumeric>1024</Td>
-            </Tr>
-          </Tbody>
-        </Table>
-      </TableContainer>
-    </div>
-  )
 }
 
 function Validators () {
@@ -87,8 +33,9 @@ function Validators () {
   const fetchData = (page, count) => {
     Api.getTransactions(page, count, 'desc')
       .then((res) => {
+        res = { resultSet: [{ active: true }, { active: false }, { active: true }] }
         fetchHandlerSuccess(setValidators, res)
-        setTotal(res.pagination.total)
+        setTotal(100)
       })
       .catch(err => fetchHandlerError(setValidators, err))
   }
@@ -120,7 +67,7 @@ function Validators () {
 
             {!validators.error
               ? !validators.loading
-                  ? <ValidatorsList transactions={validators.data.resultSet}/>
+                  ? <ValidatorsList validators={validators}/>
                   : <LoadingList itemsCount={pageSize}/>
               : <Container h={20}><ErrorMessageBlock/></Container>
             }
