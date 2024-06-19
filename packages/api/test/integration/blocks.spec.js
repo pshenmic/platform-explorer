@@ -274,17 +274,15 @@ describe('Blocks routes', () => {
     })
 
     it('should return less items when it is out of bounds', async () => {
-      const page = 3
-      const limit = 7
 
       const [validator] = validators
 
-      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/blocks?limit=${limit}&page=${page}&order=desc`)
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/blocks?limit=7&page=3&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.pagination.page, page)
-      assert.equal(body.pagination.limit, limit)
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 7)
       assert.equal(body.resultSet.length, 1)
 
       const expectedBlocks = blocks
