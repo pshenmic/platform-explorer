@@ -51,9 +51,15 @@ function Validator ({ hash }) {
                       </Thead>
                       <Tbody>
                           <Tr>
-                              <Td w={tdTitleWidth}>Identifier</Td>
+                              <Td w={tdTitleWidth}>TX Hash</Td>
                               <Td isNumeric>
-                                  <LoadingLine loading={validator.loading}>hello world</LoadingLine>
+                                  <LoadingLine loading={validator.loading}>{hash}</LoadingLine>
+                              </Td>
+                          </Tr>
+                          <Tr>
+                              <Td w={tdTitleWidth}>Status</Td>
+                              <Td isNumeric>
+                                  <LoadingLine loading={validator.loading}>active</LoadingLine>
                               </Td>
                           </Tr>
                       </Tbody>
@@ -69,7 +75,7 @@ function Validator ({ hash }) {
             m={0}
             borderWidth='1px' borderRadius='lg'
           >
-            <Flex justifyContent={'center'} alignItems={'center'}>chart will be here</Flex>
+            <Flex h={'100%'} justifyContent={'center'} alignItems={'center'}>chart will be here</Flex>
           </Container>
       </Flex>
 
