@@ -38,7 +38,7 @@ function ValidatorsRoute () {
           <Box flexShrink={'0'} w={10} h={[5, 5, 5, 10]}/>
 
           <Container maxW={'none'} p={0}>
-            {/* <TopIdentities/> */}
+            Metrics
           </Container>
       </Flex>
     </Container>

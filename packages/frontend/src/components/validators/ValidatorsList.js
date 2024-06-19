@@ -22,7 +22,7 @@ export default function ValidatorsList ({ validators }) {
   const ValidatorRow = ({ validator }) => {
     return (
       <Tr>
-        <Td><Link href={'#'}>{validator.protxhash}</Link></Td>
+        <Td><Link href={'/validator/a1b2c3'}>{validator.protxhash}</Link></Td>
         <Td isNumeric>{validator.lastBlockHeight}</Td>
         <Td isNumeric>{validator.BlocksProposed}</Td>
       </Tr>
