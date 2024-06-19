@@ -274,7 +274,6 @@ describe('Blocks routes', () => {
     })
 
     it('should return less items when it is out of bounds', async () => {
-
       const [validator] = validators
 
       const { body } = await client.get(`/validator/${validator.pro_tx_hash}/blocks?limit=7&page=3&order=desc`)
