@@ -26,7 +26,7 @@ describe('Blocks routes', () => {
     await fixtures.cleanup(knex)
 
     for (let i = 1; i < 31; i++) {
-      block = await fixtures.block(knex, { height: i + 1 })
+      block = await fixtures.block(knex, { height: i })
       blocks.push(block)
     }
 
@@ -40,7 +40,7 @@ describe('Blocks routes', () => {
 
       block = await fixtures.block(knex, {
         validator: validator.pro_tx_hash,
-        height: i + 1
+        height: i
       })
       blocks.push(block)
     }
@@ -50,7 +50,7 @@ describe('Blocks routes', () => {
 
       block = await fixtures.block(knex, {
         validator: validator.pro_tx_hash,
-        height: i + 1
+        height: i
       })
       blocks.push(block)
     }
@@ -103,6 +103,7 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.limit, 10)
 
       const expectedBlocks = blocks
+        .sort((a, b) => a.height - b.height)
         .filter(block => block.validator === validator.pro_tx_hash)
         .slice(0, 10)
         .map(row => ({
@@ -510,7 +511,7 @@ describe('Blocks routes', () => {
 
       const expectedBlocks = blocks
         .sort((a, b) => b.height - a.height)
-        .slice(blocks.length - 4, blocks.length)
+        .slice(56, 60)
         .map(row => ({
           header: {
             hash: row.hash,
