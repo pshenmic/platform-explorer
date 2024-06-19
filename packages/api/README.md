@@ -265,7 +265,7 @@ Response codes:
 ```
 ---
 ### Data Contracts
-Return dataContracts set paged and order by block height or documents count. 
+Return dataContracts set paged and order by block height or documents count.
 
 * Valid `order_by` values are `block_height` or `documents_count`
 * `name` field is nullable

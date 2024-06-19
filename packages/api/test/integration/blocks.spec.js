@@ -10,7 +10,6 @@ describe('Blocks routes', () => {
   let client
   let knex
 
-  let block
   let blocks
 
   let validators
@@ -26,7 +25,7 @@ describe('Blocks routes', () => {
     await fixtures.cleanup(knex)
 
     for (let i = 1; i < 31; i++) {
-      block = await fixtures.block(knex, { height: i })
+      const block = await fixtures.block(knex, { height: i })
       blocks.push(block)
     }
 
@@ -38,7 +37,7 @@ describe('Blocks routes', () => {
     for (let i = 31; i < 46; i++) {
       const [validator] = validators
 
-      block = await fixtures.block(knex, {
+      const block = await fixtures.block(knex, {
         validator: validator.pro_tx_hash,
         height: i
       })
@@ -48,7 +47,7 @@ describe('Blocks routes', () => {
     for (let i = 46; i < 61; i++) {
       const [, validator] = validators
 
-      block = await fixtures.block(knex, {
+      const block = await fixtures.block(knex, {
         validator: validator.pro_tx_hash,
         height: i
       })
@@ -103,8 +102,8 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.limit, 10)
 
       const expectedBlocks = blocks
-        .sort((a, b) => a.height - b.height)
         .filter(block => block.validator === validator.pro_tx_hash)
+        .sort((a, b) => a.height - b.height)
         .slice(0, 10)
         .map(row => ({
           header: {
@@ -255,8 +254,8 @@ describe('Blocks routes', () => {
       assert.equal(body.pagination.total, 15)
 
       const expectedBlocks = blocks
-        .sort((a, b) => b.height - a.height)
         .filter(block => block.validator === validator.pro_tx_hash)
+        .sort((a, b) => b.height - a.height)
         .slice(2, 4)
         .map(row => ({
           header: {
@@ -499,13 +498,12 @@ describe('Blocks routes', () => {
     })
 
     it('should return less items when when it is out of bounds', async () => {
-      const limit = 7
       const { body } = await client.get(`/blocks?limit=${limit}&page=9&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.pagination.page, 9)
-      assert.equal(body.pagination.limit, limit)
+      assert.equal(body.pagination.limit, 7)
       assert.equal(body.pagination.total, blocks.length)
       assert.equal(body.resultSet.length, 4)
 
