@@ -29,7 +29,7 @@ class MainController {
 
     const currentBlocktime = currentBlock.header.timestamp.getTime()
     const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
-    const genesisTime = new Date(genesis.genesis_time).getTime()
+    const genesisTime = new Date(genesis?.genesis_time).getTime()
     const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
     const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
     const nextEpochTime = Math.floor(genesisTime + epochChangeTime * (epochIndex + 1))
@@ -51,6 +51,7 @@ class MainController {
         version: API_VERSION,
         block: {
           height: currentBlock?.header?.height,
+          hash: currentBlock?.header?.hash,
           timestamp: currentBlock?.header?.timestamp.toISOString()
         }
       },
@@ -61,6 +62,7 @@ class MainController {
         version: tdStatus?.version ?? null,
         block: {
           height: tdStatus?.highestBlock?.height ?? null,
+          hash: tdStatus?.highestBlock?.hash ?? null,
           timestamp: tdStatus?.highestBlock?.timestamp ?? null
         }
       }
