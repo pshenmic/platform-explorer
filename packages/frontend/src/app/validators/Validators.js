@@ -17,7 +17,7 @@ import {
 
 const paginateConfig = {
   pageSize: {
-    default: 25,
+    default: 10,
     values: [10, 25, 50, 75, 100]
   },
   defaultPage: 1
@@ -33,7 +33,28 @@ function Validators () {
   const fetchData = (page, count) => {
     Api.getTransactions(page, count, 'desc')
       .then((res) => {
-        res = { resultSet: [{ active: true }, { active: false }, { active: true }] }
+        res = {
+          resultSet: [
+            {
+              active: true,
+              protxhash: 'f92e66edc9c8da41de71073ef08d62c56f8752a3f4e29ced6c515e0b1c074a38',
+              lastBlockHeight: '13619',
+              blocksProposed: '1010'
+            },
+            {
+              active: true,
+              protxhash: 'f92e66edc9c8da41de71073ef08d62c56f8752a3f4e29ced6c515e0b1c074a38',
+              lastBlockHeight: '13618',
+              blocksProposed: '1020'
+            },
+            {
+              active: true,
+              protxhash: 'f92e66edc9c8da41de71073ef08d62c56f8752a3f4e29ced6c515e0b1c074a38',
+              lastBlockHeight: '13617',
+              blocksProposed: '1030'
+            }
+          ]
+        }
         fetchHandlerSuccess(setValidators, res)
         setTotal(100)
       })
@@ -54,16 +75,16 @@ function Validators () {
 
   return (
     <Container
-        maxW='container.xl'
+        maxW={'container.xl'}
         mt={8}
         className={'Transactions'}
     >
         <Container
-            maxW='container.xl'
-            borderWidth='1px' borderRadius='lg'
+            maxW={'container.xl'}
+            borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
         >
-            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Validators</Heading>
+            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Validators</Heading>
 
             {!validators.error
               ? !validators.loading

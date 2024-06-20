@@ -9,7 +9,6 @@ import {
   Thead,
   Tbody,
   Tr,
-  Th,
   Td,
   TableContainer
 } from '@chakra-ui/react'
@@ -34,10 +33,7 @@ export default function ValidatorsList ({ validators }) {
 
   function getSortedList () {
     if (!validators?.data?.resultSet?.length) return []
-
-    if (sort.direction === 'asc')
-      return validators.data.resultSet.sort((a, b) => (a[sort.key] > b[sort.key] ? 1 : -1))
-      
+    if (sort.direction === 'asc') return validators.data.resultSet.sort((a, b) => (a[sort.key] > b[sort.key] ? 1 : -1))
     return validators.data.resultSet.sort((a, b) => (a[sort.key] > b[sort.key] ? -1 : 1))
   }
 

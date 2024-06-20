@@ -21,13 +21,13 @@ function TableHeaders ({ headers, sortCallback }) {
     })
   }
 
-  useEffect(() => sortCallback(sort), [sort])
+  useEffect(() => sortCallback(sort), [sort, sortCallback])
 
   return <>
     {headers.map((header, i) => (
         <Th
           className={`Table__Header ${header?.sortable ? 'Table__Header--Sortable' : ''}`}
-          onClick={() => {if (header?.sortable) sortHandler(header)}} isNumeric={header?.isNumeric}
+          onClick={() => { if (header?.sortable) sortHandler(header) }} isNumeric={header?.isNumeric}
           key={i}
         >
           {header?.sortable &&

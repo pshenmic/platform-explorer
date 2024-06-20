@@ -43,6 +43,20 @@
             }
         }
     }
+
+    &__Header {
+        &--Sortable {
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    &__SortDirection {
+        display: inline-block;
+        width: 16px;
+        height: 14px;
+    }
 }
 
 .ListNavigation {
