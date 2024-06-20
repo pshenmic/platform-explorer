@@ -14,7 +14,10 @@ import {
   TableContainer
 } from '@chakra-ui/react'
 
+import { TableHeaders } from '../../components/ui/Table'
+
 export default function ValidatorsList ({ validators }) {
+  const [sort, setSort] = useState({ key: 'blocksProposed', direction: 'asc' })
   const [viewActive, setViewActive] = useState(true)
   const activeCount = validators.data?.resultSet?.length > 0 ? validators.data?.resultSet.filter((validator) => validator.active).length : 0
   const inactiveCount = validators.data?.resultSet?.length > 0 ? validators.data?.resultSet.filter((validator) => !validator.active).length : 0
@@ -24,10 +27,38 @@ export default function ValidatorsList ({ validators }) {
       <Tr>
         <Td><Link href={'/validator/a1b2c3'}>{validator.protxhash}</Link></Td>
         <Td isNumeric>{validator.lastBlockHeight}</Td>
-        <Td isNumeric>{validator.BlocksProposed}</Td>
+        <Td isNumeric>{validator.blocksProposed}</Td>
       </Tr>
     )
   }
+
+  function getSortedList () {
+    if (!validators?.data?.resultSet?.length) return []
+
+    if (sort.direction === 'asc')
+      return validators.data.resultSet.sort((a, b) => (a[sort.key] > b[sort.key] ? 1 : -1))
+      
+    return validators.data.resultSet.sort((a, b) => (a[sort.key] > b[sort.key] ? -1 : 1))
+  }
+
+  const headers = [
+    {
+      key: 'hash',
+      label: 'proTxHash'
+    },
+    {
+      key: 'lastBlockHeight',
+      label: 'Last block height',
+      isNumeric: true,
+      sortable: true
+    },
+    {
+      key: 'blocksProposed',
+      label: 'Blocks proposed',
+      isNumeric: true,
+      sortable: true
+    }
+  ]
 
   return (
     <div className={'ValidatorsList'}>
@@ -44,23 +75,17 @@ export default function ValidatorsList ({ validators }) {
       />
 
       <TableContainer>
-        <Table size='md' className='Table'>
+        <Table size={'md'} className={'Table'}>
           <Thead>
             <Tr>
-              <Th>proTxHash</Th>
-              <Th isNumeric>Last block height</Th>
-              <Th isNumeric>Blocks proposed</Th>
+              <TableHeaders headers={headers} sortCallback={setSort} />
             </Tr>
           </Thead>
           <Tbody>
             {!validators.loading
-              ? validators.data.resultSet.map((validator, i) => (
+              ? getSortedList().map((validator, i) => (
                 viewActive === validator.active &&
-                  <ValidatorRow key={i} validator={{
-                    protxhash: 'f92e66edc9c8da41de71073ef08d62c56f8752a3f4e29ced6c515e0b1c074a38',
-                    lastBlockHeight: '13619',
-                    BlocksProposed: '1024'
-                  }}/>
+                  <ValidatorRow key={i} validator={validator}/>
               ))
               : <>loading</>
             }
