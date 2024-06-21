@@ -50,8 +50,8 @@ function DataContractsLayout () {
 
   return (
     <Container
-        maxW='container.xl'
-        color='white'
+        maxW={'container.xl'}
+        color={'white'}
         mt={8}
         mb={8}
         className={'Blocks'}
@@ -59,14 +59,14 @@ function DataContractsLayout () {
         <Container
             maxW={'container.xl'}
             padding={3}
-            borderWidth='1px' borderRadius='lg'
+            borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
         >
-            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Data contracts</Heading>
+            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Data contracts</Heading>
 
             {!dataContracts.loading
               ? !dataContracts.error
-                  ? <DataContractsList dataContracts={dataContracts.data.resultSet} size='l'/>
+                  ? <DataContractsList dataContracts={dataContracts.data.resultSet} size={'l'}/>
                   : <Container h={20}><ErrorMessageBlock/></Container>
               : <LoadingList itemsCount={pageSize}/>}
 
