@@ -1,4 +1,4 @@
-import currencyRound from '../src/util/currencyRound'
+import currencyRound from '../util/currencyRound'
  
 describe('currencyRound', () => {
   it('hundred', () => {
