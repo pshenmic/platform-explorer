@@ -40,7 +40,6 @@ export default function BlocksTotal () {
           {
             title: 'Transactions:',
             value: currencyRound(status?.data?.transactionsCount) || '-',
-            // value: status?.data?.transactionsCount || '-',
             icon: 'Transactions'
           }
         ]}
