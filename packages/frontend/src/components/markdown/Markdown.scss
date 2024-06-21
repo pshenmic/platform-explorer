@@ -4,6 +4,7 @@
 .Markdown {
     a {
         color: var(--chakra-colors-brand-light);
+        transition: color .1s;
 
         &:hover {
             color: var(--chakra-colors-brand-deep);
