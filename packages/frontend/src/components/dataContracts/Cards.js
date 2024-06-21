@@ -16,7 +16,7 @@ function DataContractCard ({ dataContract, loading = false }) {
             <div className={'DataContractCard__Img'}>
               <ImageGenerator username={dataContract.identifier} lightness={50} saturation={50} width={28} height={28}/>
             </div>
-            <div className={'DataContractCard__Name'}>Alice.dash</div>
+            <div className={'DataContractCard__Name'}>{dataContract.name}</div>
           </Flex>
           <div className={'DataContractCard__Id'}>{dataContract.identifier}</div>
         </Link>

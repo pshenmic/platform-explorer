@@ -76,10 +76,13 @@ function Identity ({ identifier }) {
                             <Thead>
                                 <Tr>
                                     <Th pr={0}>Identity info</Th>
-                                    <Th>
-                                        <div className={'IdentityInfo__Avatar'}>
-                                            <ImageGenerator className={'IdentitiesListItem__Avatar'} username={identifier} lightness={50} saturation={50} width={32} height={32}/>
-                                        </div>
+                                    <Th className={'TableHeader TableHeader--Name'}>
+                                        {identifier
+                                          ? <div className={'TableHeader__Content'}>
+                                                <ImageGenerator className={'TableHeader__Avatar'} username={identifier} lightness={50} saturation={50} width={32} height={32}/>
+                                            </div>
+                                          : <Box w={'32px'} h={'32px'} />
+                                        }
                                     </Th>
                                 </Tr>
                             </Thead>
@@ -89,7 +92,7 @@ function Identity ({ identifier }) {
                                     <Td isNumeric>
                                         <LoadingLine loading={identity.loading}>
                                             {identity.data?.identifier}
-                                            </LoadingLine>
+                                        </LoadingLine>
                                     </Td>
                                 </Tr>
                                 <Tr>

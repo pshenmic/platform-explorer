@@ -34,7 +34,7 @@ export default function BlocksTotal () {
           },
           {
             title: 'Avg. TPS*:',
-            value: '145',
+            value: 'n/a',
             icon: 'Timer'
           },
           {

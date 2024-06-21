@@ -2,20 +2,32 @@
 
 import { SideBlock } from '../../components/containers'
 import { DataContractCards } from '../../components/dataContracts'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
-import { useState, useEffect } from 'react'
-import * as Api from '../../util/Api'
 
 export default function Cards () {
-  const [dataContracts, setDataContracts] = useState({ data: {}, loading: true, error: false })
-
-  const fetchData = () => {
-    Api.getDataContracts(1, 4, 'desc', 'documents_count')
-      .then(res => fetchHandlerSuccess(setDataContracts, res))
-      .catch(err => fetchHandlerError(setDataContracts, err))
+  const dataContracts = {
+    data: {
+      resultSet: [
+        {
+          identifier: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+          name: 'Dashpay'
+        },
+        {
+          identifier: 'rUnsWrFu3PKyRMGk2mxmZVBPbQuZx2qtHeFjURoQevX',
+          name: 'MasternodeRewards'
+        },
+        {
+          identifier: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
+          name: 'DPNS'
+        },
+        {
+          identifier: 'HY1keaRK5bcDmujNCQq5pxNyvAiHHpoHQgLN5ppiu4kh',
+          name: 'FeatureFlags'
+        }
+      ]
+    },
+    loading: false,
+    error: false
   }
-
-  useEffect(fetchData, [])
 
   return (
     <SideBlock>

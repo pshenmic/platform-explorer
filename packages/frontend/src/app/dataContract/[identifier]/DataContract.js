@@ -8,6 +8,7 @@ import DocumentsList from '../../../components/documents/DocumentsList'
 import { LoadingLine, LoadingBlock, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import ImageGenerator from '../../../components/imageGenerator'
 import './DataContract.scss'
 
 import {
@@ -53,6 +54,8 @@ function DataContract ({ identifier }) {
       .catch(console.error)
   }
 
+  console.log('dataContract', dataContract)
+
   useEffect(fetchData, [identifier])
 
   const handlePageClick = ({ selected }) => {
@@ -86,7 +89,15 @@ function DataContract ({ identifier }) {
                 <Thead>
                     <Tr>
                         <Th>Data contract info</Th>
-                        <Th></Th>
+                        <Th isNumeric className={'TableHeader TableHeader--Name'}>
+                            <div className={'TableHeader__Content'}>
+                                {dataContract?.data?.name || ''}
+                                {dataContract.data?.identifier
+                                  ? <ImageGenerator className={'TableHeader__Avatar'} username={dataContract.data?.identifier} lightness={50} saturation={50} width={32} height={32}/>
+                                  : <Box w={'32px'} h={'32px'} />
+                                }
+                            </div>
+                        </Th>
                     </Tr>
                 </Thead>
                 <Tbody>
