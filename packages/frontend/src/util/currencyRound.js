@@ -9,7 +9,7 @@ export default function currencyRound (number) {
   if (Math.abs(num) >= 1.0e9 && Math.abs(billions) >= 100) return `${numberFormat(Math.round(billions))}B`
   if (Math.abs(num) >= 1.0e9 && Math.abs(billions) >= 10) return `${numberFormat(billions.toFixed(1))}B`
   if (Math.abs(num) >= 1.0e9) return `${numberFormat(billions.toFixed(2))}B`
-  
+
   if (Math.abs(num) >= 1.0e6 && Math.abs(millions) >= 100) return `${numberFormat(Math.round(millions))}M`
   if (Math.abs(num) >= 1.0e6 && Math.abs(millions) >= 10) return `${numberFormat(millions.toFixed(1))}M`
   if (Math.abs(num) >= 1.0e6) return `${numberFormat(millions.toFixed(2))}M`
