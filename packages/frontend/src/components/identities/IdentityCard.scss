@@ -12,6 +12,14 @@
         flex-shrink: 0;
     }
 
+    &__Alias {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: calc(100% - 65px);
+        overflow: hidden;
+    }
+
     &__Balance {
         color: var(--chakra-colors-gray-500);
     }

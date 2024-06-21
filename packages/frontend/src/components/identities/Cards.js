@@ -19,7 +19,7 @@ function IdentityCard ({ identity, loading = false }) {
                       <div className={'IdentityCard__Img'}>
                         <ImageGenerator username={identity.identifier} lightness={50} saturation={50} width={42} height={42} />
                       </div>
-                      <div className={'IdentityCard__Name'}>DQ-Broderick-29645-backup.dash</div>
+                      <div className={'IdentityCard__Alias'}>{identity.alias || identity.identifier}</div>
                   </Flex>
 
                   <div className={'IdentityCard__Balance'}>{currencyRound(identity.balance)}</div>
