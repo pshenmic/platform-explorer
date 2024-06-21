@@ -1,0 +1,12 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.Markdown {
+    a {
+        color: var(--chakra-colors-brand-normal);
+
+        &:hover {
+            color: var(--chakra-colors-brand-deep);
+        }
+    }
+}

@@ -1,9 +1,11 @@
 import Markdown from 'react-markdown'
 import HeadingRenderer from './HeadingRenderer'
+import './Markdown.scss'
 
 export default function CustomMarkdown ({ children }) {
   return (
       <Markdown
+          className={'Markdown'}
           components={{
             h1: HeadingRenderer,
             h2: HeadingRenderer,
