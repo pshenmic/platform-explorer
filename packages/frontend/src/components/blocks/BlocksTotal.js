@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import TotalCards from '../total/TotalCards'
 import { SideBlock } from '../containers'
 
@@ -29,7 +29,7 @@ export default function BlocksTotal () {
           },
           {
             title: 'Blocks:',
-            value: status?.data?.api?.block?.height || '-',
+            value: currencyRound(status?.data?.api?.block?.height) || '-',
             icon: 'Blocks'
           },
           {
@@ -39,7 +39,8 @@ export default function BlocksTotal () {
           },
           {
             title: 'Transactions:',
-            value: status?.data?.transactionsCount || '-',
+            value: currencyRound(status?.data?.transactionsCount) || '-',
+            // value: status?.data?.transactionsCount || '-',
             icon: 'Transactions'
           }
         ]}
