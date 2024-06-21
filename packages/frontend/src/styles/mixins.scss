@@ -15,6 +15,7 @@
     &__IdentifierContainer {
         display: flex;
         align-items: center;
+        min-width: 50px;
     }
 
     &__Avatar {
