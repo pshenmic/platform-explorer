@@ -35,7 +35,7 @@ function DataContractCards ({ title, items }) {
               <CardsGridTitle>{title}</CardsGridTitle>
             </CardsGridHeader>
           }
-          
+
           <CardsGridItems>
             {!items.loading
               ? items?.data?.resultSet?.length
