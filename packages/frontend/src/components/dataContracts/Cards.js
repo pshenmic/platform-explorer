@@ -30,10 +30,12 @@ function DataContractCards ({ title, items }) {
   return (
     !items.error
       ? <CardsGrid>
-          <CardsGridHeader>
-            <CardsGridTitle>{title}</CardsGridTitle>
-          </CardsGridHeader>
-
+          {title &&
+            <CardsGridHeader>
+              <CardsGridTitle>{title}</CardsGridTitle>
+            </CardsGridHeader>
+          }
+          
           <CardsGridItems>
             {!items.loading
               ? items?.data?.resultSet?.length

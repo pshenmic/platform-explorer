@@ -31,7 +31,7 @@ export default function Cards () {
 
   return (
     <SideBlock>
-      <DataContractCards title={'Top Contracts:'} items={dataContracts}/>
+      <DataContractCards items={dataContracts}/>
     </SideBlock>
   )
 }
