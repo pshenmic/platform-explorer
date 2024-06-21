@@ -54,8 +54,6 @@ function DataContract ({ identifier }) {
       .catch(console.error)
   }
 
-  console.log('dataContract', dataContract)
-
   useEffect(fetchData, [identifier])
 
   const handlePageClick = ({ selected }) => {
