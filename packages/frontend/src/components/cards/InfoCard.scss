@@ -11,7 +11,7 @@
     box-shadow: 4px 4px 5px rgba(0, 0, 0, .2);
 
     &--Clickable {
-        transition: all 1s;
+        transition: box-shadow .1s;
 
         &:hover {
             cursor: pointer;
