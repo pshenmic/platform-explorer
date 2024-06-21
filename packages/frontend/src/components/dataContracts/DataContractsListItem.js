@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import ImageGenerator from '../imageGenerator'
 import './DataContractsListItem.scss'
 
 function DataContractsListItem ({ dataContract }) {
@@ -9,8 +10,9 @@ function DataContractsListItem ({ dataContract }) {
         href={`/dataContract/${identifier}`}
         className={'DataContractsListItem'}
     >
-        <div className={'DataContractsListItem__Identifier'}>
-            {identifier}
+        <div className={'DataContractsListItem__IdentifierContainer'}>
+            <ImageGenerator className={'DataContractsListItem__Avatar'} username={identifier} lightness={50} saturation={50} width={28} height={28}/>
+            <div className={'DataContractsListItem__Identifier'}>{identifier}</div>
         </div>
 
         {isSystem && <div>SYSTEM</div>}

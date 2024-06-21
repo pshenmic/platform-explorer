@@ -12,6 +12,15 @@
     font-family: monospace;
     font-size: 12pt;
 
+    &__IdentifierContainer {
+        display: flex;
+        align-items: center;
+    }
+
+    &__Avatar {
+        margin-right: 12px;
+    }
+
     &:hover {
         background: var(--chakra-colors-whiteAlpha-50);
         text-decoration: none;

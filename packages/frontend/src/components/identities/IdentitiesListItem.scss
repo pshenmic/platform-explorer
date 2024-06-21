@@ -17,15 +17,6 @@
         white-space: nowrap;
     }
 
-    &__IdentifierContainer {
-        display: flex;
-        align-items: center;
-    }
-
-    &__Avatar {
-        margin-right: 12px;
-    }
-
     @media screen and (max-width: $breakpoint-sm) {
         flex-wrap: wrap;
 
