@@ -1,7 +1,7 @@
 const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 module.exports = class ValidatorsDAO {
-  constructor(knex) {
+  constructor (knex) {
     this.knex = knex
   }
 
@@ -11,13 +11,13 @@ module.exports = class ValidatorsDAO {
         'validators.pro_tx_hash as pro_tx_hash',
         this.knex('blocks')
           .where('validator', proTxHash)
-          .select(this.knex.raw('MAX(timestamp) as latest_timestamp'),).as('latest_timestamp'),
+          .select(this.knex.raw('MAX(timestamp) as latest_timestamp')).as('latest_timestamp'),
         this.knex('blocks')
           .where('validator', proTxHash)
-          .select(this.knex.raw('MAX(height) as latest_height'),).as('latest_height'),
+          .select(this.knex.raw('MAX(height) as latest_height')).as('latest_height'),
         this.knex('blocks')
           .where('validator', proTxHash)
-          .select(this.knex.raw('CAST( COUNT(*) as INT) as blocks_count'),).as('blocks_count')
+          .select(this.knex.raw('CAST( COUNT(*) as INT) as blocks_count')).as('blocks_count')
       )
       .where('validators.pro_tx_hash', proTxHash)
 
@@ -39,13 +39,13 @@ module.exports = class ValidatorsDAO {
         'id',
         this.knex('blocks')
           .whereRaw('pro_tx_hash = validator')
-          .select(this.knex.raw('MAX(timestamp) as latest_timestamp'),).as('latest_timestamp'),
+          .select(this.knex.raw('MAX(timestamp) as latest_timestamp')).as('latest_timestamp'),
         this.knex('blocks')
           .whereRaw('pro_tx_hash = validator')
-          .select(this.knex.raw('MAX(height) as latest_height'),).as('latest_height'),
+          .select(this.knex.raw('MAX(height) as latest_height')).as('latest_height'),
         this.knex('blocks')
           .whereRaw('pro_tx_hash = validator')
-          .select(this.knex.raw('CAST( COUNT(*) as INT) as blocks_count'),).as('blocks_count'))
+          .select(this.knex.raw('CAST( COUNT(*) as INT) as blocks_count')).as('blocks_count'))
       .select(this.knex.raw(`rank() over (order by id ${order}) rank`))
       .as('validators')
 
