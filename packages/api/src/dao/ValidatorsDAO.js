@@ -1,6 +1,5 @@
 const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { validator } = require('../../test/utils/fixtures')
 
 module.exports = class ValidatorsDAO {
   constructor (knex) {
@@ -45,10 +44,10 @@ module.exports = class ValidatorsDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    const pro_tx_hashes = rows.map((row) => row.pro_tx_hash)
+    const proTxHashes = rows.map((row) => row.pro_tx_hash)
 
     const proposedBlocks = await this.knex('blocks')
-      .whereIn('validator', pro_tx_hashes)
+      .whereIn('validator', proTxHashes)
       .select(
         'validator as pro_tx_hash',
         this.knex.raw('MAX(timestamp) as latest_timestamp'),
