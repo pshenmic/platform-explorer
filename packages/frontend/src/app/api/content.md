@@ -50,6 +50,7 @@ HTTP /status
         version: "1.0.0",
         block: {
             height: 20153,
+            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
             timestamp: "2024-06-06T21:50:20.949Z"
         }
     }
@@ -60,6 +61,7 @@ HTTP /status
         version: "0.14.0-dev.6",
         block: {
             height: 20154,
+            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
             timestamp: "2024-06-06T21:53:27.947Z"
          }
     }     
@@ -83,6 +85,34 @@ GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
         },
         txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
     }
+}
+```
+---
+### Blocks by validator
+Return all blocks proposed by the specific validators
+```
+GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
+
+{
+    pagination: {
+        page: 1,
+        limit: 10,
+        total: 10
+    },
+    resultSet: [
+    {
+        header: {
+            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
+            height: 1337,
+            timestamp: "2024-03-18T10:13:54.150Z",
+            blockVersion: 13,
+            appVersion: 1,
+            validator: "B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18",
+            l1LockedHeight: 1337
+        },
+        txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
+    }, ...
+    ]
 }
 ```
 ---
@@ -180,11 +210,15 @@ Response codes:
 ---
 ### Data Contract by Identifier
 Return data contract by given identifier
+
+* `name` field is nullable
+
 ```
 GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
     identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+    name: "DPNS",
     owner: "4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF",
     schema: "{}",
     version: 0,
@@ -204,7 +238,8 @@ Response codes:
 ### Data Contracts
 Return dataContracts set paged and order by block height or documents count.
 
-Valid `order_by` values are `block_height` or `documents_count`
+* Valid `order_by` values are `block_height` or `documents_count`
+* `name` field is nullable
 
 ```
 GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
@@ -218,6 +253,7 @@ GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
     resultSet: [
     {
         identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+        name: "DPNS",
         owner: "4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF",
         schema: "{}",
         version: 0,
@@ -320,7 +356,7 @@ Response codes:
 ### Identities
 Return all identities paged and order by block height, tx count or balance.
 
-Valid `order_by` values are `block_height`, `tx_count` or `balance`
+* Valid `order_by` values are `block_height`, `tx_count` or `balance`
 ```
 GET /identities?page=1&limit=10&order=asc&order_by=block_height
 
@@ -355,6 +391,8 @@ Response codes:
 
 ### Data contracts by Identity
 Return all data contracts by the given identity
+
+* `name` field is nullable
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=1&limit=10&order=asc
 
@@ -367,6 +405,7 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=
     resultSet: [
     {
         identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+        name: "DPNS",
         owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
         version: 0,
         schema: null,

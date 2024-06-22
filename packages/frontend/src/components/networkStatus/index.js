@@ -1,13 +1,30 @@
+'use client'
+
+import * as Api from '../../util/Api'
+import { useState, useEffect, useCallback } from 'react'
 import { InfoIcon, CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
 import { Container, Tooltip, Flex } from '@chakra-ui/react'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
-function NetworkStatus ({ status }) {
+function NetworkStatus () {
+  const [status, setStatus] = useState({ data: {}, loading: true, error: false })
+
+  const fetchData = useCallback(() => {
+    Api.getStatus()
+      .then(res => fetchHandlerSuccess(setStatus, res))
+      .catch(err => fetchHandlerError(setStatus, err))
+      .finally(() => setTimeout(fetchData, 60000))
+  }, [])
+
+  useEffect(fetchData, [fetchData])
+
   const msFromLastBlock = new Date() - new Date(status?.data?.tenderdash?.block?.timestamp)
-  const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 4
-  const apiStatus = typeof status?.data?.api?.block?.timestamp === 'string' &&
-    status?.data?.api?.block?.timestamp === status?.data?.tenderdash?.block?.timestamp
+  const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
+  const apiStatus = typeof status?.data?.tenderdash?.block?.timestamp === 'string' &&
+    new Date(status?.data?.api?.block?.timestamp).getTime() ===
+    new Date(status?.data?.tenderdash?.block?.timestamp).getTime()
 
   const NetworkStatusIcon = networkStatus
     ? <CheckCircleIcon color={'green.500'} ml={2}/>
@@ -18,11 +35,10 @@ function NetworkStatus ({ status }) {
     : <WarningTwoIcon color={'yellow.400'} ml={2}/>
 
   function getLastBlocktimeString () {
-    if (!status?.data?.latestBlock?.header?.timestamp) return 'n/a'
+    if (!status?.data?.api?.block?.timestamp) return 'n/a'
 
-    const diff = new Date() - new Date(status?.data?.latestBlock?.header?.timestamp)
+    const diff = new Date() - new Date(status?.data?.api?.block?.timestamp)
 
-    console.log()
     if (diff < 60 * 1000) {
       return `${Math.floor((diff / 1000))} sec. ago`
     } else {
@@ -118,10 +134,10 @@ function NetworkStatus ({ status }) {
             <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Latest block:</div>
 
-                {status?.data?.latestBlock?.header !== undefined
+                {status?.data?.api?.block?.height !== undefined
                   ? <div className={'NetworkStatus__Value'}>
-                        <Link href={`/block/${status.data.latestBlock.header.hash}`}>
-                            #{status.data.latestBlock.header.height}, {getLastBlocktimeString()}
+                        <Link href={`/block/${status?.data?.api?.block?.hash}`}>
+                            #{status?.data?.api?.block?.height}, {getLastBlocktimeString()}
                         </Link>
                     </div>
                   : <div className={'NetworkStatus__Value'}>n/a</div>}

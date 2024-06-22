@@ -62,14 +62,7 @@ function Home () {
 
       Api.getIdentities(1, 10, 'desc', 'tx_count')
         .then(paginatedTrendingIdentities => fetchHandlerSuccess(setTrendingIdentities, paginatedTrendingIdentities))
-        .catch(err => fetchHandlerError(setTrendingIdentities, err)),
-
-      Api.getBlocks(1, 1, 'desc')
-        .then(res => {
-          const [latestBlock] = res.resultSet
-          fetchHandlerSuccess(setStatus, { latestBlock })
-        })
-        .catch(err => fetchHandlerError(setStatus, err))
+        .catch(err => fetchHandlerError(setTrendingIdentities, err))
     ])
       .catch(console.log)
   }
@@ -163,7 +156,7 @@ function Home () {
               <Box flexShrink={'0'} w={10} h={10} />
 
               <Container maxW={'none'} p={0}>
-                  <NetworkStatus status={status}/>
+                  <NetworkStatus/>
               </Container>
           </Flex>
       </Container>
@@ -209,7 +202,7 @@ function Home () {
                               <select
                                   className={'ChartBlock__TimeframeSelector'}
                                   onChange={(e) => setTransactionsTimespan(e.target.value)}
-                                  defaultValue={transactionsChartConfig.timespan.default}
+                                  value={transactionsTimespan}
                               >
                                   {transactionsChartConfig.timespan.values.map(timespan => {
                                     return <option value={timespan} key={'ts' + timespan}>{timespan}</option>

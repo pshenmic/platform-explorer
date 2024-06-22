@@ -3,7 +3,7 @@ import ImageGenerator from '../imageGenerator'
 import './DataContractsListItem.scss'
 
 function DataContractsListItem ({ dataContract }) {
-  const { identifier, timestamp, isSystem } = dataContract
+  const { identifier, name, timestamp, isSystem } = dataContract
 
   return (
     <Link
@@ -12,7 +12,7 @@ function DataContractsListItem ({ dataContract }) {
     >
         <div className={'DataContractsListItem__IdentifierContainer'}>
             <ImageGenerator className={'DataContractsListItem__Avatar'} username={identifier} lightness={50} saturation={50} width={28} height={28}/>
-            <div className={'DataContractsListItem__Identifier'}>{identifier}</div>
+            <div className={'DataContractsListItem__Identifier'}>{name ? <b>{name}</b> : identifier}</div>
         </div>
 
         {isSystem && <div>SYSTEM</div>}

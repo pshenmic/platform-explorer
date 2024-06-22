@@ -1,6 +1,6 @@
 mod dao;
 
-use std::convert::identity;
+use std::env;
 use std::num::ParseIntError;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
 use deadpool_postgres::{PoolError};
@@ -9,7 +9,7 @@ use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
-use dpp::platform_value::{platform_value, BinaryData, Value};
+use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::serialization::PlatformSerializable;
@@ -23,7 +23,6 @@ use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTr
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
 use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
-use dpp::util::json_value::JsonValueExt;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
 use crate::entities::data_contract::DataContract;
@@ -62,14 +61,16 @@ impl From<ParseIntError> for ProcessorError {
 pub struct PSQLProcessor {
     decoder: StateTransitionDecoder,
     dao: PostgresDAO,
+    platform_explorer_identifier: Identifier,
 }
 
 impl PSQLProcessor {
     pub fn new() -> PSQLProcessor {
         let dao = PostgresDAO::new();
         let decoder = StateTransitionDecoder::new();
-
-        return PSQLProcessor { decoder, dao };
+        let platform_explorer_identifier_string: String = env::var("PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").expect("You've not set the PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").parse().expect("Failed to parse PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER env");
+        let platform_explorer_identifier = Identifier::from_string(&platform_explorer_identifier_string, Base58).unwrap();
+        return PSQLProcessor { decoder, dao, platform_explorer_identifier };
     }
 
     pub async fn handle_data_contract_create(&self, state_transition: DataContractCreateTransition, st_hash: String) -> () {
@@ -98,7 +99,7 @@ impl PSQLProcessor {
                     .get_str_at_path("label")
                     .unwrap();
 
-                let normalizedParentDomainName = document_transition
+                let normalized_parent_domain_name = document_transition
                     .data()
                     .unwrap()
                     .get_str_at_path("normalizedParentDomainName")
@@ -122,9 +123,38 @@ impl PSQLProcessor {
 
                 let identity_identifier = Identifier::from_bytes(&identity_identifier.clone().into_identifier_bytes().unwrap()).unwrap().to_string(Base58);
                 let identity = self.dao.get_identity_by_identifier(identity_identifier.clone()).await.unwrap().expect(&format!("Could not find identity with identifier {}", identity_identifier));
-                let alias = format!("{}.{}", label, normalizedParentDomainName);
+                let alias = format!("{}.{}", label, normalized_parent_domain_name);
 
                 self.dao.create_identity_alias(identity, alias).await.unwrap();
+            }
+
+            if document_type == "dataContracts" && document_transition.data_contract_id() == self.platform_explorer_identifier {
+                let data_contract_identifier_str = document_transition
+                    .data()
+                    .unwrap()
+                    .get_str_at_path("identifier")
+                    .unwrap();
+
+                let data_contract_identifier = Identifier::from_string(data_contract_identifier_str, Base58).unwrap();
+
+                let data_contract_name = document_transition
+                    .data()
+                    .unwrap()
+                    .get_str_at_path("name")
+                    .unwrap();
+
+                let data_contract = self.dao.get_data_contract_by_identifier(data_contract_identifier).await
+                    .expect(&format!("Could not get DataContract with identifier {} from the database",
+                                     data_contract_identifier_str))
+                    .expect(&format!("Could not find DataContract with identifier {} in the database",
+                                     data_contract_identifier_str));
+
+
+                if data_contract.owner == state_transition.owner_id() {
+                    self.dao.set_data_contract_name(data_contract, String::from(data_contract_name)).await.unwrap();
+                } else {
+                    println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document.identifier.to_string(Base58));
+                }
             }
 
 

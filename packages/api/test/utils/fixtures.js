@@ -84,7 +84,7 @@ const fixtures = {
 
     return { ...row, txHash: state_transition_hash ?? transaction.hash, id: result[0].id, transaction }
   },
-  dataContract: async (knex, { identifier, schema, version, state_transition_hash, owner, is_system, documents = [] } = {}) => {
+  dataContract: async (knex, { identifier, name, schema, version, state_transition_hash, owner, is_system, documents = [] } = {}) => {
     if (!identifier) {
       identifier = generateIdentifier()
     }
@@ -96,6 +96,7 @@ const fixtures = {
     const row = {
       owner,
       identifier,
+      name: name ?? null,
       state_transition_hash,
       schema: schema ?? {},
       version: version ?? 0,

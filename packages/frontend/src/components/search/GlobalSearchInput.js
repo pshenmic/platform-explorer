@@ -3,11 +3,12 @@ import ModalWindow from '../modalWindow'
 import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
 import { SearchIcon } from '@chakra-ui/icons'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 function GlobalSearchInput () {
   const [showModal, setShowModal] = useState(false)
   const [modalText, setModalText] = useState('false')
+  const router = useRouter()
 
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -23,33 +24,44 @@ function GlobalSearchInput () {
     }
   }
 
+  const searchRedirect = (url) => {
+    setSearchQuery('')
+    router.push(url)
+  }
+
   const search = async () => {
     try {
       const searchResult = await Api.search(searchQuery)
 
       if (searchResult?.block) {
-        setSearchQuery('')
-        redirect(`/block/${searchResult?.block.header.hash}`)
+        searchRedirect(`/block/${searchResult?.block.header.hash}`)
+        return
       }
 
       if (searchResult?.transaction) {
-        setSearchQuery('')
-        redirect(`/transaction/${searchResult?.transaction.hash}`)
+        searchRedirect(`/transaction/${searchResult?.transaction.hash}`)
+        return
       }
 
       if (searchResult?.dataContract) {
-        setSearchQuery('')
-        redirect(`/dataContract/${searchResult?.dataContract.identifier}`)
+        searchRedirect(`/dataContract/${searchResult?.dataContract.identifier}`)
+        return
       }
 
       if (searchResult?.document) {
-        setSearchQuery('')
-        redirect(`/document/${searchResult?.document.identifier}`)
+        searchRedirect(`/document/${searchResult?.document.identifier}`)
+        return
+      }
+
+      if (searchResult?.identity) {
+        searchRedirect(`/identity/${searchResult?.identity.identifier}`)
+        return
       }
 
       showModalWindow('Not found', 6000)
     } catch (e) {
-      showModalWindow('Not found', 6000)
+      console.error(e)
+      showModalWindow('Request error', 6000)
     }
   }
 

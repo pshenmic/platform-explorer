@@ -1,0 +1,27 @@
+{
+  "name": "data-contract",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dataContract:deploy": "node index.js",
+    "lint": "standard ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pshenmic/platform-explorer.git"
+  },
+  "author": "owl352",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pshenmic/platform-explorer/issues"
+  },
+  "homepage": "https://github.com/pshenmic/platform-explorer#readme",
+  "description": "",
+  "dependencies": {
+    "dash": "4.0.0-dev.12",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "standard": "^17.1.0"
+  }
+}
