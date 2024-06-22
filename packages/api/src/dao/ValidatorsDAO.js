@@ -1,6 +1,5 @@
 const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-//
 module.exports = class ValidatorsDAO {
   constructor (knex) {
     this.knex = knex
