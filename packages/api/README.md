@@ -174,6 +174,41 @@ GET /blocks
 }
 ```
 ---
+### Validators
+Return all validators with pagination info
+```
+GET /validators
+
+{
+  resultSet: [
+    {
+      proTxHash: '35513037C3476ADDE0B23903A1A1E50660D076370F62F79F0E24212F29088044',
+      latestHeight: 5,
+      latestTimestamp: '2024-06-22T12:42:06.112Z',
+      blocksCount: 4
+    }, ...
+  ],
+  pagination: { 
+    page: 1, 
+    limit: 10, 
+    total: 30 
+  }
+}
+```
+---
+### Validator by ProTxHash
+Get validator by ProTxHash
+```
+GET /validator/35513037C3476ADDE0B23903A1A1E50660D076370F62F79F0E24212F29088044
+
+{
+  proTxHash: '5F1BBB3E5E546BC84731E08679C45A467DD38793B84B575601A56411DD279E34',
+  latestHeight: 5,
+  latestTimestamp: '2024-06-22T12:47:47.359Z',
+  blocksCount: 4
+}
+```
+---
 ### Transaction by hash
 Get a transaction (state transition) by hash
 
