@@ -1,8 +1,9 @@
 const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
+const { validator } = require('../../test/utils/fixtures')
 
 module.exports = class ValidatorsDAO {
-  constructor (knex) {
+  constructor(knex) {
     this.knex = knex
   }
 
@@ -15,7 +16,16 @@ module.exports = class ValidatorsDAO {
       return null
     }
 
-    return Validator.fromRow(row)
+    const [proposedBlocks] = await this.knex('blocks')
+      .where('validator', row.pro_tx_hash)
+      .select(
+        'validator as pro_tx_hash',
+        this.knex.raw('MAX(timestamp) as latest_timestamp'),
+        this.knex.raw('MAX(height) as latest_height'),
+        this.knex.raw('CAST( COUNT(*) as INT) as blocks_count '))
+      .groupBy('pro_tx_hash')
+
+    return Validator.fromRow(proposedBlocks)
   }
 
   getValidators = async (page, limit, order) => {
@@ -35,7 +45,20 @@ module.exports = class ValidatorsDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    const resultSet = rows.map((row) => Validator.fromRow(row))
+    const pro_tx_hashes = rows.map((row) => row.pro_tx_hash)
+
+    const proposedBlocks = await this.knex('blocks')
+      .whereIn('validator', pro_tx_hashes)
+      .select(
+        'validator as pro_tx_hash',
+        this.knex.raw('MAX(timestamp) as latest_timestamp'),
+        this.knex.raw('MAX(height) as latest_height'),
+        this.knex.raw('CAST( COUNT(*) as INT) as blocks_count '))
+      .groupBy('pro_tx_hash')
+
+    const resultSet = rows.map((row) =>
+      Validator.fromRow(proposedBlocks.find((block) => block.pro_tx_hash === row.pro_tx_hash))
+    )
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }

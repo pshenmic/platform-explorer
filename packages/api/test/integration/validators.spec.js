@@ -11,6 +11,7 @@ describe('Validators routes', () => {
   let knex
 
   let validators
+  let blocks
 
   before(async () => {
     app = await server.start()
@@ -18,12 +19,17 @@ describe('Validators routes', () => {
 
     knex = getKnex()
     validators = []
+    blocks = []
 
     await fixtures.cleanup(knex)
 
-    for (let i = 0; i < 30; i++) {
+    for (let i = 1; i < 31; i++) {
       const validator = await fixtures.validator(knex)
       validators.push(validator)
+      for (let b = 1; b < 5; b++) {
+        const block = await fixtures.block(knex, { validator: validator.pro_tx_hash, height: i * b + 1 })
+        blocks.push(block)
+      }
     }
   })
 
@@ -40,8 +46,15 @@ describe('Validators routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+
+      const lastBlocks = blocks.filter((block) => block.validator === body.proTxHash).sort((a, b) => b.height - a.height)
+      const [lastBlock] = lastBlocks
+
       const expectedValidator = {
-        proTxHash: validator.pro_tx_hash
+        proTxHash: validator.pro_tx_hash,
+        latestHeight: lastBlock.height,
+        latestTimestamp: lastBlock.timestamp.toISOString(),
+        blocksCount: lastBlocks.length,
       }
 
       assert.deepEqual(expectedValidator, body)
@@ -67,9 +80,16 @@ describe('Validators routes', () => {
 
       const expectedValidators = validators
         .slice(0, 10)
-        .map(row => ({
-          proTxHash: row.pro_tx_hash
-        }))
+        .map(row => {
+          const lastBlocks = blocks.filter((block) => block.validator === row.pro_tx_hash).sort((a, b) => b.height - a.height)
+          const [lastBlock] = lastBlocks
+          return ({
+            proTxHash: row.pro_tx_hash,
+            latestHeight: lastBlock.height,
+            latestTimestamp: lastBlock.timestamp.toISOString(),
+            blocksCount: lastBlocks.length,
+          })
+        })
 
       assert.deepEqual(expectedValidators, body.resultSet)
     })
@@ -87,9 +107,16 @@ describe('Validators routes', () => {
       const expectedValidators = validators
         .slice(validators.length - 10, validators.length)
         .sort((a, b) => b.id - a.id)
-        .map(row => ({
-          proTxHash: row.pro_tx_hash
-        }))
+        .map(row => {
+          const lastBlocks = blocks.filter((block) => block.validator === row.pro_tx_hash).sort((a, b) => b.height - a.height)
+          const [lastBlock] = lastBlocks
+          return ({
+            proTxHash: row.pro_tx_hash,
+            latestHeight: lastBlock.height,
+            latestTimestamp: lastBlock.timestamp.toISOString(),
+            blocksCount: lastBlocks.length,
+          })
+        })
 
       assert.deepEqual(expectedValidators, body.resultSet)
     })
@@ -106,9 +133,16 @@ describe('Validators routes', () => {
 
       const expectedValidators = validators
         .slice(10, 20)
-        .map(row => ({
-          proTxHash: row.pro_tx_hash
-        }))
+        .map(row => {
+          const lastBlocks = blocks.filter((block) => block.validator === row.pro_tx_hash).sort((a, b) => b.height - a.height)
+          const [lastBlock] = lastBlocks
+          return ({
+            proTxHash: row.pro_tx_hash,
+            latestHeight: lastBlock.height,
+            latestTimestamp: lastBlock.timestamp.toISOString(),
+            blocksCount: lastBlocks.length,
+          })
+        })
 
       assert.deepEqual(expectedValidators, body.resultSet)
     })
@@ -125,9 +159,16 @@ describe('Validators routes', () => {
 
       const expectedValidators = validators
         .slice(0, 7)
-        .map(row => ({
-          proTxHash: row.pro_tx_hash
-        }))
+        .map(row => {
+          const lastBlocks = blocks.filter((block) => block.validator === row.pro_tx_hash).sort((a, b) => b.height - a.height)
+          const [lastBlock] = lastBlocks
+          return ({
+            proTxHash: row.pro_tx_hash,
+            latestHeight: lastBlock.height,
+            latestTimestamp: lastBlock.timestamp.toISOString(),
+            blocksCount: lastBlocks.length,
+          })
+        })
 
       assert.deepEqual(expectedValidators, body.resultSet)
     })
@@ -144,9 +185,16 @@ describe('Validators routes', () => {
 
       const expectedValidators = validators
         .slice(7, 14)
-        .map(row => ({
-          proTxHash: row.pro_tx_hash
-        }))
+        .map(row => {
+          const lastBlocks = blocks.filter((block) => block.validator === row.pro_tx_hash).sort((a, b) => b.height - a.height)
+          const [lastBlock] = lastBlocks
+          return ({
+            proTxHash: row.pro_tx_hash,
+            latestHeight: lastBlock.height,
+            latestTimestamp: lastBlock.timestamp.toISOString(),
+            blocksCount: lastBlocks.length,
+          })
+        })
 
       assert.deepEqual(expectedValidators, body.resultSet)
     })
@@ -164,9 +212,16 @@ describe('Validators routes', () => {
       const expectedValidators = validators
         .sort((a, b) => b.id - a.id)
         .slice(21, 28)
-        .map(row => ({
-          proTxHash: row.pro_tx_hash
-        }))
+        .map(row => {
+          const lastBlocks = blocks.filter((block) => block.validator === row.pro_tx_hash).sort((a, b) => b.height - a.height)
+          const [lastBlock] = lastBlocks
+          return ({
+            proTxHash: row.pro_tx_hash,
+            latestHeight: lastBlock.height,
+            latestTimestamp: lastBlock.timestamp.toISOString(),
+            blocksCount: lastBlocks.length,
+          })
+        })
 
       assert.deepEqual(expectedValidators, body.resultSet)
     })
@@ -184,9 +239,16 @@ describe('Validators routes', () => {
       const expectedValidators = validators
         .sort((a, b) => b.id - a.id)
         .slice(28, 30)
-        .map(row => ({
-          proTxHash: row.pro_tx_hash
-        }))
+        .map(row => {
+          const lastBlocks = blocks.filter((block) => block.validator === row.pro_tx_hash).sort((a, b) => b.height - a.height)
+          const [lastBlock] = lastBlocks
+          return ({
+            proTxHash: row.pro_tx_hash,
+            latestHeight: lastBlock.height,
+            latestTimestamp: lastBlock.timestamp.toISOString(),
+            blocksCount: lastBlocks.length,
+          })
+        })
       assert.deepEqual(expectedValidators, body.resultSet)
     })
 
