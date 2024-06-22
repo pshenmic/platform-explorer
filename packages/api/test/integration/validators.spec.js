@@ -46,7 +46,6 @@ describe('Validators routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-
       const lastBlocks = blocks.filter((block) => block.validator === body.proTxHash).sort((a, b) => b.height - a.height)
       const [lastBlock] = lastBlocks
 
@@ -54,7 +53,7 @@ describe('Validators routes', () => {
         proTxHash: validator.pro_tx_hash,
         latestHeight: lastBlock.height,
         latestTimestamp: lastBlock.timestamp.toISOString(),
-        blocksCount: lastBlocks.length,
+        blocksCount: lastBlocks.length
       }
 
       assert.deepEqual(expectedValidator, body)
@@ -87,7 +86,7 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             latestHeight: lastBlock.height,
             latestTimestamp: lastBlock.timestamp.toISOString(),
-            blocksCount: lastBlocks.length,
+            blocksCount: lastBlocks.length
           })
         })
 
@@ -114,7 +113,7 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             latestHeight: lastBlock.height,
             latestTimestamp: lastBlock.timestamp.toISOString(),
-            blocksCount: lastBlocks.length,
+            blocksCount: lastBlocks.length
           })
         })
 
@@ -140,7 +139,7 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             latestHeight: lastBlock.height,
             latestTimestamp: lastBlock.timestamp.toISOString(),
-            blocksCount: lastBlocks.length,
+            blocksCount: lastBlocks.length
           })
         })
 
@@ -166,7 +165,7 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             latestHeight: lastBlock.height,
             latestTimestamp: lastBlock.timestamp.toISOString(),
-            blocksCount: lastBlocks.length,
+            blocksCount: lastBlocks.length
           })
         })
 
@@ -192,7 +191,7 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             latestHeight: lastBlock.height,
             latestTimestamp: lastBlock.timestamp.toISOString(),
-            blocksCount: lastBlocks.length,
+            blocksCount: lastBlocks.length
           })
         })
 
@@ -219,7 +218,7 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             latestHeight: lastBlock.height,
             latestTimestamp: lastBlock.timestamp.toISOString(),
-            blocksCount: lastBlocks.length,
+            blocksCount: lastBlocks.length
           })
         })
 
@@ -246,7 +245,7 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             latestHeight: lastBlock.height,
             latestTimestamp: lastBlock.timestamp.toISOString(),
-            blocksCount: lastBlocks.length,
+            blocksCount: lastBlocks.length
           })
         })
       assert.deepEqual(expectedValidators, body.resultSet)

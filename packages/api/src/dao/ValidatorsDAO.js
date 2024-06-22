@@ -3,7 +3,7 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { validator } = require('../../test/utils/fixtures')
 
 module.exports = class ValidatorsDAO {
-  constructor(knex) {
+  constructor (knex) {
     this.knex = knex
   }
 
