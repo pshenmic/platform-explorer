@@ -1,18 +1,51 @@
 module.exports = class Validator {
   proTxHash
-  latestHeight
-  latestTimestamp
-  blocksCount
+  propsedBlock
 
-  constructor (proTxHash, latestHeight, latestTimestamp, blocksCount) {
+  constructor(
+    proTxHash,
+    latestHeight,
+    latestTimestamp,
+    blocksCount,
+    blockHash,
+    l1LockedHeight,
+    appVersion,
+    blockVersion
+  ) {
     this.proTxHash = proTxHash
-    this.latestHeight = latestHeight
-    this.latestTimestamp = latestTimestamp
-    this.blocksCount = blocksCount
+    this.propsedBlock = {
+      header: {
+        latestHeight: latestHeight,
+        latestTimestamp: latestTimestamp,
+        blocksCount: Number(blocksCount),
+        blockHash: blockHash,
+        l1LockedHeight: l1LockedHeight,
+        appVersion: appVersion,
+        blockVersion: blockVersion
+      }
+    }
   }
 
   // eslint-disable-next-line camelcase
-  static fromRow ({ pro_tx_hash, latest_height, latest_timestamp, blocks_count }) {
-    return new Validator(pro_tx_hash, latest_height, latest_timestamp, blocks_count)
+  static fromRow({
+    pro_tx_hash,
+    latest_height,
+    latest_timestamp,
+    blocks_count,
+    block_hash,
+    l1_locked_height,
+    app_version,
+    block_version
+  }) {
+    return new Validator(
+      pro_tx_hash,
+      latest_height,
+      latest_timestamp,
+      blocks_count,
+      block_hash,
+      l1_locked_height,
+      app_version,
+      block_version
+    )
   }
 }

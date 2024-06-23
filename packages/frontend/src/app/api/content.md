@@ -151,10 +151,18 @@ GET /validators
 {
   resultSet: [
     {
-      proTxHash: '35513037C3476ADDE0B23903A1A1E50660D076370F62F79F0E24212F29088044',
-      latestHeight: 5,
-      latestTimestamp: '2024-06-22T12:42:06.112Z',
-      blocksCount: 4
+      "proTxHash": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+      "propsedBlock": {
+        "header": {
+          "latestHeight": 5,
+          "latestTimestamp": "2024-06-23T13:51:44.154Z",
+          "blocksCount": 5,
+          "blockHash": "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
+          "l1LockedHeight": 1337,
+          "appVersion": 1,
+          "blockVersion": 13
+        }
+      }
     }, ...
   ],
   pagination: { 
@@ -168,13 +176,21 @@ GET /validators
 ### Validator by ProTxHash
 Get validator by ProTxHash
 ```
-GET /validator/35513037C3476ADDE0B23903A1A1E50660D076370F62F79F0E24212F29088044
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 
 {
-  proTxHash: '5F1BBB3E5E546BC84731E08679C45A467DD38793B84B575601A56411DD279E34',
-  latestHeight: 5,
-  latestTimestamp: '2024-06-22T12:47:47.359Z',
-  blocksCount: 4
+  "proTxHash": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+  "propsedBlock": {
+    "header": {
+        "latestHeight": 5,
+        "latestTimestamp": "2024-06-23T13:51:44.154Z",
+        "blocksCount": 5,
+        "blockHash": "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
+        "l1LockedHeight": 1337,
+        "appVersion": 1,
+        "blockVersion": 13
+    }
+  }
 }
 ```
 ---
