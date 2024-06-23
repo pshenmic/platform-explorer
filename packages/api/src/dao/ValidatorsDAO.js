@@ -7,57 +7,25 @@ module.exports = class ValidatorsDAO {
 
   getValidatorByProTxHash = async (proTxHash) => {
     const [row] = await this.knex('validators')
-      .leftJoin('blocks', 'validators.pro_tx_hash', 'blocks.validator')
       .select(
         'validators.pro_tx_hash as pro_tx_hash',
-        this.knex('blocks')
-          .select('timestamp')
-          .where('validator', proTxHash)
-          .orderBy('height', 'desc')
-          .limit(1)
-          .as('latest_timestamp'),
-        this.knex('blocks')
-          .select('height')
-          .where('validator', proTxHash)
-          .orderBy('height', 'desc')
-          .limit(1)
-          .as('latest_height'),
         this.knex('blocks')
           .where('validator', proTxHash)
           .count('*')
           .as('blocks_count'),
-        this.knex('blocks')
-          .where('blocks.height', this.knex('blocks').max('height').where('validator', proTxHash))
-          .select('hash')
-          .orderBy('height', 'desc')
-          .limit(1)
-          .as('block_hash'),
-        this.knex('blocks')
-          .where('blocks.height', this.knex('blocks').max('height').where('validator', proTxHash))
-          .select('l1_locked_height')
-          .orderBy('height', 'desc')
-          .limit(1)
-          .as('l1_locked_height'),
-        this.knex('blocks')
-          .where('blocks.height', this.knex('blocks').max('height').where('validator', proTxHash))
-          .select('created_at')
-          .orderBy('height', 'desc')
-          .limit(1)
-          .as('created_at'),
-        this.knex('blocks')
-          .where('blocks.height', this.knex('blocks').max('height').where('validator', proTxHash))
-          .select('app_version')
-          .orderBy('height', 'desc')
-          .limit(1)
-          .as('app_version'),
-        this.knex('blocks')
-          .where('blocks.height', this.knex('blocks').max('height').where('validator', proTxHash))
-          .select('block_version')
-          .orderBy('height', 'desc')
-          .limit(1)
-          .as('block_version')
+        'blocks.timestamp as latest_timestamp',
+        'blocks.hash as block_hash',
+        'blocks.l1_locked_height as l1_locked_height',
+        'blocks.created_at as created_at',
+        'blocks.app_version as app_version',
+        'blocks.block_version as block_version',
+        'blocks.height as latest_height'
       )
+      .leftJoin('blocks', 'blocks.validator', 'pro_tx_hash')
+      .orderBy('blocks.height', 'desc')
       .where('validators.pro_tx_hash', proTxHash)
+      .limit(1)
+
     if (!row) {
       return null
     }
@@ -69,75 +37,53 @@ module.exports = class ValidatorsDAO {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
-    const subquery = this.knex('validators')
+    const validatorsSubquery = this.knex('validators')
+      .select('validators.pro_tx_hash as pro_tx_hash', 'id')
       .select(
         this.knex('validators').count('pro_tx_hash').as('total_count'),
-        'validators.pro_tx_hash as pro_tx_hash',
-        'id',
-        this.knex('blocks')
-          .count('*')
+        this.knex('blocks').count('*')
           .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .as('blocks_count'),
-        this.knex('blocks')
-          .select('height')
+          .as('blocks_count')
+      )
+      .select(
+        this.knex('blocks').select('height')
           .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc')
-          .limit(1)
+          .orderBy('height', 'desc').limit(1)
           .as('latest_height'),
-        this.knex('blocks')
-          .select('timestamp')
+        this.knex('blocks').select('timestamp')
           .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc')
-          .limit(1)
+          .orderBy('height', 'desc').limit(1)
           .as('latest_timestamp'),
-        this.knex('blocks')
-          .select('hash')
+        this.knex('blocks').select('hash')
           .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc')
-          .limit(1)
+          .orderBy('height', 'desc').limit(1)
           .as('block_hash'),
-        this.knex('blocks')
-          .select('l1_locked_height')
+        this.knex('blocks').select('l1_locked_height')
           .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc')
-          .limit(1)
+          .orderBy('height', 'desc').limit(1)
           .as('l1_locked_height'),
-        this.knex('blocks')
-          .select('created_at')
+        this.knex('blocks').select('created_at')
           .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc')
-          .limit(1)
+          .orderBy('height', 'desc').limit(1)
           .as('created_at'),
-        this.knex('blocks')
-          .select('app_version')
+        this.knex('blocks').select('app_version')
           .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc')
-          .limit(1)
+          .orderBy('height', 'desc').limit(1)
           .as('app_version'),
-        this.knex('blocks')
-          .select('block_version')
+        this.knex('blocks').select('block_version')
           .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc')
-          .limit(1)
+          .orderBy('height', 'desc').limit(1)
           .as('block_version')
       )
       .select(this.knex.raw(`rank() over (order by id ${order}) rank`))
       .as('validators')
 
-    const rows = await this.knex(subquery)
+    const rows = await this.knex(validatorsSubquery)
       .select(
-        'id',
-        'rank',
-        'pro_tx_hash',
-        'total_count',
-        'latest_height',
-        'latest_timestamp',
-        'blocks_count',
-        'block_hash',
-        'l1_locked_height',
-        'created_at',
-        'app_version',
-        'block_version'
+        'id', 'rank', 'total_count', 'pro_tx_hash',
+        'latest_height', 'latest_timestamp', 'blocks_count',
+        'block_hash', 'l1_locked_height', 'created_at',
+        'app_version', 'block_version'
       )
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)

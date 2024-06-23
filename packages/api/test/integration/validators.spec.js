@@ -50,12 +50,12 @@ describe('Validators routes', () => {
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
+        blocksCount: blocks.filter((block) => block.validator === validator.pro_tx_hash).length,
         propsedBlock: {
           header: {
-            latestHeight: latestBlock.height,
-            latestTimestamp: latestBlock.timestamp.toISOString(),
-            blocksCount: blocks.filter((block) => block.validator === validator.pro_tx_hash).length,
-            blockHash: latestBlock.hash,
+            hash: latestBlock.hash,
+            height: latestBlock.height,
+            timestamp: latestBlock.timestamp.toISOString(),
             l1LockedHeight: latestBlock.l1_locked_height,
             appVersion: latestBlock.app_version,
             blockVersion: latestBlock.block_version
@@ -91,12 +91,12 @@ describe('Validators routes', () => {
 
           return {
             proTxHash: row.pro_tx_hash,
+            blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
             propsedBlock: {
               header: {
-                latestHeight: latestBlock.height,
-                latestTimestamp: latestBlock.timestamp.toISOString(),
-                blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-                blockHash: latestBlock.hash,
+                hash: latestBlock.hash,
+                height: latestBlock.height,
+                timestamp: latestBlock.timestamp.toISOString(),
                 l1LockedHeight: latestBlock.l1_locked_height,
                 appVersion: latestBlock.app_version,
                 blockVersion: latestBlock.block_version
@@ -126,12 +126,12 @@ describe('Validators routes', () => {
 
           return {
             proTxHash: row.pro_tx_hash,
+            blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
             propsedBlock: {
               header: {
-                latestHeight: latestBlock.height,
-                latestTimestamp: latestBlock.timestamp.toISOString(),
-                blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-                blockHash: latestBlock.hash,
+                hash: latestBlock.hash,
+                height: latestBlock.height,
+                timestamp: latestBlock.timestamp.toISOString(),
                 l1LockedHeight: latestBlock.l1_locked_height,
                 appVersion: latestBlock.app_version,
                 blockVersion: latestBlock.block_version
@@ -160,12 +160,12 @@ describe('Validators routes', () => {
 
           return {
             proTxHash: row.pro_tx_hash,
+            blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
             propsedBlock: {
               header: {
-                latestHeight: latestBlock.height,
-                latestTimestamp: latestBlock.timestamp.toISOString(),
-                blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-                blockHash: latestBlock.hash,
+                hash: latestBlock.hash,
+                height: latestBlock.height,
+                timestamp: latestBlock.timestamp.toISOString(),
                 l1LockedHeight: latestBlock.l1_locked_height,
                 appVersion: latestBlock.app_version,
                 blockVersion: latestBlock.block_version
@@ -194,12 +194,12 @@ describe('Validators routes', () => {
 
           return {
             proTxHash: row.pro_tx_hash,
+            blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
             propsedBlock: {
               header: {
-                latestHeight: latestBlock.height,
-                latestTimestamp: latestBlock.timestamp.toISOString(),
-                blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-                blockHash: latestBlock.hash,
+                hash: latestBlock.hash,
+                height: latestBlock.height,
+                timestamp: latestBlock.timestamp.toISOString(),
                 l1LockedHeight: latestBlock.l1_locked_height,
                 appVersion: latestBlock.app_version,
                 blockVersion: latestBlock.block_version
@@ -228,12 +228,12 @@ describe('Validators routes', () => {
 
           return {
             proTxHash: row.pro_tx_hash,
+            blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
             propsedBlock: {
               header: {
-                latestHeight: latestBlock.height,
-                latestTimestamp: latestBlock.timestamp.toISOString(),
-                blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-                blockHash: latestBlock.hash,
+                hash: latestBlock.hash,
+                height: latestBlock.height,
+                timestamp: latestBlock.timestamp.toISOString(),
                 l1LockedHeight: latestBlock.l1_locked_height,
                 appVersion: latestBlock.app_version,
                 blockVersion: latestBlock.block_version
@@ -263,12 +263,12 @@ describe('Validators routes', () => {
 
           return {
             proTxHash: row.pro_tx_hash,
+            blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
             propsedBlock: {
               header: {
-                latestHeight: latestBlock.height,
-                latestTimestamp: latestBlock.timestamp.toISOString(),
-                blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-                blockHash: latestBlock.hash,
+                hash: latestBlock.hash,
+                height: latestBlock.height,
+                timestamp: latestBlock.timestamp.toISOString(),
                 l1LockedHeight: latestBlock.l1_locked_height,
                 appVersion: latestBlock.app_version,
                 blockVersion: latestBlock.block_version
@@ -298,12 +298,12 @@ describe('Validators routes', () => {
 
           return {
             proTxHash: row.pro_tx_hash,
+            blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
             propsedBlock: {
               header: {
-                latestHeight: latestBlock.height,
-                latestTimestamp: latestBlock.timestamp.toISOString(),
-                blocksCount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-                blockHash: latestBlock.hash,
+                hash: latestBlock.hash,
+                height: latestBlock.height,
+                timestamp: latestBlock.timestamp.toISOString(),
                 l1LockedHeight: latestBlock.l1_locked_height,
                 appVersion: latestBlock.app_version,
                 blockVersion: latestBlock.block_version

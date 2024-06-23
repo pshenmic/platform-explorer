@@ -1,7 +1,7 @@
 module.exports = class Validator {
   proTxHash
+  blocksCount
   propsedBlock
-
   constructor (
     proTxHash,
     latestHeight,
@@ -13,12 +13,12 @@ module.exports = class Validator {
     blockVersion
   ) {
     this.proTxHash = proTxHash
+    this.blocksCount = Number(blocksCount)
     this.propsedBlock = {
       header: {
-        latestHeight,
-        latestTimestamp,
-        blocksCount: Number(blocksCount),
-        blockHash,
+        hash: blockHash,
+        height: latestHeight,
+        timestamp: latestTimestamp,
         l1LockedHeight,
         appVersion,
         blockVersion
