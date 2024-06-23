@@ -26,7 +26,7 @@ module.exports = class Validator {
     }
   }
 
-  // eslint-disable-next-line camelcase
+  /* eslint-disable camelcase */
   static fromRow ({
     pro_tx_hash,
     latest_height,
@@ -48,4 +48,5 @@ module.exports = class Validator {
       block_version
     )
   }
+  /* eslint-disable camelcase */
 }
