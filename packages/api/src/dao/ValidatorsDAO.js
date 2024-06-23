@@ -1,7 +1,7 @@
 const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 module.exports = class ValidatorsDAO {
-  constructor(knex) {
+  constructor (knex) {
     this.knex = knex
   }
 
@@ -55,7 +55,7 @@ module.exports = class ValidatorsDAO {
           .select('block_version')
           .orderBy('height', 'desc')
           .limit(1)
-          .as('block_version'),
+          .as('block_version')
       )
       .where('validators.pro_tx_hash', proTxHash)
     if (!row) {
@@ -119,7 +119,7 @@ module.exports = class ValidatorsDAO {
           .whereRaw('validators.pro_tx_hash = blocks.validator')
           .orderBy('height', 'desc')
           .limit(1)
-          .as('block_version'),
+          .as('block_version')
       )
       .select(this.knex.raw(`rank() over (order by id ${order}) rank`))
       .as('validators')
@@ -141,7 +141,6 @@ module.exports = class ValidatorsDAO {
       )
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)
-
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
     const resultSet = rows.map((row) =>

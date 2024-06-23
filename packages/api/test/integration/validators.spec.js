@@ -83,7 +83,7 @@ describe('Validators routes', () => {
       assert.equal(body.pagination.limit, 10)
       assert.equal(body.pagination.total, validators.length)
       assert.equal(body.resultSet.length, 10)
-      
+
       const expectedValidators = validators
         .slice(0, 10)
         .map(row => {

@@ -2,7 +2,7 @@ module.exports = class Validator {
   proTxHash
   propsedBlock
 
-  constructor(
+  constructor (
     proTxHash,
     latestHeight,
     latestTimestamp,
@@ -15,19 +15,19 @@ module.exports = class Validator {
     this.proTxHash = proTxHash
     this.propsedBlock = {
       header: {
-        latestHeight: latestHeight,
-        latestTimestamp: latestTimestamp,
+        latestHeight,
+        latestTimestamp,
         blocksCount: Number(blocksCount),
-        blockHash: blockHash,
-        l1LockedHeight: l1LockedHeight,
-        appVersion: appVersion,
-        blockVersion: blockVersion
+        blockHash,
+        l1LockedHeight,
+        appVersion,
+        blockVersion
       }
     }
   }
 
   // eslint-disable-next-line camelcase
-  static fromRow({
+  static fromRow ({
     pro_tx_hash,
     latest_height,
     latest_timestamp,
