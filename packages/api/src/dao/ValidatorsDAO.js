@@ -21,10 +21,9 @@ module.exports = class ValidatorsDAO {
         'blocks.block_version as block_version',
         'blocks.height as latest_height'
       )
-      .leftJoin('blocks', 'blocks.validator', 'pro_tx_hash')
+      .rightJoin('blocks', 'blocks.validator', 'pro_tx_hash')
       .orderBy('blocks.height', 'desc')
       .where('validators.pro_tx_hash', proTxHash)
-      .limit(1)
 
     if (!row) {
       return null
@@ -38,52 +37,53 @@ module.exports = class ValidatorsDAO {
     const toRank = fromRank + limit - 1
 
     const validatorsSubquery = this.knex('validators')
-      .select('validators.pro_tx_hash as pro_tx_hash', 'id')
       .select(
+        'validators.pro_tx_hash as pro_tx_hash',
+        'validators.id',
         this.knex('validators').count('pro_tx_hash').as('total_count'),
-        this.knex('blocks').count('*')
-          .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .as('blocks_count')
+        this.knex('blocks')
+          .count('*')
+          .whereRaw('blocks.validator = validators.pro_tx_hash')
+          .as('blocks_count'),
+        this.knex('blocks')
+          .select('hash')
+          .whereRaw('pro_tx_hash = blocks.validator')
+          .orderBy('height', 'desc')
+          .limit(1)
+          .as('propsed_block_hash')
       )
-      .select(
-        this.knex('blocks').select('height')
-          .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc').limit(1)
-          .as('latest_height'),
-        this.knex('blocks').select('timestamp')
-          .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc').limit(1)
-          .as('latest_timestamp'),
-        this.knex('blocks').select('hash')
-          .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc').limit(1)
-          .as('block_hash'),
-        this.knex('blocks').select('l1_locked_height')
-          .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc').limit(1)
-          .as('l1_locked_height'),
-        this.knex('blocks').select('created_at')
-          .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc').limit(1)
-          .as('created_at'),
-        this.knex('blocks').select('app_version')
-          .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc').limit(1)
-          .as('app_version'),
-        this.knex('blocks').select('block_version')
-          .whereRaw('validators.pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc').limit(1)
-          .as('block_version')
-      )
-      .select(this.knex.raw(`rank() over (order by id ${order}) rank`))
       .as('validators')
 
-    const rows = await this.knex(validatorsSubquery)
+    const subquery = this.knex(validatorsSubquery)
       .select(
-        'id', 'rank', 'total_count', 'pro_tx_hash',
-        'latest_height', 'latest_timestamp', 'blocks_count',
-        'block_hash', 'l1_locked_height', 'created_at',
-        'app_version', 'block_version'
+        'pro_tx_hash',
+        'id',
+        'total_count',
+        'blocks_count',
+        this.knex.raw(`rank() over (order by validators.id ${order}) as rank`),
+        'blocks.hash as block_hash',
+        'blocks.height as latest_height',
+        'blocks.timestamp as latest_timestamp',
+        'blocks.l1_locked_height as l1_locked_height',
+        'blocks.app_version as app_version',
+        'blocks.block_version as block_version'
+      )
+      .leftJoin('blocks', 'blocks.hash', 'propsed_block_hash')
+      .as('blocks')
+
+    const rows = await this.knex(subquery)
+      .select(
+        'id',
+        'rank',
+        'total_count',
+        'pro_tx_hash',
+        'blocks_count',
+        'block_hash',
+        'latest_height',
+        'latest_timestamp',
+        'l1_locked_height',
+        'app_version',
+        'block_version'
       )
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)
