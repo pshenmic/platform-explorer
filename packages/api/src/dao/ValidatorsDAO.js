@@ -2,7 +2,7 @@ const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 
 module.exports = class ValidatorsDAO {
-  constructor (knex) {
+  constructor(knex) {
     this.knex = knex
   }
 
@@ -30,23 +30,7 @@ module.exports = class ValidatorsDAO {
       return null
     }
 
-    const lastProposedBlockHeader = row.block_hash
-      ? {
-          hash: row.block_hash,
-          height: row.latest_height,
-          timestamp: row.latest_timestamp,
-          l1_locked_height: row.l1_locked_height,
-          app_version: row.app_version,
-          block_version: row.block_version,
-          validator: row.pro_tx_hash
-        }
-      : null
-
-    return Validator.fromRow({
-      pro_tx_hash: row.pro_tx_hash,
-      proposed_blocks_amount: row.proposed_blocks_amount,
-      last_proposed_block_header: lastProposedBlockHeader
-    })
+    return Validator.fromRow(row)
   }
 
   getValidators = async (page, limit, order) => {
@@ -106,24 +90,8 @@ module.exports = class ValidatorsDAO {
       .orderBy('id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
-    const resultSet = rows.map((row) => {
-      const lastProposedBlockHeader = row.block_hash
-        ? {
-            hash: row.block_hash,
-            height: row.latest_height,
-            timestamp: row.latest_timestamp,
-            l1_locked_height: row.l1_locked_height,
-            app_version: row.app_version,
-            block_version: row.block_version,
-            validator: row.pro_tx_hash
-          }
-        : null
-      return Validator.fromRow({
-        pro_tx_hash: row.pro_tx_hash,
-        proposed_blocks_amount: row.proposed_blocks_amount,
-        last_proposed_block_header: lastProposedBlockHeader
-      })
-    })
+    const resultSet = rows.map((row) => Validator.fromRow(row))
+
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }
 }
