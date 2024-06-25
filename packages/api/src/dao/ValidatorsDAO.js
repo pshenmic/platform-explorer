@@ -1,5 +1,6 @@
 const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
+
 module.exports = class ValidatorsDAO {
   constructor (knex) {
     this.knex = knex
@@ -12,7 +13,7 @@ module.exports = class ValidatorsDAO {
         this.knex('blocks')
           .where('validator', proTxHash)
           .count('*')
-          .as('blocks_count'),
+          .as('proposed_blocks_amount'),
         'blocks.timestamp as latest_timestamp',
         'blocks.hash as block_hash',
         'blocks.l1_locked_height as l1_locked_height',
@@ -29,7 +30,23 @@ module.exports = class ValidatorsDAO {
       return null
     }
 
-    return Validator.fromRow(row)
+    const lastProposedBlockHeader = row.block_hash
+      ? {
+          hash: row.block_hash,
+          height: row.latest_height,
+          timestamp: row.latest_timestamp,
+          l1_locked_height: row.l1_locked_height,
+          app_version: row.app_version,
+          block_version: row.block_version,
+          validator: row.pro_tx_hash
+        }
+      : null
+
+    return Validator.fromRow({
+      pro_tx_hash: row.pro_tx_hash,
+      proposed_blocks_amount: row.proposed_blocks_amount,
+      last_proposed_block_header: lastProposedBlockHeader
+    })
   }
 
   getValidators = async (page, limit, order) => {
@@ -44,13 +61,13 @@ module.exports = class ValidatorsDAO {
         this.knex('blocks')
           .count('*')
           .whereRaw('blocks.validator = validators.pro_tx_hash')
-          .as('blocks_count'),
+          .as('proposed_blocks_amount'),
         this.knex('blocks')
           .select('hash')
           .whereRaw('pro_tx_hash = blocks.validator')
           .orderBy('height', 'desc')
           .limit(1)
-          .as('propsed_block_hash')
+          .as('proposed_block_hash')
       )
       .as('validators')
 
@@ -59,7 +76,7 @@ module.exports = class ValidatorsDAO {
         'pro_tx_hash',
         'id',
         'total_count',
-        'blocks_count',
+        'proposed_blocks_amount',
         this.knex.raw(`rank() over (order by validators.id ${order}) as rank`),
         'blocks.hash as block_hash',
         'blocks.height as latest_height',
@@ -68,7 +85,7 @@ module.exports = class ValidatorsDAO {
         'blocks.app_version as app_version',
         'blocks.block_version as block_version'
       )
-      .leftJoin('blocks', 'blocks.hash', 'propsed_block_hash')
+      .leftJoin('blocks', 'blocks.hash', 'proposed_block_hash')
       .as('blocks')
 
     const rows = await this.knex(subquery)
@@ -77,7 +94,7 @@ module.exports = class ValidatorsDAO {
         'rank',
         'total_count',
         'pro_tx_hash',
-        'blocks_count',
+        'proposed_blocks_amount',
         'block_hash',
         'latest_height',
         'latest_timestamp',
@@ -89,9 +106,24 @@ module.exports = class ValidatorsDAO {
       .orderBy('id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
-    const resultSet = rows.map((row) =>
-      Validator.fromRow(row)
-    )
+    const resultSet = rows.map((row) => {
+      const lastProposedBlockHeader = row.block_hash
+        ? {
+            hash: row.block_hash,
+            height: row.latest_height,
+            timestamp: row.latest_timestamp,
+            l1_locked_height: row.l1_locked_height,
+            app_version: row.app_version,
+            block_version: row.block_version,
+            validator: row.pro_tx_hash
+          }
+        : null
+      return Validator.fromRow({
+        pro_tx_hash: row.pro_tx_hash,
+        proposed_blocks_amount: row.proposed_blocks_amount,
+        last_proposed_block_header: lastProposedBlockHeader
+      })
+    })
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }
 }

@@ -183,7 +183,7 @@ GET /validators
   resultSet: [
     {
       "proTxHash": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-      "blocksCount": 5,
+      "proposedBlocksAmount": 5,
       "lastProposedBlockHeader": {
         "height": 5,
         "timestamp": "2024-06-23T13:51:44.154Z",
@@ -191,6 +191,7 @@ GET /validators
         "l1LockedHeight": 1337,
         "appVersion": 1,
         "blockVersion": 13
+        "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
       }
     }, ...
   ],
@@ -209,14 +210,15 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 
 {
   "proTxHash": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-  "blocksCount": 5,
+  "proposedBlocksAmount": 5,
   "lastProposedBlockHeader": {
     "height": 5,
     "timestamp": "2024-06-23T13:51:44.154Z",
     "hash": "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
     "l1LockedHeight": 1337,
     "appVersion": 1,
-    "blockVersion": 13
+    "blockVersion": 13,
+    "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
   }
 }
 ```
