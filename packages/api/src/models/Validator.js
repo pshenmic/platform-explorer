@@ -5,10 +5,10 @@ module.exports = class Validator {
   proposedBlocksAmount
   lastProposedBlockHeader
 
-  constructor(
+  constructor (
     proTxHash,
     proposedBlocksAmount,
-    lastProposedBlockHeader,
+    lastProposedBlockHeader
   ) {
     this.proTxHash = proTxHash
     this.proposedBlocksAmount = Number(proposedBlocksAmount)
@@ -16,7 +16,7 @@ module.exports = class Validator {
   }
 
   /* eslint-disable camelcase */
-  static fromRow({
+  static fromRow ({
     pro_tx_hash,
     proposed_blocks_amount,
     latest_height,
@@ -29,15 +29,17 @@ module.exports = class Validator {
     return new Validator(
       pro_tx_hash,
       proposed_blocks_amount,
-      block_hash ? BlockHeader.fromRow({
-        hash: block_hash,
-        height: latest_height,
-        timestamp: latest_timestamp,
-        block_version,
-        app_version,
-        l1_locked_height,
-        validator: pro_tx_hash
-      }) : null
+      block_hash
+        ? BlockHeader.fromRow({
+          hash: block_hash,
+          height: latest_height,
+          timestamp: latest_timestamp,
+          block_version,
+          app_version,
+          l1_locked_height,
+          validator: pro_tx_hash
+        })
+        : null
     )
   }
   /* eslint-disable camelcase */
