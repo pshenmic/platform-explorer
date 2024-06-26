@@ -55,16 +55,16 @@ function Transactions () {
 
   return (
     <Container
-        maxW='container.lg'
+        maxW={'container.xl'}
         mt={8}
         className={'Transactions'}
     >
         <Container
-            maxW='container.lg'
-            borderWidth='1px' borderRadius='lg'
+            maxW={'container.xl'}
+            borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
         >
-            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Transactions</Heading>
+            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Transactions</Heading>
 
             {!transactions.error
               ? !transactions.loading

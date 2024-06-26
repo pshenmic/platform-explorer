@@ -65,19 +65,19 @@ function Blocks () {
 
   return (
       <Container
-          maxW='container.lg'
-          color='white'
+          maxW={'container.xl'}
+          color={'white'}
           mt={8}
           mb={8}
           className={'Blocks'}
       >
           <Container
-              maxW='container.lg'
+              maxW={'container.xl'}
               _dark={{ color: 'white' }}
-              borderWidth='1px' borderRadius='lg'
+              borderWidth={'1px'} borderRadius={'lg'}
               className={'InfoBlock'}
           >
-              <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Blocks</Heading>
+              <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Blocks</Heading>
 
               {!blocks.error
                 ? <>

@@ -1,4 +1,5 @@
 import { StateTransitionEnum } from '../app/enums/state.transition.type'
+import currencyRound from './currencyRound'
 
 const getTransitionTypeString = (id) => {
   const [stateTransitionType] = Object.entries(StateTransitionEnum)
@@ -31,8 +32,14 @@ function fetchHandlerError (setter, error) {
   }))
 }
 
+function numberFormat (number) {
+  return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(number)
+}
+
 export {
   getTransitionTypeString,
   fetchHandlerSuccess,
-  fetchHandlerError
+  fetchHandlerError,
+  numberFormat,
+  currencyRound
 }

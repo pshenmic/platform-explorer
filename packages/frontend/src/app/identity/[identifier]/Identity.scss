@@ -1,5 +1,13 @@
+@use '../../../styles/mixins.scss';
+
 .IdentityInfo {
     height: min-content;
+
+    &__Avatar {
+        margin-left: auto;
+        width: 32px;
+        height: 32px;
+    }
 }
 
 .IdentityData {

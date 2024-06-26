@@ -55,16 +55,16 @@ function Identities () {
 
   return (
       <Container
-          maxW='container.md'
+          maxW={'container.xl'}
           mt={8}
           className={'IdentitiesPage'}
       >
           <Container
-              maxW='container.md'
-              borderWidth='1px' borderRadius='lg'
+              maxW={'container.xl'}
+              borderWidth={'1px'} borderRadius={'lg'}
               className={'InfoBlock'}
           >
-              <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Identities</Heading>
+              <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Identities</Heading>
 
               {!identities.error
                 ? !identities.loading
