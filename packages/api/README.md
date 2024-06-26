@@ -175,7 +175,8 @@ GET /blocks
 ```
 ---
 ### Validators
-Return all validators with pagination info
+Return all validators with pagination info.
+* `lastProposedBlockHeader` field is nullable
 ```
 GET /validators
 
@@ -204,7 +205,8 @@ GET /validators
 ```
 ---
 ### Validator by ProTxHash
-Get validator by ProTxHash
+Get validator by ProTxHash.
+* `lastProposedBlockHeader` field is nullable
 ```
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const BlockHeader = require('./BlockHeader')
 
 module.exports = class Validator {
@@ -10,12 +11,11 @@ module.exports = class Validator {
     proposedBlocksAmount,
     lastProposedBlockHeader
   ) {
-    this.proTxHash = proTxHash
-    this.proposedBlocksAmount = Number(proposedBlocksAmount)
-    this.lastProposedBlockHeader = lastProposedBlockHeader
+    this.proTxHash = proTxHash ?? null
+    this.proposedBlocksAmount = proposedBlocksAmount ?? null
+    this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
   }
 
-  /* eslint-disable camelcase */
   static fromRow ({
     pro_tx_hash,
     proposed_blocks_amount,
@@ -28,19 +28,19 @@ module.exports = class Validator {
   }) {
     return new Validator(
       pro_tx_hash,
-      proposed_blocks_amount,
+      Number(proposed_blocks_amount),
       block_hash
         ? BlockHeader.fromRow({
           hash: block_hash,
-          height: latest_height,
+          height: Number(latest_height),
           timestamp: latest_timestamp,
-          block_version,
-          app_version,
-          l1_locked_height,
+          block_version: Number(block_version),
+          app_version: Number(app_version),
+          l1_locked_height: Number(l1_locked_height),
           validator: pro_tx_hash
         })
         : null
     )
   }
-  /* eslint-disable camelcase */
 }
+/* eslint-disable camelcase */
