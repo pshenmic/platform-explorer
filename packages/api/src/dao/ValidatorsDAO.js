@@ -22,10 +22,10 @@ module.exports = class ValidatorsDAO {
           .limit(1)
           .as('proposed_block_hash')
       )
-      .where('validators.pro_tx_hash', proTxHash) // Добавляем это условие, чтобы искать только по нужному pro_tx_hash
+      .where('validators.pro_tx_hash', proTxHash)
       .as('validators')
 
-    const subquery = this.knex(validatorsSubquery)
+    const [row] = await this.knex(validatorsSubquery)
       .select(
         'pro_tx_hash',
         'id',
@@ -38,20 +38,6 @@ module.exports = class ValidatorsDAO {
         'blocks.block_version as block_version'
       )
       .leftJoin('blocks', 'blocks.hash', 'proposed_block_hash')
-      .as('blocks')
-
-    const [row] = await this.knex(subquery)
-      .select(
-        'id',
-        'pro_tx_hash',
-        'proposed_blocks_amount',
-        'block_hash',
-        'latest_height',
-        'latest_timestamp',
-        'l1_locked_height',
-        'app_version',
-        'block_version'
-      )
       .where('pro_tx_hash', proTxHash)
 
     if (!row) {
