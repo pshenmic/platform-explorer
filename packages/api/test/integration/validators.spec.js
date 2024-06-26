@@ -56,11 +56,16 @@ describe('Validators routes', () => {
         proposedBlocksAmount: blocks.filter((block) => block.validator === validator.pro_tx_hash).length,
         lastProposedBlockHeader: blocks
           .filter((block) => block.validator === validator.pro_tx_hash)
-          .map((block) => {
-            const { ...blockHeader } = BlockHeader.fromRow(block)
-            blockHeader.timestamp = blockHeader.timestamp.toISOString()
-            return blockHeader
-          })
+          .map((block) => BlockHeader.fromRow(block))
+          .map((blockHeader) => ({
+            hash: blockHeader.hash,
+            height: blockHeader.height,
+            timestamp: blockHeader.timestamp.toISOString(),
+            blockVersion: blockHeader.blockVersion,
+            appVersion: blockHeader.appVersion,
+            l1LockedHeight: blockHeader.l1LockedHeight,
+            validator: blockHeader.validator
+          }))
           .toReversed()[0] ?? null
       }
 
@@ -92,11 +97,16 @@ describe('Validators routes', () => {
           proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
           lastProposedBlockHeader: blocks
             .filter((block) => block.validator === row.pro_tx_hash)
-            .map((block) => {
-              const { ...blockHeader } = BlockHeader.fromRow(block)
-              blockHeader.timestamp = blockHeader.timestamp.toISOString()
-              return blockHeader
-            })
+            .map((block) => BlockHeader.fromRow(block))
+            .map((blockHeader) => ({
+              hash: blockHeader.hash,
+              height: blockHeader.height,
+              timestamp: blockHeader.timestamp.toISOString(),
+              blockVersion: blockHeader.blockVersion,
+              appVersion: blockHeader.appVersion,
+              l1LockedHeight: blockHeader.l1LockedHeight,
+              validator: blockHeader.validator
+            }))
             .toReversed()[0] ?? null
         }))
 
@@ -116,20 +126,23 @@ describe('Validators routes', () => {
       const expectedValidators = validators
         .slice(validators.length - 10, validators.length)
         .sort((a, b) => b.id - a.id)
-        .map(row => {
-          return {
-            proTxHash: row.pro_tx_hash,
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => {
-                const { ...blockHeader } = BlockHeader.fromRow(block)
-                blockHeader.timestamp = blockHeader.timestamp.toISOString()
-                return blockHeader
-              })
-              .toReversed()[0] ?? null
-          }
-        })
+        .map(row => ({
+          proTxHash: row.pro_tx_hash,
+          proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+          lastProposedBlockHeader: blocks
+            .filter((block) => block.validator === row.pro_tx_hash)
+            .map((block) => BlockHeader.fromRow(block))
+            .map((blockHeader) => ({
+              hash: blockHeader.hash,
+              height: blockHeader.height,
+              timestamp: blockHeader.timestamp.toISOString(),
+              blockVersion: blockHeader.blockVersion,
+              appVersion: blockHeader.appVersion,
+              l1LockedHeight: blockHeader.l1LockedHeight,
+              validator: blockHeader.validator
+            }))
+            .toReversed()[0] ?? null
+        }))
 
       assert.deepEqual(expectedValidators, body.resultSet)
     })
@@ -151,14 +164,18 @@ describe('Validators routes', () => {
           proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
           lastProposedBlockHeader: blocks
             .filter((block) => block.validator === row.pro_tx_hash)
-            .map((block) => {
-              const { ...blockHeader } = BlockHeader.fromRow(block)
-              blockHeader.timestamp = blockHeader.timestamp.toISOString()
-              return blockHeader
-            })
+            .map((block) => BlockHeader.fromRow(block))
+            .map((blockHeader) => ({
+              hash: blockHeader.hash,
+              height: blockHeader.height,
+              timestamp: blockHeader.timestamp.toISOString(),
+              blockVersion: blockHeader.blockVersion,
+              appVersion: blockHeader.appVersion,
+              l1LockedHeight: blockHeader.l1LockedHeight,
+              validator: blockHeader.validator
+            }))
             .toReversed()[0] ?? null
-        })
-        )
+        }))
 
       assert.deepEqual(expectedValidators, body.resultSet)
     })
@@ -180,11 +197,16 @@ describe('Validators routes', () => {
           proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
           lastProposedBlockHeader: blocks
             .filter((block) => block.validator === row.pro_tx_hash)
-            .map((block) => {
-              const { ...blockHeader } = BlockHeader.fromRow(block)
-              blockHeader.timestamp = blockHeader.timestamp.toISOString()
-              return blockHeader
-            })
+            .map((block) => BlockHeader.fromRow(block))
+            .map((blockHeader) => ({
+              hash: blockHeader.hash,
+              height: blockHeader.height,
+              timestamp: blockHeader.timestamp.toISOString(),
+              blockVersion: blockHeader.blockVersion,
+              appVersion: blockHeader.appVersion,
+              l1LockedHeight: blockHeader.l1LockedHeight,
+              validator: blockHeader.validator
+            }))
             .toReversed()[0] ?? null
         }))
 
@@ -208,11 +230,16 @@ describe('Validators routes', () => {
           proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
           lastProposedBlockHeader: blocks
             .filter((block) => block.validator === row.pro_tx_hash)
-            .map((block) => {
-              const { ...blockHeader } = BlockHeader.fromRow(block)
-              blockHeader.timestamp = blockHeader.timestamp.toISOString()
-              return blockHeader
-            })
+            .map((block) => BlockHeader.fromRow(block))
+            .map((blockHeader) => ({
+              hash: blockHeader.hash,
+              height: blockHeader.height,
+              timestamp: blockHeader.timestamp.toISOString(),
+              blockVersion: blockHeader.blockVersion,
+              appVersion: blockHeader.appVersion,
+              l1LockedHeight: blockHeader.l1LockedHeight,
+              validator: blockHeader.validator
+            }))
             .toReversed()[0] ?? null
         }))
 
@@ -237,11 +264,16 @@ describe('Validators routes', () => {
           proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
           lastProposedBlockHeader: blocks
             .filter((block) => block.validator === row.pro_tx_hash)
-            .map((block) => {
-              const { ...blockHeader } = BlockHeader.fromRow(block)
-              blockHeader.timestamp = blockHeader.timestamp.toISOString()
-              return blockHeader
-            })
+            .map((block) => BlockHeader.fromRow(block))
+            .map((blockHeader) => ({
+              hash: blockHeader.hash,
+              height: blockHeader.height,
+              timestamp: blockHeader.timestamp.toISOString(),
+              blockVersion: blockHeader.blockVersion,
+              appVersion: blockHeader.appVersion,
+              l1LockedHeight: blockHeader.l1LockedHeight,
+              validator: blockHeader.validator
+            }))
             .toReversed()[0] ?? null
         }))
 
@@ -265,11 +297,16 @@ describe('Validators routes', () => {
           proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
           lastProposedBlockHeader: blocks
             .filter((block) => block.validator === row.pro_tx_hash)
-            .map((block) => {
-              const { ...blockHeader } = BlockHeader.fromRow(block)
-              blockHeader.timestamp = blockHeader.timestamp.toISOString()
-              return blockHeader
-            })
+            .map((block) => BlockHeader.fromRow(block))
+            .map((blockHeader) => ({
+              hash: blockHeader.hash,
+              height: blockHeader.height,
+              timestamp: blockHeader.timestamp.toISOString(),
+              blockVersion: blockHeader.blockVersion,
+              appVersion: blockHeader.appVersion,
+              l1LockedHeight: blockHeader.l1LockedHeight,
+              validator: blockHeader.validator
+            }))
             .toReversed()[0] ?? null
         }))
 
