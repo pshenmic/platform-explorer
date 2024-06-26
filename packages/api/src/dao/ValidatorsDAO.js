@@ -2,7 +2,7 @@ const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 
 module.exports = class ValidatorsDAO {
-  constructor(knex) {
+  constructor (knex) {
     this.knex = knex
   }
 
@@ -23,7 +23,7 @@ module.exports = class ValidatorsDAO {
           .as('proposed_block_hash')
       )
       .where('validators.pro_tx_hash', proTxHash) // Добавляем это условие, чтобы искать только по нужному pro_tx_hash
-      .as('validators');
+      .as('validators')
 
     const subquery = this.knex(validatorsSubquery)
       .select(
@@ -38,7 +38,7 @@ module.exports = class ValidatorsDAO {
         'blocks.block_version as block_version'
       )
       .leftJoin('blocks', 'blocks.hash', 'proposed_block_hash')
-      .as('blocks');
+      .as('blocks')
 
     const [row] = await this.knex(subquery)
       .select(
@@ -52,8 +52,8 @@ module.exports = class ValidatorsDAO {
         'app_version',
         'block_version'
       )
-      .where('pro_tx_hash', proTxHash) 
-    
+      .where('pro_tx_hash', proTxHash)
+
     if (!row) {
       return null
     }
