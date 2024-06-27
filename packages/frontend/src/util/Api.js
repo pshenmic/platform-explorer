@@ -147,5 +147,8 @@ export {
   getTransactionsByIdentity,
   getDataContractsByIdentity,
   getDocumentsByIdentity,
-  getTransfersByIdentity
+  getTransfersByIdentity,
+  getValidators,
+  getValidatorByProTxHash,
+  getBlocksByValidator
 }
