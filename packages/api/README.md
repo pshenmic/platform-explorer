@@ -119,6 +119,34 @@ GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 }
 ```
 ---
+### Blocks by validator
+Return all blocks proposed by the specific validators
+```
+GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
+
+{
+    pagination: {
+        page: 1,
+        limit: 10,
+        total: 10
+    },
+    resultSet: [
+    {
+        header: {
+            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
+            height: 1337,
+            timestamp: "2024-03-18T10:13:54.150Z",
+            blockVersion: 13,
+            appVersion: 1,
+            validator: "B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18",
+            l1LockedHeight: 1337
+        },
+        txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
+    }, ...
+    ]
+}
+```
+---
 ### Blocks
 Return all blocks with pagination info
 ```
@@ -239,7 +267,7 @@ Response codes:
 ```
 ---
 ### Data Contracts
-Return dataContracts set paged and order by block height or documents count. 
+Return dataContracts set paged and order by block height or documents count.
 
 * Valid `order_by` values are `block_height` or `documents_count`
 * `name` field is nullable
