@@ -65,6 +65,10 @@ const getBlocks = (page = 1, limit = 30, order = 'asc') => {
   return call(`blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
+const getBlocksByValidator = (identifier) => {
+  return call(`validators/${identifier}/blocks}`, 'GET')
+}
+
 const getDataContractByIdentifier = (identifier) => {
   return call(`dataContract/${identifier}`, 'GET')
 }
@@ -103,6 +107,14 @@ const getIdentity = (identifier) => {
 
 const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy) => {
   return call(`identities?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
+}
+
+const getValidators = (page = 1, limit = 30, order = 'asc', orderBy) => {
+  return call(`validators?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
+}
+
+const getValidatorByProTxHash = (proTxHash) => {
+  return call(`validator/${proTxHash}`, 'GET')
 }
 
 const getStatus = () => {
