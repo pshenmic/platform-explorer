@@ -1,4 +1,5 @@
 @use 'components/ChartBlock.scss';
+@use 'components/Table.scss';
 @import './variables.scss';
 
 * {
@@ -20,28 +21,6 @@
         left: -12px;
         top: -12px;
         margin: 0;
-    }
-}
-
-.Table {
-    a {
-        position: relative;
-        display: inline-block;
-        margin-bottom: -1px;
-        border-bottom: 1px solid;
-
-        &:hover {
-            color: var(--chakra-colors-gray-200);
-            border-bottom: none;
-        }
-    }
-
-    tr {
-        &:last-child {
-            td {
-                border-bottom: none;
-            }
-        }
     }
 }
 

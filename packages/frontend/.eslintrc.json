@@ -1,6 +1,10 @@
 {
+  "plugins": ["jest"],
   "extends": [
     "eslint-config-standard", 
     "next/core-web-vitals"
-  ]
+  ],
+  "env": {
+    "jest/globals": true
+  }
 }  

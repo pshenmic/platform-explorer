@@ -49,42 +49,44 @@ function DataContractsLayout () {
   }, [pageSize])
 
   return (
-    <div className={'container'}>
-      {dataContracts &&
-          <Container
-              maxW='container.md'
-              padding={3}
-              mt={8}
-              mb={4}
-              borderWidth='1px' borderRadius='lg'
-              className={'InfoBlock'}
-          >
-              <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Data contracts</Heading>
+    <Container
+        maxW={'container.xl'}
+        color={'white'}
+        mt={8}
+        mb={8}
+        className={'Blocks'}
+    >
+        <Container
+            maxW={'container.xl'}
+            padding={3}
+            borderWidth={'1px'} borderRadius={'lg'}
+            className={'InfoBlock'}
+        >
+            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Data contracts</Heading>
 
-              {!dataContracts.loading
-                ? !dataContracts.error
-                    ? <DataContractsList dataContracts={dataContracts.data.resultSet} size='l'/>
-                    : <Container h={20}><ErrorMessageBlock/></Container>
-                : <LoadingList itemsCount={pageSize}/>}
+            {!dataContracts.loading
+              ? !dataContracts.error
+                  ? <DataContractsList dataContracts={dataContracts.data.resultSet} size={'l'}/>
+                  : <Container h={20}><ErrorMessageBlock/></Container>
+              : <LoadingList itemsCount={pageSize}/>}
 
-              {dataContracts.data?.resultSet?.length > 0 &&
-                <div className={'ListNavigation'}>
-                    <Box display={['none', 'none', 'block']} width={'100px'}/>
-                    <Pagination
-                        onPageChange={handlePageClick}
-                        pageCount={pageCount}
-                        forcePage={currentPage}
-                    />
-                    <PageSizeSelector
-                        PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                        defaultValue={paginateConfig.pageSize.default}
-                        items={paginateConfig.pageSize.values}
-                    />
-                </div>
-              }
-          </Container>
-      }
-    </div>
+            {dataContracts.data?.resultSet?.length > 0 &&
+              <div className={'ListNavigation'}>
+                  <Box display={['none', 'none', 'block']} width={'100px'}/>
+                  <Pagination
+                      onPageChange={handlePageClick}
+                      pageCount={pageCount}
+                      forcePage={currentPage}
+                  />
+                  <PageSizeSelector
+                      PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                      defaultValue={paginateConfig.pageSize.default}
+                      items={paginateConfig.pageSize.values}
+                  />
+              </div>
+            }
+        </Container>
+    </Container>
   )
 }
 
