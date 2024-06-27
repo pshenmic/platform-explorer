@@ -1,7 +1,7 @@
 import { WarningTwoIcon } from '@chakra-ui/icons'
 import { Flex } from '@chakra-ui/react'
 
-function ErrorMessageBlock ({ w = '100%', h = '100%' }) {
+function ErrorMessageBlock ({ w = '100%', h = '100%', text }) {
   return (
     <Flex
       flexGrow={1}
@@ -12,7 +12,7 @@ function ErrorMessageBlock ({ w = '100%', h = '100%' }) {
       flexDirection={'column'}
       opacity={0.5}
     >
-      <div><WarningTwoIcon color={'#ddd'} mr={2} mt={-1}/>Error loading data</div>
+      <div><WarningTwoIcon color={'#ddd'} mr={2} mt={-1}/>{ text || 'Error loading data'}</div>
     </Flex>
   )
 }

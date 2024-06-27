@@ -85,6 +85,7 @@ describe('DataContracts routes', () => {
         identifier: dataContracts[dataContracts.length - 1].dataContract.identifier,
         version: dataContracts[dataContracts.length - 1].dataContract.version + 1,
         schema: '{}',
+        name: 'L33T D4T4C087R4CT',
         documents: dataContracts[dataContracts.length - 1].dataContract.documents
       })
       const document = await fixtures.document(knex, {
@@ -112,6 +113,7 @@ describe('DataContracts routes', () => {
         .sort((a, b) => a.dataContract.id - b.dataContract.id)
         .map(({ transaction, dataContract, block }) => ({
           identifier: dataContract.identifier,
+          name: dataContract.name,
           owner: identity.identifier,
           schema: null,
           version: 0,
@@ -139,6 +141,7 @@ describe('DataContracts routes', () => {
         .slice(0, 10)
         .map(({ transaction, dataContract, block }) => ({
           identifier: dataContract.identifier,
+          name: dataContract.name,
           owner: identity.identifier,
           schema: null,
           version: dataContract.version,
@@ -166,6 +169,7 @@ describe('DataContracts routes', () => {
         .slice(6, 12)
         .map(({ transaction, dataContract, block }) => ({
           identifier: dataContract.identifier,
+          name: dataContract.name,
           owner: identity.identifier,
           schema: null,
           version: 0,
@@ -193,6 +197,7 @@ describe('DataContracts routes', () => {
         .slice(12, 18)
         .map(({ transaction, dataContract, block }) => ({
           identifier: dataContract.identifier,
+          name: dataContract.name,
           owner: identity.identifier,
           schema: null,
           version: 0,
@@ -221,6 +226,7 @@ describe('DataContracts routes', () => {
         .slice(0, 10)
         .map(({ transaction, dataContract, block }) => ({
           identifier: dataContract.identifier,
+          name: dataContract.name,
           owner: identity.identifier,
           schema: null,
           version: dataContract.version,
@@ -249,6 +255,7 @@ describe('DataContracts routes', () => {
 
       const expectedDataContract = {
         identifier: dataContract.dataContract.identifier,
+        name: dataContract.dataContract.name,
         owner: identity.identifier,
         schema: '{}',
         version: 0,
@@ -270,6 +277,7 @@ describe('DataContracts routes', () => {
 
       const expectedDataContract = {
         identifier: dataContract.dataContract.identifier,
+        name: dataContract.dataContract.name,
         owner: identity.identifier,
         schema: '{}',
         version: dataContract.dataContract.version,

@@ -10,6 +10,7 @@ use tokio_postgres::Row;
 #[derive(Clone)]
 pub struct DataContract {
     pub id: Option<u32>,
+    pub name: Option<String>,
     pub owner: Identifier,
     pub identifier: Identifier,
     pub schema: Option<Value>,
@@ -35,6 +36,7 @@ impl From<DataContractCreateTransition> for DataContract {
 
                         return DataContract {
                             id: None,
+                            name: None,
                             owner,
                             identifier,
                             schema: Some(schema_decoded),
@@ -66,6 +68,7 @@ impl From<DataContractUpdateTransition> for DataContract {
 
                         return DataContract {
                             id: None,
+                            name: None,
                             owner,
                             identifier,
                             schema: Some(schema_decoded),
@@ -80,9 +83,17 @@ impl From<DataContractUpdateTransition> for DataContract {
     }
 }
 
+
 impl From<SystemDataContract> for DataContract {
     fn from(data_contract: SystemDataContract) -> Self {
         let platform_version = dpp::version::PLATFORM_VERSIONS.first().unwrap();
+        let name = match data_contract {
+            SystemDataContract::Withdrawals => "Withdrawals",
+            SystemDataContract::MasternodeRewards => "MasternodeRewards",
+            SystemDataContract::FeatureFlags => "FeatureFlags",
+            SystemDataContract::DPNS => "DPNS",
+            SystemDataContract::Dashpay => "Dashpay"
+        };
         let identifier = data_contract.id();
         let source = data_contract.source(platform_version).unwrap();
         let owner = Identifier::from(source.owner_id_bytes);
@@ -91,6 +102,7 @@ impl From<SystemDataContract> for DataContract {
 
         return DataContract {
             id: None,
+            name: Some(String::from(name)),
             owner,
             identifier,
             schema: Some(schema_decoded),
@@ -105,13 +117,15 @@ impl From<SystemDataContract> for DataContract {
 impl From<Row> for DataContract {
     fn from(row: Row) -> Self {
         let id: i32 = row.get(0);
-        let owner: String = row.get(1);
-        let identifier: String = row.get(2);
-        let version:i32 = row.get(3);
-        let is_system:bool = row.get(4);
+        let name: Option<String> = row.get(1);
+        let owner: String = row.get(2);
+        let identifier: String = row.get(3);
+        let version: i32 = row.get(4);
+        let is_system: bool = row.get(5);
 
         return DataContract {
             id: Some(id as u32),
+            name,
             owner: Identifier::from_string(owner.trim(), Base58).unwrap(),
             identifier: Identifier::from_string(identifier.trim(), Base58).unwrap(),
             schema: None,

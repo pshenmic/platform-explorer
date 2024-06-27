@@ -8,6 +8,7 @@ import DocumentsList from '../../../components/documents/DocumentsList'
 import { LoadingLine, LoadingBlock, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import ImageGenerator from '../../../components/imageGenerator'
 import './DataContract.scss'
 
 import {
@@ -86,7 +87,15 @@ function DataContract ({ identifier }) {
                 <Thead>
                     <Tr>
                         <Th>Data contract info</Th>
-                        <Th></Th>
+                        <Th isNumeric className={'TableHeader TableHeader--Name'}>
+                            <div className={'TableHeader__Content'}>
+                                {dataContract?.data?.name || ''}
+                                {dataContract.data?.identifier
+                                  ? <ImageGenerator className={'TableHeader__Avatar'} username={dataContract.data?.identifier} lightness={50} saturation={50} width={32} height={32}/>
+                                  : <Box w={'32px'} h={'32px'} />
+                                }
+                            </div>
+                        </Th>
                     </Tr>
                 </Thead>
                 <Tbody>
@@ -94,6 +103,12 @@ function DataContract ({ identifier }) {
                         <Td w={tdTitleWidth}>Identifier</Td>
                         <Td>
                             <LoadingLine loading={dataContract.loading}>{dataContract.data?.identifier}</LoadingLine>
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Td w={tdTitleWidth}>Name</Td>
+                        <Td>
+                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>

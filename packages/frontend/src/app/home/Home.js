@@ -4,7 +4,7 @@ import { useState, useEffect, createRef } from 'react'
 import * as Api from '../../util/Api'
 import { LineChart } from '../../components/charts/index.js'
 import { SimpleList } from '../../components/lists'
-import TotalInfo from '../../components/​totalInfo'
+import TotalInfo from '../../components/total/TotalInfo'
 import NetworkStatus from '../../components/networkStatus'
 import Intro from '../../components/intro/index.js'
 import Markdown from '../../components/markdown'
@@ -62,14 +62,7 @@ function Home () {
 
       Api.getIdentities(1, 10, 'desc', 'tx_count')
         .then(paginatedTrendingIdentities => fetchHandlerSuccess(setTrendingIdentities, paginatedTrendingIdentities))
-        .catch(err => fetchHandlerError(setTrendingIdentities, err)),
-
-      Api.getBlocks(1, 1, 'desc')
-        .then(res => {
-          const [latestBlock] = res.resultSet
-          fetchHandlerSuccess(setStatus, { latestBlock })
-        })
-        .catch(err => fetchHandlerError(setStatus, err))
+        .catch(err => fetchHandlerError(setTrendingIdentities, err))
     ])
       .catch(console.log)
   }
@@ -163,7 +156,7 @@ function Home () {
               <Box flexShrink={'0'} w={10} h={10} />
 
               <Container maxW={'none'} p={0}>
-                  <NetworkStatus status={status}/>
+                  <NetworkStatus/>
               </Container>
           </Flex>
       </Container>

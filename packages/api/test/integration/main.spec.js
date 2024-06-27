@@ -156,6 +156,7 @@ describe('Other routes', () => {
 
       const expectedDataContract = {
         identifier: dataContract.identifier,
+        name: dataContract.name,
         owner: identity.identifier.trim(),
         schema: JSON.stringify(dataContract.schema),
         version: 0,
@@ -198,6 +199,7 @@ describe('Other routes', () => {
         version: 'v2.0.0',
         highestBlock: {
           height: 1337,
+          hash: 'DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF',
           timestamp: new Date().toISOString()
         }
       }
@@ -224,6 +226,7 @@ describe('Other routes', () => {
           version: require('../../package.json').version,
           block: {
             height: 10,
+            hash: blocks[blocks.length - 1].hash,
             timestamp: blocks[blocks.length - 1].timestamp.toISOString()
           }
         },
@@ -234,6 +237,7 @@ describe('Other routes', () => {
           version: mockTDStatus?.version ?? null,
           block: {
             height: mockTDStatus?.highestBlock?.height,
+            hash: mockTDStatus?.highestBlock?.hash,
             timestamp: mockTDStatus?.highestBlock?.timestamp
           }
         }

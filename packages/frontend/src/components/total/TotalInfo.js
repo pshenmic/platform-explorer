@@ -7,7 +7,7 @@ import {
   Flex
 } from '@chakra-ui/react'
 
-function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers, loading }) {
+export default function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers, loading }) {
   return (
         <Container
             className={'TotalInfo'}
@@ -69,5 +69,3 @@ function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers,
         </Container>
   )
 }
-
-export default TotalInfo
