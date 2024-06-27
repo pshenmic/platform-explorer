@@ -20,19 +20,29 @@
     @media screen and (max-width: $breakpoint-lg) {
         &__Item {
             width: calc(25% - 10px);
-            margin: 10px 0;
+        }
+
+        &--DivideBy3 &__Item {
+            width: calc(100% / 3 - 10px);
         }
     }
 
     @media screen and (max-width: $breakpoint-md) {
         &__Item {
             width: calc(50% - 10px);
-            margin: 10px 0;
+        }
+
+        &--DivideBy3 &__Item {
+            width: calc(50% - 10px);
         }
     }
 
     @media screen and (max-width: $breakpoint-sm) {
         &__Item {
+            width: 100%;
+        }
+
+        &--DivideBy3 &__Item {
             width: 100%;
         }
     }
