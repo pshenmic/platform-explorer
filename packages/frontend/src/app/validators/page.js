@@ -1,7 +1,9 @@
 import Validators from './Validators'
+import { ValidatorsTotal } from '../../components/validators'
 import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
+import { SideBlock } from '../../components/containers'
 import {
   Container,
   Flex,
@@ -38,7 +40,9 @@ function ValidatorsRoute () {
           <Box flexShrink={'0'} w={10} h={[5, 5, 5, 10]}/>
 
           <Container maxW={'none'} p={0}>
-            Metrics
+            <SideBlock>
+              <ValidatorsTotal/>
+            </SideBlock>
           </Container>
       </Flex>
     </Container>

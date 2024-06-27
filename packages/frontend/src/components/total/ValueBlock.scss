@@ -53,6 +53,27 @@
         }
     }
 
+    &--Nodes {
+        &::before {
+            background: url('/images/icons/nodes.svg') no-repeat center;
+            background-size: contain;
+        }
+    }
+
+    &--Coins {
+        &::before {
+            background: url('/images/icons/coins.svg') no-repeat center;
+            background-size: contain;
+        }
+    }
+
+    &--StarCheck {
+        &::before {
+            background: url('/images/icons/star-check.svg') no-repeat center;
+            background-size: contain;
+        }
+    }
+
     &__Title {
         color:  var(--chakra-colors-brand-deep);
         font-size: 16px;

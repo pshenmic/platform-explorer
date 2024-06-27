@@ -1,5 +1,7 @@
 import ValidatorsList from './ValidatorsList'
+import ValidatorsTotal from './ValidatorsTotal'
 
 export {
-  ValidatorsList
+  ValidatorsList,
+  ValidatorsTotal
 }
