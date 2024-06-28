@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import ImageGenerator from '../imageGenerator'
 import { Switcher } from '../../components/ui'
 import {
   Flex,
@@ -12,8 +13,8 @@ import {
   Td,
   TableContainer
 } from '@chakra-ui/react'
-
 import { TableHeaders } from '../../components/ui/Table'
+import './ValidatorsList.scss'
 
 export default function ValidatorsList ({ validators }) {
   const [sort, setSort] = useState({ key: 'blocksProposed', direction: 'asc' })
@@ -23,8 +24,13 @@ export default function ValidatorsList ({ validators }) {
 
   const ValidatorRow = ({ validator }) => {
     return (
-      <Tr>
-        <Td><Link href={'/validator/a1b2c3'}>{validator.protxhash}</Link></Td>
+      <Tr className={'ValidatorTableRow'}>
+        <Td>
+          <Link href={'/validator/a1b2c3'} className={'ValidatorTableRow__IdentifierContainer'}>
+            <ImageGenerator className={'ValidatorTableRow__Avatar'} username={validator.protxhash} lightness={50} saturation={50} width={28} height={28} />
+            <div className={'ValidatorTableRow__Identifier'}>{validator.protxhash}</div>
+          </Link>
+        </Td>
         <Td isNumeric>{validator.lastBlockHeight}</Td>
         <Td isNumeric>{validator.blocksProposed}</Td>
       </Tr>

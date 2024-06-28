@@ -43,13 +43,13 @@ function Validators () {
             },
             {
               active: true,
-              protxhash: 'f92e66edc9c8da41de71073ef08d62c56f8752a3f4e29ced6c515e0b1c074a38',
+              protxhash: 'iHJhyiQSAWHYORdJzDPUSydVOmlIfsmGiIzirPv1bZjI466qn6eg9HqZhlxI0Pts',
               lastBlockHeight: '13618',
               blocksProposed: '1020'
             },
             {
               active: true,
-              protxhash: 'f92e66edc9c8da41de71073ef08d62c56f8752a3f4e29ced6c515e0b1c074a38',
+              protxhash: 'G24zk1djskZRdDhLRBTEI9Pm0E1UTYxHW1pCFdgVkvm96mY6LWxfHBsexiGXlWxr',
               lastBlockHeight: '13617',
               blocksProposed: '1030'
             }
