@@ -12,6 +12,7 @@ import {
   Flex,
   Box
 } from '@chakra-ui/react'
+import ProposedBlocksChart from './ProposedBlocksChart'
 
 function Validator ({ hash }) {
   const [validator, setValidator] = useState({ data: {}, loading: true, error: false })
@@ -40,6 +41,7 @@ function Validator ({ hash }) {
               maxW='none'
               borderWidth='1px' borderRadius='lg'
               m={0}
+              flexShrink={0}
             >
               {!validator.error
                 ? <Table variant='simple' className={'Table'}>
@@ -67,16 +69,9 @@ function Validator ({ hash }) {
                 : <Container h={60}><ErrorMessageBlock/></Container>}
           </TableContainer>
 
-          <Box w={5} h={5} />
+          <Box w={5} h={5} flexShrink={0}/>
 
-          <Container
-            width={['100%', '100%', '100%', 'calc(50% - 10px)']}
-            maxW='none'
-            m={0}
-            borderWidth='1px' borderRadius='lg'
-          >
-            <Flex h={'100%'} justifyContent={'center'} alignItems={'center'}>chart will be here</Flex>
-          </Container>
+          <ProposedBlocksChart/>
       </Flex>
 
       <Container
