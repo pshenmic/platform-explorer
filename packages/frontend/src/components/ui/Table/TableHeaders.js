@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
-import { Th } from '@chakra-ui/react'
+import { Th, Box } from '@chakra-ui/react'
 
 function TableHeaders ({ headers, sortCallback }) {
   if (!sortCallback) sortCallback = () => {}
@@ -28,14 +28,14 @@ function TableHeaders ({ headers, sortCallback }) {
           key={i}
         >
           {header?.sortable &&
-            <span className={'Table__SortDirection'}>
+            <div className={'TableHeader__SortDirection'}>
               {header.key === sort.key
                 ? sort.direction === 'asc'
-                  ? <ChevronDownIcon w={4} h={4}/>
-                  : <ChevronUpIcon w={4} h={4}/>
-                : ''
+                  ? <ChevronDownIcon w={4} h={4} my={-1} mr={1}/>
+                  : <ChevronUpIcon w={4} h={4} my={-1} mr={1}/>
+                : <Box w={4} height={1} mr={1} display={'inline-block'}/>
               }
-            </span>
+            </div>
           }
           <span>{header.label}</span>
         </Th>
