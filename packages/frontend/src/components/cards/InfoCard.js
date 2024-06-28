@@ -1,9 +1,16 @@
 'use client'
 
-import { useState, createRef } from 'react'
+import { useState, createRef, forwardRef } from 'react'
+import Link from 'next/link'
 import './InfoCard.scss'
 
-export default function InfoCard ({ clickable, loading, children, className }) {
+const Wrapper = forwardRef(function Wrapper (props, ref) {
+  return props?.link
+    ? <Link ref={ref} onMouseMove={props.onMouseMove} href={props.link} className={props.className}>{props.children}</Link>
+    : <div ref={ref} onMouseMove={props.onMouseMove} className={props.className}>{props.children}</div>
+})
+
+export default function InfoCard ({ clickable, link, loading, children, className }) {
   const card = createRef()
   const [mousePosition, setMousePosition] = useState({})
 
@@ -13,13 +20,14 @@ export default function InfoCard ({ clickable, loading, children, className }) {
   })
 
   return (
-    <div
+    <Wrapper
       ref={card}
       onMouseMove={mouseMoveHandler}
-      className={`InfoCard ${className} ${clickable ? 'InfoCard--Clickable' : ''} ${loading ? 'InfoCard--Loading' : ''}`}
+      className={`InfoCard ${className} ${(clickable || link) ? 'InfoCard--Clickable' : ''} ${loading ? 'InfoCard--Loading' : ''}`}
+      link={link}
     >
         {children}
         <div style={{ left: mousePosition.x, top: mousePosition.y }} className={'InfoCard__HoverBg'}></div>
-    </div>
+    </Wrapper>
   )
 }

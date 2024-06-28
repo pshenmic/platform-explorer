@@ -38,7 +38,9 @@ export default function ValidatorsTotal () {
         {
           title: 'Best Validator:',
           value: 'f92e66c8',
-          icon: 'StarCheck'
+          format: ['monospase', 'elipsed'],
+          icon: 'StarCheck',
+          link: '/validator/a1b2c3'
         }
       ]}
     />
