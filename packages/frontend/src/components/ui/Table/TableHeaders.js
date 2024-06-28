@@ -8,9 +8,6 @@ function TableHeaders ({ headers, sortCallback }) {
   const [sort, setSort] = useState({ key: 'blocksProposed', direction: 'asc' })
 
   function sortHandler (header) {
-    console.log(header)
-    console.log('direction: header.key === sort.key', header.key === sort.key)
-
     setSort({
       key: header.key,
       direction: header.key === sort.key
