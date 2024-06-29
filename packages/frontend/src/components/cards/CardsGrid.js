@@ -1,8 +1,9 @@
 import { InfoCard } from './'
 import './CardsGrid.scss'
 
-function CardsGrid ({ children, className }) {
-  return <div className={`CardsGrid ${className || ''}`}>{children}</div>
+function CardsGrid ({ children, className, itemsCount = null }) {
+  const justifyClass = (itemsCount && itemsCount % 3 === 0) ? 'CardsGrid--DivideBy3' : ''
+  return <div className={`CardsGrid ${justifyClass} ${className || ''}`}>{children}</div>
 }
 
 function CardsGridHeader ({ children, className }) {

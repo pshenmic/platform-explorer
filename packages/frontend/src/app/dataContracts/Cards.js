@@ -8,6 +8,10 @@ export default function Cards () {
     data: {
       resultSet: [
         {
+          identifier: 'CzQbXNyvsjGWmJ9YMHkpVSceW16YmQEuoaosAkpm1JSN',
+          name: 'Platform Explorer'
+        },
+        {
           identifier: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
           name: 'Dashpay'
         },
@@ -22,6 +26,10 @@ export default function Cards () {
         {
           identifier: 'HY1keaRK5bcDmujNCQq5pxNyvAiHHpoHQgLN5ppiu4kh',
           name: 'FeatureFlags'
+        },
+        {
+          identifier: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6',
+          name: 'Withdrawals'
         }
       ]
     },
