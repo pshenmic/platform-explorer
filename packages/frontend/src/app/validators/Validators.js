@@ -17,7 +17,7 @@ import {
 
 const paginateConfig = {
   pageSize: {
-    default: 10,
+    default: 50,
     values: [10, 25, 50, 75, 100]
   },
   defaultPage: 1
@@ -31,32 +31,10 @@ function Validators () {
   const pageCount = Math.ceil(total / pageSize)
 
   const fetchData = (page, count) => {
-    Api.getTransactions(page, count, 'desc')
+    Api.getValidators(page, count, 'desc')
       .then((res) => {
-        res = {
-          resultSet: [
-            {
-              active: true,
-              protxhash: 'f92e66edc9c8da41de71073ef08d62c56f8752a3f4e29ced6c515e0b1c074a38',
-              lastBlockHeight: '13619',
-              blocksProposed: '1010'
-            },
-            {
-              active: true,
-              protxhash: 'iHJhyiQSAWHYORdJzDPUSydVOmlIfsmGiIzirPv1bZjI466qn6eg9HqZhlxI0Pts',
-              lastBlockHeight: '13618',
-              blocksProposed: '1020'
-            },
-            {
-              active: true,
-              protxhash: 'G24zk1djskZRdDhLRBTEI9Pm0E1UTYxHW1pCFdgVkvm96mY6LWxfHBsexiGXlWxr',
-              lastBlockHeight: '13617',
-              blocksProposed: '1030'
-            }
-          ]
-        }
         fetchHandlerSuccess(setValidators, res)
-        setTotal(100)
+        setTotal(res.pagination.total)
       })
       .catch(err => fetchHandlerError(setValidators, err))
   }

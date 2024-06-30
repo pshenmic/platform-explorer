@@ -26,21 +26,31 @@ export default function ValidatorsList ({ validators }) {
     return (
       <Tr className={'ValidatorTableRow'}>
         <Td>
-          <Link href={'/validator/a1b2c3'} className={'ValidatorTableRow__IdentifierContainer'}>
-            <ImageGenerator className={'ValidatorTableRow__Avatar'} username={validator.protxhash} lightness={50} saturation={50} width={28} height={28} />
-            <div className={'ValidatorTableRow__Identifier'}>{validator.protxhash}</div>
+          <Link href={`/validator/${validator.proTxHash}`} className={'ValidatorTableRow__IdentifierContainer'}>
+            <ImageGenerator className={'ValidatorTableRow__Avatar'} username={validator.proTxHash} lightness={50} saturation={50} width={28} height={28} />
+            <div className={'ValidatorTableRow__Identifier'}>{validator.proTxHash}</div>
           </Link>
         </Td>
-        <Td isNumeric>{validator.lastBlockHeight}</Td>
-        <Td isNumeric>{validator.blocksProposed}</Td>
+        <Td isNumeric>{validator?.lastProposedBlockHeader?.height || '-'}</Td>
+        <Td isNumeric>{validator?.proposedBlocksAmount || '-'}</Td>
       </Tr>
     )
   }
 
   function getSortedList () {
     if (!validators?.data?.resultSet?.length) return []
-    if (sort.direction === 'asc') return validators.data.resultSet.sort((a, b) => (a[sort.key] > b[sort.key] ? 1 : -1))
-    return validators.data.resultSet.sort((a, b) => (a[sort.key] > b[sort.key] ? -1 : 1))
+
+    if (sort.direction === 'asc') {
+      return validators.data.resultSet.sort((a, b) => {
+        if (sort.key === 'lastBlockHeight') return (a?.lastProposedBlockHeader?.height || 0) > (b?.lastProposedBlockHeader?.height || 0) ? 1 : -1
+        return a[sort.key] > b[sort.key] ? 1 : -1
+      })
+    }
+
+    return validators.data.resultSet.sort((a, b) => {
+      if (sort.key === 'lastBlockHeight') return (a?.lastProposedBlockHeader?.height || 0) > (b?.lastProposedBlockHeader?.height || 0) ? -1 : 1
+      return a[sort.key] > b[sort.key] ? -1 : 1
+    })
   }
 
   const headers = [
@@ -55,7 +65,7 @@ export default function ValidatorsList ({ validators }) {
       sortable: true
     },
     {
-      key: 'blocksProposed',
+      key: 'proposedBlocksAmount',
       label: 'Blocks proposed',
       isNumeric: true,
       sortable: true
@@ -86,7 +96,7 @@ export default function ValidatorsList ({ validators }) {
           <Tbody>
             {!validators.loading
               ? getSortedList().map((validator, i) => (
-                viewActive === validator.active &&
+                (viewActive === validator.active || true) &&
                   <ValidatorRow key={i} validator={validator}/>
               ))
               : <>loading</>
