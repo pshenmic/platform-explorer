@@ -3,9 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import ImageGenerator from '../imageGenerator'
-import { Switcher } from '../../components/ui'
 import {
-  Flex,
   Table,
   Thead,
   Tbody,
@@ -18,9 +16,6 @@ import './ValidatorsList.scss'
 
 export default function ValidatorsList ({ validators }) {
   const [sort, setSort] = useState({ key: 'blocksProposed', direction: 'asc' })
-  const [viewActive, setViewActive] = useState(true)
-  const activeCount = validators.data?.resultSet?.length > 0 ? validators.data?.resultSet.filter((validator) => validator.active).length : 0
-  const inactiveCount = validators.data?.resultSet?.length > 0 ? validators.data?.resultSet.filter((validator) => !validator.active).length : 0
 
   const ValidatorRow = ({ validator }) => {
     return (
@@ -74,18 +69,6 @@ export default function ValidatorsList ({ validators }) {
 
   return (
     <div className={'ValidatorsList'}>
-      <Switcher
-        options={[
-          {
-            title: 'Active'
-          },
-          {
-            title: 'Inactive'
-          }
-        ]}
-        onChange={e => setViewActive(e === 'Active')}
-      />
-
       <TableContainer>
         <Table size={'md'} className={'Table'}>
           <Thead>
@@ -94,28 +77,10 @@ export default function ValidatorsList ({ validators }) {
             </Tr>
           </Thead>
           <Tbody>
-            {!validators.loading
-              ? getSortedList().map((validator, i) => (
-                (viewActive === validator.active || true) &&
-                  <ValidatorRow key={i} validator={validator}/>
-              ))
-              : <>loading</>
-            }
+            {getSortedList().map((validator, i) => <ValidatorRow key={i} validator={validator}/>)}
           </Tbody>
         </Table>
       </TableContainer>
-
-      {(!viewActive && !inactiveCount) &&
-        <Flex justifyContent={'center'} alignItems={'center'} height={'100px'}>
-          All validators is active
-        </Flex>
-      }
-
-      {(viewActive && !activeCount) &&
-        <Flex justifyContent={'center'} alignItems={'center'} height={'100px'}>
-          All validators is inactive
-        </Flex>
-      }
     </div>
   )
 }

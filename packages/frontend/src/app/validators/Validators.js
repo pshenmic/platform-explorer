@@ -17,7 +17,7 @@ import {
 
 const paginateConfig = {
   pageSize: {
-    default: 50,
+    default: 25,
     values: [10, 25, 50, 75, 100]
   },
   defaultPage: 1

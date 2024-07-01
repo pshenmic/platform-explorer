@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import TotalCards from '../total/TotalCards'
 
 export default function ValidatorsTotal () {
@@ -32,15 +32,13 @@ export default function ValidatorsTotal () {
         },
         {
           title: 'Fees collected:',
-          value: currencyRound(716253447) || '-',
+          value: 'n/a',
           icon: 'Coins'
         },
         {
           title: 'Best Validator:',
-          value: 'f92e66c8',
-          format: ['monospase', 'elipsed'],
-          icon: 'StarCheck',
-          link: '/validator/a1b2c3'
+          value: 'n/a',
+          icon: 'StarCheck'
         }
       ]}
     />

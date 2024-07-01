@@ -15,7 +15,6 @@ import {
   Flex,
   Box
 } from '@chakra-ui/react'
-import ProposedBlocksChart from './ProposedBlocksChart'
 
 const paginateConfig = {
   pageSize: {
@@ -63,7 +62,7 @@ function Validator ({ hash }) {
 
   return (
     <Container
-        maxW={'container.xl'}
+        maxW={'container.lg'}
         p={3}
         mt={8}
     >
@@ -74,7 +73,7 @@ function Validator ({ hash }) {
           mb={5}
       >
           <TableContainer
-              width={['100%', '100%', '100%', 'calc(50% - 10px)']}
+              width={'100%'}
               maxW={'none'}
               borderWidth={'1px'} borderRadius={'lg'}
               m={0}
@@ -96,14 +95,8 @@ function Validator ({ hash }) {
                               </Td>
                           </Tr>
                           <Tr>
-                              <Td w={tdTitleWidth}>Status</Td>
-                              <Td >
-                                  <LoadingLine loading={validator.loading}>active</LoadingLine>
-                              </Td>
-                          </Tr>
-                          <Tr>
                               <Td w={tdTitleWidth}>Proposed blocks</Td>
-                              <Td >
+                              <Td isNumeric>
                                   <LoadingLine loading={validator.loading}>{validator?.data?.proposedBlocksAmount || '-'}</LoadingLine>
                               </Td>
                           </Tr>
@@ -111,10 +104,6 @@ function Validator ({ hash }) {
                   </Table>
                 : <Container h={60}><ErrorMessageBlock/></Container>}
           </TableContainer>
-
-          <Box w={5} h={5} flexShrink={0}/>
-
-          <ProposedBlocksChart/>
       </Flex>
 
       <Container
