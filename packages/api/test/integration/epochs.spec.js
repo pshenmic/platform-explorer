@@ -58,7 +58,7 @@ describe('Blocks routes', () => {
       const genesisTime = new Date(genesis?.genesis_time).getTime()
       const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
       const currentBlocktime = block.timestamp.getTime()
-      const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime) 
+      const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
       const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
 
       const { body } = await client.get(`/epoch/${epochIndex}`)
@@ -73,7 +73,7 @@ describe('Blocks routes', () => {
 
       const expectedBlock = {
         epoch: {
-          endTime: new Date(startEpochTime+epochChangeTime).toISOString(),
+          endTime: new Date(startEpochTime + epochChangeTime).toISOString(),
           index: epochIndex,
           startTime: new Date(startEpochTime).toISOString()
 

@@ -4,7 +4,7 @@ const TenderdashRPC = require('../tenderdashRpc')
 const { calculateEpoch } = require('../utils')
 
 class EpochController {
-  constructor(knex) {
+  constructor (knex) {
     this.blocksDAO = new BlocksDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.knex = knex
