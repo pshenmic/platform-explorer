@@ -81,7 +81,7 @@ function Validator ({ hash }) {
               flexShrink={0}
             >
               {!validator.error
-                ? <Table variant='simple' className={'Table'}>
+                ? <Table variant={'simple'} className={'Table'}>
                       <Thead>
                           <Tr>
                               <Th pr={0}>validator info</Th>
@@ -118,13 +118,13 @@ function Validator ({ hash }) {
       </Flex>
 
       <Container
-        width='100%'
-        maxW='none'
+        width={'100%'}
+        maxW={'none'}
         mt={5}
-        borderWidth='1px' borderRadius='lg'
+        borderWidth={'1px'} borderRadius={'lg'}
         className={'InfoBlock'}
       >
-          <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Proposed blocks</Heading>
+          <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Proposed blocks</Heading>
 
           {!proposedBlocks.error
             ? <>
