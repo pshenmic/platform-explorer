@@ -89,7 +89,7 @@ function Validator ({ hash }) {
                       </Thead>
                       <Tbody>
                           <Tr>
-                              <Td w={tdTitleWidth}>TX Hash</Td>
+                              <Td w={tdTitleWidth}>ProTxHash</Td>
                               <Td isNumeric className={'Table__Cell--BreakWord'}>
                                   <LoadingLine loading={validator.loading}>{hash}</LoadingLine>
                               </Td>
