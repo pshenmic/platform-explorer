@@ -127,8 +127,9 @@ describe('Utils', () => {
   })
 
   describe('calculateEpoch()', () => {
-    it('should calculate Last epoch', async () => {
-      mock.method(TenderdashRPC, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+    it('should calculate last epoch', async () => {
+      mock.method(TenderdashRPC, 'getGenesis', async () => ({ genesis_time: new Date(36000000) }))
+
       const genesis = await TenderdashRPC.getGenesis()
 
       const genesisTime = new Date(genesis?.genesis_time).getTime()
@@ -147,7 +148,8 @@ describe('Utils', () => {
     })
 
     it('should calculate custom epoch', async () => {
-      mock.method(TenderdashRPC, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+      mock.method(TenderdashRPC, 'getGenesis', async () => ({ genesis_time: new Date(36000000) }))
+
       const genesis = await TenderdashRPC.getGenesis()
 
       const genesisTime = new Date(genesis?.genesis_time).getTime()
