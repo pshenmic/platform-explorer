@@ -96,12 +96,12 @@ jobs:
 
       - name: Check lint rules
         run: cd packages/api && npm run lint
+        
+      - name: Migrate DB
+        run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run db:migrate
 
       - name: Run unit tests
         run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run test:unit
-
-      - name: Migrate DB
-        run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run db:migrate
 
       - name: Run integration tests
         run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run test:integration
