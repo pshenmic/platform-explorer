@@ -4,6 +4,7 @@ const TransactionsDAO = require('../dao/TransactionsDAO')
 const DocumentsDAO = require('../dao/DocumentsDAO')
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const TenderdashRPC = require('../tenderdashRpc')
+const { calculateEpoch } = require('../utils')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
@@ -27,18 +28,10 @@ class MainController {
 
     const [currentBlock] = blocks.resultSet
 
-    const currentBlocktime = currentBlock.header.timestamp.getTime()
-    const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
-    const genesisTime = new Date(genesis?.genesis_time).getTime()
-    const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
-    const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
-    const nextEpochTime = Math.floor(genesisTime + epochChangeTime * (epochIndex + 1))
-
-    const epoch = {
-      index: epochIndex,
-      startTime: new Date(startEpochTime),
-      endTime: new Date(nextEpochTime)
-    }
+    const epoch = calculateEpoch({
+      currentBlock,
+      genesis_time: genesis?.genesis_time
+    })
 
     response.send({
       epoch,
