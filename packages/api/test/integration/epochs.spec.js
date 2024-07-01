@@ -51,10 +51,15 @@ describe('Blocks routes', () => {
     it('should return current epoch data', async () => {
       mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
 
-      const epochIndex = Math.round(
-        (new Date().getTime() - new Date(0).getTime()) /
-                Number(process.env.EPOCH_CHANGE_TIME)
-      ) - 1
+      const genesis = await tenderdashRpc.getGenesis()
+
+      const [block] = blocks.toReversed()
+
+      const genesisTime = new Date(genesis?.genesis_time).getTime()
+      const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
+      const currentBlocktime = block.timestamp.getTime()
+      const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime) 
+      const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
 
       const { body } = await client.get(`/epoch/${epochIndex}`)
         .expect(200)
@@ -68,9 +73,9 @@ describe('Blocks routes', () => {
 
       const expectedBlock = {
         epoch: {
-          endTime: new Date(timestamp.getTime() + 3600000).toISOString(),
+          endTime: new Date(startEpochTime+epochChangeTime).toISOString(),
           index: epochIndex,
-          startTime: timestamp.toISOString()
+          startTime: new Date(startEpochTime).toISOString()
 
         },
         tps: (identities.length + transactions.length) / 3600

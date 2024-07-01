@@ -10,7 +10,7 @@ const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
 
 class MainController {
-  constructor (knex) {
+  constructor(knex) {
     this.blocksDAO = new BlocksDAO(knex)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
@@ -29,7 +29,7 @@ class MainController {
     const [currentBlock] = blocks.resultSet
 
     const epoch = calculateEpoch({
-      currentBlock,
+      currentBlock: currentBlock.header,
       genesis_time: genesis?.genesis_time
     })
 

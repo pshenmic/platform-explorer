@@ -4,7 +4,7 @@ const TenderdashRPC = require('../tenderdashRpc')
 const { calculateEpoch } = require('../utils')
 
 class EpochController {
-  constructor (knex) {
+  constructor(knex) {
     this.blocksDAO = new BlocksDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.knex = knex
@@ -19,7 +19,7 @@ class EpochController {
     const epoch = calculateEpoch({
       index,
       genesis_time: genesis?.genesis_time,
-      currentBlock
+      currentBlock: currentBlock.header
     })
 
     const subquery = this.knex('state_transitions')
