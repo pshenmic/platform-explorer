@@ -1,0 +1,25 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.DataContractCard {
+    &__Img {
+        @include mixins.avatar-container;
+
+        margin-right: 8px;
+        width: 28px;
+        height: 28px;
+    }
+
+    &__Name {
+        font-size: 18px;
+    }
+
+    &__Id {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--chakra-colors-gray-500);
+        font-family: monospace;
+        font-size: 16px;
+    }
+}

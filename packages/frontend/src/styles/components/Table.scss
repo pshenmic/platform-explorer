@@ -1,0 +1,38 @@
+.Table {
+    a {
+        position: relative;
+        display: inline-block;
+        margin-bottom: -1px;
+        border-bottom: 1px solid;
+
+        &:hover {
+            color: var(--chakra-colors-gray-200);
+            border-bottom: none;
+        }
+    }
+
+    tr {
+        &:last-child {
+            td {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+.TableHeader {
+    &--Name {
+        box-sizing: content-box;
+        min-height: 32px;
+    }
+
+    &--Name &__Content {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    &__Avatar {
+        margin-left: 8px;
+    }
+}
