@@ -1,0 +1,32 @@
+.Switcher {
+    background-color: rgba(0, 0, 0, .2);
+    width: max-content;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, .4);
+    display: flex;
+    overflow: hidden;
+
+    input {
+        display: none;
+    }
+
+    &__OptionTitle {
+        padding: 8px 12px;
+        display: inline-block;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        color: var(--chakra-colors-gray-700);
+        transition: all .15s;
+
+        input:checked ~ & {
+            background-color: var(--chakra-colors-gray-900);
+            color: #fff;
+        }
+
+        &:hover {
+            cursor: pointer;
+            color: var(--chakra-colors-gray-500);
+        }
+    }
+}

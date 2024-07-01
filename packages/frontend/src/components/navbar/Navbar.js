@@ -20,6 +20,7 @@ const links = [
   { title: 'Transactions', href: '/transactions' },
   { title: 'Data Contracts', href: '/dataContracts' },
   { title: 'Identities', href: '/identities' },
+  { title: 'Validators', href: '/validators' },
   { title: 'API', href: '/api' }
 ]
 

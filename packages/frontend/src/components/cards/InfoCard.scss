@@ -2,6 +2,7 @@
 @import '../../styles/variables.scss';
 
 .InfoCard {
+    display: block;
     position: relative;
     z-index: 1;
     overflow: hidden;
@@ -9,6 +10,10 @@
     border-radius: $border-radius-def;
     padding: 16px;
     box-shadow: 4px 4px 5px rgba(0, 0, 0, .2);
+
+    &:hover {
+        cursor: default;
+    }
 
     &--Clickable {
         transition: box-shadow .1s;
