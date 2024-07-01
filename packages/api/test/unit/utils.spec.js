@@ -1,4 +1,4 @@
-const { describe, it, before } = require('node:test')
+const { describe, it, before, mock } = require('node:test')
 const assert = require('node:assert').strict
 const utils = require('../../src/utils')
 const TenderdashRPC = require('../../src/tenderdashRpc')
@@ -28,6 +28,10 @@ describe('Utils', () => {
     await fixtures.cleanup(knex)
 
     block = await fixtures.block(knex, { height: 1 })
+  })
+
+  after(async () => {
+    await knex.destroy()
   })
 
   describe('decodeStateTransition()', () => {
@@ -124,6 +128,7 @@ describe('Utils', () => {
 
   describe('calculateEpoch()', () => {
     it('should calculate Last epoch', async () => {
+      mock.method(TenderdashRPC, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
       const genesis = await TenderdashRPC.getGenesis()
 
       const genesisTime = new Date(genesis?.genesis_time).getTime()
@@ -142,6 +147,7 @@ describe('Utils', () => {
     })
 
     it('should calculate custom epoch', async () => {
+      mock.method(TenderdashRPC, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
       const genesis = await TenderdashRPC.getGenesis()
 
       const genesisTime = new Date(genesis?.genesis_time).getTime()
