@@ -12,7 +12,9 @@ export const metadata = {
   applicationName: 'Dash Platform Explorer'
 }
 
-function TransactionsRoute () {
+function TransactionsRoute ({ searchParams }) {
+  const page = Number(searchParams.page) || 1
+
   return <>
     <Container
       maxW={'container.xl'}
@@ -39,7 +41,7 @@ function TransactionsRoute () {
           </Container>
       </Flex>
     </Container>
-    <Transactions/>
+    <Transactions defaultPage={page}/>
   </>
 }
 

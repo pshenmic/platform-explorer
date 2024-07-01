@@ -8,6 +8,7 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import {
   Container,
@@ -23,12 +24,15 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function Transactions () {
+function Transactions ({ defaultPage = 1 }) {
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentPage, setCurrentPage] = useState(defaultPage || 0)
   const pageCount = Math.ceil(total / pageSize)
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const fetchData = (page, count) => {
     setTransactions(state => ({ ...state, loading: true }))
@@ -41,16 +45,20 @@ function Transactions () {
       .catch(err => fetchHandlerError(setTransactions, err))
   }
 
-  useEffect(() => fetchData(paginateConfig.defaultPage, pageSize), [pageSize])
+  useEffect(() => fetchData(defaultPage, pageSize), [pageSize])
 
   const handlePageClick = useCallback(({ selected }) => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+    urlParameters.set('page', selected + 1)
+    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+
     setCurrentPage(selected)
     fetchData(selected + 1, pageSize)
   }, [pageSize])
 
   useEffect(() => {
-    setCurrentPage(0)
-    handlePageClick({ selected: 0 })
+    setCurrentPage(defaultPage - 1)
+    handlePageClick({ selected: defaultPage - 1 })
   }, [pageSize, handlePageClick])
 
   return (
