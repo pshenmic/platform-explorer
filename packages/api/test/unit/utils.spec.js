@@ -1,4 +1,4 @@
-const { describe, it, before, mock } = require('node:test')
+const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const utils = require('../../src/utils')
 const TenderdashRPC = require('../../src/tenderdashRpc')
