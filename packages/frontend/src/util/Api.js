@@ -65,8 +65,8 @@ const getBlocks = (page = 1, limit = 30, order = 'asc') => {
   return call(`blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
-const getBlocksByValidator = (identifier) => {
-  return call(`validators/${identifier}/blocks}`, 'GET')
+const getBlocksByValidator = (proTxHash, page = 1, limit = 30, order = 'asc') => {
+  return call(`validator/${proTxHash}/blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getDataContractByIdentifier = (identifier) => {

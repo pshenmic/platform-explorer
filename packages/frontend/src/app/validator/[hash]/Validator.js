@@ -1,8 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { fetchHandlerSuccess } from '../../../util'
-import { LoadingLine } from '../../../components/loading'
+import { useState, useEffect, useCallback } from 'react'
+import * as Api from '../../../util/Api'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import { LoadingLine, LoadingList } from '../../../components/loading'
+import Pagination from '../../../components/pagination'
+import PageSizeSelector from '../../../components/pageSizeSelector/PageSizeSelector'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import BlocksList from '../../../components/blocks/BlocksList'
 import {
@@ -14,15 +17,49 @@ import {
 } from '@chakra-ui/react'
 import ProposedBlocksChart from './ProposedBlocksChart'
 
+const paginateConfig = {
+  pageSize: {
+    default: 25,
+    values: [10, 25, 50, 75, 100]
+  },
+  defaultPage: 1
+}
+
 function Validator ({ hash }) {
   const [validator, setValidator] = useState({ data: {}, loading: true, error: false })
+  const [proposedBlocks, setProposedBlocks] = useState({ data: {}, loading: true, error: false })
+  const [totalBlocks, setTotalBlocks] = useState(1)
   const tdTitleWidth = 250
+  const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageCount = Math.ceil(totalBlocks / pageSize) ? Math.ceil(totalBlocks / pageSize) : 1
 
-  const fetchData = () => {
-    fetchHandlerSuccess(setValidator, {})
+  const fetchData = (page, count) => {
+    setProposedBlocks(state => ({ ...state, loading: true }))
+
+    Api.getValidatorByProTxHash(hash)
+      .then((res) => fetchHandlerSuccess(setValidator, res))
+      .catch(err => fetchHandlerError(setValidator, err))
+
+    Api.getBlocksByValidator(hash, page, count)
+      .then((res) => {
+        fetchHandlerSuccess(setProposedBlocks, res)
+        setTotalBlocks(res?.pagination?.total)
+      })
+      .catch(err => fetchHandlerError(setProposedBlocks, err))
   }
 
-  useEffect(fetchData, [hash])
+  useEffect(() => fetchData(paginateConfig.defaultPage, paginateConfig.pageSize.default), [hash])
+
+  const handlePageClick = useCallback(({ selected }) => {
+    setCurrentPage(selected)
+    fetchData(selected + 1, pageSize)
+  }, [pageSize])
+
+  useEffect(() => {
+    setCurrentPage(0)
+    handlePageClick({ selected: 0 })
+  }, [pageSize, handlePageClick])
 
   return (
     <Container
@@ -38,8 +75,8 @@ function Validator ({ hash }) {
       >
           <TableContainer
               width={['100%', '100%', '100%', 'calc(50% - 10px)']}
-              maxW='none'
-              borderWidth='1px' borderRadius='lg'
+              maxW={'none'}
+              borderWidth={'1px'} borderRadius={'lg'}
               m={0}
               flexShrink={0}
             >
@@ -54,14 +91,20 @@ function Validator ({ hash }) {
                       <Tbody>
                           <Tr>
                               <Td w={tdTitleWidth}>TX Hash</Td>
-                              <Td isNumeric>
+                              <Td isNumeric className={'Table__Cell--BreakWord'}>
                                   <LoadingLine loading={validator.loading}>{hash}</LoadingLine>
                               </Td>
                           </Tr>
                           <Tr>
                               <Td w={tdTitleWidth}>Status</Td>
-                              <Td isNumeric>
+                              <Td >
                                   <LoadingLine loading={validator.loading}>active</LoadingLine>
+                              </Td>
+                          </Tr>
+                          <Tr>
+                              <Td w={tdTitleWidth}>Proposed blocks</Td>
+                              <Td >
+                                  <LoadingLine loading={validator.loading}>{validator?.data?.proposedBlocksAmount || '-'}</LoadingLine>
                               </Td>
                           </Tr>
                       </Tbody>
@@ -82,7 +125,32 @@ function Validator ({ hash }) {
         className={'InfoBlock'}
       >
           <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Proposed blocks</Heading>
-          <BlocksList/>
+
+          {!proposedBlocks.error
+            ? <>
+                {!proposedBlocks.loading
+                  ? <BlocksList blocks={proposedBlocks?.data?.resultSet}/>
+                  : <LoadingList itemsCount={pageSize}/>
+                }
+              </>
+            : <Container h={20}><ErrorMessageBlock/></Container>
+          }
+
+          {proposedBlocks.data?.resultSet?.length > 0 &&
+            <div className={'ListNavigation'}>
+                <Box/>
+                <Pagination
+                    onPageChange={handlePageClick}
+                    pageCount={pageCount}
+                    forcePage={currentPage}
+                />
+                <PageSizeSelector
+                    PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                    defaultValue={paginateConfig.pageSize.default}
+                    items={paginateConfig.pageSize.values}
+                />
+            </div>
+          }
       </Container>
     </Container>
   )
