@@ -1,7 +1,7 @@
 const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const utils = require('../../src/utils')
-// const TenderdashRPC = require('../../src/tenderdashRpc')
+const TenderdashRPC = require('../../src/tenderdashRpc')
 const fixtures = require('../utils/fixtures')
 const createIdentityMock = require('./mocks/create_identity.json')
 const dataContractCreateMock = require('./mocks/data_contract_create.json')
