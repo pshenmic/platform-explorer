@@ -9,8 +9,8 @@ import { LoadingLine, LoadingBlock, LoadingList } from '../../../components/load
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import ImageGenerator from '../../../components/imageGenerator'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import './DataContract.scss'
-
 import {
   Box,
   Container,
@@ -27,14 +27,23 @@ const pagintationConfig = {
   defaultPage: 1
 }
 
-function DataContract ({ identifier }) {
+const tabs = [
+  'documents',
+  'schema'
+]
+
+function DataContract ({ identifier, defaultTabName }) {
   const [dataContract, setDataContract] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
   const pageSize = pagintationConfig.itemsOnPage.default
   const [total, setTotal] = useState(1)
   const [currentPage, setCurrentPage] = useState(0)
   const pageCount = Math.ceil(total / pageSize)
+  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   const tdTitleWidth = 250
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const fetchData = () => {
     Promise.all([
@@ -55,6 +64,12 @@ function DataContract ({ identifier }) {
   }
 
   useEffect(fetchData, [identifier])
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+    urlParameters.set('tab', tabs[activeTab])
+    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  }, [activeTab, router, pathname, searchParams])
 
   const handlePageClick = ({ selected }) => {
     setDocuments(state => ({ ...state, loading: true }))
@@ -167,7 +182,7 @@ function DataContract ({ identifier }) {
             borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
         >
-            <Tabs>
+            <Tabs onChange={setActiveTab} defaultIndex={activeTab}>
                 <TabList>
                     <Tab>Documents</Tab>
                     <Tab>Schema</Tab>
@@ -202,7 +217,7 @@ function DataContract ({ identifier }) {
                     <TabPanel>
                         <Box>
                           {!dataContract.error
-                            ? <LoadingBlock loading={dataContract.loading}>
+                            ? <LoadingBlock loading={dataContract.loading} h={60}>
                                   <div className={'DataContractSchema'}>
                                       <Code
                                           className={'DataContractSchema__Code'}
