@@ -89,7 +89,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.14.0'
+          node-version: '20.x'
 
       - name: NPM install
         run: cd packages/api && npm install
@@ -101,7 +101,7 @@ jobs:
         run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run db:migrate
 
       - name: Run unit tests
-        run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run test:unit
+        run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=indexer POSTGRES_USER=indexer POSTGRES_PASS=indexer POSTGRES_DB=indexer EPOCH_CHANGE_TIME=3600000 npm run test:unit
 
       - name: Run integration tests
         run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run test:integration
