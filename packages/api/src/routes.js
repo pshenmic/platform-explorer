@@ -2,6 +2,7 @@
  *
  * @param fastify {Fastify}
  * @param mainController {MainController}
+ * @param epochController {EpochController}
  * @param blockController {BlocksController}
  * @param transactionsController {TransactionsController}
  * @param validatorsController {ValidatorsController}
@@ -9,6 +10,7 @@
 module.exports = ({
   fastify,
   mainController,
+  epochController,
   blocksController,
   transactionsController,
   dataContractsController,
@@ -21,6 +23,11 @@ module.exports = ({
       path: '/status',
       method: 'GET',
       handler: mainController.getStatus
+    },
+    {
+      path: '/epoch/:index',
+      method: 'GET',
+      handler: epochController.getEpochInfo
     },
     {
       path: '/block/:hash',

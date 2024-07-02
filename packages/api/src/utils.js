@@ -14,6 +14,21 @@ const getKnex = () => {
     }
   })
 }
+// eslint-disable-next-line camelcase
+const calculateEpoch = ({ index, genesis_time, currentBlock }) => {
+  const currentBlocktime = currentBlock.timestamp.getTime()
+  const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
+  const genesisTime = new Date(genesis_time).getTime()
+  const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
+  const startEpochTime = Math.floor(genesisTime + epochChangeTime * Number(index ?? epochIndex))
+  const endEpochTime = Math.floor(startEpochTime + epochChangeTime)
+
+  return {
+    index: Number(index ?? epochIndex),
+    startTime: new Date(startEpochTime),
+    endTime: new Date(endEpochTime)
+  }
+}
 
 const hash = (data) => {
   return crypto.createHash('sha1').update(data).digest('hex')
@@ -93,4 +108,4 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-module.exports = { hash, decodeStateTransition, getKnex }
+module.exports = { hash, decodeStateTransition, getKnex, calculateEpoch }

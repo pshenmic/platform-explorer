@@ -6,6 +6,7 @@ const Routes = require('./routes')
 
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 const MainController = require('./controllers/MainController')
+const EpochController = require('./controllers/EpochController')
 const TransactionsController = require('./controllers/TransactionsController')
 const BlocksController = require('./controllers/BlocksController')
 const DocumentsController = require('./controllers/DocumentsController')
@@ -57,6 +58,7 @@ module.exports = {
     await knex.raw('select 1+1')
 
     const mainController = new MainController(knex)
+    const epochController = new EpochController(knex)
     const blocksController = new BlocksController(knex)
     const transactionsController = new TransactionsController(client, knex)
     const dataContractsController = new DataContractsController(knex)
@@ -67,6 +69,7 @@ module.exports = {
     Routes({
       fastify,
       mainController,
+      epochController,
       blocksController,
       transactionsController,
       dataContractsController,
