@@ -89,7 +89,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '20.14.0'
 
       - name: NPM install
         run: cd packages/api && npm install
