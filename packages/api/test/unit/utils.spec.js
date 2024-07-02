@@ -130,9 +130,9 @@ describe('Utils', () => {
     it('should calculate last epoch', async () => {
       mock.method(TenderdashRPC, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
 
-      // const genesis = await TenderdashRPC.getGenesis()
+      const genesis = await TenderdashRPC.getGenesis()
 
-      const genesisTime = new Date(0).getTime()
+      const genesisTime = new Date(genesis?.genesis_time).getTime()
       const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
       const currentBlocktime = block.timestamp.getTime()
       const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
@@ -147,24 +147,24 @@ describe('Utils', () => {
       })
     })
 
-    // it('should calculate custom epoch', async () => {
-    //   mock.method(TenderdashRPC, 'getGenesis', async () => ({ genesis_time: new Date(36000000) }))
+    it('should calculate custom epoch', async () => {
+      mock.method(TenderdashRPC, 'getGenesis', async () => ({ genesis_time: new Date(36000000) }))
 
-    //   const genesis = await TenderdashRPC.getGenesis()
+      const genesis = await TenderdashRPC.getGenesis()
 
-    //   const genesisTime = new Date(genesis?.genesis_time).getTime()
-    //   const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
-    //   const currentBlocktime = block.timestamp.getTime()
-    //   const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime) - 1
-    //   const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
+      const genesisTime = new Date(genesis?.genesis_time).getTime()
+      const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
+      const currentBlocktime = block.timestamp.getTime()
+      const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime) - 1
+      const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
 
-    //   const currentEpoch = utils.calculateEpoch({ index: epochIndex, genesis_time: genesisTime, currentBlock: block })
+      const currentEpoch = utils.calculateEpoch({ index: epochIndex, genesis_time: genesisTime, currentBlock: block })
 
-    //   assert.deepEqual(currentEpoch, {
-    //     endTime: new Date(Math.floor(startEpochTime + epochChangeTime)),
-    //     index: epochIndex,
-    //     startTime: new Date(Math.floor(genesisTime + epochChangeTime * epochIndex))
-    //   })
-    // })
+      assert.deepEqual(currentEpoch, {
+        endTime: new Date(Math.floor(startEpochTime + epochChangeTime)),
+        index: epochIndex,
+        startTime: new Date(Math.floor(genesisTime + epochChangeTime * epochIndex))
+      })
+    })
   })
 })
