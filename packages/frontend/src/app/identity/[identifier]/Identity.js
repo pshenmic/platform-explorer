@@ -11,6 +11,7 @@ import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import ImageGenerator from '../../../components/imageGenerator'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import './Identity.scss'
 
 import {
@@ -21,13 +22,30 @@ import {
   Flex
 } from '@chakra-ui/react'
 
-function Identity ({ identifier }) {
+const tabs = [
+  'transactions',
+  'transfers',
+  'documents',
+  'datacontracts'
+]
+
+function Identity ({ identifier, defaultTabName }) {
   const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
   const [dataContracts, setDataContracts] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, loading: true, error: false })
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, loading: true, error: false })
+  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   const tdTitleWidth = 100
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+    urlParameters.set('tab', tabs[activeTab])
+    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  }, [activeTab, router, pathname, searchParams])
 
   const fetchData = () => {
     Promise.all([
@@ -174,6 +192,8 @@ function Identity ({ identifier }) {
                       h={'100%'}
                       display={'flex'}
                       flexDirection={'column'}
+                      defaultIndex={activeTab}
+                      onChange={setActiveTab}
                     >
                         <TabList className={'IdentityData__Tabs'}>
                             <Tab className={'IdentityData__Tab'}>Transactions</Tab>
