@@ -61,17 +61,6 @@ module.exports = class ValidatorsDAO {
     return Validator.fromRow(row)
   }
 
-  /**
-   * Get all active / non
-   *
-   * @param page {number}
-   * @param limit {number}
-   * @param order {string}
-   * @param isActive {undefined | boolean}
-   * @param validators {[{}]} validators (from Tenderdash RPC)
-   *
-   * @returns {Promise<PaginatedResultSet>}
-   */
   getValidators = async (page, limit, order, isActive, validators) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
