@@ -13,7 +13,8 @@ export const metadata = {
 }
 
 function TransactionsRoute ({ searchParams }) {
-  const page = Number(searchParams.page) || 1
+  const page = Number(searchParams.p) || 1
+  const pageSize = Number(searchParams.ps)
 
   return <>
     <Container
@@ -41,7 +42,7 @@ function TransactionsRoute ({ searchParams }) {
           </Container>
       </Flex>
     </Container>
-    <Transactions defaultPage={page}/>
+    <Transactions defaultPage={page} defaultPageSize={pageSize}/>
   </>
 }
 
