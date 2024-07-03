@@ -26,10 +26,10 @@ function DataContractCard ({ dataContract, loading = false }) {
   )
 }
 
-function DataContractCards ({ title, items }) {
+function DataContractCards ({ title, items, className }) {
   return (
     !items.error
-      ? <CardsGrid>
+      ? <CardsGrid className={className} itemsCount={items?.data?.resultSet?.length || null}>
           {title &&
             <CardsGridHeader>
               <CardsGridTitle>{title}</CardsGridTitle>
