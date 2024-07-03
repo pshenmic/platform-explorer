@@ -52,8 +52,15 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
 
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
-    urlParameters.set('p', currentPage + 1)
-    urlParameters.set('ps', pageSize)
+
+    if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
+      urlParameters.delete('p', currentPage + 1)
+      urlParameters.delete('ps', pageSize)
+    } else {
+      urlParameters.set('p', currentPage + 1)
+      urlParameters.set('ps', pageSize)
+    }
+
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize])
 
