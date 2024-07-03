@@ -178,7 +178,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should be able to walk through pages', async () => {
@@ -212,7 +212,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should return custom page size', async () => {
@@ -246,7 +246,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should allow to walk through pages with custom page size', async () => {
@@ -280,7 +280,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should allow to walk through pages with custom page size desc', async () => {
@@ -315,7 +315,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should return less items when when it is out of bounds', async () => {
@@ -349,7 +349,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should return less items when there is none on the one bound', async () => {
@@ -364,7 +364,7 @@ describe('Validators routes', () => {
 
         const expectedValidators = []
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
     })
 
@@ -435,7 +435,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should be able to walk through pages', async () => {
@@ -469,7 +469,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should return custom page size', async () => {
@@ -503,7 +503,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should allow to walk through pages with custom page size', async () => {
@@ -537,7 +537,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should allow to walk through pages with custom page size desc', async () => {
@@ -572,7 +572,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should return less items when when it is out of bounds', async () => {
@@ -606,7 +606,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should return less items when there is none on the one bound', async () => {
@@ -621,7 +621,7 @@ describe('Validators routes', () => {
 
         const expectedValidators = []
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
     })
 
@@ -668,7 +668,7 @@ describe('Validators routes', () => {
             lastProposedBlockHeader: null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should be able to walk through pages', async () => {
@@ -690,7 +690,7 @@ describe('Validators routes', () => {
             lastProposedBlockHeader: null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should return custom page size', async () => {
@@ -712,7 +712,7 @@ describe('Validators routes', () => {
             lastProposedBlockHeader: null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should allow to walk through pages with custom page size', async () => {
@@ -734,7 +734,7 @@ describe('Validators routes', () => {
             lastProposedBlockHeader: null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should allow to walk through pages with custom page size desc', async () => {
@@ -769,7 +769,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should return less items when when it is out of bounds', async () => {
@@ -803,7 +803,7 @@ describe('Validators routes', () => {
               .toReversed()[0] ?? null
           }))
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
 
       it('should return less items when there is none on the one bound', async () => {
@@ -818,7 +818,7 @@ describe('Validators routes', () => {
 
         const expectedValidators = []
 
-        assert.deepEqual(expectedValidators, body.resultSet)
+        assert.deepEqual(body.resultSet, expectedValidators)
       })
     })
   })
