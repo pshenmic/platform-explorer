@@ -12,7 +12,10 @@ export const metadata = {
   applicationName: 'Dash Platform Explorer'
 }
 
-function DataContractsRoute () {
+function DataContractsRoute ({ searchParams }) {
+  const page = Number(searchParams.p) || 1
+  const pageSize = Number(searchParams.ps)
+
   return <>
     <Container
       maxW={'container.xl'}
@@ -40,7 +43,7 @@ function DataContractsRoute () {
           </Container>
       </Flex>
     </Container>
-    <DataContracts/>
+    <DataContracts defaultPage={page} defaultPageSize={pageSize}/>
   </>
 }
 
