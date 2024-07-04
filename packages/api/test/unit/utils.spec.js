@@ -128,11 +128,7 @@ describe('Utils', () => {
 
   describe('calculateEpoch()', () => {
     it('should calculate last epoch', async () => {
-      mock.method(TenderdashRPC, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
-
-      const genesis = await TenderdashRPC.getGenesis()
-
-      const genesisTime = new Date(genesis?.genesis_time).getTime()
+      const genesisTime = new Date(0).getTime()
       const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
       const currentBlocktime = block.timestamp.getTime()
       const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
