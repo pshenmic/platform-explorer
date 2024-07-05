@@ -34,6 +34,7 @@ use crate::models::{TransactionResult, TransactionStatus};
 
 pub enum ProcessorError {
     DatabaseError,
+    TenderdashTxResultNotExists,
     UnexpectedError,
 }
 
