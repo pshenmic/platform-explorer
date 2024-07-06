@@ -19,7 +19,7 @@ class EpochController {
 
     const epoch = calculateEpoch({
       index,
-      genesis_time: this.genesisTime,
+      genesisTime: this.genesisTime,
       currentBlock: currentBlock.header
     })
 

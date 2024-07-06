@@ -14,11 +14,11 @@ const getKnex = () => {
     }
   })
 }
-// eslint-disable-next-line camelcase
-const calculateEpoch = ({ index, genesis_time, currentBlock }) => {
+
+const calculateEpoch = ({ index, genesisTime, currentBlock }) => {
   const currentBlocktime = currentBlock.timestamp.getTime()
   const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
-  const genesisTime = new Date(genesis_time).getTime()
+  const genesisTime = new Date(genesisTime).getTime()
   const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
   const startEpochTime = Math.floor(genesisTime + epochChangeTime * Number(index ?? epochIndex))
   const endEpochTime = Math.floor(startEpochTime + epochChangeTime)

@@ -30,7 +30,7 @@ class MainController {
 
     const epoch = calculateEpoch({
       currentBlock: currentBlock.header,
-      genesis_time: this.genesisTime
+      genesisTime: this.genesisTime
     })
 
     response.send({

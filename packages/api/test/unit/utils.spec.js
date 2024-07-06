@@ -133,7 +133,7 @@ describe('Utils', () => {
       const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
       const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
 
-      const currentEpoch = utils.calculateEpoch({ genesis_time: genesisTime, currentBlock: block })
+      const currentEpoch = utils.calculateEpoch({ genesisTime, currentBlock: block })
 
       assert.deepEqual(currentEpoch, {
         endTime: new Date(Math.floor(startEpochTime + epochChangeTime)),
@@ -150,7 +150,7 @@ describe('Utils', () => {
       const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime) - 1
       const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
 
-      const currentEpoch = utils.calculateEpoch({ index: epochIndex, genesis_time: genesisTime, currentBlock: block })
+      const currentEpoch = utils.calculateEpoch({ index: epochIndex, genesisTime, currentBlock: block })
 
       assert.deepEqual(currentEpoch, {
         endTime: new Date(Math.floor(startEpochTime + epochChangeTime)),
