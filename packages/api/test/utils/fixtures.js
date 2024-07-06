@@ -2,7 +2,7 @@
 
 const { base58 } = require('@scure/base')
 const crypto = require('crypto')
-const Constants  = require('../../src/constants')
+const Constants = require('../../src/constants')
 
 const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase()
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))

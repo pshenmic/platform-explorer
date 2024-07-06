@@ -3,7 +3,6 @@ const supertest = require('supertest')
 const server = require('../../src/server')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 
-
 describe('Index route', () => {
   let app
   let client

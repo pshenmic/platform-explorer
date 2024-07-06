@@ -18,7 +18,6 @@ describe('Blocks routes', () => {
   before(async () => {
     mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
 
-
     app = await server.start()
     client = supertest(app.server)
 
@@ -43,7 +42,6 @@ describe('Blocks routes', () => {
       transactions.push(transaction)
       identities.push(identity)
     }
-
   })
 
   after(async () => {

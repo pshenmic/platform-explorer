@@ -1,13 +1,13 @@
-const TenderdashRPC = require("./tenderdashRpc")
+const TenderdashRPC = require('./tenderdashRpc')
 
 class Constants {
   genesisTime = new Date()
 
-  async init() {
+  async init () {
     this.genesisTime = (await TenderdashRPC.getGenesis()).genesis_time
   }
 
-  static get StateTransitionEnum() {
+  static get StateTransitionEnum () {
     return {
       DATA_CONTRACT_CREATE: 0,
       DOCUMENTS_BATCH: 1,
@@ -17,11 +17,11 @@ class Constants {
       IDENTITY_UPDATE: 5,
       IDENTITY_CREDIT_WITHDRAWAL: 6,
       IDENTITY_CREDIT_TRANSFER: 7
-    };
+    }
   }
 
-  static get BLOCK_TIME() {
-    return 5000;
+  static get BLOCK_TIME () {
+    return 5000
   }
 }
 

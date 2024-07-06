@@ -17,7 +17,6 @@ class MainController {
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
     this.genesisTime = genesisTime
-
   }
 
   getStatus = async (request, response) => {

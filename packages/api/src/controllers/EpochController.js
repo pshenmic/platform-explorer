@@ -1,15 +1,16 @@
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const BlocksDAO = require('../dao/BlocksDAO')
-const TenderdashRPC = require('../tenderdashRpc')
 const { calculateEpoch } = require('../utils')
 
 class EpochController {
+  /* eslint-disable camelcase */
   constructor (knex, genesis_time) {
     this.blocksDAO = new BlocksDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.knex = knex
     this.genesisTime = genesis_time
   }
+  /* eslint-disable camelcase */
 
   getEpochInfo = async (request, response) => {
     const { index } = request.params

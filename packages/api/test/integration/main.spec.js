@@ -80,7 +80,6 @@ describe('Other routes', () => {
       const newBlock = await fixtures.block(knex, { height: i + 1, timestamp: new Date(block.timestamp.getTime() + blockDiffTime * i) })
       blocks.push(newBlock)
     }
-
   })
 
   after(async () => {

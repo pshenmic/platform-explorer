@@ -20,7 +20,7 @@ describe('DataContracts routes', () => {
 
   before(async () => {
     mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
-    
+
     app = await server.start()
     client = supertest(app.server)
     knex = getKnex()
@@ -99,7 +99,6 @@ describe('DataContracts routes', () => {
       dataContracts[dataContracts.length - 1].transaction = contractCreateTransaction
       dataContracts[dataContracts.length - 1].dataContract = dataContract
     }
-
   })
 
   after(async () => {

@@ -74,7 +74,6 @@ describe('Transaction routes', () => {
         transactions.push({ transaction, block })
       }
     }
-
   })
 
   after(async () => {

@@ -1,4 +1,4 @@
-const { describe, it, before, after, mock } = require('node:test')
+const { describe, it, before, after } = require('node:test')
 const assert = require('node:assert').strict
 const utils = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
@@ -143,7 +143,6 @@ describe('Utils', () => {
     })
 
     it('should calculate custom epoch', async () => {
-
       const genesisTime = new Date(0).getTime()
 
       const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)

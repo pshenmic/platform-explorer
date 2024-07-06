@@ -59,7 +59,6 @@ describe('Documents routes', () => {
 
       documents.push({ transaction: documentTransaction, block, dataContract, document })
     }
-
   })
 
   after(async () => {
