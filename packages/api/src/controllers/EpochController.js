@@ -4,21 +4,21 @@ const TenderdashRPC = require('../tenderdashRpc')
 const { calculateEpoch } = require('../utils')
 
 class EpochController {
-  constructor (knex) {
+  constructor (knex, genesis_time) {
     this.blocksDAO = new BlocksDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.knex = knex
+    this.genesisTime = genesis_time
   }
 
   getEpochInfo = async (request, response) => {
     const { index } = request.params
 
-    const genesis = await TenderdashRPC.getGenesis()
     const [currentBlock] = (await this.blocksDAO.getBlocks(1, 1, 'desc')).resultSet
 
     const epoch = calculateEpoch({
       index,
-      genesis_time: genesis?.genesis_time,
+      genesis_time: this.genesisTime,
       currentBlock: currentBlock.header
     })
 

@@ -3,7 +3,7 @@ const Fastify = require('fastify')
 const metricsPlugin = require('fastify-metrics')
 const cors = require('@fastify/cors')
 const Routes = require('./routes')
-
+const Constants = require('./constants')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 const MainController = require('./controllers/MainController')
 const EpochController = require('./controllers/EpochController')
@@ -38,8 +38,12 @@ let client
 let knex
 let fastify
 
+let consts
+
 module.exports = {
   start: async () => {
+    consts = new Constants()
+    await consts.init()
     client = new Dash.Client()
     await client.platform.initialize()
 
@@ -57,8 +61,8 @@ module.exports = {
 
     await knex.raw('select 1+1')
 
-    const mainController = new MainController(knex)
-    const epochController = new EpochController(knex)
+    const mainController = new MainController(knex, consts.genesisTime)
+    const epochController = new EpochController(knex, consts.genesisTime)
     const blocksController = new BlocksController(knex)
     const transactionsController = new TransactionsController(client, knex)
     const dataContractsController = new DataContractsController(knex)

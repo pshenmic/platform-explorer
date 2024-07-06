@@ -2,11 +2,10 @@
 
 const { base58 } = require('@scure/base')
 const crypto = require('crypto')
-const { StateTransitionEnum } = require('../../src/constants')
+const Constants  = require('../../src/constants')
 
 const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase()
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
-
 const fixtures = {
   identifier: () => generateIdentifier(),
   block: async (knex, { hash, height, timestamp, block_version, app_version, l1_locked_height, validator } = {}) => {
@@ -68,7 +67,7 @@ const fixtures = {
       transaction = await fixtures.transaction(knex, {
         block_hash,
         owner: identifier,
-        type: StateTransitionEnum.IDENTITY_CREATE
+        type: Constants.StateTransitionEnum.IDENTITY_CREATE
       })
     }
 

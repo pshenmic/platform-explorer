@@ -1,9 +1,10 @@
-const { describe, it, before, after } = require('node:test')
+const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
+const tenderdashRpc = require('../../src/tenderdashRpc')
 
 describe('Blocks routes', () => {
   let app
@@ -15,6 +16,8 @@ describe('Blocks routes', () => {
   let validators
 
   before(async () => {
+    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -53,6 +56,8 @@ describe('Blocks routes', () => {
       })
       blocks.push(block)
     }
+
+    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
   })
 
   after(async () => {

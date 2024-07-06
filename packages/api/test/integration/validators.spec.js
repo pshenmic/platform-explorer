@@ -1,10 +1,11 @@
-const { describe, it, before, after } = require('node:test')
+const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const BlockHeader = require('../../src/models/BlockHeader')
+const tenderdashRpc = require('../../src/tenderdashRpc')
 
 describe('Validators routes', () => {
   let app
@@ -15,6 +16,8 @@ describe('Validators routes', () => {
   let blocks
 
   before(async () => {
+    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -36,6 +39,7 @@ describe('Validators routes', () => {
       )
       blocks.push(block)
     }
+
   })
 
   after(async () => {
@@ -45,6 +49,8 @@ describe('Validators routes', () => {
 
   describe('getValidatorByProTxHash()', async () => {
     it('should return validator by proTxHash', async () => {
+      
+
       const [validator] = validators
 
       const { body } = await client.get(`/validator/${validator.pro_tx_hash}`)
@@ -73,6 +79,8 @@ describe('Validators routes', () => {
     })
 
     it('should return 404 if validator not found', async () => {
+      
+
       await client.get('/validator/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -81,6 +89,8 @@ describe('Validators routes', () => {
 
   describe('getValidators()', async () => {
     it('should return default set of validators', async () => {
+      
+
       const { body } = await client.get('/validators')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -114,6 +124,8 @@ describe('Validators routes', () => {
     })
 
     it('should return default set of validators order desc', async () => {
+      
+
       const { body } = await client.get('/validators?order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -148,6 +160,8 @@ describe('Validators routes', () => {
     })
 
     it('should be able to walk through pages', async () => {
+      
+
       const { body } = await client.get('/validators?page=2')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -181,6 +195,8 @@ describe('Validators routes', () => {
     })
 
     it('should return custom page size', async () => {
+      
+
       const { body } = await client.get('/validators?limit=7')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -214,6 +230,8 @@ describe('Validators routes', () => {
     })
 
     it('should allow to walk through pages with custom page size', async () => {
+      
+
       const { body } = await client.get('/validators?limit=7&page=2')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -247,6 +265,8 @@ describe('Validators routes', () => {
     })
 
     it('should allow to walk through pages with custom page size desc', async () => {
+      
+
       const { body } = await client.get('/validators?limit=5&page=4&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -281,6 +301,8 @@ describe('Validators routes', () => {
     })
 
     it('should return less items when when it is out of bounds', async () => {
+      
+
       const { body } = await client.get('/validators?limit=10&page=3&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -314,6 +336,8 @@ describe('Validators routes', () => {
     })
 
     it('should return less items when there is none on the one bound', async () => {
+      
+
       const { body } = await client.get('/validators?limit=10&page=4&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')

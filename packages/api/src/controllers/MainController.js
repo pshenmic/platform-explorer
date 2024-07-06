@@ -10,19 +10,20 @@ const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
 
 class MainController {
-  constructor (knex) {
+  constructor (knex, genesisTime) {
     this.blocksDAO = new BlocksDAO(knex)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
+    this.genesisTime = genesisTime
+
   }
 
   getStatus = async (request, response) => {
-    const [blocks, stats, genesis, tdStatus] = (await Promise.allSettled([
+    const [blocks, stats, tdStatus] = (await Promise.allSettled([
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
-      TenderdashRPC.getGenesis(),
       TenderdashRPC.getStatus()
     ])).map((e) => e.value ?? null)
 
@@ -30,7 +31,7 @@ class MainController {
 
     const epoch = calculateEpoch({
       currentBlock: currentBlock.header,
-      genesis_time: genesis?.genesis_time
+      genesis_time: this.genesisTime
     })
 
     response.send({

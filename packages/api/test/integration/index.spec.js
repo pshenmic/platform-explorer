@@ -1,12 +1,16 @@
-const { describe, it, before, after } = require('node:test')
+const { describe, it, before, after, mock } = require('node:test')
 const supertest = require('supertest')
 const server = require('../../src/server')
+const tenderdashRpc = require('../../src/tenderdashRpc')
+
 
 describe('Index route', () => {
   let app
   let client
 
   before(async () => {
+    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+
     app = await server.start()
     client = supertest(app.server)
   })

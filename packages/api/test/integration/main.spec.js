@@ -24,6 +24,8 @@ describe('Other routes', () => {
   let documentTransaction
 
   before(async () => {
+    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -78,6 +80,7 @@ describe('Other routes', () => {
       const newBlock = await fixtures.block(knex, { height: i + 1, timestamp: new Date(block.timestamp.getTime() + blockDiffTime * i) })
       blocks.push(newBlock)
     }
+
   })
 
   after(async () => {

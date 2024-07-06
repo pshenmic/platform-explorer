@@ -16,6 +16,9 @@ describe('Blocks routes', () => {
   let transactions
 
   before(async () => {
+    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -40,6 +43,7 @@ describe('Blocks routes', () => {
       transactions.push(transaction)
       identities.push(identity)
     }
+
   })
 
   after(async () => {
@@ -49,8 +53,6 @@ describe('Blocks routes', () => {
 
   describe('getEpochInfo()', async () => {
     it('should return current epoch data', async () => {
-      mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
-
       const genesis = await tenderdashRpc.getGenesis()
 
       const [block] = blocks.toReversed()
