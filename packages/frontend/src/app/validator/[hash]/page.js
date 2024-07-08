@@ -3,7 +3,7 @@ import Validator from './Validator'
 export function generateMetadata ({ params }) {
   return {
     title: 'Validator #' + params.hash + ' — Dash Platform Explorer',
-    description: 'Validator #' + params.hash + ' on dash platform. The Hash, Height, Type, Timestamp, Transaction data.',
+    description: 'Validator #' + params.hash + ' on dash platform. ProTxHash, Status, Proposed blocks',
     keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'Transaction', 'Hash', 'Height', 'Type', 'Timestamp', 'Data'],
     applicationName: 'Dash Platform Explorer'
   }

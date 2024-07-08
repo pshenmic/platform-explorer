@@ -11,9 +11,9 @@ import {
 } from '@chakra-ui/react'
 
 export const metadata = {
-  title: 'ValidatorsRoute — Dash Platform Explorer',
-  description: 'ValidatorsRoute on Dash Platform. The Identifier, Date of Creation',
-  keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'Identities'],
+  title: 'Validators — Dash Platform Explorer',
+  description: 'All validators on Dash Platform. Statistics and status of validators on Dash Platform.',
+  keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'Validators'],
   applicationName: 'Dash Platform Explorer'
 }
 
