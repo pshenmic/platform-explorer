@@ -18,9 +18,8 @@ const getKnex = () => {
 const calculateEpoch = ({ index, genesisTime, currentBlock }) => {
   const currentBlocktime = currentBlock.timestamp.getTime()
   const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
-  const genesisTime = new Date(genesisTime).getTime()
-  const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
-  const startEpochTime = Math.floor(genesisTime + epochChangeTime * Number(index ?? epochIndex))
+  const epochIndex = Math.floor((currentBlocktime - genesisTime.getTime()) / epochChangeTime)
+  const startEpochTime = Math.floor(genesisTime.getTime() + epochChangeTime * Number(index ?? epochIndex))
   const endEpochTime = Math.floor(startEpochTime + epochChangeTime)
 
   return {

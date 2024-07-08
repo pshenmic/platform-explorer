@@ -19,6 +19,8 @@ describe('Utils', () => {
   let block
 
   before(async () => {
+    process.env.EPOCH_CHANGE_TIME = 3600000
+
     client = new Dash.Client()
     await client.platform.initialize()
 
@@ -127,35 +129,35 @@ describe('Utils', () => {
 
   describe('calculateEpoch()', () => {
     it('should calculate last epoch', async () => {
-      const genesisTime = new Date(0).getTime()
+      const genesisTime = new Date(0)
       const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
       const currentBlocktime = block.timestamp.getTime()
-      const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
-      const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
+      const epochIndex = Math.floor((currentBlocktime - genesisTime.getTime()) / epochChangeTime)
+      const startEpochTime = Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex)
 
       const currentEpoch = utils.calculateEpoch({ genesisTime, currentBlock: block })
 
       assert.deepEqual(currentEpoch, {
         endTime: new Date(Math.floor(startEpochTime + epochChangeTime)),
         index: epochIndex,
-        startTime: new Date(Math.floor(genesisTime + epochChangeTime * epochIndex))
+        startTime: new Date(Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex))
       })
     })
 
     it('should calculate custom epoch', async () => {
-      const genesisTime = new Date(0).getTime()
+      const genesisTime = new Date(0)
 
       const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
       const currentBlocktime = block.timestamp.getTime()
-      const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime) - 1
-      const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
+      const epochIndex = Math.floor((currentBlocktime - genesisTime.getTime()) / epochChangeTime) - 1
+      const startEpochTime = Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex)
 
       const currentEpoch = utils.calculateEpoch({ index: epochIndex, genesisTime, currentBlock: block })
 
       assert.deepEqual(currentEpoch, {
         endTime: new Date(Math.floor(startEpochTime + epochChangeTime)),
         index: epochIndex,
-        startTime: new Date(Math.floor(genesisTime + epochChangeTime * epochIndex))
+        startTime: new Date(Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex))
       })
     })
   })
