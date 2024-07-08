@@ -8,6 +8,7 @@ import Pagination from '../../../components/pagination'
 import PageSizeSelector from '../../../components/pageSizeSelector/PageSizeSelector'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import BlocksList from '../../../components/blocks/BlocksList'
+import ImageGenerator from '../../../components/imageGenerator'
 import {
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
@@ -37,7 +38,7 @@ function Validator ({ hash }) {
     setProposedBlocks(state => ({ ...state, loading: true }))
 
     Api.getValidatorByProTxHash(hash)
-      .then((res) => fetchHandlerSuccess(setValidator, res))
+      .then(res => fetchHandlerSuccess(setValidator, res))
       .catch(err => fetchHandlerError(setValidator, err))
 
     Api.getBlocksByValidator(hash, page, count)
@@ -71,20 +72,27 @@ function Validator ({ hash }) {
           justifyContent={'space-between'}
           wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
           mb={5}
+          alignItems={'center'}
       >
           <TableContainer
               width={'100%'}
               maxW={'none'}
               borderWidth={'1px'} borderRadius={'lg'}
               m={0}
-              flexShrink={0}
             >
               {!validator.error
                 ? <Table variant={'simple'} className={'Table'}>
                       <Thead>
                           <Tr>
                               <Th pr={0}>validator info</Th>
-                              <Th></Th>
+                              <Th className={'TableHeader TableHeader--Name'}>
+                                  {hash
+                                    ? <div className={'TableHeader__Content'}>
+                                          <ImageGenerator className={'TableHeader__Avatar'} username={hash} lightness={50} saturation={50} width={32} height={32}/>
+                                      </div>
+                                    : <Box w={'32px'} h={'32px'} />
+                                  }
+                              </Th>
                           </Tr>
                       </Thead>
                       <Tbody>
@@ -92,6 +100,12 @@ function Validator ({ hash }) {
                               <Td w={tdTitleWidth}>ProTxHash</Td>
                               <Td isNumeric className={'Table__Cell--BreakWord'}>
                                   <LoadingLine loading={validator.loading}>{hash}</LoadingLine>
+                              </Td>
+                          </Tr>
+                          <Tr>
+                              <Td w={tdTitleWidth}>Status</Td>
+                              <Td isNumeric>
+                                  <LoadingLine loading={validator.loading}>{validator?.data?.isActive ? 'Active' : 'Inactive'}</LoadingLine>
                               </Td>
                           </Tr>
                           <Tr>
