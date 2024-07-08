@@ -27,5 +27,8 @@
         font-family: $monospace-font;
         font-size: 16px;
         text-transform: uppercase;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
