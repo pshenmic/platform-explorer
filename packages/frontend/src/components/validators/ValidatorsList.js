@@ -40,16 +40,16 @@ export default function ValidatorsList ({ validators, pageSize }) {
   function getSortedList () {
     if (!validators?.data?.resultSet?.length) return []
 
-    if (sort.direction === 'asc') {
-      return validators.data.resultSet.sort((a, b) => {
-        if (sort.key === 'lastBlockHeight') return (a?.lastProposedBlockHeader?.height || 0) > (b?.lastProposedBlockHeader?.height || 0) ? 1 : -1
-        return a[sort.key] > b[sort.key] ? 1 : -1
-      })
-    }
-
     return validators.data.resultSet.sort((a, b) => {
-      if (sort.key === 'lastBlockHeight') return (a?.lastProposedBlockHeader?.height || 0) > (b?.lastProposedBlockHeader?.height || 0) ? -1 : 1
-      return a[sort.key] > b[sort.key] ? -1 : 1
+      if (sort.key === 'lastBlockHeight') {
+        return (a?.lastProposedBlockHeader?.height || 0) > (b?.lastProposedBlockHeader?.height || 0)
+          ? sort.direction === 'asc' ? 1 : -1
+          : sort.direction === 'asc' ? -1 : 1
+      }
+
+      return a[sort.key] > b[sort.key]
+        ? sort.direction === 'asc' ? 1 : -1
+        : sort.direction === 'asc' ? -1 : 1
     })
   }
 
