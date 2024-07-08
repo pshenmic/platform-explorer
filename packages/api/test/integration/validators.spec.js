@@ -48,7 +48,7 @@ describe('Validators routes', () => {
     mock.method(tenderdashRpc, 'getValidators',
       async () =>
         Promise.resolve(activeValidators.map(activeValidator =>
-          ({ proTxHash: activeValidator.pro_tx_hash }))))
+          ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
   })
 
   after(async () => {
