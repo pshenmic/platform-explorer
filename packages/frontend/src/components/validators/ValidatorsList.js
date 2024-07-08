@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import ImageGenerator from '../imageGenerator'
+import { LoadingLine } from '../../components/loading'
 import {
   Table,
   Thead,
@@ -14,20 +15,24 @@ import {
 import { TableHeaders } from '../../components/ui/Table'
 import './ValidatorsList.scss'
 
-export default function ValidatorsList ({ validators }) {
+export default function ValidatorsList ({ validators, pageSize }) {
   const [sort, setSort] = useState({ key: 'blocksProposed', direction: 'asc' })
 
-  const ValidatorRow = ({ validator }) => {
+  const ValidatorRow = ({ validator, loading }) => {
     return (
       <Tr className={'ValidatorTableRow'}>
         <Td>
-          <Link href={`/validator/${validator.proTxHash}`} className={'ValidatorTableRow__IdentifierContainer'}>
-            <ImageGenerator className={'ValidatorTableRow__Avatar'} username={validator.proTxHash} lightness={50} saturation={50} width={28} height={28} />
-            <div className={'ValidatorTableRow__Identifier'}>{validator.proTxHash}</div>
-          </Link>
+          <LoadingLine loading={loading} w={'700px'} className={'ValidatorTableRow__IdentifierContainer'}>
+            {!loading &&
+              <Link href={`/validator/${validator.proTxHash}`} className={'ValidatorTableRow__IdentifierContainer'}>
+                <ImageGenerator className={'ValidatorTableRow__Avatar'} username={validator.proTxHash} lightness={50} saturation={50} width={28} height={28} />
+                <div className={'ValidatorTableRow__Identifier'}>{validator.proTxHash}</div>
+              </Link>
+            }
+          </LoadingLine>
         </Td>
-        <Td isNumeric>{validator?.lastProposedBlockHeader?.height || '-'}</Td>
-        <Td isNumeric>{validator?.proposedBlocksAmount || '-'}</Td>
+        <Td isNumeric><LoadingLine loading={loading}>{validator?.lastProposedBlockHeader?.height || '-'}</LoadingLine></Td>
+        <Td isNumeric><LoadingLine loading={loading}>{validator?.proposedBlocksAmount || '-'}</LoadingLine></Td>
       </Tr>
     )
   }
@@ -77,7 +82,10 @@ export default function ValidatorsList ({ validators }) {
             </Tr>
           </Thead>
           <Tbody>
-            {getSortedList().map((validator, i) => <ValidatorRow key={i} validator={validator}/>)}
+            {!validators?.loading
+              ? getSortedList().map((validator, i) => <ValidatorRow key={i} validator={validator}/>)
+              : Array.from({ length: pageSize }, (x, i) => <ValidatorRow key={i} loading={true}/>)
+            }
           </Tbody>
         </Table>
       </TableContainer>

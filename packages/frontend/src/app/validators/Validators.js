@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
-import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { ValidatorsList } from '../../components/validators'
@@ -54,25 +53,23 @@ function Validators () {
             className={'InfoBlock'}
         >
             <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Validators</Heading>
-
-            <Switcher
-              options={[
-                {
-                  title: 'Active'
-                },
-                {
-                  title: 'Inactive'
-                }
-              ]}
-              onChange={e => setIsActive(e === 'Active')}
-            />
+            <Box mb={2}>
+              <Switcher
+                options={[
+                  {
+                    title: 'Active'
+                  },
+                  {
+                    title: 'Inactive'
+                  }
+                ]}
+                onChange={e => setIsActive(e === 'Active')}
+              />
+            </Box>
 
             {!validators.error
-              ? !validators.loading
-                  ? <ValidatorsList validators={validators}/>
-                  : <LoadingList itemsCount={pageSize}/>
-              : <Container h={20}><ErrorMessageBlock/></Container>
-            }
+              ? <ValidatorsList validators={validators} pageSize={pageSize}/>
+              : <Container h={20}><ErrorMessageBlock/></Container>}
 
             {validators.data?.resultSet?.length > 0 &&
               <div className={'ListNavigation'}>
