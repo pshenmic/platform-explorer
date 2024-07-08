@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
@@ -8,12 +8,8 @@ import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { ValidatorsList } from '../../components/validators'
-
-import {
-  Container,
-  Box,
-  Heading
-} from '@chakra-ui/react'
+import { Switcher } from '../../components/ui'
+import { Container, Box, Heading } from '@chakra-ui/react'
 
 const paginateConfig = {
   pageSize: {
@@ -28,28 +24,23 @@ function Validators () {
   const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(0)
   const [total, setTotal] = useState(1)
+  const [isActive, setIsActive] = useState(true)
   const pageCount = Math.ceil(total / pageSize)
 
-  const fetchData = (page, count) => {
-    Api.getValidators(page, count, 'desc')
-      .then((res) => {
+  const fetchData = (page, count, active) => {
+    setValidators({ data: {}, loading: true, error: false })
+
+    Api.getValidators(page, count, 'desc', active)
+      .then(res => {
         fetchHandlerSuccess(setValidators, res)
         setTotal(res.pagination.total)
       })
       .catch(err => fetchHandlerError(setValidators, err))
   }
 
-  useEffect(() => fetchData(paginateConfig.defaultPage, pageSize), [pageSize])
-
-  const handlePageClick = useCallback(({ selected }) => {
-    setCurrentPage(selected)
-    fetchData(selected + 1, pageSize)
-  }, [pageSize])
-
-  useEffect(() => {
-    setCurrentPage(0)
-    handlePageClick({ selected: 0 })
-  }, [pageSize, handlePageClick])
+  useEffect(() => setCurrentPage(0), [pageSize])
+  useEffect(() => fetchData(paginateConfig.defaultPage, pageSize, isActive), [pageSize])
+  useEffect(() => fetchData(currentPage + 1, pageSize, isActive), [isActive, pageSize, currentPage])
 
   return (
     <Container
@@ -64,6 +55,18 @@ function Validators () {
         >
             <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Validators</Heading>
 
+            <Switcher
+              options={[
+                {
+                  title: 'Active'
+                },
+                {
+                  title: 'Inactive'
+                }
+              ]}
+              onChange={e => setIsActive(e === 'Active')}
+            />
+
             {!validators.error
               ? !validators.loading
                   ? <ValidatorsList validators={validators}/>
@@ -75,7 +78,7 @@ function Validators () {
               <div className={'ListNavigation'}>
                 <Box display={['none', 'none', 'block']} width={'100px'}/>
                 <Pagination
-                    onPageChange={handlePageClick}
+                    onPageChange={({ selected }) => setCurrentPage(selected)}
                     pageCount={pageCount}
                     forcePage={currentPage}
                 />
