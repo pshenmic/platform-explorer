@@ -11,6 +11,7 @@ const identityUpdateMock = require('./mocks/identity_update.json')
 const identityCreditTransfer = require('./mocks/identity_credit_transfer.json')
 const identityWithdrawal = require('./mocks/identity_withdrawal.json')
 const Dash = require('dash')
+const Epoch = require('../../src/models/Epoch')
 
 describe('Utils', () => {
   let client
@@ -137,11 +138,11 @@ describe('Utils', () => {
 
       const currentEpoch = utils.calculateEpoch({ genesisTime, timestamp: block.timestamp })
 
-      assert.deepEqual(currentEpoch, {
-        endTime: new Date(Math.floor(startEpochTime + epochChangeTime)),
-        index: epochIndex,
-        startTime: new Date(Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex))
-      })
+      assert.deepEqual(currentEpoch, new Epoch(
+        epochIndex,
+        new Date(Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex)),
+        new Date(Math.floor(startEpochTime + epochChangeTime))
+      ))
     })
 
     it('should calculate custom epoch', async () => {
@@ -154,11 +155,11 @@ describe('Utils', () => {
 
       const currentEpoch = utils.calculateEpoch({ index: epochIndex, genesisTime, timestamp: block.timestamp })
 
-      assert.deepEqual(currentEpoch, {
-        endTime: new Date(Math.floor(startEpochTime + epochChangeTime)),
-        index: epochIndex,
-        startTime: new Date(Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex))
-      })
+      assert.deepEqual(currentEpoch, new Epoch(
+        epochIndex,
+        new Date(Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex)),
+        new Date(Math.floor(startEpochTime + epochChangeTime))
+      ))
     })
   })
 })
