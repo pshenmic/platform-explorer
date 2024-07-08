@@ -8,7 +8,7 @@ const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 
 const genesisTime = new Date(0)
-const blockDiffTime = 2 * 60 * 1000
+const blockDiffTime = 2 * 3600 * 1000
 
 describe('Other routes', () => {
   let app
@@ -196,7 +196,6 @@ describe('Other routes', () => {
 
   describe('getStatus()', async () => {
     it('should return status', async () => {
-      process.env.EPOCH_CHANGE_TIME = 60000
       const mockTDStatus = {
         version: 'v2.0.0',
         highestBlock: {
@@ -215,8 +214,8 @@ describe('Other routes', () => {
       const expectedStats = {
         epoch: {
           index: 18,
-          startTime: '1970-01-01T00:18:00.000Z',
-          endTime: '1970-01-01T00:19:00.000Z'
+          startTime: '1970-01-01T18:00:00.000Z',
+          endTime: '1970-01-01T19:00:00.000Z'
         },
         transactionsCount: 3,
         transfersCount: 0,
