@@ -206,7 +206,6 @@ describe('Other routes', () => {
         }
       }
 
-      mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
       mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
 
       const { body } = await client.get('/status')

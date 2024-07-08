@@ -62,7 +62,7 @@ describe('Blocks routes', () => {
       const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
       const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
 
-      const { body } = await client.get(`/epoch/${epochIndex}`)
+      const { body } = await client.get(`/getEpochByIndex/${epochIndex}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -85,8 +85,8 @@ describe('Blocks routes', () => {
     })
 
     it('should return error if not valid date', async () => {
-      await client.get('/epoch/10000000000000000000')
-        .expect(500)
+      await client.get('/getEpochByIndex/10000000000000000000')
+        .expect(400)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })

@@ -1,5 +1,6 @@
 const crypto = require('crypto')
-const { StateTransitionEnum } = require('./constants')
+const { StateTransitionEnum, EPOCH_CHANGE_TIME } = require('./constants')
+const Epoch = require('./models/Epoch')
 
 const getKnex = () => {
   return require('knex')({
@@ -15,18 +16,18 @@ const getKnex = () => {
   })
 }
 
-const calculateEpoch = ({ index, genesisTime, currentBlock }) => {
-  const currentBlocktime = currentBlock.timestamp.getTime()
-  const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
+const calculateEpoch = ({ index, genesisTime, timestamp }) => {
+  const currentBlocktime = timestamp.getTime()
+  const epochChangeTime = EPOCH_CHANGE_TIME
   const epochIndex = Math.floor((currentBlocktime - genesisTime.getTime()) / epochChangeTime)
   const startEpochTime = Math.floor(genesisTime.getTime() + epochChangeTime * Number(index ?? epochIndex))
   const endEpochTime = Math.floor(startEpochTime + epochChangeTime)
 
-  return {
-    index: Number(index ?? epochIndex),
-    startTime: new Date(startEpochTime),
-    endTime: new Date(endEpochTime)
-  }
+  return new Epoch(
+    Number(index ?? epochIndex),
+    new Date(startEpochTime),
+    new Date(endEpochTime)
+  )
 }
 
 const hash = (data) => {

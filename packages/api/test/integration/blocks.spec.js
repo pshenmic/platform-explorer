@@ -56,8 +56,6 @@ describe('Blocks routes', () => {
       })
       blocks.push(block)
     }
-
-    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
   })
 
   after(async () => {

@@ -29,7 +29,7 @@ class MainController {
     const [currentBlock] = blocks.resultSet
 
     const epoch = calculateEpoch({
-      currentBlock: currentBlock.header,
+      timestamp: currentBlock.header.timestamp,
       genesisTime: this.genesisTime
     })
 
