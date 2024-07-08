@@ -18,7 +18,7 @@ class ValidatorsController {
 
     const validators = await TenderdashRPC.getValidators()
 
-    const isActive = validators.some(validator => validator.proTxHash === proTxHash)
+    const isActive = validators.some(validator => validator.pro_tx_hash === proTxHash)
 
     response.send(new Validator(validator.proTxHash, isActive, validator.proposedBlocksAmount, validator.lastProposedBlockHeader))
   }
@@ -50,7 +50,7 @@ class ValidatorsController {
       ...validators,
       resultSet: validators.resultSet.map(validator =>
         new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
-          activeValidator.proTxHash === validator.proTxHash),
+          activeValidator.pro_tx_hash === validator.proTxHash),
         validator.proposedBlocksAmount,
         validator.lastProposedBlockHeader))
     })
