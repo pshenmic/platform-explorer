@@ -41,7 +41,7 @@ function Validator ({ hash }) {
       .then(res => fetchHandlerSuccess(setValidator, res))
       .catch(err => fetchHandlerError(setValidator, err))
 
-    Api.getBlocksByValidator(hash, page, count)
+    Api.getBlocksByValidator(hash, page, count, 'desc')
       .then((res) => {
         fetchHandlerSuccess(setProposedBlocks, res)
         setTotalBlocks(res?.pagination?.total)
