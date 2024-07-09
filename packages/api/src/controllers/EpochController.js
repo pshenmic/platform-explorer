@@ -10,8 +10,8 @@ class EpochController {
 
   getEpochByIndex = async (request, response) => {
     const { index } = request.params
-    const epochChangeTime = Constants.EPOCH_CHANGE_TIME
 
+    const epochChangeTime = Constants.EPOCH_CHANGE_TIME
     const genesisTime = await Constants.genesisTime
 
     if (genesisTime.getTime() + index * epochChangeTime > new Date().getTime()) {
