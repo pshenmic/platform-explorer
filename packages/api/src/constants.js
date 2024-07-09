@@ -1,24 +1,17 @@
 const TenderdashRPC = require('./tenderdashRpc')
-const StateTransitionEnum = require('./StateTransition.enum')
 
-class Constants {
-  genesisTime
+let GenesisTime
 
-  async init () {
-    this.genesisTime = (await TenderdashRPC.getGenesis()).genesis_time
-  }
-
-  static get StateTransitionEnum () {
-    return StateTransitionEnum
-  }
-
-  static get BLOCK_TIME () {
-    return 5000
-  }
-
-  static get EPOCH_CHANGE_TIME () {
-    return 3600000
+module.exports = {
+  EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
+  BLOCK_TIME: 5000,
+  get genesisTime () {
+    if (!GenesisTime) {
+      return TenderdashRPC.getGenesis().then((v) => {
+        GenesisTime = v.genesis_time
+        return v.genesis_time
+      }).catch(Error)
+    }
+    return GenesisTime
   }
 }
-
-module.exports = Constants

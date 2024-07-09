@@ -38,12 +38,9 @@ let client
 let knex
 let fastify
 
-let constants
-
 module.exports = {
   start: async () => {
-    constants = new Constants()
-    await constants.init()
+    await Constants.genesisTime
     client = new Dash.Client()
     await client.platform.initialize()
 
@@ -61,8 +58,8 @@ module.exports = {
 
     await knex.raw('select 1+1')
 
-    const mainController = new MainController(knex, constants.genesisTime)
-    const epochController = new EpochController(knex, constants.genesisTime)
+    const mainController = new MainController(knex, Constants)
+    const epochController = new EpochController(knex, Constants)
     const blocksController = new BlocksController(knex)
     const transactionsController = new TransactionsController(client, knex)
     const dataContractsController = new DataContractsController(knex)

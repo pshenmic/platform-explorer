@@ -4,19 +4,19 @@ const TransactionsDAO = require('../dao/TransactionsDAO')
 const DocumentsDAO = require('../dao/DocumentsDAO')
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const TenderdashRPC = require('../tenderdashRpc')
-const { calculateEpoch } = require('../utils')
+const Epoch = require('../models/Epoch')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
 
 class MainController {
-  constructor (knex, genesisTime) {
+  constructor (knex, constants) {
     this.blocksDAO = new BlocksDAO(knex)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
-    this.genesisTime = genesisTime
+    this.constants = constants
   }
 
   getStatus = async (request, response) => {
@@ -28,9 +28,9 @@ class MainController {
 
     const [currentBlock] = blocks.resultSet
 
-    const epoch = calculateEpoch({
+    const epoch = Epoch.fromObject({
       timestamp: currentBlock.header.timestamp,
-      genesisTime: this.genesisTime
+      genesisTime: this.constants.genesisTime
     })
 
     response.send({

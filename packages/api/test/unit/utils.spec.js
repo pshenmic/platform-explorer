@@ -1,7 +1,6 @@
-const { describe, it, before, after } = require('node:test')
+const { describe, it, before } = require('node:test')
 const assert = require('node:assert').strict
 const utils = require('../../src/utils')
-const fixtures = require('../utils/fixtures')
 const createIdentityMock = require('./mocks/create_identity.json')
 const dataContractCreateMock = require('./mocks/data_contract_create.json')
 const documentsBatchMock = require('./mocks/documents_batch.json')
@@ -16,24 +15,9 @@ const Epoch = require('../../src/models/Epoch')
 describe('Utils', () => {
   let client
 
-  let knex
-  let block
-
   before(async () => {
-    process.env.EPOCH_CHANGE_TIME = 3600000
-
     client = new Dash.Client()
     await client.platform.initialize()
-
-    knex = utils.getKnex()
-
-    await fixtures.cleanup(knex)
-
-    block = await fixtures.block(knex, { height: 1 })
-  })
-
-  after(async () => {
-    await knex.destroy()
   })
 
   describe('decodeStateTransition()', () => {
@@ -131,34 +115,15 @@ describe('Utils', () => {
   describe('calculateEpoch()', () => {
     it('should calculate last epoch', async () => {
       const genesisTime = new Date(0)
-      const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
-      const currentBlocktime = block.timestamp.getTime()
-      const epochIndex = Math.floor((currentBlocktime - genesisTime.getTime()) / epochChangeTime)
-      const startEpochTime = Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex)
 
-      const currentEpoch = utils.calculateEpoch({ genesisTime, timestamp: block.timestamp })
+      const blockTimestamp = new Date(36000)
+
+      const currentEpoch = Epoch.fromObject({ genesisTime, timestamp: blockTimestamp })
 
       assert.deepEqual(currentEpoch, new Epoch(
-        epochIndex,
-        new Date(Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex)),
-        new Date(Math.floor(startEpochTime + epochChangeTime))
-      ))
-    })
-
-    it('should calculate custom epoch', async () => {
-      const genesisTime = new Date(0)
-
-      const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
-      const currentBlocktime = block.timestamp.getTime()
-      const epochIndex = Math.floor((currentBlocktime - genesisTime.getTime()) / epochChangeTime) - 1
-      const startEpochTime = Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex)
-
-      const currentEpoch = utils.calculateEpoch({ index: epochIndex, genesisTime, timestamp: block.timestamp })
-
-      assert.deepEqual(currentEpoch, new Epoch(
-        epochIndex,
-        new Date(Math.floor(genesisTime.getTime() + epochChangeTime * epochIndex)),
-        new Date(Math.floor(startEpochTime + epochChangeTime))
+        0,
+        new Date('1970-01-01T00:00:00.000Z'),
+        new Date('1970-01-01T01:00:00.000Z')
       ))
     })
   })

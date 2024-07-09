@@ -4,7 +4,7 @@ const supertest = require('supertest')
 const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
-const { StateTransitionEnum } = require('../../src/constants')
+const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 
 describe('Identities routes', () => {

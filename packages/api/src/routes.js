@@ -27,7 +27,7 @@ module.exports = ({
     {
       path: '/getEpochByIndex/:index',
       method: 'GET',
-      handler: epochController.getEpochInfo
+      handler: epochController.getEpochByIndex
     },
     {
       path: '/block/:hash',

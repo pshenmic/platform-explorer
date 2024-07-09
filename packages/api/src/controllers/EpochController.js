@@ -1,18 +1,22 @@
 const EpochDAO = require('../dao/EpochDAO')
 
 class EpochController {
-  constructor (knex, genesisTime) {
-    this.epochDAO = new EpochDAO(knex, genesisTime)
+  epochDAO
+  constants
+
+  constructor (knex, constants) {
+    this.epochDAO = new EpochDAO(knex, constants)
+    this.constants = constants
   }
 
-  getEpochInfo = async (request, response) => {
+  getEpochByIndex = async (request, response) => {
     const { index } = request.params
 
-    const epochInfo = await this.epochDAO.getEpochInfo(index)
-
-    if (!epochInfo) {
+    if (this.constants.genesisTime.getTime() + index * this.constants.EPOCH_CHANGE_TIME > new Date().getTime()) {
       response.status(400).send({ message: 'Invalid epoch date' })
     }
+
+    const epochInfo = await this.epochDAO.getEpochByIndex(index)
 
     response.send(epochInfo)
   }

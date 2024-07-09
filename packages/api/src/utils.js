@@ -1,6 +1,5 @@
 const crypto = require('crypto')
-const { StateTransitionEnum, EPOCH_CHANGE_TIME } = require('./constants')
-const Epoch = require('./models/Epoch')
+const StateTransitionEnum = require('./enums/StateTransitionEnum')
 
 const getKnex = () => {
   return require('knex')({
@@ -14,19 +13,6 @@ const getKnex = () => {
       ssl: process.env.POSTGRES_SSL ? { rejectUnauthorized: false } : false
     }
   })
-}
-
-const calculateEpoch = ({ index, genesisTime, timestamp }) => {
-  const currentBlocktime = timestamp.getTime()
-  const epochIndex = Math.floor((currentBlocktime - genesisTime.getTime()) / EPOCH_CHANGE_TIME)
-  const startEpochTime = Math.floor(genesisTime.getTime() + EPOCH_CHANGE_TIME * Number(index ?? epochIndex))
-  const endEpochTime = Math.floor(startEpochTime + EPOCH_CHANGE_TIME)
-
-  return new Epoch(
-    Number(index ?? epochIndex),
-    new Date(startEpochTime),
-    new Date(endEpochTime)
-  )
 }
 
 const hash = (data) => {
@@ -107,4 +93,4 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, calculateEpoch }
+module.exports = { hash, decodeStateTransition, getKnex }
