@@ -1,3 +1,4 @@
+process.env.EPOCH_CHANGE_TIME = 3600000
 const { describe, it } = require('node:test')
 const assert = require('node:assert').strict
 const Epoch = require('../../../src/models/Epoch')

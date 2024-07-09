@@ -1,7 +1,7 @@
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const BlocksDAO = require('../dao/BlocksDAO')
 const Epoch = require('../models/Epoch')
-const Constants= require('../constants')
+const Constants = require('../constants')
 
 module.exports = class EpochDAO {
   constructor (knex) {
