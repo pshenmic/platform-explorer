@@ -10,9 +10,7 @@ module.exports = class EpochDAO {
     this.knex = knex
   }
 
-  getEpochByIndex = async (index) => {
-    const [currentBlock] = (await this.blocksDAO.getBlocks(1, 1, 'desc')).resultSet
-
+  getEpochByIndex = async (index, currentBlock) => {
     const epoch = Epoch.fromObject({
       index,
       genesisTime: Constants.genesisTime,
