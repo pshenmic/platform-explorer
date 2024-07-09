@@ -24,7 +24,7 @@ describe('Epoch', () => {
 
       const blockTimestamp = new Date(7200001)
 
-      const currentEpoch = Epoch.fromObject({ index: 1,genesisTime, timestamp: blockTimestamp })
+      const currentEpoch = Epoch.fromObject({ index: 1, genesisTime, timestamp: blockTimestamp })
 
       assert.deepEqual(currentEpoch, new Epoch(
         1,
