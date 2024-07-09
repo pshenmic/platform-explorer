@@ -7,7 +7,7 @@ const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 
-describe('Blocks routes', () => {
+describe('Epoch routes', () => {
   let app
   let client
   let knex
