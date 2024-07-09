@@ -21,7 +21,7 @@ export default function ValidatorsList ({ validators, pageSize }) {
   const ValidatorRow = ({ validator, loading }) => {
     return (
       <Tr className={'ValidatorTableRow'}>
-        <Td>
+        <Td py={0} maxW={'calc(100vw - 500px)'} minW={'200px'} pr={0}>
           <LoadingLine loading={loading} w={'700px'} className={'ValidatorTableRow__IdentifierContainer'}>
             {!loading &&
               <Link href={`/validator/${validator.proTxHash}`} className={'ValidatorTableRow__IdentifierContainer'}>
