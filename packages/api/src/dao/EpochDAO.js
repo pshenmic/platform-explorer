@@ -1,12 +1,13 @@
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const BlocksDAO = require('../dao/BlocksDAO')
 const Epoch = require('../models/Epoch')
+const Constants= require('../constants')
+
 module.exports = class EpochDAO {
-  constructor (knex, constants) {
+  constructor (knex) {
     this.blocksDAO = new BlocksDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.knex = knex
-    this.constants = constants
   }
 
   getEpochByIndex = async (index) => {
@@ -14,7 +15,7 @@ module.exports = class EpochDAO {
 
     const epoch = Epoch.fromObject({
       index,
-      genesisTime: this.constants.genesisTime,
+      genesisTime: Constants.genesisTime,
       timestamp: currentBlock.header.timestamp
     })
 
@@ -24,7 +25,7 @@ module.exports = class EpochDAO {
       .count('* as tx_count')
 
     const [row] = await this.knex
-      .select(this.knex.raw(`SUM(tx_count) * 1.0 / ${this.constants.EPOCH_CHANGE_TIME / 1000} as tps`))
+      .select(this.knex.raw(`SUM(tx_count) * 1.0 / ${Constants.EPOCH_CHANGE_TIME / 1000} as tps`))
       .from(subquery)
 
     return {

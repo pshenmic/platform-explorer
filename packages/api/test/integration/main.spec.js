@@ -1,3 +1,4 @@
+process.env.EPOCH_CHANGE_TIME = 3600000
 const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')

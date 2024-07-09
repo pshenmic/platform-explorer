@@ -25,7 +25,7 @@ module.exports = ({
       handler: mainController.getStatus
     },
     {
-      path: '/getEpochByIndex/:index',
+      path: '/epoch/:index',
       method: 'GET',
       handler: epochController.getEpochByIndex
     },

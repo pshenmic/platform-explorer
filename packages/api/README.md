@@ -106,7 +106,7 @@ Returns info about epoch by specific index
 
 
 ```
-HTTP /getEpochByIndex/1
+HTTP /epoch/1
 
 {
     epoch: {

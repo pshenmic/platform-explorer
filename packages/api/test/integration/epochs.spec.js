@@ -1,3 +1,4 @@
+process.env.EPOCH_CHANGE_TIME = 3600000
 const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
@@ -51,7 +52,7 @@ describe('Blocks routes', () => {
 
   describe('getEpochInfo()', async () => {
     it('should return current epoch data', async () => {
-      const { body } = await client.get('/getEpochByIndex/0')
+      const { body } = await client.get('/epoch/0')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -68,7 +69,7 @@ describe('Blocks routes', () => {
     })
 
     it('should return error if not valid date', async () => {
-      await client.get('/getEpochByIndex/10000000000000000000')
+      await client.get('/epoch/10000000000000000000')
         .expect(400)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })

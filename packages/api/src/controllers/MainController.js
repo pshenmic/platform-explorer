@@ -5,6 +5,7 @@ const DocumentsDAO = require('../dao/DocumentsDAO')
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
+const Constants = require('../constants')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
@@ -16,7 +17,6 @@ class MainController {
     this.documentsDAO = new DocumentsDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
-    this.constants = constants
   }
 
   getStatus = async (request, response) => {
@@ -30,7 +30,7 @@ class MainController {
 
     const epoch = Epoch.fromObject({
       timestamp: currentBlock.header.timestamp,
-      genesisTime: this.constants.genesisTime
+      genesisTime: await Constants.genesisTime
     })
 
     response.send({

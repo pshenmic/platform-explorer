@@ -3,7 +3,7 @@ const assert = require('node:assert').strict
 const Epoch = require('../../../src/models/Epoch')
 
 describe('Epoch', () => {
-  describe('calculateEpoch()', () => {
+  describe('Epoch.fromObject()', () => {
     it('should calculate last epoch', async () => {
       const genesisTime = new Date(0)
 
