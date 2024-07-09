@@ -10,11 +10,11 @@ class EpochController {
 
   getEpochByIndex = async (request, response) => {
     const { index } = request.params
+    const epochChangeTime = Constants.EPOCH_CHANGE_TIME
 
     const genesisTime = await Constants.genesisTime
-    if (
-      genesisTime.getTime() + index * Constants.EPOCH_CHANGE_TIME > new Date().getTime()
-    ) {
+
+    if (genesisTime.getTime() + index * epochChangeTime > new Date().getTime()) {
       return response.status(400).send({ message: 'Invalid epoch date' })
     }
 
