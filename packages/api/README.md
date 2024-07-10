@@ -99,25 +99,6 @@ HTTP /status
 }
 ```
 ---
-### Epoch Info
-Returns info about epoch by specific index
-
-* tps - Transactions per second
-
-
-```
-HTTP /epoch/1
-
-{
-    epoch: {
-        index: 1,
-        startTime: "2024-04-08T14:00:00.000Z",
-        endTime: "2024-04-09T14:00:00.000Z"
-    },
-    tps: 0.01666666666     
-}
-```
----
 ### Block by hash
 Get a block by hash
 ```

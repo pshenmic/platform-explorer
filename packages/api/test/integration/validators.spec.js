@@ -18,8 +18,6 @@ describe('Validators routes', () => {
   let blocks
 
   before(async () => {
-    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
-
     app = await server.start()
     client = supertest(app.server)
 
