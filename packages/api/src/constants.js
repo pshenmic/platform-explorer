@@ -7,8 +7,8 @@ module.exports = {
   get genesisTime () {
     if (!genesisTime) {
       return TenderdashRPC.getGenesis().then((genesis) => {
-        genesisTime = genesis.genesis_time
-        return genesis.genesis_time
+        genesisTime = new Date(genesis.genesis_time)
+        return genesisTime
       }).catch(() => { throw new Error('Could not load genesis time') })
     }
     return genesisTime
