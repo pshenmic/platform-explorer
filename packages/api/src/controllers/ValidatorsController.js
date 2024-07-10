@@ -1,4 +1,6 @@
 const ValidatorsDAO = require('../dao/ValidatorsDAO')
+const TenderdashRPC = require('../tenderdashRpc')
+const Validator = require('../models/Validator')
 
 class ValidatorsController {
   constructor (knex) {
@@ -14,19 +16,44 @@ class ValidatorsController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    response.send(validator)
+    const validators = await TenderdashRPC.getValidators()
+
+    const isActive = validators.some(validator => validator.pro_tx_hash === proTxHash)
+
+    response.send(new Validator(validator.proTxHash, isActive, validator.proposedBlocksAmount, validator.lastProposedBlockHeader))
   }
 
   getValidators = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const { page = 1, limit = 10, order = 'asc', isActive = undefined } = request.query
 
     if (order !== 'asc' && order !== 'desc') {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    const validators = await this.validatorsDAO.getValidators(Number(page), Number(limit), order)
+    const activeValidators = await TenderdashRPC.getValidators()
 
-    response.send(validators)
+    if (typeof isActive !== 'undefined') {
+      if (isActive !== 'true' && isActive !== 'false') {
+        return response.status(400).send({ message: `invalid isActive value ${order}. only boolean values are accepted` })
+      }
+    }
+
+    const validators = await this.validatorsDAO.getValidators(
+      Number(page),
+      Number(limit),
+      order,
+      typeof isActive === 'undefined' ? undefined : isActive === 'true',
+      activeValidators
+    )
+
+    return response.send({
+      ...validators,
+      resultSet: validators.resultSet.map(validator =>
+        new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
+          activeValidator.pro_tx_hash === validator.proTxHash),
+        validator.proposedBlocksAmount,
+        validator.lastProposedBlockHeader))
+    })
   }
 }
 

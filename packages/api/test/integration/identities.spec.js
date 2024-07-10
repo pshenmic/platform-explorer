@@ -1,11 +1,10 @@
-const { describe, it, before, after, beforeEach, mock } = require('node:test')
+const { describe, it, before, after, beforeEach } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
-const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
-const tenderdashRpc = require('../../src/tenderdashRpc')
+const { StateTransitionEnum } = require('../../src/constants')
 
 describe('Identities routes', () => {
   let app
@@ -26,7 +25,6 @@ describe('Identities routes', () => {
   let transactions
 
   before(async () => {
-    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
     app = await server.start()
     client = supertest(app.server)
     knex = getKnex()

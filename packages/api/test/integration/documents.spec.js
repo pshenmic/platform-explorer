@@ -1,11 +1,10 @@
-const { describe, it, before, after, mock } = require('node:test')
+const { describe, it, before, after } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+const { StateTransitionEnum } = require('../../src/constants')
 const { getKnex } = require('../../src/utils')
-const tenderdashRpc = require('../../src/tenderdashRpc')
 
 describe('Documents routes', () => {
   let app
@@ -18,8 +17,6 @@ describe('Documents routes', () => {
   let documents
 
   before(async () => {
-    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
-
     app = await server.start()
     client = supertest(app.server)
 

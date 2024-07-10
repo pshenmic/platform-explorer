@@ -99,25 +99,6 @@ HTTP /status
 }
 ```
 ---
-### Epoch Info
-Returns info about epoch by specific index
-
-* tps - Transactions per second
-
-
-```
-HTTP /epoch/1
-
-{
-    epoch: {
-        index: 1,
-        startTime: "2024-04-08T14:00:00.000Z",
-        endTime: "2024-04-09T14:00:00.000Z"
-    },
-    tps: 0.01666666666     
-}
-```
----
 ### Block by hash
 Get a block by hash
 ```
@@ -196,22 +177,24 @@ GET /blocks
 ### Validators
 Return all validators with pagination info.
 * `lastProposedBlockHeader` field is nullable
+* `?isActive=true` boolean can be supplied in the query params to filter by isActive field
 ```
 GET /validators
 
 {
   resultSet: [
     {
-      "proTxHash": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-      "proposedBlocksAmount": 5,
-      "lastProposedBlockHeader": {
-        "height": 5,
-        "timestamp": "2024-06-23T13:51:44.154Z",
-        "hash": "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
-        "l1LockedHeight": 1337,
-        "appVersion": 1,
-        "blockVersion": 13
-        "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+      proTxHash: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+      isActive: true,
+      proposedBlocksAmount: 5,
+      lastProposedBlockHeader: {
+        height: 5,
+        timestamp: "2024-06-23T13:51:44.154Z",
+        hash: "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
+        l1LockedHeight: 1337,
+        appVersion: 1,
+        blockVersion: 13
+        validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
       }
     }, ...
   ],
@@ -230,16 +213,17 @@ Get validator by ProTxHash.
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 
 {
-  "proTxHash": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-  "proposedBlocksAmount": 5,
-  "lastProposedBlockHeader": {
-    "height": 5,
-    "timestamp": "2024-06-23T13:51:44.154Z",
-    "hash": "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
-    "l1LockedHeight": 1337,
-    "appVersion": 1,
-    "blockVersion": 13,
-    "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+  proTxHash: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+  isActive: true,
+  proposedBlocksAmount: 5,
+  lastProposedBlockHeader: {
+    height: 5,
+    timestamp: "2024-06-23T13:51:44.154Z",
+    hash: "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
+    l1LockedHeight: 1337,
+    appVersion: 1,
+    blockVersion: 13,
+    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
   }
 }
 ```
