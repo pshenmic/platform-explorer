@@ -53,10 +53,32 @@
         }
     }
 
+    &--Nodes {
+        &::before {
+            background: url('/images/icons/nodes.svg') no-repeat center;
+            background-size: contain;
+        }
+    }
+
+    &--Coins {
+        &::before {
+            background: url('/images/icons/coins.svg') no-repeat center;
+            background-size: contain;
+        }
+    }
+
+    &--StarCheck {
+        &::before {
+            background: url('/images/icons/star-check.svg') no-repeat center;
+            background-size: contain;
+        }
+    }
+
     &__Title {
         color:  var(--chakra-colors-brand-deep);
         font-size: 16px;
         margin-right: 10px;
+        white-space: nowrap;
     }
     
     &__Value {
@@ -68,6 +90,13 @@
             opacity: .5;
             border-radius: 5px;
             animation-delay: 100ms;
+        }
+
+        &--Elipsed {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 }
