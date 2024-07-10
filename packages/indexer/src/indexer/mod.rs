@@ -192,3 +192,4 @@ impl Indexer {
         Ok(blocks_count)
     }
 }
+
