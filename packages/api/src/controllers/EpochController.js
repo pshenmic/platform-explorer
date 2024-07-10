@@ -5,7 +5,7 @@ const Constants = require('../constants')
 class EpochController {
   epochDAO
   blocksDAO
-  
+
   constructor (knex) {
     this.epochDAO = new EpochDAO(knex)
     this.blocksDAO = new BlocksDAO(knex)

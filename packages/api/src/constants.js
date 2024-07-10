@@ -4,7 +4,7 @@ let genesisTime
 
 module.exports = {
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
-  get genesisTime() {
+  get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {
       return TenderdashRPC.getGenesis().then((genesis) => {
         genesisTime = new Date(genesis.genesis_time)

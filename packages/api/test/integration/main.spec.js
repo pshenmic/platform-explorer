@@ -247,7 +247,6 @@ describe('Other routes', () => {
       assert.deepEqual(body, expectedStats)
     })
 
-
     it('should return status with null epoch with bad genesis_time', async () => {
       const mockTDStatus = {
         version: 'v2.0.0',
@@ -259,7 +258,7 @@ describe('Other routes', () => {
       }
 
       mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
-      mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: "aaa" }))
+      mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: 'aaa' }))
 
       const { body } = await client.get('/status')
         .expect(200)
