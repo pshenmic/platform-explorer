@@ -1,15 +1,15 @@
+process.env.EPOCH_CHANGE_TIME = 3600000
 const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const { StateTransitionEnum } = require('../../src/constants')
+const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const constants = require('../../src/constants')
 
 const genesisTime = new Date(0)
-const blockDiffTime = 2 * 60 * 1000
+const blockDiffTime = 2 * 3600 * 1000
 
 describe('Other routes', () => {
   let app
@@ -25,6 +25,8 @@ describe('Other routes', () => {
   let documentTransaction
 
   before(async () => {
+    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -314,8 +316,8 @@ describe('Other routes', () => {
       const expectedStats = {
         epoch: {
           index: 18,
-          startTime: '1970-01-01T00:18:00.000Z',
-          endTime: '1970-01-01T00:19:00.000Z'
+          startTime: '1970-01-01T18:00:00.000Z',
+          endTime: '1970-01-01T19:00:00.000Z'
         },
         transactionsCount: 3,
         transfersCount: 0,

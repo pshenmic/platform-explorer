@@ -1,3 +1,7 @@
+const TenderdashRPC = require('./tenderdashRpc')
+
+let genesisTime
+
 module.exports = {
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
   get genesisTime() {
