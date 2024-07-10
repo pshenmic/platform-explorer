@@ -86,10 +86,14 @@ impl Indexer {
                             Err(err) => {
                                 match err {
                                     ProcessorError::DatabaseError => {
-                                        println!("Database error occurred while indexing block height {}", block_height);
+                                        println!("Database error occurred while indexing block height {} retrying ...", block_height);
                                     }
                                     ProcessorError::UnexpectedError => {
-                                        println!("Unexpected processor error happened at block height {}", block_height);
+                                        println!("Unexpected processor error happened at block height {}, retrying ...", block_height);
+                                    }
+                                    // https://github.com/pshenmic/platform-explorer/issues/170
+                                    ProcessorError::TenderdashTxResultNotExists => {
+                                        println!("Block TX Count length and Block Results Tx Count length did not match for height {}, retrying...", block_height);
                                     }
                                 }
                             }
@@ -107,6 +111,11 @@ impl Indexer {
         let validators = self.tenderdash_rpc.get_validators_by_block_height(block_height.clone()).await?;
 
         let tx_results = block_results_response.txs_results.unwrap_or(vec![]);
+
+        if block.block.data.txs.len() != tx_results.len() {
+            return Err(ProcessorError::TenderdashTxResultNotExists);
+        }
+
         let block_hash = block.block_id.hash;
 
         let transactions = block.block.data.txs.iter().enumerate().map(|(i, tx_string)| {
@@ -183,4 +192,3 @@ impl Indexer {
         Ok(blocks_count)
     }
 }
-
