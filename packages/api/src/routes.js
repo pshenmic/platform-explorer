@@ -128,6 +128,11 @@ module.exports = ({
       path: '/validator/:proTxHash',
       method: 'GET',
       handler: validatorsController.getValidatorByProTxHash
+    },
+    {
+      path: '/validator/:proTxHash/stats',
+      method: 'GET',
+      handler: validatorsController.getValidatorStatsByProTxHash
     }
   ]
 

@@ -1,5 +1,6 @@
 const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
+const SeriesData = require('../models/SeriesData')
 
 module.exports = class ValidatorsDAO {
   constructor (knex) {
@@ -137,5 +138,39 @@ module.exports = class ValidatorsDAO {
     const resultSet = rows.map((row) => Validator.fromRow(row))
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
+  }
+
+  getValidatorStatsByProTxHash = async (proTxHash, timespan) => {
+    const interval = {
+      '1h': { offset: '1 hour', step: '5 minute' },
+      '24h': { offset: '24 hour', step: '2 hour' },
+      '3d': { offset: '3 day', step: '6 hour' },
+      '1w': { offset: '1 week', step: '14 hour' }
+    }[timespan]
+
+    const ranges = this.knex
+      .from(this.knex.raw(`generate_series(now() - interval '${interval.offset}', now(), interval  '${interval.step}') date_to`))
+      .select('date_to', this.knex.raw('LAG(date_to, 1) over (order by date_to asc) date_from'))
+
+    const rows = await this.knex.with('ranges', ranges)
+      .select(this.knex.raw(`COALESCE(date_from, now() - interval '${interval.offset}') date_from`), 'date_to')
+      .select(
+        this.knex('blocks')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
+          .where('validator', proTxHash)
+          .count('*')
+          .as('blocks_count')
+      )
+      .from('ranges')
+
+    return rows
+      .slice(1)
+      .map(row => ({
+        timestamp: row.date_from,
+        data: {
+          blocksCount: parseInt(row.blocks_count)
+        }
+      }))
+      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
   }
 }

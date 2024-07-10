@@ -247,6 +247,20 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 }
 ```
 ---
+### Validator stats by ProTxHash
+Return a series data for the amount of proposed blocks by validator chart with variable timespan (1h, 24h, 3d, 1w)
+```
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?timespan=24h
+[
+    {
+        timestamp: "2024-06-23T13:51:44.154Z",
+        data: {
+            blocksCount: 2
+        }
+    },...
+]
+```
+---
 ### Transaction by hash
 Get a transaction (state transition) by hash
 
