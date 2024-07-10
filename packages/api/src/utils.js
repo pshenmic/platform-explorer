@@ -1,5 +1,5 @@
 const crypto = require('crypto')
-const { StateTransitionEnum } = require('./constants')
+const StateTransitionEnum = require('./enums/StateTransitionEnum')
 
 const getKnex = () => {
   return require('knex')({

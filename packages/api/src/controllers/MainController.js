@@ -4,6 +4,8 @@ const TransactionsDAO = require('../dao/TransactionsDAO')
 const DocumentsDAO = require('../dao/DocumentsDAO')
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const TenderdashRPC = require('../tenderdashRpc')
+const Epoch = require('../models/Epoch')
+const Constants = require('../constants')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
@@ -18,27 +20,21 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    const [blocks, stats, genesis, tdStatus] = (await Promise.allSettled([
+    const [blocks, stats, tdStatus, genesisTime] = (await Promise.allSettled([
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
-      TenderdashRPC.getGenesis(),
-      TenderdashRPC.getStatus()
+      TenderdashRPC.getStatus(),
+      Constants.genesisTime
     ])).map((e) => e.value ?? null)
 
     const [currentBlock] = blocks.resultSet
 
-    const currentBlocktime = currentBlock.header.timestamp.getTime()
-    const epochChangeTime = Number(process.env.EPOCH_CHANGE_TIME)
-    const genesisTime = new Date(genesis?.genesis_time).getTime()
-    const epochIndex = Math.floor((currentBlocktime - genesisTime) / epochChangeTime)
-    const startEpochTime = Math.floor(genesisTime + epochChangeTime * epochIndex)
-    const nextEpochTime = Math.floor(genesisTime + epochChangeTime * (epochIndex + 1))
-
-    const epoch = {
-      index: epochIndex,
-      startTime: new Date(startEpochTime),
-      endTime: new Date(nextEpochTime)
-    }
+    const epoch = genesisTime && currentBlock
+      ? Epoch.fromObject({
+        timestamp: currentBlock.header.timestamp,
+        genesisTime
+      })
+      : null
 
     response.send({
       epoch,
