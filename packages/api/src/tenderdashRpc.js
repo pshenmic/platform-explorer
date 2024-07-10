@@ -102,12 +102,6 @@ class TenderdashRPC {
 
     return genesis
   }
-
-  static async getValidators () {
-    const { validators } = await call('validators', 'GET')
-
-    return validators
-  }
 }
 
 module.exports = TenderdashRPC
