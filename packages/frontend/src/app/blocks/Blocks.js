@@ -56,8 +56,8 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
 
     if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
-      urlParameters.delete('p', currentPage + 1)
-      urlParameters.delete('ps', pageSize)
+      urlParameters.delete('p')
+      urlParameters.delete('ps')
     } else {
       urlParameters.set('p', currentPage + 1)
       urlParameters.set('ps', pageSize)
