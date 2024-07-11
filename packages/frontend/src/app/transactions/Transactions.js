@@ -34,7 +34,9 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
 
     Api.getTransactions(page, count, 'desc')
       .then((res) => {
-        if (res.pagination.total === -1) setCurrentPage(0)
+        if (res.pagination.total === -1) {
+          setCurrentPage(0)
+        }
         fetchHandlerSuccess(setTransactions, res)
         setTotal(res.pagination.total)
       })

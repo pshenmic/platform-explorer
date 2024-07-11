@@ -41,7 +41,9 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
 
     Api.getBlocks(page, count, 'desc')
       .then(res => {
-        if (res.pagination.total === -1) setCurrentPage(0)
+        if (res.pagination.total === -1) {
+          setCurrentPage(0)
+        }
         fetchHandlerSuccess(setBlocks, res)
         setTotal(res.pagination.total)
       })

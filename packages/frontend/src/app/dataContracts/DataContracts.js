@@ -39,7 +39,9 @@ function DataContractsLayout ({ defaultPage = 1, defaultPageSize }) {
 
     Api.getDataContracts(page, count, 'desc')
       .then(res => {
-        if (res.pagination.total === -1) setCurrentPage(0)
+        if (res.pagination.total === -1) {
+          setCurrentPage(0)
+        }
         fetchHandlerSuccess(setDataContracts, res)
         setTotal(res.pagination.total)
       })
