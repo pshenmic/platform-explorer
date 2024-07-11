@@ -25,7 +25,7 @@ module.exports = class ValidatorsDAO {
       .where('validators.pro_tx_hash', proTxHash)
       .as('validators')
 
-    const [row] = await this.knex(validatorsSubquery)
+    const subquery = this.knex(validatorsSubquery)
       .select(
         'pro_tx_hash',
         'id',
@@ -38,6 +38,20 @@ module.exports = class ValidatorsDAO {
         'blocks.block_version as block_version'
       )
       .leftJoin('blocks', 'blocks.hash', 'proposed_block_hash')
+      .as('blocks')
+
+    const [row] = await this.knex(subquery)
+      .select(
+        'id',
+        'pro_tx_hash',
+        'proposed_blocks_amount',
+        'block_hash',
+        'latest_height',
+        'latest_timestamp',
+        'l1_locked_height',
+        'app_version',
+        'block_version'
+      )
       .where('pro_tx_hash', proTxHash)
 
     if (!row) {
@@ -47,7 +61,7 @@ module.exports = class ValidatorsDAO {
     return Validator.fromRow(row)
   }
 
-  getValidators = async (page, limit, order) => {
+  getValidators = async (page, limit, order, isActive, validators) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
@@ -55,7 +69,15 @@ module.exports = class ValidatorsDAO {
       .select(
         'validators.pro_tx_hash as pro_tx_hash',
         'validators.id',
-        this.knex('validators').count('pro_tx_hash').as('total_count'),
+        this.knex('validators')
+          .modify(function (knex) {
+            if (isActive !== undefined && isActive) {
+              knex.whereIn('pro_tx_hash', validators.map(validator => validator.pro_tx_hash))
+            } else if (isActive !== undefined && !isActive) {
+              knex.whereNotIn('pro_tx_hash', validators.map(validator => validator.pro_tx_hash))
+            }
+          })
+          .count('pro_tx_hash').as('total_count'),
         this.knex('blocks')
           .count('*')
           .whereRaw('blocks.validator = validators.pro_tx_hash')
@@ -83,6 +105,13 @@ module.exports = class ValidatorsDAO {
         'blocks.app_version as app_version',
         'blocks.block_version as block_version'
       )
+      .modify(function (knex) {
+        if (isActive !== undefined && isActive) {
+          knex.whereIn('pro_tx_hash', validators.map(validator => validator.pro_tx_hash))
+        } else if (isActive !== undefined && !isActive) {
+          knex.whereNotIn('pro_tx_hash', validators.map(validator => validator.pro_tx_hash))
+        }
+      })
       .leftJoin('blocks', 'blocks.hash', 'proposed_block_hash')
       .as('blocks')
 
@@ -104,6 +133,7 @@ module.exports = class ValidatorsDAO {
       .orderBy('id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
+
     const resultSet = rows.map((row) => Validator.fromRow(row))
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)

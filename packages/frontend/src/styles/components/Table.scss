@@ -18,6 +18,12 @@
             }
         }
     }
+
+    &__Cell {
+        &--BreakWord {
+            white-space: break-spaces;
+        }
+    }
 }
 
 .TableHeader {
@@ -34,5 +40,9 @@
 
     &__Avatar {
         margin-left: 8px;
+    }
+
+    &__SortDirection {
+        display: inline-block;
     }
 }

@@ -3,15 +3,18 @@ const BlockHeader = require('./BlockHeader')
 
 module.exports = class Validator {
   proTxHash
+  isActive
   proposedBlocksAmount
   lastProposedBlockHeader
 
   constructor (
     proTxHash,
+    isActive,
     proposedBlocksAmount,
     lastProposedBlockHeader
   ) {
     this.proTxHash = proTxHash ?? null
+    this.isActive = isActive ?? null
     this.proposedBlocksAmount = proposedBlocksAmount ?? null
     this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
   }
@@ -24,10 +27,12 @@ module.exports = class Validator {
     block_hash,
     l1_locked_height,
     app_version,
-    block_version
+    block_version,
+    is_active
   }) {
     return new Validator(
       pro_tx_hash,
+      is_active,
       Number(proposed_blocks_amount),
       block_hash
         ? BlockHeader.fromRow({
@@ -43,4 +48,3 @@ module.exports = class Validator {
     )
   }
 }
-/* eslint-disable camelcase */
