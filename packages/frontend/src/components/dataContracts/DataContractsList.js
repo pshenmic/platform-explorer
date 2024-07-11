@@ -1,4 +1,5 @@
 import DataContractsListItem from './DataContractsListItem'
+import { EmptyListMessage } from '../lists'
 import './DataContractsList.scss'
 
 function DataContractsList ({ dataContracts = [], size = 'l' }) {
@@ -13,7 +14,7 @@ function DataContractsList ({ dataContracts = [], size = 'l' }) {
             )}
 
             {dataContracts.length === 0 &&
-                <div className={'DataContractsList__EmptyMessage'}>There are no data contracts created yet.</div>
+                <EmptyListMessage>There are no data contracts created yet.</EmptyListMessage>
             }
         </div>
   )

@@ -1,4 +1,5 @@
 import IdentitiesListItem from './IdentitiesListItem'
+import { EmptyListMessage } from '../lists'
 import './IdentitiesList.scss'
 
 function IdentitiesList ({ identities }) {
@@ -12,7 +13,7 @@ function IdentitiesList ({ identities }) {
             )}
 
             {identities.length === 0 &&
-                <div className={'IdentitiesList__EmptyMessage'}>There are no identities created yet.</div>
+                <EmptyListMessage>There are no identities created yet.</EmptyListMessage>
             }
         </div>
   )

@@ -1,4 +1,5 @@
 import BlocksListItem from './BlocksListItem'
+import { EmptyListMessage } from '../lists'
 import './BlocksList.scss'
 
 function BlocksList ({ blocks = [], columnsCount = 1, size = 'l' }) {
@@ -18,7 +19,7 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l' }) {
         )}
 
         {blocks.length === 0 &&
-            <div className={'documents_list__empty_message'}>There are no documents created yet.</div>
+            <EmptyListMessage>There are no documents created yet.</EmptyListMessage>
         }
     </div>
   )
