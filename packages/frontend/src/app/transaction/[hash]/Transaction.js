@@ -2,7 +2,7 @@
 
 import * as Api from '../../../util/Api'
 import { useState, useEffect, useCallback } from 'react'
-import { getTransitionTypeString, fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import { getTransitionTypeString, fetchHandlerSuccess, fetchHandlerError, numberFormat } from '../../../util'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import TransactionData from './TransactionData'
@@ -33,6 +33,7 @@ function Transaction ({ hash }) {
     Api.getTransaction(hash)
       .then((res) => {
         fetchHandlerSuccess(setTransaction, res)
+        console.log('transaction', res)
         decodeTx(res.data)
       })
       .catch(err => fetchHandlerError(setTransaction, err))
@@ -42,7 +43,7 @@ function Transaction ({ hash }) {
 
   return (
     <Container
-        maxW='container.lg'
+        maxW={'container.lg'}
         p={3}
         mt={8}
     >
@@ -73,12 +74,6 @@ function Transaction ({ hash }) {
                         </Td>
                     </Tr>
                     <Tr>
-                        <Td w={tdTitleWidth}>Index</Td>
-                        <Td>
-                            <LoadingLine loading={transaction.loading}>{transaction.data?.index}</LoadingLine>
-                        </Td>
-                    </Tr>
-                    <Tr>
                         <Td w={tdTitleWidth}>Type</Td>
                         <Td>
                             <LoadingLine loading={transaction.loading}>
@@ -87,9 +82,27 @@ function Transaction ({ hash }) {
                         </Td>
                     </Tr>
                     <Tr>
+                        <Td w={tdTitleWidth}>Index</Td>
+                        <Td>
+                            <LoadingLine loading={transaction.loading}>{transaction.data?.index}</LoadingLine>
+                        </Td>
+                    </Tr>
+                    <Tr>
                         <Td w={tdTitleWidth}>Timestamp</Td>
                         <Td>
                             <LoadingLine loading={transaction.loading}>{transaction.data?.timestamp && new Date(transaction.data?.timestamp).toLocaleString()}</LoadingLine>
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Td w={tdTitleWidth}>Status</Td>
+                        <Td>
+                            <LoadingLine loading={transaction.loading}>{transaction.data?.status}</LoadingLine>
+                        </Td>
+                    </Tr>
+                    <Tr>
+                        <Td w={tdTitleWidth}>Gas Used</Td>
+                        <Td>
+                            <LoadingLine loading={transaction.loading}>{numberFormat(transaction.data?.gasUsed)}</LoadingLine>
                         </Td>
                     </Tr>
                 </Tbody>
