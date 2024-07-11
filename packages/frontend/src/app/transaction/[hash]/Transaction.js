@@ -33,7 +33,6 @@ function Transaction ({ hash }) {
     Api.getTransaction(hash)
       .then((res) => {
         fetchHandlerSuccess(setTransaction, res)
-        console.log('transaction', res)
         decodeTx(res.data)
       })
       .catch(err => fetchHandlerError(setTransaction, err))
