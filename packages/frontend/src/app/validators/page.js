@@ -17,7 +17,10 @@ export const metadata = {
   applicationName: 'Dash Platform Explorer'
 }
 
-function ValidatorsRoute () {
+function ValidatorsRoute ({ searchParams }) {
+  const page = Number(searchParams.p) || 1
+  const pageSize = Number(searchParams.ps)
+
   return <>
     <Container
       maxW={'container.xl'}
@@ -46,7 +49,7 @@ function ValidatorsRoute () {
           </Container>
       </Flex>
     </Container>
-    <Validators/>
+    <Validators defaultPage={page} defaultPageSize={pageSize}/>
   </>
 }
 

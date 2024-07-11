@@ -9,6 +9,7 @@ import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { ValidatorsList } from '../../components/validators'
 import { Switcher } from '../../components/ui'
 import { Container, Box, Heading } from '@chakra-ui/react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 const paginateConfig = {
   pageSize: {
@@ -18,28 +19,52 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function Validators () {
+function Validators ({ defaultPage = 1, defaultPageSize }) {
   const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
-  const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
-  const [currentPage, setCurrentPage] = useState(0)
+  const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
+  const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const [total, setTotal] = useState(1)
   const [isActive, setIsActive] = useState(true)
   const pageCount = Math.ceil(total / pageSize)
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const fetchData = (page, count, active) => {
     setValidators({ data: {}, loading: true, error: false })
 
     Api.getValidators(page, count, 'desc', active)
       .then(res => {
+        if (res.pagination.total === -1) {
+          setCurrentPage(0)
+        }
         fetchHandlerSuccess(setValidators, res)
         setTotal(res.pagination.total)
       })
       .catch(err => fetchHandlerError(setValidators, err))
   }
 
-  useEffect(() => setCurrentPage(0), [pageSize])
-  useEffect(() => fetchData(paginateConfig.defaultPage, pageSize, isActive), [pageSize])
-  useEffect(() => fetchData(currentPage + 1, pageSize, isActive), [isActive, pageSize, currentPage])
+  useEffect(() => fetchData(currentPage + 1, pageSize, isActive), [pageSize, currentPage])
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+
+    if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
+      urlParameters.delete('p')
+      urlParameters.delete('ps')
+    } else {
+      urlParameters.set('p', currentPage + 1)
+      urlParameters.set('ps', pageSize)
+    }
+
+    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  }, [currentPage, pageSize])
+
+  const isActiveSwitchHandler = (activeState) => {
+    setCurrentPage(0)
+    setIsActive(activeState)
+    fetchData(1, pageSize, activeState)
+  }
 
   return (
     <Container
@@ -63,7 +88,7 @@ function Validators () {
                     title: 'Inactive'
                   }
                 ]}
-                onChange={e => setIsActive(e === 'Active')}
+                onChange={e => isActiveSwitchHandler(e === 'Active')}
               />
             </Box>
 
@@ -81,7 +106,7 @@ function Validators () {
                 />
                 <PageSizeSelector
                     PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                    defaultValue={paginateConfig.pageSize.default}
+                    defaultValue={pageSize}
                     items={paginateConfig.pageSize.values}
                 />
               </div>
