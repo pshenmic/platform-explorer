@@ -19,12 +19,12 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function Validators ({ defaultPage = 1, defaultPageSize }) {
+function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
   const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const [total, setTotal] = useState(1)
-  const [isActive, setIsActive] = useState(true)
+  const [isActive, setIsActive] = useState(defaultIsActive !== undefined ? defaultIsActive === true : true)
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
@@ -50,11 +50,11 @@ function Validators ({ defaultPage = 1, defaultPageSize }) {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
 
     if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
-      urlParameters.delete('p')
-      urlParameters.delete('ps')
+      urlParameters.delete('page')
+      urlParameters.delete('page-size')
     } else {
-      urlParameters.set('p', currentPage + 1)
-      urlParameters.set('ps', pageSize)
+      urlParameters.set('page', currentPage + 1)
+      urlParameters.set('page-size', pageSize)
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })

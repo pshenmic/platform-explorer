@@ -13,8 +13,8 @@ export const metadata = {
 }
 
 function TransactionsRoute ({ searchParams }) {
-  const page = Number(searchParams.p) || 1
-  const pageSize = Number(searchParams.ps)
+  const page = Number(searchParams.page) || 1
+  const pageSize = Number(searchParams['page-size'])
 
   return <>
     <Container
