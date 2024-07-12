@@ -15,6 +15,7 @@ describe('Epoch routes', () => {
   let blocks
   let identities
   let transactions
+  let validator
 
   before(async () => {
     mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
@@ -30,19 +31,26 @@ describe('Epoch routes', () => {
 
     await fixtures.cleanup(knex)
 
-    for (let i = 1; i < 31; i++) {
-      const block = await fixtures.block(knex, { height: i, timestamp: new Date(60000 * i) })
+    validator = await fixtures.validator(knex)
+    for (let i = 1; i <= 30; i++) {
+      const block = await fixtures.block(knex, {
+        height: i,
+        timestamp: new Date(60000 * i),
+        validator: i % 5 === 0 ? validator.pro_tx_hash : null
+      })
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
       const transaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
         index: i,
         type: 0,
+        gas_used: 1,
         owner: identity.identifier
       })
       blocks.push(block)
       transactions.push(transaction)
       identities.push(identity)
     }
+    console.log('txns:', transactions.length)
   })
 
   after(async () => {
@@ -63,7 +71,9 @@ describe('Epoch routes', () => {
           startTime: '1970-01-01T00:00:00.000Z'
 
         },
-        tps: (identities.length + transactions.length) / 3600
+        tps: (identities.length + transactions.length) / (process.env.EPOCH_CHANGE_TIME / 1000),
+        totalCollectedFees: transactions.length,
+        bestValidator: validator.pro_tx_hash
       }
       assert.deepEqual(body, expectedBlock)
     })
