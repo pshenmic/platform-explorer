@@ -19,17 +19,17 @@ module.exports = class EpochDAO {
     })
 
     const subquery = this.knex('state_transitions')
-      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
-      .leftJoin('validators', 'blocks.validator', 'validators.pro_tx_hash')
-      .where('blocks.timestamp', '>', epoch.startTime.toISOString())
-      .andWhere('blocks.timestamp', '<=', epoch.endTime.toISOString())
-      .sum('gas_used as collected_fees')
-      .count('* as tx_count')
-      .groupBy('validators.pro_tx_hash')
       .select(
         'validators.pro_tx_hash',
         this.knex.raw('ROW_NUMBER() OVER (ORDER BY COUNT(blocks.hash) DESC) as row_num')
       )
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+      .leftJoin('validators', 'blocks.validator', 'validators.pro_tx_hash')
+      .sum('gas_used as collected_fees')
+      .count('* as tx_count')
+      .where('blocks.timestamp', '>', epoch.startTime.toISOString())
+      .andWhere('blocks.timestamp', '<=', epoch.endTime.toISOString())
+      .groupBy('validators.pro_tx_hash')
 
     const [row] = await this.knex
       .select(
@@ -40,8 +40,8 @@ module.exports = class EpochDAO {
         this.knex.raw('SUM(collected_fees) OVER () as total_collected_fees'),
         this.knex.raw(`SUM(tx_count) OVER () * 1.0 / ${Constants.EPOCH_CHANGE_TIME / 1000} as tps`)
       )
-      .orderBy('row_num', 'asc')
       .from(subquery)
+      .orderBy('row_num', 'asc')
 
     return EpochData.fromObject({ epoch, ...row })
   }
