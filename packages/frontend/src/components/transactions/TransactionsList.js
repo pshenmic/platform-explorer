@@ -14,7 +14,7 @@ export default function TransactionsList ({ transactions = [], size = 'l' }) {
         )}
 
         {transactions.length === 0 &&
-            <EmptyListMessage>There are no data contracts created yet.</EmptyListMessage>
+            <EmptyListMessage>There are no transactions created yet.</EmptyListMessage>
         }
     </div>
   )

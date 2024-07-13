@@ -19,7 +19,7 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l' }) {
         )}
 
         {blocks.length === 0 &&
-            <EmptyListMessage>There are no documents created yet.</EmptyListMessage>
+            <EmptyListMessage>There are no blocks created yet.</EmptyListMessage>
         }
     </div>
   )
