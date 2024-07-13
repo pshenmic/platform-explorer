@@ -5,7 +5,7 @@ const Constants = require('../constants')
 const EpochData = require('../models/EpochData')
 
 module.exports = class EpochDAO {
-  constructor(knex) {
+  constructor (knex) {
     this.blocksDAO = new BlocksDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.knex = knex
@@ -28,7 +28,7 @@ module.exports = class EpochDAO {
       .groupBy('validators.pro_tx_hash')
       .select(
         'validators.pro_tx_hash',
-        this.knex.raw('ROW_NUMBER() OVER (ORDER BY COUNT(blocks.hash) DESC) as row_num'),
+        this.knex.raw('ROW_NUMBER() OVER (ORDER BY COUNT(blocks.hash) DESC) as row_num')
       )
 
     const [row] = await this.knex
@@ -38,7 +38,7 @@ module.exports = class EpochDAO {
         'collected_fees',
         'row_num',
         this.knex.raw('SUM(collected_fees) OVER () as total_collected_fees'),
-        this.knex.raw(`SUM(tx_count) OVER () * 1.0 / ${Constants.EPOCH_CHANGE_TIME / 1000} as tps`),
+        this.knex.raw(`SUM(tx_count) OVER () * 1.0 / ${Constants.EPOCH_CHANGE_TIME / 1000} as tps`)
       )
       .orderBy('row_num', 'asc')
       .from(subquery)
