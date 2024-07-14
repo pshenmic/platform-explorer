@@ -45,50 +45,54 @@ const NavLink = (props) => {
   )
 }
 
-function Navbar () {
+function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <Box px={3}>
-        <Flex
-          className={'Navbar'}
-          maxW='1980px'
-          ml='auto'
-          mr='auto'
-          h={16}
-          alignItems={'center'}
-          justifyContent={'space-between'}
-        >
-          <IconButton
-            size={'md'}
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            aria-label={'Open Menu'}
-            display={{ lg: 'none' }}
-            onClick={isOpen ? onClose : onOpen}
-          />
+      <Flex
+        className={'Navbar'}
+        maxW='1980px'
+        ml='auto'
+        mr='auto'
+        h={16}
+        alignItems={'center'}
+        justifyContent={'space-between'}
+      >
+        <IconButton
+          size={'md'}
+          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+          aria-label={'Open Menu'}
+          display={{ lg: 'none' }}
+          onClick={isOpen ? onClose : onOpen}
+        />
 
-            <HStack spacing={8} alignItems={'center'}>
-                <HStack as={'nav'} spacing={4} display={{ base: 'none', lg: 'flex' }}>
-                {links.map((link) => (
-                    <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
-                ))}
-                </HStack>
+        <HStack spacing={8} alignItems={'center'}>
+          <HStack as={'nav'} spacing={4} display={{ base: 'none', lg: 'flex' }}>
+            {links.map((link) => (
+              <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
+            ))}
+          </HStack>
 
-            </HStack>
-            <Box ml={2}>
-              <GlobalSearchInput />
-            </Box>
-        </Flex>
+        </HStack>
+        <div>
+          
+          <Box ml={2}>
+            <GlobalSearchInput />
+          </Box>
+        </div>
 
-        {isOpen
-          ? <Box className={'NavbarMobileMenu'} pb={4} display={{ lg: 'none' }}>
-              <Stack as={'nav'} spacing={4}>
-                {links.map((link) => (
-                  <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
-                ))}
-              </Stack>
-            </Box>
-          : null}
+      </Flex>
+
+      {isOpen
+        ? <Box className={'NavbarMobileMenu'} pb={4} display={{ lg: 'none' }}>
+          <Stack as={'nav'} spacing={4}>
+            {links.map((link) => (
+              <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
+            ))}
+          </Stack>
+        </Box>
+        : null}
     </Box>
   )
 }
