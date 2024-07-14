@@ -6,12 +6,14 @@ import { getTransitionTypeString, fetchHandlerSuccess, fetchHandlerError, number
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import TransactionData from './TransactionData'
+import { CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
 import './Transaction.scss'
 
 import {
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
-  Heading
+  Heading,
+  Flex
 } from '@chakra-ui/react'
 
 function Transaction ({ hash }) {
@@ -40,6 +42,10 @@ function Transaction ({ hash }) {
 
   useEffect(fetchData, [hash, decodeTx])
 
+  const StatusIcon = transaction.data.status === 'SUCCESS'
+    ? <CheckCircleIcon color={'green.500'} ml={2}/>
+    : <WarningTwoIcon color={'red.500'} ml={2}/>
+
   return (
     <Container
         maxW={'container.lg'}
@@ -60,6 +66,12 @@ function Transaction ({ hash }) {
                     </Tr>
                 </Thead>
                 <Tbody>
+                    <Tr>
+                        <Td w={tdTitleWidth}>Status</Td>
+                        <Td>
+                            <LoadingLine loading={transaction.loading}><Flex alignItems={'center'}>{transaction.data?.status}{StatusIcon}</Flex></LoadingLine>
+                        </Td>
+                    </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Hash</Td>
                         <Td>
@@ -90,12 +102,6 @@ function Transaction ({ hash }) {
                         <Td w={tdTitleWidth}>Timestamp</Td>
                         <Td>
                             <LoadingLine loading={transaction.loading}>{transaction.data?.timestamp && new Date(transaction.data?.timestamp).toLocaleString()}</LoadingLine>
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Status</Td>
-                        <Td>
-                            <LoadingLine loading={transaction.loading}>{transaction.data?.status}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
