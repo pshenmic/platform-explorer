@@ -12,7 +12,7 @@ export const theme = extendTheme({
       normal: '#008DE4',
       deep: '#0E75B5',
       shaded: '#165278',
-      light: '#5ca5d1'
+      light: '#5ca5d1',
     },
     white: {
       50: '#FFFFFF'
@@ -30,7 +30,9 @@ export const theme = extendTheme({
       600: '#62676a',
       700: '#494e51',
       800: '#313639',
-      900: '#181d20'
+      900: '#181d20',
+      1000: '#93aab2',
+      1100: '#2e393d'
     }
   },
   styles: {
