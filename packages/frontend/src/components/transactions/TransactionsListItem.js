@@ -12,7 +12,7 @@ function TransactionsListItem ({ transaction }) {
 
   const StatusIcon = transaction.status === 'SUCCESS'
     ? <CheckCircleIcon color={'green.500'}/>
-    : <WarningTwoIcon color={'yellow.400'}/>
+    : <WarningTwoIcon color={'red.500'}/>
 
   return (
     <Link
