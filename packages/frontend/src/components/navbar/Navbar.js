@@ -13,6 +13,7 @@ import {
 
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
+import Network from './Network'
 
 const links = [
   { title: 'Home', href: '/' },
@@ -75,9 +76,13 @@ function Navbar () {
                 </HStack>
 
             </HStack>
+            <div className='wrapperNetworkAndSearch'>
+              <Network />
             <Box ml={2}>
               <GlobalSearchInput />
             </Box>
+            </div>
+           
         </Flex>
 
         {isOpen

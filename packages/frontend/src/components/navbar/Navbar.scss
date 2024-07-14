@@ -2,4 +2,42 @@
     padding: 0 16px;
     border-radius: 0 0 10px 10px;
     background-color: var(--chakra-colors-whiteAlpha-50);
+
+    .wrapperNetworkAndSearch {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+}
+
+.network {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    >p {
+        font-weight: 400;
+        font-size: 12px;
+        color: var(--chakra-colors-gray-1000);
+    }
+
+    >button {
+        position: relative;
+        padding: 6px 12px;
+        background-color: var(--chakra-colors-brand-deep);
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        .arrow{
+            color: var(--chakra-colors-white-50);
+            stroke-width: 1.50px;
+        }
+    }
+    
 }
