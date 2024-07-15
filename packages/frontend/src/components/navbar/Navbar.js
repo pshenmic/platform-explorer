@@ -48,7 +48,7 @@ const NavLink = (props) => {
   )
 }
 
-function Navbar() {
+function Navbar () {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
