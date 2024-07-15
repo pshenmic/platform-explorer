@@ -105,12 +105,14 @@ function DataContract ({ identifier }) {
                             <LoadingLine loading={dataContract.loading}>{dataContract.data?.identifier}</LoadingLine>
                         </Td>
                     </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Name</Td>
-                        <Td>
-                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
-                        </Td>
-                    </Tr>
+                    {dataContract.data?.name &&
+                        <Tr>
+                            <Td w={tdTitleWidth}>Name</Td>
+                            <Td>
+                                <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
+                            </Td>
+                        </Tr>
+                    }
                     <Tr>
                         <Td w={tdTitleWidth}>Owner</Td>
                         <Td>
@@ -203,16 +205,16 @@ function DataContract ({ identifier }) {
                         <Box>
                           {!dataContract.error
                             ? <LoadingBlock loading={dataContract.loading}>
-                                  <div className={'DataContractSchema'}>
-                                      <Code
-                                          className={'DataContractSchema__Code'}
-                                          borderRadius={'lg'}
-                                          p={4}
-                                          w={'100%'}
-                                      >
-                                          {dataContract.data?.schema && JSON.stringify(JSON.parse(dataContract.data?.schema), null, 2)}
+                                <div className={'DataContractSchema'}>
+                                    <Code
+                                        className={'DataContractSchema__Code'}
+                                        borderRadius={'lg'}
+                                        px={5}
+                                        py={4}
+                                    >
+                                        {dataContract.data?.schema && JSON.stringify(JSON.parse(dataContract.data?.schema), null, 2)}
                                     </Code>
-                                  </div>
+                                </div>
                               </LoadingBlock>
                             : <Container h={20}><ErrorMessageBlock/></Container>
                           }
