@@ -8,9 +8,9 @@ import './footer.scss'
 import Image from 'next/image'
 
 const socialNetwork = [
-    { img: '/images/icons/github.svg', href: '', alt: 'github' },
-    { img: '/images/icons/twitter.svg', href: '', alt: 'twitter' },
-    { img: '/images/icons/discord.svg', href: '', alt: 'discord' },
+    { img: '/images/icons/github.svg', href: 'https://github.com/pshenmic/platform-explorer/', alt: 'github' },
+    { img: '/images/icons/twitter.svg', href: 'https://x.com/Dashpay', alt: 'twitter' },
+    { img: '/images/icons/discord.svg', href: 'https://discord.gg/GeH3ug5G', alt: 'discord' },
 ]
 
 function Footer() {
@@ -18,7 +18,7 @@ function Footer() {
     return (
         <Box px={3}>
             <Flex
-                className={'footer'}
+                className={'Footer'}
                 maxW='1980px'
                 ml='auto'
                 mr='auto'
@@ -28,17 +28,17 @@ function Footer() {
             >
                 <p>pshenmic.dev</p>
                 {socialNetwork?.length ?
-                    <div className='wrapperNetwork'>
+                    <div className='Footer__WrapperNetwork'>
                         {
                             socialNetwork.map((_, i) => (
-                                <a className='network' href={_?.href ? _.href : '#'}>
+                                <a className='Footer__Network' href={_?.href ? _.href : '#'} target="_blank" rel="noopener noreferrer">
                                     <Image src={_.img} width={20} height={20} alt={_.alt} />
                                 </a>
                             ))
                         }
                     </div>
                     : null}
-                <p className='copyright'>2024 © Dash Platform Explorer v0.2 MIT LICENCE</p>
+                <p className='Footer__Copyright'>2024 © Dash Platform Explorer v0.2 MIT LICENCE</p>
             </Flex>
         </Box>
     )
