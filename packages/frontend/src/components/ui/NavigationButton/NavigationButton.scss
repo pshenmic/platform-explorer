@@ -1,0 +1,46 @@
+.activeButton{
+    background-color: var(--chakra-colors-brand-deep) !important;
+}
+
+.navigationButton {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: transparent;
+    border-radius: 10px;
+    white-space: nowrap;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    transition: ease 0.5s;
+    &:hover{
+        background-color: rgba(14, 117, 181, 1);
+        .subName{
+            background-color: rgba(132, 144, 153, 1) !important;
+        }
+    }
+
+    .subName {
+        border-radius: 5px;
+        padding: 4px 10px;
+        background-color: rgba(92, 100, 106, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 400;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+    }
+}
+
+.noActiveButton{
+    cursor: no-drop !important;
+    &:hover{
+        background-color: rgba(82, 88, 93, 0.43) !important;
+      
+    }
+}

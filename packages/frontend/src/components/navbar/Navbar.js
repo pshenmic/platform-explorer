@@ -40,7 +40,9 @@ const NavLink = (props) => {
         color: 'white'
       }}
       color={'white'}
-      href={to}>
+      href={to}
+      whiteSpace={'nowrap'}    
+        >
       {children}
     </Box>
   )
@@ -65,11 +67,12 @@ function Navbar () {
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
             aria-label={'Open Menu'}
             display={{ lg: 'none' }}
+            marginRight={'8px'}
             onClick={isOpen ? onClose : onOpen}
           />
 
             <HStack spacing={8} alignItems={'center'}>
-                <HStack as={'nav'} spacing={4} display={{ base: 'none', lg: 'flex' }}>
+                <HStack as={'nav'} spacing={3} display={{ base: 'none', lg: 'flex' }}>
                 {links.map((link) => (
                     <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
                 ))}
