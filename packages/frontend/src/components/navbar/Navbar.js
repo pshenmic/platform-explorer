@@ -45,7 +45,7 @@ const NavLink = (props) => {
   )
 }
 
-function Navbar() {
+function Navbar () {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -76,7 +76,6 @@ function Navbar() {
 
         </HStack>
         <div>
-          
           <Box ml={2}>
             <GlobalSearchInput />
           </Box>
