@@ -1,11 +1,11 @@
 'use client'
 import { memo } from 'react'
 import NavigationButton from '../ui/NavigationButton/NavigationButton'
-import './Navbar.scss'
+import './NetworkSelect.scss'
 
 // props.data - The data array [{name: '', subname: '', activeButton: boolean}]
 
-function InternalNavigation({ active, setActive, data }) {
+function Dropdown({ active, setActive, data }) {
 
     return (
         <div className='InternalNavigation' >
@@ -18,4 +18,4 @@ function InternalNavigation({ active, setActive, data }) {
     )
 }
 
-export default memo(InternalNavigation)
+export default memo(Dropdown)

@@ -3,12 +3,12 @@ import './NavigationButton.scss'
 function NavigationButton({ active, name, subName, activeButton, ...porps }) {
 
     return (
-        <button className={`navigationButton ${!activeButton ? "noActiveButton" : null} ${active === name ? 'activeButton' : null}`} 
+        <button className={`NavigationButton ${!activeButton ? "NavigationButton__NoActive" : null} ${active === name ? 'NavigationButton__Active' : null}`} 
         disabled={!activeButton ? true : false} {...porps}>
             {name}
             {
                 subName ?
-                    <span className="subName">
+                    <span className="NavigationButton__SubName">
                         {subName}
                     </span>
                     : null

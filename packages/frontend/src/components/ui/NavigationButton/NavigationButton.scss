@@ -1,8 +1,8 @@
-.activeButton{
+.NavigationButton__Active{
     background-color: var(--chakra-colors-brand-deep) !important;
 }
 
-.navigationButton {
+.NavigationButton {
     position: relative;
     display: flex;
     align-items: center;
@@ -17,14 +17,15 @@
     font-size: 12px;
     letter-spacing: 0.04em;
     transition: ease 0.5s;
+   
     &:hover{
-        background-color: rgba(14, 117, 181, 1);
-        .subName{
+        background-color: rgba(82, 88, 93, 0.43) ;
+        .NavigationButton__SubName{
             background-color: rgba(132, 144, 153, 1) !important;
         }
     }
 
-    .subName {
+    .NavigationButton__SubName {
         border-radius: 5px;
         padding: 4px 10px;
         background-color: rgba(92, 100, 106, 1);
@@ -34,13 +35,11 @@
         font-weight: 400;
         font-size: 10px;
         letter-spacing: 0.04em;
+        transition: ease 0.5s;
     }
 }
 
-.noActiveButton{
+.NavigationButton__NoActive{
     cursor: no-drop !important;
-    &:hover{
-        background-color: rgba(82, 88, 93, 0.43) !important;
-      
-    }
+    
 }

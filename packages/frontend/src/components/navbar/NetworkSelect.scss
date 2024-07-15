@@ -1,0 +1,75 @@
+
+.NetworkSelect {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    >p {
+        font-weight: 400;
+        font-size: 12px;
+        color: var(--chakra-colors-gray-1000);
+        @media screen and (max-width: 72.5rem) {
+           display: none;
+        }
+    }
+
+    .NetworkSelect__Button {
+        position: relative;
+        padding: 6px 12px;
+        background-color: var(--chakra-colors-brand-deep);
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+
+        .NetworkSelect__Arrow {
+            color: var(--chakra-colors-white-50);
+            stroke-width: 1.50px;
+            transform: rotate(180deg);
+            transition: transform ease 0.5s;
+        }
+        .Arrow__Active{
+            transform: rotate(0deg);
+            transition: transform ease 0.5s;
+        }
+    }
+
+}
+
+.InternalNavigation {
+    position: relative;
+    width: auto;
+    border-bottom: 4px solid #52585d;
+    border-top: 4px solid #52585d;
+    border-radius: 10px;
+    padding: 8px 4px;
+    background: #24282b;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.NetworkSelect__DropdownWrapper{
+    position: absolute;
+    top: calc(5px + 100%);
+    right: 0;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: ease 0.5s;
+
+}
+
+.DropdownWrapper__Active{
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    transition: ease 0.5s;
+}
