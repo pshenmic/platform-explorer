@@ -17,7 +17,7 @@ const BlocksDAO = require('./dao/BlocksDAO')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
-    return reply.status(403).send({ error: 'tenderdash backend is not available' })
+    return reply.status(403).send({ error: 'tenderdash/dashcore backend is not available' })
   }
 
   if (err?.constructor?.name === 'InvalidStateTransitionError') {

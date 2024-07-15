@@ -6,6 +6,7 @@ const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const DashCoreRPC = require('../../src/dashcoreRpc')
 
 describe('Validators routes', () => {
   let app
@@ -49,6 +50,8 @@ describe('Validators routes', () => {
       async () =>
         Promise.resolve(activeValidators.map(activeValidator =>
           ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
+
+    mock.method(DashCoreRPC, 'getValidatorInfo', async () => null)
   })
 
   after(async () => {
@@ -68,7 +71,8 @@ describe('Validators routes', () => {
         proTxHash: validator.pro_tx_hash,
         isActive: false,
         proposedBlocksAmount: 0,
-        lastProposedBlockHeader: null
+        lastProposedBlockHeader: null,
+        proTxInfo: null
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -97,7 +101,8 @@ describe('Validators routes', () => {
             l1LockedHeight: blockHeader.l1LockedHeight,
             validator: blockHeader.validator
           }))
-          .toReversed()[0] ?? null
+          .toReversed()[0] ?? null,
+        proTxInfo: null
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -140,7 +145,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -175,7 +181,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -209,7 +216,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -243,7 +251,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -277,7 +286,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -312,7 +322,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -346,7 +357,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -397,7 +409,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -432,7 +445,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -466,7 +480,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -500,7 +515,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -534,7 +550,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -569,7 +586,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -603,7 +621,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -642,7 +661,8 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             isActive: false,
             proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null
+            lastProposedBlockHeader: null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -665,7 +685,8 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             isActive: false,
             proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null
+            lastProposedBlockHeader: null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -687,7 +708,8 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             isActive: false,
             proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null
+            lastProposedBlockHeader: null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -709,7 +731,8 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             isActive: false,
             proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null
+            lastProposedBlockHeader: null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -731,7 +754,8 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             isActive: false,
             proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null
+            lastProposedBlockHeader: null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -766,7 +790,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -800,7 +825,8 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: null
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)

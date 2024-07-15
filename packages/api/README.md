@@ -11,13 +11,15 @@ $ npm start
 
 Environments:
 ```
-BASE_URL=http://127.0.0.1:36657 # Tenderdash RPC URL
 POSTGRES_HOST=127.0.0.1
 POSTGRES_DB=indexer
 POSTGRES_USER=indexer
 POSTGRES_PASS=indexer
-DATABASE_URL=postgres://indexer:indexer@127.0.0.1/indexer
-BACKEND_URL=http://172.17.0.1:4000
+TENDERDASH_URL=http://127.0.0.1:36657
+DASHCORE_URL=http://127.0.0.1:19998
+DASHCORE_USER=8JjXoVNu
+DASHCORE_PASS=mCq47H4wllv7
+EPOCH_CHANGE_TIME=3600000
 ```
 
 
@@ -40,11 +42,15 @@ Production (testnet) live URL is [https://platform-explorer.pshenmic.dev](https:
 Reference:
 
 * [Status](#status)
+* [Epoch info](#epoch-info)
 * [Block by hash](#block-by-hash)
+* [Blocks by validator](#blocks-by-validator)
 * [Blocks](#blocks)
+* [Validators](#validators)
+* [Validator by ProTxHash](#validator-by-protxhash)
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
-* [Data Contract](#data-contract-by-identifier)
+* [Data Contract By Identifier](#data-contract-by-identifier)
 * [Data Contracts](#data-contracts)
 * [Document by Identifier](#document-by-identifier)
 * [Documents by Data Contract](#documents-by-data-contract)
@@ -54,6 +60,7 @@ Reference:
 * [Documents by Identity](#documents-by-identity)
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
+* [Transactions history](#transactions-history)
 
 ### Status
 Returns basic stats and epoch info
@@ -103,6 +110,8 @@ HTTP /status
 Returns info about epoch by specific index
 
 * tps - Transactions per second
+* totalCollectedFees - total number or fees spent per epoch
+* bestValidator - validator with most validated blocks
 
 
 ```
@@ -114,7 +123,9 @@ HTTP /epoch/1
         startTime: "2024-04-08T14:00:00.000Z",
         endTime: "2024-04-09T14:00:00.000Z"
     },
-    tps: 0.01666666666     
+    tps: 0.01666666666,
+    totalCollectedFees: 30,
+    bestValidator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
 }
 ```
 ---
@@ -214,6 +225,32 @@ GET /validators
         appVersion: 1,
         blockVersion: 13
         validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+      },
+      proTxInfo: {
+        "type": "Evo",
+        "collateralHash": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
+        "collateralIndex": 19,
+        "collateralAddress": "yYK3Kiq36Xmf1ButkTUYb1iCNtJfSSM4KH",
+        "operatorReward": 0,
+        "confirmations": 214424,
+        "state": {
+            "version": 2,
+            "service": "35.164.23.245:19999",
+            "registeredHeight": 850334,
+            "lastPaidHeight": 1064721,
+            "consecutivePayments": 0,
+            "PoSePenalty": 0,
+            "PoSeRevivedHeight": 1027671,
+            "PoSeBanHeight": -1,
+            "revocationReason": 0,
+            "ownerAddress": "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+            "votingAddress": "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+            "platformNodeID": "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
+            "platformP2PPort": 36656,
+            "platformHTTPPort": 1443,
+            "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+            "pubKeyOperator": "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
+        }
       }
     }, ...
   ],
@@ -243,6 +280,32 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     appVersion: 1,
     blockVersion: 13,
     validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+  },
+  proTxInfo: {
+    "type": "Evo",
+    "collateralHash": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
+    "collateralIndex": 19,
+    "collateralAddress": "yYK3Kiq36Xmf1ButkTUYb1iCNtJfSSM4KH",
+    "operatorReward": 0,
+    "confirmations": 214424,
+    "state": {
+        "version": 2,
+        "service": "35.164.23.245:19999",
+        "registeredHeight": 850334,
+        "lastPaidHeight": 1064721,
+        "consecutivePayments": 0,
+        "PoSePenalty": 0,
+        "PoSeRevivedHeight": 1027671,
+        "PoSeBanHeight": -1,
+        "revocationReason": 0,
+        "ownerAddress": "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+        "votingAddress": "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+        "platformNodeID": "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
+        "platformP2PPort": 36656,
+        "platformHTTPPort": 1443,
+        "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+        "pubKeyOperator": "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
+    }
   }
 }
 ```
