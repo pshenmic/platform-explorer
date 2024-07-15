@@ -5,9 +5,9 @@ import Dropdown from './Dropdown'
 
 const listNetworks = [
   { name: 'testnet', subname: '', activeButton: true },
-  { name: 'mainnet', subname: 'Soon', activeButton: true },
+  { name: 'mainnet', subname: 'Soon', activeButton: false },
   { name: 'devnet-abc', subname: 'Soon', activeButton: false }
-]
+] 
 
 function NetworkSelect () {
   const [activeNetwork, setActiveNetwork] = useState(listNetworks[0].name)
