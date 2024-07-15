@@ -1,4 +1,4 @@
-var RpcClient = require('@dashevo/dashd-rpc/promise');
+const RpcClient = require('@dashevo/dashd-rpc/promise')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 
 const config = {
@@ -12,7 +12,7 @@ const config = {
 const rpc = new RpcClient(config)
 
 class DashCoreRPC {
-  static async getValidatorInfo(proTxHash) {
+  static async getValidatorInfo (proTxHash) {
     try {
       const { result } = await rpc.protx('info', proTxHash)
       return result
