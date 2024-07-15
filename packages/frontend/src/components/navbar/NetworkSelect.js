@@ -15,9 +15,9 @@ function NetworkSelect() {
     const [showDropdown, setShopDropdown] = useState(false)
 
     return (
-        <div className='NetworkSelect'>
+        <div className='NetworkSelect' onMouseLeave={() => setShopDropdown(false)}>
             <p>Network:</p>
-            <button className='NetworkSelect__Button' onClick={() => setShopDropdown(!showDropdown)}>{activeNetwork} 
+            <button className='NetworkSelect__Button' onMouseEnter={() => setShopDropdown(true)} onClick={() => setShopDropdown(!showDropdown)}>{activeNetwork} 
                 <svg className={`NetworkSelect__Arrow ${showDropdown ? 'Arrow__Active' : null}`} width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M1 5L5 1L9 5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
