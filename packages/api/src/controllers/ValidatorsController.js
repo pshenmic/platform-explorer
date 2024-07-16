@@ -6,7 +6,7 @@ const ProTxInfo = require('../models/ProTxInfo')
 const { validator } = require('../../test/utils/fixtures')
 
 class ValidatorsController {
-  constructor(knex) {
+  constructor (knex) {
     this.validatorsDAO = new ValidatorsDAO(knex)
   }
 
@@ -65,9 +65,9 @@ class ValidatorsController {
       resultSet: validatorsWithInfo.map(validator =>
         new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
           activeValidator.pro_tx_hash === validator.proTxHash),
-          validator.proposedBlocksAmount,
-          validator.lastProposedBlockHeader,
-          ProTxInfo.fromObject(validator.proTxInfo ?? null)
+        validator.proposedBlocksAmount,
+        validator.lastProposedBlockHeader,
+        ProTxInfo.fromObject(validator.proTxInfo ?? null)
         )
       )
     })

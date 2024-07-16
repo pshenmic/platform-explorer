@@ -30,39 +30,39 @@ describe('Validators routes', () => {
     blocks = []
 
     dashCoreRpcResponse = {
-      "type": "Evo",
-      "proTxHash": "88251bd4b124efeb87537deabeec54f6c8f575f4df81f10cf5e8eea073092b6f",
-      "collateralHash": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
-      "collateralIndex": 3,
-      "collateralAddress": "yM9Fgxk8bdqXq4ffv7bWpSFb68UCxCQaTX",
-      "operatorReward": 0,
-      "state": {
-        "version": 2,
-        "service": "52.33.28.47:19999",
-        "registeredHeight": 850334,
-        "lastPaidHeight": 1064465,
-        "consecutivePayments": 0,
-        "PoSePenalty": 0,
-        "PoSeRevivedHeight": 1027668,
-        "PoSeBanHeight": -1,
-        "revocationReason": 0,
-        "ownerAddress": "yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69",
-        "votingAddress": "yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69",
-        "platformNodeID": "711fd9548ae19b2e91c7a9b4067000467ccdd2b5",
-        "platformP2PPort": 36656,
-        "platformHTTPPort": 1443,
-        "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-        "pubKeyOperator": "af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53"
+      type: 'Evo',
+      proTxHash: '88251bd4b124efeb87537deabeec54f6c8f575f4df81f10cf5e8eea073092b6f',
+      collateralHash: '6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59',
+      collateralIndex: 3,
+      collateralAddress: 'yM9Fgxk8bdqXq4ffv7bWpSFb68UCxCQaTX',
+      operatorReward: 0,
+      state: {
+        version: 2,
+        service: '52.33.28.47:19999',
+        registeredHeight: 850334,
+        lastPaidHeight: 1064465,
+        consecutivePayments: 0,
+        PoSePenalty: 0,
+        PoSeRevivedHeight: 1027668,
+        PoSeBanHeight: -1,
+        revocationReason: 0,
+        ownerAddress: 'yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69',
+        votingAddress: 'yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69',
+        platformNodeID: '711fd9548ae19b2e91c7a9b4067000467ccdd2b5',
+        platformP2PPort: 36656,
+        platformHTTPPort: 1443,
+        payoutAddress: 'yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A',
+        pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53'
       },
-      "confirmations": 214276,
-      "metaInfo": {
-        "lastDSQ": 96910,
-        "mixingTxCount": 0,
-        "outboundAttemptCount": 0,
-        "lastOutboundAttempt": 0,
-        "lastOutboundAttemptElapsed": 1721031091,
-        "lastOutboundSuccess": 1720991464,
-        "lastOutboundSuccessElapsed": 39627
+      confirmations: 214276,
+      metaInfo: {
+        lastDSQ: 96910,
+        mixingTxCount: 0,
+        outboundAttemptCount: 0,
+        lastOutboundAttempt: 0,
+        lastOutboundAttemptElapsed: 1721031091,
+        lastOutboundSuccess: 1720991464,
+        lastOutboundSuccessElapsed: 39627
       }
     }
 
@@ -1070,7 +1070,6 @@ describe('Validators routes', () => {
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
-
 
       it('should return error when dashcore not available', async () => {
         mock.method(DashCoreRPC, 'getProTxInfo', async () => { throw new ServiceNotAvailableError() })
