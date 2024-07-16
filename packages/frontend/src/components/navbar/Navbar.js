@@ -79,7 +79,7 @@ function Navbar () {
           </HStack>
 
         </HStack>
-        <div className='Navbar__WrapperNetworkSelect'>
+        <div className={'Navbar__WrapperNetworkSelect'}>
           <NetworkSelect />
           <Box ml={2}>
             <GlobalSearchInput />

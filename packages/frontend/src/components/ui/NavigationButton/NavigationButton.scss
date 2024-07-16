@@ -19,7 +19,8 @@
     transition: ease 0.5s;
    
     &:hover{
-        background-color: rgba(82, 88, 93, 0.43) ;
+        background-color: rgba(82, 88, 93, 0.43);
+
         .NavigationButton__SubName{
             background-color: rgba(132, 144, 153, 1) !important;
         }
@@ -41,5 +42,4 @@
 
 .NavigationButton__NoActive{
     cursor: no-drop !important;
-    
 }

@@ -9,6 +9,7 @@
         font-weight: 400;
         font-size: 12px;
         color: var(--chakra-colors-gray-1000);
+
         @media screen and (max-width: 72.5rem) {
            display: none;
         }
@@ -28,19 +29,18 @@
         gap: 10px;
         z-index: 11;
 
-
         .NetworkSelect__Arrow {
             color: var(--chakra-colors-white-50);
             stroke-width: 1.50px;
             transform: rotate(180deg);
             transition: transform ease 0.5s;
         }
+
         .Arrow__Active{
             transform: rotate(0deg);
             transition: transform ease 0.5s;
         }
     }
-
 }
 
 .InternalNavigation {
@@ -65,6 +65,7 @@
     visibility: hidden;
     pointer-events: none;
     transition: ease 0.5s;
+
     &::before{
         content: '';
         position: absolute;

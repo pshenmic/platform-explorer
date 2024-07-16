@@ -10,6 +10,7 @@
         display: flex;
         align-items: center;
         gap: 16px;
+        
         @media screen and (max-width: $breakpoint-sm) {
             gap: 8px;
          }

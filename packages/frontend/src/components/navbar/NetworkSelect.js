@@ -1,4 +1,5 @@
 'use client'
+
 import { useState } from 'react'
 import './NetworkSelect.scss'
 import Dropdown from './Dropdown'
@@ -6,7 +7,7 @@ import Dropdown from './Dropdown'
 const listNetworks = [
   { name: 'testnet', subname: '', activeButton: true },
   { name: 'mainnet', subname: 'Soon', activeButton: false },
-  { name: 'devnet-abc', subname: 'Soon', activeButton: false }
+  // { name: 'devnet-abc', subname: 'Soon', activeButton: false }
 ]
 
 function NetworkSelect () {
@@ -14,12 +15,11 @@ function NetworkSelect () {
   const [showDropdown, setShowDropdown] = useState(false)
 
   return (
-    <div className='NetworkSelect' onMouseLeave={() => setShowDropdown(false)}>
+    <div className={'NetworkSelect'} onMouseLeave={() => setShowDropdown(false)}>
       <p>Network:</p>
       <button
-        className='NetworkSelect__Button'
+        className={'NetworkSelect__Button'}
         onMouseEnter={() => setShowDropdown(true)}
-        onClick={() => setShowDropdown(!showDropdown)}
       >
         {activeNetwork}
         <svg

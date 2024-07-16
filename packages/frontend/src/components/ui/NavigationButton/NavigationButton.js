@@ -9,7 +9,7 @@ function NavigationButton ({ active, name, subName, activeButton, ...props }) {
     >
       {name}
       {subName && (
-        <span className="NavigationButton__SubName">
+        <span className={'NavigationButton__SubName'}>
           {subName}
         </span>
       )}
