@@ -12,7 +12,7 @@ function Footer () {
   return (
         <Box px={3}>
             <Flex
-                className='Footer'
+                className={'Footer'}
                 maxW='1980px'
                 ml='auto'
                 mr='auto'
@@ -20,13 +20,13 @@ function Footer () {
                 alignItems='center'
                 justifyContent='space-between'
             >
-                <p>pshenmic.dev</p>
+                <a href='https://pshenmic.dev/' target="_blank" rel="noopener noreferrer">pshenmic.dev</a>
                 {socialNetwork.length
-                  ? (<div className='Footer__WrapperNetwork'>
+                  ? (<div className={'Footer__WrapperNetwork'}>
                         {socialNetwork.map((item, i) => (
                             <a
                                 key={i}
-                                className='Footer__Network'
+                                className={'Footer__Network'}
                                 href={item.href ? item.href : '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -36,7 +36,7 @@ function Footer () {
                         ))}
                     </div>)
                   : null}
-                <p className='Footer__Copyright'>2024 © Dash Platform Explorer v0.2 MIT LICENCE</p>
+                <p className={'Footer__Copyright'}>2024 © Dash Platform Explorer v0.2 MIT LICENCE</p>
             </Flex>
         </Box>
   )
