@@ -6,7 +6,7 @@ import Dropdown from './Dropdown'
 
 const listNetworks = [
   { name: 'testnet', subname: '', activeButton: true },
-  { name: 'mainnet', subname: 'Soon', activeButton: false },
+  { name: 'mainnet', subname: 'Soon', activeButton: false }
   // { name: 'devnet-abc', subname: 'Soon', activeButton: false }
 ]
 
