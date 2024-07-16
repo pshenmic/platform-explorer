@@ -3,7 +3,6 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
-const { validator } = require('../../test/utils/fixtures')
 
 class ValidatorsController {
   constructor (knex) {
