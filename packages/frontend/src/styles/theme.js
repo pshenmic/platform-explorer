@@ -25,7 +25,7 @@ export const theme = extendTheme({
       600: '#62676a',
       700: '#494e51',
       800: '#2e393d',
-      900: '#181d20',
+      900: '#181d20'
     }
   },
   styles: {
