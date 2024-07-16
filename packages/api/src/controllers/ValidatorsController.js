@@ -2,9 +2,11 @@ const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
+const ProTxInfo = require('../models/ProTxInfo')
+const { validator } = require('../../test/utils/fixtures')
 
 class ValidatorsController {
-  constructor (knex) {
+  constructor(knex) {
     this.validatorsDAO = new ValidatorsDAO(knex)
   }
 
@@ -19,7 +21,7 @@ class ValidatorsController {
 
     const validators = await TenderdashRPC.getValidators()
 
-    const proTxInfo = await DashCoreRPC.getValidatorInfo(validator.proTxHash)
+    const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
 
     const isActive = validators.some(validator => validator.pro_tx_hash === proTxHash)
 
@@ -29,17 +31,7 @@ class ValidatorsController {
         isActive,
         validator.proposedBlocksAmount,
         validator.lastProposedBlockHeader,
-        proTxInfo
-          ? {
-              type: proTxInfo.type,
-              collateralHash: proTxInfo.collateralHash,
-              collateralIndex: proTxInfo.collateralIndex,
-              collateralAddress: proTxInfo.collateralAddress,
-              operatorReward: proTxInfo.operatorReward,
-              confirmations: proTxInfo.confirmations,
-              state: proTxInfo.state
-            }
-          : null))
+        ProTxInfo.fromObject(proTxInfo ?? null)))
   }
 
   getValidators = async (request, response) => {
@@ -65,28 +57,19 @@ class ValidatorsController {
       activeValidators
     )
 
-    for (let i = 0; i < validators.resultSet.length; i++) {
-      const proTxInfo = await DashCoreRPC.getValidatorInfo(validators.resultSet[i].proTxHash)
-      validators.resultSet[i].proTxInfo = proTxInfo
-        ? {
-            type: proTxInfo.type,
-            collateralHash: proTxInfo.collateralHash,
-            collateralIndex: proTxInfo.collateralIndex,
-            collateralAddress: proTxInfo.collateralAddress,
-            operatorReward: proTxInfo.operatorReward,
-            confirmations: proTxInfo.confirmations,
-            state: proTxInfo.state
-          }
-        : null
-    }
+    const validatorsWithInfo = await Promise.all(
+      validators.resultSet.map(async (validator) => ({ ...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash) })))
 
     return response.send({
       ...validators,
-      resultSet: validators.resultSet.map(validator =>
+      resultSet: validatorsWithInfo.map(validator =>
         new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
           activeValidator.pro_tx_hash === validator.proTxHash),
-        validator.proposedBlocksAmount,
-        validator.lastProposedBlockHeader, validator.proTxInfo))
+          validator.proposedBlocksAmount,
+          validator.lastProposedBlockHeader,
+          ProTxInfo.fromObject(validator.proTxInfo ?? null)
+        )
+      )
     })
   }
 }

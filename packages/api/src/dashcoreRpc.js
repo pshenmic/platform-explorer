@@ -12,7 +12,7 @@ const config = {
 const rpc = new RpcClient(config)
 
 class DashCoreRPC {
-  static async getValidatorInfo (proTxHash) {
+  static async getProTxInfo (proTxHash) {
     try {
       const { result } = await rpc.protx('info', proTxHash)
       return result
