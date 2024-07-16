@@ -2,7 +2,7 @@ const RpcClient = require('@dashevo/dashd-rpc/promise')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 
 const config = {
-  protocol: process.env.DASHCORE_PROTOCOL,
+  protocol: 'http',
   host: process.env.DASHCORE_HOST,
   port: Number(process.env.DASHCORE_PORT),
   user: process.env.DASHCORE_USER,
