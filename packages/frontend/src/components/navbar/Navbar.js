@@ -85,7 +85,6 @@ function Navbar () {
             <GlobalSearchInput />
           </Box>
         </div>
-
       </Flex>
 
       {isOpen
