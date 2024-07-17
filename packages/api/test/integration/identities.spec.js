@@ -68,7 +68,7 @@ describe('Identities routes', () => {
     })
 
     it('should return 404 when identity not found', async () => {
-      await client.get('/identity/12345678901234567890123456789012345678901234')
+      await client.get('/identity/Cxo56ta5EMrWok8yp2Gpzm8cjBoa3mGYKZaAp9yqD3gW')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
