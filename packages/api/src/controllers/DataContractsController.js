@@ -20,14 +20,6 @@ class DataContractsController {
   getDataContracts = async (request, response) => {
     const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
 
-    if (order !== 'asc' && order !== 'desc') {
-      return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
-    }
-
-    if (orderBy !== 'block_height' && orderBy !== 'documents_count') {
-      return response.status(400).send({ message: `invalid order_by value ${order}. only 'block_height' or 'documents_count' is valid values` })
-    }
-
     const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page), Number(limit), order, orderBy)
 
     response.send(dataContracts)

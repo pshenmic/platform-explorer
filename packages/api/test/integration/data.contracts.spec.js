@@ -290,21 +290,8 @@ describe('DataContracts routes', () => {
       assert.deepEqual(body, expectedDataContract)
     })
 
-    //
-    // it('should return last revision of data contract by identifier', async () => {
-    //     const {body} = await client.get('/dataContract/Gc7HqRGqmA4ZSafQ6zXeKH8Rh4AjNjjWsztotJDLpMXa')
-    //         .expect(200)
-    //         .expect('Content-Type', 'application/json; charset=utf-8');
-    //
-    //     assert.equal(body.identifier, 'Gc7HqRGqmA4ZSafQ6zXeKH8Rh4AjNjjWsztotJDLpMXa')
-    //     assert.equal(body.txHash, '4107CE20DB3BE2B2A3B3F3ABA9F68438428E734E4ACF39D4F6D03B0F9B187829')
-    //     assert.equal(body.owner, 'FRMXvU2vRqk9xTya3MTB58ieBt27izpPyoX3fVLf3HuA')
-    //     assert.equal(body.version, 2)
-    //     assert.equal(body.timestamp, '2024-02-22T14:23:57.592Z')
-    // });
-
     it('should return 404 if data contract not found', async () => {
-      await client.get('/dataContract/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF')
+      await client.get('/dataContract/Gc70000000000afQ6zXeKH8Rh4AjNjjWsztotJDLpMXa')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })

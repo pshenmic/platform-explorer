@@ -26,23 +26,13 @@ class ValidatorsController {
   getValidators = async (request, response) => {
     const { page = 1, limit = 10, order = 'asc', isActive = undefined } = request.query
 
-    if (order !== 'asc' && order !== 'desc') {
-      return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
-    }
-
     const activeValidators = await TenderdashRPC.getValidators()
-
-    if (typeof isActive !== 'undefined') {
-      if (isActive !== 'true' && isActive !== 'false') {
-        return response.status(400).send({ message: `invalid isActive value ${order}. only boolean values are accepted` })
-      }
-    }
 
     const validators = await this.validatorsDAO.getValidators(
       Number(page),
       Number(limit),
       order,
-      typeof isActive === 'undefined' ? undefined : isActive === 'true',
+      isActive,
       activeValidators
     )
 

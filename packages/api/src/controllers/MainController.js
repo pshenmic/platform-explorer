@@ -68,11 +68,6 @@ class MainController {
   search = async (request, response) => {
     const { query } = request.query
 
-    // todo validate
-    if (!query) {
-      return response.status(400).send({ error: '`?query=` missing' })
-    }
-
     if (/^[0-9]+$/.test(query)) {
       // search block by height
       const block = await this.blocksDAO.getBlockByHeight(query)

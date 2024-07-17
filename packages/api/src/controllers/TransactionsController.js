@@ -34,13 +34,6 @@ class TransactionsController {
   getTransactionHistory = async (request, response) => {
     const { timespan = '1h' } = request.query
 
-    const possibleValues = ['1h', '24h', '3d', '1w']
-
-    if (possibleValues.indexOf(timespan) === -1) {
-      return response.status(400)
-        .send({ message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid` })
-    }
-
     const timeSeries = await this.transactionsDAO.getHistorySeries(timespan)
 
     response.send(timeSeries)
