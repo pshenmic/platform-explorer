@@ -52,9 +52,9 @@ function Navbar () {
     <Box px={3}>
       <Flex
         className={'Navbar'}
-        maxW='1980px'
-        ml='auto'
-        mr='auto'
+        maxW={'1980px'}
+        ml={'auto'}
+        mr={'auto'}
         h={16}
         alignItems={'center'}
         justifyContent={'space-between'}
