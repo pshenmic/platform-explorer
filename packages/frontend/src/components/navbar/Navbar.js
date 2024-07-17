@@ -30,7 +30,7 @@ const NavLink = (props) => {
 
   return (
     <Box
-      as="a"
+      as={'a'}
       px={2}
       py={1}
       rounded={'md'}
@@ -55,11 +55,11 @@ function Navbar () {
     <Box px={3}>
       <Flex
         className={'Navbar'}
-        maxW='1980px'
-        ml='auto'
-        mr='auto'
+        maxW={'1980px'}
+        ml={'auto'}
+        mr={'auto'}
         h={16}
-        gap='8px'
+        gap={'8px'}
         alignItems={'center'}
         justifyContent={'space-between'}
       >
@@ -77,8 +77,8 @@ function Navbar () {
               <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
             ))}
           </HStack>
-
         </HStack>
+
         <div className={'Navbar__WrapperNetworkSelect'}>
           <NetworkSelect />
           <Box ml={2}>

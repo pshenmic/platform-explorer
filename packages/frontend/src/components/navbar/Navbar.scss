@@ -6,7 +6,7 @@
     border-radius: 0 0 10px 10px;
     background-color: var(--chakra-colors-whiteAlpha-50);
 
-    .Navbar__WrapperNetworkSelect {
+    &__WrapperNetworkSelect {
         display: flex;
         align-items: center;
         gap: 16px;
