@@ -13,7 +13,7 @@
     @media screen and (max-width: $breakpoint-lg) {
         flex-direction: column;
         gap: 12px;
-     }
+    }
 
     > * {
         flex: 1;
@@ -25,12 +25,12 @@
         font-weight: 400;
     }
 
-    .Footer__Copyright {
+    &__Copyright {
         text-align: right;
 
         @media screen and (max-width: $breakpoint-lg) {
             text-align: center;
-         }
+        }
     }
 
     &__WrapperNetwork {
