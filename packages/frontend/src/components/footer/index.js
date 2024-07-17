@@ -13,18 +13,18 @@ function Footer () {
         <Box px={3}>
             <Flex
                 className={'Footer'}
-                maxW='1980px'
-                ml='auto'
-                mr='auto'
-                h='auto'
-                alignItems='center'
-                justifyContent='space-between'
+                maxW={'1980px'}
+                ml={'auto'}
+                mr={'auto'}
+                h={'auto'}
+                alignItems={'center'}
+                justifyContent={'space-between'}
             >
                 <a
-                    href='https://pshenmic.dev/'
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Go to Pschenmic Dev"
+                    href={'https://pshenmic.dev/'}
+                    target={'_blank'}
+                    rel={'noopener noreferrer'}
+                    aria-label={'Go to Pschenmic Dev'}
                 >
                     pshenmic.dev
                 </a>
@@ -35,8 +35,8 @@ function Footer () {
                                 key={i}
                                 className={'Footer__Network'}
                                 href={item.href ? item.href : '#'}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                target={'_blank'}
+                                rel={'noopener noreferrer'}
                                 aria-label={item.ariaLabel}
                             >
                                 <Image src={item.img} width={20} height={20} alt={item.alt} />
