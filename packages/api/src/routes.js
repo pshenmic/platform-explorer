@@ -1,4 +1,4 @@
-const schemas = require('./schemas')
+const { schemas } = require('./schemas')
 
 /**
  *
