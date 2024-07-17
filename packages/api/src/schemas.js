@@ -1,21 +1,30 @@
 const schemaObjects = [
   {
+    $id: 'baseSchema',
+    type: 'object',
+    properties: {
+      hash: { type: 'string', minLength: 64, maxLength: 64 },
+      page: { type: ['integer', 'null'], minimum: 1 },
+      limit: { type: ['integer', 'null'], minimum: 1, maximum: 100 },
+      order: { type: ['string', 'null'], enum: ['asc', 'desc'] }
+    }
+  }, {
     $id: 'txHashSchema',
     type: 'object',
     properties: {
-      txHash: { type: 'string', minLength: 64, maxLength: 64 }
+      txHash: { $ref: 'baseSchema#/properties/hash' }
     }
   }, {
     $id: 'validatorSchema',
     type: 'object',
     properties: {
-      validator: { type: 'string', minLength: 64, maxLength: 64 }
+      validator: { $ref: 'baseSchema#/properties/hash' }
     }
   }, {
     $id: 'hashSchema',
     type: 'object',
     properties: {
-      hash: { type: 'string', minLength: 64, maxLength: 64 }
+      hash: { $ref: 'baseSchema#/properties/hash' }
     }
   }, {
     $id: 'identifierSchema',
@@ -33,18 +42,18 @@ const schemaObjects = [
     $id: 'paginationWithOrderBySchema',
     type: 'object',
     properties: {
-      page: { type: ['integer', 'null'], minimum: 1 },
-      limit: { type: ['integer', 'null'], minimum: 1, maximum: 100 },
-      order: { type: ['string', 'null'], enum: ['asc', 'desc'] },
+      page: { $ref: 'baseSchema#/properties/page' },
+      limit: { $ref: 'baseSchema#/properties/limit' },
+      order: { $ref: 'baseSchema#/properties/order' },
       orderBy: { type: ['string', 'null'], enum: ['block_height', 'documents_count'] }
     }
   }, {
     $id: 'paginationSchema',
     type: 'object',
     properties: {
-      page: { type: ['integer', 'null'], minimum: 1 },
-      limit: { type: ['integer', 'null'], minimum: 1, maximum: 100 },
-      order: { type: ['string', 'null'], enum: ['asc', 'desc'] }
+      page: { $ref: 'baseSchema#/properties/page' },
+      limit: { $ref: 'baseSchema#/properties/limit' },
+      order: { $ref: 'baseSchema#/properties/order' }
     }
   }, {
     $id: 'querySchema',
@@ -70,9 +79,9 @@ const schemaObjects = [
     type: 'object',
     properties: {
       isActive: { type: ['boolean', 'null'] },
-      page: { type: ['integer', 'null'], minimum: 1 },
-      limit: { type: ['integer', 'null'], minimum: 1, maximum: 100 },
-      order: { type: ['string', 'null'], enum: ['asc', 'desc'] }
+      page: { $ref: 'baseSchema#/properties/page' },
+      limit: { $ref: 'baseSchema#/properties/limit' },
+      order: { $ref: 'baseSchema#/properties/order' }
     }
   }
 ]
