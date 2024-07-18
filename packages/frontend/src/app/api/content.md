@@ -72,6 +72,8 @@ HTTP /status
 Returns info about epoch by specific index
 
 * tps - Transactions per second
+* totalCollectedFees - total number or fees spent per epoch
+* bestValidator - validator with most validated blocks
 
 
 ```
@@ -83,7 +85,9 @@ HTTP /epoch/1
         startTime: "2024-04-08T14:00:00.000Z",
         endTime: "2024-04-09T14:00:00.000Z"
     },
-    tps: 0.01666666666     
+    tps: 0.01666666666,
+    totalCollectedFees: 30,
+    bestValidator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
 }
 ```
 ---
