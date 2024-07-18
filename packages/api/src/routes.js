@@ -55,14 +55,7 @@ module.exports = ({
       method: 'GET',
       handler: blocksController.getBlocksByValidator,
       schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' }
-          }
-        },
+        querystring: { $ref: 'paginationOptions#' },
         params: {
           type: 'object',
           properties: {
@@ -76,14 +69,7 @@ module.exports = ({
       method: 'GET',
       handler: blocksController.getBlocks,
       schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -91,14 +77,7 @@ module.exports = ({
       method: 'GET',
       handler: transactionsController.getTransactions,
       schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -119,15 +98,7 @@ module.exports = ({
       method: 'GET',
       handler: dataContractsController.getDataContracts,
       schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' },
-            orderBy: { $ref: 'orderBy#' }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -154,14 +125,7 @@ module.exports = ({
             identifier: { $ref: 'identifier#' }
           }
         },
-        querystring: {
-          type: 'object',
-          properties: {
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -182,15 +146,7 @@ module.exports = ({
       method: 'GET',
       handler: identitiesController.getIdentities,
       schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' },
-            orderBy: { $ref: 'orderBy#' }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -217,14 +173,7 @@ module.exports = ({
             identifier: { $ref: 'identifier#' }
           }
         },
-        querystring: {
-          type: 'object',
-          properties: {
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -238,14 +187,7 @@ module.exports = ({
             identifier: { $ref: 'identifier#' }
           }
         },
-        querystring: {
-          type: 'object',
-          properties: {
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -259,14 +201,7 @@ module.exports = ({
             identifier: { $ref: 'identifier#' }
           }
         },
-        querystring: {
-          type: 'object',
-          properties: {
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -280,14 +215,7 @@ module.exports = ({
             identifier: { $ref: 'identifier#' }
           }
         },
-        querystring: {
-          type: 'object',
-          properties: {
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -335,15 +263,7 @@ module.exports = ({
       method: 'GET',
       handler: validatorsController.getValidators,
       schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            isActive: { $ref: 'isActive#' },
-            page: { $ref: 'page#' },
-            limit: { $ref: 'limit#' },
-            order: { $ref: 'order#' }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
