@@ -338,7 +338,7 @@ module.exports = ({
         querystring: {
           type: 'object',
           properties: {
-            isActive: { type: ['boolean', 'null'] },
+            isActive: { $ref: 'isActive#' },
             page: { $ref: 'page#' },
             limit: { $ref: 'limit#' },
             order: { $ref: 'order#' }

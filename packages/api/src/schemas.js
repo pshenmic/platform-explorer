@@ -32,6 +32,10 @@ const schemaTypes = [
     enum: ['block_height', 'documents_count']
   },
   {
+    $id: 'isActive',
+    type: ['boolean', 'null']
+  },
+  {
     $id: 'identifier',
     type: 'string',
     minLength: 43,
