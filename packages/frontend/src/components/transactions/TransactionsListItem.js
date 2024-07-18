@@ -23,8 +23,8 @@ function TransactionsListItem ({ transaction }) {
             <div className={'TransactionsListItem__Timestamp'}>
                   <Tooltip
                       label={transaction.status === 'SUCCESS'
-                        ? 'Transaction processed successfully'
-                        : 'Transaction processed with error'
+                        ? 'Successful'
+                        : 'Error during transaction'
                       }
                       aria-label={'A tooltip'}
                       placement={'top'}
