@@ -13,6 +13,7 @@ import {
 
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
+import NetworkSelect from './NetworkSelect'
 
 const links = [
   { title: 'Home', href: '/' },
@@ -29,7 +30,7 @@ const NavLink = (props) => {
 
   return (
     <Box
-      as="a"
+      as={'a'}
       px={2}
       py={1}
       rounded={'md'}
@@ -39,7 +40,9 @@ const NavLink = (props) => {
         color: 'white'
       }}
       color={'white'}
-      href={to}>
+      href={to}
+      whiteSpace={'nowrap'}
+    >
       {children}
     </Box>
   )
@@ -50,45 +53,49 @@ function Navbar () {
 
   return (
     <Box px={3}>
-        <Flex
-          className={'Navbar'}
-          maxW='1980px'
-          ml='auto'
-          mr='auto'
-          h={16}
-          alignItems={'center'}
-          justifyContent={'space-between'}
-        >
-          <IconButton
-            size={'md'}
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            aria-label={'Open Menu'}
-            display={{ lg: 'none' }}
-            onClick={isOpen ? onClose : onOpen}
-          />
+      <Flex
+        className={'Navbar'}
+        maxW={'1980px'}
+        ml={'auto'}
+        mr={'auto'}
+        h={16}
+        gap={'8px'}
+        alignItems={'center'}
+        justifyContent={'space-between'}
+      >
+        <IconButton
+          size={'md'}
+          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+          aria-label={'Open Menu'}
+          display={{ lg: 'none' }}
+          onClick={isOpen ? onClose : onOpen}
+        />
 
-            <HStack spacing={8} alignItems={'center'}>
-                <HStack as={'nav'} spacing={4} display={{ base: 'none', lg: 'flex' }}>
-                {links.map((link) => (
-                    <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
-                ))}
-                </HStack>
+        <HStack spacing={8} alignItems={'center'}>
+          <HStack as={'nav'} spacing={3} display={{ base: 'none', lg: 'flex' }}>
+            {links.map((link) => (
+              <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
+            ))}
+          </HStack>
+        </HStack>
 
-            </HStack>
-            <Box ml={2}>
-              <GlobalSearchInput />
-            </Box>
-        </Flex>
+        <div className={'Navbar__WrapperNetworkSelect'}>
+          <NetworkSelect />
+          <Box ml={2}>
+            <GlobalSearchInput />
+          </Box>
+        </div>
+      </Flex>
 
-        {isOpen
-          ? <Box className={'NavbarMobileMenu'} pb={4} display={{ lg: 'none' }}>
-              <Stack as={'nav'} spacing={4}>
-                {links.map((link) => (
-                  <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
-                ))}
-              </Stack>
-            </Box>
-          : null}
+      {isOpen
+        ? <Box className={'NavbarMobileMenu'} pb={4} display={{ lg: 'none' }}>
+          <Stack as={'nav'} spacing={4}>
+            {links.map((link) => (
+              <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
+            ))}
+          </Stack>
+        </Box>
+        : null}
     </Box>
   )
 }
