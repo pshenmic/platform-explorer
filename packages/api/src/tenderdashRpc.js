@@ -1,11 +1,11 @@
 const fetch = require('node-fetch')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 
-const BASE_URL = process.env.BASE_URL
+const TENDERDASH_URL = process.env.TENDERDASH_URL
 
 const call = async (path, method, body) => {
   try {
-    const response = await fetch(`${BASE_URL}/${path}`, {
+    const response = await fetch(`${TENDERDASH_URL}/${path}`, {
       method,
       body,
       headers: {

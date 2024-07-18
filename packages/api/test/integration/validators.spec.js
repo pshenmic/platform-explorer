@@ -6,6 +6,8 @@ const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const DashCoreRPC = require('../../src/dashcoreRpc')
+const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
 
 describe('Validators routes', () => {
   let app
@@ -17,7 +19,7 @@ describe('Validators routes', () => {
   let inactiveValidators
   let blocks
 
-  let intervals
+  let dashCoreRpcResponse
 
   before(async () => {
     app = await server.start()
@@ -27,11 +29,41 @@ describe('Validators routes', () => {
     validators = []
     blocks = []
 
-    intervals = {
-      '1h': 300000,
-      '24h': 7200000,
-      '3d': 21600000,
-      '1w': 50400000
+    dashCoreRpcResponse = {
+      type: 'Evo',
+      proTxHash: '88251bd4b124efeb87537deabeec54f6c8f575f4df81f10cf5e8eea073092b6f',
+      collateralHash: '6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59',
+      collateralIndex: 3,
+      collateralAddress: 'yM9Fgxk8bdqXq4ffv7bWpSFb68UCxCQaTX',
+      operatorReward: 0,
+      state: {
+        version: 2,
+        service: '52.33.28.47:19999',
+        registeredHeight: 850334,
+        lastPaidHeight: 1064465,
+        consecutivePayments: 0,
+        PoSePenalty: 0,
+        PoSeRevivedHeight: 1027668,
+        PoSeBanHeight: -1,
+        revocationReason: 0,
+        ownerAddress: 'yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69',
+        votingAddress: 'yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69',
+        platformNodeID: '711fd9548ae19b2e91c7a9b4067000467ccdd2b5',
+        platformP2PPort: 36656,
+        platformHTTPPort: 1443,
+        payoutAddress: 'yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A',
+        pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53'
+      },
+      confirmations: 214276,
+      metaInfo: {
+        lastDSQ: 96910,
+        mixingTxCount: 0,
+        outboundAttemptCount: 0,
+        lastOutboundAttempt: 0,
+        lastOutboundAttemptElapsed: 1721031091,
+        lastOutboundSuccess: 1720991464,
+        lastOutboundSuccessElapsed: 39627
+      }
     }
 
     await fixtures.cleanup(knex)
@@ -58,6 +90,8 @@ describe('Validators routes', () => {
       async () =>
         Promise.resolve(activeValidators.map(activeValidator =>
           ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
+
+    mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
   })
 
   after(async () => {
@@ -77,7 +111,16 @@ describe('Validators routes', () => {
         proTxHash: validator.pro_tx_hash,
         isActive: false,
         proposedBlocksAmount: 0,
-        lastProposedBlockHeader: null
+        lastProposedBlockHeader: null,
+        proTxInfo: {
+          type: dashCoreRpcResponse.type,
+          collateralHash: dashCoreRpcResponse.collateralHash,
+          collateralIndex: dashCoreRpcResponse.collateralIndex,
+          collateralAddress: dashCoreRpcResponse.collateralAddress,
+          operatorReward: dashCoreRpcResponse.operatorReward,
+          confirmations: dashCoreRpcResponse.confirmations,
+          state: dashCoreRpcResponse.state
+        }
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -106,7 +149,16 @@ describe('Validators routes', () => {
             l1LockedHeight: blockHeader.l1LockedHeight,
             validator: blockHeader.validator
           }))
-          .toReversed()[0] ?? null
+          .toReversed()[0] ?? null,
+        proTxInfo: {
+          type: dashCoreRpcResponse.type,
+          collateralHash: dashCoreRpcResponse.collateralHash,
+          collateralIndex: dashCoreRpcResponse.collateralIndex,
+          collateralAddress: dashCoreRpcResponse.collateralAddress,
+          operatorReward: dashCoreRpcResponse.operatorReward,
+          confirmations: dashCoreRpcResponse.confirmations,
+          state: dashCoreRpcResponse.state
+        }
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -149,7 +201,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -184,7 +245,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -218,7 +288,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -252,7 +331,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -286,7 +374,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -321,7 +418,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -355,7 +461,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -406,7 +521,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -441,7 +565,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -475,7 +608,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -509,7 +651,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -543,7 +694,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -578,7 +738,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -612,7 +781,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -651,7 +829,16 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             isActive: false,
             proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null
+            lastProposedBlockHeader: null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -674,7 +861,16 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             isActive: false,
             proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null
+            lastProposedBlockHeader: null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -696,7 +892,16 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             isActive: false,
             proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null
+            lastProposedBlockHeader: null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -718,7 +923,16 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             isActive: false,
             proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null
+            lastProposedBlockHeader: null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -740,7 +954,16 @@ describe('Validators routes', () => {
             proTxHash: row.pro_tx_hash,
             isActive: false,
             proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null
+            lastProposedBlockHeader: null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -775,7 +998,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -809,7 +1041,16 @@ describe('Validators routes', () => {
                 l1LockedHeight: blockHeader.l1LockedHeight,
                 validator: blockHeader.validator
               }))
-              .toReversed()[0] ?? null
+              .toReversed()[0] ?? null,
+            proTxInfo: {
+              type: dashCoreRpcResponse.type,
+              collateralHash: dashCoreRpcResponse.collateralHash,
+              collateralIndex: dashCoreRpcResponse.collateralIndex,
+              collateralAddress: dashCoreRpcResponse.collateralAddress,
+              operatorReward: dashCoreRpcResponse.operatorReward,
+              confirmations: dashCoreRpcResponse.confirmations,
+              state: dashCoreRpcResponse.state
+            }
           }))
 
         assert.deepEqual(body.resultSet, expectedValidators)
@@ -828,6 +1069,22 @@ describe('Validators routes', () => {
         const expectedValidators = []
 
         assert.deepEqual(body.resultSet, expectedValidators)
+      })
+
+      it('should return error when dashcore not available', async () => {
+        mock.method(DashCoreRPC, 'getProTxInfo', async () => { throw new ServiceNotAvailableError() })
+
+        await client.get('/validators')
+          .expect(503)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+      })
+
+      it('should return error when tenderdash not available', async () => {
+        mock.method(tenderdashRpc, 'getValidators', async () => { throw new ServiceNotAvailableError() })
+
+        await client.get('/validators')
+          .expect(503)
+          .expect('Content-Type', 'application/json; charset=utf-8')
       })
     })
   })
