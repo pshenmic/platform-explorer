@@ -1,4 +1,4 @@
-import { StateTransitionEnum } from '../app/enums/state.transition.type'
+import { StateTransitionEnum, TransactionTypesEnum } from '../app/enums/state.transition.type'
 import currencyRound from './currencyRound'
 
 const getTransitionTypeString = (id) => {
@@ -6,7 +6,7 @@ const getTransitionTypeString = (id) => {
     .filter(([key]) => StateTransitionEnum[key] === id)
     .map(([key]) => key)
 
-  return stateTransitionType ?? 'UNKNOWN'
+  return TransactionTypesEnum[stateTransitionType] ?? 'UNKNOWN'
 }
 
 function fetchHandlerSuccess (setter, data) {

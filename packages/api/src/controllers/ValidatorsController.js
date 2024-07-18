@@ -71,6 +71,26 @@ class ValidatorsController {
       )
     })
   }
+
+  getValidatorStatsByProTxHash = async (request, response) => {
+    const { proTxHash } = request.params
+    const { timespan = '1h' } = request.query
+
+    const possibleValues = ['1h', '24h', '3d', '1w']
+
+    if (possibleValues.indexOf(timespan) === -1) {
+      return response.status(400)
+        .send({ message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid` })
+    }
+
+    if (!proTxHash) {
+      return response.status(400).send({ message: 'invalid proTxHash' })
+    }
+
+    const stats = await this.validatorsDAO.getValidatorStatsByProTxHash(proTxHash, timespan)
+
+    response.send(stats)
+  }
 }
 
 module.exports = ValidatorsController
