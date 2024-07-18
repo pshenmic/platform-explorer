@@ -26,7 +26,7 @@ const schemaTypes = [
         type: ['string', 'null'],
         enum: ['block_height', 'documents_count']
       },
-      isActive: { type: ['boolean', 'null'] },
+      isActive: { type: ['boolean', 'null'] }
     }
   },
   {
