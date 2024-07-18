@@ -50,7 +50,6 @@ describe('Epoch routes', () => {
       transactions.push(transaction)
       identities.push(identity)
     }
-    console.log('txns:', transactions.length)
   })
 
   after(async () => {
@@ -72,7 +71,7 @@ describe('Epoch routes', () => {
 
         },
         tps: (identities.length + transactions.length) / (process.env.EPOCH_CHANGE_TIME / 1000),
-        totalCollectedFees: transactions.length,
+        totalCollectedFees: transactions.reduce((acc, tx) => acc + tx.gas_used, 0),
         bestValidator: validator.pro_tx_hash
       }
       assert.deepEqual(body, expectedBlock)
