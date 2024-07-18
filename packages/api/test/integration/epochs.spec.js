@@ -43,7 +43,7 @@ describe('Epoch routes', () => {
         block_hash: block.hash,
         index: i,
         type: 0,
-        gas_used: 1,
+        gas_used: Math.ceil(Math.random() * 1000),
         owner: identity.identifier
       })
       blocks.push(block)
