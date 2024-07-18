@@ -16,7 +16,7 @@ const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 
-function errorHandler(err, req, reply) {
+function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
     return reply.status(403).send({ error: 'tenderdash backend is not available' })
   }
@@ -87,7 +87,7 @@ module.exports = {
     new fastify.metrics.client.Gauge({
       name: 'platform_explorer_api_block_height',
       help: 'The latest block height in the API',
-      async collect() {
+      async collect () {
         const blockDAO = new BlocksDAO(knex)
         const { resultSet: [block] } = await blockDAO.getBlocks(1, 1, 'desc')
 

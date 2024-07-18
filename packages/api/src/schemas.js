@@ -30,7 +30,7 @@ const schemaTypes = [
     $id: 'orderBy',
     type: ['string', 'null'],
     enum: ['block_height', 'documents_count']
-  },
+  }
 ]
 
 const schemaObjects = [
@@ -66,7 +66,7 @@ const schemaObjects = [
       page: { $ref: 'page#' },
       limit: { $ref: 'limit#' },
       order: { $ref: 'order#' },
-      orderBy: { $ref: 'orderBy#' },
+      orderBy: { $ref: 'orderBy#' }
     }
   },
   {
@@ -93,7 +93,7 @@ const schemaObjects = [
     $id: 'timespanSchema',
     type: 'object',
     properties: {
-      timespan: { $ref: 'timespan#' },
+      timespan: { $ref: 'timespan#' }
     }
   },
   {
@@ -107,7 +107,5 @@ const schemaObjects = [
     }
   }
 ]
-
-
 
 module.exports = { schemaObjects, schemaTypes }
