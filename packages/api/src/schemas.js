@@ -1,28 +1,53 @@
-const schemaObjects = [
+const schemaTypes = [
   {
-    $id: 'baseSchema',
-    type: 'object',
-    properties: {
-      hash: { type: 'string', minLength: 64, maxLength: 64 },
-      page: { type: ['integer', 'null'], minimum: 1 },
-      limit: { type: ['integer', 'null'], minimum: 1, maximum: 100 },
-      order: { type: ['string', 'null'], enum: ['asc', 'desc'] }
-    }
+    $id: 'hash',
+    type: 'string',
+    minLength: 64,
+    maxLength: 64
   },
+  {
+    $id: 'page',
+    type: ['integer', 'null'],
+    minimum: 1
+  },
+  {
+    $id: 'limit',
+    type: ['integer', 'null'],
+    minimum: 1,
+    maximum: 100
+  },
+  {
+    $id: 'order',
+    type: ['string', 'null'],
+    enum: ['asc', 'desc']
+  },
+  {
+    $id: 'timespan',
+    type: ['string', 'null'],
+    enum: ['1h', '24h', '3d', '1w']
+  },
+  {
+    $id: 'orderBy',
+    type: ['string', 'null'],
+    enum: ['block_height', 'documents_count']
+  },
+]
+
+const schemaObjects = [
   {
     $id: 'txHashSchema',
     type: 'object',
-    properties: { txHash: { $ref: 'baseSchema#/properties/hash' } }
+    properties: { txHash: { $ref: 'hash#' } }
   },
   {
     $id: 'validatorSchema',
     type: 'object',
-    properties: { validator: { $ref: 'baseSchema#/properties/hash' } }
+    properties: { validator: { $ref: 'hash#' } }
   },
   {
     $id: 'hashSchema',
     type: 'object',
-    properties: { hash: { $ref: 'baseSchema#/properties/hash' } }
+    properties: { hash: { $ref: 'hash#' } }
   },
   {
     $id: 'identifierSchema',
@@ -38,19 +63,19 @@ const schemaObjects = [
     $id: 'paginationWithOrderBySchema',
     type: 'object',
     properties: {
-      page: { $ref: 'baseSchema#/properties/page' },
-      limit: { $ref: 'baseSchema#/properties/limit' },
-      order: { $ref: 'baseSchema#/properties/order' },
-      orderBy: { type: ['string', 'null'], enum: ['block_height', 'documents_count'] }
+      page: { $ref: 'page#' },
+      limit: { $ref: 'limit#' },
+      order: { $ref: 'order#' },
+      orderBy: { $ref: 'orderBy#' },
     }
   },
   {
     $id: 'paginationSchema',
     type: 'object',
     properties: {
-      page: { $ref: 'baseSchema#/properties/page' },
-      limit: { $ref: 'baseSchema#/properties/limit' },
-      order: { $ref: 'baseSchema#/properties/order' }
+      page: { $ref: 'page#' },
+      limit: { $ref: 'limit#' },
+      order: { $ref: 'order#' }
     }
   },
   {
@@ -68,7 +93,7 @@ const schemaObjects = [
     $id: 'timespanSchema',
     type: 'object',
     properties: {
-      timespan: { type: ['string', 'null'], enum: ['1h', '24h', '3d', '1w'] }
+      timespan: { $ref: 'timespan#' },
     }
   },
   {
@@ -76,53 +101,13 @@ const schemaObjects = [
     type: 'object',
     properties: {
       isActive: { type: ['boolean', 'null'] },
-      page: { $ref: 'baseSchema#/properties/page' },
-      limit: { $ref: 'baseSchema#/properties/limit' },
-      order: { $ref: 'baseSchema#/properties/order' }
+      page: { $ref: 'page#' },
+      limit: { $ref: 'limit#' },
+      order: { $ref: 'order#' }
     }
   }
 ]
 
-const schemas = {
-  epochSchema: { params: { $ref: 'epochSchema#' } },
-  blockSchema: { params: { $ref: 'hashSchema#' } },
-  validatorBlocksSchema: {
-    params: { $ref: 'validatorSchema#' },
-    querystring: { $ref: 'paginationSchema#' }
-  },
-  blocksSchema: { querystring: { $ref: 'paginationSchema#' } },
-  transactionsSchema: { querystring: { $ref: 'paginationSchema#' } },
-  transactionSchema: { params: { $ref: 'txHashSchema#' } },
-  dataContractsSchema: { querystring: { $ref: 'paginationWithOrderBySchema#' } },
-  dataContractSchema: { params: { $ref: 'identifierSchema#' } },
-  dataContractDocumentsSchema: {
-    params: { $ref: 'identifierSchema#' },
-    querystring: { $ref: 'paginationSchema#' }
-  },
-  documentSchema: { params: { $ref: 'identifierSchema#' } },
-  identitiesSchema: { querystring: { $ref: 'paginationWithOrderBySchema#' } },
-  identitySchema: { params: { $ref: 'identifierSchema#' } },
-  identityTransactionsSchema: {
-    params: { $ref: 'identifierSchema#' },
-    querystring: { $ref: 'paginationSchema#' }
-  },
-  identityDataContractsSchema: {
-    params: { $ref: 'identifierSchema#' },
-    querystring: { $ref: 'paginationSchema#' }
-  },
-  identityDocumentsSchema: {
-    params: { $ref: 'identifierSchema#' },
-    querystring: { $ref: 'paginationSchema#' }
-  },
-  identityTransfersSchema: {
-    params: { $ref: 'identifierSchema#' },
-    querystring: { $ref: 'paginationSchema#' }
-  },
-  searchSchema: { querystring: { $ref: 'querySchema#' } },
-  decodeSchema: { body: { $ref: 'decodeSchema#' } },
-  transactionsHistorySchema: { querystring: { $ref: 'timespanSchema#' } },
-  validatorsSchema: { querystring: { $ref: 'paginationWithIsActiveSchema#' } },
-  validatorSchema: { params: { $ref: 'txHashSchema#' } }
-}
 
-module.exports = { schemaObjects, schemas }
+
+module.exports = { schemaObjects, schemaTypes }

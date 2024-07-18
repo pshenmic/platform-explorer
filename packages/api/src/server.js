@@ -2,7 +2,7 @@ const Dash = require('dash')
 const Fastify = require('fastify')
 const metricsPlugin = require('fastify-metrics')
 const cors = require('@fastify/cors')
-const { schemaObjects } = require('./schemas')
+const { schemaTypes, schemaObjects } = require('./schemas')
 const Routes = require('./routes')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 const MainController = require('./controllers/MainController')
@@ -16,7 +16,7 @@ const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 
-function errorHandler (err, req, reply) {
+function errorHandler(err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
     return reply.status(403).send({ error: 'tenderdash backend is not available' })
   }
@@ -53,6 +53,7 @@ module.exports = {
       endpoint: '/metrics'
     })
 
+    schemaTypes.forEach(schema => fastify.addSchema(schema))
     schemaObjects.forEach(schema => fastify.addSchema(schema))
 
     knex = getKnex()
@@ -86,7 +87,7 @@ module.exports = {
     new fastify.metrics.client.Gauge({
       name: 'platform_explorer_api_block_height',
       help: 'The latest block height in the API',
-      async collect () {
+      async collect() {
         const blockDAO = new BlocksDAO(knex)
         const { resultSet: [block] } = await blockDAO.getBlocks(1, 1, 'desc')
 

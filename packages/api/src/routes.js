@@ -1,5 +1,3 @@
-const { schemas } = require('./schemas')
-
 /**
  *
  * @param fastify {Fastify}
@@ -30,127 +28,142 @@ module.exports = ({
       path: '/epoch/:index',
       method: 'GET',
       handler: epochController.getEpochByIndex,
-      schema: schemas.epochSchema
+      schema: { params: { $ref: 'epochSchema#' } },
     },
     {
       path: '/block/:hash',
       method: 'GET',
       handler: blocksController.getBlockByHash,
-      schema: schemas.blockSchema
+      schema: { params: { $ref: 'hashSchema#' } },
     },
     {
       path: '/validator/:validator/blocks',
       method: 'GET',
       handler: blocksController.getBlocksByValidator,
-      schema: schemas.validatorBlocksSchema
+      schema: { querystring: { $ref: 'paginationSchema#' } },
     },
     {
       path: '/blocks',
       method: 'GET',
       handler: blocksController.getBlocks,
-      schema: schemas.blocksSchema
+      schema: { querystring: { $ref: 'paginationSchema#' } },
     },
     {
       path: '/transactions',
       method: 'GET',
       handler: transactionsController.getTransactions,
-      schema: schemas.transactionsSchema
+      schema: { querystring: { $ref: 'paginationSchema#' } }
     },
     {
       path: '/transaction/:txHash',
       method: 'GET',
       handler: transactionsController.getTransactionByHash,
-      schema: schemas.transactionSchema
+      schema: { params: { $ref: 'txHashSchema#' } },
     },
     {
       path: '/dataContracts',
       method: 'GET',
       handler: dataContractsController.getDataContracts,
-      schema: schemas.dataContractsSchema
+      schema: { querystring: { $ref: 'paginationWithOrderBySchema#' } },
     },
     {
       path: '/dataContract/:identifier',
       method: 'GET',
       handler: dataContractsController.getDataContractByIdentifier,
-      schema: schemas.dataContractSchema
+      schema: { params: { $ref: 'identifierSchema#' } },
     },
     {
       path: '/dataContract/:identifier/documents',
       method: 'GET',
       handler: documentsController.getDocumentsByDataContract,
-      schema: schemas.dataContractDocumentsSchema
+      schema: {
+        params: { $ref: 'identifierSchema#' },
+        querystring: { $ref: 'paginationSchema#' }
+      },
     },
     {
       path: '/document/:identifier',
       method: 'GET',
       handler: documentsController.getDocumentByIdentifier,
-      schema: schemas.documentSchema
+      schema: { params: { $ref: 'identifierSchema#' } },
     },
     {
       path: '/identities',
       method: 'GET',
       handler: identitiesController.getIdentities,
-      schema: schemas.identitiesSchema
+      schema: { querystring: { $ref: 'paginationWithOrderBySchema#' } },
     },
     {
       path: '/identity/:identifier',
       method: 'GET',
       handler: identitiesController.getIdentityByIdentifier,
-      schema: schemas.identitySchema
+      schema: { params: { $ref: 'identifierSchema#' } },
     },
     {
       path: '/identity/:identifier/transactions',
       method: 'GET',
       handler: identitiesController.getTransactionsByIdentity,
-      schema: schemas.identityTransactionsSchema
+      schema: {
+        params: { $ref: 'identifierSchema#' },
+        querystring: { $ref: 'paginationSchema#' }
+      },
     },
     {
       path: '/identity/:identifier/dataContracts',
       method: 'GET',
       handler: identitiesController.getDataContractsByIdentity,
-      schema: schemas.identityDataContractsSchema
+      schema: {
+        params: { $ref: 'identifierSchema#' },
+        querystring: { $ref: 'paginationSchema#' }
+      },
     },
     {
       path: '/identity/:identifier/documents',
       method: 'GET',
       handler: identitiesController.getDocumentsByIdentity,
-      schema: schemas.identityDocumentsSchema
+      schema: {
+        params: { $ref: 'identifierSchema#' },
+        querystring: { $ref: 'paginationSchema#' }
+      },
     },
     {
       path: '/identity/:identifier/transfers',
       method: 'GET',
       handler: identitiesController.getTransfersByIdentity,
-      schema: schemas.identityTransfersSchema
+      schema: {
+        params: { $ref: 'identifierSchema#' },
+        querystring: { $ref: 'paginationSchema#' }
+      },
     },
     {
       path: '/search',
       method: 'GET',
       handler: mainController.search,
-      schema: schemas.searchSchema
+      schema: { querystring: { $ref: 'querySchema#' } },
     },
     {
       path: '/transaction/decode',
       method: 'POST',
       handler: transactionsController.decode,
-      schema: schemas.decodeSchema
+      schema: { body: { $ref: 'decodeSchema#' } },
     },
     {
       path: '/transactions/history',
       method: 'GET',
       handler: transactionsController.getTransactionHistory,
-      schema: schemas.transactionsHistorySchema
+      schema: { querystring: { $ref: 'timespanSchema#' } },
     },
     {
       path: '/validators',
       method: 'GET',
       handler: validatorsController.getValidators,
-      schema: schemas.validatorsSchema
+      schema: { querystring: { $ref: 'paginationWithIsActiveSchema#' } },
     },
     {
       path: '/validator/:proTxHash',
       method: 'GET',
       handler: validatorsController.getValidatorByProTxHash,
-      schema: schemas.validatorSchema
+      schema: { params: { $ref: 'txHashSchema#' } }
     }
   ]
 

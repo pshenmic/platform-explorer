@@ -109,6 +109,7 @@ GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 ---
 ### Blocks by validator
 Return all blocks proposed by the specific validators
+* `limit` cannot be more then 100
 ```
 GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
 
@@ -137,6 +138,7 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
 ---
 ### Blocks
 Return all blocks with pagination info
+* `limit` cannot be more then 100
 ```
 GET /blocks
 
@@ -166,6 +168,7 @@ GET /blocks
 Return all validators with pagination info.
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
+* `limit` cannot be more then 100
 ```
 GET /validators
 
@@ -250,6 +253,8 @@ Return transaction set paged
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 
+* `limit` cannot be more then 100
+
 ```
 GET /transactions?=1&limit=10&order=asc
 
@@ -313,6 +318,7 @@ Return dataContracts set paged and order by block height or documents count.
 
 * Valid `order_by` values are `block_height` or `documents_count`
 * `name` field is nullable
+* `limit` cannot be more then 100
 
 ```
 GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
@@ -370,6 +376,7 @@ Response codes:
 ---
 ### Documents by Data Contract
 Return all documents by the given data contract identifier
+* `limit` cannot be more then 100
 ```
 GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
 
@@ -430,6 +437,7 @@ Response codes:
 Return all identities paged and order by block height, tx count or balance.
 
 * Valid `order_by` values are `block_height`, `tx_count` or `balance`
+* `limit` cannot be more then 100
 ```
 GET /identities?page=1&limit=10&order=asc&order_by=block_height
 
@@ -466,6 +474,7 @@ Response codes:
 Return all data contracts by the given identity
 
 * `name` field is nullable
+* `limit` cannot be more then 100
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=1&limit=10&order=asc
 
@@ -498,6 +507,7 @@ Response codes:
 ---
 ### Documents by Identity
 Return all documents by the given identity
+* `limit` cannot be more then 100
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
 
@@ -532,6 +542,7 @@ Response codes:
 Return all transactions made by the given identity
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
+* `limit` cannot be more then 100
 
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
@@ -566,6 +577,7 @@ Response codes:
 ---
 ### Transfers by Identity
 Return all transfers made by the given identity
+* `limit` cannot be more then 100
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&limit=10&order=asc
 
