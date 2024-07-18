@@ -30,82 +30,13 @@ const schemaTypes = [
     $id: 'orderBy',
     type: ['string', 'null'],
     enum: ['block_height', 'documents_count']
+  },
+  {
+    $id: 'identifier',
+    type: 'string',
+    minLength: 43,
+    maxLength: 44
   }
 ]
 
-const schemaObjects = [
-  {
-    $id: 'txHashSchema',
-    type: 'object',
-    properties: { txHash: { $ref: 'hash#' } }
-  },
-  {
-    $id: 'validatorSchema',
-    type: 'object',
-    properties: { validator: { $ref: 'hash#' } }
-  },
-  {
-    $id: 'hashSchema',
-    type: 'object',
-    properties: { hash: { $ref: 'hash#' } }
-  },
-  {
-    $id: 'identifierSchema',
-    type: 'object',
-    properties: { identifier: { type: 'string', minLength: 43, maxLength: 44 } }
-  },
-  {
-    $id: 'epochSchema',
-    type: 'object',
-    properties: { index: { type: 'number', minimum: 0 } }
-  },
-  {
-    $id: 'paginationWithOrderBySchema',
-    type: 'object',
-    properties: {
-      page: { $ref: 'page#' },
-      limit: { $ref: 'limit#' },
-      order: { $ref: 'order#' },
-      orderBy: { $ref: 'orderBy#' }
-    }
-  },
-  {
-    $id: 'paginationSchema',
-    type: 'object',
-    properties: {
-      page: { $ref: 'page#' },
-      limit: { $ref: 'limit#' },
-      order: { $ref: 'order#' }
-    }
-  },
-  {
-    $id: 'querySchema',
-    type: 'object',
-    properties: { query: { type: 'string' } }
-  },
-  {
-    $id: 'decodeSchema',
-    type: 'object',
-    required: ['base64'],
-    properties: { base64: { type: 'string' } }
-  },
-  {
-    $id: 'timespanSchema',
-    type: 'object',
-    properties: {
-      timespan: { $ref: 'timespan#' }
-    }
-  },
-  {
-    $id: 'paginationWithIsActiveSchema',
-    type: 'object',
-    properties: {
-      isActive: { type: ['boolean', 'null'] },
-      page: { $ref: 'page#' },
-      limit: { $ref: 'limit#' },
-      order: { $ref: 'order#' }
-    }
-  }
-]
-
-module.exports = { schemaObjects, schemaTypes }
+module.exports = schemaTypes

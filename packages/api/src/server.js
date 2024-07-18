@@ -2,7 +2,7 @@ const Dash = require('dash')
 const Fastify = require('fastify')
 const metricsPlugin = require('fastify-metrics')
 const cors = require('@fastify/cors')
-const { schemaTypes, schemaObjects } = require('./schemas')
+const schemaTypes = require('./schemas')
 const Routes = require('./routes')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 const MainController = require('./controllers/MainController')
@@ -54,7 +54,6 @@ module.exports = {
     })
 
     schemaTypes.forEach(schema => fastify.addSchema(schema))
-    schemaObjects.forEach(schema => fastify.addSchema(schema))
 
     knex = getKnex()
 

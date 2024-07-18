@@ -28,84 +28,203 @@ module.exports = ({
       path: '/epoch/:index',
       method: 'GET',
       handler: epochController.getEpochByIndex,
-      schema: { params: { $ref: 'epochSchema#' } }
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            index: { type: 'number', minimum: 0 }
+          }
+        }
+      }
     },
     {
       path: '/block/:hash',
       method: 'GET',
       handler: blocksController.getBlockByHash,
-      schema: { params: { $ref: 'hashSchema#' } }
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        }
+      }
     },
     {
       path: '/validator/:validator/blocks',
       method: 'GET',
       handler: blocksController.getBlocksByValidator,
-      schema: { querystring: { $ref: 'paginationSchema#' } }
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' }
+          }
+        },
+        params: {
+          type: 'object',
+          properties: {
+            validator: { $ref: 'hash#' }
+          }
+        }
+      }
     },
     {
       path: '/blocks',
       method: 'GET',
       handler: blocksController.getBlocks,
-      schema: { querystring: { $ref: 'paginationSchema#' } }
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' }
+          }
+        }
+      }
     },
     {
       path: '/transactions',
       method: 'GET',
       handler: transactionsController.getTransactions,
-      schema: { querystring: { $ref: 'paginationSchema#' } }
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' }
+          }
+        }
+      }
     },
     {
       path: '/transaction/:txHash',
       method: 'GET',
       handler: transactionsController.getTransactionByHash,
-      schema: { params: { $ref: 'txHashSchema#' } }
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            txHash: { $ref: 'hash#' }
+          }
+        }
+      }
     },
     {
       path: '/dataContracts',
       method: 'GET',
       handler: dataContractsController.getDataContracts,
-      schema: { querystring: { $ref: 'paginationWithOrderBySchema#' } }
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' },
+            orderBy: { $ref: 'orderBy#' }
+          }
+        }
+      }
     },
     {
       path: '/dataContract/:identifier',
       method: 'GET',
       handler: dataContractsController.getDataContractByIdentifier,
-      schema: { params: { $ref: 'identifierSchema#' } }
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
     },
     {
       path: '/dataContract/:identifier/documents',
       method: 'GET',
       handler: documentsController.getDocumentsByDataContract,
       schema: {
-        params: { $ref: 'identifierSchema#' },
-        querystring: { $ref: 'paginationSchema#' }
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' }
+          }
+        }
       }
     },
     {
       path: '/document/:identifier',
       method: 'GET',
       handler: documentsController.getDocumentByIdentifier,
-      schema: { params: { $ref: 'identifierSchema#' } }
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
     },
     {
       path: '/identities',
       method: 'GET',
       handler: identitiesController.getIdentities,
-      schema: { querystring: { $ref: 'paginationWithOrderBySchema#' } }
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' },
+            orderBy: { $ref: 'orderBy#' }
+          }
+        }
+      }
     },
     {
       path: '/identity/:identifier',
       method: 'GET',
       handler: identitiesController.getIdentityByIdentifier,
-      schema: { params: { $ref: 'identifierSchema#' } }
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
     },
     {
       path: '/identity/:identifier/transactions',
       method: 'GET',
       handler: identitiesController.getTransactionsByIdentity,
       schema: {
-        params: { $ref: 'identifierSchema#' },
-        querystring: { $ref: 'paginationSchema#' }
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' }
+          }
+        }
       }
     },
     {
@@ -113,8 +232,20 @@ module.exports = ({
       method: 'GET',
       handler: identitiesController.getDataContractsByIdentity,
       schema: {
-        params: { $ref: 'identifierSchema#' },
-        querystring: { $ref: 'paginationSchema#' }
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' }
+          }
+        }
       }
     },
     {
@@ -122,8 +253,20 @@ module.exports = ({
       method: 'GET',
       handler: identitiesController.getDocumentsByIdentity,
       schema: {
-        params: { $ref: 'identifierSchema#' },
-        querystring: { $ref: 'paginationSchema#' }
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' }
+          }
+        }
       }
     },
     {
@@ -131,39 +274,90 @@ module.exports = ({
       method: 'GET',
       handler: identitiesController.getTransfersByIdentity,
       schema: {
-        params: { $ref: 'identifierSchema#' },
-        querystring: { $ref: 'paginationSchema#' }
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' }
+          }
+        }
       }
     },
     {
       path: '/search',
       method: 'GET',
       handler: mainController.search,
-      schema: { querystring: { $ref: 'querySchema#' } }
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            query: { type: 'string' }
+          }
+        }
+      }
     },
     {
       path: '/transaction/decode',
       method: 'POST',
       handler: transactionsController.decode,
-      schema: { body: { $ref: 'decodeSchema#' } }
+      schema: {
+        body: {
+          type: 'object',
+          required: ['base64'],
+          properties: {
+            base64: { type: 'string' }
+          }
+        }
+      }
     },
     {
       path: '/transactions/history',
       method: 'GET',
       handler: transactionsController.getTransactionHistory,
-      schema: { querystring: { $ref: 'timespanSchema#' } }
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            timespan: { $ref: 'timespan#' }
+          }
+        }
+      }
     },
     {
       path: '/validators',
       method: 'GET',
       handler: validatorsController.getValidators,
-      schema: { querystring: { $ref: 'paginationWithIsActiveSchema#' } }
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            isActive: { type: ['boolean', 'null'] },
+            page: { $ref: 'page#' },
+            limit: { $ref: 'limit#' },
+            order: { $ref: 'order#' }
+          }
+        }
+      }
     },
     {
       path: '/validator/:proTxHash',
       method: 'GET',
       handler: validatorsController.getValidatorByProTxHash,
-      schema: { params: { $ref: 'txHashSchema#' } }
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            proTxHash: { $ref: 'hash#' }
+          }
+        }
+      }
     }
   ]
 
