@@ -86,7 +86,7 @@ function NetworkStatus () {
             <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Tenderdash version:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{status?.data?.tenderdash?.version !== undefined ? `v${status.data.tenderdash.version}` : '-'}</span>
+                    <span>{status?.data?.tenderdash?.version ? `v${status.data.tenderdash.version}` : '-'}</span>
                 </div>
             </div>
 
@@ -94,7 +94,7 @@ function NetworkStatus () {
                 <Flex mr={6}>
                   <div className={'NetworkStatus__Title'}>Network:</div>
                   <div className={'NetworkStatus__Value'}>
-                      <span>{status?.data?.network !== undefined ? `${status.data.network}` : 'n/a'}</span>
+                      <span>{status?.data?.network ? `${status.data.network}` : 'n/a'}</span>
 
                       <Tooltip
                           label={`${networkStatus
