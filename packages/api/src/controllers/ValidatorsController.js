@@ -63,7 +63,7 @@ class ValidatorsController {
   }
 
   getValidatorStatsByProTxHash = async (request, response) => {
-    const { proTxHash } = request.params
+    const { hash } = request.params
     const { timespan = '1h' } = request.query
 
     const possibleValues = ['1h', '24h', '3d', '1w']
@@ -73,11 +73,7 @@ class ValidatorsController {
         .send({ message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid` })
     }
 
-    if (!proTxHash) {
-      return response.status(400).send({ message: 'invalid proTxHash' })
-    }
-
-    const stats = await this.validatorsDAO.getValidatorStatsByProTxHash(proTxHash, timespan)
+    const stats = await this.validatorsDAO.getValidatorStatsByProTxHash(hash, timespan)
 
     response.send(stats)
   }

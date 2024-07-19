@@ -8,9 +8,9 @@ class TransactionsController {
   }
 
   getTransactionByHash = async (request, reply) => {
-    const { txHash } = request.params
+    const { hash } = request.params
 
-    const transaction = await this.transactionsDAO.getTransactionByHash(txHash)
+    const transaction = await this.transactionsDAO.getTransactionByHash(hash)
 
     if (!transaction) {
       return reply.status(404).send({ message: 'not found' })

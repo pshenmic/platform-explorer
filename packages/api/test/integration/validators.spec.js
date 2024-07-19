@@ -21,6 +21,8 @@ describe('Validators routes', () => {
 
   let dashCoreRpcResponse
 
+  let intervals
+
   before(async () => {
     app = await server.start()
     client = supertest(app.server)
@@ -28,6 +30,13 @@ describe('Validators routes', () => {
     knex = getKnex()
     validators = []
     blocks = []
+
+    intervals = {
+      '1h': 300000,
+      '24h': 7200000,
+      '3d': 21600000,
+      '1w': 50400000
+    }
 
     dashCoreRpcResponse = {
       type: 'Evo',
@@ -1086,6 +1095,86 @@ describe('Validators routes', () => {
           .expect(503)
           .expect('Content-Type', 'application/json; charset=utf-8')
       })
+    })
+  })
+
+  describe('getValidatorStatsByProTxHash()', async () => {
+    it('should return stats by proTxHash', async () => {
+      const [, validator] = validators
+      const timespan = '1h'
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedStats = []
+
+      for (let i = 0; i < 12; i++) {
+        const nextPeriod = firstTimestamp.getTime() - intervals[timespan] * i
+        const prevPeriod = firstTimestamp.getTime() - intervals[timespan] * (i - 1)
+
+        const blocksCount = blocks.filter(
+          (block) => block.timestamp.getTime() <= prevPeriod &&
+            block.timestamp.getTime() >= nextPeriod &&
+            block.validator === validator.pro_tx_hash
+        ).length
+
+        expectedStats.push(
+          {
+            timestamp: new Date(nextPeriod).toISOString(),
+            data: {
+              blocksCount
+            }
+          }
+        )
+      }
+
+      assert.deepEqual(expectedStats.reverse(), body)
+    })
+
+    it('should return stats by proTxHash with custom timespan', async () => {
+      const [, validator] = validators
+      const timespan = '24h'
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats?timespan=${timespan}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedStats = []
+
+      for (let i = 0; i < 12; i++) {
+        const nextPeriod = firstTimestamp.getTime() - intervals[timespan] * i
+        const prevPeriod = firstTimestamp.getTime() - intervals[timespan] * (i - 1)
+
+        const blocksCount = blocks.filter(
+          (block) => block.timestamp.getTime() <= prevPeriod &&
+            block.timestamp.getTime() >= nextPeriod &&
+            block.validator === validator.pro_tx_hash
+        ).length
+
+        expectedStats.push(
+          {
+            timestamp: new Date(nextPeriod).toISOString(),
+            data: {
+              blocksCount
+            }
+          }
+        )
+      }
+
+      assert.deepEqual(expectedStats.reverse(), body)
+    })
+
+    it('should return error on wrong timespan', async () => {
+      await client.get('/validator/20/stats?timespan=2h')
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
 })

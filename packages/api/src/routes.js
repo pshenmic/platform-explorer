@@ -81,14 +81,14 @@ module.exports = ({
       }
     },
     {
-      path: '/transaction/:txHash',
+      path: '/transaction/:hash',
       method: 'GET',
       handler: transactionsController.getTransactionByHash,
       schema: {
         params: {
           type: 'object',
           properties: {
-            txHash: { $ref: 'hash#' }
+            hash: { $ref: 'hash#' }
           }
         }
       }
@@ -267,14 +267,14 @@ module.exports = ({
       }
     },
     {
-      path: '/validator/:proTxHash',
+      path: '/validator/:hash/stats',
       method: 'GET',
       handler: validatorsController.getValidatorByProTxHash,
       schema: {
         params: {
           type: 'object',
           properties: {
-            proTxHash: { $ref: 'hash#' }
+            hash: { $ref: 'hash#' }
           }
         }
       }
