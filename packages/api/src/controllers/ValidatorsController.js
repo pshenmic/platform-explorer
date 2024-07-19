@@ -10,9 +10,9 @@ class ValidatorsController {
   }
 
   getValidatorByProTxHash = async (request, response) => {
-    const { proTxHash } = request.params
+    const { hash } = request.params
 
-    const validator = await this.validatorsDAO.getValidatorByProTxHash(proTxHash)
+    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash)
 
     if (!validator) {
       return response.status(404).send({ message: 'not found' })
@@ -22,7 +22,7 @@ class ValidatorsController {
 
     const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
 
-    const isActive = validators.some(validator => validator.pro_tx_hash === proTxHash)
+    const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
     response.send(
       new Validator(
