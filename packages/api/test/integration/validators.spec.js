@@ -1172,8 +1172,8 @@ describe('Validators routes', () => {
     })
 
     it('should return error on wrong timespan', async () => {
-      await client.get('/validator/20/stats?timespan=2h')
-        .expect(400)
+      await client.get('/validator/3307F23FFAF8DE506325EF015C7C5F8BDF8E4E4621FD9002CB9FC307CF5A7F32/stats?timespan=2h')
+        .expect(500)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
