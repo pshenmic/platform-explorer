@@ -1,6 +1,7 @@
 import { Box, Flex } from '@chakra-ui/react'
 import Image from 'next/image'
 import './footer.scss'
+import version from './version'
 
 const socialNetwork = [
   { img: '/images/icons/github.svg', href: 'https://github.com/pshenmic/platform-explorer/', alt: 'github', ariaLabel: 'Go to GitHub' },
@@ -44,7 +45,7 @@ function Footer () {
                         ))}
                     </div>)
                   : null}
-                <p className={'Footer__Copyright'}>2024 © Dash Platform Explorer v0.2 MIT LICENCE</p>
+                <p className={'Footer__Copyright'}>2024 © Dash Platform Explorer v{version} MIT LICENCE</p>
             </Flex>
         </Box>
   )
