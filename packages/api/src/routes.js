@@ -295,7 +295,7 @@ module.exports = ({
           properties: {
             hash: { $ref: 'hash#' }
           }
-        },
+        }
       }
     }
   ]
