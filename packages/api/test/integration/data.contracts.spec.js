@@ -304,7 +304,7 @@ describe('DataContracts routes', () => {
     // });
 
     it('should return 404 if data contract not found', async () => {
-      await client.get('/dataContract/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF')
+      await client.get('/dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })

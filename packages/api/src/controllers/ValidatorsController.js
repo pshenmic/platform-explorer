@@ -10,9 +10,9 @@ class ValidatorsController {
   }
 
   getValidatorByProTxHash = async (request, response) => {
-    const { proTxHash } = request.params
+    const { hash } = request.params
 
-    const validator = await this.validatorsDAO.getValidatorByProTxHash(proTxHash)
+    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash)
 
     if (!validator) {
       return response.status(404).send({ message: 'not found' })
@@ -22,7 +22,7 @@ class ValidatorsController {
 
     const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
 
-    const isActive = validators.some(validator => validator.pro_tx_hash === proTxHash)
+    const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
     response.send(
       new Validator(
@@ -36,23 +36,13 @@ class ValidatorsController {
   getValidators = async (request, response) => {
     const { page = 1, limit = 10, order = 'asc', isActive = undefined } = request.query
 
-    if (order !== 'asc' && order !== 'desc') {
-      return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
-    }
-
     const activeValidators = await TenderdashRPC.getValidators()
-
-    if (typeof isActive !== 'undefined') {
-      if (isActive !== 'true' && isActive !== 'false') {
-        return response.status(400).send({ message: `invalid isActive value ${order}. only boolean values are accepted` })
-      }
-    }
 
     const validators = await this.validatorsDAO.getValidators(
       Number(page),
       Number(limit),
       order,
-      typeof isActive === 'undefined' ? undefined : isActive === 'true',
+      isActive,
       activeValidators
     )
 
@@ -73,7 +63,7 @@ class ValidatorsController {
   }
 
   getValidatorStatsByProTxHash = async (request, response) => {
-    const { proTxHash } = request.params
+    const { hash } = request.params
     const { timespan = '1h' } = request.query
 
     const possibleValues = ['1h', '24h', '3d', '1w']
@@ -83,11 +73,7 @@ class ValidatorsController {
         .send({ message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid` })
     }
 
-    if (!proTxHash) {
-      return response.status(400).send({ message: 'invalid proTxHash' })
-    }
-
-    const stats = await this.validatorsDAO.getValidatorStatsByProTxHash(proTxHash, timespan)
+    const stats = await this.validatorsDAO.getValidatorStatsByProTxHash(hash, timespan)
 
     response.send(stats)
   }
