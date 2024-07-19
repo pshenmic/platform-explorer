@@ -13,6 +13,7 @@ import {
 
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
+import NetworkSelect from './NetworkSelect'
 
 const links = [
   { title: 'Home', href: '/' },
@@ -29,7 +30,7 @@ const NavLink = (props) => {
 
   return (
     <Box
-      as="a"
+      as={'a'}
       px={2}
       py={1}
       rounded={'md'}
@@ -39,7 +40,9 @@ const NavLink = (props) => {
         color: 'white'
       }}
       color={'white'}
-      href={to}>
+      href={to}
+      whiteSpace={'nowrap'}
+    >
       {children}
     </Box>
   )
@@ -56,6 +59,7 @@ function Navbar () {
         ml={'auto'}
         mr={'auto'}
         h={16}
+        gap={'8px'}
         alignItems={'center'}
         justifyContent={'space-between'}
       >
@@ -68,19 +72,19 @@ function Navbar () {
         />
 
         <HStack spacing={8} alignItems={'center'}>
-          <HStack as={'nav'} spacing={4} display={{ base: 'none', lg: 'flex' }}>
+          <HStack as={'nav'} spacing={3} display={{ base: 'none', lg: 'flex' }}>
             {links.map((link) => (
               <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
             ))}
           </HStack>
-
         </HStack>
-        <div>
+
+        <div className={'Navbar__WrapperNetworkSelect'}>
+          <NetworkSelect />
           <Box ml={2}>
             <GlobalSearchInput />
           </Box>
         </div>
-
       </Flex>
 
       {isOpen

@@ -6,17 +6,19 @@ module.exports = class Validator {
   isActive
   proposedBlocksAmount
   lastProposedBlockHeader
-
+  proTxInfo
   constructor (
     proTxHash,
     isActive,
     proposedBlocksAmount,
-    lastProposedBlockHeader
+    lastProposedBlockHeader,
+    proTxInfo
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null
     this.proposedBlocksAmount = proposedBlocksAmount ?? null
     this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
+    this.proTxInfo = proTxInfo ?? null
   }
 
   static fromRow ({
