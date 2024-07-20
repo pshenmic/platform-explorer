@@ -8,9 +8,9 @@ class TransactionsController {
   }
 
   getTransactionByHash = async (request, reply) => {
-    const { txHash } = request.params
+    const { hash } = request.params
 
-    const transaction = await this.transactionsDAO.getTransactionByHash(txHash)
+    const transaction = await this.transactionsDAO.getTransactionByHash(hash)
 
     if (!transaction) {
       return reply.status(404).send({ message: 'not found' })
@@ -33,13 +33,6 @@ class TransactionsController {
 
   getTransactionHistory = async (request, response) => {
     const { timespan = '1h' } = request.query
-
-    const possibleValues = ['1h', '24h', '3d', '1w']
-
-    if (possibleValues.indexOf(timespan) === -1) {
-      return response.status(400)
-        .send({ message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid` })
-    }
 
     const timeSeries = await this.transactionsDAO.getHistorySeries(timespan)
 
