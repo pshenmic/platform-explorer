@@ -140,7 +140,7 @@ class MainController {
       }
     }
 
-    if (/^\b[^\s.]+(?:\.[^\s.]+)*\b$/) {
+    if (/^[^\s.]+(\.[^\s.]+)*$/.test(query)) {
       const identity = await this.identitiesDAO.getIdentityByDPNS(query)
 
       if (identity) {
