@@ -78,7 +78,7 @@ describe('Identities routes', () => {
     it('should return identity by dpns', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      await fixtures.identity_alias(knex, { dpns: 'test-name.1.dash', identity })
+      await fixtures.identity_alias(knex, { alias: 'test-name.1.dash', identity })
 
       const { body } = await client.get('/dpns/identity?dpns=test-name.1.dash')
         .expect(200)
@@ -104,7 +104,7 @@ describe('Identities routes', () => {
     it('should return identity by dpns with any case', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      await fixtures.identity_alias(knex, { dpns: 'test-name.2.dash', identity })
+      await fixtures.identity_alias(knex, { alias: 'test-name.2.dash', identity })
 
       const { body } = await client.get('/dpns/identity?dpns=TeSt-NaME.2.DAsH')
         .expect(200)

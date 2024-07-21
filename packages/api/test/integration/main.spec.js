@@ -20,6 +20,7 @@ describe('Other routes', () => {
   let blocks
   let identityTransaction
   let identity
+  let identityAlias
   let dataContractTransaction
   let dataContract
   let documentTransaction
@@ -52,6 +53,11 @@ describe('Other routes', () => {
       identifier: identityIdentifier,
       state_transition_hash: identityTransaction.hash,
       block_hash: block.hash
+    })
+
+    identityAlias = await fixtures.identity_alias(knex, {
+      alias: 'dpns.dash',
+      identity
     })
 
     dataContractTransaction = await fixtures.transaction(knex, {
@@ -173,6 +179,28 @@ describe('Other routes', () => {
     })
 
     it('should search by identity', async () => {
+      const { body } = await client.get(`/search?query=${identityAlias.alias}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedIdentity = {
+        identifier: identity.identifier,
+        revision: 0,
+        balance: 0,
+        timestamp: block.timestamp.toISOString(),
+        txHash: identityTransaction.hash,
+        totalTxs: 3,
+        totalTransfers: 0,
+        totalDocuments: 1,
+        totalDataContracts: 1,
+        isSystem: false,
+        owner: identity.identifier
+      }
+
+      assert.deepEqual({ identity: expectedIdentity }, body)
+    })
+
+    it('should search identity by DPNS', async () => {
       const { body } = await client.get(`/search?query=${identity.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
