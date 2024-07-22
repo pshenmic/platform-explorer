@@ -11,7 +11,10 @@ const socialNetwork = [
 
 function Footer () {
   return (
-        <Box px={3}>
+        <Box
+            px={3}
+            marginTop={'auto'}
+        >
             <Flex
                 className={'Footer'}
                 maxW={'1980px'}
