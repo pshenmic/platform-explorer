@@ -5,7 +5,7 @@ const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 
 class ValidatorsController {
-  constructor (knex) {
+  constructor(knex) {
     this.validatorsDAO = new ValidatorsDAO(knex)
   }
 
@@ -20,7 +20,7 @@ class ValidatorsController {
 
     const validators = await TenderdashRPC.getValidators()
 
-    const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
+    const proTxInfo = await Promise.resolve(DashCoreRPC.getProTxInfo(validator.proTxHash))
 
     const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
@@ -54,9 +54,9 @@ class ValidatorsController {
       resultSet: validatorsWithInfo.map(validator =>
         new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
           activeValidator.pro_tx_hash === validator.proTxHash),
-        validator.proposedBlocksAmount,
-        validator.lastProposedBlockHeader,
-        ProTxInfo.fromObject(validator.proTxInfo)
+          validator.proposedBlocksAmount,
+          validator.lastProposedBlockHeader,
+          ProTxInfo.fromObject(validator.proTxInfo)
         )
       )
     })
