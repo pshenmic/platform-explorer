@@ -3,7 +3,6 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
-const ServiceNotAvailableError = require('../errors/ServiceNotAvailableError')
 
 class ValidatorsController {
   constructor (knex) {
@@ -21,17 +20,7 @@ class ValidatorsController {
 
     const validators = await TenderdashRPC.getValidators()
 
-    let proTxInfo
-
-    try {
-      proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
-    } catch (error) {
-      if (error.code === -8) {
-        proTxInfo = null
-      } else {
-        throw new ServiceNotAvailableError()
-      }
-    }
+    const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
 
     const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
