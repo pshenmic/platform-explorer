@@ -5,7 +5,7 @@ const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 
 class ValidatorsController {
-  constructor(knex) {
+  constructor (knex) {
     this.validatorsDAO = new ValidatorsDAO(knex)
   }
 
@@ -54,9 +54,9 @@ class ValidatorsController {
       resultSet: validatorsWithInfo.map(validator =>
         new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
           activeValidator.pro_tx_hash === validator.proTxHash),
-          validator.proposedBlocksAmount,
-          validator.lastProposedBlockHeader,
-          ProTxInfo.fromObject(validator.proTxInfo)
+        validator.proposedBlocksAmount,
+        validator.lastProposedBlockHeader,
+        ProTxInfo.fromObject(validator.proTxInfo)
         )
       )
     })
