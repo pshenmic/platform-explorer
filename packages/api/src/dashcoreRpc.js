@@ -16,8 +16,12 @@ class DashCoreRPC {
       const { result } = await rpc.protx('info', proTxHash)
       return result
     } catch (e) {
-      console.error(e)
-      throw e
+      if (e.code === -8) {
+        return null
+      } else {
+        console.error(e)
+        throw e
+      }
     }
   }
 }
