@@ -20,7 +20,7 @@ class ValidatorsController {
 
     const validators = await TenderdashRPC.getValidators()
 
-    const proTxInfo = await Promise.resolve(DashCoreRPC.getProTxInfo(validator.proTxHash))
+    const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
 
     const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
@@ -46,7 +46,7 @@ class ValidatorsController {
       activeValidators
     )
 
-    const validatorsWithInfo = await Promise.all(
+    const validatorsWithInfo = await Promise.allSettled(
       validators.resultSet.map(async (validator) => ({ ...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash) })))
 
     return response.send({
