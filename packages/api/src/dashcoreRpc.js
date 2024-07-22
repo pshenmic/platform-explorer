@@ -1,5 +1,4 @@
 const RpcClient = require('@dashevo/dashd-rpc/promise')
-const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 
 const config = {
   protocol: 'http',
@@ -18,7 +17,7 @@ class DashCoreRPC {
       return result
     } catch (e) {
       console.error(e)
-      throw new ServiceNotAvailableError()
+      throw e
     }
   }
 }
