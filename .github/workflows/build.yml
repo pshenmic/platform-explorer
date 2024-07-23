@@ -2,9 +2,9 @@ name: Build and push packages
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 env:
   REGISTRY: ghcr.io
@@ -27,7 +27,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
 
       - name: NPM install
         run: cd packages/data-contract && npm install
@@ -51,7 +51,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
 
       - name: NPM install
         run: cd packages/frontend && npm install
@@ -89,7 +89,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
 
       - name: NPM install
         run: cd packages/api && npm install
@@ -190,10 +190,22 @@ jobs:
             sleep 3
             docker run -d --env-file api.env --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer cargo run
   release-on-push:
+    name: Create Release
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: owl352/platform-explorer@master
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          bump_version_scheme: minor
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
