@@ -191,7 +191,7 @@ jobs:
             docker run -d --env-file api.env --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer cargo run
   create_release:
     runs-on: ubuntu-latest
-    needs: [deploy]
+    # needs: [deploy]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
