@@ -3,6 +3,8 @@ name: Build and push packages
 on:
   push:
     branches: ["master"]
+    tags:
+      - 'v*'   
   pull_request:
     branches: ["master"]
 
@@ -190,25 +192,24 @@ jobs:
             sleep 3
             docker run -d --env-file api.env --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer cargo run
   release-on-push:
+    if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Get tag
-        id: tag
-        uses: devops-actions/action-get-tag@v1.0.3
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{steps.tag.outputs.tag}}
-          release_name: Release ${{steps.tag.outputs.tag}}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
           body: |
             Changes in this Release
             - First Change
             - Second Change
           draft: false
           prerelease: false
+
