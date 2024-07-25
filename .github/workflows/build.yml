@@ -192,7 +192,7 @@ jobs:
             sleep 3
             docker run -d --env-file api.env --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer cargo run
   release-on-push:
-    if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
     name: Create Release
     runs-on: ubuntu-latest
     steps:
