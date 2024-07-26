@@ -20,6 +20,6 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: ${{ github.event.head_commit.message }}
+          body: ${{ github.event.workflow_run.head_commit.message }}
           draft: false
           prerelease: false
