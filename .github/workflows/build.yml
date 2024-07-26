@@ -171,7 +171,7 @@ jobs:
     needs: [build_api, build_indexer, test_frontend, test_data_contract]
     if: (github.event_name != 'pull_request' || github.event.pull_request.merged == true) && contains( github.event.pull_request.labels.*.name, 'indexer')
     steps:
-      - name: Deploy to the server
+      - name: Drop database
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SSH_HOST }}
