@@ -6,7 +6,7 @@ import version from './version'
 const socialNetwork = [
   { img: '/images/icons/github.svg', href: 'https://github.com/pshenmic/platform-explorer/', alt: 'github', ariaLabel: 'Go to GitHub' },
   { img: '/images/icons/twitter.svg', href: 'https://x.com/Dashpay', alt: 'twitter', ariaLabel: 'Go to X(twitter)' },
-  { img: '/images/icons/discord.svg', href: 'https://discord.gg/GeH3ug5G', alt: 'discord', ariaLabel: 'Go to Discord' }
+  { img: '/images/icons/discord.svg', href: 'https://discord.gg/KrPbKUN8Ug', alt: 'discord', ariaLabel: 'Go to Discord' }
 ]
 
 function Footer () {
