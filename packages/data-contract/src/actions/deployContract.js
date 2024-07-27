@@ -1,9 +1,9 @@
 require('dotenv').config()
-const schema = require('./schema.json')
+const schema = require('../../schema.json')
 
-const { initClient, logInfo } = require('./src/utils')
+const { initClient, logInfo } = require('../utils')
 
-async function main () {
+async function deployContract () {
   logInfo('Client Initialization')
   const client = initClient()
 
@@ -26,4 +26,4 @@ async function main () {
   logInfo(`Used id: ${identity.toJSON().id}`)
 }
 
-main().catch(console.error)
+deployContract().catch(console.error)

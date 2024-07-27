@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { initClient, logInfo, registerIdentity } = require('./utils')
+const { initClient, logInfo, registerIdentity } = require('../utils')
 
 async function createIdentity () {
   logInfo('Client initialization')
@@ -11,6 +11,7 @@ async function createIdentity () {
   console.log()
   logInfo('Done')
   logInfo(`Identity: ${identity.toJSON().id}`)
+  return identity
 }
 
 createIdentity().catch(console.error)

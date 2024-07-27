@@ -1,6 +1,6 @@
 require('dotenv').config()
-const { initClient, logInfo } = require('./utils')
-const doc = require('../document.json')
+const { initClient, logInfo } = require('../utils')
+const doc = require('../../document.json')
 
 async function pushDocument () {
   logInfo('Client initialization')
