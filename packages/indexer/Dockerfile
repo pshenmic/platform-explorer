@@ -14,6 +14,7 @@ RUN ls
 RUN cargo install refinery_cli
 
 FROM scratch
+WORKDIR /app
 COPY --from=build /app/target/x86_64-unknown-linux-musl/release /app  
 
 # FROM rust:1.76-bookworm
