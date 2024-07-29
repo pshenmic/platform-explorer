@@ -493,7 +493,7 @@ dependencies = [
 
 [[package]]
 name = "dashpay-contract"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "platform-value",
  "platform-version",
@@ -503,7 +503,7 @@ dependencies = [
 
 [[package]]
 name = "data-contracts"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "dashpay-contract",
  "dpns-contract",
@@ -592,7 +592,7 @@ checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
 name = "dpns-contract"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "platform-value",
  "platform-version",
@@ -602,7 +602,7 @@ dependencies = [
 
 [[package]]
 name = "dpp"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -624,7 +624,6 @@ dependencies = [
  "log",
  "nohash-hasher",
  "num_enum",
- "once_cell",
  "platform-serialization",
  "platform-serialization-derive",
  "platform-value",
@@ -713,7 +712,7 @@ checksum = "9fc0510504f03c51ada170672ac806f1f105a88aa97a5281117e1ddc3368e51a"
 
 [[package]]
 name = "feature-flags-contract"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "platform-value",
  "platform-version",
@@ -886,16 +885,6 @@ name = "glob"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
-
-[[package]]
-name = "grovedb-version"
-version = "1.0.0-rc.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c7d7fcdd5b7873364d38ef0e9144871c11a2124f0192fc6afd6254a93f90273"
-dependencies = [
- "thiserror",
- "versioned-feature-core 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
 
 [[package]]
 name = "h2"
@@ -1208,7 +1197,7 @@ dependencies = [
 
 [[package]]
 name = "json-schema-compatibility-validator"
-version = "1.0.0-beta.4"
+version = "0.25.16-rc.4"
 dependencies = [
  "json-patch",
  "once_cell",
@@ -1279,7 +1268,7 @@ checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 
 [[package]]
 name = "masternode-reward-shares-contract"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "platform-value",
  "platform-version",
@@ -1547,7 +1536,7 @@ checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
 
 [[package]]
 name = "platform-serialization"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "bincode",
  "platform-version",
@@ -1555,7 +1544,7 @@ dependencies = [
 
 [[package]]
 name = "platform-serialization-derive"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1565,7 +1554,7 @@ dependencies = [
 
 [[package]]
 name = "platform-value"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "base64 0.22.1",
  "bincode",
@@ -1584,18 +1573,14 @@ dependencies = [
 
 [[package]]
 name = "platform-version"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
- "bincode",
- "grovedb-version",
- "once_cell",
  "thiserror",
- "versioned-feature-core 1.0.0 (git+https://github.com/dashpay/versioned-feature-core)",
 ]
 
 [[package]]
 name = "platform-versioning"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2751,17 +2736,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 
 [[package]]
-name = "versioned-feature-core"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "898c0ad500fdb1914df465a2c729fce33646ef65dfbbbd16a6d8050e0d2404df"
-
-[[package]]
-name = "versioned-feature-core"
-version = "1.0.0"
-source = "git+https://github.com/dashpay/versioned-feature-core#560157096c8405a46ce0f21a2e7e1bd11d6625b4"
-
-[[package]]
 name = "virtue"
 version = "0.0.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3112,7 +3086,7 @@ dependencies = [
 
 [[package]]
 name = "withdrawals-contract"
-version = "1.0.0-beta.4"
+version = "1.0.0-dev.12"
 dependencies = [
  "num_enum",
  "platform-value",

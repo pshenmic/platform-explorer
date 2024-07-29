@@ -7,11 +7,8 @@ COPY Cargo.lock /app
 COPY Cargo.toml /app
 COPY migrations /app/migrations
 COPY src /app/src
-RUN rustup target add x86_64-unknown-linux-musl
-RUN cargo build --target x86_64-unknown-linux-musl --release
-RUN cargo install refinery_cli
+RUN cargo build
 
-FROM scratch as indexer
+FROM alpine:3.19 as indexer
 WORKDIR /app
-COPY --from=build /app/target/x86_64-unknown-linux-musl/release /app  
-CMD ["/app/indexer"]
+COPY --from=build /app/target/debug /app  
