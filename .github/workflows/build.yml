@@ -139,7 +139,6 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
   build_refinery_cli:
     runs-on: ubuntu-latest
-    needs: test_api
     permissions:
       contents: read
       packages: write
