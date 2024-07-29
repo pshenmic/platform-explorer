@@ -1,4 +1,5 @@
 import { StateTransitionEnum } from '../app/enums/state.transition.type'
+import copyToClipboard from './copyToClipboard'
 import currencyRound from './currencyRound'
 
 const getTransitionTypeString = (id) => {
@@ -41,5 +42,6 @@ export {
   fetchHandlerSuccess,
   fetchHandlerError,
   numberFormat,
-  currencyRound
+  currencyRound,
+  copyToClipboard
 }

@@ -9,14 +9,13 @@ import { LoadingLine, LoadingBlock, LoadingList } from '../../../components/load
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import ImageGenerator from '../../../components/imageGenerator'
-import './DataContract.scss'
+import { DataContractSchema } from '../../../components/dataContracts'
 
 import {
   Box,
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
-  Tabs, TabList, TabPanels, Tab, TabPanel,
-  Code
+  Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
 
 const pagintationConfig = {
@@ -205,16 +204,9 @@ function DataContract ({ identifier }) {
                         <Box>
                           {!dataContract.error
                             ? <LoadingBlock loading={dataContract.loading}>
-                                <div className={'DataContractSchema'}>
-                                    <Code
-                                        className={'DataContractSchema__Code'}
-                                        borderRadius={'lg'}
-                                        px={5}
-                                        py={4}
-                                    >
-                                        {dataContract.data?.schema && JSON.stringify(JSON.parse(dataContract.data?.schema), null, 2)}
-                                    </Code>
-                                </div>
+                                {dataContract.data?.schema
+                                  ? <DataContractSchema schema={dataContract.data?.schema}/>
+                                  : <Container h={20}><ErrorMessageBlock/></Container>}
                               </LoadingBlock>
                             : <Container h={20}><ErrorMessageBlock/></Container>
                           }
