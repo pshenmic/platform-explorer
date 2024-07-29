@@ -164,7 +164,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./
-          file: ./packages/indexer/migrations/Dockerfile
+          file: github.com/owl352/refinery_cli_docker
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:migrations
   build_indexer:
