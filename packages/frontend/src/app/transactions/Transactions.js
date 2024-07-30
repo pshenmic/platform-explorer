@@ -46,6 +46,12 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
   useEffect(() => fetchData(currentPage + 1, pageSize), [pageSize, currentPage])
 
   useEffect(() => {
+    const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
+    setCurrentPage(Math.max(page - 1, 0))
+    setPageSize(parseInt(searchParams.get('page-size')) || paginateConfig.pageSize.default)
+  }, [searchParams, pathname])
+
+  useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
 
     if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
@@ -89,7 +95,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
                 />
                 <PageSizeSelector
                     PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                    defaultValue={pageSize}
+                    value={pageSize}
                     items={paginateConfig.pageSize.values}
                 />
               </div>
