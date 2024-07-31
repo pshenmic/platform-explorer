@@ -93,24 +93,24 @@ function Identity ({ identifier }) {
   return (
     <div className={'identity'}>
         <Container
-            maxW='container.xl'
+            maxW={'container.xl'}
             padding={3}
             mt={8}
         >
             <Flex
-                w='100%'
-                justifyContent='space-between'
+                w={'100%'}
+                justifyContent={'space-between'}
                 wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
             >
                 <TableContainer
                     width={['100%', '100%', '100%', 'calc(50% - 10px)']}
-                    maxW='none'
-                    borderWidth='1px' borderRadius='lg'
+                    maxW={'none'}
+                    borderWidth={'1px'} borderRadius={'lg'}
                     m={0}
                     className={'IdentityInfo'}
                   >
                     {!identity.error
-                      ? <Table variant='simple' className={'Table'}>
+                      ? <Table variant={'simple'} className={'Table'}>
                             <Thead>
                                 <Tr>
                                     <Th pr={0}>Identity info</Th>
@@ -202,9 +202,9 @@ function Identity ({ identifier }) {
 
                 <Container
                   width={['100%', '100%', '100%', 'calc(50% - 10px)']}
-                  maxW='none'
+                  maxW={'none'}
                   m={0}
-                  borderWidth='1px' borderRadius='lg'
+                  borderWidth={'1px'} borderRadius={'lg'}
                   className={'InfoBlock'}
                 >
                     <Tabs
@@ -226,7 +226,7 @@ function Identity ({ identifier }) {
                             <TabPanel px={0} h={'100%'}>
                               {!transactions.error
                                 ? !transactions.loading
-                                    ? <TransactionsList transactions={transactions.data.resultSet} size='m'/>
+                                    ? <TransactionsList transactions={transactions.data.resultSet} size={'m'}/>
                                     : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
@@ -242,7 +242,7 @@ function Identity ({ identifier }) {
                             <TabPanel px={0} h={'100%'}>
                               {!documents.error
                                 ? !documents.loading
-                                    ? <DocumentsList documents={documents.data.resultSet} size='m'/>
+                                    ? <DocumentsList documents={documents.data.resultSet} size={'m'}/>
                                     : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
@@ -250,7 +250,7 @@ function Identity ({ identifier }) {
                             <TabPanel px={0} h={'100%'}>
                               {!dataContracts.error
                                 ? !dataContracts.loading
-                                    ? <DataContractsList dataContracts={dataContracts.data.resultSet} size='m'/>
+                                    ? <DataContractsList dataContracts={dataContracts.data.resultSet} size={'m'}/>
                                     : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
