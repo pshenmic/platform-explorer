@@ -32,7 +32,9 @@ const tabs = [
   'schema'
 ]
 
-function DataContract ({ identifier, defaultTabName }) {
+const defaultTabName = 'documents'
+
+function DataContract ({ identifier }) {
   const [dataContract, setDataContract] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
   const pageSize = pagintationConfig.itemsOnPage.default
@@ -78,7 +80,14 @@ function DataContract ({ identifier, defaultTabName }) {
 
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
-    urlParameters.set('tab', tabs[activeTab])
+
+    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase()) ||
+       (tabs.indexOf(defaultTabName.toLowerCase()) === -1 && activeTab === 0)) {
+      urlParameters.delete('tab')
+    } else {
+      urlParameters.set('tab', tabs[activeTab])
+    }
+
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab])
 

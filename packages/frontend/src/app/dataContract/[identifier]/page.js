@@ -9,9 +9,8 @@ export async function generateMetadata ({ params }) {
   }
 }
 
-function DataContractRoute ({ params, searchParams }) {
-  const tab = String(searchParams.tab) || ''
-  return <DataContract identifier={params.identifier} defaultTabName={tab}/>
+function DataContractRoute ({ params }) {
+  return <DataContract identifier={params.identifier}/>
 }
 
 export default DataContractRoute
