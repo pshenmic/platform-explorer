@@ -66,10 +66,21 @@ function DataContract ({ identifier, defaultTabName }) {
   useEffect(fetchData, [identifier])
 
   useEffect(() => {
+    const tab = searchParams.get('tab')
+
+    if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
+      setActiveTab(tabs.indexOf(tab.toLowerCase()))
+      return
+    }
+
+    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  }, [searchParams])
+
+  useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
     urlParameters.set('tab', tabs[activeTab])
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [activeTab, router, pathname, searchParams])
+  }, [activeTab])
 
   const handlePageClick = ({ selected }) => {
     setDocuments(state => ({ ...state, loading: true }))
@@ -182,7 +193,11 @@ function DataContract ({ identifier, defaultTabName }) {
             borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
         >
-            <Tabs onChange={setActiveTab} defaultIndex={activeTab}>
+            <Tabs
+              onChange={setActiveTab}
+              // defaultIndex={activeTab}
+              index={activeTab}
+            >
                 <TabList>
                     <Tab>Documents</Tab>
                     <Tab>Schema</Tab>
