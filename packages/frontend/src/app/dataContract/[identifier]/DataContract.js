@@ -204,7 +204,6 @@ function DataContract ({ identifier }) {
         >
             <Tabs
               onChange={setActiveTab}
-              // defaultIndex={activeTab}
               index={activeTab}
             >
                 <TabList>
