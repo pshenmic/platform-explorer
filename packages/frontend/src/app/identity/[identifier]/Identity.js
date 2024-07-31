@@ -29,7 +29,9 @@ const tabs = [
   'datacontracts'
 ]
 
-function Identity ({ identifier, defaultTabName }) {
+const defaultTabName = 'transactions'
+
+function Identity ({ identifier }) {
   const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
   const [dataContracts, setDataContracts] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, loading: true, error: false })
@@ -40,12 +42,6 @@ function Identity ({ identifier, defaultTabName }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-
-  useEffect(() => {
-    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
-    urlParameters.set('tab', tabs[activeTab])
-    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [activeTab, router, pathname, searchParams])
 
   const fetchData = () => {
     Promise.all([
@@ -69,6 +65,30 @@ function Identity ({ identifier, defaultTabName }) {
   }
 
   useEffect(fetchData, [identifier])
+
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+
+    if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
+      setActiveTab(tabs.indexOf(tab.toLowerCase()))
+      return
+    }
+
+    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  }, [searchParams])
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+
+    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase()) ||
+        (tabs.indexOf(defaultTabName.toLowerCase()) === -1 && activeTab === 0)) {
+      urlParameters.delete('tab')
+    } else {
+      urlParameters.set('tab', tabs[activeTab])
+    }
+
+    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  }, [activeTab, router, pathname])
 
   return (
     <div className={'identity'}>
@@ -192,7 +212,7 @@ function Identity ({ identifier, defaultTabName }) {
                       h={'100%'}
                       display={'flex'}
                       flexDirection={'column'}
-                      defaultIndex={activeTab}
+                      index={activeTab}
                       onChange={setActiveTab}
                     >
                         <TabList className={'IdentityData__Tabs'}>

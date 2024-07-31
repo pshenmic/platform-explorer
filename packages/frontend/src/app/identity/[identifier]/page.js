@@ -9,9 +9,8 @@ export async function generateMetadata ({ params }) {
   }
 }
 
-function IdentityRoute ({ params, searchParams }) {
-  const tab = String(searchParams.tab) || ''
-  return <Identity identifier={params.identifier} defaultTabName={tab}/>
+function IdentityRoute ({ params }) {
+  return <Identity identifier={params.identifier}/>
 }
 
 export default IdentityRoute
