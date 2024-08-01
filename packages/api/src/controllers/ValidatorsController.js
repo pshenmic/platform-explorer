@@ -5,7 +5,7 @@ const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 
 class ValidatorsController {
-  constructor (knex) {
+  constructor(knex) {
     this.validatorsDAO = new ValidatorsDAO(knex)
   }
 
@@ -47,16 +47,22 @@ class ValidatorsController {
     )
 
     const validatorsWithInfo = await Promise.all(
-      validators.resultSet.map(async (validator) => ({ ...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash) })))
+      validators.resultSet.map(async (validator) => {
+        try {
+          return { ...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash) }
+        } catch (error) {
+          return {...validator, proTxInfo: null}
+        }
+      }))
 
     return response.send({
       ...validators,
       resultSet: validatorsWithInfo.map(validator =>
         new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
           activeValidator.pro_tx_hash === validator.proTxHash),
-        validator.proposedBlocksAmount,
-        validator.lastProposedBlockHeader,
-        ProTxInfo.fromObject(validator.proTxInfo)
+          validator.proposedBlocksAmount,
+          validator.lastProposedBlockHeader,
+          validator.proTxInfo ? ProTxInfo.fromObject(validator.proTxInfo) : null
         )
       )
     })
