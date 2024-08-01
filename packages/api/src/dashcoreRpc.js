@@ -11,7 +11,7 @@ const config = {
 const rpc = new RpcClient(config)
 
 class DashCoreRPC {
-  static async getProTxInfo(proTxHash,blockHash) {
+  static async getProTxInfo (proTxHash, blockHash) {
     try {
       const { result } = await rpc.protx('info', proTxHash, blockHash)
       return result
@@ -21,7 +21,7 @@ class DashCoreRPC {
     }
   }
 
-  static async getRawTransaction(proTxHash) {
+  static async getRawTransaction (proTxHash) {
     try {
       const { result } = await rpc.getRawTransaction(proTxHash, 1)
       return result

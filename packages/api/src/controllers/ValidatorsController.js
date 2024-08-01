@@ -5,7 +5,7 @@ const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 
 class ValidatorsController {
-  constructor(knex) {
+  constructor (knex) {
     this.validatorsDAO = new ValidatorsDAO(knex)
   }
 
@@ -20,7 +20,9 @@ class ValidatorsController {
 
     const validators = await TenderdashRPC.getValidators()
 
-    const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
+    const transaction = await DashCoreRPC.getRawTransaction(validator.proTxHash)
+
+    const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash, transaction.blockhash)
 
     const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
