@@ -173,7 +173,6 @@ function DataContract ({ identifier }) {
                     <Tab>Documents</Tab>
                     <Tab>Schema</Tab>
                 </TabList>
-
                 <TabPanels>
                     <TabPanel>
                         <Box>
@@ -199,7 +198,6 @@ function DataContract ({ identifier }) {
                             }
                         </Box>
                     </TabPanel>
-
                     <TabPanel>
                         <Box>
                           {!dataContract.error
