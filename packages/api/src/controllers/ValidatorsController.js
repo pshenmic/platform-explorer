@@ -48,10 +48,18 @@ class ValidatorsController {
 
     const validatorsWithInfo = await Promise.all(
       validators.resultSet.map(async (validator) => {
+        // const validatorTx = 
         try {
-          return { ...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash) }
+          return {
+            ...validator,
+            proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash)
+          }
         } catch (error) {
-          return {...validator, proTxInfo: null}
+          const txn = await DashCoreRPC.getRawTransaction(validator.proTxHash)
+          return {
+            ...validator,
+            proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash, txn.blockhash)
+          }
         }
       }))
 
