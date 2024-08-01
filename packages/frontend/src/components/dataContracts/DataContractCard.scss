@@ -19,7 +19,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         color: var(--chakra-colors-gray-500);
-        font-family: monospace;
+        font-family: $font-monospace;
         font-size: 16px;
     }
 }

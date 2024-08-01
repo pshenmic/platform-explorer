@@ -6,4 +6,6 @@ $breakpoint-2xl: '96em';
 
 $border-radius-def: 5px;
 
-$monospace-font: monospace;
+$font-monospace: var(--chakra-fonts-monospace);
+$font-heading: var(--chakra-fonts-heading);
+$font-body: var(--chakra-fonts-body);

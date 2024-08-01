@@ -9,7 +9,7 @@
     line-height: 24px;
     border-bottom: 1px solid var(--chakra-colors-gray-800);
     color:  var(--chakra-colors-gray-100);
-    font-family: monospace;
+    font-family: $font-monospace;
     font-size: 12pt;
 
     &__IdentifierContainer {
