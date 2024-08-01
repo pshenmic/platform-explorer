@@ -12,9 +12,19 @@ const config = {
 const rpc = new RpcClient(config)
 
 class DashCoreRPC {
-  static async getProTxInfo (proTxHash) {
+  static async getProTxInfo(proTxHash,blockHash) {
     try {
-      const { result } = await rpc.protx('info', proTxHash)
+      const { result } = await rpc.protx('info', proTxHash, blockHash)
+      return result
+    } catch (e) {
+      console.error(e)
+      throw new ServiceNotAvailableError()
+    }
+  }
+
+  static async getRawTransaction(proTxHash) {
+    try {
+      const { result } = await rpc.getRawTransaction(proTxHash, 1)
       return result
     } catch (e) {
       console.error(e)
