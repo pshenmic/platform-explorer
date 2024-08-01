@@ -5,7 +5,7 @@ const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 
 class ValidatorsController {
-  constructor(knex) {
+  constructor (knex) {
     this.validatorsDAO = new ValidatorsDAO(knex)
   }
 
@@ -20,7 +20,9 @@ class ValidatorsController {
 
     const validators = await TenderdashRPC.getValidators()
 
-    const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
+    const transaction = await DashCoreRPC.getRawTransaction(validator.proTxHash)
+
+    const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash, transaction.blockhash)
 
     const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
@@ -48,17 +50,17 @@ class ValidatorsController {
 
     const validatorsWithInfo = await Promise.all(
       validators.resultSet.map(async (validator) => {
-        // const validatorTx = 
+        // const validatorTx =
         try {
           return {
             ...validator,
             proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash)
           }
         } catch (error) {
-          const txn = await DashCoreRPC.getRawTransaction(validator.proTxHash)
+          const transaction = await DashCoreRPC.getRawTransaction(validator.proTxHash)
           return {
             ...validator,
-            proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash, txn.blockhash)
+            proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash, transaction.blockhash)
           }
         }
       }))
@@ -68,9 +70,9 @@ class ValidatorsController {
       resultSet: validatorsWithInfo.map(validator =>
         new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
           activeValidator.pro_tx_hash === validator.proTxHash),
-          validator.proposedBlocksAmount,
-          validator.lastProposedBlockHeader,
-          validator.proTxInfo ? ProTxInfo.fromObject(validator.proTxInfo) : null
+        validator.proposedBlocksAmount,
+        validator.lastProposedBlockHeader,
+        validator.proTxInfo ? ProTxInfo.fromObject(validator.proTxInfo) : null
         )
       )
     })
