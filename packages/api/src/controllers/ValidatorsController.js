@@ -5,7 +5,7 @@ const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 
 class ValidatorsController {
-  constructor (knex) {
+  constructor(knex) {
     this.validatorsDAO = new ValidatorsDAO(knex)
   }
 
