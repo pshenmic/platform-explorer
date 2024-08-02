@@ -23,7 +23,7 @@ class DashCoreRPC {
     }
   }
 
-  static async getProTxInfo (proTxHash, blockHash = NaN) {
+  static async getProTxInfo (proTxHash, blockHash = undefined) {
     try {
       const args = ['info', proTxHash]
       if (blockHash) args.push(blockHash)
