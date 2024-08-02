@@ -3,11 +3,7 @@ import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import Cards from './Cards'
-import {
-  Container,
-  Flex,
-  Box
-} from '@chakra-ui/react'
+import { Container, Flex, Box } from '@chakra-ui/react'
 
 export const metadata = {
   title: 'Identities — Dash Platform Explorer',
@@ -16,7 +12,10 @@ export const metadata = {
   applicationName: 'Dash Platform Explorer'
 }
 
-function IdentitiesRoute () {
+function IdentitiesRoute ({ searchParams }) {
+  const page = Number(searchParams.page) || 1
+  const pageSize = Number(searchParams['page-size'])
+
   return <>
     <Container
       maxW={'container.xl'}
@@ -43,7 +42,7 @@ function IdentitiesRoute () {
           </Container>
       </Flex>
     </Container>
-    <Identities/>
+    <Identities defaultPage={page} defaultPageSize={pageSize}/>
   </>
 }
 

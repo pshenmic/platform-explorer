@@ -12,7 +12,10 @@ export const metadata = {
   applicationName: 'Dash Platform Explorer'
 }
 
-async function BlocksRoute () {
+async function BlocksRoute ({ searchParams }) {
+  const page = Number(searchParams.page) || 1
+  const pageSize = Number(searchParams['page-size'])
+
   return <>
     <Container
       maxW={'container.xl'}
@@ -40,7 +43,7 @@ async function BlocksRoute () {
       </Flex>
     </Container>
 
-    <Blocks/>
+    <Blocks defaultPage={page} defaultPageSize={pageSize}/>
   </>
 }
 

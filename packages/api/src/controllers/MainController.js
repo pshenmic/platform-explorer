@@ -27,7 +27,7 @@ class MainController {
       Constants.genesisTime
     ])).map((e) => e.value ?? null)
 
-    const [currentBlock] = blocks.resultSet
+    const [currentBlock] = blocks?.resultSet ?? []
 
     const epoch = genesisTime && currentBlock
       ? Epoch.fromObject({
