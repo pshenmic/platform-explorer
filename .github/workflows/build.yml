@@ -171,8 +171,6 @@ jobs:
     needs: [build_api, build_indexer, test_frontend, test_data_contract]
     if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
       - name: Deploy to the server
         uses: appleboy/ssh-action@v0.1.10
         with:
