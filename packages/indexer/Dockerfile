@@ -5,7 +5,6 @@ RUN git clone --depth 1 --branch v1.0.0-beta.4  https://github.com/dashevo/platf
 WORKDIR /app
 COPY Cargo.lock /app
 COPY Cargo.toml /app
-COPY migrations /app/migrations
 COPY src /app/src
 RUN cargo build
 
