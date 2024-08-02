@@ -188,7 +188,7 @@ jobs:
             docker stop $(docker ps -f name=platform-explorer-indexer -q)
             docker rm platform-explorer-api platform-explorer-indexer
             docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api npm run db:drop
-            docker run --rm --env-file api.env -v `pwd`/packages/indexer/migrations:/migrations owl352/refinery_cli_docker refinery migrate -e DATABASE_URL -p /migrations
+            docker run --rm --env-file api.env -v ./packages/indexer/migrations:/migrations owl352/refinery_cli_docker refinery migrate -e DATABASE_URL -p /migrations
             docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             sleep 3
             docker run -d --env-file api.env --restart always --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
