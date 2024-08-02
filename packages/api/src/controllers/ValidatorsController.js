@@ -47,7 +47,10 @@ class ValidatorsController {
     )
 
     const validatorsWithInfo = await Promise.all(
-      validators.resultSet.map(async (validator) => ({ ...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash) })))
+      validators.resultSet.map(async (validator) => ({
+        ...validator,
+        proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash)
+      })))
 
     return response.send({
       ...validators,
