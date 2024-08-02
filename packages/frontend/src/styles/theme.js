@@ -16,7 +16,7 @@ export const theme = extendTheme({
   fonts: {
     heading: montserrat.style.fontFamily,
     body: openSans.style.fontFamily,
-    monospace: roboto.style.fontFamily
+    mono: roboto.style.fontFamily
   },
   config: {
     useSystemColorMode: false,
