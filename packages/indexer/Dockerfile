@@ -13,4 +13,3 @@ RUN cargo build
 FROM alpine:3.19 as indexer
 WORKDIR /app
 COPY --from=build /app/target/debug /app  
-COPY --from=build /app/migrations /app  
