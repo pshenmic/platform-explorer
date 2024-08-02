@@ -27,7 +27,7 @@
         overflow-wrap: anywhere;
 
         &--Monospace {
-            font-family: $font-monospace;
+            font-family: $font-mono;
         }
     }
 
@@ -48,7 +48,7 @@
         }
 
         &--Monospace {
-            font-family: $font-monospace;
+            font-family: $font-mono;
         }
     }
 }
