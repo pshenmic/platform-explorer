@@ -5,7 +5,6 @@ import { ChakraProvider, localStorageManager } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import theme from '../styles/theme'
 import '../styles/theme.scss'
-import Footer from './footer'
 
 export default function RootComponent ({ children }) {
   useEffect(() => {
