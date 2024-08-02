@@ -14,6 +14,7 @@ class DashCoreRPC {
   static async getRawTransaction (proTxHash) {
     try {
       const { result } = await rpc.getRawTransaction(proTxHash, 1)
+
       return result
     } catch (e) {
       console.error(e)
@@ -25,18 +26,19 @@ class DashCoreRPC {
     }
   }
 
-  static async getProTxInfo (proTxHash, blockHash) {
+  static async getProTxInfo (proTxHash, blockHash = NaN) {
     try {
-      const args = ['info', proTxHash]
-      if (blockHash) args.push(blockHash)
-      const { result } = await rpc.protx(...args)
+      const { result } = await rpc.protx('info', proTxHash, blockHash)
+
       return result
     } catch (e) {
       if (e.code === -8) {
         const { blockhash } = await this.getRawTransaction(proTxHash)
         const result = await this.getProTxInfo(proTxHash, blockhash)
+
         return result
       }
+
       console.error(e)
       throw new ServiceNotAvailableError()
     }
