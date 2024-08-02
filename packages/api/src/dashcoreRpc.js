@@ -25,7 +25,10 @@ class DashCoreRPC {
 
   static async getProTxInfo (proTxHash, blockHash = NaN) {
     try {
-      const { result } = await rpc.protx('info', proTxHash, blockHash)
+      const args = ['info', proTxHash]
+      if (blockHash) args.push(blockHash)
+
+      const { result } = await rpc.protx(...args)
 
       return result
     } catch (e) {
