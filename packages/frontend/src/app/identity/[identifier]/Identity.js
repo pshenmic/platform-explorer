@@ -11,6 +11,7 @@ import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import ImageGenerator from '../../../components/imageGenerator'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import './Identity.scss'
 
 import {
@@ -21,13 +22,26 @@ import {
   Flex
 } from '@chakra-ui/react'
 
+const tabs = [
+  'transactions',
+  'transfers',
+  'documents',
+  'datacontracts'
+]
+
+const defaultTabName = 'transactions'
+
 function Identity ({ identifier }) {
   const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
   const [dataContracts, setDataContracts] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, loading: true, error: false })
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, loading: true, error: false })
+  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   const tdTitleWidth = 100
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const fetchData = () => {
     Promise.all([
@@ -52,27 +66,51 @@ function Identity ({ identifier }) {
 
   useEffect(fetchData, [identifier])
 
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+
+    if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
+      setActiveTab(tabs.indexOf(tab.toLowerCase()))
+      return
+    }
+
+    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  }, [searchParams])
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+
+    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase()) ||
+        (tabs.indexOf(defaultTabName.toLowerCase()) === -1 && activeTab === 0)) {
+      urlParameters.delete('tab')
+    } else {
+      urlParameters.set('tab', tabs[activeTab])
+    }
+
+    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  }, [activeTab, router, pathname])
+
   return (
     <div className={'identity'}>
         <Container
-            maxW='container.xl'
+            maxW={'container.xl'}
             padding={3}
             mt={8}
         >
             <Flex
-                w='100%'
-                justifyContent='space-between'
+                w={'100%'}
+                justifyContent={'space-between'}
                 wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
             >
                 <TableContainer
                     width={['100%', '100%', '100%', 'calc(50% - 10px)']}
-                    maxW='none'
-                    borderWidth='1px' borderRadius='lg'
+                    maxW={'none'}
+                    borderWidth={'1px'} borderRadius={'lg'}
                     m={0}
                     className={'IdentityInfo'}
                   >
                     {!identity.error
-                      ? <Table variant='simple' className={'Table'}>
+                      ? <Table variant={'simple'} className={'Table'}>
                             <Thead>
                                 <Tr>
                                     <Th pr={0}>Identity info</Th>
@@ -164,9 +202,9 @@ function Identity ({ identifier }) {
 
                 <Container
                   width={['100%', '100%', '100%', 'calc(50% - 10px)']}
-                  maxW='none'
+                  maxW={'none'}
                   m={0}
-                  borderWidth='1px' borderRadius='lg'
+                  borderWidth={'1px'} borderRadius={'lg'}
                   className={'InfoBlock'}
                 >
                     <Tabs
@@ -174,6 +212,8 @@ function Identity ({ identifier }) {
                       h={'100%'}
                       display={'flex'}
                       flexDirection={'column'}
+                      index={activeTab}
+                      onChange={setActiveTab}
                     >
                         <TabList className={'IdentityData__Tabs'}>
                             <Tab className={'IdentityData__Tab'}>Transactions</Tab>
@@ -186,7 +226,7 @@ function Identity ({ identifier }) {
                             <TabPanel px={0} h={'100%'}>
                               {!transactions.error
                                 ? !transactions.loading
-                                    ? <TransactionsList transactions={transactions.data.resultSet} size='m'/>
+                                    ? <TransactionsList transactions={transactions.data.resultSet} size={'m'}/>
                                     : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
@@ -202,7 +242,7 @@ function Identity ({ identifier }) {
                             <TabPanel px={0} h={'100%'}>
                               {!documents.error
                                 ? !documents.loading
-                                    ? <DocumentsList documents={documents.data.resultSet} size='m'/>
+                                    ? <DocumentsList documents={documents.data.resultSet} size={'m'}/>
                                     : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
@@ -210,7 +250,7 @@ function Identity ({ identifier }) {
                             <TabPanel px={0} h={'100%'}>
                               {!dataContracts.error
                                 ? !dataContracts.loading
-                                    ? <DataContractsList dataContracts={dataContracts.data.resultSet} size='m'/>
+                                    ? <DataContractsList dataContracts={dataContracts.data.resultSet} size={'m'}/>
                                     : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
