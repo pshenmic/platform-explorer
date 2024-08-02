@@ -181,8 +181,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            git clone --depth 1 https://github.com/pshenmic/platform-explorer
-            git -C ./platform-explorer pull --depth 1
+            git -C ./platform-explorer pull
             docker pull owl352/refinery_cli_docker
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
