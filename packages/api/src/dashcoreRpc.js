@@ -11,7 +11,7 @@ const config = {
 const rpc = new RpcClient(config)
 
 class DashCoreRPC {
-  static async getRawTransaction(proTxHash) {
+  static async getRawTransaction (proTxHash) {
     try {
       const { result } = await rpc.getRawTransaction(proTxHash, 1)
       return result
@@ -25,14 +25,14 @@ class DashCoreRPC {
     }
   }
 
-  static async getProTxInfo(proTxHash, blockHash) {
+  static async getProTxInfo (proTxHash, blockHash) {
     try {
-      const args = ['info', proTxHash, ]
-      if(blockHash) args.push(blockHash)
+      const args = ['info', proTxHash]
+      if (blockHash) args.push(blockHash)
       const { result } = await rpc.protx(...args)
       return result
     } catch (e) {
-      if (e.code == -8) {
+      if (e.code === -8) {
         const { blockhash } = await this.getRawTransaction(proTxHash)
         const result = await this.getProTxInfo(proTxHash, blockhash)
         return result
