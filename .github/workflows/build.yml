@@ -189,4 +189,3 @@ jobs:
             docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             sleep 3
             docker run -d --env-file api.env --restart always --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer cargo run
-            
