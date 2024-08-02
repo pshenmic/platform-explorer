@@ -212,7 +212,6 @@ impl PSQLProcessor {
             StateTransition::IdentityCreditWithdrawal(st) => st.state_transition_type() as u32,
             StateTransition::IdentityUpdate(st) => st.state_transition_type() as u32,
             StateTransition::IdentityCreditTransfer(st) => st.state_transition_type() as u32,
-            StateTransition::MasternodeVote(st) => st.state_transition_type() as u32
         };
 
         let bytes = match state_transition.clone() {
@@ -248,11 +247,6 @@ impl PSQLProcessor {
                 PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreditTransfer(
                     st.clone()
                 )).unwrap(),
-            StateTransition::MasternodeVote(st) => {
-                PlatformSerializable::serialize_to_bytes(&StateTransition::MasternodeVote(
-                    st.clone()
-                )).unwrap()
-            }
         };
 
         let st_hash = digest(bytes.clone()).to_uppercase();
@@ -308,8 +302,6 @@ impl PSQLProcessor {
                 self.handle_identity_credit_transfer(_st, st_hash).await;
 
                 println!("Processed IdentityCreditTransfer at block hash {}", block_hash);
-            }
-            StateTransition::MasternodeVote(_) => {
             }
         }
     }

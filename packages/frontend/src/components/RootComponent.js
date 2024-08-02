@@ -13,10 +13,10 @@ export default function RootComponent ({ children }) {
   }, [])
 
   return (
-    <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
-      <Navbar />
-      {children}
-      <Footer />
+    <ChakraProvider theme={ theme } colorModeManager={localStorageManager}>
+        <Navbar/>
+
+        { children }
     </ChakraProvider>
   )
 }

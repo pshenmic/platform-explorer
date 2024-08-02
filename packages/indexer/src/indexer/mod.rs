@@ -11,14 +11,14 @@ use crate::models::{TransactionResult, TransactionStatus};
 use crate::utils::TenderdashRpcApi;
 
 pub enum IndexerError {
-    TenderdashRPCError,
+    BackendUrlError,
     ProcessorError,
 }
 
 impl From<reqwest::Error> for IndexerError {
     fn from(value: reqwest::Error) -> Self {
         println!("{}", value);
-        IndexerError::TenderdashRPCError
+        IndexerError::BackendUrlError
     }
 }
 
@@ -40,12 +40,12 @@ pub struct Indexer {
 impl Indexer {
     pub fn new() -> Indexer {
         let processor = PSQLProcessor::new();
-        let tenderdash_url = env::var("TENDERDASH_URL").expect("You've not set the TENDERDASH_URL");
+        let backend_url = env::var("BACKEND_URL").expect("You've not set the BACKEND_URL");
         let txs_to_skip = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
         let decoder = StateTransitionDecoder::new();
 
         return Indexer {
-            tenderdash_rpc: TenderdashRpcApi::new(tenderdash_url),
+            tenderdash_rpc: TenderdashRpcApi::new(backend_url),
             processor,
             decoder,
             last_block_height: Cell::new(0),

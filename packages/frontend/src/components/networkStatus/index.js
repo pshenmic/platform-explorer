@@ -59,9 +59,9 @@ function NetworkStatus () {
             <div className={`NetworkStatus__InfoItem ${status?.loading ? 'NetworkStatus__InfoItem--Loading' : ''}`}>
                 <div className={'NetworkStatus__Title'}>Epoch:</div>
                 <div className={'NetworkStatus__Value'}>
-                    <span>{status?.data?.epoch?.index ? `#${status.data.epoch.index}` : '-'}</span>
+                    <span>{status?.data?.epoch !== undefined ? `#${status.data.epoch.index}` : '-'}</span>
 
-                    {status?.data?.epoch?.endTime &&
+                    {status?.data?.epoch !== undefined &&
                         <Tooltip
                             label={`Next epoch change at ${new Date(status.data.epoch.endTime).toLocaleString()}`}
                             aria-label={'A tooltip'}

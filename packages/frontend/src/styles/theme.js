@@ -29,7 +29,7 @@ export const theme = extendTheme({
       550: '#52585d6b',
       600: '#62676a',
       700: '#494e51',
-      800: '#2e393d',
+      800: '#313639',
       900: '#181d20'
     }
   },
@@ -41,10 +41,7 @@ export const theme = extendTheme({
       'html, body': {
         background: '#181d20',
         color: 'white',
-        scrollBehavior: 'smooth',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column'
+        scrollBehavior: 'smooth'
       },
       h1: {
         fontSize: '4xl',
