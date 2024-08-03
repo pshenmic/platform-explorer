@@ -54,7 +54,7 @@ function DataContract ({ identifier }) {
       Api.getDocumentsByDataContract(
         identifier,
         pagintationConfig.defaultPage,
-        pagintationConfig.itemsOnPage.default)
+        pageSize)
         .then(res => {
           fetchHandlerSuccess(setDocuments, res)
           setTotal(res.pagination.total)
