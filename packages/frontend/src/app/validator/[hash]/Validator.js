@@ -9,7 +9,7 @@ import PageSizeSelector from '../../../components/pageSizeSelector/PageSizeSelec
 import { ErrorMessageBlock } from '../../../components/Errors'
 import BlocksList from '../../../components/blocks/BlocksList'
 import ImageGenerator from '../../../components/imageGenerator'
-import ProposedBlocksChart from './../../../components/charts/ProposedBlocksChart'
+import BlocksChart from './BlocksChart'
 import {
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
@@ -126,7 +126,7 @@ function Validator ({ hash }) {
           </GridItem>
 
           <GridItem height={'100%'} p={0}>
-              <ProposedBlocksChart proTxHash={hash} height={'100%'}/>
+              <BlocksChart hash={hash}/>
           </GridItem>
       </Grid>
 
