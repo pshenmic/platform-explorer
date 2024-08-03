@@ -66,16 +66,12 @@ module.exports = class IdentitiesDAO {
   }
 
   getIdentityByDPNS = async (dpns) => {
-    const [identifier] = await this.knex('identity_aliases')
-      .select('alias', 'identity_identifier')
+    const identifier = this.knex('identity_aliases')
+      .select('identity_identifier')
       .whereRaw(`UPPER(alias) LIKE UPPER('${dpns}')`)
+      .limit(1)
 
-    if (!identifier) {
-      // throw new Error(`${dpns} not found`)
-      return null
-    }
-
-    const identity = await this.getIdentityByIdentifier(identifier.identity_identifier)
+    const identity = await this.getIdentityByIdentifier(identifier)
 
     return identity
   }
