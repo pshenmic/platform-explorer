@@ -1,4 +1,5 @@
 import DocumentsListItem from './DocumentsListItem'
+import { EmptyListMessage } from '../lists'
 import './DocumentsList.scss'
 
 export default function DocumentsList ({ documents = [], size = 'l' }) {
@@ -13,7 +14,7 @@ export default function DocumentsList ({ documents = [], size = 'l' }) {
         )}
 
         {documents.length === 0 &&
-            <div className={'DocumentsList__EmptyMessage'}>There are no documents created yet.</div>
+            <EmptyListMessage>There are no documents created yet.</EmptyListMessage>
         }
     </div>
   )

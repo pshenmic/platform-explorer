@@ -20,14 +20,6 @@ class IdentitiesController {
   getIdentities = async (request, response) => {
     const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
 
-    if (order !== 'asc' && order !== 'desc') {
-      return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
-    }
-
-    if (orderBy !== 'block_height' && orderBy !== 'tx_count' && orderBy !== 'balance') {
-      return response.status(400).send({ message: `invalid order_by value ${order}. only 'block_height' or 'tx_count' or 'balance' is valid values` })
-    }
-
     const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
 
     response.send(identities)
@@ -36,10 +28,6 @@ class IdentitiesController {
   getTransactionsByIdentity = async (request, response) => {
     const { identifier } = request.params
     const { page = 1, limit = 10, order = 'asc' } = request.query
-
-    if (order !== 'asc' && order !== 'desc') {
-      return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
-    }
 
     const transactions = await this.identitiesDAO.getTransactionsByIdentity(identifier, Number(page), Number(limit), order)
 
@@ -50,10 +38,6 @@ class IdentitiesController {
     const { identifier } = request.params
     const { page = 1, limit = 10, order = 'asc' } = request.query
 
-    if (order !== 'asc' && order !== 'desc') {
-      return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
-    }
-
     const dataContracts = await this.identitiesDAO.getDataContractsByIdentity(identifier, Number(page), Number(limit), order)
 
     response.send(dataContracts)
@@ -63,10 +47,6 @@ class IdentitiesController {
     const { identifier } = request.params
     const { page = 1, limit = 10, order = 'asc' } = request.query
 
-    if (order !== 'asc' && order !== 'desc') {
-      return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
-    }
-
     const documents = await this.identitiesDAO.getDocumentsByIdentity(identifier, Number(page), Number(limit), order)
 
     response.send(documents)
@@ -75,10 +55,6 @@ class IdentitiesController {
   getTransfersByIdentity = async (request, response) => {
     const { identifier } = request.params
     const { page = 1, limit = 10, order = 'asc' } = request.query
-
-    if (order !== 'asc' && order !== 'desc') {
-      return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
-    }
 
     const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page), Number(limit), order)
 

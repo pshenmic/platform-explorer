@@ -27,7 +27,7 @@ class MainController {
       Constants.genesisTime
     ])).map((e) => e.value ?? null)
 
-    const [currentBlock] = blocks.resultSet
+    const [currentBlock] = blocks?.resultSet ?? []
 
     const epoch = genesisTime && currentBlock
       ? Epoch.fromObject({
@@ -67,11 +67,6 @@ class MainController {
 
   search = async (request, response) => {
     const { query } = request.query
-
-    // todo validate
-    if (!query) {
-      return response.status(400).send({ error: '`?query=` missing' })
-    }
 
     if (/^[0-9]+$/.test(query)) {
       // search block by height

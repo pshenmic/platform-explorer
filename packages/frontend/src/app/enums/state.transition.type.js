@@ -8,3 +8,14 @@ export const StateTransitionEnum = {
   IDENTITY_CREDIT_WITHDRAWAL: 6,
   IDENTITY_CREDIT_TRANSFER: 7
 }
+
+export const TransactionTypesEnum = {
+  DATA_CONTRACT_CREATE: 'Data Contract Create',
+  DOCUMENTS_BATCH: 'Documents Batch',
+  IDENTITY_CREATE: 'Identity Create',
+  IDENTITY_TOP_UP: 'Identity Top Up',
+  DATA_CONTRACT_UPDATE: 'Data Contract Create',
+  IDENTITY_UPDATE: 'Identity Update',
+  IDENTITY_CREDIT_WITHDRAWAL: 'Credit Withdrawal',
+  IDENTITY_CREDIT_TRANSFER: 'Credit Transfer'
+}

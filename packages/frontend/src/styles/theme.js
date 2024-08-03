@@ -14,16 +14,22 @@ export const theme = extendTheme({
       shaded: '#165278',
       light: '#5ca5d1'
     },
+    white: {
+      50: '#FFFFFF'
+    },
     gray: {
       50: '#f0f1f2',
       100: '#e0e3e5',
       200: '#c6cacd',
+      250: '#93aab2',
       300: '#acb1b4',
       400: '#94999c',
       500: '#7b7f83',
+      525: '#849099',
+      550: '#52585d6b',
       600: '#62676a',
       700: '#494e51',
-      800: '#313639',
+      800: '#2e393d',
       900: '#181d20'
     }
   },
@@ -35,7 +41,10 @@ export const theme = extendTheme({
       'html, body': {
         background: '#181d20',
         color: 'white',
-        scrollBehavior: 'smooth'
+        scrollBehavior: 'smooth',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column'
       },
       h1: {
         fontSize: '4xl',

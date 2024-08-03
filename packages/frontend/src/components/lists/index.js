@@ -1,6 +1,13 @@
 import Link from 'next/link'
 import './SimpleList.scss'
 import { forwardRef } from 'react'
+import { Container } from '@chakra-ui/react'
+
+function EmptyListMessage ({ children }) {
+  return (
+    <Container textAlign={'center'}>{children}</Container>
+  )
+}
 
 function SimpleListItem ({ item }) {
   const ItemContainer = ({ link, children }) => link
@@ -73,5 +80,6 @@ const SimpleList = forwardRef(function (props, ref) {
 SimpleList.displayName = 'SimpleList'
 
 export {
-  SimpleList
+  SimpleList,
+  EmptyListMessage
 }

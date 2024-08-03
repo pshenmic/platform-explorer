@@ -2,6 +2,7 @@ const Dash = require('dash')
 const Fastify = require('fastify')
 const metricsPlugin = require('fastify-metrics')
 const cors = require('@fastify/cors')
+const schemaTypes = require('./schemas')
 const Routes = require('./routes')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 const MainController = require('./controllers/MainController')
@@ -17,7 +18,7 @@ const BlocksDAO = require('./dao/BlocksDAO')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
-    return reply.status(403).send({ error: 'tenderdash backend is not available' })
+    return reply.status(503).send({ error: 'tenderdash/dashcore backend is not available' })
   }
 
   if (err?.constructor?.name === 'InvalidStateTransitionError') {
@@ -51,6 +52,8 @@ module.exports = {
     await fastify.register(metricsPlugin, {
       endpoint: '/metrics'
     })
+
+    schemaTypes.forEach(schema => fastify.addSchema(schema))
 
     knex = getKnex()
 
