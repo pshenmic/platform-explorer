@@ -9,12 +9,11 @@ import PageSizeSelector from '../../../components/pageSizeSelector/PageSizeSelec
 import { ErrorMessageBlock } from '../../../components/Errors'
 import BlocksList from '../../../components/blocks/BlocksList'
 import ImageGenerator from '../../../components/imageGenerator'
-import ProposedBlocksChart from './../../../components/charts/ProposedBlocksChart'
 import {
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
-  Grid, GridItem,
   Heading,
+  Flex,
   Box
 } from '@chakra-ui/react'
 
@@ -68,67 +67,58 @@ function Validator ({ hash }) {
         p={3}
         mt={8}
     >
-      <Grid
+      <Flex
           w={'100%'}
+          justifyContent={'space-between'}
+          wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
           mb={5}
-          gap={5}
-          templateColumns={['1fr', '1fr', '1fr', '1fr 1fr']}
+          alignItems={'center'}
       >
-          <GridItem p={0} height={'100%'}>
-            <TableContainer
-                width={'100%'}
-                height={'100%'}
-                maxW={'none'}
-                borderWidth={'1px'} borderRadius={'lg'}
-                m={0}
-                display={'block'}
-              >
-                {!validator.error
-                  ? <Table variant={'simple'} className={'Table'}>
-                        <Thead>
-                            <Tr>
-                                <Th pr={0}>validator info</Th>
-                                <Th className={'TableHeader TableHeader--Name'}>
-                                    {hash
-                                      ? <div className={'TableHeader__Content'}>
-                                            <ImageGenerator className={'TableHeader__Avatar'} username={hash} lightness={50} saturation={50} width={32} height={32}/>
-                                        </div>
-                                      : <Box w={'32px'} h={'32px'} />
-                                    }
-                                </Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            <Tr>
-                                <Td w={tdTitleWidth}>ProTxHash</Td>
-                                <Td isNumeric className={'Table__Cell--BreakWord'}>
-                                    <LoadingLine loading={validator.loading}>
-                                      <div>{hash}</div>
-                                    </LoadingLine>
-                                </Td>
-                            </Tr>
-                            <Tr>
-                                <Td w={tdTitleWidth}>Status</Td>
-                                <Td isNumeric>
-                                    <LoadingLine loading={validator.loading}>{validator?.data?.isActive ? 'Active' : 'Inactive'}</LoadingLine>
-                                </Td>
-                            </Tr>
-                            <Tr>
-                                <Td w={tdTitleWidth}>Proposed blocks</Td>
-                                <Td isNumeric>
-                                    <LoadingLine loading={validator.loading}>{validator?.data?.proposedBlocksAmount || '-'}</LoadingLine>
-                                </Td>
-                            </Tr>
-                        </Tbody>
-                    </Table>
-                  : <Container h={60}><ErrorMessageBlock/></Container>}
-            </TableContainer>
-          </GridItem>
-
-          <GridItem height={'100%'} p={0}>
-              <ProposedBlocksChart proTxHash={hash} height={'100%'}/>
-          </GridItem>
-      </Grid>
+          <TableContainer
+              width={'100%'}
+              maxW={'none'}
+              borderWidth={'1px'} borderRadius={'lg'}
+              m={0}
+            >
+              {!validator.error
+                ? <Table variant={'simple'} className={'Table'}>
+                      <Thead>
+                          <Tr>
+                              <Th pr={0}>validator info</Th>
+                              <Th className={'TableHeader TableHeader--Name'}>
+                                  {hash
+                                    ? <div className={'TableHeader__Content'}>
+                                          <ImageGenerator className={'TableHeader__Avatar'} username={hash} lightness={50} saturation={50} width={32} height={32}/>
+                                      </div>
+                                    : <Box w={'32px'} h={'32px'} />
+                                  }
+                              </Th>
+                          </Tr>
+                      </Thead>
+                      <Tbody>
+                          <Tr>
+                              <Td w={tdTitleWidth}>ProTxHash</Td>
+                              <Td isNumeric className={'Table__Cell--BreakWord'}>
+                                  <LoadingLine loading={validator.loading}>{hash}</LoadingLine>
+                              </Td>
+                          </Tr>
+                          <Tr>
+                              <Td w={tdTitleWidth}>Status</Td>
+                              <Td isNumeric>
+                                  <LoadingLine loading={validator.loading}>{validator?.data?.isActive ? 'Active' : 'Inactive'}</LoadingLine>
+                              </Td>
+                          </Tr>
+                          <Tr>
+                              <Td w={tdTitleWidth}>Proposed blocks</Td>
+                              <Td isNumeric>
+                                  <LoadingLine loading={validator.loading}>{validator?.data?.proposedBlocksAmount || '-'}</LoadingLine>
+                              </Td>
+                          </Tr>
+                      </Tbody>
+                  </Table>
+                : <Container h={60}><ErrorMessageBlock/></Container>}
+          </TableContainer>
+      </Flex>
 
       <Container
         width={'100%'}

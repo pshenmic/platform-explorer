@@ -3,34 +3,34 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
-import LineChartBlock from './LineChartBlock'
+import LineChartBlock from '../../components/charts/LineChartBlock'
 
-const transactionsChartConfig = {
+const chartConfig = {
   timespan: {
     default: '1w',
     values: ['1h', '24h', '3d', '1w']
   }
 }
 
-export default function TransactionsHistory ({ height = '220px' }) {
-  const [transactionsHistory, setTransactionsHistory] = useState({ data: {}, loading: true, error: false })
-  const [timespan, setTimespan] = useState(transactionsChartConfig.timespan.default)
+export default function ProposedBlocksChart ({ proTxHash, height = '220px' }) {
+  const [blocksHistory, setBlocksHistory] = useState({ data: {}, loading: true, error: false })
+  const [timespan, setTimespan] = useState(chartConfig.timespan.default)
 
   useEffect(() => {
-    Api.getTransactionsHistory(timespan)
-      .then(res => fetchHandlerSuccess(setTransactionsHistory, { resultSet: res }))
-      .catch(err => fetchHandlerError(setTransactionsHistory, err))
+    Api.getBlocksStatsByValidator(proTxHash, timespan)
+      .then(res => fetchHandlerSuccess(setBlocksHistory, { resultSet: res }))
+      .catch(err => fetchHandlerError(setBlocksHistory, err))
   }, [timespan])
 
   return (
     <LineChartBlock
-        title={'Transactions history'}
-        loading={transactionsHistory.loading}
-        error={transactionsHistory.error}
+        title={'Proposed blocks'}
+        loading={blocksHistory.loading}
+        error={blocksHistory.error}
         timespanChange={setTimespan}
-        data={transactionsHistory.data?.resultSet?.map((item) => ({
+        data={blocksHistory.data?.resultSet?.map((item) => ({
           x: new Date(item.timestamp),
-          y: item.data.txs
+          y: item.data.blocksCount
         })) || []}
         xAxis={{
           type: (() => {
@@ -45,8 +45,9 @@ export default function TransactionsHistory ({ height = '220px' }) {
         yAxis={{
           type: 'number',
           title: '',
-          abbreviation: 'txs'
+          abbreviation: 'blocks'
         }}
+        height={height}
     />
   )
 }

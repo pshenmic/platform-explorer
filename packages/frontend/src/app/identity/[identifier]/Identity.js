@@ -127,7 +127,7 @@ function Identity ({ identifier }) {
                             <Tbody>
                                 <Tr>
                                     <Td w={tdTitleWidth}>Identifier</Td>
-                                    <Td isNumeric>
+                                    <Td isNumeric className={'Table__Cell--BreakWord'}>
                                         <LoadingLine loading={identity.loading}>
                                             {identity.data?.identifier}
                                         </LoadingLine>

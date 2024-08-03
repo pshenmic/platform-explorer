@@ -27,12 +27,12 @@ const defChartConfig = {
   }
 }
 
-export default function LineChartBlock ({ height = '220px', items, timespanChange, title, config }) {
+export default function LineChartBlock ({ height = '220px', items, data, xAxis, yAxis, loading, error, timespanChange, title, config }) {
   const chartConfig = config || defChartConfig
-  const [transactionsTimespan, setTransactionsTimespan] = useState(chartConfig.timespan.default)
+  const [timespan, setTimespan] = useState(chartConfig.timespan.default)
 
   function timespanChangeHandler (value) {
-    setTransactionsTimespan(value)
+    setTimespan(value)
     if (typeof timespanChange === 'function') timespanChange(value)
   }
 
@@ -46,6 +46,7 @@ export default function LineChartBlock ({ height = '220px', items, timespanChang
         p={3}
         pb={2}
         background={'gray.900'}
+        height={height}
     >
         <div className={'ChartBlock__Head'}>
             <Heading className={'ChartBlock__Title'} as={'h2'} size={'sm'}>{title}</Heading>
@@ -74,29 +75,13 @@ export default function LineChartBlock ({ height = '220px', items, timespanChang
             p={0}
             flexDirection={'column'}
         >
-          {!items.loading
-            ? (!items.error && items.data?.resultSet?.length)
+          {!loading
+            ? (!error && data?.length)
                 ? <LineChart
-                    data={items.data.resultSet.map((item) => ({
-                      x: new Date(item.timestamp),
-                      y: item.data.txs
-                    }))}
-                    timespan={transactionsTimespan}
-                    xAxis={{
-                      type: (() => {
-                        if (transactionsTimespan === '1h') return { axis: 'time' }
-                        if (transactionsTimespan === '24h') return { axis: 'time' }
-                        if (transactionsTimespan === '3d') return { axis: 'date', tooltip: 'datetime' }
-                        if (transactionsTimespan === '1w') return { axis: 'date' }
-                      })(),
-                      abbreviation: '',
-                      title: ''
-                    }}
-                    yAxis={{
-                      type: 'number',
-                      title: '',
-                      abbreviation: 'txs'
-                    }}
+                    data={data}
+                    timespan={timespan}
+                    xAxis={xAxis}
+                    yAxis={yAxis}
                 />
                 : <ErrorMessageBlock/>
             : <Container

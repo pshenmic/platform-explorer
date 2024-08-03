@@ -22,6 +22,7 @@
     &__Cell {
         &--BreakWord {
             white-space: break-spaces;
+            word-break: break-all;
         }
     }
 }
