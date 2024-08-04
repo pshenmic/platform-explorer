@@ -31,15 +31,15 @@ module.exports = class EpochDAO {
       .andWhere('blocks.timestamp', '<=', epoch.endTime.toISOString())
       .groupBy('validators.pro_tx_hash')
       .as('subquery')
-      
+
     const [row] = await this.knex
       .select(
-        'pro_tx_hash as best_validator',
-        'tx_count',
-        'collected_fees',
-        'row_num',
-        this.knex.raw('SUM(collected_fees) OVER () as total_collected_fees'),
-        this.knex.raw(`SUM(tx_count) OVER () * 1.0 / ${Constants.EPOCH_CHANGE_TIME / 1000} as tps`)
+        'subquery.pro_tx_hash as best_validator',
+        'subquery.tx_count',
+        'subquery.collected_fees',
+        'subquery.row_num',
+        this.knex.raw('SUM(subquery.collected_fees) OVER () as total_collected_fees'),
+        this.knex.raw(`SUM(subquery.tx_count) OVER () * 1.0 / ${Constants.EPOCH_CHANGE_TIME / 1000} as tps`)
       )
       .from(subquery)
       .orderBy('row_num', 'asc')
