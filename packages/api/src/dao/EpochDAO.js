@@ -30,7 +30,8 @@ module.exports = class EpochDAO {
       .where('blocks.timestamp', '>', epoch.startTime.toISOString())
       .andWhere('blocks.timestamp', '<=', epoch.endTime.toISOString())
       .groupBy('validators.pro_tx_hash')
-
+      .as('subquery')
+      
     const [row] = await this.knex
       .select(
         'pro_tx_hash as best_validator',
