@@ -66,7 +66,6 @@ export default function LineChartBlock ({ height = '220px', data, xAxis, yAxis, 
         </div>
 
         <Flex
-            minH={'220px'}
             height={height}
             maxW={'none'}
             flexGrow={'1'}
