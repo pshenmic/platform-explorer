@@ -1,6 +1,23 @@
 import { extendTheme } from '@chakra-ui/react'
+import {
+  Montserrat,
+  Open_Sans as OpenSans,
+  Roboto
+} from 'next/font/google'
+
+const montserrat = Montserrat({ subsets: ['latin'] })
+const openSans = OpenSans({ subsets: ['latin'] })
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '700', '900']
+})
 
 export const theme = extendTheme({
+  fonts: {
+    heading: montserrat.style.fontFamily,
+    body: openSans.style.fontFamily,
+    mono: roboto.style.fontFamily
+  },
   config: {
     useSystemColorMode: false,
     initialColorMode: 'dark'
