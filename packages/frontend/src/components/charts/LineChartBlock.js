@@ -27,7 +27,7 @@ const defChartConfig = {
   }
 }
 
-export default function LineChartBlock ({ height = '220px', items, data, xAxis, yAxis, loading, error, timespanChange, title, config }) {
+export default function LineChartBlock ({ height = '220px', data, xAxis, yAxis, loading, error, timespanChange, title, config }) {
   const chartConfig = config || defChartConfig
   const [timespan, setTimespan] = useState(chartConfig.timespan.default)
 

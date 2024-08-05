@@ -47,6 +47,7 @@ export default function TransactionsHistory ({ height = '220px' }) {
           title: '',
           abbreviation: 'txs'
         }}
+        height={height}
     />
   )
 }
