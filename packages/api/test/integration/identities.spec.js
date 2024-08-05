@@ -26,7 +26,14 @@ describe('Identities routes', () => {
   let transactions
 
   before(async () => {
-    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+    mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
+      block: {
+        header: {
+          time: new Date(0).toISOString()
+        }
+      }
+    }))
+
     app = await server.start()
     client = supertest(app.server)
     knex = getKnex()
@@ -69,6 +76,66 @@ describe('Identities routes', () => {
 
     it('should return 404 when identity not found', async () => {
       await client.get('/identity/Cxo56ta5EMrWok8yp2Gpzm8cjBoa3mGYKZaAp9yqD3gW')
+        .expect(404)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+    })
+  })
+
+  describe('getIdentityByDPNS()', async () => {
+    it('should return identity by dpns', async () => {
+      const block = await fixtures.block(knex)
+      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      await fixtures.identity_alias(knex, { alias: 'test-name.1.dash', identity })
+
+      const { body } = await client.get('/dpns/identity?dpns=test-name.1.dash')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedIdentity = {
+        identifier: identity.identifier,
+        owner: identity.identifier,
+        revision: identity.revision,
+        balance: 0,
+        timestamp: block.timestamp.toISOString(),
+        txHash: identity.txHash,
+        totalTxs: 1,
+        totalTransfers: 0,
+        totalDocuments: 0,
+        totalDataContracts: 0,
+        isSystem: false
+      }
+
+      assert.deepEqual(body, expectedIdentity)
+    })
+
+    it('should return identity by dpns with any case', async () => {
+      const block = await fixtures.block(knex)
+      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      await fixtures.identity_alias(knex, { alias: 'test-name.2.dash', identity })
+
+      const { body } = await client.get('/dpns/identity?dpns=TeSt-NaME.2.DAsH')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedIdentity = {
+        identifier: identity.identifier,
+        owner: identity.identifier,
+        revision: identity.revision,
+        balance: 0,
+        timestamp: block.timestamp.toISOString(),
+        txHash: identity.txHash,
+        totalTxs: 1,
+        totalTransfers: 0,
+        totalDocuments: 0,
+        totalDataContracts: 0,
+        isSystem: false
+      }
+
+      assert.deepEqual(body, expectedIdentity)
+    })
+
+    it('should return 404 when identity not found', async () => {
+      await client.get('/dpns/identity?dpns=bad-name')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })

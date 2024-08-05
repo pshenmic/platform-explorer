@@ -163,6 +163,20 @@ module.exports = ({
       }
     },
     {
+      path: '/dpns/identity',
+      method: 'GET',
+      handler: identitiesController.getIdentityByDPNS,
+      schema: {
+        querystring: {
+          type: 'object',
+          required: ['dpns'],
+          properties: {
+            dpns: { type: 'string' }
+          }
+        }
+      }
+    },
+    {
       path: '/identity/:identifier/transactions',
       method: 'GET',
       handler: identitiesController.getTransactionsByIdentity,

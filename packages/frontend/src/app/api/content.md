@@ -22,6 +22,7 @@ Reference:
 * [Document by Identifier](#document-by-identifier)
 * [Documents by Data Contract](#documents-by-data-contract)
 * [Identity by Identifier](#identity-by-identifier)
+* [Identity by DPNS](#identity-by-dpns)
 * [Identities](#identities)
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
@@ -486,6 +487,32 @@ Response codes:
 Return identity by given identifier
 ```
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
+
+{
+    identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+    owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+    revision: 1,
+    balance: 1000000,
+    timestamp: "2024-03-18T10:13:54.150Z",
+    txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
+    totalTxs: 1,
+    totalTransfers: 0,
+    totalDocuments: 0,
+    totalDataContracts: 0,
+    isSystem: false
+}
+```
+Response codes:
+```
+200: OK
+404: Not found
+500: Internal Server Error
+```
+---
+### Identity by DPNS
+Return identity by given DPNS/alias
+```
+GET /dpns/identity?dpns=test-name.1.dash
 
 {
     identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
