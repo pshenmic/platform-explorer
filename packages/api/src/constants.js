@@ -7,7 +7,7 @@ module.exports = {
   get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {
       return TenderdashRPC.getBlockByHeight(1).then((blockInfo) => {
-        if (!blockInfo) {
+        if (!blockInfo?.block?.header?.time) {
           throw new Error('Could not load genesis time')
         }
         genesisTime = new Date(blockInfo.block.header.time)
