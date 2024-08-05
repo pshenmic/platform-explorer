@@ -9,14 +9,13 @@ import { LoadingLine, LoadingBlock, LoadingList } from '../../../components/load
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import ImageGenerator from '../../../components/imageGenerator'
+import { DataContractSchema } from '../../../components/dataContracts'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import './DataContract.scss'
 import {
   Box,
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
-  Tabs, TabList, TabPanels, Tab, TabPanel,
-  Code
+  Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
 
 const pagintationConfig = {
@@ -55,7 +54,7 @@ function DataContract ({ identifier }) {
       Api.getDocumentsByDataContract(
         identifier,
         pagintationConfig.defaultPage,
-        pagintationConfig.itemsOnPage.default)
+        pageSize)
         .then(res => {
           fetchHandlerSuccess(setDocuments, res)
           setTotal(res.pagination.total)
@@ -140,12 +139,14 @@ function DataContract ({ identifier }) {
                             <LoadingLine loading={dataContract.loading}>{dataContract.data?.identifier}</LoadingLine>
                         </Td>
                     </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Name</Td>
-                        <Td>
-                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
-                        </Td>
-                    </Tr>
+                    {dataContract.data?.name &&
+                        <Tr>
+                            <Td w={tdTitleWidth}>Name</Td>
+                            <Td>
+                                <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
+                            </Td>
+                        </Tr>
+                    }
                     <Tr>
                         <Td w={tdTitleWidth}>Owner</Td>
                         <Td>
@@ -210,7 +211,6 @@ function DataContract ({ identifier }) {
                     <Tab>Documents</Tab>
                     <Tab>Schema</Tab>
                 </TabList>
-
                 <TabPanels>
                     <TabPanel>
                         <Box>
@@ -236,21 +236,13 @@ function DataContract ({ identifier }) {
                             }
                         </Box>
                     </TabPanel>
-
                     <TabPanel>
                         <Box>
                           {!dataContract.error
-                            ? <LoadingBlock loading={dataContract.loading} h={60}>
-                                  <div className={'DataContractSchema'}>
-                                      <Code
-                                          className={'DataContractSchema__Code'}
-                                          borderRadius={'lg'}
-                                          p={4}
-                                          w={'100%'}
-                                      >
-                                          {dataContract.data?.schema && JSON.stringify(JSON.parse(dataContract.data?.schema), null, 2)}
-                                    </Code>
-                                  </div>
+                            ? <LoadingBlock loading={dataContract.loading}>
+                                {dataContract.data?.schema
+                                  ? <DataContractSchema schema={dataContract.data?.schema}/>
+                                  : <Container h={20}><ErrorMessageBlock/></Container>}
                               </LoadingBlock>
                             : <Container h={20}><ErrorMessageBlock/></Container>
                           }

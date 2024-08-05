@@ -1,3 +1,4 @@
+import copyToClipboard from './copyToClipboard'
 import { StateTransitionEnum, TransactionTypesEnum } from '../app/enums/state.transition.type'
 import currencyRound from './currencyRound'
 
@@ -41,5 +42,6 @@ export {
   fetchHandlerSuccess,
   fetchHandlerError,
   numberFormat,
-  currencyRound
+  currencyRound,
+  copyToClipboard
 }
