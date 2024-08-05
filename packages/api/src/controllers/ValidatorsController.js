@@ -30,9 +30,9 @@ class ValidatorsController {
         isActive,
         validator.proposedBlocksAmount,
         validator.lastProposedBlockHeader,
-        proTxInfo
-          ? ProTxInfo.fromObject(proTxInfo)
-          : null))
+        ProTxInfo.fromObject(proTxInfo)
+      )
+    )
   }
 
   getValidators = async (request, response) => {
@@ -59,9 +59,7 @@ class ValidatorsController {
           activeValidator.pro_tx_hash === validator.proTxHash),
         validator.proposedBlocksAmount,
         validator.lastProposedBlockHeader,
-        validator.proTxInfo
-          ? ProTxInfo.fromObject(validator.proTxInfo)
-          : null
+        ProTxInfo.fromObject(validator.proTxInfo)
         )
       )
     })
