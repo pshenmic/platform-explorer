@@ -117,6 +117,10 @@ const getValidatorByProTxHash = (proTxHash) => {
   return call(`validator/${proTxHash}`, 'GET')
 }
 
+const getBlocksStatsByValidator = (proTxHash, timespan = '24h') => {
+  return call(`validator/${proTxHash}/stats?timespan=${timespan}`, 'GET')
+}
+
 const getStatus = () => {
   return call('status', 'GET')
 }
@@ -150,5 +154,6 @@ export {
   getTransfersByIdentity,
   getValidators,
   getValidatorByProTxHash,
-  getBlocksByValidator
+  getBlocksByValidator,
+  getBlocksStatsByValidator
 }
