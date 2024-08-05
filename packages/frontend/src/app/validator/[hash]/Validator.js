@@ -101,7 +101,7 @@ function Validator ({ hash }) {
                         <Tbody>
                             <Tr>
                                 <Td w={tdTitleWidth}>ProTxHash</Td>
-                                <Td isNumeric className={'Table__Cell--BreakWord'}>
+                                <Td isNumeric className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                                     <LoadingLine loading={validator.loading}>
                                       <div>{hash}</div>
                                     </LoadingLine>

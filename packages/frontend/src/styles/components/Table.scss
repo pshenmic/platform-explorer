@@ -1,3 +1,5 @@
+@import './../variables.scss';
+
 .Table {
     a {
         position: relative;
@@ -23,6 +25,10 @@
         &--BreakWord {
             white-space: break-spaces;
             word-break: break-all;
+        }
+
+        &--Mono {
+            font-family: $font-mono;
         }
     }
 }
