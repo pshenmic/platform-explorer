@@ -116,7 +116,7 @@ class MainController {
         return response.send({ document })
       }
     }
-    
+
     if (/^[^\s.]+(\.[^\s.]+)*$/.test(query)) {
       const identity = await this.identitiesDAO.getIdentityByDPNS(query)
 
