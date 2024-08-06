@@ -58,6 +58,11 @@ function GlobalSearchInput () {
         return
       }
 
+      if (searchResult?.validator) {
+        searchRedirect(`/validator/${searchResult?.validator.proTxHash}`)
+        return
+      }
+
       showModalWindow('Not found', 6000)
     } catch (e) {
       console.error(e)
