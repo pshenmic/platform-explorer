@@ -116,30 +116,7 @@ class MainController {
         return response.send({ document })
       }
     }
-
-    if (/^[0-9A-z]{43,44}$/.test(query)) {
-      // search identites
-      const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
-
-      if (identity) {
-        return response.send({ identity })
-      }
-
-      // search data contracts
-      const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(query)
-
-      if (dataContract) {
-        return response.send({ dataContract })
-      }
-
-      // search documents
-      const document = await this.documentsDAO.getDocumentByIdentifier(query)
-
-      if (document) {
-        return response.send({ document })
-      }
-    }
-
+    
     if (/^[^\s.]+(\.[^\s.]+)*$/.test(query)) {
       const identity = await this.identitiesDAO.getIdentityByDPNS(query)
 
