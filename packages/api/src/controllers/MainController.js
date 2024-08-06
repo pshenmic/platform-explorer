@@ -3,6 +3,7 @@ const DataContractsDAO = require('../dao/DataContractsDAO')
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const DocumentsDAO = require('../dao/DocumentsDAO')
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
+const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const Constants = require('../constants')
@@ -17,6 +18,7 @@ class MainController {
     this.documentsDAO = new DocumentsDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
+    this.validatorsDAO = new ValidatorsDAO(knex)
   }
 
   getStatus = async (request, response) => {
@@ -90,6 +92,13 @@ class MainController {
 
       if (transaction) {
         return response.send({ transaction })
+      }
+
+      // search validators
+      const validator = await this.validatorsDAO.getValidatorByProTxHash(query)
+
+      if (validator) {
+        return response.send({ validator })
       }
     }
 
