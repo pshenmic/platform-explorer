@@ -12,6 +12,8 @@
         color: var(--chakra-colors-gray-200);
         word-wrap: break-word;
         overflow-wrap: anywhere;
+        font-family: $font-heading;
+        font-weight: 500;
     }
 }
 
@@ -25,7 +27,7 @@
         overflow-wrap: anywhere;
 
         &--Monospace {
-            font-family: monospace;
+            font-family: $font-mono;
         }
     }
 
@@ -46,7 +48,7 @@
         }
 
         &--Monospace {
-            font-family: monospace;
+            font-family: $font-mono;
         }
     }
 }
