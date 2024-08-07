@@ -4,6 +4,11 @@ import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
 import { SearchIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/navigation'
+import {
+  ResponseErrorNotFound,
+  ResponseErrorTimeout,
+  ResponseErrorInternalServer
+} from '../../util/errors'
 
 function GlobalSearchInput () {
   const [showModal, setShowModal] = useState(false)
@@ -62,7 +67,14 @@ function GlobalSearchInput () {
       showModalWindow('Not found', 6000)
     } catch (e) {
       console.error(e)
-      const errorMessage = e.status === 404 ? 'Not found' : 'Request error'
+
+      const errorMessage = (() => {
+        if (e instanceof ResponseErrorNotFound ||
+            e instanceof ResponseErrorTimeout ||
+            e instanceof ResponseErrorInternalServer) return e.message
+        return 'Request error'
+      })()
+
       showModalWindow(errorMessage)
     }
   }

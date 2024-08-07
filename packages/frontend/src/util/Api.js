@@ -1,9 +1,10 @@
+import { ResponseErrorNotFound, ResponseErrorTimeout } from './errors'
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 const fetchWrapper = (url, options) => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => reject(new Error('RPC_TIMEOUT')), 30000)
-
+    setTimeout(() => reject(new ResponseErrorTimeout()), 30000)
     fetch(url, options).catch(reject).then(resolve)
   })
 }
@@ -20,31 +21,13 @@ const call = async (path, method, body) => {
 
     if (response.status === 200) {
       return response.json()
+    } else if (response.status === 404) {
+      throw new ResponseErrorNotFound()
     } else {
-      const text = await response.text()
-
-      let json
-      try {
-        json = JSON.parse(text)
-      } catch (e) {}
-
-      if (json?.error) {
-        const error = new Error(json.error)
-        error.status = response.status
-        throw error
-      }
-
       const error = new Error('Unknown status code: ' + response.status)
-      error.status = response.status
       throw error
     }
   } catch (e) {
-    if (e === 'RPC_TIMEOUT') {
-      const error = new Error('Request to Tenderdash RPC is timed out')
-      error.status = 408
-      throw error
-    }
-
     console.error(e)
     throw e
   }
