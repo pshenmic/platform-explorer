@@ -233,7 +233,7 @@ jobs:
             docker rm platform-explorer-api platform-explorer-indexer
             docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             sleep 3
-            docker run -d --env-file api.env --restart always --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer cargo run
+            docker run -d --env-file api.env --restart always --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
             
   create_tag:
     runs-on: ubuntu-latest
@@ -292,12 +292,6 @@ jobs:
         with:
           name: "Changelog"
           path: CHANGELOG.md
-
-      - name: DEBUG tag
-        run: echo ${{steps.previoustag.outputs.tag }}
-
-      - name: DEBUG package
-        run: echo ${{steps.package-version.outputs.current-version}}
 
       - name: Create a GitHub release
         if: ${{steps.package-version.outputs.current-version != steps.previoustag.outputs.tag }}
