@@ -182,16 +182,8 @@ jobs:
     if: (github.event_name != 'pull_request' || github.event.pull_request.merged == true)
     
     steps:
-      - uses: Stockopedia/action-get-changed-files@v1
-        id: changes
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          ignore: "**/+(.github)"
-          foldersOnly: false 
-          format: csv
-      
       - name: Drop database
-        if: ${{contains(steps.changes.outputs.changed, 'packages/indexer/')}}
+        if: ${{contains(github.event.pull_request.labels.*.name, 'indexer')}}
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -246,8 +238,6 @@ jobs:
       - name: 'Get Previous tag'
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        with:
-          fallback: 1.0.0
 
       - name: get-npm-version
         id: package-version
@@ -255,44 +245,7 @@ jobs:
         with:
           path: ./
 
-      - name: 'Generate changelog'
-        id: changelog
-        uses: heinrichreimer/action-github-changelog-generator@v2.3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }} 
-          headerLabel: "# 📑 Changelog"
-          breakingLabel: '### 💥 Breaking'
-          enhancementLabel: '### 🚀 Enhancements'
-          bugsLabel: '### 🐛 Bug fixes'
-          deprecatedLabel: '### ⚠️ Deprecations'
-          removedLabel: '### 🔥 Removals'
-          securityLabel: '### 🛡️ Security'
-          issuesLabel: '### 📁 Other issues'
-          prLabel: '### 📁 Other pull requests'
-          addSections: '{"indexer":{"prefix":"### 🧩 Indexer","labels":["indexer"]},"api":{"prefix":"###📊 API","labels":["backend"]},"frontend":{"prefix":"###👨‍💻 frontend","labels":["frontend"]}}'
-          issues: true
-          issuesWoLabels: true
-          pullRequests: true
-          prWoLabels: true
-          author: true
-          unreleased: true
-          compareLink: true
-          stripGeneratorNotice: true
-          verbose: true
-
-      - name: "🖨️ Print changelog to console"
-        run: cat CHANGELOG.md
-
-      - name: "📤 Upload changelog"
-        uses: actions/upload-artifact@v4
-        with:
-          name: "Changelog"
-          path: CHANGELOG.md
-
       - name: Create a GitHub release
-        if: ${{steps.package-version.outputs.current-version != steps.previoustag.outputs.tag }}
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.package-version.outputs.current-version}}
-          name: Release ${{ steps.package-version.outputs.current-version}}
-          body: ${{steps.changelog.outputs.changelog}}
+        uses: release-drafter/release-drafter@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
