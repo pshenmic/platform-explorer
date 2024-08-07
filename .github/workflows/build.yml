@@ -19,11 +19,7 @@ jobs:
         if: | 
           (contains(github.event.pull_request.labels.*.name, 'backend') ||
             contains(github.event.pull_request.labels.*.name, 'frontend') || 
-            contains(github.event.pull_request.labels.*.name, 'indexer') || 
-            contains(github.event.pull_request.labels.*.name, 'data contract') || 
-            contains(github.event.pull_request.labels.*.name, 'design') || 
-            contains(github.event.pull_request.labels.*.name, 'enhancement') || 
-            contains(github.event.pull_request.labels.*.name, 'documentation')) == false &&
+            contains(github.event.pull_request.labels.*.name, 'indexer')) == false &&
           (github.event_name == 'pull_request')        
         run: exit 1
       
