@@ -22,6 +22,7 @@ jobs:
             contains(github.event.pull_request.labels.*.name, 'indexer') || 
             contains(github.event.pull_request.labels.*.name, 'data contract') || 
             contains(github.event.pull_request.labels.*.name, 'design') || 
+            contains(github.event.pull_request.labels.*.name, 'enhancement') || 
             contains(github.event.pull_request.labels.*.name, 'documentation')) == false &&
           (github.event_name == 'pull_request')        
         run: exit 1
