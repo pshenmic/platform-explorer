@@ -71,7 +71,9 @@ function GlobalSearchInput () {
       const errorMessage = (() => {
         if (e instanceof ResponseErrorNotFound ||
             e instanceof ResponseErrorTimeout ||
-            e instanceof ResponseErrorInternalServer) return e.message
+            e instanceof ResponseErrorInternalServer) {
+          return e.message
+        }
         return 'Request error'
       })()
 
