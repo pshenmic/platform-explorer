@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ModalWindow from '../modalWindow'
 import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
@@ -9,8 +9,18 @@ function GlobalSearchInput () {
   const [showModal, setShowModal] = useState(false)
   const [modalText, setModalText] = useState('false')
   const router = useRouter()
-
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    let timer
+    if (showModal) {
+      timer = setTimeout(() => {
+        setShowModal(false)
+        setModalText('')
+      }, 6000)
+    }
+    return () => clearTimeout(timer)
+  }, [showModal])
 
   const showModalWindow = (text, timeout) => {
     setShowModal(true)
@@ -33,40 +43,27 @@ function GlobalSearchInput () {
     try {
       const searchResult = await Api.search(searchQuery)
 
-      if (searchResult?.block) {
-        searchRedirect(`/block/${searchResult?.block.header.hash}`)
-        return
+      const searchTypeMap = {
+        block: `/block/${searchResult.block?.header.hash}`,
+        transaction: `/transaction/${searchResult.transaction?.hash}`,
+        dataContract: `/dataContract/${searchResult.dataContract?.identifier}`,
+        document: `/document/${searchResult.document?.identifier}`,
+        identity: `/identity/${searchResult.identity?.identifier}`,
+        validator: `/validator/${searchResult.validator?.proTxHash}`
       }
 
-      if (searchResult?.transaction) {
-        searchRedirect(`/transaction/${searchResult?.transaction.hash}`)
-        return
-      }
-
-      if (searchResult?.dataContract) {
-        searchRedirect(`/dataContract/${searchResult?.dataContract.identifier}`)
-        return
-      }
-
-      if (searchResult?.document) {
-        searchRedirect(`/document/${searchResult?.document.identifier}`)
-        return
-      }
-
-      if (searchResult?.identity) {
-        searchRedirect(`/identity/${searchResult?.identity.identifier}`)
-        return
-      }
-
-      if (searchResult?.validator) {
-        searchRedirect(`/validator/${searchResult?.validator.proTxHash}`)
-        return
+      for (const key in searchTypeMap) {
+        if (searchResult[key]) {
+          searchRedirect(searchTypeMap[key])
+          return
+        }
       }
 
       showModalWindow('Not found', 6000)
     } catch (e) {
       console.error(e)
-      showModalWindow('Request error', 6000)
+      const errorMessage = e.status === 404 ? 'Not found' : 'Request error'
+      showModalWindow(errorMessage)
     }
   }
 

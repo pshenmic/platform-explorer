@@ -29,19 +29,24 @@ const call = async (path, method, body) => {
       } catch (e) {}
 
       if (json?.error) {
-        throw new Error(json.error)
+        const error = new Error(json.error)
+        error.status = response.status
+        throw error
       }
 
-      console.error(text)
-      throw new Error('Unknown status code: ' + response.status)
+      const error = new Error('Unknown status code: ' + response.status)
+      error.status = response.status
+      throw error
     }
   } catch (e) {
     if (e === 'RPC_TIMEOUT') {
-      throw new Error('Request to Tenderdash RPC is timed out')
+      const error = new Error('Request to Tenderdash RPC is timed out')
+      error.status = 408
+      throw error
     }
 
     console.error(e)
-    throw new Error(e)
+    throw e
   }
 }
 
