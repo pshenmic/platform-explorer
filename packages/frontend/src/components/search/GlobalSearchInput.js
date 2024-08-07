@@ -49,12 +49,12 @@ function GlobalSearchInput () {
       const searchResult = await Api.search(searchQuery)
 
       const searchTypeMap = {
-        block: `/block/${searchResult.block?.header.hash}`,
-        transaction: `/transaction/${searchResult.transaction?.hash}`,
-        dataContract: `/dataContract/${searchResult.dataContract?.identifier}`,
-        document: `/document/${searchResult.document?.identifier}`,
-        identity: `/identity/${searchResult.identity?.identifier}`,
-        validator: `/validator/${searchResult.validator?.proTxHash}`
+        block: `/block/${searchResult?.block?.header?.hash}`,
+        transaction: `/transaction/${searchResult?.transaction?.hash}`,
+        dataContract: `/dataContract/${searchResult?.dataContract?.identifier}`,
+        document: `/document/${searchResult?.document?.identifier}`,
+        identity: `/identity/${searchResult?.identity?.identifier}`,
+        validator: `/validator/${searchResult?.validator?.proTxHash}`
       }
 
       for (const key in searchTypeMap) {
