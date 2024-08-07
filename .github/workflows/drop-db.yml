@@ -1,14 +1,14 @@
 name: Drop DB
 
 on:
-    push:
-        tags:        
-            - 'v*'
-    workflow_run:
-        workflows: ["Build and push packages"]
-        branches: [main]
-        types: 
-        - completed
+  push:
+      tags:        
+          - 'v*'
+  workflow_run:
+      workflows: ["Build and push packages"]
+      branches: [main]
+      types: 
+      - completed
 
 
 env:
@@ -16,26 +16,26 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs: 
-    drop_db:
-        runs-on: ubuntu-latest
-        steps:
+  drop_db:
+      runs-on: ubuntu-latest
+      steps:
 
-        - name: Checkout repository
-          uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
-            
-        - name: Drop database
-          uses: appleboy/ssh-action@v0.1.10
-          with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ${{ secrets.SSH_USERNAME }}
-            key: ${{ secrets.SSH_KEY }}
-            port: ${{ secrets.SSH_PORT }}
-            script: |
-              git -C ./platform-explorer pull
-              docker pull owl352/refinery_cli_docker
-              docker stop $(docker ps -f name=platform-explorer-api -q)
-              docker stop $(docker ps -f name=platform-explorer-indexer -q)
-              docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api npm run db:drop
-              docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer refinery migrate -e DATABASE_URL -p /app/migrations
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Drop database
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            git -C ./platform-explorer pull
+            docker pull owl352/refinery_cli_docker
+            docker stop $(docker ps -f name=platform-explorer-api -q)
+            docker stop $(docker ps -f name=platform-explorer-indexer -q)
+            docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api npm run db:drop
+            docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer refinery migrate -e DATABASE_URL -p /app/migrations
