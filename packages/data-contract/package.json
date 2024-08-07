@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dataContract:deploy": "node index.js",
+    "dataContract:deploy": "node ./src/actions/deployContract.js",
+    "identity:register": "node ./src/actions/registerIdentity.js",
+    "document:push": "node ./src/actions/pushDocument.js",
     "lint": "standard ."
   },
   "repository": {
@@ -18,7 +20,7 @@
   "homepage": "https://github.com/pshenmic/platform-explorer#readme",
   "description": "",
   "dependencies": {
-    "dash": "4.0.0-dev.12",
+    "dash": "^4.0.0-rc.2",
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
