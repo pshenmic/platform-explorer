@@ -3,7 +3,8 @@ name: Release
 on:
   workflow_run:
     workflows: ["Build and push packages"]
-    branches: ['*.*.*']
+    branches: 
+      - '*.*.*'
     types: 
       - completed
 

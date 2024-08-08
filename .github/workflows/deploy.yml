@@ -5,7 +5,7 @@ on:
     workflows: ["Build and push packages"]
     branches: [master]
     types: 
-    - completed
+      - completed
 
 env:
   REGISTRY: ghcr.io
