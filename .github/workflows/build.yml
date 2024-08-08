@@ -127,7 +127,7 @@ jobs:
       packages: write
       id-token: write
 
-    if: startsWith(${{github.ref_name}}, '*.*.*') || github.ref_name == 'master'
+    if: (startsWith(${{github.ref_name}}, '*.*.*') || github.ref_name == 'master') && github.event_name != 'pull_request'
 
     steps:
       - name: Checkout repository
@@ -159,7 +159,7 @@ jobs:
       packages: write
       id-token: write
 
-    if: startsWith(${{github.ref_name}}, '*.*.*') || github.ref_name == 'master'
+    if: (startsWith(${{github.ref_name}}, '*.*.*') || github.ref_name == 'master') && github.event_name != 'pull_request'
     
     steps:
       - name: Checkout repository
