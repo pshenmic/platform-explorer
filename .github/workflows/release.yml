@@ -1,40 +1,35 @@
 name: Release
 
 on:
-  push:
-    tags:        
-      - 'v*'
   workflow_run:
     workflows: ["Build and push packages"]
-    branches: [main]
+    branches: [v*]
     types: 
       - completed
 
 jobs: 
   create_tag:
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-      steps:
-      - name: Wait for tests to succeed
-        uses: lewagon/wait-on-check-action@v1.3.4
-        with:
-          ref: ${{ github.ref }}
-          check-name: 'deploy'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
+    if: github.event.workflow_run.conclusion == 'success'
+    steps:
 
-      - name: Get tag
-        id: tag
-        uses: dawidd6/action-get-tag@v1
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 
 
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    - name: 'Get Previous tag'
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
-      - name: Create a GitHub release
-        uses: release-drafter/release-drafter@v6
-        with:
-          version: ${{steps.tag.outputs.tag}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Create a GitHub release
+      uses: release-drafter/release-drafter@v6
+      with:
+        version: ${{ steps.previoustag.outputs.tag }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

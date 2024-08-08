@@ -12,10 +12,26 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  
   deploy:
     runs-on: ubuntu-latest
+
+    if: | 
+      github.event.workflow_run.conclusion == 'success'  && 
+      startsWith(github.ref_name,'v*') || 
+      github.ref_name == 'master'
     
     steps:
+      - name: DEBUG
+        run: echo ${{github.ref_name}}
+      
+      - name: Wait for other checks to succeed
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.ref }}
+          running-workflow-name: 'Build and push packages'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -29,10 +45,37 @@ jobs:
           script: |
             git -C ./platform-explorer pull
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
+            docker stop $(docker ps -f name=platform-explorer-api -q)
+            docker rm platform-explorer-api
+            docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
+            sleep 3
+  drop_db:
+      runs-on: ubuntu-latest
+
+      if: github.event.workflow_run.conclusion == 'success'  && startsWith(github.ref_name,'v*')
+      steps:
+      - name: DEBUG
+        run: echo ${{github.ref_name}}
+      
+        
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Drop database
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            git -C ./platform-explorer pull
+            docker pull owl352/refinery_cli_docker
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
             docker stop $(docker ps -f name=platform-explorer-api -q)
             docker stop $(docker ps -f name=platform-explorer-indexer -q)
-            docker rm platform-explorer-api platform-explorer-indexer
-            docker run -d -p 3005:3005 --restart always --env-file api.env --name platform-explorer-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
-            sleep 3
+            docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api npm run db:drop
+            docker run --rm --env-file api.env owl352/refinery_cli_docker refinery migrate -e DATABASE_URL -p /app/migrations
             docker run -d --env-file api.env --restart always --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
