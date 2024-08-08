@@ -8,7 +8,7 @@ import {
   ResponseErrorNotFound,
   ResponseErrorTimeout,
   ResponseErrorInternalServer
-} from '../../util/errors'
+} from '../../util/Errors'
 
 function GlobalSearchInput () {
   const [showModal, setShowModal] = useState(false)

@@ -1,4 +1,4 @@
-import { ResponseErrorNotFound, ResponseErrorTimeout } from './errors'
+import { ResponseErrorNotFound, ResponseErrorTimeout } from './Errors'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -24,6 +24,8 @@ const call = async (path, method, body) => {
     } else if (response.status === 404) {
       throw new ResponseErrorNotFound()
     } else {
+      const text = await response.text()
+      console.error(text)
       const error = new Error('Unknown status code: ' + response.status)
       throw error
     }
