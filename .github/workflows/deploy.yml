@@ -18,7 +18,7 @@ jobs:
 
     if: | 
       github.event.workflow_run.conclusion == 'success'  && 
-      startsWith(github.ref_name,'v*') || 
+      startsWith(github.ref_name,'*.*.*') || 
       github.ref_name == 'master'
     
     steps:
@@ -52,7 +52,7 @@ jobs:
   drop_db:
       runs-on: ubuntu-latest
 
-      if: github.event.workflow_run.conclusion == 'success'  && startsWith(github.ref_name,'v*')
+      if: github.event.workflow_run.conclusion == 'success'  && startsWith(github.ref_name,'*.*.*')
       steps:
       - name: DEBUG
         run: echo ${{github.ref_name}}

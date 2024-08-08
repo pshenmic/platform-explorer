@@ -3,7 +3,7 @@ name: Build and push packages
 on:
   push:
     tags:
-      - 'v*'
+      - '*.*.*'
     branches:
       - 'master'
   pull_request:
@@ -127,7 +127,7 @@ jobs:
       packages: write
       id-token: write
 
-    if: startsWith(${{github.ref_name}}, 'v*') || github.ref_name == 'master'
+    if: startsWith(${{github.ref_name}}, '*.*.*') || github.ref_name == 'master'
 
     steps:
       - name: Checkout repository
@@ -159,7 +159,7 @@ jobs:
       packages: write
       id-token: write
 
-    if: startsWith(${{github.ref_name}}, 'v*') || github.ref_name == 'master'
+    if: startsWith(${{github.ref_name}}, '*.*.*') || github.ref_name == 'master'
     
     steps:
       - name: Checkout repository
