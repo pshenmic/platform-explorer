@@ -2,6 +2,8 @@ name: Build and push packages
 
 on:
   push:
+    branches:
+      - '*'
   pull_request:
     branches: [ "master" ]
 
