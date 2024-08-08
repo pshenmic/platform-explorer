@@ -22,9 +22,6 @@ jobs:
       github.ref_name == 'master'
     
     steps:
-      - name: DEBUG
-        run: echo ${{github.ref_name}}
-      
       - name: Wait for other checks to succeed
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
@@ -54,10 +51,6 @@ jobs:
 
       if: github.event.workflow_run.conclusion == 'success'  && startsWith(github.ref_name,'*.*.*')
       steps:
-      - name: DEBUG
-        run: echo ${{github.ref_name}}
-      
-        
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
