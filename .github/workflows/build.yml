@@ -2,8 +2,6 @@ name: Build and push packages
 
 on:
   push:
-    tags:
-      - 'v*'
   pull_request:
     branches: [ "master" ]
 
@@ -125,6 +123,8 @@ jobs:
       packages: write
       id-token: write
 
+    if: startsWith(${{github.ref_name}}, 'v*') || github.ref_name == 'master'
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -155,6 +155,8 @@ jobs:
       packages: write
       id-token: write
 
+    if: startsWith(${{github.ref_name}}, 'v*') || github.ref_name == 'master'
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
