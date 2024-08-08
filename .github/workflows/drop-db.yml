@@ -18,8 +18,8 @@ env:
 jobs: 
   drop_db:
       runs-on: ubuntu-latest
+      if: startsWith(${{github.ref_name}}, 'v*')
       steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
