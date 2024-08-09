@@ -91,6 +91,7 @@ impl PSQLProcessor {
 
         for (_, document_transition) in transitions.iter().enumerate() {
             let document = Document::from(document_transition.clone());
+            let document_identifier = document.identifier.clone();
 
             self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
 
@@ -148,7 +149,7 @@ impl PSQLProcessor {
                 if data_contract.owner == state_transition.owner_id() {
                     self.dao.set_data_contract_name(data_contract, String::from(data_contract_name)).await.unwrap();
                 } else {
-                    println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document.identifier.to_string(Base58));
+                    println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document_identifier.to_string(Base58));
                 }
             }
         }
