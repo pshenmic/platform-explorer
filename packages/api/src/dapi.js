@@ -10,7 +10,7 @@ const client = new DAPIClient(
 )
 
 class DAPI {
-  static async getTotalCredits() {
+  static async getTotalCredits () {
     const { totalCreditsOnPlatform } = await client.platform.getTotalCredits()
     return totalCreditsOnPlatform
   }
