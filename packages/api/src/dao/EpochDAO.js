@@ -18,6 +18,12 @@ module.exports = class EpochDAO {
       timestamp: currentBlock.header.timestamp
     })
 
+    const bestValidator = this.knex('blocks')
+      .select('pro_tx_hash')
+      .count('* as rating')
+      .groupBy('pro_tx_hash')
+      .as('bestValidator')
+
     const subquery = this.knex('state_transitions')
       .select(
         'validators.pro_tx_hash',
@@ -34,10 +40,14 @@ module.exports = class EpochDAO {
 
     const [row] = await this.knex
       .select(
-        'pro_tx_hash as best_validator',
         'tx_count',
         'collected_fees',
         'row_num',
+        this.knex(bestValidator)
+          .orderBy('rating', 'desc')
+          .limit(1)
+          .select('pro_tx_hash')
+          .as('best_validator'),
         this.knex.raw('SUM(collected_fees) OVER () as total_collected_fees'),
         this.knex.raw(`SUM(tx_count) OVER () * 1.0 / ${Constants.EPOCH_CHANGE_TIME / 1000} as tps`)
       )
