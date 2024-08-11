@@ -7,6 +7,7 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const dapi = require('../../src/dapi')
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
@@ -244,6 +245,7 @@ describe('Other routes', () => {
       mock.method(tenderdashRpc, 'getBlockByHeight', async () => {
         try { throw new Error() } catch { }
       })
+      mock.method(dapi, 'getTotalCredits', async () => 0)
 
       const { body } = await client.get('/status')
         .expect(200)
@@ -251,6 +253,7 @@ describe('Other routes', () => {
 
       const expectedStats = {
         epoch: null,
+        totalCreditsOnPlatform: 0,
         transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,
@@ -298,12 +301,15 @@ describe('Other routes', () => {
           }
         }
       }))
+      mock.method(dapi, 'getTotalCredits', async () => 0)
+
       const { body } = await client.get('/status')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedStats = {
         epoch: null,
+        totalCreditsOnPlatform: 0,
         transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,
@@ -351,6 +357,7 @@ describe('Other routes', () => {
           }
         }
       }))
+      mock.method(dapi, 'getTotalCredits', async () => 0)
 
       const { body } = await client.get('/status')
         .expect(200)
@@ -362,6 +369,7 @@ describe('Other routes', () => {
           startTime: '1970-01-01T18:00:00.000Z',
           endTime: '1970-01-01T19:00:00.000Z'
         },
+        totalCreditsOnPlatform: 0,
         transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,
