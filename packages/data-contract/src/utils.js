@@ -1,9 +1,5 @@
 const Dash = require('dash')
 
-function logInfo (...messages) {
-  console.log('\x1b[32m [INFO]', ...messages, '\x1b[0m ')
-}
-
 function initClient () {
   const options = {
     network: 'testnet',
@@ -29,8 +25,4 @@ function initClient () {
   return client
 }
 
-async function registerIdentity (client) {
-  return await client.platform.identities.register()
-}
-
-module.exports = { initClient, logInfo, registerIdentity }
+module.exports = { initClient }

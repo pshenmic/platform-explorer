@@ -1,33 +1,29 @@
 require('dotenv').config()
-const { initClient, logInfo } = require('../utils')
+const { initClient } = require('../utils')
 const doc = require('../../document.json')
 
 async function pushDocument () {
-  logInfo('Client initialization')
+  console.log('Client initialization')
+
   const { platform } = initClient()
 
-  logInfo('Getting identity')
   if (!process.env.OWNER_IDENTIFIER) {
-    logInfo('No identity in env :(')
-    process.exit()
+    throw new Error('No identity in env :(')
   }
   const identity = await platform.identities.get(process.env.OWNER_IDENTIFIER)
 
   if (!process.env.CONTRACT_ID) {
-    logInfo('No contract ID in env')
-    process.exit()
+    throw new Error('No contract ID in env')
   }
 
   if (!process.env.DOCUMENT_NAME) {
-    logInfo('No document name in env')
-    process.exit()
+    throw new Error('No document name in env')
   }
 
-  logInfo('Creating Document')
   const document = await platform.documents.create(
-        `contract.${process.env.DOCUMENT_NAME}`,
-        identity,
-        doc
+    `contract.${process.env.DOCUMENT_NAME}`,
+    identity,
+    doc
   )
   const documentBatch = {
     create: [document],
@@ -35,12 +31,10 @@ async function pushDocument () {
     delete: []
   }
 
-  logInfo('Broadcasting Document')
+  console.log('Broadcasting Document')
   await platform.documents.broadcast(documentBatch, identity)
 
-  console.log()
-  logInfo('Done')
-  logInfo(`Document at: ${document.getId()}`)
+  console.log('Done', '\n', `Document at: ${document.getId()}`)
 }
 
 pushDocument().catch(console.error)
