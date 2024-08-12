@@ -80,6 +80,7 @@ HTTP /status
         startTime: "2024-04-08T14:00:00.000Z",
         endTime: "2024-04-09T14:00:00.000Z"
     },
+    identitiesCount: 12,
     transactionsCount: 3,
     transfersCount: 0,
     dataContractsCount: 1,
