@@ -12,7 +12,7 @@ const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
 
 class MainController {
-  constructor(knex) {
+  constructor (knex) {
     this.blocksDAO = new BlocksDAO(knex)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
@@ -22,12 +22,11 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    const [blocks, stats, identitiesCount, tdStatus, genesisTime] = (await Promise.allSettled([
+    const [blocks, stats, tdStatus, genesisTime] = (await Promise.allSettled([
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
-      this.identitiesDAO.getStatus(),
       TenderdashRPC.getStatus(),
-      Constants.genesisTime,
+      Constants.genesisTime
     ])).map((e) => e.value ?? null)
 
     const [currentBlock] = blocks?.resultSet ?? []
@@ -45,7 +44,7 @@ class MainController {
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
       documentsCount: stats?.documentsCount,
-      identitiesCount,
+      identitiesCount: stats?.identitiesCount,
       network: tdStatus?.network ?? null,
       api: {
         version: API_VERSION,

@@ -10,13 +10,6 @@ module.exports = class IdentitiesDAO {
     this.knex = knex
   }
 
-  getStatus = async () => {
-    const [{ count }] = await this.knex('identities')
-      .count('*')
-
-    return Number(count ?? 0)
-  }
-
   getIdentityByIdentifier = async (identifier) => {
     const subquery = this.knex('identities')
       .select('identities.id', 'identities.identifier as identifier', 'identities.owner as owner',
