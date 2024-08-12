@@ -17,6 +17,18 @@ class IdentitiesController {
     response.send(identity)
   }
 
+  getIdentityByDPNS = async (request, response) => {
+    const { dpns } = request.query
+
+    const identity = await this.identitiesDAO.getIdentityByDPNS(dpns)
+
+    if (!identity) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
+    response.send(identity)
+  }
+
   getIdentities = async (request, response) => {
     const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
 

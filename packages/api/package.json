@@ -15,7 +15,7 @@
     "@dashevo/dashd-rpc": "^19.0.0",
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
-    "dash": "4.0.0-dev.12",
+    "dash": "4.0.0-rc.2",
     "dotenv": "^16.3.1",
     "fastify": "^4.21.0",
     "fastify-metrics": "^11.0.0",

@@ -16,7 +16,13 @@ describe('Blocks routes', () => {
   let validators
 
   before(async () => {
-    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+    mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
+      block: {
+        header: {
+          time: new Date(0).toISOString()
+        }
+      }
+    }))
 
     app = await server.start()
     client = supertest(app.server)

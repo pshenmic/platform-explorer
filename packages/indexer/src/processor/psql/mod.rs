@@ -9,7 +9,7 @@ use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
-use dpp::platform_value::{platform_value, BinaryData};
+use dpp::platform_value::{platform_value, BinaryData, Value};
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::serialization::PlatformSerializable;
@@ -91,6 +91,10 @@ impl PSQLProcessor {
 
         for (_, document_transition) in transitions.iter().enumerate() {
             let document = Document::from(document_transition.clone());
+            let document_identifier = document.identifier.clone();
+
+            self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
+
             let document_type = document_transition.document_type_name();
 
             if document_type == "domain" && document_transition.data_contract_id() == SystemDataContract::DPNS.id() {
@@ -103,24 +107,15 @@ impl PSQLProcessor {
                 let normalized_parent_domain_name = document_transition
                     .data()
                     .unwrap()
-                    .get_str_at_path("normalizedParentDomainName")
+                    .get_str_at_path("parentDomainName")
                     .unwrap();
 
-                let primary_alias = document_transition
+                let identity_identifier = document_transition
                     .data()
                     .unwrap()
-                    .get_optional_at_path("records.dashUniqueIdentityId").unwrap();
-
-                let identity_identifier = match primary_alias {
-                    None => {
-                        document_transition
-                            .data()
-                            .unwrap()
-                            .get_optional_at_path("records.dashAliasIdentityId").unwrap()
-                            .expect("Could not find dashAliasIdentityId")
-                    }
-                    Some(value) => value
-                };
+                    .get_optional_at_path("records.identity")
+                    .unwrap()
+                    .expect("Could not find DPNS domain document identity identifier");
 
                 let identity_identifier = Identifier::from_bytes(&identity_identifier.clone().into_identifier_bytes().unwrap()).unwrap().to_string(Base58);
                 let identity = self.dao.get_identity_by_identifier(identity_identifier.clone()).await.unwrap().expect(&format!("Could not find identity with identifier {}", identity_identifier));
@@ -154,12 +149,9 @@ impl PSQLProcessor {
                 if data_contract.owner == state_transition.owner_id() {
                     self.dao.set_data_contract_name(data_contract, String::from(data_contract_name)).await.unwrap();
                 } else {
-                    println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document.identifier.to_string(Base58));
+                    println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document_identifier.to_string(Base58));
                 }
             }
-
-
-            self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
         }
     }
 
@@ -212,6 +204,7 @@ impl PSQLProcessor {
             StateTransition::IdentityCreditWithdrawal(st) => st.state_transition_type() as u32,
             StateTransition::IdentityUpdate(st) => st.state_transition_type() as u32,
             StateTransition::IdentityCreditTransfer(st) => st.state_transition_type() as u32,
+            StateTransition::MasternodeVote(st) => st.state_transition_type() as u32
         };
 
         let bytes = match state_transition.clone() {
@@ -247,6 +240,11 @@ impl PSQLProcessor {
                 PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreditTransfer(
                     st.clone()
                 )).unwrap(),
+            StateTransition::MasternodeVote(st) => {
+                PlatformSerializable::serialize_to_bytes(&StateTransition::MasternodeVote(
+                    st.clone()
+                )).unwrap()
+            }
         };
 
         let st_hash = digest(bytes.clone()).to_uppercase();
@@ -302,6 +300,8 @@ impl PSQLProcessor {
                 self.handle_identity_credit_transfer(_st, st_hash).await;
 
                 println!("Processed IdentityCreditTransfer at block hash {}", block_hash);
+            }
+            StateTransition::MasternodeVote(_) => {
             }
         }
     }

@@ -9,14 +9,13 @@ import { LoadingLine, LoadingBlock, LoadingList } from '../../../components/load
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import ImageGenerator from '../../../components/imageGenerator'
-import './DataContract.scss'
-
+import { DataContractSchema } from '../../../components/dataContracts'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Box,
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
-  Tabs, TabList, TabPanels, Tab, TabPanel,
-  Code
+  Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
 
 const pagintationConfig = {
@@ -27,6 +26,13 @@ const pagintationConfig = {
   defaultPage: 1
 }
 
+const tabs = [
+  'documents',
+  'schema'
+]
+
+const defaultTabName = 'documents'
+
 function DataContract ({ identifier }) {
   const [dataContract, setDataContract] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
@@ -34,7 +40,11 @@ function DataContract ({ identifier }) {
   const [total, setTotal] = useState(1)
   const [currentPage, setCurrentPage] = useState(0)
   const pageCount = Math.ceil(total / pageSize)
+  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   const tdTitleWidth = 250
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const fetchData = () => {
     Promise.all([
@@ -44,7 +54,7 @@ function DataContract ({ identifier }) {
       Api.getDocumentsByDataContract(
         identifier,
         pagintationConfig.defaultPage,
-        pagintationConfig.itemsOnPage.default)
+        pageSize)
         .then(res => {
           fetchHandlerSuccess(setDocuments, res)
           setTotal(res.pagination.total)
@@ -55,6 +65,30 @@ function DataContract ({ identifier }) {
   }
 
   useEffect(fetchData, [identifier])
+
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+
+    if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
+      setActiveTab(tabs.indexOf(tab.toLowerCase()))
+      return
+    }
+
+    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  }, [searchParams])
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+
+    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase()) ||
+       (tabs.indexOf(defaultTabName.toLowerCase()) === -1 && activeTab === 0)) {
+      urlParameters.delete('tab')
+    } else {
+      urlParameters.set('tab', tabs[activeTab])
+    }
+
+    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  }, [activeTab])
 
   const handlePageClick = ({ selected }) => {
     setDocuments(state => ({ ...state, loading: true }))
@@ -105,12 +139,14 @@ function DataContract ({ identifier }) {
                             <LoadingLine loading={dataContract.loading}>{dataContract.data?.identifier}</LoadingLine>
                         </Td>
                     </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Name</Td>
-                        <Td>
-                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
-                        </Td>
-                    </Tr>
+                    {dataContract.data?.name &&
+                        <Tr>
+                            <Td w={tdTitleWidth}>Name</Td>
+                            <Td>
+                                <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
+                            </Td>
+                        </Tr>
+                    }
                     <Tr>
                         <Td w={tdTitleWidth}>Owner</Td>
                         <Td>
@@ -167,12 +203,14 @@ function DataContract ({ identifier }) {
             borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
         >
-            <Tabs>
+            <Tabs
+              onChange={setActiveTab}
+              index={activeTab}
+            >
                 <TabList>
                     <Tab>Documents</Tab>
                     <Tab>Schema</Tab>
                 </TabList>
-
                 <TabPanels>
                     <TabPanel>
                         <Box>
@@ -198,21 +236,13 @@ function DataContract ({ identifier }) {
                             }
                         </Box>
                     </TabPanel>
-
                     <TabPanel>
                         <Box>
                           {!dataContract.error
                             ? <LoadingBlock loading={dataContract.loading}>
-                                  <div className={'DataContractSchema'}>
-                                      <Code
-                                          className={'DataContractSchema__Code'}
-                                          borderRadius={'lg'}
-                                          p={4}
-                                          w={'100%'}
-                                      >
-                                          {dataContract.data?.schema && JSON.stringify(JSON.parse(dataContract.data?.schema), null, 2)}
-                                    </Code>
-                                  </div>
+                                {dataContract.data?.schema
+                                  ? <DataContractSchema schema={dataContract.data?.schema}/>
+                                  : <Container h={20}><ErrorMessageBlock/></Container>}
                               </LoadingBlock>
                             : <Container h={20}><ErrorMessageBlock/></Container>
                           }

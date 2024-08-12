@@ -17,7 +17,13 @@ describe('Transaction routes', () => {
   let transactions
 
   before(async () => {
-    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+    mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
+      block: {
+        header: {
+          time: new Date(0).toISOString()
+        }
+      }
+    }))
 
     const startDate = new Date(new Date() - 1000 * 60 * 60)
 

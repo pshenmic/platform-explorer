@@ -38,8 +38,8 @@ describe('Utils', () => {
         transitions: [
           {
             action: 0,
-            dataContractId: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
-            id: '2sq2fsVgNrrNKFyRgcLvT8SSVFmCLoMTUfNBY3yEdyeQ',
+            dataContractId: 'FhKAsUnPbqe7K4TZxgRdtPUrfSvNCtYV8iPsvjX7ZG58',
+            id: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
             revision: 1
           }
         ]

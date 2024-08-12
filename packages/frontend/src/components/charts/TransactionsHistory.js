@@ -14,19 +14,40 @@ const transactionsChartConfig = {
 
 export default function TransactionsHistory ({ height = '220px' }) {
   const [transactionsHistory, setTransactionsHistory] = useState({ data: {}, loading: true, error: false })
-  const [transactionsTimespan, setTransactionsTimespan] = useState(transactionsChartConfig.timespan.default)
+  const [timespan, setTimespan] = useState(transactionsChartConfig.timespan.default)
 
   useEffect(() => {
-    Api.getTransactionsHistory(transactionsTimespan)
+    Api.getTransactionsHistory(timespan)
       .then(res => fetchHandlerSuccess(setTransactionsHistory, { resultSet: res }))
       .catch(err => fetchHandlerError(setTransactionsHistory, err))
-  }, [transactionsTimespan])
+  }, [timespan])
 
   return (
     <LineChartBlock
         title={'Transactions history'}
-        items={transactionsHistory}
-        timespanChange={setTransactionsTimespan}
+        loading={transactionsHistory.loading}
+        error={transactionsHistory.error}
+        timespanChange={setTimespan}
+        data={transactionsHistory.data?.resultSet?.map((item) => ({
+          x: new Date(item.timestamp),
+          y: item.data.txs
+        })) || []}
+        xAxis={{
+          type: (() => {
+            if (timespan === '1h') return { axis: 'time' }
+            if (timespan === '24h') return { axis: 'time' }
+            if (timespan === '3d') return { axis: 'date', tooltip: 'datetime' }
+            if (timespan === '1w') return { axis: 'date' }
+          })(),
+          abbreviation: '',
+          title: ''
+        }}
+        yAxis={{
+          type: 'number',
+          title: '',
+          abbreviation: 'txs'
+        }}
+        height={height}
     />
   )
 }

@@ -1,6 +1,20 @@
 import { extendTheme } from '@chakra-ui/react'
+import {
+  Montserrat,
+  Open_Sans as OpenSans,
+  Roboto_Mono as RobotoMono
+} from 'next/font/google'
+
+const montserrat = Montserrat({ subsets: ['latin'] })
+const openSans = OpenSans({ subsets: ['latin'] })
+const robotoMono = RobotoMono({ subsets: ['latin'] })
 
 export const theme = extendTheme({
+  fonts: {
+    heading: montserrat.style.fontFamily,
+    body: openSans.style.fontFamily,
+    mono: robotoMono.style.fontFamily
+  },
   config: {
     useSystemColorMode: false,
     initialColorMode: 'dark'
@@ -29,7 +43,7 @@ export const theme = extendTheme({
       550: '#52585d6b',
       600: '#62676a',
       700: '#494e51',
-      800: '#313639',
+      800: '#2e393d',
       900: '#181d20'
     }
   },
@@ -41,7 +55,10 @@ export const theme = extendTheme({
       'html, body': {
         background: '#181d20',
         color: 'white',
-        scrollBehavior: 'smooth'
+        scrollBehavior: 'smooth',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column'
       },
       h1: {
         fontSize: '4xl',

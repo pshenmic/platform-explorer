@@ -5,6 +5,9 @@
     position: relative;
     padding: 30px 0 30px 64px;
     width: max-content;
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
     
     &::before {
         content: '';
