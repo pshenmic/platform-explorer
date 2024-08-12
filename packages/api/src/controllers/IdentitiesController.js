@@ -1,8 +1,18 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
+const Identity = require('../models/Identity')
+const DAPI = require('../dapi')
 
 class IdentitiesController {
-  constructor (knex) {
+  constructor(knex) {
     this.identitiesDAO = new IdentitiesDAO(knex)
+    this.DAPI = new DAPI({
+      seeds: [{
+        host: '54.68.235.201',
+        port: 1443,
+        // '54.68.235.201:1443',
+        allowSelfSignedCertificate: true
+     }],
+    })
   }
 
   getIdentityByIdentifier = async (request, response) => {
@@ -14,7 +24,9 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    response.send(identity)
+    const balance = await this.DAPI.getIdentityBalance(identity.identifier)
+
+    response.send(new Identity({...identity,balance}))
   }
 
   getIdentityByDPNS = async (request, response) => {

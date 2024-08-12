@@ -9,6 +9,7 @@
     "test:integration": "node --test --test-concurrency=1 test/integration/*.spec.js",
     "db:migrate": "node ./test/utils/migrate.js ../indexer/migrations",
     "db:drop": "node ./test/utils/drop.js",
+    "platform:patch": "./scripts/patch.sh",
     "lint": "standard ."
   },
   "dependencies": {
