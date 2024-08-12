@@ -49,7 +49,7 @@ function Document ({ identifier }) {
         >
             <TableContainer
                 maxW={'none'}
-                borderWidth={'1px'} borderRadius={'lg'}
+                borderWidth={'1px'} borderRadius={'block'}
                 width={['100%', '100%', '100%', '50%']}
                 m={0}
             >
@@ -64,13 +64,13 @@ function Document ({ identifier }) {
                         <Tbody>
                             <Tr>
                                 <Td w={tdTitleWidth}>Identifier</Td>
-                                <Td>
+                                <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                                     <LoadingLine loading={document.loading}>{document.data?.identifier}</LoadingLine>
                                 </Td>
                             </Tr>
                             <Tr>
                                 <Td w={tdTitleWidth}>Owner</Td>
-                                <Td>
+                                <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                                     <LoadingLine loading={document.loading}>
                                         <Link href={`/identity/${document.data?.owner}`}>{document.data?.owner}</Link>
                                     </LoadingLine>

@@ -53,8 +53,8 @@ function Transaction ({ hash }) {
         mt={8}
     >
         <TableContainer
-            maxW='none'
-            borderWidth='1px' borderRadius='lg'
+            maxW={'none'}
+            borderWidth={'1px'} borderRadius={'block'}
             mb={4}
         >
             {!transaction.error
@@ -74,7 +74,7 @@ function Transaction ({ hash }) {
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Hash</Td>
-                        <Td>
+                        <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                             <LoadingLine loading={transaction.loading}>{transaction.data?.hash}</LoadingLine>
                         </Td>
                     </Tr>

@@ -1,6 +1,6 @@
 @import './../variables.scss';
 
-$border-radius: 30px;
+$border-radius: var(--chakra-radii-block);
 
 .InfoBlock {
     position: relative;

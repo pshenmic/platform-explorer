@@ -41,7 +41,7 @@ export default function LineChartBlock ({ height = '220px', data, xAxis, yAxis, 
         className={'ChartBlock'}
         maxW={'none'}
         width={'100%'}
-        borderWidth={'1px'} borderRadius={'lg'}
+        borderWidth={'1px'} borderRadius={'block'}
         direction={'column'}
         p={3}
         pb={2}

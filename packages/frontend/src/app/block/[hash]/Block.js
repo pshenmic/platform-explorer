@@ -38,7 +38,7 @@ function Block ({ hash }) {
     >
         <TableContainer
             maxW={'none'}
-            borderWidth={'1px'} borderRadius={'xl'}
+            borderWidth={'1px'} borderRadius={'block'}
         >
             {!block.error
               ? <Table variant={'simple'}>
@@ -51,8 +51,10 @@ function Block ({ hash }) {
                 <Tbody>
                     <Tr>
                         <Td w={tdTitleWidth}>Hash</Td>
-                        <Td>
-                          <LoadingLine loading={block.loading}>{block.data?.header?.hash}</LoadingLine>
+                        <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
+                          <LoadingLine loading={block.loading}>
+                            {block.data?.header?.hash}
+                          </LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
@@ -93,8 +95,10 @@ function Block ({ hash }) {
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Validator</Td>
-                        <Td>
-                          <LoadingLine loading={block.loading}>{block.data?.header?.validator}</LoadingLine>
+                        <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
+                          <LoadingLine loading={block.loading}>
+                            {block.data?.header?.validator}
+                          </LoadingLine>
                         </Td>
                     </Tr>
                 </Tbody>

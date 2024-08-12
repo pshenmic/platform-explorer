@@ -105,7 +105,7 @@ function Identity ({ identifier }) {
                 <TableContainer
                     width={['100%', '100%', '100%', 'calc(50% - 10px)']}
                     maxW={'none'}
-                    borderWidth={'1px'} borderRadius={'lg'}
+                    borderWidth={'1px'} borderRadius={'block'}
                     m={0}
                     className={'IdentityInfo'}
                   >

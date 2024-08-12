@@ -47,6 +47,9 @@ export const theme = extendTheme({
       900: '#181d20'
     }
   },
+  radii: {
+    'block': '30px'
+  },
   styles: {
     global: {
       '*': {
