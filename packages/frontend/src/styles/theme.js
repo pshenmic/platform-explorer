@@ -48,7 +48,7 @@ export const theme = extendTheme({
     }
   },
   radii: {
-    'block': '30px'
+    block: '30px'
   },
   styles: {
     global: {
