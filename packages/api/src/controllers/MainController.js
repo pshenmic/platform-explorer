@@ -31,6 +31,8 @@ class MainController {
 
     const [currentBlock] = blocks?.resultSet ?? []
 
+    const identitiesCount = await this.identitiesDAO.getIdentitiesCount()
+
     const epoch = genesisTime && currentBlock
       ? Epoch.fromObject({
         timestamp: currentBlock.header.timestamp,
@@ -44,6 +46,7 @@ class MainController {
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
       documentsCount: stats?.documentsCount,
+      identitiesCount,
       network: tdStatus?.network ?? null,
       api: {
         version: API_VERSION,

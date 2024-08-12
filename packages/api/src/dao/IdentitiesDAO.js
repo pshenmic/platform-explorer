@@ -65,6 +65,13 @@ module.exports = class IdentitiesDAO {
     return Identity.fromRow({ ...row })
   }
 
+  getIdentitiesCount = async () => {
+    const [{ count }] = await this.knex('identities')
+      .count('*')
+
+    return Number(count ?? 0)
+  }
+
   getIdentityByDPNS = async (dpns) => {
     const identifier = this.knex('identity_aliases')
       .select('identity_identifier')
