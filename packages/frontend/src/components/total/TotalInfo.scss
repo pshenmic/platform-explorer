@@ -1,50 +1,32 @@
 @import '../../styles/variables.scss';
 
 .TotalInfo {
-    background-color: var(--chakra-colors-blackAlpha-200);
-    border: 1px solid;
-    border-left: none;
-    border-right: none;
     &__ContentContainer {
         margin: 0 auto;
     }
 
-    &__Divider {
-        width: 1px;
-        background-color: var(--chakra-colors-gray-800);
-    }
-
     &__Item {
-        padding: 0 10px;
+        width: calc(100% / 5 - 20px);
     }
 
-    @media screen and (max-width: $breakpoint-lg) {
-        &__Divider {
-            height: 40px;
-            margin: auto 0;
-        }
-    }
-    
     @media screen and (max-width: $breakpoint-md) {
         &__Item {
-            width: calc(50% - 1px);
+            width: calc(50% - 10px);
             display: flex;
             justify-content: center;
+            margin-bottom: 20px;
+
+            &:last-child {
+                margin: 0 auto;
+                width: 100%;
+                justify-content: center;
+            }
         }
     }
 
-    @media screen and (max-width: 355px) {
-        &__ContentContainer {
-            width: min-content;
-        }
-
+    @media screen and (max-width: 400px) {
         &__Item {
             width: 100%;
-            justify-content: start;
-        }
-
-        &__Divider {
-            display: none !important;
         }
     }
 }
