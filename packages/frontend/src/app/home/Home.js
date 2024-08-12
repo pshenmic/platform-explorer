@@ -151,7 +151,7 @@ function Home () {
         transactions={status.data?.transactionsCount}
         dataContracts={status.data?.dataContractsCount}
         documents={status.data?.documentsCount}
-        transfers={status.data?.transfersCount}
+        identities={status.data?.identitiesCount}
         loading={status.loading}
       />
 

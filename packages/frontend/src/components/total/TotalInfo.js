@@ -2,7 +2,7 @@ import './TotalInfo.scss'
 import './TotalInfoItem.scss'
 import { Container, Flex } from '@chakra-ui/react'
 
-export default function TotalInfo ({ blocks, transactions, dataContracts, documents, transfers, loading }) {
+export default function TotalInfo ({ blocks, transactions, dataContracts, documents, identities, loading }) {
   return (
     <Container
       className={'TotalInfo'}
@@ -40,7 +40,7 @@ export default function TotalInfo ({ blocks, transactions, dataContracts, docume
 
         <div className={'InfoBlock TotalInfo__Item TotalInfoItem TotalInfoItem--Identities'}>
           <div className={'TotalInfoItem__Title'}>Identities</div>
-          <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${transfers || '-'}`}</div>
+          <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${identities || '-'}`}</div>
         </div>
       </Flex>
     </Container>
