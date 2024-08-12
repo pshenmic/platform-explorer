@@ -200,7 +200,6 @@ function DataContract ({ identifier }) {
             width={'100%'}
             maxW={'none'}
             mt={5}
-            borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
         >
             <Tabs

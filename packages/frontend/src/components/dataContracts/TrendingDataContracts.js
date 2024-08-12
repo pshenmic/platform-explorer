@@ -61,11 +61,10 @@ export default function TrendingDataContracts ({ printCount = 5, preload = 10, p
         maxW={'100%'}
         m={0}
         h={'100%'}
-        borderWidth={'1px'} borderRadius={'lg'}
         className={'InfoBlock'}
         flexDirection={'column'}
     >
-        <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Data Contracts</Heading>
+        <Heading className={'InfoBlock__Title'} as={'h2'}>Trending Data Contracts</Heading>
         {!dataContracts.loading
           ? !dataContracts.error
               ? <SimpleList

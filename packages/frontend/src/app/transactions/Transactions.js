@@ -73,10 +73,9 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
     >
         <Container
             maxW={'container.xl'}
-            borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
         >
-            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Transactions</Heading>
+            <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
 
             {!transactions.error
               ? !transactions.loading

@@ -80,10 +80,9 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
     >
         <Container
             maxW={'container.xl'}
-            borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
         >
-            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Validators</Heading>
+            <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>
             <Box mb={2}>
               <Switcher
                 options={[

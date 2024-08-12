@@ -180,11 +180,10 @@ function Home () {
                           maxW={'100%'}
                           m={0}
                           h={'100%'}
-                          borderWidth={'1px'} borderRadius={'lg'}
                           className={'InfoBlock'}
                           flexDirection={'column'}
                       >
-                          <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Data Contracts</Heading>
+                          <Heading className={'InfoBlock__Title'} as={'h2'}>Trending Data Contracts</Heading>
                           {!dataContracts.loading
                             ? !dataContracts.error
                                 ? <SimpleList
@@ -209,13 +208,12 @@ function Home () {
                   <Flex
                       ref={transactionsContainer}
                       maxW={'100%'}
-                      borderWidth={'1px'} borderRadius={'lg'}
                       mb={0}
                       className={'InfoBlock'}
                       flexDirection={'column'}
                       flexGrow={1}
                   >
-                      <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Transactions</Heading>
+                      <Heading className={'InfoBlock__Title'} as={'h2'}>Transactions</Heading>
                       {!transactions.loading
                         ? !transactions.error
                             ? <SimpleList
@@ -244,12 +242,11 @@ function Home () {
                       <Flex
                           ref={trendingIdentitiesContainer}
                           maxW={'100%'}
-                          borderWidth={'1px'} borderRadius={'lg'}
                           className={'InfoBlock'}
                           flexGrow={'1'}
                           flexDirection={'column'}
                       >
-                          <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Trending Identities</Heading>
+                          <Heading className={'InfoBlock__Title'} as={'h2'}>Trending Identities</Heading>
                           {!trendingIdentities.loading
                             ? !trendingIdentities.error
                                 ? <SimpleList
@@ -271,12 +268,11 @@ function Home () {
                       <Flex
                           ref={richListContainer}
                           maxW={'none'}
-                          borderWidth={'1px'} borderRadius={'lg'}
                           className={'InfoBlock'}
                           flexGrow={'1'}
                           flexDirection={'column'}
                       >
-                          <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
+                          <Heading className={'InfoBlock__Title'} as={'h2'}>Richlist</Heading>
                           {!richestIdentities.loading
                             ? !richestIdentities.error
                                 ? <SimpleList

@@ -117,12 +117,11 @@ function Transaction ({ hash }) {
 
         {!transaction.error &&
           <Container
-            maxW='container.lg'
+            maxW={'container.lg'}
             m={0}
-            borderWidth='1px' borderRadius='lg'
             className={'InfoBlock'}
           >
-            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Transaction data</Heading>
+            <Heading className={'InfoBlock__Title'} as={'h1'}>Transaction data</Heading>
 
             {(!transaction.loading && decodedST)
               ? <Table variant='simple' className='Table TransactionData'>

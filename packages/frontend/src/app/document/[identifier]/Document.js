@@ -98,12 +98,11 @@ function Document ({ identifier }) {
             <Container
                 width={['100%', '100%', '100%', '50%']}
                 maxW={'none'}
-                borderWidth={'1px'} borderRadius={'lg'}
                 className={'InfoBlock'}
                 display={'flex'}
                 flexDirection={'column'}
             >
-                <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Data</Heading>
+                <Heading className={'InfoBlock__Title'} as={'h1'}>Data</Heading>
                   {!document.error
                     ? <LoadingBlock loading={document.loading}>
                         <Code

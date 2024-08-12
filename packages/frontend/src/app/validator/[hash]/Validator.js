@@ -134,10 +134,9 @@ function Validator ({ hash }) {
         width={'100%'}
         maxW={'none'}
         mt={5}
-        borderWidth={'1px'} borderRadius={'lg'}
         className={'InfoBlock'}
       >
-          <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Proposed blocks</Heading>
+          <Heading className={'InfoBlock__Title'} as={'h1'}>Proposed blocks</Heading>
 
           {!proposedBlocks.error
             ? <>

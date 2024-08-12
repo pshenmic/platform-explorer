@@ -30,18 +30,18 @@ function Block ({ hash }) {
 
   return (
     <Container
-        maxW='container.xl'
-        bg='gray.600'
-        color='white'
+        maxW={'container.xl'}
+        bg={'gray.600'}
+        color={'white'}
         _dark={{ bg: 'gray.900' }}
         mt={8}
     >
         <TableContainer
-            maxW='none'
-            borderWidth='1px' borderRadius='lg'
+            maxW={'none'}
+            borderWidth={'1px'} borderRadius={'xl'}
         >
             {!block.error
-              ? <Table variant='simple'>
+              ? <Table variant={'simple'}>
                 <Thead>
                     <Tr>
                         <Th><div className={'Table__Title'}>Block info</div></Th>
@@ -104,17 +104,16 @@ function Block ({ hash }) {
 
         {txHashes.length
           ? <Container
-            width='100%'
-            maxW='none'
-            mt={5}
-            borderWidth='1px' borderRadius='lg'
-            className={'InfoBlock'}
+              width={'100%'}
+              maxW={'none'}
+              mt={5}
+              className={'InfoBlock'}
             >
-                <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Transactions</Heading>
+              <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
 
-                <div>
-                    <TransactionsList transactions={txHashes}/>
-                </div>
+              <div>
+                  <TransactionsList transactions={txHashes}/>
+              </div>
             </Container>
           : null}
     </Container>

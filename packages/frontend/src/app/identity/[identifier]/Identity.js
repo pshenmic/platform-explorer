@@ -204,7 +204,6 @@ function Identity ({ identifier }) {
                   width={['100%', '100%', '100%', 'calc(50% - 10px)']}
                   maxW={'none'}
                   m={0}
-                  borderWidth={'1px'} borderRadius={'lg'}
                   className={'InfoBlock'}
                 >
                     <Tabs
