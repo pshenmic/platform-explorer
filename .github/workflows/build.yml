@@ -3,7 +3,7 @@ name: Build and push packages
 on:
   push:
     tags:
-      - '*.*.*'
+      - '*'
     branches:
       - 'master'
   pull_request:
