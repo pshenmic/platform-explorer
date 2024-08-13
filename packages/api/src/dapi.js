@@ -1,17 +1,16 @@
 const DAPIClient = require('@dashevo/dapi-client')
-const {Identifier, DashPlatformProtocol} = require('@dashevo/wasm-dpp')
-
+const { Identifier, DashPlatformProtocol } = require('@dashevo/wasm-dpp')
 
 class DAPI {
   DAPIClient
   dpp
-  constructor(options) {
+  constructor (options) {
     this.DAPIClient = new DAPIClient(options)
-    this.dpp = new DashPlatformProtocol();
+    this.dpp = new DashPlatformProtocol()
   }
 
-  async getIdentityBalance(identifier) {
-    const identityId = Identifier.from(identifier);
+  async getIdentityBalance (identifier) {
+    const identityId = Identifier.from(identifier)
     const GRPCIdentity = await this.DAPIClient.platform.getIdentity(identityId)
     const decoded = this.dpp.identity.createFromBuffer(GRPCIdentity.getIdentity())
     return decoded.balance

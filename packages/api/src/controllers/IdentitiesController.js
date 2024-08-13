@@ -3,13 +3,13 @@ const Identity = require('../models/Identity')
 const DAPI = require('../dapi')
 
 class IdentitiesController {
-  constructor(knex) {
+  constructor (knex) {
     this.identitiesDAO = new IdentitiesDAO(knex)
     this.DAPI = new DAPI({
       dapiAddresses: [
         '127.0.0.1:9901',
         '127.0.0.1:9090',
-        '127.0.0.1:1443',
+        '127.0.0.1:1443'
       ],
       allowSelfSignedCertificate: true
     })
@@ -26,7 +26,7 @@ class IdentitiesController {
 
     const balance = await this.DAPI.getIdentityBalance(identifier)
 
-    response.send(Identity.fromObject({...identity,balance}))
+    response.send(Identity.fromObject({ ...identity, balance }))
   }
 
   getIdentityByDPNS = async (request, response) => {

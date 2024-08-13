@@ -29,7 +29,7 @@ module.exports = class Identity {
     return new Identity(identifier, owner, revision, Number(balance), timestamp, Number(total_txs), Number(total_data_contracts), Number(total_documents), Number(total_transfers), tx_hash, is_system)
   }
 
-  static fromObject({identifier, owner, revision, balance, timestamp, totalTxs, totalDataContracts, totalDocuments, totalTransfers, txHash, isSystem}){
+  static fromObject ({ identifier, owner, revision, balance, timestamp, totalTxs, totalDataContracts, totalDocuments, totalTransfers, txHash, isSystem }) {
     return new Identity(identifier, owner, revision, balance, timestamp, totalTxs, totalDataContracts, totalDocuments, totalTransfers, txHash, isSystem)
   }
 }
