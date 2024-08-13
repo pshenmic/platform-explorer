@@ -8,7 +8,7 @@ async function pushDocument () {
   if (!process.env.OWNER_IDENTIFIER) {
     throw new Error('No identity in env :(')
   }
-  
+
   if (!process.env.CONTRACT_ID) {
     throw new Error('No contract ID in env')
   }
