@@ -8,8 +8,7 @@ async function pushDocument () {
   if (!process.env.OWNER_IDENTIFIER) {
     throw new Error('No identity in env :(')
   }
-  const identity = await platform.identities.get(process.env.OWNER_IDENTIFIER)
-
+  
   if (!process.env.CONTRACT_ID) {
     throw new Error('No contract ID in env')
   }
@@ -19,6 +18,8 @@ async function pushDocument () {
   }
 
   const { platform } = initClient()
+
+  const identity = await platform.identities.get(process.env.OWNER_IDENTIFIER)
 
   const document = await platform.documents.create(
     `contract.${process.env.DOCUMENT_NAME}`,

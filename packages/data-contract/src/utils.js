@@ -1,8 +1,7 @@
 const Dash = require('dash')
 
 function initClient () {
-
-  if(!process.env.MNEMONIC){
+  if (!process.env.MNEMONIC) {
     throw new Error('Mnemonic not setted')
   }
 
