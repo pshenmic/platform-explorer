@@ -1,6 +1,11 @@
 const Dash = require('dash')
 
 function initClient () {
+
+  if(!process.env.MNEMONIC){
+    throw new Error('Mnemonic not setted')
+  }
+
   const options = {
     network: 'testnet',
     wallet: {
@@ -21,8 +26,7 @@ function initClient () {
     }
   }
 
-  const client = new Dash.Client(options)
-  return client
+  return new Dash.Client(options)
 }
 
 module.exports = { initClient }

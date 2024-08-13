@@ -5,8 +5,6 @@ const doc = require('../../document.json')
 async function pushDocument () {
   console.log('Client initialization')
 
-  const { platform } = initClient()
-
   if (!process.env.OWNER_IDENTIFIER) {
     throw new Error('No identity in env :(')
   }
@@ -19,6 +17,8 @@ async function pushDocument () {
   if (!process.env.DOCUMENT_NAME) {
     throw new Error('No document name in env')
   }
+
+  const { platform } = initClient()
 
   const document = await platform.documents.create(
     `contract.${process.env.DOCUMENT_NAME}`,
