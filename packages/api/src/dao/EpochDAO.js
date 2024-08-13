@@ -5,7 +5,7 @@ const Constants = require('../constants')
 const EpochData = require('../models/EpochData')
 
 module.exports = class EpochDAO {
-  constructor (knex) {
+  constructor(knex) {
     this.blocksDAO = new BlocksDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.knex = knex
@@ -19,9 +19,11 @@ module.exports = class EpochDAO {
     })
 
     const bestValidator = this.knex('blocks')
-      .select('pro_tx_hash')
+      .select('validator')
       .count('* as rating')
-      .groupBy('pro_tx_hash')
+      .where('timestamp', '>', epoch.startTime.toISOString())
+      .andWhere('timestamp', '<=', epoch.endTime.toISOString())
+      .groupBy('validator')
       .as('bestValidator')
 
     const subquery = this.knex('state_transitions')
@@ -38,21 +40,27 @@ module.exports = class EpochDAO {
       .groupBy('validators.pro_tx_hash')
       .as('subquery')
 
-    const [row] = await this.knex
+    const epochInfo = this.knex(subquery)
       .select(
         'tx_count',
         'collected_fees',
         'row_num',
-        this.knex(bestValidator)
-          .orderBy('rating', 'desc')
-          .limit(1)
-          .select('pro_tx_hash')
-          .as('best_validator'),
         this.knex.raw('SUM(collected_fees) OVER () as total_collected_fees'),
         this.knex.raw(`SUM(tx_count) OVER () * 1.0 / ${Constants.EPOCH_CHANGE_TIME / 1000} as tps`)
       )
-      .from(subquery)
       .orderBy('row_num', 'asc')
+      .limit(1)
+      .as('epochInfo')
+
+    const [row] = await this.knex(bestValidator)
+      .orderBy('rating', 'desc')
+      .limit(1)
+      .select(
+        'validator as best_validator',
+        this.knex(epochInfo).select('tx_count').as('tx_count'),
+        this.knex(epochInfo).select('total_collected_fees').as('total_collected_fees'),
+        this.knex(epochInfo).select('tps').as('tps'),
+      )
 
     return EpochData.fromObject({ epoch, ...row })
   }
