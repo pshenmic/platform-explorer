@@ -5,7 +5,7 @@ const Constants = require('../constants')
 const EpochData = require('../models/EpochData')
 
 module.exports = class EpochDAO {
-  constructor(knex) {
+  constructor (knex) {
     this.blocksDAO = new BlocksDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.knex = knex
@@ -59,7 +59,7 @@ module.exports = class EpochDAO {
         'validator as best_validator',
         this.knex(epochInfo).select('tx_count').as('tx_count'),
         this.knex(epochInfo).select('total_collected_fees').as('total_collected_fees'),
-        this.knex(epochInfo).select('tps').as('tps'),
+        this.knex(epochInfo).select('tps').as('tps')
       )
 
     return EpochData.fromObject({ epoch, ...row })
