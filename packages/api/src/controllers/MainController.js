@@ -44,6 +44,7 @@ class MainController {
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
       documentsCount: stats?.documentsCount,
+      identitiesCount: stats?.identitiesCount,
       network: tdStatus?.network ?? null,
       api: {
         version: API_VERSION,
