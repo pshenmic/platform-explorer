@@ -170,7 +170,7 @@ function Home () {
                   mb={5}
               >
                   <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
-                    <TransactionsHistory/>
+                    <TransactionsHistory height={'100%'}/>
                   </Container>
 
                   <Box flexShrink={'0'} w={10} h={[0, 0, 0, 10]} />

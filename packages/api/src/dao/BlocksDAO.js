@@ -12,6 +12,7 @@ module.exports = class BlockDAO {
       .select(this.knex('transfers').count('*').as('transfers_count'))
       .select(this.knex('data_contracts').count('*').as('data_contracts_count'))
       .select(this.knex('documents').count('*').as('documents_count'))
+      .select(this.knex('identities').count('*').as('identities_count'))
 
     const [row] = rows
 
@@ -19,14 +20,16 @@ module.exports = class BlockDAO {
       tx_count: txCount,
       transfers_count: transfersCount,
       data_contracts_count: dataContractsCount,
-      documents_count: documentsCount
+      documents_count: documentsCount,
+      identities_count: identitiesCount
     } = row
 
     return {
       transactionsCount: parseInt(txCount),
       transfersCount: parseInt(transfersCount),
       dataContractsCount: parseInt(dataContractsCount),
-      documentsCount: parseInt(documentsCount)
+      documentsCount: parseInt(documentsCount),
+      identitiesCount: parseInt(identitiesCount)
     }
   }
 

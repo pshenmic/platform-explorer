@@ -20,12 +20,19 @@ describe('Other routes', () => {
   let blocks
   let identityTransaction
   let identity
+  let identityAlias
   let dataContractTransaction
   let dataContract
   let documentTransaction
 
   before(async () => {
-    mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+    mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
+      block: {
+        header: {
+          time: new Date(0).toISOString()
+        }
+      }
+    }))
 
     app = await server.start()
     client = supertest(app.server)
@@ -52,6 +59,11 @@ describe('Other routes', () => {
       identifier: identityIdentifier,
       state_transition_hash: identityTransaction.hash,
       block_hash: block.hash
+    })
+
+    identityAlias = await fixtures.identity_alias(knex, {
+      alias: 'dpns.dash',
+      identity
     })
 
     dataContractTransaction = await fixtures.transaction(knex, {
@@ -173,6 +185,28 @@ describe('Other routes', () => {
     })
 
     it('should search by identity', async () => {
+      const { body } = await client.get(`/search?query=${identityAlias.alias}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedIdentity = {
+        identifier: identity.identifier,
+        revision: 0,
+        balance: 0,
+        timestamp: block.timestamp.toISOString(),
+        txHash: identityTransaction.hash,
+        totalTxs: 3,
+        totalTransfers: 0,
+        totalDocuments: 1,
+        totalDataContracts: 1,
+        isSystem: false,
+        owner: identity.identifier
+      }
+
+      assert.deepEqual({ identity: expectedIdentity }, body)
+    })
+
+    it('should search identity by DPNS', async () => {
       const { body } = await client.get(`/search?query=${identity.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -206,9 +240,8 @@ describe('Other routes', () => {
         }
       }
 
-      mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
       mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
-      mock.method(tenderdashRpc, 'getGenesis', async () => {
+      mock.method(tenderdashRpc, 'getBlockByHeight', async () => {
         try { throw new Error() } catch { }
       })
 
@@ -218,6 +251,7 @@ describe('Other routes', () => {
 
       const expectedStats = {
         epoch: null,
+        identitiesCount: 1,
         transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,
@@ -258,14 +292,20 @@ describe('Other routes', () => {
       }
 
       mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
-      mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: 'aaa' }))
-
+      mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
+        block: {
+          header: {
+            time: 'aaa'
+          }
+        }
+      }))
       const { body } = await client.get('/status')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedStats = {
         epoch: null,
+        identitiesCount: 1,
         transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,
@@ -306,7 +346,13 @@ describe('Other routes', () => {
       }
       mock.reset()
       mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
-      mock.method(tenderdashRpc, 'getGenesis', async () => ({ genesis_time: new Date(0) }))
+      mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
+        block: {
+          header: {
+            time: new Date(0).toISOString()
+          }
+        }
+      }))
 
       const { body } = await client.get('/status')
         .expect(200)
@@ -318,6 +364,7 @@ describe('Other routes', () => {
           startTime: '1970-01-01T18:00:00.000Z',
           endTime: '1970-01-01T19:00:00.000Z'
         },
+        identitiesCount: 1,
         transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,

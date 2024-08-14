@@ -3,6 +3,7 @@ const DataContractsDAO = require('../dao/DataContractsDAO')
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const DocumentsDAO = require('../dao/DocumentsDAO')
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
+const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const Constants = require('../constants')
@@ -17,6 +18,7 @@ class MainController {
     this.documentsDAO = new DocumentsDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
+    this.validatorsDAO = new ValidatorsDAO(knex)
   }
 
   getStatus = async (request, response) => {
@@ -27,7 +29,7 @@ class MainController {
       Constants.genesisTime
     ])).map((e) => e.value ?? null)
 
-    const [currentBlock] = blocks.resultSet
+    const [currentBlock] = blocks?.resultSet ?? []
 
     const epoch = genesisTime && currentBlock
       ? Epoch.fromObject({
@@ -42,6 +44,7 @@ class MainController {
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
       documentsCount: stats?.documentsCount,
+      identitiesCount: stats?.identitiesCount,
       network: tdStatus?.network ?? null,
       api: {
         version: API_VERSION,
@@ -91,10 +94,17 @@ class MainController {
       if (transaction) {
         return response.send({ transaction })
       }
+
+      // search validators
+      const validator = await this.validatorsDAO.getValidatorByProTxHash(query)
+
+      if (validator) {
+        return response.send({ validator })
+      }
     }
 
     // check for any Identifiers (identities, data contracts, documents)
-    if (query.length >= 43 && query.length <= 44) {
+    if (/^[0-9A-z]{43,44}$/.test(query)) {
       // search identites
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
@@ -114,6 +124,14 @@ class MainController {
 
       if (document) {
         return response.send({ document })
+      }
+    }
+
+    if (/^[^\s.]+(\.[^\s.]+)*$/.test(query)) {
+      const identity = await this.identitiesDAO.getIdentityByDPNS(query)
+
+      if (identity) {
+        return response.send({ identity })
       }
     }
 
