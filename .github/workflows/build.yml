@@ -21,6 +21,7 @@ jobs:
       - name: "Validate label"
         if: | 
           (contains(github.event.pull_request.labels.*.name, 'backend') ||
+            contains(github.event.pull_request.labels.*.name, 'data contract') || 
             contains(github.event.pull_request.labels.*.name, 'frontend') || 
             contains(github.event.pull_request.labels.*.name, 'indexer')) == false &&
           (github.event_name == 'pull_request')        
