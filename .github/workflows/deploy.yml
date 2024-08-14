@@ -67,7 +67,7 @@ jobs:
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             
             docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api npm run db:drop
-            docker run --rm --env-file api.env -v ./platform-explorer/packages/indexer/migrations:/migrations owl352/refinery_cli_docker refinery migrate -e DATABASE_URL -p /migrations
+            docker run --rm --env-file api.env -v ./platform-explorer/packages/indexer/migrations:/migrations owl352/refinery_cli_docker ./refinery migrate -e DATABASE_URL -p /migrations
 
   start:
     runs-on: ubuntu-latest
