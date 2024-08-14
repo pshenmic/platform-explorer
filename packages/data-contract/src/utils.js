@@ -1,7 +1,6 @@
 const Dash = require('dash')
 
 function initClient () {
-
   const options = {
     network: 'testnet',
     wallet: {
