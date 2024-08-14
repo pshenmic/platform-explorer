@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dataContract:deploy": "node index.js",
+    "dataContract:deploy": "node ./src/actions/deployContract.js",
+    "identity:register": "node ./src/actions/registerIdentity.js",
+    "document:push": "node ./src/actions/pushDocument.js",
     "lint": "standard ."
   },
   "repository": {
