@@ -1,9 +1,6 @@
 const Dash = require('dash')
 
 function initClient () {
-  if (!process.env.MNEMONIC) {
-    throw new Error('Mnemonic not setted')
-  }
 
   const options = {
     network: 'testnet',

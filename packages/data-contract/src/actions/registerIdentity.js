@@ -3,6 +3,11 @@ const { initClient } = require('../utils')
 
 async function createIdentity () {
   console.log('Creating Identity')
+
+  if (!process.env.MNEMONIC) {
+    throw new Error('Mnemonic not setted')
+  }
+
   const client = initClient()
 
   const identity = await client.platform.identities.register()

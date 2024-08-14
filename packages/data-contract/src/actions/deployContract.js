@@ -6,11 +6,15 @@ const { initClient } = require('../utils')
 async function deployContract () {
   console.log('Deploying Contract')
 
-  const client = initClient()
+  if (!process.env.MNEMONIC) {
+    throw new Error('Mnemonic not setted')
+  }
 
   if (!process.env.OWNER_IDENTIFIER) {
     throw new Error('No identity in env :(')
   }
+
+  const client = initClient()
 
   const identity = await client.platform.identities.get(process.env.OWNER_IDENTIFIER)
 

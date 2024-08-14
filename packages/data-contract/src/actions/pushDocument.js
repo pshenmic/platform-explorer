@@ -5,6 +5,10 @@ const doc = require('../../document.json')
 async function pushDocument () {
   console.log('Client initialization')
 
+  if (!process.env.MNEMONIC) {
+    throw new Error('Mnemonic not setted')
+  }
+
   if (!process.env.OWNER_IDENTIFIER) {
     throw new Error('No identity in env :(')
   }
