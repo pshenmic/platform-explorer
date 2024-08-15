@@ -16,40 +16,40 @@ function SimpleListItem ({ item }) {
 
   return (
     <ItemContainer
-        link={item.link}
-        className={'SimpleListItem'}
+      link={item.link}
+      className={'SimpleListItem'}
     >
-        {item.monospaceTitles &&
-            <div className={'SimpleListItem__TitlesContainer SimpleListItem__TitlesContainer--Monospace'}>
-                {item.monospaceTitles.map((title, key) =>
-                    <div className={'SimpleListItem__Title'} key={key}>{ title }</div>
-                )}
-            </div>
-        }
+      {item.monospaceTitles &&
+        <div className={'SimpleListItem__TitlesContainer SimpleListItem__TitlesContainer--Monospace'}>
+          {item.monospaceTitles.map((title, key) =>
+            <div className={'SimpleListItem__Title'} key={key}>{ title }</div>
+          )}
+        </div>
+      }
 
-        {item.titles &&
-            <div className={'SimpleListItem__TitlesContainer'}>
-                {item.titles.map((title, key) =>
-                    <div className={'SimpleListItem__Title'} key={key}>{ title }</div>
-                )}
-            </div>
-        }
+      {item.titles &&
+        <div className={'SimpleListItem__TitlesContainer'}>
+          {item.titles.map((title, key) =>
+            <div className={'SimpleListItem__Title'} key={key}>{ title }</div>
+          )}
+        </div>
+      }
 
-        {item.monospaceColumns &&
-            <div className={'SimpleListItem__ColumnsContainer'}>
-                {item.monospaceColumns.map((column, key) =>
-                    <div className={'SimpleListItem__Column SimpleListItem__Column--Monospace'} key={key}>{ column }</div>
-                )}
-            </div>
-        }
+      {item.monospaceColumns &&
+        <div className={'SimpleListItem__ColumnsContainer'}>
+          {item.monospaceColumns.map((column, key) =>
+            <div className={'SimpleListItem__Column SimpleListItem__Column--Monospace'} key={key}>{ column }</div>
+          )}
+        </div>
+      }
 
-        {item.columns &&
-            <div className={'SimpleListItem__ColumnsContainer'}>
-                {item.columns.map((column, key) =>
-                    <div className={'SimpleListItem__Column'} key={key}>{ column }</div>
-                )}
-            </div>
-        }
+      {item.columns &&
+        <div className={'SimpleListItem__ColumnsContainer'}>
+          {item.columns.map((column, key) =>
+            <div className={'SimpleListItem__Column'} key={key}>{ column }</div>
+          )}
+        </div>
+      }
     </ItemContainer>
   )
 }
@@ -59,20 +59,22 @@ const SimpleList = forwardRef(function (props, ref) {
 
   return (
     <div className={'SimpleList'} ref={ref}>
+      {columns?.length > 0 &&
         <div className={'SimpleList__ColumnTitles'}>
-            {columns.map((column, key) =>
-                <div key={key} className={'SimpleList__ColumnTitle'}>{ column }</div>
-            )}
+          {columns.map((column, key) =>
+            <div key={key} className={'SimpleList__ColumnTitle'}>{column}</div>
+          )}
         </div>
+      }
 
-        <div className={'SimpleList__List'}>
-            {items.map((item, key) =>
-                <SimpleListItem
-                    key={key}
-                    item={item}
-                />
-            )}
-        </div>
+      <div className={'SimpleList__List'}>
+        {items.map((item, key) =>
+          <SimpleListItem
+            key={key}
+            item={item}
+          />
+        )}
+      </div>
     </div>
   )
 })

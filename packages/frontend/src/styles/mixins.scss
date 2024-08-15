@@ -1,195 +1,201 @@
 @import './variables.scss';
 
 @mixin def_list_item {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: 12px;
+  margin-bottom: 8px;
+  line-height: 24px;
+  background: var(--chakra-colors-whiteAlpha-100);
+  color: var(--chakra-colors-gray-100);
+  font-family: $font-mono;
+  font-size: 12pt;
+  border-radius: 10px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__IdentifierContainer {
     display: flex;
-    width: 100%;
+    align-items: center;
+    min-width: 50px;
+  }
+
+  &__Avatar {
+    margin-right: 12px;
+    height: 28px;
+    width: 28px;
+  }
+
+  &:hover {
+    background: var(--chakra-colors-whiteAlpha-50);
     text-decoration: none;
-    padding: 6px 8px;
-    margin-bottom: 1px;
-    line-height: 24px;
-    border-bottom: 1px solid var(--chakra-colors-gray-800);
-    color:  var(--chakra-colors-gray-100);
-    font-family: $font-mono;
-    font-size: 12pt;
+    cursor: pointer;
+  }
 
-    &__IdentifierContainer {
-        display: flex;
-        align-items: center;
-        min-width: 50px;
-    }
-
-    &__Avatar {
-        margin-right: 12px;
-        height: 28px;
-        width: 28px;
-    }
-
-    &:hover {
-        background: var(--chakra-colors-whiteAlpha-50);
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    &:last-child {
-        border-bottom: none;
-    }
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 @mixin loading-line($delay: 0) {
-    overflow: hidden;
-    position: relative;
+  overflow: hidden;
+  position: relative;
 
-    @keyframes loading-line {
-        0% {
-            left: -100%;
-            width: 100%;
-        }
-        50% {
-            left: 100%;
-            width: 100%;
-        }
-        100% {
-            left: 100%;
-            width: 100%;
-        }
+  @keyframes loading-line {
+    0% {
+      left: -100%;
+      width: 100%;
     }
+    50% {
+      left: 100%;
+      width: 100%;
+    }
+    100% {
+      left: 100%;
+      width: 100%;
+    }
+  }
 
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--chakra-colors-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14 117 181) 0%, rgb(22 82 120) 100%);
+    border-radius: 100px;
+    opacity: .1;
+    animation: loading-line linear 3s infinite;
+  }
+
+  Tr & {
     &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: var(--chakra-colors-gray-900);
-        border-radius: 5px;
-        opacity: 1;
+      background-color: var(--chakra-colors-gray-800);
+      opacity: .2;
+    }
+  }
+
+  $timeOffset: 0.5s;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}n) {
+      &::after {
+        animation-delay: ($i - 2) * $timeOffset + ($delay * 0.15s);
+      }
     }
 
-    &::after {
-        content: '';
-        position: absolute;
-        z-index: 2;
-        top: 0;
-        left: -50%;
-        width: 40%;
-        height: 100%;
-        background: linear-gradient(90deg, rgb(14 117 181) 0%, rgb(22 82 120) 100%);
-        border-radius: 100px;
-        opacity: .1;
-        animation: loading-line linear 3s infinite;
-    }
-
-    Tr & {
-        &::before {
-            background-color: var(--chakra-colors-gray-800);
-            opacity: .2;
-        }
-    }
-    $timeOffset: 0.5s;
-
-    @for $i from 1 through 10 {
-        &:nth-child(#{$i}n) {
-          &::after {
+    Tr:nth-child(#{$i}n) & {
+        &::after {
             animation-delay: ($i - 2) * $timeOffset + ($delay * 0.15s);
-          }
-        }
-
-        Tr:nth-child(#{$i}n) & {
-            &::after {
-                animation-delay: ($i - 2) * $timeOffset + ($delay * 0.15s);
-            }
         }
     }
+  }
 }
 
 @mixin loading-container {
-    @keyframes loading-process {
-        from {
-            opacity: 0;
-            left: -100%;
-            z-index: 6;
-        }
-        50% {
-            opacity: .25;
-        }
-        to {
-            z-index: 6;
-            left: 100%;
-        }
+  @keyframes loading-process {
+    from {
+      opacity: 0;
+      left: -100%;
+      z-index: 6;
     }
-    
-    @keyframes loading-bg {
-        from {
-            z-index: 5;
-            opacity: 0;
-        }
-        15% {
-            opacity: 1;
-        }
-        85% {
-            opacity: 1;
-        }
-        to {
-            opacity: 0;
-            z-index: 5;
-        }
+    50% {
+      opacity: .25;
     }
-    
-    @keyframes loading-container {
-        from {
-            overflow: hidden;
-        }
-        to {
-            overflow: hidden;
-        }
+    to {
+      z-index: 6;
+      left: 100%;
     }
+  }
+  
+  @keyframes loading-bg {
+    from {
+      z-index: 5;
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      z-index: 5;
+    }
+  }
+  
+  @keyframes loading-container {
+    from {
+      overflow: hidden;
+    }
+    to {
+      overflow: hidden;
+    }
+  }
 
-    overflow: hidden;
-    position: relative;
-    animation: 1s loading-container infinite;
+  overflow: hidden;
+  position: relative;
+  animation: 1s loading-container infinite;
 
-    &::before {
-        animation: 1s loading-bg infinite;
-    }
+  &::before {
+    animation: 1s loading-bg infinite;
+  }
 
-    &::after {
-        animation: 1s loading-process infinite;
-    }
-    
-    &::before, &::after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        opacity: 0;
-        left: 0;
-        z-index: -1;
-    }
+  &::after {
+    animation: 1s loading-process infinite;
+  }
+  
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    opacity: 0;
+    left: 0;
+    z-index: -1;
+  }
 
-    &::before {
-        background-color: var(--chakra-colors-gray-900);
-    }
+  &::before {
+    background-color: var(--chakra-colors-gray-900);
+  }
 
-    &::after {
-        background: linear-gradient(90deg, transparent 0%, rgb(14 117 181) 50%, transparent 100%);
-        width: 100%;
-        height: 100%;
-    }
+  &::after {
+    background: linear-gradient(90deg, transparent 0%, rgb(14 117 181) 50%, transparent 100%);
+    width: 100%;
+    height: 100%;
+  }
 }
 
 @mixin avatar-container {
-    border-radius: $border-radius-def;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
-    background-color: var(--chakra-colors-gray-900);
-    border: 1px solid var(--chakra-colors-whiteAlpha-100);
-    overflow: hidden;
+  border-radius: $border-radius-def;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+  background-color: var(--chakra-colors-gray-900);
+  border: 1px solid var(--chakra-colors-whiteAlpha-100);
+  overflow: hidden;
 
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        object-position: center;
-    }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
 }
