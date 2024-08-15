@@ -124,152 +124,152 @@ function Home () {
       <Intro/>
     </Container>
 
-      <TotalInfo
-        blocks={status?.data?.api?.block?.height}
-        transactions={status.data?.transactionsCount}
-        dataContracts={status.data?.dataContractsCount}
-        documents={status.data?.documentsCount}
-        identities={status.data?.identitiesCount}
-        loading={status.loading}
-      />
+    <TotalInfo
+      blocks={status?.data?.api?.block?.height}
+      transactions={status.data?.transactionsCount}
+      dataContracts={status.data?.dataContractsCount}
+      documents={status.data?.documentsCount}
+      identities={status.data?.identitiesCount}
+      loading={status.loading}
+    />
 
-      <Container
-          maxW={'container.xl'}
-          color={'white'}
-          padding={3}
-          mt={0}
-          mb={4}
-      >
-          <Container p={0} maxW={'container.xl'} mb={[10, 10, 16]}>
-              <Flex
-                  w={'100%'}
-                  justifyContent={'space-between'}
-                  wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
-                  mb={5}
-              >
-                  <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
-                    <TransactionsHistory height={'100%'}/>
-                  </Container>
-
-                  <Box flexShrink={'0'} w={10} h={[0, 0, 0, 10]} />
-
-                  <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
-                      <Flex
-                          maxW={'100%'}
-                          m={0}
-                          h={'100%'}
-                          className={'InfoBlock'}
-                          flexDirection={'column'}
-                      >
-                          <Heading className={'InfoBlock__Title'} as={'h2'}>Trending Data Contracts</Heading>
-                          {!dataContracts.loading
-                            ? !dataContracts.error
-                                ? <SimpleList
-                                    items={dataContracts.data.resultSet.map((dataContract, i) => ({
-                                      columns: [dataContract.identifier, dataContract.documentsCount],
-                                      link: '/dataContract/' + dataContract.identifier
-                                    }))}
-                                    columns={['Identifier', 'Documents Count']}
-                                  />
-                                : <ErrorMessageBlock/>
-                            : <LoadingList itemsCount={dataContracts.props.printCount}/>}
-                      </Flex>
-                  </Container>
-              </Flex>
-
-              <Flex
-                  w={'100%'}
-                  justifyContent={'space-between'}
-                  wrap={['wrap', 'wrap', 'nowrap']}
-                  mb={[10, 10, 16]}
-              >
-                  <Flex
-                      ref={transactionsContainer}
-                      maxW={'100%'}
-                      mb={0}
-                      className={'InfoBlock'}
-                      flexDirection={'column'}
-                      flexGrow={1}
-                  >
-                      <Heading className={'InfoBlock__Title'} as={'h2'}>Transactions</Heading>
-                      {!transactions.loading
-                        ? !transactions.error
-                            ? <SimpleList
-                              ref={transactionsList}
-                              items={transactions.data.resultSet
-                                .filter((item, i) => i < transactions.props.printCount)
-                                .map((transaction, i) => ({
-                                  monospaceTitles: [transaction.hash],
-                                  columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
-                                  link: '/transaction/' + transaction.hash
-                                }))}
-                              columns={[]}
-                            />
-                            : <ErrorMessageBlock/>
-                        : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
-                  </Flex>
-
-                  <Box flexShrink={'0'} w={10} h={10} />
-
-                  <Flex
-                      flexDirection={'column'}
-                      p={0}
-                      maxW={['100%', '100%', 'calc(50% - 20px)']}
-                      width={'100%'}
-                  >
-                      <Flex
-                          ref={trendingIdentitiesContainer}
-                          maxW={'100%'}
-                          className={'InfoBlock'}
-                          flexGrow={'1'}
-                          flexDirection={'column'}
-                      >
-                          <Heading className={'InfoBlock__Title'} as={'h2'}>Trending Identities</Heading>
-                          {!trendingIdentities.loading
-                            ? !trendingIdentities.error
-                                ? <SimpleList
-                                  ref={trendingIdentitiesList}
-                                  items={trendingIdentities.data.resultSet
-                                    .filter((item, i) => i < trendingIdentities.props.printCount)
-                                    .map((identitiy, i) => ({
-                                      columns: [identitiy.identifier, identitiy.totalTxs],
-                                      link: '/identity/' + identitiy.identifier
-                                    }))}
-                                  columns={['Identifier', 'Tx Count']}
-                                />
-                                : <ErrorMessageBlock/>
-                            : <LoadingList itemsCount={trendingIdentities.props.printCount}/>}
-                      </Flex>
-
-                      <Box w={10} h={10} />
-
-                      <Flex
-                          ref={richListContainer}
-                          maxW={'none'}
-                          className={'InfoBlock'}
-                          flexGrow={'1'}
-                          flexDirection={'column'}
-                      >
-                          <Heading className={'InfoBlock__Title'} as={'h2'}>Richlist</Heading>
-                          {!richestIdentities.loading
-                            ? !richestIdentities.error
-                                ? <SimpleList
-                                  ref={richListRef}
-                                  items={richestIdentities.data.resultSet
-                                    .filter((item, i) => i < richestIdentities.props.printCount)
-                                    .map((identitiy, i) => ({
-                                      columns: [identitiy.identifier, identitiy.balance],
-                                      link: '/identity/' + identitiy.identifier
-                                    }))}
-                                  columns={['Identifier', 'Balance']}
-                                />
-                                : <ErrorMessageBlock/>
-                            : <LoadingList itemsCount={richestIdentities.props.printCount}/>}
-                      </Flex>
-                  </Flex>
-              </Flex>
+    <Container
+      maxW={'container.xl'}
+      color={'white'}
+      padding={3}
+      mt={0}
+      mb={4}
+    >
+      <Container p={0} maxW={'container.xl'} mb={[10, 10, 16]}>
+        <Flex
+          w={'100%'}
+          justifyContent={'space-between'}
+          wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
+          mb={5}
+        >
+          <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
+            <TransactionsHistory height={'100%'}/>
           </Container>
+
+          <Box flexShrink={'0'} w={10} h={[0, 0, 0, 10]} />
+
+          <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
+            <Flex
+              maxW={'100%'}
+              m={0}
+              h={'100%'}
+              className={'InfoBlock'}
+              flexDirection={'column'}
+            >
+              <Heading className={'InfoBlock__Title'} as={'h2'}>Trending Data Contracts</Heading>
+              {!dataContracts.loading
+                ? !dataContracts.error
+                    ? <SimpleList
+                        items={dataContracts.data.resultSet.map((dataContract, i) => ({
+                          columns: [dataContract.identifier, dataContract.documentsCount],
+                          link: '/dataContract/' + dataContract.identifier
+                        }))}
+                        columns={['Identifier', 'Documents Count']}
+                      />
+                    : <ErrorMessageBlock/>
+                : <LoadingList itemsCount={dataContracts.props.printCount}/>}
+            </Flex>
+          </Container>
+        </Flex>
+
+        <Flex
+          w={'100%'}
+          justifyContent={'space-between'}
+          wrap={['wrap', 'wrap', 'nowrap']}
+          mb={[10, 10, 16]}
+        >
+          <Flex
+            ref={transactionsContainer}
+            maxW={'100%'}
+            mb={0}
+            className={'InfoBlock'}
+            flexDirection={'column'}
+            flexGrow={1}
+          >
+            <Heading className={'InfoBlock__Title'} as={'h2'}>Transactions</Heading>
+            {!transactions.loading
+              ? !transactions.error
+                  ? <SimpleList
+                    ref={transactionsList}
+                    items={transactions.data.resultSet
+                      .filter((item, i) => i < transactions.props.printCount)
+                      .map((transaction, i) => ({
+                        monospaceTitles: [transaction.hash],
+                        columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
+                        link: '/transaction/' + transaction.hash
+                      }))}
+                    columns={[]}
+                  />
+                  : <ErrorMessageBlock/>
+              : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
+          </Flex>
+
+          <Box flexShrink={'0'} w={10} h={10} />
+
+          <Flex
+            flexDirection={'column'}
+            p={0}
+            maxW={['100%', '100%', 'calc(50% - 20px)']}
+            width={'100%'}
+          >
+            <Flex
+              ref={trendingIdentitiesContainer}
+              maxW={'100%'}
+              className={'InfoBlock'}
+              flexGrow={'1'}
+              flexDirection={'column'}
+            >
+              <Heading className={'InfoBlock__Title'} as={'h2'}>Trending Identities</Heading>
+              {!trendingIdentities.loading
+                ? !trendingIdentities.error
+                    ? <SimpleList
+                      ref={trendingIdentitiesList}
+                      items={trendingIdentities.data.resultSet
+                        .filter((item, i) => i < trendingIdentities.props.printCount)
+                        .map((identitiy, i) => ({
+                          columns: [identitiy.identifier, identitiy.totalTxs],
+                          link: '/identity/' + identitiy.identifier
+                        }))}
+                      columns={['Identifier', 'Tx Count']}
+                    />
+                    : <ErrorMessageBlock/>
+                : <LoadingList itemsCount={trendingIdentities.props.printCount}/>}
+            </Flex>
+
+            <Box w={10} h={10} />
+
+            <Flex
+              ref={richListContainer}
+              maxW={'none'}
+              className={'InfoBlock'}
+              flexGrow={'1'}
+              flexDirection={'column'}
+            >
+              <Heading className={'InfoBlock__Title'} as={'h2'}>Richlist</Heading>
+              {!richestIdentities.loading
+                ? !richestIdentities.error
+                    ? <SimpleList
+                      ref={richListRef}
+                      items={richestIdentities.data.resultSet
+                        .filter((item, i) => i < richestIdentities.props.printCount)
+                        .map((identitiy, i) => ({
+                          columns: [identitiy.identifier, identitiy.balance],
+                          link: '/identity/' + identitiy.identifier
+                        }))}
+                      columns={['Identifier', 'Balance']}
+                    />
+                    : <ErrorMessageBlock/>
+                : <LoadingList itemsCount={richestIdentities.props.printCount}/>}
+            </Flex>
+          </Flex>
+        </Flex>
       </Container>
+    </Container>
   </>)
 }
 
