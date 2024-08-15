@@ -37,6 +37,11 @@
     font-family: $font-heading;
     letter-spacing: 0.4px;
     text-transform: uppercase;
+
+    &, span {
+      display: flex;
+      align-items: center;
+    }
   }
 
   &__BadgeIcon {
