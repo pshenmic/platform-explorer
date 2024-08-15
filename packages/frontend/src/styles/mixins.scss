@@ -35,7 +35,7 @@
     }
 }
 
-@mixin loading-line {
+@mixin loading-line($delay: 0) {
     overflow: hidden;
     position: relative;
 
@@ -86,19 +86,18 @@
             opacity: .2;
         }
     }
-
     $timeOffset: 0.5s;
 
     @for $i from 1 through 10 {
         &:nth-child(#{$i}n) {
           &::after {
-            animation-delay: $i * $timeOffset;
+            animation-delay: ($i - 2) * $timeOffset + ($delay * 0.15s);
           }
         }
 
         Tr:nth-child(#{$i}n) & {
             &::after {
-                animation-delay: $i * $timeOffset;
+                animation-delay: ($i - 2) * $timeOffset + ($delay * 0.15s);
             }
         }
     }

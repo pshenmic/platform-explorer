@@ -5,14 +5,10 @@ import * as Api from '../../util/Api'
 import TransactionsHistory from '../../components/charts/TransactionsHistory'
 import { SimpleList } from '../../components/lists'
 import TotalInfo from '../../components/total/TotalInfo'
-import NetworkStatus from '../../components/networkStatus'
-import Intro from '../../components/intro/index.js'
-import Markdown from '../../components/markdown'
-import introContent from './intro.md'
 import { getTransitionTypeString, fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { LoadingList } from '../../components/loading'
-
+import Intro from './HomeIntro.js'
 import {
   Box,
   Container,
@@ -119,32 +115,14 @@ function Home () {
   ])
 
   return (<>
-      <Container
-          maxW={'container.xl'}
-          color={'white'}
-          padding={3}
-          mt={8}
-          mb={8}
-      >
-          <Flex
-              justifyContent={'space-between'}
-              alignItems={'center'}
-              wrap={['wrap', 'wrap', 'nowrap']}
-          >
-              <Container maxW={'none'} p={0}>
-                  <Intro
-                      title={'Platform Explorer'}
-                      contentSource={<Markdown>{introContent}</Markdown>}
-                  />
-              </Container>
-
-              <Box flexShrink={'0'} w={10} h={10} />
-
-              <Container maxW={'none'} p={0}>
-                  <NetworkStatus/>
-              </Container>
-          </Flex>
-      </Container>
+    <Container
+      maxW={'container.xl'}
+      color={'white'}
+      padding={3}
+      mt={8}
+    >
+      <Intro/>
+    </Container>
 
       <TotalInfo
         blocks={status?.data?.api?.block?.height}

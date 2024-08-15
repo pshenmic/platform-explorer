@@ -159,6 +159,34 @@ export const theme = extendTheme({
         p: 4,
         borderRadius: 'lg'
       }
+    },
+    Badge: {
+      baseStyle: props => {
+        const { colorScheme } = props
+        const backgroundColors = {
+          red: '#4E3234',
+          green: '#2B4629',
+          gray: 'gray.600'
+        }
+        const textColor = {
+          red: '#F45858',
+          green: '#81F458',
+          gray: 'gray.50'
+        }
+
+        return {
+          borderWidth: '0px',
+          padding: '3px 10px',
+          borderRadius: '999px',
+          fontFamily: 'mono',
+          fontSize: '11px',
+          textTransform: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          bg: backgroundColors[colorScheme] || 'gray.500',
+          color: textColor[colorScheme] || 'white'
+        }
+      }
     }
   }
 })
