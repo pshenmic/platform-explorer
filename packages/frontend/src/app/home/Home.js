@@ -170,6 +170,7 @@ function Home () {
                           link: '/dataContract/' + dataContract.identifier
                         }))}
                         columns={['Identifier', 'Documents Count']}
+                        showMoreLink={'/dataContracts'}
                       />
                     : <ErrorMessageBlock/>
                 : <LoadingList itemsCount={dataContracts.props.printCount}/>}
@@ -204,6 +205,7 @@ function Home () {
                         link: '/transaction/' + transaction.hash
                       }))}
                     columns={[]}
+                    showMoreLink={'/transactions'}
                   />
                   : <ErrorMessageBlock/>
               : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
@@ -236,6 +238,7 @@ function Home () {
                           link: '/identity/' + identitiy.identifier
                         }))}
                       columns={['Identifier', 'Tx Count']}
+                      showMoreLink={'/identities'}
                     />
                     : <ErrorMessageBlock/>
                 : <LoadingList itemsCount={trendingIdentities.props.printCount}/>}
@@ -262,6 +265,7 @@ function Home () {
                           link: '/identity/' + identitiy.identifier
                         }))}
                       columns={['Identifier', 'Balance']}
+                      showMoreLink={'/identities'}
                     />
                     : <ErrorMessageBlock/>
                 : <LoadingList itemsCount={richestIdentities.props.printCount}/>}

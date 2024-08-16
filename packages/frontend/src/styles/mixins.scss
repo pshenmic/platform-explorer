@@ -199,3 +199,69 @@
     object-position: center;
   }
 }
+
+@mixin DefButton {
+  display: block;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-family: $font-heading;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: transparent;
+  transition: all 0.5s;
+  
+  &::before, &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+  }
+
+  &::before {
+    background-color: var(--chakra-colors-gray-800);
+    width: 100%;
+    z-index: -1;
+    transition: all 1s;
+  }
+
+  &::after {
+    width: 300px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .1), rgba(255, 255, 255, 0));
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: all .5s;
+  }
+
+  @keyframes flash {
+    from {
+      left: 0;
+      transform: translateX(-100%);
+    }
+
+    to {
+      left: 100%;
+      transform: translateX(0);
+    }
+  }
+
+  &:hover, &:focus-within {
+    background-color: $color-brand-normal;
+
+    &::before {
+      opacity: .85;
+    }
+
+    &::after {
+      animation: flash 1s backwards;
+      pointer-events: none;
+      opacity: 1;
+    }
+  }
+}

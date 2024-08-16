@@ -55,7 +55,7 @@ function SimpleListItem ({ item }) {
 }
 
 const SimpleList = forwardRef(function (props, ref) {
-  const { items, columns } = props
+  const { items, columns, showMoreLink } = props
 
   return (
     <div className={'SimpleList'} ref={ref}>
@@ -75,6 +75,10 @@ const SimpleList = forwardRef(function (props, ref) {
           />
         )}
       </div>
+
+      {showMoreLink &&
+        <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>Show more</Link>
+      }
     </div>
   )
 })

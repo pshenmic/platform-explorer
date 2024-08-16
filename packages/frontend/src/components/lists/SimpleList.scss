@@ -7,7 +7,7 @@
     justify-content: space-between;
     padding: 8px 12px;
     border-radius: 10px;
-    background-color: var(--chakra-colors-gray-700);
+    background-color: var(--chakra-colors-gray-800);
     margin-bottom: 8px;
   }
 
@@ -20,6 +20,17 @@
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.4px;
+  }
+
+  &__ShowMoreButton {
+    @include mixins.DefButton;
+
+    width: 100%;
+    margin-top: 8px;
+
+    &::before {
+      content: '';
+    }
   }
 }
 
