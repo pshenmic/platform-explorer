@@ -37,19 +37,34 @@ function numberFormat (number) {
   return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(number)
 }
 
-function getTimeDelta (startDate, endDate) {
+function getTimeDelta (startDate, endDate, format) {
   if (!startDate || !endDate) return 'n/a'
 
   const diff = new Date(endDate) - new Date(startDate)
-
   const isFuture = diff > 0
   const absoluteDiff = Math.abs(diff)
+  const days = Math.floor(absoluteDiff / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((absoluteDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((absoluteDiff % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((absoluteDiff % (1000 * 60)) / 1000)
 
-  if (absoluteDiff < 60 * 1000) {
-    return `${Math.floor(absoluteDiff / 1000)} sec. ${isFuture ? 'left' : 'ago'}`
-  } else {
-    return `${Math.floor(absoluteDiff / 1000 / 60)} min. ${isFuture ? 'left' : 'ago'}`
+  if (!format || format === 'default') {
+    if (days > 0) {
+      return `${days}d ${hours}h ${isFuture ? 'left' : 'ago'}`
+    } else if (hours > 0) {
+      return `${hours}h ${minutes}m ${isFuture ? 'left' : 'ago'}`
+    } else if (minutes > 0) {
+      return `${minutes} min. ${isFuture ? 'left' : 'ago'}`
+    } else {
+      return `${seconds} sec. ${isFuture ? 'left' : 'ago'}`
+    }
   }
+
+  if (format === 'detailed') {
+    return `${days}d:${hours}h:${minutes}m:${seconds}s`
+  }
+
+  return 'Invalid format'
 }
 
 export {
