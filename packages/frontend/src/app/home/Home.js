@@ -166,7 +166,19 @@ function Home () {
                 ? !dataContracts.error
                     ? <SimpleList
                         items={dataContracts.data.resultSet.map((dataContract, i) => ({
-                          columns: [dataContract.identifier, dataContract.documentsCount],
+                          columns: [
+                            {
+                              value: dataContract.identifier,
+                              avatar: true,
+                              mono: true,
+                              dim: true
+                            },
+                            {
+                              value: dataContract.documentsCount,
+                              mono: true,
+                              numberFormat: 'currency'
+                            }
+                          ],
                           link: '/dataContract/' + dataContract.identifier
                         }))}
                         columns={['Identifier', 'Documents Count']}
@@ -234,7 +246,19 @@ function Home () {
                       items={trendingIdentities.data.resultSet
                         .filter((item, i) => i < trendingIdentities.props.printCount)
                         .map((identitiy, i) => ({
-                          columns: [identitiy.identifier, identitiy.totalTxs],
+                          columns: [
+                            {
+                              value: identitiy.identifier,
+                              avatar: true,
+                              mono: true,
+                              dim: true
+                            },
+                            {
+                              value: identitiy.totalTxs,
+                              mono: true,
+                              numberFormat: 'currency'
+                            }
+                          ],
                           link: '/identity/' + identitiy.identifier
                         }))}
                       columns={['Identifier', 'Tx Count']}
@@ -261,7 +285,19 @@ function Home () {
                       items={richestIdentities.data.resultSet
                         .filter((item, i) => i < richestIdentities.props.printCount)
                         .map((identitiy, i) => ({
-                          columns: [identitiy.identifier, identitiy.balance],
+                          columns: [
+                            {
+                              value: identitiy.identifier,
+                              avatar: true,
+                              mono: true,
+                              dim: true
+                            },
+                            {
+                              value: identitiy.balance,
+                              mono: true,
+                              numberFormat: 'currency'
+                            }
+                          ],
                           link: '/identity/' + identitiy.identifier
                         }))}
                       columns={['Identifier', 'Balance']}

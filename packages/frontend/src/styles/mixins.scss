@@ -12,6 +12,14 @@
   font-family: $font-mono;
   font-size: 12pt;
   border-radius: 10px;
+  border: 1px solid var(--chakra-colors-gray-750);
+  background-color: var(--chakra-colors-gray-650);
+
+  &:hover {
+    background: var(--chakra-colors-whiteAlpha-50);
+    text-decoration: none;
+    cursor: pointer;
+  }
 
   &:last-child {
     margin-bottom: 0;
@@ -27,16 +35,6 @@
     margin-right: 12px;
     height: 28px;
     width: 28px;
-  }
-
-  &:hover {
-    background: var(--chakra-colors-whiteAlpha-50);
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  &:last-child {
-    border-bottom: none;
   }
 }
 

@@ -43,8 +43,9 @@
     word-wrap: break-word;
     overflow-wrap: anywhere;
 
-    &--Monospace {
+    &--Mono {
       font-family: $font-mono;
+      color: var(--chakra-colors-gray-250);
     }
   }
 
@@ -58,14 +59,25 @@
     word-wrap: break-word;
     overflow-wrap: anywhere;
     margin-right: 16px;
+    display: flex;
+    align-items: center;
 
     &:last-child {
       overflow-wrap: normal;
       margin-right: 0;
     }
 
-    &--Monospace {
+    &--Mono {
       font-family: $font-mono;
+      font-size: 12px;
     }
+
+    &--Dim {
+      color: var(--chakra-colors-gray-250);
+    }
+  }
+
+  &__Avatar {
+    
   }
 }
