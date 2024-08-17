@@ -37,11 +37,27 @@ function numberFormat (number) {
   return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(number)
 }
 
+function getTimeDelta (startDate, endDate) {
+  if (!startDate || !endDate) return 'n/a'
+
+  const diff = new Date(endDate) - new Date(startDate)
+
+  const isFuture = diff > 0
+  const absoluteDiff = Math.abs(diff)
+
+  if (absoluteDiff < 60 * 1000) {
+    return `${Math.floor(absoluteDiff / 1000)} sec. ${isFuture ? 'left' : 'ago'}`
+  } else {
+    return `${Math.floor(absoluteDiff / 1000 / 60)} min. ${isFuture ? 'left' : 'ago'}`
+  }
+}
+
 export {
   getTransitionTypeString,
   fetchHandlerSuccess,
   fetchHandlerError,
   numberFormat,
   currencyRound,
-  copyToClipboard
+  copyToClipboard,
+  getTimeDelta
 }

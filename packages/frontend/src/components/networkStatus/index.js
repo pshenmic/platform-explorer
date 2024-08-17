@@ -4,7 +4,7 @@ import * as Api from '../../util/Api'
 import { useState, useEffect, useCallback } from 'react'
 import { CheckCircleIcon, WarningIcon, InfoIcon } from '@chakra-ui/icons'
 import { Tooltip, Badge } from '@chakra-ui/react'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, getTimeDelta } from '../../util'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
@@ -33,18 +33,6 @@ function NetworkStatus () {
   const ApiStatusIcon = apiStatus
     ? <CheckCircleIcon mr={2}/>
     : <WarningIcon mr={2}/>
-
-  function getLastBlocktimeString () {
-    if (!status?.data?.api?.block?.timestamp) return 'n/a'
-
-    const diff = new Date() - new Date(status?.data?.api?.block?.timestamp)
-
-    if (diff < 60 * 1000) {
-      return `${Math.floor((diff / 1000))} sec. ago`
-    } else {
-      return `${Math.floor((diff / 1000) / 60)} min. ago`
-    }
-  }
 
   return (
     <div className={'NetworkStatus'}>
@@ -135,7 +123,8 @@ function NetworkStatus () {
             {status?.data?.api?.block?.height !== undefined
               ? <div className={'NetworkStatus__Value'}>
                   <Link href={`/block/${status?.data?.api?.block?.hash}`}>
-                    #{status?.data?.api?.block?.height}, {getLastBlocktimeString()}
+                    #{status?.data?.api?.block?.height},
+                    {status?.data?.api?.block?.timestamp && ' ' + getTimeDelta(new Date(), new Date(status.data.api.block?.timestamp))}
                   </Link>
                 </div>
               : <div className={'NetworkStatus__Value'}>n/a</div>}
