@@ -7,11 +7,9 @@ class IdentitiesController {
     this.identitiesDAO = new IdentitiesDAO(knex)
     this.DAPI = new DAPI({
       dapiAddresses: [
-        '127.0.0.1:9901',
-        '127.0.0.1:9090',
-        '127.0.0.1:1443'
+        process.env.DAPI_URL,
       ],
-      allowSelfSignedCertificate: true
+      retries: process.env.DAPI_RETRIES,
     })
   }
 
@@ -45,6 +43,15 @@ class IdentitiesController {
     const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
 
     const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
+
+    // 150ms on local testnet node for 20 identities
+    // 130ms on local testnet node for 10 identities
+    // maybe not bad, because not linear
+    // but getIdentities was deprecated
+    for(let i=0; i<identities.resultSet.length; i++){
+      identities.resultSet[i].balance = await this.DAPI.getIdentityBalance(identities.resultSet[i].identifier)
+    }
+
 
     response.send(identities)
   }
