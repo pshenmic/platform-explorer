@@ -28,6 +28,7 @@ describe('Other routes', () => {
 
   before(async () => {
     mock.method(DAPI.prototype, 'initDAPI', () => {})
+    mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
@@ -104,8 +105,6 @@ describe('Other routes', () => {
   })
 
   describe('search()', async () => {
-    mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
-
     it('should search block by hash', async () => {
       const { body } = await client.get(`/search?query=${block.hash}`)
         .expect(200)
@@ -190,6 +189,8 @@ describe('Other routes', () => {
     })
 
     it('should search by identity', async () => {
+      mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
+
       const { body } = await client.get(`/search?query=${identityAlias.alias}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')

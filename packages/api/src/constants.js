@@ -4,6 +4,12 @@ let genesisTime
 
 module.exports = {
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
+  DAPIConfig: {
+    dapiAddresses: [
+      process.env.DAPI_URL
+    ],
+    retries: process.env.DAPI_RETRIES
+  },
   get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {
       return TenderdashRPC.getBlockByHeight(1).then((blockInfo) => {

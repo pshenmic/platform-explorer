@@ -7,6 +7,8 @@ const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const Constants = require('../constants')
+const DAPI = require('../dapi')
+const { DAPIConfig } = require('../constants')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
@@ -19,6 +21,7 @@ class MainController {
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
     this.validatorsDAO = new ValidatorsDAO(knex)
+    this.DAPI = new DAPI(DAPIConfig)
   }
 
   getStatus = async (request, response) => {
@@ -108,6 +111,8 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
+        identity.balance = await this.DAPI.getIdentityBalance(identity.identifier)
+
         return response.send({ identity })
       }
 
@@ -130,6 +135,7 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByDPNS(query)
 
       if (identity) {
+        identity.balance = await this.DAPI.getIdentityBalance(identity.identifier)
         return response.send({ identity })
       }
     }
