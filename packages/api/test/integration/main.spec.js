@@ -28,6 +28,7 @@ describe('Other routes', () => {
 
   before(async () => {
     mock.method(DAPI.prototype, 'initDAPI', () => {})
+    mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
