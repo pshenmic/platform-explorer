@@ -75,7 +75,7 @@ describe('Identities routes', () => {
         isSystem: false
       }
 
-      assert.deepEqual(expectedIdentity, body)
+      assert.deepEqual(body, expectedIdentity)
     })
 
     it('should return 404 when identity not found', async () => {
