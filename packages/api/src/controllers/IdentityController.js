@@ -1,10 +1,10 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
-const DAPI = require('../dapi')
+const IdentityController = require('../dapi')
 
 class IdentitiesController {
     constructor(knex) {
         this.identitiesDAO = new IdentitiesDAO(knex)
-        this.DAPI = new DAPI({
+        this.DAPI = new IdentityController({
             dapiAddresses: [
                 process.env.DAPI_URL,
             ],
