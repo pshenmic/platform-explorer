@@ -24,7 +24,7 @@ const schemaTypes = [
       },
       orderBy: {
         type: ['string', 'null'],
-        enum: ['block_height', 'documents_count']
+        enum: ['block_height', 'documents_count', 'tx_count', 'balance']
       },
       isActive: { type: ['boolean', 'null'] }
     }

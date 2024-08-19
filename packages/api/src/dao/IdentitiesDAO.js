@@ -119,7 +119,7 @@ module.exports = class IdentitiesDAO {
       .as('as_data_contracts')
 
     const rows = await this.knex.with('with_alias', filteredIdentities)
-      .select('total_txs', 'balance', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system')
+      .select('total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system')
       .select(this.knex('with_alias').count('*').as('total_count'))
       .select(this.knex(this.knex(documentsSubQuery)
         .select('id', this.knex.raw('rank() over (partition by as_documents.identifier order by as_documents.id desc) rank')).as('ranked_documents'))
@@ -142,7 +142,6 @@ module.exports = class IdentitiesDAO {
       total_data_contracts: parseInt(row.total_data_contracts),
       total_documents: parseInt(row.total_documents),
       total_txs: parseInt(row.total_txs),
-      balance: parseInt(row.balance)
     })), page, limit, totalCount)
   }
 

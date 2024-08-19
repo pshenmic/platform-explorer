@@ -6,8 +6,12 @@ class DAPI {
     dpp
 
     constructor(options) {
-        this.DAPIClient = new DAPIClient(options)
+        this.initDAPI(options)
         this.dpp = new DashPlatformProtocol()
+    }
+
+    initDAPI(options){
+        this.DAPIClient = new DAPIClient(options)
     }
 
     //======================//

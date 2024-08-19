@@ -6,6 +6,8 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const DAPI = require('../../src/dapi')
+
 
 describe('Identities routes', () => {
   let app
@@ -34,6 +36,9 @@ describe('Identities routes', () => {
       }
     }))
 
+    mock.method(DAPI.prototype, 'initDAPI',()=>{})
+    mock.method(DAPI.prototype, 'getIdentityBalance',async()=>0)
+
     app = await server.start()
     client = supertest(app.server)
     knex = getKnex()
@@ -50,6 +55,7 @@ describe('Identities routes', () => {
 
   describe('getIdentityByIdentifier()', async () => {
     it('should return identity by identifier', async () => {
+
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
 
@@ -71,7 +77,7 @@ describe('Identities routes', () => {
         isSystem: false
       }
 
-      assert.deepEqual(body, expectedIdentity)
+      assert.deepEqual(expectedIdentity, body)
     })
 
     it('should return 404 when identity not found', async () => {
@@ -360,6 +366,11 @@ describe('Identities routes', () => {
         identity.balance = transfer.amount
         identities.push({ identity, block, transfer })
       }
+
+      mock.method(DAPI.prototype, 'getIdentityBalance',async(identifie)=>{
+        const {identity} = identities.find(({identity}) => identity.identifier === identifie)
+        return identity.balance
+      })
 
       const { body } = await client.get('/identities?order_by=balance&order=desc')
         .expect(200)

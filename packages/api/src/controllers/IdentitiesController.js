@@ -1,10 +1,10 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
-const IdentityController = require('../dapi')
+const DAPI = require('../dapi')
 
 class IdentitiesController {
     constructor(knex) {
         this.identitiesDAO = new IdentitiesDAO(knex)
-        this.DAPI = new IdentityController({
+        this.DAPI = new DAPI({
             dapiAddresses: [
                 process.env.DAPI_URL,
             ],
@@ -35,6 +35,8 @@ class IdentitiesController {
             return response.status(404).send({message: 'not found'})
         }
 
+        identity.balance = await this.DAPI.getIdentityBalance(identity.identifier)
+
         response.send(identity)
     }
 
@@ -43,8 +45,8 @@ class IdentitiesController {
 
         const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
 
-        // 150ms on local testnet node for 20 identities
         // 130ms on local testnet node for 10 identities
+        // 150ms on local testnet node for 20 identities
         // 175ms on local testnet node for 46 identities
         // maybe not bad, because not linear
         // but getIdentities was deprecated
