@@ -45,11 +45,6 @@ class IdentitiesController {
 
     const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
 
-    // 130ms on local testnet node for 10 identities
-    // 150ms on local testnet node for 20 identities
-    // 175ms on local testnet node for 46 identities
-    // maybe not bad, because not linear
-    // but getIdentities was deprecated
     for (let i = 0; i < identities.resultSet.length; i++) {
       identities.resultSet[i].balance = await this.DAPI.getIdentityBalance(identities.resultSet[i].identifier)
     }

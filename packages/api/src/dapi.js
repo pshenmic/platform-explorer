@@ -14,12 +14,6 @@ class DAPI {
     this.DAPIClient = new DAPIClient(options)
   }
 
-  //= =====================//
-  // W e   c a n   g e t: //
-  //    metadata          //
-  //    public keys       //
-  //    balance           //
-  //= =====================//
   async getIdentityBalance (identifier) {
     const GRPCIdentity = await this.DAPIClient.platform.getIdentity(Identifier.from(identifier))
     return this.dpp.identity.createFromBuffer(GRPCIdentity.getIdentity()).balance
