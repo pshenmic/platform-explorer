@@ -8,7 +8,6 @@ const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/dapi')
 
-
 describe('Identities routes', () => {
   let app
   let client
@@ -36,8 +35,8 @@ describe('Identities routes', () => {
       }
     }))
 
-    mock.method(DAPI.prototype, 'initDAPI',()=>{})
-    mock.method(DAPI.prototype, 'getIdentityBalance',async()=>0)
+    mock.method(DAPI.prototype, 'initDAPI', () => {})
+    mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
     app = await server.start()
     client = supertest(app.server)
@@ -55,7 +54,6 @@ describe('Identities routes', () => {
 
   describe('getIdentityByIdentifier()', async () => {
     it('should return identity by identifier', async () => {
-
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
 
@@ -367,8 +365,8 @@ describe('Identities routes', () => {
         identities.push({ identity, block, transfer })
       }
 
-      mock.method(DAPI.prototype, 'getIdentityBalance',async(identifie)=>{
-        const {identity} = identities.find(({identity}) => identity.identifier === identifie)
+      mock.method(DAPI.prototype, 'getIdentityBalance', async (identifie) => {
+        const { identity } = identities.find(({ identity }) => identity.identifier === identifie)
         return identity.balance
       })
 

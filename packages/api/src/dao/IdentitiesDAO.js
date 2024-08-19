@@ -141,7 +141,7 @@ module.exports = class IdentitiesDAO {
       owner: row.identity_owner,
       total_data_contracts: parseInt(row.total_data_contracts),
       total_documents: parseInt(row.total_documents),
-      total_txs: parseInt(row.total_txs),
+      total_txs: parseInt(row.total_txs)
     })), page, limit, totalCount)
   }
 
