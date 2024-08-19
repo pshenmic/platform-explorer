@@ -6,6 +6,7 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const DAPI = require("../../src/dapi");
 
 describe('Transaction routes', () => {
   let app
@@ -17,6 +18,8 @@ describe('Transaction routes', () => {
   let transactions
 
   before(async () => {
+    mock.method(DAPI.prototype, 'initDAPI', () => {})
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
