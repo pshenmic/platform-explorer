@@ -6,7 +6,7 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const DAPI = require("../../src/dapi");
+const DAPI = require('../../src/dapi')
 
 describe('Transaction routes', () => {
   let app
