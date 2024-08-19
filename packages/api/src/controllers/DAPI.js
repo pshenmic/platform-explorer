@@ -1,5 +1,4 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
-const Identity = require('../models/Identity')
 const DAPI = require('../dapi')
 
 class IdentitiesController {
