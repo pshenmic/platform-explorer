@@ -17,9 +17,7 @@ class DAPI {
     //    balance           //
     //======================//
     async getIdentityBalance(identifier) {
-        const identityId = Identifier.from(identifier)
-        // Drops errors on idenitities like: 11111111111111111111111111111111 (bad)
-        const GRPCIdentity = await this.DAPIClient.platform.getIdentity(identityId)
+        const GRPCIdentity = await this.DAPIClient.platform.getIdentity(Identifier.from(identifier))
         return this.dpp.identity.createFromBuffer(GRPCIdentity.getIdentity()).balance
     }
 }

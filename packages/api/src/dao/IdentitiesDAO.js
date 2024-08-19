@@ -48,7 +48,6 @@ module.exports = class IdentitiesDAO {
         'tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'recipient', 'amount')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
-      .select(this.knex.raw('COALESCE((select sum(amount) from transfers where recipient = identifier), 0) - COALESCE((select sum(amount) from transfers where sender = identifier), 0) as balance'))
       .select(this.knex('state_transitions').count('*').where('owner', identifier).as('total_txs'))
       .select(this.knex(documentsSubQuery).count('*').where('rank', 1).as('total_documents'))
       .select(this.knex(dataContractsSubQuery).count('*').where('rank', 1).as('total_data_contracts'))

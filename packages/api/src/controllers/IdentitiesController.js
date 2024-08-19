@@ -3,94 +3,94 @@ const Identity = require('../models/Identity')
 const DAPI = require('../dapi')
 
 class IdentitiesController {
-  constructor (knex) {
-    this.identitiesDAO = new IdentitiesDAO(knex)
-    this.DAPI = new DAPI({
-      dapiAddresses: [
-        process.env.DAPI_URL,
-      ],
-      retries: process.env.DAPI_RETRIES,
-    })
-  }
-
-  getIdentityByIdentifier = async (request, response) => {
-    const { identifier } = request.params
-
-    const identity = await this.identitiesDAO.getIdentityByIdentifier(identifier)
-
-    if (!identity) {
-      return response.status(404).send({ message: 'not found' })
+    constructor(knex) {
+        this.identitiesDAO = new IdentitiesDAO(knex)
+        this.DAPI = new DAPI({
+            dapiAddresses: [
+                process.env.DAPI_URL,
+            ],
+            retries: process.env.DAPI_RETRIES,
+        })
     }
 
-    const balance = await this.DAPI.getIdentityBalance(identifier)
+    getIdentityByIdentifier = async (request, response) => {
+        const {identifier} = request.params
 
-    response.send(Identity.fromObject({ ...identity, balance }))
-  }
+        const identity = await this.identitiesDAO.getIdentityByIdentifier(identifier)
 
-  getIdentityByDPNS = async (request, response) => {
-    const { dpns } = request.query
+        if (!identity) {
+            return response.status(404).send({message: 'not found'})
+        }
 
-    const identity = await this.identitiesDAO.getIdentityByDPNS(dpns)
+        identity.balance = await this.DAPI.getIdentityBalance(identifier)
 
-    if (!identity) {
-      return response.status(404).send({ message: 'not found' })
+        response.send(identity)
     }
 
-    response.send(identity)
-  }
+    getIdentityByDPNS = async (request, response) => {
+        const {dpns} = request.query
 
-  getIdentities = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
+        const identity = await this.identitiesDAO.getIdentityByDPNS(dpns)
 
-    const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
+        if (!identity) {
+            return response.status(404).send({message: 'not found'})
+        }
 
-    // 150ms on local testnet node for 20 identities
-    // 130ms on local testnet node for 10 identities
-    // maybe not bad, because not linear
-    // but getIdentities was deprecated
-    for(let i=0; i<identities.resultSet.length; i++){
-      identities.resultSet[i].balance = await this.DAPI.getIdentityBalance(identities.resultSet[i].identifier)
+        response.send(identity)
     }
 
+    getIdentities = async (request, response) => {
+        const {page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height'} = request.query
 
-    response.send(identities)
-  }
+        const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
 
-  getTransactionsByIdentity = async (request, response) => {
-    const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+        // 150ms on local testnet node for 20 identities
+        // 130ms on local testnet node for 10 identities
+        // 175ms on local testnet node for 46 identities
+        // maybe not bad, because not linear
+        // but getIdentities was deprecated
+        for (let i = 0; i < identities.resultSet.length; i++) {
+            identities.resultSet[i].balance = await this.DAPI.getIdentityBalance(identities.resultSet[i].identifier)
+        }
 
-    const transactions = await this.identitiesDAO.getTransactionsByIdentity(identifier, Number(page), Number(limit), order)
+        response.send(identities)
+    }
 
-    response.send(transactions)
-  }
+    getTransactionsByIdentity = async (request, response) => {
+        const {identifier} = request.params
+        const {page = 1, limit = 10, order = 'asc'} = request.query
 
-  getDataContractsByIdentity = async (request, response) => {
-    const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+        const transactions = await this.identitiesDAO.getTransactionsByIdentity(identifier, Number(page), Number(limit), order)
 
-    const dataContracts = await this.identitiesDAO.getDataContractsByIdentity(identifier, Number(page), Number(limit), order)
+        response.send(transactions)
+    }
 
-    response.send(dataContracts)
-  }
+    getDataContractsByIdentity = async (request, response) => {
+        const {identifier} = request.params
+        const {page = 1, limit = 10, order = 'asc'} = request.query
 
-  getDocumentsByIdentity = async (request, response) => {
-    const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+        const dataContracts = await this.identitiesDAO.getDataContractsByIdentity(identifier, Number(page), Number(limit), order)
 
-    const documents = await this.identitiesDAO.getDocumentsByIdentity(identifier, Number(page), Number(limit), order)
+        response.send(dataContracts)
+    }
 
-    response.send(documents)
-  }
+    getDocumentsByIdentity = async (request, response) => {
+        const {identifier} = request.params
+        const {page = 1, limit = 10, order = 'asc'} = request.query
 
-  getTransfersByIdentity = async (request, response) => {
-    const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+        const documents = await this.identitiesDAO.getDocumentsByIdentity(identifier, Number(page), Number(limit), order)
 
-    const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page), Number(limit), order)
+        response.send(documents)
+    }
 
-    response.send(transfers)
-  }
+    getTransfersByIdentity = async (request, response) => {
+        const {identifier} = request.params
+        const {page = 1, limit = 10, order = 'asc'} = request.query
+
+        const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page), Number(limit), order)
+
+        response.send(transfers)
+    }
 }
 
 module.exports = IdentitiesController
