@@ -136,6 +136,7 @@ class MainController {
 
       if (identity) {
         identity.balance = await this.DAPI.getIdentityBalance(identity.identifier)
+
         return response.send({ identity })
       }
     }
