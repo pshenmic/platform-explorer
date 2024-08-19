@@ -5,7 +5,8 @@ import * as Api from '../../util/Api'
 import TransactionsHistory from '../../components/charts/TransactionsHistory'
 import { SimpleList } from '../../components/lists'
 import TotalInfo from '../../components/total/TotalInfo'
-import { getTransitionTypeString, fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import TransactionsList from '../../components/transactions/TransactionsList'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { LoadingList } from '../../components/loading'
 import Intro from './HomeIntro.js'
@@ -35,7 +36,7 @@ function Home () {
         .then(res => fetchHandlerSuccess(setStatus, res))
         .catch(err => fetchHandlerError(setStatus, err)),
 
-      Api.getTransactions(1, 10, 'desc')
+      Api.getTransactions(1, 13, 'desc')
         .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
         .catch(err => fetchHandlerError(setTransactions, err)),
 
@@ -61,7 +62,10 @@ function Home () {
 
     const childNodes = listBlock.childNodes
     const [listContainer] = Object.entries(childNodes)
-      .filter(([i, element]) => element.className.split(' ').includes('SimpleList__List'))
+      .filter(([i, element]) => {
+        const classes = element.className.split(' ')
+        return classes.includes('SimpleList__List') || classes.includes('TransactionsListItem')
+      })
       .map(([i, element]) => element)
     const lastElementHeight = listContainer.childNodes[listContainer.childNodes.length - 1].getBoundingClientRect().height
     const bottomOffset = container.getBoundingClientRect().bottom - listBlock.getBoundingClientRect().bottom
@@ -198,7 +202,7 @@ function Home () {
         >
           <Flex
             ref={transactionsContainer}
-            maxW={'100%'}
+            maxW={['100%', '100%', 'calc(50% - 20px)']}
             mb={0}
             className={'InfoBlock'}
             flexDirection={'column'}
@@ -207,18 +211,7 @@ function Home () {
             <Heading className={'InfoBlock__Title'} as={'h2'}>Transactions</Heading>
             {!transactions.loading
               ? !transactions.error
-                  ? <SimpleList
-                    ref={transactionsList}
-                    items={transactions.data.resultSet
-                      .filter((item, i) => i < transactions.props.printCount)
-                      .map((transaction, i) => ({
-                        monospaceTitles: [transaction.hash],
-                        columns: [new Date(transaction.timestamp).toLocaleString(), getTransitionTypeString(transaction.type)],
-                        link: '/transaction/' + transaction.hash
-                      }))}
-                    columns={[]}
-                    showMoreLink={'/transactions'}
-                  />
+                  ? <TransactionsList ref={transactionsList} transactions={transactions.data.resultSet} showMoreLink={'/transactions'}/>
                   : <ErrorMessageBlock/>
               : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
           </Flex>
@@ -230,6 +223,7 @@ function Home () {
             p={0}
             maxW={['100%', '100%', 'calc(50% - 20px)']}
             width={'100%'}
+            flexShrink={0}
           >
             <Flex
               ref={trendingIdentitiesContainer}

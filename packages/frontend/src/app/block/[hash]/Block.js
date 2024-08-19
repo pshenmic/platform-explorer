@@ -114,10 +114,10 @@ function Block ({ hash }) {
               className={'InfoBlock'}
             >
               <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
-
-              <div>
-                  <TransactionsList transactions={txHashes}/>
-              </div>
+              <TransactionsList
+                transactions={txHashes.map(hash => ({ hash }))}
+                type={'hashes'}
+              />
             </Container>
           : null}
     </Container>

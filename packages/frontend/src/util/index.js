@@ -1,5 +1,5 @@
 import copyToClipboard from './copyToClipboard'
-import { StateTransitionEnum, TransactionTypesEnum } from '../app/enums/state.transition.type'
+import { StateTransitionEnum, TransactionTypesEnum } from '../enums/state.transition.type'
 import currencyRound from './currencyRound'
 
 const getTransitionTypeString = (id) => {
@@ -50,9 +50,9 @@ function getTimeDelta (startDate, endDate, format) {
 
   if (!format || format === 'default') {
     if (days > 0) {
-      return `${days}d ${hours}h ${isFuture ? 'left' : 'ago'}`
+      return `${days}d ${isFuture ? 'left' : 'ago'}`
     } else if (hours > 0) {
-      return `${hours}h ${minutes}m ${isFuture ? 'left' : 'ago'}`
+      return `${hours}h ${isFuture ? 'left' : 'ago'}`
     } else if (minutes > 0) {
       return `${minutes} min. ${isFuture ? 'left' : 'ago'}`
     } else {

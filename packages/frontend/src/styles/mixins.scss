@@ -38,6 +38,18 @@
   }
 }
 
+@mixin defListTitles {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background-color: var(--chakra-colors-gray-800);
+  margin-bottom: 8px;
+  font-family: $font-heading;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--chakra-colors-white);
+}
+
 @mixin loading-line($delay: 0) {
   overflow: hidden;
   position: relative;

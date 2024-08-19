@@ -67,14 +67,11 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
 
   return (
     <Container
-        maxW={'container.xl'}
-        mt={8}
-        className={'Transactions'}
+      maxW={'container.xl'}
+      mt={8}
+      className={'Transactions'}
     >
-        <Container
-            maxW={'container.xl'}
-            className={'InfoBlock'}
-        >
+        <Container maxW={'container.xl'} className={'InfoBlock'}>
             <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
 
             {!transactions.error

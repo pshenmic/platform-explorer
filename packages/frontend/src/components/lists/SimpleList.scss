@@ -3,22 +3,15 @@
 
 .SimpleList {
   &__ColumnTitles {
+    @include mixins.defListTitles;
+
     display: flex;
     justify-content: space-between;
-    padding: 8px 12px;
-    border-radius: 10px;
-    background-color: var(--chakra-colors-gray-800);
-    margin-bottom: 8px;
   }
 
   &__ColumnTitle {
-    color: var(--chakra-colors-white);
     word-wrap: break-word;
     overflow-wrap: anywhere;
-    font-family: $font-heading;
-    font-weight: 700;
-    font-size: 12px;
-    text-transform: uppercase;
     letter-spacing: 0.4px;
   }
 

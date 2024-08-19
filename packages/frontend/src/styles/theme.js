@@ -168,12 +168,20 @@ export const theme = extendTheme({
         const backgroundColors = {
           red: '#4E3234',
           green: '#2B4629',
-          gray: 'gray.600'
+          gray: 'gray.600',
+          blue: 'rgba(0, 141, 228, 0.2)',
+          yellow: 'rgba(244, 228, 88, 0.2)',
+          orange: 'rgba(244, 154, 88, 0.2)',
+          emerald: 'rgba(88, 244, 188, 0.2)'
         }
         const textColor = {
           red: '#F45858',
           green: '#81F458',
-          gray: 'gray.50'
+          gray: 'gray.50',
+          blue: 'rgb(0, 141, 228)',
+          yellow: '#F4E458',
+          orange: 'rgb(244, 154, 88)',
+          emerald: 'rgb(88, 244, 188)'
         }
 
         return {
