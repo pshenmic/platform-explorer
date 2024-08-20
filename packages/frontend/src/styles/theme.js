@@ -197,6 +197,16 @@ export const theme = extendTheme({
           color: textColor[colorScheme] || 'white'
         }
       }
+    },
+    Progress: {
+      baseStyle: {
+        track: {
+          bg: 'rgba(0, 141, 228, 0.3)'
+        },
+        filledTrack: {
+          bg: 'rgba(0, 141, 228, 1)'
+        }
+      }
     }
   }
 })

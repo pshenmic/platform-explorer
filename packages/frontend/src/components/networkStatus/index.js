@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { CheckCircleIcon, WarningIcon, InfoIcon } from '@chakra-ui/icons'
 import { Tooltip, Badge } from '@chakra-ui/react'
 import { fetchHandlerSuccess, fetchHandlerError, getTimeDelta } from '../../util'
+import EpochProgress from './EpochProgress'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
@@ -38,7 +39,7 @@ function NetworkStatus () {
     <div className={'NetworkStatus'}>
       <div align={['center', 'start', 'start', 'start', 'start']} className={`NetworkStatus__Stat NetworkStatus__Stat--Epoch ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>Epoch:</div>
-        <div className={'NetworkStatus__InfoValue'}>
+        <div className={'NetworkStatus__InfoValue NetworkStatus__InfoValue--Epoch'}>
           {status?.data?.epoch?.index
             ? <>#{status.data.epoch.index}
                 {status.data?.epoch?.endTime &&
@@ -55,6 +56,11 @@ function NetworkStatus () {
                 }
               </>
             : '-'}
+          {status.data?.epoch &&
+            <div className={'NetworkStatus__EpochProgress'}>
+              <EpochProgress epoch={status.data.epoch}/>
+            </div>
+          }
         </div>
       </div>
 

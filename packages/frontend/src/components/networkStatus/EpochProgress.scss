@@ -1,0 +1,27 @@
+@import '../../styles/variables.scss';
+
+.EpochProgress {
+  &__Info {
+		display: flex;
+    font-family: $font-mono;
+		font-size: 12px;
+		font-weight: 400;
+		text-transform: none;
+		margin-top: 6px;
+	}
+
+	&__InfoTitle {
+    color: var(--chakra-colors-gray-500);
+		margin-right: 12px;
+	}
+
+	&__InfoValue {
+		color: #fff;
+	}
+
+  @media screen and (max-width: 420px) {
+		&__Info {
+			justify-content: center;
+		}
+	}
+}
