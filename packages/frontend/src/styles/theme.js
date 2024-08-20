@@ -58,7 +58,6 @@ export const theme = extendTheme({
         borderColor: 'gray.800'
       },
       'html, body': {
-        background: '#181d20',
         color: 'white',
         scrollBehavior: 'smooth',
         minHeight: '100vh',

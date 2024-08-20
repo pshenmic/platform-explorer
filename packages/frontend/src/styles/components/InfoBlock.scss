@@ -9,6 +9,8 @@ $border-radius: var(--chakra-radii-block);
   box-shadow: 2px 2px $color-brand-normal;
   border-radius: $border-radius;
   border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(44px);
 
   &__Title {
     background-color: $color-brand-normal;

@@ -1,6 +1,5 @@
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
-import GlobalSearchInput from '../search/GlobalSearchInput'
-
+import GlobalSearchInput from '../../search/GlobalSearchInput'
 import {
   Box,
   Flex,
@@ -10,7 +9,6 @@ import {
   useColorModeValue,
   Stack
 } from '@chakra-ui/react'
-
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
 import NetworkSelect from './NetworkSelect'
@@ -48,7 +46,7 @@ const NavLink = (props) => {
   )
 }
 
-function Navbar () {
+function Navbar ({ showHeaderLight }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
