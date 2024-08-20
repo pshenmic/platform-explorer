@@ -175,7 +175,8 @@ function Home () {
                               value: dataContract.identifier,
                               avatar: true,
                               mono: true,
-                              dim: true
+                              dim: true,
+                              ellipsis: true
                             },
                             {
                               value: dataContract.documentsCount,
