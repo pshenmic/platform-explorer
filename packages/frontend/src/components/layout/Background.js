@@ -5,9 +5,6 @@ import './Background.scss'
 
 function Background () {
   const pathname = usePathname()
-
-  console.log('pathname', pathname)
-
   const showOnRoutes = [
     '/',
     '/blocks',
@@ -17,7 +14,6 @@ function Background () {
     '/validators',
     '/transactions'
   ]
-
   const showDecoration = showOnRoutes.includes(pathname)
 
   return (

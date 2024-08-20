@@ -55,7 +55,7 @@ export const theme = extendTheme({
   styles: {
     global: {
       '*': {
-        borderColor: 'gray.800'
+        borderColor: 'rgba(255, 255, 255, 0.07)'
       },
       'html, body': {
         color: 'white',
