@@ -12,7 +12,7 @@
 
   &__Content {
     display: grid;
-    grid-template-columns: 100px calc(100% - 270px) 170px;
+    grid-template-columns: 100px 1fr auto;
 
     &--Inline {
       display: inline !important;
@@ -24,8 +24,11 @@
     align-items: center;
 
     &--Timestamp {
+      font-family: $font-mono;
+      font-size: 12px;
       margin-right: 16px;
       white-space: nowrap;
+      color: #fff;
     }
 
     &--Identifier {
@@ -34,6 +37,10 @@
       flex-grow: 1;
       margin-right: 16px;
       font-size: 12px;
+      
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
       span {
         text-overflow: ellipsis;

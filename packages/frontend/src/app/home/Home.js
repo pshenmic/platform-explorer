@@ -57,66 +57,66 @@ function Home () {
 
   useEffect(fetchData, [])
 
-  function adaptList (container, listBlock, data, setDataFunc) {
-    if (!container || !listBlock || data?.props.printCount >= data?.data?.resultSet?.length) return
+  // function adaptList (container, listBlock, data, setDataFunc) {
+  //   if (!container || !listBlock || data?.props.printCount >= data?.data?.resultSet?.length) return
 
-    const childNodes = listBlock.childNodes
-    const [listContainer] = Object.entries(childNodes)
-      .filter(([i, element]) => {
-        const classes = element.className.split(' ')
-        return classes.includes('SimpleList__List') || classes.includes('TransactionsListItem')
-      })
-      .map(([i, element]) => element)
-    const lastElementHeight = listContainer.childNodes[listContainer.childNodes.length - 1].getBoundingClientRect().height
-    const bottomOffset = container.getBoundingClientRect().bottom - listBlock.getBoundingClientRect().bottom
-    const extraItems = Math.floor(bottomOffset / lastElementHeight)
+  //   const childNodes = listBlock.childNodes
+  //   const [listContainer] = Object.entries(childNodes)
+  //     .filter(([i, element]) => {
+  //       const classes = element.className.split(' ')
+  //       return classes.includes('SimpleList__List') || classes.includes('TransactionsListItem')
+  //     })
+  //     .map(([i, element]) => element)
+  //   const lastElementHeight = listContainer.childNodes[listContainer.childNodes.length - 1].getBoundingClientRect().height
+  //   const bottomOffset = container.getBoundingClientRect().bottom - listBlock.getBoundingClientRect().bottom
+  //   const extraItems = Math.floor(bottomOffset / lastElementHeight)
 
-    if (extraItems > 0) {
-      setDataFunc(state => ({
-        ...state,
-        props: {
-          printCount: state.props.printCount + extraItems
-        }
-      }))
-    }
-  }
+  //   if (extraItems > 0) {
+  //     setDataFunc(state => ({
+  //       ...state,
+  //       props: {
+  //         printCount: state.props.printCount + extraItems
+  //       }
+  //     }))
+  //   }
+  // }
 
-  useEffect(() => {
-    if (!trendingIdentities.loading && !richestIdentities.loading) {
-      adaptList(
-        trendingIdentitiesContainer.current,
-        trendingIdentitiesList.current,
-        trendingIdentities,
-        setTrendingIdentities
-      )
+  // useEffect(() => {
+  //   if (!trendingIdentities.loading && !richestIdentities.loading) {
+  //     adaptList(
+  //       trendingIdentitiesContainer.current,
+  //       trendingIdentitiesList.current,
+  //       trendingIdentities,
+  //       setTrendingIdentities
+  //     )
 
-      adaptList(
-        richListContainer.current,
-        richListRef.current,
-        richestIdentities,
-        setRichestIdentities
-      )
-    }
+  //     adaptList(
+  //       richListContainer.current,
+  //       richListRef.current,
+  //       richestIdentities,
+  //       setRichestIdentities
+  //     )
+  //   }
 
-    if (!transactions.loading) {
-      adaptList(
-        transactionsContainer.current,
-        transactionsList.current,
-        transactions,
-        setTransactions
-      )
-    }
-  }, [
-    richListContainer,
-    trendingIdentitiesContainer,
-    transactionsContainer,
-    richListRef,
-    richestIdentities,
-    transactions,
-    transactionsList,
-    trendingIdentities,
-    trendingIdentitiesList
-  ])
+  //   if (!transactions.loading) {
+  //     adaptList(
+  //       transactionsContainer.current,
+  //       transactionsList.current,
+  //       transactions,
+  //       setTransactions
+  //     )
+  //   }
+  // }, [
+  //   richListContainer,
+  //   trendingIdentitiesContainer,
+  //   transactionsContainer,
+  //   richListRef,
+  //   richestIdentities,
+  //   transactions,
+  //   transactionsList,
+  //   trendingIdentities,
+  //   trendingIdentitiesList
+  // ])
 
   return (<>
     <Container
@@ -245,7 +245,8 @@ function Home () {
                               value: identitiy.identifier,
                               avatar: true,
                               mono: true,
-                              dim: true
+                              dim: true,
+                              ellipsis: true
                             },
                             {
                               value: identitiy.totalTxs,
@@ -284,7 +285,8 @@ function Home () {
                               value: identitiy.identifier,
                               avatar: true,
                               mono: true,
-                              dim: true
+                              dim: true,
+                              ellipsis: true
                             },
                             {
                               value: identitiy.balance,

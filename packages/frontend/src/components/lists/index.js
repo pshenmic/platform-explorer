@@ -56,6 +56,8 @@ function SimpleListItem ({ item }) {
                       column?.mono && 'SimpleListItem__Column--Mono'
                     } ${
                       column?.dim && 'SimpleListItem__Column--Dim'
+                    } ${
+                      column?.ellipsis && 'SimpleListItem__Column--Ellipsis'
                     }`}
                 >
                   {column?.avatar &&
@@ -69,8 +71,8 @@ function SimpleListItem ({ item }) {
                     />
                   }
                   {column?.numberFormat === 'currency'
-                    ? numberFormat(column.value)
-                    : column.value
+                    ? <span>{numberFormat(column.value)}</span>
+                    : <span>{column.value}</span>
                   }
                 </div>
               )
