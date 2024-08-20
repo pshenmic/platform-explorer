@@ -203,6 +203,7 @@ function Home () {
           <Flex
             ref={transactionsContainer}
             maxW={['100%', '100%', 'calc(50% - 20px)']}
+            order={[4, 4, 0]}
             mb={0}
             className={'InfoBlock'}
             flexDirection={'column'}
@@ -216,7 +217,7 @@ function Home () {
               : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
           </Flex>
 
-          <Box flexShrink={'0'} w={10} h={10} />
+          <Box flexShrink={'0'} w={10} h={10} order={[3, 3, 0]}/>
 
           <Flex
             flexDirection={'column'}
