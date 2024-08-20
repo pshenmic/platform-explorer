@@ -4,7 +4,7 @@ $border-radius: var(--chakra-radii-block);
 
 .InfoBlock {
   position: relative;
-  padding: 20px 32px 32px 32px;
+  padding: 20px 32px 32px 32px !important;
   background-color: var(--chakra-colors-blackAlpha-200);
   box-shadow: 2px 2px $color-brand-normal;
   border-radius: $border-radius;
