@@ -106,13 +106,13 @@ function GlobalSearchInput () {
             fontSize={'12px'}
             className={'GlobalSearchInput__Field'}
           />
-          <InputRightElement width='4.5rem'>
+          <InputRightElement>
             <Button
-              h={'1.75rem'}
+              h={'28px'}
+              w={'28px !important'}
+              minW={'none'}
               size={'sm'}
               onClick={search}
-              _hover={{ bg: 'whiteAlpha.300' }}
-              bg={'whiteAlpha.200'}
               className={'GlobalSearchInput__Button'}
             >
               <SearchIcon color={'whiteAlpha.900'}/>

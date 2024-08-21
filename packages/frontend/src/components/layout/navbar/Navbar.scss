@@ -2,19 +2,19 @@
 @import '../../../styles/variables.scss';
 
 .Navbar {
-    padding: 0 16px;
-    background-color: var(--chakra-colors-whiteAlpha-50);
-    background: rgba(24, 31, 34, 0.8);
-    border-radius: 0px 0px 20px 20px;
-    border-width: 1px;
+  padding: 0 16px;
+  background-color: var(--chakra-colors-whiteAlpha-50);
+  background: rgba(24, 31, 34, 0.8);
+  border-radius: 0px 0px 20px 20px;
+  border-width: 1px;
 
-    &__WrapperNetworkSelect {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        
-        @media screen and (max-width: $breakpoint-sm) {
-            gap: 8px;
-         }
+  &__WrapperNetworkSelect {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    @media screen and (max-width: $breakpoint-sm) {
+      gap: 8px;
     }
+  }
 }
