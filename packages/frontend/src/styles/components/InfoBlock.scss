@@ -1,3 +1,4 @@
+@use './../mixins.scss';
 @import './../variables.scss';
 
 $border-radius: var(--chakra-radii-block);
@@ -26,5 +27,13 @@ $border-radius: var(--chakra-radii-block);
     left: -32px;
     top: -20px;
     margin: 0;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    padding: 20px 16px 16px 16px !important;
+
+    &__Title {
+      left: -16px;
+    }
   }
 }

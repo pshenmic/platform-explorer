@@ -2,95 +2,103 @@
 @import '../../styles/variables.scss';
 
 .TotalInfoItem {
-    position: relative;
-    display: flex;
-    align-items: end;
-    flex-direction: column;
-    padding: 30px;
-    font-family: $font-heading;
-    font-weight: 800;
-    font-style: italic;
-    
+  position: relative;
+  display: flex;
+  align-items: end;
+  flex-direction: column;
+  padding: 30px !important;
+  font-family: $font-heading;
+  font-weight: 800;
+  font-style: italic;
+  
+  &::before {
+    content: '';
+    display: block;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 20px;
+  }
+
+  &--Blocks {
     &::before {
-        content: '';
-        display: block;
-        width: 44px;
-        height: 44px;
-        margin-bottom: 20px;
+      background: url('/images/icons/block.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--Transactions {
+    &::before {
+      background: url('/images/icons/transactions.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--DataContracts {
+    &::before {
+      background: url('/images/icons/data-contract.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--Documents {
+    &::before {
+      background: url('/images/icons/document.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--Transfers {
+    &::before {
+      background: url('/images/icons/transfers.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--Identities {
+    &::before {
+      background: url('/images/icons/identities.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+  
+  &__Title {
+    color: $color-brand-normal;
+    font-size: 14px;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  &__Value {
+    font-size: 34px;
+
+    &--Loading {
+      @include mixins.loading-line;
+
+      opacity: .5;
+      border-radius: 5px;
+      animation-delay: 100ms;
+      width: 100%;
+      border-radius: 999px;
+    }
+  }
+
+  @media screen and (max-width: 1140px) {
+    padding: 20px !important;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 !important;
+
+    &::before {
+      transform: none;
+      margin-bottom: 8px;
     }
 
-    &--Blocks {
-        &::before {
-            background: url('/images/icons/block.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &--Transactions {
-        &::before {
-            background: url('/images/icons/transactions.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &--DataContracts {
-        &::before {
-            background: url('/images/icons/data-contract.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &--Documents {
-        &::before {
-            background: url('/images/icons/document.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &--Transfers {
-        &::before {
-            background: url('/images/icons/transfers.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &--Identities {
-        &::before {
-            background: url('/images/icons/identities.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-    
     &__Title {
-        color: $color-brand-normal;
-        font-size: 14px;
-        text-transform: uppercase;
-        text-align: right;
+      text-align: center;
     }
-
-    &__Value {
-        font-size: 34px;
-
-        &--Loading {
-            @include mixins.loading-line;
-
-            opacity: .5;
-            border-radius: 5px;
-            animation-delay: 100ms;
-            width: 100%;
-            border-radius: 999px;
-        }
-    }
-
-    @media screen and (max-width: $breakpoint-lg) {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px 0;
-
-        &::before {
-            transform: none;
-            margin-bottom: 8px;
-        }
-    }
+  }
 }
