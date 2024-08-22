@@ -1,4 +1,9 @@
 .NavbarMobileMenu {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 64px;
+    z-index: 5;
     background-color: var(--chakra-colors-gray-650);
     border-radius: 10px;
     margin-top: 6px;
