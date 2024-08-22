@@ -343,7 +343,7 @@ const LineGraph = ({
             </filter>
 
             <svg x='15' y='-15' overflow={'visible'}>
-              <g className={'Axis'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
+              <g className={'Axis Axis--X'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
                 <line
                   x1={marginLeft - 20}
                   x2={width - marginRight + 10}
@@ -357,7 +357,7 @@ const LineGraph = ({
             </svg>
 
             <svg x='0' y='-15'>
-              <g className={'Axis'} ref={gy} >
+              <g className={'Axis Axis--Y'} ref={gy} >
                 <line
                   x1={0}
                   x2={0}
