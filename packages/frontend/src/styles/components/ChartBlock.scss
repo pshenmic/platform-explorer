@@ -1,6 +1,8 @@
 @use '../../styles/mixins.scss';
 
 .ChartBlock {
+    min-height: 300px;
+
     &__Head {
         display: flex;
         justify-content: space-between;

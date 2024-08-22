@@ -166,7 +166,42 @@ const LineGraph = ({
         .ticks(5)
         .tickPadding(10)
       )
+
+    const yAxisTicksWidth = d3.select(gy.current)
+      .select('.Axis__TickContainer')
+      .node()
+      .getBBox()
+      .width
+
+    d3.select('.Axis__Line')
+      .attr('x1', marginLeft + yAxisTicksWidth - 60)
   }, [gy, y])
+
+  useEffect(() => {
+    if (!gx.current || !gy.current) return
+
+    const yGrid = d3.axisLeft(y)
+      .ticks(5)
+      .tickSize(-width + marginLeft + marginRight - 20)
+      .tickFormat('')
+
+    d3.select(gy.current).select('.grid-y').remove()
+    d3.select(gy.current)
+      .append('g')
+      .attr('class', 'grid grid-y')
+      .call(yGrid)
+
+    const xGrid = d3.axisBottom(x)
+      .tickValues(getDatesTicks(data.map((d) => d.x), xTicksCount - 2))
+      .tickSize(-height + marginTop + marginBottom)
+      .tickFormat('')
+
+    d3.select(gx.current).select('.grid-x').remove()
+    d3.select(gx.current)
+      .append('g')
+      .attr('class', 'grid grid-x')
+      .call(xGrid)
+  }, [x, y, width, height, marginLeft, marginRight, marginTop, marginBottom, gx, gy, data])
 
   const updateSize = () => {
     if (!loading || !d3.select(gy.current).node()) return
@@ -304,21 +339,35 @@ const LineGraph = ({
             viewBox={`0 0 ${width} ${height}`}
         >
             <filter id="shadow">
-                <feDropShadow dx="0.2" dy="0.4" stdDeviation=".15" />
+                <feDropShadow dx='0.2' dy='0.4' stdDeviation='.15'/>
             </filter>
 
             <svg x='15' y='-15' overflow={'visible'}>
-                <g className={'Axis'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
-                    <g><text className={'Axis__Label'} fill='white'>{xAxis.title}</text></g>
-                    <g className={'Axis__TickContainer'}></g>
-                </g>
+              <g className={'Axis'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
+                <line
+                  x1={marginLeft - 20}
+                  x2={width - marginRight + 10}
+                  y1={0}
+                  y2={0}
+                  className={'Axis__Line'}
+                />
+                <g><text className={'Axis__Label'} fill='white'>{xAxis.title}</text></g>
+                <g className={'Axis__TickContainer'}></g>
+              </g>
             </svg>
 
             <svg x='0' y='-15'>
-                <g className={'Axis'} ref={gy} >
-                    <g><text className={'Axis__Label'} fill='white'>{yAxis.title}</text></g>
-                    <g className={'Axis__TickContainer'}></g>
-                </g>
+              <g className={'Axis'} ref={gy} >
+                <line
+                  x1={0}
+                  x2={0}
+                  y1={marginTop - 5}
+                  y2={height - marginBottom + 20}
+                  className={'Axis__Line'}
+                />
+                <g><text className={'Axis__Label'} fill='white'>{yAxis.title}</text></g>
+                <g className={'Axis__TickContainer'}></g>
+              </g>
             </svg>
 
             <g transform={'translate(15,-15)'}>
@@ -340,15 +389,15 @@ const LineGraph = ({
                 <path d={area(data)} fill="url(#AreaFill)" clipPath={'url(#clipPath)'}/>
 
                 <g filter='url(#shadow)'>
-                    <path ref={graphicLine} d={line(data)} stroke="#0e75b5" strokeWidth="3" fill="none"/>
+                    <path ref={graphicLine} d={line(data)} stroke="#008DE4" strokeWidth="3" fill="none"/>
 
-                    <g fill='#0e75b5'>
+                    <g fill='#008DE4'>
                         {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'Chart__Point'}/>))}
                     </g>
                 </g>
 
                 <g ref={focusPoint} className={'Chart__FocusPoint'}>
-                    <circle r="3" fill='white' />
+                    <circle r="3"/>
                 </g>
 
                 <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'} filter='url(#shadow)'></g>

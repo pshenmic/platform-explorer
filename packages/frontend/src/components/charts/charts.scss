@@ -2,63 +2,90 @@
 @import '../../styles/variables.scss';
 
 .ChartContainer {
-    &.loading {
-        @include mixins.loading-container;
-    }
+  &.loading {
+    @include mixins.loading-container;
+  }
 }
 
 .Chart {
-    visibility: hidden;
-    opacity: 0;
-    transition: all 1s;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 1s;
 
-    &.loaded {
-        visibility: visible;
-        opacity: 1;
-    }
+  &.loaded {
+      visibility: visible;
+      opacity: 1;
+  }
 
-    &__Tooltip {
-        font-size: 14px;
-        font-family: var(--chakra-fonts-body);
-    }
+  &__Tooltip {
+      font-size: 14px;
+      font-family: var(--chakra-fonts-body);
+  }
 
-    &__FocusPoint {
-        display: none;
-        opacity: .8;
-    }
+  &__FocusPoint {
+      display: none;
+      fill: #fff;
+      stroke: $color-brand-normal;
+      stroke-width: 2px;
+  }
+
+  &__Point {
+      fill: $color-brand-normal;
+      opacity: 0;
+  }
+
+  .grid line {
+      stroke: #ccc;
+      stroke-opacity: 0.03;
+  }
+
+  .grid .tick:nth-child(even) line {
+    stroke-opacity: 0.1;
+  }
+    
+  .grid path {
+    display: none;
+  }
 }
 
 .ChartTooltip {
-    &__InfoLine {
-        &--Blocks {
-            opacity: .7;
-        }
-
-        &--Bold {
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        &--Tiny {
-            font-size: 13px;
-        }
+  &__InfoLine {
+    &--Blocks {
+      opacity: .7;
     }
+
+    &--Bold {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    &--Tiny {
+      font-size: 13px;
+    }
+  }
 }
 
 .Axis {
-    font-family: var(--chakra-fonts-body);
-    font-size: 25px;
+    font-family: $font-heading;
+    font-weight: 700;
+    font-size: 12px;
 
     .domain {
-        opacity: .3;
+      opacity: 0;
     }
 
     &__Label {
-        font-size: 14px;
-        opacity: .5;
+      font-size: 12px;
+      opacity: .5;
     }
 
     &__TickContainer {
-        font-size: 14px;
+      font-size: 12px;
+    }
+
+    &__Line {
+      opacity: .5;
+      stroke-width: 1px;
+      stroke: #fff;
     }
 }
