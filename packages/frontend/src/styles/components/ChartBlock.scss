@@ -1,23 +1,45 @@
 @use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
 
 .ChartBlock {
-    min-height: 300px;
+  min-height: 300px;
 
-    &__Head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 2px 6px;
-        margin-bottom: 8px;
+  &__TimeframeTitle {
+    margin: 5px 5px 5px 0;
+  }
+
+  &__TimeframeContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-left: auto;
+    margin-top: -20px;
+  }
+
+  &__TimeframeButtons {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__TimeframeButton {
+    font-family: $font-heading;
+    font-size: 12px;
+    margin-right: 10px;
+    height: 27px !important;
+    margin: 5px;
+
+    &:last-child {
+      margin-right: 0;
     }
 
-    &__Title {
-        margin: 0;
+    &--Active {
+      background-color: $color-brand-normal !important;
     }
+  }
 
-    &__TimeframeSelector {
-        background: var(--chakra-colors-gray-900);
-        border-bottom: 1px solid var(--chakra-colors-gray-700);
-        padding: 2px 4px;
+  @media screen and (max-width: 640px) {
+    &__TimeframeContainer {
+      margin-top: 0;
     }
+  }
 }

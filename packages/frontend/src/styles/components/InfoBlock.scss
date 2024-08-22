@@ -12,6 +12,10 @@ $border-radius: var(--chakra-radii-block);
   border-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(44px);
 
+  &--NoBorder {
+    box-shadow: none;
+  }
+
   &__Title {
     background-color: $color-brand-normal;
     font-size: 14px !important;

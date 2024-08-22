@@ -161,6 +161,20 @@ export const theme = extendTheme({
         borderRadius: 'lg'
       }
     },
+    Button: {
+      baseStyle: {
+        fontFamily: 'heading',
+        textTransform: 'uppercase',
+        borderRadius: '10px',
+        letterSpacing: '0.4px',
+        fontWeight: '700'
+      },
+      sizes: {
+        md: {
+          fontSize: '12px'
+        }
+      }
+    },
     Badge: {
       baseStyle: props => {
         const { colorScheme } = props
