@@ -170,6 +170,9 @@ export const theme = extendTheme({
         fontWeight: '700'
       },
       sizes: {
+        sm: {
+          fontSize: '12px'
+        },
         md: {
           fontSize: '12px'
         }

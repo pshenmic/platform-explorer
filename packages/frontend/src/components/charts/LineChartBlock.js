@@ -54,8 +54,7 @@ export default function LineChartBlock ({
         width={'100%'}
         borderWidth={'1px'} borderRadius={'block'}
         direction={'column'}
-        p={3}
-        pb={2}
+        pb={'10px !important'}
         background={'gray.900'}
         height={height}
     >

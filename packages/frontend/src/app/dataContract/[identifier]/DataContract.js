@@ -201,6 +201,7 @@ function DataContract ({ identifier }) {
             maxW={'none'}
             mt={5}
             className={'InfoBlock'}
+            p={0}
         >
             <Tabs
               onChange={setActiveTab}
@@ -211,11 +212,11 @@ function DataContract ({ identifier }) {
                     <Tab>Schema</Tab>
                 </TabList>
                 <TabPanels>
-                    <TabPanel>
+                    <TabPanel p={0}>
                         <Box>
                           {!documents.error
                             ? !documents.loading
-                                ? <Box m={4}>
+                                ? <Box mt={4}>
                                     <DocumentsList
                                         documents={documents.data.resultSet}
                                         columnsCount={2}
@@ -235,7 +236,7 @@ function DataContract ({ identifier }) {
                             }
                         </Box>
                     </TabPanel>
-                    <TabPanel>
+                    <TabPanel px={0}>
                         <Box>
                           {!dataContract.error
                             ? <LoadingBlock loading={dataContract.loading}>
