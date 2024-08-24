@@ -20,6 +20,7 @@ class MainController {
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
     this.validatorsDAO = new ValidatorsDAO(knex)
+    this.dapi = new DAPI(Constants.DAPIConfig)
   }
 
   getStatus = async (request, response) => {
@@ -39,7 +40,7 @@ class MainController {
       })
       : null
 
-    const totalCreditsOnPlatform = await DAPI.getTotalCredits()
+    const totalCreditsOnPlatform = await this.dapi.getTotalCreditsInPlatform()
 
     response.send({
       epoch,

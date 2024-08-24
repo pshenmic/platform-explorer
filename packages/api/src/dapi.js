@@ -1,20 +1,28 @@
 const DAPIClient = require('@dashevo/dapi-client')
-
-const client = new DAPIClient(
-  {
-    dapiAddresses: [
-      process.env.DAPI_URL,
-      '127.0.0.1:9901'
-    ],
-    network: process.env.DAPI_NETWORK ?? 'local'
-  }
-)
+const {Identifier, DashPlatformProtocol} = require('@dashevo/wasm-dpp')
 
 class DAPI {
-  static async getTotalCredits () {
-    const { totalCreditsOnPlatform } = await client.platform.getTotalCredits()
-    return totalCreditsOnPlatform
-  }
+    DAPIClient
+    dpp
+
+    constructor(options) {
+        this.initDAPI(options)
+        this.dpp = new DashPlatformProtocol()
+    }
+
+    initDAPI(options) {
+        this.DAPIClient = new DAPIClient(options)
+    }
+
+    async getIdentityBalance(identifier) {
+        const GRPCIdentity = await this.DAPIClient.platform.getIdentity(Identifier.from(identifier))
+        return this.dpp.identity.createFromBuffer(GRPCIdentity.getIdentity()).balance
+    }
+
+    async getTotalCreditsInPlatform() {
+        const {totalCreditsInPlatform} = await this.DAPIClient.platform.getTotalCreditsInPlatform()
+        return totalCreditsInPlatform
+    }
 }
 
 module.exports = DAPI
