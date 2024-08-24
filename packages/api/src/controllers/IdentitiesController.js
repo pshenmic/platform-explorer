@@ -1,11 +1,9 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
-const DAPI = require('../dapi')
-const { DAPIConfig } = require('../constants')
 
 class IdentitiesController {
-  constructor (knex) {
+  constructor (knex, DAPI) {
     this.identitiesDAO = new IdentitiesDAO(knex)
-    this.DAPI = new DAPI(DAPIConfig)
+    this.DAPI = DAPI
   }
 
   getIdentityByIdentifier = async (request, response) => {

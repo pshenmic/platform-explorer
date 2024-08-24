@@ -8,20 +8,19 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const Constants = require('../constants')
 const DAPI = require('../dapi')
-const { DAPIConfig } = require('../constants')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
 
 class MainController {
-  constructor (knex) {
+  constructor (knex, DAPI) {
     this.blocksDAO = new BlocksDAO(knex)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
     this.validatorsDAO = new ValidatorsDAO(knex)
-    this.DAPI = new DAPI(DAPIConfig)
+    this.DAPI = DAPI
   }
 
   getStatus = async (request, response) => {

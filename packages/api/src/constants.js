@@ -6,9 +6,14 @@ module.exports = {
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
   DAPIConfig: {
     dapiAddresses: [
-      process.env.DAPI_URL
+      {
+        host: process.env.DAPI_HOST,
+        port: process.env.DAPI_PORT,
+        retries: process.env.DAPI_RETRIES,
+        protocol: process.env.DAPI_PROTOCOL,
+      }
     ],
-    retries: process.env.DAPI_RETRIES
+    retries: Number(process.env.DAPI_RETRIES)
   },
   get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {
