@@ -33,7 +33,7 @@ jobs:
           script: |
             docker stop $(docker ps -f name=platform-explorer-indexer -q) || true
             docker stop $(docker ps -f name=platform-explorer-api -q) || true
-            docker rm platform-explorer-api platform-explorer-indexer
+            docker rm platform-explorer-api platform-explorer-indexer || true
 
   drop_db:
       runs-on: ubuntu-latest
