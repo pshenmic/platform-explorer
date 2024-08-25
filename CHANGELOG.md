@@ -1,5 +1,13 @@
 # CHANGELOG
 
+### v1.0.2
+
+GitHub Action Deploy release fix
+
+## Changes
+
+- Skip errors when stopping or removing containers in the CI deploy action @pshenmic
+
 ### v1.0.1
 
 Upgrade to Dash Platform v1.1.0
