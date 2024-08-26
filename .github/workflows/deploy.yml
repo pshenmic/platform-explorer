@@ -1,12 +1,12 @@
 name: "Deploy"
 
-on: 
+on:
   workflow_run:
     workflows: ["Build and push packages"]
-    branches: 
+    branches:
       - "master"
       - "*.*.*"
-    types: 
+    types:
       - completed
 
 env:
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     if: github.event.workflow_run.conclusion == 'success'
-    
+
     steps:
       - name: Stop
         uses: appleboy/ssh-action@v0.1.10
@@ -31,21 +31,21 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker stop $(docker ps -f name=platform-explorer-indexer -q)
-            docker stop $(docker ps -f name=platform-explorer-api -q)
-            docker rm platform-explorer-api platform-explorer-indexer
+            docker stop $(docker ps -f name=platform-explorer-indexer -q) || true
+            docker stop $(docker ps -f name=platform-explorer-api -q) || true
+            docker rm platform-explorer-api platform-explorer-indexer || true
 
   drop_db:
       runs-on: ubuntu-latest
 
       needs: stop
-      
+
       steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: REGEX
         uses: actions-ecosystem/action-regex-match@v2
         id: regex-match
@@ -67,15 +67,15 @@ jobs:
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             
             docker run --rm --env-file api.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api npm run db:drop
-            docker run --rm --env-file api.env -v ./platform-explorer/packages/indexer/migrations:/migrations owl352/refinery_cli_docker refinery migrate -e DATABASE_URL -p /migrations
+            docker run --rm --env-file api.env -v ./platform-explorer/packages/indexer/migrations:/migrations owl352/refinery_cli_docker ./refinery migrate -e DATABASE_URL -p /migrations
 
   start:
     runs-on: ubuntu-latest
 
     needs: drop_db
-    
+
     steps:
-      
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
