@@ -19,8 +19,6 @@ describe('Epoch routes', () => {
   let validator
 
   before(async () => {
-    mock.method(DAPI.prototype, 'initDAPI', () => {})
-
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {

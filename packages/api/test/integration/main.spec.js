@@ -27,7 +27,6 @@ describe('Other routes', () => {
   let documentTransaction
 
   before(async () => {
-    mock.method(DAPI.prototype, 'initDAPI', () => {})
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({

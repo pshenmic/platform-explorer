@@ -25,8 +25,6 @@ describe('Blocks routes', () => {
       }
     }))
 
-    mock.method(DAPI.prototype, 'initDAPI', () => {})
-
     app = await server.start()
     client = supertest(app.server)
 

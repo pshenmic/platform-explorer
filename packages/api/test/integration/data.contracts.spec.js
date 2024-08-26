@@ -19,8 +19,6 @@ describe('DataContracts routes', () => {
   let documents
 
   before(async () => {
-    mock.method(DAPI.prototype, 'initDAPI', () => {})
-
     app = await server.start()
     client = supertest(app.server)
     knex = getKnex()
