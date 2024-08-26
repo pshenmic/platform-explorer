@@ -10,6 +10,7 @@ import TransactionsList from '../../components/transactions/TransactionsList'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { LoadingList } from '../../components/loading'
 import Intro from './HomeIntro.js'
+import theme from '../../styles/theme'
 import {
   Box,
   Container,
@@ -29,6 +30,8 @@ function Home () {
   const trendingIdentitiesList = createRef()
   const transactionsContainer = createRef()
   const transactionsList = createRef()
+  const blockOffset = theme.blockOffset
+  const blockMaxWidth = ['100%', '100%', 'calc(50% - 10px)', 'calc(50% - 10px)', 'calc(50% - 20px)']
 
   const fetchData = () => {
     Promise.all([
@@ -57,107 +60,55 @@ function Home () {
 
   useEffect(fetchData, [])
 
-  // function adaptList (container, listBlock, data, setDataFunc) {
-  //   if (!container || !listBlock || data?.props.printCount >= data?.data?.resultSet?.length) return
-
-  //   const childNodes = listBlock.childNodes
-  //   const [listContainer] = Object.entries(childNodes)
-  //     .filter(([i, element]) => {
-  //       const classes = element.className.split(' ')
-  //       return classes.includes('SimpleList__List') || classes.includes('TransactionsListItem')
-  //     })
-  //     .map(([i, element]) => element)
-  //   const lastElementHeight = listContainer.childNodes[listContainer.childNodes.length - 1].getBoundingClientRect().height
-  //   const bottomOffset = container.getBoundingClientRect().bottom - listBlock.getBoundingClientRect().bottom
-  //   const extraItems = Math.floor(bottomOffset / lastElementHeight)
-
-  //   if (extraItems > 0) {
-  //     setDataFunc(state => ({
-  //       ...state,
-  //       props: {
-  //         printCount: state.props.printCount + extraItems
-  //       }
-  //     }))
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (!trendingIdentities.loading && !richestIdentities.loading) {
-  //     adaptList(
-  //       trendingIdentitiesContainer.current,
-  //       trendingIdentitiesList.current,
-  //       trendingIdentities,
-  //       setTrendingIdentities
-  //     )
-
-  //     adaptList(
-  //       richListContainer.current,
-  //       richListRef.current,
-  //       richestIdentities,
-  //       setRichestIdentities
-  //     )
-  //   }
-
-  //   if (!transactions.loading) {
-  //     adaptList(
-  //       transactionsContainer.current,
-  //       transactionsList.current,
-  //       transactions,
-  //       setTransactions
-  //     )
-  //   }
-  // }, [
-  //   richListContainer,
-  //   trendingIdentitiesContainer,
-  //   transactionsContainer,
-  //   richListRef,
-  //   richestIdentities,
-  //   transactions,
-  //   transactionsList,
-  //   trendingIdentities,
-  //   trendingIdentitiesList
-  // ])
-
   return (<>
     <Container
       maxW={'container.xl'}
       color={'white'}
-      padding={3}
-      mt={8}
+      px={3}
+      py={0}
+      mt={blockOffset}
     >
       <Intro/>
     </Container>
 
-    <TotalInfo
-      blocks={status?.data?.api?.block?.height}
-      transactions={status.data?.transactionsCount}
-      dataContracts={status.data?.dataContractsCount}
-      documents={status.data?.documentsCount}
-      identities={status.data?.identitiesCount}
-      loading={status.loading}
-    />
+    <Container
+      px={3}
+      py={0}
+      mt={blockOffset}
+      maxW={'container.xl'}
+    >
+      <TotalInfo
+        blocks={status?.data?.api?.block?.height}
+        transactions={status.data?.transactionsCount}
+        dataContracts={status.data?.dataContractsCount}
+        documents={status.data?.documentsCount}
+        identities={status.data?.identitiesCount}
+        loading={status.loading}
+      />
+    </Container>
 
     <Container
       maxW={'container.xl'}
       color={'white'}
       padding={3}
-      mt={0}
-      mb={4}
+      mt={blockOffset}
+      py={0}
+      mb={0}
     >
-      <Container p={0} maxW={'container.xl'} mb={[10, 10, 16]}>
+      <Container p={0} maxW={'container.xl'} mb={blockOffset}>
         <Flex
           w={'100%'}
           justifyContent={'space-between'}
           wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
-          mb={5}
+          mb={blockOffset}
         >
-          <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
+          <Container flexS mb={0} p={0} maxW={blockMaxWidth}>
             <TransactionsHistory height={'100%'}/>
           </Container>
 
-          <Box flexShrink={'0'} w={10} h={[0, 0, 0, 10]} />
+          <Box flexShrink={'0'} w={blockOffset} h={blockOffset} />
 
-          <Container mb={5} p={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
+          <Container m={0} p={0} maxW={blockMaxWidth}>
             <Flex
               maxW={'100%'}
               m={0}
@@ -198,12 +149,12 @@ function Home () {
         <Flex
           w={'100%'}
           justifyContent={'space-between'}
-          wrap={['wrap', 'wrap', 'nowrap']}
-          mb={[10, 10, 16]}
+          wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
+          mb={0}
         >
           <Flex
             ref={transactionsContainer}
-            maxW={['100%', '100%', 'calc(50% - 20px)']}
+            maxW={blockMaxWidth}
             order={[4, 4, 0]}
             mb={0}
             className={'InfoBlock'}
@@ -218,12 +169,12 @@ function Home () {
               : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
           </Flex>
 
-          <Box flexShrink={'0'} w={10} h={10} order={[3, 3, 0]}/>
+          <Box flexShrink={'0'} w={blockOffset} h={blockOffset} order={[3, 3, 0]}/>
 
           <Flex
             flexDirection={'column'}
             p={0}
-            maxW={['100%', '100%', 'calc(50% - 20px)']}
+            maxW={blockMaxWidth}
             width={'100%'}
             flexShrink={0}
           >
@@ -265,7 +216,7 @@ function Home () {
                 : <LoadingList itemsCount={trendingIdentities.props.printCount}/>}
             </Flex>
 
-            <Box w={10} h={10} />
+            <Box w={blockOffset} h={blockOffset}/>
 
             <Flex
               ref={richListContainer}

@@ -9,7 +9,7 @@ import EpochProgress from './EpochProgress'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
-function NetworkStatus () {
+function NetworkStatus ({ className }) {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
 
   const fetchData = useCallback(() => {
@@ -36,7 +36,7 @@ function NetworkStatus () {
     : <WarningIcon mr={2}/>
 
   return (
-    <div className={'NetworkStatus'}>
+    <div className={`NetworkStatus  ${className || ''}`}>
       <div align={['center', 'start', 'start', 'start', 'start']} className={`NetworkStatus__Stat NetworkStatus__Stat--Epoch ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>Epoch:</div>
         <div className={'NetworkStatus__InfoValue NetworkStatus__InfoValue--Epoch'}>

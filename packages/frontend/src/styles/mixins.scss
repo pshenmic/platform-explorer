@@ -275,3 +275,23 @@
     }
   }
 }
+
+@mixin BlockSpacing ($property) {
+  #{$property}: var(--chakra-space-10);
+
+  @media screen and (max-width: $breakpoint-xl) {
+    #{$property}: var(--chakra-space-5);
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    #{$property}: var(--chakra-space-5);
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    #{$property}: var(--chakra-space-4);
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    #{$property}: var(--chakra-space-3);
+  }
+}

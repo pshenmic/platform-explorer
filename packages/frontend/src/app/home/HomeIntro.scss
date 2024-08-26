@@ -2,12 +2,16 @@
 @import '../../styles/variables.scss';
 
 .HomeIntro {
-  padding: 65px !important;
+  padding: 4.063rem 0 !important;
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 1.25rem;
   width: 100%;
   margin: 0 auto;
 
   &__About {
     max-width: 500px;
+    padding-left: 4.063rem;
   }
 
   &__Welcome {
@@ -41,6 +45,19 @@
     font-family: $font-mono;
     color: var(--chakra-colors-gray-500);
     line-height: 1.7;
+  }
+
+  @media screen and (max-width: 1200px) {
+    grid-template-columns: auto;
+
+    &__NetworkStatus {
+      padding: 0 40px;
+    }
+
+    &__About {
+      max-width: none;
+      padding: 0 40px;
+    }
   }
 
   @media screen and (max-width: $breakpoint-lg) {

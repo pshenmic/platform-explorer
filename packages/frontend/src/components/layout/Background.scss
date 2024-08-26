@@ -2,6 +2,7 @@
 
 .Background {
   background-color: #0F1315;
+  overflow: hidden;
   z-index: -1;
 
   &, &:after {
@@ -28,7 +29,7 @@
       position: absolute;
       top: 0;
       left: 50%;
-      transform: translate(calc(-50% - 990px), -50%);
+      transform: translate(calc(-50% - 720px), -50%);
       width: 1000px;
       height: 1000px;
       border-radius: 1500px;
@@ -38,7 +39,7 @@
     }
   }
 
-  @media screen and (max-width: 1980px) {
+  @media screen and (max-width: 1440px) {
     &::before {
       left: 0;
       transform: translate(-50%, -50%);

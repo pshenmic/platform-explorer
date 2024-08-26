@@ -1,11 +1,10 @@
-import { Box, Heading, Text, HStack } from '@chakra-ui/react'
+import { Box, Heading, Text } from '@chakra-ui/react'
 import NetworkStatus from '../../components/networkStatus'
 import './HomeIntro.scss'
 
 export default function HomeIntro () {
   return (
     <Box className={'InfoBlock HomeIntro'}>
-      <HStack align={'center'} flexDirection={['column', 'column', 'column', 'row']} spacing={6}>
         <div className={'HomeIntro__About'}>
           <Text size={'sm'} mt={0} mb={2} className={'HomeIntro__Welcome'}>
             WELCOME TO
@@ -21,8 +20,7 @@ export default function HomeIntro () {
           </Text>
         </div>
 
-        <NetworkStatus/>
-      </HStack>
+        <NetworkStatus className={'HomeIntro__NetworkStatus'}/>
     </Box>
   )
 }

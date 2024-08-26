@@ -5,7 +5,7 @@
   display: grid;
   width: 100%;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 1.25rem;
   grid-template-columns: repeat(3, 1fr);
 
   &__Stat {

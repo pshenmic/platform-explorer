@@ -1,32 +1,89 @@
+@use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
+$scrollColor: $color-brand-shaded;
+$scrollBackgroundColor: rgba(0, 0, 0, .3);
+
 .TotalInfo {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: $scrollColor $scrollBackgroundColor;
+
+  &__ContentContainer {
+    margin: 0 auto;
+  }
+
+  &__Item {
+    @include mixins.BlockSpacing(margin-right);
+    width: calc(100% / 5 - 40px);
+    flex-grow: 1;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $scrollColor;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: $scrollBackgroundColor;
+    border-radius: 10px;
+  }
+  
+  @supports (scrollbar-width: thin) {
+    scrollbar-width: thin;
+    scrollbar-color: $scrollColor $scrollBackgroundColor;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    overflow-y: scroll;
+    padding-bottom: 4px;
+
     &__ContentContainer {
-        margin: 0 auto;
+      flex-wrap: nowrap !important;
+      padding-bottom: 4px;
+
+      &::after {
+        content: '';
+        display: block;
+        width: 2px;
+        flex-shrink: 0;
+      }
     }
 
     &__Item {
-        width: calc(100% / 5 - 20px);
+      width: 25%;
+      flex-shrink: 0;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__ContentContainer {
+      &::before {
+        width: calc((100% - 40%) / 2);
+      }
     }
 
-    @media screen and (max-width: $breakpoint-md) {
-        &__Item {
-            width: calc(50% - 10px);
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-
-            &:last-child {
-                margin: 0 auto;
-                width: 100%;
-                justify-content: center;
-            }
-        }
+    &__Item {
+      width: 40%;
     }
+  }
 
-    @media screen and (max-width: 400px) {
-        &__Item {
-            width: 100%;
-        }
+  @media screen and (max-width: $breakpoint-sm) {
+    &__Item {
+      width: 70%;
     }
+  }
 }

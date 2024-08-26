@@ -49,7 +49,7 @@ function Navbar () {
     <Box px={3}>
       <Flex
         className={'Navbar'}
-        maxW={'1980px'}
+        maxW={'1440px'}
         ml={'auto'}
         mr={'auto'}
         h={16}

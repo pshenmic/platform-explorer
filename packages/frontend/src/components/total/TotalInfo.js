@@ -8,9 +8,8 @@ export default function TotalInfo ({ blocks, transactions, dataContracts, docume
       className={'TotalInfo'}
       maxW={'none'}
       borderColor={'gray.800'}
-      py={0}
-      mt={8}
-      mb={8}
+      p={0}
+      m={0}
     >
       <Flex
         className={'TotalInfo__ContentContainer'}
