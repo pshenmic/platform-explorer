@@ -257,6 +257,7 @@ describe('Other routes', () => {
 
       const expectedStats = {
         epoch: null,
+        identitiesCount: 1,
         transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,
@@ -310,6 +311,7 @@ describe('Other routes', () => {
 
       const expectedStats = {
         epoch: null,
+        identitiesCount: 1,
         transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,
@@ -368,6 +370,7 @@ describe('Other routes', () => {
           startTime: '1970-01-01T18:00:00.000Z',
           endTime: '1970-01-01T19:00:00.000Z'
         },
+        identitiesCount: 1,
         transactionsCount: 3,
         transfersCount: 0,
         dataContractsCount: 1,
