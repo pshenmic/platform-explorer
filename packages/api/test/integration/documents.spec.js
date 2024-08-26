@@ -6,7 +6,6 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const DAPI = require('../../src/dapi')
 
 describe('Documents routes', () => {
   let app
