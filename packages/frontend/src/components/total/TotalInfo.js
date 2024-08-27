@@ -1,6 +1,7 @@
 import './TotalInfo.scss'
 import './TotalInfoItem.scss'
 import { Container, Flex } from '@chakra-ui/react'
+import Link from 'next/link'
 
 export default function TotalInfo ({ blocks, transactions, dataContracts, documents, identities, loading }) {
   return (
@@ -17,30 +18,30 @@ export default function TotalInfo ({ blocks, transactions, dataContracts, docume
         maxW={'container.xl'}
         wrap={'wrap'}
       >
-        <div className={'InfoBlock TotalInfo__Item TotalInfoItem TotalInfoItem--Blocks'}>
+        <Link href={'/blocks/'} className={'InfoBlock TotalInfo__Item TotalInfoItem TotalInfoItem--Blocks'}>
           <div className={'TotalInfoItem__Title'}>Blocks</div>
           <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${blocks || '-'}`}</div>
-        </div>
+        </Link>
 
-        <div className={'InfoBlock TotalInfo__Item TotalInfoItem TotalInfoItem--Transactions'}>
+        <Link href={'/transactions/'} className={'InfoBlock TotalInfo__Item TotalInfoItem TotalInfoItem--Transactions'}>
           <div className={'TotalInfoItem__Title'}>Transactions</div>
           <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${transactions || '-'}`}</div>
-        </div>
+        </Link>
 
-        <div className={'InfoBlock TotalInfo__Item TotalInfoItem TotalInfoItem--DataContracts'}>
+        <Link href={'/dataContracts/'} className={'InfoBlock TotalInfo__Item TotalInfoItem TotalInfoItem--DataContracts'}>
           <div className={'TotalInfoItem__Title'}>Data Contracts</div>
           <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${dataContracts || '-'}`}</div>
-        </div>
+        </Link>
 
         <div className={'InfoBlock TotalInfo__Item TotalInfoItem TotalInfoItem--Documents'}>
           <div className={'TotalInfoItem__Title'}>Documents</div>
           <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${documents || '-'}`}</div>
         </div>
 
-        <div className={'InfoBlock TotalInfo__Item TotalInfoItem TotalInfoItem--Identities'}>
+        <Link href={'/identities/'} className={'InfoBlock TotalInfo__Item TotalInfoItem TotalInfoItem--Identities'}>
           <div className={'TotalInfoItem__Title'}>Identities</div>
           <div className={`TotalInfoItem__Value ${loading ? 'TotalInfoItem__Value--Loading' : ''}`}>{`${identities || '-'}`}</div>
-        </div>
+        </Link>
       </Flex>
     </Container>
   )
