@@ -7,16 +7,16 @@
   padding: 12px;
   margin-bottom: 8px;
   line-height: 24px;
-  background: var(--chakra-colors-whiteAlpha-100);
   color: var(--chakra-colors-gray-100);
   font-family: $font-mono;
   font-size: 12pt;
   border-radius: 10px;
   border: 1px solid var(--chakra-colors-gray-750);
   background-color: var(--chakra-colors-gray-650);
+  transition: all $transition-time-def;
 
   &:hover {
-    background: var(--chakra-colors-whiteAlpha-50);
+    background-color: var(--chakra-colors-gray-900);
     text-decoration: none;
     cursor: pointer;
   }
