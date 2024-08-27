@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, createRef } from 'react'
+import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsHistory from '../../components/charts/TransactionsHistory'
 import { SimpleList } from '../../components/lists'
