@@ -13,7 +13,7 @@
 }
 
 .ValidatorTableRow {
-    @include mixins.def_list_item;
+    @include mixins.DefListItem;
 
     background-color: var(--chakra-colors-gray-650);
   

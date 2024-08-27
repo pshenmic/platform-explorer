@@ -16,7 +16,7 @@
     &--Loading {
       @for $i from 1 through 10 {
         &:nth-of-type(#{$i}) .NetworkStatus__InfoValue {
-          @include mixins.loading-line($i);
+          @include mixins.LoadingLine($i);
           width: 100%;
         }
       }

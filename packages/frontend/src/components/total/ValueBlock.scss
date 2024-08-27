@@ -85,7 +85,7 @@
         font-size: 18px;
 
         &--Loading {
-            @include mixins.loading-line;
+            @include mixins.LoadingLine;
     
             opacity: .5;
             border-radius: 5px;

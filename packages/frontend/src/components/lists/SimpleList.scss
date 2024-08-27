@@ -28,7 +28,7 @@
 }
 
 .SimpleListItem {
-  @include mixins.def_list_item;
+  @include mixins.DefListItem;
   
   display: block;
 

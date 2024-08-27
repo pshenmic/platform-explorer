@@ -2,5 +2,5 @@
 @import '../../styles/variables.scss';
 
 .LoadingLine {
-    @include mixins.loading-line;
+    @include mixins.LoadingLine;
 }

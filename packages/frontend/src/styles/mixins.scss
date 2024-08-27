@@ -1,6 +1,6 @@
 @import './variables.scss';
 
-@mixin def_list_item {
+@mixin DefListItem {
   display: flex;
   width: 100%;
   text-decoration: none;
@@ -50,11 +50,11 @@
   color: var(--chakra-colors-white);
 }
 
-@mixin loading-line($delay: 0) {
+@mixin LoadingLine($delay: 0) {
   overflow: hidden;
   position: relative;
 
-  @keyframes loading-line {
+  @keyframes LoadingLine {
     0% {
       left: -100%;
       width: 100%;
@@ -92,7 +92,7 @@
     background: linear-gradient(90deg, rgb(14 117 181) 0%, rgb(22 82 120) 100%);
     border-radius: 100px;
     opacity: .1;
-    animation: loading-line linear 3s infinite;
+    animation: LoadingLine linear 3s infinite;
   }
 
   Tr & {
@@ -119,7 +119,7 @@
   }
 }
 
-@mixin loading-container {
+@mixin LoadingContainer {
   @keyframes loading-process {
     from {
       opacity: 0;
@@ -152,7 +152,7 @@
     }
   }
   
-  @keyframes loading-container {
+  @keyframes LoadingContainer {
     from {
       overflow: hidden;
     }
@@ -163,7 +163,7 @@
 
   overflow: hidden;
   position: relative;
-  animation: 1s loading-container infinite;
+  animation: 1s LoadingContainer infinite;
 
   &::before {
     animation: 1s loading-bg infinite;
@@ -195,7 +195,7 @@
   }
 }
 
-@mixin avatar-container {
+@mixin AvatarContainer {
   border-radius: $border-radius-def;
   box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
   background-color: var(--chakra-colors-gray-900);
