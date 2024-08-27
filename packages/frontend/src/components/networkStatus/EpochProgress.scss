@@ -13,9 +13,11 @@
 	&__InfoTitle {
     color: var(--chakra-colors-gray-500);
 		margin-right: 12px;
+    white-space: nowrap;
 	}
 
 	&__InfoValue {
 		color: #fff;
+    white-space: nowrap;
 	} 
 }
