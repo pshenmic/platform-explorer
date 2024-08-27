@@ -102,7 +102,7 @@ function Home () {
           wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
           mb={blockOffset}
         >
-          <Container flexS mb={0} p={0} maxW={blockMaxWidth}>
+          <Container mb={0} p={0} maxW={blockMaxWidth}>
             <TransactionsHistory height={'100%'}/>
           </Container>
 
