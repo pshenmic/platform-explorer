@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { LineChart } from '../../components/charts/index.js'
 import { Container, Heading, Flex, Button } from '@chakra-ui/react'
 import { WarningTwoIcon } from '@chakra-ui/icons'
+import './ChartBlock.scss';
 
 function ErrorMessageBlock () {
   return (
@@ -55,7 +56,6 @@ export default function LineChartBlock ({
         borderWidth={'1px'} borderRadius={'block'}
         direction={'column'}
         pb={'10px !important'}
-        background={'gray.900'}
         height={height}
     >
       <Heading className={'InfoBlock__Title'} as={'h1'}>{title}</Heading>

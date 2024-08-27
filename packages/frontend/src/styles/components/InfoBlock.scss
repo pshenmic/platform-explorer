@@ -6,12 +6,12 @@ $border-radius: var(--chakra-radii-block);
 .InfoBlock {
   position: relative;
   padding: 20px 32px 32px 32px !important;
-  background-color: var(--chakra-colors-blackAlpha-200);
+  background: rgba(24, 31, 34, 0.2);
   box-shadow: 2px 2px $color-brand-normal;
   border-radius: $border-radius;
   border-width: 1px;
   border-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(44px);
+  backdrop-filter: $blockBackgroundBlur;
 
   &--NoBorder {
     box-shadow: none;

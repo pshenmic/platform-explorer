@@ -3,11 +3,16 @@
 
 .Navbar {
   padding: 0 16px;
-  background-color: var(--chakra-colors-whiteAlpha-50);
   background: rgba(24, 31, 34, 0.8);
   border-radius: 0px 0px 20px 20px;
   border-width: 1px;
-  position: relative;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  backdrop-filter: $blockBackgroundBlur;
 
   &__WrapperNetworkSelect {
     display: flex;
@@ -18,4 +23,8 @@
       gap: 8px;
     }
   }
+}
+
+.NavbarStub {
+  height: 64px;
 }

@@ -1,8 +1,8 @@
-@import '../../styles/mixins.scss';
+@use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
 .HomeIntro {
-  padding: 4.063rem 0 !important;
+  padding: 65px 0 !important;
   display: grid;
   grid-template-columns: 2fr 3fr;
   gap: 1.25rem;
@@ -11,11 +11,11 @@
 
   &__About {
     max-width: 500px;
-    padding-left: 4.063rem;
+    padding-left: 65px;
   }
 
   &__Welcome {
-    font-size: 14px;
+    font-size: 0.875rem;
     text-transform: uppercase;
     font-family: $font-heading;
     font-weight: 800;
@@ -27,21 +27,21 @@
 
   &__Title {
     font-style: italic;
-    font-size: 34px !important;
+    font-size: 2.125rem !important;
     font-weight: 800;
     margin-bottom: 12px;
     margin-top: 0;
   }
 
   &__Subtitle {
-    font-size: 14px !important;
+    font-size: 0.875rem !important;
     font-weight: 400 !important;
     margin-bottom: 12px;
     margin-top: 0;
   }
 
   &__Description {
-    font-size: 12px !important;
+    font-size: 0.75rem !important;
     font-family: $font-mono;
     color: var(--chakra-colors-gray-500);
     line-height: 1.7;
@@ -49,22 +49,22 @@
 
   @media screen and (max-width: 1200px) {
     grid-template-columns: auto;
+    padding: 40px 0 !important;
 
-    &__NetworkStatus {
+    &__NetworkStatus, &__About {
       padding: 0 40px;
     }
 
     &__About {
       max-width: none;
-      padding: 0 40px;
     }
   }
 
   @media screen and (max-width: $breakpoint-lg) {
-    padding: 40px;
+    padding: 40px 0 !important;
 
-    &__About {
-      max-width: none;
+    &__NetworkStatus, &__About {
+      padding: 0 24px;
     }
   }
 }
