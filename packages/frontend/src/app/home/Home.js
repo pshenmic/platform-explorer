@@ -24,12 +24,6 @@ function Home () {
   const [transactions, setTransactions] = useState({ data: {}, props: { printCount: 8 }, loading: true, error: false })
   const [richestIdentities, setRichestIdentities] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
   const [trendingIdentities, setTrendingIdentities] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
-  const richListContainer = createRef()
-  const richListRef = createRef()
-  const trendingIdentitiesContainer = createRef()
-  const trendingIdentitiesList = createRef()
-  const transactionsContainer = createRef()
-  const transactionsList = createRef()
   const blockOffset = theme.blockOffset
   const blockMaxWidth = ['100%', '100%', 'calc(50% - 10px)', 'calc(50% - 10px)', 'calc(50% - 20px)']
 
@@ -153,7 +147,6 @@ function Home () {
           mb={0}
         >
           <Flex
-            ref={transactionsContainer}
             maxW={blockMaxWidth}
             order={[4, 4, 0]}
             mb={0}
@@ -164,7 +157,7 @@ function Home () {
             <Heading className={'InfoBlock__Title'} as={'h2'}>Transactions</Heading>
             {!transactions.loading
               ? !transactions.error
-                  ? <TransactionsList ref={transactionsList} transactions={transactions.data.resultSet} showMoreLink={'/transactions'}/>
+                  ? <TransactionsList transactions={transactions.data.resultSet} showMoreLink={'/transactions'}/>
                   : <ErrorMessageBlock/>
               : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
           </Flex>
@@ -179,7 +172,6 @@ function Home () {
             flexShrink={0}
           >
             <Flex
-              ref={trendingIdentitiesContainer}
               maxW={'100%'}
               className={'InfoBlock'}
               flexGrow={'1'}
@@ -189,7 +181,6 @@ function Home () {
               {!trendingIdentities.loading
                 ? !trendingIdentities.error
                     ? <SimpleList
-                      ref={trendingIdentitiesList}
                       items={trendingIdentities.data.resultSet
                         .filter((item, i) => i < trendingIdentities.props.printCount)
                         .map((identitiy, i) => ({
@@ -219,7 +210,6 @@ function Home () {
             <Box w={blockOffset} h={blockOffset}/>
 
             <Flex
-              ref={richListContainer}
               maxW={'none'}
               className={'InfoBlock'}
               flexGrow={'1'}
@@ -229,7 +219,6 @@ function Home () {
               {!richestIdentities.loading
                 ? !richestIdentities.error
                     ? <SimpleList
-                      ref={richListRef}
                       items={richestIdentities.data.resultSet
                         .filter((item, i) => i < richestIdentities.props.printCount)
                         .map((identitiy, i) => ({
