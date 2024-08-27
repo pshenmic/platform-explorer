@@ -4,7 +4,7 @@
 .TotalInfoItem {
   position: relative;
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   flex-direction: column;
   padding: 30px !important;
   font-family: $font-heading;
