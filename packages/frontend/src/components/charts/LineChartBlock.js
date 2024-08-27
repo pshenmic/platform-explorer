@@ -74,30 +74,30 @@ export default function LineChartBlock ({
         </div>
       </div>
 
-        <Flex
-            height={height}
-            maxW={'none'}
-            flexGrow={'1'}
-            mt={2}
-            mb={4}
-            p={0}
-            flexDirection={'column'}
-        >
-          {!loading
-            ? (!error && data?.length)
-                ? <LineChart
-                    data={data}
-                    timespan={timespan}
-                    xAxis={xAxis}
-                    yAxis={yAxis}
-                />
-                : <ErrorMessageBlock/>
-            : <Container
-                w={'100%'}
-                h={'100%'}
-                className={'ChartBlock__Loader'}>
-              </Container>}
-        </Flex>
+      <Flex
+          height={'100%'}
+          maxW={'none'}
+          flexGrow={'1'}
+          mt={2}
+          mb={4}
+          p={0}
+          flexDirection={'column'}
+      >
+        {!loading
+          ? (!error && data?.length)
+              ? <LineChart
+                  data={data}
+                  timespan={timespan}
+                  xAxis={xAxis}
+                  yAxis={yAxis}
+              />
+              : <ErrorMessageBlock/>
+          : <Container
+              w={'100%'}
+              h={'100%'}
+              className={'ChartBlock__Loader'}>
+            </Container>}
+      </Flex>
     </Flex>
   </>)
 }
