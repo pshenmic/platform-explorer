@@ -8,7 +8,7 @@ export default function Cards () {
     data: {
       resultSet: [
         {
-          identifier: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+          identifier: '49GmYeGAk9s6nnuFLJd1KXVKoXtsvA7WdGacGHDAMbLJ',
           name: 'Platform Explorer'
         },
         {
