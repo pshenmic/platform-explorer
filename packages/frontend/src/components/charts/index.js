@@ -25,18 +25,21 @@ function getDatesTicks (dates, numTicks) {
 
 const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number' } }, yAxis = { title: '', type: { axis: 'number' } } }) => {
   const chartContainer = useRef()
-  const [chartElement, setChartElement] = useState('')
+  const [chartElement, setChartElement] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [skeleton, setSkeleton] = useState(true)
 
   const render = useCallback(() => {
+    if (loading || !chartContainer.current) return
     setLoading(true)
-    if (!chartContainer.current) return
-    setChartElement('')
-  }, [])
+    setSkeleton(true)
+    setChartElement(null)
+  }, [loading, chartContainer.current])
 
   useEffect(() => {
     if (chartElement) {
-      setTimeout(() => setLoading(false), 1000)
+      setLoading(false)
+      setTimeout(() => setSkeleton(false), 1000)
       return
     }
 
@@ -60,9 +63,9 @@ const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number'
             height={'100%'}
             maxW={'none'}
             p={0} m={0}
-            className={`ChartContainer ${loading ? 'loading' : ''}`}
+            className={`ChartContainer ${skeleton ? 'loading' : ''}`}
         >
-            {chartElement}
+            {chartElement || <></>}
         </Container>
 }
 
