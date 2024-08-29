@@ -78,10 +78,9 @@ function Identities ({ defaultPage = 1, defaultPageSize }) {
       >
           <Container
               maxW={'container.xl'}
-              borderWidth={'1px'} borderRadius={'lg'}
               className={'InfoBlock'}
           >
-              <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Identities</Heading>
+              <Heading className={'InfoBlock__Title'} as={'h1'}>Identities</Heading>
 
               {!identities.error
                 ? !identities.loading

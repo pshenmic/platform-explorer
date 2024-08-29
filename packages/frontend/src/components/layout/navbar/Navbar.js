@@ -1,19 +1,20 @@
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
-import GlobalSearchInput from '../search/GlobalSearchInput'
+'use client'
 
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
+import GlobalSearchInput from '../../search/GlobalSearchInput'
 import {
   Box,
   Flex,
   HStack,
   IconButton,
   useDisclosure,
-  useColorModeValue,
   Stack
 } from '@chakra-ui/react'
-
+import NetworkSelect from './NetworkSelect'
+import { usePathname } from 'next/navigation'
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
-import NetworkSelect from './NetworkSelect'
+import './NavLink.scss'
 
 const links = [
   { title: 'Home', href: '/' },
@@ -25,23 +26,15 @@ const links = [
   { title: 'API', href: '/api' }
 ]
 
-const NavLink = (props) => {
-  const { children, to } = props
-
+const NavLink = ({ children, to, isActive }) => {
   return (
     <Box
       as={'a'}
       px={2}
       py={1}
-      rounded={'md'}
-      _hover={{
-        textDecoration: 'none',
-        bg: useColorModeValue('brand.deep', 'brand.deep'),
-        color: 'white'
-      }}
-      color={'white'}
       href={to}
       whiteSpace={'nowrap'}
+      className={`NavLink ${isActive ? 'NavLink--Active' : ''}`}
     >
       {children}
     </Box>
@@ -49,13 +42,15 @@ const NavLink = (props) => {
 }
 
 function Navbar () {
+  const pathname = usePathname()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
-    <Box px={3}>
+    <Box px={3} position={'relative'}>
+      <div className={'NavbarStub'}></div>
       <Flex
         className={'Navbar'}
-        maxW={'1980px'}
+        maxW={'1440px'}
         ml={'auto'}
         mr={'auto'}
         h={16}
@@ -74,7 +69,7 @@ function Navbar () {
         <HStack spacing={8} alignItems={'center'}>
           <HStack as={'nav'} spacing={3} display={{ base: 'none', lg: 'flex' }}>
             {links.map((link) => (
-              <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
+              <NavLink to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
             ))}
           </HStack>
         </HStack>
@@ -85,17 +80,17 @@ function Navbar () {
             <GlobalSearchInput />
           </Box>
         </div>
-      </Flex>
 
-      {isOpen
-        ? <Box className={'NavbarMobileMenu'} pb={4} display={{ lg: 'none' }}>
-          <Stack as={'nav'} spacing={4}>
-            {links.map((link) => (
-              <NavLink to={link.href} key={link.title}>{link.title}</NavLink>
-            ))}
-          </Stack>
-        </Box>
-        : null}
+        {isOpen
+          ? <Box className={'NavbarMobileMenu'} pb={4} display={{ lg: 'none' }}>
+              <Stack as={'nav'} spacing={4}>
+                {links.map((link) => (
+                  <NavLink to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
+                ))}
+              </Stack>
+            </Box>
+          : null}
+      </Flex>
     </Box>
   )
 }

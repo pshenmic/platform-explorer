@@ -10,15 +10,30 @@ const openSans = OpenSans({ subsets: ['latin'] })
 const robotoMono = RobotoMono({ subsets: ['latin'] })
 
 export const theme = extendTheme({
+  config: {
+    useSystemColorMode: false,
+    initialColorMode: 'dark'
+  },
   fonts: {
     heading: montserrat.style.fontFamily,
     body: openSans.style.fontFamily,
     mono: robotoMono.style.fontFamily
   },
-  config: {
-    useSystemColorMode: false,
-    initialColorMode: 'dark'
+  space: {
+    px: '1px',
+    0: '0',
+    1: '0.25rem',
+    2: '0.5rem',
+    3: '0.75rem',
+    4: '1rem',
+    5: '1.25rem',
+    6: '1.5rem',
+    7: '1.75rem',
+    8: '2rem',
+    9: '2.375rem',
+    10: '2.5rem'
   },
+  blockOffset: [3, 4, 5, 5, 10],
   initialColorMode: 'dark',
   useSystemColorMode: false,
   colors: {
@@ -42,18 +57,22 @@ export const theme = extendTheme({
       525: '#849099',
       550: '#52585d6b',
       600: '#62676a',
+      650: '#232C30',
       700: '#494e51',
+      750: '#39454C',
       800: '#2e393d',
       900: '#181d20'
     }
   },
+  radii: {
+    block: '30px'
+  },
   styles: {
     global: {
       '*': {
-        borderColor: 'gray.800'
+        borderColor: 'rgba(255, 255, 255, 0.07)'
       },
       'html, body': {
-        background: '#181d20',
         color: 'white',
         scrollBehavior: 'smooth',
         minHeight: '100vh',
@@ -155,6 +174,69 @@ export const theme = extendTheme({
         whiteSpace: 'break-spaces',
         p: 4,
         borderRadius: 'lg'
+      }
+    },
+    Button: {
+      baseStyle: {
+        fontFamily: 'heading',
+        textTransform: 'uppercase',
+        borderRadius: '10px',
+        letterSpacing: '0.4px',
+        fontWeight: '700'
+      },
+      sizes: {
+        sm: {
+          fontSize: '12px'
+        },
+        md: {
+          fontSize: '12px'
+        }
+      }
+    },
+    Badge: {
+      baseStyle: props => {
+        const { colorScheme } = props
+        const backgroundColors = {
+          red: '#4E3234',
+          green: '#2B4629',
+          gray: 'gray.600',
+          blue: 'rgba(0, 141, 228, 0.2)',
+          yellow: 'rgba(244, 228, 88, 0.2)',
+          orange: 'rgba(244, 154, 88, 0.2)',
+          emerald: 'rgba(88, 244, 188, 0.2)'
+        }
+        const textColor = {
+          red: '#F45858',
+          green: '#81F458',
+          gray: 'gray.50',
+          blue: 'rgb(0, 141, 228)',
+          yellow: '#F4E458',
+          orange: 'rgb(244, 154, 88)',
+          emerald: 'rgb(88, 244, 188)'
+        }
+
+        return {
+          borderWidth: '0px',
+          padding: '3px 10px',
+          borderRadius: '999px',
+          fontFamily: 'mono',
+          fontSize: '11px',
+          textTransform: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          bg: backgroundColors[colorScheme] || 'gray.500',
+          color: textColor[colorScheme] || 'white'
+        }
+      }
+    },
+    Progress: {
+      baseStyle: {
+        track: {
+          bg: 'rgba(0, 141, 228, 0.3)'
+        },
+        filledTrack: {
+          bg: 'rgba(0, 141, 228, 1)'
+        }
       }
     }
   }

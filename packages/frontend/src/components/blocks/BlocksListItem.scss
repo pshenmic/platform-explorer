@@ -1,7 +1,7 @@
 @use '../../styles/mixins.scss';
 
 .BlocksListItem {
-    @include mixins.def_list_item;
+    @include mixins.DefListItem;
 
     &__Hash {
         color: var(--chakra-colors-gray-200);

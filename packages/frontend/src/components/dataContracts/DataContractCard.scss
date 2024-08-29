@@ -3,7 +3,7 @@
 
 .DataContractCard {
     &__Img {
-        @include mixins.avatar-container;
+        @include mixins.AvatarContainer;
 
         margin-right: 8px;
         width: 28px;

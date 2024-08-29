@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .IdentitiesListItem {
-    @include mixins.def_list_item;
+    @include mixins.DefListItem;
 
     justify-content: space-between;
 

@@ -1,196 +1,297 @@
 @import './variables.scss';
 
-@mixin def_list_item {
-    display: flex;
-    width: 100%;
-    text-decoration: none;
-    padding: 6px 8px;
-    margin-bottom: 1px;
-    line-height: 24px;
-    border-bottom: 1px solid var(--chakra-colors-gray-800);
-    color:  var(--chakra-colors-gray-100);
-    font-family: $font-mono;
-    font-size: 12pt;
+@mixin DefListItem {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: 12px;
+  margin-bottom: 8px;
+  line-height: 24px;
+  color: var(--chakra-colors-gray-100);
+  font-family: $font-mono;
+  font-size: 12pt;
+  border-radius: 10px;
+  border: 1px solid var(--chakra-colors-gray-750);
+  background-color: var(--chakra-colors-gray-650);
+  transition: all $transition-time-def;
 
-    &__IdentifierContainer {
-        display: flex;
-        align-items: center;
-        min-width: 50px;
-    }
-
-    &__Avatar {
-        margin-right: 12px;
-        height: 28px;
-        width: 28px;
-    }
-
-    &:hover {
-        background: var(--chakra-colors-whiteAlpha-50);
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    &:last-child {
-        border-bottom: none;
-    }
-}
-
-@mixin loading-line {
-    overflow: hidden;
-    position: relative;
-
-    @keyframes loading-line {
-        0% {
-            left: -100%;
-            width: 100%;
-        }
-        50% {
-            left: 100%;
-            width: 100%;
-        }
-        100% {
-            left: 100%;
-            width: 100%;
-        }
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: var(--chakra-colors-gray-900);
-        border-radius: 5px;
-        opacity: 1;
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        z-index: 2;
-        top: 0;
-        left: -50%;
-        width: 40%;
-        height: 100%;
-        background: linear-gradient(90deg, rgb(14 117 181) 0%, rgb(22 82 120) 100%);
-        border-radius: 100px;
-        opacity: .1;
-        animation: loading-line linear 3s infinite;
-    }
-
-    Tr & {
-        &::before {
-            background-color: var(--chakra-colors-gray-800);
-            opacity: .2;
-        }
-    }
-
-    $timeOffset: 0.5s;
-
-    @for $i from 1 through 10 {
-        &:nth-child(#{$i}n) {
-          &::after {
-            animation-delay: $i * $timeOffset;
-          }
-        }
-
-        Tr:nth-child(#{$i}n) & {
-            &::after {
-                animation-delay: $i * $timeOffset;
-            }
-        }
-    }
-}
-
-@mixin loading-container {
-    @keyframes loading-process {
-        from {
-            opacity: 0;
-            left: -100%;
-            z-index: 6;
-        }
-        50% {
-            opacity: .25;
-        }
-        to {
-            z-index: 6;
-            left: 100%;
-        }
-    }
-    
-    @keyframes loading-bg {
-        from {
-            z-index: 5;
-            opacity: 0;
-        }
-        15% {
-            opacity: 1;
-        }
-        85% {
-            opacity: 1;
-        }
-        to {
-            opacity: 0;
-            z-index: 5;
-        }
-    }
-    
-    @keyframes loading-container {
-        from {
-            overflow: hidden;
-        }
-        to {
-            overflow: hidden;
-        }
-    }
-
-    overflow: hidden;
-    position: relative;
-    animation: 1s loading-container infinite;
-
-    &::before {
-        animation: 1s loading-bg infinite;
-    }
-
-    &::after {
-        animation: 1s loading-process infinite;
-    }
-    
-    &::before, &::after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        opacity: 0;
-        left: 0;
-        z-index: -1;
-    }
-
-    &::before {
-        background-color: var(--chakra-colors-gray-900);
-    }
-
-    &::after {
-        background: linear-gradient(90deg, transparent 0%, rgb(14 117 181) 50%, transparent 100%);
-        width: 100%;
-        height: 100%;
-    }
-}
-
-@mixin avatar-container {
-    border-radius: $border-radius-def;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+  &:hover {
     background-color: var(--chakra-colors-gray-900);
-    border: 1px solid var(--chakra-colors-whiteAlpha-100);
-    overflow: hidden;
+    text-decoration: none;
+    cursor: pointer;
+  }
 
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        object-position: center;
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__IdentifierContainer {
+    display: flex;
+    align-items: center;
+    min-width: 50px;
+  }
+
+  &__Avatar {
+    margin-right: 12px;
+    height: 28px;
+    width: 28px;
+  }
+}
+
+@mixin defListTitles {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background-color: var(--chakra-colors-gray-800);
+  margin-bottom: 8px;
+  font-family: $font-heading;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--chakra-colors-white);
+}
+
+@mixin LoadingLine($delay: 0) {
+  overflow: hidden;
+  position: relative;
+
+  @keyframes LoadingLine {
+    0% {
+      left: -100%;
+      width: 100%;
     }
+    50% {
+      left: 100%;
+      width: 100%;
+    }
+    100% {
+      left: 100%;
+      width: 100%;
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--chakra-colors-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14 117 181) 0%, rgb(22 82 120) 100%);
+    border-radius: 100px;
+    opacity: .1;
+    animation: LoadingLine linear 3s infinite;
+  }
+
+  Tr & {
+    &::before {
+      background-color: var(--chakra-colors-gray-800);
+      opacity: .2;
+    }
+  }
+
+  $timeOffset: 0.5s;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}n) {
+      &::after {
+        animation-delay: ($i - 2) * $timeOffset + ($delay * 0.15s);
+      }
+    }
+
+    Tr:nth-child(#{$i}n) & {
+        &::after {
+            animation-delay: ($i - 2) * $timeOffset + ($delay * 0.15s);
+        }
+    }
+  }
+}
+
+@mixin LoadingContainer {
+  @keyframes loading-process {
+    from {
+      opacity: 0;
+      left: -100%;
+      z-index: 6;
+    }
+    50% {
+      opacity: .25;
+    }
+    to {
+      z-index: 6;
+      left: 100%;
+    }
+  }
+  
+  @keyframes loading-bg {
+    from {
+      z-index: 5;
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      z-index: 5;
+    }
+  }
+  
+  @keyframes LoadingContainer {
+    from {
+      overflow: hidden;
+    }
+    to {
+      overflow: hidden;
+    }
+  }
+
+  overflow: hidden;
+  position: relative;
+  animation: 1s LoadingContainer infinite;
+
+  &::before {
+    animation: 1s loading-bg infinite;
+  }
+
+  &::after {
+    animation: 1s loading-process infinite;
+  }
+  
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    opacity: 0;
+    left: 0;
+    z-index: -1;
+  }
+
+  &::before {
+    background-color: var(--chakra-colors-gray-900);
+  }
+
+  &::after {
+    background: linear-gradient(90deg, transparent 0%, rgb(14 117 181) 50%, transparent 100%);
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@mixin AvatarContainer {
+  border-radius: $border-radius-def;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+  background-color: var(--chakra-colors-gray-900);
+  border: 1px solid var(--chakra-colors-whiteAlpha-100);
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
+@mixin DefButton {
+  display: block;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-family: $font-heading;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: transparent;
+  transition: all 0.5s;
+  
+  &::before, &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+  }
+
+  &::before {
+    background-color: var(--chakra-colors-gray-800);
+    width: 100%;
+    z-index: -1;
+    transition: all 1s;
+  }
+
+  &::after {
+    width: 300px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .1), rgba(255, 255, 255, 0));
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: all .5s;
+  }
+
+  @keyframes flash {
+    from {
+      left: 0;
+      transform: translateX(-100%);
+    }
+
+    to {
+      left: 100%;
+      transform: translateX(0);
+    }
+  }
+
+  &:hover, &:focus-within {
+    background-color: $color-brand-normal;
+
+    &::before {
+      opacity: .85;
+    }
+
+    &::after {
+      animation: flash 1s backwards;
+      pointer-events: none;
+      opacity: 1;
+    }
+  }
+}
+
+@mixin BlockSpacing ($property) {
+  #{$property}: var(--chakra-space-10);
+
+  @media screen and (max-width: $breakpoint-xl) {
+    #{$property}: var(--chakra-space-5);
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    #{$property}: var(--chakra-space-5);
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    #{$property}: var(--chakra-space-4);
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    #{$property}: var(--chakra-space-3);
+  }
 }

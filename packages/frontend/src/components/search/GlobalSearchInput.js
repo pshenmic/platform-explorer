@@ -9,6 +9,7 @@ import {
   ResponseErrorTimeout,
   ResponseErrorInternalServer
 } from '../../util/Errors'
+import './GlobalSearchInput.scss'
 
 function GlobalSearchInput () {
   const [showModal, setShowModal] = useState(false)
@@ -93,34 +94,37 @@ function GlobalSearchInput () {
 
   return (
     <div>
-        <InputGroup size={'md'}>
-            <Input
-                pr={'4.5rem'}
-                value={searchQuery}
-                type={'text'}
-                placeholder={'Search...'}
-                onChange={handleSearchInput}
-                onKeyPress={handleKeyPress}
-                bg={'gray.900'}
-            />
-            <InputRightElement width='4.5rem'>
-                <Button
-                    h={'1.75rem'}
-                    size={'sm'}
-                    onClick={search}
-                    _hover={{ bg: 'whiteAlpha.300' }}
-                    bg={'whiteAlpha.200'}
-                >
-                    <SearchIcon color={'whiteAlpha.900'}/>
-                </Button>
-            </InputRightElement>
-        </InputGroup>
+      <InputGroup size={'md'} className={'GlobalSearchInput'}>
+          <Input
+            pr={'4.5rem'}
+            value={searchQuery}
+            type={'text'}
+            placeholder={'Search...'}
+            onChange={handleSearchInput}
+            onKeyPress={handleKeyPress}
+            color={'gray.250'}
+            fontSize={'12px'}
+            className={'GlobalSearchInput__Field'}
+          />
+          <InputRightElement>
+            <Button
+              h={'28px'}
+              w={'28px !important'}
+              minW={'none'}
+              size={'sm'}
+              onClick={search}
+              className={'GlobalSearchInput__Button'}
+            >
+              <SearchIcon color={'whiteAlpha.900'}/>
+            </Button>
+        </InputRightElement>
+      </InputGroup>
 
-        <ModalWindow
-            open={showModal}
-            text={modalText}
-            setShowModal={setShowModal}
-        />
+      <ModalWindow
+        open={showModal}
+        text={modalText}
+        setShowModal={setShowModal}
+      />
     </div>
   )
 }

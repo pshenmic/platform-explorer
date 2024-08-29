@@ -1,6 +1,6 @@
 'use client'
 
-import NavigationButton from '../ui/NavigationButton/NavigationButton'
+import NavigationButton from '../../ui/NavigationButton/NavigationButton'
 import './NetworkSelect.scss'
 
 // props.data - The data array [{name: '', subname: '', activeButton: boolean}]

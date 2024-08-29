@@ -1,12 +1,47 @@
 @use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
-.ValidatorsList {}
+.ValidatorsList {
+  &__Table {
+    border-collapse: separate !important;
+    border-spacing: 0 10px;
+
+    td {
+      border: none
+    }
+  }
+}
 
 .ValidatorTableRow {
-    @include mixins.def_list_item;
+    @include mixins.DefListItem;
+
+    background-color: var(--chakra-colors-gray-650);
+  
+    &:hover {
+      background: var(--chakra-colors-whiteAlpha-50);
+      text-decoration: none;
+      cursor: pointer;
+    }
 
     display: table-row;
+
+    td {
+      border-top: 1px solid var(--chakra-colors-gray-750);
+      border-bottom: 1px solid var(--chakra-colors-gray-750);
+      overflow: hidden; /* Нужно для корректного скругления */
+    }
+    
+    td:first-child {
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      border-left: 1px solid var(--chakra-colors-gray-750);
+    }
+
+    td:last-child {
+      border-bottom-right-radius: 10px;
+      border-top-right-radius: 10px;
+      border-right: 1px solid var(--chakra-colors-gray-750);
+    }
 
     &:hover {
         cursor: default;

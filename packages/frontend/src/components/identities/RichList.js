@@ -59,12 +59,11 @@ export default function RichList ({ printCount = 5, preload = 10, previewLines =
   return (<>
     <Flex
         maxW={'none'}
-        borderWidth={'1px'} borderRadius={'lg'}
         className={'InfoBlock'}
         flexGrow={'1'}
         flexDirection={'column'}
     >
-        <Heading className={'InfoBlock__Title'} as={'h2'} size={'sm'}>Richlist</Heading>
+        <Heading className={'InfoBlock__Title'} as={'h2'}>Richlist</Heading>
           {!richestIdentities.loading
             ? !richestIdentities.error
                 ? <SimpleList

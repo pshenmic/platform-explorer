@@ -1,3 +1,37 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
 .TransactionsList {
+  &__ColumnTitles {
+    @include mixins.defListTitles;
     
+    display: grid;
+    grid-template-columns: 100px calc(100% - 270px) 170px;
+  }
+
+  &__ColumnTitle {
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &--Hash {
+      white-space: nowrap;
+    }
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__ColumnTitles {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &__ColumnTitle {
+      &--Hash {
+        display: none;
+      }
+    }
+  }
 }

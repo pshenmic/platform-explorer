@@ -2,65 +2,79 @@
 @import '../../styles/variables.scss';
 
 .TransactionsListItem {
-    @include mixins.def_list_item;
+  @include mixins.DefListItem;
 
+  display: block;
 
-    &:last-child {
-        border-bottom: none;
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__Content {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+
+    &--Inline {
+      display: inline !important;
+    }
+  }
+
+  &__Column {
+    display: flex;
+    align-items: center;
+
+    &--Timestamp {
+      font-family: $font-mono;
+      font-size: 12px;
+      margin-right: 16px;
+      white-space: nowrap;
+      color: #fff;
     }
 
-    &__Timestamp {
-        margin-right: 16px;
-        white-space: nowrap;
-    }
+    &--Identifier {
+      color: var(--chakra-colors-gray-250);
+      font-family: $font-mono;
+      flex-grow: 1;
+      margin-right: 16px;
+      font-size: 12px;
+      
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
-    &__Identifier {
-        color: var(--chakra-colors-gray-200);
-        font-family: $font-mono;
-        font-size: 12pt;
-        flex-grow: 1;
+      span {
         text-overflow: ellipsis;
         overflow: hidden; 
         white-space: nowrap;
-        margin-right: 16px;
+      }
     }
 
-    .TransactionsList--SizeS &,
-    .TransactionsList--SizeM & {
-        flex-wrap: wrap;
-
-        &__Timestamp {
-            flex-grow: 1;
-        }
-
-        &__Identifier {
-            order: 3;
-            width: 100%;
-            margin-right: 0;
-            margin-top: 2px;
-        }
+    &--Type {
+      justify-content: flex-end;
+      white-space: nowrap;
     }
+  }
 
-    &__Type {
-
-    }
-
-    @media screen and (max-width: $breakpoint-md) {
-        flex-wrap: wrap;
-        
-        &__Type {
-            order: 2;
+  @media screen and (max-width: $breakpoint-sm) {
+      &__Column {
+        &--Timestamp {
+          grid-column: 1 / 1;
         }
 
-        &__Identifier {
-            order: 3;
-            width: 100%;
+        &--Identifier {
+          order: 3;
+          grid-column: 1 / -1;
+          margin-right: 0;
+          margin-top: 12px;
         }
-    }
 
-    @media screen and (max-width: $breakpoint-sm) {
-        &__Timestamp {
-            white-space: wrap;
+        &--Type {
+          grid-column: 0 / 1;
         }
-    }
+      }
+
+      &__Content {
+        grid-template-columns: 1fr 1fr;
+      }
+  }
 }

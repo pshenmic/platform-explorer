@@ -1,0 +1,46 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.ChartBlock {
+  min-height: 300px;
+  padding-bottom: 0 !important;
+
+  &__TimeframeTitle {
+    margin: 5px 5px 5px 0;
+  }
+
+  &__TimeframeContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-left: auto;
+    margin-top: -20px;
+  }
+
+  &__TimeframeButtons {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__TimeframeButton {
+    font-family: $font-heading;
+    font-size: 12px;
+    margin-right: 10px;
+    height: 27px !important;
+    margin: 5px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &--Active {
+      background-color: $color-brand-normal !important;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    &__TimeframeContainer {
+      margin-top: 0;
+    }
+  }
+}

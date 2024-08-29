@@ -1,0 +1,16 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.GlobalSearchInput {
+  &__Field {
+    font-family: $font-mono;
+    border-radius: 10px !important;
+    background-color: rgba(46, 57, 61, 0.5) !important;
+    border-width: 0 !important;
+    color: #fff;
+
+    &:hover, &:focus {
+      background-color: rgba(46, 57, 61, 0.6) !important;
+    }
+  }
+}
