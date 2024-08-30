@@ -353,6 +353,7 @@ describe('Other routes', () => {
         }
       }
       mock.reset()
+      mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
       mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
       mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
         block: {
