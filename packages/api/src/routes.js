@@ -1,4 +1,4 @@
-const caseMiddleware = require('./middlewares/case');
+const caseMiddleware = require('./middlewares/case')
 /**
  *
  * @param fastify {Fastify}
@@ -316,11 +316,11 @@ module.exports = ({
   ]
 
   routes.forEach(
-      route =>
-          fastify[route.method.toLowerCase()](
-              route.path,
-              { schema: route.schema ?? null },
-              caseMiddleware(route.handler)
-          )
+    route =>
+      fastify[route.method.toLowerCase()](
+        route.path,
+        { schema: route.schema ?? null },
+        caseMiddleware(route.handler)
+      )
   )
 }
