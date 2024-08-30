@@ -14,11 +14,11 @@ module.exports = class ValidatorsDAO {
         'validators.id',
         this.knex('blocks')
           .count('*')
-          .whereRaw('blocks.validator = validators.pro_tx_hash')
+          .where('blocks.validator', 'validators.pro_tx_hash')
           .as('proposed_blocks_amount'),
         this.knex('blocks')
           .select('hash')
-          .whereRaw('pro_tx_hash = blocks.validator')
+          .where('pro_tx_hash', 'blocks.validator')
           .orderBy('height', 'desc')
           .limit(1)
           .as('proposed_block_hash')
@@ -81,11 +81,11 @@ module.exports = class ValidatorsDAO {
           .count('pro_tx_hash').as('total_count'),
         this.knex('blocks')
           .count('*')
-          .whereRaw('blocks.validator = validators.pro_tx_hash')
+          .where('blocks.validator', 'validators.pro_tx_hash')
           .as('proposed_blocks_amount'),
         this.knex('blocks')
           .select('hash')
-          .whereRaw('pro_tx_hash = blocks.validator')
+          .where('pro_tx_hash', 'blocks.validator')
           .orderBy('height', 'desc')
           .limit(1)
           .as('proposed_block_hash')
