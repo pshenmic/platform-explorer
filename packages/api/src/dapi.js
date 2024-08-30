@@ -14,6 +14,11 @@ class DAPI {
     const GRPCIdentity = await this.dapi.platform.getIdentity(Identifier.from(identifier))
     return this.dpp.identity.createFromBuffer(GRPCIdentity.getIdentity()).balance
   }
+
+  async getTotalCredits(){
+    const {totalCreditsInPlatform} = await this.dapi.platform.getTotalCreditsInPlatform()
+    return totalCreditsInPlatform
+  }
 }
 
 module.exports = DAPI

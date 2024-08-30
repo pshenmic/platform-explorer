@@ -28,6 +28,7 @@ describe('Other routes', () => {
 
   before(async () => {
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
+    mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
@@ -258,6 +259,7 @@ describe('Other routes', () => {
         epoch: null,
         identitiesCount: 1,
         transactionsCount: 3,
+        totalCredits: 0,
         transfersCount: 0,
         dataContractsCount: 1,
         documentsCount: 1,
@@ -312,6 +314,7 @@ describe('Other routes', () => {
         epoch: null,
         identitiesCount: 1,
         transactionsCount: 3,
+        totalCredits: 0,
         transfersCount: 0,
         dataContractsCount: 1,
         documentsCount: 1,
@@ -371,6 +374,7 @@ describe('Other routes', () => {
         },
         identitiesCount: 1,
         transactionsCount: 3,
+        totalCredits: 0,
         transfersCount: 0,
         dataContractsCount: 1,
         documentsCount: 1,
