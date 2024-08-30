@@ -1,12 +1,46 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
 .NavbarMobileMenu {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 64px;
-    z-index: 5;
-    background-color: var(--chakra-colors-gray-650);
-    border-radius: 20px;
-    margin-top: 6px;
-    padding: 14px;
-    box-shadow: 0px 20px 32px 0px var(--chakra-colors-gray-900);
+  position: absolute;
+  z-index: -2;
+  top: -28px;
+  visibility: hidden;
+  opacity: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--chakra-colors-gray-650);
+  border-radius: 0 0 20px 20px;
+  margin-top: 6px;
+  gap: 8px;
+  padding: 88px 24px 28px 24px;
+  margin-top: 0;
+  box-shadow: 0px 20px 32px 0px var(--chakra-colors-gray-900);
+  gap: 1rem;
+  transition: all .5s;
+
+  &--Open {
+    top: 0;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &__Items {
+    gap: 8px;
+  }
+
+  &__Item {
+    opacity: 0;
+    transition: all .5s ease-in-out;
+  }
+
+  &--Open &__Item {
+    opacity: 1;
+
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        transition-delay: 0.05s * ($i - 1);
+      }
+    }
+  }
 }

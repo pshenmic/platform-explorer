@@ -2,6 +2,7 @@
 
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
+import Link from 'next/link'
 import {
   Box,
   Flex,
@@ -26,18 +27,15 @@ const links = [
   { title: 'API', href: '/api' }
 ]
 
-const NavLink = ({ children, to, isActive }) => {
+const NavLink = ({ children, to, isActive, className }) => {
   return (
-    <Box
-      as={'a'}
-      px={2}
-      py={1}
+    <Link
       href={to}
       whiteSpace={'nowrap'}
-      className={`NavLink ${isActive ? 'NavLink--Active' : ''}`}
+      className={`NavLink ${isActive ? 'NavLink--Active' : ''} ${className || ''}`}
     >
       {children}
-    </Box>
+    </Link>
   )
 }
 
@@ -66,30 +64,26 @@ function Navbar () {
           onClick={isOpen ? onClose : onOpen}
         />
 
-        <HStack spacing={8} alignItems={'center'}>
-          <HStack as={'nav'} spacing={3} display={{ base: 'none', lg: 'flex' }}>
-            {links.map((link) => (
-              <NavLink to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
-            ))}
-          </HStack>
+        <HStack className={'Navbar__Menu'} as={'nav'} spacing={3} display={{ base: 'none', lg: 'flex' }}>
+          {links.map((link) => (
+            <NavLink to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
+          ))}
         </HStack>
 
         <div className={'Navbar__WrapperNetworkSelect'}>
-          <NetworkSelect />
+          <NetworkSelect/>
           <Box ml={2}>
             <GlobalSearchInput />
           </Box>
         </div>
 
-        {isOpen
-          ? <Box className={'NavbarMobileMenu'} pb={4} display={{ lg: 'none' }}>
-              <Stack as={'nav'} spacing={4}>
-                {links.map((link) => (
-                  <NavLink to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
-                ))}
-              </Stack>
-            </Box>
-          : null}
+        <Box className={`Navbar__MobileMenu NavbarMobileMenu ${isOpen ? 'NavbarMobileMenu--Open' : ''}`} display={{ lg: 'none' }}>
+          <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
+            {links.map((link) => (
+              <NavLink className={'NavbarMobileMenu__Item'} to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
+            ))}
+          </Stack>
+        </Box>
       </Flex>
     </Box>
   )
