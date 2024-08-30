@@ -13,6 +13,7 @@ module.exports = class EpochData {
 
   // eslint-disable-next-line camelcase
   static fromObject ({ epoch, tps, total_collected_fees, best_validator }) {
-    return new EpochData(epoch, Number(tps), Number(total_collected_fees), best_validator)
+    // eslint-disable-next-line camelcase
+    return new EpochData(epoch, Number(tps ?? 0), Number(total_collected_fees ?? 0), best_validator)
   }
 }

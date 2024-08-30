@@ -10,10 +10,10 @@ module.exports = {
         host: process.env.DAPI_HOST,
         port: process.env.DAPI_PORT,
         retries: process.env.DAPI_RETRIES,
-        protocol: process.env.DAPI_PROTOCOL,
+        protocol: process.env.DAPI_PROTOCOL
       }
     ],
-    retries: Number(process.env.DAPI_RETRIES)
+    retries: -1
   },
   get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {
