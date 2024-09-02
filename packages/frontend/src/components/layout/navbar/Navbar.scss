@@ -25,6 +25,11 @@
     border: 1px solid rgba(255, 255, 255, .07);
   }
 
+  &__Burger {
+    position: relative;
+    z-index: 20;
+  }
+
   &__WrapperNetworkSelect {
     display: flex;
     align-items: center;

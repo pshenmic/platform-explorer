@@ -59,6 +59,7 @@ function Navbar () {
         justifyContent={'space-between'}
       >
         <IconButton
+          className={'Navbar__Burger'}
           size={'md'}
           icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
           aria-label={'Open Menu'}
