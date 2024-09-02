@@ -79,15 +79,14 @@ function Navbar () {
             <GlobalSearchInput />
           </Box>
         </div>
-
-        <Box className={`Navbar__MobileMenu NavbarMobileMenu ${isOpen ? 'NavbarMobileMenu--Open' : ''}`} display={{ lg: 'none' }}>
-          <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
-            {links.map((link) => (
-              <NavLink className={'NavbarMobileMenu__Item'} to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
-            ))}
-          </Stack>
-        </Box>
       </Flex>
+      <Box className={`NavbarMobileMenu ${isOpen ? 'NavbarMobileMenu--Open' : ''}`} display={{ lg: 'none' }}>
+        <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
+          {links.map((link) => (
+            <NavLink className={'NavbarMobileMenu__Item'} to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
+          ))}
+        </Stack>
+      </Box>
     </Box>
   )
 }
