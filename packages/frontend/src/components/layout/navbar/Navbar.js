@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
+import { useEffect } from 'react'
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
 import './NavLink.scss'
@@ -31,7 +32,6 @@ const NavLink = ({ children, to, isActive, className }) => {
   return (
     <Link
       href={to}
-      whiteSpace={'nowrap'}
       className={`NavLink ${isActive ? 'NavLink--Active' : ''} ${className || ''}`}
     >
       {children}
@@ -42,6 +42,8 @@ const NavLink = ({ children, to, isActive, className }) => {
 function Navbar () {
   const pathname = usePathname()
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  useEffect(onClose, [pathname])
 
   return (
     <Box px={3} position={'relative'}>
