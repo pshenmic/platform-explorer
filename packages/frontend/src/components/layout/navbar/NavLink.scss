@@ -13,12 +13,14 @@
   white-space: nowrap;
   padding: 4px 8px;
 
-  &:hover {
-    color: #fff;
-  }
-
   &--Active {
     color: $color-brand-normal;
+  }
+
+  @media screen and (min-width: $breakpoint-lg) {
+    &:hover {
+      color: #fff;
+    }
   }
 
   @media screen and (max-width: $breakpoint-lg) {
@@ -28,5 +30,14 @@
     text-align: center;
     border: 1px solid rgba(255, 255, 255, .07);
     top: 0;
+
+    &--Active {
+      border: 1px solid $color-brand-normal;
+      background: rgba(255, 255, 255, .02);
+    }
+
+    &:active {
+      color: #fff;
+    }
   }
 }
