@@ -17,7 +17,7 @@
     color: $color-brand-normal;
   }
 
-  @media screen and (min-width: $breakpoint-lg) {
+  @media (pointer: fine), screen and (min-width: $breakpoint-lg) {
     &:hover {
       color: #fff;
     }

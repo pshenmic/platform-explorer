@@ -17,7 +17,7 @@
   margin-top: 0;
   box-shadow: 0px 20px 32px 0px var(--chakra-colors-gray-900);
   gap: 1rem;
-  transition: all .5s;
+  transition: all 1s;
 
   max-height: 100vh;
   display: flex;
@@ -31,13 +31,13 @@
   &__Items {
     gap: 8px;
     width: 100%;
-    overflow-y: auto;
+    overflow-y: auto; 
     padding-bottom: 28px;
   }
 
   &__Item {
     opacity: 0;
-    transition: all .5s ease-in-out, opacity .5s ease-in-out;
+    transition: all $transition-time-def, opacity .5s !important;
   }
 
   &--Open &__Item {
@@ -45,7 +45,7 @@
 
     @for $i from 1 through 10 {
       &:nth-child(#{$i}) {
-        transition: all $transition-time-def ease-in-out, opacity .5s 0.05s * ($i - 1) ease-in-out;
+        transition: all $transition-time-def, opacity .5s 0.05s * ($i - 1) !important;
       }
     }
   }
