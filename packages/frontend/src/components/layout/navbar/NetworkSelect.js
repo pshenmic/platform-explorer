@@ -1,18 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './NetworkSelect.scss'
 import Dropdown from './Dropdown'
 
 const listNetworks = [
   { name: 'mainnet', subname: '', disabled: false, link: 'https://platform-explorer.com' },
-  { name: 'testnet', subname: '', disabled: false, link: 'https://testnet.platform-explorer.com' }
+  { name: 'testnet', subname: '', disabled: false, link: 'https://testnet.platform-explorer.com' },
 ]
 
 function NetworkSelect () {
-  const origin = window.location.origin
+  const [origin, setOrigin] = useState('')
   const activeNetwork = listNetworks.find(network => network.link === origin) || listNetworks[0]
   const [showDropdown, setShowDropdown] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOrigin(window.location.origin)
+    }
+  }, [])
 
   return (
     <div className={'NetworkSelect'} onMouseLeave={() => setShowDropdown(false)}>
