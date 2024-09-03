@@ -10,8 +10,8 @@ class DAPI {
   }
 
   async getIdentityBalance (identifier) {
-    const GRPCIdentity = await this.dapi.platform.getIdentity(Identifier.from(identifier))
-    return this.dpp.identity.createFromBuffer(GRPCIdentity.getIdentity()).balance
+    const identity = await this.dapi.platform.getIdentity(Identifier.from(identifier))
+    return this.dpp.identity.createFromBuffer(identity.getIdentity()).balance
   }
 }
 
