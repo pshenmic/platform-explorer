@@ -76,7 +76,7 @@ impl TenderdashRpcApi {
     }
 
     pub async fn get_validators_by_block_height(&self, block_height: i32) -> Result<Vec<Validator>, Error> {
-        let url = format!("{}/validators?height={}", self.tenderdash_url, block_height);
+        let url = format!("{}/validators?height={}&per_page=150", self.tenderdash_url, block_height);
 
         let res = self.client
             .get(url)
