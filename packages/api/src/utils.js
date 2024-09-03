@@ -1,6 +1,5 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
-const DAPIClient = require('@dashevo/dapi-client')
 
 const getKnex = () => {
   return require('knex')({
