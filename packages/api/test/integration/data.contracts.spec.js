@@ -2,10 +2,11 @@ const { describe, it, before, after } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
-const { getKnex, getDapi } = require('../../src/utils')
+const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { mock } = require('node:test')
+const utils = require('../../src/utils')
 
 describe('DataContracts routes', () => {
   let app
@@ -19,7 +20,7 @@ describe('DataContracts routes', () => {
   let documents
 
   before(async () => {
-    mock.fn(getDapi, () => 0)
+    mock.method(utils, 'getDapi', () => 0)
 
     app = await server.start()
     client = supertest(app.server)
