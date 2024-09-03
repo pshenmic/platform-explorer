@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './NetworkSelect.scss'
 import Dropdown from './Dropdown'
 
@@ -10,15 +10,9 @@ const listNetworks = [
 ]
 
 function NetworkSelect () {
-  const [origin, setOrigin] = useState('')
-  const activeNetwork = listNetworks.find(network => network.link === origin) || listNetworks[0]
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const activeNetwork = listNetworks.find(network => network.link === baseUrl)
   const [showDropdown, setShowDropdown] = useState(false)
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setOrigin(window.location.origin)
-    }
-  }, [])
 
   return (
     <div className={'NetworkSelect'} onMouseLeave={() => setShowDropdown(false)}>
@@ -27,7 +21,7 @@ function NetworkSelect () {
         className={'NetworkSelect__Button'}
         onMouseEnter={() => setShowDropdown(true)}
       >
-        {activeNetwork.name}
+        {activeNetwork?.name || ''}
         <svg
           className={`NetworkSelect__Button--Arrow ${showDropdown ? 'NetworkSelect__Button--ArrowActive' : ''}`}
           width={'10'}
@@ -40,7 +34,7 @@ function NetworkSelect () {
         </svg>
       </button>
       <div className={`NetworkSelect__DropdownWrapper ${showDropdown ? 'NetworkSelect__DropdownWrapperActive' : ''}`}>
-        <Dropdown active={activeNetwork.name} data={listNetworks} />
+        <Dropdown active={activeNetwork?.name} data={listNetworks} />
       </div>
     </div>
   )
