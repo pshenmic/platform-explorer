@@ -7,7 +7,6 @@ const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const Constants = require('../constants')
-const Identity = require('../models/Identity')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
@@ -113,7 +112,7 @@ class MainController {
       if (identity) {
         const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity: Identity.fromObject({ ...identity, balance}) })
+        return response.send({ identity: {...identity, balance} })
       }
 
       // search data contracts
@@ -137,7 +136,7 @@ class MainController {
       if (identity) {
         const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity: Identity.fromObject({ ...identity, balance }) })
+        return response.send({ identity: {...identity, balance} })
       }
     }
 
