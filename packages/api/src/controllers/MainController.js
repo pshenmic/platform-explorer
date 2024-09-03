@@ -20,7 +20,7 @@ class MainController {
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
     this.validatorsDAO = new ValidatorsDAO(knex)
-    this.DAPI = DAPI
+    this.dapi = DAPI
   }
 
   getStatus = async (request, response) => {
@@ -111,7 +111,7 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
-        identity.balance = await this.DAPI.getIdentityBalance(identity.identifier)
+        identity.balance = await this.dapi.getIdentityBalance(identity.identifier)
 
         return response.send({ identity })
       }
@@ -135,7 +135,7 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByDPNS(query)
 
       if (identity) {
-        const balance = await this.DAPI.getIdentityBalance(identity.identifier)
+        const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
         return response.send({ identity: Identity.fromObject({ ...identity, balance }) })
       }
