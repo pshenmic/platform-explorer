@@ -2,9 +2,9 @@ const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const Identity = require('../models/Identity')
 
 class IdentitiesController {
-  constructor (knex, DAPI) {
+  constructor (knex, dapi) {
     this.identitiesDAO = new IdentitiesDAO(knex)
-    this.dapi = DAPI
+    this.dapi = dapi
   }
 
   getIdentityByIdentifier = async (request, response) => {
