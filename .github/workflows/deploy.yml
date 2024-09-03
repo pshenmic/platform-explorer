@@ -31,9 +31,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker stop $(docker ps -f name=platform-explorer-indexer -q) || true
-            docker stop $(docker ps -f name=platform-explorer-api -q) || true
-            docker rm platform-explorer-api platform-explorer-indexer || true
+            docker stop $(docker ps -f name=pe-testnet-api -q) || true
+            docker stop $(docker ps -f name=pe-testnet-indexer -q) || true
+            docker stop $(docker ps -f name=pe-mainnet-api -q) || true
+            docker stop $(docker ps -f name=pe-mainnet-indexer -q) || true
+            docker rm pe-testnet-api pe-testnet-indexer pe-mainnet-api pe-mainnet-indexer || true
 
   drop_db:
       runs-on: ubuntu-latest
@@ -93,10 +95,10 @@ jobs:
             git -C ./platform-explorer pull
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
-            docker run -d -p 3005:3005 --restart always --env-file testnet.env --name platform-explorer-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
+            docker run -d -p 3005:3005 --restart always --env-file testnet.env --name pe-testnet-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             sleep 3
-            docker run -d --env-file testnet.env --restart always --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
+            docker run -d --env-file testnet.env --restart always --name pe-testnet-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
             sleep 3
-            docker run -d -p 3006:3005 --restart always --env-file production.env --name platform-explorer-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
+            docker run -d -p 3006:3005 --restart always --env-file production.env --name pe-mainnet-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             sleep 3
-            docker run -d --env-file production.env --restart always --name platform-explorer-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
+            docker run -d --env-file production.env --restart always --name pe-mainnet-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
