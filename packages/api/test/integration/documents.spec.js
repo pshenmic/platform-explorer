@@ -6,7 +6,7 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const utils = require('../../src/utils')
+const DAPI = require('../../src/dapi')
 
 describe('Documents routes', () => {
   let app
@@ -19,7 +19,8 @@ describe('Documents routes', () => {
   let documents
 
   before(async () => {
-    mock.method(utils, 'getDapi', () => 0)
+    mock.method(DAPI.prototype, 'getDapi', () => 0)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {

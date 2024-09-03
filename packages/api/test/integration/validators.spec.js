@@ -8,7 +8,7 @@ const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
-const utils = require('../../src/utils')
+const DAPI = require('../../src/dapi')
 
 describe('Validators routes', () => {
   let app
@@ -25,7 +25,7 @@ describe('Validators routes', () => {
   let intervals
 
   before(async () => {
-    mock.method(utils, 'getDapi', () => 0)
+    mock.method(DAPI.prototype, 'getDapi', () => 0)
 
     app = await server.start()
     client = supertest(app.server)
