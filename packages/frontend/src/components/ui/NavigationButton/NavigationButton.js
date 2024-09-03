@@ -1,10 +1,10 @@
 import './NavigationButton.scss'
 
-function NavigationButton ({ active, name, subName, activeButton, ...props }) {
+function NavigationButton ({ active, name, subName, disabled, ...props }) {
   return (
     <button
-      className={`NavigationButton ${!activeButton ? 'NavigationButton__NoActive' : ''} ${active === name ? 'NavigationButton__Active' : ''}`}
-      disabled={!activeButton}
+      className={`NavigationButton ${disabled ? 'NavigationButton__NoActive' : ''} ${active ? 'NavigationButton__Active' : ''}`}
+      disabled={disabled}
       {...props}
     >
       {name}
