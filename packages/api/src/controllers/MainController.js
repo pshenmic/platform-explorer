@@ -7,6 +7,7 @@ const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const Constants = require('../constants')
+const Identity = require('../models/Identity')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
@@ -134,9 +135,9 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByDPNS(query)
 
       if (identity) {
-        identity.balance = await this.DAPI.getIdentityBalance(identity.identifier)
+        const balance = await this.DAPI.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity })
+        return response.send({ identity: Identity.fromObject({ ...identity, balance}) })
       }
     }
 
