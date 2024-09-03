@@ -1,6 +1,6 @@
 import { ResponseErrorNotFound, ResponseErrorTimeout } from './Errors'
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 const fetchWrapper = (url, options) => {
   return new Promise((resolve, reject) => {
