@@ -55,7 +55,6 @@ module.exports = {
           protocol: process.env.DAPI_PROTOCOL ?? 'http'
         }
       ],
-      retries: -1
     })
 
     const { dpp } = client.platform
