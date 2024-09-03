@@ -5,8 +5,8 @@ class DAPI {
   dapi
   dpp
 
-  constructor (options, dpp) {
-    this.dapi = new DAPIClient(options)
+  constructor (dpp) {
+    this.dapi = this.getDapi()
     this.dpp = dpp
   }
 
@@ -15,9 +15,18 @@ class DAPI {
     return this.dpp.identity.createFromBuffer(GRPCIdentity.getIdentity()).balance
   }
 
-  async getTotalCredits () {
-    const { totalCreditsInPlatform } = await this.dapi.platform.getTotalCreditsInPlatform()
-    return totalCreditsInPlatform
+  getDapi () {
+    return this.dapi ?? new DAPIClient({
+      dapiAddresses: [
+        {
+          host: process.env.DAPI_HOST,
+          port: process.env.DAPI_PORT,
+          retries: process.env.DAPI_RETRIES,
+          protocol: process.env.DAPI_PROTOCOL
+        }
+      ],
+      retries: -1
+    })
   }
 }
 

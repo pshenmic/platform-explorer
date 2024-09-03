@@ -118,7 +118,7 @@ jobs:
         run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run db:migrate
 
       - name: Run integration tests
-        run: cd packages/api && DAPI_HOST=127.0.0.1 DAPI_PORT=1443 DAPI_PROTOCOL=http POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run test:integration
+        run: cd packages/api && POSTGRES_HOST=127.0.0.1 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASS=postgres POSTGRES_DB=postgres npm run test:integration
 
   build_api:
     runs-on: ubuntu-latest
