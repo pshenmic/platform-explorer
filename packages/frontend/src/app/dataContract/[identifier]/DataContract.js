@@ -151,7 +151,10 @@ function DataContract ({ identifier }) {
                         <Td w={tdTitleWidth}>Owner</Td>
                         <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                             <LoadingLine loading={dataContract.loading}>
-                              <Link href={`/identity/${dataContract.data?.owner}`}>{dataContract.data?.owner}</Link>
+                              {dataContract.data?.isSystem
+                                ? dataContract.data?.owner
+                                : <Link href={`/identity/${dataContract.data?.owner}`}>{dataContract.data?.owner}</Link>
+                              }
                             </LoadingLine>
                         </Td>
                     </Tr>
