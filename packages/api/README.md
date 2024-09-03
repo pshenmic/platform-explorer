@@ -31,7 +31,6 @@ Prepare an .env file with all necessary environments and then start a docker con
 docker run -d -p 3005:3005 --restart always --env-file .env ghcr.io/pshenmic/platform-explorer:api
 ```
 
-        startTime: "2024-04-08T14:00:00.000Z",
 ## HTTP API
 
 Platform Explorer HTTP API allow you to query and see platform blockchain data programmatically with a REST interface via HTTP calls. You can use it to build, test, or improve your applications.
@@ -78,6 +77,7 @@ HTTP /status
 {
     epoch: {
         index: 3,
+        startTime: "2024-04-08T14:00:00.000Z",
         endTime: "2024-04-09T14:00:00.000Z"
     },
     identitiesCount: 12,
