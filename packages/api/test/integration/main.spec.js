@@ -8,7 +8,7 @@ const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/dapi')
-const {getDapi} = require('../../src/utils')
+const { getDapi } = require('../../src/utils')
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000

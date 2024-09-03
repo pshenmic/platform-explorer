@@ -94,7 +94,7 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-const getDapi = ()=>{
+const getDapi = () => {
   return new DAPIClient({
     dapiAddresses: [
       {

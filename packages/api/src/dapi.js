@@ -1,5 +1,5 @@
 const { Identifier } = require('@dashevo/wasm-dpp')
-const {getDapi} = require("./utils");
+const { getDapi } = require('./utils')
 
 class DAPI {
   dapi
