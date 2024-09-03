@@ -111,9 +111,9 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
-        identity.balance = await this.dapi.getIdentityBalance(identity.identifier)
+        const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity })
+        return response.send({ Identity.fromObject({ ...identity, balance}) })
       }
 
       // search data contracts
