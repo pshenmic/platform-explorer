@@ -54,7 +54,7 @@ module.exports = {
           port: process.env.DAPI_PORT ?? '1443',
           protocol: process.env.DAPI_PROTOCOL ?? 'http'
         }
-      ],
+      ]
     })
 
     const { dpp } = client.platform
