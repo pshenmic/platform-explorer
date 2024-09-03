@@ -112,7 +112,7 @@ class MainController {
       if (identity) {
         const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity: {...identity, balance} })
+        return response.send({ identity: { ...identity, balance } })
       }
 
       // search data contracts
@@ -136,7 +136,7 @@ class MainController {
       if (identity) {
         const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity: {...identity, balance} })
+        return response.send({ identity: { ...identity, balance } })
       }
     }
 
