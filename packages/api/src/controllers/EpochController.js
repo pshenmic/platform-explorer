@@ -1,6 +1,6 @@
 const EpochDAO = require('../dao/EpochDAO')
 const BlocksDAO = require('../dao/BlocksDAO')
-const Constants = require("../constants");
+const Constants = require('../constants')
 
 class EpochController {
   epochDAO
