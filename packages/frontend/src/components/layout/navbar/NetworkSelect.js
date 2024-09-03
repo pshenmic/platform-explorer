@@ -5,8 +5,8 @@ import './NetworkSelect.scss'
 import Dropdown from './Dropdown'
 
 const listNetworks = [
-  { name: 'testnet', subname: '', activeButton: true },
-  { name: 'mainnet', subname: 'Soon', activeButton: false }
+  { name: 'mainnet', subname: '', activeButton: true },
+  { name: 'testnet', subname: 'soon', activeButton: false }
 ]
 
 function NetworkSelect () {
