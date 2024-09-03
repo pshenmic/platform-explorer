@@ -4,7 +4,7 @@ const Identity = require('../models/Identity')
 class IdentitiesController {
   constructor (knex, DAPI) {
     this.identitiesDAO = new IdentitiesDAO(knex)
-    this.DAPI = DAPI
+    this.dapi = DAPI
   }
 
   getIdentityByIdentifier = async (request, response) => {
@@ -16,7 +16,7 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const balance = await this.DAPI.getIdentityBalance(identifier)
+    const balance = await this.dapi.getIdentityBalance(identifier)
 
     response.send(Identity.fromObject({ ...identity, balance }))
   }
@@ -30,7 +30,7 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const balance = await this.DAPI.getIdentityBalance(identity.identifier)
+    const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
     response.send(Identity.fromObject({ ...identity, balance }))
   }
@@ -41,7 +41,7 @@ class IdentitiesController {
     const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
 
     for (let i = 0; i < identities.resultSet.length; i++) {
-      const balance = await this.DAPI.getIdentityBalance(identities.resultSet[i].identifier)
+      const balance = await this.dapi.getIdentityBalance(identities.resultSet[i].identifier)
 
       identities.resultSet[i] = Identity.fromObject({ ...identities.resultSet[i], balance })
     }
