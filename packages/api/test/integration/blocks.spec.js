@@ -5,7 +5,6 @@ const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const DAPI = require('../../src/dapi')
 
 describe('Blocks routes', () => {
   let app

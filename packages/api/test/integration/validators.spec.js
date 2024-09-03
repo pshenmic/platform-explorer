@@ -8,7 +8,6 @@ const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
-const DAPI = require('../../src/dapi')
 
 describe('Validators routes', () => {
   let app

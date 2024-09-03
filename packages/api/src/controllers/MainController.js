@@ -137,7 +137,7 @@ class MainController {
       if (identity) {
         const balance = await this.DAPI.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity: Identity.fromObject({ ...identity, balance}) })
+        return response.send({ identity: Identity.fromObject({ ...identity, balance }) })
       }
     }
 

@@ -5,8 +5,6 @@ const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
-const { mock } = require('node:test')
-const DAPI = require('../../src/dapi')
 
 describe('DataContracts routes', () => {
   let app
