@@ -5,12 +5,13 @@ import './NetworkSelect.scss'
 import Dropdown from './Dropdown'
 
 const listNetworks = [
-  { name: 'mainnet', subname: '', activeButton: true },
-  { name: 'testnet', subname: 'soon', activeButton: false }
+  { name: 'mainnet', subname: '', disabled: false, link: 'https://platform-explorer.com' },
+  { name: 'testnet', subname: '', disabled: false, link: 'https://testnet.platform-explorer.com' }
 ]
 
 function NetworkSelect () {
-  const [activeNetwork, setActiveNetwork] = useState(listNetworks[0].name)
+  const origin = window.location.origin
+  const activeNetwork = listNetworks.find(network => network.link === origin) || listNetworks[0]
   const [showDropdown, setShowDropdown] = useState(false)
 
   return (
@@ -20,7 +21,7 @@ function NetworkSelect () {
         className={'NetworkSelect__Button'}
         onMouseEnter={() => setShowDropdown(true)}
       >
-        {activeNetwork}
+        {activeNetwork.name}
         <svg
           className={`Button__Arrow ${showDropdown ? 'Button__ArrowActive' : ''}`}
           width={'10'}
@@ -33,7 +34,7 @@ function NetworkSelect () {
         </svg>
       </button>
       <div className={`NetworkSelect__DropdownWrapper ${showDropdown ? 'NetworkSelect__DropdownWrapperActive' : ''}`}>
-        <Dropdown active={activeNetwork} setActive={setActiveNetwork} data={listNetworks} />
+        <Dropdown active={activeNetwork.name} data={listNetworks} />
       </div>
     </div>
   )
