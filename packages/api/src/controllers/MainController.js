@@ -23,11 +23,12 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    const [blocks, stats, tdStatus, genesisTime] = (await Promise.allSettled([
+    const [blocks, stats, tdStatus, genesisTime, totalCredits] = (await Promise.allSettled([
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
       TenderdashRPC.getStatus(),
-      Constants.genesisTime
+      Constants.genesisTime,
+      this.dapi.getTotalCredits()
     ])).map((e) => e.value ?? null)
 
     const [currentBlock] = blocks?.resultSet ?? []
@@ -42,6 +43,7 @@ class MainController {
     response.send({
       epoch,
       transactionsCount: stats?.transactionsCount,
+      totalCredits,
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
       documentsCount: stats?.documentsCount,

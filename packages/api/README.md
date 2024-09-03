@@ -81,6 +81,7 @@ HTTP /status
         endTime: "2024-04-09T14:00:00.000Z"
     },
     identitiesCount: 12,
+    totalCredits: 100000,
     transactionsCount: 3,
     transfersCount: 0,
     dataContractsCount: 1,
