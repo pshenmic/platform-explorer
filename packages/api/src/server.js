@@ -51,6 +51,7 @@ module.exports = {
       dapiAddresses: (process.env.DAPI_URL ?? '127.0.0.1:1443:self-signed').split(','),
       network: process.env.NETWORK ?? 'testnet'
     })
+
     const {dpp} = client.platform
 
     dapi = new DAPI(dapiClient, dpp)
