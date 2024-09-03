@@ -1,5 +1,5 @@
 @use '../../styles/mixins.scss';
 
 .LoadingBlock {
-    @include mixins.loading-container;
+    @include mixins.LoadingContainer;
 }

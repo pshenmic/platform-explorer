@@ -1,6 +1,6 @@
 {
   "name": "data-contract",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.js",
   "scripts": {
     "dataContract:deploy": "node ./src/actions/deployContract.js",
@@ -20,7 +20,7 @@
   "homepage": "https://github.com/pshenmic/platform-explorer#readme",
   "description": "",
   "dependencies": {
-    "dash": "4.1.0",
+    "dash": "4.2.0",
     "dotenv": "^16.4.5"
   },
   "devDependencies": {

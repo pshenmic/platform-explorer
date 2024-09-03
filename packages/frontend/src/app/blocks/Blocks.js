@@ -89,10 +89,9 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
           <Container
               maxW={'container.xl'}
               _dark={{ color: 'white' }}
-              borderWidth={'1px'} borderRadius={'lg'}
               className={'InfoBlock'}
           >
-              <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Blocks</Heading>
+              <Heading className={'InfoBlock__Title'} as={'h1'}>Blocks</Heading>
 
               {!blocks.error
                 ? <>

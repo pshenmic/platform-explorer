@@ -23,7 +23,7 @@ module.exports = class ValidatorsDAO {
           .limit(1)
           .as('proposed_block_hash')
       )
-      .where('validators.pro_tx_hash', proTxHash)
+      .whereILike('validators.pro_tx_hash', proTxHash)
       .as('validators')
 
     const subquery = this.knex(validatorsSubquery)
@@ -53,7 +53,7 @@ module.exports = class ValidatorsDAO {
         'app_version',
         'block_version'
       )
-      .where('pro_tx_hash', proTxHash)
+      .whereILike('pro_tx_hash', proTxHash)
 
     if (!row) {
       return null
@@ -157,7 +157,7 @@ module.exports = class ValidatorsDAO {
       .select(
         this.knex('blocks')
           .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .where('validator', proTxHash)
+          .whereILike('validator', proTxHash)
           .count('*')
           .as('blocks_count')
       )

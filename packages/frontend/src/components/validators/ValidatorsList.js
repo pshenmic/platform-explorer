@@ -75,7 +75,7 @@ export default function ValidatorsList ({ validators, pageSize }) {
   return (
     <div className={'ValidatorsList'}>
       <TableContainer>
-        <Table size={'md'} className={'Table'}>
+        <Table size={'md'} className={'ValidatorsList__Table Table'}>
           <Thead>
             <Tr>
               <TableHeaders headers={headers} sortCallback={setSort} />

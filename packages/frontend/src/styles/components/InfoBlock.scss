@@ -1,0 +1,39 @@
+@use './../mixins.scss';
+@import './../variables.scss';
+
+$border-radius: var(--chakra-radii-block);
+
+.InfoBlock {
+  position: relative;
+  padding: 20px 32px 32px 32px !important;
+  background: rgba(24, 31, 34, 0.2);
+  box-shadow: 2px 2px $color-brand-normal;
+  border-radius: $border-radius;
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: $blockBackgroundBlur;
+
+  &--NoBorder {
+    box-shadow: none;
+  }
+
+  &__Title {
+    background-color: $color-brand-normal;
+    font-size: 14px !important;
+    width: max-content;
+    padding: 10px 20px;
+    border-radius: $border-radius $border-radius $border-radius 0;
+    position: relative;
+    left: -32px;
+    top: -20px;
+    margin: 0;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    padding: 20px 16px 16px 16px !important;
+
+    &__Title {
+      left: -16px;
+    }
+  }
+}

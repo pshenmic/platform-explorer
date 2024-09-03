@@ -1,0 +1,48 @@
+@import '../../styles/variables.scss';
+
+.Background {
+  background-color: #0F1315;
+  overflow: hidden;
+  z-index: -1;
+
+  &, &:after {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  &::after {
+    content: '';
+    background-image: url('/images/grain-texture.jpg');
+    background-position: left;
+    background-repeat: repeat;
+    opacity: .5;
+    z-index: -1;
+    mix-blend-mode: soft-light;
+  }
+
+  &--Light {
+    &::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translate(calc(-50% - 720px), -50%);
+      width: 1000px;
+      height: 1000px;
+      border-radius: 1500px;
+      background: radial-gradient(circle, rgba(0, 141, 228, .9) 0%, rgba(0, 141, 228, 0) 60%);
+      filter: blur(50px);
+      z-index: -2;
+    }
+  }
+
+  @media screen and (max-width: 1440px) {
+    &::before {
+      left: 0;
+      transform: translate(-50%, -50%);
+    }
+  }
+}

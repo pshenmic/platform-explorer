@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .TransfersListItem {
-    @include mixins.def_list_item;
+    @include mixins.DefListItem;
 
     flex-wrap: wrap;
     

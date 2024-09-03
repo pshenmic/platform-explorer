@@ -49,7 +49,7 @@ function Document ({ identifier }) {
         >
             <TableContainer
                 maxW={'none'}
-                borderWidth={'1px'} borderRadius={'lg'}
+                borderWidth={'1px'} borderRadius={'block'}
                 width={['100%', '100%', '100%', '50%']}
                 m={0}
             >
@@ -64,13 +64,13 @@ function Document ({ identifier }) {
                         <Tbody>
                             <Tr>
                                 <Td w={tdTitleWidth}>Identifier</Td>
-                                <Td>
+                                <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                                     <LoadingLine loading={document.loading}>{document.data?.identifier}</LoadingLine>
                                 </Td>
                             </Tr>
                             <Tr>
                                 <Td w={tdTitleWidth}>Owner</Td>
-                                <Td>
+                                <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                                     <LoadingLine loading={document.loading}>
                                         <Link href={`/identity/${document.data?.owner}`}>{document.data?.owner}</Link>
                                     </LoadingLine>
@@ -98,12 +98,11 @@ function Document ({ identifier }) {
             <Container
                 width={['100%', '100%', '100%', '50%']}
                 maxW={'none'}
-                borderWidth={'1px'} borderRadius={'lg'}
                 className={'InfoBlock'}
                 display={'flex'}
                 flexDirection={'column'}
             >
-                <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Data</Heading>
+                <Heading className={'InfoBlock__Title'} as={'h1'}>Data</Heading>
                   {!document.error
                     ? <LoadingBlock loading={document.loading}>
                         <Code

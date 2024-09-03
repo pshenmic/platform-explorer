@@ -2,53 +2,79 @@
 @import '../../styles/variables.scss';
 
 .SimpleList {
-    &__ColumnTitles {
-        display: flex;
-        justify-content: space-between;
-        padding: 6px 8px;
-    }
+  &__ColumnTitles {
+    @include mixins.defListTitles;
 
-    &__ColumnTitle {
-        color: var(--chakra-colors-gray-200);
-        word-wrap: break-word;
-        overflow-wrap: anywhere;
-        font-family: $font-heading;
-        font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__ColumnTitle {
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    letter-spacing: 0.4px;
+  }
+
+  &__ShowMoreButton {
+    @include mixins.DefButton;
+
+    width: 100%;
+    margin-top: 8px;
+
+    &::before {
+      content: '';
     }
+  }
 }
 
 .SimpleListItem {
-    @include mixins.def_list_item;
-    
-    display: block;
+  @include mixins.DefListItem;
+  
+  display: block;
 
-    &__Title {
-        word-wrap: break-word;
-        overflow-wrap: anywhere;
+  &__Title {
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
 
-        &--Monospace {
-            font-family: $font-mono;
-        }
+    &--Mono {
+      font-family: $font-mono;
+      color: var(--chakra-colors-gray-250);
+    }
+  }
+
+  &__ColumnsContainer {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__Column {
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+
+    &:last-child {
+      overflow-wrap: normal;
+      margin-right: 0;
     }
 
-    &__ColumnsContainer {
-        display: flex;
-        justify-content: space-between;
+    &--Mono {
+      font-family: $font-mono;
+      font-size: 12px;
     }
 
-    &__Column {
-        max-width: 100%;
-        word-wrap: break-word;
-        overflow-wrap: anywhere;
-        margin-right: 16px;
-
-        &:last-child {
-            overflow-wrap: normal;
-            margin-right: 0;
-        }
-
-        &--Monospace {
-            font-family: $font-mono;
-        }
+    &--Ellipsis {
+      &, span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
+
+    &--Dim {
+      color: var(--chakra-colors-gray-250);
+    }
+  }
 }

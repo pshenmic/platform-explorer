@@ -1,0 +1,21 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.NavLink {
+  position: relative;
+  font-family: $font-heading;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--chakra-colors-gray-250);
+  transition: $transition-time-def;
+
+  &:hover {
+    color: #fff;
+  }
+
+  &--Active {
+    color: $color-brand-normal;
+  }
+}

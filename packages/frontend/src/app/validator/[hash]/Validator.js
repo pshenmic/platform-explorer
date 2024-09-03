@@ -79,7 +79,7 @@ function Validator ({ hash }) {
                 width={'100%'}
                 height={'100%'}
                 maxW={'none'}
-                borderWidth={'1px'} borderRadius={'lg'}
+                borderWidth={'1px'} borderRadius={'block'}
                 m={0}
                 display={'block'}
               >
@@ -134,10 +134,9 @@ function Validator ({ hash }) {
         width={'100%'}
         maxW={'none'}
         mt={5}
-        borderWidth={'1px'} borderRadius={'lg'}
         className={'InfoBlock'}
       >
-          <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Proposed blocks</Heading>
+          <Heading className={'InfoBlock__Title'} as={'h1'}>Proposed blocks</Heading>
 
           {!proposedBlocks.error
             ? <>

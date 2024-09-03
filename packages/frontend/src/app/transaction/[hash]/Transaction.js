@@ -53,8 +53,8 @@ function Transaction ({ hash }) {
         mt={8}
     >
         <TableContainer
-            maxW='none'
-            borderWidth='1px' borderRadius='lg'
+            maxW={'none'}
+            borderWidth={'1px'} borderRadius={'block'}
             mb={4}
         >
             {!transaction.error
@@ -74,7 +74,7 @@ function Transaction ({ hash }) {
                     </Tr>
                     <Tr>
                         <Td w={tdTitleWidth}>Hash</Td>
-                        <Td>
+                        <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                             <LoadingLine loading={transaction.loading}>{transaction.data?.hash}</LoadingLine>
                         </Td>
                     </Tr>
@@ -117,12 +117,11 @@ function Transaction ({ hash }) {
 
         {!transaction.error &&
           <Container
-            maxW='container.lg'
+            maxW={'container.lg'}
             m={0}
-            borderWidth='1px' borderRadius='lg'
             className={'InfoBlock'}
           >
-            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>Transaction data</Heading>
+            <Heading className={'InfoBlock__Title'} as={'h1'}>Transaction data</Heading>
 
             {(!transaction.loading && decodedST)
               ? <Table variant='simple' className='Table TransactionData'>

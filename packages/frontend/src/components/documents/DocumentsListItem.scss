@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .DocumentsListItem {
-    @include mixins.def_list_item;
+    @include mixins.DefListItem;
 
     &__Identifier {
         word-wrap: break-word;

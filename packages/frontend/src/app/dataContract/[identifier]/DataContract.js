@@ -114,7 +114,7 @@ function DataContract ({ identifier }) {
     >
         <TableContainer
             maxW={'none'}
-            borderWidth={'1px'} borderRadius={'lg'}
+            borderWidth={'1px'} borderRadius={'block'}
         >
           {!dataContract.error
             ? <Table variant={'simple'}>
@@ -135,7 +135,7 @@ function DataContract ({ identifier }) {
                 <Tbody>
                     <Tr>
                         <Td w={tdTitleWidth}>Identifier</Td>
-                        <Td>
+                        <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                             <LoadingLine loading={dataContract.loading}>{dataContract.data?.identifier}</LoadingLine>
                         </Td>
                     </Tr>
@@ -149,7 +149,7 @@ function DataContract ({ identifier }) {
                     }
                     <Tr>
                         <Td w={tdTitleWidth}>Owner</Td>
-                        <Td>
+                        <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                             <LoadingLine loading={dataContract.loading}>
                               <Link href={`/identity/${dataContract.data?.owner}`}>{dataContract.data?.owner}</Link>
                             </LoadingLine>
@@ -184,7 +184,7 @@ function DataContract ({ identifier }) {
                     {!dataContract.data?.isSystem &&
                         <Tr w={tdTitleWidth}>
                             <Td>Transaction</Td>
-                            <Td>
+                            <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                                 <LoadingLine loading={dataContract.loading}>
                                     <Link href={`/transaction/${dataContract.data?.txHash}`}>{dataContract.data?.txHash}</Link>
                                 </LoadingLine>
@@ -200,8 +200,8 @@ function DataContract ({ identifier }) {
             width={'100%'}
             maxW={'none'}
             mt={5}
-            borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
+            p={0}
         >
             <Tabs
               onChange={setActiveTab}
@@ -212,11 +212,11 @@ function DataContract ({ identifier }) {
                     <Tab>Schema</Tab>
                 </TabList>
                 <TabPanels>
-                    <TabPanel>
+                    <TabPanel p={0}>
                         <Box>
                           {!documents.error
                             ? !documents.loading
-                                ? <Box m={4}>
+                                ? <Box mt={4}>
                                     <DocumentsList
                                         documents={documents.data.resultSet}
                                         columnsCount={2}
@@ -236,7 +236,7 @@ function DataContract ({ identifier }) {
                             }
                         </Box>
                     </TabPanel>
-                    <TabPanel>
+                    <TabPanel px={0}>
                         <Box>
                           {!dataContract.error
                             ? <LoadingBlock loading={dataContract.loading}>

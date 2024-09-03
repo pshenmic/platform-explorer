@@ -314,5 +314,12 @@ module.exports = ({
     }
   ]
 
-  routes.forEach(route => fastify[route.method.toLowerCase()](route.path, { schema: route.schema ?? null }, route.handler))
+  routes.forEach(
+    route =>
+      fastify[route.method.toLowerCase()](
+        route.path,
+        { schema: route.schema ?? null },
+        route.handler
+      )
+  )
 }

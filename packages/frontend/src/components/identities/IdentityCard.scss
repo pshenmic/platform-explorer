@@ -3,7 +3,7 @@
 
 .IdentityCard {
     &__Img {
-        @include mixins.avatar-container;
+        @include mixins.AvatarContainer;
 
         width: 42px;
         height: 42px;

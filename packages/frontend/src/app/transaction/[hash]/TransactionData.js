@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { StateTransitionEnum } from '../../enums/state.transition.type'
+import { StateTransitionEnum } from '../../../enums/state.transition.type'
 import { Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react'
 
 function TransactionData ({ data }) {

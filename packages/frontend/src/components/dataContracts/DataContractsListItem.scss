@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .DataContractsListItem {
-    @include mixins.def_list_item;
+    @include mixins.DefListItem;
 
     width: 100%;
     justify-content: space-between;

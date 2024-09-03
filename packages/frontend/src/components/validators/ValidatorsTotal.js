@@ -22,7 +22,7 @@ export default function ValidatorsTotal () {
       cards={[
         {
           title: 'Epoch:',
-          value: status?.data?.epoch?.index || '-',
+          value: 'n/a',
           icon: 'Sandglass'
         },
         {

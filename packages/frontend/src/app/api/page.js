@@ -17,19 +17,18 @@ export const metadata = {
 async function ApiRoute () {
   return (
     <Container
-        maxW='container.lg'
-        color='white'
+        maxW={'container.lg'}
+        color={'white'}
         mt={8}
         mb={8}
         className={'Api'}
     >
         <Container
-            maxW='container.lg'
+            maxW={'container.lg'}
             _dark={{ color: 'white' }}
-            borderWidth='1px' borderRadius='lg'
             className={'InfoBlock'}
         >
-            <Heading className={'InfoBlock__Title'} as='h1' size='sm'>How to use Platform Explorer API</Heading>
+            <Heading className={'InfoBlock__Title'} as={'h1'}>How to use Platform Explorer API</Heading>
             <Markdown>{content}</Markdown>
         </Container>
     </Container>

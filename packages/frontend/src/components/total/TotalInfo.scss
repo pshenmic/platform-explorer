@@ -1,50 +1,89 @@
+@use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
-.TotalInfo {
-    background-color: var(--chakra-colors-blackAlpha-200);
-    border: 1px solid;
-    border-left: none;
-    border-right: none;
-    &__ContentContainer {
-        margin: 0 auto;
-    }
+$scrollColor: $color-brand-shaded;
+$scrollBackgroundColor: rgba(0, 0, 0, .3);
 
-    &__Divider {
-        width: 1px;
-        background-color: var(--chakra-colors-gray-800);
+.TotalInfo {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: $scrollColor $scrollBackgroundColor;
+
+  &__ContentContainer {
+    margin: 0 auto;
+  }
+
+  &__Item {
+    @include mixins.BlockSpacing(margin-right);
+    width: calc(100% / 5 - 40px);
+    flex-grow: 1;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $scrollColor;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: $scrollBackgroundColor;
+    border-radius: 10px;
+  }
+  
+  @supports (scrollbar-width: thin) {
+    scrollbar-width: thin;
+    scrollbar-color: $scrollColor $scrollBackgroundColor;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    overflow-y: scroll;
+    padding-bottom: 4px;
+
+    &__ContentContainer {
+      flex-wrap: nowrap !important;
+      padding-bottom: 4px;
+
+      &::after {
+        content: '';
+        display: block;
+        width: 2px;
+        flex-shrink: 0;
+      }
     }
 
     &__Item {
-        padding: 0 10px;
+      width: 25%;
+      flex-shrink: 0;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__ContentContainer {
+      &::before {
+        width: calc((100% - 40%) / 2);
+      }
     }
 
-    @media screen and (max-width: $breakpoint-lg) {
-        &__Divider {
-            height: 40px;
-            margin: auto 0;
-        }
+    &__Item {
+      width: 40%;
     }
-    
-    @media screen and (max-width: $breakpoint-md) {
-        &__Item {
-            width: calc(50% - 1px);
-            display: flex;
-            justify-content: center;
-        }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__Item {
+      width: 70%;
     }
-
-    @media screen and (max-width: 355px) {
-        &__ContentContainer {
-            width: min-content;
-        }
-
-        &__Item {
-            width: 100%;
-            justify-content: start;
-        }
-
-        &__Divider {
-            display: none !important;
-        }
-    }
+  }
 }

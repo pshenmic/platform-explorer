@@ -81,10 +81,9 @@ function DataContractsLayout ({ defaultPage = 1, defaultPageSize }) {
         <Container
             maxW={'container.xl'}
             padding={3}
-            borderWidth={'1px'} borderRadius={'lg'}
             className={'InfoBlock'}
         >
-            <Heading className={'InfoBlock__Title'} as={'h1'} size={'sm'}>Data contracts</Heading>
+            <Heading className={'InfoBlock__Title'} as={'h1'}>Data contracts</Heading>
 
             {!dataContracts.loading
               ? !dataContracts.error
