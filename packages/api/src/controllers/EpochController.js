@@ -5,12 +5,10 @@ const Constants = require('../constants')
 class EpochController {
   epochDAO
   blocksDAO
-  dapi
 
-  constructor (knex, dapi) {
+  constructor (knex) {
     this.epochDAO = new EpochDAO(knex)
     this.blocksDAO = new BlocksDAO(knex)
-    this.dapi = dapi
   }
 
   getEpochByIndex = async (request, response) => {

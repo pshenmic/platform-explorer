@@ -94,18 +94,4 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-const getDapi = () => {
-  return new DAPIClient({
-    dapiAddresses: [
-      {
-        host: process.env.DAPI_HOST,
-        port: process.env.DAPI_PORT,
-        retries: process.env.DAPI_RETRIES,
-        protocol: process.env.DAPI_PROTOCOL
-      }
-    ],
-    retries: -1
-  })
-}
-
-module.exports = { hash, decodeStateTransition, getKnex, getDapi }
+module.exports = { hash, decodeStateTransition, getKnex }
