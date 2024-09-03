@@ -2,7 +2,7 @@ const { describe, it, before, after, mock } = require('node:test')
 const supertest = require('supertest')
 const server = require('../../src/server')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const {getDapi} = require("../../src/utils");
+const { getDapi } = require('../../src/utils')
 
 describe('Index route', () => {
   let app

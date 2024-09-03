@@ -4,7 +4,7 @@ const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const { getKnex, getDapi} = require('../../src/utils')
+const { getKnex, getDapi } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 
 describe('Epoch routes', () => {

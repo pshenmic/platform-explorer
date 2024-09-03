@@ -2,10 +2,10 @@ const { describe, it, before, after } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
-const { getKnex, getDapi} = require('../../src/utils')
+const { getKnex, getDapi } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
-const {mock} = require('node:test')
+const { mock } = require('node:test')
 
 describe('DataContracts routes', () => {
   let app
