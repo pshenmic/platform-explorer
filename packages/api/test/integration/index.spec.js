@@ -2,12 +2,15 @@ const { describe, it, before, after, mock } = require('node:test')
 const supertest = require('supertest')
 const server = require('../../src/server')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const {getDapi} = require("../../src/utils");
 
 describe('Index route', () => {
   let app
   let client
 
   before(async () => {
+    mock.fn(getDapi, () => 0)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {

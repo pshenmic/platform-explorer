@@ -3,7 +3,7 @@ const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const { getKnex } = require('../../src/utils')
+const { getKnex, getDapi} = require('../../src/utils')
 const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
@@ -24,6 +24,8 @@ describe('Validators routes', () => {
   let intervals
 
   before(async () => {
+    mock.fn(getDapi, () => 0)
+
     app = await server.start()
     client = supertest(app.server)
 

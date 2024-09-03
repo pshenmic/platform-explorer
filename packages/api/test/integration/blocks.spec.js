@@ -3,7 +3,7 @@ const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const { getKnex } = require('../../src/utils')
+const { getKnex, getDapi} = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 
 describe('Blocks routes', () => {
@@ -16,6 +16,7 @@ describe('Blocks routes', () => {
   let validators
 
   before(async () => {
+    mock.fn(getDapi, () => 0)
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
