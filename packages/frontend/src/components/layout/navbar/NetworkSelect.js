@@ -6,7 +6,7 @@ import Dropdown from './Dropdown'
 
 const listNetworks = [
   { name: 'mainnet', subname: '', disabled: false, link: 'https://platform-explorer.com' },
-  { name: 'testnet', subname: '', disabled: false, link: 'https://testnet.platform-explorer.com' },
+  { name: 'testnet', subname: '', disabled: false, link: 'https://testnet.platform-explorer.com' }
 ]
 
 function NetworkSelect () {
