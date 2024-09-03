@@ -27,7 +27,6 @@ describe('Other routes', () => {
   let documentTransaction
 
   before(async () => {
-    mock.method(DAPI.prototype, 'getDapi', () => 0)
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
     mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
 
@@ -190,7 +189,6 @@ describe('Other routes', () => {
     })
 
     it('should search by identity', async () => {
-      mock.method(DAPI.prototype, 'getDapi', () => 0)
       mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
       const { body } = await client.get(`/search?query=${identityAlias.alias}`)

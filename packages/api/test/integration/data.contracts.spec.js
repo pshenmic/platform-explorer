@@ -5,8 +5,6 @@ const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
-const { mock } = require('node:test')
-const DAPI = require('../../src/dapi')
 
 describe('DataContracts routes', () => {
   let app
@@ -20,8 +18,6 @@ describe('DataContracts routes', () => {
   let documents
 
   before(async () => {
-    mock.method(DAPI.prototype, 'getDapi', () => 0)
-
     app = await server.start()
     client = supertest(app.server)
     knex = getKnex()

@@ -16,6 +16,7 @@ const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./dapi')
+const DAPIClient = require('@dashevo/dapi-client')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -46,9 +47,19 @@ module.exports = {
 
     await client.platform.initialize()
 
+    const dapiClient = new DAPIClient({
+      dapiAddresses: [
+        {
+          host: process.env.DAPI_HOST ?? 'localhost',
+          port: process.env.DAPI_PORT ?? '1443',
+          protocol: process.env.DAPI_PROTOCOL ?? 'http'
+        }
+      ]
+    })
+
     const { dpp } = client.platform
 
-    dapi = new DAPI(dpp)
+    dapi = new DAPI(dapiClient, dpp)
 
     fastify = Fastify()
 

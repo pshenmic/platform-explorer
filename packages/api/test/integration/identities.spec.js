@@ -27,7 +27,6 @@ describe('Identities routes', () => {
   let transactions
 
   before(async () => {
-    mock.method(DAPI.prototype, 'getDapi', () => 0)
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({

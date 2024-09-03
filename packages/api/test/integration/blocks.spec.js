@@ -5,7 +5,6 @@ const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const DAPI = require('../../src/dapi')
 
 describe('Blocks routes', () => {
   let app
@@ -17,7 +16,6 @@ describe('Blocks routes', () => {
   let validators
 
   before(async () => {
-    mock.method(DAPI.prototype, 'getDapi', () => 0)
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {

@@ -12,14 +12,14 @@ const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
 
 class MainController {
-  constructor (knex, DAPI) {
+  constructor (knex, dapi) {
     this.blocksDAO = new BlocksDAO(knex)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
     this.validatorsDAO = new ValidatorsDAO(knex)
-    this.DAPI = DAPI
+    this.dapi = dapi
   }
 
   getStatus = async (request, response) => {
@@ -112,9 +112,9 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
-        identity.balance = await this.DAPI.getIdentityBalance(identity.identifier)
+        const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity })
+        return response.send({ identity: { ...identity, balance } })
       }
 
       // search data contracts
@@ -136,9 +136,9 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByDPNS(query)
 
       if (identity) {
-        identity.balance = await this.DAPI.getIdentityBalance(identity.identifier)
+        const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity })
+        return response.send({ identity: { ...identity, balance } })
       }
     }
 
