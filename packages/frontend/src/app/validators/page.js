@@ -34,7 +34,7 @@ function ValidatorsRoute ({ searchParams }) {
           alignItems={'center'}
           wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
       >
-          <Container maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
+          <Container maxW={['100%', '100%', '100%', 'calc(50% - 20px)']} flexShrink={0}>
             <Intro
               title={'Validators'}
               contentSource={<Markdown>{introContent}</Markdown>}
@@ -43,7 +43,7 @@ function ValidatorsRoute ({ searchParams }) {
 
           <Box flexShrink={'0'} w={10} h={[5, 5, 5, 10]}/>
 
-          <Container maxW={'none'} p={0}>
+          <Container maxW={['100%', '100%', '100%', 'calc(50% - 20px)']} p={0}>
             <SideBlock>
               <ValidatorsTotal/>
             </SideBlock>
