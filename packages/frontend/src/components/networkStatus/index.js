@@ -2,10 +2,9 @@
 
 import * as Api from '../../util/Api'
 import { useState, useEffect, useCallback } from 'react'
-import { CheckCircleIcon, WarningIcon, InfoIcon } from '@chakra-ui/icons'
+import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons'
 import { Tooltip, Badge } from '@chakra-ui/react'
 import { fetchHandlerSuccess, fetchHandlerError, getTimeDelta } from '../../util'
-import EpochProgress from './EpochProgress'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
@@ -40,27 +39,7 @@ function NetworkStatus ({ className }) {
       <div align={['center', 'start', 'start', 'start', 'start']} className={`NetworkStatus__Stat NetworkStatus__Stat--Epoch ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>Epoch:</div>
         <div className={'NetworkStatus__InfoValue NetworkStatus__InfoValue--Epoch'}>
-          {status?.data?.epoch?.index
-            ? <>#{status.data.epoch.index}
-                {status.data?.epoch?.endTime &&
-                  <Tooltip
-                    label={`Next epoch change at ${new Date(status.data.epoch.endTime).toLocaleString()}`}
-                    aria-label={'A tooltip'}
-                    placement={'top'}
-                    hasArrow
-                    bg={'gray.700'}
-                    color={'white'}
-                  >
-                    <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
-                  </Tooltip>
-                }
-              </>
-            : '-'}
-          {status.data?.epoch &&
-            <div className={'NetworkStatus__EpochProgress'}>
-              <EpochProgress epoch={status.data.epoch}/>
-            </div>
-          }
+          N/a
         </div>
       </div>
 
