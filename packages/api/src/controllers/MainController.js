@@ -28,7 +28,7 @@ class MainController {
       this.blocksDAO.getStats(),
       TenderdashRPC.getStatus(),
       Constants.genesisTime,
-      this.DAPI.getTotalCredits()
+      this.dapi.getTotalCredits()
     ])).map((e) => e.value ?? null)
 
     const [currentBlock] = blocks?.resultSet ?? []
