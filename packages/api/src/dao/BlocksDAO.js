@@ -38,7 +38,7 @@ module.exports = class BlockDAO {
       .select('blocks.hash as hash', 'state_transitions.hash as st_hash', 'blocks.height as height', 'blocks.timestamp as timestamp', 'blocks.block_version as block_version', 'blocks.app_version as app_version', 'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator')
       .from('blocks')
       .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
-      .where('blocks.hash', blockHash)
+      .whereILike('blocks.hash', blockHash)
 
     const [block] = results
 
@@ -66,11 +66,11 @@ module.exports = class BlockDAO {
         'blocks.validator as validator',
         this.knex.raw(`rank() over (partition by blocks.validator order by blocks.height ${order}) as rank`)
       )
-      .where('blocks.validator', validator)
+      .whereILike('blocks.validator', validator)
       .as('blocks')
 
     const rows = await this.knex(subquery)
-      .select(this.knex('blocks').count('height').as('total_count').where('blocks.validator', validator),
+      .select(this.knex('blocks').count('height').as('total_count').whereILike('blocks.validator', validator),
         'blocks.hash as hash', 'height', 'timestamp', 'block_version',
         'app_version', 'l1_locked_height', 'state_transitions.hash as st_hash', 'validator')
       .whereBetween('rank', [fromRank, toRank])

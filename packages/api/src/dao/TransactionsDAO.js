@@ -13,7 +13,7 @@ module.exports = class TransactionsDAO {
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
         'state_transitions.type as type', 'state_transitions.index as index', 'blocks.height as block_height',
         'blocks.hash as block_hash', 'blocks.timestamp as timestamp')
-      .where('state_transitions.hash', hash)
+      .whereILike('state_transitions.hash', hash)
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
 
     if (!row) {
