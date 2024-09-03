@@ -15,6 +15,11 @@ class DAPI {
     return this.dpp.identity.createFromBuffer(GRPCIdentity.getIdentity()).balance
   }
 
+  async getTotalCredits () {
+    const { totalCreditsInPlatform } = await this.dapi.platform.getTotalCreditsInPlatform()
+    return totalCreditsInPlatform
+  }
+
   getDapi () {
     return this.dapi ?? new DAPIClient({
       dapiAddresses: [
