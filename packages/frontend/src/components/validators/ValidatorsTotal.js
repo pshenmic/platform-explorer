@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import TotalCards from '../total/TotalCards'
-import { currencyRound } from '../../util'
 
 export default function ValidatorsTotal () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
@@ -15,7 +14,7 @@ export default function ValidatorsTotal () {
     Api.getStatus()
       .then(res => {
         fetchHandlerSuccess(setStatus, res)
-        
+
         Api.getEpoch(res?.epoch?.index)
           .then(res => fetchHandlerSuccess(setEpoch, res))
           .catch(err => fetchHandlerError(setEpoch, err))
