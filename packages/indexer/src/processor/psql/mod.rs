@@ -364,8 +364,6 @@ impl PSQLProcessor {
         let identity = Identity::from(system_data_contract);
         let data_contract_identifier = data_contract.identifier.clone();
         let data_contract_owner = data_contract.owner.clone();
-
-        self.dao.create_identity(identity, None).await.unwrap();
         self.dao.create_data_contract(data_contract, None).await;
 
         match system_data_contract {
