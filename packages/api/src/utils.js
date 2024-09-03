@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
+const DAPIClient = require('@dashevo/dapi-client')
 
 const getKnex = () => {
   return require('knex')({
@@ -93,4 +94,18 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-module.exports = { hash, decodeStateTransition, getKnex }
+const getDapi = ()=>{
+  return new DAPIClient({
+    dapiAddresses: [
+      {
+        host: process.env.DAPI_HOST,
+        port: process.env.DAPI_PORT,
+        retries: process.env.DAPI_RETRIES,
+        protocol: process.env.DAPI_PROTOCOL
+      }
+    ],
+    retries: -1
+  })
+}
+
+module.exports = { hash, decodeStateTransition, getKnex, getDapi }

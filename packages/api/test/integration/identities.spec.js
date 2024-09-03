@@ -2,7 +2,7 @@ const { describe, it, before, after, beforeEach, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
-const { getKnex } = require('../../src/utils')
+const { getKnex, getDapi} = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
@@ -35,6 +35,7 @@ describe('Identities routes', () => {
       }
     }))
 
+    mock.fn(getDapi, () => 0)
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
     app = await server.start()
@@ -364,6 +365,7 @@ describe('Identities routes', () => {
         identities.push({ identity, block, transfer })
       }
 
+      mock.fn(getDapi, () => 0)
       mock.method(DAPI.prototype, 'getIdentityBalance', async (identifier) => {
         const { identity } = identities.find(({ identity }) => identity.identifier === identifier)
         return identity.balance

@@ -1,22 +1,12 @@
 const { Identifier } = require('@dashevo/wasm-dpp')
-const DAPIClient = require('@dashevo/dapi-client')
+const {getDapi} = require("./utils");
 
 class DAPI {
   dapi
   dpp
 
   constructor (dpp) {
-    this.dapi = new DAPIClient({
-      dapiAddresses: [
-        {
-          host: process.env.DAPI_HOST,
-          port: process.env.DAPI_PORT,
-          retries: process.env.DAPI_RETRIES,
-          protocol: process.env.DAPI_PROTOCOL
-        }
-      ],
-      retries: -1
-    })
+    this.dapi = getDapi()
     this.dpp = dpp
   }
 
