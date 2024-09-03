@@ -364,8 +364,8 @@ describe('Identities routes', () => {
         identities.push({ identity, block, transfer })
       }
 
-      mock.method(DAPI.prototype, 'getIdentityBalance', async (identifie) => {
-        const { identity } = identities.find(({ identity }) => identity.identifier === identifie)
+      mock.method(DAPI.prototype, 'getIdentityBalance', async (identifier) => {
+        const { identity } = identities.find(({ identity }) => identity.identifier === identifier)
         return identity.balance
       })
 

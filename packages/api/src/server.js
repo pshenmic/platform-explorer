@@ -16,8 +16,6 @@ const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./dapi')
-const { DAPIConfig } = require('./constants')
-const { default: loadWasmDpp, DashPlatformProtocol } = require('@dashevo/wasm-dpp')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -41,18 +39,16 @@ let client
 let knex
 let fastify
 let dapi
-let dpp
 
 module.exports = {
   start: async () => {
     client = new Dash.Client()
 
-    await loadWasmDpp()
-    dpp = new DashPlatformProtocol()
-
-    dapi = new DAPI(DAPIConfig, dpp)
-
     await client.platform.initialize()
+
+    const { dpp } = client.platform
+
+    dapi = new DAPI(dpp)
 
     fastify = Fastify()
 

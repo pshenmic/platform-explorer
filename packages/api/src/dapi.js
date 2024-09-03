@@ -5,8 +5,18 @@ class DAPI {
   dapi
   dpp
 
-  constructor (options, dpp) {
-    this.dapi = new DAPIClient(options)
+  constructor (dpp) {
+    this.dapi = new DAPIClient({
+      dapiAddresses: [
+        {
+          host: process.env.DAPI_HOST,
+          port: process.env.DAPI_PORT,
+          retries: process.env.DAPI_RETRIES,
+          protocol: process.env.DAPI_PROTOCOL
+        }
+      ],
+      retries: -1
+    })
     this.dpp = dpp
   }
 
