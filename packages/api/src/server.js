@@ -48,7 +48,7 @@ module.exports = {
     await client.platform.initialize()
 
     const dapiClient = new DAPIClient({
-      dapiAddresses: (process.env.DAPI_URL?? '127.0.0.1:1443:self-signed').split(','),
+      dapiAddresses: (process.env.DAPI_URL ?? '127.0.0.1:1443:self-signed').split(','),
       network: process.env.NETWORK ?? 'testnet'
     })
 
