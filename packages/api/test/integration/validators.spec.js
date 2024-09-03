@@ -25,8 +25,6 @@ describe('Validators routes', () => {
   let intervals
 
   before(async () => {
-    mock.method(DAPI.prototype, 'getDapi', () => 0)
-
     app = await server.start()
     client = supertest(app.server)
 

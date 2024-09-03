@@ -18,8 +18,6 @@ describe('Transaction routes', () => {
   let transactions
 
   before(async () => {
-    mock.method(DAPI.prototype, 'getDapi', () => 0)
-
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {

@@ -13,26 +13,27 @@ const DocumentsController = require('./controllers/DocumentsController')
 const IdentitiesController = require('./controllers/IdentitiesController')
 const DataContractsController = require('./controllers/DataContractsController')
 const ValidatorsController = require('./controllers/ValidatorsController')
-const { getKnex } = require('./utils')
+const {getKnex} = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./dapi')
+const DAPIClient = require('@dashevo/dapi-client')
 
-function errorHandler (err, req, reply) {
+function errorHandler(err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
-    return reply.status(503).send({ error: 'tenderdash/dashcore backend is not available' })
+    return reply.status(503).send({error: 'tenderdash/dashcore backend is not available'})
   }
 
   if (err?.constructor?.name === 'InvalidStateTransitionError') {
     const [error] = err.getErrors()
-    const { code, message } = error
+    const {code, message} = error
 
-    return reply.status(500).send({ error: message, code })
+    return reply.status(500).send({error: message, code})
   }
 
   console.error(err)
   reply.status(500)
 
-  reply.send({ error: err.message })
+  reply.send({error: err.message})
 }
 
 let client
@@ -46,9 +47,20 @@ module.exports = {
 
     await client.platform.initialize()
 
-    const { dpp } = client.platform
+    const dapiClient = new DAPIClient({
+      dapiAddresses: [
+        {
+          host: process.env.DAPI_HOST ?? 'localhost',
+          port: process.env.DAPI_PORT ?? '1443',
+          protocol: process.env.DAPI_PROTOCOL ?? 'http'
+        }
+      ],
+      retries: -1
+    })
 
-    dapi = new DAPI(dpp)
+    const {dpp} = client.platform
+
+    dapi = new DAPI(dapiClient, dpp)
 
     fastify = Fastify()
 
@@ -93,9 +105,9 @@ module.exports = {
     new fastify.metrics.client.Gauge({
       name: 'platform_explorer_api_block_height',
       help: 'The latest block height in the API',
-      async collect () {
+      async collect() {
         const blockDAO = new BlocksDAO(knex)
-        const { resultSet: [block] } = await blockDAO.getBlocks(1, 1, 'desc')
+        const {resultSet: [block]} = await blockDAO.getBlocks(1, 1, 'desc')
 
         this.set(block.header.height)
       }
