@@ -29,7 +29,7 @@ function NetworkSelect () {
       >
         {activeNetwork.name}
         <svg
-          className={`Button__Arrow ${showDropdown ? 'Button__ArrowActive' : ''}`}
+          className={`NetworkSelect__Button--Arrow ${showDropdown ? 'NetworkSelect__Button--ArrowActive' : ''}`}
           width={'10'}
           height={'6'}
           viewBox={'0 0 10 6'}
