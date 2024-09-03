@@ -48,13 +48,8 @@ module.exports = {
     await client.platform.initialize()
 
     const dapiClient = new DAPIClient({
-      dapiAddresses: [
-        {
-          host: process.env.DAPI_HOST ?? 'localhost',
-          port: process.env.DAPI_PORT ?? '1443',
-          protocol: process.env.DAPI_PROTOCOL ?? 'http'
-        }
-      ]
+      dapiAddresses: process.env.DAPI_URL.split(','),
+      network: process.env.NETWORK ?? 'testnet'
     })
 
     const { dpp } = client.platform
