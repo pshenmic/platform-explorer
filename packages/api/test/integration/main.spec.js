@@ -7,6 +7,7 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const DAPI = require('../../src/dapi')
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
@@ -26,6 +27,8 @@ describe('Other routes', () => {
   let documentTransaction
 
   before(async () => {
+    mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -185,6 +188,8 @@ describe('Other routes', () => {
     })
 
     it('should search by identity', async () => {
+      mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
+
       const { body } = await client.get(`/search?query=${identityAlias.alias}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')

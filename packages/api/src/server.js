@@ -15,6 +15,8 @@ const DataContractsController = require('./controllers/DataContractsController')
 const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
+const DAPI = require('./dapi')
+const DAPIClient = require('@dashevo/dapi-client')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -37,11 +39,27 @@ function errorHandler (err, req, reply) {
 let client
 let knex
 let fastify
+let dapi
 
 module.exports = {
   start: async () => {
     client = new Dash.Client()
+
     await client.platform.initialize()
+
+    const dapiClient = new DAPIClient({
+      dapiAddresses: [
+        {
+          host: process.env.DAPI_HOST ?? 'localhost',
+          port: process.env.DAPI_PORT ?? '1443',
+          protocol: process.env.DAPI_PROTOCOL ?? 'http'
+        }
+      ]
+    })
+
+    const { dpp } = client.platform
+
+    dapi = new DAPI(dapiClient, dpp)
 
     fastify = Fastify()
 
@@ -59,13 +77,13 @@ module.exports = {
 
     await knex.raw('select 1+1')
 
-    const mainController = new MainController(knex)
+    const mainController = new MainController(knex, dapi)
     const epochController = new EpochController(knex)
     const blocksController = new BlocksController(knex)
     const transactionsController = new TransactionsController(client, knex)
     const dataContractsController = new DataContractsController(knex)
     const documentsController = new DocumentsController(knex)
-    const identitiesController = new IdentitiesController(knex)
+    const identitiesController = new IdentitiesController(knex, dapi)
     const validatorsController = new ValidatorsController(knex)
 
     Routes({

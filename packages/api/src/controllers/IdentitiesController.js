@@ -1,8 +1,9 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 
 class IdentitiesController {
-  constructor (knex) {
+  constructor (knex, dapi) {
     this.identitiesDAO = new IdentitiesDAO(knex)
+    this.dapi = dapi
   }
 
   getIdentityByIdentifier = async (request, response) => {
@@ -14,7 +15,9 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    response.send(identity)
+    const balance = await this.dapi.getIdentityBalance(identifier)
+
+    response.send({ ...identity, balance })
   }
 
   getIdentityByDPNS = async (request, response) => {
@@ -26,7 +29,9 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    response.send(identity)
+    const balance = await this.dapi.getIdentityBalance(identity.identifier)
+
+    response.send({ ...identity, balance })
   }
 
   getIdentities = async (request, response) => {
@@ -34,7 +39,12 @@ class IdentitiesController {
 
     const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
 
-    response.send(identities)
+    const identitiesWithBalance = await Promise.all(identities.resultSet.map(async identity => {
+      const balance = await this.dapi.getIdentityBalance(identity.identifier)
+      return { ...identity, balance }
+    }))
+
+    response.send({ ...identities, resultSet: identitiesWithBalance })
   }
 
   getTransactionsByIdentity = async (request, response) => {

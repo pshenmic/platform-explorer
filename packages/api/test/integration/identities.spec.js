@@ -6,6 +6,7 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const DAPI = require('../../src/dapi')
 
 describe('Identities routes', () => {
   let app
@@ -26,6 +27,8 @@ describe('Identities routes', () => {
   let transactions
 
   before(async () => {
+    mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -360,6 +363,11 @@ describe('Identities routes', () => {
         identity.balance = transfer.amount
         identities.push({ identity, block, transfer })
       }
+
+      mock.method(DAPI.prototype, 'getIdentityBalance', async (identifier) => {
+        const { identity } = identities.find(({ identity }) => identity.identifier === identifier)
+        return identity.balance
+      })
 
       const { body } = await client.get('/identities?order_by=balance&order=desc')
         .expect(200)
