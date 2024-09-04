@@ -17,7 +17,7 @@ class EpochController {
 
     const [currentEpoch, nextEpoch] = await this.dapi.getEpochsInfo(index, 200, true)
 
-    if(!currentEpoch){
+    if (!currentEpoch) {
       response.status(404).send({ message: 'not found' })
     }
 
