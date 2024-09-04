@@ -6,8 +6,8 @@ module.exports = class EpochDAO {
   }
 
   getEpochByObject = async (epoch) => {
-    const epochEnd = new Date(epoch.nextEpochApproximateTime)
-    const epochPeriod = epochEnd.getTime() - epoch.startTime
+    const epochEnd = new Date(epoch.endTime)
+    const epochPeriod = epoch.endTime - epoch.startTime
 
     const bestValidator = this.knex('blocks')
       .select('validator')

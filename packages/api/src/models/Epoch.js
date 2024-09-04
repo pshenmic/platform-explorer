@@ -6,29 +6,27 @@ module.exports = class Epoch {
   firstCoreBlockHeight
   startTime
   feeMultiplier
-  nextEpochApproximateTime
-  nextEpoch
+  endTime
 
-  constructor (number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, nextEpochApproximateTime, nextEpoch) {
+  constructor (number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, endTime) {
     this.number = number ?? null
     this.firstBlockHeight = firstBlockHeight ?? null
     this.firstCoreBlockHeight = firstCoreBlockHeight ?? null
     this.startTime = startTime ?? null
     this.feeMultiplier = feeMultiplier ?? null
-    this.nextEpochApproximateTime = nextEpochApproximateTime ?? null
-    this.nextEpoch = nextEpoch ?? null
+    this.endTime = endTime ?? null
   }
 
   static fromObject ({ number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, nextEpoch }) {
-    let nextEpochApproximateTime
+    let endTime
 
     if (nextEpoch) {
-      nextEpochApproximateTime = nextEpoch.startTime
+      endTime = nextEpoch.startTime
     } else if (startTime) {
-      nextEpochApproximateTime = startTime + EPOCH_CHANGE_TIME
+      endTime = startTime + EPOCH_CHANGE_TIME
     }
 
-    return new Epoch(number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, nextEpochApproximateTime, nextEpoch)
+    return new Epoch(number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, endTime)
   }
 }
 
