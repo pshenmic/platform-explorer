@@ -278,7 +278,7 @@ describe('Other routes', () => {
 
       const expectedStats = {
         epoch: {
-          number: 0,
+          number: null,
           firstBlockHeight: 0,
           firstCoreBlockHeight: 0,
           startTime: 0,
