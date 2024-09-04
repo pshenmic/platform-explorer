@@ -43,9 +43,12 @@ HTTP /status
 
 {
     epoch: {
-        index: 3,
-        startTime: "2024-04-08T14:00:00.000Z",
-        endTime: "2024-04-09T14:00:00.000Z"
+        number: 1145,
+        firstBlockHeight: 5380,
+        firstCoreBlockHeight: 1096730,
+        startTime: 1725475350064,
+        feeMultiplier: 1,
+        endTime: 1725478950064
     },
     identitiesCount: 12,
     totalCredits: 100000,
@@ -85,13 +88,16 @@ Returns info about epoch by specific index
 
 
 ```
-HTTP /epoch/1
+HTTP /epoch/0
 
 {
     epoch: {
-        index: 1,
-        startTime: "2024-04-08T14:00:00.000Z",
-        endTime: "2024-04-09T14:00:00.000Z"
+        number: 0,
+        firstBlockHeight: 1,
+        firstCoreBlockHeight: 1090319,
+        startTime: 1721353209000,
+        feeMultiplier: 1,
+        endTime: 1721356809000
     },
     tps: 0.01666666666,
     totalCollectedFees: 30,
