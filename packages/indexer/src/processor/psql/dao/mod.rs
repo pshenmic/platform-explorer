@@ -153,11 +153,7 @@ impl PostgresDAO {
     }
 
     pub async fn create_identity(&self, identity: Identity, st_hash: Option<String>) -> Result<(), PoolError> {
-        let identifier: String = match st_hash {
-            None => identity.identifier.to_string(Base64),
-            Some(_) => identity.identifier.to_string(Base58)
-        };
-
+        let identifier = identity.identifier;
         let revision = identity.revision;
         let revision_i32 = revision as i32;
         let owner = identity.owner;
@@ -171,7 +167,7 @@ impl PostgresDAO {
         let stmt = client.prepare_cached(query).await.unwrap();
 
         client.query(&stmt, &[
-            &identifier,
+            &identifier.to_string(Base58),
             &owner.to_string(Base58),
             &revision_i32,
             &st_hash,
