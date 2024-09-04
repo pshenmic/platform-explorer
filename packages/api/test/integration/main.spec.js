@@ -283,7 +283,6 @@ describe('Other routes', () => {
           firstCoreBlockHeight: 0,
           startTime: 0,
           feeMultiplier: 0,
-          nextEpoch: 0,
           endTime: null
         },
         identitiesCount: 1,
