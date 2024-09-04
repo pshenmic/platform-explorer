@@ -24,7 +24,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const [total, setTotal] = useState(1)
-  const [isActive, setIsActive] = useState(defaultIsActive !== undefined ? defaultIsActive === true : true)
+  const [isActive, setIsActive] = useState(defaultIsActive !== undefined ? defaultIsActive === true : false)
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
@@ -87,13 +87,13 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
               <Switcher
                 options={[
                   {
-                    title: 'Active'
+                    title: 'All'
                   },
                   {
-                    title: 'All'
+                    title: 'Current'
                   }
                 ]}
-                onChange={e => isActiveSwitchHandler(e === 'Active')}
+                onChange={e => isActiveSwitchHandler(e === 'Current')}
               />
             </Box>
 
