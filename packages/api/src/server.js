@@ -15,7 +15,7 @@ const DataContractsController = require('./controllers/DataContractsController')
 const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
-const DAPI = require('./dapi')
+const DAPI = require('./DAPI')
 const DAPIClient = require('@dashevo/dapi-client')
 
 function errorHandler (err, req, reply) {
@@ -73,7 +73,7 @@ module.exports = {
     await knex.raw('select 1+1')
 
     const mainController = new MainController(knex, dapi)
-    const epochController = new EpochController(knex)
+    const epochController = new EpochController(knex, dapi)
     const blocksController = new BlocksController(knex)
     const transactionsController = new TransactionsController(client, knex)
     const dataContractsController = new DataContractsController(knex)

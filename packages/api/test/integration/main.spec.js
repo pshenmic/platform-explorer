@@ -7,7 +7,7 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const DAPI = require('../../src/dapi')
+const DAPI = require('../../src/DAPI')
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
@@ -29,6 +29,14 @@ describe('Other routes', () => {
   before(async () => {
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
     mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
+    mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
+      number: 0,
+      firstBlockHeight: 0,
+      firstCoreBlockHeight: 0,
+      startTime: 0,
+      feeMultiplier: 0,
+      nextEpoch: 0
+    }])
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
@@ -236,113 +244,6 @@ describe('Other routes', () => {
   })
 
   describe('getStatus()', async () => {
-    it('should return status with null epoch', async () => {
-      const mockTDStatus = {
-        version: 'v2.0.0',
-        highestBlock: {
-          height: 1337,
-          hash: 'DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF',
-          timestamp: new Date().toISOString()
-        }
-      }
-
-      mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
-      mock.method(tenderdashRpc, 'getBlockByHeight', async () => {
-        try { throw new Error() } catch { }
-      })
-
-      const { body } = await client.get('/status')
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      const expectedStats = {
-        epoch: null,
-        identitiesCount: 1,
-        transactionsCount: 3,
-        totalCredits: 0,
-        transfersCount: 0,
-        dataContractsCount: 1,
-        documentsCount: 1,
-        network: null,
-        api: {
-          version: require('../../package.json').version,
-          block: {
-            height: 10,
-            hash: blocks[blocks.length - 1].hash,
-            timestamp: blocks[blocks.length - 1].timestamp.toISOString()
-          }
-        },
-        platform: {
-          version: '1' + require('../../package.json').dependencies.dash.substring(1)
-        },
-        tenderdash: {
-          version: mockTDStatus?.version ?? null,
-          block: {
-            height: mockTDStatus?.highestBlock?.height,
-            hash: mockTDStatus?.highestBlock?.hash,
-            timestamp: mockTDStatus?.highestBlock?.timestamp
-          }
-        }
-      }
-
-      assert.deepEqual(body, expectedStats)
-    })
-
-    it('should return status with null epoch with bad genesis_time', async () => {
-      const mockTDStatus = {
-        version: 'v2.0.0',
-        highestBlock: {
-          height: 1337,
-          hash: 'DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF',
-          timestamp: new Date().toISOString()
-        }
-      }
-
-      mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
-      mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
-        block: {
-          header: {
-            time: 'aaa'
-          }
-        }
-      }))
-      const { body } = await client.get('/status')
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      const expectedStats = {
-        epoch: null,
-        identitiesCount: 1,
-        transactionsCount: 3,
-        totalCredits: 0,
-        transfersCount: 0,
-        dataContractsCount: 1,
-        documentsCount: 1,
-        network: null,
-        api: {
-          version: require('../../package.json').version,
-          block: {
-            height: 10,
-            hash: blocks[blocks.length - 1].hash,
-            timestamp: blocks[blocks.length - 1].timestamp.toISOString()
-          }
-        },
-        platform: {
-          version: '1' + require('../../package.json').dependencies.dash.substring(1)
-        },
-        tenderdash: {
-          version: mockTDStatus?.version ?? null,
-          block: {
-            height: mockTDStatus?.highestBlock?.height,
-            hash: mockTDStatus?.highestBlock?.hash,
-            timestamp: mockTDStatus?.highestBlock?.timestamp
-          }
-        }
-      }
-
-      assert.deepEqual(body, expectedStats)
-    })
-
     it('should return status', async () => {
       const mockTDStatus = {
         version: 'v2.0.0',
@@ -354,6 +255,14 @@ describe('Other routes', () => {
       }
       mock.reset()
       mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
+      mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
+        number: 0,
+        firstBlockHeight: 0,
+        firstCoreBlockHeight: 0,
+        startTime: 0,
+        feeMultiplier: 0,
+        nextEpoch: 0
+      }])
       mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
       mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
         block: {
@@ -369,9 +278,12 @@ describe('Other routes', () => {
 
       const expectedStats = {
         epoch: {
-          index: 18,
-          startTime: '1970-01-01T18:00:00.000Z',
-          endTime: '1970-01-01T19:00:00.000Z'
+          number: 0,
+          firstBlockHeight: 0,
+          firstCoreBlockHeight: 0,
+          startTime: 0,
+          feeMultiplier: 0,
+          endTime: null
         },
         identitiesCount: 1,
         transactionsCount: 3,

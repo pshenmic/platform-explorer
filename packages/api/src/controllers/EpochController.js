@@ -1,29 +1,29 @@
 const EpochDAO = require('../dao/EpochDAO')
 const BlocksDAO = require('../dao/BlocksDAO')
-const Constants = require('../constants')
+const Epoch = require('../models/Epoch')
 
 class EpochController {
   epochDAO
   blocksDAO
 
-  constructor (knex) {
+  constructor (knex, dapi) {
     this.epochDAO = new EpochDAO(knex)
     this.blocksDAO = new BlocksDAO(knex)
+    this.dapi = dapi
   }
 
   getEpochByIndex = async (request, response) => {
     const { index } = request.params
 
-    const epochChangeTime = Constants.EPOCH_CHANGE_TIME
-    const genesisTime = await Constants.genesisTime
+    const [currentEpoch, nextEpoch] = await this.dapi.getEpochsInfo(2, index, true)
 
-    const [currentBlock] = (await this.blocksDAO.getBlocks(1, 1, 'desc')).resultSet
-
-    if (genesisTime.getTime() + index * epochChangeTime > currentBlock.header.timestamp.getTime()) {
-      return response.status(400).send({ message: 'Invalid epoch date' })
+    if (!currentEpoch) {
+      response.status(404).send({ message: 'not found' })
     }
 
-    const epochInfo = await this.epochDAO.getEpochByIndex(index, currentBlock)
+    const epoch = Epoch.fromObject({ ...currentEpoch, nextEpoch })
+
+    const epochInfo = await this.epochDAO.getEpochByObject(epoch)
 
     response.send(epochInfo)
   }
