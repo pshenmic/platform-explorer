@@ -15,7 +15,7 @@ const DataContractsController = require('./controllers/DataContractsController')
 const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
-const DAPI = require('./dapi')
+const DAPI = require('./DAPI')
 const DAPIClient = require('@dashevo/dapi-client')
 
 function errorHandler (err, req, reply) {
