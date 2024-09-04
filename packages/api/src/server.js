@@ -73,7 +73,7 @@ module.exports = {
     await knex.raw('select 1+1')
 
     const mainController = new MainController(knex, dapi)
-    const epochController = new EpochController(knex)
+    const epochController = new EpochController(knex, dapi)
     const blocksController = new BlocksController(knex)
     const transactionsController = new TransactionsController(client, knex)
     const dataContractsController = new DataContractsController(knex)

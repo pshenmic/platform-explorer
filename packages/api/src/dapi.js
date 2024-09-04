@@ -10,13 +10,18 @@ class DAPI {
   }
 
   async getIdentityBalance (identifier) {
-    const identity = await this.dapi.platform.getIdentity(Identifier.from(identifier))
-    return this.dpp.identity.createFromBuffer(identity.getIdentity()).balance
+    const { balance } = await this.dapi.platform.getIdentityBalance(Identifier.from(identifier))
+    return balance
   }
 
   async getTotalCredits () {
     const { totalCreditsInPlatform } = await this.dapi.platform.getTotalCreditsInPlatform()
     return totalCreditsInPlatform
+  }
+
+  async getEpochsInfo(start,count, ascending) {
+    const {epochsInfo} = await this.dapi.platform.getEpochsInfo(start,count,{ascending})
+    return epochsInfo
   }
 }
 
