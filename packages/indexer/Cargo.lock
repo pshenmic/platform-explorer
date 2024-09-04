@@ -1115,6 +1115,7 @@ dependencies = [
  "dotenv",
  "dpp",
  "futures",
+ "hex",
  "refinery",
  "reqwest",
  "serde",

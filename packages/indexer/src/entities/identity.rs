@@ -1,4 +1,6 @@
 use std::env;
+use base64::Engine;
+use base64::engine::general_purpose;
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
@@ -9,8 +11,9 @@ use dpp::state_transition::identity_update_transition::accessors::IdentityUpdate
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
 use dashcore_rpc::{Auth, Client, RpcApi};
 use dpp::dashcore::{Txid};
-use dpp::platform_value::string_encoding::Encoding::Base58;
+use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
 use tokio_postgres::Row;
+use crate::entities::validator::Validator;
 
 #[derive(Clone)]
 pub struct Identity {
@@ -111,6 +114,24 @@ impl From<Row> for Identity {
             owner: Identifier::from_string(&owner.trim(), Base58).unwrap(),
             revision: Revision::from(revision as u64),
             identifier: Identifier::from_string(&identifier.trim(), Base58).unwrap(),
+            is_system,
+            balance: None,
+        };
+    }
+}
+impl From<Validator> for Identity {
+    fn from(validator: Validator) -> Self {
+        let pro_tx_hash_buffer = hex::decode(&validator.pro_tx_hash).unwrap();
+        let identifier_string = general_purpose::STANDARD.encode(pro_tx_hash_buffer);
+        let identifier = Identifier::from_string(&identifier_string, Base64).unwrap();
+        let revision = 0u64;
+        let is_system: bool = false;
+
+        return Identity {
+            id: None,
+            owner: identifier,
+            revision,
+            identifier,
             is_system,
             balance: None,
         };

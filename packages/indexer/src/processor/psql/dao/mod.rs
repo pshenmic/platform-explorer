@@ -6,7 +6,7 @@ use sha256::{digest};
 use crate::entities::document::Document;
 use base64::{Engine as _, engine::{general_purpose}};
 use dpp::identifier::Identifier;
-use dpp::platform_value::string_encoding::Encoding::{Base58};
+use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
 use crate::entities::block_header::BlockHeader;
 use crate::entities::data_contract::DataContract;
 use crate::entities::identity::Identity;
@@ -153,7 +153,11 @@ impl PostgresDAO {
     }
 
     pub async fn create_identity(&self, identity: Identity, st_hash: Option<String>) -> Result<(), PoolError> {
-        let identifier = identity.identifier;
+        let identifier: String = match st_hash {
+            None => identity.identifier.to_string(Base64),
+            Some(_) => identity.identifier.to_string(Base58)
+        };
+
         let revision = identity.revision;
         let revision_i32 = revision as i32;
         let owner = identity.owner;
@@ -167,14 +171,14 @@ impl PostgresDAO {
         let stmt = client.prepare_cached(query).await.unwrap();
 
         client.query(&stmt, &[
-            &identifier.to_string(Base58),
+            &identifier,
             &owner.to_string(Base58),
             &revision_i32,
             &st_hash,
             &is_system
         ]).await.unwrap();
 
-        println!("Created Identity {}", identifier.to_string(Base58));
+        println!("Created Identity {}", identifier);
 
         Ok(())
     }

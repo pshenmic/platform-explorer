@@ -311,7 +311,8 @@ impl PSQLProcessor {
 
         match existing {
             None => {
-                self.dao.create_validator(validator).await?;
+                self.dao.create_validator(validator.clone()).await?;
+                self.dao.create_identity(Identity::from(validator), None).await?;
                 Ok(())
             }
             Some(_) => Ok(())
