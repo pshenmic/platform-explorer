@@ -278,12 +278,13 @@ describe('Other routes', () => {
 
       const expectedStats = {
         epoch: {
-          number: null,
+          number: 0,
           firstBlockHeight: 0,
           firstCoreBlockHeight: 0,
           startTime: 0,
           feeMultiplier: 0,
-          nextEpoch: 0
+          nextEpoch: 0,
+          endTime: null
         },
         identitiesCount: 1,
         transactionsCount: 3,
