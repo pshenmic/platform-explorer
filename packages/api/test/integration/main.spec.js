@@ -30,12 +30,12 @@ describe('Other routes', () => {
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
     mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
     mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
-      number:0,
-      firstBlockHeight:0,
-      firstCoreBlockHeight:0,
-      startTime:0,
-      feeMultiplier:0,
-      nextEpoch:0
+      number: 0,
+      firstBlockHeight: 0,
+      firstCoreBlockHeight: 0,
+      startTime: 0,
+      feeMultiplier: 0,
+      nextEpoch: 0
     }])
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
@@ -256,12 +256,12 @@ describe('Other routes', () => {
       mock.reset()
       mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
       mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
-        number:0,
-        firstBlockHeight:0,
-        firstCoreBlockHeight:0,
-        startTime:0,
-        feeMultiplier:0,
-        nextEpoch:0
+        number: 0,
+        firstBlockHeight: 0,
+        firstCoreBlockHeight: 0,
+        startTime: 0,
+        feeMultiplier: 0,
+        nextEpoch: 0
       }])
       mock.method(tenderdashRpc, 'getStatus', async () => (mockTDStatus))
       mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
@@ -278,12 +278,12 @@ describe('Other routes', () => {
 
       const expectedStats = {
         epoch: {
-          number:0,
-          firstBlockHeight:0,
-          firstCoreBlockHeight:0,
-          startTime:0,
-          feeMultiplier:0,
-          nextEpoch:0
+          number: 0,
+          firstBlockHeight: 0,
+          firstCoreBlockHeight: 0,
+          startTime: 0,
+          feeMultiplier: 0,
+          nextEpoch: 0
         },
         identitiesCount: 1,
         transactionsCount: 3,
