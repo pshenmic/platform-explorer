@@ -33,7 +33,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
   const fetchData = (page, count, active) => {
     setValidators({ data: {}, loading: true, error: false })
 
-    Api.getValidators(page, count, 'desc', active)
+    Api.getValidators(page, count, 'desc', active || null)
       .then(res => {
         if (res.pagination.total === -1) {
           setCurrentPage(0)
@@ -90,7 +90,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
                     title: 'Active'
                   },
                   {
-                    title: 'Inactive'
+                    title: 'All'
                   }
                 ]}
                 onChange={e => isActiveSwitchHandler(e === 'Active')}

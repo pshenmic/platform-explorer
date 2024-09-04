@@ -99,8 +99,8 @@ const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy) => {
   return call(`identities?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
 
-const getValidators = (page = 1, limit = 30, order = 'asc', isActive = true, orderBy) => {
-  return call(`validators?page=${page}&limit=${limit}&order=${order}&isActive=${String(isActive)}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
+const getValidators = (page = 1, limit = 30, order = 'asc', isActive, orderBy) => {
+  return call(`validators?page=${page}&limit=${limit}&order=${order}${typeof isActive === 'boolean' ? `&isActive=${String(isActive)}` : ''}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
 
 const getValidatorByProTxHash = (proTxHash) => {
