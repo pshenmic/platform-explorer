@@ -17,6 +17,10 @@ class EpochController {
 
     const [currentEpoch, nextEpoch] = await this.dapi.getEpochsInfo(index, 200, true)
 
+    if(!currentEpoch){
+      response.status(404).send({ message: 'not found' })
+    }
+
     const epoch = Epoch.fromObject({ ...currentEpoch, nextEpoch })
 
     const epochInfo = await this.epochDAO.getEpochByObject(epoch)
