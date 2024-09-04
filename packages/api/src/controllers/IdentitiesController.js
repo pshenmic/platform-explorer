@@ -40,7 +40,7 @@ class IdentitiesController {
     const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
 
     const identitiesWithBalance = await Promise.all(identities.resultSet.map(async identity => {
-      const balance = await this.dapi.getIdentityBalance(identity.identifier)
+      const balance = await this.dapi.getIdentityBalance(identity.identifier,identity.txHash?'base58':'base64')
       return { ...identity, balance }
     }))
 
