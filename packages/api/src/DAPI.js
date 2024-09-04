@@ -10,7 +10,7 @@ class DAPI {
   }
 
   async getIdentityBalance (identifier) {
-    const { balance } = await this.dapi.platform.getIdentityBalance(Identifier.from(identifier))
+    const { balance } = await this.dapi.platform.getIdentityBalance(Identifier.from(identifier, 'base58'))
     return balance
   }
 
