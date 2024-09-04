@@ -26,7 +26,7 @@ class MainController {
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
       TenderdashRPC.getStatus(),
-      this.dapi.getEpochsInfo(undefined, 1),
+      this.dapi.getEpochsInfo(1),
       this.dapi.getTotalCredits()
     ])).map((e) => e.value ?? null)
 
