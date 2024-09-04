@@ -19,8 +19,8 @@ class DAPI {
     return totalCreditsInPlatform
   }
 
-  async getEpochsInfo(start,count, ascending) {
-    const {epochsInfo} = await this.dapi.platform.getEpochsInfo(start,count,{ascending})
+  async getEpochsInfo (start, count, ascending) {
+    const { epochsInfo } = await this.dapi.platform.getEpochsInfo(start, count, { ascending })
     return epochsInfo
   }
 }

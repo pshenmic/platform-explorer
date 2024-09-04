@@ -1,4 +1,4 @@
-const {EPOCH_CHANGE_TIME} = require('../constants');
+const { EPOCH_CHANGE_TIME } = require('../constants')
 
 module.exports = class Epoch {
   number
@@ -9,7 +9,7 @@ module.exports = class Epoch {
   nextEpochApproximateTime
   nextEpoch
 
-  constructor(number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, nextEpochApproximateTime, nextEpoch) {
+  constructor (number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, nextEpochApproximateTime, nextEpoch) {
     this.number = number ?? null
     this.firstBlockHeight = firstBlockHeight ?? null
     this.firstCoreBlockHeight = firstCoreBlockHeight ?? null
@@ -19,19 +19,18 @@ module.exports = class Epoch {
     this.nextEpoch = nextEpoch ?? null
   }
 
-  static fromObject({number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, nextEpoch}) {
+  static fromObject ({ number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, nextEpoch }) {
     let nextEpochApproximateTime
 
-    if(nextEpoch){
+    if (nextEpoch) {
       nextEpochApproximateTime = nextEpoch.startTime
-    }else if(startTime){
+    } else if (startTime) {
       nextEpochApproximateTime = startTime + EPOCH_CHANGE_TIME
     }
 
     return new Epoch(number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, nextEpochApproximateTime, nextEpoch)
   }
 }
-
 
 // module.exports = class Epoch {
 //   index

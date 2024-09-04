@@ -6,7 +6,6 @@ const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
-const Constants = require('../constants')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
@@ -27,7 +26,7 @@ class MainController {
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
       TenderdashRPC.getStatus(),
-      this.dapi.getEpochsInfo(undefined,1),
+      this.dapi.getEpochsInfo(undefined, 1),
       this.dapi.getTotalCredits()
     ])).map((e) => e.value ?? null)
 
