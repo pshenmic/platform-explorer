@@ -15,7 +15,7 @@ class EpochController {
   getEpochByIndex = async (request, response) => {
     const { index } = request.params
 
-    try{
+    try {
       const [currentEpoch, nextEpoch] = await this.dapi.getEpochsInfo(2, index, true)
 
       const epoch = Epoch.fromObject({ ...currentEpoch, nextEpoch })
@@ -23,7 +23,7 @@ class EpochController {
       const epochInfo = await this.epochDAO.getEpochByObject(epoch)
 
       response.send(epochInfo)
-    }catch (e) {
+    } catch (e) {
       response.status(400).send({ message: 'not found' })
     }
   }

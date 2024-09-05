@@ -1,10 +1,10 @@
 process.env.EPOCH_CHANGE_TIME = 3600000
-const {describe, it, before, after, mock} = require('node:test')
+const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const {getKnex} = require('../../src/utils')
+const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/DAPI')
 
@@ -59,7 +59,7 @@ describe('Epoch routes', () => {
         timestamp: new Date(60000 * i),
         validator: i % 5 === 0 ? validator.pro_tx_hash : null
       })
-      const identity = await fixtures.identity(knex, {block_hash: block.hash})
+      const identity = await fixtures.identity(knex, { block_hash: block.hash })
       const transaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
         index: i,
@@ -80,7 +80,7 @@ describe('Epoch routes', () => {
 
   describe('getEpochInfo()', async () => {
     it('should return current epoch data', async () => {
-      const {body} = await client.get('/epoch/0')
+      const { body } = await client.get('/epoch/0')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
