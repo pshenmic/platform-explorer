@@ -8,7 +8,7 @@ const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
-const Base58 = require('base-58')
+const Base58 = require('bs58').default
 
 describe('Validators routes', () => {
   let app
@@ -146,19 +146,7 @@ describe('Validators routes', () => {
           confirmations: dashCoreRpcResponse.confirmations,
           state: dashCoreRpcResponse.state
         },
-        identity: {
-          identifier: identity.identifier,
-          revision: identity.revision,
-          balance: null,
-          timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-          txHash: identity.txHash,
-          totalTxs: 1,
-          totalTransfers: 0,
-          totalDocuments: 0,
-          totalDataContracts: 0,
-          isSystem: false,
-          owner: identity.identifier
-        }
+        identity: identity.identifier
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -200,19 +188,7 @@ describe('Validators routes', () => {
           confirmations: dashCoreRpcResponse.confirmations,
           state: dashCoreRpcResponse.state
         },
-        identity: {
-          identifier: identity.identifier,
-          revision: identity.revision,
-          balance: null,
-          timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-          txHash: identity.txHash,
-          totalTxs: 1,
-          totalTransfers: 0,
-          totalDocuments: 0,
-          totalDataContracts: 0,
-          isSystem: false,
-          owner: identity.identifier
-        }
+        identity: identity.identifier
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -268,19 +244,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -329,19 +293,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -389,19 +341,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -453,19 +393,7 @@ describe('Validators routes', () => {
                   confirmations: dashCoreRpcResponse.confirmations,
                   state: dashCoreRpcResponse.state
                 },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -513,19 +441,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -575,19 +491,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -635,19 +539,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -712,19 +604,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -773,19 +653,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -833,19 +701,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -893,19 +749,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -953,19 +797,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -1014,19 +846,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -1074,19 +894,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -1139,19 +947,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -1188,19 +984,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -1236,19 +1020,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -1284,19 +1056,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -1332,19 +1092,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -1393,19 +1141,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 
@@ -1453,19 +1189,7 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: {
-                identifier: identity.identifier,
-                revision: identity.revision,
-                balance: null,
-                timestamp: blocks.find(block => block.hash === identity.transaction.block_hash).timestamp.toISOString(),
-                txHash: identity.txHash,
-                totalTxs: 1,
-                totalTransfers: 0,
-                totalDocuments: 0,
-                totalDataContracts: 0,
-                isSystem: false,
-                owner: identity.identifier
-              }
+              identity: identity.identifier
             }
           })
 

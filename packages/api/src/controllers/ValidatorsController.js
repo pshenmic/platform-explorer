@@ -26,20 +26,13 @@ class ValidatorsController {
 
     const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
-    const validatorWithIdentity = await Validator.getIdentity(
-      {
-        ...new Validator(
-          validator.proTxHash,
-          isActive,
-          validator.proposedBlocksAmount,
-          validator.lastProposedBlockHeader,
-          ProTxInfo.fromObject(proTxInfo)
-        ),
-        identitiesDAO: this.identitiesDAO
-      }
-    )
-
-    response.send(validatorWithIdentity)
+    response.send(new Validator(
+      validator.proTxHash,
+      isActive,
+      validator.proposedBlocksAmount,
+      validator.lastProposedBlockHeader,
+      ProTxInfo.fromObject(proTxInfo)
+    ))
   }
 
   getValidators = async (request, response) => {
@@ -59,20 +52,14 @@ class ValidatorsController {
       validators.resultSet.map(async (validator) =>
         ({ ...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash) })))
 
-    const resultSet = await Promise.all(
-      validatorsWithInfo.map(async validator =>
-        await Validator.getIdentity(
-          {
-            ...new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
-              activeValidator.pro_tx_hash === validator.proTxHash),
-            validator.proposedBlocksAmount,
-            validator.lastProposedBlockHeader,
-            ProTxInfo.fromObject(validator.proTxInfo)
-            ),
-            identitiesDAO: this.identitiesDAO
-          }
-        )
-      ))
+    const resultSet = validatorsWithInfo.map(validator =>
+      new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
+        activeValidator.pro_tx_hash === validator.proTxHash),
+      validator.proposedBlocksAmount,
+      validator.lastProposedBlockHeader,
+      ProTxInfo.fromObject(validator.proTxInfo)
+      )
+    )
 
     return response.send({
       ...validators,

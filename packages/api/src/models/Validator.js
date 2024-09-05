@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 const BlockHeader = require('./BlockHeader')
-const Base58 = require('base-58')
+const Base58 = require('bs58').default
 
 module.exports = class Validator {
   proTxHash
@@ -15,15 +15,14 @@ module.exports = class Validator {
     isActive,
     proposedBlocksAmount,
     lastProposedBlockHeader,
-    proTxInfo,
-    identity
+    proTxInfo
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null
     this.proposedBlocksAmount = proposedBlocksAmount ?? null
     this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
     this.proTxInfo = proTxInfo ?? null
-    this.identity = identity ?? null
+    this.identity = proTxHash ? Base58.encode(Buffer.from(proTxHash, 'hex')) : null
   }
 
   static fromRow ({
@@ -52,21 +51,6 @@ module.exports = class Validator {
           validator: pro_tx_hash
         })
         : null
-    )
-  }
-
-  static async getIdentity ({ proTxHash, isActive, proposedBlocksAmount, lastProposedBlockHeader, proTxInfo, identitiesDAO }) {
-    const identitifier = Base58.encode(Buffer.from(proTxHash, 'hex'))
-
-    const identity = await identitiesDAO.getIdentityByIdentifier(identitifier)
-
-    return new Validator(
-      proTxHash,
-      isActive,
-      proposedBlocksAmount,
-      lastProposedBlockHeader,
-      proTxInfo,
-      identity
     )
   }
 }

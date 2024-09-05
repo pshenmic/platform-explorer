@@ -226,57 +226,45 @@ GET /validators
 {
   resultSet: [
     {
-      "proTxHash": "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E",
-      "isActive": true,
-      "proposedBlocksAmount": 197,
-      "lastProposedBlockHeader": {
-        "hash": "C6ABF0D0804553A119F17B62B7B77BA67218187C820A7BDD79ECBDBE5A8D2746",
-        "height": 5923,
-        "timestamp": "2024-09-05T16:59:17.976Z",
-        "blockVersion": 14,
-        "appVersion": 1,
-        "l1LockedHeight": 1097293,
-        "validator": "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E"
+      proTxHash: "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E",
+      isActive: true,
+      proposedBlocksAmount: 197,
+      lastProposedBlockHeader: {
+        hash: "C6ABF0D0804553A119F17B62B7B77BA67218187C820A7BDD79ECBDBE5A8D2746",
+        height: 5923,
+        timestamp: "2024-09-05T16:59:17.976Z",
+        blockVersion: 14,
+        appVersion: 1,
+        l1LockedHeight: 1097293,
+        validator: "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E"
       },
-      "proTxInfo": {
-        "type": "Evo",
-        "collateralHash": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
-        "collateralIndex": 25,
-        "collateralAddress": "yc8K5Z6LKBHhMTqK8zgih4ebdjeQ5mTyKZ",
-        "operatorReward": 0,
-        "confirmations": 246967,
-        "state": {
-          "version": 2,
-          "service": "44.233.44.95:19999",
-          "registeredHeight": 850334,
-          "lastPaidHeight": 1097196,
-          "consecutivePayments": 0,
-          "PoSePenalty": 0,
-          "PoSeRevivedHeight": 1083081,
-          "PoSeBanHeight": -1,
-          "revocationReason": 0,
-          "ownerAddress": "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
-          "votingAddress": "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
-          "platformNodeID": "46d938862af6d9a291e26c0048177db2892a710b",
-          "platformP2PPort": 36656,
-          "platformHTTPPort": 1443,
-          "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-          "pubKeyOperator": "99b9f0fbeea3822cdc5b3654dea52103b3d9d5f01db4201955ea3689074d37da4711d8f313d4b5458eef3395aa75bfc7"
+      proTxInfo: {
+        type: "Evo",
+        collateralHash: "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
+        collateralIndex: 25,
+        collateralAddress: "yc8K5Z6LKBHhMTqK8zgih4ebdjeQ5mTyKZ",
+        operatorReward: 0,
+        confirmations: 246967,
+        state: {
+          version: 2,
+          service: "44.233.44.95:19999",
+          registeredHeight: 850334,
+          lastPaidHeight: 1097196,
+          consecutivePayments: 0,
+          PoSePenalty: 0,
+          PoSeRevivedHeight: 1083081,
+          PoSeBanHeight: -1,
+          revocationReason: 0,
+          ownerAddress: "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
+          votingAddress: "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
+          platformNodeID: "46d938862af6d9a291e26c0048177db2892a710b",
+          platformP2PPort: 36656,
+          platformHTTPPort: 1443,
+          payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+          pubKeyOperator: "99b9f0fbeea3822cdc5b3654dea52103b3d9d5f01db4201955ea3689074d37da4711d8f313d4b5458eef3395aa75bfc7"
         }
       },
-      "identity": {
-        "identifier": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
-        "revision": 0,
-        "balance": null,
-        "timestamp": null,
-        "txHash": null,
-        "totalTxs": 0,
-        "totalTransfers": 0,
-        "totalDocuments": 0,
-        "totalDataContracts": 0,
-        "isSystem": false,
-        "owner": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
-      }
+      identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
     }, ...
   ],
   pagination: { 
@@ -294,57 +282,45 @@ Get validator by ProTxHash.
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 
 {
-  "proTxHash": "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E",
-  "isActive": true,
-  "proposedBlocksAmount": 197,
-  "lastProposedBlockHeader": {
-    "hash": "C6ABF0D0804553A119F17B62B7B77BA67218187C820A7BDD79ECBDBE5A8D2746",
-    "height": 5923,
-    "timestamp": "2024-09-05T16:59:17.976Z",
-    "blockVersion": 14,
-    "appVersion": 1,
-    "l1LockedHeight": 1097293,
-    "validator": "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E"
+  proTxHash: "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E",
+  isActive: true,
+  proposedBlocksAmount: 197,
+  lastProposedBlockHeader: {
+    hash: "C6ABF0D0804553A119F17B62B7B77BA67218187C820A7BDD79ECBDBE5A8D2746",
+    height: 5923,
+    timestamp: "2024-09-05T16:59:17.976Z",
+    blockVersion: 14,
+    appVersion: 1,
+    l1LockedHeight: 1097293,
+    validator: "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E"
   },
-  "proTxInfo": {
-    "type": "Evo",
-    "collateralHash": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
-    "collateralIndex": 25,
-    "collateralAddress": "yc8K5Z6LKBHhMTqK8zgih4ebdjeQ5mTyKZ",
-    "operatorReward": 0,
-    "confirmations": 246967,
-    "state": {
-      "version": 2,
-      "service": "44.233.44.95:19999",
-      "registeredHeight": 850334,
-      "lastPaidHeight": 1097196,
-      "consecutivePayments": 0,
-      "PoSePenalty": 0,
-      "PoSeRevivedHeight": 1083081,
-      "PoSeBanHeight": -1,
-      "revocationReason": 0,
-      "ownerAddress": "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
-      "votingAddress": "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
-      "platformNodeID": "46d938862af6d9a291e26c0048177db2892a710b",
-      "platformP2PPort": 36656,
-      "platformHTTPPort": 1443,
-      "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-      "pubKeyOperator": "99b9f0fbeea3822cdc5b3654dea52103b3d9d5f01db4201955ea3689074d37da4711d8f313d4b5458eef3395aa75bfc7"
+  proTxInfo: {
+    type: "Evo",
+    collateralHash: "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
+    collateralIndex: 25,
+    collateralAddress: "yc8K5Z6LKBHhMTqK8zgih4ebdjeQ5mTyKZ",
+    operatorReward: 0,
+    confirmations: 246967,
+    state: {
+      version: 2,
+      service: "44.233.44.95:19999",
+      registeredHeight: 850334,
+      lastPaidHeight: 1097196,
+      consecutivePayments: 0,
+      PoSePenalty: 0,
+      PoSeRevivedHeight: 1083081,
+      PoSeBanHeight: -1,
+      revocationReason: 0,
+      ownerAddress: "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
+      votingAddress: "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
+      platformNodeID: "46d938862af6d9a291e26c0048177db2892a710b",
+      platformP2PPort: 36656,
+      platformHTTPPort: 1443,
+      payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+      pubKeyOperator: "99b9f0fbeea3822cdc5b3654dea52103b3d9d5f01db4201955ea3689074d37da4711d8f313d4b5458eef3395aa75bfc7"
     }
   },
-  "identity": {
-    "identifier": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
-    "revision": 0,
-    "balance": null,
-    "timestamp": null,
-    "txHash": null,
-    "totalTxs": 0,
-    "totalTransfers": 0,
-    "totalDocuments": 0,
-    "totalDataContracts": 0,
-    "isSystem": false,
-    "owner": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
-  }
+  "identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
 }
 ```
 ---
