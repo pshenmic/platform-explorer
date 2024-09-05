@@ -33,19 +33,19 @@ export default function ValidatorsTotal () {
       cards={[
         {
           title: 'Epoch:',
-          value: status?.data?.epoch?.number !== undefined ? status.data.epoch.number : 'n/a',
+          value: typeof status?.data?.epoch?.number === 'number' ? status.data.epoch.number : 'n/a',
           icon: 'Sandglass',
           loading: status.loading
         },
         {
           title: 'Total Validators:',
-          value: validators?.data?.pagination?.total || 'n/a',
+          value: typeof validators?.data?.pagination?.total === 'number' ? validators.data.pagination.total : 'n/a',
           icon: 'Nodes',
           loading: validators.loading
         },
         {
           title: 'Fees collected:',
-          value: currencyRound(epoch?.data?.totalCollectedFees) || 'n/a',
+          value: typeof status?.data?.epoch?.number === 'number' ? currencyRound(epoch.data.totalCollectedFees) : 'n/a',
           icon: 'Coins',
           loading: epoch.loading
         },
@@ -54,7 +54,7 @@ export default function ValidatorsTotal () {
           value: epoch?.data?.bestValidator || 'n/a',
           icon: 'StarCheck',
           loading: epoch.loading,
-          link: epoch?.data?.bestValidator ? `/validator/${epoch?.data?.bestValidator}` : '',
+          link: epoch?.data?.bestValidator ? `/validator/${epoch.data.bestValidator}` : '',
           format: ['elipsed']
         }
       ]}

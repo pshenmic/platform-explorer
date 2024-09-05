@@ -30,25 +30,25 @@ export default function BlocksTotal () {
         cards={[
           {
             title: 'Epoch:',
-            value: status?.data?.epoch?.number !== undefined ? status.data.epoch.number : 'n/a',
+            value: typeof status?.data?.epoch?.number === 'number' ? status.data.epoch.number : 'n/a',
             icon: 'Sandglass',
             loading: status.loading
           },
           {
             title: 'Blocks:',
-            value: currencyRound(status?.data?.api?.block?.height) || '-',
+            value: typeof status?.data?.api?.block?.height === 'number' ? currencyRound(status.data.api.block.height) : 'n/a',
             icon: 'Blocks',
             loading: status.loading
           },
           {
             title: 'Avg. TPS*:',
-            value: epoch?.data?.tps?.toFixed(4) || 'n/a',
+            value: typeof epoch?.data?.tps === 'number' ? epoch.data.tps.toFixed(4) : 'n/a',
             icon: 'Timer',
             loading: epoch.loading
           },
           {
             title: 'Transactions:',
-            value: currencyRound(status?.data?.transactionsCount) || '-',
+            value: typeof status?.data?.transactionsCount === 'number' ? currencyRound(status.data.transactionsCount) : 'n/a',
             icon: 'Transactions',
             loading: status.loading
           }
