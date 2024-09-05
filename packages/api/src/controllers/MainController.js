@@ -77,7 +77,7 @@ class MainController {
       }
     }
 
-    if (/^[0-9A-F]{64,64}$/.test(query)) {
+    if (/^[0-9A-f]{64,64}$/.test(query)) {
       // search block by hash
       const block = await this.blocksDAO.getBlockByHash(query)
 
