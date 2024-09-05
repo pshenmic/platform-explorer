@@ -59,8 +59,7 @@ class ValidatorsController {
         validator.proposedBlocksAmount,
         validator.lastProposedBlockHeader,
         ProTxInfo.fromObject(validator.proTxInfo)
-        )
-      )
+        ))
     })
   }
 
