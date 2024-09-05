@@ -12,11 +12,12 @@
     "lint": "standard ."
   },
   "dependencies": {
-    "@dashevo/dapi-grpc": "github:owl352/dapi-grpc",
     "@dashevo/dapi-client": "github:owl352/dapi-client",
+    "@dashevo/dapi-grpc": "github:owl352/dapi-grpc",
     "@dashevo/dashd-rpc": "^19.0.0",
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
+    "base-58": "^0.0.1",
     "dash": "4.2.0",
     "dotenv": "^16.3.1",
     "fastify": "^4.21.0",

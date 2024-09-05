@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 const BlockHeader = require('./BlockHeader')
+const Base58 = require('base-58')
 
 module.exports = class Validator {
   proTxHash
@@ -7,31 +8,35 @@ module.exports = class Validator {
   proposedBlocksAmount
   lastProposedBlockHeader
   proTxInfo
-  constructor (
+  identity
+
+  constructor(
     proTxHash,
     isActive,
     proposedBlocksAmount,
     lastProposedBlockHeader,
-    proTxInfo
+    proTxInfo,
+    identity
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null
     this.proposedBlocksAmount = proposedBlocksAmount ?? null
     this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
     this.proTxInfo = proTxInfo ?? null
+    this.identity = identity ?? null
   }
 
-  static fromRow ({
-    pro_tx_hash,
-    proposed_blocks_amount,
-    latest_height,
-    latest_timestamp,
-    block_hash,
-    l1_locked_height,
-    app_version,
-    block_version,
-    is_active
-  }) {
+  static fromRow({
+                   pro_tx_hash,
+                   proposed_blocks_amount,
+                   latest_height,
+                   latest_timestamp,
+                   block_hash,
+                   l1_locked_height,
+                   app_version,
+                   block_version,
+                   is_active
+                 }) {
     return new Validator(
       pro_tx_hash,
       is_active,
@@ -47,6 +52,21 @@ module.exports = class Validator {
           validator: pro_tx_hash
         })
         : null
+    )
+  }
+
+  static async getIdentity({proTxHash, isActive, proposedBlocksAmount, lastProposedBlockHeader, proTxInfo, identitiesDAO}){
+    const identitifier = Base58.encode(Buffer.from(proTxHash,'hex'))
+
+    const identity = await identitiesDAO.getIdentityByIdentifier(identitifier)
+
+    return new Validator(
+      proTxHash,
+      isActive,
+      proposedBlocksAmount,
+      lastProposedBlockHeader,
+      proTxInfo,
+      identity
     )
   }
 }
