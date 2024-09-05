@@ -26,9 +26,6 @@ export default function ValidatorsTotal () {
       .catch(err => fetchHandlerError(setValidators, err))
   }
 
-  console.log('status', status)
-  console.log('epoch', epoch)
-
   useEffect(fetchData, [])
 
   return (
