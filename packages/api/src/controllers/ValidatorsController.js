@@ -6,18 +6,18 @@ const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 
 class ValidatorsController {
-  constructor(knex) {
+  constructor (knex) {
     this.validatorsDAO = new ValidatorsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex)
   }
 
   getValidatorByProTxHash = async (request, response) => {
-    const {hash} = request.params
+    const { hash } = request.params
 
     const validator = await this.validatorsDAO.getValidatorByProTxHash(hash)
 
     if (!validator) {
-      return response.status(404).send({message: 'not found'})
+      return response.status(404).send({ message: 'not found' })
     }
 
     const validators = await TenderdashRPC.getValidators()
@@ -43,7 +43,7 @@ class ValidatorsController {
   }
 
   getValidators = async (request, response) => {
-    const {page = 1, limit = 10, order = 'asc', isActive = undefined} = request.query
+    const { page = 1, limit = 10, order = 'asc', isActive = undefined } = request.query
 
     const activeValidators = await TenderdashRPC.getValidators()
 
@@ -57,18 +57,17 @@ class ValidatorsController {
 
     const validatorsWithInfo = await Promise.all(
       validators.resultSet.map(async (validator) =>
-        ({...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash)})))
-
+        ({ ...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash) })))
 
     const resultSet = await Promise.all(
       validatorsWithInfo.map(async validator =>
         await Validator.getIdentity(
           {
             ...new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
-                activeValidator.pro_tx_hash === validator.proTxHash),
-              validator.proposedBlocksAmount,
-              validator.lastProposedBlockHeader,
-              ProTxInfo.fromObject(validator.proTxInfo)
+              activeValidator.pro_tx_hash === validator.proTxHash),
+            validator.proposedBlocksAmount,
+            validator.lastProposedBlockHeader,
+            ProTxInfo.fromObject(validator.proTxInfo)
             ),
             identitiesDAO: this.identitiesDAO
           }
@@ -82,14 +81,14 @@ class ValidatorsController {
   }
 
   getValidatorStatsByProTxHash = async (request, response) => {
-    const {hash} = request.params
-    const {timespan = '1h'} = request.query
+    const { hash } = request.params
+    const { timespan = '1h' } = request.query
 
     const possibleValues = ['1h', '24h', '3d', '1w']
 
     if (possibleValues.indexOf(timespan) === -1) {
       return response.status(400)
-        .send({message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid`})
+        .send({ message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid` })
     }
 
     const stats = await this.validatorsDAO.getValidatorStatsByProTxHash(hash, timespan)

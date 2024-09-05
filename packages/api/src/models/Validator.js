@@ -10,7 +10,7 @@ module.exports = class Validator {
   proTxInfo
   identity
 
-  constructor(
+  constructor (
     proTxHash,
     isActive,
     proposedBlocksAmount,
@@ -26,17 +26,17 @@ module.exports = class Validator {
     this.identity = identity ?? null
   }
 
-  static fromRow({
-                   pro_tx_hash,
-                   proposed_blocks_amount,
-                   latest_height,
-                   latest_timestamp,
-                   block_hash,
-                   l1_locked_height,
-                   app_version,
-                   block_version,
-                   is_active
-                 }) {
+  static fromRow ({
+    pro_tx_hash,
+    proposed_blocks_amount,
+    latest_height,
+    latest_timestamp,
+    block_hash,
+    l1_locked_height,
+    app_version,
+    block_version,
+    is_active
+  }) {
     return new Validator(
       pro_tx_hash,
       is_active,
@@ -55,8 +55,8 @@ module.exports = class Validator {
     )
   }
 
-  static async getIdentity({proTxHash, isActive, proposedBlocksAmount, lastProposedBlockHeader, proTxInfo, identitiesDAO}){
-    const identitifier = Base58.encode(Buffer.from(proTxHash,'hex'))
+  static async getIdentity ({ proTxHash, isActive, proposedBlocksAmount, lastProposedBlockHeader, proTxInfo, identitiesDAO }) {
+    const identitifier = Base58.encode(Buffer.from(proTxHash, 'hex'))
 
     const identity = await identitiesDAO.getIdentityByIdentifier(identitifier)
 
