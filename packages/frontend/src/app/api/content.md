@@ -1,36 +1,3 @@
-# API
-
-Api module provides a view for a database filled up with data with indexer.
-
-### Start
-
-````
-$ npm install
-$ npm start
-````
-
-Environments:
-```
-POSTGRES_HOST=127.0.0.1
-POSTGRES_DB=indexer
-POSTGRES_USER=indexer
-POSTGRES_PASS=indexer
-TENDERDASH_URL=http://127.0.0.1:36657
-DASHCORE_URL=http://127.0.0.1:19998
-DASHCORE_USER=username
-DASHCORE_PASS=password
-EPOCH_CHANGE_TIME=3600000
-```
-
-
-### Deploy
-
-#### docker
-Prepare an .env file with all necessary environments and then start a docker container
-```
-docker run -d -p 3005:3005 --restart always --env-file .env ghcr.io/pshenmic/platform-explorer:api
-```
-
 ## HTTP API
 
 Platform Explorer HTTP API allow you to query and see platform blockchain data programmatically with a REST interface via HTTP calls. You can use it to build, test, or improve your applications.
@@ -226,57 +193,45 @@ GET /validators
 {
   resultSet: [
     {
-      "proTxHash": "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E",
-      "isActive": true,
-      "proposedBlocksAmount": 197,
-      "lastProposedBlockHeader": {
-        "hash": "C6ABF0D0804553A119F17B62B7B77BA67218187C820A7BDD79ECBDBE5A8D2746",
-        "height": 5923,
-        "timestamp": "2024-09-05T16:59:17.976Z",
-        "blockVersion": 14,
-        "appVersion": 1,
-        "l1LockedHeight": 1097293,
-        "validator": "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E"
+      proTxHash: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+      isActive: true,
+      proposedBlocksAmount: 5,
+      lastProposedBlockHeader: {
+        height: 5,
+        timestamp: "2024-06-23T13:51:44.154Z",
+        hash: "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
+        l1LockedHeight: 1337,
+        appVersion: 1,
+        blockVersion: 13
+        validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
       },
-      "proTxInfo": {
-        "type": "Evo",
-        "collateralHash": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
-        "collateralIndex": 25,
-        "collateralAddress": "yc8K5Z6LKBHhMTqK8zgih4ebdjeQ5mTyKZ",
-        "operatorReward": 0,
-        "confirmations": 246967,
-        "state": {
-          "version": 2,
-          "service": "44.233.44.95:19999",
-          "registeredHeight": 850334,
-          "lastPaidHeight": 1097196,
-          "consecutivePayments": 0,
-          "PoSePenalty": 0,
-          "PoSeRevivedHeight": 1083081,
-          "PoSeBanHeight": -1,
-          "revocationReason": 0,
-          "ownerAddress": "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
-          "votingAddress": "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
-          "platformNodeID": "46d938862af6d9a291e26c0048177db2892a710b",
-          "platformP2PPort": 36656,
-          "platformHTTPPort": 1443,
-          "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-          "pubKeyOperator": "99b9f0fbeea3822cdc5b3654dea52103b3d9d5f01db4201955ea3689074d37da4711d8f313d4b5458eef3395aa75bfc7"
+      proTxInfo: {
+        type: "Evo",
+        collateralHash: "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
+        collateralIndex: 19,
+        collateralAddress: "yYK3Kiq36Xmf1ButkTUYb1iCNtJfSSM4KH",
+        operatorReward: 0,
+        confirmations: 214424,
+        state: {
+            version: 2,
+            service: "35.164.23.245:19999",
+            registeredHeight: 850334,
+            lastPaidHeight: 1064721,
+            consecutivePayments: 0,
+            PoSePenalty: 0,
+            PoSeRevivedHeight: 1027671,
+            PoSeBanHeight: -1,
+            revocationReason: 0,
+            ownerAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+            votingAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+            platformNodeID: "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
+            platformP2PPort: 36656,
+            platformHTTPPort: 1443,
+            payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+            pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
         }
-      },
-      "identity": {
-        "identifier": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
-        "revision": 0,
-        "balance": null,
-        "timestamp": null,
-        "txHash": null,
-        "totalTxs": 0,
-        "totalTransfers": 0,
-        "totalDocuments": 0,
-        "totalDataContracts": 0,
-        "isSystem": false,
-        "owner": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
       }
+      identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
     }, ...
   ],
   pagination: { 
@@ -294,57 +249,45 @@ Get validator by ProTxHash.
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 
 {
-  "proTxHash": "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E",
-  "isActive": true,
-  "proposedBlocksAmount": 197,
-  "lastProposedBlockHeader": {
-    "hash": "C6ABF0D0804553A119F17B62B7B77BA67218187C820A7BDD79ECBDBE5A8D2746",
-    "height": 5923,
-    "timestamp": "2024-09-05T16:59:17.976Z",
-    "blockVersion": 14,
-    "appVersion": 1,
-    "l1LockedHeight": 1097293,
-    "validator": "754B89DAE8DB20FC4CEE5E3ADB07B146D7EFE508A66FA0A8E1094675B9DAA35E"
+  proTxHash: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+  isActive: true,
+  proposedBlocksAmount: 5,
+  lastProposedBlockHeader: {
+    height: 5,
+    timestamp: "2024-06-23T13:51:44.154Z",
+    hash: "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
+    l1LockedHeight: 1337,
+    appVersion: 1,
+    blockVersion: 13,
+    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
   },
-  "proTxInfo": {
-    "type": "Evo",
-    "collateralHash": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
-    "collateralIndex": 25,
-    "collateralAddress": "yc8K5Z6LKBHhMTqK8zgih4ebdjeQ5mTyKZ",
-    "operatorReward": 0,
-    "confirmations": 246967,
-    "state": {
-      "version": 2,
-      "service": "44.233.44.95:19999",
-      "registeredHeight": 850334,
-      "lastPaidHeight": 1097196,
-      "consecutivePayments": 0,
-      "PoSePenalty": 0,
-      "PoSeRevivedHeight": 1083081,
-      "PoSeBanHeight": -1,
-      "revocationReason": 0,
-      "ownerAddress": "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
-      "votingAddress": "yhKYB5z9vsmurGiJs1LdraDuBmwg2E5751",
-      "platformNodeID": "46d938862af6d9a291e26c0048177db2892a710b",
-      "platformP2PPort": 36656,
-      "platformHTTPPort": 1443,
-      "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-      "pubKeyOperator": "99b9f0fbeea3822cdc5b3654dea52103b3d9d5f01db4201955ea3689074d37da4711d8f313d4b5458eef3395aa75bfc7"
+  proTxInfo: {
+    type: "Evo",
+    collateralHash: "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
+    collateralIndex: 19,
+    collateralAddress: "yYK3Kiq36Xmf1ButkTUYb1iCNtJfSSM4KH",
+    operatorReward: 0,
+    confirmations: 214424,
+    state: {
+        version: 2,
+        service: "35.164.23.245:19999",
+        registeredHeight: 850334,
+        lastPaidHeight: 1064721,
+        consecutivePayments: 0,
+        PoSePenalty: 0,
+        PoSeRevivedHeight: 1027671,
+        PoSeBanHeight: -1,
+        revocationReason: 0,
+        ownerAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+        votingAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+        platformNodeID: "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
+        platformP2PPort: 36656,
+        platformHTTPPort: 1443,
+        payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+        pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
     }
   },
-  "identity": {
-    "identifier": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
-    "revision": 0,
-    "balance": null,
-    "timestamp": null,
-    "txHash": null,
-    "totalTxs": 0,
-    "totalTransfers": 0,
-    "totalDocuments": 0,
-    "totalDataContracts": 0,
-    "isSystem": false,
-    "owner": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
-  }
+  "identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
 }
 ```
 ---
