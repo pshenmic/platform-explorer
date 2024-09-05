@@ -1,5 +1,4 @@
 const ValidatorsDAO = require('../dao/ValidatorsDAO')
-const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
@@ -8,7 +7,6 @@ const ProTxInfo = require('../models/ProTxInfo')
 class ValidatorsController {
   constructor (knex) {
     this.validatorsDAO = new ValidatorsDAO(knex)
-    this.identitiesDAO = new IdentitiesDAO(knex)
   }
 
   getValidatorByProTxHash = async (request, response) => {
