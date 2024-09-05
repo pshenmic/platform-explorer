@@ -15,7 +15,7 @@ export default function BlocksTotal () {
       .then(res => {
         fetchHandlerSuccess(setStatus, res)
 
-        Api.getEpoch(res?.epoch?.index)
+        Api.getEpoch(res?.epoch?.number)
           .then(res => fetchHandlerSuccess(setEpoch, res))
           .catch(err => fetchHandlerError(setEpoch, err))
       })
@@ -30,7 +30,7 @@ export default function BlocksTotal () {
         cards={[
           {
             title: 'Epoch:',
-            value: status?.data?.epoch?.index || '-',
+            value: status?.data?.epoch?.number !== undefined ? status.data.epoch.number : 'n/a',
             icon: 'Sandglass',
             loading: status.loading
           },

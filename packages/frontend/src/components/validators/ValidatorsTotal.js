@@ -15,7 +15,7 @@ export default function ValidatorsTotal () {
       .then(res => {
         fetchHandlerSuccess(setStatus, res)
 
-        Api.getEpoch(res?.epoch?.index)
+        Api.getEpoch(res?.epoch?.number)
           .then(res => fetchHandlerSuccess(setEpoch, res))
           .catch(err => fetchHandlerError(setEpoch, err))
       })
@@ -26,6 +26,9 @@ export default function ValidatorsTotal () {
       .catch(err => fetchHandlerError(setValidators, err))
   }
 
+  console.log('status', status)
+  console.log('epoch', epoch)
+
   useEffect(fetchData, [])
 
   return (
@@ -33,7 +36,7 @@ export default function ValidatorsTotal () {
       cards={[
         {
           title: 'Epoch:',
-          value: status?.data?.epoch?.index || 'n/a',
+          value: status?.data?.epoch?.number !== undefined ? status.data.epoch.number : 'n/a',
           icon: 'Sandglass',
           loading: status.loading
         },

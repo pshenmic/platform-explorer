@@ -39,7 +39,7 @@ function NetworkStatus ({ className }) {
       <div align={['center', 'start', 'start', 'start', 'start']} className={`NetworkStatus__Stat NetworkStatus__Stat--Epoch ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>Epoch:</div>
         <div className={'NetworkStatus__InfoValue NetworkStatus__InfoValue--Epoch'}>
-          N/a
+          {status?.data?.epoch?.number !== undefined ? `${status?.data?.epoch?.number}` : 'n/a'}
         </div>
       </div>
 
