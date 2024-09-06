@@ -55,11 +55,12 @@ class ValidatorsController {
     return response.send({
       ...validators,
       resultSet: validatorsWithInfo.map(validator =>
-        new Validator(validator.proTxHash, activeValidators.some(activeValidator =>
-          activeValidator.pro_tx_hash === validator.proTxHash),
-        validator.proposedBlocksAmount,
-        validator.lastProposedBlockHeader,
-        ProTxInfo.fromObject(validator.proTxInfo)
+        new Validator(
+          validator.proTxHash, activeValidators.some(activeValidator =>
+            activeValidator.pro_tx_hash === validator.proTxHash),
+          validator.proposedBlocksAmount,
+          validator.lastProposedBlockHeader,
+          ProTxInfo.fromObject(validator.proTxInfo)
         )
       )
     })
