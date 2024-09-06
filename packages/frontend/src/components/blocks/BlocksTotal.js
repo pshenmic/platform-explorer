@@ -8,10 +8,17 @@ import { SideBlock } from '../containers'
 
 export default function BlocksTotal () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
+  const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
 
   const fetchData = () => {
     Api.getStatus()
-      .then(res => fetchHandlerSuccess(setStatus, res))
+      .then(res => {
+        fetchHandlerSuccess(setStatus, res)
+
+        Api.getEpoch(res?.epoch?.number)
+          .then(res => fetchHandlerSuccess(setEpoch, res))
+          .catch(err => fetchHandlerError(setEpoch, err))
+      })
       .catch(err => fetchHandlerError(setStatus, err))
   }
 
@@ -20,27 +27,30 @@ export default function BlocksTotal () {
   return (
     <SideBlock>
       <TotalCards
-        loading={status.loading}
         cards={[
           {
             title: 'Epoch:',
-            value: status?.data?.epoch?.index || '-',
-            icon: 'Sandglass'
+            value: typeof status?.data?.epoch?.number === 'number' ? status.data.epoch.number : 'n/a',
+            icon: 'Sandglass',
+            loading: status.loading
           },
           {
             title: 'Blocks:',
-            value: currencyRound(status?.data?.api?.block?.height) || '-',
-            icon: 'Blocks'
+            value: typeof status?.data?.api?.block?.height === 'number' ? currencyRound(status.data.api.block.height) : 'n/a',
+            icon: 'Blocks',
+            loading: status.loading
           },
           {
             title: 'Avg. TPS*:',
-            value: 'n/a',
-            icon: 'Timer'
+            value: typeof epoch?.data?.tps === 'number' ? epoch.data.tps.toFixed(4) : 'n/a',
+            icon: 'Timer',
+            loading: epoch.loading
           },
           {
             title: 'Transactions:',
-            value: currencyRound(status?.data?.transactionsCount) || '-',
-            icon: 'Transactions'
+            value: typeof status?.data?.transactionsCount === 'number' ? currencyRound(status.data.transactionsCount) : 'n/a',
+            icon: 'Transactions',
+            loading: status.loading
           }
         ]}
       />

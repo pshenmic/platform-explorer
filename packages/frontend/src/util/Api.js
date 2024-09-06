@@ -75,6 +75,10 @@ const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30
   return call(`dataContract/${dataContractIdentifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
+const getEpoch = (identifier) => {
+  return call(`epoch/${identifier}`, 'GET')
+}
+
 const getTransactionsByIdentity = (identifier) => {
   return call(`identity/${identifier}/transactions`, 'GET')
 }
@@ -145,5 +149,6 @@ export {
   getValidators,
   getValidatorByProTxHash,
   getBlocksByValidator,
-  getBlocksStatsByValidator
+  getBlocksStatsByValidator,
+  getEpoch
 }

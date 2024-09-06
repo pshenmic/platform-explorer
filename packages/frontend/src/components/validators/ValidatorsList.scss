@@ -16,14 +16,13 @@
     @include mixins.DefListItem;
 
     background-color: var(--chakra-colors-gray-650);
+    display: table-row;
   
     &:hover {
       background: var(--chakra-colors-whiteAlpha-50);
       text-decoration: none;
       cursor: pointer;
     }
-
-    display: table-row;
 
     td {
       border-top: 1px solid var(--chakra-colors-gray-750);
