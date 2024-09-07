@@ -356,7 +356,7 @@ describe('Identities routes', () => {
           owner: identity.identifier
         })
         transfer = await fixtures.transfer(knex, {
-          amount: Math.floor(25 * (i+1)),
+          amount: Math.floor(25 * (i + 1)),
           recipient: identity.identifier,
           state_transition_hash: transferTx.hash
         })
