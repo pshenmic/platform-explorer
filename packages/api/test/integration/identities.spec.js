@@ -356,18 +356,29 @@ describe('Identities routes', () => {
           owner: identity.identifier
         })
         transfer = await fixtures.transfer(knex, {
-          amount: Math.floor(1000 * Math.random()),
+          amount: Math.floor(25 * (i+1)),
           recipient: identity.identifier,
           state_transition_hash: transferTx.hash
         })
+
         identity.balance = transfer.amount
+
         identities.push({ identity, block, transfer })
       }
+
+      mock.reset()
 
       mock.method(DAPI.prototype, 'getIdentityBalance', async (identifier) => {
         const { identity } = identities.find(({ identity }) => identity.identifier === identifier)
         return identity.balance
       })
+      mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
+        block: {
+          header: {
+            time: new Date(0).toISOString()
+          }
+        }
+      }))
 
       const { body } = await client.get('/identities?order_by=balance&order=desc')
         .expect(200)
