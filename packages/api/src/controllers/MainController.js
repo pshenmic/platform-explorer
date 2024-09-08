@@ -30,7 +30,6 @@ class MainController {
       this.dapi.getTotalCredits()
     ])).map((e) => e.value ?? null)
 
-
     const [currentBlock] = blocks?.resultSet ?? []
 
     const [epochInfo] = epochsInfo ?? []
