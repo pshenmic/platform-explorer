@@ -11,7 +11,7 @@ const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
 
 class MainController {
-  constructor (knex, dapi) {
+  constructor(knex, dapi) {
     this.blocksDAO = new BlocksDAO(knex)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
@@ -22,7 +22,7 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    const [blocks, stats, tdStatus, [epochInfo], totalCredits] = (await Promise.allSettled([
+    const [blocks, stats, tdStatus, epochsInfo, totalCredits] = (await Promise.allSettled([
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
       TenderdashRPC.getStatus(),
@@ -32,7 +32,9 @@ class MainController {
 
     const [currentBlock] = blocks?.resultSet ?? []
 
-    const epoch = Epoch.fromObject(epochInfo)
+    const [epochInfo] = epochsInfo ?? []
+
+    const epoch = epochInfo ? Epoch.fromObject(epochInfo) : null
 
     response.send({
       epoch,
@@ -66,14 +68,14 @@ class MainController {
   }
 
   search = async (request, response) => {
-    const { query } = request.query
+    const {query} = request.query
 
     if (/^[0-9]+$/.test(query)) {
       // search block by height
       const block = await this.blocksDAO.getBlockByHeight(query)
 
       if (block) {
-        return response.send({ block })
+        return response.send({block})
       }
     }
 
@@ -82,21 +84,21 @@ class MainController {
       const block = await this.blocksDAO.getBlockByHash(query)
 
       if (block) {
-        return response.send({ block })
+        return response.send({block})
       }
 
       // search transactions
       const transaction = await this.transactionsDAO.getTransactionByHash(query)
 
       if (transaction) {
-        return response.send({ transaction })
+        return response.send({transaction})
       }
 
       // search validators
       const validator = await this.validatorsDAO.getValidatorByProTxHash(query)
 
       if (validator) {
-        return response.send({ validator })
+        return response.send({validator})
       }
     }
 
@@ -108,21 +110,21 @@ class MainController {
       if (identity) {
         const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity: { ...identity, balance } })
+        return response.send({identity: {...identity, balance}})
       }
 
       // search data contracts
       const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(query)
 
       if (dataContract) {
-        return response.send({ dataContract })
+        return response.send({dataContract})
       }
 
       // search documents
       const document = await this.documentsDAO.getDocumentByIdentifier(query)
 
       if (document) {
-        return response.send({ document })
+        return response.send({document})
       }
     }
 
@@ -132,11 +134,11 @@ class MainController {
       if (identity) {
         const balance = await this.dapi.getIdentityBalance(identity.identifier)
 
-        return response.send({ identity: { ...identity, balance } })
+        return response.send({identity: {...identity, balance}})
       }
     }
 
-    response.status(404).send({ message: 'not found' })
+    response.status(404).send({message: 'not found'})
   }
 }
 
