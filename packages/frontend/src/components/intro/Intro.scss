@@ -2,8 +2,37 @@
 @import '../../styles/variables.scss';
 
 .Intro {
-    &__Title {
-        font-style: italic;
-        font-weight: 800 !important;
+  @include mixins.Block(true);
+  // display: grid;
+  // grid-template-columns: 2fr 3fr;
+  display: flex;
+  padding: 64px;
+  // gap: 1.25rem;
+  width: 100%;
+
+  &__Title {
+    font-style: italic;
+    font-weight: 800;
+  }
+
+  &__Info {
+    width: 480px;
+    flex-shrink: 0;
+  }
+
+  &__Block {
+    flex-grow: 1;
+    flex-shrink: 1; /* он может уменьшаться в случае, если контейнер станет слишком узким */
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  @media screen and (max-width: 1200px) {
+    flex-wrap: wrap;
+    padding: 40px;
+
+    &__Info, &__Block {
+      width: 100%;
     }
+  }
 }

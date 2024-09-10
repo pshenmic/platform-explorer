@@ -1,0 +1,22 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.ValidatorsTotalCard {
+  padding: 30px;
+
+  &__Title {
+    color: $color-brand-normal;
+    font-family: $font-heading;
+    font-style: italic;
+    font-size: 0.875rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  &__Value {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-size: 1.25rem;
+  }
+}

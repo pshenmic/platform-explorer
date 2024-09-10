@@ -1,0 +1,22 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.Identifier {
+  display: flex;
+  align-items: center;
+  font-family: $font-mono;
+  font-size: 0.75rem;
+
+  &--Ellipsis {
+    &, span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__Avatar {
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+}

@@ -1,0 +1,13 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.ValidatorsTotal {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-left: 84px;
+
+  &__Card {
+    padding: 30px;
+  }
+}
