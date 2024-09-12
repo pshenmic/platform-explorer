@@ -96,10 +96,7 @@ const SimpleList = forwardRef(function (props, ref) {
           {columns.map((column, key) => {
             if (typeof column === 'object') {
               return (
-                <div key={key} className={'SimpleList__ColumnTitle'}>
-                  {column?.avatar && <>a</>}
-                  {column.value}
-                </div>
+                <div key={key} className={'SimpleList__ColumnTitle'}>{column.value}</div>
               )
             }
 
