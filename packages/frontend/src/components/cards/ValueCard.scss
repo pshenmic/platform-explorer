@@ -2,14 +2,19 @@
 @import '../../styles/variables.scss';
 
 .ValueCard {
-  padding: 12px;
+  padding: 8px 12px;
   border-radius: $border-radius-def;
   background-color: var(--chakra-colors-gray-650);
   border: 1px solid var(--chakra-colors-gray-550);
   display: flex;
   align-items: center;
+  transition: all $transition-time-def;
 
-  &--Loading {
-    
+  &--Loading {}
+
+  &--Clickable {
+    &:hover {
+      background-color: var(--chakra-colors-gray-800);
+    }
   }
 }

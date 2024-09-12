@@ -10,7 +10,7 @@ const Wrapper = (props, ref) => {
 export default function ValueCard ({ link, loading, children, className }) {
   return (
     <Wrapper
-      className={`ValueCard ${className} ${loading ? 'ValueCard--Loading' : ''}`}
+      className={`ValueCard ${className} ${loading ? 'ValueCard--Loading' : ''} ${link ? 'ValueCard--Clickable' : ''}`}
       link={link}
     >
       {children}
