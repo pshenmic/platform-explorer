@@ -15,6 +15,28 @@
     }
   }
 
+  &--Dim {
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &--GradientStart {
+    background: -webkit-linear-gradient(
+      0deg,
+      #fff 0 30%,
+      var(--chakra-colors-gray-250) 40% 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  &--GradientBoth {
+    background: -webkit-linear-gradient(
+      0deg,
+      #fff 0 30%,
+      var(--chakra-colors-gray-250) 40% 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
   &__Avatar {
     flex-shrink: 0;
     margin-right: 10px;
