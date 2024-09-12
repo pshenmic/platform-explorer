@@ -19,4 +19,26 @@
     font-weight: 800;
     font-size: 1.25rem;
   }
+
+  &__EpochNumber {}
+
+  &__EpochProgress {
+    margin-top: 24px;
+  }
+
+  &--BestValidator {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &--BestValidator & {
+    &__Value {
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    padding: 16px;
+  }
 }

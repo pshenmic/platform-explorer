@@ -34,30 +34,41 @@ export default function ValidatorsTotal () {
 
   return (
     <div className={'ValidatorsTotal'}>
-      <InfoCard link={'/'} className={'ValidatorsTotalCard'} loading={status.loading}>
+      <InfoCard className={'ValidatorsTotalCard'} loading={status.loading}>
         <div className={'ValidatorsTotalCard__Title'}>Epoch</div>
         <div className={'ValidatorsTotalCard__Value'}>
           {typeof status?.data?.epoch?.number === 'number'
-            ? status.data.epoch.number
+            ? <div className={'ValidatorsTotalCard__EpochNumber'}>#{status.data.epoch.number}</div>
             : 'n/a'}
         </div>
-        {status?.data?.epoch && <EpochProgress epoch={status.data.epoch}/>}
+        {status?.data?.epoch && <EpochProgress epoch={status.data.epoch} className={'ValidatorsTotalCard__EpochProgress'}/>}
       </InfoCard>
-      <InfoCard link={'/'} className={'ValidatorsTotalCard'} loading={status.loading}>
+      <InfoCard
+        className={'ValidatorsTotalCard ValidatorsTotalCard--BestValidator'}
+        loading={status.loading}
+      >
         <div className={'ValidatorsTotalCard__Title'}>Best Validator</div>
-        <ValueCard>
-          <Identifier avatar={true} copyButton={true}>{epoch?.data?.bestValidator || 'n/a'}</Identifier>
+        <ValueCard
+          link={epoch?.data?.bestValidator ? `/validator/${epoch?.data?.bestValidator}` : undefined}
+          className={'ValidatorsTotalCard__Value'}>
+          <Identifier
+            avatar={true}
+            copyButton={true}
+            styles={['gradient-start']}
+          >
+            {epoch?.data?.bestValidator || 'n/a'}
+          </Identifier>
         </ValueCard>
       </InfoCard>
-      <InfoCard link={'/'} className={'ValidatorsTotalCard'} loading={status.loading}>
+      <InfoCard className={'ValidatorsTotalCard'} loading={status.loading}>
         <div className={'ValidatorsTotalCard__Title'}>Fees collected</div>
         <div className={'ValidatorsTotalCard__Value'}>
-          {typeof status?.data?.epoch?.number === 'number'
+          {typeof epoch?.data?.totalCollectedFees === 'number'
             ? currencyRound(epoch.data.totalCollectedFees)
             : 'n/a'}
         </div>
       </InfoCard>
-      <InfoCard link={'/'} className={'ValidatorsTotalCard'} loading={status.loading}>
+      <InfoCard className={'ValidatorsTotalCard'} loading={validators.loading}>
         <div className={'ValidatorsTotalCard__Title'}>Total validators</div>
         <div className={'ValidatorsTotalCard__Value'}>
           {typeof validators?.data?.pagination?.total === 'number'
