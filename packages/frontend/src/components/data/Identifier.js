@@ -5,7 +5,7 @@ import { CopyButton } from '../ui/Buttons'
 export default function Identifier ({ children, ellipsis = true, avatar, styles = [], copyButton }) {
   return (
     <div
-      className={`Identifier ${ellipsis && 'Identifier--Ellipsis'} ` + 
+      className={`Identifier ${ellipsis && 'Identifier--Ellipsis'} ` +
         `${styles.includes('dim') && 'Identifier--Dim'} ` +
         `${styles.includes('gradient-start') && 'Identifier--GradientStart'} ` +
         `${styles.includes('gradient-both') && 'Identifier--GradientBoth'} `
