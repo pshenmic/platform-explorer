@@ -1,11 +1,11 @@
 process.env.EPOCH_CHANGE_TIME = 3600000
-const { describe, it, before, after, mock } = require('node:test')
+const {describe, it, before, after, mock} = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
-const { getKnex } = require('../../src/utils')
+const {getKnex} = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/DAPI')
 
@@ -25,6 +25,7 @@ describe('Other routes', () => {
   let dataContractTransaction
   let dataContract
   let documentTransaction
+  let transactions
 
   before(async () => {
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
@@ -51,6 +52,7 @@ describe('Other routes', () => {
 
     knex = getKnex()
     blocks = []
+    transactions = []
 
     await fixtures.cleanup(knex)
 
@@ -59,7 +61,7 @@ describe('Other routes', () => {
     // for the search() test
 
     const identityIdentifier = fixtures.identifier()
-    block = await fixtures.block(knex, { timestamp: new Date(genesisTime + blockDiffTime) })
+    block = await fixtures.block(knex, {timestamp: new Date(genesisTime + blockDiffTime)})
     blocks.push(block)
 
     identityTransaction = await fixtures.transaction(knex, {
@@ -99,11 +101,31 @@ describe('Other routes', () => {
       data_contract_id: dataContract.id
     })
 
+    transactions.push(identityTransaction.hash)
+    transactions.push(dataContractTransaction.hash)
+    transactions.push(documentTransaction.hash)
+
     // prepare for get status
 
     for (let i = 1; i < 10; i++) {
-      const newBlock = await fixtures.block(knex, { height: i + 1, timestamp: new Date(block.timestamp.getTime() + blockDiffTime * i) })
+      const newBlock = await fixtures.block(knex, {
+        height: i + 1,
+        timestamp: new Date(block.timestamp.getTime() + blockDiffTime * i)
+      })
       blocks.push(newBlock)
+    }
+
+    for (let i = 0; i < 48; i++) {
+      const tmpBlock = await fixtures.block(knex, {
+        timestamp: new Date(new Date().getTime() - 3600000 * i)
+      })
+      const transaction = await fixtures.transaction(knex, {
+        block_hash: tmpBlock.hash,
+        type: 0,
+        owner: identity.identifier,
+        gas_used: 10000,
+      })
+      transactions.push(transaction.hash)
     }
   })
 
@@ -114,7 +136,7 @@ describe('Other routes', () => {
 
   describe('search()', async () => {
     it('should search block by hash', async () => {
-      const { body } = await client.get(`/search?query=${block.hash}`)
+      const {body} = await client.get(`/search?query=${block.hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -131,11 +153,11 @@ describe('Other routes', () => {
         txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
 
-      assert.deepEqual({ block: expectedBlock }, body)
+      assert.deepEqual({block: expectedBlock}, body)
     })
 
     it('should search transaction by hash', async () => {
-      const { body } = await client.get(`/search?query=${dataContractTransaction.hash}`)
+      const {body} = await client.get(`/search?query=${dataContractTransaction.hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -152,11 +174,11 @@ describe('Other routes', () => {
         error: dataContractTransaction.error
       }
 
-      assert.deepEqual({ transaction: expectedTransaction }, body)
+      assert.deepEqual({transaction: expectedTransaction}, body)
     })
 
     it('should search block by height', async () => {
-      const { body } = await client.get(`/search?query=${block.height}`)
+      const {body} = await client.get(`/search?query=${block.height}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -170,14 +192,14 @@ describe('Other routes', () => {
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator
         },
-        txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
+        txs: transactions
       }
 
-      assert.deepEqual({ block: expectedBlock }, body)
+      assert.deepEqual({block: expectedBlock}, body)
     })
 
     it('should search by data contract', async () => {
-      const { body } = await client.get(`/search?query=${dataContract.identifier}`)
+      const {body} = await client.get(`/search?query=${dataContract.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -193,13 +215,13 @@ describe('Other routes', () => {
         documentsCount: 1
       }
 
-      assert.deepEqual({ dataContract: expectedDataContract }, body)
+      assert.deepEqual({dataContract: expectedDataContract}, body)
     })
 
     it('should search by identity', async () => {
       mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
-      const { body } = await client.get(`/search?query=${identityAlias.alias}`)
+      const {body} = await client.get(`/search?query=${identityAlias.alias}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -209,7 +231,7 @@ describe('Other routes', () => {
         balance: 0,
         timestamp: block.timestamp.toISOString(),
         txHash: identityTransaction.hash,
-        totalTxs: 3,
+        totalTxs: 51,
         totalTransfers: 0,
         totalDocuments: 1,
         totalDataContracts: 1,
@@ -217,11 +239,11 @@ describe('Other routes', () => {
         owner: identity.identifier
       }
 
-      assert.deepEqual({ identity: expectedIdentity }, body)
+      assert.deepEqual({identity: expectedIdentity}, body)
     })
 
     it('should search identity by DPNS', async () => {
-      const { body } = await client.get(`/search?query=${identity.identifier}`)
+      const {body} = await client.get(`/search?query=${identity.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -231,7 +253,7 @@ describe('Other routes', () => {
         balance: 0,
         timestamp: block.timestamp.toISOString(),
         txHash: identityTransaction.hash,
-        totalTxs: 3,
+        totalTxs: 51,
         totalTransfers: 0,
         totalDocuments: 1,
         totalDataContracts: 1,
@@ -239,7 +261,7 @@ describe('Other routes', () => {
         owner: identity.identifier
       }
 
-      assert.deepEqual({ identity: expectedIdentity }, body)
+      assert.deepEqual({identity: expectedIdentity}, body)
     })
   })
 
@@ -272,7 +294,7 @@ describe('Other routes', () => {
         }
       }))
 
-      const { body } = await client.get('/status')
+      const {body} = await client.get('/status')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -286,8 +308,9 @@ describe('Other routes', () => {
           endTime: null
         },
         identitiesCount: 1,
-        transactionsCount: 3,
+        transactionsCount: 51,
         totalCredits: 0,
+        totalCollectedFeesDay: 240000,
         transfersCount: 0,
         dataContractsCount: 1,
         documentsCount: 1,

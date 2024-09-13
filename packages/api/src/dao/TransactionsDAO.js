@@ -115,13 +115,18 @@ module.exports = class TransactionsDAO {
     const subquery = this.knex.with('ranges', ranges)
       .select(
         this.knex('state_transitions')
+          .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
           .sum('gas_used as collected_fees')
           .as('collected_fees')
       )
+      .from('ranges')
       .as('subquery')
 
     const [row] = await this.knex(subquery)
-      .select(this.knex.raw('SUM(collected_fees) OVER () as total_collected_fees'))
+      .select(
+        this.knex.raw('SUM(collected_fees) OVER () as total_collected_fees')
+      )
 
     return Number(row.total_collected_fees ?? 0)
   }
