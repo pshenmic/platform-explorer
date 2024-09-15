@@ -6,6 +6,7 @@ const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
+const USDRater = require('../USDRater')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
@@ -22,12 +23,13 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    const [blocks, stats, tdStatus, [epochInfo], totalCredits] = (await Promise.allSettled([
+    const [blocks, stats, tdStatus, [epochInfo], totalCredits, USDRate] = (await Promise.allSettled([
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
       TenderdashRPC.getStatus(),
       this.dapi.getEpochsInfo(1),
-      this.dapi.getTotalCredits()
+      this.dapi.getTotalCredits(),
+      USDRater()
     ])).map((e) => e.value ?? null)
 
     const [currentBlock] = blocks?.resultSet ?? []
@@ -36,6 +38,7 @@ class MainController {
 
     response.send({
       epoch,
+      USDRate,
       transactionsCount: stats?.transactionsCount,
       totalCredits,
       transfersCount: stats?.transfersCount,

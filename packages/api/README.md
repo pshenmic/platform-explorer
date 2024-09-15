@@ -83,6 +83,7 @@ HTTP /status
         feeMultiplier: 1,
         endTime: 1725478950064
     },
+    USDRate: 24.45,
     identitiesCount: 12,
     totalCredits: 100000,
     transactionsCount: 3,
