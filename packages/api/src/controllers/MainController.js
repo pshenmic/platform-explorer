@@ -27,8 +27,7 @@ class MainController {
       this.blocksDAO.getStats(),
       TenderdashRPC.getStatus(),
       this.dapi.getEpochsInfo(1),
-      this.dapi.getTotalCredits(),
-      this.transactionsDAO.getCollectedFees('24h')
+      this.dapi.getTotalCredits()
     ])).map((e) => e.value ?? null)
 
     const [currentBlock] = blocks?.resultSet ?? []
@@ -39,7 +38,6 @@ class MainController {
       epoch,
       transactionsCount: stats?.transactionsCount,
       totalCredits,
-      totalCollectedFeesDay,
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
       documentsCount: stats?.documentsCount,
