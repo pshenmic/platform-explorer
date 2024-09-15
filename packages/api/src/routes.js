@@ -16,13 +16,19 @@ module.exports = ({
   dataContractsController,
   documentsController,
   identitiesController,
-  validatorsController
+  validatorsController,
+  rateController
 }) => {
   const routes = [
     {
       path: '/status',
       method: 'GET',
       handler: mainController.getStatus
+    },
+    {
+      path: '/rates',
+      method: 'GET',
+      handler: rateController.getUSDRate
     },
     {
       path: '/epoch/:index',
