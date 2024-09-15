@@ -52,7 +52,6 @@ HTTP /status
     },
     identitiesCount: 12,
     totalCredits: 100000,
-    totalCollectedFeesDay: 167703567170,
     transactionsCount: 3,
     transfersCount: 0,
     dataContractsCount: 1,
