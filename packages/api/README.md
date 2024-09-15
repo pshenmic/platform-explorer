@@ -784,7 +784,7 @@ GET /rate
 {
     usd: 24.45,
     source: "Kucoin"
-},
+}
 ```
 Response codes:
 ```
