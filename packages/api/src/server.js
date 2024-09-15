@@ -93,7 +93,7 @@ module.exports = {
       documentsController,
       identitiesController,
       validatorsController,
-      rateController,
+      rateController
     })
 
     fastify.setErrorHandler(errorHandler)

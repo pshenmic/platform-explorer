@@ -3,7 +3,7 @@ module.exports = {
     const response = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=DASH', {
       method: 'GET',
       headers: {
-        'content-type': 'application/json',
+        'content-type': 'application/json'
       }
     })
 

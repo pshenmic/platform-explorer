@@ -26,7 +26,7 @@ module.exports = ({
       handler: mainController.getStatus
     },
     {
-      path: '/rates',
+      path: '/rate',
       method: 'GET',
       handler: rateController.getUSDRate
     },
