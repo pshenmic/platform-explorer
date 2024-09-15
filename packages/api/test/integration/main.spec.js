@@ -307,6 +307,7 @@ describe('Other routes', () => {
           feeMultiplier: 0,
           endTime: null
         },
+        USDRate: null,
         identitiesCount: 1,
         transactionsCount: 51,
         totalCredits: 0,

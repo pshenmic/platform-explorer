@@ -4,6 +4,8 @@ let genesisTime
 
 module.exports = {
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
+  ratesUrls: (process.env.RATER_URLS ?? '').split(', '),
+  ratesUSDPath: (process.env.RATER_USD_PATHS ?? '').split(', '),
   get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {
       return TenderdashRPC.getBlockByHeight(1).then((blockInfo) => {
