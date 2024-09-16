@@ -15,12 +15,12 @@ function IdentityCard ({ identity, loading = false }) {
         ? <Link href={`/identity/${identity.identifier}`}>
             <InfoCard className={'IdentityCard'} clickable={true}>
               <Flex alignItems={'center'} justifyContent={'space-between'}>
-                  <Flex alignItems={'center'}>
+                  <div className={'IdentityCard__AliasContainer'}>
                       <div className={'IdentityCard__Img'}>
                         <ImageGenerator username={identity.identifier} lightness={50} saturation={50} width={42} height={42} />
                       </div>
                       <div className={'IdentityCard__Alias'}>{identity.alias || identity.identifier}</div>
-                  </Flex>
+                  </div>
 
                   <div className={'IdentityCard__Balance'}>{currencyRound(identity.balance)}</div>
               </Flex>

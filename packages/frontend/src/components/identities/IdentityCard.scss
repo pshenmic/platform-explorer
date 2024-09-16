@@ -16,6 +16,12 @@
     flex-shrink: 0;
   }
 
+  &__AliasContainer {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
   &__Alias {
     text-overflow: ellipsis;
     white-space: nowrap;
