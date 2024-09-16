@@ -23,24 +23,11 @@ function TransactionsRoute ({ searchParams }) {
       mt={8}
       mb={0}
     >
-      <Flex
-          justifyContent={'space-between'}
-          alignItems={'center'}
-          wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
-      >
-          <Container maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
-            <Intro
-              title={'Transactions'}
-              contentSource={<Markdown>{introContent}</Markdown>}
-            />
-          </Container>
-
-          <Box flexShrink={'0'} w={10} h={10} />
-
-          <Container height={'max-content'} maxW={'none'} p={0}>
-            <TransactionsHistory height={'300px'}/>
-          </Container>
-      </Flex>
+      <Intro
+        title={'Transactions'}
+        description={<Markdown>{introContent}</Markdown>}
+        block={<TransactionsHistory height={'300px'} blockBorders={false}/>}
+      />
     </Container>
     <Transactions defaultPage={page} defaultPageSize={pageSize}/>
   </>
