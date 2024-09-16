@@ -1,4 +1,4 @@
-import './pagination.scss'
+import './Pagination.scss'
 
 import ReactPaginate from 'react-paginate'
 

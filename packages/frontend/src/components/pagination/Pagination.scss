@@ -55,7 +55,7 @@
 }
 
 @media screen and (max-width: $breakpoint-md) {
-  .PageItem:not(.active):not(.PageItem--previous):not(.PageItem--next) {
+  .PageItem:not(.active):not(.PageItem--Previous):not(.PageItem--Next) {
     display: none;
   }
 }
