@@ -48,17 +48,19 @@ export default function ValidatorsTotal () {
         loading={status.loading}
       >
         <div className={'ValidatorsTotalCard__Title'}>Best Validator</div>
-        <ValueCard
-          link={epoch?.data?.bestValidator ? `/validator/${epoch?.data?.bestValidator}` : undefined}
-          className={'ValidatorsTotalCard__Value'}
-        >
+        <div className={'ValidatorsTotalCard__Value'}>
           {epoch?.data?.bestValidator
-            ? <Identifier avatar={true} copyButton={true} styles={['gradient-start']}>
+            ? <ValueCard
+              link={epoch?.data?.bestValidator ? `/validator/${epoch?.data?.bestValidator}` : undefined}
+              className={'ValidatorsTotalCard__Value'}
+            >
+              <Identifier avatar={true} copyButton={true} styles={['gradient-start']}>
                 {epoch.data.bestValidator}
               </Identifier>
+            </ValueCard>
             : 'n/a'
           }
-        </ValueCard>
+        </div>
       </InfoCard>
       <InfoCard className={'ValidatorsTotalCard'} loading={status.loading}>
         <div className={'ValidatorsTotalCard__Title'}>Fees collected</div>
