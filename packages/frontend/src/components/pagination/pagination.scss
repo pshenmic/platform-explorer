@@ -1,66 +1,60 @@
-.pagination {
-    display: flex;
-    justify-content: center;
-    list-style: none;
-    padding: 0;
-    margin: 0;
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.Pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
   
-.page-item {
-    padding: 1px 4px 2px;
-    margin: 0 2px;
-    cursor: pointer;
-    font-size: 14pt;
-    -webkit-user-select: none;
-    -ms-user-select: none; 
-    text-align: center;
-    border-radius: 5px;
-}
-  
-.page-item:hover:not(.disabled) {
-    background-color: #ffffff10;
-}
-  
-.page-item--next,
-.page-item--previous {
-    display: inline-block;
-    width: 22px;
-    padding: 0px 2px 2px;
-    border: 1px solid #ffffff75;
-    border-radius: 5px;
-    user-select: none;
-}
-  
-.page-item--next:hover:not(.disabled),
-.page-item--previous:hover:not(.disabled) {
-    border: 1px solid #ffffff;
-    background-color: #ffffff15;
-}
-  
-.page-link {
-    position: relative;
-}
-  
-.page-item.disabled {
+.PageItem {
+  margin: 0 6px;
+  background-color: var(--chakra-colors-gray-800);
+  border-radius: $border-radius-def;
+
+  &--Next:hover:not(.disabled),
+  &--Previous:hover:not(.disabled) {
+      background-color: #a58b8b15;
+  }
+
+  &.disabled {
     cursor: default;
     opacity: .3;
-}
-  
-.active, .active:hover {
-    background-color: var(--chakra-colors-gray-800);
-}
-  
-.page-item.active:hover {
-    cursor: default;
-}
-  
-.page-item--break-link {
-    padding: 1px 2px 2px;
-    margin: 0;
-}
-  
-@media screen and (max-width: 440px) {
-    .page-item:not(.active):not(.page-item--previous):not(.page-item--next) {
-      display: none;
+  }
+
+  &:not(.active) {
+    &:hover:not(.disabled) {
+      background-color: #ffffff10;
     }
+  }
+
+  &.active {
+    &, &:hover {
+      cursor: default;
+      background-color: var(--chakra-colors-brand-normal);
+    }
+  }
+}
+
+.PageLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -ms-user-select: none; 
+  text-align: center;
+  padding: 10px 12px;
+  font-size: 0.75rem;
+  min-width: 55px;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: $breakpoint-md) {
+  .PageItem:not(.active):not(.PageItem--previous):not(.PageItem--next) {
+    display: none;
+  }
 }
