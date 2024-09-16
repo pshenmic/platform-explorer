@@ -83,7 +83,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
             className={'InfoBlock'}
         >
             <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>
-            <Box mb={2}>
+            <Box mb={5}>
               <Switcher
                 options={[
                   {
