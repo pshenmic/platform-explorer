@@ -25,35 +25,33 @@ export default function BlocksTotal () {
   useEffect(fetchData, [])
 
   return (
-    <SideBlock>
-      <TotalCards
-        cards={[
-          {
-            title: 'Epoch:',
-            value: typeof status?.data?.epoch?.number === 'number' ? status.data.epoch.number : 'n/a',
-            icon: 'Sandglass',
-            loading: status.loading
-          },
-          {
-            title: 'Blocks:',
-            value: typeof status?.data?.api?.block?.height === 'number' ? currencyRound(status.data.api.block.height) : 'n/a',
-            icon: 'Blocks',
-            loading: status.loading
-          },
-          {
-            title: 'Avg. TPS*:',
-            value: typeof epoch?.data?.tps === 'number' ? epoch.data.tps.toFixed(4) : 'n/a',
-            icon: 'Timer',
-            loading: epoch.loading
-          },
-          {
-            title: 'Transactions:',
-            value: typeof status?.data?.transactionsCount === 'number' ? currencyRound(status.data.transactionsCount) : 'n/a',
-            icon: 'Transactions',
-            loading: status.loading
-          }
-        ]}
-      />
-    </SideBlock>
+    <TotalCards
+      cards={[
+        {
+          title: 'Epoch:',
+          value: typeof status?.data?.epoch?.number === 'number' ? status.data.epoch.number : 'n/a',
+          icon: 'Sandglass',
+          loading: status.loading
+        },
+        {
+          title: 'Blocks:',
+          value: typeof status?.data?.api?.block?.height === 'number' ? currencyRound(status.data.api.block.height) : 'n/a',
+          icon: 'Blocks',
+          loading: status.loading
+        },
+        {
+          title: 'Avg. TPS*:',
+          value: typeof epoch?.data?.tps === 'number' ? epoch.data.tps.toFixed(4) : 'n/a',
+          icon: 'Timer',
+          loading: epoch.loading
+        },
+        {
+          title: 'Transactions:',
+          value: typeof status?.data?.transactionsCount === 'number' ? currencyRound(status.data.transactionsCount) : 'n/a',
+          icon: 'Transactions',
+          loading: status.loading
+        }
+      ]}
+    />
   )
 }

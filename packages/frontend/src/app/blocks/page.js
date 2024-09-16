@@ -23,24 +23,11 @@ async function BlocksRoute ({ searchParams }) {
       mt={8}
       mb={0}
     >
-      <Flex
-          justifyContent={'space-between'}
-          alignItems={'center'}
-          wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
-      >
-          <Container maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
-            <Intro
-                title={'Blocks'}
-                contentSource={<Markdown>{introContent}</Markdown>}
-            />
-          </Container>
-
-          <Box flexShrink={'0'} w={10} h={10} />
-
-          <Container maxW={'none'} p={0}>
-              <BlocksTotal/>
-          </Container>
-      </Flex>
+      <Intro
+        title={'Blocks'}
+        description={<Markdown>{introContent}</Markdown>}
+        block={<BlocksTotal/>}
+      />
     </Container>
 
     <Blocks defaultPage={page} defaultPageSize={pageSize}/>
