@@ -26,7 +26,7 @@ function IdentityCard ({ identity, loading = false }) {
               </Flex>
             </InfoCard>
         </Link>
-        : <InfoCard className={'IdentityCard'} loading={true}/>
+        : <InfoCard className={'IdentityCard IdentityCard--Loading'} loading={true}/>
       }
     </Container>
   )
