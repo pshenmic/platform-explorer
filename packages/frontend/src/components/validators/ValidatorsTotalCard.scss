@@ -5,13 +5,14 @@
   padding: 30px;
 
   &__Title {
+    margin-bottom: 12px;
     color: $color-brand-normal;
     font-family: $font-heading;
     font-style: italic;
     font-size: 0.875rem;
     font-weight: 800;
-    margin-bottom: 12px;
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
   &__Value {
@@ -38,7 +39,15 @@
     }
   }
 
-  @media screen and (max-width: $breakpoint-sm) {
+  @media screen and (max-width: $breakpoint-lg) {
+    padding: 28px;
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
     padding: 16px;
+
+    &__Title {
+      margin-bottom: 8px;
+    }
   }
 }
