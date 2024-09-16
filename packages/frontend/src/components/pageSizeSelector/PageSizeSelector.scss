@@ -1,9 +1,14 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
 .PageSizeSelector {
   display: flex;
+  font-family: $font-mono;
   
   &__Title {
     margin-right: 8px;
     white-space: nowrap;
+    color: var(--chakra-colors-gray-250);;
   }
 
   select {
@@ -15,7 +20,6 @@
     border: 1px solid var(--chakra-colors-whiteAlpha-200);
     border-radius: 5px;
     padding: 0 4px;
-
     background-color: var(--chakra-colors-brand-normal);
   }
 }

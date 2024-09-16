@@ -16,7 +16,7 @@
 
   &--Next:hover:not(.disabled),
   &--Previous:hover:not(.disabled) {
-      background-color: #a58b8b15;
+    background-color: #a58b8b15;
   }
 
   &.disabled {
@@ -51,6 +51,7 @@
   min-width: 55px;
   align-items: center;
   justify-content: center;
+  font-family: $font-mono;
 }
 
 @media screen and (max-width: $breakpoint-md) {
