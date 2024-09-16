@@ -50,14 +50,14 @@ export default function ValidatorsTotal () {
         <div className={'ValidatorsTotalCard__Title'}>Best Validator</div>
         <ValueCard
           link={epoch?.data?.bestValidator ? `/validator/${epoch?.data?.bestValidator}` : undefined}
-          className={'ValidatorsTotalCard__Value'}>
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            styles={['gradient-start']}
-          >
-            {epoch?.data?.bestValidator || 'n/a'}
-          </Identifier>
+          className={'ValidatorsTotalCard__Value'}
+        >
+          {epoch?.data?.bestValidator
+            ? <Identifier avatar={true} copyButton={true} styles={['gradient-start']}>
+                {epoch.data.bestValidator}
+              </Identifier>
+            : 'n/a'
+          }
         </ValueCard>
       </InfoCard>
       <InfoCard className={'ValidatorsTotalCard'} loading={status.loading}>
@@ -78,37 +78,4 @@ export default function ValidatorsTotal () {
       </InfoCard>
     </div>
   )
-
-  // return (
-  //   <TotalCards
-  //     cards={[
-  //       {
-  //         title: 'Epoch:',
-  //         value: typeof status?.data?.epoch?.number === 'number' ? status.data.epoch.number : 'n/a',
-  //         icon: 'Sandglass',
-  //         loading: status.loading
-  //       },
-  //       {
-  //         title: 'Total Validators:',
-  //         value: typeof validators?.data?.pagination?.total === 'number' ? validators.data.pagination.total : 'n/a',
-  //         icon: 'Nodes',
-  //         loading: validators.loading
-  //       },
-  //       {
-  //         title: 'Fees collected:',
-  //         value: typeof status?.data?.epoch?.number === 'number' ? currencyRound(epoch.data.totalCollectedFees) : 'n/a',
-  //         icon: 'Coins',
-  //         loading: epoch.loading
-  //       },
-  //       {
-  //         title: 'Best Validator:',
-  //         value: epoch?.data?.bestValidator || 'n/a',
-  //         icon: 'StarCheck',
-  //         loading: epoch.loading,
-  //         link: epoch?.data?.bestValidator ? `/validator/${epoch.data.bestValidator}` : '',
-  //         format: ['elipsed']
-  //       }
-  //     ]}
-  //   />
-  // )
 }

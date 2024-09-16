@@ -1,0 +1,57 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.ValidatorListItem {
+  @include mixins.DefListItem;
+  display: block;
+  width: 100%;
+  background-color: var(--chakra-colors-gray-650);
+
+  &--Loading {
+    height: 58px !important;
+  }
+
+  &__Content {
+    width: 100%;
+    display: grid;
+    grid-template-columns: calc(100% - 400px) 200px 200px;
+
+    &--Inline {
+      display: inline !important;
+    }
+  }
+
+  &__Column {
+    text-align: right;
+
+    &:first-child {
+      text-align: left;
+    }
+  }
+
+  & &__IdentifierContainer {
+    display: flex;
+    align-items: center;
+    border-bottom: 0;
+    margin: -12px 0;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &__Identifier {
+    font-family: $font-mono;
+    font-size: 16px;
+    text-transform: uppercase;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__Content {
+      grid-template-columns: calc(100% - 300px) 150px 150px;
+    }
+  }
+}

@@ -2,67 +2,32 @@
 @import '../../styles/variables.scss';
 
 .ValidatorsList {
-  &__Table {
-    border-collapse: separate !important;
-    border-spacing: 0 10px;
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    display: grid;
+    grid-template-columns: auto 200px 200px;
+  }
 
-    td {
-      border: none
+  &__ColumnTitle {
+    text-align: right;
+
+    &:first-child {
+      text-align: left;
     }
   }
-}
-
-.ValidatorTableRow {
-    @include mixins.DefListItem;
-
-    background-color: var(--chakra-colors-gray-650);
-    display: table-row;
   
-    &:hover {
-      background: var(--chakra-colors-whiteAlpha-50);
-      text-decoration: none;
-      cursor: pointer;
+  @media screen and (max-width: $breakpoint-lg) {
+    &__ColumnTitles {
+      grid-template-columns: auto 150px 150px;
     }
+  }
 
-    td {
-      border-top: 1px solid var(--chakra-colors-gray-750);
-      border-bottom: 1px solid var(--chakra-colors-gray-750);
-      overflow: hidden; /* Нужно для корректного скругления */
-    }
-    
-    td:first-child {
-      border-top-left-radius: 10px;
-      border-bottom-left-radius: 10px;
-      border-left: 1px solid var(--chakra-colors-gray-750);
-    }
+  @media screen and (max-width: $breakpoint-md) {
+    overflow-y: auto;
 
-    td:last-child {
-      border-bottom-right-radius: 10px;
-      border-top-right-radius: 10px;
-      border-right: 1px solid var(--chakra-colors-gray-750);
+    &__ContentContainer {
+      width: max-content;
+      min-width: 100%;
     }
-
-    &:hover {
-        cursor: default;
-    }
-
-    & &__IdentifierContainer {
-        display: flex;
-        align-items: center;
-        border-bottom: 0;
-        margin: -12px 0;
-
-        &:hover {
-            cursor: pointer;
-        }
-    }
-
-    &__Identifier {
-        font-family: $font-mono;
-        font-size: 16px;
-        text-transform: uppercase;
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+  }
 }
