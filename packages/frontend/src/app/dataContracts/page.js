@@ -2,7 +2,7 @@ import DataContracts from './DataContracts'
 import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
-import { Container, Flex, Box } from '@chakra-ui/react'
+import { Container } from '@chakra-ui/react'
 import Cards from './Cards'
 
 export const metadata = {

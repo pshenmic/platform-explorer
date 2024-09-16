@@ -1,7 +1,7 @@
 import Markdown from '../../components/markdown'
 import Intro from '../../components/intro/index.js'
 import introContent from './intro.md'
-import { Container, Flex, Box } from '@chakra-ui/react'
+import { Container } from '@chakra-ui/react'
 import Blocks from './Blocks'
 import { BlocksTotal } from '../../components/blocks'
 

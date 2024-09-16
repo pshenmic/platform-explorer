@@ -2,7 +2,7 @@ import Transactions from './Transactions'
 import Intro from '../../components/intro/index.js'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
-import { Container, Flex, Box } from '@chakra-ui/react'
+import { Container } from '@chakra-ui/react'
 import TransactionsHistory from '../../components/charts/TransactionsHistory'
 
 export const metadata = {

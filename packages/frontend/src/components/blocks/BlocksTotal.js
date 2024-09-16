@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import TotalCards from '../total/TotalCards'
-import { SideBlock } from '../containers'
 
 export default function BlocksTotal () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
