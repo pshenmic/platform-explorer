@@ -6,26 +6,26 @@ function Pagination ({ onPageChange, pageCount, forcePage }) {
   pageCount = Math.max(pageCount, 1)
 
   return (
-        <ReactPaginate
-            breakLabel="..."
-            nextLabel=">"
-            onPageChange={onPageChange}
-            pageRangeDisplayed={2}
-            marginPagesDisplayed={1}
-            pageCount={pageCount}
-            previousLabel="<"
-            pageClassName="page-item"
-            pageLinkClassName="page-link"
-            previousClassName="page-item page-item--previous"
-            previousLinkClassName="page-link"
-            nextClassName="page-item page-item--next"
-            nextLinkClassName="page-link"
-            breakClassName="page-item  page-item--break-link"
-            containerClassName="pagination"
-            activeClassName="active"
-            renderOnZeroPageCount={true}
-            forcePage={forcePage}
-        />
+    <ReactPaginate
+      breakLabel="..."
+      nextLabel=">"
+      onPageChange={onPageChange}
+      pageRangeDisplayed={2}
+      marginPagesDisplayed={1}
+      pageCount={pageCount}
+      previousLabel="<"
+      pageClassName="page-item"
+      pageLinkClassName="page-link"
+      previousClassName="page-item page-item--previous"
+      previousLinkClassName="page-link"
+      nextClassName="page-item page-item--next"
+      nextLinkClassName="page-link"
+      breakClassName="page-item  page-item--break-link"
+      containerClassName="pagination"
+      activeClassName="active"
+      renderOnZeroPageCount={true}
+      forcePage={forcePage}
+    />
   )
 }
 
