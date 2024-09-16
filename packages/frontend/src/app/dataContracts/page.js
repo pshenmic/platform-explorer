@@ -24,24 +24,11 @@ function DataContractsRoute ({ searchParams }) {
       mt={8}
       mb={0}
     >
-      <Flex
-          justifyContent={'space-between'}
-          alignItems={'center'}
-          wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
-      >
-          <Container flexShrink={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
-            <Intro
-              title={'Data contracts'}
-              contentSource={<Markdown>{introContent}</Markdown>}
-            />
-          </Container>
-
-          <Box flexShrink={'0'} w={10} h={[5, 5, 5, 10]} />
-
-          <Container flexShrink={0} maxW={['100%', '100%', '100%', 'calc(50% - 20px)']}>
-            <Cards/>
-          </Container>
-      </Flex>
+      <Intro
+        title={'Data contracts'}
+        description={<Markdown>{introContent}</Markdown>}
+        block={<Cards/>}
+      />
     </Container>
     <DataContracts defaultPage={page} defaultPageSize={pageSize}/>
   </>
