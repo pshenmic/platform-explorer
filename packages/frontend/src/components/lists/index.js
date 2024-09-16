@@ -4,6 +4,7 @@ import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../imageGenerator'
 import { numberFormat } from '../../util'
+import ListColumnsHeader from './ListColumnsHeader'
 
 function EmptyListMessage ({ children }) {
   return (
@@ -126,5 +127,6 @@ SimpleList.displayName = 'SimpleList'
 
 export {
   SimpleList,
-  EmptyListMessage
+  EmptyListMessage,
+  ListColumnsHeader
 }

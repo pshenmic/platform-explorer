@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { ListColumnsHeader } from '../lists'
 import Link from 'next/link'
 import { LoadingLine } from '../loading'
 import { Identifier } from '../data'
@@ -59,17 +60,6 @@ export default function ValidatorsList ({ validators, pageSize }) {
     })
   }
 
-  function sortHandler (header) {
-    setSort({
-      key: header.key,
-      direction: header.key === sort.key
-        ? sort.direction === 'asc'
-          ? 'desc'
-          : 'asc'
-        : 'desc'
-    })
-  }
-
   const headers = [
     {
       key: 'hash',
@@ -92,18 +82,13 @@ export default function ValidatorsList ({ validators, pageSize }) {
   return (
     <div className={'ValidatorsList'}>
       <div className={'ValidatorsList__ContentContainer'}>
-        <Grid className={'ValidatorsList__ColumnTitles'}>
-          {headers.map(header => (
-              <GridItem
-                className={'ValidatorsList__ColumnTitle'}
-                onClick={() => sortHandler(header)}
-              >
-                {header.label}
-              </GridItem>
-            ))
-          }
-        </Grid>
-        
+        <ListColumnsHeader
+          columns={headers}
+          sortCallback={setSort}
+          className={'ValidatorsList__ColumnTitles'}
+          columnClassName={'ValidatorsList__ColumnTitle'}
+        />
+
         {!validators?.loading
           ? getSortedList().map((validator, i) => <ValidatorListItem key={i} validator={validator}/>)
           : Array.from({ length: pageSize }, (x, i) => <ValidatorListItem key={i} loading={true}/>)

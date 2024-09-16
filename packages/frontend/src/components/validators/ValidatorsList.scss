@@ -9,16 +9,16 @@
   }
 
   &__ColumnTitle {
-    text-align: right;
+    justify-content: flex-end;
 
     &:first-child {
-      text-align: left;
+      justify-content: flex-start;
     }
   }
   
   @media screen and (max-width: $breakpoint-lg) {
     &__ColumnTitles {
-      grid-template-columns: auto 150px 150px;
+      grid-template-columns: auto 170px 170px;
     }
   }
 
