@@ -3,7 +3,8 @@
 
 .ValidatorsTotalCard {
   padding: 30px;
-
+  height: 160px;
+  
   &__Title {
     margin-bottom: 12px;
     color: $color-brand-normal;
@@ -45,9 +46,14 @@
 
   @media screen and (max-width: $breakpoint-md) {
     padding: 16px;
+    height: 120px;
+
+    &__EpochProgress {
+      margin-top: 8px;
+    }
 
     &__Title {
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
   }
 }
