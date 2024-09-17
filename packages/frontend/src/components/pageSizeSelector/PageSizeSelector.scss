@@ -4,16 +4,18 @@
 .PageSizeSelector {
   display: flex;
   font-family: $font-mono;
+  align-items: center;
   
   &__Title {
     margin-right: 8px;
     white-space: nowrap;
-    color: var(--chakra-colors-gray-250);;
+    color: var(--chakra-colors-gray-250);
+    font-size: 0.75rem;
   }
 
   select {
+    font-size: 0.75rem;
     padding: 6px 12px;
-    width: 100px;
     max-width: 100%;
     height: 29px;
     box-sizing: border-box;

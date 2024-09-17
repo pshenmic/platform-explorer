@@ -3,16 +3,19 @@
 
 .GoToHeightForm {
   display: flex;
+  align-items: center;
 
   &__Title {
     margin-right: 8px;
     white-space: nowrap;
     font-family: $font-mono;
-    color: var(--chakra-colors-gray-250);;
+    color: var(--chakra-colors-gray-250);
+    font-size: 0.75rem;
   }
 
   &__Input {
     font-family: $font-mono;
+    font-size: 0.75rem;
 
     &, &:focus {
       width: 80px;
