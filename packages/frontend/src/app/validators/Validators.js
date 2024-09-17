@@ -79,52 +79,52 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
 
   return (
     <Container
-        maxW={'container.xl'}
-        mt={8}
-        className={'Transactions'}
+      maxW={'container.xl'}
+      mt={8}
+      className={'Transactions'}
     >
-        <Container
-            maxW={'container.xl'}
-            className={'InfoBlock'}
-        >
-            <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>
-            <Box mb={5}>
-              <Switcher
-                options={[
-                  {
-                    title: 'All'
-                  },
-                  {
-                    title: 'Current'
-                  },
-                  {
-                    title: 'Queued'
-                  }
-                ]}
-                onChange={activeOption => isActiveSwitchHandler(activeOption)}
-              />
-            </Box>
+      <Container
+        maxW={'container.xl'}
+        className={'InfoBlock'}
+      >
+        <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>
+        <Box mb={5}>
+          <Switcher
+            options={[
+              {
+                title: 'All'
+              },
+              {
+                title: 'Current'
+              },
+              {
+                title: 'Queued'
+              }
+            ]}
+            onChange={activeOption => isActiveSwitchHandler(activeOption)}
+          />
+        </Box>
 
-            {!validators.error
-              ? <ValidatorsList validators={validators} pageSize={pageSize}/>
-              : <Container h={20}><ErrorMessageBlock/></Container>}
+        {!validators.error
+          ? <ValidatorsList validators={validators} pageSize={pageSize}/>
+          : <Container h={20}><ErrorMessageBlock/></Container>}
 
-            {validators.data?.resultSet?.length > 0 &&
-              <div className={'ListNavigation'}>
-                <Box display={['none', 'none', 'block']} width={'100px'}/>
-                <Pagination
-                    onPageChange={({ selected }) => setCurrentPage(selected)}
-                    pageCount={pageCount}
-                    forcePage={currentPage}
-                />
-                <PageSizeSelector
-                    PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                    value={pageSize}
-                    items={paginateConfig.pageSize.values}
-                />
-              </div>
-            }
-        </Container>
+        {validators.data?.resultSet?.length > 0 &&
+          <div className={'ListNavigation'}>
+            <Box display={['none', 'none', 'block']} width={'100px'}/>
+            <Pagination
+              onPageChange={({ selected }) => setCurrentPage(selected)}
+              pageCount={pageCount}
+              forcePage={currentPage}
+            />
+            <PageSizeSelector
+              PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+              value={pageSize}
+              items={paginateConfig.pageSize.values}
+            />
+          </div>
+        }
+      </Container>
     </Container>
   )
 }
