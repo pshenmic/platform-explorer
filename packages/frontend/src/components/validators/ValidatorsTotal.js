@@ -46,7 +46,10 @@ export default function ValidatorsTotal () {
               slides: { perView: 2 }
             }
           },
-          slides: { perView: 1 }
+          slides: {
+            origin: 'center',
+            perView: 1.1
+          }
         }}
         plugins={[WheelControls]}
       >

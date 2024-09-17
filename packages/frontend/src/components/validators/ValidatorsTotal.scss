@@ -23,6 +23,10 @@
   }
 
   @media screen and (max-width: $breakpoint-md) {
+    &__Slider {
+      margin: 0 -10px;
+    }
+
     &__CardsColumn {
       padding: 0 4px;
     }
