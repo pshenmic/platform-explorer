@@ -22,6 +22,12 @@
     }
   }
 
+  @media screen and (min-width: 600px) {
+    .SliderNavigation {
+      display: none;
+    }
+  }
+
   @media screen and (max-width: $breakpoint-md) {
     &__Slider {
      width: calc(100% + 20px);

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Progress } from '@chakra-ui/react'
 import { useKeenSlider } from 'keen-slider/react'
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import 'keen-slider/keen-slider.min.css'
+import './Slider.scss'
 import './SliderNavigation.scss'
 
 function Slider ({
@@ -14,6 +16,7 @@ function Slider ({
   autoPlaySpeed = 5000
 }) {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const totalSlides = React.Children.count(children)
   const [progress, setProgress] = useState(0)
   const [sliderRef, slider] = useKeenSlider({
     ...settings,
@@ -29,27 +32,30 @@ function Slider ({
   const updateProgress = () => {
     setProgress((prev) => {
       if (prev >= 100) {
-        slider.current?.next() // Переход к следующему слайду
+        if (currentSlide !== totalSlides - 1) {
+          slider.current?.next()
+        } else {
+          slider.current?.moveToIdx(0)
+        }
+        
         return 0
       }
-      return prev + (100 / (autoPlaySpeed / 100)) // Увеличиваем прогресс
+      return prev + (100 / (autoPlaySpeed / 10))
     })
   }
 
   // Устанавливаем таймер для автопрокрутки
   useEffect(() => {
-    const interval = setInterval(updateProgress, 100)
+    const interval = setInterval(updateProgress, 10)
     return () => clearInterval(interval)
   }, [currentSlide])
 
-  const totalSlides = React.Children.count(children)
 
   return (
-    <div>
-      <div ref={sliderRef} className={`keen-slider ${className || ''}`}>{children}</div>
+    <div className={'Slider'}>
+      <div ref={sliderRef} className={`Slider__Carousel keen-slider ${className || ''}`}>{children}</div>
 
-      <div className={'SliderNavigation'}>
-
+      <div className={'Slider__Navigation SliderNavigation'}>
         {showProgressBar && (
           <div className={'SliderNavigation__ProgressBars'}>
             {[...Array(totalSlides)].map((_, index) => (
@@ -65,24 +71,36 @@ function Slider ({
         )}
 
         {showNavButtons && (
-          <div className={''}>
+          <div className={'SliderNavigation__Buttons'}>
             <button
-              className={''}
+              className={`SliderNavigation__Button SliderNavigation__Button--Prev ` +
+                `${currentSlide === 0
+                  ? 'SliderNavigation__Button--Disabled'
+                  : ''}`
+              }
               onClick={() => {
-                slider.current?.prev()
-                resetProgress()
+                if (currentSlide !== 0) {
+                  slider.current?.prev()
+                  resetProgress()
+                }
               }}
             >
-              {'<'}
+              <ChevronLeftIcon color={'#ddd'}/>
             </button>
             <button
-              className={''}
+              className={`SliderNavigation__Button SliderNavigation__Button--Next ` +
+                `${currentSlide === totalSlides - 1
+                  ? 'SliderNavigation__Button--Disabled'
+                  : ''}`
+              }
               onClick={() => {
-                slider.current?.next()
-                resetProgress()
+                if (currentSlide !== totalSlides - 1) {
+                  slider.current?.next()
+                  resetProgress()
+                }
               }}
             >
-              {'>'}
+              <ChevronRightIcon color={'#ddd'}/>
             </button>
           </div>
         )}
