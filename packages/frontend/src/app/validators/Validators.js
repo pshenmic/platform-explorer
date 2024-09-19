@@ -97,15 +97,9 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
         <Box mb={5}>
           <Switcher
             options={[
-              {
-                title: 'All'
-              },
-              {
-                title: 'Current'
-              },
-              {
-                title: 'Queued'
-              }
+              { title: 'All' },
+              { title: 'Current' },
+              { title: 'Queued' }
             ]}
             defaultValue={activeState}
             onChange={activeOption => isActiveSwitchHandler(activeOption)}
