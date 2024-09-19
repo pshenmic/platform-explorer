@@ -24,7 +24,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const [total, setTotal] = useState(1)
-  const [activeState, setActiveState] = useState(defaultIsActive !== undefined ? defaultIsActive === true : 'All')
+  const [activeState, setActiveState] = useState(defaultIsActive !== undefined ? defaultIsActive : 'all')
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
@@ -34,8 +34,8 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
     setValidators({ data: {}, loading: true, error: false })
 
     const state = (() => {
-      if (active === 'All') return null
-      return active === 'Current'
+      if (active === 'all') return null
+      return active === 'current'
     })()
 
     Api.getValidators(page, count, 'desc', state)
@@ -60,6 +60,12 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
 
+    if (activeState.toLowerCase() !== 'all') {
+      urlParameters.set('active-state', activeState.toLowerCase())
+    } else {
+      urlParameters.delete('active-state')
+    }
+
     if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
       urlParameters.delete('page')
       urlParameters.delete('page-size')
@@ -69,11 +75,11 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [currentPage, pageSize])
+  }, [currentPage, pageSize, activeState])
 
   const isActiveSwitchHandler = (newActiveState) => {
     setCurrentPage(0)
-    setActiveState(newActiveState)
+    setActiveState(newActiveState.toLowerCase())
     fetchData(1, pageSize, newActiveState)
   }
 
@@ -101,6 +107,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
                 title: 'Queued'
               }
             ]}
+            defaultValue={activeState}
             onChange={activeOption => isActiveSwitchHandler(activeOption)}
           />
         </Box>

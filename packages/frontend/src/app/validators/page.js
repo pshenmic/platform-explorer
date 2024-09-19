@@ -15,7 +15,7 @@ export const metadata = {
 function ValidatorsRoute ({ searchParams }) {
   const page = Number(searchParams.page) || 1
   const pageSize = Number(searchParams['page-size'])
-  const isActive = searchParams.active
+  const activeState = searchParams['active-state']
 
   return <>
     <Container
@@ -30,7 +30,7 @@ function ValidatorsRoute ({ searchParams }) {
         block={<ValidatorsTotal/>}
       />
     </Container>
-    <Validators defaultPage={page} defaultPageSize={pageSize} defaultIsActive={isActive}/>
+    <Validators defaultPage={page} defaultPageSize={pageSize} defaultIsActive={activeState}/>
   </>
 }
 
