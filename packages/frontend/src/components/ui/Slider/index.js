@@ -21,7 +21,7 @@ function Slider ({
   const [sliderRef, slider] = useKeenSlider({
     ...settings,
     slideChanged (s) {
-      setCurrentSlide(s.track.details.rel) // обновляем текущий слайд
+      setCurrentSlide(s.track.details.rel)
       resetProgress()
     }
   }, plugins)
