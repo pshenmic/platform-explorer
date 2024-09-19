@@ -3,7 +3,7 @@
 
 .ValidatorsTotalCard {
   padding: 30px;
-  height: 160px;
+  height: 180px;
   
   &__Title {
     margin-bottom: 12px;
@@ -37,6 +37,21 @@
   &--BestValidator & {
     &__Value {
       width: 100%;
+    }
+  }
+
+  &--Fees, &--TotalValidators {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &--Fees &, &--TotalValidators & {
+    &__Value {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
   }
 

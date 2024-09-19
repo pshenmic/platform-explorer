@@ -25,10 +25,8 @@ function Slider ({
       resetProgress()
     }
   }, plugins)
-
   const resetProgress = () => setProgress(0)
 
-  // Обновляем прогресс слайдов
   const updateProgress = () => {
     setProgress((prev) => {
       if (prev >= 100) {
@@ -37,19 +35,17 @@ function Slider ({
         } else {
           slider.current?.moveToIdx(0)
         }
-        
+
         return 0
       }
       return prev + (100 / (autoPlaySpeed / 10))
     })
   }
 
-  // Устанавливаем таймер для автопрокрутки
   useEffect(() => {
     const interval = setInterval(updateProgress, 10)
     return () => clearInterval(interval)
-  }, [currentSlide])
-
+  }, [currentSlide, updateProgress])
 
   return (
     <div className={'Slider'}>
@@ -73,7 +69,7 @@ function Slider ({
         {showNavButtons && (
           <div className={'SliderNavigation__Buttons'}>
             <button
-              className={`SliderNavigation__Button SliderNavigation__Button--Prev ` +
+              className={'SliderNavigation__Button SliderNavigation__Button--Prev ' +
                 `${currentSlide === 0
                   ? 'SliderNavigation__Button--Disabled'
                   : ''}`
@@ -88,7 +84,7 @@ function Slider ({
               <ChevronLeftIcon color={'#ddd'}/>
             </button>
             <button
-              className={`SliderNavigation__Button SliderNavigation__Button--Next ` +
+              className={'SliderNavigation__Button SliderNavigation__Button--Next ' +
                 `${currentSlide === totalSlides - 1
                   ? 'SliderNavigation__Button--Disabled'
                   : ''}`

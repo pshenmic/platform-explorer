@@ -8,6 +8,8 @@ import EpochProgress from '../networkStatus/EpochProgress'
 import { Identifier } from '../data'
 import { Slider, SliderElement } from '../ui/Slider'
 import { WheelControls } from '../ui/Slider/plugins'
+import { Flex, Text, Box } from '@chakra-ui/react'
+import ImageGenerator from '../imageGenerator'
 import './ValidatorsTotal.scss'
 import './ValidatorsTotalCard.scss'
 
@@ -27,7 +29,7 @@ export default function ValidatorsTotal () {
       })
       .catch(err => fetchHandlerError(setStatus, err))
 
-    Api.getValidators(1, 1)
+    Api.getValidators(1, 10)
       .then(res => fetchHandlerSuccess(setValidators, res))
       .catch(err => fetchHandlerError(setValidators, err))
   }
@@ -63,16 +65,21 @@ export default function ValidatorsTotal () {
             </div>
             {status?.data?.epoch && <EpochProgress epoch={status.data.epoch} className={'ValidatorsTotalCard__EpochProgress'}/>}
           </InfoCard>
-          <InfoCard className={'ValidatorsTotal__Card ValidatorsTotalCard'} loading={status.loading}>
+          <InfoCard className={'ValidatorsTotal__Card ValidatorsTotalCard ValidatorsTotalCard--Fees'} loading={status.loading}>
             <div className={'ValidatorsTotalCard__Title'}>Fees collected</div>
             <div className={'ValidatorsTotalCard__Value'}>
-              {typeof epoch?.data?.totalCollectedFees === 'number'
-                ? currencyRound(epoch.data.totalCollectedFees)
-                : 'n/a'}
+              <div>
+                {typeof epoch?.data?.totalCollectedFees === 'number'
+                  ? currencyRound(epoch.data.totalCollectedFees)
+                  : 'n/a'}
+              </div>
+              <Flex fontFamily={'mono'} fontSize={'0.75rem'} fontWeight={'normal'}>
+                <Text color={'gray.500'} mr={'8px'}>Last 24h: </Text>
+                <Text>n/a</Text>
+              </Flex>
             </div>
           </InfoCard>
         </SliderElement>
-
         <SliderElement className={'ValidatorsTotal__CardsColumn'}>
           <InfoCard
             className={'ValidatorsTotal__Card ValidatorsTotalCard ValidatorsTotalCard--BestValidator'}
@@ -93,13 +100,29 @@ export default function ValidatorsTotal () {
               }
             </div>
           </InfoCard>
-          <InfoCard className={'ValidatorsTotal__Card ValidatorsTotalCard'} loading={validators.loading}>
+          <InfoCard className={'ValidatorsTotal__Card ValidatorsTotalCard ValidatorsTotalCard--TotalValidators'} loading={validators.loading}>
             <div className={'ValidatorsTotalCard__Title'}>Total validators</div>
             <div className={'ValidatorsTotalCard__Value'}>
-              {typeof validators?.data?.pagination?.total === 'number'
-                ? validators.data.pagination.total
-                : 'n/a'}
+              <div>
+                {typeof validators?.data?.pagination?.total === 'number'
+                  ? validators.data.pagination.total
+                  : 'n/a'}
+                </div>
               </div>
+              <Flex>
+                {validators.data?.resultSet?.map((validator, i) => (
+                  <Box opacity={ 1 - 0.1 * i } key={i}>
+                    <ImageGenerator
+                      className={''}
+                      username={validator.proTxHash}
+                      lightness={50}
+                      saturation={50}
+                      width={32}
+                      height={32}
+                    />
+                  </Box>
+                ))}
+              </Flex>
           </InfoCard>
         </SliderElement>
       </Slider>
