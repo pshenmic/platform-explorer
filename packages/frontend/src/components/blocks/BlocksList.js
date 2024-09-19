@@ -1,5 +1,5 @@
 import BlocksListItem from './BlocksListItem'
-import { EmptyListMessage } from '../lists'
+import { EmptyListMessage } from '../ui/lists'
 import './BlocksList.scss'
 
 function BlocksList ({ blocks = [], columnsCount = 1, size = 'l' }) {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ListColumnsHeader } from '../lists'
+import { ListColumnsHeader } from '../ui/lists'
 import Link from 'next/link'
 import { LoadingLine } from '../loading'
 import { Identifier } from '../data'

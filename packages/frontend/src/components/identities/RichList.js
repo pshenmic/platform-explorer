@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import { SimpleList } from '../lists'
+import { SimpleList } from '../ui/lists'
 import { LoadingList } from '../../components/loading'
 import { Heading, Flex } from '@chakra-ui/react'
 import { WarningTwoIcon } from '@chakra-ui/icons'

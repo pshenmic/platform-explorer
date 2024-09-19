@@ -2,8 +2,8 @@ import Link from 'next/link'
 import './SimpleList.scss'
 import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
-import ImageGenerator from '../imageGenerator'
-import { numberFormat } from '../../util'
+import ImageGenerator from '../../imageGenerator'
+import { numberFormat } from '../../../util'
 import ListColumnsHeader from './ListColumnsHeader'
 
 function EmptyListMessage ({ children }) {
