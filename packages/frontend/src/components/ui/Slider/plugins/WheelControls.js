@@ -52,10 +52,10 @@ const WheelControls = (slider) => {
     const totalSlides = slider?.slides?.length
     const visibleSlides = slider?.options?.slides?.perView || 1
 
+    slider.container.removeEventListener('wheel', eventWheel)
+
     if (totalSlides > visibleSlides) {
       slider.container.addEventListener('wheel', eventWheel, { passive: false })
-    } else {
-      slider.container.removeEventListener('wheel', eventWheel)
     }
   }
 
