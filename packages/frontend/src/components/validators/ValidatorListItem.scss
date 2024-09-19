@@ -23,6 +23,9 @@
 
   &__Column {
     text-align: right;
+    font-size: 0.75rem;
+    font-family: $font-mono;
+    color: #fff;
 
     &:first-child {
       text-align: left;
