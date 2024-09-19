@@ -161,7 +161,7 @@ function Validator ({ hash }) {
 
         {proposedBlocks.data?.resultSet?.length > 0 &&
           <div className={'ListNavigation'}>
-              <Box/>
+              <Box width={'155px'}/>
               <Pagination
                 onPageChange={handlePageClick}
                 pageCount={pageCount}

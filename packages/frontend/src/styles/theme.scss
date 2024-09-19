@@ -22,6 +22,11 @@
     margin-bottom: 6px;
   }
 
+  .PageSizeSelector {
+    width: 150px;
+    justify-content: right;
+  }
+
   @media screen and (max-width: $breakpoint-lg) {
     flex-direction: column;
     align-items: center;
@@ -29,6 +34,8 @@
     .PageSizeSelector {
       margin-left: auto;
       margin-right: auto;
+      justify-content: center;
+      width: auto;
     }
     
     .Pagination {

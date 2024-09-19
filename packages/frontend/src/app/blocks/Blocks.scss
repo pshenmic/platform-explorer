@@ -1,7 +1,11 @@
 .Blocks {
+  .PageSizeSelector, .GoToHeightForm {
+    width: 210px;
+  }
+
   @media screen and (max-width: 1268px) {
     .GoToHeightForm {
-      order: 3;
+      order: 2;
     }
 
     .Pagination {
@@ -12,7 +16,7 @@
     }
 
     .PageSizeSelector {
-      order: 1;
+      order: 3;
       text-align: left;
     }
   }
@@ -27,24 +31,6 @@
       width: 100%;
       justify-content: center;
       margin-bottom: 8px;
-    }
-  }
-
-  @media screen and (max-width: 310px) {
-    .GoToHeightForm {
-      margin: 0;
-      width: 100%;
-    }
-
-    .PageSizeSelector {
-      width: 100%;
-      text-align: center;
-      margin: 0 auto;
-    }
-
-    .GoToHeightForm {
-      text-align: center;
-      margin-bottom: 4px;
     }
   }
 }
