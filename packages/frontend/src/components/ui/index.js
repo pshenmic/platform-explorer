@@ -12,7 +12,7 @@ function Switcher ({ options = [], onChange, defaultValue }) {
             type={'radio'}
             name={'switcher'}
             value={option.title}
-            defaultChecked={String(defaultValue).toLowerCase() === String(option.title).toLowerCase() || !defaultValue && i === 0}/>
+            defaultChecked={String(defaultValue).toLowerCase() === String(option.title).toLowerCase() || (!defaultValue && i === 0)}/>
           <span className={'Switcher__OptionTitle'}>{option.title}</span>
         </label>
       ))}
