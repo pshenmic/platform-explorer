@@ -36,7 +36,7 @@ class ValidatorsController {
   }
 
   getValidators = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc', isActive = undefined } = request.query
+    const { page = 1, limit = 10, order = 'asc', isActive = undefined, all = false } = request.query
 
     const activeValidators = await TenderdashRPC.getValidators()
 
@@ -45,7 +45,8 @@ class ValidatorsController {
       Number(limit),
       order,
       isActive,
-      activeValidators
+      activeValidators,
+      all
     )
 
     const validatorsWithInfo = await Promise.all(

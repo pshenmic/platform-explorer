@@ -18,6 +18,10 @@ const schemaTypes = [
         minimum: 1,
         maximum: 100
       },
+      all: {
+        type: ['boolean', 'null'],
+        default: false
+      },
       order: {
         type: ['string', 'null'],
         enum: ['asc', 'desc']
