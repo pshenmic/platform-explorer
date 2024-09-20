@@ -22,7 +22,7 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    const [blocks, stats, tdStatus, [epochInfo], totalCredits, totalCollectedFeesDay] = (await Promise.allSettled([
+    const [blocks, stats, tdStatus, epochsInfo, totalCredits, totalCollectedFeesDay] = (await Promise.allSettled([
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
       TenderdashRPC.getStatus(),
@@ -33,7 +33,9 @@ class MainController {
 
     const [currentBlock] = blocks?.resultSet ?? []
 
-    const epoch = Epoch.fromObject(epochInfo)
+    const [epochInfo] = epochsInfo ?? []
+
+    const epoch = epochInfo ? Epoch.fromObject(epochInfo) : null
 
     response.send({
       epoch,
