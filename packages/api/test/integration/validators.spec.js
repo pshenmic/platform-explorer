@@ -209,107 +209,10 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
-        assert.equal(body.pagination.total, validators.length)
-        assert.equal(body.resultSet.length, 10)
-
-        const expectedValidators = validators
-          .slice(0, 10)
-          .map(row => {
-            const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
-            return {
-              proTxHash: row.pro_tx_hash,
-              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
-              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-              lastProposedBlockHeader: blocks
-                .filter((block) => block.validator === row.pro_tx_hash)
-                .map((block) => BlockHeader.fromRow(block))
-                .map((blockHeader) => ({
-                  hash: blockHeader.hash,
-                  height: blockHeader.height,
-                  timestamp: blockHeader.timestamp.toISOString(),
-                  blockVersion: blockHeader.blockVersion,
-                  appVersion: blockHeader.appVersion,
-                  l1LockedHeight: blockHeader.l1LockedHeight,
-                  validator: blockHeader.validator
-                }))
-                .toReversed()[0] ?? null,
-              proTxInfo: {
-                type: dashCoreRpcResponse.type,
-                collateralHash: dashCoreRpcResponse.collateralHash,
-                collateralIndex: dashCoreRpcResponse.collateralIndex,
-                collateralAddress: dashCoreRpcResponse.collateralAddress,
-                operatorReward: dashCoreRpcResponse.operatorReward,
-                confirmations: dashCoreRpcResponse.confirmations,
-                state: dashCoreRpcResponse.state
-              },
-              identity: identity.identifier
-            }
-          })
-
-        assert.deepEqual(body.resultSet, expectedValidators)
-      })
-
-      it('should return set of all validators', async () => {
-        const { body } = await client.get('/validators?all=true')
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-
-        assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, validators.length)
         assert.equal(body.pagination.total, validators.length)
         assert.equal(body.resultSet.length, validators.length)
 
         const expectedValidators = validators
-          .map(row => {
-            const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
-            return {
-              proTxHash: row.pro_tx_hash,
-              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
-              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-              lastProposedBlockHeader: blocks
-                .filter((block) => block.validator === row.pro_tx_hash)
-                .map((block) => BlockHeader.fromRow(block))
-                .map((blockHeader) => ({
-                  hash: blockHeader.hash,
-                  height: blockHeader.height,
-                  timestamp: blockHeader.timestamp.toISOString(),
-                  blockVersion: blockHeader.blockVersion,
-                  appVersion: blockHeader.appVersion,
-                  l1LockedHeight: blockHeader.l1LockedHeight,
-                  validator: blockHeader.validator
-                }))
-                .toReversed()[0] ?? null,
-              proTxInfo: {
-                type: dashCoreRpcResponse.type,
-                collateralHash: dashCoreRpcResponse.collateralHash,
-                collateralIndex: dashCoreRpcResponse.collateralIndex,
-                collateralAddress: dashCoreRpcResponse.collateralAddress,
-                operatorReward: dashCoreRpcResponse.operatorReward,
-                confirmations: dashCoreRpcResponse.confirmations,
-                state: dashCoreRpcResponse.state
-              },
-              identity: identity.identifier
-            }
-          })
-
-        assert.deepEqual(body.resultSet, expectedValidators)
-      })
-
-      it('should return default set of validators order desc', async () => {
-        const { body } = await client.get('/validators?order=desc&all=true')
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-
-        assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, validators.length)
-        assert.equal(body.pagination.total, validators.length)
-        assert.equal(body.resultSet.length, validators.length)
-
-        const expectedValidators = validators
-          .toReversed()
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -352,13 +255,11 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, validators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.resultSet.length, validators.length)
 
         const expectedValidators = validators
           .toReversed()
-          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -396,7 +297,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?page=2')
+        const { body } = await client.get('/validators?limit=10&page=2')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -664,107 +565,10 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
-        assert.equal(body.pagination.total, activeValidators.length)
-        assert.equal(body.resultSet.length, 10)
-
-        const expectedValidators = activeValidators
-          .slice(0, 10)
-          .map(row => {
-            const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
-            return {
-              proTxHash: row.pro_tx_hash,
-              isActive: true,
-              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-              lastProposedBlockHeader: blocks
-                .filter((block) => block.validator === row.pro_tx_hash)
-                .map((block) => BlockHeader.fromRow(block))
-                .map((blockHeader) => ({
-                  hash: blockHeader.hash,
-                  height: blockHeader.height,
-                  timestamp: blockHeader.timestamp.toISOString(),
-                  blockVersion: blockHeader.blockVersion,
-                  appVersion: blockHeader.appVersion,
-                  l1LockedHeight: blockHeader.l1LockedHeight,
-                  validator: blockHeader.validator
-                }))
-                .toReversed()[0] ?? null,
-              proTxInfo: {
-                type: dashCoreRpcResponse.type,
-                collateralHash: dashCoreRpcResponse.collateralHash,
-                collateralIndex: dashCoreRpcResponse.collateralIndex,
-                collateralAddress: dashCoreRpcResponse.collateralAddress,
-                operatorReward: dashCoreRpcResponse.operatorReward,
-                confirmations: dashCoreRpcResponse.confirmations,
-                state: dashCoreRpcResponse.state
-              },
-              identity: identity.identifier
-            }
-          })
-
-        assert.deepEqual(body.resultSet, expectedValidators)
-      })
-
-      it('should return set of all validators', async () => {
-        const { body } = await client.get('/validators?isActive=true&all=true')
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-
-        assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, activeValidators.length)
         assert.equal(body.pagination.total, activeValidators.length)
         assert.equal(body.resultSet.length, activeValidators.length)
 
         const expectedValidators = activeValidators
-          .map(row => {
-            const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
-            return {
-              proTxHash: row.pro_tx_hash,
-              isActive: true,
-              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-              lastProposedBlockHeader: blocks
-                .filter((block) => block.validator === row.pro_tx_hash)
-                .map((block) => BlockHeader.fromRow(block))
-                .map((blockHeader) => ({
-                  hash: blockHeader.hash,
-                  height: blockHeader.height,
-                  timestamp: blockHeader.timestamp.toISOString(),
-                  blockVersion: blockHeader.blockVersion,
-                  appVersion: blockHeader.appVersion,
-                  l1LockedHeight: blockHeader.l1LockedHeight,
-                  validator: blockHeader.validator
-                }))
-                .toReversed()[0] ?? null,
-              proTxInfo: {
-                type: dashCoreRpcResponse.type,
-                collateralHash: dashCoreRpcResponse.collateralHash,
-                collateralIndex: dashCoreRpcResponse.collateralIndex,
-                collateralAddress: dashCoreRpcResponse.collateralAddress,
-                operatorReward: dashCoreRpcResponse.operatorReward,
-                confirmations: dashCoreRpcResponse.confirmations,
-                state: dashCoreRpcResponse.state
-              },
-              identity: identity.identifier
-            }
-          })
-
-        assert.deepEqual(body.resultSet, expectedValidators)
-      })
-
-      it('should return set of all validators order desc', async () => {
-        const { body } = await client.get('/validators?order=desc&isActive=true&all=true')
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-
-        assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, activeValidators.length)
-        assert.equal(body.pagination.total, activeValidators.length)
-        assert.equal(body.resultSet.length, activeValidators.length)
-
-        const expectedValidators = activeValidators
-          .toReversed()
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -807,13 +611,11 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, activeValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.resultSet.length, activeValidators.length)
 
         const expectedValidators = activeValidators
           .toReversed()
-          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -851,7 +653,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?page=2&isActive=true')
+        const { body } = await client.get('/validators?limit=10&page=2&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1114,83 +916,10 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
-        assert.equal(body.pagination.total, inactiveValidators.length)
-        assert.equal(body.resultSet.length, 10)
-
-        const expectedValidators = inactiveValidators
-          .slice(0, 10)
-          .map(row => {
-            const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
-            return {
-              proTxHash: row.pro_tx_hash,
-              isActive: false,
-              proposedBlocksAmount: 0,
-              lastProposedBlockHeader: null,
-              proTxInfo: {
-                type: dashCoreRpcResponse.type,
-                collateralHash: dashCoreRpcResponse.collateralHash,
-                collateralIndex: dashCoreRpcResponse.collateralIndex,
-                collateralAddress: dashCoreRpcResponse.collateralAddress,
-                operatorReward: dashCoreRpcResponse.operatorReward,
-                confirmations: dashCoreRpcResponse.confirmations,
-                state: dashCoreRpcResponse.state
-              },
-              identity: identity.identifier
-            }
-          })
-
-        assert.deepEqual(body.resultSet, expectedValidators)
-      })
-
-      it('should return set of all validators', async () => {
-        const { body } = await client.get('/validators?isActive=false&all=true')
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-
-        assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, inactiveValidators.length)
         assert.equal(body.pagination.total, inactiveValidators.length)
         assert.equal(body.resultSet.length, inactiveValidators.length)
 
         const expectedValidators = inactiveValidators
-          .map(row => {
-            const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
-            return {
-              proTxHash: row.pro_tx_hash,
-              isActive: false,
-              proposedBlocksAmount: 0,
-              lastProposedBlockHeader: null,
-              proTxInfo: {
-                type: dashCoreRpcResponse.type,
-                collateralHash: dashCoreRpcResponse.collateralHash,
-                collateralIndex: dashCoreRpcResponse.collateralIndex,
-                collateralAddress: dashCoreRpcResponse.collateralAddress,
-                operatorReward: dashCoreRpcResponse.operatorReward,
-                confirmations: dashCoreRpcResponse.confirmations,
-                state: dashCoreRpcResponse.state
-              },
-              identity: identity.identifier
-            }
-          })
-
-        assert.deepEqual(body.resultSet, expectedValidators)
-      })
-
-      it('should return set of all validators order desc', async () => {
-        const { body } = await client.get('/validators?order=desc&isActive=false&all=true')
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-
-        assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, inactiveValidators.length)
-        assert.equal(body.pagination.total, inactiveValidators.length)
-        assert.equal(body.resultSet.length, inactiveValidators.length)
-
-        const expectedValidators = inactiveValidators
-          .toReversed()
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -1221,13 +950,11 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, inactiveValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.resultSet.length, inactiveValidators.length)
 
         const expectedValidators = inactiveValidators
           .toReversed()
-          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -1253,7 +980,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?page=2&isActive=false')
+        const { body } = await client.get('/validators?limit=10&page=2&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 

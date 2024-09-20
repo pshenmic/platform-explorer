@@ -219,8 +219,7 @@ GET /blocks
 Return all validators with pagination info.
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
-* `limit` cannot be more then 100
-* `all` boolean can be supplied in the query params to get all validators by params
+* `limit` cannot be more then 100 (0 = all validators)
 ```
 GET /validators
 
