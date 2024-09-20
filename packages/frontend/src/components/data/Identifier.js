@@ -15,7 +15,7 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
         <ImageGenerator className={'Identifier__Avatar'} username={children} lightness={50} saturation={50} width={28} height={28} />
       )}
       <span>{children}</span>
-      {copyButton && <CopyButton text={children}/>}
+      {copyButton && <CopyButton className={'Identifier__CopyButton'} text={children}/>}
     </div>
   )
 }

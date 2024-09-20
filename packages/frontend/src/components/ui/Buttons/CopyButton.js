@@ -36,7 +36,9 @@ function CopyButton ({ text, className }) {
         event.preventDefault()
         copyToClipboard(text, showMessage)
       }}
-      className={`CopyButton ${className}`}>
+      px={2}
+      className={`CopyButton ${className}`}
+    >
       <Tooltip
         label={messageState.text}
         aria-label={'A tooltip'}
