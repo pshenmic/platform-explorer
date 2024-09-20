@@ -9,10 +9,7 @@ class RateController {
       return response.send({ usd: kucoinResponse, source: 'Kucoin' })
     }
 
-    const coinbaseResponse = await Coinbase.getUSDRate(request).catch((err) => {
-      console.error(err)
-      return null
-    })
+    const coinbaseResponse = await Coinbase.getUSDRate(request)
 
     if (typeof coinbaseResponse === 'number') {
       return response.send({ usd: coinbaseResponse, source: 'Coinbase' })
