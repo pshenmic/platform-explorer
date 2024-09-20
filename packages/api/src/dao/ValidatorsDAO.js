@@ -3,7 +3,7 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
 
 module.exports = class ValidatorsDAO {
-  constructor(knex) {
+  constructor (knex) {
     this.knex = knex
   }
 
@@ -142,10 +142,10 @@ module.exports = class ValidatorsDAO {
 
   getValidatorStatsByProTxHash = async (proTxHash, timespan) => {
     const interval = {
-      '1h': {offset: '1 hour', step: '5 minute'},
-      '24h': {offset: '24 hour', step: '2 hour'},
-      '3d': {offset: '3 day', step: '6 hour'},
-      '1w': {offset: '1 week', step: '14 hour'}
+      '1h': { offset: '1 hour', step: '5 minute' },
+      '24h': { offset: '24 hour', step: '2 hour' },
+      '3d': { offset: '3 day', step: '6 hour' },
+      '1w': { offset: '1 week', step: '14 hour' }
     }[timespan]
 
     const ranges = this.knex
@@ -171,6 +171,6 @@ module.exports = class ValidatorsDAO {
           blocksCount: parseInt(row.blocks_count)
         }
       }))
-      .map(({timestamp, data}) => new SeriesData(timestamp, data))
+      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
   }
 }
