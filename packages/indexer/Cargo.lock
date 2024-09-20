@@ -493,7 +493,7 @@ dependencies = [
 
 [[package]]
 name = "dashpay-contract"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "platform-value",
  "platform-version",
@@ -503,7 +503,7 @@ dependencies = [
 
 [[package]]
 name = "data-contracts"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "dashpay-contract",
  "dpns-contract",
@@ -592,7 +592,7 @@ checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
 name = "dpns-contract"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "platform-value",
  "platform-version",
@@ -602,7 +602,7 @@ dependencies = [
 
 [[package]]
 name = "dpp"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -713,7 +713,7 @@ checksum = "9fc0510504f03c51ada170672ac806f1f105a88aa97a5281117e1ddc3368e51a"
 
 [[package]]
 name = "feature-flags-contract"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "platform-value",
  "platform-version",
@@ -1209,7 +1209,7 @@ dependencies = [
 
 [[package]]
 name = "json-schema-compatibility-validator"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "json-patch",
  "once_cell",
@@ -1280,7 +1280,7 @@ checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 
 [[package]]
 name = "masternode-reward-shares-contract"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "platform-value",
  "platform-version",
@@ -1548,7 +1548,7 @@ checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
 
 [[package]]
 name = "platform-serialization"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "bincode",
  "platform-version",
@@ -1556,7 +1556,7 @@ dependencies = [
 
 [[package]]
 name = "platform-serialization-derive"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1566,7 +1566,7 @@ dependencies = [
 
 [[package]]
 name = "platform-value"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "base64 0.22.1",
  "bincode",
@@ -1585,7 +1585,7 @@ dependencies = [
 
 [[package]]
 name = "platform-version"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "bincode",
  "grovedb-version",
@@ -1596,7 +1596,7 @@ dependencies = [
 
 [[package]]
 name = "platform-versioning"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3113,7 +3113,7 @@ dependencies = [
 
 [[package]]
 name = "withdrawals-contract"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "num_enum",
  "platform-value",
