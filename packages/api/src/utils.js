@@ -93,4 +93,27 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-module.exports = { hash, decodeStateTransition, getKnex }
+const calculateInterval = (start, end) => {
+  const startTimestamp = start.getTime()
+  const endTimestamp = end.getTime()
+
+  const period = endTimestamp - startTimestamp
+
+  if(period<=3600000){
+    return "PT5M"
+  }else if(period<=21600000){
+    return "PT1H"
+  }else if(period<=43200000){
+    return "PT2H"
+  }else if(period<=604800000){
+    return "P1D"
+  }else if(period<=2419200000){
+    return "P1W"
+  }else if(period<=62208000000){
+    return "P1M"
+  }else{
+    return "P1Y"
+  }
+}
+
+module.exports = { hash, decodeStateTransition, getKnex, calculateInterval }

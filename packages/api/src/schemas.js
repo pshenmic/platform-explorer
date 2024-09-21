@@ -26,13 +26,22 @@ const schemaTypes = [
         type: ['string', 'null'],
         enum: ['block_height', 'documents_count', 'tx_count', 'balance']
       },
-      isActive: { type: ['boolean', 'null'] }
+      isActive: {type: ['boolean', 'null']}
     }
   },
   {
-    $id: 'timespan',
-    type: ['string', 'null'],
-    enum: ['1h', '24h', '3d', '1w']
+    $id: 'timeInterval',
+    type: 'object',
+    properties: {
+      start: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      },
+      end: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      },
+    }
   },
   {
     $id: 'identifier',
@@ -44,7 +53,7 @@ const schemaTypes = [
     $id: 'identifierSchema',
     type: 'object',
     properties: {
-      identifier: { $ref: 'identifier#' }
+      identifier: {$ref: 'identifier#'}
     }
   }
 ]
