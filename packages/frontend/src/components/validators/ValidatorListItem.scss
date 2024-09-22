@@ -8,7 +8,7 @@
   background-color: var(--chakra-colors-gray-650);
 
   &--Loading {
-    height: 58px !important;
+    height: 46px !important;
   }
 
   &__Content {
@@ -22,13 +22,16 @@
   }
 
   &__Column {
-    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
     font-size: 0.75rem;
     font-family: $font-mono;
     color: #fff;
 
     &:first-child {
       text-align: left;
+      justify-content: flex-start;
     }
   }
 

@@ -12,7 +12,7 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
       }
     >
       {avatar && (
-        <ImageGenerator className={'Identifier__Avatar'} username={children} lightness={50} saturation={50} width={28} height={28} />
+        <ImageGenerator className={'Identifier__Avatar'} username={children} lightness={50} saturation={50} width={24} height={24} />
       )}
       <span>{children}</span>
       {copyButton && <CopyButton className={'Identifier__CopyButton'} text={children}/>}
