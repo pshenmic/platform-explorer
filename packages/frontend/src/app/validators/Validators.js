@@ -77,11 +77,10 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize, activeState])
 
-  const isActiveSwitchHandler = (newActiveState) => {
+  useEffect(() => {
     setCurrentPage(0)
-    setActiveState(newActiveState.toLowerCase())
-    fetchData(1, pageSize, newActiveState)
-  }
+    fetchData(1, pageSize, activeState)
+  }, [activeState])
 
   return (
     <Container
@@ -102,7 +101,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
               { title: 'Queued' }
             ]}
             defaultValue={activeState}
-            onChange={activeOption => isActiveSwitchHandler(activeOption)}
+            onChange={activeOption => setActiveState(activeOption.toLowerCase())}
           />
         </Box>
 
