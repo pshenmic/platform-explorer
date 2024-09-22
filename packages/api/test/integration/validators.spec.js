@@ -81,7 +81,18 @@ describe('Validators routes', () => {
     for (let i = 1; i <= 50; i++) {
       const block = await fixtures.block(
         knex,
-        {validator: validators[i % 30].pro_tx_hash, height: i}
+        {validator: validators[i % 30].pro_tx_hash, height: i,}
+      )
+
+      blocks.push(block)
+    }
+
+    for (let i = 1; i <= 10; i++) {
+      const block = await fixtures.block(
+        knex,
+        {validator: validators[1].pro_tx_hash, height: 50+i,
+          timestamp: new Date(new Date().getTime()+3600000+i)
+        }
       )
 
       blocks.push(block)
@@ -1233,21 +1244,19 @@ describe('Validators routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const [firstPeriod] = body.toReversed()
-      const firstTimestamp = new Date(firstPeriod.timestamp)
+      const firstTimestamp = new Date(firstPeriod.timestamp).getTime()
 
       const expectedStats = []
 
       for (let i = 0; i < 12; i++) {
-        const nextPeriod = firstTimestamp.getTime() - 300000 * i
-        const prevPeriod = firstTimestamp.getTime() - 300000 * (i + 1)
+        const nextPeriod = firstTimestamp - 300000 * i
+        const prevPeriod = firstTimestamp - 300000 * (i - 1)
+
 
         const blocksCount = blocks.filter(
           (block) => {
-            if(block.validator === validator.pro_tx_hash){
-              console.log('bb')
-            }
-            return block.timestamp.getTime() >= prevPeriod &&
-              block.timestamp.getTime() <= nextPeriod &&
+            return new Date(block.timestamp).getTime() <= prevPeriod &&
+              new Date(block.timestamp).getTime() >= nextPeriod &&
               block.validator === validator.pro_tx_hash
           }
         ).length
@@ -1267,9 +1276,8 @@ describe('Validators routes', () => {
 
     it('should return stats by proTxHash with custom timespan', async () => {
       const [, validator] = validators
-      const timespan = '24h'
 
-      const {body} = await client.get(`/validator/${validator.pro_tx_hash}/stats?timespan=${timespan}`)
+      const {body} = await client.get(`/validator/${validator.pro_tx_hash}/stats?start=${new Date().toISOString()}&end=${new Date(new Date().getTime()+20600000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1278,14 +1286,17 @@ describe('Validators routes', () => {
 
       const expectedStats = []
 
-      for (let i = 0; i < 12; i++) {
-        const nextPeriod = firstTimestamp.getTime() - intervals[timespan] * i
-        const prevPeriod = firstTimestamp.getTime() - intervals[timespan] * (i - 1)
+      for (let i = 0; i < 5; i++) {
+        const nextPeriod = firstTimestamp - 3600000 * i
+        const prevPeriod = firstTimestamp - 3600000 * (i - 1)
+
 
         const blocksCount = blocks.filter(
-          (block) => block.timestamp.getTime() <= prevPeriod &&
-            block.timestamp.getTime() >= nextPeriod &&
-            block.validator === validator.pro_tx_hash
+          (block) => {
+            return new Date(block.timestamp).getTime() <= prevPeriod &&
+              new Date(block.timestamp).getTime() >= nextPeriod &&
+              block.validator === validator.pro_tx_hash
+          }
         ).length
 
         expectedStats.push(
@@ -1303,7 +1314,7 @@ describe('Validators routes', () => {
 
     it('should return error on wrong bounds', async () => {
       await client.get(`/validator/${validators[0].pro_tx_hash}/stats?start=2025-01-02T00:00:00&end=2024-01-08T00:00:00`)
-        .expect(500)
+        .expect(400)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
