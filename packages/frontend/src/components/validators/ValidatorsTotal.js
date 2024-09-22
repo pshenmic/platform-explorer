@@ -75,7 +75,11 @@ export default function ValidatorsTotal () {
               </div>
               <Flex fontFamily={'mono'} fontSize={'0.75rem'} fontWeight={'normal'}>
                 <Text color={'gray.500'} mr={'8px'}>Last 24h: </Text>
-                <Text>n/a</Text>
+                <Text>
+                  {typeof status.data?.totalCollectedFeesDay === 'number'
+                    ? currencyRound(status.data.totalCollectedFeesDay)
+                    : 'n/a'}
+                </Text>
               </Flex>
             </div>
           </InfoCard>
