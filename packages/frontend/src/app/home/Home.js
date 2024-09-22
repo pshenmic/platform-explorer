@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsHistory from '../../components/charts/TransactionsHistory'
-import { SimpleList } from '../../components/lists'
+import { SimpleList } from '../../components/ui/lists'
 import TotalInfo from '../../components/total/TotalInfo'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import TransactionsList from '../../components/transactions/TransactionsList'

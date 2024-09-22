@@ -3,12 +3,7 @@
 
 .TransactionsListItem {
   @include mixins.DefListItem;
-
   display: block;
-
-  &:last-child {
-    border-bottom: none;
-  }
 
   &__Content {
     display: grid;

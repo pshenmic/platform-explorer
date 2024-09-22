@@ -1,5 +1,5 @@
 import DocumentsListItem from './DocumentsListItem'
-import { EmptyListMessage } from '../lists'
+import { EmptyListMessage } from '../ui/lists'
 import './DocumentsList.scss'
 
 export default function DocumentsList ({ documents = [], size = 'l' }) {
