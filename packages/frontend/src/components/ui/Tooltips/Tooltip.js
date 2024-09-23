@@ -3,7 +3,7 @@ import './Tooltip.scss'
 
 export default function Tooltip ({ title = '', content = '', children, ...props }) {
   const extraClass = title && content ? 'Tooltip--Extended' : ''
-  
+
   return (
     <ChakraTooltip
       className={`Tooltip ${extraClass}`}
