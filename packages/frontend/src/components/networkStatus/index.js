@@ -4,9 +4,9 @@ import * as Api from '../../util/Api'
 import { useState, useEffect, useCallback } from 'react'
 import { CheckCircleIcon, WarningIcon, InfoIcon } from '@chakra-ui/icons'
 import EpochProgress from './EpochProgress'
-import { Tooltip, Badge } from '@chakra-ui/react'
+import { Badge } from '@chakra-ui/react'
 import { fetchHandlerSuccess, fetchHandlerError, getTimeDelta } from '../../util'
-import { RateTooltip } from '../ui/Tooltips'
+import { Tooltip } from '../ui/Tooltips'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
@@ -48,7 +48,6 @@ function NetworkStatus ({ className }) {
                     label={`Next epoch change at ${new Date(status.data.epoch.endTime).toLocaleString()}`}
                     aria-label={'A tooltip'}
                     placement={'top'}
-                    hasArrow
                     bg={'gray.700'}
                     color={'white'}
                   >
@@ -86,7 +85,6 @@ function NetworkStatus ({ className }) {
               }`}
               aria-label={'Network status'}
               placement={'top'}
-              hasArrow
               bg={'gray.700'}
               color={'white'}
             >
@@ -110,7 +108,6 @@ function NetworkStatus ({ className }) {
               }`}
               aria-label={'API status'}
               placement={'top'}
-              hasArrow
               bg={'gray.700'}
               color={'white'}
             >
