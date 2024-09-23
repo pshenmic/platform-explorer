@@ -2,12 +2,20 @@ import copyToClipboard from './copyToClipboard'
 import { StateTransitionEnum, TransactionTypesEnum } from '../enums/state.transition.type'
 import currencyRound from './currencyRound'
 
-const getTransitionTypeString = (id) => {
+const getTransitionTypeStringById = (id) => {
   const [stateTransitionType] = Object.entries(StateTransitionEnum)
     .filter(([key]) => StateTransitionEnum[key] === id)
     .map(([key]) => key)
 
   return TransactionTypesEnum[stateTransitionType] ?? 'UNKNOWN'
+}
+
+function getTransitionTypeKeyById (id) {
+  const [stateTransitionType] = Object.entries(StateTransitionEnum)
+    .filter(([key]) => StateTransitionEnum[key] === id)
+    .map(([key]) => key)
+
+  return stateTransitionType
 }
 
 function fetchHandlerSuccess (setter, data) {
@@ -68,11 +76,12 @@ function getTimeDelta (startDate, endDate, format) {
 }
 
 export {
-  getTransitionTypeString,
+  getTransitionTypeStringById,
   fetchHandlerSuccess,
   fetchHandlerError,
   numberFormat,
   currencyRound,
   copyToClipboard,
-  getTimeDelta
+  getTimeDelta,
+  getTransitionTypeKeyById
 }

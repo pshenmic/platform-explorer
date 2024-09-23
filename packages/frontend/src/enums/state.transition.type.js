@@ -19,3 +19,14 @@ export const TransactionTypesEnum = {
   IDENTITY_CREDIT_WITHDRAWAL: 'Credit Withdrawal',
   IDENTITY_CREDIT_TRANSFER: 'Credit Transfer'
 }
+
+export const TransactionTypesColors = {
+  DATA_CONTRACT_CREATE: 'blue',
+  DATA_CONTRACT_UPDATE: 'yellow',
+  DOCUMENTS_BATCH: 'gray',
+  IDENTITY_CREATE: 'blue',
+  IDENTITY_TOP_UP: 'emerald',
+  IDENTITY_UPDATE: 'yellow',
+  IDENTITY_CREDIT_WITHDRAWAL: 'red',
+  IDENTITY_CREDIT_TRANSFER: 'orange'
+}

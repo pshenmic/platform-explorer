@@ -25,7 +25,7 @@ function TransactionsListItem ({ transaction }) {
         }
         {transaction?.type !== undefined &&
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Type'}>
-            <TypeBadge type={transaction.type}/>
+            <TypeBadge typeId={transaction.type}/>
           </GridItem>
         }
       </Grid>
