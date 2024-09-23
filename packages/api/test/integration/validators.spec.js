@@ -1,9 +1,9 @@
-const {describe, it, before, after, mock} = require('node:test')
+const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const {getKnex} = require('../../src/utils')
+const { getKnex } = require('../../src/utils')
 const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
@@ -81,7 +81,7 @@ describe('Validators routes', () => {
     for (let i = 1; i <= 50; i++) {
       const block = await fixtures.block(
         knex,
-        {validator: validators[i % 30].pro_tx_hash, height: i,}
+        { validator: validators[i % 30].pro_tx_hash, height: i }
       )
 
       blocks.push(block)
@@ -90,8 +90,10 @@ describe('Validators routes', () => {
     for (let i = 1; i <= 10; i++) {
       const block = await fixtures.block(
         knex,
-        {validator: validators[1].pro_tx_hash, height: 50+i,
-          timestamp: new Date(new Date().getTime()+3600000+i)
+        {
+          validator: validators[1].pro_tx_hash,
+          height: 50 + i,
+          timestamp: new Date(new Date().getTime() + 3600000 + i)
         }
       )
 
@@ -113,7 +115,7 @@ describe('Validators routes', () => {
     mock.method(tenderdashRpc, 'getValidators',
       async () =>
         Promise.resolve(activeValidators.map(activeValidator =>
-          ({pro_tx_hash: activeValidator.pro_tx_hash}))))
+          ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
 
     mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
   })
@@ -127,7 +129,7 @@ describe('Validators routes', () => {
     it('should return inactive validator by proTxHash', async () => {
       const [validator] = inactiveValidators
 
-      const {body} = await client.get(`/validator/${validator.pro_tx_hash}`)
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -157,7 +159,7 @@ describe('Validators routes', () => {
     it('should return active validator by proTxHash', async () => {
       const [validator] = activeValidators
 
-      const {body} = await client.get(`/validator/${validator.pro_tx_hash}`)
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -206,7 +208,7 @@ describe('Validators routes', () => {
   describe('getValidators()', async () => {
     describe('no filter', async () => {
       it('should return default set of validators', async () => {
-        const {body} = await client.get('/validators')
+        const { body } = await client.get('/validators')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -254,7 +256,7 @@ describe('Validators routes', () => {
       })
 
       it('should return default set of validators order desc', async () => {
-        const {body} = await client.get('/validators?order=desc')
+        const { body } = await client.get('/validators?order=desc')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -303,7 +305,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const {body} = await client.get('/validators?page=2')
+        const { body } = await client.get('/validators?page=2')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -351,7 +353,7 @@ describe('Validators routes', () => {
       })
 
       it('should return custom page size', async () => {
-        const {body} = await client.get('/validators?limit=7')
+        const { body } = await client.get('/validators?limit=7')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -403,7 +405,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size', async () => {
-        const {body} = await client.get('/validators?limit=7&page=2')
+        const { body } = await client.get('/validators?limit=7&page=2')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -451,7 +453,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size desc', async () => {
-        const {body} = await client.get('/validators?limit=5&page=4&order=desc')
+        const { body } = await client.get('/validators?limit=5&page=4&order=desc')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -501,7 +503,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when when it is out of bounds', async () => {
-        const {body} = await client.get('/validators?limit=6&page=9')
+        const { body } = await client.get('/validators?limit=6&page=9')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -549,7 +551,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const {body} = await client.get('/validators?limit=10&page=6')
+        const { body } = await client.get('/validators?limit=10&page=6')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -566,7 +568,7 @@ describe('Validators routes', () => {
 
     describe('filter isActive = true', async () => {
       it('should return default set of validators', async () => {
-        const {body} = await client.get('/validators?isActive=true')
+        const { body } = await client.get('/validators?isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -614,7 +616,7 @@ describe('Validators routes', () => {
       })
 
       it('should return default set of validators order desc', async () => {
-        const {body} = await client.get('/validators?order=desc&isActive=true')
+        const { body } = await client.get('/validators?order=desc&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -663,7 +665,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const {body} = await client.get('/validators?page=2&isActive=true')
+        const { body } = await client.get('/validators?page=2&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -711,7 +713,7 @@ describe('Validators routes', () => {
       })
 
       it('should return custom page size', async () => {
-        const {body} = await client.get('/validators?limit=7&isActive=true')
+        const { body } = await client.get('/validators?limit=7&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -759,7 +761,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size', async () => {
-        const {body} = await client.get('/validators?limit=7&page=2&isActive=true')
+        const { body } = await client.get('/validators?limit=7&page=2&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -807,7 +809,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size desc', async () => {
-        const {body} = await client.get('/validators?limit=5&page=4&order=desc&isActive=true')
+        const { body } = await client.get('/validators?limit=5&page=4&order=desc&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -856,7 +858,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when when it is out of bounds', async () => {
-        const {body} = await client.get('/validators?limit=4&page=8&isActive=true')
+        const { body } = await client.get('/validators?limit=4&page=8&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -904,7 +906,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const {body} = await client.get('/validators?limit=10&page=4&isActive=true')
+        const { body } = await client.get('/validators?limit=10&page=4&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -921,7 +923,7 @@ describe('Validators routes', () => {
 
     describe('filter isActive = false', async () => {
       it('should return default set of validators', async () => {
-        const {body} = await client.get('/validators?isActive=false')
+        const { body } = await client.get('/validators?isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -957,7 +959,7 @@ describe('Validators routes', () => {
       })
 
       it('should return default set of validators order desc', async () => {
-        const {body} = await client.get('/validators?order=desc&isActive=false')
+        const { body } = await client.get('/validators?order=desc&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -994,7 +996,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const {body} = await client.get('/validators?page=2&isActive=false')
+        const { body } = await client.get('/validators?page=2&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1030,7 +1032,7 @@ describe('Validators routes', () => {
       })
 
       it('should return custom page size', async () => {
-        const {body} = await client.get('/validators?limit=7&isActive=false')
+        const { body } = await client.get('/validators?limit=7&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1066,7 +1068,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size', async () => {
-        const {body} = await client.get('/validators?limit=7&page=2&isActive=false')
+        const { body } = await client.get('/validators?limit=7&page=2&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1102,7 +1104,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size desc', async () => {
-        const {body} = await client.get('/validators?limit=5&page=4&order=desc&isActive=false')
+        const { body } = await client.get('/validators?limit=5&page=4&order=desc&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1151,7 +1153,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when when it is out of bounds', async () => {
-        const {body} = await client.get('/validators?limit=3&page=7&isActive=false')
+        const { body } = await client.get('/validators?limit=3&page=7&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1199,7 +1201,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const {body} = await client.get('/validators?limit=10&page=4&isActive=false')
+        const { body } = await client.get('/validators?limit=10&page=4&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1239,7 +1241,7 @@ describe('Validators routes', () => {
     it('should return stats by proTxHash', async () => {
       const [, validator] = validators
 
-      const {body} = await client.get(`/validator/${validator.pro_tx_hash}/stats`)
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1251,7 +1253,6 @@ describe('Validators routes', () => {
       for (let i = 0; i < 12; i++) {
         const nextPeriod = firstTimestamp - 300000 * i
         const prevPeriod = firstTimestamp - 300000 * (i - 1)
-
 
         const blocksCount = blocks.filter(
           (block) => {
@@ -1277,7 +1278,7 @@ describe('Validators routes', () => {
     it('should return stats by proTxHash with custom timespan', async () => {
       const [, validator] = validators
 
-      const {body} = await client.get(`/validator/${validator.pro_tx_hash}/stats?start=${new Date().toISOString()}&end=${new Date(new Date().getTime()+20600000).toISOString()}`)
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats?start=${new Date().toISOString()}&end=${new Date(new Date().getTime() + 80600000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1286,10 +1287,9 @@ describe('Validators routes', () => {
 
       const expectedStats = []
 
-      for (let i = 0; i < 5; i++) {
-        const nextPeriod = firstTimestamp - 3600000 * i
-        const prevPeriod = firstTimestamp - 3600000 * (i - 1)
-
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 7200000 * i
+        const prevPeriod = firstTimestamp - 7200000 * (i - 1)
 
         const blocksCount = blocks.filter(
           (block) => {

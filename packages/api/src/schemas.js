@@ -26,7 +26,7 @@ const schemaTypes = [
         type: ['string', 'null'],
         enum: ['block_height', 'documents_count', 'tx_count', 'balance']
       },
-      isActive: {type: ['boolean', 'null']}
+      isActive: { type: ['boolean', 'null'] }
     }
   },
   {
@@ -40,7 +40,7 @@ const schemaTypes = [
       end: {
         type: ['string', 'null'],
         format: 'date-time'
-      },
+      }
     }
   },
   {
@@ -53,7 +53,7 @@ const schemaTypes = [
     $id: 'identifierSchema',
     type: 'object',
     properties: {
-      identifier: {$ref: 'identifier#'}
+      identifier: { $ref: 'identifier#' }
     }
   }
 ]

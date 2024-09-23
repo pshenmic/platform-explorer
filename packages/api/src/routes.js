@@ -8,16 +8,16 @@
  * @param validatorsController {ValidatorsController}
  */
 module.exports = ({
-                    fastify,
-                    mainController,
-                    epochController,
-                    blocksController,
-                    transactionsController,
-                    dataContractsController,
-                    documentsController,
-                    identitiesController,
-                    validatorsController
-                  }) => {
+  fastify,
+  mainController,
+  epochController,
+  blocksController,
+  transactionsController,
+  dataContractsController,
+  documentsController,
+  identitiesController,
+  validatorsController
+}) => {
   const routes = [
     {
       path: '/status',
@@ -32,7 +32,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            index: {type: 'number', minimum: 0}
+            index: { type: 'number', minimum: 0 }
           }
         }
       }
@@ -45,7 +45,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            hash: {$ref: 'hash#'}
+            hash: { $ref: 'hash#' }
           }
         }
       }
@@ -55,11 +55,11 @@ module.exports = ({
       method: 'GET',
       handler: blocksController.getBlocksByValidator,
       schema: {
-        querystring: {$ref: 'paginationOptions#'},
+        querystring: { $ref: 'paginationOptions#' },
         params: {
           type: 'object',
           properties: {
-            validator: {$ref: 'hash#'}
+            validator: { $ref: 'hash#' }
           }
         }
       }
@@ -69,7 +69,7 @@ module.exports = ({
       method: 'GET',
       handler: blocksController.getBlocks,
       schema: {
-        querystring: {$ref: 'paginationOptions#'}
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -77,7 +77,7 @@ module.exports = ({
       method: 'GET',
       handler: transactionsController.getTransactions,
       schema: {
-        querystring: {$ref: 'paginationOptions#'}
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -88,7 +88,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            hash: {$ref: 'hash#'}
+            hash: { $ref: 'hash#' }
           }
         }
       }
@@ -98,7 +98,7 @@ module.exports = ({
       method: 'GET',
       handler: dataContractsController.getDataContracts,
       schema: {
-        querystring: {$ref: 'paginationOptions#'}
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -109,7 +109,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            identifier: {$ref: 'identifier#'}
+            identifier: { $ref: 'identifier#' }
           }
         }
       }
@@ -122,10 +122,10 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            identifier: {$ref: 'identifier#'}
+            identifier: { $ref: 'identifier#' }
           }
         },
-        querystring: {$ref: 'paginationOptions#'}
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -136,7 +136,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            identifier: {$ref: 'identifier#'}
+            identifier: { $ref: 'identifier#' }
           }
         }
       }
@@ -146,7 +146,7 @@ module.exports = ({
       method: 'GET',
       handler: identitiesController.getIdentities,
       schema: {
-        querystring: {$ref: 'paginationOptions#'}
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -157,7 +157,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            identifier: {$ref: 'identifier#'}
+            identifier: { $ref: 'identifier#' }
           }
         }
       }
@@ -171,7 +171,7 @@ module.exports = ({
           type: 'object',
           required: ['dpns'],
           properties: {
-            dpns: {type: 'string'}
+            dpns: { type: 'string' }
           }
         }
       }
@@ -184,10 +184,10 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            identifier: {$ref: 'identifier#'}
+            identifier: { $ref: 'identifier#' }
           }
         },
-        querystring: {$ref: 'paginationOptions#'}
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -198,10 +198,10 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            identifier: {$ref: 'identifier#'}
+            identifier: { $ref: 'identifier#' }
           }
         },
-        querystring: {$ref: 'paginationOptions#'}
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -212,10 +212,10 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            identifier: {$ref: 'identifier#'}
+            identifier: { $ref: 'identifier#' }
           }
         },
-        querystring: {$ref: 'paginationOptions#'}
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -226,10 +226,10 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            identifier: {$ref: 'identifier#'}
+            identifier: { $ref: 'identifier#' }
           }
         },
-        querystring: {$ref: 'paginationOptions#'}
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -240,7 +240,7 @@ module.exports = ({
         querystring: {
           type: 'object',
           properties: {
-            query: {type: 'string'}
+            query: { type: 'string' }
           }
         }
       }
@@ -254,7 +254,7 @@ module.exports = ({
           type: 'object',
           required: ['base64'],
           properties: {
-            base64: {type: 'string'}
+            base64: { type: 'string' }
           }
         }
       }
@@ -264,7 +264,7 @@ module.exports = ({
       method: 'GET',
       handler: transactionsController.getTransactionHistory,
       schema: {
-        querystring: {$ref: 'timeInterval#'}
+        querystring: { $ref: 'timeInterval#' }
       }
     },
     {
@@ -272,7 +272,7 @@ module.exports = ({
       method: 'GET',
       handler: validatorsController.getValidators,
       schema: {
-        querystring: {$ref: 'paginationOptions#'}
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -283,10 +283,10 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            hash: {$ref: 'hash#'}
+            hash: { $ref: 'hash#' }
           }
         },
-        querystring: {$ref: 'timeInterval#'}
+        querystring: { $ref: 'timeInterval#' }
       }
     },
     {
@@ -297,7 +297,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            hash: {$ref: 'hash#'}
+            hash: { $ref: 'hash#' }
           }
         }
       }
@@ -308,7 +308,7 @@ module.exports = ({
     route =>
       fastify[route.method.toLowerCase()](
         route.path,
-        {schema: route.schema ?? null},
+        { schema: route.schema ?? null },
         route.handler
       )
   )

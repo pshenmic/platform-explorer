@@ -264,53 +264,167 @@ describe('Transaction routes', () => {
 
       assert.equal(body.length, 12)
 
-      // todo add assert expected data series
-      // didn't find a correct to do this yet
-      // assert.deepEqual(expectedSeriesData, body)
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 300000 * i
+        const prevPeriod = firstTimestamp - 300000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            txs: txs.length,
+            blockHeight: txs[0]?.block?.height,
+            blockHash: txs[0]?.block?.hash
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
     })
-    it('should return default series set timespan 1h', async () => {
-      const { body } = await client.get('/transactions/history?timespan=1h')
+
+    it('should return default series set timespan 2H', async () => {
+      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 12)
+      assert.equal(body.length, 4)
 
-      // todo add assert expected data series
-      // didn't find a correct to do this yet
-      // assert.deepEqual(expectedSeriesData, body)
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 1800000 * i
+        const prevPeriod = firstTimestamp - 1800000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            txs: txs.length,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
     })
+
     it('should return default series set timespan 24h', async () => {
-      const { body } = await client.get('/transactions/history?timespan=24h')
+      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.length, 12)
 
-      // todo add assert expected data series
-      // didn't find a correct to do this yet
-      // assert.deepEqual(expectedSeriesData, body)
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 7200000 * i
+        const prevPeriod = firstTimestamp - 7200000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            txs: txs.length,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
     })
+
     it('should return default series set timespan 3d', async () => {
-      const { body } = await client.get('/transactions/history?timespan=3d')
+      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 12)
+      assert.equal(body.length, 3)
 
-      // todo add assert expected data series
-      // didn't find a correct to do this yet
-      // assert.deepEqual(expectedSeriesData, body)
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 86400000 * i
+        const prevPeriod = firstTimestamp - 86400000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            txs: txs.length,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
     })
+
     it('should return default series set timespan 1w', async () => {
-      const { body } = await client.get('/transactions/history?timespan=1w')
+      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 12)
+      assert.equal(body.length, 7)
 
-      // todo add assert expected data series
-      // didn't find a correct to do this yet
-      // assert.deepEqual(expectedSeriesData, body)
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 86400000 * i
+        const prevPeriod = firstTimestamp - 86400000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            txs: txs.length,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
     })
   })
 })

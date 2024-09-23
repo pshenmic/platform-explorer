@@ -141,7 +141,6 @@ module.exports = class ValidatorsDAO {
   }
 
   getValidatorStatsByProTxHash = async (proTxHash, start, end, interval) => {
-
     const startSql = `'${start.toISOString()}'::timestamptz`
 
     const endSql = `'${end.toISOString()}'::timestamptz`

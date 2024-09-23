@@ -49,10 +49,9 @@ module.exports = class TransactionsDAO {
   }
 
   getHistorySeries = async (start, end, interval) => {
+    const startSql = `'${start.toISOString()}'::timestamptz`
 
-    const startSql = `'${start.toISOString()}'::timestamp`
-
-    const endSql = `'${end.toISOString()}'::timestamp`
+    const endSql = `'${end.toISOString()}'::timestamptz`
 
     const ranges = this.knex
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
