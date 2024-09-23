@@ -55,6 +55,11 @@
     }
   }
 
+  &__TotalCollectedFees {
+    display: flex;
+    align-items: center;
+  }
+
   @media screen and (max-width: $breakpoint-lg) {
     padding: 28px;
   }

@@ -10,8 +10,12 @@ import { Slider, SliderElement } from '../ui/Slider'
 import { WheelControls } from '../ui/Slider/plugins'
 import { Flex, Text, Box } from '@chakra-ui/react'
 import ImageGenerator from '../imageGenerator'
+import { InfoIcon } from '@chakra-ui/icons'
+import { RateTooltip } from '../ui/Tooltips'
 import './ValidatorsTotal.scss'
 import './ValidatorsTotalCard.scss'
+
+const tempUsdRate = 24.45
 
 export default function ValidatorsTotal () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
@@ -68,9 +72,17 @@ export default function ValidatorsTotal () {
           <InfoCard className={'ValidatorsTotal__Card ValidatorsTotalCard ValidatorsTotalCard--Fees'} loading={status.loading}>
             <div className={'ValidatorsTotalCard__Title'}>Fees collected</div>
             <div className={'ValidatorsTotalCard__Value'}>
-              <div>
+              <div className='ValidatorsTotalCard__TotalCollectedFees'>
                 {typeof epoch?.data?.totalCollectedFees === 'number'
-                  ? currencyRound(epoch.data.totalCollectedFees)
+                  ? <>
+                      {currencyRound(epoch.data.totalCollectedFees)}
+                      <RateTooltip
+                        dash={epoch.data.totalCollectedFees / 1000}
+                        usd={(epoch.data.totalCollectedFees / 1000 / tempUsdRate).toFixed(2)}
+                      >
+                        <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+                      </RateTooltip>
+                    </>
                   : 'n/a'}
               </div>
               <Flex fontFamily={'mono'} fontSize={'0.75rem'} fontWeight={'normal'}>
