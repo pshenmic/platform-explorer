@@ -6,6 +6,7 @@ import { CheckCircleIcon, WarningIcon, InfoIcon } from '@chakra-ui/icons'
 import EpochProgress from './EpochProgress'
 import { Tooltip, Badge } from '@chakra-ui/react'
 import { fetchHandlerSuccess, fetchHandlerError, getTimeDelta } from '../../util'
+import { RateTooltip } from '../ui/Tooltips'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
