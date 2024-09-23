@@ -1,5 +1,5 @@
 import IdentitiesListItem from './IdentitiesListItem'
-import { EmptyListMessage } from '../lists'
+import { EmptyListMessage } from '../ui/lists'
 import './IdentitiesList.scss'
 
 function IdentitiesList ({ identities }) {

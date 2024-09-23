@@ -12,7 +12,7 @@ const transactionsChartConfig = {
   }
 }
 
-export default function TransactionsHistory ({ height = '220px' }) {
+export default function TransactionsHistory ({ height = '220px', blockBorders = true }) {
   const [transactionsHistory, setTransactionsHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(transactionsChartConfig.timespan.default)
 
@@ -48,6 +48,7 @@ export default function TransactionsHistory ({ height = '220px' }) {
           abbreviation: 'txs'
         }}
         height={height}
+        blockBorders={blockBorders}
     />
   )
 }

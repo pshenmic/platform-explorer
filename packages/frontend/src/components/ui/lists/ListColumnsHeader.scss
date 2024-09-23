@@ -1,0 +1,11 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.ListColumnsHeader {
+  @include mixins.defListTitles;
+
+  &__Column {
+    display: flex;
+    align-items: center;
+  }
+}

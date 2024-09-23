@@ -18,7 +18,7 @@
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
     "bs58": "^6.0.0",
-    "dash": "4.2.0",
+    "dash": "4.3.0",
     "dotenv": "^16.3.1",
     "fastify": "^4.21.0",
     "fastify-metrics": "^11.0.0",

@@ -1,5 +1,5 @@
 import DataContractsListItem from './DataContractsListItem'
-import { EmptyListMessage } from '../lists'
+import { EmptyListMessage } from '../ui/lists'
 import './DataContractsList.scss'
 
 function DataContractsList ({ dataContracts = [], size = 'l' }) {

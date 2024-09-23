@@ -2,12 +2,21 @@
 @import '../../styles/variables.scss';
 
 .Markdown {
-    a {
-        color: var(--chakra-colors-brand-light);
-        transition: color .1s;
+  a {
+    color: var(--chakra-colors-brand-normal);
+    transition: color .1s;
 
-        &:hover {
-            color: var(--chakra-colors-brand-deep);
-        }
+    &:hover {
+      color: var(--chakra-colors-brand-light);
     }
+  }
+
+  li {
+    font-family: $font-mono;
+  }
+
+  small {
+    font-size: 100%;
+    color: var(--chakra-colors-gray-250);
+  }
 }

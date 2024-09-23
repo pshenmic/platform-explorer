@@ -2,8 +2,41 @@
 @import '../../styles/variables.scss';
 
 .Intro {
-    &__Title {
-        font-style: italic;
-        font-weight: 800 !important;
+  @include mixins.Block(true);
+  display: flex;
+  padding: 64px;
+  width: 100%;
+
+  &__Title {
+    font-style: italic;
+    font-weight: 800;
+  }
+
+  &__Info {
+    width: 480px;
+    flex-shrink: 0;
+  }
+
+  &__Block {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    margin-left: 84px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    flex-wrap: wrap;
+    padding: 40px;
+
+    &__Info, &__Block {
+      width: 100%;
     }
+
+    &__Block {
+      margin-left: 0;
+    }
+  }
 }

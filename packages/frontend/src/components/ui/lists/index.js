@@ -2,8 +2,9 @@ import Link from 'next/link'
 import './SimpleList.scss'
 import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
-import ImageGenerator from '../imageGenerator'
-import { numberFormat } from '../../util'
+import ImageGenerator from '../../imageGenerator'
+import { numberFormat } from '../../../util'
+import ListColumnsHeader from './ListColumnsHeader'
 
 function EmptyListMessage ({ children }) {
   return (
@@ -96,10 +97,7 @@ const SimpleList = forwardRef(function (props, ref) {
           {columns.map((column, key) => {
             if (typeof column === 'object') {
               return (
-                <div key={key} className={'SimpleList__ColumnTitle'}>
-                  {column?.avatar && <>a</>}
-                  {column.value}
-                </div>
+                <div key={key} className={'SimpleList__ColumnTitle'}>{column.value}</div>
               )
             }
 
@@ -129,5 +127,6 @@ SimpleList.displayName = 'SimpleList'
 
 export {
   SimpleList,
-  EmptyListMessage
+  EmptyListMessage,
+  ListColumnsHeader
 }

@@ -26,8 +26,9 @@ export default function InfoCard ({ clickable, link, loading, children, classNam
       className={`InfoCard ${className} ${(clickable || link) ? 'InfoCard--Clickable' : ''} ${loading ? 'InfoCard--Loading' : ''}`}
       link={link}
     >
-        {children}
-        <div style={{ left: mousePosition.x, top: mousePosition.y }} className={'InfoCard__HoverBg'}></div>
+      {children}
+      <div className={'InfoCard__LoadingStub'}></div>
+      <div style={{ left: mousePosition.x, top: mousePosition.y }} className={'InfoCard__HoverBg'}></div>
     </Wrapper>
   )
 }

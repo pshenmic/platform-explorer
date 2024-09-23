@@ -28,7 +28,17 @@ function CopyButton ({ text, className }) {
   }
 
   return (
-    <Button size={'sm'} onClick={() => copyToClipboard(text, showMessage)} className={`CopyButton ${className}`}>
+    <Button
+      bg={'transparent'}
+      size={'sm'}
+      onClick={event => {
+        event.stopPropagation()
+        event.preventDefault()
+        copyToClipboard(text, showMessage)
+      }}
+      px={2}
+      className={`CopyButton ${className}`}
+    >
       <Tooltip
         label={messageState.text}
         aria-label={'A tooltip'}
@@ -39,7 +49,7 @@ function CopyButton ({ text, className }) {
         isDisabled={!messageState.active}
         isOpen={messageState.active}
       >
-        <CopyIcon/>
+        <CopyIcon w={4} h={4} color={'gray.250'}/>
       </Tooltip>
     </Button>
   )

@@ -4,7 +4,7 @@
   display: flex;
   width: 100%;
   text-decoration: none;
-  padding: 12px;
+  padding: 6px 12px;
   margin-bottom: 8px;
   line-height: 24px;
   color: var(--chakra-colors-gray-100);
@@ -39,7 +39,7 @@
 }
 
 @mixin defListTitles {
-  padding: 8px 12px;
+  padding: 7px 12px;
   border-radius: 10px;
   background-color: var(--chakra-colors-gray-800);
   margin-bottom: 8px;
@@ -135,23 +135,6 @@
     }
   }
   
-  @keyframes loading-bg {
-    from {
-      z-index: 5;
-      opacity: 0;
-    }
-    15% {
-      opacity: 1;
-    }
-    85% {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-      z-index: 5;
-    }
-  }
-  
   @keyframes LoadingContainer {
     from {
       overflow: hidden;
@@ -166,11 +149,13 @@
   animation: 1s LoadingContainer infinite;
 
   &::before {
-    animation: 1s loading-bg infinite;
+    z-index: 5 !important;
+    opacity: 1 !important;
   }
 
   &::after {
     animation: 1s loading-process infinite;
+    z-index: 6;
   }
   
   &::before, &::after {
@@ -179,7 +164,6 @@
     width: 100%;
     height: 100%;
     top: 0;
-    opacity: 0;
     left: 0;
     z-index: -1;
   }
@@ -189,7 +173,7 @@
   }
 
   &::after {
-    background: linear-gradient(90deg, transparent 0%, rgb(14 117 181) 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgb(14 117 181) 50%, transparent 100%) !important;
     width: 100%;
     height: 100%;
   }
@@ -293,5 +277,16 @@
 
   @media screen and (max-width: $breakpoint-sm) {
     #{$property}: var(--chakra-space-3);
+  }
+}
+
+@mixin Block ($blueBorder: false) {
+  backdrop-filter: $blockBackgroundBlur;
+  border-radius: var(--chakra-radii-block);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(24, 31, 34, 0.2);
+
+  @if $blueBorder {
+    box-shadow: 2px 2px $color-brand-normal;
   }
 }
