@@ -218,7 +218,7 @@ export const theme = extendTheme({
 
         return {
           borderWidth: '0px',
-          padding: '3px 10px',
+          padding: '2px 10px',
           borderRadius: '999px',
           fontFamily: 'mono',
           fontSize: '11px',
