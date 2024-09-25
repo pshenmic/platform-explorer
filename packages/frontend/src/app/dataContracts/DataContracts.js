@@ -76,7 +76,6 @@ function DataContractsLayout ({ defaultPage = 1, defaultPageSize }) {
         color={'white'}
         mt={8}
         mb={8}
-        className={'Blocks'}
     >
         <Container
             maxW={'container.xl'}
