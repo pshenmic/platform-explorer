@@ -33,7 +33,7 @@ function Home () {
         .then(res => fetchHandlerSuccess(setStatus, res))
         .catch(err => fetchHandlerError(setStatus, err)),
 
-      Api.getTransactions(1, 13, 'desc')
+      Api.getTransactions(1, 14, 'desc')
         .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
         .catch(err => fetchHandlerError(setTransactions, err)),
 
