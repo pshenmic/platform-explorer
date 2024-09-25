@@ -14,7 +14,7 @@ export const TransactionTypesEnum = {
   DOCUMENTS_BATCH: 'Documents Batch',
   IDENTITY_CREATE: 'Identity Create',
   IDENTITY_TOP_UP: 'Identity Top Up',
-  DATA_CONTRACT_UPDATE: 'Data Contract Create',
+  DATA_CONTRACT_UPDATE: 'Data Contract Update',
   IDENTITY_UPDATE: 'Identity Update',
   IDENTITY_CREDIT_WITHDRAWAL: 'Credit Withdrawal',
   IDENTITY_CREDIT_TRANSFER: 'Credit Transfer'
