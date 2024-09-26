@@ -28,25 +28,6 @@
     }
   }
 
-  &--GradientStart {
-    background: -webkit-linear-gradient(
-      0deg,
-      #fff 0 20%,
-      var(--chakra-colors-gray-250) 25% 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  &--GradientBoth {
-    background: -webkit-linear-gradient(
-      0deg,
-      #fff 0 20%,
-      var(--chakra-colors-gray-250) 30% 70%,
-      #fff 80% 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
   &__Avatar {
     flex-shrink: 0;
     margin-right: 10px;
