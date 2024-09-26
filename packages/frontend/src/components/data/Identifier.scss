@@ -6,17 +6,26 @@
   align-items: center;
   font-family: $font-mono;
   font-size: 0.75rem;
+  overflow: hidden;
 
-  &--Ellipsis {
-    &, span {
+  &--Ellipsis & {
+    &__SymbolsContainer {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
   }
 
-  &--Dim {
+  &__SymbolsContainer {
     color: var(--chakra-colors-gray-250);
+  }
+
+  &__Symbols {
+    color: #fff;
+
+    &--Dim {
+      color: var(--chakra-colors-gray-250);
+    }
   }
 
   &--GradientStart {
