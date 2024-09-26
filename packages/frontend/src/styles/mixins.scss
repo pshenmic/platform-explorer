@@ -13,13 +13,18 @@
   border-radius: 10px;
   border: 1px solid var(--chakra-colors-gray-750);
   background-color: var(--chakra-colors-gray-650);
-  transition: all .5s;
+  transition: box-shadow .5s, transform .1s, background-color .25s;
 
   &:hover {
     background-color: var(--chakra-colors-gray-750);
     text-decoration: none;
     cursor: pointer;
     box-shadow: 0 0px 20px 0px rgba(255, 255, 255, .25) inset;
+  }
+
+  &:active {
+    background-color: var(--chakra-colors-gray-650);
+    transform: translateY(1px);
   }
 
   &:last-child {
