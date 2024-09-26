@@ -23,7 +23,7 @@ const ValidatorListItem = ({ validator, loading }) => {
                   className={'ValidatorListItem__Column ValidatorListItem__Column--Identifier'}
                   avatar={true}
                   copyButton={true}
-                  styles={['highlight-first']}
+                  styles={['highlight-both']}
                 >
                   {validator.proTxHash}
                 </Identifier>

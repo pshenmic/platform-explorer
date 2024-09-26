@@ -7,6 +7,7 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
     if (styles.includes('dim')) return 'dim'
     if (styles.includes('highlight-first')) return 'first'
     if (styles.includes('highlight-last')) return 'last'
+    if (styles.includes('highlight-both')) return 'both'
     return null
   })()
 

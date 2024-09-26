@@ -96,7 +96,7 @@ export default function ValidatorsTotal () {
                   link={epoch?.data?.bestValidator ? `/validator/${epoch?.data?.bestValidator}` : undefined}
                   className={'ValidatorsTotalCard__Value'}
                 >
-                  <Identifier avatar={true} copyButton={true} styles={['highlight-first']}>
+                  <Identifier avatar={true} copyButton={true} styles={['highlight-both']}>
                     {epoch.data.bestValidator}
                   </Identifier>
                 </ValueCard>
