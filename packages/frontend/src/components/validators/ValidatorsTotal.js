@@ -15,12 +15,11 @@ import { RateTooltip } from '../ui/Tooltips'
 import './ValidatorsTotal.scss'
 import './ValidatorsTotalCard.scss'
 
-const tempUsdRate = 24.45
-
 export default function ValidatorsTotal () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
   const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
   const fetchData = () => {
     Api.getStatus()
@@ -36,6 +35,10 @@ export default function ValidatorsTotal () {
     Api.getValidators(1, 10)
       .then(res => fetchHandlerSuccess(setValidators, res))
       .catch(err => fetchHandlerError(setValidators, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
 
   useEffect(fetchData, [])
@@ -78,7 +81,11 @@ export default function ValidatorsTotal () {
                       {currencyRound(epoch.data.totalCollectedFees)}
                       <RateTooltip
                         dash={epoch.data.totalCollectedFees / 1000}
-                        usd={(epoch.data.totalCollectedFees / 1000 / tempUsdRate).toFixed(2)}
+                        usd={
+                          typeof rate.data?.usd === 'number'
+                            ? (epoch.data.totalCollectedFees / 1000 / rate.data?.usd).toFixed(2)
+                            : null
+                        }
                       >
                         <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
                       </RateTooltip>
