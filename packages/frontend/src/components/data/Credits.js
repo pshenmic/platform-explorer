@@ -1,6 +1,6 @@
 import './Credits.scss'
 
-function Credits({ children }) {
+function Credits ({ children }) {
   if (!children) return null
 
   const numberStr = children.toString()
@@ -9,7 +9,7 @@ function Credits({ children }) {
     .reverse()
     .reduce((groups, current, i) => {
       if (i % 3 === 0) groups.unshift('')
-        groups[0] = current + groups[0]
+      groups[0] = current + groups[0]
       return groups
     }, [])
 
