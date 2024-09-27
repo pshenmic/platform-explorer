@@ -9,7 +9,7 @@ use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
-use dpp::platform_value::{platform_value, BinaryData, Value};
+use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::serialization::PlatformSerializable;
@@ -17,7 +17,7 @@ use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatch
 use dpp::state_transition::documents_batch_transition::{DocumentsBatchTransition};
 use sha256::digest;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
-use dpp::state_transition::documents_batch_transition::document_transition::DocumentTransitionV0Methods;
+use dpp::state_transition::documents_batch_transition::document_transition::{DocumentTransition, DocumentTransitionV0Methods};
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
@@ -93,7 +93,28 @@ impl PSQLProcessor {
             let document = Document::from(document_transition.clone());
             let document_identifier = document.identifier.clone();
 
-            self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
+            match document_transition {
+                DocumentTransition::UpdatePrice(_) => {
+                    self.dao.update_document_price(document).await.unwrap();
+                }
+                DocumentTransition::Purchase(_) => {
+                    let current_document = self.dao.get_document_by_identifier(document.identifier).await.unwrap()
+                        .expect(&format!("Could not get Document with identifier {} from the database", document.identifier));
+
+                    self.dao.assign_document(document.clone(), state_transition.owner_id()).await.unwrap();
+
+                    let transfer = Transfer {
+                        id: None,
+                        sender: document.owner,
+                        recipient: current_document.owner,
+                        amount: document.price.unwrap(),
+                    };
+                    self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
+                }
+                _ => {
+                    self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
+                }
+            }
 
             let document_type = document_transition.document_type_name();
 
@@ -362,7 +383,6 @@ impl PSQLProcessor {
 
     pub async fn process_system_data_contract(&self, system_data_contract: SystemDataContract) -> () {
         let data_contract = DataContract::from(system_data_contract);
-        let identity = Identity::from(system_data_contract);
         let data_contract_identifier = data_contract.identifier.clone();
         let data_contract_owner = data_contract.owner.clone();
         self.dao.create_data_contract(data_contract, None).await;
@@ -402,6 +422,7 @@ impl PSQLProcessor {
                     deleted: false,
                     revision: 0,
                     is_system: true,
+                    price: None,
                 };
 
                 self.dao.create_document(dash_tld_document, None).await.unwrap();
