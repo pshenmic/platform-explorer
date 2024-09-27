@@ -3,8 +3,8 @@ import './SimpleList.scss'
 import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
-import { numberFormat } from '../../../util'
 import ListColumnsHeader from './ListColumnsHeader'
+import { Credits } from '../../../components/data'
 
 function EmptyListMessage ({ children }) {
   return (
@@ -72,7 +72,7 @@ function SimpleListItem ({ item }) {
                     />
                   }
                   {column?.numberFormat === 'currency'
-                    ? <span>{numberFormat(column.value)}</span>
+                    ? <span><Credits>{column.value}</Credits></span>
                     : <span>{column.value}</span>
                   }
                 </div>
