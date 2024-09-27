@@ -72,7 +72,7 @@ function SimpleListItem ({ item }) {
                     />
                   }
                   {column?.numberFormat === 'currency'
-                    ? <span><Credits>{column.value}</Credits></span>
+                    ? <Credits>{column.value}</Credits>
                     : <span>{column.value}</span>
                   }
                 </div>
