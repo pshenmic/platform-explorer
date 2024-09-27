@@ -94,6 +94,9 @@ impl PSQLProcessor {
             let document_identifier = document.identifier.clone();
 
             match document_transition {
+                DocumentTransition::Transfer(_) => {
+                    self.dao.assign_document(document, state_transition.owner_id()).await.unwrap();
+                }
                 DocumentTransition::UpdatePrice(_) => {
                     self.dao.update_document_price(document).await.unwrap();
                 }
