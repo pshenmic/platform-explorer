@@ -4,8 +4,7 @@ import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
 import ListColumnsHeader from './ListColumnsHeader'
-import { Credits } from '../../../components/data'
-import { Identifier } from '../../data'
+import { Credits, Identifier } from '../../../components/data'
 
 function EmptyListMessage ({ children }) {
   return (
