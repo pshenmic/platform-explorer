@@ -121,12 +121,13 @@ function Home () {
                               avatar: true,
                               mono: true,
                               dim: true,
-                              ellipsis: true
+                              ellipsis: true,
+                              format: 'identifier'
                             },
                             {
                               value: dataContract.documentsCount,
                               mono: true,
-                              numberFormat: 'currency'
+                              format: 'currency'
                             }
                           ],
                           link: '/dataContract/' + dataContract.identifier
@@ -190,12 +191,13 @@ function Home () {
                               avatar: true,
                               mono: true,
                               dim: true,
-                              ellipsis: true
+                              ellipsis: true,
+                              format: 'identifier'
                             },
                             {
                               value: identitiy.totalTxs,
                               mono: true,
-                              numberFormat: 'currency'
+                              format: 'currency'
                             }
                           ],
                           link: '/identity/' + identitiy.identifier
@@ -228,12 +230,13 @@ function Home () {
                               avatar: true,
                               mono: true,
                               dim: true,
-                              ellipsis: true
+                              ellipsis: true,
+                              format: 'identifier'
                             },
                             {
                               value: identitiy.balance,
                               mono: true,
-                              numberFormat: 'currency'
+                              format: 'currency'
                             }
                           ],
                           link: '/identity/' + identitiy.identifier
