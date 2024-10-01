@@ -1,7 +1,6 @@
 import './TotalInfo.scss'
 import './TotalInfoItem.scss'
 import { Container, Flex } from '@chakra-ui/react'
-import { ChevronRightIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 
 export default function TotalInfo ({ blocks, transactions, dataContracts, documents, identities, loading }) {
