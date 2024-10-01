@@ -7,14 +7,14 @@ function TypeBadge ({ typeId }) {
   const TransitionTypeKey = getTransitionTypeKeyById(typeId)
 
   const descriptions = {
-    DATA_CONTRACT_CREATE: 'Creates a new data contract. This contract defines the schema for storing and managing data on the platform.',
-    DATA_CONTRACT_UPDATE: 'Updates an existing data contract, modifying its schema or rules for data management on the platform.',
-    DOCUMENTS_BATCH: 'Batch submission or update of documents that are stored according to a data contract.',
-    IDENTITY_CREATE: 'Creates a new decentralized identity (DID) to manage digital assets and actions.',
-    IDENTITY_TOP_UP: 'Adds credits to an existing decentralized identity (DID) to support its usage.',
-    IDENTITY_UPDATE: 'Updates information or parameters of an existing decentralized identity.',
-    IDENTITY_CREDIT_WITHDRAWAL: 'Withdraws credits from the platform, converting them into Dash or other assets.',
-    IDENTITY_CREDIT_TRANSFER: 'Transfers credits between decentralized identities or other network participants.'
+    DATA_CONTRACT_CREATE: 'Creates a new data contract. This contract defines the schema for storing data on the platform.',
+    DATA_CONTRACT_UPDATE: 'Updates an existing data contract. Increments the version and updates the schema of the data contract',
+    DOCUMENTS_BATCH: 'Creates a new document transitions. It is used to make create, modify, delete other document actions on the platform.',
+    IDENTITY_CREATE: 'Creates a new decentralized identity (DID) to manage digital assets and make actions.',
+    IDENTITY_TOP_UP: 'Adds credits to an existing decentralized identity (DID) balance.',
+    IDENTITY_UPDATE: 'Updates an identity by adding and removing associated public keys.',
+    IDENTITY_CREDIT_WITHDRAWAL: 'Withdraws credits from the platform, converting them into Dash.',
+    IDENTITY_CREDIT_TRANSFER: 'Transfers credits between identities or other network participants.'
   }
 
   return (
