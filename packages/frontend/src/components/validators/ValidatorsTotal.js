@@ -75,7 +75,7 @@ export default function ValidatorsTotal () {
           <InfoCard className={'ValidatorsTotal__Card ValidatorsTotalCard ValidatorsTotalCard--Fees'} loading={status.loading}>
             <div className={'ValidatorsTotalCard__Title'}>Fees collected</div>
             <div className={'ValidatorsTotalCard__Value'}>
-              <div className='ValidatorsTotalCard__TotalCollectedFees'>
+              <div className={'ValidatorsTotalCard__TotalCollectedFees'}>
                 {typeof epoch?.data?.totalCollectedFees === 'number'
                   ? <>
                       {currencyRound(epoch.data.totalCollectedFees)}
