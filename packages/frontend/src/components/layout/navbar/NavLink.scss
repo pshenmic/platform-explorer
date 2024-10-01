@@ -48,8 +48,7 @@
     &:active {
       color: #fff;
       transform: translateY(1px);
-      background: rgba(255, 255, 255, .05);
-      box-shadow: 0 0px 20px 0px rgba(255, 255, 255, .25) inset;
+      background: rgba(255, 255, 255, 0.1) !important;
     }
   }
 }
