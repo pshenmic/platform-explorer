@@ -8,7 +8,7 @@ export default function Tooltip ({ title = '', content = '', children, ...props 
     <ChakraTooltip
       className={`Tooltip ${extraClass}`}
       label={
-        <div className={''}>
+        <div>
           <div className={'Tooltip__Title'}>{title}</div>
           <div className={'Tooltip__Content'}>{content}</div>
         </div>
