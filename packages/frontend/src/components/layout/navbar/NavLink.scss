@@ -39,15 +39,18 @@
       cursor: default;
     }
 
-    &:not(.NavLink--Active):hover {
-      background: rgba(255, 255, 255, .1);
-      box-shadow: 0 0px 20px 0px rgba(255, 255, 255, .25) inset;
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.NavLink--Active):hover {
+        background: rgba(255, 255, 255, .1);
+        box-shadow: 0 0px 20px 0px rgba(255, 255, 255, .25) inset;
+      }
     }
 
     &:active {
       color: #fff;
       transform: translateY(1px);
       background: rgba(255, 255, 255, .05);
+      box-shadow: 0 0px 20px 0px rgba(255, 255, 255, .25) inset;
     }
   }
 }

@@ -15,16 +15,19 @@
   background-color: var(--chakra-colors-gray-650);
   transition: box-shadow .5s, transform .1s, background-color .25s;
 
-  &:hover {
-    background-color: var(--chakra-colors-gray-750);
-    text-decoration: none;
-    cursor: pointer;
-    box-shadow: 0 0px 20px 0px rgba(255, 255, 255, .25) inset;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--chakra-colors-gray-750);
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 0px 20px 0px rgba(255, 255, 255, .25) inset;
+    }
   }
 
   &:active {
     background-color: var(--chakra-colors-gray-650);
     transform: translateY(1px);
+    box-shadow: 0 0px 20px 0px rgba(255, 255, 255, .25) inset;
   }
 
   &:last-child {
