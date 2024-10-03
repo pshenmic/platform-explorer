@@ -80,12 +80,11 @@ function Validator ({ hash }) {
   }, [pageSize, handlePageClick])
 
   return (
-    <PageDataContainer className={'ValidatorPage'}>
-      <div className={'PageInfoContainer__Header'}>
-        <div className={'PageInfoContainer__BackLink'}>{'<'}</div>
-        <div className={'PageInfoContainer__Title'}>Validator Info</div>
-      </div>
-
+    <PageDataContainer
+      className={'ValidatorPage'}
+      backLink={'/validators'}
+      title={'Validator Info'}
+    >
       <div className={'ValidatorPage__ContentContainer'}>
         <div className={'ValidatorPage__Column'}>
           <div className={'ValidatorPage__GroupContainer'}>
@@ -151,8 +150,6 @@ function Validator ({ hash }) {
                 )}
               />
             </div>
-
-            {/* Endpoints */}
 
             <div>
               <InfoLine
@@ -308,9 +305,7 @@ function Validator ({ hash }) {
                 )}
               />
             </div>
-
           </div>
-
         </div>
 
         <div className={'ValidatorPage__Column'}>

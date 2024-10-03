@@ -3,13 +3,14 @@
 
 .ValidatorPage {
   &__ContentContainer {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
   }
 
   &__Column {
     position: relative;
     overflow: hidden;
-    width: 50%;
     flex-shrink: 0;
   }
 
