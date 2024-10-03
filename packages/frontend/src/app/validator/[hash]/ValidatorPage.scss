@@ -1,11 +1,21 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
 .ValidatorPage {
   &__ContentContainer {
     display: flex;
   }
 
   &__Column {
+    position: relative;
     overflow: hidden;
     width: 50%;
     flex-shrink: 0;
+  }
+
+  &__GroupContainer {
+    border-radius: 18px;
+    border: 1px solid var(--chakra-colors-gray-800);
+    padding: 24px;
   }
 }

@@ -88,7 +88,8 @@ function Validator ({ hash }) {
 
       <div className={'ValidatorPage__ContentContainer'}>
         <div className={'ValidatorPage__Column'}>
-          <div>
+          <div className={'ValidatorPage__GroupContainer'}>
+
             <div className={'ValidatorCard'}>
               <div className={'ValidatorCard__Header'}>
                 <div className={'ValidatorCard__Avatar'}></div>
@@ -153,171 +154,175 @@ function Validator ({ hash }) {
 
             {/* Endpoints */}
 
-            <InfoLine
-              title={'CORE P2P'}
-              value={(
-                <Identifier
-                  className={''}
-                  copyButton={true}
-                  styles={['gradient-both']}
-                >
+            <div>
+              <InfoLine
+                title={'CORE P2P'}
+                value={(
+                  <Identifier
+                    className={''}
+                    copyButton={true}
+                    styles={['gradient-both']}
+                  >
+                    <Endpoint
+                      value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
+                      status={'active'}
+                    />
+                  </Identifier>
+                )}
+              />
+
+              <InfoLine
+                title={'Platform P2P'}
+                value={(
+                  <Identifier
+                    className={''}
+                    copyButton={true}
+                    styles={['gradient-both']}
+                  >
+                    <Endpoint
+                      value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
+                      status={'active'}
+                    />
+                  </Identifier>
+                )}
+              />
+
+              <InfoLine
+                title={'Platform GRPC'}
+                value={(
                   <Endpoint
                     value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
                     status={'active'}
                   />
-                </Identifier>
-              )}
-            />
+                )}
+              />
+            </div>
 
-            <InfoLine
-              title={'Platform P2P'}
-              value={(
-                <Identifier
-                  className={''}
-                  copyButton={true}
-                  styles={['gradient-both']}
-                >
-                  <Endpoint
-                    value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
-                    status={'active'}
-                  />
-                </Identifier>
-              )}
-            />
+            <HorisontalSeparator/>
 
-            <InfoLine
-              title={'Platform GRPC'}
-              value={(
-                <Endpoint
-                  value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
-                  status={'active'}
-                />
-              )}
-            />
+            <div>
+              {/* Status*/}
+
+              <InfoLine
+                title={'Status'}
+                value={(
+                  <Badge colorScheme={false ? 'green' : 'orange'}>
+                    {false
+                      ? '1'
+                      : 'Waiting for Quorum'}
+                  </Badge>
+                )}
+              />
+              <InfoLine
+                title={'Epoch'}
+                value={'#1343'}
+              />
+              <InfoLine
+                title={'Next epoch starts in'}
+                value={'10d:5h:13m'}
+              />
+              <InfoLine
+                title={'Rewards This Epoch'}
+                value={'85,80'}
+              />
+              <InfoLine
+                title={'Rewards This Epoch'}
+                value={'825,280'}
+              />
+              <InfoLine
+                title={'Last Proposed Block'}
+                value={(
+                  <ValueContainer>
+                    <DateBlock timestamp={1727887511000}/>
+                    <Identifier copyButton={true}styles={['gradient-both']}>
+                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                    </Identifier>
+                  </ValueContainer>
+                )}
+              />
+              <InfoLine
+                title={'Withdrawals Count'}
+                value={'42'}
+              />
+              <InfoLine
+                title={'Last Withdrawal'}
+                value={(
+                  <ValueContainer>
+                    <DateBlock timestamp={1727887511000}/>
+                    <Identifier copyButton={true} styles={['gradient-both']}>
+                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                    </Identifier>
+                  </ValueContainer>
+                )}
+              />
+            </div>
+
+            <HorisontalSeparator/>
+
+            <div>
+              {/* PoSe Score and etc. */}
+
+              <InfoLine
+                title={'PoSe Score'}
+                value={(
+                  <div>
+                    <span>0</span>
+                    <span>status</span>
+                  </div>
+                )}
+              />
+              <InfoLine
+                title={'Collateral address'}
+                value={(
+                  <ValueContainer>
+                    <Identifier copyButton={true} styles={['gradient-both']}>
+                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                    </Identifier>
+                  </ValueContainer>
+                )}
+              />
+              <InfoLine
+                title={'Owner address'}
+                value={(
+                  <ValueContainer>
+                    <Identifier copyButton={true} styles={['gradient-both']}>
+                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                    </Identifier>
+                  </ValueContainer>
+                )}
+              />
+              <InfoLine
+                title={'Voting address'}
+                value={(
+                  <ValueContainer>
+                    <Identifier copyButton={true} styles={['gradient-both']}>
+                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                    </Identifier>
+                  </ValueContainer>
+                )}
+              />
+              <InfoLine
+                title={'Payout address'}
+                value={(
+                  <ValueContainer>
+                    <Identifier copyButton={true} styles={['gradient-both']}>
+                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                    </Identifier>
+                  </ValueContainer>
+                )}
+              />
+              <InfoLine
+                title={'Operator Public Key'}
+                value={(
+                  <Identifier copyButton={true} styles={['gradient-both']}>
+                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                  </Identifier>
+                )}
+              />
+            </div>
+
           </div>
 
-          <HorisontalSeparator/>
-
-          <div>
-            {/* Status*/}
-
-            <InfoLine
-              title={'Status'}
-              value={(
-                <Badge colorScheme={false ? 'green' : 'orange'}>
-                  {false
-                    ? '1'
-                    : 'Waiting for Quorum'}
-                </Badge>
-              )}
-            />
-            <InfoLine
-              title={'Epoch'}
-              value={'#1343'}
-            />
-            <InfoLine
-              title={'Next epoch starts in'}
-              value={'10d:5h:13m'}
-            />
-            <InfoLine
-              title={'Rewards This Epoch'}
-              value={'85,80'}
-            />
-            <InfoLine
-              title={'Rewards This Epoch'}
-              value={'825,280'}
-            />
-            <InfoLine
-              title={'Last Proposed Block'}
-              value={(
-                <ValueContainer>
-                  <DateBlock timestamp={1727887511000}/>
-                  <Identifier copyButton={true}styles={['gradient-both']}>
-                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
-                  </Identifier>
-                </ValueContainer>
-              )}
-            />
-            <InfoLine
-              title={'Withdrawals Count'}
-              value={'42'}
-            />
-            <InfoLine
-              title={'Last Withdrawal'}
-              value={(
-                <ValueContainer>
-                  <DateBlock timestamp={1727887511000}/>
-                  <Identifier copyButton={true} styles={['gradient-both']}>
-                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
-                  </Identifier>
-                </ValueContainer>
-              )}
-            />
-          </div>
-
-          <HorisontalSeparator/>
-
-          <div>
-            {/* PoSe Score and etc. */}
-
-            <InfoLine
-              title={'PoSe Score'}
-              value={(
-                <div>
-                  <span>0</span>
-                  <span>status</span>
-                </div>
-              )}
-            />
-            <InfoLine
-              title={'Collateral address'}
-              value={(
-                <ValueContainer>
-                  <Identifier copyButton={true} styles={['gradient-both']}>
-                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
-                  </Identifier>
-                </ValueContainer>
-              )}
-            />
-            <InfoLine
-              title={'Owner address'}
-              value={(
-                <ValueContainer>
-                  <Identifier copyButton={true} styles={['gradient-both']}>
-                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
-                  </Identifier>
-                </ValueContainer>
-              )}
-            />
-            <InfoLine
-              title={'Voting address'}
-              value={(
-                <ValueContainer>
-                  <Identifier copyButton={true} styles={['gradient-both']}>
-                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
-                  </Identifier>
-                </ValueContainer>
-              )}
-            />
-            <InfoLine
-              title={'Payout address'}
-              value={(
-                <ValueContainer>
-                  <Identifier copyButton={true} styles={['gradient-both']}>
-                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
-                  </Identifier>
-                </ValueContainer>
-              )}
-            />
-            <InfoLine
-              title={'Operator Public Key'}
-              value={(
-                <Identifier copyButton={true} styles={['gradient-both']}>
-                  XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
-                </Identifier>
-              )}
-            />
-          </div>
         </div>
 
         <div className={'ValidatorPage__Column'}>
