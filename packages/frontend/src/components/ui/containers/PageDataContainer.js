@@ -7,7 +7,7 @@ function PageDataContainer ({ children }) {
       maxW={'container.xl'}
       p={3}
       mt={8}
-      bg={'rgba(255,255,255,.1)'}
+      bg={'gray.675'}
     >
       {children}
     </Container>
