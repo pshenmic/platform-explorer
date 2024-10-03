@@ -1,0 +1,11 @@
+.ValidatorPage {
+  &__ContentContainer {
+    display: flex;
+  }
+
+  &__Column {
+    overflow: hidden;
+    width: 50%;
+    flex-shrink: 0;
+  }
+}

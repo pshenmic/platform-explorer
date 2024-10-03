@@ -11,9 +11,10 @@ import BlocksList from '../../../components/blocks/BlocksList'
 import ImageGenerator from '../../../components/imageGenerator'
 import BlocksChart from './BlocksChart'
 import Link from 'next/link'
-import { Identifier, DateBlock, Endpoint, IpAddress } from '../../../components/data'
+import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine } from '../../../components/data'
 import { ValueContainer, PageDataContainer } from '../../../components/ui/containers'
 import { HorisontalSeparator } from '../../../components/ui/separators'
+import './ValidatorPage.scss'
 
 import { Badge } from '@chakra-ui/react'
 import {
@@ -79,14 +80,14 @@ function Validator ({ hash }) {
   }, [pageSize, handlePageClick])
 
   return (
-    <PageDataContainer>
+    <PageDataContainer className={'ValidatorPage'}>
       <div className={'PageInfoContainer__Header'}>
         <div className={'PageInfoContainer__BackLink'}>{'<'}</div>
         <div className={'PageInfoContainer__Title'}>Validator Info</div>
       </div>
 
-      <div>
-        <div className={'PageInfoColumn'}>
+      <div className={'ValidatorPage__ContentContainer'}>
+        <div className={'ValidatorPage__Column'}>
           <div>
             <div className={'ValidatorCard'}>
               <div className={'ValidatorCard__Header'}>
@@ -318,9 +319,25 @@ function Validator ({ hash }) {
             />
           </div>
         </div>
-        <div className={'PageInfoColumn'}> {/* Npobg */}
-          {/* Chart */}
-          {/* Proposed Blocks */}
+
+        <div className={'ValidatorPage__Column'}>
+          <div>
+            <BlocksChart blockBorders={false} height={'300px'} hash={hash}/>
+          </div>
+          <div>
+            <div>Proposed Blocks</div>
+
+            {!proposedBlocks.error
+              ? <>
+                  {!proposedBlocks.loading
+                    ? <BlocksList blocks={proposedBlocks?.data?.resultSet}/>
+                    : <LoadingList itemsCount={pageSize}/>
+                  }
+                </>
+              : <Container h={20}><ErrorMessageBlock/></Container>
+            }
+
+          </div>
         </div>
       </div>
     </PageDataContainer>

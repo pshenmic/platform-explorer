@@ -10,7 +10,7 @@ const chartConfig = {
   }
 }
 
-export default function BlocksChart ({ hash }) {
+export default function BlocksChart ({ hash, blockBorders = true, height = '100%' }) {
   const [blocksHistory, setBlocksHistory] = useState({ data: {}, loading: true, error: false })
   const [blocksHistoryTimespan, setBlocksHistoryTimespan] = useState(chartConfig.timespan.default)
 
@@ -22,10 +22,11 @@ export default function BlocksChart ({ hash }) {
 
   return (
     <ProposedBlocksChart
-      height={'100%'}
+      height={height}
       blocksHistory={blocksHistory}
       timespan={blocksHistoryTimespan}
       timespanChangeHandler={setBlocksHistoryTimespan}
+      blockBorders={blockBorders}
     />
   )
 }
