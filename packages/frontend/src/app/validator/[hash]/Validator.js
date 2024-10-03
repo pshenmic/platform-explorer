@@ -158,32 +158,20 @@ function Validator ({ hash }) {
               <InfoLine
                 title={'CORE P2P'}
                 value={(
-                  <Identifier
-                    className={''}
-                    copyButton={true}
-                    styles={['gradient-both']}
-                  >
-                    <Endpoint
-                      value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
-                      status={'active'}
-                    />
-                  </Identifier>
+                  <Endpoint
+                    value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
+                    status={'active'}
+                  />
                 )}
               />
 
               <InfoLine
                 title={'Platform P2P'}
                 value={(
-                  <Identifier
-                    className={''}
-                    copyButton={true}
-                    styles={['gradient-both']}
-                  >
-                    <Endpoint
-                      value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
-                      status={'active'}
-                    />
-                  </Identifier>
+                  <Endpoint
+                    value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
+                    status={'active'}
+                  />
                 )}
               />
 

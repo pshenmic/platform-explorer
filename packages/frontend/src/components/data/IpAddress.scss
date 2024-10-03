@@ -1,0 +1,16 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.IpAddress {
+	font-weight: $font-mono;
+	font-size: 0.75rem;
+
+	&__Ip {
+		
+	}
+
+	&__Port {
+		color: $color-brand-normal;
+		font-weight: 600;
+	}
+}
