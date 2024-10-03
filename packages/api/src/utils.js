@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
-const net = require("net");
-const {VALIDATOR_TIMEOUT} = require("./constants");
+const net = require('net')
+const { VALIDATOR_TIMEOUT } = require('./constants')
 
 const getKnex = () => {
   return require('knex')({
@@ -12,7 +12,7 @@ const getKnex = () => {
       user: process.env.POSTGRES_USER,
       database: process.env.POSTGRES_DB,
       password: process.env.POSTGRES_PASS,
-      ssl: process.env.POSTGRES_SSL ? {rejectUnauthorized: false} : false
+      ssl: process.env.POSTGRES_SSL ? { rejectUnauthorized: false } : false
     }
   })
 }
@@ -95,7 +95,7 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-isConnectable = async (url) => {
+const isConnectable = async (url) => {
   let connection
   try {
     const [host] = url.match(/^\d+\.\d+\.\d+\.\d+/)
@@ -106,12 +106,12 @@ isConnectable = async (url) => {
 
       connection.setTimeout(VALIDATOR_TIMEOUT)
 
-      connection.once("connect", async () => {
+      connection.once('connect', async () => {
         await connection.destroy()
         resolve(true)
       })
 
-      connection.once("error", async () => {
+      connection.once('error', async () => {
         await connection.destroy()
         resolve(false)
       })
@@ -123,7 +123,7 @@ isConnectable = async (url) => {
       try {
         await connection.destroy()
       } catch (e) {
-        console.error("Cannot destroy connection")
+        console.error('Cannot destroy connection')
       }
     }
 
@@ -131,5 +131,4 @@ isConnectable = async (url) => {
   }
 }
 
-
-module.exports = {hash, decodeStateTransition, getKnex, isConnectable}
+module.exports = { hash, decodeStateTransition, getKnex, isConnectable }
