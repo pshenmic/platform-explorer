@@ -1,7 +1,3 @@
-const cbor = require('cbor')
-
-const { deserializeConsensusError } = require('@dashevo/wasm-dpp')
-
 module.exports = class Transaction {
   hash
   index
@@ -29,17 +25,6 @@ module.exports = class Transaction {
 
   // eslint-disable-next-line camelcase
   static fromRow ({ tx_hash, index, block_hash, block_height, type, data, timestamp, gas_used, status, error }) {
-    let decodedError = null
-
-    try {
-      if (typeof error === 'string') {
-        const { serializedError } = cbor.decode(Buffer.from(error, 'base64'))?.data
-        decodedError = deserializeConsensusError(serializedError).message
-      }
-    } catch (e) {
-      console.error(e)
-    }
-
-    return new Transaction(tx_hash, index, block_hash, block_height, type, data, timestamp, parseInt(gas_used), status, decodedError ?? error)
+    return new Transaction(tx_hash, index, block_hash, block_height, type, data, timestamp, parseInt(gas_used), status, error)
   }
 }
