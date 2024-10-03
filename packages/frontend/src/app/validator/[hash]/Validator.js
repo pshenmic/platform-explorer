@@ -11,7 +11,11 @@ import BlocksList from '../../../components/blocks/BlocksList'
 import ImageGenerator from '../../../components/imageGenerator'
 import BlocksChart from './BlocksChart'
 import Link from 'next/link'
-import { Identifier } from '../../../components/data'
+import { Identifier, DateBlock, Endpoint, IpAddress } from '../../../components/data'
+import { ValueContainer, PageDataContainer } from '../../../components/ui/containers'
+import { HorisontalSeparator } from '../../../components/ui/separators'
+
+import { Badge } from '@chakra-ui/react'
 import {
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
@@ -28,75 +32,12 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function InfoLine ({ title, value, className }) {
-  return (
-    <div className={`InfoLine ${className}`}>
-      <div className={'InfoLine__Title'}>{title}:</div>
-      <div className={'InfoLine__Value'}>{value}</div>
-    </div>
-  )
-}
-
 function Credits ({ credits, usd, format }) {
   return (
     <div>
       <span>{credits} CREDITS</span>
       <span>({credits / 1000} DASH)</span>
       <span>~{usd}$</span>
-    </div>
-  )
-}
-
-function DateBlock ({ timestamp }) {
-  const date = new Date(timestamp)
-
-  if (String(date) === 'Invalid Date') return null
-
-  const options = {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  }
-
-  const formattedDate = date.toLocaleDateString('en-GB', options)
-
-  return (
-    <div>
-      <div>{formattedDate}</div>
-      <div>
-        {getTimeDelta(new Date(), date)}
-      </div>
-    </div>
-  )
-}
-
-function HorisontalSeparator () {
-  return <div className={'HorisontalSeparator'}></div>
-}
-
-function Endpoint ({ value, status, link }) {
-  const statusClass = (() => {
-    if (status === 'active') return 'Endpoint__Status--Active'
-    if (status === 'warining') return 'Endpoint__Status--Warning'
-    if (status === 'error') return 'Endpoint__Status--Error'
-    return ''
-  })()
-
-  return (
-    <div className={'Endpoint'}>
-      <div className={'Endpoint__Value'}>{value}</div>
-      {status !== undefined &&
-        <div className={`Endpoint__Status ${statusClass}`}></div>
-      }
-    </div>
-  )
-}
-
-function IpAddress ({ address, port, className }) {
-  return (
-    <div className={`IpAddress ${className}`}>
-      <span className={'IpAddress__Ip'}>{address}</span>
-      <span className={'IpAddress__Port'}>{port}</span>
     </div>
   )
 }
@@ -138,13 +79,7 @@ function Validator ({ hash }) {
   }, [pageSize, handlePageClick])
 
   return (
-    <Container
-      className={'PageInfoContainer'}
-      maxW={'container.xl'}
-      p={3}
-      mt={8}
-      bg={'gray'}
-    >
+    <PageDataContainer>
       <div className={'PageInfoContainer__Header'}>
         <div className={'PageInfoContainer__BackLink'}>{'<'}</div>
         <div className={'PageInfoContainer__Title'}>Validator Info</div>
@@ -252,16 +187,10 @@ function Validator ({ hash }) {
             <InfoLine
               title={'Platform GRPC'}
               value={(
-                <Identifier
-                  className={''}
-                  copyButton={true}
-                  styles={['gradient-both']}
-                >
-                  <Endpoint
-                    value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
-                    status={'active'}
-                  />
-                </Identifier>
+                <Endpoint
+                  value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
+                  status={'active'}
+                />
               )}
             />
           </div>
@@ -270,12 +199,123 @@ function Validator ({ hash }) {
 
           <div>
             {/* Status*/}
+
+            <InfoLine
+              title={'Status'}
+              value={(
+                <Badge colorScheme={false ? 'green' : 'orange'}>
+                  {false
+                    ? '1'
+                    : 'Waiting for Quorum'}
+                </Badge>
+              )}
+            />
+            <InfoLine
+              title={'Epoch'}
+              value={'#1343'}
+            />
+            <InfoLine
+              title={'Next epoch starts in'}
+              value={'10d:5h:13m'}
+            />
+            <InfoLine
+              title={'Rewards This Epoch'}
+              value={'85,80'}
+            />
+            <InfoLine
+              title={'Rewards This Epoch'}
+              value={'825,280'}
+            />
+            <InfoLine
+              title={'Last Proposed Block'}
+              value={(
+                <ValueContainer>
+                  <DateBlock timestamp={1727887511000}/>
+                  <Identifier copyButton={true}styles={['gradient-both']}>
+                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                  </Identifier>
+                </ValueContainer>
+              )}
+            />
+            <InfoLine
+              title={'Withdrawals Count'}
+              value={'42'}
+            />
+            <InfoLine
+              title={'Last Withdrawal'}
+              value={(
+                <ValueContainer>
+                  <DateBlock timestamp={1727887511000}/>
+                  <Identifier copyButton={true} styles={['gradient-both']}>
+                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                  </Identifier>
+                </ValueContainer>
+              )}
+            />
           </div>
 
           <HorisontalSeparator/>
 
           <div>
             {/* PoSe Score and etc. */}
+
+            <InfoLine
+              title={'PoSe Score'}
+              value={(
+                <div>
+                  <span>0</span>
+                  <span>status</span>
+                </div>
+              )}
+            />
+            <InfoLine
+              title={'Collateral address'}
+              value={(
+                <ValueContainer>
+                  <Identifier copyButton={true} styles={['gradient-both']}>
+                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                  </Identifier>
+                </ValueContainer>
+              )}
+            />
+            <InfoLine
+              title={'Owner address'}
+              value={(
+                <ValueContainer>
+                  <Identifier copyButton={true} styles={['gradient-both']}>
+                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                  </Identifier>
+                </ValueContainer>
+              )}
+            />
+            <InfoLine
+              title={'Voting address'}
+              value={(
+                <ValueContainer>
+                  <Identifier copyButton={true} styles={['gradient-both']}>
+                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                  </Identifier>
+                </ValueContainer>
+              )}
+            />
+            <InfoLine
+              title={'Payout address'}
+              value={(
+                <ValueContainer>
+                  <Identifier copyButton={true} styles={['gradient-both']}>
+                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                  </Identifier>
+                </ValueContainer>
+              )}
+            />
+            <InfoLine
+              title={'Operator Public Key'}
+              value={(
+                <Identifier copyButton={true} styles={['gradient-both']}>
+                  XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                </Identifier>
+              )}
+            />
           </div>
         </div>
         <div className={'PageInfoColumn'}> {/* Npobg */}
@@ -283,8 +323,7 @@ function Validator ({ hash }) {
           {/* Proposed Blocks */}
         </div>
       </div>
-
-    </Container>
+    </PageDataContainer>
   )
 
   return (
