@@ -56,93 +56,93 @@ function Transaction ({ hash }) {
 
   return (
     <Container
-        maxW={'container.lg'}
-        p={3}
-        mt={8}
+      maxW={'container.lg'}
+      p={3}
+      mt={8}
     >
         <TableContainer
-            maxW={'none'}
-            borderWidth={'1px'} borderRadius={'block'}
-            mb={4}
+          maxW={'none'}
+          borderWidth={'1px'} borderRadius={'block'}
+          mb={4}
         >
             {!transaction.error
               ? <Table variant='simple' className='Table'>
                 <Thead>
-                    <Tr>
-                        <Th>transaction info</Th>
-                        <Th></Th>
-                    </Tr>
+                  <Tr>
+                    <Th>transaction info</Th>
+                    <Th></Th>
+                  </Tr>
                 </Thead>
                 <Tbody>
+                  <Tr>
+                    <Td w={tdTitleWidth}>Status</Td>
+                    <Td>
+                      <LoadingLine loading={transaction.loading}>
+                        <Flex alignItems={'center'}>{transaction.data?.status}{StatusIcon}</Flex>
+                      </LoadingLine>
+                    </Td>
+                  </Tr>
+                  {transaction.data?.error &&
                     <Tr>
-                      <Td w={tdTitleWidth}>Status</Td>
+                      <Td w={tdTitleWidth}>Error</Td>
                       <Td>
                         <LoadingLine loading={transaction.loading}>
-                          <Flex alignItems={'center'}>{transaction.data?.status}{StatusIcon}</Flex>
+                          <Code whiteSpace={'wrap'} mt={2} maxW={['300px', '300px', '500px', '720px']}>
+                            {transaction.data?.error}
+                          </Code>
                         </LoadingLine>
                       </Td>
                     </Tr>
-                    {transaction.data?.error &&
-                      <Tr>
-                        <Td w={tdTitleWidth}>Error</Td>
-                        <Td>
-                          <LoadingLine loading={transaction.loading}>
-                            <Code whiteSpace={'wrap'} mt={2} maxW={['300px', '300px', '500px', '720px']}>
-                              {transaction.data?.error}
-                            </Code>
-                          </LoadingLine>
-                        </Td>
-                      </Tr>
-                    }
-                    <Tr>
-                        <Td w={tdTitleWidth}>Hash</Td>
-                        <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
-                            <LoadingLine loading={transaction.loading}>{transaction.data?.hash}</LoadingLine>
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Height</Td>
-                        <Td>
-                            <LoadingLine loading={transaction.loading}>{transaction.data?.blockHeight}</LoadingLine>
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Type</Td>
-                        <Td>
-                            <LoadingLine loading={transaction.loading}>
-                                {transaction.data?.type && getTransitionTypeStringById(transaction.data?.type)}
-                            </LoadingLine>
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Index</Td>
-                        <Td>
-                            <LoadingLine loading={transaction.loading}>{transaction.data?.index}</LoadingLine>
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Timestamp</Td>
-                        <Td>
-                            <LoadingLine loading={transaction.loading}>{transaction.data?.timestamp && new Date(transaction.data?.timestamp).toLocaleString()}</LoadingLine>
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Gas Used</Td>
-                        <Td>
-                          <LoadingLine loading={transaction.loading}>
-                            <RateTooltip
-                              dash={transaction.data?.gasUsed / 1000}
-                              usd={
-                                typeof rate.data?.usd === 'number'
-                                  ? (rate.data?.usd * transaction.data?.gasUsed / 1000).toFixed(2)
-                                  : null
-                              }
-                            >
-                              <span><Credits>{transaction.data?.gasUsed}</Credits> Credits</span>
-                            </RateTooltip>
-                          </LoadingLine>
-                        </Td>
-                    </Tr>
+                  }
+                  <Tr>
+                    <Td w={tdTitleWidth}>Hash</Td>
+                    <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
+                      <LoadingLine loading={transaction.loading}>{transaction.data?.hash}</LoadingLine>
+                    </Td>
+                  </Tr>
+                  <Tr>
+                    <Td w={tdTitleWidth}>Height</Td>
+                    <Td>
+                      <LoadingLine loading={transaction.loading}>{transaction.data?.blockHeight}</LoadingLine>
+                    </Td>
+                  </Tr>
+                  <Tr>
+                    <Td w={tdTitleWidth}>Type</Td>
+                    <Td>
+                      <LoadingLine loading={transaction.loading}>
+                        {transaction.data?.type && getTransitionTypeStringById(transaction.data?.type)}
+                      </LoadingLine>
+                    </Td>
+                  </Tr>
+                  <Tr>
+                    <Td w={tdTitleWidth}>Index</Td>
+                    <Td>
+                      <LoadingLine loading={transaction.loading}>{transaction.data?.index}</LoadingLine>
+                    </Td>
+                  </Tr>
+                  <Tr>
+                    <Td w={tdTitleWidth}>Timestamp</Td>
+                    <Td>
+                      <LoadingLine loading={transaction.loading}>{transaction.data?.timestamp && new Date(transaction.data?.timestamp).toLocaleString()}</LoadingLine>
+                    </Td>
+                  </Tr>
+                  <Tr>
+                    <Td w={tdTitleWidth}>Gas Used</Td>
+                    <Td>
+                      <LoadingLine loading={transaction.loading}>
+                        <RateTooltip
+                          dash={transaction.data?.gasUsed / 1000}
+                          usd={
+                            typeof rate.data?.usd === 'number'
+                              ? (rate.data?.usd * transaction.data?.gasUsed / 1000).toFixed(2)
+                              : null
+                          }
+                        >
+                          <span><Credits>{transaction.data?.gasUsed}</Credits> Credits</span>
+                        </RateTooltip>
+                      </LoadingLine>
+                    </Td>
+                  </Tr>
                 </Tbody>
                 </Table>
               : <Container h={20}><ErrorMessageBlock/></Container>}
@@ -158,7 +158,7 @@ function Transaction ({ hash }) {
 
             {(!transaction.loading && decodedST)
               ? <Table variant='simple' className='Table TransactionData'>
-                    <TransactionData data={decodedST}/>
+                  <TransactionData data={decodedST}/>
                 </Table>
               : <LoadingList itemsCount={3}/>}
           </Container>
