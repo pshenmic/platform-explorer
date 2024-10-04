@@ -8,6 +8,7 @@ import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import TransactionData from './TransactionData'
 import { CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
+import { RateTooltip } from '../../../components/ui/Tooltips'
 import './Transaction.scss'
 
 import {
@@ -19,6 +20,7 @@ import {
 
 function Transaction ({ hash }) {
   const [transaction, setTransaction] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [decodedST, setDecodedST] = useState(null)
   const tdTitleWidth = 250
 
@@ -39,6 +41,10 @@ function Transaction ({ hash }) {
         decodeTx(res.data)
       })
       .catch(err => fetchHandlerError(setTransaction, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
 
   useEffect(fetchData, [hash, decodeTx])
@@ -108,9 +114,18 @@ function Transaction ({ hash }) {
                     <Tr>
                         <Td w={tdTitleWidth}>Gas Used</Td>
                         <Td>
-                            <LoadingLine loading={transaction.loading}>
-                              <Credits>{transaction.data?.gasUsed}</Credits>
-                            </LoadingLine>
+                          <LoadingLine loading={transaction.loading}>
+                            <RateTooltip
+                              dash={transaction.data?.gasUsed / 1000}
+                              usd={
+                                typeof rate.data?.usd === 'number'
+                                  ? (rate.data?.usd * transaction.data?.gasUsed / 1000).toFixed(2)
+                                  : null
+                              }
+                            >
+                              <span><Credits>{transaction.data?.gasUsed}</Credits></span>
+                            </RateTooltip>
+                          </LoadingLine>
                         </Td>
                     </Tr>
                 </Tbody>
