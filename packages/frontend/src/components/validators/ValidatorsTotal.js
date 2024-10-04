@@ -83,7 +83,7 @@ export default function ValidatorsTotal () {
                         dash={epoch.data.totalCollectedFees / 1000}
                         usd={
                           typeof rate.data?.usd === 'number'
-                            ? (epoch.data.totalCollectedFees / 1000 / rate.data?.usd).toFixed(2)
+                            ? (rate.data?.usd * transaction.data?.gasUsed / 1000).toFixed(2)
                             : null
                         }
                       >
