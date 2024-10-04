@@ -7,7 +7,7 @@ export const StateTransitionEnum = {
   IDENTITY_UPDATE: 5,
   IDENTITY_CREDIT_WITHDRAWAL: 6,
   IDENTITY_CREDIT_TRANSFER: 7,
-  MASTERNODE_VOTING: 8
+  MASTERNODE_VOTE: 8
 }
 
 export const TransactionTypesEnum = {
@@ -19,7 +19,7 @@ export const TransactionTypesEnum = {
   IDENTITY_UPDATE: 'Identity Update',
   IDENTITY_CREDIT_WITHDRAWAL: 'Credit Withdrawal',
   IDENTITY_CREDIT_TRANSFER: 'Credit Transfer',
-  MASTERNODE_VOTING: 'Masternode Voting'
+  MASTERNODE_VOTE: 'Masternode Vote'
 }
 
 export const TransactionTypesColors = {
