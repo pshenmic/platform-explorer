@@ -12,6 +12,8 @@ import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import ImageGenerator from '../../../components/imageGenerator'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { Credits } from '../../../components/data'
+import { RateTooltip } from '../../../components/ui/Tooltips'
 import './Identity.scss'
 
 import {
@@ -37,6 +39,7 @@ function Identity ({ identifier }) {
   const [documents, setDocuments] = useState({ data: {}, loading: true, error: false })
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   const tdTitleWidth = 100
   const router = useRouter()
@@ -62,6 +65,10 @@ function Identity ({ identifier }) {
         .catch(err => fetchHandlerError(setTransfers, err))
     ])
       .catch(console.error)
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
 
   useEffect(fetchData, [identifier])
@@ -136,7 +143,18 @@ function Identity ({ identifier }) {
                                 <Tr>
                                     <Td w={tdTitleWidth}>Balance</Td>
                                     <Td isNumeric>
-                                        <LoadingLine loading={identity.loading}>{identity.data?.balance} Credits</LoadingLine>
+                                      <LoadingLine loading={identity.loading}>
+                                        <RateTooltip
+                                          dash={identity.data?.balance / 1000}
+                                          usd={
+                                            typeof rate.data?.usd === 'number'
+                                              ? (rate.data?.usd * identity.data?.balance / 1000).toFixed(2)
+                                              : null
+                                          }
+                                        >
+                                          <span><Credits>{identity.data?.balance}</Credits> Credits</span>
+                                        </RateTooltip>
+                                      </LoadingLine>
                                     </Td>
                                 </Tr>
                                 <Tr>

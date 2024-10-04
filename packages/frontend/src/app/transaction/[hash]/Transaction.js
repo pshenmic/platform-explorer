@@ -123,7 +123,7 @@ function Transaction ({ hash }) {
                                   : null
                               }
                             >
-                              <span><Credits>{transaction.data?.gasUsed}</Credits></span>
+                              <span><Credits>{transaction.data?.gasUsed}</Credits> Credits</span>
                             </RateTooltip>
                           </LoadingLine>
                         </Td>
