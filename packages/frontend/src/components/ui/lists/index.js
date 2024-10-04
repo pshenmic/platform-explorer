@@ -3,8 +3,8 @@ import './SimpleList.scss'
 import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
-import { numberFormat } from '../../../util'
 import ListColumnsHeader from './ListColumnsHeader'
+import { Credits, Identifier } from '../../../components/data'
 
 function EmptyListMessage ({ children }) {
   return (
@@ -16,6 +16,12 @@ function SimpleListItem ({ item }) {
   const ItemContainer = ({ link, children }) => link
     ? <Link href={link} className={'SimpleListItem'}>{children}</Link>
     : <div className={'SimpleListItem'}>{children}</div>
+
+  const ValueContainer = ({ format, children }) => {
+    if (format === 'currency') return <Credits>{children}</Credits>
+    if (format === 'identifier') return <Identifier styles={['highlight-both']} copyButton={true}>{children}</Identifier>
+    return <span>{children}</span>
+  }
 
   return (
     <ItemContainer
@@ -71,10 +77,7 @@ function SimpleListItem ({ item }) {
                       height={15}
                     />
                   }
-                  {column?.numberFormat === 'currency'
-                    ? <span>{numberFormat(column.value)}</span>
-                    : <span>{column.value}</span>
-                  }
+                  <ValueContainer format={column?.format}>{column.value}</ValueContainer>
                 </div>
               )
             }

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { getTimeDelta } from '../../util/index'
 import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
+import { Identifier } from '../data'
 import './TransactionsListItem.scss'
 
 function TransactionsListItem ({ transaction }) {
@@ -20,7 +21,7 @@ function TransactionsListItem ({ transaction }) {
         }
         {transaction?.hash &&
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Identifier'}>
-            <span>{transaction.hash}</span>
+            <Identifier copyButton={true} styles={['highlight-both']}>{transaction.hash}</Identifier>
           </GridItem>
         }
         {transaction?.type !== undefined &&

@@ -218,10 +218,10 @@ export const theme = extendTheme({
 
         return {
           borderWidth: '0px',
-          padding: '2px 10px',
+          padding: '0 12px',
           borderRadius: '999px',
           fontFamily: 'mono',
-          fontSize: '11px',
+          fontSize: '0.625rem',
           textTransform: 'none',
           display: 'inline-flex',
           alignItems: 'center',

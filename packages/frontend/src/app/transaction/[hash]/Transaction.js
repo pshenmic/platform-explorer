@@ -2,7 +2,8 @@
 
 import * as Api from '../../../util/Api'
 import { useState, useEffect, useCallback } from 'react'
-import { getTransitionTypeStringById, fetchHandlerSuccess, fetchHandlerError, numberFormat } from '../../../util'
+import { getTransitionTypeStringById, fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import { Credits } from '../../../components/data'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import TransactionData from './TransactionData'
@@ -42,7 +43,7 @@ function Transaction ({ hash }) {
 
   useEffect(fetchData, [hash, decodeTx])
 
-  const StatusIcon = transaction.data.status === 'SUCCESS'
+  const StatusIcon = transaction.data?.status === 'SUCCESS'
     ? <CheckCircleIcon color={'green.500'} ml={2}/>
     : <WarningTwoIcon color={'red.500'} ml={2}/>
 
@@ -107,7 +108,9 @@ function Transaction ({ hash }) {
                     <Tr>
                         <Td w={tdTitleWidth}>Gas Used</Td>
                         <Td>
-                            <LoadingLine loading={transaction.loading}>{numberFormat(transaction.data?.gasUsed)}</LoadingLine>
+                            <LoadingLine loading={transaction.loading}>
+                              <Credits>{transaction.data?.gasUsed}</Credits>
+                            </LoadingLine>
                         </Td>
                     </Tr>
                 </Tbody>
