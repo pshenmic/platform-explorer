@@ -4,7 +4,7 @@
 $border-radius: var(--chakra-radii-block);
 
 .InfoBlock {
-  @include mixins.Block(true);
+  @include mixins.Block();
   position: relative;
   padding: 20px 32px 32px 32px !important;
 

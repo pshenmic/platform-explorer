@@ -30,14 +30,25 @@
     text-align: center;
     border: 1px solid rgba(255, 255, 255, .07);
     top: 0;
+    transition: all .1s;
 
     &--Active {
       border: 1px solid $color-brand-normal;
+      color: $color-brand-normal !important;
       background: rgba(255, 255, 255, .02);
+      cursor: default;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.NavLink--Active):hover {
+        background: rgba(255, 255, 255, .15);
+      }
     }
 
     &:active {
       color: #fff;
+      transform: translateY(1px);
+      background: rgba(255, 255, 255, 0.1) !important;
     }
   }
 }

@@ -17,6 +17,11 @@
         margin: 10px 0;
     }
 
+    &--DivideBy3 {
+        overflow: hidden;
+        max-width: 100%;
+    }
+
     @media screen and (max-width: $breakpoint-lg) {
         &__Item {
             width: calc(25% - 10px);
