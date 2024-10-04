@@ -6,7 +6,8 @@ export const StateTransitionEnum = {
   DATA_CONTRACT_UPDATE: 4,
   IDENTITY_UPDATE: 5,
   IDENTITY_CREDIT_WITHDRAWAL: 6,
-  IDENTITY_CREDIT_TRANSFER: 7
+  IDENTITY_CREDIT_TRANSFER: 7,
+  MASTERNODE_VOTING: 8
 }
 
 export const TransactionTypesEnum = {
@@ -17,7 +18,8 @@ export const TransactionTypesEnum = {
   DATA_CONTRACT_UPDATE: 'Data Contract Update',
   IDENTITY_UPDATE: 'Identity Update',
   IDENTITY_CREDIT_WITHDRAWAL: 'Credit Withdrawal',
-  IDENTITY_CREDIT_TRANSFER: 'Credit Transfer'
+  IDENTITY_CREDIT_TRANSFER: 'Credit Transfer',
+  MASTERNODE_VOTING: 'Masternode Voting'
 }
 
 export const TransactionTypesColors = {
@@ -28,5 +30,6 @@ export const TransactionTypesColors = {
   IDENTITY_TOP_UP: 'emerald',
   IDENTITY_UPDATE: 'yellow',
   IDENTITY_CREDIT_WITHDRAWAL: 'red',
-  IDENTITY_CREDIT_TRANSFER: 'orange'
+  IDENTITY_CREDIT_TRANSFER: 'orange',
+  MASTERNODE_VOTING: 'yellow'
 }
