@@ -7,7 +7,7 @@ import TransactionsList from '../../../components/transactions/TransactionsList'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import DataContractsList from '../../../components/dataContracts/DataContractsList'
 import TransfersList from '../../../components/transfers/TransfersList'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError, creditsToDash } from '../../../util'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import ImageGenerator from '../../../components/imageGenerator'
@@ -15,7 +15,6 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Credits } from '../../../components/data'
 import { RateTooltip } from '../../../components/ui/Tooltips'
 import './Identity.scss'
-
 import {
   Box,
   Container,
@@ -145,10 +144,10 @@ function Identity ({ identifier }) {
                                     <Td isNumeric>
                                       <LoadingLine loading={identity.loading}>
                                         <RateTooltip
-                                          dash={identity.data?.balance / 1000}
+                                          dash={creditsToDash(identity.data?.balance)}
                                           usd={
                                             typeof rate.data?.usd === 'number'
-                                              ? (rate.data?.usd * identity.data?.balance / 1000).toFixed(2)
+                                              ? (rate.data.usd * creditsToDash(identity.data?.balance)).toFixed(2)
                                               : null
                                           }
                                         >

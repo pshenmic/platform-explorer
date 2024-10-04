@@ -2,7 +2,7 @@
 
 import * as Api from '../../../util/Api'
 import { useState, useEffect, useCallback } from 'react'
-import { getTransitionTypeStringById, fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import { getTransitionTypeStringById, fetchHandlerSuccess, fetchHandlerError, creditsToDash } from '../../../util'
 import { Credits } from '../../../components/data'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
@@ -131,10 +131,10 @@ function Transaction ({ hash }) {
                     <Td>
                       <LoadingLine loading={transaction.loading}>
                         <RateTooltip
-                          dash={transaction.data?.gasUsed / 1000}
+                          dash={creditsToDash(transaction.data?.gasUsed)}
                           usd={
                             typeof rate.data?.usd === 'number'
-                              ? (rate.data?.usd * transaction.data?.gasUsed / 1000).toFixed(2)
+                              ? (rate.data.usd * creditsToDash(transaction.data?.gasUsed)).toFixed(2)
                               : null
                           }
                         >

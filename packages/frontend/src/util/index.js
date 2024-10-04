@@ -75,6 +75,10 @@ function getTimeDelta (startDate, endDate, format) {
   return 'Invalid format'
 }
 
+function creditsToDash (credits) {
+  return credits / 100000000000
+}
+
 export {
   getTransitionTypeStringById,
   fetchHandlerSuccess,
@@ -83,5 +87,6 @@ export {
   currencyRound,
   copyToClipboard,
   getTimeDelta,
-  getTransitionTypeKeyById
+  getTransitionTypeKeyById,
+  creditsToDash
 }
