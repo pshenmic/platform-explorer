@@ -15,7 +15,8 @@ import {
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
   Heading,
-  Flex
+  Flex,
+  Code
 } from '@chakra-ui/react'
 
 function Transaction ({ hash }) {
@@ -74,11 +75,25 @@ function Transaction ({ hash }) {
                 </Thead>
                 <Tbody>
                     <Tr>
-                        <Td w={tdTitleWidth}>Status</Td>
-                        <Td>
-                            <LoadingLine loading={transaction.loading}><Flex alignItems={'center'}>{transaction.data?.status}{StatusIcon}</Flex></LoadingLine>
-                        </Td>
+                      <Td w={tdTitleWidth}>Status</Td>
+                      <Td>
+                        <LoadingLine loading={transaction.loading}>
+                          <Flex alignItems={'center'}>{transaction.data?.status}{StatusIcon}</Flex>
+                        </LoadingLine>
+                      </Td>
                     </Tr>
+                    {transaction.data?.error &&
+                      <Tr>
+                        <Td w={tdTitleWidth}>Error</Td>
+                        <Td>
+                          <LoadingLine loading={transaction.loading}>
+                            <Code whiteSpace={'wrap'} mt={2} maxW={['300px', '300px', '500px', '720px']}>
+                              {transaction.data?.error}
+                            </Code>
+                          </LoadingLine>
+                        </Td>
+                      </Tr>
+                    }
                     <Tr>
                         <Td w={tdTitleWidth}>Hash</Td>
                         <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
