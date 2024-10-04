@@ -78,21 +78,8 @@ function NetworkStatus ({ className }) {
         <div className={'NetworkStatus__InfoTitle'}>Network:</div>
         <div className={'NetworkStatus__InfoValue'}>
           <Badge colorScheme={networkStatus ? 'green' : 'red'} className={'NetworkStatus__Badge'}>
-            <Tooltip
-              label={`${networkStatus
-                ? 'Network appears operational'
-                : 'Chain propagation degraded'
-              }`}
-              aria-label={'Network status'}
-              placement={'top'}
-              bg={'gray.700'}
-              color={'white'}
-            >
-              <span>
-                {NetworkStatusIcon}
-                {status?.data?.network ? `${status.data.network}` : 'n/a'}
-              </span>
-            </Tooltip>
+            {NetworkStatusIcon}
+            {status?.data?.network ? `${status.data.network}` : 'n/a'}
           </Badge>
         </div>
       </div>
@@ -101,21 +88,8 @@ function NetworkStatus ({ className }) {
         <div className={'NetworkStatus__InfoTitle'}>API:</div>
         <div className={'NetworkStatus__InfoValue'}>
           <Badge colorScheme={apiStatus ? 'green' : 'red'} className={'NetworkStatus__Badge'}>
-            <Tooltip
-              label={`${apiStatus
-                ? 'API appears operational'
-                : 'API indexing disrupted'
-              }`}
-              aria-label={'API status'}
-              placement={'top'}
-              bg={'gray.700'}
-              color={'white'}
-            >
-              <span>
-                {ApiStatusIcon}
-                {apiStatus ? 'operational' : 'disrupted'}
-              </span>
-            </Tooltip>
+            {ApiStatusIcon}
+            {apiStatus ? 'operational' : 'disrupted'}
           </Badge>
         </div>
       </div>
