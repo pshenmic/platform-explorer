@@ -98,8 +98,9 @@ const decodeStateTransition = async (client, base64) => {
 
 const tryToConnect = (port, host) => {
   return new Promise((resolve) => {
+    let connection
     try {
-      const connection = net.createConnection(port, host)
+      connection = net.createConnection(port, host)
 
       connection.setTimeout(VALIDATOR_TIMEOUT)
 
@@ -119,7 +120,7 @@ const tryToConnect = (port, host) => {
       })
     } catch (e) {
       console.error('e')
-
+      connection.destroy()
       resolve(false)
     }
   })
@@ -129,8 +130,6 @@ const isConnectable = async ({ service, platformP2PPort, platformHTTPPort }) => 
   let serviceConnectable = false
   let p2pConnectable = false
   let httpConnectable = false
-
-  const p2pResponse = null
 
   try {
     const [host] = service.match(/^\d+\.\d+\.\d+\.\d+/)
@@ -145,7 +144,7 @@ const isConnectable = async ({ service, platformP2PPort, platformHTTPPort }) => 
     console.error(error)
   }
 
-  return ConnectionData.fromObject({ serviceConnectable, p2pConnectable, httpConnectable, p2pResponse })
+  return ConnectionData.fromObject({ serviceConnectable, p2pConnectable, httpConnectable })
 }
 
 module.exports = { hash, decodeStateTransition, getKnex, isConnectable, tryToConnect }
