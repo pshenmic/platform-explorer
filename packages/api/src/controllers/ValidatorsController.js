@@ -4,6 +4,7 @@ const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 const { isConnectable } = require('../utils')
+const ConnectionData = require('../models/ConnectionData')
 
 class ValidatorsController {
   constructor (knex) {
@@ -25,9 +26,14 @@ class ValidatorsController {
 
     const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
-    const serviceConnectable = typeof proTxInfo?.state.service === 'string'
-      ? await isConnectable(proTxInfo?.state.service)
-      : false
+    const connectionInfo = proTxInfo?.state
+      ? await isConnectable(proTxInfo?.state)
+      : ConnectionData.fromObject({
+        serviceConnectable: false,
+        p2pConnectable: false,
+        httpConnectable: false,
+        p2pResponse: null
+      })
 
     response.send(
       new Validator(
@@ -39,7 +45,7 @@ class ValidatorsController {
           ...proTxInfo,
           state: {
             ...proTxInfo.state,
-            serviceConnectable
+            connectionInfo
           }
         })
       )

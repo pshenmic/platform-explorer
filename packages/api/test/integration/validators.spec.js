@@ -64,7 +64,12 @@ describe('Validators routes', () => {
         platformP2PPort: 36656,
         platformHTTPPort: 1443,
         payoutAddress: 'yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A',
-        pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53'
+        pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53',
+        connectionInfo: {
+          httpConnectable: false,
+          p2pConnectable: false,
+          serviceConnectable: false
+        }
       },
       confirmations: 214276,
       metaInfo: {

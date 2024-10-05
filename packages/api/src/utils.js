@@ -2,6 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
 const { VALIDATOR_TIMEOUT } = require('./constants')
+const ConnectionData = require('./models/ConnectionData')
 
 const getKnex = () => {
   return require('knex')({
@@ -95,40 +96,56 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-const isConnectable = async (url) => {
-  let connection
-  try {
-    const [host] = url.match(/^\d+\.\d+\.\d+\.\d+/)
-    const [port] = url.match(/\d+$/)
-
-    return new Promise((resolve) => {
-      connection = net.createConnection(port, host)
+const tryToConnect = (port, host) => {
+  return new Promise((resolve) => {
+    try {
+      const connection = net.createConnection(port, host)
 
       connection.setTimeout(VALIDATOR_TIMEOUT)
+
+      connection.once('error', async () => {
+        await connection.destroy()
+        resolve(false)
+      })
 
       connection.once('connect', async () => {
         await connection.destroy()
         resolve(true)
       })
 
-      connection.once('error', async () => {
+      connection.once('timeout', async () => {
         await connection.destroy()
         resolve(false)
       })
-    })
-  } catch (error) {
-    console.error(error)
+    } catch (e) {
+      console.error('e')
 
-    if (connection) {
-      try {
-        await connection.destroy()
-      } catch (e) {
-        console.error('Cannot destroy connection')
-      }
+      resolve(false)
     }
-
-    return false
-  }
+  })
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, isConnectable }
+const isConnectable = async ({ service, platformP2PPort, platformHTTPPort }) => {
+  let serviceConnectable = false
+  let p2pConnectable = false
+  let httpConnectable = false
+
+  const p2pResponse = null
+
+  try {
+    const [host] = service.match(/^\d+\.\d+\.\d+\.\d+/)
+    const [servicePort] = service.match(/\d+$/)
+
+    serviceConnectable = await tryToConnect(servicePort, host)
+
+    p2pConnectable = await tryToConnect(platformP2PPort, host)
+
+    httpConnectable = await tryToConnect(platformHTTPPort, host)
+  } catch (error) {
+    console.error(error)
+  }
+
+  return ConnectionData.fromObject({ serviceConnectable, p2pConnectable, httpConnectable, p2pResponse })
+}
+
+module.exports = { hash, decodeStateTransition, getKnex, isConnectable, tryToConnect }
