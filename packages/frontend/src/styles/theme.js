@@ -1,4 +1,4 @@
-import { background, extendTheme } from '@chakra-ui/react'
+import { extendTheme } from '@chakra-ui/react'
 import {
   Montserrat,
   Open_Sans as OpenSans,
@@ -165,7 +165,7 @@ export const theme = extendTheme({
   components: {
     Container: {
       baseStyle: {
-        p: 3,
+        p: 3
       },
       sizes: {
         xl: {
