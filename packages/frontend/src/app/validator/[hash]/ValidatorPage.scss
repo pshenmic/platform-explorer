@@ -2,6 +2,10 @@
 @import '../../../styles/variables.scss';
 
 .ValidatorPage {
+  &__Card {
+    margin-bottom: 24px;
+  }
+
   &__ContentContainer {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -18,6 +22,10 @@
     border-radius: 18px;
     border: 1px solid var(--chakra-colors-gray-800);
     padding: 24px;
+  }
+
+  &__InfoLine {
+    margin-bottom: 14px;
   }
 
   @media screen and (max-width: $breakpoint-lg) {

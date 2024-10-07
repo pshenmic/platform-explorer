@@ -89,73 +89,10 @@ function Validator ({ hash }) {
       <div className={'ValidatorPage__ContentContainer'}>
         <div className={'ValidatorPage__Column'}>
           <div className={'ValidatorPage__GroupContainer'}>
-
-            <ValidatorCard validator={validator}/>
-
-            {/* <div className={'ValidatorCard'}>
-              <div className={'ValidatorCard__Header'}>
-                <div className={'ValidatorCard__Avatar'}></div>
-
-                <InfoLine
-                  title={'Pro TX Hash'}
-                  value={(
-                    <Identifier
-                      className={''}
-                      copyButton={true}
-                      styles={['gradient-both']}
-                    >
-                      {hash}
-                    </Identifier>
-                  )}
-                />
-
-                <InfoLine
-                  title={'Balance'}
-                  value={<Credits credits={85800000} usd={'209.15'} />}
-                />
-              </div>
-
-              <HorisontalSeparator/>
-
-              <InfoLine
-                title={'Creation Date'}
-                value={<DateBlock timestamp={1727887511000}/>}
-              />
-
-              <InfoLine
-                title={'Block Height'}
-                value={'#10225'}
-              />
-
-              <InfoLine
-                title={'Identity Address'}
-                value={(
-                  <Identifier
-                    className={''}
-                    copyButton={true}
-                    styles={['gradient-both']}
-                  >
-                    23975732199C674FD2133FA9F08454D809561DC24E6E941D78FF414C528ABA67
-                  </Identifier>
-                )}
-              />
-
-              <InfoLine
-                title={'Node ID'}
-                value={(
-                  <Identifier
-                    className={''}
-                    copyButton={true}
-                    styles={['gradient-both']}
-                  >
-                    50d847734406592420320c864eb572fb900e5c36
-                  </Identifier>
-                )}
-              />
-            </div> */}
-
+            <ValidatorCard validator={validator} className={'ValidatorPage__Card'}/>
             <div>
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'CORE P2P'}
                 value={(
                   <Endpoint
@@ -164,8 +101,8 @@ function Validator ({ hash }) {
                   />
                 )}
               />
-
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Platform P2P'}
                 value={(
                   <Endpoint
@@ -174,8 +111,8 @@ function Validator ({ hash }) {
                   />
                 )}
               />
-
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Platform GRPC'}
                 value={(
                   <Endpoint
@@ -192,6 +129,7 @@ function Validator ({ hash }) {
               {/* Status*/}
 
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Status'}
                 value={(
                   <Badge colorScheme={false ? 'green' : 'orange'}>
@@ -202,22 +140,27 @@ function Validator ({ hash }) {
                 )}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Epoch'}
                 value={'#1343'}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Next epoch starts in'}
                 value={'10d:5h:13m'}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Rewards This Epoch'}
                 value={'85,80'}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Rewards This Epoch'}
                 value={'825,280'}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Last Proposed Block'}
                 value={(
                   <ValueContainer>
@@ -229,10 +172,12 @@ function Validator ({ hash }) {
                 )}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Withdrawals Count'}
                 value={'42'}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Last Withdrawal'}
                 value={(
                   <ValueContainer>
@@ -251,6 +196,7 @@ function Validator ({ hash }) {
               {/* PoSe Score and etc. */}
 
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'PoSe Score'}
                 value={(
                   <div>
@@ -260,6 +206,7 @@ function Validator ({ hash }) {
                 )}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Collateral address'}
                 value={(
                   <ValueContainer>
@@ -270,6 +217,7 @@ function Validator ({ hash }) {
                 )}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Owner address'}
                 value={(
                   <ValueContainer>
@@ -280,6 +228,7 @@ function Validator ({ hash }) {
                 )}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Voting address'}
                 value={(
                   <ValueContainer>
@@ -290,6 +239,7 @@ function Validator ({ hash }) {
                 )}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Payout address'}
                 value={(
                   <ValueContainer>
@@ -300,6 +250,7 @@ function Validator ({ hash }) {
                 )}
               />
               <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Operator Public Key'}
                 value={(
                   <Identifier copyButton={true} styles={['gradient-both']}>

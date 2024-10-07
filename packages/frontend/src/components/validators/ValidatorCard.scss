@@ -26,4 +26,16 @@
   &__Separator {
     margin: 12px 0;
   }
+
+  &__BlockHeighValue {
+    font-size: 0.813rem;
+  }
+
+  &__InfoLine {
+    margin-bottom: 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }

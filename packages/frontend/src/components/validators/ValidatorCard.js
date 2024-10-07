@@ -13,7 +13,7 @@ function Credits ({ credits, usd, format }) {
   )
 }
 
-export default function ValidatorCard ({ validator }) {
+export default function ValidatorCard ({ validator, className }) {
   console.log('validator', validator)
 
   if (validator.error) {
@@ -25,7 +25,7 @@ export default function ValidatorCard ({ validator }) {
   }
   
   return (
-    <div className={'InfoBlock InfoBlock--Gradient ValidatorCard'}>
+    <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${className || ''}`}>
       <div className={'ValidatorCard__Header'}>
         <div className={'ValidatorCard__Avatar'}>
           <ImageGenerator
@@ -59,16 +59,21 @@ export default function ValidatorCard ({ validator }) {
       <HorisontalSeparator className={'ValidatorCard__Separator'}/>
 
       <InfoLine
+        className={'ValidatorCard__InfoLine'}
         title={'Creation Date'}
         value={<DateBlock timestamp={1727887511000}/>}
       />
 
       <InfoLine
+        className={'ValidatorCard__InfoLine'}
         title={'Block Height'}
-        value={'#10225'}
+        value={(
+          <span className={'ValidatorCard__BlockHeighValue'}>#10225</span>
+        )}
       />
 
       <InfoLine
+        className={'ValidatorCard__InfoLine'}
         title={'Identity Address'}
         value={(
           <Identifier
@@ -82,6 +87,7 @@ export default function ValidatorCard ({ validator }) {
       />
 
       <InfoLine
+        className={'ValidatorCard__InfoLine'}
         title={'Node ID'}
         value={(
           <Identifier
