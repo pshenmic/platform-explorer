@@ -1,0 +1,28 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.DateBlock {
+  display: flex;
+  align-items: center;
+  font-family: $font-mono;
+
+  &__CalendarIcon {
+    width: 50px;
+    height: 50px;
+    margin-right: 8px;
+  }
+
+  &__Date {
+    font-size: 0.813rem;
+  }
+
+  &__Delta {
+    display: inline-block;
+    padding: 3px 10px;
+    border: 1px solid rgba(147, 170, 178, .4);
+    border-radius: 4px;
+    color: var(--chakra-colors-gray-250);
+    margin-left: 8px;
+    font-size: 0.688rem;
+  }
+}

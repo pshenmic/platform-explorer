@@ -1,6 +1,8 @@
 'use client'
 
 import { getTimeDelta } from '../../util'
+import { CalendarIcon } from '../ui/icons'
+import './DateBlock.scss'
 
 function DateBlock ({ timestamp, format }) {
   const date = new Date(timestamp)
@@ -16,9 +18,17 @@ function DateBlock ({ timestamp, format }) {
   const formattedDate = date.toLocaleDateString('en-GB', options)
 
   return (
-    <div>
-      <div>{formattedDate}</div>
-      <div>
+    <div className={'DateBlock'}>
+      <CalendarIcon
+        className={'DateBlock__CalendarIcon'}
+        color={'gray.250'}
+        w={'12px'}
+        h={'14px'}
+      />
+      <div className={'DateBlock__Date'}>
+        {formattedDate}
+      </div>
+      <div className={'DateBlock__Delta'}>
         {getTimeDelta(new Date(), date)}
       </div>
     </div>
