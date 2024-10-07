@@ -15,6 +15,7 @@ import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine } from '../../../c
 import { ValueContainer, PageDataContainer } from '../../../components/ui/containers'
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
+import { CircleIcon } from '../../../components/ui/icons'
 import './ValidatorPage.scss'
 
 import { Badge } from '@chakra-ui/react'
@@ -98,6 +99,7 @@ function Validator ({ hash }) {
                   <Endpoint
                     value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
                     status={'active'}
+                    link={'https://192.168.0.1'}
                   />
                 )}
               />
@@ -163,9 +165,9 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Last Proposed Block'}
                 value={(
-                  <ValueContainer>
-                    <DateBlock timestamp={1727887511000}/>
-                    <Identifier copyButton={true}styles={['gradient-both']}>
+                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
+                    <DateBlock timestamp={1727887511000} format={'delta-only'}/>
+                    <Identifier ellipsis={false} styles={['gradient-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -180,9 +182,9 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Last Withdrawal'}
                 value={(
-                  <ValueContainer>
-                    <DateBlock timestamp={1727887511000}/>
-                    <Identifier copyButton={true} styles={['gradient-both']}>
+                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
+                    <DateBlock timestamp={1727887511000} format={'delta-only'}/>
+                    <Identifier ellipsis={false} styles={['gradient-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -199,9 +201,9 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'PoSe Score'}
                 value={(
-                  <div>
+                  <div className={'ValidatorPage__PoseScroreValue'}>
                     <span>0</span>
-                    <span>status</span>
+                    <CircleIcon w={'8px'} h={'8px'} ml={'4px'} mb={'-1px'} color={'green.default'}/>
                   </div>
                 )}
               />
@@ -209,8 +211,8 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Collateral address'}
                 value={(
-                  <ValueContainer>
-                    <Identifier copyButton={true} styles={['gradient-both']}>
+                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
+                    <Identifier styles={['gradient-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -220,8 +222,8 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Owner address'}
                 value={(
-                  <ValueContainer>
-                    <Identifier copyButton={true} styles={['gradient-both']}>
+                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
+                    <Identifier styles={['gradient-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -231,8 +233,8 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Voting address'}
                 value={(
-                  <ValueContainer>
-                    <Identifier copyButton={true} styles={['gradient-both']}>
+                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
+                    <Identifier styles={['gradient-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -242,8 +244,8 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Payout address'}
                 value={(
-                  <ValueContainer>
-                    <Identifier copyButton={true} styles={['gradient-both']}>
+                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
+                    <Identifier styles={['gradient-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>

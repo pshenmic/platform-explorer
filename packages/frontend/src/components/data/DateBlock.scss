@@ -3,8 +3,10 @@
 
 .DateBlock {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   font-family: $font-mono;
+  white-space: nowrap;
 
   &__CalendarIcon {
     width: 50px;

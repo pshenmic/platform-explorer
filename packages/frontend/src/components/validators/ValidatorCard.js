@@ -1,5 +1,5 @@
 import './ValidatorCard.scss'
-import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine } from '../data'
+import { Identifier, DateBlock, InfoLine } from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 
@@ -44,6 +44,7 @@ export default function ValidatorCard ({ validator, className }) {
                 className={''}
                 copyButton={true}
                 styles={['gradient-both']}
+                ellipsis={false}
               >
                 {validator.data.proTxHash}
               </Identifier>

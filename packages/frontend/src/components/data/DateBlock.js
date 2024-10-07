@@ -19,15 +19,19 @@ function DateBlock ({ timestamp, format }) {
 
   return (
     <div className={'DateBlock'}>
-      <CalendarIcon
-        className={'DateBlock__CalendarIcon'}
-        color={'gray.250'}
-        w={'12px'}
-        h={'14px'}
-      />
-      <div className={'DateBlock__Date'}>
-        {formattedDate}
-      </div>
+      {format !== 'delta-only' &&
+        <CalendarIcon
+          className={'DateBlock__CalendarIcon'}
+          color={'gray.250'}
+          w={'12px'}
+          h={'14px'}
+        />
+      }
+      {format !== 'delta-only' &&
+        <div className={'DateBlock__Date'}>
+          {formattedDate}
+        </div>
+      }
       <div className={'DateBlock__Delta'}>
         {getTimeDelta(new Date(), date)}
       </div>

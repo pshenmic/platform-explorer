@@ -1,18 +1,27 @@
+import { CircleIcon, ArrowCornerIcon } from '../ui/icons'
+import './Endpoint.scss'
+
 function Endpoint ({ value, status, link }) {
-  const statusClass = (() => {
-    if (status === 'active') return 'Endpoint__Status--Active'
-    if (status === 'warining') return 'Endpoint__Status--Warning'
-    if (status === 'error') return 'Endpoint__Status--Error'
+  const iconColor = (() => {
+    if (status === 'active') return 'green.default'
+    if (status === 'warining') return 'yellow.default'
+    if (status === 'error') return 'red.default'
     return ''
   })()
 
+  const Wrapper = ({ children, ...props }) => {
+    if (link) return <a href={link} target={'_blank'} rel={'noopener noreferrer'} {...props}>{children}</a>
+    return <div {...props}>{children}</div>
+  }
+
   return (
-    <div className={'Endpoint'}>
+    <Wrapper className={'Endpoint'}>
+      {link && <ArrowCornerIcon color={'brand.normal'} w={'10px'} h={'10px'} mr={'10px'}/>}
       <div className={'Endpoint__Value'}>{value}</div>
       {status !== undefined &&
-        <div className={`Endpoint__Status ${statusClass}`}></div>
+        <CircleIcon className={'Endpoint__Status'} w={'8px'} h={'8px'} color={iconColor}/>
       }
-    </div>
+    </Wrapper>
   )
 }
 

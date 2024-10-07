@@ -6,6 +6,8 @@
   align-items: center;
   font-family: $font-mono;
   font-size: 0.75rem;
+  white-space: wrap;
+  word-break: break-all;
 
   &--Ellipsis {
     &, span {

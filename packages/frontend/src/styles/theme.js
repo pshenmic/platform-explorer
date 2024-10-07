@@ -46,6 +46,15 @@ export const theme = extendTheme({
     white: {
       50: '#FFFFFF'
     },
+    red: {
+      default: '#F45858'
+    },
+    yellow: {
+      default: '#FFD205'
+    },
+    green: {
+      default: '#81F458'
+    },
     gray: {
       50: '#f0f1f2',
       100: '#e0e3e5',

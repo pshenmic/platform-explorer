@@ -9,6 +9,23 @@ const CalendarIcon = (props) => (
   </Icon>
 )
 
+const CircleIcon = (props) => (
+  <Icon viewBox='0 0 8 8' {...props}>
+    <circle fill='currentColor' cx='4' cy='4' r='4'/>
+  </Icon>
+)
+
+const ArrowCornerIcon = (props) => (
+  <Icon viewBox='0 0 10 11' {...props}>
+    <path
+      fill='currentColor'
+      d='M2.08127 0.5C1.62282 0.5 1.24772 0.875098 1.24772 1.33355C1.24772 1.792 1.62282 2.1671 2.08127 2.1671H7.15551L0.242251 9.08036C-0.0807502 9.40336 -0.0807502 9.93475 0.242251 10.2577C0.565251 10.5808 1.09664 10.5808 1.41964 10.2577L8.3329 3.34449V8.8355C8.3329 9.29396 8.708 9.66905 9.16645 9.66905C9.6249 9.66905 10 9.29396 10 8.8355V1.33355C10 0.875098 9.6249 0.5 9.16645 0.5H2.08127Z'
+    />
+  </Icon>
+)
+
 export {
-  CalendarIcon
+  CalendarIcon,
+  CircleIcon,
+  ArrowCornerIcon
 }

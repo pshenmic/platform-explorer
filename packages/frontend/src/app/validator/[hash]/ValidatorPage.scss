@@ -28,6 +28,19 @@
     margin-bottom: 14px;
   }
 
+  &__ValueContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    overflow: hidden;
+    max-width: 324px;
+  }
+
+  &__PoseScroreValue {
+    display: flex;
+    align-items: center;
+  }
+
   @media screen and (max-width: $breakpoint-lg) {
     &__ContentContainer {
       grid-template-columns: 1fr;
