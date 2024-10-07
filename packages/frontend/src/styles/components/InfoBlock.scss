@@ -12,6 +12,40 @@ $border-radius: var(--chakra-radii-block);
     box-shadow: none;
   }
 
+  &--Gradient {
+    overflow: hidden;
+    background-color: transparent;
+    border-radius: 20px;
+    padding: 20px 24px !important;
+
+    &::before {
+      content: '';
+      position: absolute;
+      z-index: -2;
+      display: block;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-color: #181F22;
+      opacity: .2;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      display: block;
+      width: 500px;
+      height: 500px;
+      top: 0;
+      left: 0;
+      transform: translate(-50%, -50%);
+      background: radial-gradient($color-brand-normal, #181F22 50%);
+      opacity: .2;
+    }
+  }
+
   &__Title {
     background-color: $color-brand-normal;
     font-size: 14px !important;

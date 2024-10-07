@@ -1,0 +1,29 @@
+
+
+.ValidatorCard {
+  &__Header {
+    display: flex;
+    width: 100%;
+  }
+
+  &__Avatar {
+    width: 88px;
+    height: 88px;
+    border: 1px solid rgba(137, 126, 126, 0.1);
+    flex-shrink: 0;
+    margin-right: 24px;
+  }
+
+  &__HeaderLines {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: 6px 0;
+    overflow: hidden;
+  }
+
+  &__Separator {
+    margin: 12px 0;
+  }
+}

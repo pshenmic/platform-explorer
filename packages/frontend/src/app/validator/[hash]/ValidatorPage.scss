@@ -19,4 +19,10 @@
     border: 1px solid var(--chakra-colors-gray-800);
     padding: 24px;
   }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__ContentContainer {
+      grid-template-columns: 1fr;
+    }
+  }
 }

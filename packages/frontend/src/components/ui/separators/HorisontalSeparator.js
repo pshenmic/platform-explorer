@@ -1,5 +1,5 @@
 import './HorisontalSeparator.scss'
 
-export default function HorisontalSeparator () {
-  return <div className={'HorisontalSeparator'}></div>
+export default function HorisontalSeparator ({ className }) {
+  return <div className={`HorisontalSeparator ${className || ''}`}></div>
 }

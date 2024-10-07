@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine } from '../../../components/data'
 import { ValueContainer, PageDataContainer } from '../../../components/ui/containers'
 import { HorisontalSeparator } from '../../../components/ui/separators'
+import { ValidatorCard } from '../../../components/validators'
 import './ValidatorPage.scss'
 
 import { Badge } from '@chakra-ui/react'
@@ -89,7 +90,9 @@ function Validator ({ hash }) {
         <div className={'ValidatorPage__Column'}>
           <div className={'ValidatorPage__GroupContainer'}>
 
-            <div className={'ValidatorCard'}>
+            <ValidatorCard validator={validator}/>
+
+            {/* <div className={'ValidatorCard'}>
               <div className={'ValidatorCard__Header'}>
                 <div className={'ValidatorCard__Avatar'}></div>
 
@@ -149,7 +152,7 @@ function Validator ({ hash }) {
                   </Identifier>
                 )}
               />
-            </div>
+            </div> */}
 
             <div>
               <InfoLine
