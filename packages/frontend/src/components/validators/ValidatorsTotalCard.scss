@@ -22,7 +22,10 @@
     font-size: 1.25rem;
   }
 
-  &__EpochNumber {}
+  &__EpochNumber {
+    display: flex;
+    align-items: center;
+  }
 
   &__EpochProgress {
     margin-top: 24px;

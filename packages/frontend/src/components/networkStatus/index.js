@@ -43,7 +43,7 @@ function NetworkStatus ({ className }) {
         <div className={'NetworkStatus__InfoValue NetworkStatus__InfoValue--Epoch'}>
           {typeof status?.data?.epoch?.number === 'number'
             ? <>#{status.data.epoch.number}
-                {status.data?.epoch?.endTime &&
+                {status.data?.epoch &&
                   <EpochTooltip epoch={status.data.epoch}>
                     <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
                   </EpochTooltip>

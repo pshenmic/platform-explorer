@@ -11,7 +11,7 @@ import { WheelControls } from '../ui/Slider/plugins'
 import { Flex, Text, Box } from '@chakra-ui/react'
 import ImageGenerator from '../imageGenerator'
 import { InfoIcon } from '@chakra-ui/icons'
-import { RateTooltip } from '../ui/Tooltips'
+import { RateTooltip, EpochTooltip } from '../ui/Tooltips'
 import './ValidatorsTotal.scss'
 import './ValidatorsTotalCard.scss'
 
@@ -67,7 +67,14 @@ export default function ValidatorsTotal () {
             <div className={'ValidatorsTotalCard__Title'}>Epoch</div>
             <div className={'ValidatorsTotalCard__Value'}>
               {typeof status?.data?.epoch?.number === 'number'
-                ? <div className={'ValidatorsTotalCard__EpochNumber'}>#{status.data.epoch.number}</div>
+                ? <div className={'ValidatorsTotalCard__EpochNumber'}>
+                    #{status.data.epoch.number}
+                    {status.data?.epoch &&
+                      <EpochTooltip epoch={status.data.epoch}>
+                        <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+                      </EpochTooltip>
+                    }
+                  </div>
                 : 'n/a'}
             </div>
             {status?.data?.epoch && <EpochProgress epoch={status.data.epoch} className={'ValidatorsTotalCard__EpochProgress'}/>}
