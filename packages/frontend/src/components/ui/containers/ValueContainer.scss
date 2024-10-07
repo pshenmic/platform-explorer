@@ -1,0 +1,8 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.ValueContainer {
+  border-radius: 10px;
+  background: rgba(46, 57, 61, .5);
+  padding: 12px;
+}

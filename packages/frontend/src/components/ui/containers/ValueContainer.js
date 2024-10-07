@@ -1,6 +1,8 @@
+import './ValueContainer.scss'
+
 function ValueContainer ({ children }) {
   return (
-    <div>
+    <div className={'ValueContainer'}>
       {children}
     </div>
   )
