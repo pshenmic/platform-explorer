@@ -6,7 +6,7 @@ import { CheckCircleIcon, WarningIcon, InfoIcon } from '@chakra-ui/icons'
 import EpochProgress from './EpochProgress'
 import { Badge } from '@chakra-ui/react'
 import { fetchHandlerSuccess, fetchHandlerError, getTimeDelta } from '../../util'
-import { Tooltip } from '../ui/Tooltips'
+import { EpochTooltip } from '../ui/Tooltips'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
@@ -44,15 +44,9 @@ function NetworkStatus ({ className }) {
           {typeof status?.data?.epoch?.number === 'number'
             ? <>#{status.data.epoch.number}
                 {status.data?.epoch?.endTime &&
-                  <Tooltip
-                    label={`Next epoch change at ${new Date(status.data.epoch.endTime).toLocaleString()}`}
-                    aria-label={'A tooltip'}
-                    placement={'top'}
-                    bg={'gray.700'}
-                    color={'white'}
-                  >
+                  <EpochTooltip epoch={status.data.epoch}>
                     <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
-                  </Tooltip>
+                  </EpochTooltip>
                 }
               </>
             : 'n/a'}

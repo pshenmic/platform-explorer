@@ -1,8 +1,9 @@
 import RateTooltip from './RateTooltip'
 import Tooltip from './Tooltip'
-import './Tooltip.scss'
+import EpochTooltip from './EpochTooltip'
 
 export {
   Tooltip,
-  RateTooltip
+  RateTooltip,
+  EpochTooltip
 }

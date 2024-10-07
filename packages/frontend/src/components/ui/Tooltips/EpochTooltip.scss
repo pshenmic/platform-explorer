@@ -1,0 +1,16 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.EpochTooltip {
+  font-family: $font-mono;
+
+  &__Title {
+    color: rgba(255, 255, 255, .6);
+    display: inline-block;
+    width: 50px;
+  }
+
+  &__Value {
+    color: #fff;
+  }
+}
