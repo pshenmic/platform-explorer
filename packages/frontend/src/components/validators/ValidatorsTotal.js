@@ -67,14 +67,12 @@ export default function ValidatorsTotal () {
             <div className={'ValidatorsTotalCard__Title'}>Epoch</div>
             <div className={'ValidatorsTotalCard__Value'}>
               {typeof status?.data?.epoch?.number === 'number'
-                ? <div className={'ValidatorsTotalCard__EpochNumber'}>
-                    #{status.data.epoch.number}
-                    {status.data?.epoch &&
-                      <EpochTooltip epoch={status.data.epoch}>
-                        <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
-                      </EpochTooltip>
-                    }
-                  </div>
+                ? <EpochTooltip epoch={status.data.epoch}>
+                    <div className={'ValidatorsTotalCard__EpochNumber'}>
+                      #{status.data.epoch.number}
+                      <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+                    </div>
+                  </EpochTooltip>
                 : 'n/a'}
             </div>
             {status?.data?.epoch && <EpochProgress epoch={status.data.epoch} className={'ValidatorsTotalCard__EpochProgress'}/>}
@@ -84,19 +82,18 @@ export default function ValidatorsTotal () {
             <div className={'ValidatorsTotalCard__Value'}>
               <div className={'ValidatorsTotalCard__TotalCollectedFees'}>
                 {typeof epoch?.data?.totalCollectedFees === 'number'
-                  ? <>
-                      {currencyRound(epoch.data.totalCollectedFees)}
-                      <RateTooltip
-                        dash={creditsToDash(epoch.data.totalCollectedFees)}
-                        usd={
-                          typeof rate.data?.usd === 'number'
-                            ? (rate.data.usd * creditsToDash(epoch.data.totalCollectedFees)).toFixed(2)
-                            : null
-                        }
-                      >
+                  ? <RateTooltip
+                      dash={creditsToDash(epoch.data.totalCollectedFees)}
+                      usd={typeof rate.data?.usd === 'number'
+                        ? (rate.data.usd * creditsToDash(epoch.data.totalCollectedFees)).toFixed(2)
+                        : null
+                      }
+                    >
+                      <span>
+                        {currencyRound(epoch.data.totalCollectedFees)}
                         <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
-                      </RateTooltip>
-                    </>
+                      </span>
+                    </RateTooltip>
                   : 'n/a'}
               </div>
               <Flex fontFamily={'mono'} fontSize={'0.75rem'} fontWeight={'normal'}>

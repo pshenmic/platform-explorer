@@ -42,13 +42,12 @@ function NetworkStatus ({ className }) {
         <div className={'NetworkStatus__InfoTitle'}>Epoch:</div>
         <div className={'NetworkStatus__InfoValue NetworkStatus__InfoValue--Epoch'}>
           {typeof status?.data?.epoch?.number === 'number'
-            ? <>#{status.data.epoch.number}
-                {status.data?.epoch &&
-                  <EpochTooltip epoch={status.data.epoch}>
-                    <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
-                  </EpochTooltip>
-                }
-              </>
+            ? <EpochTooltip epoch={status.data.epoch}>
+                <span>
+                  #{status.data.epoch.number}
+                  <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+                </span>
+              </EpochTooltip>
             : 'n/a'}
           {status.data?.epoch &&
             <div className={'NetworkStatus__EpochProgress'}>

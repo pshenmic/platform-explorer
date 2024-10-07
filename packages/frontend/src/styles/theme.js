@@ -46,7 +46,7 @@ export const theme = extendTheme({
       normal: '#008DE4',
       deep: '#0E75B5',
       shaded: '#165278',
-      light: '#5ca5d1'
+      light: '#2CBBFF'
     },
     white: {
       50: '#FFFFFF'

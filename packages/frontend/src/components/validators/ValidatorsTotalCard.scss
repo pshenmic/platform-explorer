@@ -23,8 +23,10 @@
   }
 
   &__EpochNumber {
+    @include mixins.TooltipElement();
     display: flex;
     align-items: center;
+    width: max-content;
   }
 
   &__EpochProgress {
@@ -59,8 +61,12 @@
   }
 
   &__TotalCollectedFees {
-    display: flex;
-    align-items: center;
+    span {
+      @include mixins.TooltipElement();
+      display: flex;
+      align-items: center;
+      width: max-content;
+    }
   }
 
   @media screen and (max-width: $breakpoint-lg) {
