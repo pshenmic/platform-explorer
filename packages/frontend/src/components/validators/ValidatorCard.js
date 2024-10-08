@@ -1,17 +1,7 @@
 import './ValidatorCard.scss'
-import { Identifier, DateBlock, InfoLine } from '../data'
+import { Identifier, DateBlock, InfoLine, CreditsBlock } from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
-
-function Credits ({ credits, usd, format }) {
-  return (
-    <span>
-      <span>{credits} CREDITS</span>
-      <span>({credits / 1000} DASH)</span>
-      <span>~{usd}$</span>
-    </span>
-  )
-}
 
 export default function ValidatorCard ({ validator, className }) {
   console.log('validator', validator)
@@ -43,7 +33,7 @@ export default function ValidatorCard ({ validator, className }) {
               <Identifier
                 className={''}
                 copyButton={true}
-                styles={['gradient-both']}
+                styles={['highlight-both']}
                 ellipsis={false}
               >
                 {validator.data.proTxHash}
@@ -52,7 +42,7 @@ export default function ValidatorCard ({ validator, className }) {
           />
           <InfoLine
             title={'Balance'}
-            value={<Credits credits={85800000} usd={'209.15'} />}
+            value={<CreditsBlock credits={85800000} usd={'209.15'}/>}
           />
         </div>
       </div>
@@ -80,7 +70,7 @@ export default function ValidatorCard ({ validator, className }) {
           <Identifier
             className={''}
             copyButton={true}
-            styles={['gradient-both']}
+            styles={['highlight-both']}
           >
             23975732199C674FD2133FA9F08454D809561DC24E6E941D78FF414C528ABA67
           </Identifier>
@@ -94,7 +84,7 @@ export default function ValidatorCard ({ validator, className }) {
           <Identifier
             className={''}
             copyButton={true}
-            styles={['gradient-both']}
+            styles={['highlight-both']}
           >
             50d847734406592420320c864eb572fb900e5c36
           </Identifier>

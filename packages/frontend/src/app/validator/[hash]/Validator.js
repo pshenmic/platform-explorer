@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, getTimeDelta } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import Pagination from '../../../components/pagination'
 import PageSizeSelector from '../../../components/pageSizeSelector/PageSizeSelector'
@@ -17,14 +17,13 @@ import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
 import { CircleIcon } from '../../../components/ui/icons'
 import './ValidatorPage.scss'
-
-import { Badge } from '@chakra-ui/react'
 import {
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
   Grid, GridItem,
   Heading,
-  Box
+  Box,
+  Badge
 } from '@chakra-ui/react'
 
 const paginateConfig = {
@@ -35,15 +34,15 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function Credits ({ credits, usd, format }) {
-  return (
-    <div>
-      <span>{credits} CREDITS</span>
-      <span>({credits / 1000} DASH)</span>
-      <span>~{usd}$</span>
-    </div>
-  )
-}
+// function Credits ({ credits, usd, format }) {
+//   return (
+//     <div>
+//       <span>{credits} CREDITS</span>
+//       <span>({credits / 1000} DASH)</span>
+//       <span>~{usd}$</span>
+//     </div>
+//   )
+// }
 
 function Validator ({ hash }) {
   const [validator, setValidator] = useState({ data: {}, loading: true, error: false })
@@ -128,8 +127,6 @@ function Validator ({ hash }) {
             <HorisontalSeparator/>
 
             <div>
-              {/* Status*/}
-
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Status'}
@@ -167,7 +164,7 @@ function Validator ({ hash }) {
                 value={(
                   <ValueContainer className={'ValidatorPage__ValueContainer'}>
                     <DateBlock timestamp={1727887511000} format={'delta-only'}/>
-                    <Identifier ellipsis={false} styles={['gradient-both']}>
+                    <Identifier ellipsis={false} styles={['highlight-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -184,7 +181,7 @@ function Validator ({ hash }) {
                 value={(
                   <ValueContainer className={'ValidatorPage__ValueContainer'}>
                     <DateBlock timestamp={1727887511000} format={'delta-only'}/>
-                    <Identifier ellipsis={false} styles={['gradient-both']}>
+                    <Identifier ellipsis={false} styles={['highlight-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -212,7 +209,7 @@ function Validator ({ hash }) {
                 title={'Collateral address'}
                 value={(
                   <ValueContainer className={'ValidatorPage__ValueContainer'}>
-                    <Identifier styles={['gradient-both']}>
+                    <Identifier styles={['highlight-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -223,7 +220,7 @@ function Validator ({ hash }) {
                 title={'Owner address'}
                 value={(
                   <ValueContainer className={'ValidatorPage__ValueContainer'}>
-                    <Identifier styles={['gradient-both']}>
+                    <Identifier styles={['highlight-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -234,7 +231,7 @@ function Validator ({ hash }) {
                 title={'Voting address'}
                 value={(
                   <ValueContainer className={'ValidatorPage__ValueContainer'}>
-                    <Identifier styles={['gradient-both']}>
+                    <Identifier styles={['highlight-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -245,7 +242,7 @@ function Validator ({ hash }) {
                 title={'Payout address'}
                 value={(
                   <ValueContainer className={'ValidatorPage__ValueContainer'}>
-                    <Identifier styles={['gradient-both']}>
+                    <Identifier styles={['highlight-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
                   </ValueContainer>
@@ -255,7 +252,7 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Operator Public Key'}
                 value={(
-                  <Identifier copyButton={true} styles={['gradient-both']}>
+                  <Identifier copyButton={true} styles={['highlight-both']}>
                     XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                   </Identifier>
                 )}
