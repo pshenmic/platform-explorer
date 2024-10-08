@@ -6,38 +6,28 @@
   align-items: center;
   font-family: $font-mono;
   font-size: 0.75rem;
+  font-weight: 400;
   white-space: wrap;
   word-break: break-all;
 
-  &--Ellipsis {
-    &, span {
+  &--Ellipsis & {
+    &__SymbolsContainer {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
   }
 
-  &--Dim {
+  &__SymbolsContainer {
     color: var(--chakra-colors-gray-250);
   }
 
-  &--GradientStart {
-    background: -webkit-linear-gradient(
-      0deg,
-      #fff 0 20%,
-      var(--chakra-colors-gray-250) 25% 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+  &__Symbols {
+    color: #fff;
 
-  &--GradientBoth {
-    background: -webkit-linear-gradient(
-      0deg,
-      #fff 0 20%,
-      var(--chakra-colors-gray-250) 30% 70%,
-      #fff 80% 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    &--Dim {
+      color: var(--chakra-colors-gray-250);
+    }
   }
 
   &__Avatar {

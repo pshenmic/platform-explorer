@@ -23,7 +23,7 @@ export default function ValidatorCard ({ validator, className }) {
   if (validator.loading) {
     return
   }
-  
+
   return (
     <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${className || ''}`}>
       <div className={'ValidatorCard__Header'}>
@@ -33,7 +33,7 @@ export default function ValidatorCard ({ validator, className }) {
             lightness={50}
             saturation={50}
             width={88}
-            height={88}/>  
+            height={88}/>
         </div>
 
         <div className={'ValidatorCard__HeaderLines'}>
