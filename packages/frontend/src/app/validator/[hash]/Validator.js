@@ -12,7 +12,7 @@ import ImageGenerator from '../../../components/imageGenerator'
 import BlocksChart from './BlocksChart'
 import Link from 'next/link'
 import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine } from '../../../components/data'
-import { ValueContainer, PageDataContainer } from '../../../components/ui/containers'
+import { ValueContainer, PageDataContainer, TabsBlock, InfoContainer } from '../../../components/ui/containers'
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
 import { CircleIcon } from '../../../components/ui/icons'
@@ -23,7 +23,8 @@ import {
   Grid, GridItem,
   Heading,
   Box,
-  Badge
+  Badge,
+  Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
 
 const paginateConfig = {
@@ -33,16 +34,6 @@ const paginateConfig = {
   },
   defaultPage: 1
 }
-
-// function Credits ({ credits, usd, format }) {
-//   return (
-//     <div>
-//       <span>{credits} CREDITS</span>
-//       <span>({credits / 1000} DASH)</span>
-//       <span>~{usd}$</span>
-//     </div>
-//   )
-// }
 
 function Validator ({ hash }) {
   const [validator, setValidator] = useState({ data: {}, loading: true, error: false })
@@ -165,7 +156,7 @@ function Validator ({ hash }) {
                   <ValueContainer className={'ValidatorPage__ValueContainer'}>
                     <DateBlock timestamp={1727887511000} format={'delta-only'}/>
                     <Identifier ellipsis={false} styles={['highlight-both']}>
-                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                      52D76B76D748BDB4F171CF5383B85C17FDC0944A7F06AABB0A9C080709E5FB63
                     </Identifier>
                   </ValueContainer>
                 )}
@@ -182,7 +173,7 @@ function Validator ({ hash }) {
                   <ValueContainer className={'ValidatorPage__ValueContainer'}>
                     <DateBlock timestamp={1727887511000} format={'delta-only'}/>
                     <Identifier ellipsis={false} styles={['highlight-both']}>
-                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                      52D76B76D748BDB4F171CF5383B85C17FDC0944A7F06AABB0A9C080709E5FB63
                     </Identifier>
                   </ValueContainer>
                 )}
@@ -262,23 +253,53 @@ function Validator ({ hash }) {
         </div>
 
         <div className={'ValidatorPage__Column'}>
-          <div>
-            <BlocksChart blockBorders={false} height={'300px'} hash={hash}/>
-          </div>
-          <div>
-            <div>Proposed Blocks</div>
+          <InfoContainer styles={['tabs']}>
+            <Tabs>
+              <TabList>
+                <Tab>Proposed Blocks</Tab>
+                <Tab>Reward Earned</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <BlocksChart blockBorders={false} height={'300px'} hash={hash}/>
+                </TabPanel>
+                <TabPanel>
+                  Reward Earned
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </InfoContainer>
 
-            {!proposedBlocks.error
-              ? <>
-                  {!proposedBlocks.loading
-                    ? <BlocksList blocks={proposedBlocks?.data?.resultSet}/>
-                    : <LoadingList itemsCount={pageSize}/>
+          <InfoContainer styles={['tabs']} className={'ValidatorPage__Lists'}>
+
+            <Tabs>
+              <TabList>
+                <Tab>Proposed Blocks</Tab>
+                <Tab>Transactions</Tab>
+                <Tab>Withdrawals</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  {!proposedBlocks.error
+                    ? <>
+                        {!proposedBlocks.loading
+                          ? <BlocksList blocks={proposedBlocks?.data?.resultSet}/>
+                          : <LoadingList itemsCount={pageSize}/>
+                        }
+                      </>
+                    : <Container h={20}><ErrorMessageBlock/></Container>
                   }
-                </>
-              : <Container h={20}><ErrorMessageBlock/></Container>
-            }
+                </TabPanel>
+                <TabPanel>
+                  Transactions
+                </TabPanel>
+                <TabPanel>
+                  Withdrawals
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </InfoContainer>
 
-          </div>
         </div>
       </div>
     </PageDataContainer>

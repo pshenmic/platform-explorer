@@ -1,0 +1,25 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.InfoContainer {
+  border-radius: 18px;
+  border: 1px solid var(--chakra-colors-gray-800);
+  padding: 24px;
+
+  &--Tabs {
+    padding: 10px 0 24px 0;
+    overflow: hidden;
+
+    .chakra-tabs__tab {
+      font-size: 0.75rem;
+    }
+
+    .chakra-tabs__tablist {
+      border-bottom: 1px solid;
+      border-color: inherit;
+      padding: 0 30px;
+    }
+
+    .chakra-tabs__tab-panels {}
+  }
+}

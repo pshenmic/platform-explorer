@@ -13,9 +13,16 @@
   }
 
   &__Column {
+    display: flex;
+    flex-direction: column;
     position: relative;
     overflow: hidden;
     flex-shrink: 0;
+  }
+
+  &__Lists {
+    flex-grow: 1;
+    margin-top: 24px;
   }
 
   &__GroupContainer {
