@@ -99,6 +99,6 @@ jobs:
             sleep 3
             docker run -d --env-file testnet.env --restart always --name pe-testnet-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
             sleep 3
-            docker run -d -p 3006:3005 --restart always --env-file production.env --name pe-mainnet-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
-            sleep 3
-            docker run -d --env-file production.env --restart always --name pe-mainnet-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
+#            docker run -d -p 3006:3005 --restart always --env-file production.env --name pe-mainnet-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
+#            sleep 3
+#            docker run -d --env-file production.env --restart always --name pe-mainnet-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
