@@ -240,7 +240,7 @@ function Home () {
                               value: identitiy.balance,
                               mono: true,
                               format: 'currency',
-                              rate: rate.data || null
+                              rate: !rate.loading && !rate.error ? rate.data : null
                             }
                           ],
                           link: '/identity/' + identitiy.identifier
