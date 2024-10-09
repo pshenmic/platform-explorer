@@ -284,7 +284,7 @@ function Validator ({ hash }) {
                 <Tab>Withdrawals</Tab>
               </TabList>
               <TabPanels style={{
-                display:'flex',
+                display: 'flex',
                 flexDirection: 'column',
                 flexGrow: 1
               }}>
