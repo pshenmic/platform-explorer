@@ -14,7 +14,8 @@ function TypeBadge ({ typeId }) {
     IDENTITY_TOP_UP: 'Adds credits to an existing decentralized identity (DID) balance.',
     IDENTITY_UPDATE: 'Updates an identity by adding and removing associated public keys.',
     IDENTITY_CREDIT_WITHDRAWAL: 'Withdraws credits from the platform, converting them into Dash.',
-    IDENTITY_CREDIT_TRANSFER: 'Transfers credits between identities or other network participants.'
+    IDENTITY_CREDIT_TRANSFER: 'Transfers credits between identities or other network participants.',
+    MASTERNODE_VOTE: 'Vote for a contested resource on the Dash Platform'
   }
 
   return (
