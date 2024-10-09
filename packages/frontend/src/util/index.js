@@ -76,7 +76,7 @@ function getTimeDelta (startDate, endDate, format) {
 }
 
 function creditsToDash (credits) {
-  return credits / 100000000000
+  return credits / 10e10
 }
 
 function roundUsd (usd, maxDecimals = 5) {
