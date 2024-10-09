@@ -79,6 +79,25 @@ function creditsToDash (credits) {
   return credits / 100000000000
 }
 
+function roundUsd (usd, maxDecimals = 5) {
+  if (usd >= 0.01 || usd < 1 / Math.pow(10, maxDecimals)) return usd.toFixed(2)
+    
+  const multiplier = Math.pow(10, maxDecimals)
+  const roundedValue = Math.round(usd * multiplier) / multiplier
+  const stringValue = roundedValue.toString()
+  const decimalPart = stringValue.split('.')[1]
+  let precision = 2
+
+  if (decimalPart) {
+    const firstSignificantIndex = decimalPart.search(/[1-9]/)
+    precision = firstSignificantIndex + 1 <= maxDecimals
+      ? firstSignificantIndex + 1
+      : 2
+  }
+
+  return usd.toFixed(precision)
+}
+
 export {
   getTransitionTypeStringById,
   fetchHandlerSuccess,
@@ -88,5 +107,6 @@ export {
   copyToClipboard,
   getTimeDelta,
   getTransitionTypeKeyById,
-  creditsToDash
+  creditsToDash,
+  roundUsd
 }
