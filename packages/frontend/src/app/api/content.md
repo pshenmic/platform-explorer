@@ -29,7 +29,7 @@ Reference:
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
-* [Rate](#rate)
+* [Rate](#rates)
 
 ### Status
 Returns basic stats and epoch info
@@ -233,7 +233,18 @@ GET /validators
             pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
         }
       },
-      identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
+      identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
+      identityBalance: 0,
+      epochInfo: {
+        number: 1982,
+        firstBlockHeight: 31976,
+        firstCoreBlockHeight: 1118131,
+        startTime: 1728488466559,
+        feeMultiplier: 1,
+        endTime: 1728492066559
+      },
+      totalReward: 0,
+      epochReward: 0
     }, ...
   ],
   pagination: { 
@@ -294,7 +305,18 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
         }
     }
   },
-  "identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
+  identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
+  identityBalance: 0,
+  epochInfo: {
+    number: 1982,
+    firstBlockHeight: 31976,
+    firstCoreBlockHeight: 1118131,
+    startTime: 1728488466559,
+    feeMultiplier: 1,
+    endTime: 1728492066559
+  },
+  totalReward: 0,
+  epochReward: 0
 }
 ```
 ---
