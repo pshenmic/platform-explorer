@@ -8,6 +8,7 @@ const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
+const Base58 = require('bs58').default
 
 describe('Validators routes', () => {
   let app
@@ -18,6 +19,7 @@ describe('Validators routes', () => {
   let activeValidators
   let inactiveValidators
   let blocks
+  let identities
 
   let dashCoreRpcResponse
 
@@ -30,6 +32,7 @@ describe('Validators routes', () => {
     knex = getKnex()
     validators = []
     blocks = []
+    identities = []
 
     intervals = {
       '1h': 300000,
@@ -89,7 +92,17 @@ describe('Validators routes', () => {
         knex,
         { validator: validators[i % 30].pro_tx_hash, height: i }
       )
+
       blocks.push(block)
+    }
+
+    for (let i = 0; i < 50; i++) {
+      const identity = await fixtures.identity(knex, {
+        identifier: Base58.encode(Buffer.from(validators[i].pro_tx_hash, 'hex')),
+        block_hash: blocks[i].hash
+      })
+
+      identities.push(identity)
     }
 
     activeValidators = validators.sort((a, b) => a.id - b.id).slice(0, 30)
@@ -116,6 +129,9 @@ describe('Validators routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      const identity = identities.find(identity =>
+        identity.identifier === Base58.encode(Buffer.from(validator.pro_tx_hash, 'hex')))
+
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
         isActive: false,
@@ -129,7 +145,8 @@ describe('Validators routes', () => {
           operatorReward: dashCoreRpcResponse.operatorReward,
           confirmations: dashCoreRpcResponse.confirmations,
           state: dashCoreRpcResponse.state
-        }
+        },
+        identity: identity.identifier
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -141,6 +158,9 @@ describe('Validators routes', () => {
       const { body } = await client.get(`/validator/${validator.pro_tx_hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const identity = identities.find(identity =>
+        identity.identifier === Base58.encode(Buffer.from(validator.pro_tx_hash, 'hex')))
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
@@ -167,7 +187,8 @@ describe('Validators routes', () => {
           operatorReward: dashCoreRpcResponse.operatorReward,
           confirmations: dashCoreRpcResponse.confirmations,
           state: dashCoreRpcResponse.state
-        }
+        },
+        identity: identity.identifier
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -194,33 +215,38 @@ describe('Validators routes', () => {
 
         const expectedValidators = validators
           .slice(0, 10)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -238,33 +264,38 @@ describe('Validators routes', () => {
         const expectedValidators = validators
           .toReversed()
           .slice(0, 10)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -281,33 +312,38 @@ describe('Validators routes', () => {
 
         const expectedValidators = validators
           .slice(10, 20)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: validators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: validators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -324,33 +360,42 @@ describe('Validators routes', () => {
 
         const expectedValidators = validators
           .slice(0, 7)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: validators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive:
+                validators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount:
+              blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader:
+                blocks
+                  .filter((block) => block.validator === row.pro_tx_hash)
+                  .map((block) => BlockHeader.fromRow(block))
+                  .map((blockHeader) => ({
+                    hash: blockHeader.hash,
+                    height: blockHeader.height,
+                    timestamp: blockHeader.timestamp.toISOString(),
+                    blockVersion: blockHeader.blockVersion,
+                    appVersion: blockHeader.appVersion,
+                    l1LockedHeight: blockHeader.l1LockedHeight,
+                    validator: blockHeader.validator
+                  }))
+                  .toReversed()[0] ?? null,
+              proTxInfo:
+                {
+                  type: dashCoreRpcResponse.type,
+                  collateralHash: dashCoreRpcResponse.collateralHash,
+                  collateralIndex: dashCoreRpcResponse.collateralIndex,
+                  collateralAddress: dashCoreRpcResponse.collateralAddress,
+                  operatorReward: dashCoreRpcResponse.operatorReward,
+                  confirmations: dashCoreRpcResponse.confirmations,
+                  state: dashCoreRpcResponse.state
+                },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -367,33 +412,38 @@ describe('Validators routes', () => {
 
         const expectedValidators = validators
           .slice(7, 14)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -411,33 +461,39 @@ describe('Validators routes', () => {
         const expectedValidators = validators
           .toReversed()
           .slice(15, 20)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -454,33 +510,38 @@ describe('Validators routes', () => {
 
         const expectedValidators = validators
           .slice(48, 50)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -514,33 +575,38 @@ describe('Validators routes', () => {
 
         const expectedValidators = activeValidators
           .slice(0, 10)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: true,
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: true,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -558,33 +624,38 @@ describe('Validators routes', () => {
         const expectedValidators = activeValidators
           .toReversed()
           .slice(0, 10)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: true,
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: true,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -601,33 +672,38 @@ describe('Validators routes', () => {
 
         const expectedValidators = activeValidators
           .slice(10, 20)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: true,
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: true,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -644,33 +720,38 @@ describe('Validators routes', () => {
 
         const expectedValidators = activeValidators
           .slice(0, 7)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: true,
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: true,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -687,33 +768,38 @@ describe('Validators routes', () => {
 
         const expectedValidators = activeValidators
           .slice(7, 14)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: true,
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: true,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -731,33 +817,38 @@ describe('Validators routes', () => {
         const expectedValidators = activeValidators
           .toReversed()
           .slice(15, 20)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: true,
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: true,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -774,33 +865,38 @@ describe('Validators routes', () => {
 
         const expectedValidators = activeValidators
           .slice(28, 30)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: true,
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: true,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -834,21 +930,26 @@ describe('Validators routes', () => {
 
         const expectedValidators = inactiveValidators
           .slice(0, 10)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: false,
-            proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: false,
+              proposedBlocksAmount: 0,
+              lastProposedBlockHeader: null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -866,21 +967,26 @@ describe('Validators routes', () => {
         const expectedValidators = inactiveValidators
           .toReversed()
           .slice(0, 10)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: false,
-            proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: false,
+              proposedBlocksAmount: 0,
+              lastProposedBlockHeader: null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -897,21 +1003,26 @@ describe('Validators routes', () => {
 
         const expectedValidators = inactiveValidators
           .slice(10, 20)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: false,
-            proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: false,
+              proposedBlocksAmount: 0,
+              lastProposedBlockHeader: null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -928,21 +1039,26 @@ describe('Validators routes', () => {
 
         const expectedValidators = inactiveValidators
           .slice(0, 7)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: false,
-            proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: false,
+              proposedBlocksAmount: 0,
+              lastProposedBlockHeader: null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -959,21 +1075,26 @@ describe('Validators routes', () => {
 
         const expectedValidators = inactiveValidators
           .slice(7, 14)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: false,
-            proposedBlocksAmount: 0,
-            lastProposedBlockHeader: null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: false,
+              proposedBlocksAmount: 0,
+              lastProposedBlockHeader: null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -991,33 +1112,38 @@ describe('Validators routes', () => {
         const expectedValidators = inactiveValidators
           .toReversed()
           .slice(15, 20)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: false,
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: false,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -1034,33 +1160,38 @@ describe('Validators routes', () => {
 
         const expectedValidators = inactiveValidators
           .slice(18, 20)
-          .map(row => ({
-            proTxHash: row.pro_tx_hash,
-            isActive: false,
-            proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
-            lastProposedBlockHeader: blocks
-              .filter((block) => block.validator === row.pro_tx_hash)
-              .map((block) => BlockHeader.fromRow(block))
-              .map((blockHeader) => ({
-                hash: blockHeader.hash,
-                height: blockHeader.height,
-                timestamp: blockHeader.timestamp.toISOString(),
-                blockVersion: blockHeader.blockVersion,
-                appVersion: blockHeader.appVersion,
-                l1LockedHeight: blockHeader.l1LockedHeight,
-                validator: blockHeader.validator
-              }))
-              .toReversed()[0] ?? null,
-            proTxInfo: {
-              type: dashCoreRpcResponse.type,
-              collateralHash: dashCoreRpcResponse.collateralHash,
-              collateralIndex: dashCoreRpcResponse.collateralIndex,
-              collateralAddress: dashCoreRpcResponse.collateralAddress,
-              operatorReward: dashCoreRpcResponse.operatorReward,
-              confirmations: dashCoreRpcResponse.confirmations,
-              state: dashCoreRpcResponse.state
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: false,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
             }
-          }))
+          })
 
         assert.deepEqual(body.resultSet, expectedValidators)
       })
@@ -1081,7 +1212,9 @@ describe('Validators routes', () => {
       })
 
       it('should return error when dashcore not available', async () => {
-        mock.method(DashCoreRPC, 'getProTxInfo', async () => { throw new ServiceNotAvailableError() })
+        mock.method(DashCoreRPC, 'getProTxInfo', async () => {
+          throw new ServiceNotAvailableError()
+        })
 
         await client.get('/validators')
           .expect(503)
@@ -1089,7 +1222,9 @@ describe('Validators routes', () => {
       })
 
       it('should return error when tenderdash not available', async () => {
-        mock.method(tenderdashRpc, 'getValidators', async () => { throw new ServiceNotAvailableError() })
+        mock.method(tenderdashRpc, 'getValidators', async () => {
+          throw new ServiceNotAvailableError()
+        })
 
         await client.get('/validators')
           .expect(503)

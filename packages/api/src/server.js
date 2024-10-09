@@ -17,6 +17,7 @@ const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./DAPI')
 const DAPIClient = require('@dashevo/dapi-client')
+const RateController = require('./controllers/RateController')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -80,6 +81,7 @@ module.exports = {
     const documentsController = new DocumentsController(knex)
     const identitiesController = new IdentitiesController(knex, dapi)
     const validatorsController = new ValidatorsController(knex)
+    const rateController = new RateController()
 
     Routes({
       fastify,
@@ -90,7 +92,8 @@ module.exports = {
       dataContractsController,
       documentsController,
       identitiesController,
-      validatorsController
+      validatorsController,
+      rateController
     })
 
     fastify.setErrorHandler(errorHandler)

@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 const BlockHeader = require('./BlockHeader')
+const Base58 = require('bs58').default
 
 module.exports = class Validator {
   proTxHash
@@ -7,6 +8,8 @@ module.exports = class Validator {
   proposedBlocksAmount
   lastProposedBlockHeader
   proTxInfo
+  identity
+
   constructor (
     proTxHash,
     isActive,
@@ -19,6 +22,7 @@ module.exports = class Validator {
     this.proposedBlocksAmount = proposedBlocksAmount ?? null
     this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
     this.proTxInfo = proTxInfo ?? null
+    this.identity = proTxHash ? Base58.encode(Buffer.from(proTxHash, 'hex')) : null
   }
 
   static fromRow ({

@@ -22,22 +22,26 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    const [blocks, stats, tdStatus, [epochInfo], totalCredits] = (await Promise.allSettled([
+    const [blocks, stats, tdStatus, epochsInfo, totalCredits, totalCollectedFeesDay] = (await Promise.allSettled([
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
       TenderdashRPC.getStatus(),
       this.dapi.getEpochsInfo(1),
-      this.dapi.getTotalCredits()
+      this.dapi.getTotalCredits(),
+      this.transactionsDAO.getCollectedFees('24h')
     ])).map((e) => e.value ?? null)
 
     const [currentBlock] = blocks?.resultSet ?? []
 
-    const epoch = Epoch.fromObject(epochInfo)
+    const [epochInfo] = epochsInfo ?? []
+
+    const epoch = epochInfo ? Epoch.fromObject(epochInfo) : null
 
     response.send({
       epoch,
       transactionsCount: stats?.transactionsCount,
       totalCredits,
+      totalCollectedFeesDay,
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
       documentsCount: stats?.documentsCount,
@@ -77,7 +81,7 @@ class MainController {
       }
     }
 
-    if (/^[0-9A-F]{64,64}$/.test(query)) {
+    if (/^[0-9A-f]{64,64}$/.test(query)) {
       // search block by hash
       const block = await this.blocksDAO.getBlockByHash(query)
 

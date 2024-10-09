@@ -4,7 +4,7 @@
 .TotalInfoItem {
   position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   flex-direction: column;
   padding: 30px !important;
   font-family: $font-heading;
@@ -17,6 +17,19 @@
     width: 44px;
     height: 44px;
     margin-bottom: 20px;
+  }
+
+  &--Clikable {
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.NavLink--Active):hover {
+        background-color: rgba(255, 255, 255, .05);
+      }
+    }
+
+    &:active {
+      transform: translateY(1px);
+      background: rgba(255, 255, 255, 0.025) !important;
+    }
   }
 
   &--Blocks {
@@ -65,7 +78,32 @@
     color: $color-brand-normal;
     font-size: 14px;
     text-transform: uppercase;
-    text-align: right;
+    text-align: center;
+    position: relative;
+
+    a & {
+      padding-right: 24px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        right: 0px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: block;
+        width: 16px;
+        height: 16px;
+        background: url('/images/icons/chevron-right.svg') no-repeat center;
+        background-color: rgba(0, 141, 228, .2);
+        border-radius: 4px;
+      }
+    }
+
+    a:hover & {
+      &::after {
+        background-color: rgba(0, 141, 228, .3);
+      }
+    }
   }
 
   &__Value {

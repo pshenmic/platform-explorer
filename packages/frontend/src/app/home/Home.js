@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsHistory from '../../components/charts/TransactionsHistory'
-import { SimpleList } from '../../components/lists'
+import { SimpleList } from '../../components/ui/lists'
 import TotalInfo from '../../components/total/TotalInfo'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import TransactionsList from '../../components/transactions/TransactionsList'
@@ -33,7 +33,7 @@ function Home () {
         .then(res => fetchHandlerSuccess(setStatus, res))
         .catch(err => fetchHandlerError(setStatus, err)),
 
-      Api.getTransactions(1, 13, 'desc')
+      Api.getTransactions(1, 14, 'desc')
         .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
         .catch(err => fetchHandlerError(setTransactions, err)),
 
@@ -121,12 +121,13 @@ function Home () {
                               avatar: true,
                               mono: true,
                               dim: true,
-                              ellipsis: true
+                              ellipsis: true,
+                              format: 'identifier'
                             },
                             {
                               value: dataContract.documentsCount,
                               mono: true,
-                              numberFormat: 'currency'
+                              format: 'currency'
                             }
                           ],
                           link: '/dataContract/' + dataContract.identifier
@@ -190,12 +191,13 @@ function Home () {
                               avatar: true,
                               mono: true,
                               dim: true,
-                              ellipsis: true
+                              ellipsis: true,
+                              format: 'identifier'
                             },
                             {
                               value: identitiy.totalTxs,
                               mono: true,
-                              numberFormat: 'currency'
+                              format: 'currency'
                             }
                           ],
                           link: '/identity/' + identitiy.identifier
@@ -228,12 +230,13 @@ function Home () {
                               avatar: true,
                               mono: true,
                               dim: true,
-                              ellipsis: true
+                              ellipsis: true,
+                              format: 'identifier'
                             },
                             {
                               value: identitiy.balance,
                               mono: true,
-                              numberFormat: 'currency'
+                              format: 'currency'
                             }
                           ],
                           link: '/identity/' + identitiy.identifier

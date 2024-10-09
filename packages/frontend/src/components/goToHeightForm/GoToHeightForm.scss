@@ -1,54 +1,63 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
 
 .GoToHeightForm {
-    width: 115px;
+  display: flex;
+  align-items: center;
 
-    &__Title {
-        margin-bottom: 8px;
+  &__Title {
+    margin-right: 8px;
+    white-space: nowrap;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-250);
+    font-size: 0.75rem;
+  }
+
+  &__Input {
+    font-family: $font-mono;
+    font-size: 0.75rem;
+
+    &, &:focus {
+      width: 80px;
+      padding: 0 8px;
+      margin-right: 6px;
+      height: 29px;
+      box-sizing: border-box;
+      border: 1px solid var(--chakra-colors-whiteAlpha-400);
+      border-radius: 5px;
+      -webkit-appearance: none;
+      -moz-appearance: textfield;
     }
 
-    &__Input {
-        &, &:focus {
-            width: 80px;
-            padding: 0 8px;
-            margin-right: 6px;
-            height: 29px;
-            box-sizing: border-box;
-            border: 1px solid var(--chakra-colors-whiteAlpha-400);
-            border-radius: 5px;
-            -webkit-appearance: none;
-            -moz-appearance: textfield;
-        }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
 
-        &::-webkit-outer-spin-button,
-        &::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-        }
+    &--Incorrect {
+      border: 1px solid var(--chakra-colors-whiteAlpha-200);
+      color: gray;
+    }
+  }
+
+  &__Button {
+    background-color: transparent;
+    border: 1px solid var(--chakra-colors-whiteAlpha-400);
+    border-radius: 5px;
+    height: 29px;
+    color: #fff;
+    padding: 0 4px;
+    font-family: $font-mono;
     
-        &--Incorrect {
-            border: 1px solid var(--chakra-colors-whiteAlpha-200);
-
-            color: gray;
-        }
+    &:disabled {
+      color: gray;
+      cursor: default;
     }
 
-    &__Button {
-        background-color: transparent;
-        border: 1px solid var(--chakra-colors-whiteAlpha-400);
-        border-radius: 5px;
-        height: 29px;
-        color: #fff;
-        padding: 0 4px;
-        
-        &:disabled {
-            color: gray;
-            cursor: default;
-        }
-
-        &:hover:not(:disabled) {
-            background-color: #ffffff15;
-            cursor: pointer;
-        }
+    &:hover:not(:disabled) {
+      background-color: #ffffff15;
+      cursor: pointer;
     }
-
+  }
 }
 

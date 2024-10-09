@@ -62,6 +62,7 @@ Reference:
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
+* [Rate](#rates)
 
 ### Status
 Returns basic stats and epoch info
@@ -85,6 +86,7 @@ HTTP /status
     },
     identitiesCount: 12,
     totalCredits: 100000,
+    totalCollectedFeesDay: 167703567170,
     transactionsCount: 3,
     transfersCount: 0,
     dataContractsCount: 1,
@@ -263,7 +265,8 @@ GET /validators
             payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
             pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
         }
-      }
+      },
+      identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
     }, ...
   ],
   pagination: { 
@@ -318,7 +321,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
         payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
         pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
     }
-  }
+  },
+  "identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
 }
 ```
 ---
@@ -773,4 +777,19 @@ Response codes:
 200: OK
 400: Invalid input, check timespan value
 500: Internal Server Error
+```
+### Rate
+Return a rate DASH to USD
+```
+GET /rate
+{
+    usd: 24.45,
+    source: "Kucoin"
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
 ```

@@ -7,7 +7,7 @@ export default function TotalCards ({ cards, loading = false }) {
   return (
     <div className={'TotalCards'}>
         {cards.map((card, i) => (
-            <InfoCard link={card.link} className={'TotalCards__Item'} loading={loading} key={i}>
+            <InfoCard link={card.link} className={'TotalCards__Item'} loading={card?.loading || loading} key={i}>
               {!loading
                 ? <ValueBlock
                     title={card.title}

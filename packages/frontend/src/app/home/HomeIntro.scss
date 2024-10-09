@@ -2,16 +2,16 @@
 @import '../../styles/variables.scss';
 
 .HomeIntro {
-  padding: 65px 0 !important;
+  @include mixins.Block(true);
+  padding: 64px 0 !important;
   display: grid;
   grid-template-columns: 2fr 3fr;
   gap: 1.25rem;
   width: 100%;
-  margin: 0 auto;
 
   &__About {
     max-width: 500px;
-    padding-left: 65px;
+    padding-left: 64px;
   }
 
   &__Welcome {

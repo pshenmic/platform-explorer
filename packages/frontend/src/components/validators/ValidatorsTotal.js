@@ -2,45 +2,134 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
-import TotalCards from '../total/TotalCards'
+import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
+import { InfoCard, ValueCard } from '../cards'
+import EpochProgress from '../networkStatus/EpochProgress'
+import { Identifier } from '../data'
+import { Slider, SliderElement } from '../ui/Slider'
+import { WheelControls } from '../ui/Slider/plugins'
+import { Flex, Text, Box } from '@chakra-ui/react'
+import ImageGenerator from '../imageGenerator'
+import './ValidatorsTotal.scss'
+import './ValidatorsTotalCard.scss'
 
 export default function ValidatorsTotal () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
+  const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
+  const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
 
   const fetchData = () => {
     Api.getStatus()
-      .then(res => fetchHandlerSuccess(setStatus, res))
+      .then(res => {
+        fetchHandlerSuccess(setStatus, res)
+
+        Api.getEpoch(res?.epoch?.number)
+          .then(res => fetchHandlerSuccess(setEpoch, res))
+          .catch(err => fetchHandlerError(setEpoch, err))
+      })
       .catch(err => fetchHandlerError(setStatus, err))
+
+    Api.getValidators(1, 10)
+      .then(res => fetchHandlerSuccess(setValidators, res))
+      .catch(err => fetchHandlerError(setValidators, err))
   }
 
   useEffect(fetchData, [])
 
   return (
-    <TotalCards
-      loading={status.loading}
-      cards={[
-        {
-          title: 'Epoch:',
-          value: 'n/a',
-          icon: 'Sandglass'
-        },
-        {
-          title: 'Total Validators:',
-          value: 30,
-          icon: 'Nodes'
-        },
-        {
-          title: 'Fees collected:',
-          value: 'n/a',
-          icon: 'Coins'
-        },
-        {
-          title: 'Best Validator:',
-          value: 'n/a',
-          icon: 'StarCheck'
-        }
-      ]}
-    />
+    <div className={'ValidatorsTotal slider-container'}>
+      <Slider
+        className={'ValidatorsTotal__Slider'}
+        settings={{
+          rubberband: false,
+          renderMode: 'performance',
+          breakpoints: {
+            '(min-width: 600px)': {
+              slides: { perView: 2 }
+            }
+          },
+          slides: {
+            origin: 'center',
+            perView: 1.1
+          }
+        }}
+        plugins={[WheelControls]}
+      >
+        <SliderElement className={'ValidatorsTotal__CardsColumn'}>
+          <InfoCard className={'ValidatorsTotal__Card ValidatorsTotalCard'} loading={status.loading}>
+            <div className={'ValidatorsTotalCard__Title'}>Epoch</div>
+            <div className={'ValidatorsTotalCard__Value'}>
+              {typeof status?.data?.epoch?.number === 'number'
+                ? <div className={'ValidatorsTotalCard__EpochNumber'}>#{status.data.epoch.number}</div>
+                : 'n/a'}
+            </div>
+            {status?.data?.epoch && <EpochProgress epoch={status.data.epoch} className={'ValidatorsTotalCard__EpochProgress'}/>}
+          </InfoCard>
+          <InfoCard className={'ValidatorsTotal__Card ValidatorsTotalCard ValidatorsTotalCard--Fees'} loading={status.loading}>
+            <div className={'ValidatorsTotalCard__Title'}>Fees collected</div>
+            <div className={'ValidatorsTotalCard__Value'}>
+              <div>
+                {typeof epoch?.data?.totalCollectedFees === 'number'
+                  ? currencyRound(epoch.data.totalCollectedFees)
+                  : 'n/a'}
+              </div>
+              <Flex fontFamily={'mono'} fontSize={'0.75rem'} fontWeight={'normal'}>
+                <Text color={'gray.500'} mr={'8px'}>Last 24h: </Text>
+                <Text>
+                  {typeof status.data?.totalCollectedFeesDay === 'number'
+                    ? currencyRound(status.data.totalCollectedFeesDay)
+                    : 'n/a'}
+                </Text>
+              </Flex>
+            </div>
+          </InfoCard>
+        </SliderElement>
+        <SliderElement className={'ValidatorsTotal__CardsColumn'}>
+          <InfoCard
+            className={'ValidatorsTotal__Card ValidatorsTotalCard ValidatorsTotalCard--BestValidator'}
+            loading={status.loading}
+          >
+            <div className={'ValidatorsTotalCard__Title'}>Best Validator</div>
+            <div className={'ValidatorsTotalCard__Value'}>
+              {epoch?.data?.bestValidator
+                ? <ValueCard
+                  link={epoch?.data?.bestValidator ? `/validator/${epoch?.data?.bestValidator}` : undefined}
+                  className={'ValidatorsTotalCard__Value'}
+                >
+                  <Identifier avatar={true} copyButton={true} styles={['highlight-both']}>
+                    {epoch.data.bestValidator}
+                  </Identifier>
+                </ValueCard>
+                : 'n/a'
+              }
+            </div>
+          </InfoCard>
+          <InfoCard className={'ValidatorsTotal__Card ValidatorsTotalCard ValidatorsTotalCard--TotalValidators'} loading={validators.loading}>
+            <div className={'ValidatorsTotalCard__Title'}>Total validators</div>
+            <div className={'ValidatorsTotalCard__Value'}>
+              <div>
+                {typeof validators?.data?.pagination?.total === 'number'
+                  ? validators.data.pagination.total
+                  : 'n/a'}
+                </div>
+              </div>
+              <Flex>
+                {validators.data?.resultSet?.map((validator, i) => (
+                  <Box opacity={ 1 - 0.1 * i } key={i}>
+                    <ImageGenerator
+                      className={''}
+                      username={validator.proTxHash}
+                      lightness={50}
+                      saturation={50}
+                      width={32}
+                      height={32}
+                    />
+                  </Box>
+                ))}
+              </Flex>
+          </InfoCard>
+        </SliderElement>
+      </Slider>
+    </div>
   )
 }

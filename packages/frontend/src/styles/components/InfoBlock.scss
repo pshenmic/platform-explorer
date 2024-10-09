@@ -4,14 +4,9 @@
 $border-radius: var(--chakra-radii-block);
 
 .InfoBlock {
+  @include mixins.Block();
   position: relative;
   padding: 20px 32px 32px 32px !important;
-  background: rgba(24, 31, 34, 0.2);
-  box-shadow: 2px 2px $color-brand-normal;
-  border-radius: $border-radius;
-  border-width: 1px;
-  border-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: $blockBackgroundBlur;
 
   &--NoBorder {
     box-shadow: none;
