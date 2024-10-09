@@ -3,11 +3,10 @@
 import { Flex, Container } from '@chakra-ui/react'
 import Link from 'next/link'
 import { InfoCard } from '../cards'
-import { currencyRound } from '../../util'
+import { currencyRound, creditsToDash } from '../../util'
 import { ErrorMessageBlock } from '../Errors'
 import ImageGenerator from '../imageGenerator'
 import { RateTooltip } from '../ui/Tooltips'
-import { creditsToDash } from '../../util'
 import './IdentityCard.scss'
 
 function IdentityCard ({ identity, rate, loading = false }) {

@@ -81,7 +81,7 @@ function creditsToDash (credits) {
 
 function roundUsd (usd, maxDecimals = 5) {
   if (usd >= 0.01 || usd < 1 / Math.pow(10, maxDecimals)) return usd.toFixed(2)
-    
+
   const multiplier = Math.pow(10, maxDecimals)
   const roundedValue = Math.round(usd * multiplier) / multiplier
   const stringValue = roundedValue.toString()
