@@ -2,15 +2,21 @@
 @import '../../styles/variables.scss';
 
 .IpAddress {
-	font-weight: $font-mono;
-	font-size: 0.75rem;
+  font-weight: $font-mono;
+  font-size: 0.75rem;
 
-	&__Ip {
-		
-	}
+  &__Ip {
+    transition: .1s;
+  }
 
-	&__Port {
-		color: $color-brand-normal;
-		font-weight: 600;
-	}
+  &__Port {
+    color: $color-brand-normal;
+    font-weight: 600;
+  }
+
+  a:hover & {
+    &, &__Ip {
+      color: $color-brand-normal;
+    }
+  }
 }

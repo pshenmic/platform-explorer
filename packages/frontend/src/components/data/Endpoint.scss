@@ -1,8 +1,17 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
 .Endpoint {
   display: flex;
   align-items: center;
 
   &__Status {
     margin-left: 8px;
+  }
+}
+
+a.Endpoint {
+  &:hover {
+    color: $color-brand-normal !important;
   }
 }
