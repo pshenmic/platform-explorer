@@ -24,7 +24,7 @@ module.exports = class Validator {
     epochReward,
     identity,
     identityBalance,
-    epochInfo,
+    epochInfo
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null

@@ -14,7 +14,7 @@ class EpochController {
 
   getEpochByIndex = async (request, response) => {
     const { index } = request.params
-    const {ascending = true} = request.query
+    const { ascending = true } = request.query
 
     try {
       const [currentEpoch, nextEpoch] = await this.dapi.getEpochsInfo(2, index, ascending)
