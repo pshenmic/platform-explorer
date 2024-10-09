@@ -1,5 +1,40 @@
-
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
 
 .TimeframeSelector {
-  
+  &--MenuActive & {
+    &__Menu {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  &__Menu {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, .3);
+    backdrop-filter: $blockBackgroundBlur;
+    visibility: hidden;
+    opacity: 0;
+    transition: all .2s;
+  }
+
+  &__Button {
+    position: absolute !important;
+    top: -36px;
+    right: 10px;
+    transition: all .2s;
+    visibility: visible;
+    opacity: 1;
+    height: 28px !important;
+  }
+
+  &__CloseButton {
+    position: absolute !important;
+    top: 10px;
+    right: 10px;
+  }
 }

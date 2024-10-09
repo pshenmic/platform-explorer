@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { LineChart } from './../../../components/charts'
 import * as Api from '../../../util/Api'
 import { Button } from '@chakra-ui/react'
+import { CalendarIcon } from './../../../components/ui/icons'
 import './TimeframeSelector.scss'
 
 const chartConfig = {
@@ -14,6 +15,7 @@ const chartConfig = {
 
 const TimeframeSelector = ({ config, callback }) => {
   const [timespan, setTimespan] = useState(chartConfig.timespan.default)
+  const [menuIsActive, setMenuIsActive] = useState(false)
 
   const changeHandler = (value) => {
     setTimespan(value)
@@ -21,26 +23,30 @@ const TimeframeSelector = ({ config, callback }) => {
   }
 
   return (
-    <div className={'TimeframeSelector'}>
-      <div>
-        {config.timespan.values.map(iTimespan => {
-          return (
+    <div className={`TimeframeSelector ${menuIsActive ? 'TimeframeSelector--MenuActive' : ''}`}>
+      <div className={'TimeframeSelector__Menu'}>
+        <div className={'TimeframeSelector__Values'}>
+          {config.timespan.values.map(iTimespan => (
             <Button
               className={`ChartBlock__TimeframeButton ${timespan === iTimespan ? 'ChartBlock__TimeframeButton--Active' : ''}`}
-              onClick={() => changeHandler(iTimespan)}
-              key={'ts' + iTimespan}>{iTimespan}
+              onClick={() => {
+                changeHandler(iTimespan)
+                setMenuIsActive(false)
+              }}
+              key={iTimespan}
+            >
+              {iTimespan}
             </Button>
-          )
-        })}
+          ))}
+        </div>
       </div>
-      {/* <div className={'ChartBlock__TimeframeButtons'}>
         <Button
-          className={'ChartBlock__TimeframeButton'}
-          // onClick={() => {}}
+          className={'TimeframeSelector__Button'}
+          onClick={() => setMenuIsActive(state => !state)}
         >
-          {iTimespan}
+          <CalendarIcon mr={'10px'}/>
+          {timespan}
         </Button>
-      </div> */}
     </div>
   )
 }

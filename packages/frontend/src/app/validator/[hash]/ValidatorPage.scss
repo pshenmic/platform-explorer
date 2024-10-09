@@ -21,8 +21,20 @@
   }
 
   &__Lists {
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
     margin-top: 24px;
+  }
+
+  &__ListContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  &__List {
+    flex-grow: 1;
   }
 
   &__GroupContainer {

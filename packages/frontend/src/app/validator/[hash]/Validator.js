@@ -10,7 +10,7 @@ import { ErrorMessageBlock } from '../../../components/Errors'
 import BlocksList from '../../../components/blocks/BlocksList'
 // import ImageGenerator from '../../../components/imageGenerator'
 import BlocksChart from './BlocksChart'
-// import Link from 'next/link'
+import Link from 'next/link'
 import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine } from '../../../components/data'
 import { ValueContainer, PageDataContainer, InfoContainer } from '../../../components/ui/containers'
 import { HorisontalSeparator } from '../../../components/ui/separators'
@@ -153,12 +153,14 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Last Proposed Block'}
                 value={(
-                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
-                    <DateBlock timestamp={1727887511000} format={'delta-only'}/>
-                    <Identifier ellipsis={false} styles={['highlight-both']}>
-                      52D76B76D748BDB4F171CF5383B85C17FDC0944A7F06AABB0A9C080709E5FB63
-                    </Identifier>
-                  </ValueContainer>
+                  <Link href={`/block/${'52D76B76D748BDB4F171CF5383B85C17FDC0944A7F06AABB0A9C080709E5FB63'}`}>
+                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
+                      <DateBlock timestamp={1727887511000} format={'delta-only'}/>
+                      <Identifier ellipsis={false} styles={['highlight-both']}>
+                        52D76B76D748BDB4F171CF5383B85C17FDC0944A7F06AABB0A9C080709E5FB63
+                      </Identifier>
+                    </ValueContainer>
+                  </Link>
                 )}
               />
               <InfoLine
@@ -170,12 +172,14 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Last Withdrawal'}
                 value={(
-                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
-                    <DateBlock timestamp={1727887511000} format={'delta-only'}/>
-                    <Identifier ellipsis={false} styles={['highlight-both']}>
-                      52D76B76D748BDB4F171CF5383B85C17FDC0944A7F06AABB0A9C080709E5FB63
-                    </Identifier>
-                  </ValueContainer>
+                  <Link href={`/transaction/${'326794777FD5F42065348004F3E2C678CA9989834ABDD0E9783EE211D2067039'}`}>
+                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
+                      <DateBlock timestamp={1727887511000} format={'delta-only'}/>
+                      <Identifier ellipsis={false} styles={['highlight-both']}>
+                        326794777FD5F42065348004F3E2C678CA9989834ABDD0E9783EE211D2067039
+                      </Identifier>
+                    </ValueContainer>
+                  </Link>
                 )}
               />
             </div>
@@ -197,7 +201,7 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Collateral address'}
                 value={(
-                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
+                  <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
                     <Identifier styles={['highlight-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
@@ -208,7 +212,7 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Owner address'}
                 value={(
-                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
+                  <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
                     <Identifier styles={['highlight-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
@@ -219,7 +223,7 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Voting address'}
                 value={(
-                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
+                  <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
                     <Identifier styles={['highlight-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
@@ -230,7 +234,7 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Payout address'}
                 value={(
-                  <ValueContainer className={'ValidatorPage__ValueContainer'}>
+                  <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
                     <Identifier styles={['highlight-both']}>
                       XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                     </Identifier>
@@ -241,7 +245,7 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Operator Public Key'}
                 value={(
-                  <Identifier copyButton={true} styles={['highlight-both']}>
+                  <Identifier copyButton={true} styles={['highlight-both']} clickable={true}>
                     XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
                   </Identifier>
                 )}
@@ -258,7 +262,7 @@ function Validator ({ hash }) {
                 <Tab>Reward Earned</Tab>
               </TabList>
               <TabPanels>
-                  <TabPanel height={'400px'}>
+                  <TabPanel height={'400px'} position={'relative'}>
                     <BlocksChart blockBorders={false} height={'300px'} hash={hash}/>
                   </TabPanel>
                   <TabPanel height={'400px'}>
@@ -269,22 +273,29 @@ function Validator ({ hash }) {
           </InfoContainer>
 
           <InfoContainer styles={['tabs']} className={'ValidatorPage__Lists'}>
-
-            <Tabs>
+            <Tabs style={{
+              display: 'flex',
+              flexDirection: 'column',
+              flexGrow: 1
+            }}>
               <TabList>
                 <Tab>Proposed Blocks</Tab>
                 <Tab>Transactions</Tab>
                 <Tab>Withdrawals</Tab>
               </TabList>
-              <TabPanels>
-                <TabPanel>
+              <TabPanels style={{
+                display:'flex',
+                flexDirection: 'column',
+                flexGrow: 1
+              }}>
+                <TabPanel className={'ValidatorPage__ListContainer'}>
                   {!proposedBlocks.error
-                    ? <>
+                    ? <div className={'ValidatorPage__List'}>
                         {!proposedBlocks.loading
                           ? <BlocksList blocks={proposedBlocks?.data?.resultSet}/>
                           : <LoadingList itemsCount={pageSize}/>
                         }
-                      </>
+                      </div>
                     : <Container h={20}><ErrorMessageBlock/></Container>
                   }
 
@@ -296,10 +307,10 @@ function Validator ({ hash }) {
                     />
                   }
                 </TabPanel>
-                <TabPanel>
+                <TabPanel className={'ValidatorPage__ListContainer'}>
                   Transactions
                 </TabPanel>
-                <TabPanel>
+                <TabPanel className={'ValidatorPage__ListContainer'}>
                   Withdrawals
                 </TabPanel>
               </TabPanels>
