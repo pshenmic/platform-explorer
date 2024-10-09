@@ -28,7 +28,7 @@ function IdentityCard ({ identity, rate, loading = false }) {
                     <RateTooltip
                       dash={creditsToDash(identity.balance)}
                       usd={typeof rate?.usd === 'number'
-                        ? (rate.usd * creditsToDash(identity.balance)).toFixed(2)
+                        ? rate.usd * creditsToDash(identity.balance)
                         : null
                       }
                     >

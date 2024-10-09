@@ -27,7 +27,7 @@ function SimpleListItem ({ item }) {
         <RateTooltip
           dash={creditsToDash(credits)}
           usd={typeof column?.rate?.usd === 'number'
-            ? (column.rate.usd * creditsToDash(credits)).toFixed(2)
+            ? column.rate.usd * creditsToDash(credits)
             : null}
         >
           <span>

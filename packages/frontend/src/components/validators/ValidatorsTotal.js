@@ -85,9 +85,8 @@ export default function ValidatorsTotal () {
                   ? <RateTooltip
                       dash={creditsToDash(epoch.data.totalCollectedFees)}
                       usd={typeof rate.data?.usd === 'number'
-                        ? (rate.data.usd * creditsToDash(epoch.data.totalCollectedFees)).toFixed(2)
-                        : null
-                      }
+                        ? rate.data.usd * creditsToDash(epoch.data.totalCollectedFees)
+                        : null}
                     >
                       <span>
                         {currencyRound(epoch.data.totalCollectedFees)}

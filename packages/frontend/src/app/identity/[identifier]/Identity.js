@@ -145,11 +145,9 @@ function Identity ({ identifier }) {
                                       <LoadingLine loading={identity.loading}>
                                         <RateTooltip
                                           dash={creditsToDash(identity.data?.balance)}
-                                          usd={
-                                            typeof rate.data?.usd === 'number'
-                                              ? (rate.data.usd * creditsToDash(identity.data?.balance)).toFixed(2)
-                                              : null
-                                          }
+                                          usd={typeof rate.data?.usd === 'number'
+                                            ? rate.data.usd * creditsToDash(identity.data?.balance)
+                                            : null}
                                         >
                                           <span><Credits>{identity.data?.balance}</Credits> Credits</span>
                                         </RateTooltip>
