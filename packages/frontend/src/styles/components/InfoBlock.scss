@@ -41,7 +41,7 @@ $border-radius: var(--chakra-radii-block);
       top: 0;
       left: 0;
       transform: translate(-50%, -50%);
-      background: radial-gradient($color-brand-normal, #181F22 50%);
+      background: radial-gradient($color-brand-normal, transparent 50%);
       opacity: .2;
     }
   }
