@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 const BlockHeader = require('./BlockHeader')
-const Base58 = require('bs58').default
 
 module.exports = class Validator {
   proTxHash
