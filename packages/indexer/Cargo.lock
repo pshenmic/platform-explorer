@@ -1150,7 +1150,7 @@ dependencies = [
 
 [[package]]
 name = "indexer"
-version = "1.0.5"
+version = "1.0.7"
 dependencies = [
  "anyhow",
  "async-trait",
