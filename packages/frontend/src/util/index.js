@@ -2,7 +2,7 @@ import copyToClipboard from './copyToClipboard'
 import { StateTransitionEnum, TransactionTypesEnum } from '../enums/state.transition.type'
 import currencyRound from './currencyRound'
 
-const getTransitionTypeStringById = (id) => {
+function getTransitionTypeStringById (id) {
   const [stateTransitionType] = Object.entries(StateTransitionEnum)
     .filter(([key]) => StateTransitionEnum[key] === id)
     .map(([key]) => key)
