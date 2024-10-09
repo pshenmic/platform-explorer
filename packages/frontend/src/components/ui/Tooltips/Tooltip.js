@@ -1,3 +1,5 @@
+'use client'
+
 import { Tooltip as ChakraTooltip, useOutsideClick } from '@chakra-ui/react'
 import { useState, useRef, cloneElement } from 'react'
 import './Tooltip.scss'
