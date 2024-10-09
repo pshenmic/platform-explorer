@@ -1,13 +1,17 @@
-const { describe, it, before, after, mock } = require('node:test')
+process.env.EPOCH_CHANGE_TIME = 3600000
+
+const {describe, it, before, after, mock} = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const { getKnex } = require('../../src/utils')
+const {getKnex} = require('../../src/utils')
 const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
+const DAPI = require("../../src/DAPI");
+const Epoch = require("../../src/models/Epoch");
 const Base58 = require('bs58').default
 
 describe('Validators routes', () => {
@@ -24,6 +28,9 @@ describe('Validators routes', () => {
   let dashCoreRpcResponse
 
   let intervals
+
+  let epochInfo
+  let fullEpochInfo
 
   before(async () => {
     app = await server.start()
@@ -95,7 +102,7 @@ describe('Validators routes', () => {
     for (let i = 1; i <= 50; i++) {
       const block = await fixtures.block(
         knex,
-        { validator: validators[i % 30].pro_tx_hash, height: i }
+        {validator: validators[i % 30].pro_tx_hash, height: i}
       )
 
       blocks.push(block)
@@ -113,12 +120,30 @@ describe('Validators routes', () => {
     activeValidators = validators.sort((a, b) => a.id - b.id).slice(0, 30)
     inactiveValidators = validators.sort((a, b) => a.id - b.id).slice(30, 50)
 
+    const date = Date.now()
+
+    epochInfo = () => [
+      {
+        number: 0,
+        firstBlockHeight: 0,
+        firstCoreBlockHeight: 1,
+        startTime: date,
+        feeMultiplier: 1
+      }
+    ]
+
+    fullEpochInfo = Epoch.fromObject(epochInfo()[0])
+
     mock.method(tenderdashRpc, 'getValidators',
       async () =>
         Promise.resolve(activeValidators.map(activeValidator =>
-          ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
+          ({pro_tx_hash: activeValidator.pro_tx_hash}))))
 
     mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
+
+    mock.method(DAPI.prototype, 'getEpochsInfo', epochInfo)
+
+    mock.method(DAPI.prototype, 'getIdentityBalance', () => 0)
   })
 
   after(async () => {
@@ -130,7 +155,7 @@ describe('Validators routes', () => {
     it('should return inactive validator by proTxHash', async () => {
       const [validator] = inactiveValidators
 
-      const { body } = await client.get(`/validator/${validator.pro_tx_hash}`)
+      const {body} = await client.get(`/validator/${validator.pro_tx_hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -151,7 +176,11 @@ describe('Validators routes', () => {
           confirmations: dashCoreRpcResponse.confirmations,
           state: dashCoreRpcResponse.state
         },
-        identity: identity.identifier
+        totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -160,7 +189,7 @@ describe('Validators routes', () => {
     it('should return active validator by proTxHash', async () => {
       const [validator] = activeValidators
 
-      const { body } = await client.get(`/validator/${validator.pro_tx_hash}`)
+      const {body} = await client.get(`/validator/${validator.pro_tx_hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -193,7 +222,11 @@ describe('Validators routes', () => {
           confirmations: dashCoreRpcResponse.confirmations,
           state: dashCoreRpcResponse.state
         },
-        identity: identity.identifier
+        totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -209,7 +242,7 @@ describe('Validators routes', () => {
   describe('getValidators()', async () => {
     describe('no filter', async () => {
       it('should return default set of validators', async () => {
-        const { body } = await client.get('/validators')
+        const {body} = await client.get('/validators')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -249,7 +282,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -257,7 +294,7 @@ describe('Validators routes', () => {
       })
 
       it('should return default set of validators order desc', async () => {
-        const { body } = await client.get('/validators?order=desc')
+        const {body} = await client.get('/validators?order=desc')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -298,7 +335,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -306,7 +347,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?page=2')
+        const {body} = await client.get('/validators?page=2')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -346,7 +387,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -354,7 +399,7 @@ describe('Validators routes', () => {
       })
 
       it('should return custom page size', async () => {
-        const { body } = await client.get('/validators?limit=7')
+        const {body} = await client.get('/validators?limit=7')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -398,7 +443,11 @@ describe('Validators routes', () => {
                   confirmations: dashCoreRpcResponse.confirmations,
                   state: dashCoreRpcResponse.state
                 },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -406,7 +455,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size', async () => {
-        const { body } = await client.get('/validators?limit=7&page=2')
+        const {body} = await client.get('/validators?limit=7&page=2')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -446,7 +495,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -454,7 +507,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size desc', async () => {
-        const { body } = await client.get('/validators?limit=5&page=4&order=desc')
+        const {body} = await client.get('/validators?limit=5&page=4&order=desc')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -496,7 +549,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -504,7 +561,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when when it is out of bounds', async () => {
-        const { body } = await client.get('/validators?limit=6&page=9')
+        const {body} = await client.get('/validators?limit=6&page=9')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -544,7 +601,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -552,7 +613,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const { body } = await client.get('/validators?limit=10&page=6')
+        const {body} = await client.get('/validators?limit=10&page=6')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -569,7 +630,7 @@ describe('Validators routes', () => {
 
     describe('filter isActive = true', async () => {
       it('should return default set of validators', async () => {
-        const { body } = await client.get('/validators?isActive=true')
+        const {body} = await client.get('/validators?isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -609,7 +670,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -617,8 +682,7 @@ describe('Validators routes', () => {
       })
 
       it('should return default set of validators order desc', async () => {
-        const { body } = await client.get('/validators?order=desc&isActive=true')
-          .expect(200)
+        const {body} = await client.get('/validators?order=desc&isActive=true')
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
@@ -658,7 +722,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -666,7 +734,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?page=2&isActive=true')
+        const {body} = await client.get('/validators?page=2&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -706,7 +774,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -714,7 +786,7 @@ describe('Validators routes', () => {
       })
 
       it('should return custom page size', async () => {
-        const { body } = await client.get('/validators?limit=7&isActive=true')
+        const {body} = await client.get('/validators?limit=7&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -754,7 +826,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -762,7 +838,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size', async () => {
-        const { body } = await client.get('/validators?limit=7&page=2&isActive=true')
+        const {body} = await client.get('/validators?limit=7&page=2&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -802,7 +878,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -810,7 +890,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size desc', async () => {
-        const { body } = await client.get('/validators?limit=5&page=4&order=desc&isActive=true')
+        const {body} = await client.get('/validators?limit=5&page=4&order=desc&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -851,7 +931,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -859,7 +943,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when when it is out of bounds', async () => {
-        const { body } = await client.get('/validators?limit=4&page=8&isActive=true')
+        const {body} = await client.get('/validators?limit=4&page=8&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -899,7 +983,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -907,7 +995,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const { body } = await client.get('/validators?limit=10&page=4&isActive=true')
+        const {body} = await client.get('/validators?limit=10&page=4&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -924,7 +1012,7 @@ describe('Validators routes', () => {
 
     describe('filter isActive = false', async () => {
       it('should return default set of validators', async () => {
-        const { body } = await client.get('/validators?isActive=false')
+        const {body} = await client.get('/validators?isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -952,7 +1040,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -960,7 +1052,7 @@ describe('Validators routes', () => {
       })
 
       it('should return default set of validators order desc', async () => {
-        const { body } = await client.get('/validators?order=desc&isActive=false')
+        const {body} = await client.get('/validators?order=desc&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -989,7 +1081,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -997,7 +1093,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?page=2&isActive=false')
+        const {body} = await client.get('/validators?page=2&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1025,7 +1121,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -1033,7 +1133,7 @@ describe('Validators routes', () => {
       })
 
       it('should return custom page size', async () => {
-        const { body } = await client.get('/validators?limit=7&isActive=false')
+        const {body} = await client.get('/validators?limit=7&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1061,7 +1161,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -1069,7 +1173,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size', async () => {
-        const { body } = await client.get('/validators?limit=7&page=2&isActive=false')
+        const {body} = await client.get('/validators?limit=7&page=2&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1097,7 +1201,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -1105,7 +1213,7 @@ describe('Validators routes', () => {
       })
 
       it('should allow to walk through pages with custom page size desc', async () => {
-        const { body } = await client.get('/validators?limit=5&page=4&order=desc&isActive=false')
+        const {body} = await client.get('/validators?limit=5&page=4&order=desc&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1146,7 +1254,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -1154,7 +1266,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when when it is out of bounds', async () => {
-        const { body } = await client.get('/validators?limit=3&page=7&isActive=false')
+        const {body} = await client.get('/validators?limit=3&page=7&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1194,7 +1306,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: {...fullEpochInfo}
             }
           })
 
@@ -1202,7 +1318,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const { body } = await client.get('/validators?limit=10&page=4&isActive=false')
+        const {body} = await client.get('/validators?limit=10&page=4&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1243,7 +1359,7 @@ describe('Validators routes', () => {
       const [, validator] = validators
       const timespan = '1h'
 
-      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats`)
+      const {body} = await client.get(`/validator/${validator.pro_tx_hash}/stats`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1279,7 +1395,7 @@ describe('Validators routes', () => {
       const [, validator] = validators
       const timespan = '24h'
 
-      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats?timespan=${timespan}`)
+      const {body} = await client.get(`/validator/${validator.pro_tx_hash}/stats?timespan=${timespan}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 

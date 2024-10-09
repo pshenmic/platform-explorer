@@ -9,20 +9,33 @@ module.exports = class Validator {
   lastProposedBlockHeader
   proTxInfo
   identity
+  identityBalance
+  epochInfo
+  totalReward
+  epochReward
 
   constructor (
     proTxHash,
     isActive,
     proposedBlocksAmount,
     lastProposedBlockHeader,
-    proTxInfo
+    proTxInfo,
+    totalReward,
+    epochReward,
+    identity,
+    identityBalance,
+    epochInfo,
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null
     this.proposedBlocksAmount = proposedBlocksAmount ?? null
     this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
     this.proTxInfo = proTxInfo ?? null
-    this.identity = proTxHash ? Base58.encode(Buffer.from(proTxHash, 'hex')) : null
+    this.identity = identity ?? null
+    this.identityBalance = identityBalance ?? null
+    this.epochInfo = epochInfo ?? null
+    this.totalReward = totalReward ?? null
+    this.epochReward = epochReward ?? null
   }
 
   static fromRow ({
@@ -34,7 +47,9 @@ module.exports = class Validator {
     l1_locked_height,
     app_version,
     block_version,
-    is_active
+    is_active,
+    total_collected_reward,
+    total_collected_reward_by_epoch
   }) {
     return new Validator(
       pro_tx_hash,
@@ -50,7 +65,10 @@ module.exports = class Validator {
           l1_locked_height: Number(l1_locked_height),
           validator: pro_tx_hash
         })
-        : null
+        : null,
+      null,
+      Number(total_collected_reward),
+      Number(total_collected_reward_by_epoch)
     )
   }
 }

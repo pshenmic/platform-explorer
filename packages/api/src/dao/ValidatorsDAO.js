@@ -3,11 +3,12 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
 
 module.exports = class ValidatorsDAO {
-  constructor (knex) {
+  constructor(knex) {
     this.knex = knex
   }
 
-  getValidatorByProTxHash = async (proTxHash) => {
+  getValidatorByProTxHash = async (proTxHash, start, end) => {
+
     const validatorsSubquery = this.knex('validators')
       .select(
         'validators.pro_tx_hash as pro_tx_hash',
@@ -21,7 +22,21 @@ module.exports = class ValidatorsDAO {
           .whereRaw('pro_tx_hash = blocks.validator')
           .orderBy('height', 'desc')
           .limit(1)
-          .as('proposed_block_hash')
+          .as('proposed_block_hash'),
+        this.knex('blocks')
+          .select(this.knex.raw('SUM(state_transitions.gas_used) OVER () as total_collected_fees'))
+          .leftJoin('state_transitions', 'blocks.hash', 'state_transitions.block_hash')
+          .whereRaw('pro_tx_hash = blocks.validator')
+          .limit(1)
+          .as('total_collected_reward'),
+        this.knex('blocks')
+          .select(this.knex.raw('SUM(state_transitions.gas_used) OVER () as total_collected_reward_by_epoch'))
+          .leftJoin('state_transitions', 'blocks.hash', 'state_transitions.block_hash')
+          .whereRaw('pro_tx_hash = blocks.validator')
+          .andWhere('blocks.timestamp', '>=', new Date(start).toISOString())
+          .andWhere('blocks.timestamp', '<=', new Date(end).toISOString())
+          .limit(1)
+          .as('total_collected_reward_by_epoch')
       )
       .whereILike('validators.pro_tx_hash', proTxHash)
       .as('validators')
@@ -36,7 +51,9 @@ module.exports = class ValidatorsDAO {
         'blocks.timestamp as latest_timestamp',
         'blocks.l1_locked_height as l1_locked_height',
         'blocks.app_version as app_version',
-        'blocks.block_version as block_version'
+        'blocks.block_version as block_version',
+        'total_collected_reward',
+        'total_collected_reward_by_epoch'
       )
       .leftJoin('blocks', 'blocks.hash', 'proposed_block_hash')
       .as('blocks')
@@ -51,9 +68,10 @@ module.exports = class ValidatorsDAO {
         'latest_timestamp',
         'l1_locked_height',
         'app_version',
-        'block_version'
+        'block_version',
+        'total_collected_reward',
+        'total_collected_reward_by_epoch'
       )
-      .whereILike('pro_tx_hash', proTxHash)
 
     if (!row) {
       return null
@@ -62,7 +80,7 @@ module.exports = class ValidatorsDAO {
     return Validator.fromRow(row)
   }
 
-  getValidators = async (page, limit, order, isActive, validators) => {
+  getValidators = async (page, limit, order, isActive, validators, start, end) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
@@ -88,7 +106,21 @@ module.exports = class ValidatorsDAO {
           .whereRaw('pro_tx_hash = blocks.validator')
           .orderBy('height', 'desc')
           .limit(1)
-          .as('proposed_block_hash')
+          .as('proposed_block_hash'),
+        this.knex('blocks')
+          .select(this.knex.raw('SUM(state_transitions.gas_used) OVER () as total_collected_fees'))
+          .leftJoin('state_transitions', 'blocks.hash', 'state_transitions.block_hash')
+          .whereRaw('pro_tx_hash = blocks.validator')
+          .limit(1)
+          .as('total_collected_reward'),
+        this.knex('blocks')
+          .select(this.knex.raw('SUM(state_transitions.gas_used) OVER () as total_collected_reward_by_epoch'))
+          .leftJoin('state_transitions', 'blocks.hash', 'state_transitions.block_hash')
+          .whereRaw('pro_tx_hash = blocks.validator')
+          .andWhere('blocks.timestamp', '>=', new Date(start).toISOString())
+          .andWhere('blocks.timestamp', '<=', new Date(end).toISOString())
+          .limit(1)
+          .as('total_collected_reward_by_epoch')
       )
       .as('validators')
 
@@ -97,7 +129,9 @@ module.exports = class ValidatorsDAO {
         'pro_tx_hash',
         'id',
         'total_count',
+        'total_collected_reward',
         'proposed_blocks_amount',
+        'total_collected_reward_by_epoch',
         this.knex.raw(`rank() over (order by validators.id ${order}) as rank`),
         'blocks.hash as block_hash',
         'blocks.height as latest_height',
@@ -122,13 +156,15 @@ module.exports = class ValidatorsDAO {
         'rank',
         'total_count',
         'pro_tx_hash',
+        'total_collected_reward',
         'proposed_blocks_amount',
+        'total_collected_reward_by_epoch',
         'block_hash',
         'latest_height',
         'latest_timestamp',
         'l1_locked_height',
         'app_version',
-        'block_version'
+        'block_version',
       )
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)
@@ -142,10 +178,10 @@ module.exports = class ValidatorsDAO {
 
   getValidatorStatsByProTxHash = async (proTxHash, timespan) => {
     const interval = {
-      '1h': { offset: '1 hour', step: '5 minute' },
-      '24h': { offset: '24 hour', step: '2 hour' },
-      '3d': { offset: '3 day', step: '6 hour' },
-      '1w': { offset: '1 week', step: '14 hour' }
+      '1h': {offset: '1 hour', step: '5 minute'},
+      '24h': {offset: '24 hour', step: '2 hour'},
+      '3d': {offset: '3 day', step: '6 hour'},
+      '1w': {offset: '1 week', step: '14 hour'}
     }[timespan]
 
     const ranges = this.knex
@@ -171,6 +207,6 @@ module.exports = class ValidatorsDAO {
           blocksCount: parseInt(row.blocks_count)
         }
       }))
-      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+      .map(({timestamp, data}) => new SeriesData(timestamp, data))
   }
 }
