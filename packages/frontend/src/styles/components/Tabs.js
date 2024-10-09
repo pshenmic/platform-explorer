@@ -9,7 +9,7 @@ const Tabs = {
       _selected: {
         color: 'brand.normal',
         borderBottom: '1px solid',
-        marginBottom: '-1px',
+        marginBottom: '-1px'
       },
       _hover: {}
     }
