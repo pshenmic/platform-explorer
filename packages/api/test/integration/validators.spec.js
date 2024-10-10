@@ -12,7 +12,7 @@ const DashCoreRPC = require('../../src/dashcoreRpc')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
 const DAPI = require('../../src/DAPI')
 const Epoch = require('../../src/models/Epoch')
-const {base58} = require('@scure/base')
+const { base58 } = require('@scure/base')
 
 describe('Validators routes', () => {
   let app

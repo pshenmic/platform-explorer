@@ -6,7 +6,7 @@ const ProTxInfo = require('../models/ProTxInfo')
 const { isConnectable } = require('../utils')
 const ConnectionData = require('../models/ConnectionData')
 const Epoch = require('../models/Epoch')
-const {base58} = require('@scure/base')
+const { base58 } = require('@scure/base')
 
 class ValidatorsController {
   constructor (knex, dapi) {
