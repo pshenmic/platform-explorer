@@ -5,6 +5,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 20px;
+  background: var(--chakra-colors-gray-650);
   
   &__Header {
     display: flex;
@@ -47,5 +48,9 @@
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    background: transparent;
   }
 }

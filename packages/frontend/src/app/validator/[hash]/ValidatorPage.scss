@@ -38,6 +38,7 @@
   }
 
   &__GroupContainer {
+    flex-grow: 1;
     border-radius: 18px;
     border: 1px solid var(--chakra-colors-gray-800);
     padding: 24px;

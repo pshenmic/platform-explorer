@@ -2,9 +2,24 @@
 @import '../../../styles/variables.scss';
 
 .InfoContainer {
+  position: relative;
   border-radius: 18px;
   border: 1px solid var(--chakra-colors-gray-800);
+  background: var(--chakra-colors-gray-675);
   padding: 24px;
+
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 0% 100%, var(--chakra-colors-gray-800) 0, transparent);
+    opacity: .5;
+    z-index: 0;
+  }
 
   &--Tabs {
     padding: 10px 0 24px 0;
