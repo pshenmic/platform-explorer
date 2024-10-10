@@ -72,6 +72,7 @@ export default function ValidatorCard ({ validator, className }) {
             className={''}
             copyButton={true}
             styles={['highlight-both']}
+            ellipsis={false}
           >
             23975732199C674FD2133FA9F08454D809561DC24E6E941D78FF414C528ABA67
           </Identifier>
@@ -86,6 +87,7 @@ export default function ValidatorCard ({ validator, className }) {
             className={''}
             copyButton={true}
             styles={['highlight-both']}
+            ellipsis={false}
           >
             50d847734406592420320c864eb572fb900e5c36
           </Identifier>
