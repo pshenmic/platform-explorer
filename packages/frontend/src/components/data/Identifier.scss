@@ -10,6 +10,10 @@
   white-space: wrap;
   word-break: break-all;
 
+  &--Ellipsis {
+    overflow: hidden;
+  }
+
   &--Ellipsis & {
     &__SymbolsContainer {
       overflow: hidden;
