@@ -18,6 +18,7 @@ const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./DAPI')
 const DAPIClient = require('@dashevo/dapi-client')
 const RateController = require('./controllers/RateController')
+const {default: loadWasmDpp} = require('@dashevo/wasm-dpp')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -45,6 +46,8 @@ let dapi
 module.exports = {
   start: async () => {
     client = new Dash.Client()
+
+    await loadWasmDpp()
 
     await client.platform.initialize()
 
