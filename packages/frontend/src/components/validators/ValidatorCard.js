@@ -28,6 +28,7 @@ export default function ValidatorCard ({ validator, className }) {
 
         <div className={'ValidatorCard__HeaderLines'}>
           <InfoLine
+            className={'ValidatorCard__ProTxHash'}
             title={'Pro TX Hash'}
             value={(
               <Identifier

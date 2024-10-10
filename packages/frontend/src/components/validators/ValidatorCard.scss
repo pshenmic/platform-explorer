@@ -1,4 +1,5 @@
-
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
 
 .ValidatorCard {
   &__Header {
@@ -48,7 +49,39 @@
     }
   }
 
-  @media screen and (max-width: 680px) {
-    
+  @media screen and (max-width: $breakpoint-lg) {
+    &__Header {
+      .InfoLine {
+        flex-wrap: wrap;
+        justify-content: start;
+
+        &__Title {
+          margin-bottom: 5px;
+        }
+
+        &__Value {
+          width: 100%;
+          justify-content: flex-start;
+          text-align: left;
+        }
+      }
+    }
+
+    &__Avatar {
+      position: absolute;
+      right: 16px;
+      top: 20px;
+      margin-right: 0;
+    }
+
+    &__ProTxHash {
+      padding-right: 170px;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__ProTxHash {
+      padding-right: 100px;
+    }
   }
 }
