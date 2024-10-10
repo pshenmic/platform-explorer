@@ -3,16 +3,24 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
+const { isConnectable } = require('../utils')
+const ConnectionData = require('../models/ConnectionData')
+const Epoch = require('../models/Epoch')
+const { base58 } = require('@scure/base')
 
 class ValidatorsController {
-  constructor (knex) {
+  constructor (knex, dapi) {
     this.validatorsDAO = new ValidatorsDAO(knex)
+    this.dapi = dapi
   }
 
   getValidatorByProTxHash = async (request, response) => {
     const { hash } = request.params
 
-    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash)
+    const [currentEpoch] = await this.dapi.getEpochsInfo(1)
+    const epoch = Epoch.fromObject(currentEpoch)
+
+    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash, epoch.startTime, epoch.endTime)
 
     if (!validator) {
       return response.status(404).send({ message: 'not found' })
@@ -24,13 +32,36 @@ class ValidatorsController {
 
     const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
+    const connectionInfo = proTxInfo?.state
+      ? await isConnectable(proTxInfo?.state)
+      : ConnectionData.fromObject({
+        serviceConnectable: false,
+        p2pConnectable: false,
+        httpConnectable: false,
+        p2pResponse: null
+      })
+
+    const validatorIdentifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
+    const validatorBalance = await this.dapi.getIdentityBalance(validatorIdentifier)
+
     response.send(
       new Validator(
         validator.proTxHash,
         isActive,
         validator.proposedBlocksAmount,
         validator.lastProposedBlockHeader,
-        ProTxInfo.fromObject(proTxInfo)
+        ProTxInfo.fromObject({
+          ...proTxInfo,
+          state: {
+            ...proTxInfo.state,
+            connectionInfo
+          }
+        }),
+        validator.totalReward,
+        validator.epochReward,
+        validatorIdentifier,
+        validatorBalance,
+        epoch
       )
     )
   }
@@ -40,29 +71,49 @@ class ValidatorsController {
 
     const activeValidators = await TenderdashRPC.getValidators()
 
+    const [currentEpoch] = await this.dapi.getEpochsInfo(1)
+    const epoch = Epoch.fromObject(currentEpoch)
+
     const validators = await this.validatorsDAO.getValidators(
       Number(page),
       Number(limit),
       order,
       isActive,
-      activeValidators
+      activeValidators,
+      epoch.startTime,
+      epoch.endTime
     )
 
     const validatorsWithInfo = await Promise.all(
       validators.resultSet.map(async (validator) =>
         ({ ...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash) })))
 
+    const resultSet = await Promise.all(
+      validatorsWithInfo.map(
+        async (validator) => {
+          const validatorIdentifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
+          const validatorBalance = validatorIdentifier ? await this.dapi.getIdentityBalance(validatorIdentifier) : null
+
+          return new Validator(
+            validator.proTxHash,
+            activeValidators.some(activeValidator =>
+              activeValidator.pro_tx_hash === validator.proTxHash),
+            validator.proposedBlocksAmount,
+            validator.lastProposedBlockHeader,
+            ProTxInfo.fromObject(validator.proTxInfo),
+            validator.totalReward,
+            validator.epochReward,
+            validatorIdentifier,
+            validatorBalance,
+            epoch
+          )
+        }
+      )
+    )
+
     return response.send({
       ...validators,
-      resultSet: validatorsWithInfo.map(validator =>
-        new Validator(
-          validator.proTxHash, activeValidators.some(activeValidator =>
-            activeValidator.pro_tx_hash === validator.proTxHash),
-          validator.proposedBlocksAmount,
-          validator.lastProposedBlockHeader,
-          ProTxInfo.fromObject(validator.proTxInfo)
-        )
-      )
+      resultSet
     })
   }
 

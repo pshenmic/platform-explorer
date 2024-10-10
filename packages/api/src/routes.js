@@ -38,7 +38,13 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            index: { type: 'number', minimum: 0 }
+            index: { type: ['number', 'null'], minimum: 0 }
+          }
+        },
+        querystring: {
+          type: 'object',
+          properties: {
+            ascending: { type: ['boolean', 'null'] }
           }
         }
       }

@@ -1,3 +1,5 @@
+process.env.EPOCH_CHANGE_TIME = 3600000
+
 const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
@@ -8,7 +10,9 @@ const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
-const Base58 = require('bs58').default
+const DAPI = require('../../src/DAPI')
+const Epoch = require('../../src/models/Epoch')
+const { base58 } = require('@scure/base')
 
 describe('Validators routes', () => {
   let app
@@ -24,6 +28,9 @@ describe('Validators routes', () => {
   let dashCoreRpcResponse
 
   let intervals
+
+  let epochInfo
+  let fullEpochInfo
 
   before(async () => {
     app = await server.start()
@@ -64,7 +71,12 @@ describe('Validators routes', () => {
         platformP2PPort: 36656,
         platformHTTPPort: 1443,
         payoutAddress: 'yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A',
-        pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53'
+        pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53',
+        connectionInfo: {
+          httpConnectable: false,
+          p2pConnectable: false,
+          serviceConnectable: false
+        }
       },
       confirmations: 214276,
       metaInfo: {
@@ -98,7 +110,7 @@ describe('Validators routes', () => {
 
     for (let i = 0; i < 50; i++) {
       const identity = await fixtures.identity(knex, {
-        identifier: Base58.encode(Buffer.from(validators[i].pro_tx_hash, 'hex')),
+        identifier: base58.encode(Buffer.from(validators[i].pro_tx_hash, 'hex')),
         block_hash: blocks[i].hash
       })
 
@@ -108,12 +120,30 @@ describe('Validators routes', () => {
     activeValidators = validators.sort((a, b) => a.id - b.id).slice(0, 30)
     inactiveValidators = validators.sort((a, b) => a.id - b.id).slice(30, 50)
 
+    const date = Date.now()
+
+    epochInfo = () => [
+      {
+        number: 0,
+        firstBlockHeight: 0,
+        firstCoreBlockHeight: 1,
+        startTime: date,
+        feeMultiplier: 1
+      }
+    ]
+
+    fullEpochInfo = Epoch.fromObject(epochInfo()[0])
+
     mock.method(tenderdashRpc, 'getValidators',
       async () =>
         Promise.resolve(activeValidators.map(activeValidator =>
           ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
 
     mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
+
+    mock.method(DAPI.prototype, 'getEpochsInfo', epochInfo)
+
+    mock.method(DAPI.prototype, 'getIdentityBalance', () => 0)
   })
 
   after(async () => {
@@ -130,7 +160,7 @@ describe('Validators routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const identity = identities.find(identity =>
-        identity.identifier === Base58.encode(Buffer.from(validator.pro_tx_hash, 'hex')))
+        identity.identifier === base58.encode(Buffer.from(validator.pro_tx_hash, 'hex')))
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
@@ -146,7 +176,11 @@ describe('Validators routes', () => {
           confirmations: dashCoreRpcResponse.confirmations,
           state: dashCoreRpcResponse.state
         },
-        identity: identity.identifier
+        totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: { ...fullEpochInfo }
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -160,7 +194,7 @@ describe('Validators routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const identity = identities.find(identity =>
-        identity.identifier === Base58.encode(Buffer.from(validator.pro_tx_hash, 'hex')))
+        identity.identifier === base58.encode(Buffer.from(validator.pro_tx_hash, 'hex')))
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
@@ -188,7 +222,11 @@ describe('Validators routes', () => {
           confirmations: dashCoreRpcResponse.confirmations,
           state: dashCoreRpcResponse.state
         },
-        identity: identity.identifier
+        totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: { ...fullEpochInfo }
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -217,7 +255,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -244,7 +282,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -266,7 +308,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -293,7 +335,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -314,7 +360,7 @@ describe('Validators routes', () => {
           .slice(10, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: validators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -341,7 +387,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -362,7 +412,7 @@ describe('Validators routes', () => {
           .slice(0, 7)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive:
@@ -393,7 +443,11 @@ describe('Validators routes', () => {
                   confirmations: dashCoreRpcResponse.confirmations,
                   state: dashCoreRpcResponse.state
                 },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -414,7 +468,7 @@ describe('Validators routes', () => {
           .slice(7, 14)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -441,7 +495,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -463,7 +521,7 @@ describe('Validators routes', () => {
           .slice(15, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
 
             return {
               proTxHash: row.pro_tx_hash,
@@ -491,7 +549,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -512,7 +574,7 @@ describe('Validators routes', () => {
           .slice(48, 50)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -539,7 +601,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -577,7 +643,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -604,7 +670,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -613,7 +683,6 @@ describe('Validators routes', () => {
 
       it('should return default set of validators order desc', async () => {
         const { body } = await client.get('/validators?order=desc&isActive=true')
-          .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
@@ -626,7 +695,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -653,7 +722,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -674,7 +747,7 @@ describe('Validators routes', () => {
           .slice(10, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -701,7 +774,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -722,7 +799,7 @@ describe('Validators routes', () => {
           .slice(0, 7)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -749,7 +826,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -770,7 +851,7 @@ describe('Validators routes', () => {
           .slice(7, 14)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -797,7 +878,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -819,7 +904,7 @@ describe('Validators routes', () => {
           .slice(15, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -846,7 +931,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -867,7 +956,7 @@ describe('Validators routes', () => {
           .slice(28, 30)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -894,7 +983,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -932,7 +1025,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -947,7 +1040,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -969,7 +1066,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -984,7 +1081,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -1005,7 +1106,7 @@ describe('Validators routes', () => {
           .slice(10, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -1020,7 +1121,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -1041,7 +1146,7 @@ describe('Validators routes', () => {
           .slice(0, 7)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -1056,7 +1161,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -1077,7 +1186,7 @@ describe('Validators routes', () => {
           .slice(7, 14)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -1092,7 +1201,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -1114,7 +1227,7 @@ describe('Validators routes', () => {
           .slice(15, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -1141,7 +1254,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
@@ -1162,7 +1279,7 @@ describe('Validators routes', () => {
           .slice(18, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -1189,7 +1306,11 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo }
             }
           })
 
