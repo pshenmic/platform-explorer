@@ -1,4 +1,5 @@
 import { extendTheme } from '@chakra-ui/react'
+import tabsTheme from './components/Tabs'
 import {
   Montserrat,
   Open_Sans as OpenSans,
@@ -50,6 +51,15 @@ export const theme = extendTheme({
     },
     white: {
       50: '#FFFFFF'
+    },
+    red: {
+      default: '#F45858'
+    },
+    yellow: {
+      default: '#FFD205'
+    },
+    green: {
+      default: '#81F458'
     },
     gray: {
       50: '#f0f1f2',
@@ -163,6 +173,7 @@ export const theme = extendTheme({
     }
   },
   components: {
+    Tabs: tabsTheme,
     Container: {
       baseStyle: {
         p: 3

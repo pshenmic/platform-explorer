@@ -1,0 +1,78 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.ValidatorPage {
+  &__Card {
+    margin-bottom: 24px;
+  }
+
+  &__ContentContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  &__Column {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  &__Lists {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-top: 24px;
+  }
+
+  &__ListContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  &__List {
+    flex-grow: 1;
+  }
+
+  &__GroupContainer {
+    flex-grow: 1;
+    border-radius: 18px;
+    border: 1px solid var(--chakra-colors-gray-800);
+
+    .InfoLine--Loading .InfoLine {
+      &__Value {
+        height: 32px;
+      }
+    }
+  }
+
+  &__InfoLine {
+    margin-bottom: 14px;
+  }
+
+  &__ValueContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    overflow: hidden;
+    max-width: 324px;
+
+    .DateBlock {
+      margin-bottom: 4px;
+    }
+  }
+
+  &__PoseScroreValue {
+    display: flex;
+    align-items: center;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__ContentContainer {
+      grid-template-columns: 1fr;
+    }
+  }
+}

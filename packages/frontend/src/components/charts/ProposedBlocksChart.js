@@ -2,7 +2,7 @@
 
 import LineChartBlock from '../../components/charts/LineChartBlock'
 
-export default function ProposedBlocksChart ({ blocksHistory, timespan, timespanChangeHandler, height = '220px' }) {
+export default function ProposedBlocksChart ({ blocksHistory, timespan, timespanChangeHandler, blockBorders = true, height = '220px' }) {
   if (!timespanChangeHandler) timespanChangeHandler = () => {}
 
   return (
@@ -31,6 +31,7 @@ export default function ProposedBlocksChart ({ blocksHistory, timespan, timespan
           abbreviation: 'blocks'
         }}
         height={height}
+        blockBorders={blockBorders}
     />
   )
 }

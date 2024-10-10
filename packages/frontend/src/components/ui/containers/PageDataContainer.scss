@@ -1,0 +1,65 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.PageDataContainer {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--chakra-colors-gray-650);
+  
+  &__Header {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    margin-bottom: 32px;
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      height: 40px;
+      width: 100%;
+      left: 0;
+      background: #24282b;
+      opacity: .5;
+      top: 0;
+      z-index: 0;
+    }
+  }
+
+  &__BackLink {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 32px;
+    height: 24px;
+    margin-right: 10px;
+    background-color: rgba(24, 167, 255, .1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__Title {
+    position: relative;
+    z-index: 2;
+    font-family: $font-heading;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    background: transparent;
+
+    &__Header {
+      padding: 0 12px;
+      margin-bottom: 12px;
+
+      &::before {
+        border-radius: 20px;
+      }
+    }
+  }
+}

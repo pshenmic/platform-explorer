@@ -287,6 +287,22 @@
   }
 }
 
+@mixin InfoContainerPadding ($property) {
+  #{$property}: var(--chakra-space-3);
+
+  @media screen and (min-width: $breakpoint-md) {
+    #{$property}: var(--chakra-space-4);
+  }
+
+  @media screen and (min-width: $breakpoint-lg) {
+    #{$property}: var(--chakra-space-5);
+  }
+
+  @media screen and (min-width: $breakpoint-xl) {
+    #{$property}: var(--chakra-space-6);
+  }
+}
+
 @mixin Block ($blueBorder: false) {
   backdrop-filter: $blockBackgroundBlur;
   border-radius: var(--chakra-radii-block);
