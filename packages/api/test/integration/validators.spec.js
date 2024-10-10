@@ -209,12 +209,10 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, validators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.resultSet.length, validators.length)
 
         const expectedValidators = validators
-          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -257,13 +255,11 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, validators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.resultSet.length, validators.length)
 
         const expectedValidators = validators
           .toReversed()
-          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -301,7 +297,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?page=2')
+        const { body } = await client.get('/validators?limit=10&page=2')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -569,12 +565,10 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, activeValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.resultSet.length, activeValidators.length)
 
         const expectedValidators = activeValidators
-          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -617,13 +611,11 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, activeValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.resultSet.length, activeValidators.length)
 
         const expectedValidators = activeValidators
           .toReversed()
-          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -661,7 +653,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?page=2&isActive=true')
+        const { body } = await client.get('/validators?limit=10&page=2&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -924,12 +916,10 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, inactiveValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.resultSet.length, inactiveValidators.length)
 
         const expectedValidators = inactiveValidators
-          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -960,13 +950,11 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
-        assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, inactiveValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.resultSet.length, inactiveValidators.length)
 
         const expectedValidators = inactiveValidators
           .toReversed()
-          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -992,7 +980,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?page=2&isActive=false')
+        const { body } = await client.get('/validators?limit=10&page=2&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
