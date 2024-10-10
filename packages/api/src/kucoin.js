@@ -1,7 +1,7 @@
 module.exports = {
   getUSDRate: async () => {
     try {
-      const response = await fetch('https://api.kucoin.com/api/v1/market/stats?sym', {
+      const response = await fetch('https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=DASH-USDT', {
         method: 'GET',
         headers: {
           'content-type': 'application/json'
@@ -12,7 +12,7 @@ module.exports = {
         throw new Error(`Kucoin api error (${response.status}) \n${await response.text()}`)
       }
 
-      const rate = (await response.json()).data?.sell
+      const rate = (await response.json()).data?.price
       return rate ? Number(rate) : null
     } catch (e) {
       console.error(e)
