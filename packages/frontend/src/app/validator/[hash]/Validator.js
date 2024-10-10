@@ -40,6 +40,7 @@ function Validator ({ hash }) {
   const pageSize = 13
   const [currentPage, setCurrentPage] = useState(1)
   const pageCount = Math.ceil(totalBlocks / pageSize) ? Math.ceil(totalBlocks / pageSize) : 1
+  const [activeChartTab, setActiveChartTab] = useState(0)
 
   const fetchData = (page, count) => {
     setProposedBlocks(state => ({ ...state, loading: true }))
@@ -69,7 +70,7 @@ function Validator ({ hash }) {
     handlePageClick({ selected: 0 })
   }, [pageSize, handlePageClick])
 
-  console.log('validator', validator.data)
+  // console.log('validator', validator.data)
 
   return (
     <PageDataContainer
@@ -279,14 +280,19 @@ function Validator ({ hash }) {
 
         <div className={'ValidatorPage__Column'}>
           <InfoContainer styles={['tabs']}>
-            <Tabs>
+            <Tabs onChange={(index) => setActiveChartTab(index)}>
               <TabList>
                 <Tab>Proposed Blocks</Tab>
                 <Tab>Reward Earned</Tab>
               </TabList>
               <TabPanels>
                   <TabPanel height={'400px'} position={'relative'}>
-                    <BlocksChart blockBorders={false} height={'300px'} hash={hash}/>
+                    <BlocksChart
+                      blockBorders={false}
+                      height={'300px'}
+                      hash={hash}
+                      isActive={activeChartTab === 0}
+                    />
                   </TabPanel>
                   <TabPanel height={'400px'}>
                     Reward Earned

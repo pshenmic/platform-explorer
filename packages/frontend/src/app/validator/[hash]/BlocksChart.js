@@ -13,7 +13,7 @@ const chartConfig = {
   }
 }
 
-const TimeframeSelector = ({ config, callback }) => {
+const TimeframeSelector = ({ config, isActive, callback }) => {
   const [timespan, setTimespan] = useState(chartConfig.timespan.default)
   const [menuIsActive, setMenuIsActive] = useState(false)
 
@@ -21,6 +21,10 @@ const TimeframeSelector = ({ config, callback }) => {
     setTimespan(value)
     if (typeof callback === 'function') callback(value)
   }
+
+  useEffect(() => {
+    if (!isActive) setMenuIsActive(false)
+  }, [isActive])
 
   return (
     <div className={`TimeframeSelector ${menuIsActive ? 'TimeframeSelector--MenuActive' : ''}`}>
@@ -66,7 +70,7 @@ const TimeframeSelector = ({ config, callback }) => {
   )
 }
 
-export default function BlocksChart ({ hash }) {
+export default function BlocksChart ({ hash, isActive }) {
   const [blocksHistory, setBlocksHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(chartConfig.timespan.default)
 
@@ -78,7 +82,7 @@ export default function BlocksChart ({ hash }) {
 
   return (
     <div style={{ height: '100%' }}>
-      <TimeframeSelector config={chartConfig} callback={setTimespan}/>
+      <TimeframeSelector config={chartConfig} callback={setTimespan} isActive={isActive}/>
       <LineChart
         data={blocksHistory.data?.resultSet?.map((item) => ({
           x: new Date(item.timestamp),
