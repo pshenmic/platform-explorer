@@ -37,6 +37,9 @@
     .chakra-tabs__tab {
       font-size: 0.75rem;
       white-space: nowrap;
+      font-weight: 700;
+      font-family: $font-heading;
+      text-transform: uppercase;
     }
 
     .chakra-tabs__tablist {

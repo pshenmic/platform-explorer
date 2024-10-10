@@ -30,11 +30,35 @@
     visibility: visible;
     opacity: 1;
     height: 28px !important;
+
+    &--Active {
+      background-color: #fff !important;
+      color: $color-brand-normal !important;
+    }
+  }
+}
+
+.TimeframeMenu {
+  padding: 12px;
+
+  &__ValuesContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
 
-  &__CloseButton {
-    position: absolute !important;
-    top: 10px;
-    right: 10px;
+  &__ValuesTitle {
+    font-family: $font-mono;
+    color: #fff;
+    opacity: .5;
+    font-size: 0.75rem;
+  }
+
+  &__Values {
+    
+  }
+
+  &__Calendar {
+
   }
 }

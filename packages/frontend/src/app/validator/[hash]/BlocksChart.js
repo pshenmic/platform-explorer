@@ -24,29 +24,44 @@ const TimeframeSelector = ({ config, callback }) => {
 
   return (
     <div className={`TimeframeSelector ${menuIsActive ? 'TimeframeSelector--MenuActive' : ''}`}>
-      <div className={'TimeframeSelector__Menu'}>
-        <div className={'TimeframeSelector__Values'}>
-          {config.timespan.values.map(iTimespan => (
-            <Button
-              className={`ChartBlock__TimeframeButton ${timespan === iTimespan ? 'ChartBlock__TimeframeButton--Active' : ''}`}
-              onClick={() => {
-                changeHandler(iTimespan)
-                setMenuIsActive(false)
-              }}
-              key={iTimespan}
-            >
-              {iTimespan}
-            </Button>
-          ))}
+      
+      <div className={'TimeframeSelector__Menu TimeframeMenu'}>
+        
+        <div className={'TimeframeMenu__ValuesContainer'}>
+          <div className={'TimeframeMenu__ValuesTitle'}>
+            Select a day, period or Timeframe:
+          </div>
+
+          <div className={'TimeframeMenu__Values'}>
+            {config.timespan.values.map(iTimespan => (
+              <Button
+                className={'TimeframeMenu__ValueButton'}
+                onClick={() => {
+                  changeHandler(iTimespan)
+                  setMenuIsActive(false)
+                }}
+                key={iTimespan}
+                size={'xs'}
+              >
+                {iTimespan}
+              </Button>
+            ))}
+          </div>
         </div>
+
+        <div className={'TimeframeMenu__Calendar'}>
+          calendar coming soon
+        </div>
+
       </div>
-        <Button
-          className={'TimeframeSelector__Button'}
-          onClick={() => setMenuIsActive(state => !state)}
-        >
-          <CalendarIcon mr={'10px'}/>
-          {timespan}
-        </Button>
+
+      <Button
+        className={`TimeframeSelector__Button ${menuIsActive ? 'TimeframeSelector__Button--Active' : ''}`}
+        onClick={() => setMenuIsActive(state => !state)}
+      >
+        <CalendarIcon mr={'10px'}/>
+        {timespan}
+      </Button>
     </div>
   )
 }
