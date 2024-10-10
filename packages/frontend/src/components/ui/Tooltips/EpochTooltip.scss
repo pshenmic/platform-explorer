@@ -2,13 +2,20 @@
 @import '../../../styles/variables.scss';
 
 .EpochTooltip {
-  font-family: $font-mono;
+  font-family: $font-heading;
   font-size: 0.75rem;
+
+  &__Line {
+    margin-bottom: 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 
   &__Title {
     color: rgba(255, 255, 255, .6);
     display: inline-block;
-    width: 50px;
   }
 
   &__Value {
