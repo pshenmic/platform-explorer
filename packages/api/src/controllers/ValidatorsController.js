@@ -6,7 +6,7 @@ const ProTxInfo = require('../models/ProTxInfo')
 const { isConnectable } = require('../utils')
 const ConnectionData = require('../models/ConnectionData')
 const Epoch = require('../models/Epoch')
-const Base58 = require('bs58').default
+const {base58} = require('@scure/base')
 
 class ValidatorsController {
   constructor (knex, dapi) {
@@ -41,7 +41,7 @@ class ValidatorsController {
         p2pResponse: null
       })
 
-    const validatorIdentifier = validator.proTxHash ? Base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
+    const validatorIdentifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
     const validatorBalance = await this.dapi.getIdentityBalance(validatorIdentifier)
 
     response.send(
@@ -91,7 +91,7 @@ class ValidatorsController {
     const resultSet = await Promise.all(
       validatorsWithInfo.map(
         async (validator) => {
-          const validatorIdentifier = validator.proTxHash ? Base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
+          const validatorIdentifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
           const validatorBalance = validatorIdentifier ? await this.dapi.getIdentityBalance(validatorIdentifier) : null
 
           return new Validator(
