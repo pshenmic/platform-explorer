@@ -50,6 +50,24 @@
     .chakra-tabs__tab-panels {}
   }
 
+  @media screen and (max-width: $breakpoint-xl) {
+    &--Tabs {
+      .chakra-tabs__tablist {
+        padding: 0 24px;
+        padding-bottom: 1px;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &--Tabs {
+      .chakra-tabs__tablist {
+        padding: 0 20px;
+        padding-bottom: 1px;
+      }
+    }
+  }
+
   @media screen and (max-width: $breakpoint-md) {
     &--Tabs {
       .chakra-tabs__tablist {

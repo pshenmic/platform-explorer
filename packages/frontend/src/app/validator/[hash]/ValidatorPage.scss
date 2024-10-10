@@ -41,6 +41,12 @@
     flex-grow: 1;
     border-radius: 18px;
     border: 1px solid var(--chakra-colors-gray-800);
+
+    .InfoLine--Loading .InfoLine {
+      &__Value {
+        height: 32px;
+      }
+    }
   }
 
   &__InfoLine {
@@ -53,6 +59,10 @@
     justify-content: flex-end;
     overflow: hidden;
     max-width: 324px;
+
+    .DateBlock {
+      margin-bottom: 4px;
+    }
   }
 
   &__PoseScroreValue {

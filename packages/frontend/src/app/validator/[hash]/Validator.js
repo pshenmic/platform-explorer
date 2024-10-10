@@ -79,8 +79,9 @@ function Validator ({ hash }) {
     >
       <div className={'ValidatorPage__ContentContainer'}>
         <div className={'ValidatorPage__Column'}>
-        <InfoContainer className={'ValidatorPage__GroupContainer'}>
-          <ValidatorCard validator={validator} className={'ValidatorPage__Card'}/>
+          <InfoContainer className={'ValidatorPage__GroupContainer'}>
+            <ValidatorCard validator={validator} className={'ValidatorPage__Card'}/>
+
             <div>
               <InfoLine
                 className={'ValidatorPage__InfoLine'}

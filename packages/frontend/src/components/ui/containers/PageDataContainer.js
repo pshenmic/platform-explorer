@@ -14,7 +14,8 @@ function PageDataContainer ({ title, backLink, children }) {
         className={'PageDataContainer'}
         maxW={'1440px'}
         px={[0, 0, 0, 3]}
-        py={0}
+        pt={0}
+        pb={[3, 4, 5, 6]}
         mt={[0, 0, 0, 8]}
       >
         <div className={'PageDataContainer__Header'}>
