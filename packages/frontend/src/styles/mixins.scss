@@ -13,12 +13,19 @@
   border-radius: 10px;
   border: 1px solid var(--chakra-colors-gray-750);
   background-color: var(--chakra-colors-gray-650);
-  transition: all $transition-time-def;
+  transition: all .1s;
 
-  &:hover {
-    background-color: var(--chakra-colors-gray-900);
-    text-decoration: none;
-    cursor: pointer;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--chakra-colors-gray-750);
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 0px 9999px 0px rgba(0, 0, 0, .25) inset;
   }
 
   &:last-child {
@@ -288,5 +295,26 @@
 
   @if $blueBorder {
     box-shadow: 2px 2px $color-brand-normal;
+  }
+}
+
+@mixin TooltipElement () {
+  transition: .2s;
+
+  &, .chakra-icon {
+    transition: .2s;
+  }
+
+  .chakra-icon {
+    color: $color-brand-normal;
+  }
+
+  &:hover {
+    color: $color-brand-light;
+    cursor:  default;
+
+    .chakra-icon {
+      color: $color-brand-light;
+    }
   }
 }

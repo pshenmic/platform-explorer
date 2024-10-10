@@ -1,0 +1,2 @@
+ALTER TABLE documents
+ADD COLUMN "price" BIGINT DEFAULT null;

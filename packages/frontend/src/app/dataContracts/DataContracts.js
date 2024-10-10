@@ -76,11 +76,9 @@ function DataContractsLayout ({ defaultPage = 1, defaultPageSize }) {
         color={'white'}
         mt={8}
         mb={8}
-        className={'Blocks'}
     >
         <Container
             maxW={'container.xl'}
-            padding={3}
             className={'InfoBlock'}
         >
             <Heading className={'InfoBlock__Title'} as={'h1'}>Data contracts</Heading>

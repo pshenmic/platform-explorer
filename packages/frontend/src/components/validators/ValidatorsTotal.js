@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, currencyRound, creditsToDash } from '../../util'
 import { InfoCard, ValueCard } from '../cards'
 import EpochProgress from '../networkStatus/EpochProgress'
 import { Identifier } from '../data'
@@ -10,6 +10,8 @@ import { Slider, SliderElement } from '../ui/Slider'
 import { WheelControls } from '../ui/Slider/plugins'
 import { Flex, Text, Box } from '@chakra-ui/react'
 import ImageGenerator from '../imageGenerator'
+import { InfoIcon } from '@chakra-ui/icons'
+import { RateTooltip, EpochTooltip } from '../ui/Tooltips'
 import './ValidatorsTotal.scss'
 import './ValidatorsTotalCard.scss'
 
@@ -17,6 +19,7 @@ export default function ValidatorsTotal () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
   const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
   const fetchData = () => {
     Api.getStatus()
@@ -32,6 +35,10 @@ export default function ValidatorsTotal () {
     Api.getValidators(1, 10)
       .then(res => fetchHandlerSuccess(setValidators, res))
       .catch(err => fetchHandlerError(setValidators, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
 
   useEffect(fetchData, [])
@@ -60,7 +67,12 @@ export default function ValidatorsTotal () {
             <div className={'ValidatorsTotalCard__Title'}>Epoch</div>
             <div className={'ValidatorsTotalCard__Value'}>
               {typeof status?.data?.epoch?.number === 'number'
-                ? <div className={'ValidatorsTotalCard__EpochNumber'}>#{status.data.epoch.number}</div>
+                ? <EpochTooltip epoch={status.data.epoch}>
+                    <div className={'ValidatorsTotalCard__EpochNumber'}>
+                      #{status.data.epoch.number}
+                      <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+                    </div>
+                  </EpochTooltip>
                 : 'n/a'}
             </div>
             {status?.data?.epoch && <EpochProgress epoch={status.data.epoch} className={'ValidatorsTotalCard__EpochProgress'}/>}
@@ -68,9 +80,19 @@ export default function ValidatorsTotal () {
           <InfoCard className={'ValidatorsTotal__Card ValidatorsTotalCard ValidatorsTotalCard--Fees'} loading={status.loading}>
             <div className={'ValidatorsTotalCard__Title'}>Fees collected</div>
             <div className={'ValidatorsTotalCard__Value'}>
-              <div>
+              <div className={'ValidatorsTotalCard__TotalCollectedFees'}>
                 {typeof epoch?.data?.totalCollectedFees === 'number'
-                  ? currencyRound(epoch.data.totalCollectedFees)
+                  ? <RateTooltip
+                      dash={creditsToDash(epoch.data.totalCollectedFees)}
+                      usd={typeof rate.data?.usd === 'number'
+                        ? rate.data.usd * creditsToDash(epoch.data.totalCollectedFees)
+                        : null}
+                    >
+                      <span>
+                        {currencyRound(epoch.data.totalCollectedFees)}
+                        <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+                      </span>
+                    </RateTooltip>
                   : 'n/a'}
               </div>
               <Flex fontFamily={'mono'} fontSize={'0.75rem'} fontWeight={'normal'}>
@@ -96,7 +118,7 @@ export default function ValidatorsTotal () {
                   link={epoch?.data?.bestValidator ? `/validator/${epoch?.data?.bestValidator}` : undefined}
                   className={'ValidatorsTotalCard__Value'}
                 >
-                  <Identifier avatar={true} copyButton={true} styles={['gradient-start']}>
+                  <Identifier avatar={true} copyButton={true} styles={['highlight-both']}>
                     {epoch.data.bestValidator}
                   </Identifier>
                 </ValueCard>
