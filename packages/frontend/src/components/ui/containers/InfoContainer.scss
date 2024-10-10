@@ -2,23 +2,32 @@
 @import '../../../styles/variables.scss';
 
 .InfoContainer {
+  @include mixins.BlockSpacing(padding);
   position: relative;
+  z-index: 1;
+  overflow: hidden;
   border-radius: 18px;
   border: 1px solid var(--chakra-colors-gray-800);
-  background: var(--chakra-colors-gray-675);
-  padding: 24px;
-
-  &::before {
+  
+  &::before, &::after {
     content: '';
     display: block;
     position: absolute;
     height: 100%;
     width: 100%;
     left: 0;
-    bottom: 0;
+    top: 0;
+  }
+
+  &::before {
+    background: var(--chakra-colors-gray-675);
+    z-index: -2;
+  }
+
+  &::after {
     background: radial-gradient(circle at 0% 100%, var(--chakra-colors-gray-800) 0, transparent);
     opacity: .5;
-    z-index: 0;
+    z-index: -1;
   }
 
   &--Tabs {
