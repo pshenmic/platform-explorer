@@ -8,6 +8,11 @@
   font-family: $font-mono;
   white-space: nowrap;
 
+  &__CalendarIcon, &__Date {
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+
   &__CalendarIcon, &__Date, &__Delta {
     margin-right: 8px;
 

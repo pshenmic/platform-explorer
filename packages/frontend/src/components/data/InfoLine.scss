@@ -20,5 +20,9 @@
     color: #fff;
     overflow: hidden;
     text-align: right;
+
+    .DateBlock {
+      justify-content: flex-end;
+    }
   }
 }
