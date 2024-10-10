@@ -92,6 +92,7 @@ function Validator ({ hash }) {
                     link={'https://192.168.0.1'}
                   />
                 )}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -102,6 +103,7 @@ function Validator ({ hash }) {
                     status={'active'}
                   />
                 )}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -112,6 +114,7 @@ function Validator ({ hash }) {
                     status={'active'}
                   />
                 )}
+                loading={validator.loading}
               />
             </div>
 
@@ -128,26 +131,31 @@ function Validator ({ hash }) {
                       : 'Waiting for Quorum'}
                   </Badge>
                 )}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Epoch'}
                 value={'#1343'}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Next epoch starts in'}
                 value={'10d:5h:13m'}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Rewards This Epoch'}
                 value={'85,80'}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Rewards This Epoch'}
                 value={'825,280'}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -165,6 +173,7 @@ function Validator ({ hash }) {
                     </ValueContainer>
                   </Link>
                 )}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -184,6 +193,7 @@ function Validator ({ hash }) {
                     </ValueContainer>
                   </Link>
                 )}
+                loading={validator.loading}
               />
             </div>
 
@@ -201,6 +211,7 @@ function Validator ({ hash }) {
                     <CircleIcon w={'8px'} h={'8px'} ml={'4px'} mb={'-1px'} color={'green.default'}/>
                   </div>
                 )}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -212,6 +223,7 @@ function Validator ({ hash }) {
                     </Identifier>
                   </ValueContainer>
                 )}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -223,6 +235,7 @@ function Validator ({ hash }) {
                     </Identifier>
                   </ValueContainer>
                 )}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -234,6 +247,7 @@ function Validator ({ hash }) {
                     </Identifier>
                   </ValueContainer>
                 )}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -245,6 +259,7 @@ function Validator ({ hash }) {
                     </Identifier>
                   </ValueContainer>
                 )}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -254,6 +269,7 @@ function Validator ({ hash }) {
                     {validator.data?.proTxInfo?.state?.pubKeyOperator || ''}
                   </Identifier>
                 )}
+                loading={validator.loading}
               />
             </div>
           </InfoContainer>

@@ -11,12 +11,8 @@ export default function ValidatorCard ({ validator, className }) {
     return
   }
 
-  if (validator.loading) {
-    return
-  }
-
   return (
-    <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${className || ''}`}>
+    <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${validator.loading ? 'ValidatorCard--Loading' : ''} ${className || ''}`}>
       <div className={'ValidatorCard__Header'}>
         <div className={'ValidatorCard__Avatar'}>
           <ImageGenerator
@@ -31,6 +27,7 @@ export default function ValidatorCard ({ validator, className }) {
           <InfoLine
             className={'ValidatorCard__ProTxHash'}
             title={'Pro TX Hash'}
+            loading={validator.loading}
             value={(
               <Identifier
                 className={''}
@@ -45,6 +42,7 @@ export default function ValidatorCard ({ validator, className }) {
           <InfoLine
             title={'Balance'}
             value={<CreditsBlock credits={85800000} usd={'209.15'}/>}
+            loading={validator.loading}
           />
         </div>
       </div>
@@ -55,6 +53,7 @@ export default function ValidatorCard ({ validator, className }) {
         className={'ValidatorCard__InfoLine'}
         title={'Creation Date'}
         value={<DateBlock timestamp={1727887511000}/>}
+        loading={validator.loading}
       />
 
       <InfoLine
@@ -63,6 +62,7 @@ export default function ValidatorCard ({ validator, className }) {
         value={(
           <span className={'ValidatorCard__BlockHeighValue'}>#10225</span>
         )}
+        loading={validator.loading}
       />
 
       <InfoLine
@@ -81,6 +81,7 @@ export default function ValidatorCard ({ validator, className }) {
             </Identifier>
           </Link>
         )}
+        loading={validator.loading}
       />
 
       <InfoLine
@@ -96,6 +97,7 @@ export default function ValidatorCard ({ validator, className }) {
             50d847734406592420320c864eb572fb900e5c36
           </Identifier>
         )}
+        loading={validator.loading}
       />
     </div>
   )

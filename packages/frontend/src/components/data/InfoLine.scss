@@ -25,4 +25,14 @@
       justify-content: flex-end;
     }
   }
+
+  &--Loading & {
+    &__Value {
+      @include mixins.LoadingLine;
+      position: relative;
+      min-height: 18px;
+      width: 200px !important;
+      max-width: 100%;
+    }
+  }
 }

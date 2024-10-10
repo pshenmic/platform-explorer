@@ -16,6 +16,19 @@
     }
   }
 
+  .InfoLine--Loading .InfoLine {
+    &__Value {
+      height: 30px;
+    }
+  }
+
+  &--Loading & {
+    &__Avatar {
+      position: absolute !important;
+      @include mixins.LoadingContainer;
+    }
+  }
+
   &__Avatar {
     width: 88px;
     height: 88px;
@@ -57,6 +70,7 @@
 
         &__Title {
           margin-bottom: 5px;
+          width: 100%;
         }
 
         &__Value {
