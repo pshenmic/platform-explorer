@@ -1,7 +1,7 @@
 FROM rust:1.80-alpine3.19 as build
 RUN apk add --no-cache git cmake clang libressl-dev
 WORKDIR /
-RUN git clone --depth 1 --branch v1.3.0  https://github.com/dashevo/platform
+RUN git clone --depth 1 --branch v1.4.0-dev.8  https://github.com/dashevo/platform
 WORKDIR /app
 COPY Cargo.lock /app
 COPY Cargo.toml /app

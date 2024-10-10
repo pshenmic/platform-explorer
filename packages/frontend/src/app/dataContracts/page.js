@@ -20,7 +20,6 @@ function DataContractsRoute ({ searchParams }) {
     <Container
       maxW={'container.xl'}
       color={'white'}
-      px={0}
       mt={8}
       mb={0}
     >
