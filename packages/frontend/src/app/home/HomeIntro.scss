@@ -2,6 +2,7 @@
 @import '../../styles/variables.scss';
 
 .HomeIntro {
+  @include mixins.Block(true);
   padding: 64px 0 !important;
   display: grid;
   grid-template-columns: 2fr 3fr;
