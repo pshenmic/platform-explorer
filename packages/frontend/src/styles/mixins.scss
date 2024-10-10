@@ -288,9 +288,7 @@
 }
 
 @mixin InfoContainerPadding ($property) {
-  @media screen and (min-width: $breakpoint-sm) {
-    #{$property}: var(--chakra-space-3);
-  }
+  #{$property}: var(--chakra-space-3);
 
   @media screen and (min-width: $breakpoint-md) {
     #{$property}: var(--chakra-space-4);
