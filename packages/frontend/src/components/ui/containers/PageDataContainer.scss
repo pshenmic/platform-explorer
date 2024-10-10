@@ -20,7 +20,7 @@
       height: 40px;
       width: 100%;
       left: 0;
-      background: var(--chakra-colors-gray-900);
+      background: #24282b;
       opacity: .5;
       top: 0;
       z-index: 0;
@@ -52,5 +52,14 @@
 
   @media screen and (max-width: $breakpoint-lg) {
     background: transparent;
+
+    &__Header {
+      padding: 0 12px;
+      margin-bottom: 12px;
+
+      &::before {
+        border-radius: 20px;
+      }
+    }
   }
 }
