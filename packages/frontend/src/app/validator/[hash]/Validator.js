@@ -180,6 +180,7 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Withdrawals Count'}
                 value={'42'}
+                loading={validator.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
