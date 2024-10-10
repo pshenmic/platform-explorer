@@ -155,9 +155,12 @@ function Validator ({ hash }) {
                 value={(
                   <Link href={`/block/${'52D76B76D748BDB4F171CF5383B85C17FDC0944A7F06AABB0A9C080709E5FB63'}`}>
                     <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                      <DateBlock timestamp={1727887511000} format={'delta-only'}/>
+                      <DateBlock
+                        timestamp={validator.data?.lastProposedBlockHeader?.timestamp}
+                        format={'delta-only'}
+                      />
                       <Identifier ellipsis={false} styles={['highlight-both']}>
-                        52D76B76D748BDB4F171CF5383B85C17FDC0944A7F06AABB0A9C080709E5FB63
+                        {validator.data?.lastProposedBlockHeader?.hash || ''}
                       </Identifier>
                     </ValueContainer>
                   </Link>
@@ -192,7 +195,9 @@ function Validator ({ hash }) {
                 title={'PoSe Score'}
                 value={(
                   <div className={'ValidatorPage__PoseScroreValue'}>
-                    <span>0</span>
+                    <span>
+                      {validator.data?.proTxInfo?.state?.PoSePenalty}
+                    </span>
                     <CircleIcon w={'8px'} h={'8px'} ml={'4px'} mb={'-1px'} color={'green.default'}/>
                   </div>
                 )}
@@ -202,8 +207,8 @@ function Validator ({ hash }) {
                 title={'Collateral address'}
                 value={(
                   <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                    <Identifier styles={['highlight-both']}>
-                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                    <Identifier styles={['highlight-both']} ellipsis={false}>
+                      {validator.data?.proTxInfo?.collateralAddress || ''}
                     </Identifier>
                   </ValueContainer>
                 )}
@@ -213,8 +218,8 @@ function Validator ({ hash }) {
                 title={'Owner address'}
                 value={(
                   <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                    <Identifier styles={['highlight-both']}>
-                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                    <Identifier styles={['highlight-both']} ellipsis={false}>
+                      {validator.data?.proTxInfo?.state?.ownerAddress || ''}
                     </Identifier>
                   </ValueContainer>
                 )}
@@ -224,8 +229,8 @@ function Validator ({ hash }) {
                 title={'Voting address'}
                 value={(
                   <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                    <Identifier styles={['highlight-both']}>
-                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                    <Identifier styles={['highlight-both']} ellipsis={false}>
+                    {validator.data?.proTxInfo?.state?.votingAddress || ''}
                     </Identifier>
                   </ValueContainer>
                 )}
@@ -235,8 +240,8 @@ function Validator ({ hash }) {
                 title={'Payout address'}
                 value={(
                   <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                    <Identifier styles={['highlight-both']}>
-                      XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                    <Identifier styles={['highlight-both']} ellipsis={false}>
+                      {validator.data?.proTxInfo?.state?.payoutAddress || ''}
                     </Identifier>
                   </ValueContainer>
                 )}
@@ -245,8 +250,8 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Operator Public Key'}
                 value={(
-                  <Identifier copyButton={true} styles={['highlight-both']} clickable={true}>
-                    XsX1yMuyEwd3gYce8QD3m1v5G8X4MSCty4
+                  <Identifier copyButton={true} styles={['highlight-both']} ellipsis={false}>
+                    {validator.data?.proTxInfo?.state?.pubKeyOperator || ''}
                   </Identifier>
                 )}
               />

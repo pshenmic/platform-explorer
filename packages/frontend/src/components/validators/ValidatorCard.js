@@ -2,6 +2,7 @@ import './ValidatorCard.scss'
 import { Identifier, DateBlock, InfoLine, CreditsBlock } from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
+import Link from 'next/link'
 
 export default function ValidatorCard ({ validator, className }) {
   console.log('validator', validator)
@@ -68,14 +69,17 @@ export default function ValidatorCard ({ validator, className }) {
         className={'ValidatorCard__InfoLine'}
         title={'Identity Address'}
         value={(
-          <Identifier
-            className={''}
-            copyButton={true}
-            styles={['highlight-both']}
-            ellipsis={false}
-          >
-            23975732199C674FD2133FA9F08454D809561DC24E6E941D78FF414C528ABA67
-          </Identifier>
+          <Link href={`/identity/${validator.data?.identity}`}>
+            <Identifier
+              className={''}
+              copyButton={true}
+              styles={['highlight-both']}
+              ellipsis={false}
+              clickable={true}
+            >
+              {validator.data?.identity}
+            </Identifier>
+          </Link>
         )}
       />
 
