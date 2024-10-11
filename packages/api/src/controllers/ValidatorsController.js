@@ -20,12 +20,12 @@ class ValidatorsController {
     const { hash } = request.params
 
     const [currentEpoch] = await this.dapi.getEpochsInfo(1)
-    const epoch = Epoch.fromObject(currentEpoch)
+    const epochInfo = Epoch.fromObject(currentEpoch)
 
-    const validatorIdentifier = base58.encode(Buffer.from(hash, 'hex'))
-    const validatorBalance = await this.dapi.getIdentityBalance(validatorIdentifier)
+    const identifier = base58.encode(Buffer.from(hash, 'hex'))
+    const identityBalance = await this.dapi.getIdentityBalance(identifier)
 
-    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash, validatorIdentifier, epoch.startTime, epoch.endTime)
+    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash, identifier, epochInfo.startTime, epochInfo.endTime)
 
     if (!validator) {
       return response.status(404).send({ message: 'not found' })
@@ -47,25 +47,21 @@ class ValidatorsController {
       })
 
     response.send(
-      new Validator(
-        validator.proTxHash,
-        isActive,
-        validator.proposedBlocksAmount,
-        validator.lastProposedBlockHeader,
-        ProTxInfo.fromObject({
-          ...proTxInfo,
-          state: {
-            ...proTxInfo.state,
-            connectionInfo
-          }
-        }),
-        validator.totalReward,
-        validator.epochReward,
-        validator.withdrawlsCount,
-        validator.lastWithdrawl,
-        validatorIdentifier,
-        validatorBalance,
-        epoch
+      Validator.fromObject(
+        {
+          ...validator,
+          isActive,
+          proTxInfo: ProTxInfo.fromObject({
+            ...proTxInfo,
+            state: {
+              ...proTxInfo.state,
+              connectionInfo
+            }
+          }),
+          identifier,
+          identityBalance,
+          epochInfo
+        }
       )
     )
   }
@@ -76,7 +72,7 @@ class ValidatorsController {
     const activeValidators = await TenderdashRPC.getValidators()
 
     const [currentEpoch] = await this.dapi.getEpochsInfo(1)
-    const epoch = Epoch.fromObject(currentEpoch)
+    const epochInfo = Epoch.fromObject(currentEpoch)
 
     const validators = await this.validatorsDAO.getValidators(
       Number(page),
@@ -84,8 +80,8 @@ class ValidatorsController {
       order,
       isActive,
       activeValidators,
-      epoch.startTime,
-      epoch.endTime
+      epochInfo.startTime,
+      epochInfo.endTime
     )
 
     const validatorsWithInfo = await Promise.all(
@@ -95,23 +91,19 @@ class ValidatorsController {
     const resultSet = await Promise.all(
       validatorsWithInfo.map(
         async (validator) => {
-          const validatorIdentifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
-          const validatorBalance = validatorIdentifier ? await this.dapi.getIdentityBalance(validatorIdentifier) : null
+          const identifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
+          const identityBalance = identifier ? await this.dapi.getIdentityBalance(identifier) : null
 
-          return new Validator(
-            validator.proTxHash,
-            activeValidators.some(activeValidator =>
-              activeValidator.pro_tx_hash === validator.proTxHash),
-            validator.proposedBlocksAmount,
-            validator.lastProposedBlockHeader,
-            ProTxInfo.fromObject(validator.proTxInfo),
-            validator.totalReward,
-            validator.epochReward,
-            null,
-            null,
-            validatorIdentifier,
-            validatorBalance,
-            epoch
+          return Validator.fromObject(
+            {
+              ...validator,
+              isActive: activeValidators.some(activeValidator =>
+                activeValidator.pro_tx_hash === validator.proTxHash),
+              proTxInfo: ProTxInfo.fromObject(validator.proTxInfo),
+              identifier,
+              identityBalance,
+              epochInfo
+            }
           )
         }
       )

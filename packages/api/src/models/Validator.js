@@ -7,7 +7,7 @@ module.exports = class Validator {
   proposedBlocksAmount
   lastProposedBlockHeader
   proTxInfo
-  identity
+  identifier
   identityBalance
   epochInfo
   totalReward
@@ -25,7 +25,7 @@ module.exports = class Validator {
     epochReward,
     withdrawlsCount,
     lastWithdrawl,
-    identity,
+    identifier,
     identityBalance,
     epochInfo
   ) {
@@ -34,7 +34,7 @@ module.exports = class Validator {
     this.proposedBlocksAmount = proposedBlocksAmount ?? null
     this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
     this.proTxInfo = proTxInfo ?? null
-    this.identity = identity ?? null
+    this.identifier = identifier ?? null
     this.identityBalance = identityBalance ?? null
     this.epochInfo = epochInfo ?? null
     this.totalReward = totalReward ?? null
@@ -78,6 +78,36 @@ module.exports = class Validator {
       Number(total_collected_reward_by_epoch),
       Number(withdrawls_count),
       last_withdrawl
+    )
+  }
+
+  static fromObject ({
+    proTxHash,
+    isActive,
+    proposedBlocksAmount,
+    lastProposedBlockHeader,
+    proTxInfo,
+    totalReward,
+    epochReward,
+    withdrawlsCount,
+    lastWithdrawl,
+    identifier,
+    identityBalance,
+    epochInfo
+  }) {
+    return new Validator(
+      proTxHash,
+      isActive,
+      proposedBlocksAmount,
+      lastProposedBlockHeader,
+      proTxInfo,
+      totalReward,
+      epochReward,
+      withdrawlsCount,
+      lastWithdrawl,
+      identifier,
+      identityBalance,
+      epochInfo
     )
   }
 }
