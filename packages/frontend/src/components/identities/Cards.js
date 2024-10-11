@@ -3,12 +3,13 @@
 import { Flex, Container } from '@chakra-ui/react'
 import Link from 'next/link'
 import { InfoCard } from '../cards'
-import { currencyRound } from '../../util'
+import { currencyRound, creditsToDash } from '../../util'
 import { ErrorMessageBlock } from '../Errors'
 import ImageGenerator from '../imageGenerator'
+import { RateTooltip } from '../ui/Tooltips'
 import './IdentityCard.scss'
 
-function IdentityCard ({ identity, loading = false }) {
+function IdentityCard ({ identity, rate, loading = false }) {
   return (
     <Container p={0} mx={0} my={3} maxW={'none'}>
       {!loading
@@ -22,7 +23,17 @@ function IdentityCard ({ identity, loading = false }) {
                       <div className={'IdentityCard__Alias'}>{identity.alias || identity.identifier}</div>
                   </div>
 
-                  <div className={'IdentityCard__Balance'}>{currencyRound(identity.balance)}</div>
+                  <div className={'IdentityCard__Balance'}>
+                    <RateTooltip
+                      dash={creditsToDash(identity.balance)}
+                      usd={typeof rate?.usd === 'number'
+                        ? rate.usd * creditsToDash(identity.balance)
+                        : null
+                      }
+                    >
+                      <span>{currencyRound(identity.balance)}</span>
+                    </RateTooltip>
+                  </div>
               </Flex>
             </InfoCard>
         </Link>
@@ -32,12 +43,12 @@ function IdentityCard ({ identity, loading = false }) {
   )
 }
 
-function IdentitiesCards ({ items }) {
+function IdentitiesCards ({ items, rate }) {
   return (
     !items.error
       ? !items.loading
           ? items?.data?.resultSet?.length
-            ? items.data.resultSet.map((identity, i) => <IdentityCard identity={identity} key={i}/>)
+            ? items.data.resultSet.map((identity, i) => <IdentityCard identity={identity} rate={rate} key={i}/>)
             : <ErrorMessageBlock h={250} text={'Identities not found'}/>
           : Array.from({ length: 3 }, (x, i) => <IdentityCard loading={true} key={i}/>)
       : <ErrorMessageBlock h={250}/>

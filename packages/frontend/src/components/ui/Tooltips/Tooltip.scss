@@ -1,0 +1,26 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.Tooltip {
+  font-family: $font-heading;
+  font-size: 0.75rem;
+  color: #fff;
+
+  &__Title {
+    color: #fff;
+    font-weight: 800;
+    opacity: .6;
+  }
+
+  &--Extended & {
+    &__Title {
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+  }
+
+  &__Content {
+    color: #fff;
+    opacity: .6;
+  }
+}

@@ -22,7 +22,12 @@
     font-size: 1.25rem;
   }
 
-  &__EpochNumber {}
+  &__EpochNumber {
+    @include mixins.TooltipElement();
+    display: flex;
+    align-items: center;
+    width: max-content;
+  }
 
   &__EpochProgress {
     margin-top: 24px;
@@ -52,6 +57,15 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+    }
+  }
+
+  &__TotalCollectedFees {
+    span {
+      @include mixins.TooltipElement();
+      display: flex;
+      align-items: center;
+      width: max-content;
     }
   }
 

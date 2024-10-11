@@ -313,3 +313,24 @@
     box-shadow: 2px 2px $color-brand-normal;
   }
 }
+
+@mixin TooltipElement () {
+  transition: .2s;
+
+  &, .chakra-icon {
+    transition: .2s;
+  }
+
+  .chakra-icon {
+    color: $color-brand-normal;
+  }
+
+  &:hover {
+    color: $color-brand-light;
+    cursor:  default;
+
+    .chakra-icon {
+      color: $color-brand-light;
+    }
+  }
+}

@@ -6,7 +6,7 @@ use sha256::{digest};
 use crate::entities::document::Document;
 use base64::{Engine as _, engine::{general_purpose}};
 use dpp::identifier::Identifier;
-use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
+use dpp::platform_value::string_encoding::Encoding::{Base58};
 use crate::entities::block_header::BlockHeader;
 use crate::entities::data_contract::DataContract;
 use crate::entities::identity::Identity;
@@ -257,6 +257,31 @@ impl PostgresDAO {
         Ok(blocks.first().cloned())
     }
 
+    pub async fn get_document_by_identifier(&self, identifier: Identifier) -> Result<Option<Document>, PoolError> {
+        let client = self.connection_pool.get().await?;
+
+        let stmt = client.prepare_cached("SELECT documents.id, documents.identifier,\
+        data_contracts.identifier,documents.owner,documents.price,\
+        documents.deleted,documents.revision,documents.is_system \
+        FROM documents \
+        LEFT JOIN data_contracts ON data_contracts.id = documents.data_contract_id \
+        WHERE documents.identifier = $1 \
+        ORDER by revision DESC \
+        LIMIT 1;").await.unwrap();
+
+        let rows: Vec<Row> = client.query(&stmt, &[
+            &identifier.to_string(Base58)
+        ]).await.unwrap();
+
+        let documents: Vec<Document> = rows
+            .into_iter()
+            .map(|row| {
+                row.into()
+            }).collect::<Vec<Document>>();
+
+        Ok(documents.first().cloned())
+    }
+
     pub async fn get_owner_by_state_transition_hash(&self, hash: String) -> Result<Option<String>, PoolError> {
         let client = self.connection_pool.get().await?;
 
@@ -361,6 +386,44 @@ impl PostgresDAO {
         ]).await.unwrap();
 
         println!("DataContract {} was verified with the name {}", &data_contract.identifier.to_string(Base58), &name);
+
+        Ok(())
+    }
+
+    pub async fn update_document_price(&self, document: Document) -> Result<(), PoolError> {
+        let client = self.connection_pool.get().await.unwrap();
+
+        let stmt = client.prepare_cached("UPDATE documents set \
+        price = $1, \
+        revision = $2 \
+        WHERE identifier = $3;").await.unwrap();
+
+        client.query(&stmt, &[
+            &(document.price.unwrap() as i64),
+            &(document.revision as i32),
+            &document.identifier.to_string(Base58),
+        ]).await.unwrap();
+
+        println!("Updated price for a document {} to {}", &document.identifier.to_string(Base58), &document.price.unwrap());
+
+        Ok(())
+    }
+
+    pub async fn assign_document(&self, document: Document, owner: Identifier) -> Result<(), PoolError> {
+        let client = self.connection_pool.get().await.unwrap();
+
+        let stmt = client.prepare_cached("UPDATE documents set \
+        owner = $1, \
+        revision = $2 \
+        WHERE identifier = $3;").await.unwrap();
+
+        client.query(&stmt, &[
+            &owner.to_string(Base58),
+            &(document.revision as i32),
+            &document.identifier.to_string(Base58),
+        ]).await.unwrap();
+
+        println!("Reassigned document {} to the {}", &document.identifier.to_string(Base58), &owner.to_string(Base58));
 
         Ok(())
     }
