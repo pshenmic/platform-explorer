@@ -28,9 +28,9 @@ const TimeframeSelector = ({ config, isActive, callback }) => {
 
   return (
     <div className={`TimeframeSelector ${menuIsActive ? 'TimeframeSelector--MenuActive' : ''}`}>
-      
+
       <div className={'TimeframeSelector__Menu TimeframeMenu'}>
-        
+
         <div className={'TimeframeMenu__ValuesContainer'}>
           <div className={'TimeframeMenu__ValuesTitle'}>
             Select a day, period or Timeframe:
