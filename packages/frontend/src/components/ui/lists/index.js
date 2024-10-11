@@ -4,7 +4,9 @@ import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
 import ListColumnsHeader from './ListColumnsHeader'
-import { Credits, Identifier } from '../../../components/data'
+import { Credits, Identifier } from '../../data'
+import { RateTooltip } from '../Tooltips'
+import { creditsToDash } from '../../../util'
 
 function EmptyListMessage ({ children }) {
   return (
@@ -17,9 +19,24 @@ function SimpleListItem ({ item }) {
     ? <Link href={link} className={'SimpleListItem'}>{children}</Link>
     : <div className={'SimpleListItem'}>{children}</div>
 
-  const ValueContainer = ({ format, children }) => {
-    if (format === 'currency') return <Credits>{children}</Credits>
-    if (format === 'identifier') return <Identifier styles={['highlight-both']} copyButton={true}>{children}</Identifier>
+  const ValueContainer = ({ column, children }) => {
+    if (column.format === 'currency') {
+      const credits = Number(column.value)
+
+      return (
+        <RateTooltip
+          dash={creditsToDash(credits)}
+          usd={typeof column?.rate?.usd === 'number'
+            ? column.rate.usd * creditsToDash(credits)
+            : null}
+        >
+          <span>
+            <Credits>{children}</Credits>
+          </span>
+        </RateTooltip>
+      )
+    }
+    if (column.format === 'identifier') return <Identifier styles={['highlight-both']} copyButton={true}>{children}</Identifier>
     return <span>{children}</span>
   }
 
@@ -60,11 +77,11 @@ function SimpleListItem ({ item }) {
                 <div
                   key={key}
                   className={`SimpleListItem__Column ${
-                      column?.mono && 'SimpleListItem__Column--Mono'
+                      column?.mono ? 'SimpleListItem__Column--Mono' : ''
                     } ${
-                      column?.dim && 'SimpleListItem__Column--Dim'
+                      column?.dim ? 'SimpleListItem__Column--Dim' : ''
                     } ${
-                      column?.ellipsis && 'SimpleListItem__Column--Ellipsis'
+                      column?.ellipsis ? 'SimpleListItem__Column--Ellipsis' : ''
                     }`}
                 >
                   {column?.avatar &&
@@ -77,7 +94,7 @@ function SimpleListItem ({ item }) {
                       height={15}
                     />
                   }
-                  <ValueContainer format={column?.format}>{column.value}</ValueContainer>
+                  <ValueContainer column={column} format={column?.format}>{column.value}</ValueContainer>
                 </div>
               )
             }

@@ -1,7 +1,7 @@
 import './Credits.scss'
 
 function Credits ({ children }) {
-  if (!children) return null
+  if (children === undefined) return null
 
   const numberStr = children.toString()
   const parts = numberStr

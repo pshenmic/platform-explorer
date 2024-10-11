@@ -1,9 +1,10 @@
 'use client'
 
-import { Button, Tooltip } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
 import { CopyIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import { copyToClipboard } from '../../../util'
+import { Tooltip } from '../../ui/Tooltips'
 
 const copyMessageSuccess = 'Copied'
 const copyMessageError = 'Copy Failed'
@@ -45,11 +46,11 @@ function CopyButton ({ text, className }) {
         label={messageState.text}
         aria-label={'A tooltip'}
         placement={'top'}
-        hasArrow
         bg={'gray.700'}
         color={'white'}
         isDisabled={!messageState.active}
         isOpen={messageState.active}
+        p={3}
       >
         <CopyIcon w={4} h={4} color={'gray.250'}/>
       </Tooltip>
