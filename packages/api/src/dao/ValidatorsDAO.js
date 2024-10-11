@@ -1,13 +1,24 @@
 const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
+const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
 
 module.exports = class ValidatorsDAO {
   constructor (knex) {
     this.knex = knex
   }
 
-  getValidatorByProTxHash = async (proTxHash, start, end) => {
+  getValidatorByProTxHash = async (proTxHash, identifier, start, end) => {
+    const withdrawlsSubquery = this.knex('state_transitions')
+      .select(
+        'state_transitions.id as state_transition_id',
+        'state_transitions.hash as tx_hash',
+        'state_transitions.block_hash as block_hash'
+      )
+      .where('state_transitions.owner', '=', identifier)
+      .andWhere('state_transitions.type', '=', IDENTITY_CREDIT_WITHDRAWAL)
+      .orderBy('state_transition_id', 'desc')
+
     const validatorsSubquery = this.knex('validators')
       .select(
         'validators.pro_tx_hash as pro_tx_hash',
@@ -69,7 +80,16 @@ module.exports = class ValidatorsDAO {
         'app_version',
         'block_version',
         'total_collected_reward',
-        'total_collected_reward_by_epoch'
+        'total_collected_reward_by_epoch',
+        this.knex.with('alias', withdrawlsSubquery)
+          .count('tx_hash')
+          .from('alias')
+          .as('withdrawls_count'),
+        this.knex.with('alias', withdrawlsSubquery)
+          .select('tx_hash')
+          .from('alias')
+          .limit(1)
+          .as('last_withdrawl')
       )
 
     if (!row) {

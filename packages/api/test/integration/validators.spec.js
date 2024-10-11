@@ -13,6 +13,7 @@ const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableEr
 const DAPI = require('../../src/DAPI')
 const Epoch = require('../../src/models/Epoch')
 const { base58 } = require('@scure/base')
+const { IDENTITY_CREDIT_WITHDRAWAL } = require('../../src/enums/StateTransitionEnum')
 
 describe('Validators routes', () => {
   let app
@@ -24,6 +25,7 @@ describe('Validators routes', () => {
   let inactiveValidators
   let blocks
   let identities
+  let transactions
 
   let dashCoreRpcResponse
 
@@ -40,6 +42,7 @@ describe('Validators routes', () => {
     validators = []
     blocks = []
     identities = []
+    transactions = []
 
     intervals = {
       '1h': 300000,
@@ -120,6 +123,23 @@ describe('Validators routes', () => {
     activeValidators = validators.sort((a, b) => a.id - b.id).slice(0, 30)
     inactiveValidators = validators.sort((a, b) => a.id - b.id).slice(30, 50)
 
+    for (let i = 0; i < 10; i++) {
+      const transaction = await fixtures.transaction(
+        knex,
+        {
+          type: IDENTITY_CREDIT_WITHDRAWAL,
+          block_hash: blocks[i].hash,
+          owner: base58.encode(Buffer.from((
+            (i % 2)
+              ? inactiveValidators
+              : activeValidators)[0].pro_tx_hash,
+          'hex'))
+        }
+      )
+
+      transactions.push(transaction)
+    }
+
     const date = Date.now()
 
     epochInfo = () => [
@@ -180,7 +200,9 @@ describe('Validators routes', () => {
         epochReward: 0,
         identity: identity.identifier,
         identityBalance: 0,
-        epochInfo: { ...fullEpochInfo }
+        epochInfo: { ...fullEpochInfo },
+        withdrawlsCount: 5,
+        lastWithdrawl: transactions[transactions.length - 1].hash
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -226,7 +248,9 @@ describe('Validators routes', () => {
         epochReward: 0,
         identity: identity.identifier,
         identityBalance: 0,
-        epochInfo: { ...fullEpochInfo }
+        epochInfo: { ...fullEpochInfo },
+        withdrawlsCount: 5,
+        lastWithdrawl: transactions[transactions.length - 2].hash
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -286,7 +310,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -339,7 +365,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -391,7 +419,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -447,7 +477,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -499,7 +531,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -553,7 +587,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -605,7 +641,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -674,7 +712,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -726,7 +766,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -778,7 +820,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -830,7 +874,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -882,7 +928,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -935,7 +983,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -987,7 +1037,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -1044,7 +1096,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -1085,7 +1139,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -1125,7 +1181,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -1165,7 +1223,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -1205,7 +1265,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -1258,7 +1320,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 
@@ -1310,7 +1374,9 @@ describe('Validators routes', () => {
               epochReward: 0,
               identity: identity.identifier,
               identityBalance: 0,
-              epochInfo: { ...fullEpochInfo }
+              epochInfo: { ...fullEpochInfo },
+              withdrawlsCount: null,
+              lastWithdrawl: null
             }
           })
 

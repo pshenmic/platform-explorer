@@ -7,10 +7,12 @@ const { isConnectable } = require('../utils')
 const ConnectionData = require('../models/ConnectionData')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
+const IdentitiesDAO = require('../dao/IdentitiesDAO')
 
 class ValidatorsController {
   constructor (knex, dapi) {
     this.validatorsDAO = new ValidatorsDAO(knex)
+    this.identityDAO = new IdentitiesDAO(knex)
     this.dapi = dapi
   }
 
@@ -20,7 +22,10 @@ class ValidatorsController {
     const [currentEpoch] = await this.dapi.getEpochsInfo(1)
     const epoch = Epoch.fromObject(currentEpoch)
 
-    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash, epoch.startTime, epoch.endTime)
+    const validatorIdentifier = base58.encode(Buffer.from(hash, 'hex'))
+    const validatorBalance = await this.dapi.getIdentityBalance(validatorIdentifier)
+
+    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash, validatorIdentifier, epoch.startTime, epoch.endTime)
 
     if (!validator) {
       return response.status(404).send({ message: 'not found' })
@@ -41,9 +46,6 @@ class ValidatorsController {
         p2pResponse: null
       })
 
-    const validatorIdentifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
-    const validatorBalance = await this.dapi.getIdentityBalance(validatorIdentifier)
-
     response.send(
       new Validator(
         validator.proTxHash,
@@ -59,6 +61,8 @@ class ValidatorsController {
         }),
         validator.totalReward,
         validator.epochReward,
+        validator.withdrawlsCount,
+        validator.lastWithdrawl,
         validatorIdentifier,
         validatorBalance,
         epoch
@@ -103,6 +107,8 @@ class ValidatorsController {
             ProTxInfo.fromObject(validator.proTxInfo),
             validator.totalReward,
             validator.epochReward,
+            null,
+            null,
             validatorIdentifier,
             validatorBalance,
             epoch
