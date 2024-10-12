@@ -1,8 +1,7 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
-const {VALIDATOR_TIMEOUT} = require('./constants')
-const ConnectionData = require('./models/ConnectionData')
+const {TCP_CONNECT_TIMEOUT} = require('./constants')
 
 const getKnex = () => {
   return require('knex')({
@@ -104,55 +103,34 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-const tryToConnect = (port, host) => {
+const checkTcpConnect = (port, host) => {
   return new Promise((resolve) => {
     let connection
     try {
       connection = net.createConnection(port, host)
 
-      connection.setTimeout(VALIDATOR_TIMEOUT)
+      connection.setTimeout(TCP_CONNECT_TIMEOUT)
 
-      connection.once('error', async () => {
+      connection.once('error', async (e) => {
         await connection.destroy()
-        resolve(false)
+        resolve('ERR_CONNECTION_REFUSED')
       })
 
       connection.once('connect', async () => {
         await connection.destroy()
-        resolve(true)
+        resolve('OK')
       })
 
       connection.once('timeout', async () => {
         await connection.destroy()
-        resolve(false)
+        resolve('ERR_CONNECTION_REFUSED')
       })
     } catch (e) {
       console.error('e')
       connection.destroy()
-      resolve(false)
+      resolve('ERROR')
     }
   })
 }
 
-const isConnectable = async ({service, platformP2PPort, platformHTTPPort}) => {
-  let serviceConnectable = false
-  let p2pConnectable = false
-  let httpConnectable = false
-
-  try {
-    const [host] = service.match(/^\d+\.\d+\.\d+\.\d+/)
-    const [servicePort] = service.match(/\d+$/)
-
-    serviceConnectable = await tryToConnect(servicePort, host)
-
-    p2pConnectable = await tryToConnect(platformP2PPort, host)
-
-    httpConnectable = await tryToConnect(platformHTTPPort, host)
-  } catch (error) {
-    console.error(error)
-  }
-
-  return ConnectionData.fromObject({serviceConnectable, p2pConnectable, httpConnectable})
-}
-
-module.exports = {hash, decodeStateTransition, getKnex, isConnectable, tryToConnect}
+module.exports = {hash, decodeStateTransition, getKnex, checkTcpConnect}
