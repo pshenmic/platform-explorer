@@ -117,8 +117,28 @@ describe('Utils', () => {
       assert.deepEqual(decoded, {
         type: 8,
         contestedResourcesVotePoll: [
-          'dash', 'test111'
+          Buffer.from([
+            18,
+            4,
+            100,
+            97,
+            115,
+            104
+          ]),
+          Buffer.from([
+            18,
+            8,
+            116,
+            101,
+            115,
+            116,
+            48,
+            49,
+            48,
+            48
+          ])
         ],
+        contractId: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
         modifiedDataIds: [
           '2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9'
         ],
