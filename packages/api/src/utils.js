@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
-const { VALIDATOR_TIMEOUT } = require('./constants')
+const {VALIDATOR_TIMEOUT} = require('./constants')
 const ConnectionData = require('./models/ConnectionData')
 
 const getKnex = () => {
@@ -13,7 +13,7 @@ const getKnex = () => {
       user: process.env.POSTGRES_USER,
       database: process.env.POSTGRES_DB,
       password: process.env.POSTGRES_PASS,
-      ssl: process.env.POSTGRES_SSL ? { rejectUnauthorized: false } : false
+      ssl: process.env.POSTGRES_SSL ? {rejectUnauthorized: false} : false
     }
   })
 }
@@ -90,7 +90,7 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.MASTERNODE_VOTE: {
-      decoded.contestedResourcesVotePoll = stateTransition.getContestedDocumentResourceVotePoll().indexValues
+      decoded.contestedResourcesVotePoll = stateTransition.getContestedDocumentResourceVotePoll().indexValues.map(buff => buff.toString('base64'))
       decoded.contractId = stateTransition.getContestedDocumentResourceVotePoll().contractId.toString()
       decoded.modifiedDataIds = stateTransition.getModifiedDataIds().map(identifier => identifier.toString())
       decoded.ownerId = stateTransition.getOwnerId().toString()
@@ -134,7 +134,7 @@ const tryToConnect = (port, host) => {
   })
 }
 
-const isConnectable = async ({ service, platformP2PPort, platformHTTPPort }) => {
+const isConnectable = async ({service, platformP2PPort, platformHTTPPort}) => {
   let serviceConnectable = false
   let p2pConnectable = false
   let httpConnectable = false
@@ -152,7 +152,7 @@ const isConnectable = async ({ service, platformP2PPort, platformHTTPPort }) => 
     console.error(error)
   }
 
-  return ConnectionData.fromObject({ serviceConnectable, p2pConnectable, httpConnectable })
+  return ConnectionData.fromObject({serviceConnectable, p2pConnectable, httpConnectable})
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, isConnectable, tryToConnect }
+module.exports = {hash, decodeStateTransition, getKnex, isConnectable, tryToConnect}
