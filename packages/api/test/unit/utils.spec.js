@@ -117,8 +117,8 @@ describe('Utils', () => {
       assert.deepEqual(decoded, {
         type: 8,
         contestedResourcesVotePoll: [
-          "EgRkYXNo",
-          "Egh0ZXN0MDEwMA=="
+          'EgRkYXNo',
+          'Egh0ZXN0MDEwMA=='
         ],
         contractId: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
         modifiedDataIds: [
