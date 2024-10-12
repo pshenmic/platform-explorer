@@ -31,20 +31,14 @@ module.exports = ({
       handler: rateController.getUSDRate
     },
     {
-      path: '/epoch/:index',
+      path: '/epoch',
       method: 'GET',
       handler: epochController.getEpochByIndex,
       schema: {
-        params: {
-          type: 'object',
-          properties: {
-            index: { type: ['number', 'null'], minimum: 0 }
-          }
-        },
         querystring: {
           type: 'object',
           properties: {
-            ascending: { type: ['boolean', 'null'] }
+            index: { type: ['number', 'null'], minimum: 0 }
           }
         }
       }
