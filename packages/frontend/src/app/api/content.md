@@ -29,7 +29,7 @@ Reference:
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
-* [Rate](#rate)
+* [Rate](#rates)
 
 ### Status
 Returns basic stats and epoch info
@@ -511,7 +511,8 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     totalTransfers: 0,
     totalDocuments: 0,
     totalDataContracts: 0,
-    isSystem: false
+    isSystem: false,
+    alias: "test.dash"
 }
 ```
 Response codes:
@@ -573,7 +574,8 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
         totalTransfers: 0,
         totalDocuments: 0,
         totalDataContracts: 0,
-        isSystem: false
+        isSystem: false,
+        alias: "test.dash"
     }, ...
     ]
 }
