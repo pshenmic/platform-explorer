@@ -210,6 +210,53 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, validators.length)
+        assert.equal(body.resultSet.length, 10)
+
+        const expectedValidators = validators
+          .slice(0, 10)
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
+            }
+          })
+
+        assert.deepEqual(body.resultSet, expectedValidators)
+      })
+
+      it('should return all validators', async () => {
+        const { body } = await client.get('/validators?limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.pagination.page, 1)
+        assert.equal(body.pagination.total, validators.length)
         assert.equal(body.resultSet.length, validators.length)
 
         const expectedValidators = validators
@@ -256,10 +303,11 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, validators.length)
-        assert.equal(body.resultSet.length, validators.length)
+        assert.equal(body.resultSet.length, 10)
 
         const expectedValidators = validators
           .toReversed()
+          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -566,6 +614,53 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, activeValidators.length)
+        assert.equal(body.resultSet.length, 10)
+
+        const expectedValidators = activeValidators
+          .slice(0, 10)
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: true,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
+            }
+          })
+
+        assert.deepEqual(body.resultSet, expectedValidators)
+      })
+
+      it('should return all validators', async () => {
+        const { body } = await client.get('/validators?isActive=true&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.pagination.page, 1)
+        assert.equal(body.pagination.total, activeValidators.length)
         assert.equal(body.resultSet.length, activeValidators.length)
 
         const expectedValidators = activeValidators
@@ -612,10 +707,11 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, activeValidators.length)
-        assert.equal(body.resultSet.length, activeValidators.length)
+        assert.equal(body.resultSet.length, 10)
 
         const expectedValidators = activeValidators
           .toReversed()
+          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
@@ -917,6 +1013,41 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, inactiveValidators.length)
+        assert.equal(body.resultSet.length, 10)
+
+        const expectedValidators = inactiveValidators
+          .slice(0, 10)
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: false,
+              proposedBlocksAmount: 0,
+              lastProposedBlockHeader: null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              identity: identity.identifier
+            }
+          })
+
+        assert.deepEqual(body.resultSet, expectedValidators)
+      })
+
+      it('should return all validators', async () => {
+        const { body } = await client.get('/validators?isActive=false&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.pagination.page, 1)
+        assert.equal(body.pagination.total, inactiveValidators.length)
         assert.equal(body.resultSet.length, inactiveValidators.length)
 
         const expectedValidators = inactiveValidators
@@ -951,10 +1082,11 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, inactiveValidators.length)
-        assert.equal(body.resultSet.length, inactiveValidators.length)
+        assert.equal(body.resultSet.length, 10)
 
         const expectedValidators = inactiveValidators
           .toReversed()
+          .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
               identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
