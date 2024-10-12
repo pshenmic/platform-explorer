@@ -80,7 +80,7 @@ describe('Epoch routes', () => {
 
   describe('getEpochInfo()', async () => {
     it('should return current epoch data', async () => {
-      const { body } = await client.get('/epoch/0')
+      const { body } = await client.get('/epoch?index=0')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -105,7 +105,7 @@ describe('Epoch routes', () => {
       mock.method(DAPI.prototype, 'getEpochsInfo', () => {
         throw new Error()
       })
-      await client.get('/epoch/10000000000000000000')
+      await client.get('/epoch?index=10000000000000000000')
         .expect(400)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
