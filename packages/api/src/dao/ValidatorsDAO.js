@@ -9,7 +9,7 @@ module.exports = class ValidatorsDAO {
   }
 
   getValidatorByProTxHash = async (proTxHash, identifier, start, end) => {
-    const withdrawlsSubquery = this.knex('state_transitions')
+    const withdrawalsSubquery = this.knex('state_transitions')
       .select(
         'state_transitions.id as state_transition_id',
         'state_transitions.hash as tx_hash',
@@ -81,15 +81,15 @@ module.exports = class ValidatorsDAO {
         'block_version',
         'total_collected_reward',
         'total_collected_reward_by_epoch',
-        this.knex.with('alias', withdrawlsSubquery)
+        this.knex.with('alias', withdrawalsSubquery)
           .count('tx_hash')
           .from('alias')
-          .as('withdrawls_count'),
-        this.knex.with('alias', withdrawlsSubquery)
+          .as('withdrawals_count'),
+        this.knex.with('alias', withdrawalsSubquery)
           .select('tx_hash')
           .from('alias')
           .limit(1)
-          .as('last_withdrawl')
+          .as('last_withdrawal')
       )
 
     if (!row) {

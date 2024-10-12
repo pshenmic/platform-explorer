@@ -245,8 +245,8 @@ GET /validators
       },
       totalReward: 0,
       epochReward: 0,
-      withdrawlsCount: null,
-      lastWithdrawl: null
+      withdrawalsCount: null,
+      lastWithdrawal: null
     }, ...
   ],
   pagination: { 
@@ -319,8 +319,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
   },
   totalReward: 0,
   epochReward: 0,
-  withdrawlsCount: 1,
-  lastWithdrawl: "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047"
+  withdrawalsCount: 1,
+  lastWithdrawal: "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047"
 }
 ```
 ---
