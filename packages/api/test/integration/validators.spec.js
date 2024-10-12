@@ -210,7 +210,7 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, validators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.pagination.limit, 10)
 
         const expectedValidators = validators
           .slice(0, 10)
@@ -303,7 +303,7 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, validators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.pagination.limit, 10)
 
         const expectedValidators = validators
           .toReversed()
@@ -352,7 +352,7 @@ describe('Validators routes', () => {
         assert.equal(body.pagination.page, 2)
         assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, validators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.pagination.limit, 10)
 
         const expectedValidators = validators
           .slice(10, 20)
@@ -614,7 +614,7 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, activeValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.pagination.limit, 10)
 
         const expectedValidators = activeValidators
           .slice(0, 10)
@@ -707,7 +707,7 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, activeValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.pagination.limit, 10)
 
         const expectedValidators = activeValidators
           .toReversed()
@@ -756,7 +756,7 @@ describe('Validators routes', () => {
         assert.equal(body.pagination.page, 2)
         assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, activeValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.pagination.limit, 10)
 
         const expectedValidators = activeValidators
           .slice(10, 20)
@@ -1013,7 +1013,7 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, inactiveValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.pagination.limit, 10)
 
         const expectedValidators = inactiveValidators
           .slice(0, 10)
@@ -1082,7 +1082,7 @@ describe('Validators routes', () => {
 
         assert.equal(body.pagination.page, 1)
         assert.equal(body.pagination.total, inactiveValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.pagination.limit, 10)
 
         const expectedValidators = inactiveValidators
           .toReversed()
@@ -1119,7 +1119,7 @@ describe('Validators routes', () => {
         assert.equal(body.pagination.page, 2)
         assert.equal(body.pagination.limit, 10)
         assert.equal(body.pagination.total, inactiveValidators.length)
-        assert.equal(body.resultSet.length, 10)
+        assert.equal(body.pagination.limit, 10)
 
         const expectedValidators = inactiveValidators
           .slice(10, 20)
