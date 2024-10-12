@@ -347,7 +347,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?limit=10&page=2')
+        const { body } = await client.get('/validators?page=2')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -593,7 +593,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const { body } = await client.get('/validators?limit=10&page=6')
+        const { body } = await client.get('/validators?page=6')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -753,7 +753,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?limit=10&page=2&isActive=true')
+        const { body } = await client.get('/validators?page=2&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -994,7 +994,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const { body } = await client.get('/validators?limit=10&page=4&isActive=true')
+        const { body } = await client.get('/validators?page=4&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1118,7 +1118,7 @@ describe('Validators routes', () => {
       })
 
       it('should be able to walk through pages', async () => {
-        const { body } = await client.get('/validators?limit=10&page=2&isActive=false')
+        const { body } = await client.get('/validators?page=2&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1323,7 +1323,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const { body } = await client.get('/validators?limit=10&page=4&isActive=false')
+        const { body } = await client.get('/validators?page=4&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
