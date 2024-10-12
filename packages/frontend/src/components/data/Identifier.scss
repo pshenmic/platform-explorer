@@ -1,0 +1,40 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.Identifier {
+  display: flex;
+  align-items: center;
+  font-family: $font-mono;
+  font-size: 0.75rem;
+  overflow: hidden;
+  font-weight: 400;
+
+  &--Ellipsis & {
+    &__SymbolsContainer {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__SymbolsContainer {
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__Symbols {
+    color: #fff;
+
+    &--Dim {
+      color: var(--chakra-colors-gray-250);
+    }
+  }
+
+  &__Avatar {
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+
+  &__CopyButton {
+    margin-left: 4px;
+  }
+}

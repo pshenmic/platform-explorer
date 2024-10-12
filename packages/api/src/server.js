@@ -17,6 +17,8 @@ const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./DAPI')
 const DAPIClient = require('@dashevo/dapi-client')
+const RateController = require('./controllers/RateController')
+const { default: loadWasmDpp } = require('@dashevo/wasm-dpp')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -44,6 +46,8 @@ let dapi
 module.exports = {
   start: async () => {
     client = new Dash.Client()
+
+    await loadWasmDpp()
 
     await client.platform.initialize()
 
@@ -80,6 +84,7 @@ module.exports = {
     const documentsController = new DocumentsController(knex)
     const identitiesController = new IdentitiesController(knex, dapi)
     const validatorsController = new ValidatorsController(knex)
+    const rateController = new RateController()
 
     Routes({
       fastify,
@@ -90,7 +95,8 @@ module.exports = {
       dataContractsController,
       documentsController,
       identitiesController,
-      validatorsController
+      validatorsController,
+      rateController
     })
 
     fastify.setErrorHandler(errorHandler)

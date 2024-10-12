@@ -29,6 +29,7 @@ Reference:
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
+* [Rate](#rate)
 
 ### Status
 Returns basic stats and epoch info
@@ -52,6 +53,7 @@ HTTP /status
     },
     identitiesCount: 12,
     totalCredits: 100000,
+    totalCollectedFeesDay: 167703567170,
     transactionsCount: 3,
     transfersCount: 0,
     dataContractsCount: 1,
@@ -742,4 +744,19 @@ Response codes:
 200: OK
 400: Invalid input, check timespan value
 500: Internal Server Error
+```
+### Rate
+Return a rate DASH to USD
+```
+GET /rate
+{
+    usd: 24.45,
+    source: "Kucoin"
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
 ```

@@ -25,6 +25,7 @@ describe('Other routes', () => {
   let dataContractTransaction
   let dataContract
   let documentTransaction
+  let transactions
 
   before(async () => {
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
@@ -51,6 +52,7 @@ describe('Other routes', () => {
 
     knex = getKnex()
     blocks = []
+    transactions = []
 
     await fixtures.cleanup(knex)
 
@@ -99,11 +101,31 @@ describe('Other routes', () => {
       data_contract_id: dataContract.id
     })
 
+    transactions.push(identityTransaction.hash)
+    transactions.push(dataContractTransaction.hash)
+    transactions.push(documentTransaction.hash)
+
     // prepare for get status
 
     for (let i = 1; i < 10; i++) {
-      const newBlock = await fixtures.block(knex, { height: i + 1, timestamp: new Date(block.timestamp.getTime() + blockDiffTime * i) })
+      const newBlock = await fixtures.block(knex, {
+        height: i + 1,
+        timestamp: new Date(block.timestamp.getTime() + blockDiffTime * i)
+      })
       blocks.push(newBlock)
+    }
+
+    for (let i = 0; i < 48; i++) {
+      const tmpBlock = await fixtures.block(knex, {
+        timestamp: new Date(new Date().getTime() - 3600000 * i)
+      })
+      const transaction = await fixtures.transaction(knex, {
+        block_hash: tmpBlock.hash,
+        type: 0,
+        owner: identity.identifier,
+        gas_used: 10000
+      })
+      transactions.push(transaction.hash)
     }
   })
 
@@ -170,7 +192,7 @@ describe('Other routes', () => {
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator
         },
-        txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
+        txs: transactions
       }
 
       assert.deepEqual({ block: expectedBlock }, body)
@@ -209,7 +231,7 @@ describe('Other routes', () => {
         balance: 0,
         timestamp: block.timestamp.toISOString(),
         txHash: identityTransaction.hash,
-        totalTxs: 3,
+        totalTxs: 51,
         totalTransfers: 0,
         totalDocuments: 1,
         totalDataContracts: 1,
@@ -231,7 +253,7 @@ describe('Other routes', () => {
         balance: 0,
         timestamp: block.timestamp.toISOString(),
         txHash: identityTransaction.hash,
-        totalTxs: 3,
+        totalTxs: 51,
         totalTransfers: 0,
         totalDocuments: 1,
         totalDataContracts: 1,
@@ -286,8 +308,9 @@ describe('Other routes', () => {
           endTime: null
         },
         identitiesCount: 1,
-        transactionsCount: 3,
+        transactionsCount: 51,
         totalCredits: 0,
+        totalCollectedFeesDay: 240000,
         transfersCount: 0,
         dataContractsCount: 1,
         documentsCount: 1,
