@@ -319,27 +319,36 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     operatorReward: 0,
     confirmations: 214424,
     state: {
-        version: 2,
-        service: "35.164.23.245:19999",
-        registeredHeight: 850334,
-        lastPaidHeight: 1064721,
-        consecutivePayments: 0,
-        PoSePenalty: 0,
-        PoSeRevivedHeight: 1027671,
-        PoSeBanHeight: -1,
-        revocationReason: 0,
-        ownerAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-        votingAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-        platformNodeID: "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
-        platformP2PPort: 36656,
-        platformHTTPPort: 1443,
-        payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-        pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730",
-        connectionInfo: {
-            httpConnectable: false,
-            p2pConnectable: false,
-            serviceConnectable: false
+      version: 2,
+      service: "35.164.23.245:19999",
+      registeredHeight: 850334,
+      lastPaidHeight: 1064721,
+      consecutivePayments: 0,
+      PoSePenalty: 0,
+      PoSeRevivedHeight: 1027671,
+      PoSeBanHeight: -1,
+      revocationReason: 0,
+      ownerAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+      votingAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+      platformNodeID: "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
+      platformP2PPort: 36656,
+      platformHTTPPort: 1443,
+      payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+      pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730",
+      endpoints: {
+        coreP2P: {
+          host: "35.165.50.126:19999",
+          status: "ERROR"
+        },
+        platformP2P: {
+          host: "35.165.50.126:36656",
+          status: "ERROR"
+        },
+        platformGrpc: {
+          host: "35.165.50.126:1443",
+          status: "ERROR"
         }
+      }
     }
   },
   identifier: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",

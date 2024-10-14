@@ -126,7 +126,7 @@ const checkTcpConnect = (port, host) => {
         resolve('ERR_CONNECTION_REFUSED')
       })
     } catch (e) {
-      console.error('e')
+      console.error(e)
       connection.destroy()
       resolve('ERROR')
     }
