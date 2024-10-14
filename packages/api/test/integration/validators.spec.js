@@ -27,6 +27,8 @@ describe('Validators routes', () => {
   let identities
   let transactions
 
+  let timestamp
+
   let dashCoreRpcResponse
 
   let intervals
@@ -43,6 +45,7 @@ describe('Validators routes', () => {
     blocks = []
     identities = []
     transactions = []
+    timestamp = new Date()
 
     intervals = {
       '1h': 300000,
@@ -114,7 +117,11 @@ describe('Validators routes', () => {
     for (let i = 1; i <= 50; i++) {
       const block = await fixtures.block(
         knex,
-        { validator: validators[i % 30].pro_tx_hash, height: i }
+        {
+          validator: validators[i % 30].pro_tx_hash,
+          height: i,
+          timestamp
+        }
       )
 
       blocks.push(block)
@@ -211,7 +218,8 @@ describe('Validators routes', () => {
         identityBalance: 0,
         epochInfo: { ...fullEpochInfo },
         withdrawalsCount: 5,
-        lastWithdrawal: transactions[transactions.length - 1].hash
+        lastWithdrawal: transactions[transactions.length - 1].hash,
+        lastWithdrawalTime: timestamp.toISOString()
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -259,7 +267,8 @@ describe('Validators routes', () => {
         identityBalance: 0,
         epochInfo: { ...fullEpochInfo },
         withdrawalsCount: 5,
-        lastWithdrawal: transactions[transactions.length - 2].hash
+        lastWithdrawal: transactions[transactions.length - 2].hash,
+        lastWithdrawalTime: timestamp.toISOString()
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -321,7 +330,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -376,7 +386,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -430,7 +441,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -488,7 +500,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -542,7 +555,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -598,7 +612,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -652,7 +667,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -723,7 +739,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -777,7 +794,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -831,7 +849,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -885,7 +904,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -939,7 +959,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -994,7 +1015,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -1048,7 +1070,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -1107,7 +1130,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -1150,7 +1174,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -1192,7 +1217,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -1234,7 +1260,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -1276,7 +1303,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -1331,7 +1359,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -1385,7 +1414,8 @@ describe('Validators routes', () => {
               identityBalance: 0,
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
-              lastWithdrawal: null
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 

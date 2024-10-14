@@ -14,6 +14,7 @@ module.exports = class Validator {
   epochReward
   withdrawalsCount
   lastWithdrawal
+  lastWithdrawalTime
 
   constructor (
     proTxHash,
@@ -25,6 +26,7 @@ module.exports = class Validator {
     epochReward,
     withdrawalsCount,
     lastWithdrawal,
+    lastWithdrawalTime,
     identifier,
     identityBalance,
     epochInfo
@@ -41,6 +43,7 @@ module.exports = class Validator {
     this.epochReward = epochReward ?? null
     this.withdrawalsCount = withdrawalsCount ?? null
     this.lastWithdrawal = lastWithdrawal ?? null
+    this.lastWithdrawalTime = lastWithdrawalTime ?? null
   }
 
   static fromRow ({
@@ -56,7 +59,8 @@ module.exports = class Validator {
     total_collected_reward,
     total_collected_reward_by_epoch,
     withdrawals_count,
-    last_withdrawal
+    last_withdrawal,
+    last_withdrawal_time
   }) {
     return new Validator(
       pro_tx_hash,
@@ -77,7 +81,8 @@ module.exports = class Validator {
       Number(total_collected_reward),
       Number(total_collected_reward_by_epoch),
       Number(withdrawals_count),
-      last_withdrawal
+      last_withdrawal,
+      last_withdrawal_time
     )
   }
 
@@ -91,6 +96,7 @@ module.exports = class Validator {
     epochReward,
     withdrawalsCount,
     lastWithdrawal,
+    lastWithdrawalTime,
     identifier,
     identityBalance,
     epochInfo
@@ -105,6 +111,7 @@ module.exports = class Validator {
       epochReward,
       withdrawalsCount,
       lastWithdrawal,
+      lastWithdrawalTime,
       identifier,
       identityBalance,
       epochInfo

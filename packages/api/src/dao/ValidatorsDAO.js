@@ -81,15 +81,21 @@ module.exports = class ValidatorsDAO {
         'block_version',
         'total_collected_reward',
         'total_collected_reward_by_epoch',
-        this.knex.with('alias', withdrawalsSubquery)
+        this.knex.with('subquery_alias', withdrawalsSubquery)
           .count('tx_hash')
-          .from('alias')
+          .from('subquery_alias')
           .as('withdrawals_count'),
-        this.knex.with('alias', withdrawalsSubquery)
+        this.knex.with('subquery_alias', withdrawalsSubquery)
           .select('tx_hash')
-          .from('alias')
+          .from('subquery_alias')
           .limit(1)
-          .as('last_withdrawal')
+          .as('last_withdrawal'),
+        this.knex.with('subquery_alias', withdrawalsSubquery)
+          .select('blocks.timestamp')
+          .from('subquery_alias')
+          .limit(1)
+          .leftJoin('blocks', 'blocks.hash', 'subquery_alias.block_hash')
+          .as('last_withdrawal_time')
       )
 
     if (!row) {
