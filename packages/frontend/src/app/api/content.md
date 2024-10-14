@@ -29,7 +29,7 @@ Reference:
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
-* [Rate](#rates)
+* [Rate](#rate)
 
 ### Status
 Returns basic stats and epoch info
