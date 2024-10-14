@@ -46,6 +46,7 @@
 }
 
 @mixin defListTitles {
+  display: grid;
   padding: 7px 12px;
   border-radius: 10px;
   background-color: var(--chakra-colors-gray-800);
