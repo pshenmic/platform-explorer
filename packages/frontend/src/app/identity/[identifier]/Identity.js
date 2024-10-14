@@ -139,6 +139,16 @@ function Identity ({ identifier }) {
                                         </LoadingLine>
                                     </Td>
                                 </Tr>
+                                {identity?.alias &&
+                                  <Tr>
+                                    <Td w={tdTitleWidth}>Name</Td>
+                                    <Td isNumeric className={'Table__Cell--BreakWord'}>
+                                      <LoadingLine loading={identity.loading}>
+                                        {identity.alias}
+                                      </LoadingLine>
+                                    </Td>
+                                  </Tr>
+                                }
                                 <Tr>
                                     <Td w={tdTitleWidth}>Balance</Td>
                                     <Td isNumeric>
