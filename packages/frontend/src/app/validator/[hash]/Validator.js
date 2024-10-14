@@ -16,6 +16,7 @@ import { ValueContainer, PageDataContainer, InfoContainer } from '../../../compo
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
 import { CircleIcon } from '../../../components/ui/icons'
+import { getTimeDelta } from '../../../util'
 import './ValidatorPage.scss'
 import {
   Container,
@@ -33,6 +34,7 @@ import {
 
 function Validator ({ hash }) {
   const [validator, setValidator] = useState({ data: {}, loading: true, error: false })
+  const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [proposedBlocks, setProposedBlocks] = useState({ data: {}, loading: true, error: false })
   const [totalBlocks, setTotalBlocks] = useState(1)
   // const tdTitleWidth = 250
@@ -55,7 +57,15 @@ function Validator ({ hash }) {
         setTotalBlocks(res?.pagination?.total)
       })
       .catch(err => fetchHandlerError(setProposedBlocks, err))
+
+    Api.getStatus()
+      .then(res => fetchHandlerSuccess(setStatus, res))
+      .catch(err => fetchHandlerError(setStatus, err))
+
+    
   }
+
+  console.log('status', status)
 
   // useEffect(() => fetchData(paginateConfig.defaultPage, paginateConfig.pageSize.default), [hash])
   useEffect(() => fetchData(1, pageSize), [hash])
@@ -91,7 +101,6 @@ function Validator ({ hash }) {
                   <Endpoint
                     value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
                     status={'active'}
-                    link={'https://192.168.0.1'}
                   />
                 )}
                 loading={validator.loading}
@@ -114,6 +123,7 @@ function Validator ({ hash }) {
                   <Endpoint
                     value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
                     status={'active'}
+                    link={'https://192.168.0.1:9999'}
                   />
                 )}
                 loading={validator.loading}
@@ -138,13 +148,16 @@ function Validator ({ hash }) {
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Epoch'}
-                value={'#1343'}
-                loading={validator.loading}
+                value={status.data?.epoch?.number ? `#${status.data?.epoch?.number}` : 'n/a'}
+                loading={status.loading}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Next epoch starts in'}
-                value={'10d:5h:13m'}
+                value={status.data?.epoch?.endTime
+                  ? getTimeDelta(new Date(), new Date(status.data?.epoch?.endTime), 'detailed')
+                  : 'n/a'
+                }
                 loading={validator.loading}
               />
               <InfoLine
@@ -155,7 +168,7 @@ function Validator ({ hash }) {
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
-                title={'Rewards This Epoch'}
+                title={'Total Rewards Earned'}
                 value={'825,280'}
                 loading={validator.loading}
               />
