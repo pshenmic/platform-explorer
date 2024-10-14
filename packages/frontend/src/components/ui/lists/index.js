@@ -87,7 +87,7 @@ function SimpleListItem ({ item }) {
                   {column?.avatar &&
                     <ImageGenerator
                       className={'SimpleListItem__Avatar'}
-                      username={column.value}
+                      username={column.avatarSource || column.value}
                       lightness={50}
                       saturation={50}
                       width={15}
