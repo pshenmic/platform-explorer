@@ -197,6 +197,20 @@ module.exports = ({
       }
     },
     {
+      path: '/identity/:identifier/withdrawals',
+      method: 'GET',
+      handler: identitiesController.getWithdrawalsByIdentity,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' },
+        params: {
+          type: 'object',
+          properties: {
+            validator: { $ref: 'hash#' }
+          }
+        }
+      }
+    },
+    {
       path: '/identity/:identifier/dataContracts',
       method: 'GET',
       handler: identitiesController.getDataContractsByIdentity,
