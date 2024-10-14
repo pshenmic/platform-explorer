@@ -79,8 +79,8 @@ const getEpoch = (identifier) => {
   return call(`epoch/${identifier}`, 'GET')
 }
 
-const getTransactionsByIdentity = (identifier) => {
-  return call(`identity/${identifier}/transactions`, 'GET')
+const getTransactionsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
+  return call(`identity/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getDataContractsByIdentity = (identifier) => {
@@ -91,8 +91,8 @@ const getDocumentsByIdentity = (identifier) => {
   return call(`identity/${identifier}/documents`, 'GET')
 }
 
-const getTransfersByIdentity = (identifier) => {
-  return call(`identity/${identifier}/transfers`, 'GET')
+const getTransfersByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
+  return call(`identity/${identifier}/transfers?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getIdentity = (identifier) => {
