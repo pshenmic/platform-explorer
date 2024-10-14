@@ -5,6 +5,7 @@ import * as Api from '../../../util/Api'
 import { Button } from '@chakra-ui/react'
 import { CalendarIcon } from './../../../components/ui/icons'
 import './TimeframeSelector.scss'
+import './TabsChart.scss'
 
 const chartConfig = {
   timespan: {
@@ -13,21 +14,25 @@ const chartConfig = {
   }
 }
 
-const TimeframeSelector = ({ config, isActive, callback }) => {
+const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback }) => {
   const [timespan, setTimespan] = useState(chartConfig.timespan.default)
-  const [menuIsActive, setMenuIsActive] = useState(false)
+  const [menuIsOpen, setMenuIsOpen] = useState(false)
 
   const changeHandler = (value) => {
     setTimespan(value)
-    if (typeof callback === 'function') callback(value)
+    if (typeof changeCallback === 'function') changeCallback(value)
   }
 
   useEffect(() => {
-    if (!isActive) setMenuIsActive(false)
+    if (!isActive) setMenuIsOpen(false)
   }, [isActive])
 
+  useEffect(() => {
+    if (typeof openStateCallback === 'function') openStateCallback(menuIsOpen)
+  }, [menuIsOpen])
+
   return (
-    <div className={`TimeframeSelector ${menuIsActive ? 'TimeframeSelector--MenuActive' : ''}`}>
+    <div className={`TimeframeSelector ${menuIsOpen ? 'TimeframeSelector--MenuActive' : ''}`}>
 
       <div className={'TimeframeSelector__Menu TimeframeMenu'}>
 
@@ -39,10 +44,10 @@ const TimeframeSelector = ({ config, isActive, callback }) => {
           <div className={'TimeframeMenu__Values'}>
             {config.timespan.values.map(iTimespan => (
               <Button
-                className={'TimeframeMenu__ValueButton'}
+                className={`TimeframeMenu__ValueButton ${iTimespan === timespan ? 'TimeframeMenu__ValueButton--Active' : ''}`}
                 onClick={() => {
                   changeHandler(iTimespan)
-                  setMenuIsActive(false)
+                  setMenuIsOpen(false)
                 }}
                 key={iTimespan}
                 size={'xs'}
@@ -60,8 +65,8 @@ const TimeframeSelector = ({ config, isActive, callback }) => {
       </div>
 
       <Button
-        className={`TimeframeSelector__Button ${menuIsActive ? 'TimeframeSelector__Button--Active' : ''}`}
-        onClick={() => setMenuIsActive(state => !state)}
+        className={`TimeframeSelector__Button ${menuIsOpen ? 'TimeframeSelector__Button--Active' : ''}`}
+        onClick={() => setMenuIsOpen(state => !state)}
       >
         <CalendarIcon mr={'10px'}/>
         {timespan}
@@ -73,6 +78,7 @@ const TimeframeSelector = ({ config, isActive, callback }) => {
 export default function BlocksChart ({ hash, isActive }) {
   const [blocksHistory, setBlocksHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(chartConfig.timespan.default)
+  const [menuIsOpen, setMenuIsOpen] = useState(chartConfig.timespan.default)
 
   useEffect(() => {
     Api.getBlocksStatsByValidator(hash, timespan)
@@ -81,27 +87,36 @@ export default function BlocksChart ({ hash, isActive }) {
   }, [timespan])
 
   return (
-    <div style={{ height: '100%' }}>
-      <TimeframeSelector config={chartConfig} callback={setTimespan} isActive={isActive}/>
-      <LineChart
-        data={blocksHistory.data?.resultSet?.map((item) => ({
-          x: new Date(item.timestamp),
-          y: item.data.blocksCount
-        })) || []}
-        timespan={timespan}
-        xAxis={{
-          type: (() => {
-            if (timespan === '1h') return { axis: 'time' }
-            if (timespan === '24h') return { axis: 'time' }
-            if (timespan === '3d') return { axis: 'date', tooltip: 'datetime' }
-            if (timespan === '1w') return { axis: 'date' }
-          })()
-        }}
-        yAxis={{
-          type: 'number',
-          abbreviation: 'blocks'
-        }}
+    <div style={{ height: '100%' }} className={'TabsChart'}>
+      <TimeframeSelector
+        className={'TabsChart__TimeframeSelector'}
+        config={chartConfig}
+        changeCallback={setTimespan}
+        isActive={isActive}
+        openStateCallback={setMenuIsOpen}
       />
+      <div className={`TabsChart__ChartContiner ${menuIsOpen ? 'TabsChart__ChartContiner--Hidden' : ''}`}>
+        <LineChart
+          data={blocksHistory.data?.resultSet?.map((item) => ({
+            x: new Date(item.timestamp),
+            y: item.data.blocksCount
+          })) || []}
+          timespan={timespan}
+          xAxis={{
+            type: (() => {
+              if (timespan === '1h') return { axis: 'time' }
+              if (timespan === '24h') return { axis: 'time' }
+              if (timespan === '3d') return { axis: 'date', tooltip: 'datetime' }
+              if (timespan === '1w') return { axis: 'date' }
+            })()
+          }}
+          yAxis={{
+            type: 'number',
+            abbreviation: 'blocks'
+          }}
+        />
+      </div>
+
     </div>
 
   // <ProposedBlocksChart

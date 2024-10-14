@@ -1,0 +1,16 @@
+.TabsChart {
+  height: 100%;
+
+  &__ChartContiner {
+    height: 100%;
+    visibility: visible;
+    opacity: 1;
+    transition: all .2s;
+
+    &--Hidden {
+      visibility: hidden;
+      opacity: 0;
+      transition-delay: 0s;
+    }
+  }
+}
