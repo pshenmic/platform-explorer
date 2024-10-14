@@ -218,7 +218,7 @@ describe('Other routes', () => {
       assert.deepEqual({ dataContract: expectedDataContract }, body)
     })
 
-    it('should search by identity', async () => {
+    it('should search by identity DPNS', async () => {
       mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
       const { body } = await client.get(`/search?query=${identityAlias.alias}`)
@@ -236,13 +236,14 @@ describe('Other routes', () => {
         totalDocuments: 1,
         totalDataContracts: 1,
         isSystem: false,
-        owner: identity.identifier
+        owner: identity.identifier,
+        alias: 'dpns.dash'
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
     })
 
-    it('should search identity by DPNS', async () => {
+    it('should search identity', async () => {
       const { body } = await client.get(`/search?query=${identity.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -258,7 +259,8 @@ describe('Other routes', () => {
         totalDocuments: 1,
         totalDataContracts: 1,
         isSystem: false,
-        owner: identity.identifier
+        owner: identity.identifier,
+        alias: 'dpns.dash'
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
