@@ -27,6 +27,7 @@ Reference:
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
 * [Transactions By Identity](#transactions-by-identity)
+* [Withdrawals by Identity](#withdrawals-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Rate](#rate)
@@ -246,7 +247,8 @@ GET /validators
       totalReward: 0,
       epochReward: 0,
       withdrawalsCount: null,
-      lastWithdrawal: null
+      lastWithdrawal: null,
+      lastWithdrawalTime: null,
     }, ...
   ],
   pagination: { 
@@ -320,7 +322,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
   totalReward: 0,
   epochReward: 0,
   withdrawalsCount: 1,
-  lastWithdrawal: "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047"
+  lastWithdrawal: "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047",
+  lastWithdrawalTime: "2024-10-12T03:15:19.257Z"
 }
 ```
 ---
@@ -722,6 +725,34 @@ Response codes:
 500: Internal Server Error
 ```
 ---
+### Withdrawals by Identity
+Return all withdrawals made by the given identity
+* `limit` cannot be more then 100
+```
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/withdrawals?page=1&limit=10&order=asc
+
+{
+    pagination: {
+        page: 1,
+        limit: 10,
+        total: 10
+    },
+    resultSet: [
+    {
+      "amount": 10000000,
+      "owner": "78nGoakMPbYKFLCgkt2qUXfZmw7ycESxQrx8k4deEBRt",
+      "txHash": "47122C74C071288F7F0576DF2084F74A8B470EFFF35DD703F96DCAE7F21484EB",
+      "timestamp": "2024-10-09T17:52:24.151Z",
+      "blockHash": "B3655E797107BC970188055BBDBBDC785B6386BED7D26AC46468D736386E1042"
+    }, ...
+    ]
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
 ### Transfers by Identity
 Return all transfers made by the given identity
 * `limit` cannot be more then 100
