@@ -2,7 +2,6 @@
 @import '../../styles/variables.scss';
 
 .InfoLine {
-  overflow: hidden;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -18,7 +17,6 @@
   &__Value {
     font-size: 0.688rem;
     color: #fff;
-    overflow: hidden;
     text-align: right;
 
     .DateBlock {
