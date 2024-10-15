@@ -25,7 +25,9 @@ import {
 
 function Validator ({ hash }) {
   const [validator, setValidator] = useState({ data: {}, loading: true, error: false })
+  const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [proposedBlocks, setProposedBlocks] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const pageSize = 13
   const [currentPage, setCurrentPage] = useState(1)
@@ -41,6 +43,10 @@ function Validator ({ hash }) {
     Api.getStatus()
       .then(res => fetchHandlerSuccess(setStatus, res))
       .catch(err => fetchHandlerError(setStatus, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
 
   useEffect(() => fetchData(), [hash])
@@ -61,7 +67,7 @@ function Validator ({ hash }) {
     // const identifier = 'HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT' // test
 
     Api.getTransactionsByIdentity(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
-      .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
+      .then(res => fetchHandlerSuccess(setTransactions, res))
       .catch(err => fetchHandlerError(setTransactions, err))
   }, [validator, transactions.props.currentPage])
 
@@ -70,12 +76,19 @@ function Validator ({ hash }) {
     setTransfers(state => ({ ...state, loading: true }))
 
     const identifier = validator.data.identity
-    // const identifier = 'HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT' // test
 
     Api.getTransfersByIdentity(identifier, transfers.props.currentPage + 1, pageSize, 'desc')
-      .then(paginatedTransactions => fetchHandlerSuccess(setTransfers, paginatedTransactions))
+      .then(res => fetchHandlerSuccess(setTransfers, res))
       .catch(err => fetchHandlerError(setTransfers, err))
   }, [validator, transfers.props.currentPage])
+
+  useEffect(() => {
+    if (!validator.data?.identity) return
+
+    Api.getIdentity(validator.data.identity)
+      .then(res => fetchHandlerSuccess(setIdentity, res))
+      .catch(err => fetchHandlerError(setIdentity, err))
+  }, [validator])
 
   function paginationHandler (setter, currentPage) {
     setter(state => ({
@@ -106,7 +119,7 @@ function Validator ({ hash }) {
       <div className={'ValidatorPage__ContentContainer'}>
         <div className={'ValidatorPage__Column'}>
           <InfoContainer className={'ValidatorPage__GroupContainer'}>
-            <ValidatorCard validator={validator} className={'ValidatorPage__Card'}/>
+            <ValidatorCard validator={validator} identity={identity} rate={rate} className={'ValidatorPage__Card'}/>
 
             <div>
               <InfoLine

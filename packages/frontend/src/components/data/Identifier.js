@@ -12,6 +12,8 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
   })()
 
   const HighlightedID = ({ children, mode }) => {
+    if (!children) return 'n/a'
+    
     const highlightedCount = 5
     const firstPart = children.slice(0, highlightedCount)
     const middlePart = children.slice(highlightedCount, children.length - highlightedCount)
@@ -33,13 +35,11 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
       )}
       <div className={'Identifier__SymbolsContainer'}>
         {highlightMode
-          ? <HighlightedID mode={highlightMode}>
-              {children}
-            </HighlightedID>
+          ? <HighlightedID mode={highlightMode}>{children}</HighlightedID>
           : children
         }
       </div>
-      {copyButton && <CopyButton className={'Identifier__CopyButton'} text={children}/>}
+      {copyButton && children && <CopyButton className={'Identifier__CopyButton'} text={children}/>}
     </div>
   )
 }

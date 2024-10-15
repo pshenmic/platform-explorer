@@ -4,23 +4,23 @@ import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import Link from 'next/link'
 
-export default function ValidatorCard ({ validator, className }) {
+export default function ValidatorCard ({ validator, identity, rate, className }) {
   console.log('validator', validator)
-
-  if (validator.error) {
-    return
-  }
+  console.log('identity', identity)
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${validator.loading ? 'ValidatorCard--Loading' : ''} ${className || ''}`}>
       <div className={'ValidatorCard__Header'}>
         <div className={'ValidatorCard__Avatar'}>
-          <ImageGenerator
-            username={validator.data.proTxHash}
-            lightness={50}
-            saturation={50}
-            width={88}
-            height={88}/>
+          {!validator.error
+            ? <ImageGenerator
+                username={validator.data.proTxHash}
+                lightness={50}
+                saturation={50}
+                width={88}
+                height={88}/>
+            : ''
+          }
         </div>
 
         <div className={'ValidatorCard__HeaderLines'}>
@@ -28,21 +28,25 @@ export default function ValidatorCard ({ validator, className }) {
             className={'ValidatorCard__ProTxHash'}
             title={'Pro TX Hash'}
             loading={validator.loading}
-            value={(
-              <Identifier
-                className={''}
-                copyButton={true}
-                styles={['highlight-both']}
-                ellipsis={false}
-              >
-                {validator.data.proTxHash}
-              </Identifier>
+            value={(!validator.error
+              ? <Identifier
+                  className={''}
+                  copyButton={true}
+                  styles={['highlight-both']}
+                  ellipsis={false}
+                >
+                  {validator.data.proTxHash}
+                </Identifier>
+              : 'n/a'
             )}
           />
           <InfoLine
             title={'Balance'}
-            value={<CreditsBlock credits={85800000} usd={'209.15'}/>}
-            loading={validator.loading}
+            value={!identity.error
+              ? <CreditsBlock credits={identity.data?.balance} rate={rate}/>
+              : 'n/a'
+            }
+            loading={identity.loading}
           />
         </div>
       </div>
