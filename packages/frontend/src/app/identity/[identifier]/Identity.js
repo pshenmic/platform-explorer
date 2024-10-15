@@ -65,7 +65,6 @@ function Identity ({ identifier }) {
     ])
       .catch(console.error)
 
-
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
