@@ -79,7 +79,7 @@ describe('Identities routes', () => {
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
-        alias
+        aliases: [alias]
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -114,7 +114,7 @@ describe('Identities routes', () => {
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
-        alias
+        aliases: [alias]
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -141,7 +141,7 @@ describe('Identities routes', () => {
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
-        alias
+        aliases: [alias]
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -188,7 +188,7 @@ describe('Identities routes', () => {
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
-        alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+        aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
       }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -228,7 +228,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
-          alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+          aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -269,7 +269,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
-          alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+          aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -311,7 +311,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
-          alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+          aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
 
         }))
 
@@ -369,7 +369,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
-          alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+          aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -438,7 +438,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
-          alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+          aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
 
         }))
 
