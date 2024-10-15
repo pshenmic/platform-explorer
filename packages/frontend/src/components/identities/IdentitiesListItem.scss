@@ -2,31 +2,35 @@
 @import '../../styles/variables.scss';
 
 .IdentitiesListItem {
-    @include mixins.DefListItem;
+  @include mixins.DefListItem;
 
-    justify-content: space-between;
+  justify-content: space-between;
+
+  &__Identifier, &__Alias {
+    font-size: 0.75rem;
+    margin-right: 16px;
+  }
+  
+  &__Alias {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  &__Timestamp {
+    white-space: nowrap;
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    flex-wrap: wrap;
 
     &__Identifier {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        margin-right: 16px;
-    }    
+      width: 100%;
+      margin-right: 0;
+    }
 
     &__Timestamp {
-        white-space: nowrap;
+      white-space: wrap;
     }
-
-    @media screen and (max-width: $breakpoint-sm) {
-        flex-wrap: wrap;
-
-        &__Identifier {
-            width: 100%;
-            margin-right: 0;
-        }
-
-        &__Timestamp {
-            white-space: wrap;
-        }
-    }
+  }
 }
