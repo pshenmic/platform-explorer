@@ -5,18 +5,19 @@
   font-weight: $font-mono;
   font-size: 0.75rem;
 
-  &__Ip {
-    transition: .1s;
+  &__Ip, &__Port {
+    transition: all .1s;
   }
 
   &__Port {
-    color: $color-brand-normal;
+    color: $color-brand-pressed;
     font-weight: 600;
   }
 
   a:hover & {
-    &, &__Ip {
-      color: $color-brand-normal;
+    &, &__Ip, 
+    &, &__Port {
+      color: $color-brand-light;
     }
   }
 }
