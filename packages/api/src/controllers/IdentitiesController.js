@@ -37,7 +37,7 @@ class IdentitiesController {
   getIdentities = async (request, response) => {
     const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
 
-    const identities = await this.identitiesDAO.getIdentities(Number(page), Number(limit), order, orderBy)
+    const identities = await this.identitiesDAO.getIdentities(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
 
     const identitiesWithBalance = await Promise.all(identities.resultSet.map(async identity => {
       const balance = await this.dapi.getIdentityBalance(identity.identifier)
@@ -51,7 +51,7 @@ class IdentitiesController {
     const { identifier } = request.params
     const { page = 1, limit = 10, order = 'asc' } = request.query
 
-    const transactions = await this.identitiesDAO.getTransactionsByIdentity(identifier, Number(page), Number(limit), order)
+    const transactions = await this.identitiesDAO.getTransactionsByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(transactions)
   }
@@ -60,7 +60,7 @@ class IdentitiesController {
     const { identifier } = request.params
     const { page = 1, limit = 10, order = 'asc' } = request.query
 
-    const dataContracts = await this.identitiesDAO.getDataContractsByIdentity(identifier, Number(page), Number(limit), order)
+    const dataContracts = await this.identitiesDAO.getDataContractsByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(dataContracts)
   }
@@ -69,7 +69,7 @@ class IdentitiesController {
     const { identifier } = request.params
     const { page = 1, limit = 10, order = 'asc' } = request.query
 
-    const documents = await this.identitiesDAO.getDocumentsByIdentity(identifier, Number(page), Number(limit), order)
+    const documents = await this.identitiesDAO.getDocumentsByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(documents)
   }
@@ -78,7 +78,7 @@ class IdentitiesController {
     const { identifier } = request.params
     const { page = 1, limit = 10, order = 'asc' } = request.query
 
-    const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page), Number(limit), order)
+    const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(transfers)
   }

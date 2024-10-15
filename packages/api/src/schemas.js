@@ -15,7 +15,7 @@ const schemaTypes = [
       },
       limit: {
         type: ['integer', 'null'],
-        minimum: 1,
+        minimum: 0,
         maximum: 100
       },
       order: {

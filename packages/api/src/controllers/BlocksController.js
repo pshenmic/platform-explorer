@@ -21,7 +21,7 @@ class BlocksController {
     const { validator } = request.params
     const { page = 1, limit = 10, order = 'asc' } = request.query
 
-    const block = await this.blocksDAO.getBlocksByValidator(validator, Number(page), Number(limit), order)
+    const block = await this.blocksDAO.getBlocksByValidator(validator, Number(page ?? 1), Number(limit ?? 10), order)
 
     if (!block) {
       return response.status(404).send({ message: 'not found' })
@@ -33,7 +33,7 @@ class BlocksController {
   getBlocks = async (request, response) => {
     const { page = 1, limit = 10, order = 'asc' } = request.query
 
-    const blocks = await this.blocksDAO.getBlocks(Number(page), Number(limit), order)
+    const blocks = await this.blocksDAO.getBlocks(Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(blocks)
   }
