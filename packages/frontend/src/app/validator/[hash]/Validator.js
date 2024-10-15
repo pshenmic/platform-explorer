@@ -34,6 +34,13 @@ function Validator ({ hash }) {
   const [transfers, setTransfers] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [activeChartTab, setActiveChartTab] = useState(0)
 
+  const poseStatusColor = (validator.data?.proTxInfo?.state?.PoSeBanHeight > 0 &&
+    validator.data?.proTxInfo?.state?.PoSeRevivedHeight === -1)
+      ? 'red.default'
+      : validator.data?.proTxInfo?.state?.PoSePenalty > 0
+        ? 'yellow.default'
+        : 'green.default'
+
   const fetchData = () => {
     Api.getValidatorByProTxHash(hash)
       .then(res => fetchHandlerSuccess(setValidator, res))
@@ -167,51 +174,51 @@ function Validator ({ hash }) {
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Epoch'}
-                value={validator.data?.epochInfo?.number ? `#${validator.data.epochInfo.number}` : 'n/a'}
+                value={`#${validator.data?.epochInfo?.number }`}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !validator.data?.epochInfo?.number}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Next epoch starts in'}
-                value={validator.data?.epochInfo?.endTime
-                  ? getTimeDelta(new Date(), new Date(validator.data.epochInfo.endTime), 'detailed')
-                  : 'n/a'
-                }
+                value={getTimeDelta(new Date(), new Date(validator.data?.epochInfo?.endTime), 'detailed')}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !validator.data?.epochInfo?.endTime}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Rewards This Epoch'}
-                value={typeof validator.data?.epochReward === 'number'
-                  ? <RateTooltip
-                      credits={validator.data?.epochReward}
-                      rate={rate.data}
-                    >
-                      {validator.data?.epochReward}
-                    </RateTooltip>
-                  : 'n/a'}
+                value={(
+                  <RateTooltip credits={validator.data?.epochReward} rate={rate.data}>
+                    {validator.data?.epochReward}
+                  </RateTooltip>
+                )}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !(typeof validator.data?.epochReward === 'number')}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Total Rewards Earned'}
-                value={'825,280'}
+                value={(
+                  <RateTooltip credits={validator.data?.totalReward} rate={rate.data}>
+                    {validator.data?.epochReward}
+                  </RateTooltip>
+                )}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !(typeof validator.data?.totalReward === 'number')}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Last Proposed Block'}
                 value={(
-                  <Link href={`/block/${'52D76B76D748BDB4F171CF5383B85C17FDC0944A7F06AABB0A9C080709E5FB63'}`}>
+                  <Link href={`/block/${validator.data?.lastProposedBlockHeader?.hash}`}>
                     <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                      <DateBlock
-                        timestamp={validator.data?.lastProposedBlockHeader?.timestamp}
-                        format={'delta-only'}
-                      />
+                      {validator.data?.lastProposedBlockHeader?.timestamp &&
+                        <DateBlock
+                          timestamp={validator.data.lastProposedBlockHeader.timestamp}
+                          format={'delta-only'}
+                        />
+                      }
                       <Identifier ellipsis={false} styles={['highlight-both']}>
                         {validator.data?.lastProposedBlockHeader?.hash || ''}
                       </Identifier>
@@ -219,30 +226,31 @@ function Validator ({ hash }) {
                   </Link>
                 )}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !validator.data?.lastProposedBlockHeader?.hash}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Withdrawals Count'}
-                value={'42'}
+                value={validator.data?.withdrawalsCount}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || typeof validator.data?.withdrawalsCount !== 'number'}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Last Withdrawal'}
                 value={(
-                  <Link href={`/transaction/${'326794777FD5F42065348004F3E2C678CA9989834ABDD0E9783EE211D2067039'}`}>
+                  <Link href={`/transaction/${validator.data?.lastWithdrawal}`}>
                     <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                      <DateBlock timestamp={1727887511000} format={'delta-only'}/>
+                      {validator.data?.lastWithdrawalTime &&
+                        <DateBlock timestamp={validator.data.lastWithdrawalTime} format={'delta-only'}/>}
                       <Identifier ellipsis={false} styles={['highlight-both']}>
-                        326794777FD5F42065348004F3E2C678CA9989834ABDD0E9783EE211D2067039
+                        {validator.data?.lastWithdrawal}
                       </Identifier>
                     </ValueContainer>
                   </Link>
                 )}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !validator.data?.lastWithdrawal}
               />
             </div>
 
@@ -257,11 +265,11 @@ function Validator ({ hash }) {
                     <span>
                       {validator.data?.proTxInfo?.state?.PoSePenalty}
                     </span>
-                    <CircleIcon w={'8px'} h={'8px'} ml={'4px'} mb={'-1px'} color={'green.default'}/>
+                    <CircleIcon w={'8px'} h={'8px'} ml={'4px'} mb={'-1px'} color={poseStatusColor}/>
                   </div>
                 )}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || typeof validator.data?.proTxInfo?.state?.PoSePenalty !== 'number'}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
