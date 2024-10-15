@@ -4,9 +4,7 @@ import { Identifier } from '../data'
 import './IdentitiesListItem.scss'
 
 function IdentitiesListItem ({ identity }) {
-  const { identifier, timestamp, isSystem } = identity
-
-  const alias = Math.floor(Math.random() * 2) ? 'alias' : null
+  const { alias, identifier, timestamp, isSystem } = identity
 
   return (
     <Link
