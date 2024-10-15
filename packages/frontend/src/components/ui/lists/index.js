@@ -24,12 +24,7 @@ function SimpleListItem ({ item }) {
       const credits = Number(column.value)
 
       return (
-        <RateTooltip
-          dash={creditsToDash(credits)}
-          usd={typeof column?.rate?.usd === 'number'
-            ? column.rate.usd * creditsToDash(credits)
-            : null}
-        >
+        <RateTooltip credits={credits} rate={column?.rate}>
           <span>
             <Credits>{children}</Credits>
           </span>

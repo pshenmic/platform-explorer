@@ -16,6 +16,7 @@ import { ValueContainer, PageDataContainer, InfoContainer } from '../../../compo
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
 import { CircleIcon } from '../../../components/ui/icons'
+import { RateTooltip } from '../../../components/ui/Tooltips'
 import './ValidatorPage.scss'
 import {
   Container,
@@ -170,7 +171,7 @@ function Validator ({ hash }) {
                 value={(
                   <Badge colorScheme={validator?.data?.isActive ? 'green' : 'orange'}>
                     {validator?.data?.isActive
-                      ? 'Active'
+                      ? 'Proposing'
                       : 'Waiting for Quorum'}
                   </Badge>
                 )}
@@ -180,15 +181,15 @@ function Validator ({ hash }) {
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Epoch'}
-                value={status.data?.epoch?.number ? `#${status.data?.epoch?.number}` : 'n/a'}
-                loading={status.loading}
+                value={validator.data?.epochInfo?.number ? `#${validator.data.epochInfo.number}` : 'n/a'}
+                loading={validator.loading}
                 error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Next epoch starts in'}
-                value={status.data?.epoch?.endTime
-                  ? getTimeDelta(new Date(), new Date(status.data?.epoch?.endTime), 'detailed')
+                value={validator.data?.epochInfo?.endTime
+                  ? getTimeDelta(new Date(), new Date(validator.data.epochInfo.endTime), 'detailed')
                   : 'n/a'
                 }
                 loading={validator.loading}
@@ -197,7 +198,14 @@ function Validator ({ hash }) {
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Rewards This Epoch'}
-                value={'85,80'}
+                value={typeof validator.data?.epochReward === 'number'
+                  ? <RateTooltip
+                      credits={validator.data?.epochReward}
+                      rate={rate.data}
+                    >
+                      {validator.data?.epochReward}
+                    </RateTooltip>
+                  : 'n/a'}
                 loading={validator.loading}
                 error={validator.error}
               />

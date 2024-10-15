@@ -144,10 +144,8 @@ function Identity ({ identifier }) {
                                     <Td isNumeric>
                                       <LoadingLine loading={identity.loading}>
                                         <RateTooltip
-                                          dash={creditsToDash(identity.data?.balance)}
-                                          usd={typeof rate.data?.usd === 'number'
-                                            ? rate.data.usd * creditsToDash(identity.data?.balance)
-                                            : null}
+                                          credits={identity.data?.balance}
+                                          rate={rate.data}
                                         >
                                           <span><Credits>{identity.data?.balance}</Credits> Credits</span>
                                         </RateTooltip>

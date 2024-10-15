@@ -24,14 +24,8 @@ function IdentityCard ({ identity, rate, loading = false }) {
                   </div>
 
                   <div className={'IdentityCard__Balance'}>
-                    <RateTooltip
-                      dash={creditsToDash(identity.balance)}
-                      usd={typeof rate?.usd === 'number'
-                        ? rate.usd * creditsToDash(identity.balance)
-                        : null
-                      }
-                    >
-                      <span>{currencyRound(identity.balance)}</span>
+                    <RateTooltip credits={identity?.balance} rate={rate}>
+                      <span>{currencyRound(identity?.balance)}</span>
                     </RateTooltip>
                   </div>
               </Flex>

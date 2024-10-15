@@ -83,10 +83,8 @@ export default function ValidatorsTotal () {
               <div className={'ValidatorsTotalCard__TotalCollectedFees'}>
                 {typeof epoch?.data?.totalCollectedFees === 'number'
                   ? <RateTooltip
-                      dash={creditsToDash(epoch.data.totalCollectedFees)}
-                      usd={typeof rate.data?.usd === 'number'
-                        ? rate.data.usd * creditsToDash(epoch.data.totalCollectedFees)
-                        : null}
+                      credits={epoch.data.totalCollectedFees}
+                      rate={rate.data}
                     >
                       <span>
                         {currencyRound(epoch.data.totalCollectedFees)}

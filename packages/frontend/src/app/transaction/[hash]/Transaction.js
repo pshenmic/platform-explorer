@@ -131,10 +131,8 @@ function Transaction ({ hash }) {
                     <Td>
                       <LoadingLine loading={transaction.loading}>
                         <RateTooltip
-                          dash={creditsToDash(transaction.data?.gasUsed)}
-                          usd={typeof rate.data?.usd === 'number'
-                            ? rate.data.usd * creditsToDash(transaction.data?.gasUsed)
-                            : null}
+                          credits={transaction.data?.gasUsed}
+                          rate={rate.data}
                         >
                           <span><Credits>{transaction.data?.gasUsed}</Credits> Credits</span>
                         </RateTooltip>

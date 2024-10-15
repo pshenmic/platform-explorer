@@ -1,8 +1,11 @@
 import Tooltip from './Tooltip'
-import { roundUsd } from '../../../util'
+import { roundUsd, creditsToDash } from '../../../util'
 import './RateTooltip.scss'
 
-export default function RateTooltip ({ dash, usd, children }) {
+export default function RateTooltip ({ credits, dash, usd, rate, children }) {
+  if (!dash && typeof credits === 'number') dash = creditsToDash(credits)
+  if (!usd && typeof dash === 'number' && rate?.usd) usd = dash * rate?.usd
+
   return (
     <Tooltip
       label={(
