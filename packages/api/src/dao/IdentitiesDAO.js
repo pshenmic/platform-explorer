@@ -124,8 +124,8 @@ module.exports = class IdentitiesDAO {
       .whereRaw('data_contracts.owner = with_alias.identifier')
       .as('as_data_contracts')
 
-    const rows = await this.knex.with('with_alias', filteredIdentities)
-      .select('total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system', 'identity_aliases.alias as alias')
+    const withouOrder = this.knex.with('with_alias', filteredIdentities)
+      .select('total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system', 'identity_aliases.alias as alias', 'balance')
       .select(this.knex('with_alias').count('*').as('total_count'))
       .select(this.knex(this.knex(documentsSubQuery)
         .select('id', this.knex.raw('rank() over (partition by as_documents.identifier order by as_documents.id desc) rank')).as('ranked_documents'))
@@ -138,8 +138,20 @@ module.exports = class IdentitiesDAO {
       .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
       .leftJoin('identity_aliases', 'identity_aliases.identity_identifier', 'identifier')
       .from('with_alias')
+      .distinctOn('identifier')
+
+    const rows = await this.knex.with('alias', withouOrder)
+      .select(
+        'total_txs', 'identity_id', 'identifier',
+        'identity_owner', 'revision', 'tx_hash',
+        'timestamp', 'row_number', 'is_system',
+        'alias', 'total_count', 'total_documents',
+        'total_data_contracts', 'total_transfers',
+        'balance'
+      )
       .whereBetween('row_number', [fromRank, toRank])
       .orderBy(orderByOptions)
+      .from('alias')
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
