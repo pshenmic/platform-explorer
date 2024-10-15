@@ -3,7 +3,7 @@
 import { Flex, Container } from '@chakra-ui/react'
 import Link from 'next/link'
 import { InfoCard } from '../cards'
-import { currencyRound, creditsToDash } from '../../util'
+import { currencyRound } from '../../util'
 import { ErrorMessageBlock } from '../Errors'
 import ImageGenerator from '../imageGenerator'
 import { RateTooltip } from '../ui/Tooltips'

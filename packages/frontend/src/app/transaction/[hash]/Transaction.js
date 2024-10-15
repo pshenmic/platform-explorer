@@ -2,7 +2,7 @@
 
 import * as Api from '../../../util/Api'
 import { useState, useEffect, useCallback } from 'react'
-import { getTransitionTypeStringById, fetchHandlerSuccess, fetchHandlerError, creditsToDash } from '../../../util'
+import { getTransitionTypeStringById, fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { Credits } from '../../../components/data'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'

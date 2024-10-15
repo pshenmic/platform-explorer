@@ -1,5 +1,5 @@
 import './ValidatorCard.scss'
-import { Identifier, DateBlock, InfoLine, CreditsBlock } from '../data'
+import { Identifier, InfoLine, CreditsBlock } from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import Link from 'next/link'

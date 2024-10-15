@@ -1,6 +1,6 @@
 import './IpAddress.scss'
 
-function splitIpAndPort(address) {
+function splitIpAndPort (address) {
   if (!address) return { ip: null, port: null }
 
   if (address.includes(':')) {
@@ -10,10 +10,9 @@ function splitIpAndPort(address) {
       return { ip, port }
     }
   }
-  
+
   return { ip: address, port: null }
 }
-
 
 function IpAddress ({ children, className }) {
   if (!children) return

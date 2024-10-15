@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, currencyRound, creditsToDash } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import { InfoCard, ValueCard } from '../cards'
 import EpochProgress from '../networkStatus/EpochProgress'
 import { Identifier } from '../data'

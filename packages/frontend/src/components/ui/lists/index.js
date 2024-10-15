@@ -6,7 +6,6 @@ import ImageGenerator from '../../imageGenerator'
 import ListColumnsHeader from './ListColumnsHeader'
 import { Credits, Identifier } from '../../data'
 import { RateTooltip } from '../Tooltips'
-import { creditsToDash } from '../../../util'
 
 function EmptyListMessage ({ children }) {
   return (
