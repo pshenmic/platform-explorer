@@ -80,7 +80,7 @@ describe('Epoch routes', () => {
 
   describe('getEpochInfo()', async () => {
     it('should return current epoch data', async () => {
-      const { body } = await client.get('/epoch/0')
+      const { body } = await client.get('/epoch')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 

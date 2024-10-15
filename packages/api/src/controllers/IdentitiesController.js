@@ -1,8 +1,10 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
+const TransactionsDAO = require('../dao/TransactionsDAO')
 
 class IdentitiesController {
   constructor (knex, dapi) {
     this.identitiesDAO = new IdentitiesDAO(knex)
+    this.transactionsDAO = new TransactionsDAO(knex)
     this.dapi = dapi
   }
 
@@ -81,6 +83,15 @@ class IdentitiesController {
     const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page), Number(limit), order)
 
     response.send(transfers)
+  }
+
+  getWithdrawalsByIdentity = async (request, response) => {
+    const { identifier } = request.params
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+
+    const withdrawals = await this.transactionsDAO.getWithdrawalsByIdentifier(identifier, Number(page ?? 1), Number(limit ?? 10), order ?? 'asc')
+
+    response.send(withdrawals)
   }
 }
 

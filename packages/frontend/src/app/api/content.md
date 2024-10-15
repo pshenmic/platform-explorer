@@ -27,9 +27,10 @@ Reference:
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
 * [Transactions By Identity](#transactions-by-identity)
+* [Withdrawals by Identity](#withdrawals-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
-* [Rate](#rates)
+* [Rate](#rate)
 
 ### Status
 Returns basic stats and epoch info
@@ -87,6 +88,7 @@ Returns info about epoch by specific index
 * tps - Transactions per second
 * totalCollectedFees - total number or fees spent per epoch
 * bestValidator - validator with most validated blocks
+* if no index set => returning last epoch
 
 
 ```
@@ -233,7 +235,21 @@ GET /validators
             pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
         }
       },
-      identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
+      identifier: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
+      identityBalance: 0,
+      epochInfo: {
+        number: 1982,
+        firstBlockHeight: 31976,
+        firstCoreBlockHeight: 1118131,
+        startTime: 1728488466559,
+        feeMultiplier: 1,
+        endTime: 1728492066559
+      },
+      totalReward: 0,
+      epochReward: 0,
+      withdrawalsCount: null,
+      lastWithdrawal: null,
+      lastWithdrawalTime: null,
     }, ...
   ],
   pagination: { 
@@ -271,25 +287,53 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     operatorReward: 0,
     confirmations: 214424,
     state: {
-        version: 2,
-        service: "35.164.23.245:19999",
-        registeredHeight: 850334,
-        lastPaidHeight: 1064721,
-        consecutivePayments: 0,
-        PoSePenalty: 0,
-        PoSeRevivedHeight: 1027671,
-        PoSeBanHeight: -1,
-        revocationReason: 0,
-        ownerAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-        votingAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-        platformNodeID: "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
-        platformP2PPort: 36656,
-        platformHTTPPort: 1443,
-        payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-        pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
+      version: 2,
+      service: "35.164.23.245:19999",
+      registeredHeight: 850334,
+      lastPaidHeight: 1064721,
+      consecutivePayments: 0,
+      PoSePenalty: 0,
+      PoSeRevivedHeight: 1027671,
+      PoSeBanHeight: -1,
+      revocationReason: 0,
+      ownerAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+      votingAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+      platformNodeID: "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
+      platformP2PPort: 36656,
+      platformHTTPPort: 1443,
+      payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+      pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730",
+      endpoints: {
+        coreP2P: {
+          host: "35.165.50.126:19999",
+          status: "ERROR"
+        },
+        platformP2P: {
+          host: "35.165.50.126:36656",
+          status: "ERROR"
+        },
+        platformGrpc: {
+          host: "35.165.50.126:1443",
+          status: "ERROR"
+        }
+      }
     }
   },
-  "identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
+  identifier: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
+  identityBalance: 0,
+  epochInfo: {
+    number: 1982,
+    firstBlockHeight: 31976,
+    firstCoreBlockHeight: 1118131,
+    startTime: 1728488466559,
+    feeMultiplier: 1,
+    endTime: 1728492066559
+  },
+  totalReward: 0,
+  epochReward: 0,
+  withdrawalsCount: 1,
+  lastWithdrawal: "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047",
+  lastWithdrawalTime: "2024-10-12T03:15:19.257Z"
 }
 ```
 ---
@@ -691,6 +735,34 @@ Response codes:
 500: Internal Server Error
 ```
 ---
+### Withdrawals by Identity
+Return all withdrawals made by the given identity
+* `limit` cannot be more then 100
+```
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/withdrawals?page=1&limit=10&order=asc
+
+{
+    pagination: {
+        page: 1,
+        limit: 10,
+        total: 10
+    },
+    resultSet: [
+    {
+      "amount": 10000000,
+      "owner": "78nGoakMPbYKFLCgkt2qUXfZmw7ycESxQrx8k4deEBRt",
+      "txHash": "47122C74C071288F7F0576DF2084F74A8B470EFFF35DD703F96DCAE7F21484EB",
+      "timestamp": "2024-10-09T17:52:24.151Z",
+      "blockHash": "B3655E797107BC970188055BBDBBDC785B6386BED7D26AC46468D736386E1042"
+    }, ...
+    ]
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
 ### Transfers by Identity
 Return all transfers made by the given identity
 * `limit` cannot be more then 100

@@ -9,6 +9,7 @@ const dataContractUpdateMock = require('./mocks/data_contract_update.json')
 const identityUpdateMock = require('./mocks/identity_update.json')
 const identityCreditTransfer = require('./mocks/identity_credit_transfer.json')
 const identityWithdrawal = require('./mocks/identity_withdrawal.json')
+const masternodeVote = require('./mocks/masternode_vote.json')
 const Dash = require('dash')
 
 describe('Utils', () => {
@@ -107,6 +108,23 @@ describe('Utils', () => {
         outputScript: '76a9148dc5fd6be194390035cca6293a357bac8e3c35c588ac',
         coreFeePerByte: 2,
         type: 6
+      })
+    })
+
+    it('should decode MasternodeVote', async () => {
+      const decoded = await utils.decodeStateTransition(client, masternodeVote.data)
+
+      assert.deepEqual(decoded, {
+        type: 8,
+        contestedResourcesVotePoll: [
+          'EgRkYXNo',
+          'Egh0ZXN0MDEwMA=='
+        ],
+        contractId: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
+        modifiedDataIds: [
+          '2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9'
+        ],
+        ownerId: '2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9'
       })
     })
   })

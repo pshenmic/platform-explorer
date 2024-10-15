@@ -31,6 +31,11 @@ module.exports = ({
       handler: rateController.getUSDRate
     },
     {
+      path: '/epoch',
+      method: 'GET',
+      handler: epochController.getEpochByIndex
+    },
+    {
       path: '/epoch/:index',
       method: 'GET',
       handler: epochController.getEpochByIndex,
@@ -38,7 +43,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            index: { type: 'number', minimum: 0 }
+            index: { type: ['number', 'null'], minimum: 0 }
           }
         }
       }
@@ -194,6 +199,20 @@ module.exports = ({
           }
         },
         querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/identity/:identifier/withdrawals',
+      method: 'GET',
+      handler: identitiesController.getWithdrawalsByIdentity,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' },
+        params: {
+          type: 'object',
+          properties: {
+            validator: { $ref: 'hash#' }
+          }
+        }
       }
     },
     {

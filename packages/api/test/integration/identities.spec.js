@@ -1195,4 +1195,182 @@ describe('Identities routes', () => {
       assert.deepEqual(body.resultSet, expectedTransfers)
     })
   })
+
+  describe('getWithdrawalsByIdentity()', async () => {
+    it('should return default set of withdrawals by identity', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      transfers = []
+
+      for (let i = 1; i <= 30; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL
+        })
+        transfer = await fixtures.transfer(knex, {
+          amount: 1000,
+          recipient: identity.identifier,
+          sender: null,
+          state_transition_hash: transaction.hash
+        })
+        transfers.push({ transfer, transaction, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/withdrawals`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedTransfers = transfers
+        .sort((a, b) => a.block.height - b.block.height)
+        .slice(0, 10)
+        .map((_transfer, i) => ({
+          amount: parseInt(_transfer.transfer.amount),
+          txHash: _transfer.transaction.hash,
+          owner: _transfer.transaction.owner,
+          timestamp: _transfer.block.timestamp.toISOString(),
+          blockHash: _transfer.block.hash
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTransfers)
+    })
+
+    it('should return default set of withdrawals by identity desc', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      transfers = []
+
+      for (let i = 1; i <= 30; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL
+        })
+        transfer = await fixtures.transfer(knex, {
+          amount: 1000,
+          recipient: identity.identifier,
+          sender: null,
+          state_transition_hash: transaction.hash
+        })
+        transfers.push({ transfer, transaction, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/withdrawals?order=desc`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedTransfers = transfers
+        .sort((a, b) => b.block.height - a.block.height)
+        .slice(0, 10)
+        .map((_transfer, i) => ({
+          amount: parseInt(_transfer.transfer.amount),
+          txHash: _transfer.transaction.hash,
+          owner: _transfer.transaction.owner,
+          timestamp: _transfer.block.timestamp.toISOString(),
+          blockHash: _transfer.block.hash
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTransfers)
+    })
+
+    it('should allow to walk through pages', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      transfers = []
+
+      for (let i = 1; i <= 30; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL
+        })
+        transfer = await fixtures.transfer(knex, {
+          amount: 1000,
+          recipient: identity.identifier,
+          sender: null,
+          state_transition_hash: transaction.hash
+        })
+        transfers.push({ transfer, transaction, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/withdrawals?page=2&limit=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 5)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 5)
+
+      const expectedTransfers = transfers
+        .sort((a, b) => a.block.height - b.block.height)
+        .slice(5, 10)
+        .map((_transfer, i) => ({
+          amount: parseInt(_transfer.transfer.amount),
+          txHash: _transfer.transaction.hash,
+          owner: _transfer.transaction.owner,
+          timestamp: _transfer.block.timestamp.toISOString(),
+          blockHash: _transfer.block.hash
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTransfers)
+    })
+
+    it('should allow to walk through pages desc', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      transfers = []
+
+      for (let i = 1; i <= 30; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL
+        })
+        transfer = await fixtures.transfer(knex, {
+          amount: 1000,
+          recipient: identity.identifier,
+          sender: null,
+          state_transition_hash: transaction.hash
+        })
+        transfers.push({ transfer, transaction, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/withdrawals?page=2&limit=5&order=desc`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 5)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 5)
+
+      const expectedTransfers = transfers
+        .sort((a, b) => b.block.height - a.block.height)
+        .slice(5, 10)
+        .map((_transfer, i) => ({
+          amount: parseInt(_transfer.transfer.amount),
+          txHash: _transfer.transaction.hash,
+          owner: _transfer.transaction.owner,
+          timestamp: _transfer.block.timestamp.toISOString(),
+          blockHash: _transfer.block.hash
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTransfers)
+    })
+  })
 })
