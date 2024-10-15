@@ -30,6 +30,12 @@
   }
 
   &__Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-500);
     width: 88px;
     height: 88px;
     border: 1px solid rgba(137, 126, 126, 0.1);

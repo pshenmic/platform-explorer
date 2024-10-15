@@ -119,7 +119,7 @@ function Validator ({ hash }) {
       <div className={'ValidatorPage__ContentContainer'}>
         <div className={'ValidatorPage__Column'}>
           <InfoContainer className={'ValidatorPage__GroupContainer'}>
-            <ValidatorCard validator={validator} identity={identity} rate={rate} className={'ValidatorPage__Card'}/>
+            <ValidatorCard validator={validator} rate={rate} className={'ValidatorPage__Card'}/>
 
             <div>
               <InfoLine
@@ -127,34 +127,37 @@ function Validator ({ hash }) {
                 title={'CORE P2P'}
                 value={(
                   <Endpoint
-                    value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
-                    status={'active'}
+                    value={<IpAddress>{validator.data?.proTxInfo?.state?.endpoints?.coreP2P?.host}</IpAddress>}
+                    status={validator.data?.proTxInfo?.state?.endpoints?.coreP2P?.status || 'error'}
                   />
                 )}
                 loading={validator.loading}
+                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.coreP2P}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Platform P2P'}
                 value={(
                   <Endpoint
-                    value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
-                    status={'active'}
+                    value={<IpAddress>{validator.data?.proTxInfo?.state?.endpoints?.platformP2P?.host}</IpAddress>}
+                    status={validator.data?.proTxInfo?.state?.endpoints?.platformP2P?.status || 'error'}
                   />
                 )}
                 loading={validator.loading}
+                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.platformP2P}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Platform GRPC'}
                 value={(
                   <Endpoint
-                    value={<IpAddress address={'192.168.0.1'} port={'9999'}/>}
-                    status={'active'}
+                    value={<IpAddress>{validator.data?.proTxInfo?.state?.endpoints?.platformGrpc?.host}</IpAddress>}
+                    status={validator.data?.proTxInfo?.state?.endpoints?.platformGrpc?.status || 'error'}
                     link={'https://192.168.0.1:9999'}
                   />
                 )}
                 loading={validator.loading}
+                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.platformGrpc}
               />
             </div>
 
@@ -172,12 +175,14 @@ function Validator ({ hash }) {
                   </Badge>
                 )}
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Epoch'}
                 value={status.data?.epoch?.number ? `#${status.data?.epoch?.number}` : 'n/a'}
                 loading={status.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -187,18 +192,21 @@ function Validator ({ hash }) {
                   : 'n/a'
                 }
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Rewards This Epoch'}
                 value={'85,80'}
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Total Rewards Earned'}
                 value={'825,280'}
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -217,12 +225,14 @@ function Validator ({ hash }) {
                   </Link>
                 )}
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Withdrawals Count'}
                 value={'42'}
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -238,6 +248,7 @@ function Validator ({ hash }) {
                   </Link>
                 )}
                 loading={validator.loading}
+                error={validator.error}
               />
             </div>
 
@@ -256,6 +267,7 @@ function Validator ({ hash }) {
                   </div>
                 )}
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -268,6 +280,7 @@ function Validator ({ hash }) {
                   </ValueContainer>
                 )}
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -280,6 +293,7 @@ function Validator ({ hash }) {
                   </ValueContainer>
                 )}
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -292,6 +306,7 @@ function Validator ({ hash }) {
                   </ValueContainer>
                 )}
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -304,6 +319,7 @@ function Validator ({ hash }) {
                   </ValueContainer>
                 )}
                 loading={validator.loading}
+                error={validator.error}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -314,6 +330,7 @@ function Validator ({ hash }) {
                   </Identifier>
                 )}
                 loading={validator.loading}
+                error={validator.error}
               />
             </div>
           </InfoContainer>

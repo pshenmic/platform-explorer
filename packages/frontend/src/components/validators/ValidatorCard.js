@@ -4,9 +4,8 @@ import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import Link from 'next/link'
 
-export default function ValidatorCard ({ validator, identity, rate, className }) {
+export default function ValidatorCard ({ validator, rate, className }) {
   console.log('validator', validator)
-  console.log('identity', identity)
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${validator.loading ? 'ValidatorCard--Loading' : ''} ${className || ''}`}>
@@ -19,7 +18,7 @@ export default function ValidatorCard ({ validator, identity, rate, className })
                 saturation={50}
                 width={88}
                 height={88}/>
-            : ''
+            : 'n/a'
           }
         </div>
 
@@ -28,6 +27,7 @@ export default function ValidatorCard ({ validator, identity, rate, className })
             className={'ValidatorCard__ProTxHash'}
             title={'Pro TX Hash'}
             loading={validator.loading}
+            error={validator.error}
             value={(!validator.error
               ? <Identifier
                   className={''}
@@ -42,32 +42,35 @@ export default function ValidatorCard ({ validator, identity, rate, className })
           />
           <InfoLine
             title={'Balance'}
-            value={!identity.error
-              ? <CreditsBlock credits={identity.data?.balance} rate={rate}/>
+            value={typeof validator.data?.identityBalance === 'number'
+              ? <CreditsBlock credits={validator.data.identityBalance} rate={rate}/>
               : 'n/a'
             }
-            loading={identity.loading}
+            loading={validator.loading}
+            error={validator.error}
           />
         </div>
       </div>
 
       <HorisontalSeparator className={'ValidatorCard__Separator'}/>
 
-      <InfoLine
+      {/* <InfoLine
         className={'ValidatorCard__InfoLine'}
         title={'Creation Date'}
         value={<DateBlock timestamp={1727887511000}/>}
         loading={validator.loading}
-      />
+        error={validator.error}
+      /> */}
 
-      <InfoLine
+      {/* <InfoLine
         className={'ValidatorCard__InfoLine'}
         title={'Block Height'}
         value={(
           <span className={'ValidatorCard__BlockHeighValue'}>#10225</span>
         )}
         loading={validator.loading}
-      />
+        error={validator.error}
+      /> */}
 
       <InfoLine
         className={'ValidatorCard__InfoLine'}
@@ -86,6 +89,7 @@ export default function ValidatorCard ({ validator, identity, rate, className })
           </Link>
         )}
         loading={validator.loading}
+        error={validator.error}
       />
 
       <InfoLine
@@ -98,10 +102,11 @@ export default function ValidatorCard ({ validator, identity, rate, className })
             styles={['highlight-both']}
             ellipsis={false}
           >
-            50d847734406592420320c864eb572fb900e5c36
+            {validator.data?.proTxHash?.state?.platformNodeID}
           </Identifier>
         )}
         loading={validator.loading}
+        error={validator.error}
       />
     </div>
   )

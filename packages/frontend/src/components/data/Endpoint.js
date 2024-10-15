@@ -5,7 +5,8 @@ function Endpoint ({ value, status, link }) {
   const iconColors = {
     active: 'green.default',
     warining: 'yellow.default',
-    error: 'red.default'
+    error: 'red.default',
+    ERR_CONNECTION_REFUSED: 'red.default'
   }
 
   const Wrapper = ({ children, ...props }) => {
