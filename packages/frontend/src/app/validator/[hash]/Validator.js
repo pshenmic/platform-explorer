@@ -348,7 +348,7 @@ function Validator ({ hash }) {
                   {!proposedBlocks.error
                     ? <div className={'ValidatorPage__List'}>
                         {!proposedBlocks.loading
-                          ? <BlocksList blocks={proposedBlocks?.data?.resultSet}/>
+                          ? <BlocksList blocks={proposedBlocks?.data?.resultSet} headerStyles={'light'}/>
                           : <LoadingList itemsCount={pageSize}/>
                         }
                       </div>
@@ -369,7 +369,10 @@ function Validator ({ hash }) {
                   {!transactions.error
                     ? <div className={'ValidatorPage__List'}>
                         {!transactions.loading
-                          ? <TransactionsList transactions={transactions.data.resultSet} size={'m'}/>
+                          ? <TransactionsList
+                              transactions={transactions.data.resultSet}
+                              headerStyles={'light'}
+                            />
                           : <LoadingList itemsCount={pageSize}/>}
                       </div>
                     : <Container h={20}><ErrorMessageBlock/></Container>}

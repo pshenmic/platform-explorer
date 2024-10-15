@@ -56,6 +56,13 @@
   font-size: 12px;
   text-transform: uppercase;
   color: var(--chakra-colors-white);
+
+  &--Light {
+    background: transparent !important;
+    font-weight: 500 !important;
+    color: #fff !important;
+    text-transform: none !important;
+  }
 }
 
 @mixin LoadingLine($delay: 0) {

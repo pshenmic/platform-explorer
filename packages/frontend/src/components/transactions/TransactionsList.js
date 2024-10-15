@@ -4,19 +4,24 @@ import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './TransactionsList.scss'
 
-export default function TransactionsList ({ transactions = [], showMoreLink, size = 'l', type = 'full' }) {
+export default function TransactionsList ({ transactions = [], showMoreLink, type = 'full', headerStyles = 'default' }) {
+  const headerExtraClass = {
+    default: '',
+    light: 'BlocksList__ColumnTitles--Light'
+  }
+
   return (
-    <div className={'TransactionsList ' + 'TransactionsList--Size' + size.toUpperCase()}>
+    <div className={'TransactionsList'}>
       {type === 'full' &&
-        <Grid className={'TransactionsList__ColumnTitles'}>
+        <Grid className={`TransactionsList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
           <GridItem className={'TransactionsList__ColumnTitle'}>
             Time
           </GridItem>
           <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Hash'}>
-            Transaction HASH
+            Transaction Hash
           </GridItem>
           <GridItem className={'TransactionsList__ColumnTitle'}>
-            TYPE
+            Type
           </GridItem>
         </Grid>
       }

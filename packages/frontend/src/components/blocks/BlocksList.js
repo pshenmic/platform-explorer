@@ -3,7 +3,12 @@ import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './BlocksList.scss'
 
-function BlocksList ({ blocks = [], columnsCount = 1, size = 'l' }) {
+function BlocksList ({ blocks = [], columnsCount = 1, size = 'l', headerStyles = 'default' }) {
+  const headerExtraClass = {
+    default: '',
+    light: 'BlocksList__ColumnTitles--Light'
+  }
+
   return (
     <div
       className={'BlocksList'}
@@ -11,7 +16,7 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l' }) {
         columnCount: blocks.length > 1 ? columnsCount : 1
       }}
     >
-      <Grid className={'BlocksList__ColumnTitles'}>
+      <Grid className={`BlocksList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
         <GridItem className={'BlocksList__ColumnTitle'}>
           Height
         </GridItem>
@@ -19,10 +24,10 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l' }) {
           Time
         </GridItem>
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Hash'}>
-          Block HASH
+          Block Hash
         </GridItem>
         <GridItem className={'BlocksList__ColumnTitle'}>
-          Txs count
+          TXs count
         </GridItem>
       </Grid>
 
