@@ -36,10 +36,10 @@ function Validator ({ hash }) {
 
   const poseStatusColor = (validator.data?.proTxInfo?.state?.PoSeBanHeight > 0 &&
     validator.data?.proTxInfo?.state?.PoSeRevivedHeight === -1)
-      ? 'red.default'
-      : validator.data?.proTxInfo?.state?.PoSePenalty > 0
-        ? 'yellow.default'
-        : 'green.default'
+    ? 'red.default'
+    : validator.data?.proTxInfo?.state?.PoSePenalty > 0
+      ? 'yellow.default'
+      : 'green.default'
 
   const fetchData = () => {
     Api.getValidatorByProTxHash(hash)
@@ -174,7 +174,7 @@ function Validator ({ hash }) {
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Epoch'}
-                value={`#${validator.data?.epochInfo?.number }`}
+                value={`#${validator.data?.epochInfo?.number}`}
                 loading={validator.loading}
                 error={validator.error || !validator.data?.epochInfo?.number}
               />
@@ -282,7 +282,7 @@ function Validator ({ hash }) {
                   </ValueContainer>
                 )}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !validator.data?.proTxInfo?.collateralAddress}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -295,7 +295,7 @@ function Validator ({ hash }) {
                   </ValueContainer>
                 )}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !validator.data?.proTxInfo?.state?.ownerAddress}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -308,7 +308,7 @@ function Validator ({ hash }) {
                   </ValueContainer>
                 )}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !validator.data?.proTxInfo?.state?.votingAddress}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -321,7 +321,7 @@ function Validator ({ hash }) {
                   </ValueContainer>
                 )}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !validator.data?.proTxInfo?.state?.payoutAddress}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -332,7 +332,7 @@ function Validator ({ hash }) {
                   </Identifier>
                 )}
                 loading={validator.loading}
-                error={validator.error}
+                error={validator.error || !validator.data?.proTxInfo?.state?.pubKeyOperator}
               />
             </div>
           </InfoContainer>
