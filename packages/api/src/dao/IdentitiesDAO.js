@@ -11,6 +11,11 @@ module.exports = class IdentitiesDAO {
   }
 
   getIdentityByIdentifier = async (identifier) => {
+    const aliasSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', 'alias')
+      .where('identity_identifier', '=', identifier)
+      .as('identity_alias')
+
     const subquery = this.knex('identities')
       .select('identities.id', 'identities.identifier as identifier', 'identities.owner as owner',
         'identities.state_transition_hash as tx_hash', 'identities.revision as revision',
@@ -52,6 +57,7 @@ module.exports = class IdentitiesDAO {
       .select(this.knex(documentsSubQuery).count('*').where('rank', 1).as('total_documents'))
       .select(this.knex(dataContractsSubQuery).count('*').where('rank', 1).as('total_data_contracts'))
       .select(this.knex(transfersSubquery).count('*').as('total_transfers'))
+      .select(this.knex(aliasSubquery).select('alias').limit(1).as('alias'))
       .from('with_alias')
       .limit(1)
 
@@ -119,7 +125,7 @@ module.exports = class IdentitiesDAO {
       .as('as_data_contracts')
 
     const rows = await this.knex.with('with_alias', filteredIdentities)
-      .select('total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system')
+      .select('total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system', 'identity_aliases.alias as alias')
       .select(this.knex('with_alias').count('*').as('total_count'))
       .select(this.knex(this.knex(documentsSubQuery)
         .select('id', this.knex.raw('rank() over (partition by as_documents.identifier order by as_documents.id desc) rank')).as('ranked_documents'))
@@ -130,6 +136,7 @@ module.exports = class IdentitiesDAO {
       .select(this.knex('transfers').count('*').whereRaw('sender = identifier or recipient = identifier').as('total_transfers'))
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+      .leftJoin('identity_aliases', 'identity_aliases.identity_identifier', 'identifier')
       .from('with_alias')
       .whereBetween('row_number', [fromRank, toRank])
       .orderBy(orderByOptions)

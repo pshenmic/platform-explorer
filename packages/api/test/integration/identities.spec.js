@@ -14,6 +14,7 @@ describe('Identities routes', () => {
   let knex
 
   let identity
+  let alias
   let block
   let dataContract
   let dataContractTransaction
@@ -55,6 +56,12 @@ describe('Identities routes', () => {
     it('should return identity by identifier', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      const { alias } = await fixtures.identity_alias(knex,
+        {
+          alias: 'test',
+          identity
+        }
+      )
 
       const { body } = await client.get(`/identity/${identity.identifier}`)
         .expect(200)
@@ -71,7 +78,8 @@ describe('Identities routes', () => {
         totalTransfers: 0,
         totalDocuments: 0,
         totalDataContracts: 0,
-        isSystem: false
+        isSystem: false,
+        alias
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -88,7 +96,7 @@ describe('Identities routes', () => {
     it('should return identity by dpns', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      await fixtures.identity_alias(knex, { alias: 'test-name.1.dash', identity })
+      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.1.dash', identity })
 
       const { body } = await client.get('/dpns/identity?dpns=test-name.1.dash')
         .expect(200)
@@ -105,7 +113,8 @@ describe('Identities routes', () => {
         totalTransfers: 0,
         totalDocuments: 0,
         totalDataContracts: 0,
-        isSystem: false
+        isSystem: false,
+        alias
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -114,7 +123,7 @@ describe('Identities routes', () => {
     it('should return identity by dpns with any case', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      await fixtures.identity_alias(knex, { alias: 'test-name.2.dash', identity })
+      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.2.dash', identity })
 
       const { body } = await client.get('/dpns/identity?dpns=TeSt-NaME.2.DAsH')
         .expect(200)
@@ -131,7 +140,8 @@ describe('Identities routes', () => {
         totalTransfers: 0,
         totalDocuments: 0,
         totalDataContracts: 0,
-        isSystem: false
+        isSystem: false,
+        alias
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -147,11 +157,14 @@ describe('Identities routes', () => {
   describe('getIdentities()', async () => {
     it('should return default set of identities', async () => {
       const identities = []
+      const aliases = []
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
+        alias = await fixtures.identity_alias(knex, { alias: `#test$${i}`, identity })
         identities.push({ identity, block })
+        aliases.push(alias)
       }
 
       const { body } = await client.get('/identities')
@@ -174,18 +187,22 @@ describe('Identities routes', () => {
         totalTransfers: 0,
         totalDocuments: 0,
         totalDataContracts: 0,
-        isSystem: false
+        isSystem: false,
+        alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
       }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
     })
     it('should return default set of identities desc', async () => {
       const identities = []
+      const aliases = []
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
+        alias = await fixtures.identity_alias(knex, { alias: `#test1$${i}`, identity })
         identities.push({ identity, block })
+        aliases.push(alias)
       }
 
       const { body } = await client.get('/identities?order=desc')
@@ -210,7 +227,8 @@ describe('Identities routes', () => {
           totalTransfers: 0,
           totalDocuments: 0,
           totalDataContracts: 0,
-          isSystem: false
+          isSystem: false,
+          alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -218,11 +236,14 @@ describe('Identities routes', () => {
 
     it('should allow walk through pages', async () => {
       const identities = []
+      const aliases = []
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
+        alias = await fixtures.identity_alias(knex, { alias: `#test2$${i}`, identity })
         identities.push({ identity, block })
+        aliases.push(alias)
       }
 
       const { body } = await client.get('/identities?page=2')
@@ -247,7 +268,8 @@ describe('Identities routes', () => {
           totalTransfers: 0,
           totalDocuments: 0,
           totalDataContracts: 0,
-          isSystem: false
+          isSystem: false,
+          alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -255,11 +277,14 @@ describe('Identities routes', () => {
 
     it('should allow walk through pages desc', async () => {
       const identities = []
+      const aliases = []
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
         identities.push({ identity, block })
+        aliases.push(alias)
       }
 
       const { body } = await client.get('/identities?page=2&limit=5&order=desc')
@@ -285,7 +310,9 @@ describe('Identities routes', () => {
           totalTransfers: 0,
           totalDocuments: 0,
           totalDataContracts: 0,
-          isSystem: false
+          isSystem: false,
+          alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -293,6 +320,7 @@ describe('Identities routes', () => {
 
     it('should allow sort by tx count', async () => {
       const identities = []
+      const aliases = []
 
       for (let i = 0; i < 30; i++) {
         const transactions = []
@@ -313,6 +341,8 @@ describe('Identities routes', () => {
         identity.transactions = transactions
 
         identities.push({ identity, block })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
+        aliases.push(alias)
       }
 
       const { body } = await client.get('/identities?order_by=tx_count&order=desc')
@@ -338,7 +368,8 @@ describe('Identities routes', () => {
           totalTransfers: 0,
           totalDocuments: 0,
           totalDataContracts: 0,
-          isSystem: false
+          isSystem: false,
+          alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -346,6 +377,7 @@ describe('Identities routes', () => {
 
     it('should allow sort by balance', async () => {
       const identities = []
+      const aliases = []
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
@@ -364,6 +396,8 @@ describe('Identities routes', () => {
         identity.balance = transfer.amount
 
         identities.push({ identity, block, transfer })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
+        aliases.push(alias)
       }
 
       mock.reset()
@@ -403,7 +437,9 @@ describe('Identities routes', () => {
           totalTransfers: 1,
           totalDocuments: 0,
           totalDataContracts: 0,
-          isSystem: false
+          isSystem: false,
+          alias: aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
