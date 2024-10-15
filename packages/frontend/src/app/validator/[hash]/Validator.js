@@ -17,6 +17,7 @@ import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
 import { CircleIcon } from '../../../components/ui/icons'
 import { RateTooltip } from '../../../components/ui/Tooltips'
+import { networks } from '../../../constants/networks'
 import './ValidatorPage.scss'
 import {
   Container,
@@ -33,6 +34,9 @@ function Validator ({ hash }) {
   const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [activeChartTab, setActiveChartTab] = useState(0)
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const activeNetwork = networks.find(network => network.apiBaseUrl === baseUrl)
+  const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
 
   const poseStatusColor = (validator.data?.proTxInfo?.state?.PoSeBanHeight > 0 &&
     validator.data?.proTxInfo?.state?.PoSeRevivedHeight === -1)
@@ -275,11 +279,19 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Collateral address'}
                 value={(
-                  <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                    <Identifier styles={['highlight-both']} ellipsis={false}>
-                      {validator.data?.proTxInfo?.collateralAddress || ''}
-                    </Identifier>
-                  </ValueContainer>
+                  <a
+                    href={l1explorerBaseUrl
+                      ? `${l1explorerBaseUrl}/address/${validator.data?.proTxInfo?.collateralAddress}`
+                      : '#'}
+                    target={'_blank'}
+                    rel={'noopener noreferrer'}
+                  >
+                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
+                      <Identifier styles={['highlight-both']} ellipsis={false}>
+                        {validator.data?.proTxInfo?.collateralAddress || ''}
+                      </Identifier>
+                    </ValueContainer>
+                  </a>
                 )}
                 loading={validator.loading}
                 error={validator.error || !validator.data?.proTxInfo?.collateralAddress}
@@ -288,11 +300,19 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Owner address'}
                 value={(
-                  <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                    <Identifier styles={['highlight-both']} ellipsis={false}>
-                      {validator.data?.proTxInfo?.state?.ownerAddress || ''}
-                    </Identifier>
-                  </ValueContainer>
+                  <a
+                    href={l1explorerBaseUrl
+                      ? `${l1explorerBaseUrl}/address/${validator.data?.proTxInfo?.state?.ownerAddress}`
+                      : '#'}
+                    target={'_blank'}
+                    rel={'noopener noreferrer'}
+                  >
+                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
+                      <Identifier styles={['highlight-both']} ellipsis={false}>
+                        {validator.data?.proTxInfo?.state?.ownerAddress || ''}
+                      </Identifier>
+                    </ValueContainer>
+                  </a>
                 )}
                 loading={validator.loading}
                 error={validator.error || !validator.data?.proTxInfo?.state?.ownerAddress}
@@ -301,11 +321,19 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Voting address'}
                 value={(
-                  <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                    <Identifier styles={['highlight-both']} ellipsis={false}>
-                    {validator.data?.proTxInfo?.state?.votingAddress || ''}
-                    </Identifier>
-                  </ValueContainer>
+                  <a
+                    href={l1explorerBaseUrl
+                      ? `${l1explorerBaseUrl}/address/${validator.data?.proTxInfo?.state?.votingAddress}`
+                      : '#'}
+                    target={'_blank'}
+                    rel={'noopener noreferrer'}
+                  >
+                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
+                      <Identifier styles={['highlight-both']} ellipsis={false}>
+                      {validator.data?.proTxInfo?.state?.votingAddress || ''}
+                      </Identifier>
+                    </ValueContainer>
+                  </a>
                 )}
                 loading={validator.loading}
                 error={validator.error || !validator.data?.proTxInfo?.state?.votingAddress}
@@ -314,11 +342,19 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Payout address'}
                 value={(
-                  <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                    <Identifier styles={['highlight-both']} ellipsis={false}>
-                      {validator.data?.proTxInfo?.state?.payoutAddress || ''}
-                    </Identifier>
-                  </ValueContainer>
+                  <a
+                    href={l1explorerBaseUrl
+                      ? `${l1explorerBaseUrl}/address/${validator.data?.proTxInfo?.state?.payoutAddress}`
+                      : '#'}
+                    target={'_blank'}
+                    rel={'noopener noreferrer'}
+                  >
+                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
+                      <Identifier styles={['highlight-both']} ellipsis={false}>
+                        {validator.data?.proTxInfo?.state?.payoutAddress || ''}
+                      </Identifier>
+                    </ValueContainer>
+                  </a>
                 )}
                 loading={validator.loading}
                 error={validator.error || !validator.data?.proTxInfo?.state?.payoutAddress}
