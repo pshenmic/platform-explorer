@@ -237,7 +237,7 @@ describe('Other routes', () => {
         totalDataContracts: 1,
         isSystem: false,
         owner: identity.identifier,
-        alias: 'dpns.dash'
+        aliases: ['dpns.dash']
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
@@ -260,7 +260,7 @@ describe('Other routes', () => {
         totalDataContracts: 1,
         isSystem: false,
         owner: identity.identifier,
-        alias: 'dpns.dash'
+        aliases: ['dpns.dash']
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
