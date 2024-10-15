@@ -4,7 +4,7 @@ import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
 import ListColumnsHeader from './ListColumnsHeader'
-import { Credits, Identifier } from '../../data'
+import { Credits, Identifier, Alias } from '../../data'
 import { RateTooltip } from '../Tooltips'
 import { creditsToDash } from '../../../util'
 
@@ -37,6 +37,7 @@ function SimpleListItem ({ item }) {
       )
     }
     if (column.format === 'identifier') return <Identifier styles={['highlight-both']} copyButton={true}>{children}</Identifier>
+    if (column.format === 'alias') return <Alias>{children}</Alias>
     return <span>{children}</span>
   }
 
