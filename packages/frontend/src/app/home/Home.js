@@ -191,15 +191,13 @@ function Home () {
                         .map((identitiy, i) => ({
                           columns: [
                             {
-                              // value: identitiy.identifier,
-                              value: 'alias', // identitiy.alias || identitiy.identifier
+                              value: identitiy.alias || identitiy.identifier,
                               avatar: true,
                               avatarSource: identitiy.identifier,
                               mono: true,
-                              // dim: identitiy.alias ? false : true,
+                              dim: !!identitiy.alias,
                               ellipsis: true,
-                              // format: 'identifier'
-                              format: 'alias' // identitiy.alias ? 'alias' : 'identifier'
+                              format: identitiy.alias ? 'alias' : 'identifier'
                             },
                             {
                               value: identitiy.totalTxs,
