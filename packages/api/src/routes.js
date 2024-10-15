@@ -33,9 +33,14 @@ module.exports = ({
     {
       path: '/epoch',
       method: 'GET',
+      handler: epochController.getEpochByIndex
+    },
+    {
+      path: '/epoch/:index',
+      method: 'GET',
       handler: epochController.getEpochByIndex,
       schema: {
-        querystring: {
+        params: {
           type: 'object',
           properties: {
             index: { type: ['number', 'null'], minimum: 0 }
