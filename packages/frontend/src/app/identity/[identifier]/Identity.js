@@ -65,6 +65,7 @@ function Identity ({ identifier }) {
     ])
       .catch(console.error)
 
+
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
@@ -139,12 +140,12 @@ function Identity ({ identifier }) {
                                         </LoadingLine>
                                     </Td>
                                 </Tr>
-                                {identity?.alias &&
+                                { identity?.data.alias &&
                                   <Tr>
                                     <Td w={tdTitleWidth}>Name</Td>
                                     <Td isNumeric className={'Table__Cell--BreakWord'}>
                                       <LoadingLine loading={identity.loading}>
-                                        {identity.alias}
+                                        {identity?.data.alias}
                                       </LoadingLine>
                                     </Td>
                                   </Tr>
