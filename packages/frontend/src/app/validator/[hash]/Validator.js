@@ -20,7 +20,6 @@ import { RateTooltip } from '../../../components/ui/Tooltips'
 import { networks } from '../../../constants/networks'
 import './ValidatorPage.scss'
 import {
-  Container,
   Badge,
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'

@@ -87,7 +87,7 @@ export default function BlocksChart ({ hash, isActive }) {
       .catch(err => fetchHandlerError(setBlocksHistory, err))
   }, [timespan])
 
-  if (blocksHistory.error || (!blocksHistory.loading && !blocksHistory.data?.resultSet)) { 
+  if (blocksHistory.error || (!blocksHistory.loading && !blocksHistory.data?.resultSet)) {
     return (<ErrorMessageBlock/>)
   }
 
