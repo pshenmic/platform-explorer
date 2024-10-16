@@ -376,10 +376,10 @@ function Validator ({ hash }) {
 
         <div className={'ValidatorPage__Column'}>
           <InfoContainer styles={['tabs']}>
-            <Tabs onChange={(index) => setActiveChartTab(index)}>
+            <Tabs onChange={(index) => setActiveChartTab(index)} index={activeChartTab}>
               <TabList>
                 <Tab>Proposed Blocks</Tab>
-                <Tab>Reward Earned</Tab>
+                <Tab isDisabled>Reward Earned</Tab>
               </TabList>
               <TabPanels>
                   <TabPanel height={'300px'} position={'relative'}>
@@ -387,9 +387,10 @@ function Validator ({ hash }) {
                       blockBorders={false}
                       hash={hash}
                       isActive={activeChartTab === 0}
+                      loading={validator.loading}
                     />
                   </TabPanel>
-                  <TabPanel height={'400px'}>
+                  <TabPanel height={'300px'}>
                     Reward Earned
                   </TabPanel>
               </TabPanels>
@@ -420,7 +421,7 @@ function Validator ({ hash }) {
                           : <LoadingList itemsCount={pageSize}/>
                         }
                       </div>
-                    : <Container h={20}><ErrorMessageBlock/></Container>
+                    : <ErrorMessageBlock/>
                   }
 
                   {proposedBlocks.data?.resultSet?.length > 0 &&
@@ -443,7 +444,7 @@ function Validator ({ hash }) {
                             />
                           : <LoadingList itemsCount={pageSize}/>}
                       </div>
-                    : <Container h={20}><ErrorMessageBlock/></Container>}
+                    : <ErrorMessageBlock/>}
 
                   {transactions.data?.resultSet?.length > 0 &&
                     <div className={'ValidatorPage__ListPagination'}>
@@ -461,7 +462,7 @@ function Validator ({ hash }) {
                     ? !transfers.loading
                         ? <TransfersList transfers={transfers.data.resultSet} identityId={validator.data?.identity}/>
                         : <LoadingList itemsCount={pageSize}/>
-                    : <Container h={20}><ErrorMessageBlock/></Container>}
+                    : <ErrorMessageBlock/>}
                 </TabPanel>
               </TabPanels>
             </Tabs>

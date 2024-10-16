@@ -23,7 +23,12 @@ function getDatesTicks (dates, numTicks) {
   return [firstDate, ...rangeDates, lastDate]
 }
 
-const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number' } }, yAxis = { title: '', type: { axis: 'number' } } }) => {
+const LineChart = ({
+  data,
+  timespan,
+  xAxis = { title: '', type: { axis: 'number' } },
+  yAxis = { title: '', type: { axis: 'number' } }
+}) => {
   const chartContainer = useRef()
   const [chartElement, setChartElement] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -37,6 +42,12 @@ const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number'
   }, [loading, chartContainer.current])
 
   useEffect(() => {
+    if (!data?.length) {
+      setLoading(true)
+      setSkeleton(true)
+      return
+    }
+
     if (chartElement) {
       setLoading(false)
       setTimeout(() => setSkeleton(false), 1000)

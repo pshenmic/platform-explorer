@@ -4,6 +4,7 @@ import { LineChart } from './../../../components/charts'
 import * as Api from '../../../util/Api'
 import { Button } from '@chakra-ui/react'
 import { CalendarIcon } from './../../../components/ui/icons'
+import { ErrorMessageBlock } from '../../../components/Errors'
 import './TimeframeSelector.scss'
 import './TabsChart.scss'
 
@@ -78,7 +79,7 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
 export default function BlocksChart ({ hash, isActive }) {
   const [blocksHistory, setBlocksHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(chartConfig.timespan.default)
-  const [menuIsOpen, setMenuIsOpen] = useState(chartConfig.timespan.default)
+  const [menuIsOpen, setMenuIsOpen] = useState(false)
 
   useEffect(() => {
     Api.getBlocksStatsByValidator(hash, timespan)
@@ -86,15 +87,21 @@ export default function BlocksChart ({ hash, isActive }) {
       .catch(err => fetchHandlerError(setBlocksHistory, err))
   }, [timespan])
 
+  if (blocksHistory.error || (!blocksHistory.loading && !blocksHistory.data?.resultSet)) { 
+    return (<ErrorMessageBlock/>)
+  }
+
   return (
     <div style={{ height: '100%' }} className={'TabsChart'}>
-      <TimeframeSelector
-        className={'TabsChart__TimeframeSelector'}
-        config={chartConfig}
-        changeCallback={setTimespan}
-        isActive={isActive}
-        openStateCallback={setMenuIsOpen}
-      />
+      {!blocksHistory.loading &&
+        <TimeframeSelector
+          className={'TabsChart__TimeframeSelector'}
+          config={chartConfig}
+          changeCallback={setTimespan}
+          isActive={isActive}
+          openStateCallback={setMenuIsOpen}
+        />
+      }
       <div className={`TabsChart__ChartContiner ${menuIsOpen ? 'TabsChart__ChartContiner--Hidden' : ''}`}>
         <LineChart
           data={blocksHistory.data?.resultSet?.map((item) => ({
@@ -116,15 +123,6 @@ export default function BlocksChart ({ hash, isActive }) {
           }}
         />
       </div>
-
     </div>
-
-  // <ProposedBlocksChart
-  //   height={height}
-  //   blocksHistory={blocksHistory}
-  //   timespan={blocksHistoryTimespan}
-  //   timespanChangeHandler={setBlocksHistoryTimespan}
-  //   blockBorders={blockBorders}
-  // />
   )
 }
