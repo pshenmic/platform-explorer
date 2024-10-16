@@ -13,7 +13,7 @@ function PageDataContainer ({ title, backLink, children }) {
       <Container
         className={'PageDataContainer'}
         maxW={'1440px'}
-        px={[0, 0, 0, 3]}
+        px={[0, 0, 0, 5, 8]}
         pt={0}
         pb={[3, 4, 5, 6]}
         mt={[0, 0, 0, 8]}
