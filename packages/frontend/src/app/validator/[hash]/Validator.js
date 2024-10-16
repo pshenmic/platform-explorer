@@ -374,7 +374,7 @@ function Validator ({ hash }) {
         </div>
 
         <div className={'ValidatorPage__Column'}>
-          <InfoContainer styles={['tabs']}>
+          <InfoContainer styles={['tabs']} className={'ValidatorPage__ChartsContainer'}>
             <Tabs onChange={(index) => setActiveChartTab(index)} index={activeChartTab}>
               <TabList>
                 <Tab>Proposed Blocks</Tab>

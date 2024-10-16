@@ -51,6 +51,15 @@
     flex-grow: 1;
   }
 
+  &__ChartsContainer {
+    padding-bottom: 0;
+    overflow-x: hidden;
+
+    .Chart {
+      overflow: visible !important;
+    }
+  }
+
   &__ListPagination {
     margin-top: 20px;
 
