@@ -39,6 +39,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all .1s;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: rgba(24, 167, 255, .2);
+      }
+    }
+
+    &:active {
+      transform: translateY(1px);
+      background-color: rgba(24, 167, 255, .15);
+    }
   }
 
   &__Title {
