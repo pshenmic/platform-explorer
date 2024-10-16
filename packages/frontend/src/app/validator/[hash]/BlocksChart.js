@@ -10,13 +10,30 @@ import './TabsChart.scss'
 
 const chartConfig = {
   timespan: {
-    default: '1w',
-    values: ['1h', '24h', '3d', '1w']
+    defaultIndex: 3,
+    values: [
+      {
+        label: '1 hour',
+        range: '1h'
+      },
+      {
+        label: '24 hours',
+        range: '24h'
+      },
+      {
+        label: '3 days',
+        range: '3d'
+      },
+      {
+        label: '1 week',
+        range: '1w'
+      }
+    ]
   }
 }
 
 const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback }) => {
-  const [timespan, setTimespan] = useState(chartConfig.timespan.default)
+  const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
   const [menuIsOpen, setMenuIsOpen] = useState(false)
 
   const changeHandler = (value) => {
@@ -43,17 +60,17 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
           </div>
 
           <div className={'TimeframeMenu__Values'}>
-            {config.timespan.values.map(iTimespan => (
+            {config.timespan.values.map((iTimespan, i) => (
               <Button
-                className={`TimeframeMenu__ValueButton ${iTimespan === timespan ? 'TimeframeMenu__ValueButton--Active' : ''}`}
+                className={`TimeframeMenu__ValueButton ${iTimespan.range === timespan.range ? 'TimeframeMenu__ValueButton--Active' : ''}`}
                 onClick={() => {
                   changeHandler(iTimespan)
                   setMenuIsOpen(false)
                 }}
-                key={iTimespan}
+                key={i}
                 size={'xs'}
               >
-                {iTimespan}
+                {iTimespan.label}
               </Button>
             ))}
           </div>
@@ -70,7 +87,7 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
         onClick={() => setMenuIsOpen(state => !state)}
       >
         <CalendarIcon mr={'10px'}/>
-        {timespan}
+        {timespan.label}
       </Button>
     </div>
   )
@@ -78,11 +95,11 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
 
 export default function BlocksChart ({ hash, isActive }) {
   const [blocksHistory, setBlocksHistory] = useState({ data: {}, loading: true, error: false })
-  const [timespan, setTimespan] = useState(chartConfig.timespan.default)
+  const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
   const [menuIsOpen, setMenuIsOpen] = useState(false)
 
   useEffect(() => {
-    Api.getBlocksStatsByValidator(hash, timespan)
+    Api.getBlocksStatsByValidator(hash, timespan.range)
       .then(res => fetchHandlerSuccess(setBlocksHistory, { resultSet: res }))
       .catch(err => fetchHandlerError(setBlocksHistory, err))
   }, [timespan])
@@ -108,13 +125,13 @@ export default function BlocksChart ({ hash, isActive }) {
             x: new Date(item.timestamp),
             y: item.data.blocksCount
           })) || []}
-          timespan={timespan}
+          timespan={timespan.range}
           xAxis={{
             type: (() => {
-              if (timespan === '1h') return { axis: 'time' }
-              if (timespan === '24h') return { axis: 'time' }
-              if (timespan === '3d') return { axis: 'date', tooltip: 'datetime' }
-              if (timespan === '1w') return { axis: 'date' }
+              if (timespan.range === '1h') return { axis: 'time' }
+              if (timespan.range === '24h') return { axis: 'time' }
+              if (timespan.range === '3d') return { axis: 'date', tooltip: 'datetime' }
+              if (timespan.range === '1w') return { axis: 'date' }
             })()
           }}
           yAxis={{
