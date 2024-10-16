@@ -12,7 +12,7 @@
   font-size: 12pt;
   border-radius: 10px;
   border: 1px solid var(--chakra-colors-gray-750);
-  background-color: var(--chakra-colors-gray-650);
+  background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   transition: all .1s;
 
   @media (hover: hover) and (pointer: fine) {
