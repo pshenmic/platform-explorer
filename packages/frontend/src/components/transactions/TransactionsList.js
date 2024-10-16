@@ -33,7 +33,7 @@ export default function TransactionsList ({ transactions = [], showMoreLink, typ
               transaction={transaction}
             />
         ))
-        : <EmptyListMessage>There are no transactions created yet.</EmptyListMessage>
+        : <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
       }
 
       {showMoreLink &&
