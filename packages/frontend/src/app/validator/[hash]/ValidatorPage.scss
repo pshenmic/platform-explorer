@@ -93,4 +93,17 @@
       grid-template-columns: 1fr;
     }
   }
+
+  @media screen and (min-width: $breakpoint-lg) and (max-width: 1100px) {
+    &__ListPagination {
+      .PageLink {
+        padding: 10px 8px;
+        min-width: 45px;
+      }
+
+      .PageItem:not(.PageItem--Previous):not(.PageItem--Next) {
+        margin: 0 4px;
+      }
+    }
+  }
 }
