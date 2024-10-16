@@ -423,12 +423,13 @@ function Validator ({ hash }) {
                     : <ErrorMessageBlock/>
                   }
 
-                  {proposedBlocks.data?.resultSet?.length > 0 &&
+                  {proposedBlocks.data?.resultSet &&
                     <div className={'ValidatorPage__ListPagination'}>
                       <Pagination
                         onPageChange={pagination => paginationHandler(setProposedBlocks, pagination.selected)}
                         pageCount={Math.ceil(proposedBlocks.data?.pagination?.total / pageSize) || 1}
                         forcePage={currentPage}
+                        pageRangeDisplayed={0}
                       />
                     </div>
                   }
@@ -445,13 +446,13 @@ function Validator ({ hash }) {
                       </div>
                     : <ErrorMessageBlock/>}
 
-                  {transactions.data?.resultSet?.length > 0 &&
+                  {transactions.data?.resultSet &&
                     <div className={'ValidatorPage__ListPagination'}>
                       <Pagination
-                        className={'ValidatorPage__ListPagination'}
                         onPageChange={pagination => paginationHandler(setTransactions, pagination.selected)}
                         pageCount={Math.ceil(transactions.data?.pagination?.total / pageSize) || 1}
                         forcePage={currentPage}
+                        pageRangeDisplayed={0}
                       />
                     </div>
                   }

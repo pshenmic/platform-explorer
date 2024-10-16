@@ -35,6 +35,20 @@
 
   &__ListPagination {
     margin-top: 20px;
+
+    .PageItem {
+      &--Previous, &--Next {
+        display: block;
+      }
+
+      &--Previous {
+        margin-right: auto;
+      }
+
+      &--Next {
+        margin-left: auto;
+      }
+    }
   }
 
   &__List {
