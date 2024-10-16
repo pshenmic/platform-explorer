@@ -16,7 +16,7 @@ function Footer () {
     >
       <Flex
         className={'Footer'}
-        maxW={'1440px'}
+        maxW={'container.maxPageW'}
         ml={'auto'}
         mr={'auto'}
         h={'auto'}

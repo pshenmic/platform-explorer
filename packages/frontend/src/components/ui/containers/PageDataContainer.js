@@ -6,18 +6,13 @@ import './PageDataContainer.scss'
 function PageDataContainer ({ title, backLink, children }) {
   return (
     <Container
+      className={'PageDataContainer'}
       maxW={'none'}
       m={0}
       py={3}
+      mt={[0, 0, 0, 8]}
     >
-      <Container
-        className={'PageDataContainer'}
-        maxW={'1440px'}
-        px={[0, 0, 0, 5, 8]}
-        pt={0}
-        pb={[3, 4, 5, 6]}
-        mt={[0, 0, 0, 8]}
-      >
+      <Container maxW={'container.maxPageW'} px={[0, 0, 0, 5, 8]} pt={0}>
         <div className={'PageDataContainer__Header'}>
           {backLink &&
             <Link href={backLink} className={'PageDataContainer__BackLink'}>
@@ -26,7 +21,7 @@ function PageDataContainer ({ title, backLink, children }) {
           {title && <div className={'PageDataContainer__Title'}>{title}</div>}
         </div>
 
-        <div>{children}</div>
+        <div className={'PageDataContainer__Content'}>{children}</div>
       </Container>
     </Container>
   )

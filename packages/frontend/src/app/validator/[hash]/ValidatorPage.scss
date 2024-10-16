@@ -1,6 +1,23 @@
 @use '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
+
+@mixin blockOffsets ($property) {
+  #{$property}: 12px;
+
+  @media screen and (min-width: $breakpoint-md) {
+    #{$property}: 16px
+  }
+
+  @media screen and (min-width: $breakpoint-lg) {
+    #{$property}: 20px
+  }
+
+  @media screen and (min-width: $breakpoint-xl) {
+    #{$property}: 24px
+  }
+}
+
 .ValidatorPage {
   &__Card {
     margin-bottom: 24px;
@@ -9,7 +26,7 @@
   &__ContentContainer {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    @include blockOffsets(gap);
   }
 
   &__Column {
@@ -25,6 +42,7 @@
     flex-direction: column;
     flex-grow: 1;
     margin-top: 24px;
+    @include blockOffsets(margin-top);
   }
 
   &__ListContainer {

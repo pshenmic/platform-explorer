@@ -1,18 +1,16 @@
 @use '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
+$borderRadius: 20px;
+
 .PageDataContainer {
-  position: relative;
-  overflow: hidden;
-  border-radius: 20px;
-  background: var(--chakra-colors-gray-650);
-  
   &__Header {
+    position: relative;
     display: flex;
     align-items: center;
     height: 40px;
-    margin-bottom: 32px;
-
+    padding: 0 12px;
+    
     &::before {
       content: '';
       display: block;
@@ -21,10 +19,22 @@
       width: 100%;
       left: 0;
       background: #24282b;
+      border-radius: $borderRadius $borderRadius 0 0;
       opacity: .5;
       top: 0;
       z-index: 0;
     }
+  }
+
+  &__Content {
+    padding-top: 32px;
+    padding-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 $borderRadius $borderRadius;
+    background: var(--chakra-colors-gray-675);
+    @include mixins.pageDataPadding(padding-left);
+    @include mixins.pageDataPadding(padding-right);
   }
 
   &__BackLink {
@@ -63,7 +73,10 @@
   }
 
   @media screen and (max-width: $breakpoint-lg) {
-    background: transparent;
+    &__Content {
+      padding: 0;
+      background: transparent;
+    }
 
     &__Header {
       padding: 0 12px;
