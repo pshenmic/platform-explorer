@@ -406,7 +406,7 @@ function Validator ({ hash }) {
               <TabList>
                 <Tab>Proposed Blocks</Tab>
                 <Tab>Transactions</Tab>
-                <Tab>Withdrawals</Tab>
+                <Tab isDisabled>Withdrawals</Tab>
               </TabList>
               <TabPanels style={{
                 display: 'flex',

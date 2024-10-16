@@ -1,5 +1,6 @@
-import Link from 'next/link'
 import './SimpleList.scss'
+import './EmptyListMessage.scss'
+import Link from 'next/link'
 import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
@@ -9,7 +10,7 @@ import { RateTooltip } from '../Tooltips'
 
 function EmptyListMessage ({ children }) {
   return (
-    <Container textAlign={'center'}>{children}</Container>
+    <Container className={'EmptyListMessage'}>{children}</Container>
   )
 }
 
