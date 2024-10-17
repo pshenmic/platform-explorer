@@ -50,7 +50,7 @@ const DateRangePicker = ({
 
     const startLabel = range[0].toLocaleString('en-US', { month: 'long', year: 'numeric' })
     const endLabel = range[1].toLocaleString('en-US', { month: 'long', year: 'numeric' })
-    
+
     return [startLabel, endLabel]
   }
 
