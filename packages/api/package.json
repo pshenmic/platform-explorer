@@ -12,10 +12,7 @@
     "lint": "standard ."
   },
   "dependencies": {
-    "@dashevo/dapi-grpc": "^1.4.0",
-    "@dashevo/dapi-client": "^1.4.0",
-    "@dashevo/dashd-rpc": "^19.0.0",
-    "@dashevo/wasm-dpp": "^1.4.0",
+    "@dashevo/dashd-rpc": "19.0.0",
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
     "bs58": "^6.0.0",
