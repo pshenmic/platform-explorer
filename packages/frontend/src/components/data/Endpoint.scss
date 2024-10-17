@@ -1,0 +1,59 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.Endpoint {
+  display: flex;
+  align-items: center;
+
+  &__Status {
+    margin-left: 8px;
+  }
+}
+
+a.Endpoint {
+  &:hover {
+    color: $color-brand-light !important;
+  }
+}
+
+a.Endpoint {
+  .Endpoint {
+    &__Value {
+      position: relative;
+  
+      &::after {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 100%;
+        height: 0;
+        bottom: 0;
+        background-color: $color-brand-light;
+        opacity: 0;
+        transition: all .1s;
+      }
+    }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover .Endpoint {
+      &__Value {
+        &::after {
+          height: 2px;
+          bottom: -2px;
+          opacity: .44;
+        }
+      }
+    }
+  }
+
+  &:active  .Endpoint {
+    &__Value {
+      transform: translateY(1px);
+
+      &::after {
+        height: 0px;
+        bottom: 0px;
+      }
+    }
+  }
+}

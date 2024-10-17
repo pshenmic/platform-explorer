@@ -1,0 +1,51 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.TimeframeMenu {
+  padding: 12px;
+  border-radius: 20px;
+
+  &__ValuesContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  &__ValuesTitle {
+    font-family: $font-mono;
+    color: #fff;
+    opacity: .5;
+    font-size: 0.75rem;
+  }
+
+  &__Values {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+  }
+
+  &__ValueButton {
+    margin-left: 10px;
+
+    &--Active {
+      background-color: $color-brand-normal !important;
+      color: #fff !important;
+    }
+  }
+
+  &__Calendar {
+    width: 100%;
+    height: 100%;
+  }
+
+  @media screen and (max-width: 555px) {
+    &__Values {
+      flex-wrap: wrap;
+      margin-bottom: -8px;
+    }
+
+    &__ValueButton {
+      margin-bottom: 8px;
+    }
+  }
+}

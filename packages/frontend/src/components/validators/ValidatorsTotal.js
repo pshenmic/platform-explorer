@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, currencyRound, creditsToDash } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import { InfoCard, ValueCard } from '../cards'
 import EpochProgress from '../networkStatus/EpochProgress'
 import { Identifier } from '../data'
@@ -83,10 +83,8 @@ export default function ValidatorsTotal () {
               <div className={'ValidatorsTotalCard__TotalCollectedFees'}>
                 {typeof epoch?.data?.totalCollectedFees === 'number'
                   ? <RateTooltip
-                      dash={creditsToDash(epoch.data.totalCollectedFees)}
-                      usd={typeof rate.data?.usd === 'number'
-                        ? rate.data.usd * creditsToDash(epoch.data.totalCollectedFees)
-                        : null}
+                      credits={epoch.data.totalCollectedFees}
+                      rate={rate.data}
                     >
                       <span>
                         {currencyRound(epoch.data.totalCollectedFees)}

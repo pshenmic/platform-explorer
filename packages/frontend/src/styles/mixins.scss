@@ -12,7 +12,7 @@
   font-size: 12pt;
   border-radius: 10px;
   border: 1px solid var(--chakra-colors-gray-750);
-  background-color: var(--chakra-colors-gray-650);
+  background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   transition: all .1s;
 
   @media (hover: hover) and (pointer: fine) {
@@ -46,6 +46,7 @@
 }
 
 @mixin defListTitles {
+  display: grid;
   padding: 7px 12px;
   border-radius: 10px;
   background-color: var(--chakra-colors-gray-800);
@@ -55,6 +56,13 @@
   font-size: 12px;
   text-transform: uppercase;
   color: var(--chakra-colors-white);
+
+  &--Light {
+    background: transparent !important;
+    font-weight: 500 !important;
+    color: #fff !important;
+    text-transform: none !important;
+  }
 }
 
 @mixin LoadingLine($delay: 0) {
@@ -284,6 +292,54 @@
 
   @media screen and (max-width: $breakpoint-sm) {
     #{$property}: var(--chakra-space-3);
+  }
+}
+
+@mixin InfoContainerPadding ($property) {
+  #{$property}: var(--chakra-space-3);
+
+  @media screen and (min-width: $breakpoint-md) {
+    #{$property}: var(--chakra-space-4);
+  }
+
+  @media screen and (min-width: $breakpoint-lg) {
+    #{$property}: var(--chakra-space-5);
+  }
+
+  @media screen and (min-width: $breakpoint-xl) {
+    #{$property}: var(--chakra-space-6);
+  }
+}
+
+@mixin navContainerPadding ($property) {
+  #{$property}: var(--chakra-space-8);
+
+  @media screen and (min-width: $breakpoint-md) {
+    #{$property}: var(--chakra-space-4);
+  }
+
+  @media screen and (min-width: $breakpoint-lg) {
+    #{$property}: var(--chakra-space-5);
+  }
+
+  @media screen and (min-width: $breakpoint-xl) {
+    #{$property}: var(--chakra-space-6);
+  }
+}
+
+@mixin pageDataPadding ($property) {
+  #{$property}: var(--chakra-space-4);
+
+  @media screen and (min-width: $breakpoint-md) {
+    #{$property}: var(--chakra-space-4);
+  }
+
+  @media screen and (min-width: $breakpoint-lg) {
+    #{$property}: var(--chakra-space-6);
+  }
+
+  @media screen and (min-width: $breakpoint-xl) {
+    #{$property}: var(--chakra-space-8);
   }
 }
 

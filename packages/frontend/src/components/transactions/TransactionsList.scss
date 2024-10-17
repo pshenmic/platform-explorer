@@ -4,8 +4,6 @@
 .TransactionsList {
   &__ColumnTitles {
     @include mixins.defListTitles;
-    
-    display: grid;
     grid-template-columns: 100px calc(100% - 270px) 170px;
   }
 

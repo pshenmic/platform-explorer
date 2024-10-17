@@ -69,7 +69,7 @@ function getTimeDelta (startDate, endDate, format) {
   }
 
   if (format === 'detailed') {
-    return `${days}d:${hours}h:${minutes}m:${seconds}s`
+    return `${days}d:${hours}h:${minutes}m`
   }
 
   return 'Invalid format'

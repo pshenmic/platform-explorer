@@ -23,7 +23,12 @@ function getDatesTicks (dates, numTicks) {
   return [firstDate, ...rangeDates, lastDate]
 }
 
-const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number' } }, yAxis = { title: '', type: { axis: 'number' } } }) => {
+const LineChart = ({
+  data,
+  timespan,
+  xAxis = { title: '', type: { axis: 'number' } },
+  yAxis = { title: '', type: { axis: 'number' } }
+}) => {
   const chartContainer = useRef()
   const [chartElement, setChartElement] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -37,6 +42,12 @@ const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number'
   }, [loading, chartContainer.current])
 
   useEffect(() => {
+    if (!data?.length) {
+      setLoading(true)
+      setSkeleton(true)
+      return
+    }
+
     if (chartElement) {
       setLoading(false)
       setTimeout(() => setSkeleton(false), 1000)
@@ -57,16 +68,18 @@ const LineChart = ({ data, timespan, xAxis = { title: '', type: { axis: 'number'
 
   useEffect(() => render, [data, render])
 
-  return <Container
-            ref={chartContainer}
-            width={'100%'}
-            height={'100%'}
-            maxW={'none'}
-            p={0} m={0}
-            className={`ChartContainer ${skeleton ? 'loading' : ''}`}
-        >
-            {chartElement || <></>}
-        </Container>
+  return (
+    <Container
+      ref={chartContainer}
+      width={'100%'}
+      height={'100%'}
+      maxW={'none'}
+      p={0} m={0}
+      className={`ChartContainer ${skeleton ? 'loading' : ''}`}
+    >
+      {chartElement || <></>}
+    </Container>
+  )
 }
 
 const LineGraph = ({
@@ -83,6 +96,8 @@ const LineGraph = ({
   const marginBottom = xAxis.title ? 45 : 20
   const marginLeft = 40
   const xAxisFormatCode = typeof xAxis.type === 'string' ? xAxis.type : xAxis.type.axis
+  const [chartWidth, setChartWidth] = useState(0)
+  const svgRef = useRef(null)
 
   const getFormatByCode = (code) => {
     if (code === 'number') return d3.format(',.0f')
@@ -103,16 +118,27 @@ const LineGraph = ({
   })
 
   const xTicksCount = (() => {
-    if (xAxisFormatCode === 'number') return 6
-    if (xAxisFormatCode === 'time') return 6
+    const isSmallScreen = chartWidth < 500
+
+    if (xAxisFormatCode === 'number') return isSmallScreen ? 4 : 6
+    if (xAxisFormatCode === 'time') return isSmallScreen ? 4 : 6
     if (xAxisFormatCode === 'date' || xAxisFormatCode === 'datetime') {
-      if (typeof timespan === 'undefined') return 6
-      if (timespan === '1w') return 6
-      if (timespan === '3d') return 4
-      if (timespan === '24h') return 6
-      if (timespan === '1h') return 6
+      if (typeof timespan === 'undefined') return isSmallScreen ? 4 : 6
+      if (timespan === '1w') return isSmallScreen ? 4 : 6
+      if (timespan === '3d') return isSmallScreen ? 3 : 4
+      if (timespan === '24h') return isSmallScreen ? 4 : 6
+      if (timespan === '1h') return isSmallScreen ? 4 : 6
     }
+
+    return 6
   })()
+
+  useEffect(() => {
+    if (svgRef.current) {
+      const currentWidth = svgRef.current.getBoundingClientRect().width
+      setChartWidth(currentWidth)
+    }
+  }, [svgRef.current])
 
   const gx = useRef()
   const gy = useRef()
@@ -123,10 +149,10 @@ const LineGraph = ({
   const [line, setLine] = useState(() => d3.line()
     .x(d => x(d.x))
     .y(d => y(d.y))
-    .curve(d3.curveCardinal))
+    .curve(d3.curveLinear))
 
   const [area, setArea] = useState(() => d3.area()
-    .curve(d3.curveCardinal)
+    .curve(d3.curveLinear)
     .x((d) => x(d.x))
     .y0(y(0))
     .y1((d) => y(d.y)))
@@ -152,10 +178,10 @@ const LineGraph = ({
     setLine((d) => d3.line()
       .x(d => x(d.x))
       .y(d => y(d.y))
-      .curve(d3.curveBumpX))
+      .curve(d3.curveLinear))
 
     setArea((d) => d3.area()
-      .curve(d3.curveBumpX)
+      .curve(d3.curveLinear)
       .x((d) => x(d.x))
       .y0(y(0))
       .y1((d) => y(d.y)))
@@ -185,7 +211,7 @@ const LineGraph = ({
 
     const yGrid = d3.axisLeft(y)
       .ticks(5)
-      .tickSize(-width + marginLeft + marginRight - 20)
+      .tickSize(-width)
       .tickFormat('')
 
     d3.select(gy.current).select('.grid-y').remove()
@@ -196,7 +222,7 @@ const LineGraph = ({
 
     const xGrid = d3.axisBottom(x)
       .tickValues(getDatesTicks(data.map((d) => d.x), xTicksCount - 2))
-      .tickSize(-height + marginTop + marginBottom)
+      .tickSize(-height + marginTop)
       .tickFormat('')
 
     d3.select(gx.current).select('.grid-x').remove()
@@ -335,6 +361,7 @@ const LineGraph = ({
   return (
     <div className={`Chart ${!loading ? 'loaded' : ''}`}>
         <svg
+            ref={svgRef}
             onMouseEnter = {pointermoved}
             onMouseMove = {pointermoved}
             onMouseLeave = {pointerleft}
@@ -346,10 +373,10 @@ const LineGraph = ({
             </filter>
 
             <svg x='15' y='-15' overflow={'visible'}>
-              <g className={'Axis Axis--X'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`} >
+              <g className={'Axis Axis--X'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`}>
                 <line
                   x1={marginLeft - 20}
-                  x2={width - marginRight + 10}
+                  x2={width - marginRight + 50}
                   y1={0}
                   y2={0}
                   className={'Axis__Line'}
@@ -359,7 +386,7 @@ const LineGraph = ({
               </g>
             </svg>
 
-            <svg x='0' y='-15'>
+            <svg x='0' y='-15' overflow={'visible'}>
               <g className={'Axis Axis--Y'} ref={gy} >
                 <line
                   x1={0}
@@ -381,9 +408,9 @@ const LineGraph = ({
                     </linearGradient>
                     <clipPath id="clipPath">
                         <rect
-                            x={marginLeft - 10}
+                            x={marginLeft - 20}
                             y={marginTop}
-                            width={width - (marginLeft - 10 + marginRight)}
+                            width={width - (marginLeft - 20 + marginRight)}
                             height={height - (marginTop + marginBottom)}
                         ></rect>
                     </clipPath>
@@ -392,15 +419,15 @@ const LineGraph = ({
                 <path d={area(data)} fill="url(#AreaFill)" clipPath={'url(#clipPath)'}/>
 
                 <g filter='url(#shadow)'>
-                    <path ref={graphicLine} d={line(data)} stroke="#008DE4" strokeWidth="3" fill="none"/>
+                    <path ref={graphicLine} d={line(data)} stroke={'#008DE4'} strokeWidth={3} fill={'none'} strokeLinejoin={'round'}/>
 
                     <g fill='#008DE4'>
-                        {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r='4' className={'Chart__Point'}/>))}
+                        {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r={4} className={'Chart__Point'}/>))}
                     </g>
                 </g>
 
                 <g ref={focusPoint} className={'Chart__FocusPoint'}>
-                    <circle r="3"/>
+                    <circle r={3}/>
                 </g>
 
                 <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'} filter='url(#shadow)'></g>

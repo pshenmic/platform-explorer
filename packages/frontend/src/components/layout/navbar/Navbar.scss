@@ -2,7 +2,8 @@
 @import '../../../styles/variables.scss';
 
 .Navbar {
-  padding: 0 16px;
+  @include mixins.navContainerPadding(padding-left);
+  @include mixins.navContainerPadding(padding-right);
   position: fixed;
   z-index: 100;
   top: 0;

@@ -2,7 +2,13 @@ import './Pagination.scss'
 
 import ReactPaginate from 'react-paginate'
 
-function Pagination ({ onPageChange, pageCount, forcePage }) {
+function Pagination ({
+  onPageChange,
+  pageCount,
+  forcePage,
+  pageRangeDisplayed = 2,
+  marginPagesDisplayed = 1
+}) {
   pageCount = Math.max(pageCount, 1)
 
   return (
@@ -10,8 +16,8 @@ function Pagination ({ onPageChange, pageCount, forcePage }) {
       breakLabel={'...'}
       nextLabel={'>'}
       onPageChange={onPageChange}
-      pageRangeDisplayed={2}
-      marginPagesDisplayed={1}
+      pageRangeDisplayed={pageRangeDisplayed}
+      marginPagesDisplayed={marginPagesDisplayed}
       pageCount={pageCount}
       previousLabel={'<'}
       pageClassName={'PageItem'}
