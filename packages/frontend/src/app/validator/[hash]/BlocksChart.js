@@ -5,6 +5,7 @@ import * as Api from '../../../util/Api'
 import { Button } from '@chakra-ui/react'
 import { CalendarIcon } from './../../../components/ui/icons'
 import { ErrorMessageBlock } from '../../../components/Errors'
+import { DateRangePicker } from '../../../components/calendar'
 import './TimeframeSelector.scss'
 import './TabsChart.scss'
 
@@ -51,7 +52,6 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
 
   return (
     <div className={`TimeframeSelector ${menuIsOpen ? 'TimeframeSelector--MenuActive' : ''}`}>
-
       <div className={'TimeframeSelector__Menu TimeframeMenu'}>
 
         <div className={'TimeframeMenu__ValuesContainer'}>
@@ -77,9 +77,13 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
         </div>
 
         <div className={'TimeframeMenu__Calendar'}>
-          calendar coming soon
+          <DateRangePicker
+            disableFutureDates={true}
+            monthsToShow={7}
+            noTopNavigation={true}
+            noWeekDay={true}
+          />
         </div>
-
       </div>
 
       <Button

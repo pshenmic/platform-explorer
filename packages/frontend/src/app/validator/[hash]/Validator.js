@@ -381,7 +381,7 @@ function Validator ({ hash }) {
                 <Tab isDisabled>Reward Earned</Tab>
               </TabList>
               <TabPanels>
-                  <TabPanel height={'300px'} position={'relative'}>
+                  <TabPanel height={'400px'} position={'relative'}>
                     <BlocksChart
                       blockBorders={false}
                       hash={hash}
@@ -389,7 +389,7 @@ function Validator ({ hash }) {
                       loading={validator.loading}
                     />
                   </TabPanel>
-                  <TabPanel height={'300px'}>
+                  <TabPanel height={'400px'}>
                     Reward Earned
                   </TabPanel>
               </TabPanels>
