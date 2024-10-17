@@ -7,6 +7,7 @@ import { CalendarIcon } from './../../../components/ui/icons'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { DateRangePicker } from '../../../components/calendar'
 import './TimeframeSelector.scss'
+import './TimeframeMenu.scss'
 import './TabsChart.scss'
 
 const chartConfig = {
@@ -50,10 +51,13 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
     if (typeof openStateCallback === 'function') openStateCallback(menuIsOpen)
   }, [menuIsOpen])
 
+  const calendarHandler = (value) => {
+    // console.log('calendarHandler', value)
+  }
+
   return (
     <div className={`TimeframeSelector ${menuIsOpen ? 'TimeframeSelector--MenuActive' : ''}`}>
       <div className={'TimeframeSelector__Menu TimeframeMenu'}>
-
         <div className={'TimeframeMenu__ValuesContainer'}>
           <div className={'TimeframeMenu__ValuesTitle'}>
             Select a day, period or Timeframe:
@@ -82,6 +86,7 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
             monthsToShow={7}
             noTopNavigation={true}
             noWeekDay={true}
+            changeHandler={calendarHandler}
           />
         </div>
       </div>

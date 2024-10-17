@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import './DateRangePicker.scss'
@@ -13,11 +13,22 @@ const DateRangePicker = ({
 }) => {
   const [range, setRange] = useState([null, null])
   const [currentMonthIndex, setCurrentMonthIndex] = useState(disableFutureDates ? -monthsToShow : 0)
+  const [showSingleCalendar, setShowSingleCalendar] = useState(window.innerWidth < 600)
   const today = new Date()
+
+  useEffect(() => {
+    const handleResize = () => {
+      setShowSingleCalendar(window.innerWidth < 600)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   const generateMonthPairs = () => {
     const months = []
-    for (let i = 0; i < monthsToShow; i += 2) {
+    for (let i = 0; i < monthsToShow; i += showSingleCalendar ? 1 : 2) {
       const date1 = new Date(today.getFullYear(), today.getMonth() + currentMonthIndex + i, 1)
       const date2 = new Date(today.getFullYear(), today.getMonth() + currentMonthIndex + i + 1, 1)
 
@@ -33,6 +44,16 @@ const DateRangePicker = ({
     return months
   }
 
+  // Получаем заголовки для диапазона
+  const getHeaderLabel = (range) => {
+    if (!range[0] || !range[1]) return ['', '']
+
+    const startLabel = range[0].toLocaleString('en-US', { month: 'long', year: 'numeric' })
+    const endLabel = range[1].toLocaleString('en-US', { month: 'long', year: 'numeric' })
+    
+    return [startLabel, endLabel]
+  }
+
   const monthPairs = generateMonthPairs()
 
   const onDateChange = (dates) => {
@@ -44,11 +65,11 @@ const DateRangePicker = ({
   }
 
   const handleNext = () => {
-    setCurrentMonthIndex(prev => prev + 2)
+    setCurrentMonthIndex(prev => prev + (showSingleCalendar ? 1 : 2))
   }
 
   const handlePrev = () => {
-    setCurrentMonthIndex(prev => prev - 2)
+    setCurrentMonthIndex(prev => prev - (showSingleCalendar ? 1 : 2))
   }
 
   const handleSetRange = (start1, end2) => {
@@ -60,19 +81,25 @@ const DateRangePicker = ({
     return false
   }
 
+  // Получаем заголовки на основе текущего выбранного диапазона
+  const [headerStart, headerEnd] = getHeaderLabel(range)
+
   return (
     <div className={'DateRangePicker ' +
       `${className || ''} ` +
       `${noTopNavigation ? 'DateRangePicker--NoTopNavigation' : ''} ` +
       `${noWeekDay ? 'DateRangePicker--NoWeekDay' : ''} `}
     >
+      {/* Заголовки месяцев */}
       <div className={'DateRangePicker__Header'}>
         <div className={'DateRangePicker__HeaderMonth'}>
-          {monthPairs[0].label.split(' - ')[0]}
+          {headerStart || monthPairs[0].label.split(' - ')[0]} {/* Отображаем выбранный месяц или месяц по умолчанию */}
         </div>
-        <div className={'DateRangePicker__HeaderMonth'}>
-          {monthPairs[0].label.split(' - ')[1]}
-        </div>
+        {!showSingleCalendar && (
+          <div className={'DateRangePicker__HeaderMonth'}>
+            {headerEnd || monthPairs[0].label.split(' - ')[1]} {/* Отображаем выбранный месяц или месяц по умолчанию */}
+          </div>
+        )}
       </div>
 
       <div className={'DateRangePicker__Calendar'}>
@@ -82,12 +109,12 @@ const DateRangePicker = ({
           onChange={onDateChange}
           value={range}
           tileDisabled={tileDisabled}
-          showDoubleView={true}
+          showDoubleView={!showSingleCalendar}
         />
       </div>
 
       <div className="DateRangePicker__MonthSelector">
-        <button className={'DateRangePicker__Arrow DateRangePicker__Arrow--left'} onClick={handlePrev}>
+        <button className={'DateRangePicker__Arrow DateRangePicker__Arrow--Left'} onClick={handlePrev}>
           &lt;
         </button>
 
@@ -102,11 +129,11 @@ const DateRangePicker = ({
             onClick={() => handleSetRange(pair.start1, pair.end2)}
             disabled={disableFutureDates && pair.start1 > today}
           >
-            {pair.labelShort}
+            {showSingleCalendar ? pair.labelShort.split(' - ')[0] : pair.labelShort}
           </button>
         ))}
 
-        <button className={'DateRangePicker__Arrow DateRangePicker__Arrow--right'} onClick={handleNext}>
+        <button className={'DateRangePicker__Arrow DateRangePicker__Arrow--Right'} onClick={handleNext}>
           &gt;
         </button>
       </div>

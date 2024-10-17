@@ -74,10 +74,19 @@ $font-color: #fff;
   }
 
   &__MonthButton {
+    &--Active {
+      background-color: $color-brand-normal;
+    }
   }
 
   &__Arrow {
+    &--Left {
+      margin-right: auto;
+    }
 
+    &--Right {
+      margin-left: auto;
+    }
   }
 
   .react-calendar {

@@ -59,6 +59,10 @@
         padding: 0 24px;
         padding-bottom: 1px;
       }
+
+      .chakra-tabs__tab {
+        padding: 8px;
+      }
     }
   }
 
@@ -76,6 +80,19 @@
       .chakra-tabs__tablist {
         padding: 0 16px;
         padding-bottom: 1px;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &--Tabs {
+      .chakra-tabs__tablist {
+        padding: 0 16px;
+        padding-bottom: 1px;
+      }
+
+      .chakra-tabs__tab {
+        padding: 8px 4px;
       }
     }
   }

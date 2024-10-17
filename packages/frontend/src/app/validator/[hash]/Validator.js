@@ -66,23 +66,20 @@ function Validator ({ hash }) {
 
   useEffect(() => {
     if (!validator.data?.identity) return
+
     setTransactions(state => ({ ...state, loading: true }))
 
-    const identifier = validator.data.identity
-    // const identifier = 'HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT' // test
-
-    Api.getTransactionsByIdentity(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
+    Api.getTransactionsByIdentity(validator.data.identity, transactions.props.currentPage + 1, pageSize, 'desc')
       .then(res => fetchHandlerSuccess(setTransactions, res))
       .catch(err => fetchHandlerError(setTransactions, err))
   }, [validator, transactions.props.currentPage])
 
   useEffect(() => {
     if (!validator.data?.identity) return
+
     setTransfers(state => ({ ...state, loading: true }))
 
-    const identifier = validator.data.identity
-
-    Api.getTransfersByIdentity(identifier, transfers.props.currentPage + 1, pageSize, 'desc')
+    Api.getTransfersByIdentity(validator.data.identity, transfers.props.currentPage + 1, pageSize, 'desc')
       .then(res => fetchHandlerSuccess(setTransfers, res))
       .catch(err => fetchHandlerError(setTransfers, err))
   }, [validator, transfers.props.currentPage])
@@ -381,7 +378,7 @@ function Validator ({ hash }) {
                 <Tab isDisabled>Reward Earned</Tab>
               </TabList>
               <TabPanels>
-                  <TabPanel height={'400px'} position={'relative'}>
+                  <TabPanel height={'350px'} position={'relative'}>
                     <BlocksChart
                       blockBorders={false}
                       hash={hash}
@@ -389,7 +386,7 @@ function Validator ({ hash }) {
                       loading={validator.loading}
                     />
                   </TabPanel>
-                  <TabPanel height={'400px'}>
+                  <TabPanel height={'350px'} position={'relative'}>
                     Reward Earned
                   </TabPanel>
               </TabPanels>
