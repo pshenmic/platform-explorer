@@ -3,6 +3,7 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
+const { calculateInterval } = require('../utils')
 
 class ValidatorsController {
   constructor (knex) {
@@ -68,16 +69,23 @@ class ValidatorsController {
 
   getValidatorStatsByProTxHash = async (request, response) => {
     const { hash } = request.params
-    const { timespan = '1h' } = request.query
+    const {
+      start = new Date().getTime() - 3600000,
+      end = new Date().getTime()
+    } = request.query
 
-    const possibleValues = ['1h', '24h', '3d', '1w']
-
-    if (possibleValues.indexOf(timespan) === -1) {
-      return response.status(400)
-        .send({ message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid` })
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
     }
 
-    const stats = await this.validatorsDAO.getValidatorStatsByProTxHash(hash, timespan)
+    const interval = calculateInterval(new Date(start), new Date(end))
+
+    const stats = await this.validatorsDAO.getValidatorStatsByProTxHash(
+      hash,
+      new Date(start),
+      new Date(end),
+      interval
+    )
 
     response.send(stats)
   }
