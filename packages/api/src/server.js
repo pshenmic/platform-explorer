@@ -47,7 +47,6 @@ module.exports = {
   start: async () => {
     client = new Dash.Client()
 
-
     await loadWasmDpp()
     await client.platform.initialize()
 
