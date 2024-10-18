@@ -128,7 +128,7 @@ const checkTcpConnect = (port, host) => {
     } catch (e) {
       console.error(e)
       connection.destroy()
-      reject('ERROR')
+      reject(e)
     }
   })
 }

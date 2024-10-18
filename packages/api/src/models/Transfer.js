@@ -17,7 +17,7 @@ module.exports = class Transfer {
   }
 
   // eslint-disable-next-line camelcase
-  static fromRow ({ amount, sender, recipient, timestamp, tx_hash, type}) {
+  static fromRow ({ amount, sender, recipient, timestamp, tx_hash, type }) {
     return new Transfer(parseInt(amount), sender, recipient, timestamp, tx_hash, type)
   }
 }

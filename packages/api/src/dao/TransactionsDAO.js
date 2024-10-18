@@ -1,8 +1,6 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
-const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
-const Withdrawal = require('../models/Witdrawal')
 
 module.exports = class TransactionsDAO {
   constructor (knex) {

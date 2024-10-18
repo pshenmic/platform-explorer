@@ -31,7 +31,7 @@ const schemaTypes = [
         type: ['integer', 'null'],
         minimum: 0,
         maximum: 8
-      },
+      }
     }
   },
   {

@@ -276,13 +276,13 @@ module.exports = class IdentitiesDAO {
         'transfers.sender as sender', 'transfers.recipient as recipient',
         'transfers.state_transition_hash as tx_hash',
         'state_transitions.block_hash as block_hash',
-        'state_transitions.type as type',
+        'state_transitions.type as type'
 
       )
       .select(this.knex.raw(`rank() over (order by transfers.id ${order}) rank`))
       .whereRaw(`(transfers.sender = '${identifier}' OR transfers.recipient = '${identifier}') ${
-        typeof type === 'number' 
-          ? `AND state_transitions.type = ${type}` 
+        typeof type === 'number'
+          ? `AND state_transitions.type = ${type}`
           : ''
       }`)
       .leftJoin('state_transitions', 'state_transitions.hash', 'transfers.state_transition_hash')
@@ -291,7 +291,7 @@ module.exports = class IdentitiesDAO {
       .select(
         'rank', 'amount', 'block_hash', 'type',
         'sender', 'recipient', 'with_alias.id',
-        'tx_hash', 'blocks.timestamp as timestamp',
+        'tx_hash', 'blocks.timestamp as timestamp'
       )
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'with_alias.block_hash')

@@ -350,7 +350,7 @@ describe('Validators routes', () => {
         const expectedValidators = validators
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -805,7 +805,7 @@ describe('Validators routes', () => {
         const expectedValidators = activeValidators
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -1242,7 +1242,7 @@ describe('Validators routes', () => {
         const expectedValidators = inactiveValidators
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
