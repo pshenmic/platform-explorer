@@ -21,7 +21,7 @@ class DocumentsController {
     const { identifier } = request.params
     const { page = 1, limit = 10, order = 'asc' } = request.query
 
-    const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, Number(page), Number(limit), order)
+    const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(documents)
   }

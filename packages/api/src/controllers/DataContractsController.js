@@ -20,7 +20,7 @@ class DataContractsController {
   getDataContracts = async (request, response) => {
     const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
 
-    const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page), Number(limit), order, orderBy)
+    const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
 
     response.send(dataContracts)
   }

@@ -41,8 +41,8 @@ class ValidatorsController {
     const activeValidators = await TenderdashRPC.getValidators()
 
     const validators = await this.validatorsDAO.getValidators(
-      Number(page),
-      Number(limit),
+      Number(page ?? 1),
+      Number(limit ?? 10),
       order,
       isActive,
       activeValidators
