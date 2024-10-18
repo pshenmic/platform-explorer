@@ -7,7 +7,7 @@ module.exports = class Validator {
   proposedBlocksAmount
   lastProposedBlockHeader
   proTxInfo
-  identifier
+  identity
   identityBalance
   epochInfo
   totalReward
@@ -36,7 +36,7 @@ module.exports = class Validator {
     this.proposedBlocksAmount = proposedBlocksAmount ?? null
     this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
     this.proTxInfo = proTxInfo ?? null
-    this.identifier = identifier ?? null
+    this.identity = identifier ?? null
     this.identityBalance = identityBalance ?? null
     this.epochInfo = epochInfo ?? null
     this.totalReward = totalReward ?? null
