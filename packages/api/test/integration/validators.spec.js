@@ -1,11 +1,12 @@
 process.env.EPOCH_CHANGE_TIME = 3600000
+process.env.TCP_CONNECT_TIMEOUT = 0
 
 const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const { getKnex } = require('../../src/utils')
+const { getKnex, checkTcpConnect } = require('../../src/utils')
 const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
@@ -63,7 +64,7 @@ describe('Validators routes', () => {
       operatorReward: 0,
       state: {
         version: 2,
-        service: '52.33.28.41:19999',
+        service: '255.255.255.255:255',
         registeredHeight: 850334,
         lastPaidHeight: 1064465,
         consecutivePayments: 0,
@@ -74,25 +75,25 @@ describe('Validators routes', () => {
         ownerAddress: 'yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69',
         votingAddress: 'yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69',
         platformNodeID: '711fd9548ae19b2e91c7a9b4067000467ccdd2b5',
-        platformP2PPort: 36656,
-        platformHTTPPort: 1443,
+        platformP2PPort: 255,
+        platformHTTPPort: 255,
         payoutAddress: 'yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A',
         pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53',
         endpoints: {
           coreP2PPortStatus: {
-            host: '52.33.28.41',
-            port: 19999,
-            status: 'ERROR'
+            host: '255.255.255.255',
+            port: 255,
+            status: 'connect EAFNOSUPPORT 255.255.255.255:255 - Local (0.0.0.0:0)'
           },
           platformP2PPortStatus: {
-            host: '52.33.28.41',
-            port: 36656,
-            status: 'ERROR'
+            host: '255.255.255.255',
+            port: 255,
+            status: 'connect EAFNOSUPPORT 255.255.255.255:255 - Local (0.0.0.0:0)'
           },
           platformGrpcPortStatus: {
-            host: '52.33.28.41',
-            port: 1443,
-            status: 'ERROR'
+            host: '255.255.255.255',
+            port: 255,
+            status: 'connect EAFNOSUPPORT 255.255.255.255:255 - Local (0.0.0.0:0)'
           }
         }
       },
@@ -183,6 +184,8 @@ describe('Validators routes', () => {
     mock.method(DAPI.prototype, 'getEpochsInfo', epochInfo)
 
     mock.method(DAPI.prototype, 'getIdentityBalance', () => 0)
+
+    mock.fn(checkTcpConnect, () => 'ERROR')
   })
 
   after(async () => {
@@ -380,7 +383,14 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identifier: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -835,7 +845,14 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identifier: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
@@ -1260,7 +1277,14 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identifier: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null
             }
           })
 
