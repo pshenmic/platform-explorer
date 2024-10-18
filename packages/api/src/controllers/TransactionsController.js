@@ -1,5 +1,6 @@
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const utils = require('../utils')
+const { calculateInterval } = require('../utils')
 
 class TransactionsController {
   constructor (client, knex) {
@@ -32,9 +33,22 @@ class TransactionsController {
   }
 
   getTransactionHistory = async (request, response) => {
-    const { timespan = '1h' } = request.query
+    const {
+      start = new Date().getTime() - 3600000,
+      end = new Date().getTime()
+    } = request.query
 
-    const timeSeries = await this.transactionsDAO.getHistorySeries(timespan)
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const interval = calculateInterval(new Date(start), new Date(end))
+
+    const timeSeries = await this.transactionsDAO.getHistorySeries(
+      new Date(start),
+      new Date(end),
+      interval
+    )
 
     response.send(timeSeries)
   }

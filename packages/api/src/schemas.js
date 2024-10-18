@@ -35,9 +35,18 @@ const schemaTypes = [
     }
   },
   {
-    $id: 'timespan',
-    type: ['string', 'null'],
-    enum: ['1h', '24h', '3d', '1w']
+    $id: 'timeInterval',
+    type: 'object',
+    properties: {
+      start: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      },
+      end: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      }
+    }
   },
   {
     $id: 'identifier',

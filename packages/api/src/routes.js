@@ -284,12 +284,7 @@ module.exports = ({
       method: 'GET',
       handler: transactionsController.getTransactionHistory,
       schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            timespan: { $ref: 'timespan#' }
-          }
-        }
+        querystring: { $ref: 'timeInterval#' }
       }
     },
     {
@@ -311,12 +306,7 @@ module.exports = ({
             hash: { $ref: 'hash#' }
           }
         },
-        querystring: {
-          type: 'object',
-          properties: {
-            timespan: { $ref: 'timespan#' }
-          }
-        }
+        querystring: { $ref: 'timeInterval#' }
       }
     },
     {
