@@ -4,7 +4,6 @@ const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 const {checkTcpConnect} = require('../utils')
-const ConnectionData = require('../models/ConnectionData')
 const Epoch = require('../models/Epoch')
 const {base58} = require('@scure/base')
 
@@ -38,9 +37,12 @@ class ValidatorsController {
     const [host] = proTxInfo?.state.service ? proTxInfo?.state.service.match(/^\d+\.\d+\.\d+\.\d+/) : [null]
     const [servicePort] = proTxInfo?.state.service ? proTxInfo?.state.service.match(/\d+$/) : [null]
 
-    const coreStatus = await checkTcpConnect(servicePort, host)
-    const platformStatus = await checkTcpConnect(proTxInfo?.state.platformP2PPort, host)
-    const grpcStatus = await checkTcpConnect(proTxInfo?.state.platformHTTPPort, host)
+    const [coreStatus, platformStatus, grpcStatus] = (await Promise.allSettled([
+      await checkTcpConnect(servicePort, host),
+      await checkTcpConnect(proTxInfo?.state.platformP2PPort, host),
+      await checkTcpConnect(proTxInfo?.state.platformHTTPPort, host)
+    ])).map((e) => e.value ?? null)
+
 
     const endpoints = {
       coreP2PPortStatus: {

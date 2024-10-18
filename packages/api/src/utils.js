@@ -104,7 +104,7 @@ const decodeStateTransition = async (client, base64) => {
 }
 
 const checkTcpConnect = (port, host) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let connection
     try {
       connection = net.createConnection(port, host)
@@ -113,7 +113,7 @@ const checkTcpConnect = (port, host) => {
 
       connection.once('error', async (e) => {
         await connection.destroy()
-        resolve('ERR_CONNECTION_REFUSED')
+        resolve(e.message)
       })
 
       connection.once('connect', async () => {
@@ -128,7 +128,7 @@ const checkTcpConnect = (port, host) => {
     } catch (e) {
       console.error(e)
       connection.destroy()
-      resolve('ERROR')
+      reject('ERROR')
     }
   })
 }
