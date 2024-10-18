@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import useResizeObserver from '@react-hook/resize-observer'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import './DateRangePicker.scss'
@@ -20,29 +21,19 @@ const DateRangePicker = ({
   const [activeStartDate, setActiveStartDate] = useState(new Date(today.getFullYear(), today.getMonth() - 1, 1))
   const [displayedMonths, setDisplayedMonths] = useState([null, null])
 
-  useEffect(() => {
-    const handleResize = () => {
-      setShowSingleCalendar(window.innerWidth < 600)
+  useResizeObserver(calendarRef, (entry) => {
+    const containerWidth = entry.contentRect.width
 
-      if (calendarRef.current) {
-        const containerWidth = calendarRef.current?.offsetWidth
+    setShowSingleCalendar(window.innerWidth < 600)
 
-        if (containerWidth < 400) {
-          setMonthsToShow(4)
-        } else if (containerWidth < 500) {
-          setMonthsToShow(6)
-        } else {
-          setMonthsToShow(8)
-        }
-      }
+    if (containerWidth < 400) {
+      setMonthsToShow(4)
+    } else if (containerWidth < 500) {
+      setMonthsToShow(6)
+    } else {
+      setMonthsToShow(8)
     }
-
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
+  })
 
   useEffect(() => {
     const generateMonthPairs = () => {
