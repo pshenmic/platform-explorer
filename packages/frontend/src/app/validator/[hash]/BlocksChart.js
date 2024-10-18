@@ -80,7 +80,7 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
           </div>
         </div>
 
-        <div className={'TimeframeMenu__Calendar'}>
+        <div className={'TimeframeMenu__Calendar TimeframeMenu__Calendar--Stub'}>
           <DateRangePicker
             disableFutureDates={true}
             monthsToShow={7}
