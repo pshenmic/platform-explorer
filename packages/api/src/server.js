@@ -18,7 +18,7 @@ const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./DAPI')
 const DAPIClient = require('@dashevo/dapi-client')
 const RateController = require('./controllers/RateController')
-const { default: loadWasmDpp } = require('Dash').PlatformProtocol
+const { default: loadWasmDpp } = require('dash').PlatformProtocol
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
