@@ -95,8 +95,7 @@ class ValidatorsController {
       order,
       isActive,
       activeValidators,
-      epochInfo.startTime,
-      epochInfo.endTime
+      epochInfo
     )
 
     const validatorsWithInfo = await Promise.all(
