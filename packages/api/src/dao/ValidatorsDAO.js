@@ -8,7 +8,7 @@ module.exports = class ValidatorsDAO {
     this.knex = knex
   }
 
-  getValidatorByProTxHash = async (proTxHash, identifier, start, end) => {
+  getValidatorByProTxHash = async (proTxHash, identifier, currentEpoch) => {
     const withdrawalsSubquery = this.knex('state_transitions')
       .select(
         'state_transitions.id as state_transition_id',
@@ -43,8 +43,8 @@ module.exports = class ValidatorsDAO {
           .select(this.knex.raw('SUM(state_transitions.gas_used) OVER () as total_collected_reward_by_epoch'))
           .leftJoin('state_transitions', 'blocks.hash', 'state_transitions.block_hash')
           .whereRaw('pro_tx_hash = blocks.validator')
-          .andWhere('blocks.timestamp', '>=', new Date(start).toISOString())
-          .andWhere('blocks.timestamp', '<=', new Date(end).toISOString())
+          .andWhere('blocks.timestamp', '>=', new Date(currentEpoch.startTime).toISOString())
+          .andWhere('blocks.timestamp', '<=', new Date(currentEpoch.endTime).toISOString())
           .limit(1)
           .as('total_collected_reward_by_epoch')
       )

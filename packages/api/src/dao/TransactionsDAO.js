@@ -132,43 +132,4 @@ module.exports = class TransactionsDAO {
 
     return Number(row.total_collected_fees ?? 0)
   }
-
-  getWithdrawalsByIdentifier = async (identifier, page, limit, order) => {
-    const fromRank = ((page - 1) * limit) + 1
-    const toRank = fromRank + limit - 1
-
-    const subquery = this.knex('state_transitions')
-      .select(
-        'state_transitions.id as state_transition_id',
-        'state_transitions.hash as tx_hash',
-        'state_transitions.block_hash as block_hash',
-        'state_transitions.owner as owner',
-        'blocks.timestamp as timestamp',
-        'transfers.amount as amount'
-      )
-      .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
-      .select()
-      .where('state_transitions.owner', '=', identifier)
-      .andWhere('state_transitions.type', '=', IDENTITY_CREDIT_WITHDRAWAL)
-      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
-      .leftJoin('transfers', 'transfers.state_transition_hash', 'state_transitions.hash')
-      .as('subquery')
-
-    const rows = await this.knex(subquery)
-      .select(
-        'rank',
-        'state_transition_id as id',
-        'tx_hash', 'block_hash',
-        'timestamp', 'amount', 'owner',
-        this.knex(subquery).count().as('total_count')
-      )
-      .orderBy('state_transition_id', order)
-      .whereBetween('rank', [fromRank, toRank])
-
-    const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
-
-    const resultSet = rows.map((row) => Withdrawal.fromRow(row))
-
-    return new PaginatedResultSet(resultSet, page, limit, totalCount)
-  }
 }
