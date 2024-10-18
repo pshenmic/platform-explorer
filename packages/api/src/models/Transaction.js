@@ -1,6 +1,6 @@
 const cbor = require('cbor')
 
-const { deserializeConsensusError } = require('Dash').PlatformProtocol
+const { deserializeConsensusError } = require('dash').PlatformProtocol
 
 module.exports = class Transaction {
   hash
