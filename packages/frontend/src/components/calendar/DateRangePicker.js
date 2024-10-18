@@ -1,60 +1,83 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import './DateRangePicker.scss'
 
 const DateRangePicker = ({
   disableFutureDates = false,
-  monthsToShow = 5,
   noTopNavigation,
   noWeekDay,
   changeHandler,
   className
 }) => {
   const [range, setRange] = useState([null, null])
+  const [monthsToShow, setMonthsToShow] = useState(5)
   const [currentMonthIndex, setCurrentMonthIndex] = useState(disableFutureDates ? -monthsToShow : 0)
   const [showSingleCalendar, setShowSingleCalendar] = useState(window.innerWidth < 600)
+  const [monthPairs, setMonthPairs] = useState([])
   const today = new Date()
+  const calendarRef = useRef(null)
+  const [activeStartDate, setActiveStartDate] = useState(new Date(today.getFullYear(), today.getMonth() - 1, 1))
+  const [displayedMonths, setDisplayedMonths] = useState([null, null])
 
   useEffect(() => {
     const handleResize = () => {
       setShowSingleCalendar(window.innerWidth < 600)
+
+      if (calendarRef.current) {
+        const containerWidth = calendarRef.current?.offsetWidth
+
+        if (containerWidth < 400) {
+          setMonthsToShow(4)
+        } else if (containerWidth < 500) {
+          setMonthsToShow(6)
+        } else {
+          setMonthsToShow(8)
+        }
+      }
     }
+
+    handleResize()
     window.addEventListener('resize', handleResize)
     return () => {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
 
-  const generateMonthPairs = () => {
-    const months = []
-    for (let i = 0; i < monthsToShow; i += showSingleCalendar ? 1 : 2) {
-      const date1 = new Date(today.getFullYear(), today.getMonth() + currentMonthIndex + i, 1)
-      const date2 = new Date(today.getFullYear(), today.getMonth() + currentMonthIndex + i + 1, 1)
+  useEffect(() => {
+    const generateMonthPairs = () => {
+      const months = []
+      for (let i = 0; i < monthsToShow; i += showSingleCalendar ? 1 : 2) {
+        const date1 = new Date(today.getFullYear(), today.getMonth() + currentMonthIndex + i, 1)
+        const date2 = new Date(today.getFullYear(), today.getMonth() + currentMonthIndex + i + 1, 1)
 
-      months.push({
-        start1: new Date(date1.getFullYear(), date1.getMonth(), 1),
-        end1: new Date(date1.getFullYear(), date1.getMonth() + 1, 0),
-        start2: new Date(date2.getFullYear(), date2.getMonth(), 1),
-        end2: new Date(date2.getFullYear(), date2.getMonth() + 1, 0),
-        label: `${date1.toLocaleString('en-US', { month: 'long', year: 'numeric' })} - ${date2.toLocaleString('en-US', { month: 'long', year: 'numeric' })}`,
-        labelShort: `${date1.toLocaleString('en-US', { month: 'short' })} - ${date2.toLocaleString('en-US', { month: 'short' })}`
-      })
+        months.push({
+          start1: new Date(date1.getFullYear(), date1.getMonth(), 1),
+          end1: new Date(date1.getFullYear(), date1.getMonth() + 1, 0),
+          start2: new Date(date2.getFullYear(), date2.getMonth(), 1),
+          end2: new Date(date2.getFullYear(), date2.getMonth() + 1, 0),
+          label: `${date1.toLocaleString('en-US', { month: 'long', year: 'numeric' })} - ${date2.toLocaleString('en-US', { month: 'long', year: 'numeric' })}`,
+          labelShort: `${date1.toLocaleString('en-US', { month: 'short' })} - ${date2.toLocaleString('en-US', { month: 'short' })}`
+        })
+      }
+      return months
     }
-    return months
+    const newMonthPairs = generateMonthPairs()
+    setMonthPairs(newMonthPairs)
+  }, [monthsToShow, currentMonthIndex, showSingleCalendar])
+
+  useEffect(() => {
+    const startMonthLabel = activeStartDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })
+    const nextMonth = new Date(activeStartDate.getFullYear(), activeStartDate.getMonth() + 1, 1)
+    const nextMonthLabel = nextMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })
+
+    setDisplayedMonths([startMonthLabel, nextMonthLabel])
+  }, [activeStartDate])
+
+  const handleSetDisplayedMonths = (start1, end2, index) => {
+    setDisplayedMonths([start1.toLocaleString('en-US', { month: 'long', year: 'numeric' }), end2.toLocaleString('en-US', { month: 'long', year: 'numeric' })])
+    setActiveStartDate(start1)
   }
-
-  // Получаем заголовки для диапазона
-  const getHeaderLabel = (range) => {
-    if (!range[0] || !range[1]) return ['', '']
-
-    const startLabel = range[0].toLocaleString('en-US', { month: 'long', year: 'numeric' })
-    const endLabel = range[1].toLocaleString('en-US', { month: 'long', year: 'numeric' })
-
-    return [startLabel, endLabel]
-  }
-
-  const monthPairs = generateMonthPairs()
 
   const onDateChange = (dates) => {
     if (typeof changeHandler === 'function') changeHandler(dates)
@@ -72,32 +95,26 @@ const DateRangePicker = ({
     setCurrentMonthIndex(prev => prev - (showSingleCalendar ? 1 : 2))
   }
 
-  const handleSetRange = (start1, end2) => {
-    setRange([start1, end2])
-  }
-
   const tileDisabled = ({ date }) => {
     if (disableFutureDates) return date > today
     return false
   }
 
-  // Получаем заголовки на основе текущего выбранного диапазона
-  const [headerStart, headerEnd] = getHeaderLabel(range)
-
   return (
-    <div className={'DateRangePicker ' +
-      `${className || ''} ` +
-      `${noTopNavigation ? 'DateRangePicker--NoTopNavigation' : ''} ` +
-      `${noWeekDay ? 'DateRangePicker--NoWeekDay' : ''} `}
+    <div 
+      ref={calendarRef}
+      className={'DateRangePicker ' +
+        `${className || ''} ` +
+        `${noTopNavigation ? 'DateRangePicker--NoTopNavigation' : ''} ` +
+        `${noWeekDay ? 'DateRangePicker--NoWeekDay' : ''} `}
     >
-      {/* Заголовки месяцев */}
       <div className={'DateRangePicker__Header'}>
         <div className={'DateRangePicker__HeaderMonth'}>
-          {headerStart || monthPairs[0].label.split(' - ')[0]} {/* Отображаем выбранный месяц или месяц по умолчанию */}
+          {displayedMonths[0]}
         </div>
         {!showSingleCalendar && (
           <div className={'DateRangePicker__HeaderMonth'}>
-            {headerEnd || monthPairs[0].label.split(' - ')[1]} {/* Отображаем выбранный месяц или месяц по умолчанию */}
+            {displayedMonths[1]}
           </div>
         )}
       </div>
@@ -110,6 +127,7 @@ const DateRangePicker = ({
           value={range}
           tileDisabled={tileDisabled}
           showDoubleView={!showSingleCalendar}
+          activeStartDate={activeStartDate}
         />
       </div>
 
@@ -122,11 +140,10 @@ const DateRangePicker = ({
           <button
             key={i}
             className={'DateRangePicker__MonthButton ' +
-              `${range[0] && range[1] && range[0].getTime() === pair.start1.getTime() &&
-                range[1].getTime() === pair.end2.getTime()
+              `${activeStartDate.getTime() === pair.start1.getTime()
                   ? 'DateRangePicker__MonthButton--Active'
                   : ''}`}
-            onClick={() => handleSetRange(pair.start1, pair.end2)}
+            onClick={() => handleSetDisplayedMonths(pair.start1, pair.end2, i)}
             disabled={disableFutureDates && pair.start1 > today}
           >
             {showSingleCalendar ? pair.labelShort.split(' - ')[0] : pair.labelShort}

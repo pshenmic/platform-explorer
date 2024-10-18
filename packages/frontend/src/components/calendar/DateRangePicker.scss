@@ -8,7 +8,6 @@ $font-color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 20px;
   font-size: 0.75rem;
   font-family: $font-mono;
 
@@ -76,6 +75,11 @@ $font-color: #fff;
   &__MonthButton {
     &--Active {
       background-color: $color-brand-normal;
+
+      &:hover {
+        background-color: $color-brand-normal;
+        cursor: default;
+      }
     }
   }
 
@@ -101,6 +105,7 @@ $font-color: #fff;
       border-radius: $border-radius;
       font-family: $font-heading;
       font-size: 0.75rem;
+      white-space: nowrap;
 
       &:disabled {
         color: rgba(255, 255, 255, 0.5) !important;
