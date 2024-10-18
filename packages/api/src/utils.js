@@ -134,4 +134,35 @@ const checkTcpConnect = (port, host) => {
   })
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect }
+const calculateInterval = (start, end) => {
+  const intervals = {
+    PT5M: 300000,
+    PT30M: 1800000,
+    PT1H: 3600000,
+    PT2H: 7200000,
+    PT12H: 43200000,
+    P1D: 86400000,
+    P1W: 604800000,
+    P1M: 2419200000,
+    P1Y: 29030400000
+  }
+
+  const intervalsInRFC = Object.keys(intervals)
+
+  const startTimestamp = start.getTime()
+  const endTimestamp = end.getTime()
+
+  const period = endTimestamp - startTimestamp
+
+  for (let i = 0; i < intervalsInRFC.length; i++) {
+    const parts = period / intervals[intervalsInRFC[i]]
+
+    if (parts <= 2 && i > 0) {
+      return intervalsInRFC[i - 1]
+    } else if (parts <= 12 && i === 0) {
+      return intervalsInRFC[i]
+    }
+  }
+}
+
+module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect, calculateInterval }
