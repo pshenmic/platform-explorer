@@ -29,6 +29,12 @@ $font-color: #fff;
     margin-bottom: 20px;
   }
 
+  &--SingleCalendar & {
+    &__HeaderMonth {
+      width: 100%;
+    }
+  }
+
   &__HeaderMonth {
     width: 50%;
     text-align: center;

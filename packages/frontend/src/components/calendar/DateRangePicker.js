@@ -11,15 +11,15 @@ const DateRangePicker = ({
   changeHandler,
   className
 }) => {
+  const today = new Date()
   const [range, setRange] = useState([null, null])
   const [monthsToShow, setMonthsToShow] = useState(5)
   const [currentMonthIndex, setCurrentMonthIndex] = useState(disableFutureDates ? -monthsToShow : 0)
   const [showSingleCalendar, setShowSingleCalendar] = useState(window.innerWidth < 600)
-  const [monthPairs, setMonthPairs] = useState([])
-  const today = new Date()
-  const calendarRef = useRef(null)
   const [activeStartDate, setActiveStartDate] = useState(new Date(today.getFullYear(), today.getMonth() - 1, 1))
   const [displayedMonths, setDisplayedMonths] = useState([null, null])
+  const [monthPairs, setMonthPairs] = useState([])
+  const calendarRef = useRef(null)
 
   useResizeObserver(calendarRef, (entry) => {
     const containerWidth = entry.contentRect.width
@@ -95,6 +95,7 @@ const DateRangePicker = ({
     <div
       ref={calendarRef}
       className={'DateRangePicker ' +
+        `${showSingleCalendar ? 'DateRangePicker--SingleCalendar' : ''}` +
         `${className || ''} ` +
         `${noTopNavigation ? 'DateRangePicker--NoTopNavigation' : ''} ` +
         `${noWeekDay ? 'DateRangePicker--NoWeekDay' : ''} `}
