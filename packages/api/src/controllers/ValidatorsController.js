@@ -45,17 +45,17 @@ class ValidatorsController {
 
     const endpoints = {
       coreP2PPortStatus: {
-        host: servicePort,
+        host: host,
         port: servicePort,
         status: coreStatus
       },
       platformP2PPortStatus: {
-        host: servicePort,
+        host: host,
         port: proTxInfo?.state.platformP2PPort,
         status: platformStatus
       },
       platformGrpcPortStatus: {
-        host: servicePort,
+        host: host,
         port: proTxInfo?.state.platformHTTPPort,
         status: grpcStatus
       }
