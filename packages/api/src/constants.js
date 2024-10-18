@@ -4,7 +4,7 @@ let genesisTime
 
 module.exports = {
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
-  TCP_CONNECT_TIMEOUT: Number(process.env.TCP_CONNECT_TIMEOUT ?? 400),
+  TCP_CONNECT_TIMEOUT: Number(process.env.TCP_CONNECT_TIMEOUT),
   get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {
       return TenderdashRPC.getBlockByHeight(1).then((blockInfo) => {
