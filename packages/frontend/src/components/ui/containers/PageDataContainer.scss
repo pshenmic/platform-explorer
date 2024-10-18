@@ -1,0 +1,90 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+$borderRadius: 20px;
+
+.PageDataContainer {
+  &__Header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 12px;
+    
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      height: 40px;
+      width: 100%;
+      left: 0;
+      background: #24282b;
+      border-radius: $borderRadius $borderRadius 0 0;
+      opacity: .5;
+      top: 0;
+      z-index: 0;
+    }
+  }
+
+  &__Content {
+    padding-top: 32px;
+    padding-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 $borderRadius $borderRadius;
+    background: var(--chakra-colors-gray-675);
+    @include mixins.pageDataPadding(padding-left);
+    @include mixins.pageDataPadding(padding-right);
+  }
+
+  &__BackLink {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 32px;
+    height: 24px;
+    margin-right: 10px;
+    background-color: rgba(24, 167, 255, .1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .1s;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: rgba(24, 167, 255, .2);
+      }
+    }
+
+    &:active {
+      transform: translateY(1px);
+      background-color: rgba(24, 167, 255, .15);
+    }
+  }
+
+  &__Title {
+    position: relative;
+    z-index: 2;
+    font-family: $font-heading;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__Content {
+      padding: 0;
+      background: transparent;
+    }
+
+    &__Header {
+      padding: 0 12px;
+      margin-bottom: 12px;
+
+      &::before {
+        border-radius: 20px;
+      }
+    }
+  }
+}

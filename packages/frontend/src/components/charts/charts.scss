@@ -11,6 +11,9 @@
   visibility: hidden;
   opacity: 0;
   transition: all 1s;
+  margin: 0 -10px !important;
+  padding: 0 10px !important;
+  overflow: hidden;
 
   &.loaded {
       visibility: visible;

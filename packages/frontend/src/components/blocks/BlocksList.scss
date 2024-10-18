@@ -1,3 +1,23 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
 .BlocksList {
-    
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    grid-template-columns: 70px 135px calc(100% - 375px) 170px;
+  }
+
+  &__ColumnTitle {
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &--Hash {
+      white-space: nowrap;
+    }
+
+    &:last-child {
+      text-align: right;
+    }
+  }
 }

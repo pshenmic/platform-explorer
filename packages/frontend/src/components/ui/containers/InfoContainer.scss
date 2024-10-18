@@ -1,0 +1,99 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.InfoContainer {
+  @include mixins.InfoContainerPadding(padding);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--chakra-colors-gray-800);
+  
+  &::before, &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+  }
+
+  &::before {
+    background: var(--chakra-colors-gray-675);
+    z-index: -2;
+  }
+
+  &::after {
+    background: radial-gradient(circle at 0% 100%, var(--chakra-colors-gray-800) 0, transparent);
+    opacity: .5;
+    z-index: -1;
+  }
+
+  &--Tabs {
+    padding: 10px 0 24px 0;
+    overflow: hidden;
+
+    .chakra-tabs__tab {
+      font-size: 0.75rem;
+      white-space: nowrap;
+      font-weight: 700;
+      font-family: $font-heading;
+      text-transform: uppercase;
+    }
+
+    .chakra-tabs__tablist {
+      border-bottom: 1px solid;
+      border-color: inherit;
+      padding: 0 30px;
+      overflow-y: hidden;
+      overflow-x: auto;
+    }
+
+    .chakra-tabs__tab-panels {}
+  }
+
+  @media screen and (max-width: $breakpoint-xl) {
+    &--Tabs {
+      .chakra-tabs__tablist {
+        padding: 0 24px;
+        padding-bottom: 1px;
+      }
+
+      .chakra-tabs__tab {
+        padding: 8px;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &--Tabs {
+      .chakra-tabs__tablist {
+        padding: 0 20px;
+        padding-bottom: 1px;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &--Tabs {
+      .chakra-tabs__tablist {
+        padding: 0 16px;
+        padding-bottom: 1px;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &--Tabs {
+      .chakra-tabs__tablist {
+        padding: 0 16px;
+        padding-bottom: 1px;
+      }
+
+      .chakra-tabs__tab {
+        padding: 8px 4px;
+      }
+    }
+  }
+}

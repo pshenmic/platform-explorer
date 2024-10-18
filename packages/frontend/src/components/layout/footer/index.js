@@ -11,46 +11,45 @@ const socialNetwork = [
 
 function Footer () {
   return (
-        <Box
-            px={3}
-            marginTop={'auto'}
+    <Box
+      marginTop={'auto'}
+    >
+      <Flex
+        className={'Footer'}
+        maxW={'container.maxPageW'}
+        ml={'auto'}
+        mr={'auto'}
+        h={'auto'}
+        alignItems={'center'}
+        justifyContent={'space-between'}
+      >
+        <a
+          href={'https://pshenmic.dev/'}
+          target={'_blank'}
+          rel={'noopener noreferrer'}
+          aria-label={'Go to Pschenmic Dev'}
         >
-            <Flex
-                className={'Footer'}
-                maxW={'1980px'}
-                ml={'auto'}
-                mr={'auto'}
-                h={'auto'}
-                alignItems={'center'}
-                justifyContent={'space-between'}
-            >
+          pshenmic.dev
+        </a>
+        {socialNetwork.length
+          ? (<div className={'Footer__WrapperNetwork'}>
+              {socialNetwork.map((item, i) => (
                 <a
-                    href={'https://pshenmic.dev/'}
-                    target={'_blank'}
-                    rel={'noopener noreferrer'}
-                    aria-label={'Go to Pschenmic Dev'}
+                  key={i}
+                  className={'Footer__Network'}
+                  href={item.href ? item.href : '#'}
+                  target={'_blank'}
+                  rel={'noopener noreferrer'}
+                  aria-label={item.ariaLabel}
                 >
-                    pshenmic.dev
+                  <Image src={item.img} width={20} height={20} alt={item.alt} />
                 </a>
-                {socialNetwork.length
-                  ? (<div className={'Footer__WrapperNetwork'}>
-                        {socialNetwork.map((item, i) => (
-                            <a
-                                key={i}
-                                className={'Footer__Network'}
-                                href={item.href ? item.href : '#'}
-                                target={'_blank'}
-                                rel={'noopener noreferrer'}
-                                aria-label={item.ariaLabel}
-                            >
-                                <Image src={item.img} width={20} height={20} alt={item.alt} />
-                            </a>
-                        ))}
-                    </div>)
-                  : null}
-                <p className={'Footer__Copyright'}>2024 © Dash Platform Explorer v{version} MIT LICENCE</p>
-            </Flex>
-        </Box>
+              ))}
+            </div>)
+          : null}
+        <p className={'Footer__Copyright'}>2024 © Dash Platform Explorer v{version} MIT LICENCE</p>
+      </Flex>
+    </Box>
   )
 }
 

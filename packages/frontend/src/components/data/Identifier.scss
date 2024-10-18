@@ -6,8 +6,13 @@
   align-items: center;
   font-family: $font-mono;
   font-size: 0.75rem;
-  overflow: hidden;
   font-weight: 400;
+  white-space: wrap;
+  word-break: break-all;
+
+  &--Ellipsis {
+    overflow: hidden;
+  }
 
   &--Ellipsis & {
     &__SymbolsContainer {
