@@ -51,6 +51,8 @@ export default function ValidatorCard ({ validator, rate, className }) {
       </div>
 
       <HorisontalSeparator className={'ValidatorCard__Separator'}/>
+      
+      {/* Will be activated later /*}
 
       {/* <InfoLine
         className={'ValidatorCard__InfoLine'}
