@@ -378,7 +378,8 @@ function Validator ({ hash }) {
                 <Tab isDisabled>Reward Earned</Tab>
               </TabList>
               <TabPanels>
-                  <TabPanel height={'350px'} position={'relative'}>
+                  {/* <TabPanel height={'350px'} position={'relative'}> */}
+                  <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
                     <BlocksChart
                       blockBorders={false}
                       hash={hash}

@@ -118,7 +118,7 @@ export default function BlocksChart ({ hash, isActive }) {
   }
 
   return (
-    <div style={{ height: '100%' }} className={'TabsChart'}>
+    <div style={{ height: menuIsOpen ? '400px' : '350px' }} className={'TabsChart'}>
       {!blocksHistory.loading &&
         <TimeframeSelector
           className={'TabsChart__TimeframeSelector'}
