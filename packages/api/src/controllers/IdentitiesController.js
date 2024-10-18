@@ -1,4 +1,5 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
+const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
 
 class IdentitiesController {
   constructor (knex, dapi) {
@@ -76,11 +77,26 @@ class IdentitiesController {
 
   getTransfersByIdentity = async (request, response) => {
     const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const { page = 1, limit = 10, order = 'asc', type = undefined } = request.query
 
-    const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order)
+    const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order, type)
 
     response.send(transfers)
+  }
+
+  getWithdrawalsByIdentity = async (request, response) => {
+    const { identifier } = request.params
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+
+    const withdrawals = await this.identitiesDAO.getTransfersByIdentity(
+      identifier,
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order ?? 'asc',
+      IDENTITY_CREDIT_WITHDRAWAL
+    )
+
+    response.send(withdrawals)
   }
 }
 

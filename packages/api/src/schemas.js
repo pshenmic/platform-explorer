@@ -26,7 +26,12 @@ const schemaTypes = [
         type: ['string', 'null'],
         enum: ['block_height', 'documents_count', 'tx_count', 'balance']
       },
-      isActive: { type: ['boolean', 'null'] }
+      isActive: { type: ['boolean', 'null'] },
+      type: {
+        type: ['integer', 'null'],
+        minimum: 0,
+        maximum: 8
+      }
     }
   },
   {

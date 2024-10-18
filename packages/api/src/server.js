@@ -83,7 +83,7 @@ module.exports = {
     const dataContractsController = new DataContractsController(knex)
     const documentsController = new DocumentsController(knex)
     const identitiesController = new IdentitiesController(knex, dapi)
-    const validatorsController = new ValidatorsController(knex)
+    const validatorsController = new ValidatorsController(knex, dapi)
     const rateController = new RateController()
 
     Routes({

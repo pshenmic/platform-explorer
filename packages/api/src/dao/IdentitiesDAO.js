@@ -266,21 +266,36 @@ module.exports = class IdentitiesDAO {
     return new PaginatedResultSet(rows.map(row => Transaction.fromRow(row)), page, limit, totalCount)
   }
 
-  getTransfersByIdentity = async (identifier, page, limit, order) => {
+  getTransfersByIdentity = async (identifier, page, limit, order, type) => {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
     const subquery = this.knex('transfers')
-      .select('transfers.id as id', 'transfers.amount as amount', 'transfers.sender as sender', 'transfers.recipient as recipient', 'transfers.state_transition_hash as tx_hash')
-      .select(this.knex.raw(`rank() over (order by id ${order}) rank`))
-      .where('transfers.sender', '=', identifier)
-      .orWhere('transfers.recipient', '=', identifier)
+      .select(
+        'transfers.id as id', 'transfers.amount as amount',
+        'transfers.sender as sender', 'transfers.recipient as recipient',
+        'transfers.state_transition_hash as tx_hash',
+        'state_transitions.block_hash as block_hash',
+        'state_transitions.type as type'
+
+      )
+      .select(this.knex.raw(`rank() over (order by transfers.id ${order}) rank`))
+      .whereRaw(`(transfers.sender = '${identifier}' OR transfers.recipient = '${identifier}') ${
+        typeof type === 'number'
+          ? `AND state_transitions.type = ${type}`
+          : ''
+      }`)
+      .leftJoin('state_transitions', 'state_transitions.hash', 'transfers.state_transition_hash')
 
     const rows = await this.knex.with('with_alias', subquery)
-      .select('with_alias.id', 'amount', 'sender', 'recipient', 'rank', 'tx_hash', 'blocks.timestamp as timestamp')
+      .select(
+        'rank', 'amount', 'block_hash', 'type',
+        'sender', 'recipient', 'with_alias.id',
+        'tx_hash', 'blocks.timestamp as timestamp',
+        'block_hash'
+      )
       .select(this.knex('with_alias').count('*').as('total_count'))
-      .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .leftJoin('blocks', 'blocks.hash', 'with_alias.block_hash')
       .from('with_alias')
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('with_alias.id', order)

@@ -1060,7 +1060,10 @@ describe('Identities routes', () => {
           amount: parseInt(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
-          timestamp: _transfer.block.timestamp.toISOString()
+          timestamp: _transfer.block.timestamp.toISOString(),
+          txHash: _transfer.transfer.state_transition_hash,
+          type: _transfer.transaction.type,
+          blockHash: _transfer.block.hash
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -1103,7 +1106,10 @@ describe('Identities routes', () => {
           amount: parseInt(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
-          timestamp: _transfer.block.timestamp.toISOString()
+          timestamp: _transfer.block.timestamp.toISOString(),
+          txHash: _transfer.transfer.state_transition_hash,
+          type: _transfer.transaction.type,
+          blockHash: _transfer.block.hash
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -1146,7 +1152,10 @@ describe('Identities routes', () => {
           amount: parseInt(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
-          timestamp: _transfer.block.timestamp.toISOString()
+          timestamp: _transfer.block.timestamp.toISOString(),
+          txHash: _transfer.transfer.state_transition_hash,
+          type: _transfer.transaction.type,
+          blockHash: _transfer.block.hash
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -1189,7 +1198,10 @@ describe('Identities routes', () => {
           amount: parseInt(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
-          timestamp: _transfer.block.timestamp.toISOString()
+          timestamp: _transfer.block.timestamp.toISOString(),
+          txHash: _transfer.transfer.state_transition_hash,
+          type: _transfer.transaction.type,
+          blockHash: _transfer.block.hash
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
