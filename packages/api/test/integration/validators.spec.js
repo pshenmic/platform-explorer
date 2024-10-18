@@ -8,7 +8,7 @@ const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
-const { base58 } = require('@scure/base')
+const Base58 = require('bs58').default
 
 describe('Validators routes', () => {
   let app
@@ -98,7 +98,7 @@ describe('Validators routes', () => {
 
     for (let i = 0; i < 50; i++) {
       const identity = await fixtures.identity(knex, {
-        identifier: base58.encode(Buffer.from(validators[i].pro_tx_hash, 'hex')),
+        identifier: Base58.encode(Buffer.from(validators[i].pro_tx_hash, 'hex')),
         block_hash: blocks[i].hash
       })
 
