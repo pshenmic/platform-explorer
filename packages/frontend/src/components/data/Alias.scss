@@ -1,0 +1,11 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.Alias {
+  font-family: $font-mono;
+  color: #fff;
+
+  &__Domain {
+    opacity: .5;
+  }
+}
