@@ -31,11 +31,6 @@ module.exports = ({
       handler: rateController.getUSDRate
     },
     {
-      path: '/epoch',
-      method: 'GET',
-      handler: epochController.getEpochByIndex
-    },
-    {
       path: '/epoch/:index',
       method: 'GET',
       handler: epochController.getEpochByIndex,
