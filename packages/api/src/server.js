@@ -48,6 +48,7 @@ module.exports = {
     client = new Dash.Client()
 
     await loadWasmDpp()
+
     await client.platform.initialize()
 
     const dapiClient = new DAPIClient({
