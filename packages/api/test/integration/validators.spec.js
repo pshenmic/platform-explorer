@@ -79,16 +79,19 @@ describe('Validators routes', () => {
         payoutAddress: 'yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A',
         pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53',
         endpoints: {
-          coreP2P: {
-            host: '52.33.28.41:19999',
+          coreP2PPortStatus: {
+            host: '52.33.28.41',
+            port: 19999,
             status: 'ERROR'
           },
-          platformP2P: {
-            host: '52.33.28.41:36656',
+          platformP2PPortStatus: {
+            host: '52.33.28.41',
+            port: 36656,
             status: 'ERROR'
           },
-          platformGrpc: {
-            host: '52.33.28.41:1443',
+          platformGrpcPortStatus: {
+            host: '52.33.28.41',
+            port: 1443,
             status: 'ERROR'
           }
         }

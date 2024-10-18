@@ -337,17 +337,20 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
       payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
       pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730",
       endpoints: {
-        coreP2P: {
-          host: "35.165.50.126:19999",
-          status: "ERROR"
+        coreP2PPortStatus: {
+          host: '52.33.28.41',
+          port: 19999,
+          status: 'ERROR'
         },
-        platformP2P: {
-          host: "35.165.50.126:36656",
-          status: "ERROR"
+        platformP2PPortStatus: {
+          host: '52.33.28.41',
+          port: 36656,
+          status: 'ERROR'
         },
-        platformGrpc: {
-          host: "35.165.50.126:1443",
-          status: "ERROR"
+        platformGrpcPortStatus: {
+          host: '52.33.28.41',
+          port: 1443,
+          status: 'ERROR'
         }
       }
     }
