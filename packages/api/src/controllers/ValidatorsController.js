@@ -38,9 +38,9 @@ class ValidatorsController {
     const [servicePort] = proTxInfo?.state.service ? proTxInfo?.state.service.match(/\d+$/) : [null]
 
     const [coreStatus, platformStatus, grpcStatus] = (await Promise.allSettled([
-      await checkTcpConnect(servicePort, host),
-      await checkTcpConnect(proTxInfo?.state.platformP2PPort, host),
-      await checkTcpConnect(proTxInfo?.state.platformHTTPPort, host)
+      checkTcpConnect(servicePort, host),
+      checkTcpConnect(proTxInfo?.state.platformP2PPort, host),
+      checkTcpConnect(proTxInfo?.state.platformHTTPPort, host)
     ])).map((e) => e.value ?? null)
 
     const endpoints = {
