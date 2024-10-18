@@ -41,7 +41,7 @@ class ValidatorsController {
       checkTcpConnect(servicePort, host),
       checkTcpConnect(proTxInfo?.state.platformP2PPort, host),
       checkTcpConnect(proTxInfo?.state.platformHTTPPort, host)
-    ])).map((e) => e?.reason.code ? e?.reason.code : e.message)
+    ])).map((e) => e.value ?? (e.reason?.code ? e.reason?.code : e.message))
 
     const endpoints = {
       coreP2PPortStatus: {
