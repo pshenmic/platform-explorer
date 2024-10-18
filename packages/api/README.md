@@ -60,7 +60,6 @@ Reference:
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
 * [Transactions By Identity](#transactions-by-identity)
-* [Withdrawals by Identity](#withdrawals-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Rate](#rate)
@@ -772,39 +771,11 @@ Response codes:
 500: Internal Server Error
 ```
 ---
-### Withdrawals by Identity
-Return all withdrawals made by the given identity
-* `limit` cannot be more then 100
-```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/withdrawals?page=1&limit=10&order=asc
-
-{
-    pagination: {
-        page: 1,
-        limit: 10,
-        total: 10
-    },
-    resultSet: [
-    {
-      "amount": 10000000,
-      "owner": "78nGoakMPbYKFLCgkt2qUXfZmw7ycESxQrx8k4deEBRt",
-      "txHash": "47122C74C071288F7F0576DF2084F74A8B470EFFF35DD703F96DCAE7F21484EB",
-      "timestamp": "2024-10-09T17:52:24.151Z",
-      "blockHash": "B3655E797107BC970188055BBDBBDC785B6386BED7D26AC46468D736386E1042"
-    }, ...
-    ]
-}
-```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
 ### Transfers by Identity
 Return all transfers made by the given identity
 * `limit` cannot be more then 100
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&limit=10&order=asc
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&limit=10&order=asc&type=1
 
 {
     pagination: {
@@ -818,6 +789,9 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&li
         sender: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
         recipient: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
         timestamp: "2024-03-18T10:13:54.150Z",
+        txHash: "445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118",
+        type: 6,
+        blockHash: "73171E0A8DCC10C6DA501E1C70A9C1E0BD6F1F8F834C2A1E787AF19B1F361D5E"
     }, ...
     ]
 }

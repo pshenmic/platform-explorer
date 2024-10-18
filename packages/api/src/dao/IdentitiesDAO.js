@@ -291,7 +291,8 @@ module.exports = class IdentitiesDAO {
       .select(
         'rank', 'amount', 'block_hash', 'type',
         'sender', 'recipient', 'with_alias.id',
-        'tx_hash', 'blocks.timestamp as timestamp'
+        'tx_hash', 'blocks.timestamp as timestamp',
+        'block_hash'
       )
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'with_alias.block_hash')
