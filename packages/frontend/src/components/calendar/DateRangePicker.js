@@ -101,7 +101,7 @@ const DateRangePicker = ({
   }
 
   return (
-    <div 
+    <div
       ref={calendarRef}
       className={'DateRangePicker ' +
         `${className || ''} ` +
