@@ -190,7 +190,7 @@ GET /blocks
 Return all validators with pagination info.
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
-* `limit` cannot be more then 100
+* `limit` cannot be more then 100 (0 = all validators)
 ```
 GET /validators
 
@@ -556,7 +556,7 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     totalDocuments: 0,
     totalDataContracts: 0,
     isSystem: false,
-    alias: "test.dash"
+    aliases: ["test.dash"...]
 }
 ```
 Response codes:
@@ -582,7 +582,8 @@ GET /dpns/identity?dpns=test-name.1.dash
     totalTransfers: 0,
     totalDocuments: 0,
     totalDataContracts: 0,
-    isSystem: false
+    isSystem: false,
+    aliases: []
 }
 ```
 Response codes:
@@ -619,7 +620,7 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
-        alias: "test.dash"
+        aliases: ["test.dash"]
     }, ...
     ]
 }

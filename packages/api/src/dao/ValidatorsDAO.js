@@ -107,7 +107,7 @@ module.exports = class ValidatorsDAO {
 
   getValidators = async (page, limit, order, isActive, validators, start, end) => {
     const fromRank = ((page - 1) * limit) + 1
-    const toRank = fromRank + limit - 1
+    const toRank = limit ? fromRank + limit - 1 : this.knex.raw("'+infinity'::numeric")
 
     const validatorsSubquery = this.knex('validators')
       .select(
@@ -198,7 +198,7 @@ module.exports = class ValidatorsDAO {
 
     const resultSet = rows.map((row) => Validator.fromRow(row))
 
-    return new PaginatedResultSet(resultSet, page, limit, totalCount)
+    return new PaginatedResultSet(resultSet, page, limit ?? resultSet.length, totalCount)
   }
 
   getValidatorStatsByProTxHash = async (proTxHash, timespan) => {

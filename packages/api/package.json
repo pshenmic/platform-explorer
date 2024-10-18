@@ -12,15 +12,13 @@
     "lint": "standard ."
   },
   "dependencies": {
-    "@dashevo/dapi-grpc": "^1.4.0",
-    "@dashevo/dapi-client": "^1.4.0",
-    "@dashevo/dashd-rpc": "^19.0.0",
-    "@dashevo/wasm-dpp": "^1.4.0",
+    "@dashevo/dapi-client": "1.4.1",
+    "@dashevo/dashd-rpc": "19.0.0",
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
     "bs58": "^6.0.0",
     "cbor": "^9.0.2",
-    "dash": "4.4.0-dev.8",
+    "dash": "4.1.1",
     "dotenv": "^16.3.1",
     "fastify": "^4.21.0",
     "fastify-metrics": "^11.0.0",
