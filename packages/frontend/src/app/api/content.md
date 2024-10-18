@@ -29,6 +29,7 @@ Reference:
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
+* [Rate](#rate)
 
 ### Status
 Returns basic stats and epoch info
@@ -52,6 +53,7 @@ HTTP /status
     },
     identitiesCount: 12,
     totalCredits: 100000,
+    totalCollectedFeesDay: 167703567170,
     transactionsCount: 3,
     transfersCount: 0,
     dataContractsCount: 1,
@@ -186,7 +188,7 @@ GET /blocks
 Return all validators with pagination info.
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
-* `limit` cannot be more then 100
+* `limit` cannot be more then 100 (0 = all validators)
 ```
 GET /validators
 
@@ -231,7 +233,21 @@ GET /validators
             pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
         }
       },
-      identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
+      identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
+      identityBalance: 0,
+      epochInfo: {
+        number: 1982,
+        firstBlockHeight: 31976,
+        firstCoreBlockHeight: 1118131,
+        startTime: 1728488466559,
+        feeMultiplier: 1,
+        endTime: 1728492066559
+      },
+      totalReward: 0,
+      epochReward: 0,
+      withdrawalsCount: null,
+      lastWithdrawal: null,
+      lastWithdrawalTime: null,
     }, ...
   ],
   pagination: { 
@@ -269,25 +285,56 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     operatorReward: 0,
     confirmations: 214424,
     state: {
-        version: 2,
-        service: "35.164.23.245:19999",
-        registeredHeight: 850334,
-        lastPaidHeight: 1064721,
-        consecutivePayments: 0,
-        PoSePenalty: 0,
-        PoSeRevivedHeight: 1027671,
-        PoSeBanHeight: -1,
-        revocationReason: 0,
-        ownerAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-        votingAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-        platformNodeID: "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
-        platformP2PPort: 36656,
-        platformHTTPPort: 1443,
-        payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-        pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
+      version: 2,
+      service: "35.164.23.245:19999",
+      registeredHeight: 850334,
+      lastPaidHeight: 1064721,
+      consecutivePayments: 0,
+      PoSePenalty: 0,
+      PoSeRevivedHeight: 1027671,
+      PoSeBanHeight: -1,
+      revocationReason: 0,
+      ownerAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+      votingAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+      platformNodeID: "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
+      platformP2PPort: 36656,
+      platformHTTPPort: 1443,
+      payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+      pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730",
+      endpoints: {
+        coreP2PPortStatus: {
+          host: '52.33.28.41',
+          port: 19999,
+          status: 'ERROR'
+        },
+        platformP2PPortStatus: {
+          host: '52.33.28.41',
+          port: 36656,
+          status: 'ERROR'
+        },
+        platformGrpcPortStatus: {
+          host: '52.33.28.41',
+          port: 1443,
+          status: 'ERROR'
+        }
+      }
     }
   },
-  "identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd"
+  identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
+  identityBalance: 0,
+  epochInfo: {
+    number: 1982,
+    firstBlockHeight: 31976,
+    firstCoreBlockHeight: 1118131,
+    startTime: 1728488466559,
+    feeMultiplier: 1,
+    endTime: 1728492066559
+  },
+  totalReward: 0,
+  epochReward: 0,
+  withdrawalsCount: 1,
+  lastWithdrawal: "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047",
+  lastWithdrawalTime: "2024-10-12T03:15:19.257Z"
 }
 ```
 ---
@@ -509,7 +556,8 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     totalTransfers: 0,
     totalDocuments: 0,
     totalDataContracts: 0,
-    isSystem: false
+    isSystem: false,
+    aliases: ["test.dash"...]
 }
 ```
 Response codes:
@@ -535,7 +583,8 @@ GET /dpns/identity?dpns=test-name.1.dash
     totalTransfers: 0,
     totalDocuments: 0,
     totalDataContracts: 0,
-    isSystem: false
+    isSystem: false,
+    aliases: []
 }
 ```
 Response codes:
@@ -571,7 +620,8 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
         totalTransfers: 0,
         totalDocuments: 0,
         totalDataContracts: 0,
-        isSystem: false
+        isSystem: false,
+        aliases: ["test.dash"]
     }, ...
     ]
 }
@@ -705,6 +755,9 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&li
         sender: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
         recipient: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
         timestamp: "2024-03-18T10:13:54.150Z",
+        txHash: "445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118",
+        type: 6,
+        blockHash: "73171E0A8DCC10C6DA501E1C70A9C1E0BD6F1F8F834C2A1E787AF19B1F361D5E"
     }, ...
     ]
 }
@@ -742,4 +795,19 @@ Response codes:
 200: OK
 400: Invalid input, check timespan value
 500: Internal Server Error
+```
+### Rate
+Return a rate DASH to USD
+```
+GET /rate
+{
+    usd: 24.45,
+    source: "Kucoin"
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
 ```

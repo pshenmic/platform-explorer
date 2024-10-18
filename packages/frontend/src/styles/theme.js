@@ -33,6 +33,11 @@ export const theme = extendTheme({
     9: '2.375rem',
     10: '2.5rem'
   },
+  sizes: {
+    container: {
+      xl: '1310px'
+    }
+  },
   blockOffset: [3, 4, 5, 5, 10],
   initialColorMode: 'dark',
   useSystemColorMode: false,
@@ -41,7 +46,7 @@ export const theme = extendTheme({
       normal: '#008DE4',
       deep: '#0E75B5',
       shaded: '#165278',
-      light: '#5ca5d1'
+      light: '#2CBBFF'
     },
     white: {
       50: '#FFFFFF'
@@ -58,6 +63,7 @@ export const theme = extendTheme({
       550: '#52585d6b',
       600: '#62676a',
       650: '#232C30',
+      675: '#21272C',
       700: '#494e51',
       750: '#39454C',
       800: '#2e393d',
@@ -160,6 +166,12 @@ export const theme = extendTheme({
     Container: {
       baseStyle: {
         p: 3
+      },
+      sizes: {
+        xl: {
+          background: 'red',
+          maxW: '100px'
+        }
       }
     },
     Modal: {
@@ -217,10 +229,10 @@ export const theme = extendTheme({
 
         return {
           borderWidth: '0px',
-          padding: '3px 10px',
+          padding: '0 12px',
           borderRadius: '999px',
           fontFamily: 'mono',
-          fontSize: '11px',
+          fontSize: '0.625rem',
           textTransform: 'none',
           display: 'inline-flex',
           alignItems: 'center',
@@ -230,12 +242,34 @@ export const theme = extendTheme({
       }
     },
     Progress: {
-      baseStyle: {
-        track: {
-          bg: 'rgba(0, 141, 228, 0.3)'
-        },
-        filledTrack: {
-          bg: 'rgba(0, 141, 228, 1)'
+      baseStyle: props => {
+        const { colorScheme } = props
+        const trackColor = {
+          red: '#4E3234',
+          green: '#2B4629',
+          gray: 'gray.600',
+          blue: 'rgba(0, 141, 228, 0.3)',
+          yellow: 'rgba(244, 228, 88, 0.2)',
+          orange: 'rgba(244, 154, 88, 0.2)',
+          emerald: 'rgba(88, 244, 188, 0.2)'
+        }
+        const filledColor = {
+          red: '#F45858',
+          green: '#81F458',
+          gray: 'gray.200',
+          blue: 'rgba(0, 141, 228, 1)',
+          yellow: '#F4E458',
+          orange: 'rgb(244, 154, 88)',
+          emerald: 'rgb(88, 244, 188)'
+        }
+
+        return {
+          track: {
+            bg: trackColor[colorScheme] || 'rgba(0, 141, 228, 0.3)'
+          },
+          filledTrack: {
+            bg: filledColor[colorScheme] || 'rgba(0, 141, 228, 1)'
+          }
         }
       }
     }

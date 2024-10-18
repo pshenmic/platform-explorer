@@ -1,5 +1,7 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
+const net = require('net')
+const { TCP_CONNECT_TIMEOUT } = require('./constants')
 
 const getKnex = () => {
   return require('knex')({
@@ -86,6 +88,14 @@ const decodeStateTransition = async (client, base64) => {
 
       break
     }
+    case StateTransitionEnum.MASTERNODE_VOTE: {
+      decoded.contestedResourcesVotePoll = stateTransition.getContestedDocumentResourceVotePoll().indexValues.map(buff => buff.toString('base64'))
+      decoded.contractId = stateTransition.getContestedDocumentResourceVotePoll().contractId.toString()
+      decoded.modifiedDataIds = stateTransition.getModifiedDataIds().map(identifier => identifier.toString())
+      decoded.ownerId = stateTransition.getOwnerId().toString()
+
+      break
+    }
     default:
       throw new Error('Unknown state transition')
   }
@@ -93,35 +103,35 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-const calculateInterval = (start, end) => {
-  const intervals = {
-    PT5M: 300000,
-    PT30M: 1800000,
-    PT1H: 3600000,
-    PT2H: 7200000,
-    PT12H: 43200000,
-    P1D: 86400000,
-    P1W: 604800000,
-    P1M: 2419200000,
-    P1Y: 29030400000
-  }
+const checkTcpConnect = (port, host) => {
+  return new Promise((resolve, reject) => {
+    let connection
+    try {
+      connection = net.createConnection(port, host)
 
-  const intervalsInRFC = Object.keys(intervals)
+      connection.setTimeout(TCP_CONNECT_TIMEOUT)
 
-  const startTimestamp = start.getTime()
-  const endTimestamp = end.getTime()
+      connection.once('error', async (e) => {
+        await connection.destroy()
+        console.error(e)
+        reject(e.message)
+      })
 
-  const period = endTimestamp - startTimestamp
+      connection.once('connect', async () => {
+        await connection.destroy()
+        resolve('OK')
+      })
 
-  for (let i = 0; i < intervalsInRFC.length; i++) {
-    const parts = period / intervals[intervalsInRFC[i]]
-
-    if (parts <= 2 && i > 0) {
-      return intervalsInRFC[i - 1]
-    } else if (parts <= 12 && i === 0) {
-      return intervalsInRFC[i]
+      connection.once('timeout', async () => {
+        await connection.destroy()
+        resolve('ERR_CONNECTION_REFUSED')
+      })
+    } catch (e) {
+      console.error(e)
+      connection.destroy()
+      reject(e)
     }
-  }
+  })
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, calculateInterval }
+module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect }

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import TotalCards from '../total/TotalCards'
-import { SideBlock } from '../containers'
 
 export default function BlocksTotal () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
@@ -25,35 +24,33 @@ export default function BlocksTotal () {
   useEffect(fetchData, [])
 
   return (
-    <SideBlock>
-      <TotalCards
-        cards={[
-          {
-            title: 'Epoch:',
-            value: typeof status?.data?.epoch?.number === 'number' ? status.data.epoch.number : 'n/a',
-            icon: 'Sandglass',
-            loading: status.loading
-          },
-          {
-            title: 'Blocks:',
-            value: typeof status?.data?.api?.block?.height === 'number' ? currencyRound(status.data.api.block.height) : 'n/a',
-            icon: 'Blocks',
-            loading: status.loading
-          },
-          {
-            title: 'Avg. TPS*:',
-            value: typeof epoch?.data?.tps === 'number' ? epoch.data.tps.toFixed(4) : 'n/a',
-            icon: 'Timer',
-            loading: epoch.loading
-          },
-          {
-            title: 'Transactions:',
-            value: typeof status?.data?.transactionsCount === 'number' ? currencyRound(status.data.transactionsCount) : 'n/a',
-            icon: 'Transactions',
-            loading: status.loading
-          }
-        ]}
-      />
-    </SideBlock>
+    <TotalCards
+      cards={[
+        {
+          title: 'Epoch:',
+          value: typeof status?.data?.epoch?.number === 'number' ? status.data.epoch.number : 'n/a',
+          icon: 'Sandglass',
+          loading: status.loading
+        },
+        {
+          title: 'Blocks:',
+          value: typeof status?.data?.api?.block?.height === 'number' ? currencyRound(status.data.api.block.height) : 'n/a',
+          icon: 'Blocks',
+          loading: status.loading
+        },
+        {
+          title: 'Avg. TPS*:',
+          value: typeof epoch?.data?.tps === 'number' ? epoch.data.tps.toFixed(4) : 'n/a',
+          icon: 'Timer',
+          loading: epoch.loading
+        },
+        {
+          title: 'Transactions:',
+          value: typeof status?.data?.transactionsCount === 'number' ? currencyRound(status.data.transactionsCount) : 'n/a',
+          icon: 'Transactions',
+          loading: status.loading
+        }
+      ]}
+    />
   )
 }

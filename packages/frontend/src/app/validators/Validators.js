@@ -24,7 +24,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const [total, setTotal] = useState(1)
-  const [isActive, setIsActive] = useState(defaultIsActive !== undefined ? defaultIsActive === true : false)
+  const [activeState, setActiveState] = useState(defaultIsActive !== undefined ? defaultIsActive : 'all')
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
@@ -33,7 +33,12 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
   const fetchData = (page, count, active) => {
     setValidators({ data: {}, loading: true, error: false })
 
-    Api.getValidators(page, count, 'desc', active || null)
+    const state = (() => {
+      if (active === 'all') return null
+      return active === 'current'
+    })()
+
+    Api.getValidators(page, count, 'desc', state)
       .then(res => {
         if (res.pagination.total === -1) {
           setCurrentPage(0)
@@ -44,7 +49,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
       .catch(err => fetchHandlerError(setValidators, err))
   }
 
-  useEffect(() => fetchData(currentPage + 1, pageSize, isActive), [pageSize, currentPage])
+  useEffect(() => fetchData(currentPage + 1, pageSize, activeState), [pageSize, currentPage])
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
@@ -55,6 +60,12 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
 
+    if (activeState.toLowerCase() !== 'all') {
+      urlParameters.set('active-state', activeState.toLowerCase())
+    } else {
+      urlParameters.delete('active-state')
+    }
+
     if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
       urlParameters.delete('page')
       urlParameters.delete('page-size')
@@ -64,59 +75,56 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [currentPage, pageSize])
+  }, [currentPage, pageSize, activeState])
 
-  const isActiveSwitchHandler = (activeState) => {
+  useEffect(() => {
     setCurrentPage(0)
-    setIsActive(activeState)
     fetchData(1, pageSize, activeState)
-  }
+  }, [activeState])
 
   return (
     <Container
-        maxW={'container.xl'}
-        mt={8}
-        className={'Transactions'}
+      maxW={'container.xl'}
+      mt={8}
+      className={'Transactions'}
     >
-        <Container
-            maxW={'container.xl'}
-            className={'InfoBlock'}
-        >
-            <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>
-            <Box mb={2}>
-              <Switcher
-                options={[
-                  {
-                    title: 'All'
-                  },
-                  {
-                    title: 'Current'
-                  }
-                ]}
-                onChange={e => isActiveSwitchHandler(e === 'Current')}
-              />
-            </Box>
+      <Container
+        maxW={'container.xl'}
+        className={'InfoBlock'}
+      >
+        <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>
+        <Box mb={5}>
+          <Switcher
+            options={[
+              { title: 'All' },
+              { title: 'Current' },
+              { title: 'Queued' }
+            ]}
+            defaultValue={activeState}
+            onChange={activeOption => setActiveState(activeOption.toLowerCase())}
+          />
+        </Box>
 
-            {!validators.error
-              ? <ValidatorsList validators={validators} pageSize={pageSize}/>
-              : <Container h={20}><ErrorMessageBlock/></Container>}
+        {!validators.error
+          ? <ValidatorsList validators={validators} pageSize={pageSize}/>
+          : <Container h={20}><ErrorMessageBlock/></Container>}
 
-            {validators.data?.resultSet?.length > 0 &&
-              <div className={'ListNavigation'}>
-                <Box display={['none', 'none', 'block']} width={'100px'}/>
-                <Pagination
-                    onPageChange={({ selected }) => setCurrentPage(selected)}
-                    pageCount={pageCount}
-                    forcePage={currentPage}
-                />
-                <PageSizeSelector
-                    PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                    value={pageSize}
-                    items={paginateConfig.pageSize.values}
-                />
-              </div>
-            }
-        </Container>
+        {validators.data?.resultSet?.length > 0 &&
+          <div className={'ListNavigation'}>
+            <Box display={['none', 'none', 'block']} width={'155px'}/>
+            <Pagination
+              onPageChange={({ selected }) => setCurrentPage(selected)}
+              pageCount={pageCount}
+              forcePage={currentPage}
+            />
+            <PageSizeSelector
+              PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+              value={pageSize}
+              items={paginateConfig.pageSize.values}
+            />
+          </div>
+        }
+      </Container>
     </Container>
   )
 }

@@ -1,4 +1,4 @@
-const { Identifier } = require('@dashevo/wasm-dpp')
+const { Identifier } = require('dash').PlatformProtocol
 
 class DAPI {
   dapi

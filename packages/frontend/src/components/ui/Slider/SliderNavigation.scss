@@ -1,0 +1,62 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.SliderNavigation {
+  position: relative;
+  width: 100%;
+
+  &__Buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__Button {
+    display: flex;
+    width: 32px;
+    height: 32px;
+    border-radius: $border-radius-def;
+    align-items: center;
+    justify-content: center;
+    background-color: $color-brand-normal;
+
+    &:hover {
+      cursor: pointer;
+      background-color: $color-brand-light;
+    }
+    
+    &--Disabled {
+      background-color: var(--chakra-colors-gray-800);
+
+      &:hover {
+        background-color: var(--chakra-colors-gray-800);
+        cursor: default;
+      }
+    }
+    
+    &--Prev {}
+
+    &--Next {
+      position: absolute;
+      right: 0;
+    }
+  }
+
+  &__ProgressBars {
+    position: absolute;
+    display: flex;
+    width: calc(100% - 120px);
+    margin: 0 auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &__ProgressBar {
+    width: 100%;
+    margin-right: 16px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}

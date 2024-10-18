@@ -46,7 +46,7 @@ describe('Transaction routes', () => {
       data: '{}',
       type: StateTransitionEnum.DOCUMENTS_BATCH,
       owner: identity.identifier,
-      error: 'fake_err',
+      error: 'Cannot deserialize',
       status: 'FAIL'
     })
     transactions.push({ transaction: errorTx, block })
@@ -126,7 +126,7 @@ describe('Transaction routes', () => {
         type: transaction.transaction.type,
         gasUsed: 0,
         status: 'FAIL',
-        error: 'fake_err'
+        error: 'Cannot deserialize'
       }
 
       assert.deepEqual(expectedTransaction, body)

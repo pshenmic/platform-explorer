@@ -1,6 +1,5 @@
 'use client'
 
-import { SideBlock } from '../../components/containers'
 import { DataContractCards } from '../../components/dataContracts'
 
 export default function Cards () {
@@ -38,8 +37,6 @@ export default function Cards () {
   }
 
   return (
-    <SideBlock>
-      <DataContractCards items={dataContracts}/>
-    </SideBlock>
+    <DataContractCards items={dataContracts}/>
   )
 }

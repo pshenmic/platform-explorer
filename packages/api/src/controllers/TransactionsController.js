@@ -27,7 +27,7 @@ class TransactionsController {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    const transactions = await this.transactionsDAO.getTransactions(Number(page), Number(limit), order)
+    const transactions = await this.transactionsDAO.getTransactions(Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(transactions)
   }

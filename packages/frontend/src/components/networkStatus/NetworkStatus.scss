@@ -51,6 +51,11 @@
     &--Epoch {
       flex-wrap: wrap;
       width: 100%;
+
+      span {
+        @include mixins.TooltipElement();
+        width: max-content;
+      }
     }
   }
 

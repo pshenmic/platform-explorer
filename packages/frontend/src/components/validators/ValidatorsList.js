@@ -1,41 +1,48 @@
 'use client'
 
 import { useState } from 'react'
+import { ListColumnsHeader } from '../ui/lists'
 import Link from 'next/link'
-import ImageGenerator from '../imageGenerator'
-import { LoadingLine } from '../../components/loading'
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Td,
-  TableContainer
-} from '@chakra-ui/react'
-import { TableHeaders } from '../../components/ui/Table'
+import { LoadingLine } from '../loading'
+import { Identifier } from '../data'
+import { Grid, GridItem } from '@chakra-ui/react'
 import './ValidatorsList.scss'
+import './ValidatorListItem.scss'
+
+const ValidatorListItem = ({ validator, loading }) => {
+  return (
+    !loading
+      ? <Link
+          href={`/validator/${validator.proTxHash}`}
+          className={'ValidatorListItem'}
+        >
+          <Grid className={'ValidatorListItem__Content'}>
+            <GridItem className={'ValidatorListItem__Column'}>
+              {validator?.proTxHash &&
+                <Identifier
+                  className={'ValidatorListItem__Column ValidatorListItem__Column--Identifier'}
+                  avatar={true}
+                  copyButton={true}
+                  styles={['highlight-both']}
+                >
+                  {validator.proTxHash}
+                </Identifier>
+              }
+            </GridItem>
+            <GridItem className={'ValidatorListItem__Column'}>
+              {validator?.lastProposedBlockHeader?.height || '-'}
+            </GridItem>
+            <GridItem className={'ValidatorListItem__Column'}>
+              {validator?.proposedBlocksAmount || '-'}
+            </GridItem>
+          </Grid>
+        </Link>
+      : <LoadingLine loading={loading} className={'ValidatorListItem ValidatorListItem--Loading'}/>
+  )
+}
 
 export default function ValidatorsList ({ validators, pageSize }) {
   const [sort, setSort] = useState({ key: 'blocksProposed', direction: 'asc' })
-
-  const ValidatorRow = ({ validator, loading }) => {
-    return (
-      <Tr className={'ValidatorTableRow'}>
-        <Td py={0} maxW={'calc(100vw - 500px)'} minW={'200px'} pr={0}>
-          <LoadingLine loading={loading} w={'700px'} className={'ValidatorTableRow__IdentifierContainer'}>
-            {!loading &&
-              <Link href={`/validator/${validator.proTxHash}`} className={'ValidatorTableRow__IdentifierContainer'}>
-                <ImageGenerator className={'ValidatorTableRow__Avatar'} username={validator.proTxHash} lightness={50} saturation={50} width={28} height={28} />
-                <div className={'ValidatorTableRow__Identifier'}>{validator.proTxHash}</div>
-              </Link>
-            }
-          </LoadingLine>
-        </Td>
-        <Td isNumeric><LoadingLine loading={loading}>{validator?.lastProposedBlockHeader?.height || '-'}</LoadingLine></Td>
-        <Td isNumeric><LoadingLine loading={loading}>{validator?.proposedBlocksAmount || '-'}</LoadingLine></Td>
-      </Tr>
-    )
-  }
 
   function getSortedList () {
     if (!validators?.data?.resultSet?.length) return []
@@ -74,21 +81,19 @@ export default function ValidatorsList ({ validators, pageSize }) {
 
   return (
     <div className={'ValidatorsList'}>
-      <TableContainer>
-        <Table size={'md'} className={'ValidatorsList__Table Table'}>
-          <Thead>
-            <Tr>
-              <TableHeaders headers={headers} sortCallback={setSort} />
-            </Tr>
-          </Thead>
-          <Tbody>
-            {!validators?.loading
-              ? getSortedList().map((validator, i) => <ValidatorRow key={i} validator={validator}/>)
-              : Array.from({ length: pageSize }, (x, i) => <ValidatorRow key={i} loading={true}/>)
-            }
-          </Tbody>
-        </Table>
-      </TableContainer>
+      <div className={'ValidatorsList__ContentContainer'}>
+        <ListColumnsHeader
+          columns={headers}
+          sortCallback={setSort}
+          className={'ValidatorsList__ColumnTitles'}
+          columnClassName={'ValidatorsList__ColumnTitle'}
+        />
+
+        {!validators?.loading
+          ? getSortedList().map((validator, i) => <ValidatorListItem key={i} validator={validator}/>)
+          : Array.from({ length: pageSize }, (x, i) => <ValidatorListItem key={i} loading={true}/>)
+        }
+      </div>
     </div>
   )
 }

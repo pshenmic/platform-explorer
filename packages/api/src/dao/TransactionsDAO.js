@@ -96,4 +96,35 @@ module.exports = class TransactionsDAO {
       }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
   }
+
+  getCollectedFees = async (timespan) => {
+    const interval = {
+      '1h': { offset: '1 hour', step: '5 minute' },
+      '24h': { offset: '24 hour', step: '2 hour' },
+      '3d': { offset: '3 day', step: '6 hour' },
+      '1w': { offset: '1 week', step: '14 hour' }
+    }[timespan]
+
+    const ranges = this.knex
+      .from(this.knex.raw(`generate_series(now() - interval '${interval.offset}', now(), interval  '${interval.step}') date_to`))
+      .select('date_to', this.knex.raw('LAG(date_to, 1) over (order by date_to asc) date_from'))
+
+    const subquery = this.knex.with('ranges', ranges)
+      .select(
+        this.knex('state_transitions')
+          .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
+          .sum('gas_used as collected_fees')
+          .as('collected_fees')
+      )
+      .from('ranges')
+      .as('subquery')
+
+    const [row] = await this.knex(subquery)
+      .select(
+        this.knex.raw('SUM(collected_fees) OVER () as total_collected_fees')
+      )
+
+    return Number(row.total_collected_fees ?? 0)
+  }
 }

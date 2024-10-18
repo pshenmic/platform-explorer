@@ -1,0 +1,16 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.RateTooltip {
+  font-size: 0.75rem;
+
+  &__Dash {
+    font-family: $font-heading;
+    color: #fff;
+  }
+
+  &__Usd {
+    font-family: $font-mono;
+    color: rgba(255, 255, 255, .6);
+  }
+}

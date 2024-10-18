@@ -16,13 +16,19 @@ module.exports = ({
   dataContractsController,
   documentsController,
   identitiesController,
-  validatorsController
+  validatorsController,
+  rateController
 }) => {
   const routes = [
     {
       path: '/status',
       method: 'GET',
       handler: mainController.getStatus
+    },
+    {
+      path: '/rate',
+      method: 'GET',
+      handler: rateController.getUSDRate
     },
     {
       path: '/epoch/:index',
@@ -32,7 +38,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            index: { type: 'number', minimum: 0 }
+            index: { type: ['number', 'null'], minimum: 0 }
           }
         }
       }
@@ -188,6 +194,20 @@ module.exports = ({
           }
         },
         querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/identity/:identifier/withdrawals',
+      method: 'GET',
+      handler: identitiesController.getWithdrawalsByIdentity,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' },
+        params: {
+          type: 'object',
+          properties: {
+            validator: { $ref: 'hash#' }
+          }
+        }
       }
     },
     {

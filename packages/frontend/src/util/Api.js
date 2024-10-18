@@ -119,6 +119,10 @@ const getStatus = () => {
   return call('status', 'GET')
 }
 
+const getRate = () => {
+  return call('rate', 'GET')
+}
+
 const search = (query) => {
   return call(`search?query=${query}`, 'GET')
 }
@@ -150,5 +154,6 @@ export {
   getValidatorByProTxHash,
   getBlocksByValidator,
   getBlocksStatsByValidator,
-  getEpoch
+  getEpoch,
+  getRate
 }

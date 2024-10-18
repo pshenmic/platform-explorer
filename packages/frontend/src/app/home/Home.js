@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsHistory from '../../components/charts/TransactionsHistory'
-import { SimpleList } from '../../components/lists'
+import { SimpleList } from '../../components/ui/lists'
 import TotalInfo from '../../components/total/TotalInfo'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import TransactionsList from '../../components/transactions/TransactionsList'
@@ -24,6 +24,7 @@ function Home () {
   const [transactions, setTransactions] = useState({ data: {}, props: { printCount: 8 }, loading: true, error: false })
   const [richestIdentities, setRichestIdentities] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
   const [trendingIdentities, setTrendingIdentities] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const blockOffset = theme.blockOffset
   const blockMaxWidth = ['100%', '100%', 'calc(50% - 10px)', 'calc(50% - 10px)', 'calc(50% - 20px)']
 
@@ -33,7 +34,7 @@ function Home () {
         .then(res => fetchHandlerSuccess(setStatus, res))
         .catch(err => fetchHandlerError(setStatus, err)),
 
-      Api.getTransactions(1, 13, 'desc')
+      Api.getTransactions(1, 14, 'desc')
         .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
         .catch(err => fetchHandlerError(setTransactions, err)),
 
@@ -47,7 +48,11 @@ function Home () {
 
       Api.getIdentities(1, 10, 'desc', 'tx_count')
         .then(paginatedTrendingIdentities => fetchHandlerSuccess(setTrendingIdentities, paginatedTrendingIdentities))
-        .catch(err => fetchHandlerError(setTrendingIdentities, err))
+        .catch(err => fetchHandlerError(setTrendingIdentities, err)),
+
+      Api.getRate()
+        .then(res => fetchHandlerSuccess(setRate, res))
+        .catch(err => fetchHandlerError(setRate, err))
     ])
       .catch(console.log)
   }
@@ -121,12 +126,12 @@ function Home () {
                               avatar: true,
                               mono: true,
                               dim: true,
-                              ellipsis: true
+                              ellipsis: true,
+                              format: 'identifier'
                             },
                             {
                               value: dataContract.documentsCount,
-                              mono: true,
-                              numberFormat: 'currency'
+                              mono: true
                             }
                           ],
                           link: '/dataContract/' + dataContract.identifier
@@ -190,12 +195,12 @@ function Home () {
                               avatar: true,
                               mono: true,
                               dim: true,
-                              ellipsis: true
+                              ellipsis: true,
+                              format: 'identifier'
                             },
                             {
                               value: identitiy.totalTxs,
-                              mono: true,
-                              numberFormat: 'currency'
+                              mono: true
                             }
                           ],
                           link: '/identity/' + identitiy.identifier
@@ -228,12 +233,14 @@ function Home () {
                               avatar: true,
                               mono: true,
                               dim: true,
-                              ellipsis: true
+                              ellipsis: true,
+                              format: 'identifier'
                             },
                             {
                               value: identitiy.balance,
                               mono: true,
-                              numberFormat: 'currency'
+                              format: 'currency',
+                              rate: !rate.loading && !rate.error ? rate.data : null
                             }
                           ],
                           link: '/identity/' + identitiy.identifier

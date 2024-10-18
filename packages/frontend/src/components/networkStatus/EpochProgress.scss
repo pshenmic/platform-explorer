@@ -4,7 +4,7 @@
   &__Info {
 		display: flex;
     font-family: $font-mono;
-		font-size: 12px;
+		font-size: 0.75rem;
 		font-weight: 400;
 		text-transform: none;
 		margin-top: 6px;
@@ -12,7 +12,7 @@
 
 	&__InfoTitle {
     color: var(--chakra-colors-gray-500);
-		margin-right: 12px;
+		margin-right: 8px;
     white-space: nowrap;
 	}
 

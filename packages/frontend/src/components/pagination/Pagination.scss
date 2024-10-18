@@ -1,0 +1,61 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.Pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+  
+.PageItem {
+  margin: 0 6px;
+  background-color: var(--chakra-colors-gray-800);
+  border-radius: $border-radius-def;
+
+  &--Next:hover:not(.disabled),
+  &--Previous:hover:not(.disabled) {
+    background-color: #a58b8b15;
+  }
+
+  &.disabled {
+    cursor: default;
+    opacity: .3;
+  }
+
+  &:not(.active) {
+    &:hover:not(.disabled) {
+      background-color: #ffffff10;
+    }
+  }
+
+  &.active {
+    &, &:hover {
+      cursor: default;
+      background-color: var(--chakra-colors-brand-normal);
+    }
+  }
+}
+
+.PageLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -ms-user-select: none; 
+  text-align: center;
+  padding: 10px 12px;
+  font-size: 0.75rem;
+  min-width: 55px;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-mono;
+}
+
+@media screen and (max-width: $breakpoint-md) {
+  .PageItem:not(.active):not(.PageItem--Previous):not(.PageItem--Next) {
+    display: none;
+  }
+}
