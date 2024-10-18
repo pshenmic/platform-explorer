@@ -105,7 +105,7 @@ module.exports = class ValidatorsDAO {
     return Validator.fromRow(row)
   }
 
-  getValidators = async (page, limit, order, isActive, validators, start, end) => {
+  getValidators = async (page, limit, order, isActive, validators, currentEpoch) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = limit ? fromRank + limit - 1 : this.knex.raw("'+infinity'::numeric")
 
@@ -142,8 +142,8 @@ module.exports = class ValidatorsDAO {
           .select(this.knex.raw('SUM(state_transitions.gas_used) OVER () as total_collected_reward_by_epoch'))
           .leftJoin('state_transitions', 'blocks.hash', 'state_transitions.block_hash')
           .whereRaw('pro_tx_hash = blocks.validator')
-          .andWhere('blocks.timestamp', '>=', new Date(start).toISOString())
-          .andWhere('blocks.timestamp', '<=', new Date(end).toISOString())
+          .andWhere('blocks.timestamp', '>=', new Date(currentEpoch.startTime).toISOString())
+          .andWhere('blocks.timestamp', '<=', new Date(currentEpoch.endTime).toISOString())
           .limit(1)
           .as('total_collected_reward_by_epoch')
       )

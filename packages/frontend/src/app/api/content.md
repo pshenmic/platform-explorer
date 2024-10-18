@@ -87,7 +87,6 @@ Returns info about epoch by specific index
 * tps - Transactions per second
 * totalCollectedFees - total number or fees spent per epoch
 * bestValidator - validator with most validated blocks
-* if no index set => returning last epoch
 
 
 ```
