@@ -82,17 +82,17 @@ describe('Validators routes', () => {
           coreP2PPortStatus: {
             host: '255.255.255.255',
             port: 255,
-            status: null
+            status: 'ERR_OUT_OF_RANGE'
           },
           platformP2PPortStatus: {
             host: '255.255.255.255',
             port: 255,
-            status: null
+            status: 'ERR_OUT_OF_RANGE'
           },
           platformGrpcPortStatus: {
             host: '255.255.255.255',
             port: 255,
-            status: null
+            status: 'ERR_OUT_OF_RANGE'
           }
         }
       },
