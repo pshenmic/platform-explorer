@@ -113,7 +113,8 @@ const checkTcpConnect = (port, host) => {
 
       connection.once('error', async (e) => {
         await connection.destroy()
-        resolve(e.message)
+        console.error(e)
+        reject(e.message)
       })
 
       connection.once('connect', async () => {
