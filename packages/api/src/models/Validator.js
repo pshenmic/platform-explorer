@@ -15,6 +15,7 @@ module.exports = class Validator {
   withdrawalsCount
   lastWithdrawal
   lastWithdrawalTime
+  endpoints
 
   constructor (
     proTxHash,
@@ -29,7 +30,8 @@ module.exports = class Validator {
     lastWithdrawalTime,
     identifier,
     identityBalance,
-    epochInfo
+    epochInfo,
+    endpoints
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null
@@ -44,6 +46,7 @@ module.exports = class Validator {
     this.withdrawalsCount = withdrawalsCount ?? null
     this.lastWithdrawal = lastWithdrawal ?? null
     this.lastWithdrawalTime = lastWithdrawalTime ?? null
+    this.endpoints = endpoints ?? null
   }
 
   static fromRow ({
@@ -99,7 +102,8 @@ module.exports = class Validator {
     lastWithdrawalTime,
     identifier,
     identityBalance,
-    epochInfo
+    epochInfo,
+    endpoints
   }) {
     return new Validator(
       proTxHash,
@@ -114,7 +118,8 @@ module.exports = class Validator {
       lastWithdrawalTime,
       identifier,
       identityBalance,
-      epochInfo
+      epochInfo,
+      endpoints
     )
   }
 }

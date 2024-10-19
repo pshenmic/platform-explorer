@@ -66,16 +66,11 @@ class ValidatorsController {
         {
           ...validator,
           isActive,
-          proTxInfo: ProTxInfo.fromObject({
-            ...proTxInfo,
-            state: {
-              ...proTxInfo.state,
-              endpoints
-            }
-          }),
+          proTxInfo: ProTxInfo.fromObject(proTxInfo),
           identifier,
           identityBalance,
-          epochInfo
+          epochInfo,
+          endpoints
         }
       )
     )

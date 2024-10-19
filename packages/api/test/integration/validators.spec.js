@@ -30,6 +30,7 @@ describe('Validators routes', () => {
   let timestamp
 
   let dashCoreRpcResponse
+  let endpoints
 
   let intervals
 
@@ -46,6 +47,24 @@ describe('Validators routes', () => {
     identities = []
     transactions = []
     timestamp = new Date()
+
+    endpoints = {
+      coreP2PPortStatus: {
+        host: '255.255.255.255',
+        port: 255,
+        status: 'ERR_OUT_OF_RANGE'
+      },
+      platformP2PPortStatus: {
+        host: '255.255.255.255',
+        port: 255,
+        status: 'ERR_OUT_OF_RANGE'
+      },
+      platformGrpcPortStatus: {
+        host: '255.255.255.255',
+        port: 255,
+        status: 'ERR_OUT_OF_RANGE'
+      }
+    }
 
     intervals = {
       '1h': 300000,
@@ -77,24 +96,7 @@ describe('Validators routes', () => {
         platformP2PPort: 255,
         platformHTTPPort: 255,
         payoutAddress: 'yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A',
-        pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53',
-        endpoints: {
-          coreP2PPortStatus: {
-            host: '255.255.255.255',
-            port: 255,
-            status: 'ERR_OUT_OF_RANGE'
-          },
-          platformP2PPortStatus: {
-            host: '255.255.255.255',
-            port: 255,
-            status: 'ERR_OUT_OF_RANGE'
-          },
-          platformGrpcPortStatus: {
-            host: '255.255.255.255',
-            port: 255,
-            status: 'ERR_OUT_OF_RANGE'
-          }
-        }
+        pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53'
       },
       confirmations: 214276,
       metaInfo: {
@@ -224,7 +226,8 @@ describe('Validators routes', () => {
         epochInfo: { ...fullEpochInfo },
         withdrawalsCount: 5,
         lastWithdrawal: transactions[transactions.length - 1].hash,
-        lastWithdrawalTime: timestamp.toISOString()
+        lastWithdrawalTime: timestamp.toISOString(),
+        endpoints
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -273,7 +276,8 @@ describe('Validators routes', () => {
         epochInfo: { ...fullEpochInfo },
         withdrawalsCount: 5,
         lastWithdrawal: transactions[transactions.length - 2].hash,
-        lastWithdrawalTime: timestamp.toISOString()
+        lastWithdrawalTime: timestamp.toISOString(),
+        endpoints
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -336,7 +340,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -389,7 +394,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -445,7 +451,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -500,7 +507,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -559,7 +567,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -614,7 +623,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -671,7 +681,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -726,7 +737,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -798,7 +810,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -851,7 +864,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -906,7 +920,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -961,7 +976,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1016,7 +1032,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1071,7 +1088,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1127,7 +1145,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1182,7 +1201,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1242,7 +1262,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1283,7 +1304,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1327,7 +1349,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1370,7 +1393,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1413,7 +1437,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1456,7 +1481,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1512,7 +1538,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1567,7 +1594,8 @@ describe('Validators routes', () => {
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
-              lastWithdrawalTime: null
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
