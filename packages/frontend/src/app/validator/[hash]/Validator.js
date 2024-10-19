@@ -122,14 +122,14 @@ function Validator ({ hash }) {
                 value={(
                   <Endpoint
                     value={<IpAddress
-                      host={validator.data?.proTxInfo?.state?.endpoints?.coreP2PPortStatus?.host}
-                      port={validator.data?.proTxInfo?.state?.endpoints?.coreP2PPortStatus?.port}
+                      host={validator.data?.endpoints?.coreP2PPortStatus?.host}
+                      port={validator.data?.endpoints?.coreP2PPortStatus?.port}
                     />}
-                    status={validator.data?.proTxInfo?.state?.endpoints?.coreP2PPortStatus?.status || 'error'}
+                    status={validator.data?.endpoints?.coreP2PPortStatus?.status || 'error'}
                   />
                 )}
                 loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.coreP2PPortStatus}
+                error={validator.error || !validator.data?.endpoints?.coreP2PPortStatus}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -137,14 +137,14 @@ function Validator ({ hash }) {
                 value={(
                   <Endpoint
                     value={<IpAddress
-                      host={validator.data?.proTxInfo?.state?.endpoints?.platformP2PPortStatus?.host}
-                      port={validator.data?.proTxInfo?.state?.endpoints?.platformP2PPortStatus?.port}
+                      host={validator.data?.endpoints?.platformP2PPortStatus?.host}
+                      port={validator.data?.endpoints?.platformP2PPortStatus?.port}
                     />}
-                    status={validator.data?.proTxInfo?.state?.endpoints?.platformP2PPortStatus?.status || 'error'}
+                    status={validator.data?.endpoints?.platformP2PPortStatus?.status || 'error'}
                   />
                 )}
                 loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.platformP2PPortStatus}
+                error={validator.error || !validator.data?.endpoints?.platformP2PPortStatus}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
@@ -152,19 +152,19 @@ function Validator ({ hash }) {
                 value={(
                   <Endpoint
                     value={(<IpAddress
-                      host={validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.host}
-                      port={validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.port}
+                      host={validator.data?.endpoints?.platformGrpcPortStatus?.host}
+                      port={validator.data?.endpoints?.platformGrpcPortStatus?.port}
                     />)}
-                    status={validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.status || 'error'}
-                    link={`https://${validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.host}${
-                      validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.port
-                        ? ':' + validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.port
+                    status={validator.data?.endpoints?.platformGrpcPortStatus?.status || 'error'}
+                    link={`https://${validator.data?.endpoints?.platformGrpcPortStatus?.host}${
+                      validator.data?.endpoints?.platformGrpcPortStatus?.port
+                        ? ':' + validator.data?.endpoints?.platformGrpcPortStatus?.port
                         : ''
                     }`}
                   />
                 )}
                 loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus}
+                error={validator.error || !validator.data?.endpoints?.platformGrpcPortStatus}
               />
             </div>
 
