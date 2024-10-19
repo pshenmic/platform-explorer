@@ -1,27 +1,31 @@
 import './IpAddress.scss'
 
 function splitIpAndPort (address) {
-  if (!address) return { ip: null, port: null }
+  if (!address) return { host: null, port: null }
 
   if (address.includes(':')) {
-    const [ip, port] = address.split(':')
+    const [host, port] = address.split(':')
 
-    if (ip.split('.').length > 0) {
-      return { ip, port }
+    if (host.split('.').length > 0) {
+      return { host, port }
     }
   }
 
-  return { ip: address, port: null }
+  return { host: address, port: null }
 }
 
-function IpAddress ({ children, className }) {
-  if (!children) return
+function IpAddress ({ children, host, port, className }) {
+  if (!children && !host) return
 
-  const { ip, port } = splitIpAndPort(children)
+  if (!host && !port) {
+    const addressData = splitIpAndPort(children)
+    host = addressData.host
+    port = addressData.port
+  }
 
   return (
     <div className={`IpAddress ${className}`}>
-      <span className={'IpAddress__Ip'}>{ip}</span>
+      <span className={'IpAddress__Host'}>{host}</span>
       {port && <>:<span className={'IpAddress__Port'}>{port}</span></>}
     </div>
   )

@@ -121,37 +121,50 @@ function Validator ({ hash }) {
                 title={'CORE P2P'}
                 value={(
                   <Endpoint
-                    value={<IpAddress>{validator.data?.proTxInfo?.state?.endpoints?.coreP2P?.host}</IpAddress>}
-                    status={validator.data?.proTxInfo?.state?.endpoints?.coreP2P?.status || 'error'}
+                    value={<IpAddress
+                      host={validator.data?.proTxInfo?.state?.endpoints?.coreP2PPortStatus?.host}
+                      port={validator.data?.proTxInfo?.state?.endpoints?.coreP2PPortStatus?.port}
+                    />}
+                    status={validator.data?.proTxInfo?.state?.endpoints?.coreP2PPortStatus?.status || 'error'}
                   />
                 )}
                 loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.coreP2P}
+                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.coreP2PPortStatus}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Platform P2P'}
                 value={(
                   <Endpoint
-                    value={<IpAddress>{validator.data?.proTxInfo?.state?.endpoints?.platformP2P?.host}</IpAddress>}
-                    status={validator.data?.proTxInfo?.state?.endpoints?.platformP2P?.status || 'error'}
+                    value={<IpAddress
+                      host={validator.data?.proTxInfo?.state?.endpoints?.platformP2PPortStatus?.host}
+                      port={validator.data?.proTxInfo?.state?.endpoints?.platformP2PPortStatus?.port}
+                    />}
+                    status={validator.data?.proTxInfo?.state?.endpoints?.platformP2PPortStatus?.status || 'error'}
                   />
                 )}
                 loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.platformP2P}
+                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.platformP2PPortStatus}
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Platform GRPC'}
                 value={(
                   <Endpoint
-                    value={<IpAddress>{validator.data?.proTxInfo?.state?.endpoints?.platformGrpc?.host}</IpAddress>}
-                    status={validator.data?.proTxInfo?.state?.endpoints?.platformGrpc?.status || 'error'}
-                    link={'https://192.168.0.1:9999'}
+                    value={(<IpAddress
+                      host={validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.host}
+                      port={validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.port}
+                    />)}
+                    status={validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.status || 'error'}
+                    link={`https://${validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.host}${
+                      validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.port
+                        ? ':' + validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus?.port
+                        : ''
+                    }`}
                   />
                 )}
                 loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.platformGrpc}
+                error={validator.error || !validator.data?.proTxInfo?.state?.endpoints?.platformGrpcPortStatus}
               />
             </div>
 
@@ -190,7 +203,7 @@ function Validator ({ hash }) {
                 title={'Rewards This Epoch'}
                 value={(
                   <RateTooltip credits={validator.data?.epochReward} rate={rate.data}>
-                    {validator.data?.epochReward}
+                    <span>{validator.data?.epochReward}</span>
                   </RateTooltip>
                 )}
                 loading={validator.loading}
@@ -201,7 +214,7 @@ function Validator ({ hash }) {
                 title={'Total Rewards Earned'}
                 value={(
                   <RateTooltip credits={validator.data?.totalReward} rate={rate.data}>
-                    {validator.data?.epochReward}
+                    <span>{validator.data?.totalReward}</span>
                   </RateTooltip>
                 )}
                 loading={validator.loading}

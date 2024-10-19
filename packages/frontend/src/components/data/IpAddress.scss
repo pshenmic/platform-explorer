@@ -5,7 +5,7 @@
   font-weight: $font-mono;
   font-size: 0.75rem;
 
-  &__Ip, &__Port {
+  &__Host, &__Port {
     transition: all .1s;
   }
 
@@ -15,7 +15,7 @@
   }
 
   a:hover & {
-    &, &__Ip, 
+    &, &__Host, 
     &, &__Port {
       color: $color-brand-light;
     }

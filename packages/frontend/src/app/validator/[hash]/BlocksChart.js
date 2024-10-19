@@ -51,9 +51,7 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
     if (typeof openStateCallback === 'function') openStateCallback(menuIsOpen)
   }, [menuIsOpen])
 
-  const calendarHandler = (value) => {
-    // console.log('calendarHandler', value)
-  }
+  const calendarHandler = (value) => {}
 
   return (
     <div className={`TimeframeSelector ${menuIsOpen ? 'TimeframeSelector--MenuActive' : ''}`}>
