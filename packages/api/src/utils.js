@@ -154,15 +154,21 @@ const calculateInterval = (start, end) => {
 
   const period = endTimestamp - startTimestamp
 
-  for (let i = 0; i < intervalsInRFC.length; i++) {
-    const parts = period / intervals[intervalsInRFC[i]]
+  return intervalsInRFC.reduce((previousValue, currentValue, currentIndex, array) => {
+    const parts = period / intervals[currentValue]
 
-    if (parts <= 2 && i > 0) {
-      return intervalsInRFC[i - 1]
-    } else if (parts <= 12 && i === 0) {
-      return intervalsInRFC[i]
+    if (parts <= 2 && currentIndex > 0) {
+      array.splice(intervalsInRFC.length)
+
+      return previousValue
+    } else if (parts <= 12 && currentIndex === 0) {
+      array.splice(intervalsInRFC.length)
+
+      return currentValue
     }
-  }
+
+    return currentValue
+  })
 }
 
 module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect, calculateInterval }
