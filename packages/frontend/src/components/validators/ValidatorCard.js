@@ -102,7 +102,7 @@ export default function ValidatorCard ({ validator, rate, className }) {
             styles={['highlight-both']}
             ellipsis={false}
           >
-            {validator.data?.proTxHash?.state?.platformNodeID}
+            {validator.data?.proTxInfo?.state?.platformNodeID}
           </Identifier>
         )}
         loading={validator.loading}
