@@ -124,7 +124,8 @@ function Validator ({ hash }) {
                       host={validator.data?.endpoints?.coreP2PPortStatus?.host}
                       port={validator.data?.endpoints?.coreP2PPortStatus?.port}
                     />}
-                    status={validator.data?.endpoints?.coreP2PPortStatus?.status || 'error'}
+                    status={validator.data?.endpoints?.coreP2PPortStatus?.status || 'UNKNOWN'}
+                    message={validator.data?.endpoints?.coreP2PPortStatus?.message}
                   />
                 )}
                 loading={validator.loading}
@@ -139,7 +140,8 @@ function Validator ({ hash }) {
                       host={validator.data?.endpoints?.platformP2PPortStatus?.host}
                       port={validator.data?.endpoints?.platformP2PPortStatus?.port}
                     />}
-                    status={validator.data?.endpoints?.platformP2PPortStatus?.status || 'error'}
+                    status={validator.data?.endpoints?.platformP2PPortStatus?.status || 'UNKNOWN'}
+                    message={validator.data?.endpoints?.platformP2PPortStatus?.message}
                   />
                 )}
                 loading={validator.loading}
@@ -154,7 +156,8 @@ function Validator ({ hash }) {
                       host={validator.data?.endpoints?.platformGrpcPortStatus?.host}
                       port={validator.data?.endpoints?.platformGrpcPortStatus?.port}
                     />)}
-                    status={validator.data?.endpoints?.platformGrpcPortStatus?.status || 'error'}
+                    status={validator.data?.endpoints?.platformGrpcPortStatus?.status || 'UNKNOWN'}
+                    message={validator.data?.endpoints?.platformGrpcPortStatus?.message}
                     link={`https://${validator.data?.endpoints?.platformGrpcPortStatus?.host}${
                       validator.data?.endpoints?.platformGrpcPortStatus?.port
                         ? ':' + validator.data?.endpoints?.platformGrpcPortStatus?.port
