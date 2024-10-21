@@ -5,7 +5,6 @@ import { HorisontalSeparator } from '../ui/separators'
 import Link from 'next/link'
 
 export default function ValidatorCard ({ validator, rate, className }) {
-
   return (
     <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${validator.loading ? 'ValidatorCard--Loading' : ''} ${className || ''}`}>
       <div className={'ValidatorCard__Header'}>
