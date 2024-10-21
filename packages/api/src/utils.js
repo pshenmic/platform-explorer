@@ -134,4 +134,44 @@ const checkTcpConnect = (port, host) => {
   })
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect }
+// Calculating period and calculate the period
+// and find the interval with less than 2 periods
+// and take the previous interval
+const calculateInterval = (start, end) => {
+  const intervals = {
+    PT5M: 300000,
+    PT30M: 1800000,
+    PT1H: 3600000,
+    PT2H: 7200000,
+    PT12H: 43200000,
+    P1D: 86400000,
+    P1W: 604800000,
+    P1M: 2419200000,
+    P1Y: 29030400000
+  }
+
+  const intervalsInRFC = Object.keys(intervals)
+
+  const startTimestamp = start.getTime()
+  const endTimestamp = end.getTime()
+
+  const period = endTimestamp - startTimestamp
+
+  return intervalsInRFC.reduce((previousValue, currentValue, currentIndex, array) => {
+    const parts = period / intervals[currentValue]
+
+    if (parts <= 2 && currentIndex > 0) {
+      array.splice(intervalsInRFC.length)
+
+      return previousValue
+    } else if (parts <= 12 && currentIndex === 0) {
+      array.splice(intervalsInRFC.length)
+
+      return currentValue
+    }
+
+    return currentValue
+  }, intervalsInRFC[0])
+}
+
+module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect, calculateInterval }

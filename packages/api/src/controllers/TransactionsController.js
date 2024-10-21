@@ -1,5 +1,6 @@
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const utils = require('../utils')
+const { calculateInterval } = require('../utils')
 
 class TransactionsController {
   constructor (client, knex) {
@@ -32,9 +33,47 @@ class TransactionsController {
   }
 
   getTransactionHistory = async (request, response) => {
-    const { timespan = '1h' } = request.query
+    const {
+      start = new Date().getTime() - 3600000,
+      end = new Date().getTime(),
+      timespan = null
+    } = request.query
 
-    const timeSeries = await this.transactionsDAO.getHistorySeries(timespan)
+    if (timespan) {
+      const possibleValues = ['1h', '24h', '3d', '1w']
+
+      if (possibleValues.indexOf(timespan) === -1) {
+        return response.status(400)
+          .send({ message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid` })
+      }
+    }
+
+    let timespanStart = null
+    let timespanEnd = null
+
+    const timespanInterval = {
+      '1h': { offset: 3600000, step: 'PT5M' },
+      '24h': { offset: 86400000, step: 'PT2H' },
+      '3d': { offset: 259200000, step: 'PT6H' },
+      '1w': { offset: 604800000, step: 'PT14H' }
+    }[timespan]
+
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    if (timespanInterval) {
+      timespanStart = new Date().getTime() - timespanInterval.offset
+      timespanEnd = new Date().getTime()
+    }
+
+    const interval = timespanInterval?.step ?? calculateInterval(new Date(start), new Date(end))
+
+    const timeSeries = await this.transactionsDAO.getHistorySeries(
+      new Date(timespanStart ?? start),
+      new Date(timespanEnd ?? end),
+      interval
+    )
 
     response.send(timeSeries)
   }
