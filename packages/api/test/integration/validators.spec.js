@@ -52,17 +52,20 @@ describe('Validators routes', () => {
       coreP2PPortStatus: {
         host: '255.255.255.255',
         port: 255,
-        status: 'ERR_OUT_OF_RANGE'
+        status: 'ERR_OUT_OF_RANGE',
+        message: 'The value of "msecs" is out of range. It must be a non-negative finite number. Received NaN'
       },
       platformP2PPortStatus: {
         host: '255.255.255.255',
         port: 255,
-        status: 'ERR_OUT_OF_RANGE'
+        status: 'ERR_OUT_OF_RANGE',
+        message: 'The value of "msecs" is out of range. It must be a non-negative finite number. Received NaN'
       },
       platformGrpcPortStatus: {
         host: '255.255.255.255',
         port: 255,
-        status: 'ERR_OUT_OF_RANGE'
+        status: 'ERR_OUT_OF_RANGE',
+        message: 'The value of "msecs" is out of range. It must be a non-negative finite number. Received NaN'
       }
     }
 

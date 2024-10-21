@@ -323,17 +323,20 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     coreP2PPortStatus: {
       host: '52.33.28.41',
       port: 19999,
-      status: 'ERROR'
+      status: 'ERROR',
+      message: null
     },
     platformP2PPortStatus: {
       host: '52.33.28.41',
       port: 36656,
-      status: 'ERROR'
+      status: 'ERROR',
+      message: null
     },
     platformGrpcPortStatus: {
       host: '52.33.28.41',
       port: 1443,
-      status: 'ERROR'
+      status: 'ERROR',
+      message: null
     }
   }
 }
