@@ -7,7 +7,6 @@ import IpAddress from './IpAddress'
 import InfoLine from './InfoLine'
 import Alias from './Alias'
 
-
 export {
   Identifier,
   Credits,
