@@ -7,7 +7,7 @@ import './NetworkSelect.scss'
 function Dropdown ({ active, data }) {
   const ButtonContainer = ({ item, children }) => item.name !== active
     ? <a href={item.exporerBaseUrl} rel={'noopener noreferrer'}>{children}</a>
-    : <>{children}</>
+    : children
 
   return (
     <div className={'InternalNavigation'}>
