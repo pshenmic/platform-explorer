@@ -83,7 +83,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.amount = parseInt(stateTransition.getAmount())
       decoded.nonce = parseInt(stateTransition.getNonce())
-      decoded.outputScript = stateTransition.getOutputScript().toString('hex')
+      decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null
       decoded.coreFeePerByte = stateTransition.getCoreFeePerByte()
 
       break
