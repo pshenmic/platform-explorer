@@ -8,6 +8,7 @@ import { ErrorMessageBlock } from '../Errors'
 import ImageGenerator from '../imageGenerator'
 import { RateTooltip } from '../ui/Tooltips'
 import './IdentityCard.scss'
+import { Identifier, Alias } from '../data'
 
 function IdentityCard ({ identity, rate, loading = false }) {
   return (
@@ -20,7 +21,10 @@ function IdentityCard ({ identity, rate, loading = false }) {
                       <div className={'IdentityCard__Img'}>
                         <ImageGenerator username={identity.identifier} lightness={50} saturation={50} width={42} height={42} />
                       </div>
-                      <div className={'IdentityCard__Alias'}>{identity.alias || identity.identifier}</div>
+                      <div className={'IdentityCard__Alias'}>{identity?.aliases?.length
+                        ? <Alias>{identity?.aliases[0]}</Alias>
+                        : <Identifier styles={['highlight-both']}>{identity.identifier}</Identifier>}
+                      </div>
                   </div>
 
                   <div className={'IdentityCard__Balance'}>
