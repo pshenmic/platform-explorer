@@ -139,7 +139,7 @@ function Identity ({ identifier }) {
                                         </LoadingLine>
                                     </Td>
                                 </Tr>
-                                {identity?.data?.aliases?.length &&
+                                {identity?.data?.aliases?.length > 0 &&
                                   <Tr>
                                     <Td w={tdTitleWidth}>Names</Td>
                                     <Td isNumeric className={'Table__Cell--BreakWord'}>
