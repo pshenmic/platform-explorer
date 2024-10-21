@@ -1,4 +1,5 @@
 import { extendTheme } from '@chakra-ui/react'
+import tabsTheme from './components/Tabs'
 import {
   Montserrat,
   Open_Sans as OpenSans,
@@ -35,7 +36,8 @@ export const theme = extendTheme({
   },
   sizes: {
     container: {
-      xl: '1310px'
+      xl: '1310px',
+      maxPageW: '1440px'
     }
   },
   blockOffset: [3, 4, 5, 5, 10],
@@ -46,10 +48,20 @@ export const theme = extendTheme({
       normal: '#008DE4',
       deep: '#0E75B5',
       shaded: '#165278',
-      light: '#2CBBFF'
+      light: '#2CBBFF',
+      pressed: '#0493EB'
     },
     white: {
       50: '#FFFFFF'
+    },
+    red: {
+      default: '#F45858'
+    },
+    yellow: {
+      default: '#FFD205'
+    },
+    green: {
+      default: '#81F458'
     },
     gray: {
       50: '#f0f1f2',
@@ -67,6 +79,7 @@ export const theme = extendTheme({
       700: '#494e51',
       750: '#39454C',
       800: '#2e393d',
+      '800-rgb': '46, 57, 61',
       900: '#181d20'
     }
   },
@@ -163,6 +176,7 @@ export const theme = extendTheme({
     }
   },
   components: {
+    Tabs: tabsTheme,
     Container: {
       baseStyle: {
         p: 3

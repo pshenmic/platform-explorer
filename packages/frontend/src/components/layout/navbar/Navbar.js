@@ -50,7 +50,7 @@ function Navbar () {
       <div className={'NavbarStub'}></div>
       <Flex
         className={'Navbar'}
-        maxW={'1440px'}
+        maxW={'container.maxPageW'}
         ml={'auto'}
         mr={'auto'}
         h={16}

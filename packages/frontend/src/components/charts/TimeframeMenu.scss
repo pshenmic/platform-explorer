@@ -1,0 +1,87 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.TimeframeMenu {
+  padding: 12px;
+  border-radius: 20px;
+
+  &__ValuesContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  &__ValuesTitle {
+    font-family: $font-mono;
+    color: #fff;
+    opacity: .5;
+    font-size: 0.75rem;
+  }
+
+  &__Values {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+  }
+
+  &__ValueButton {
+    margin-left: 10px;
+
+    &--Active {
+      background-color: $color-brand-normal !important;
+      color: #fff !important;
+    }
+  }
+
+  &__Calendar {
+    width: 100%;
+    margin-top: 24px;
+
+    &--Stub {
+      position: relative;
+
+      .DateRangePicker {
+        opacity: .05;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        z-index: 20;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        backdrop-filter: blur(2px);
+      }
+
+      &::after {
+        content: 'Coming soon';
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        font-family: $font-heading;
+        opacity: .8;
+        display: block;
+        position: absolute;
+        z-index: 22;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+
+  @media screen and (max-width: 555px) {
+    &__Values {
+      flex-wrap: wrap;
+      margin-bottom: -8px;
+    }
+
+    &__ValueButton {
+      margin-bottom: 8px;
+    }
+  }
+}

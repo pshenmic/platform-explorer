@@ -3,15 +3,11 @@
 import { useState } from 'react'
 import './NetworkSelect.scss'
 import Dropdown from './Dropdown'
-
-const listNetworks = [
-  { name: 'mainnet', subname: '', disabled: false, link: 'https://platform-explorer.com' },
-  { name: 'testnet', subname: '', disabled: false, link: 'https://testnet.platform-explorer.com' }
-]
+import { networks } from '../../../constants/networks'
 
 function NetworkSelect () {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-  const activeNetwork = listNetworks.find(network => network.link === baseUrl)
+  const activeNetwork = networks.find(network => network.apiBaseUrl === baseUrl)
   const [showDropdown, setShowDropdown] = useState(false)
 
   return (
@@ -34,7 +30,7 @@ function NetworkSelect () {
         </svg>
       </button>
       <div className={`NetworkSelect__DropdownWrapper ${showDropdown ? 'NetworkSelect__DropdownWrapperActive' : ''}`}>
-        <Dropdown active={activeNetwork?.name} data={listNetworks} />
+        <Dropdown active={activeNetwork?.name} data={networks} />
       </div>
     </div>
   )

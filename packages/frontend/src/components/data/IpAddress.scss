@@ -1,0 +1,23 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.IpAddress {
+  font-weight: $font-mono;
+  font-size: 0.75rem;
+
+  &__Host, &__Port {
+    transition: all .1s;
+  }
+
+  &__Port {
+    color: $color-brand-pressed;
+    font-weight: 600;
+  }
+
+  a:hover & {
+    &, &__Host, 
+    &, &__Port {
+      color: $color-brand-light;
+    }
+  }
+}

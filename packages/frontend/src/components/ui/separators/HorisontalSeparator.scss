@@ -1,0 +1,17 @@
+.HorisontalSeparator {
+  margin: 24px 0;
+
+  &::before, &::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 100%;
+  }
+
+  &::after {
+    position: absolute;
+    left: 0;
+    background-color: var(--chakra-colors-gray-250);
+    opacity: .2;
+  }
+}

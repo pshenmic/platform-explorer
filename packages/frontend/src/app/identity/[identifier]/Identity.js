@@ -7,7 +7,7 @@ import TransactionsList from '../../../components/transactions/TransactionsList'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import DataContractsList from '../../../components/dataContracts/DataContractsList'
 import TransfersList from '../../../components/transfers/TransfersList'
-import { fetchHandlerSuccess, fetchHandlerError, creditsToDash } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import ImageGenerator from '../../../components/imageGenerator'
@@ -158,10 +158,8 @@ function Identity ({ identifier }) {
                                     <Td isNumeric>
                                       <LoadingLine loading={identity.loading}>
                                         <RateTooltip
-                                          dash={creditsToDash(identity.data?.balance)}
-                                          usd={typeof rate.data?.usd === 'number'
-                                            ? rate.data.usd * creditsToDash(identity.data?.balance)
-                                            : null}
+                                          credits={identity.data?.balance}
+                                          rate={rate.data}
                                         >
                                           <span><Credits>{identity.data?.balance}</Credits> Credits</span>
                                         </RateTooltip>
@@ -254,7 +252,7 @@ function Identity ({ identifier }) {
                             <TabPanel px={0} h={'100%'}>
                               {!transactions.error
                                 ? !transactions.loading
-                                    ? <TransactionsList transactions={transactions.data.resultSet} size={'m'}/>
+                                    ? <TransactionsList transactions={transactions.data.resultSet}/>
                                     : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>

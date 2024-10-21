@@ -1,0 +1,42 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.InfoLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: $font-mono;
+
+  &__Title {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+
+  &__Value {
+    font-size: 0.688rem;
+    color: #fff;
+    text-align: right;
+
+    .DateBlock {
+      justify-content: flex-end;
+    }
+  }
+
+  &--Loading & {
+    &__Value {
+      @include mixins.LoadingLine;
+      position: relative;
+      min-height: 18px;
+      width: 200px !important;
+      max-width: 100%;
+    }
+  }
+
+  &--Error & {
+    &__Value {
+      color: var(--chakra-colors-gray-250);
+    }
+  }
+}

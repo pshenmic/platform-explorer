@@ -1,0 +1,38 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.CreditsBlock {
+  font-family: $font-mono;
+  font-size: 0.813rem;
+
+  &__Credits, &__Dash {
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+
+  &__Credits, &__Dash, &__Usd {
+    margin-right: 6px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &__Credits {
+    display: inline-block;
+  }
+
+  &__Dash {
+    display: inline-block;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__Usd {
+    display: inline-block;
+    padding: 6px 8px;
+    font-size: 0.688rem;
+    color: var(--chakra-colors-green-default);
+    background-color: rgba(88, 244, 188, .2);
+    border-radius: 8px;
+  }
+}

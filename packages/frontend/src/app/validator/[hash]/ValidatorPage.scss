@@ -1,0 +1,136 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+
+@mixin blockOffsets ($property) {
+  #{$property}: 12px;
+
+  @media screen and (min-width: $breakpoint-md) {
+    #{$property}: 16px
+  }
+
+  @media screen and (min-width: $breakpoint-lg) {
+    #{$property}: 20px
+  }
+
+  @media screen and (min-width: $breakpoint-xl) {
+    #{$property}: 24px
+  }
+}
+
+.ValidatorPage {
+  &__Card {
+    margin-bottom: 24px;
+  }
+
+  &__ContentContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    @include blockOffsets(gap);
+  }
+
+  &__Column {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  &__Lists {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-top: 24px;
+    @include blockOffsets(margin-top);
+  }
+
+  &__ListContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  &__ChartsContainer {
+    padding-bottom: 0;
+    overflow-x: hidden;
+
+    .Chart {
+      overflow: visible !important;
+    }
+  }
+
+  &__ListPagination {
+    margin-top: 20px;
+
+    .PageItem {
+      &--Previous, &--Next {
+        display: block;
+      }
+
+      &--Previous {
+        margin-right: auto;
+      }
+
+      &--Next {
+        margin-left: auto;
+      }
+    }
+  }
+
+  &__List {
+    flex-grow: 1;
+  }
+
+  &__GroupContainer {
+    flex-grow: 1;
+    border-radius: 18px;
+    border: 1px solid var(--chakra-colors-gray-800);
+
+    .InfoLine--Loading .InfoLine {
+      &__Value {
+        height: 32px;
+      }
+    }
+  }
+
+  &__InfoLine {
+    margin-bottom: 14px;
+  }
+
+  &__ValueContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    overflow: hidden;
+    max-width: 324px;
+
+    .DateBlock {
+      margin-bottom: 4px;
+    }
+  }
+
+  &__PoseScroreValue {
+    display: flex;
+    align-items: center;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__ContentContainer {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (min-width: $breakpoint-lg) and (max-width: 1100px) {
+    &__ListPagination {
+      .PageLink {
+        padding: 10px 8px;
+        min-width: 45px;
+      }
+
+      .PageItem:not(.PageItem--Previous):not(.PageItem--Next) {
+        margin: 0 4px;
+      }
+    }
+  }
+}

@@ -1,16 +1,16 @@
-import Link from 'next/link'
 import './SimpleList.scss'
+import './EmptyListMessage.scss'
+import Link from 'next/link'
 import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
 import ListColumnsHeader from './ListColumnsHeader'
 import { Credits, Identifier, Alias } from '../../data'
 import { RateTooltip } from '../Tooltips'
-import { creditsToDash } from '../../../util'
 
 function EmptyListMessage ({ children }) {
   return (
-    <Container textAlign={'center'}>{children}</Container>
+    <Container className={'EmptyListMessage'}>{children}</Container>
   )
 }
 
@@ -24,12 +24,7 @@ function SimpleListItem ({ item }) {
       const credits = Number(column.value)
 
       return (
-        <RateTooltip
-          dash={creditsToDash(credits)}
-          usd={typeof column?.rate?.usd === 'number'
-            ? column.rate.usd * creditsToDash(credits)
-            : null}
-        >
+        <RateTooltip credits={credits} rate={column?.rate}>
           <span>
             <Credits>{children}</Credits>
           </span>

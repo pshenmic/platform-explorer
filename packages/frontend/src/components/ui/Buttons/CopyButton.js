@@ -39,8 +39,12 @@ function CopyButton ({ text, className }) {
         event.preventDefault()
         copyToClipboard(text, showMessage)
       }}
-      px={2}
+      minW={0}
+      p={0}
       className={`CopyButton ${className}`}
+      _hover={{ color: 'gray.100' }}
+      _active={{ color: 'white' }}
+      flexShrink={0}
     >
       <Tooltip
         label={messageState.text}
@@ -52,7 +56,16 @@ function CopyButton ({ text, className }) {
         isOpen={messageState.active}
         p={3}
       >
-        <CopyIcon w={4} h={4} color={'gray.250'}/>
+        <CopyIcon
+          w={4}
+          h={4}
+          color={'gray.250'}
+          _hover={{ color: 'white' }}
+          _active={{ color: 'gray.100' }}
+          transition={'.2s'}
+          boxSizing={'content-box'}
+          p={1}
+        />
       </Tooltip>
     </Button>
   )

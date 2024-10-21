@@ -1,0 +1,13 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.EmptyListMessage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 0.75rem;
+  font-family: $font-mono;
+  color: var(--chakra-colors-gray-250);
+}
