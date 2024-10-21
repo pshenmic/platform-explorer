@@ -6,6 +6,12 @@
   font-size: 0.75rem;
   color: #fff;
 
+  &--Ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   &__Domain {
     opacity: .5;
   }
