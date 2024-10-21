@@ -27,7 +27,7 @@ const chartConfig = {
   }
 }
 
-const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, isActive, changeCallback, openStateCallback, className }, ref) {
+const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallback, className }, ref) {
   const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
   const [menuIsOpen, setMenuIsOpen] = useState(false)
 
@@ -35,14 +35,6 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, isActive, cha
     setTimespan(value)
     if (typeof changeCallback === 'function') changeCallback(value)
   }
-
-  useEffect(() => {
-    if (!isActive) setMenuIsOpen(false)
-  }, [isActive])
-
-  useEffect(() => {
-    if (typeof openStateCallback === 'function') openStateCallback(menuIsOpen)
-  }, [menuIsOpen])
 
   const calendarHandler = (value) => {}
 
@@ -57,10 +49,7 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, isActive, cha
           {config.timespan.values.map((iTimespan, i) => (
             <Button
               className={`TimeframeMenu__ValueButton ${iTimespan.range === timespan.range ? 'TimeframeMenu__ValueButton--Active' : ''}`}
-              onClick={() => {
-                changeHandler(iTimespan)
-                setMenuIsOpen(false)
-              }}
+              onClick={() => changeHandler(iTimespan)}
               key={i}
               size={'xs'}
             >
