@@ -64,13 +64,6 @@ describe('Validators routes', () => {
       }
     }
 
-    intervals = {
-      '1h': 300000,
-      '24h': 7200000,
-      '3d': 21600000,
-      '1w': 50400000
-    }
-
     dashCoreRpcResponse = {
       type: 'Evo',
       proTxHash: '88251bd4b124efeb87537deabeec54f6c8f575f4df81f10cf5e8eea073092b6f',
