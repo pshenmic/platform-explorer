@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT } = require('./constants')
+const {TCP_CONNECT_TIMEOUT} = require('./constants')
 
 const getKnex = () => {
   return require('knex')({
@@ -12,7 +12,7 @@ const getKnex = () => {
       user: process.env.POSTGRES_USER,
       database: process.env.POSTGRES_DB,
       password: process.env.POSTGRES_PASS,
-      ssl: process.env.POSTGRES_SSL ? { rejectUnauthorized: false } : false
+      ssl: process.env.POSTGRES_SSL ? {rejectUnauthorized: false} : false
     }
   })
 }
@@ -168,7 +168,7 @@ const calculateInterval = (start, end) => {
     }
 
     return currentValue
-  })
+  }, intervalsInRFC[0])
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect, calculateInterval }
+module.exports = {hash, decodeStateTransition, getKnex, checkTcpConnect, calculateInterval}
