@@ -132,7 +132,7 @@ class ValidatorsController {
       timespan = null
     } = request.query
 
-    if(timespan){
+    if (timespan) {
       const possibleValues = ['1h', '24h', '3d', '1w']
 
       if (possibleValues.indexOf(timespan) === -1) {
@@ -145,12 +145,11 @@ class ValidatorsController {
     let timespanEnd = null
 
     const timespanInterval = {
-      '1h': {offset: 3600000, step: 'PT5M'},
-      '24h': {offset: 86400000, step: 'PT2H'},
-      '3d': {offset: 259200000, step: 'PT6H'},
-      '1w': {offset: 604800000, step: 'PT14H'},
+      '1h': { offset: 3600000, step: 'PT5M' },
+      '24h': { offset: 86400000, step: 'PT2H' },
+      '3d': { offset: 259200000, step: 'PT6H' },
+      '1w': { offset: 604800000, step: 'PT14H' }
     }[timespan]
-
 
     if (start > end) {
       return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })

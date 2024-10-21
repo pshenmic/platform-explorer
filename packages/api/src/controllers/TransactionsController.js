@@ -1,30 +1,30 @@
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const utils = require('../utils')
-const {calculateInterval} = require('../utils')
+const { calculateInterval } = require('../utils')
 
 class TransactionsController {
-  constructor(client, knex) {
+  constructor (client, knex) {
     this.client = client
     this.transactionsDAO = new TransactionsDAO(knex)
   }
 
   getTransactionByHash = async (request, reply) => {
-    const {hash} = request.params
+    const { hash } = request.params
 
     const transaction = await this.transactionsDAO.getTransactionByHash(hash)
 
     if (!transaction) {
-      return reply.status(404).send({message: 'not found'})
+      return reply.status(404).send({ message: 'not found' })
     }
 
     reply.send(transaction)
   }
 
   getTransactions = async (request, response) => {
-    const {page = 1, limit = 10, order = 'asc'} = request.query
+    const { page = 1, limit = 10, order = 'asc' } = request.query
 
     if (order !== 'asc' && order !== 'desc') {
-      return response.status(400).send({message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values`})
+      return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
     const transactions = await this.transactionsDAO.getTransactions(Number(page ?? 1), Number(limit ?? 10), order)
@@ -39,7 +39,7 @@ class TransactionsController {
       timespan = null
     } = request.query
 
-    if(timespan){
+    if (timespan) {
       const possibleValues = ['1h', '24h', '3d', '1w']
 
       if (possibleValues.indexOf(timespan) === -1) {
@@ -52,14 +52,14 @@ class TransactionsController {
     let timespanEnd = null
 
     const timespanInterval = {
-      '1h': {offset: 3600000, step: 'PT5M'},
-      '24h': {offset: 86400000, step: 'PT2H'},
-      '3d': {offset: 259200000, step: 'PT6H'},
-      '1w': {offset: 604800000, step: 'PT14H'},
+      '1h': { offset: 3600000, step: 'PT5M' },
+      '24h': { offset: 86400000, step: 'PT2H' },
+      '3d': { offset: 259200000, step: 'PT6H' },
+      '1w': { offset: 604800000, step: 'PT14H' }
     }[timespan]
 
     if (start > end) {
-      return response.status(400).send({message: 'start timestamp cannot be more than end timestamp'})
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
     }
 
     if (timespanInterval) {
@@ -79,7 +79,7 @@ class TransactionsController {
   }
 
   decode = async (request, reply) => {
-    const {base64} = request.body
+    const { base64 } = request.body
 
     const decoded = await utils.decodeStateTransition(this.client, base64)
 
