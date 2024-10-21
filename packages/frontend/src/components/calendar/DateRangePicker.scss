@@ -3,6 +3,7 @@
 
 $border-radius: 10px;
 $font-color: #fff;
+$range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
 
 .DateRangePicker {
   display: flex;
@@ -70,7 +71,7 @@ $font-color: #fff;
     margin: 5px;
 
     &:hover {
-      background-color: rgba(var(--chakra-colors-gray-800-rgb), .5)
+      background-color: $range-background-color;
     }
 
     &:disabled {
@@ -134,7 +135,7 @@ $font-color: #fff;
       }
 
       &--hover, &--range {
-        background-color: rgba(var(--chakra-colors-gray-800-rgb), .5) !important;
+        background-color: $range-background-color !important;
         border-radius: 0;
       }
 
@@ -144,7 +145,7 @@ $font-color: #fff;
         color: $font-color;
 
         &:hover {
-        background-color: $color-brand-light !important;
+          background-color: $color-brand-light !important;
         }
       }
 
@@ -174,7 +175,7 @@ $font-color: #fff;
         &:enabled {
           &:hover,
           &:focus {
-            background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
+            background-color: $range-background-color;
             border-radius: $border-radius;
             overflow: hidden;
           }
@@ -193,12 +194,29 @@ $font-color: #fff;
   
       &__days {
         &__day {
-          &--weekend, &--neighboringMonth {
+          &--weekend:not(.react-calendar__month-view__days__day--neighboringMonth) {
             color: $font-color;
           }
         }
       }
     }
+  }
+
+  &:not(&--SingleCalendar) {
+    .react-calendar {
+      &__month-view {
+        &__days {
+          &__day {
+            &--neighboringMonth {
+              &.react-calendar__tile--rangeEnd,
+              &.react-calendar__tile--rangeStart {
+                background: $range-background-color !important;
+              }
+            }
+          }
+        }
+      }
+    } 
   }
 
   @media screen and (max-width: $breakpoint-xl) {
