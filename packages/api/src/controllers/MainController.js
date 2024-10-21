@@ -72,6 +72,11 @@ class MainController {
   search = async (request, response) => {
     const { query } = request.query
 
+    const epoch = Epoch.fromObject({
+      startTime: 0,
+      endTime: 0
+    })
+
     if (/^[0-9]+$/.test(query)) {
       // search block by height
       const block = await this.blocksDAO.getBlockByHeight(query)
@@ -97,7 +102,7 @@ class MainController {
       }
 
       // search validators
-      const validator = await this.validatorsDAO.getValidatorByProTxHash(query)
+      const validator = await this.validatorsDAO.getValidatorByProTxHash(query, null, epoch)
 
       if (validator) {
         return response.send({ validator })
