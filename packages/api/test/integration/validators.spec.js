@@ -1,14 +1,19 @@
+process.env.EPOCH_CHANGE_TIME = 3600000
+
 const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const { getKnex } = require('../../src/utils')
+const { getKnex, checkTcpConnect } = require('../../src/utils')
 const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
-const Base58 = require('bs58').default
+const DAPI = require('../../src/DAPI')
+const Epoch = require('../../src/models/Epoch')
+const { base58 } = require('@scure/base')
+const { IDENTITY_CREDIT_WITHDRAWAL } = require('../../src/enums/StateTransitionEnum')
 
 describe('Validators routes', () => {
   let app
@@ -20,10 +25,17 @@ describe('Validators routes', () => {
   let inactiveValidators
   let blocks
   let identities
+  let transactions
+
+  let timestamp
 
   let dashCoreRpcResponse
+  let endpoints
 
   let intervals
+
+  let epochInfo
+  let fullEpochInfo
 
   before(async () => {
     app = await server.start()
@@ -33,6 +45,29 @@ describe('Validators routes', () => {
     validators = []
     blocks = []
     identities = []
+    transactions = []
+    timestamp = new Date()
+
+    endpoints = {
+      coreP2PPortStatus: {
+        host: '255.255.255.255',
+        port: 255,
+        status: 'ERR_OUT_OF_RANGE',
+        message: 'The value of "msecs" is out of range. It must be a non-negative finite number. Received NaN'
+      },
+      platformP2PPortStatus: {
+        host: '255.255.255.255',
+        port: 255,
+        status: 'ERR_OUT_OF_RANGE',
+        message: 'The value of "msecs" is out of range. It must be a non-negative finite number. Received NaN'
+      },
+      platformGrpcPortStatus: {
+        host: '255.255.255.255',
+        port: 255,
+        status: 'ERR_OUT_OF_RANGE',
+        message: 'The value of "msecs" is out of range. It must be a non-negative finite number. Received NaN'
+      }
+    }
 
     intervals = {
       '1h': 300000,
@@ -50,7 +85,7 @@ describe('Validators routes', () => {
       operatorReward: 0,
       state: {
         version: 2,
-        service: '52.33.28.47:19999',
+        service: '255.255.255.255:255',
         registeredHeight: 850334,
         lastPaidHeight: 1064465,
         consecutivePayments: 0,
@@ -61,8 +96,8 @@ describe('Validators routes', () => {
         ownerAddress: 'yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69',
         votingAddress: 'yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69',
         platformNodeID: '711fd9548ae19b2e91c7a9b4067000467ccdd2b5',
-        platformP2PPort: 36656,
-        platformHTTPPort: 1443,
+        platformP2PPort: 255,
+        platformHTTPPort: 255,
         payoutAddress: 'yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A',
         pubKeyOperator: 'af9cd8567923fea3f6e6bbf5e1b3a76bf772f6a3c72b41be15c257af50533b32cc3923cebdeda9fce7a6bc9659123d53'
       },
@@ -90,7 +125,11 @@ describe('Validators routes', () => {
     for (let i = 1; i <= 50; i++) {
       const block = await fixtures.block(
         knex,
-        { validator: validators[i % 30].pro_tx_hash, height: i }
+        {
+          validator: validators[i % 30].pro_tx_hash,
+          height: i,
+          timestamp
+        }
       )
 
       blocks.push(block)
@@ -98,7 +137,7 @@ describe('Validators routes', () => {
 
     for (let i = 0; i < 50; i++) {
       const identity = await fixtures.identity(knex, {
-        identifier: Base58.encode(Buffer.from(validators[i].pro_tx_hash, 'hex')),
+        identifier: base58.encode(Buffer.from(validators[i].pro_tx_hash, 'hex')),
         block_hash: blocks[i].hash
       })
 
@@ -108,12 +147,49 @@ describe('Validators routes', () => {
     activeValidators = validators.sort((a, b) => a.id - b.id).slice(0, 30)
     inactiveValidators = validators.sort((a, b) => a.id - b.id).slice(30, 50)
 
+    for (let i = 0; i < 10; i++) {
+      const transaction = await fixtures.transaction(
+        knex,
+        {
+          type: IDENTITY_CREDIT_WITHDRAWAL,
+          block_hash: blocks[i].hash,
+          owner: base58.encode(Buffer.from((
+            (i % 2)
+              ? inactiveValidators
+              : activeValidators)[0].pro_tx_hash,
+          'hex'))
+        }
+      )
+
+      transactions.push(transaction)
+    }
+
+    const date = Date.now()
+
+    epochInfo = () => [
+      {
+        number: 0,
+        firstBlockHeight: 0,
+        firstCoreBlockHeight: 1,
+        startTime: date,
+        feeMultiplier: 1
+      }
+    ]
+
+    fullEpochInfo = Epoch.fromObject(epochInfo()[0])
+
     mock.method(tenderdashRpc, 'getValidators',
       async () =>
         Promise.resolve(activeValidators.map(activeValidator =>
           ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
 
     mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
+
+    mock.method(DAPI.prototype, 'getEpochsInfo', epochInfo)
+
+    mock.method(DAPI.prototype, 'getIdentityBalance', () => 0)
+
+    mock.fn(checkTcpConnect, () => 'ERROR')
   })
 
   after(async () => {
@@ -130,7 +206,7 @@ describe('Validators routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const identity = identities.find(identity =>
-        identity.identifier === Base58.encode(Buffer.from(validator.pro_tx_hash, 'hex')))
+        identity.identifier === base58.encode(Buffer.from(validator.pro_tx_hash, 'hex')))
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
@@ -146,7 +222,15 @@ describe('Validators routes', () => {
           confirmations: dashCoreRpcResponse.confirmations,
           state: dashCoreRpcResponse.state
         },
-        identity: identity.identifier
+        totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: { ...fullEpochInfo },
+        withdrawalsCount: 5,
+        lastWithdrawal: transactions[transactions.length - 1].hash,
+        lastWithdrawalTime: timestamp.toISOString(),
+        endpoints
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -160,7 +244,7 @@ describe('Validators routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const identity = identities.find(identity =>
-        identity.identifier === Base58.encode(Buffer.from(validator.pro_tx_hash, 'hex')))
+        identity.identifier === base58.encode(Buffer.from(validator.pro_tx_hash, 'hex')))
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
@@ -188,7 +272,15 @@ describe('Validators routes', () => {
           confirmations: dashCoreRpcResponse.confirmations,
           state: dashCoreRpcResponse.state
         },
-        identity: identity.identifier
+        totalReward: 0,
+        epochReward: 0,
+        identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: { ...fullEpochInfo },
+        withdrawalsCount: 5,
+        lastWithdrawal: transactions[transactions.length - 2].hash,
+        lastWithdrawalTime: timestamp.toISOString(),
+        endpoints
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -217,7 +309,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -244,7 +336,69 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
+            }
+          })
+
+        assert.deepEqual(body.resultSet, expectedValidators)
+      })
+
+      it('should return all validators', async () => {
+        const { body } = await client.get('/validators?limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.pagination.page, 1)
+        assert.equal(body.pagination.total, validators.length)
+        assert.equal(body.resultSet.length, validators.length)
+
+        const expectedValidators = validators
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -266,7 +420,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -293,7 +447,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -314,7 +476,7 @@ describe('Validators routes', () => {
           .slice(10, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: validators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -341,7 +503,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -362,7 +532,7 @@ describe('Validators routes', () => {
           .slice(0, 7)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive:
@@ -393,7 +563,15 @@ describe('Validators routes', () => {
                   confirmations: dashCoreRpcResponse.confirmations,
                   state: dashCoreRpcResponse.state
                 },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -414,7 +592,7 @@ describe('Validators routes', () => {
           .slice(7, 14)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -441,7 +619,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -463,7 +649,7 @@ describe('Validators routes', () => {
           .slice(15, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
 
             return {
               proTxHash: row.pro_tx_hash,
@@ -491,7 +677,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -512,7 +706,7 @@ describe('Validators routes', () => {
           .slice(48, 50)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
@@ -539,7 +733,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -547,7 +749,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const { body } = await client.get('/validators?limit=10&page=6')
+        const { body } = await client.get('/validators?page=6')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -577,7 +779,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -604,7 +806,69 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
+            }
+          })
+
+        assert.deepEqual(body.resultSet, expectedValidators)
+      })
+
+      it('should return all validators', async () => {
+        const { body } = await client.get('/validators?isActive=true&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.pagination.page, 1)
+        assert.equal(body.pagination.total, activeValidators.length)
+        assert.equal(body.resultSet.length, activeValidators.length)
+
+        const expectedValidators = activeValidators
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: true,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -613,7 +877,6 @@ describe('Validators routes', () => {
 
       it('should return default set of validators order desc', async () => {
         const { body } = await client.get('/validators?order=desc&isActive=true')
-          .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
         assert.equal(body.pagination.page, 1)
@@ -626,7 +889,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -653,7 +916,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -674,7 +945,7 @@ describe('Validators routes', () => {
           .slice(10, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -701,7 +972,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -722,7 +1001,7 @@ describe('Validators routes', () => {
           .slice(0, 7)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -749,7 +1028,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -770,7 +1057,7 @@ describe('Validators routes', () => {
           .slice(7, 14)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -797,7 +1084,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -819,7 +1114,7 @@ describe('Validators routes', () => {
           .slice(15, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -846,7 +1141,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -867,7 +1170,7 @@ describe('Validators routes', () => {
           .slice(28, 30)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: true,
@@ -894,7 +1197,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -902,7 +1213,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const { body } = await client.get('/validators?limit=10&page=4&isActive=true')
+        const { body } = await client.get('/validators?page=4&isActive=true')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -932,7 +1243,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -947,7 +1258,57 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
+            }
+          })
+
+        assert.deepEqual(body.resultSet, expectedValidators)
+      })
+
+      it('should return all validators', async () => {
+        const { body } = await client.get('/validators?isActive=false&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.pagination.page, 1)
+        assert.equal(body.pagination.total, inactiveValidators.length)
+        assert.equal(body.resultSet.length, inactiveValidators.length)
+
+        const expectedValidators = inactiveValidators
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: false,
+              proposedBlocksAmount: 0,
+              lastProposedBlockHeader: null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -969,7 +1330,7 @@ describe('Validators routes', () => {
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -984,7 +1345,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1005,7 +1374,7 @@ describe('Validators routes', () => {
           .slice(10, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -1020,7 +1389,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1041,7 +1418,7 @@ describe('Validators routes', () => {
           .slice(0, 7)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -1056,7 +1433,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1077,7 +1462,7 @@ describe('Validators routes', () => {
           .slice(7, 14)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -1092,7 +1477,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1114,7 +1507,7 @@ describe('Validators routes', () => {
           .slice(15, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -1141,7 +1534,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1162,7 +1563,7 @@ describe('Validators routes', () => {
           .slice(18, 20)
           .map(row => {
             const identity = identities.find(identity =>
-              identity.identifier === Base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
               isActive: false,
@@ -1189,7 +1590,15 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              identity: identity.identifier
+              totalReward: 0,
+              epochReward: 0,
+              identity: identity.identifier,
+              identityBalance: 0,
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
             }
           })
 
@@ -1197,7 +1606,7 @@ describe('Validators routes', () => {
       })
 
       it('should return less items when there is none on the one bound', async () => {
-        const { body } = await client.get('/validators?limit=10&page=4&isActive=false')
+        const { body } = await client.get('/validators?page=4&isActive=false')
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 

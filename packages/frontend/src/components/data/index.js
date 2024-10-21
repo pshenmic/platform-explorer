@@ -5,6 +5,8 @@ import DateBlock from './DateBlock'
 import Endpoint from './Endpoint'
 import IpAddress from './IpAddress'
 import InfoLine from './InfoLine'
+import Alias from './Alias'
+
 
 export {
   Identifier,
@@ -13,5 +15,6 @@ export {
   DateBlock,
   Endpoint,
   IpAddress,
-  InfoLine
+  InfoLine,
+  Alias
 }

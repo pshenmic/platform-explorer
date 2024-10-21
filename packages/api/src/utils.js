@@ -1,5 +1,7 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
+const net = require('net')
+const { TCP_CONNECT_TIMEOUT } = require('./constants')
 
 const getKnex = () => {
   return require('knex')({
@@ -86,6 +88,14 @@ const decodeStateTransition = async (client, base64) => {
 
       break
     }
+    case StateTransitionEnum.MASTERNODE_VOTE: {
+      decoded.contestedResourcesVotePoll = stateTransition.getContestedDocumentResourceVotePoll().indexValues.map(buff => buff.toString('base64'))
+      decoded.contractId = stateTransition.getContestedDocumentResourceVotePoll().contractId.toString()
+      decoded.modifiedDataIds = stateTransition.getModifiedDataIds().map(identifier => identifier.toString())
+      decoded.ownerId = stateTransition.getOwnerId().toString()
+
+      break
+    }
     default:
       throw new Error('Unknown state transition')
   }
@@ -93,4 +103,35 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
-module.exports = { hash, decodeStateTransition, getKnex }
+const checkTcpConnect = (port, host) => {
+  return new Promise((resolve, reject) => {
+    let connection
+    try {
+      connection = net.createConnection(port, host)
+
+      connection.setTimeout(TCP_CONNECT_TIMEOUT)
+
+      connection.once('error', async (e) => {
+        await connection.destroy()
+        console.error(e)
+        reject(e)
+      })
+
+      connection.once('connect', async () => {
+        await connection.destroy()
+        resolve('OK')
+      })
+
+      connection.once('timeout', async () => {
+        await connection.destroy()
+        resolve('ERR_CONNECTION_REFUSED')
+      })
+    } catch (e) {
+      console.error(e)
+      connection.destroy()
+      reject(e)
+    }
+  })
+}
+
+module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect }

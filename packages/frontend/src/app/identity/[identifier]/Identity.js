@@ -12,7 +12,7 @@ import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import ImageGenerator from '../../../components/imageGenerator'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Credits } from '../../../components/data'
+import { Credits, Alias } from '../../../components/data'
 import { RateTooltip } from '../../../components/ui/Tooltips'
 import './Identity.scss'
 import {
@@ -97,7 +97,7 @@ function Identity ({ identifier }) {
   }, [activeTab, router, pathname])
 
   return (
-    <div className={'identity'}>
+    <div className={'Identity'}>
         <Container
             maxW={'container.xl'}
             padding={3}
@@ -135,10 +135,24 @@ function Identity ({ identifier }) {
                                     <Td w={tdTitleWidth}>Identifier</Td>
                                     <Td isNumeric className={'Table__Cell--BreakWord'}>
                                         <LoadingLine loading={identity.loading}>
-                                            {identity.data?.identifier}
+                                          {identity.data?.identifier}
                                         </LoadingLine>
                                     </Td>
                                 </Tr>
+                                {identity?.data?.aliases?.length > 0 &&
+                                  <Tr>
+                                    <Td w={tdTitleWidth}>Names</Td>
+                                    <Td isNumeric className={'Table__Cell--BreakWord'}>
+                                      <LoadingLine loading={identity.loading}>
+                                        <div className={'IdentityInfo__AliasesContainer'}>
+                                        {identity?.data.aliases.map((alias, i) => (
+                                          <Alias key={i}>{alias}</Alias>
+                                        ))}
+                                        </div>
+                                      </LoadingLine>
+                                    </Td>
+                                  </Tr>
+                                }
                                 <Tr>
                                     <Td w={tdTitleWidth}>Balance</Td>
                                     <Td isNumeric>

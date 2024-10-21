@@ -1,29 +1,36 @@
 @use '../../../styles/mixins.scss';
 
 .IdentityInfo {
-    height: min-content;
+  height: min-content;
 
-    &__Avatar {
-        margin-left: auto;
-        width: 32px;
-        height: 32px;
-    }
+  &__Avatar {
+    margin-left: auto;
+    width: 32px;
+    height: 32px;
+  }
+
+  &__AliasesContainer {
+    max-height: 110px;
+    min-height: 21px;
+    height: 100%;
+    overflow-y: auto;
+  }
 }
 
 .IdentityData {
-    &__Tabs {
-        flex-wrap: wrap;
-    }
+  &__Tabs {
+    flex-wrap: wrap;
+  }
 
-    @media screen and (max-width: 530px) {
-        &__Tab {
-            width: 50%;
-        }
+  @media screen and (max-width: 530px) {
+    &__Tab {
+      width: 50%;
     }
+  }
 
-    @media screen and (max-width: 320px) {
-        &__Tab {
-            width: 100%;
-        }
+  @media screen and (max-width: 320px) {
+    &__Tab {
+      width: 100%;
     }
+  }
 }
