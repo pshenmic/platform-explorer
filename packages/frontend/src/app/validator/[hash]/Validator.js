@@ -8,7 +8,6 @@ import Pagination from '../../../components/pagination'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import BlocksList from '../../../components/blocks/BlocksList'
 import TransactionsList from '../../../components/transactions/TransactionsList'
-import TransfersList from '../../../components/transfers/TransfersList'
 import BlocksChart from './BlocksChart'
 import Link from 'next/link'
 import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine } from '../../../components/data'
@@ -31,7 +30,7 @@ function Validator ({ hash }) {
   const pageSize = 13
   const [currentPage, setCurrentPage] = useState(1)
   const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [transfers, setTransfers] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [withdrawals, setWithdrawals] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [activeChartTab, setActiveChartTab] = useState(0)
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const activeNetwork = networks.find(network => network.apiBaseUrl === baseUrl)
@@ -77,12 +76,12 @@ function Validator ({ hash }) {
   useEffect(() => {
     if (!validator.data?.identity) return
 
-    setTransfers(state => ({ ...state, loading: true }))
+    setWithdrawals(state => ({ ...state, loading: true }))
 
-    Api.getTransfersByIdentity(validator.data.identity, transfers.props.currentPage + 1, pageSize, 'desc')
-      .then(res => fetchHandlerSuccess(setTransfers, res))
-      .catch(err => fetchHandlerError(setTransfers, err))
-  }, [validator, transfers.props.currentPage])
+    Api.getWithdrawalsByIdentity(validator.data.identity, withdrawals.props.currentPage + 1, pageSize, 'desc')
+      .then(res => fetchHandlerSuccess(setWithdrawals, res))
+      .catch(err => fetchHandlerError(setWithdrawals, err))
+  }, [validator, withdrawals.props.currentPage])
 
   function paginationHandler (setter, currentPage) {
     setter(state => ({
@@ -468,9 +467,9 @@ function Validator ({ hash }) {
                   }
                 </TabPanel>
                 <TabPanel className={'ValidatorPage__ListContainer'}>
-                  {!transfers.error
-                    ? !transfers.loading
-                        ? <TransfersList transfers={transfers.data.resultSet} identityId={validator.data?.identity}/>
+                  {!withdrawals.error
+                    ? !withdrawals.loading
+                        ? <></>
                         : <LoadingList itemsCount={pageSize}/>
                     : <ErrorMessageBlock/>}
                 </TabPanel>

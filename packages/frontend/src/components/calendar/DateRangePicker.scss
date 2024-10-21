@@ -120,6 +120,7 @@ $font-color: #fff;
       font-family: $font-heading;
       font-size: 0.75rem;
       white-space: nowrap;
+      padding: 16px 8px;
 
       &:disabled {
         color: rgba(255, 255, 255, 0.5) !important;
@@ -196,6 +197,14 @@ $font-color: #fff;
             color: $font-color;
           }
         }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-xl) {
+    .react-calendar {
+      &__tile {
+        padding: 12px 6px;
       }
     }
   }

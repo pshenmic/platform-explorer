@@ -1,13 +1,11 @@
+import { useState, useEffect, useRef } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import { useState, useEffect } from 'react'
-import { LineChart } from './../../../components/charts'
+import { LineChart, TimeframeMenu } from './../../../components/charts'
 import * as Api from '../../../util/Api'
 import { Button } from '@chakra-ui/react'
 import { CalendarIcon } from './../../../components/ui/icons'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { DateRangePicker } from '../../../components/calendar'
 import './TimeframeSelector.scss'
-import './TimeframeMenu.scss'
 import './TabsChart.scss'
 
 const chartConfig = {
@@ -34,13 +32,14 @@ const chartConfig = {
   }
 }
 
-const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback }) => {
+const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback, menuRef }) => {
   const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
   const [menuIsOpen, setMenuIsOpen] = useState(false)
 
   const changeHandler = (value) => {
     setTimespan(value)
     if (typeof changeCallback === 'function') changeCallback(value)
+    setMenuIsOpen(false)
   }
 
   useEffect(() => {
@@ -51,43 +50,14 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
     if (typeof openStateCallback === 'function') openStateCallback(menuIsOpen)
   }, [menuIsOpen])
 
-  const calendarHandler = (value) => {}
-
   return (
     <div className={`TimeframeSelector ${menuIsOpen ? 'TimeframeSelector--MenuActive' : ''}`}>
-      <div className={'TimeframeSelector__Menu TimeframeMenu'}>
-        <div className={'TimeframeMenu__ValuesContainer'}>
-          <div className={'TimeframeMenu__ValuesTitle'}>
-            Select a day, period or Timeframe:
-          </div>
-
-          <div className={'TimeframeMenu__Values'}>
-            {config.timespan.values.map((iTimespan, i) => (
-              <Button
-                className={`TimeframeMenu__ValueButton ${iTimespan.range === timespan.range ? 'TimeframeMenu__ValueButton--Active' : ''}`}
-                onClick={() => {
-                  changeHandler(iTimespan)
-                  setMenuIsOpen(false)
-                }}
-                key={i}
-                size={'xs'}
-              >
-                {iTimespan.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        <div className={'TimeframeMenu__Calendar TimeframeMenu__Calendar--Stub'}>
-          <DateRangePicker
-            disableFutureDates={true}
-            monthsToShow={7}
-            noTopNavigation={true}
-            noWeekDay={true}
-            changeHandler={calendarHandler}
-          />
-        </div>
-      </div>
+      <TimeframeMenu
+        ref={menuRef}
+        className={'TimeframeSelector__Menu'}
+        config={config}
+        changeCallback={changeHandler}
+      />
 
       <Button
         className={`TimeframeSelector__Button ${menuIsOpen ? 'TimeframeSelector__Button--Active' : ''}`}
@@ -104,6 +74,8 @@ export default function BlocksChart ({ hash, isActive }) {
   const [blocksHistory, setBlocksHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
   const [menuIsOpen, setMenuIsOpen] = useState(false)
+  const TimeframeMenuRef = useRef(null)
+  const [selectorHeight, setSelectorHeight] = useState(0)
 
   useEffect(() => {
     Api.getBlocksStatsByValidator(hash, timespan.range)
@@ -111,14 +83,25 @@ export default function BlocksChart ({ hash, isActive }) {
       .catch(err => fetchHandlerError(setBlocksHistory, err))
   }, [timespan])
 
+  useEffect(() => {
+    if (menuIsOpen && TimeframeMenuRef.current) {
+      const element = TimeframeMenuRef.current
+      const height = element.getBoundingClientRect().height
+      setSelectorHeight(height)
+    } else {
+      setSelectorHeight(0)
+    }
+  }, [menuIsOpen, TimeframeMenuRef])
+
   if (blocksHistory.error || (!blocksHistory.loading && !blocksHistory.data?.resultSet)) {
     return (<ErrorMessageBlock/>)
   }
 
   return (
-    <div style={{ height: menuIsOpen ? '400px' : '350px' }} className={'TabsChart'}>
+    <div style={{ height: menuIsOpen ? `${Math.max(selectorHeight, 350)}px` : '350px' }} className={'TabsChart'}>
       {!blocksHistory.loading &&
         <TimeframeSelector
+          menuRef={TimeframeMenuRef}
           className={'TabsChart__TimeframeSelector'}
           config={chartConfig}
           changeCallback={setTimespan}

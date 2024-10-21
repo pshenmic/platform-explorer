@@ -4,6 +4,7 @@ import * as d3 from 'd3'
 import './charts.scss'
 import { Container } from '@chakra-ui/react'
 import theme from '../../styles/theme'
+import TimeframeMenu from './TimeframeMenu'
 
 function getDatesTicks (dates, numTicks) {
   if (!dates.length) return []
@@ -438,5 +439,6 @@ const LineGraph = ({
 }
 
 export {
-  LineChart
+  LineChart,
+  TimeframeMenu
 }
