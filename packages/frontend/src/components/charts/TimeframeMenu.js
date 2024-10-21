@@ -1,4 +1,4 @@
-import { useState, useEffect, forwardRef } from 'react'
+import { useState, forwardRef } from 'react'
 import { Button } from '@chakra-ui/react'
 import { DateRangePicker } from '../calendar'
 import './TimeframeMenu.scss'
@@ -29,7 +29,6 @@ const chartConfig = {
 
 const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallback, className }, ref) {
   const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
-  const [menuIsOpen, setMenuIsOpen] = useState(false)
 
   const changeHandler = (value) => {
     setTimespan(value)
