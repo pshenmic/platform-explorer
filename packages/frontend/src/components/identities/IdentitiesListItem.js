@@ -4,7 +4,7 @@ import { Identifier, Alias } from '../data'
 import './IdentitiesListItem.scss'
 
 function IdentitiesListItem ({ identity }) {
-  const { alias, identifier, timestamp, isSystem } = identity
+  const { aliases, identifier, timestamp, isSystem } = identity
 
   return (
     <Link
@@ -14,8 +14,8 @@ function IdentitiesListItem ({ identity }) {
       <div className={'IdentitiesListItem__IdentifierContainer'}>
         <ImageGenerator className={'IdentitiesListItem__Avatar'} username={identifier} lightness={50} saturation={50} width={28} height={28}/>
 
-        {alias
-          ? <Alias className={'IdentitiesListItem__Alias'}>{alias}</Alias>
+        {aliases?.length
+          ? <Alias className={'IdentitiesListItem__Alias'}>{aliases[0]}</Alias>
           : <Identifier
               className={'IdentitiesListItem__Identifier'}
               copyButton={true}
