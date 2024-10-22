@@ -91,7 +91,13 @@ export default function ValidatorsList ({ validators, pageSize }) {
 
         {!validators?.loading
           ? getSortedList().map((validator, i) => <ValidatorListItem key={i} validator={validator}/>)
-          : Array.from({ length: pageSize }, (x, i) => <ValidatorListItem key={i} loading={true}/>)
+          : Array.from({
+            length: String(pageSize).toLowerCase() === 'all'
+              ? 50
+              : pageSize
+          }, (x, i) => (
+            <ValidatorListItem key={i} loading={true}/>
+          ))
         }
       </div>
     </div>

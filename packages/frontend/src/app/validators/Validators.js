@@ -14,7 +14,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 const paginateConfig = {
   pageSize: {
     default: 25,
-    values: [10, 25, 50, 75, 100]
+    values: [10, 25, 50, 75, 100, 'All']
   },
   defaultPage: 1
 }
@@ -25,13 +25,17 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const [total, setTotal] = useState(1)
   const [activeState, setActiveState] = useState(defaultIsActive !== undefined ? defaultIsActive : 'all')
-  const pageCount = Math.ceil(total / pageSize)
+  const pageCount = String(pageSize).toLocaleLowerCase() !== 'all'
+    ? Math.ceil(total / pageSize)
+    : 1
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
   const fetchData = (page, count, active) => {
     setValidators({ data: {}, loading: true, error: false })
+
+    if (String(count).toLowerCase() === 'all') count = 0
 
     const state = (() => {
       if (active === 'all') return null
@@ -54,7 +58,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
     setCurrentPage(Math.max(page - 1, 0))
-    setPageSize(parseInt(searchParams.get('page-size')) || paginateConfig.pageSize.default)
+    setPageSize(searchParams.get('page-size') || paginateConfig.pageSize.default)
   }, [searchParams, pathname])
 
   useEffect(() => {
@@ -118,7 +122,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
               forcePage={currentPage}
             />
             <PageSizeSelector
-              PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+              PageSizeSelectHandler={e => setPageSize(e.target.value)}
               value={pageSize}
               items={paginateConfig.pageSize.values}
             />
