@@ -10,7 +10,7 @@ import BlocksList from '../../../components/blocks/BlocksList'
 import TransactionsList from '../../../components/transactions/TransactionsList'
 import BlocksChart from './BlocksChart'
 import Link from 'next/link'
-import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine } from '../../../components/data'
+import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine, Credits } from '../../../components/data'
 import { ValueContainer, PageDataContainer, InfoContainer } from '../../../components/ui/containers'
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
@@ -205,7 +205,9 @@ function Validator ({ hash }) {
                 title={'Rewards This Epoch'}
                 value={(
                   <RateTooltip credits={validator.data?.epochReward} rate={rate.data}>
-                    <span>{validator.data?.epochReward}</span>
+                    <span>
+                      <Credits>{validator.data?.epochReward}</Credits>
+                    </span>
                   </RateTooltip>
                 )}
                 loading={validator.loading}
@@ -216,7 +218,9 @@ function Validator ({ hash }) {
                 title={'Total Rewards Earned'}
                 value={(
                   <RateTooltip credits={validator.data?.totalReward} rate={rate.data}>
-                    <span>{validator.data?.totalReward}</span>
+                    <span>
+                      <Credits>{validator.data?.totalReward}</Credits>
+                    </span>
                   </RateTooltip>
                 )}
                 loading={validator.loading}
