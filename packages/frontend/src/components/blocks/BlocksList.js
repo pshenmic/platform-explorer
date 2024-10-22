@@ -20,13 +20,13 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l', headerStyles =
         <GridItem className={'BlocksList__ColumnTitle'}>
           Height
         </GridItem>
-        <GridItem className={'BlocksList__ColumnTitle'}>
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Time'}>
           Time
         </GridItem>
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Hash'}>
           Block Hash
         </GridItem>
-        <GridItem className={'BlocksList__ColumnTitle'}>
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Txs'}>
           TXs count
         </GridItem>
       </Grid>
