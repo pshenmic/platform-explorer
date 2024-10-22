@@ -4,11 +4,9 @@ import './Endpoint.scss'
 
 function Endpoint ({ value, status, message, link }) {
   const iconColors = {
-    active: 'green.default',
     OK: 'green.default',
     UNKNOWN: 'yellow.default',
-    warining: 'yellow.default',
-    error: 'red.default',
+    ERROR: 'red.default',
     ERR_CONNECTION_REFUSED: 'red.default'
   }
 
@@ -39,7 +37,7 @@ function Endpoint ({ value, status, message, link }) {
       <div className={'Endpoint__Value'}>{value}</div>
       {status !== undefined &&
         <StatusWrapper>
-          <CircleIcon className={'Endpoint__Status'} w={'8px'} h={'8px'} color={iconColors[status] || ''}/>
+          <CircleIcon className={'Endpoint__Status'} w={'8px'} h={'8px'} color={iconColors[status] || iconColors.ERROR}/>
         </StatusWrapper>
       }
     </Wrapper>
