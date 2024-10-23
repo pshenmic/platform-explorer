@@ -61,7 +61,7 @@ function Navbar () {
         <IconButton
           className={'Navbar__Burger'}
           size={'md'}
-          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+          icon={isOpen ? <CloseIcon/> : <HamburgerIcon/>}
           aria-label={'Open Menu'}
           display={{ lg: 'none' }}
           onClick={isOpen ? onClose : onOpen}
