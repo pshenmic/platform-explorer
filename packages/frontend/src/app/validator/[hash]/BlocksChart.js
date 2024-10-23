@@ -8,7 +8,7 @@ import { ErrorMessageBlock } from '../../../components/Errors'
 import './TimeframeSelector.scss'
 import './TabsChart.scss'
 
-function getDaysBetweenDates(startDate, endDate) {
+function getDaysBetweenDates (startDate, endDate) {
   const start = new Date(startDate)
   const end = new Date(endDate)
   const diffInMilliseconds = Math.abs(end - start)
@@ -98,9 +98,9 @@ export default function BlocksChart ({ hash, isActive }) {
 
     Api.getBlocksStatsByValidator(hash, start, end)
       .then(res => fetchHandlerSuccess(setBlocksHistory, { resultSet: res }))
-      .catch(err => fetchHandlerError(setBlocksHistory, err));
+      .catch(err => fetchHandlerError(setBlocksHistory, err))
   }, [timespan, customRange])
-  
+
   useEffect(() => {
     if (menuIsOpen && TimeframeMenuRef.current) {
       const element = TimeframeMenuRef.current
@@ -111,11 +111,10 @@ export default function BlocksChart ({ hash, isActive }) {
     }
   }, [menuIsOpen, TimeframeMenuRef])
 
-
   const handleDateChange = (start, end) => {
-    setCustomRange({ start, end });
-    setTimespan(chartConfig.timespan.values[4]); // Выбираем кастомный диапазон
-  };
+    setCustomRange({ start, end })
+    setTimespan(chartConfig.timespan.values[4])
+  }
 
   if (blocksHistory.error || (!blocksHistory.loading && !blocksHistory.data?.resultSet)) {
     return (<ErrorMessageBlock/>)
