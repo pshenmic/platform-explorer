@@ -228,6 +228,13 @@ function Validator ({ hash }) {
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
+                title={'Blocks proposed'}
+                value={validator.data?.proposedBlocksAmount}
+                loading={validator.loading}
+                error={validator.error || typeof validator.data?.proposedBlocksAmount !== 'number'}
+              />
+              <InfoLine
+                className={'ValidatorPage__InfoLine'}
                 title={'Last Proposed Block'}
                 value={(
                   <Link href={`/block/${validator.data?.lastProposedBlockHeader?.hash}`}>
