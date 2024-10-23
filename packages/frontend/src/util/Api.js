@@ -115,8 +115,8 @@ const getValidatorByProTxHash = (proTxHash) => {
   return call(`validator/${proTxHash}`, 'GET')
 }
 
-const getBlocksStatsByValidator = (proTxHash, timespan = '24h') => {
-  return call(`validator/${proTxHash}/stats?timespan=${timespan}`, 'GET')
+const getBlocksStatsByValidator = (proTxHash, start, end) => {
+  return call(`validator/${proTxHash}/stats?start=${start}&end=${end}`, 'GET')
 }
 
 const getStatus = () => {
