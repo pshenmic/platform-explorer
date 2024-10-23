@@ -6,7 +6,7 @@ import './NetworkSelect.scss'
 // props.data - The data array [{ name: '', subname: '', disabled: boolean, link: '' }]
 function Dropdown ({ active, data }) {
   const ButtonContainer = ({ item, children }) => item.name !== active
-    ? <a href={item.exporerBaseUrl} rel={'noopener noreferrer'}>{children}</a>
+    ? <a href={item.explorerBaseUrl} rel={'noopener noreferrer'}>{children}</a>
     : children
 
   return (

@@ -7,7 +7,7 @@ import { networks } from '../../../constants/networks'
 
 function NetworkSelect () {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-  const activeNetwork = networks.find(network => network.exporerBaseUrl === baseUrl)
+  const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const [showDropdown, setShowDropdown] = useState(false)
 
   return (
