@@ -20,4 +20,25 @@
       text-align: right;
     }
   }
+
+  @media screen and (max-width: 620px) {
+    &__ColumnTitles {
+      grid-template-columns: 70px 90px calc(100% - 160px);
+    }
+
+    &__ColumnTitle {
+      &--Hash {
+        display: none;
+      }
+
+      &--Txs {
+        order: 0;
+        text-align: left !important;
+      }
+
+      &--Time {
+        order: 2;
+      }
+    }
+  }
 }
