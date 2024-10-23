@@ -228,7 +228,7 @@ function Validator ({ hash }) {
               />
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
-                title={'Blocks proposed'}
+                title={'Blocks Proposed'}
                 value={validator.data?.proposedBlocksAmount}
                 loading={validator.loading}
                 error={validator.error || typeof validator.data?.proposedBlocksAmount !== 'number'}

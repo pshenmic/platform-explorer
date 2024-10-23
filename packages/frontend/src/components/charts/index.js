@@ -124,11 +124,11 @@ const LineGraph = ({
     if (xAxisFormatCode === 'number') return isSmallScreen ? 4 : 6
     if (xAxisFormatCode === 'time') return isSmallScreen ? 4 : 6
     if (xAxisFormatCode === 'date' || xAxisFormatCode === 'datetime') {
-      if (typeof timespan === 'undefined') return isSmallScreen ? 4 : 6
       if (timespan === '1w') return isSmallScreen ? 4 : 6
       if (timespan === '3d') return isSmallScreen ? 3 : 4
       if (timespan === '24h') return isSmallScreen ? 4 : 6
       if (timespan === '1h') return isSmallScreen ? 4 : 6
+      return isSmallScreen ? 4 : 6
     }
 
     return 6

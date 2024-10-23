@@ -9,7 +9,8 @@ const DateRangePicker = ({
   noTopNavigation,
   noWeekDay,
   changeHandler,
-  className
+  className,
+  value
 }) => {
   const today = new Date()
   const [range, setRange] = useState([null, null])
@@ -64,6 +65,10 @@ const DateRangePicker = ({
 
     setDisplayedMonths([startMonthLabel, nextMonthLabel])
   }, [activeStartDate])
+
+  useEffect(() => {
+    setRange(value)
+  }, [value])
 
   const handleSetDisplayedMonths = (start1, end2, index) => {
     setDisplayedMonths([start1.toLocaleString('en-US', { month: 'long', year: 'numeric' }), end2.toLocaleString('en-US', { month: 'long', year: 'numeric' })])

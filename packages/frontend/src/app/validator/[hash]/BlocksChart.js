@@ -8,25 +8,40 @@ import { ErrorMessageBlock } from '../../../components/Errors'
 import './TimeframeSelector.scss'
 import './TabsChart.scss'
 
+function getDaysBetweenDates(startDate, endDate) {
+  const start = new Date(startDate)
+  const end = new Date(endDate)
+  const diffInMilliseconds = Math.abs(end - start)
+  const daysDifference = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24))
+  return daysDifference
+}
+
+const getDynamicRange = (duration) => {
+  const now = new Date()
+  const end = now.toISOString()
+  const start = new Date(now - duration).toISOString()
+  return { start, end }
+}
+
 const chartConfig = {
   timespan: {
     defaultIndex: 3,
     values: [
       {
         label: '1 hour',
-        range: '1h'
+        range: getDynamicRange(60 * 60 * 1000)
       },
       {
         label: '24 hours',
-        range: '24h'
+        range: getDynamicRange(24 * 60 * 60 * 1000)
       },
       {
         label: '3 days',
-        range: '3d'
+        range: getDynamicRange(3 * 24 * 60 * 60 * 1000)
       },
       {
         label: '1 week',
-        range: '1w'
+        range: getDynamicRange(7 * 24 * 60 * 60 * 1000)
       }
     ]
   }
@@ -73,16 +88,19 @@ const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback
 export default function BlocksChart ({ hash, isActive }) {
   const [blocksHistory, setBlocksHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
+  const [customRange, setCustomRange] = useState({ start: null, end: null })
   const [menuIsOpen, setMenuIsOpen] = useState(false)
   const TimeframeMenuRef = useRef(null)
   const [selectorHeight, setSelectorHeight] = useState(0)
 
   useEffect(() => {
-    Api.getBlocksStatsByValidator(hash, timespan.range)
-      .then(res => fetchHandlerSuccess(setBlocksHistory, { resultSet: res }))
-      .catch(err => fetchHandlerError(setBlocksHistory, err))
-  }, [timespan])
+    const { start, end } = timespan.range
 
+    Api.getBlocksStatsByValidator(hash, start, end)
+      .then(res => fetchHandlerSuccess(setBlocksHistory, { resultSet: res }))
+      .catch(err => fetchHandlerError(setBlocksHistory, err));
+  }, [timespan, customRange])
+  
   useEffect(() => {
     if (menuIsOpen && TimeframeMenuRef.current) {
       const element = TimeframeMenuRef.current
@@ -92,6 +110,12 @@ export default function BlocksChart ({ hash, isActive }) {
       setSelectorHeight(0)
     }
   }, [menuIsOpen, TimeframeMenuRef])
+
+
+  const handleDateChange = (start, end) => {
+    setCustomRange({ start, end });
+    setTimespan(chartConfig.timespan.values[4]); // Выбираем кастомный диапазон
+  };
 
   if (blocksHistory.error || (!blocksHistory.loading && !blocksHistory.data?.resultSet)) {
     return (<ErrorMessageBlock/>)
@@ -107,6 +131,7 @@ export default function BlocksChart ({ hash, isActive }) {
           changeCallback={setTimespan}
           isActive={isActive}
           openStateCallback={setMenuIsOpen}
+          customRangeCallback={handleDateChange}
         />
       }
       <div className={`TabsChart__ChartContiner ${menuIsOpen ? 'TabsChart__ChartContiner--Hidden' : ''}`}>
@@ -118,10 +143,9 @@ export default function BlocksChart ({ hash, isActive }) {
           timespan={timespan.range}
           xAxis={{
             type: (() => {
-              if (timespan.range === '1h') return { axis: 'time' }
-              if (timespan.range === '24h') return { axis: 'time' }
-              if (timespan.range === '3d') return { axis: 'date', tooltip: 'datetime' }
-              if (timespan.range === '1w') return { axis: 'date' }
+              if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7) return { axis: 'date' }
+              if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 3) return { axis: 'date', tooltip: 'datetime' }
+              return { axis: 'time' }
             })()
           }}
           yAxis={{
