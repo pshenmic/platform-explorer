@@ -3,7 +3,6 @@ import TimeframeMenu from './TimeframeMenu'
 import { Button } from '@chakra-ui/react'
 import { CalendarIcon } from '../../components/ui/icons'
 import './TimeframeSelector.scss'
-// import './TabsChart.scss'
 
 export default function TimeframeSelector ({
   config,
