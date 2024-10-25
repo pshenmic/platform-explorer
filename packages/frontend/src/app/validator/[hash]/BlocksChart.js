@@ -38,7 +38,8 @@ export default function BlocksChart ({ hash, isActive }) {
   const [selectorHeight, setSelectorHeight] = useState(0)
 
   useEffect(() => {
-    const { start, end } = timespan.range
+    const { start = null, end = null } = timespan.range
+    if (!start || !end) return
 
     Api.getBlocksStatsByValidator(hash, start, end)
       .then(res => fetchHandlerSuccess(setBlocksHistory, { resultSet: res }))
