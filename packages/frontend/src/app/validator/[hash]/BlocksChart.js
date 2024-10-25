@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates, getDynamicRange } from '../../../util'
 import { LineChart, TimeframeMenu } from './../../../components/charts'
 import * as Api from '../../../util/Api'
 import { Button } from '@chakra-ui/react'
@@ -7,21 +7,6 @@ import { CalendarIcon } from './../../../components/ui/icons'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import './TimeframeSelector.scss'
 import './TabsChart.scss'
-
-function getDaysBetweenDates (startDate, endDate) {
-  const start = new Date(startDate)
-  const end = new Date(endDate)
-  const diffInMilliseconds = Math.abs(end - start)
-  const daysDifference = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24))
-  return daysDifference
-}
-
-const getDynamicRange = (duration) => {
-  const now = new Date()
-  const end = now.toISOString()
-  const start = new Date(now - duration).toISOString()
-  return { start, end }
-}
 
 const chartConfig = {
   timespan: {
