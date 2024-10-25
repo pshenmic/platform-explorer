@@ -3,7 +3,6 @@ import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates, getDynamic
 import { LineChart, TimeframeSelector } from './../../../components/charts'
 import * as Api from '../../../util/Api'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import './TabsChart.scss'
 
 const chartConfig = {
   timespan: {
