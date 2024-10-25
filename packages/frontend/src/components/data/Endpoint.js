@@ -4,8 +4,8 @@ import './Endpoint.scss'
 
 function Endpoint ({ value, status, message, link }) {
   const iconColors = {
-    active: 'green.default',
-    OK: 'green.default',
+    active: 'green.label',
+    OK: 'green.label',
     UNKNOWN: 'yellow.default',
     warining: 'yellow.default',
     error: 'red.default',

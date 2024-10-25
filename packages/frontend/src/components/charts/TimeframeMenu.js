@@ -3,32 +3,8 @@ import { Button } from '@chakra-ui/react'
 import { DateRangePicker } from '../calendar'
 import './TimeframeMenu.scss'
 
-const chartConfig = {
-  timespan: {
-    defaultIndex: 3,
-    values: [
-      {
-        label: '1 hour',
-        range: '1h'
-      },
-      {
-        label: '24 hours',
-        range: '24h'
-      },
-      {
-        label: '3 days',
-        range: '3d'
-      },
-      {
-        label: '1 week',
-        range: '1w'
-      }
-    ]
-  }
-}
-
 const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallback, className }, ref) {
-  const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
+  const [timespan, setTimespan] = useState(config.timespan.values[config.timespan.defaultIndex])
   const [selectedRange, setSelectedRange] = useState(null)
   const [calendarValue, setCalendarValue] = useState(null)
 
@@ -51,7 +27,7 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallbac
   const calendarSubmit = () => {
     if (!selectedRange.start || !selectedRange.end) return
 
-    function formatDate (date) {
+    function labelFormatDate (date) {
       const day = String(date.getDate()).padStart(2, '0')
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const year = date.getFullYear()
@@ -59,7 +35,7 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallbac
       return `${day}.${month}.${year}`
     }
 
-    const label = `${formatDate(selectedRange.start)} - ${formatDate(selectedRange.end)}`
+    const label = `${labelFormatDate(selectedRange.start)} - ${labelFormatDate(selectedRange.end)}`
 
     changeHandler({
       label,
@@ -96,6 +72,7 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallbac
               className={'TimeframeMenu__ValueButton'}
               onClick={calendarSubmit}
               size={'xs'}
+              variant={'customGreen'}
             >
               ok
             </Button>

@@ -5,6 +5,7 @@ import {
   Open_Sans as OpenSans,
   Roboto_Mono as RobotoMono
 } from 'next/font/google'
+import { color } from 'd3'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const openSans = OpenSans({ subsets: ['latin'] })
@@ -61,7 +62,8 @@ export const theme = extendTheme({
       default: '#FFD205'
     },
     green: {
-      default: '#81F458'
+      default: '#1CC400',
+      label: '#81F458'
     },
     gray: {
       50: '#f0f1f2',
@@ -216,6 +218,15 @@ export const theme = extendTheme({
         },
         md: {
           fontSize: '12px'
+        }
+      },
+      variants: {
+        customGreen: {
+          bg: 'green.default',
+          color: '#fff',
+          _hover: {
+            bg: 'green.label'
+          }
         }
       }
     },
