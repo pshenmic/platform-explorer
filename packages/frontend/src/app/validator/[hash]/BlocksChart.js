@@ -1,11 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates, getDynamicRange } from '../../../util'
-import { LineChart, TimeframeMenu } from './../../../components/charts'
+import { LineChart, TimeframeSelector } from './../../../components/charts'
 import * as Api from '../../../util/Api'
-import { Button } from '@chakra-ui/react'
-import { CalendarIcon } from './../../../components/ui/icons'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import './TimeframeSelector.scss'
 import './TabsChart.scss'
 
 const chartConfig = {
@@ -30,44 +27,6 @@ const chartConfig = {
       }
     ]
   }
-}
-
-const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback, menuRef }) => {
-  const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
-  const [menuIsOpen, setMenuIsOpen] = useState(false)
-
-  const changeHandler = (value) => {
-    setTimespan(value)
-    if (typeof changeCallback === 'function') changeCallback(value)
-    setMenuIsOpen(false)
-  }
-
-  useEffect(() => {
-    if (!isActive) setMenuIsOpen(false)
-  }, [isActive])
-
-  useEffect(() => {
-    if (typeof openStateCallback === 'function') openStateCallback(menuIsOpen)
-  }, [menuIsOpen])
-
-  return (
-    <div className={`TimeframeSelector ${menuIsOpen ? 'TimeframeSelector--MenuActive' : ''}`}>
-      <TimeframeMenu
-        ref={menuRef}
-        className={'TimeframeSelector__Menu'}
-        config={config}
-        changeCallback={changeHandler}
-      />
-
-      <Button
-        className={`TimeframeSelector__Button ${menuIsOpen ? 'TimeframeSelector__Button--Active' : ''}`}
-        onClick={() => setMenuIsOpen(state => !state)}
-      >
-        <CalendarIcon mr={'10px'}/>
-        {timespan.label}
-      </Button>
-    </div>
-  )
 }
 
 export default function BlocksChart ({ hash, isActive }) {
