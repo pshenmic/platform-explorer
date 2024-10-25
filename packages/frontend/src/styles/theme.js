@@ -5,7 +5,6 @@ import {
   Open_Sans as OpenSans,
   Roboto_Mono as RobotoMono
 } from 'next/font/google'
-import { color } from 'd3'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const openSans = OpenSans({ subsets: ['latin'] })
