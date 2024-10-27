@@ -158,10 +158,10 @@ describe('Validators routes', () => {
           type: IDENTITY_CREDIT_WITHDRAWAL,
           block_hash: blocks[i].hash,
           owner: base58.encode(Buffer.from((
-              (i % 2)
-                ? inactiveValidators
-                : activeValidators)[0].pro_tx_hash,
-            'hex'))
+            (i % 2)
+              ? inactiveValidators
+              : activeValidators)[0].pro_tx_hash,
+          'hex'))
         }
       )
 
