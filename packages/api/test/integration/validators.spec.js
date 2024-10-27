@@ -158,10 +158,10 @@ describe('Validators routes', () => {
           type: IDENTITY_CREDIT_WITHDRAWAL,
           block_hash: blocks[i].hash,
           owner: base58.encode(Buffer.from((
-            (i % 2)
-              ? inactiveValidators
-              : activeValidators)[0].pro_tx_hash,
-          'hex'))
+              (i % 2)
+                ? inactiveValidators
+                : activeValidators)[0].pro_tx_hash,
+            'hex'))
         }
       )
 
@@ -1709,6 +1709,70 @@ describe('Validators routes', () => {
             timestamp: new Date(nextPeriod).toISOString(),
             data: {
               blocksCount
+            }
+          }
+        )
+      }
+
+      assert.deepEqual(expectedStats.reverse(), body)
+    })
+
+    it('should return reward stats by proTxHash with custom timespan', async () => {
+      validators = [
+        await fixtures.validator(knex),
+        await fixtures.validator(knex)
+      ]
+      blocks = []
+      transactions = []
+
+      const [validator] = validators
+
+      for (let i = 0; i <= 20; i++) {
+        const block = await fixtures.block(knex, {
+          validator: validators[i % 2].pro_tx_hash,
+          timestamp: new Date(new Date().getTime() + (3600000 * (i % 3)) + 30000000)
+        })
+
+        blocks.push(block)
+      }
+
+      for (let i = 0; i <= 35; i++) {
+        const transaction = await fixtures.transaction(knex, {
+          block_hash: blocks[i % 20].hash,
+          gas_used: 1000,
+          type: 0,
+          owner: identities[0].identifier
+        })
+        transactions.push(transaction)
+      }
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/rewards/stats?start=${new Date(new Date().getTime() + 30000000).toISOString()}&end=${new Date(new Date().getTime() + 42000000).toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp).getTime()
+
+      const expectedStats = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 3600000 * i
+        const prevPeriod = firstTimestamp - 3600000 * (i - 1)
+
+        const rewardedBlocksHash = blocks.filter(block =>
+          (block.validator === validator.pro_tx_hash &&
+            block.timestamp.getTime() <= prevPeriod &&
+            block.timestamp.getTime() >= nextPeriod
+          ))
+          .map(block => block.hash)
+
+        const txs = transactions.filter(transaction => rewardedBlocksHash.includes(transaction.block_hash))
+
+        expectedStats.push(
+          {
+            timestamp: new Date(nextPeriod).toISOString(),
+            data: {
+              reward: txs.length > 0 ? txs.reduce((total, next) => total + next.gas_used, 0) : 0
             }
           }
         )

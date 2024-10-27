@@ -310,6 +310,20 @@ module.exports = ({
       }
     },
     {
+      path: '/validator/:hash/rewards/stats',
+      method: 'GET',
+      handler: validatorsController.getValidatorRewardStatsByProTxHash,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        },
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
       path: '/validator/:hash',
       method: 'GET',
       handler: validatorsController.getValidatorByProTxHash,
