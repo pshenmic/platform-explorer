@@ -308,7 +308,7 @@ function Validator ({ hash }) {
                     target={'_blank'}
                     rel={'noopener noreferrer'}
                   >
-                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
+                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true} external={true}>
                       <Identifier styles={['highlight-both']} ellipsis={false}>
                         {validator.data?.proTxInfo?.collateralAddress || ''}
                       </Identifier>
@@ -329,7 +329,7 @@ function Validator ({ hash }) {
                     target={'_blank'}
                     rel={'noopener noreferrer'}
                   >
-                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
+                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true} external={true}>
                       <Identifier styles={['highlight-both']} ellipsis={false}>
                         {validator.data?.proTxInfo?.state?.ownerAddress || ''}
                       </Identifier>
@@ -350,7 +350,7 @@ function Validator ({ hash }) {
                     target={'_blank'}
                     rel={'noopener noreferrer'}
                   >
-                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
+                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true} external={true}>
                       <Identifier styles={['highlight-both']} ellipsis={false}>
                       {validator.data?.proTxInfo?.state?.votingAddress || ''}
                       </Identifier>
@@ -371,7 +371,7 @@ function Validator ({ hash }) {
                     target={'_blank'}
                     rel={'noopener noreferrer'}
                   >
-                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
+                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true} external={true}>
                       <Identifier styles={['highlight-both']} ellipsis={false}>
                         {validator.data?.proTxInfo?.state?.payoutAddress || ''}
                       </Identifier>

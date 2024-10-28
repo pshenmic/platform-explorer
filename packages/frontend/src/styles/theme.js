@@ -46,9 +46,11 @@ export const theme = extendTheme({
   colors: {
     brand: {
       normal: '#008DE4',
+      'normal-rgb': '4, 147, 235',
       deep: '#0E75B5',
       shaded: '#165278',
       light: '#2CBBFF',
+      'light-rgb': '44, 187, 255',
       pressed: '#0493EB'
     },
     white: {
