@@ -24,8 +24,12 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallbac
     setCalendarValue([null, null])
   }
 
-  const calendarSubmit = () => {
-    if (!selectedRange.start || !selectedRange.end) return
+  const submitHandler = () => {
+
+    if (!selectedRange?.start || !selectedRange?.end) {
+      if (typeof changeCallback === 'function') changeCallback(timespan)
+      return
+    }
 
     function labelFormatDate (date) {
       const day = String(date.getDate()).padStart(2, '0')
@@ -49,10 +53,6 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallbac
   return (
     <div ref={ref} className={`TimeframeMenu ${className || ''}`}>
       <div className={'TimeframeMenu__ValuesContainer'}>
-        <div className={'TimeframeMenu__ValuesTitle'}>
-          Select a day, period or Timeframe:
-        </div>
-
         <div className={'TimeframeMenu__Values'}>
           {config.timespan.values.map((iTimespan, i) => (
             <Button
@@ -67,16 +67,14 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallbac
               {iTimespan.label}
             </Button>
           ))}
-          {selectedRange && (
             <Button
               className={'TimeframeMenu__ValueButton'}
-              onClick={calendarSubmit}
+              onClick={submitHandler}
               size={'xs'}
               variant={'customGreen'}
             >
               ok
             </Button>
-          )}
         </div>
       </div>
 
