@@ -12,7 +12,7 @@ function PageDataContainer ({ title, backLink, children }) {
       py={3}
       mt={[0, 0, 0, 8]}
     >
-      <Container maxW={'container.maxPageW'} px={[0, 0, 0, 5, 8]} pt={0}>
+      <Container maxW={'container.maxPageW'} px={[0]} pt={0}>
         <div className={'PageDataContainer__Header'}>
           {backLink &&
             <Link href={backLink} className={'PageDataContainer__BackLink'}>
