@@ -25,7 +25,6 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallbac
   }
 
   const submitHandler = () => {
-
     if (!selectedRange?.start || !selectedRange?.end) {
       if (typeof changeCallback === 'function') changeCallback(timespan)
       return
