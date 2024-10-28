@@ -5,6 +5,7 @@ const Tabs = {
       position: 'relative',
       zIndex: '123',
       marginBottom: '0 !important',
+      borderRadius: '4px 4px 0 0',
       p: {
         base: '6px',
         sm: '8px',
@@ -32,7 +33,12 @@ const Tabs = {
           transform: 'translateX(-50%)'
         }
       },
-      _hover: {}
+      _hover: {
+        backgroundColor: 'whiteAlpha.100'
+      },
+      _active: {
+        backgroundColor: 'whiteAlpha.50'
+      }
     },
     tablist: {
       position: 'relative',
