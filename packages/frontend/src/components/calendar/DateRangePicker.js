@@ -10,30 +10,44 @@ const DateRangePicker = ({
   noWeekDay,
   changeHandler,
   className,
-  value
+  value,
+  showSingleCalendar
 }) => {
   const today = new Date()
   const [range, setRange] = useState([null, null])
-  const [monthsToShow, setMonthsToShow] = useState(5)
+  const monthsToShow = 12
   const [currentMonthIndex, setCurrentMonthIndex] = useState(disableFutureDates ? -monthsToShow : 0)
-  const [showSingleCalendar, setShowSingleCalendar] = useState(window.innerWidth < 600)
+  const [containerSize, setContainerSize] = useState('xl')
   const [activeStartDate, setActiveStartDate] = useState(new Date(today.getFullYear(), today.getMonth() - 1, 1))
   const [displayedMonths, setDisplayedMonths] = useState([null, null])
   const [monthPairs, setMonthPairs] = useState([])
   const calendarRef = useRef(null)
 
+  const getContainerSizeByWidth = (width) => {
+    if (width < 400) {
+      return 'xs'
+    } else if (width < 450) {
+      return 'sm'
+    } else if (width < 570) {
+      return 'md'
+    } else if (width < 640) {
+      return 'lg'
+    }
+
+    return 'xl'
+  }
+
+  const containerSizeClass = {
+    xs: 'DateRangePicker--SizeXs',
+    sm: 'DateRangePicker--SizeSm',
+    md: 'DateRangePicker--SizeMd',
+    lg: 'DateRangePicker--SizeLg',
+    xl: 'DateRangePicker--SizeXl'
+  }
+
   useResizeObserver(calendarRef, (entry) => {
     const containerWidth = entry.contentRect.width
-
-    setShowSingleCalendar(window.innerWidth < 600)
-
-    if (containerWidth < 400) {
-      setMonthsToShow(4)
-    } else if (containerWidth < 500) {
-      setMonthsToShow(6)
-    } else {
-      setMonthsToShow(8)
-    }
+    setContainerSize(getContainerSizeByWidth(containerWidth))
   })
 
   useEffect(() => {
@@ -49,7 +63,7 @@ const DateRangePicker = ({
           start2: new Date(date2.getFullYear(), date2.getMonth(), 1),
           end2: new Date(date2.getFullYear(), date2.getMonth() + 1, 0),
           label: `${date1.toLocaleString('en-US', { month: 'long', year: 'numeric' })} - ${date2.toLocaleString('en-US', { month: 'long', year: 'numeric' })}`,
-          labelShort: `${date1.toLocaleString('en-US', { month: 'short' })} - ${date2.toLocaleString('en-US', { month: 'short' })}`
+          labelShort: `${date1.toLocaleString('en-US', { month: 'short' })}-${date2.toLocaleString('en-US', { month: 'short' })}`
         })
       }
       return months
@@ -99,7 +113,7 @@ const DateRangePicker = ({
   return (
     <div
       ref={calendarRef}
-      className={'DateRangePicker ' +
+      className={`DateRangePicker ${containerSizeClass[containerSize] || ''}` +
         `${showSingleCalendar ? 'DateRangePicker--SingleCalendar' : ''}` +
         `${className || ''} ` +
         `${noTopNavigation ? 'DateRangePicker--NoTopNavigation' : ''} ` +
@@ -143,7 +157,7 @@ const DateRangePicker = ({
             onClick={() => handleSetDisplayedMonths(pair.start1, pair.end2, i)}
             disabled={disableFutureDates && pair.start1 > today}
           >
-            {showSingleCalendar ? pair.labelShort.split(' - ')[0] : pair.labelShort}
+            {showSingleCalendar ? pair.labelShort.split('-')[0] : pair.labelShort}
           </button>
         ))}
 
