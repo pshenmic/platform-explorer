@@ -6,14 +6,14 @@ const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
-const {validateAliases} = require("../utils");
-const {base58} = require("@scure/base");
+const { validateAliases } = require('../utils')
+const { base58 } = require('@scure/base')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
 
 class MainController {
-  constructor(knex, dapi) {
+  constructor (knex, dapi) {
     this.blocksDAO = new BlocksDAO(knex)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
@@ -72,7 +72,7 @@ class MainController {
   }
 
   search = async (request, response) => {
-    const {query} = request.query
+    const { query } = request.query
 
     const epoch = Epoch.fromObject({
       startTime: 0,
@@ -84,7 +84,7 @@ class MainController {
       const block = await this.blocksDAO.getBlockByHeight(query)
 
       if (block) {
-        return response.send({block})
+        return response.send({ block })
       }
     }
 
@@ -93,21 +93,21 @@ class MainController {
       const block = await this.blocksDAO.getBlockByHash(query)
 
       if (block) {
-        return response.send({block})
+        return response.send({ block })
       }
 
       // search transactions
       const transaction = await this.transactionsDAO.getTransactionByHash(query)
 
       if (transaction) {
-        return response.send({transaction})
+        return response.send({ transaction })
       }
 
       // search validators
       const validator = await this.validatorsDAO.getValidatorByProTxHash(query, null, epoch)
 
       if (validator) {
-        return response.send({validator})
+        return response.send({ validator })
       }
     }
 
@@ -119,21 +119,21 @@ class MainController {
       if (identity) {
         // Sending without actual balance and aliases, because on frontend we were making
         // request /identity/:identifier for actual data
-        return response.send({identity})
+        return response.send({ identity })
       }
 
       // search data contracts
       const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(query)
 
       if (dataContract) {
-        return response.send({dataContract})
+        return response.send({ dataContract })
       }
 
       // search documents
       const document = await this.documentsDAO.getDocumentByIdentifier(query)
 
       if (document) {
-        return response.send({document})
+        return response.send({ document })
       }
     }
 
@@ -141,18 +141,16 @@ class MainController {
       let preIdentity
       let identity
 
-      let contestedState
-
       if (!query.includes('.')) {
         preIdentity = await this.identitiesDAO.getIdentityByDPNS(query)
 
         if (!preIdentity) {
-          return response.status(404).send({message: 'not found'})
+          return response.status(404).send({ message: 'not found' })
         }
       }
 
-      [{contestedState}] = await validateAliases(
-        [preIdentity ? preIdentity.aliases.find(v => v.includes(query)) : query],
+      const [{ contestedState }] = await validateAliases(
+        [preIdentity ? preIdentity.aliases.find(v => v.includes(`${query}.`)) : query],
         null,
         this.dapi
       )
@@ -166,17 +164,17 @@ class MainController {
       }
 
       if (!contestedState) {
-        identity = preIdentity
+        identity = preIdentity ?? await this.identitiesDAO.getIdentityByDPNS(query)
       }
 
       if (identity) {
         // Sending without actual balance and aliases, because on frontend we were making
         // request /identity/:identifier for actual data
-        return response.send({identity})
+        return response.send({ identity })
       }
     }
 
-    response.status(404).send({message: 'not found'})
+    response.status(404).send({ message: 'not found' })
   }
 }
 
