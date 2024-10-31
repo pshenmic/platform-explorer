@@ -42,7 +42,7 @@ function Footer () {
                   rel={'noopener noreferrer'}
                   aria-label={item.ariaLabel}
                 >
-                  <Image src={item.img} width={20} height={20} alt={item.alt} />
+                  <Image src={item.img} width={20} height={20} alt={item.alt || ''} />
                 </a>
               ))}
             </div>)
