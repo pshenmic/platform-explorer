@@ -9,10 +9,6 @@ const chartConfig = {
     defaultIndex: 3,
     values: [
       {
-        label: '1 hour',
-        range: getDynamicRange(60 * 60 * 1000)
-      },
-      {
         label: '24 hours',
         range: getDynamicRange(24 * 60 * 60 * 1000)
       },
@@ -23,7 +19,11 @@ const chartConfig = {
       {
         label: '1 week',
         range: getDynamicRange(7 * 24 * 60 * 60 * 1000)
-      }
+      },
+      {
+        label: '1 Month',
+        range: getDynamicRange(30 * 24 * 60 * 60 * 1000)
+      },
     ]
   }
 }
