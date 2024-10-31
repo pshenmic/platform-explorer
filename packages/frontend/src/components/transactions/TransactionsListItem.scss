@@ -20,7 +20,7 @@
 
     &--Timestamp {
       font-family: $font-mono;
-      font-size: 12px;
+      font-size: 0.75rem;
       margin-right: 16px;
       white-space: nowrap;
       color: #fff;
@@ -31,8 +31,7 @@
       font-family: $font-mono;
       flex-grow: 1;
       margin-right: 16px;
-      font-size: 12px;
-      
+      font-size: 0.75rem;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

@@ -76,13 +76,13 @@
 
     &__Title {
         color:  var(--chakra-colors-brand-deep);
-        font-size: 16px;
+        font-size: 1rem;
         margin-right: 10px;
         white-space: nowrap;
     }
     
     &__Value {
-        font-size: 18px;
+        font-size: 1.125rem;
 
         &--Loading {
             @include mixins.LoadingLine;
