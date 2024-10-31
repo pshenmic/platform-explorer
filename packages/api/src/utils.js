@@ -1,7 +1,8 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT } = require('./constants')
+const {TCP_CONNECT_TIMEOUT, DPNS_CONTRACT} = require('./constants')
+const {base58} = require("@scure/base");
 
 const getKnex = () => {
   return require('knex')({
@@ -12,7 +13,7 @@ const getKnex = () => {
       user: process.env.POSTGRES_USER,
       database: process.env.POSTGRES_DB,
       password: process.env.POSTGRES_PASS,
-      ssl: process.env.POSTGRES_SSL ? { rejectUnauthorized: false } : false
+      ssl: process.env.POSTGRES_SSL ? {rejectUnauthorized: false} : false
     }
   })
 }
@@ -174,4 +175,59 @@ const calculateInterval = (start, end) => {
   }, intervalsInRFC[0])
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect, calculateInterval }
+const getLabelBuffer = (text) =>
+  Buffer.from(`${
+    Buffer.from(`12${`0${(text.length).toString(16)}`.slice(-2)
+    }`, 'hex')}${text}`
+  )
+
+const validateAliases = async (aliases, identifier, dapi) => {
+  const aliasesWithContestedState = await Promise.all(aliases.map(async (alias) => {
+    const [label, domain] = alias.split('.')
+
+    const normalizedLabel = label.toLowerCase().replace(/[oli]/g, (match) => {
+      if (match === 'o') {
+        return '0';
+      }
+      if (match === 'l' || match === 'i') {
+        return '1';
+      }
+      return match;
+    })
+
+    if (/^[a-zA-Z01]{3,19}$/.test(normalizedLabel)) {
+
+      const domainBuffer = getLabelBuffer(domain)
+      const labelBuffer = getLabelBuffer(normalizedLabel)
+
+      const contestedState = await dapi.getContestedState(
+        DPNS_CONTRACT,
+        'domain',
+        'parentNameAndLabel',
+        1,
+        [
+          domainBuffer,
+          labelBuffer
+        ]
+      )
+
+      return {alias, contestedState}
+    }
+
+    return {alias, contestedState: null}
+  }))
+
+  return (identifier ? aliasesWithContestedState.filter(alias => (
+        typeof alias.contestedState?.finishedVoteInfo?.wonByIdentityId === 'string'
+          ? base58.encode(Buffer.from(alias.contestedState?.finishedVoteInfo.wonByIdentityId, 'base64')) === identifier
+          : false
+      ) || alias.contestedState === null
+    ).map(v => v.alias)
+    : aliasesWithContestedState)
+}
+
+module.exports = {
+  hash, decodeStateTransition,
+  getKnex, checkTcpConnect, calculateInterval,
+  validateAliases, getLabelBuffer
+}
