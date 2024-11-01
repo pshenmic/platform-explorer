@@ -68,8 +68,6 @@ const LineChart = ({
 
   useResizeObserver(chartContainer.current, render)
 
-  useEffect(() => render, [data, render])
-
   return (
     <Container
       ref={chartContainer}
