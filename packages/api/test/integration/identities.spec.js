@@ -30,6 +30,8 @@ describe('Identities routes', () => {
   before(async () => {
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
+    mock.method(DAPI.prototype, 'getContestedState', async () => null)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -58,7 +60,7 @@ describe('Identities routes', () => {
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
       const { alias } = await fixtures.identity_alias(knex,
         {
-          alias: 'test',
+          alias: 'test.dash',
           identity
         }
       )

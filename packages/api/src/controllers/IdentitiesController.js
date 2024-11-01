@@ -12,7 +12,8 @@ class IdentitiesController {
 
   getIdentityByIdentifier = async (request, response) => {
     const { identifier } = request.params
-    let [identity] = await Promise.all([this.identitiesDAO.getIdentityByIdentifier(identifier)])
+
+    const identity = await this.identitiesDAO.getIdentityByIdentifier(identifier)
 
     if (!identity) {
       return response.status(404).send({ message: 'not found' })
@@ -20,11 +21,9 @@ class IdentitiesController {
 
     const validatedAliases = await validateAliases(identity.aliases, identity.identifier, this.dapi)
 
-    identity = Identity.fromObject({ ...identity, aliases: validatedAliases })
-
     const balance = await this.dapi.getIdentityBalance(identifier)
 
-    response.send({ ...identity, balance })
+    response.send(Identity.fromObject({ ...identity, aliases: validatedAliases, balance }))
   }
 
   getIdentityByDPNS = async (request, response) => {
