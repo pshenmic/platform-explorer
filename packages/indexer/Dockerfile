@@ -1,4 +1,4 @@
-FROM rust:1.80-alpine3.19 as build
+FROM rust:1.82-alpine3.19 as build
 RUN apk add --no-cache git cmake clang libressl-dev build-base
 WORKDIR /
 RUN git clone --depth 1 --branch v1.5.0  https://github.com/dashevo/platform
