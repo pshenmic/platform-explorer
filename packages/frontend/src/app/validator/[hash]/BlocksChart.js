@@ -23,7 +23,7 @@ const chartConfig = {
       {
         label: '1 Month',
         range: getDynamicRange(30 * 24 * 60 * 60 * 1000)
-      },
+      }
     ]
   }
 }
