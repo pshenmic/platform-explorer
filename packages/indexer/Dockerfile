@@ -7,7 +7,7 @@ WORKDIR /app
 COPY Cargo.lock /app
 COPY Cargo.toml /app
 COPY src /app/src
-RUN cargo build --verbose
+RUN cargo build
 
 FROM alpine:3.19 as indexer
 WORKDIR /app
