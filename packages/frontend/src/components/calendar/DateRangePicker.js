@@ -16,7 +16,7 @@ const DateRangePicker = ({
   const today = new Date()
   const [range, setRange] = useState([null, null])
   const monthsToShow = 12
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(disableFutureDates ? -monthsToShow : 0)
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(disableFutureDates ? (showSingleCalendar ? -monthsToShow : -monthsToShow + 1) : 0)
   const [containerSize, setContainerSize] = useState('xl')
   const [activeStartDate, setActiveStartDate] = useState(new Date(today.getFullYear(), today.getMonth() - 1, 1))
   const [displayedMonths, setDisplayedMonths] = useState([null, null])
@@ -80,9 +80,7 @@ const DateRangePicker = ({
     setDisplayedMonths([startMonthLabel, nextMonthLabel])
   }, [activeStartDate])
 
-  useEffect(() => {
-    setRange(value)
-  }, [value])
+  useEffect(() => setRange(value), [value])
 
   const handleSetDisplayedMonths = (start1, end2, index) => {
     setDisplayedMonths([start1.toLocaleString('en-US', { month: 'long', year: 'numeric' }), end2.toLocaleString('en-US', { month: 'long', year: 'numeric' })])
