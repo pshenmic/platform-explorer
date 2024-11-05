@@ -40,6 +40,8 @@ export default function BlocksChart ({ hash, isActive }) {
     const { start = null, end = null } = timespan.range
     if (!start || !end) return
 
+    setBlocksHistory(state => ({ ...state, loading: true }))
+
     Api.getBlocksStatsByValidator(hash, start, end)
       .then(res => fetchHandlerSuccess(setBlocksHistory, { resultSet: res }))
       .catch(err => fetchHandlerError(setBlocksHistory, err))
@@ -66,23 +68,22 @@ export default function BlocksChart ({ hash, isActive }) {
 
   return (
     <div style={{ height: menuIsOpen ? `${Math.max(selectorHeight, 350)}px` : '350px' }} className={'TabsChart'}>
-      {!blocksHistory.loading &&
-        <TimeframeSelector
-          menuRef={TimeframeMenuRef}
-          className={'TabsChart__TimeframeSelector'}
-          config={chartConfig}
-          changeCallback={setTimespan}
-          isActive={isActive}
-          openStateCallback={setMenuIsOpen}
-          customRangeCallback={handleDateChange}
-        />
-      }
+      <TimeframeSelector
+        menuRef={TimeframeMenuRef}
+        className={'TabsChart__TimeframeSelector'}
+        config={chartConfig}
+        changeCallback={setTimespan}
+        isActive={isActive}
+        openStateCallback={setMenuIsOpen}
+        customRangeCallback={handleDateChange}
+      />
       <div className={`TabsChart__ChartContiner ${menuIsOpen ? 'TabsChart__ChartContiner--Hidden' : ''}`}>
         <LineChart
           data={blocksHistory.data?.resultSet?.map((item) => ({
             x: new Date(item.timestamp),
             y: item.data.blocksCount
           })) || []}
+          dataLoading={blocksHistory.loading}
           timespan={timespan.range}
           xAxis={{
             type: (() => {

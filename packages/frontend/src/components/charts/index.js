@@ -31,21 +31,28 @@ const LineChart = ({
   xAxis = { title: '', type: { axis: 'number' } },
   yAxis = { title: '', type: { axis: 'number' } },
   width,
-  height
+  height,
+  dataLoading
 }) => {
   const chartContainer = useRef()
   const [chartElement, setChartElement] = useState(null)
   const [loading, setLoading] = useState(true)
   const [skeleton, setSkeleton] = useState(true)
+  const previousDataRef = useRef(data)
 
   const render = useCallback(() => {
     if (loading || !chartContainer.current) return
     setLoading(true)
     setSkeleton(true)
     setChartElement(null)
-  }, [loading, chartContainer.current])
+  }, [loading, chartContainer])
 
-  useEffect(render, [data])
+  useEffect(() => {
+    if (JSON.stringify(previousDataRef.current) !== JSON.stringify(data)) {
+      previousDataRef.current = data
+      render()
+    }
+  }, [data, render])
 
   useResizeObserver(chartContainer.current, render)
 
@@ -57,10 +64,8 @@ const LineChart = ({
     }
 
     if (chartElement) {
-      setTimeout(() => {
-        setLoading(false)
-        setSkeleton(false)
-      }, 1000)
+      setLoading(false)
+      setSkeleton(false)
       return
     }
 
@@ -72,7 +77,7 @@ const LineChart = ({
       height={chartContainer.current.offsetHeight}
       data={data}
     />)
-  }, [chartContainer, chartElement, data, timespan, xAxis, yAxis])
+  }, [chartElement, data, timespan, xAxis, yAxis])
 
   return (
     <Container
@@ -81,7 +86,7 @@ const LineChart = ({
       height={height || '100%'}
       maxW={'none'}
       p={0} m={0}
-      className={`ChartContainer ${skeleton ? 'loading' : ''}`}
+      className={`ChartContainer ${(skeleton || dataLoading) ? 'loading' : ''}`}
     >
       {chartElement || <></>}
     </Container>
