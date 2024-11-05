@@ -37,4 +37,18 @@
       color: $color-brand-normal !important;
     }
   }
+
+  @media screen and (max-width: 555px) {
+    &__Button {
+      font-size: 0.6rem !important;
+      height: 24px !important;
+    }
+  }
+
+  @media screen and (max-width: 350px) {
+    &__Button {
+      font-size: 0.5rem !important;
+      height: 22px !important;
+    }
+  }
 }
