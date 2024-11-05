@@ -95,6 +95,7 @@ export default function BlocksChart ({ hash, isActive }) {
             type: 'number',
             abbreviation: 'blocks'
           }}
+          height={'350px'}
         />
       </div>
     </div>

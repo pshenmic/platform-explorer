@@ -29,7 +29,9 @@ const LineChart = ({
   data,
   timespan,
   xAxis = { title: '', type: { axis: 'number' } },
-  yAxis = { title: '', type: { axis: 'number' } }
+  yAxis = { title: '', type: { axis: 'number' } },
+  width,
+  height
 }) => {
   const chartContainer = useRef()
   const [chartElement, setChartElement] = useState(null)
@@ -70,13 +72,13 @@ const LineChart = ({
       height={chartContainer.current.offsetHeight}
       data={data}
     />)
-  }, [chartElement, data, timespan, xAxis, yAxis])
+  }, [chartContainer, chartElement, data, timespan, xAxis, yAxis])
 
   return (
     <Container
       ref={chartContainer}
-      width={'100%'}
-      height={'100%'}
+      width={width || '100%'}
+      height={height || '100%'}
       maxW={'none'}
       p={0} m={0}
       className={`ChartContainer ${skeleton ? 'loading' : ''}`}
