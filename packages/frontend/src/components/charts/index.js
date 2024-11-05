@@ -43,6 +43,10 @@ const LineChart = ({
     setChartElement(null)
   }, [loading, chartContainer.current])
 
+  useEffect(render, [data])
+
+  useResizeObserver(chartContainer.current, render)
+
   useEffect(() => {
     if (!data?.length) {
       setLoading(true)
@@ -51,8 +55,10 @@ const LineChart = ({
     }
 
     if (chartElement) {
-      setLoading(false)
-      setTimeout(() => setSkeleton(false), 1000)
+      setTimeout(() => {
+        setLoading(false)
+        setSkeleton(false)
+      }, 1000)
       return
     }
 
@@ -65,8 +71,6 @@ const LineChart = ({
       data={data}
     />)
   }, [chartElement, data, timespan, xAxis, yAxis])
-
-  useResizeObserver(chartContainer.current, render)
 
   return (
     <Container
