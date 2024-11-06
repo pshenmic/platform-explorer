@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
 import Calendar from 'react-calendar'
+import { ChevronIcon } from '../ui/icons'
 import 'react-calendar/dist/Calendar.css'
 import './DateRangePicker.scss'
 
@@ -142,7 +143,7 @@ const DateRangePicker = ({
 
       <div className="DateRangePicker__MonthSelector">
         <button className={'DateRangePicker__Arrow DateRangePicker__Arrow--Left'} onClick={handlePrev}>
-          &lt;
+          <ChevronIcon color={'gray.250'}/>
         </button>
 
         {monthPairs.map((pair, i) => (
@@ -160,7 +161,7 @@ const DateRangePicker = ({
         ))}
 
         <button className={'DateRangePicker__Arrow DateRangePicker__Arrow--Right'} onClick={handleNext}>
-          &gt;
+          <ChevronIcon color={'gray.250'}/>
         </button>
       </div>
     </div>

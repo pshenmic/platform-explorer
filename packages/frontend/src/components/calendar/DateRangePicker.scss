@@ -12,61 +12,6 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   font-size: 0.75rem;
   font-family: $font-mono;
 
-  &--SizeLg:not(&--SingleCalendar) & {
-    &__MonthButton {
-      font-size: 0.625rem;
-      padding: 10px 14px;
-    }
-  }
-
-  &--SizeMd:not(&--SingleCalendar) & {
-    &__MonthButton, &__Arrow {
-      border-radius: 8px;
-    }
-
-    &__MonthButton {
-      font-size: 0.5rem;
-      padding: 8px 10px;
-      margin: 6px 4px;
-    }
-
-    &__Arrow {
-      padding: 5px 7px;
-    }
-  }
-
-  &--SizeSm:not(.DateRangePicker--SingleCalendar) & {
-    &__MonthButton, &__Arrow {
-      border-radius: 6px;
-    }
-
-    &__MonthButton {
-      font-size: 0.5rem;
-      padding: 6px;
-      margin: 4px 2px;
-    }
-
-    &__Arrow {
-      padding: 5px;
-    }
-  }
-
-  &--SizeXs:not(.DateRangePicker--SingleCalendar) & {
-    &__MonthButton, &__Arrow {
-      border-radius: 5px;
-    }
-
-    &__MonthButton {
-      font-size: 0.438rem;
-      padding: 5px;
-      margin: 4px 1px;
-    }
-
-    &__Arrow {
-      padding: 5px;
-    }
-  }
-
   &--NoTopNavigation {
     .react-calendar__navigation {
       display: none !important;
@@ -81,6 +26,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
 
   &__Header {
     display: flex;
+    justify-content: center;
     width: 100%;
     margin-bottom: 20px;
   }
@@ -123,7 +69,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
     background-color: rgba(var(--chakra-colors-gray-800-rgb), .3);
     cursor: pointer;
     transition: all .1s;
-    margin: 4px;
+    margin: 0 4px;
 
     &:hover {
       background-color: $range-background-color;
@@ -156,16 +102,102 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   }
 
   &__Arrow {
-    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+
+    svg {
+      width: 8px;
+      height: 8px;
+    }
 
     &--Left {
       margin-right: auto;
       margin-left: 0;
+  
+      svg {
+        transform: rotate(180deg);
+      }
     }
 
     &--Right {
       margin-left: auto;
       margin-right: 0;
+    }
+  }
+
+  &--SizeLg:not(&--SingleCalendar) & {
+    &__MonthButton {
+      font-size: 0.625rem;
+      padding: 10px 14px;
+    }
+
+    &__Arrow {
+      width: 24px;
+    }
+  }
+
+  &--SizeMd:not(&--SingleCalendar) & {
+    &__MonthButton, &__Arrow {
+      border-radius: 8px;
+    }
+
+    &__MonthButton {
+      font-size: 0.5rem;
+      padding: 8px 10px;
+      margin: 0 4px;
+    }
+
+    &__Arrow {
+      width: 20px;
+
+      svg {
+        width: 4px;
+        height: 6px;
+      }
+    }
+  }
+
+  &--SizeSm:not(.DateRangePicker--SingleCalendar) & {
+    &__MonthButton, &__Arrow {
+      border-radius: 6px;
+    }
+
+    &__MonthButton {
+      font-size: 0.5rem;
+      padding: 6px;
+      margin: 0 2px;
+    }
+
+    &__Arrow {
+      width: 16px;
+
+      svg {
+        width: 4px;
+        height: 6px;
+      }
+    }
+  }
+
+  &--SizeXs:not(.DateRangePicker--SingleCalendar) & {
+    &__MonthButton, &__Arrow {
+      border-radius: 5px;
+    }
+
+    &__MonthButton {
+      font-size: 0.438rem;
+      padding: 5px;
+      margin: 0px 1px;
+    }
+
+    &__Arrow {
+      width: 14px;
+
+      svg {
+        width: 3px;
+        height: 5px;
+      }
     }
   }
 
