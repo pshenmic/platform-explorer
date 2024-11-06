@@ -13,7 +13,7 @@
   transition: all 1s;
   margin: 0 -10px !important;
   padding: 0 10px !important;
-  overflow: hidden;
+  overflow-x: clip;
 
   .loading & {
     opacity: 0;
