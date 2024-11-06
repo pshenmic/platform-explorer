@@ -88,6 +88,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   &--SingleCalendar & {
     &__HeaderMonth {
       width: 100%;
+      max-width: none;
     }
   }
 
@@ -97,6 +98,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
     font-family: $font-heading;
     font-size: 0.875rem;
     font-weight: 700;
+    max-width: 350px;
   }
 
   &__Calendar {
@@ -286,7 +288,21 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
     }
   }
 
+  @media screen and (max-width: $breakpoint-md) {
+    .react-calendar {
+      &__tile {
+        font-size: 0.7rem;
+      }
+    }
+  }
+
   @media screen and (max-width: $breakpoint-sm) {
+    .react-calendar {
+      &__tile {
+        font-size: 0.6rem;
+      }
+    }
+
     &:not(&--SingleCalendar) {
       .react-calendar {
         &__viewContainer {
@@ -313,6 +329,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
 
       &__HeaderMonth {
         width: 100%;
+        max-width: none;
 
         &:nth-child(2) {
           position: absolute;
