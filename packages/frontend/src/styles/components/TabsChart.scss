@@ -26,10 +26,9 @@
         top: 10px;
         right: 12px;
         z-index: 11;
-        width: 120px;
+        width: 100px;
         min-width: max-content;
         transition: width .2s;
-
   
         &--Active {
           width: calc(100% - 24px);
