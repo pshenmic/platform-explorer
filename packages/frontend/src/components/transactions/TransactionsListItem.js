@@ -5,6 +5,7 @@ import { getTimeDelta } from '../../util/index'
 import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
 import { Identifier } from '../data'
+import StatusIcon from './StatusIcon'
 import './TransactionsListItem.scss'
 
 function TransactionsListItem ({ transaction }) {
@@ -16,6 +17,7 @@ function TransactionsListItem ({ transaction }) {
       <Grid className={`TransactionsListItem__Content ${!transaction?.timestamp && !transaction?.type ? 'TransactionsListItem__Content--Inline' : ''}`}>
         {transaction?.timestamp &&
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}>
+            <StatusIcon status={transaction.status} w={'18px'} h={'18px'} mr={'8px'}/>
             {getTimeDelta(new Date(), new Date(transaction.timestamp))}
           </GridItem>
         }
