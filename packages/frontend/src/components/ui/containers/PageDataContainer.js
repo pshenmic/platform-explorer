@@ -9,10 +9,10 @@ function PageDataContainer ({ title, backLink, children }) {
       className={'PageDataContainer'}
       maxW={'none'}
       m={0}
-      py={3}
-      mt={[0, 0, 0, 8]}
+      py={[4, 4, 4, 5]}
+      mt={0}
     >
-      <Container maxW={'container.maxPageW'} px={[0]} pt={0}>
+      <Container maxW={'container.maxPageW'} px={[0]} py={0}>
         <div className={'PageDataContainer__Header'}>
           {backLink &&
             <Link href={backLink} className={'PageDataContainer__BackLink'}>
