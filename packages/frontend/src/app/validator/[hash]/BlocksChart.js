@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import useResizeObserver from '@react-hook/resize-observer'
 import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates, getDynamicRange } from '../../../util'
 import { LineChart, TimeframeSelector } from './../../../components/charts'
 import * as Api from '../../../util/Api'
@@ -47,7 +48,7 @@ export default function BlocksChart ({ hash, isActive }) {
       .catch(err => fetchHandlerError(setBlocksHistory, err))
   }, [timespan, customRange])
 
-  useEffect(() => {
+  const updateMenuHeight = () => {
     if (menuIsOpen && TimeframeMenuRef.current) {
       const element = TimeframeMenuRef.current
       const height = element.getBoundingClientRect().height
@@ -55,7 +56,11 @@ export default function BlocksChart ({ hash, isActive }) {
     } else {
       setSelectorHeight(0)
     }
-  }, [menuIsOpen, TimeframeMenuRef])
+  }
+
+  useEffect(updateMenuHeight, [menuIsOpen, TimeframeMenuRef])
+
+  useResizeObserver(TimeframeMenuRef, updateMenuHeight)
 
   const handleDateChange = (start, end) => {
     setCustomRange({ start, end })
