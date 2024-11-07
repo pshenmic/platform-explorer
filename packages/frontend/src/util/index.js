@@ -62,9 +62,9 @@ function getTimeDelta (startDate, endDate, format) {
     } else if (hours > 0) {
       return `${hours}h ${isFuture ? 'left' : 'ago'}`
     } else if (minutes > 0) {
-      return `${minutes} min. ${isFuture ? 'left' : 'ago'}`
+      return `${minutes} min ${isFuture ? 'left' : 'ago'}`
     } else {
-      return `${seconds} sec. ${isFuture ? 'left' : 'ago'}`
+      return `${seconds} sec ${isFuture ? 'left' : 'ago'}`
     }
   }
 

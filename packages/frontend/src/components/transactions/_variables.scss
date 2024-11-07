@@ -1,0 +1,77 @@
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+
+  grid-template-columns: 
+    minmax(120px, 120px)
+    minmax(0, 600px)
+    minmax(0, 150px)
+    minmax(0, 400px)
+    150px;
+
+  @media screen and (max-width: 810px) {
+    grid-template-columns: 
+      minmax(120px, 120px)
+      minmax(0, 600px)
+      auto
+      auto;
+  }
+
+  @media screen and (max-width: 660px) {
+    grid-template-columns: 
+      minmax(120px, 120px)
+      minmax(0, 600px)
+      20px
+      auto;
+  }
+
+  @media screen and (max-width: 430px) {
+    gap: 12px;
+    grid-template-columns: 
+      minmax(120px, 120px)
+      minmax(0, 600px)
+      auto;
+  }
+
+  @media screen and (max-width: 400px) {
+    grid-template-columns: 
+      minmax(80px, 80px)
+      minmax(0, 600px)
+      auto;
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &--Hash {
+    max-width: 600px;
+  }
+
+  &--Sender {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  &--Type {
+    justify-content: flex-end;
+    white-space: nowrap;
+  }
+
+  &--GasUsed {
+    width: 150px;
+  }
+
+  @media screen and (max-width: 810px) {
+    &--GasUsed {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 430px) {
+    &--Sender {
+      display: none;
+    }
+  }
+}

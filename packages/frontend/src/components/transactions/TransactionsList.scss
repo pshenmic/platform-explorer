@@ -1,13 +1,17 @@
 @use '../../styles/mixins.scss';
+@use './variables' as txs;
 @import '../../styles/variables.scss';
 
 .TransactionsList {
   &__ColumnTitles {
     @include mixins.defListTitles;
-    grid-template-columns: 100px calc(100% - 270px) 170px;
+    @include txs.Columns();
   }
 
   &__ColumnTitle {
+    @include txs.Column();
+    width: 100%;
+    display: block;
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;
@@ -21,14 +25,12 @@
     }
   }
 
-  @media screen and (max-width: $breakpoint-sm) {
-    &__ColumnTitles {
-      grid-template-columns: 1fr 1fr;
-    }
-
+  @media screen and (max-width: 660px) {
     &__ColumnTitle {
-      &--Hash {
-        display: none;
+      &--Sender {
+        width: 0;
+        height: 0;
+        visibility: hidden;
       }
     }
   }

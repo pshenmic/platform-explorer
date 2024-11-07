@@ -1,4 +1,5 @@
 @use '../../styles/mixins.scss';
+@use './variables' as txs;
 @import '../../styles/variables.scss';
 
 .TransactionsListItem {
@@ -6,8 +7,7 @@
   display: block;
 
   &__Content {
-    display: grid;
-    grid-template-columns: 100px 1fr auto;
+    @include txs.Columns();
 
     &--Inline {
       display: inline !important;
@@ -15,24 +15,20 @@
   }
 
   &__Column {
-    display: flex;
-    align-items: center;
+    @include txs.Column();
 
     &--Timestamp {
       font-family: $font-mono;
-      font-size: 12px;
-      margin-right: 16px;
+      font-size: 0.75rem;
       white-space: nowrap;
       color: #fff;
     }
 
-    &--Identifier {
+    &--Hash, &--Sender {
       color: var(--chakra-colors-gray-250);
       font-family: $font-mono;
       flex-grow: 1;
-      margin-right: 16px;
-      font-size: 12px;
-      
+      font-size: 0.75rem;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -48,28 +44,46 @@
       justify-content: flex-end;
       white-space: nowrap;
     }
+
+    &--GasUsed {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #fff;
+      white-space: nowrap;
+      text-align: left;
+    }
   }
 
-  @media screen and (max-width: $breakpoint-sm) {
-      &__Column {
-        &--Timestamp {
-          grid-column: 1 / 1;
+  @media screen and (max-width: 660px) {
+    &__Column {
+      &--Sender {
+        .Identifier__SymbolsContainer {
+          display: none;
         }
 
-        &--Identifier {
-          order: 3;
-          grid-column: 1 / -1;
-          margin-right: 0;
-          margin-top: 12px;
-        }
-
-        &--Type {
-          grid-column: 0 / 1;
+        .Identifier__Avatar {
+          margin: 0;
         }
       }
+    }
+  }
 
-      &__Content {
-        grid-template-columns: 1fr 1fr;
+  @media screen and (max-width: 400px) {
+    padding: 5px 8px;
+
+    &__Column {
+      &, .Identifier {
+        font-size: 0.563rem;
       }
+    }
+
+    &__TypeBadge {
+      font-size: 0.438rem !important;
+      line-height: 15px;
+    }
+
+    &__StatusIcon {
+      display: none !important;
+    }
   }
 }

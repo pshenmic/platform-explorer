@@ -4,11 +4,12 @@ import Link from 'next/link'
 import { getTimeDelta } from '../../util/index'
 import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
-import { Identifier } from '../data'
+import { Identifier, Credits } from '../data'
 import StatusIcon from './StatusIcon'
+import { RateTooltip } from '../ui/Tooltips'
 import './TransactionsListItem.scss'
 
-function TransactionsListItem ({ transaction }) {
+function TransactionsListItem ({ transaction, rate }) {
   return (
     <Link
       href={`/transaction/${transaction?.hash}`}
@@ -17,18 +18,34 @@ function TransactionsListItem ({ transaction }) {
       <Grid className={`TransactionsListItem__Content ${!transaction?.timestamp && !transaction?.type ? 'TransactionsListItem__Content--Inline' : ''}`}>
         {transaction?.timestamp &&
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}>
-            <StatusIcon status={transaction.status} w={'18px'} h={'18px'} mr={'8px'}/>
+            <StatusIcon className={'TransactionsListItem__StatusIcon'} status={transaction.status} w={'18px'} h={'18px'} mr={'8px'}/>
             {getTimeDelta(new Date(), new Date(transaction.timestamp))}
           </GridItem>
         }
         {transaction?.hash &&
-          <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Identifier'}>
-            <Identifier copyButton={true} styles={['highlight-both']}>{transaction.hash}</Identifier>
+          <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Hash'}>
+            <Identifier styles={['highlight-both']}>{transaction.hash}</Identifier>
+          </GridItem>
+        }
+        {transaction?.gasUsed &&
+          <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--GasUsed'}>
+            <RateTooltip
+              credits={transaction.gasUsed}
+              rate={rate?.data}
+              placement={'top'}
+            >
+              <span><Credits>{transaction.gasUsed}</Credits> Credits</span>
+            </RateTooltip>
+          </GridItem>
+        }
+        {(transaction?.sender || true) &&
+          <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Sender'}>
+            <Identifier avatar={true} styles={['highlight-both']}>3TfBxpwdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT</Identifier>
           </GridItem>
         }
         {transaction?.type !== undefined &&
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Type'}>
-            <TypeBadge typeId={transaction.type}/>
+            <TypeBadge className={'TransactionsListItem__TypeBadge'} typeId={transaction.type}/>
           </GridItem>
         }
       </Grid>
