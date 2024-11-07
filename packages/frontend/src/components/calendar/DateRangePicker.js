@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Calendar from 'react-calendar'
 import { ChevronIcon } from '../ui/icons'
 import 'react-calendar/dist/Calendar.css'
@@ -17,7 +17,6 @@ const DateRangePicker = ({
   const [range, setRange] = useState([null, null])
   const monthsToShow = 12
   const [currentMonthIndex, setCurrentMonthIndex] = useState(disableFutureDates ? (showSingleCalendar ? -monthsToShow : -monthsToShow + 1) : 0)
-  const [containerSize, setContainerSize] = useState('xl')
   const [activeStartDate, setActiveStartDate] = useState(new Date(today.getFullYear(), today.getMonth() - 1, 1))
   const [displayedMonths, setDisplayedMonths] = useState([null, null])
   const [monthPairs, setMonthPairs] = useState([])
