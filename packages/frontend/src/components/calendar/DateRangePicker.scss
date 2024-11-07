@@ -11,6 +11,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   align-items: center;
   font-size: 0.75rem;
   font-family: $font-mono;
+  container-type: inline-size;
 
   &--NoTopNavigation {
     .react-calendar__navigation {
@@ -127,7 +128,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
     }
   }
 
-  &--SizeLg:not(&--SingleCalendar) & {
+  @container (max-width: 640px) {
     &__MonthButton {
       font-size: 0.625rem;
       padding: 10px 14px;
@@ -138,7 +139,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
     }
   }
 
-  &--SizeMd:not(&--SingleCalendar) & {
+  @container (max-width: 570px) {
     &__MonthButton, &__Arrow {
       border-radius: 8px;
     }
@@ -159,7 +160,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
     }
   }
 
-  &--SizeSm:not(.DateRangePicker--SingleCalendar) & {
+  @container (max-width: 450px) {
     &__MonthButton, &__Arrow {
       border-radius: 6px;
     }
@@ -180,7 +181,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
     }
   }
 
-  &--SizeXs:not(.DateRangePicker--SingleCalendar) & {
+  @container (max-width: 400px) {
     &__MonthButton, &__Arrow {
       border-radius: 5px;
     }

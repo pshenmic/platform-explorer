@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import useResizeObserver from '@react-hook/resize-observer'
 import Calendar from 'react-calendar'
 import { ChevronIcon } from '../ui/icons'
 import 'react-calendar/dist/Calendar.css'
@@ -22,34 +21,6 @@ const DateRangePicker = ({
   const [activeStartDate, setActiveStartDate] = useState(new Date(today.getFullYear(), today.getMonth() - 1, 1))
   const [displayedMonths, setDisplayedMonths] = useState([null, null])
   const [monthPairs, setMonthPairs] = useState([])
-  const calendarRef = useRef(null)
-
-  const getContainerSizeByWidth = (width) => {
-    if (width < 400) {
-      return 'xs'
-    } else if (width < 450) {
-      return 'sm'
-    } else if (width < 570) {
-      return 'md'
-    } else if (width < 640) {
-      return 'lg'
-    }
-
-    return 'xl'
-  }
-
-  const containerSizeClass = {
-    xs: 'DateRangePicker--SizeXs',
-    sm: 'DateRangePicker--SizeSm',
-    md: 'DateRangePicker--SizeMd',
-    lg: 'DateRangePicker--SizeLg',
-    xl: 'DateRangePicker--SizeXl'
-  }
-
-  useResizeObserver(calendarRef, (entry) => {
-    const containerWidth = entry.contentRect.width
-    setContainerSize(getContainerSizeByWidth(containerWidth))
-  })
 
   useEffect(() => {
     const generateMonthPairs = () => {
@@ -83,7 +54,7 @@ const DateRangePicker = ({
 
   useEffect(() => setRange(value), [value])
 
-  const handleSetDisplayedMonths = (start1, end2, index) => {
+  const handleSetDisplayedMonths = (start1, end2) => {
     setDisplayedMonths([start1.toLocaleString('en-US', { month: 'long', year: 'numeric' }), end2.toLocaleString('en-US', { month: 'long', year: 'numeric' })])
     setActiveStartDate(start1)
   }
@@ -110,13 +81,10 @@ const DateRangePicker = ({
   }
 
   return (
-    <div
-      ref={calendarRef}
-      className={`DateRangePicker ${containerSizeClass[containerSize] || ''}` +
-        `${showSingleCalendar ? 'DateRangePicker--SingleCalendar' : ''}` +
-        `${className || ''} ` +
-        `${noTopNavigation ? 'DateRangePicker--NoTopNavigation' : ''} ` +
-        `${noWeekDay ? 'DateRangePicker--NoWeekDay' : ''} `}
+    <div className={`DateRangePicker ${className || ''}` +
+      `${showSingleCalendar ? ' DateRangePicker--SingleCalendar' : ''}` +
+      `${noTopNavigation ? ' DateRangePicker--NoTopNavigation' : ''} ` +
+      `${noWeekDay ? ' DateRangePicker--NoWeekDay' : ''} `}
     >
       <div className={'DateRangePicker__Header'}>
         <div className={'DateRangePicker__HeaderMonth'}>
