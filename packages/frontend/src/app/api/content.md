@@ -737,7 +737,8 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1
         timestamp: "2024-03-18T10:13:54.150Z",
         gasUsed: 1337000,
         status: "SUCCESS",
-        error: null
+        error: null,
+        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec"
     }, ...
     ]
 }

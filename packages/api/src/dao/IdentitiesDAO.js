@@ -246,14 +246,15 @@ module.exports = class IdentitiesDAO {
     const subquery = this.knex('state_transitions')
       .select('state_transitions.id as state_transition_id', 'state_transitions.hash as tx_hash',
         'state_transitions.index as index', 'state_transitions.type as type', 'state_transitions.block_hash as block_hash',
-        'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error'
+        'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
+        'state_transitions.owner as owner'
       )
       .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
       .where('state_transitions.owner', '=', identifier)
 
     const rows = await this.knex.with('with_alias', subquery)
       .select('state_transition_id', 'tx_hash', 'index', 'block_hash', 'type', 'rank',
-        'gas_used', 'status', 'gas_used',
+        'gas_used', 'status', 'gas_used', 'owner',
         'blocks.timestamp as timestamp', 'blocks.height as block_height')
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'block_hash')

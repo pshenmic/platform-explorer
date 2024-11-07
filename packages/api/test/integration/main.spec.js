@@ -171,7 +171,8 @@ describe('Other routes', () => {
         timestamp: block.timestamp.toISOString(),
         gasUsed: dataContractTransaction.gas_used,
         status: dataContractTransaction.status,
-        error: dataContractTransaction.error
+        error: dataContractTransaction.error,
+        owner: dataContractTransaction.owner
       }
 
       assert.deepEqual({ transaction: expectedTransaction }, body)

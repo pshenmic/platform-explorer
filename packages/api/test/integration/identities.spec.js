@@ -886,7 +886,8 @@ describe('Identities routes', () => {
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
-          error: _transaction.transaction.error
+          error: _transaction.transaction.error,
+          owner: _transaction.transaction.owner
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -929,7 +930,8 @@ describe('Identities routes', () => {
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
-          error: _transaction.transaction.error
+          error: _transaction.transaction.error,
+          owner: _transaction.transaction.owner
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -972,7 +974,8 @@ describe('Identities routes', () => {
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
-          error: _transaction.transaction.error
+          error: _transaction.transaction.error,
+          owner: _transaction.transaction.owner
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -1015,7 +1018,8 @@ describe('Identities routes', () => {
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
-          error: _transaction.transaction.error
+          error: _transaction.transaction.error,
+          owner: _transaction.transaction.owner
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
