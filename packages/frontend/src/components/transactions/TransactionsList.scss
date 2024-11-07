@@ -3,6 +3,8 @@
 @import '../../styles/variables.scss';
 
 .TransactionsList {
+  container-type: inline-size;
+
   &__ColumnTitles {
     @include mixins.defListTitles;
     @include txs.Columns();
@@ -25,7 +27,7 @@
     }
   }
 
-  @media screen and (max-width: 660px) {
+  @container (max-width: 660px) {
     &__ColumnTitle {
       &--Sender {
         width: 0;

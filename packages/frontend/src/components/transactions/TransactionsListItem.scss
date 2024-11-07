@@ -54,7 +54,7 @@
     }
   }
 
-  @media screen and (max-width: 660px) {
+  @container (max-width: 660px) {
     &__Column {
       &--Sender {
         .Identifier__SymbolsContainer {
@@ -68,7 +68,7 @@
     }
   }
 
-  @media screen and (max-width: 400px) {
+  @container (max-width: 400px) {
     padding: 5px 8px;
 
     &__Column {
