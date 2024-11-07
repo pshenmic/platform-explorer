@@ -1,6 +1,6 @@
 const cbor = require('cbor')
 
-const { deserializeConsensusError } = require('dash').PlatformProtocol
+const {deserializeConsensusError} = require('dash').PlatformProtocol
 
 module.exports = class Transaction {
   hash
@@ -15,7 +15,7 @@ module.exports = class Transaction {
   error
   owner
 
-  constructor (hash, index, blockHash, blockHeight, type, data, timestamp, gasUsed, status, error, owner) {
+  constructor(hash, index, blockHash, blockHeight, type, data, timestamp, gasUsed, status, error, owner) {
     this.hash = hash ?? null
     this.index = index ?? null
     this.blockHash = blockHash ?? null
@@ -26,16 +26,16 @@ module.exports = class Transaction {
     this.gasUsed = gasUsed ?? null
     this.status = status ?? null
     this.error = error ?? null
-    this.owner = owner ?? null
+    this.owner = owner ? owner.trim() : null
   }
 
   // eslint-disable-next-line camelcase
-  static fromRow ({ tx_hash, index, block_hash, block_height, type, data, timestamp, gas_used, status, error, owner }) {
+  static fromRow({tx_hash, index, block_hash, block_height, type, data, timestamp, gas_used, status, error, owner}) {
     let decodedError = null
 
     try {
       if (typeof error === 'string') {
-        const { serializedError } = cbor.decode(Buffer.from(error, 'base64'))?.data
+        const {serializedError} = cbor.decode(Buffer.from(error, 'base64'))?.data
         decodedError = deserializeConsensusError(serializedError).message
       }
     } catch (e) {
@@ -43,6 +43,6 @@ module.exports = class Transaction {
       decodedError = 'Cannot deserialize'
     }
 
-    return new Transaction(tx_hash, index, block_hash, block_height, type, data, timestamp, parseInt(gas_used), status, decodedError ?? error, owner?.trim())
+    return new Transaction(tx_hash, index, block_hash, block_height, type, data, timestamp, parseInt(gas_used), status, decodedError ?? error, owner)
   }
 }
