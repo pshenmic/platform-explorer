@@ -1,6 +1,6 @@
 const cbor = require('cbor')
 
-const {deserializeConsensusError} = require('dash').PlatformProtocol
+const { deserializeConsensusError } = require('dash').PlatformProtocol
 
 module.exports = class Transaction {
   hash
@@ -15,7 +15,7 @@ module.exports = class Transaction {
   error
   owner
 
-  constructor(hash, index, blockHash, blockHeight, type, data, timestamp, gasUsed, status, error, owner) {
+  constructor (hash, index, blockHash, blockHeight, type, data, timestamp, gasUsed, status, error, owner) {
     this.hash = hash ?? null
     this.index = index ?? null
     this.blockHash = blockHash ?? null
@@ -30,12 +30,12 @@ module.exports = class Transaction {
   }
 
   // eslint-disable-next-line camelcase
-  static fromRow({tx_hash, index, block_hash, block_height, type, data, timestamp, gas_used, status, error, owner}) {
+  static fromRow ({ tx_hash, index, block_hash, block_height, type, data, timestamp, gas_used, status, error, owner }) {
     let decodedError = null
 
     try {
       if (typeof error === 'string') {
-        const {serializedError} = cbor.decode(Buffer.from(error, 'base64'))?.data
+        const { serializedError } = cbor.decode(Buffer.from(error, 'base64'))?.data
         decodedError = deserializeConsensusError(serializedError).message
       }
     } catch (e) {
