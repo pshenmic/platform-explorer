@@ -13,8 +13,9 @@ module.exports = class Transaction {
   gasUsed
   status
   error
+  owner
 
-  constructor (hash, index, blockHash, blockHeight, type, data, timestamp, gasUsed, status, error) {
+  constructor (hash, index, blockHash, blockHeight, type, data, timestamp, gasUsed, status, error, owner) {
     this.hash = hash ?? null
     this.index = index ?? null
     this.blockHash = blockHash ?? null
@@ -25,10 +26,11 @@ module.exports = class Transaction {
     this.gasUsed = gasUsed ?? null
     this.status = status ?? null
     this.error = error ?? null
+    this.owner = owner ?? null
   }
 
   // eslint-disable-next-line camelcase
-  static fromRow ({ tx_hash, index, block_hash, block_height, type, data, timestamp, gas_used, status, error }) {
+  static fromRow ({ tx_hash, index, block_hash, block_height, type, data, timestamp, gas_used, status, error, owner }) {
     let decodedError = null
 
     try {
@@ -41,6 +43,6 @@ module.exports = class Transaction {
       decodedError = 'Cannot deserialize'
     }
 
-    return new Transaction(tx_hash, index, block_hash, block_height, type, data, timestamp, parseInt(gas_used), status, decodedError ?? error)
+    return new Transaction(tx_hash, index, block_hash, block_height, type, data, timestamp, parseInt(gas_used), status, decodedError ?? error, owner)
   }
 }

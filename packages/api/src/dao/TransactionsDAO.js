@@ -12,7 +12,7 @@ module.exports = class TransactionsDAO {
       .select('state_transitions.hash as tx_hash', 'state_transitions.data as data',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
         'state_transitions.type as type', 'state_transitions.index as index', 'blocks.height as block_height',
-        'blocks.hash as block_hash', 'blocks.timestamp as timestamp')
+        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner')
       .whereILike('state_transitions.hash', hash)
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
 
@@ -31,13 +31,13 @@ module.exports = class TransactionsDAO {
       .select(this.knex('state_transitions').count('hash').as('total_count'), 'state_transitions.hash as tx_hash',
         'state_transitions.data as data', 'state_transitions.type as type', 'state_transitions.index as index',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
-        'state_transitions.block_hash as block_hash', 'state_transitions.id as id')
+        'state_transitions.block_hash as block_hash', 'state_transitions.id as id', 'state_transitions.owner as owner')
       .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
       .as('state_transitions')
 
     const rows = await this.knex(subquery)
       .select('total_count', 'data', 'type', 'index', 'rank', 'block_hash', 'state_transitions.tx_hash as tx_hash',
-        'gas_used', 'status', 'error', 'blocks.height as block_height', 'blocks.timestamp as timestamp')
+        'gas_used', 'status', 'error', 'blocks.height as block_height', 'blocks.timestamp as timestamp', 'owner')
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('state_transitions.id', order)

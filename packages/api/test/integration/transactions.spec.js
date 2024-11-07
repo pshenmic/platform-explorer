@@ -104,7 +104,8 @@ describe('Transaction routes', () => {
         type: transaction.transaction.type,
         gasUsed: transaction.transaction.gas_used,
         status: transaction.transaction.status,
-        error: transaction.transaction.error
+        error: transaction.transaction.error,
+        owner: transaction.transaction.owner
       }
 
       assert.deepEqual(expectedTransaction, body)
@@ -126,7 +127,8 @@ describe('Transaction routes', () => {
         type: transaction.transaction.type,
         gasUsed: 0,
         status: 'FAIL',
-        error: 'Cannot deserialize'
+        error: 'Cannot deserialize',
+        owner: transaction.transaction.owner
       }
 
       assert.deepEqual(expectedTransaction, body)
@@ -162,7 +164,8 @@ describe('Transaction routes', () => {
           type: transaction.transaction.type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: transaction.transaction.owner
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
@@ -191,7 +194,8 @@ describe('Transaction routes', () => {
           type: transaction.transaction.type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: transaction.transaction.owner
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
@@ -220,7 +224,8 @@ describe('Transaction routes', () => {
           type: transaction.transaction.type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: transaction.transaction.owner
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
@@ -249,7 +254,8 @@ describe('Transaction routes', () => {
           type: transaction.transaction.type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: transaction.transaction.owner
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)

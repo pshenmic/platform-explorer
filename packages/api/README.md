@@ -412,7 +412,8 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
     type: 0,
     gasUsed: 1337000,
     status: "SUCCESS",
-    error: null
+    error: null,
+    owner: "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs"
 }
 ```
 
@@ -450,7 +451,8 @@ GET /transactions?=1&limit=10&order=asc
         type: 0,
         gasUsed: 1337000,
         status: "SUCCESS",
-        error: null
+        error: null,
+        owner: "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs"
     }, ...
     ]
 }
