@@ -1,0 +1,43 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as withdrawals;
+@import '../../../styles/variables.scss';
+
+.WithdrawalsListItem {
+  @include mixins.DefListItem;
+  flex-wrap: wrap;
+  
+  &:hover {
+    cursor: default;
+  }
+
+  &__Content {
+    @include withdrawals.Columns();
+  }
+
+  &__Column {
+    @include withdrawals.Column();
+    font-size: 0.688rem;
+
+    &--Timestamp {
+      font-size: 0.688rem;
+    }
+
+    &--TxHash {
+      .Identifier {
+        font-size: 0.688rem;
+      }
+    }
+
+    &--Address {
+      .Identifier {
+        font-size: 0.688rem;
+      }
+      
+      a {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+      }
+    }
+  }
+}

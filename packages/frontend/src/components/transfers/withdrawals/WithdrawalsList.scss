@@ -1,0 +1,26 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as withdrawals;
+@import '../../../styles/variables.scss';
+
+.WithdrawalsList {
+  container-type: inline-size;
+  
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include withdrawals.Columns();
+  }
+
+  &__ColumnTitle {
+    @include withdrawals.Column();
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  &__Column {
+    &--Address {
+ 
+    }
+  }
+}

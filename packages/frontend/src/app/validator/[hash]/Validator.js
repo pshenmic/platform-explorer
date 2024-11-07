@@ -17,6 +17,7 @@ import { ValidatorCard } from '../../../components/validators'
 import { CircleIcon } from '../../../components/ui/icons'
 import { RateTooltip } from '../../../components/ui/Tooltips'
 import { networks } from '../../../constants/networks'
+import { WithdrawalsList } from '../../../components/transfers'
 import './ValidatorPage.scss'
 import {
   Badge,
@@ -428,7 +429,7 @@ function Validator ({ hash }) {
               <TabList>
                 <Tab>Proposed Blocks</Tab>
                 <Tab>Transactions</Tab>
-                <Tab isDisabled>Withdrawals</Tab>
+                <Tab>Withdrawals</Tab>
               </TabList>
               <TabPanels style={{
                 display: 'flex',
@@ -482,10 +483,25 @@ function Validator ({ hash }) {
                 </TabPanel>
                 <TabPanel className={'ValidatorPage__ListContainer'}>
                   {!withdrawals.error
-                    ? !withdrawals.loading
-                        ? <></>
-                        : <LoadingList itemsCount={pageSize}/>
-                    : <ErrorMessageBlock/>}
+                    ? <div className={'ValidatorPage__List'}>
+                        {!withdrawals.loading
+                          ? <WithdrawalsList withdrawals={withdrawals?.data?.resultSet} headerStyles={'light'}/>
+                          : <LoadingList itemsCount={pageSize}/>
+                        }
+                      </div>
+                    : <ErrorMessageBlock/>
+                  }
+
+                  {withdrawals.data?.resultSet &&
+                    <div className={'ValidatorPage__ListPagination'}>
+                      <Pagination
+                        onPageChange={pagination => paginationHandler(setWithdrawals, pagination.selected)}
+                        pageCount={Math.ceil(withdrawals.data?.pagination?.total / pageSize) || 1}
+                        forcePage={currentPage}
+                        pageRangeDisplayed={0}
+                      />
+                    </div>
+                  }
                 </TabPanel>
               </TabPanels>
             </Tabs>
