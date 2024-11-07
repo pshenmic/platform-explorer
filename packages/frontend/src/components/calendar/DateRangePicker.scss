@@ -234,6 +234,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
 
       &--rangeStart,
       &--rangeEnd {
+        transition: border-radius .2s;
         background-color: $color-brand-normal !important;
         color: $font-color;
 
