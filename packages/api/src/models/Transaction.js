@@ -43,6 +43,6 @@ module.exports = class Transaction {
       decodedError = 'Cannot deserialize'
     }
 
-    return new Transaction(tx_hash, index, block_hash, block_height, type, data, timestamp, parseInt(gas_used), status, decodedError ?? error, owner)
+    return new Transaction(tx_hash, index, block_hash, block_height, type, data, timestamp, parseInt(gas_used), status, decodedError ?? error, owner?.trim())
   }
 }
