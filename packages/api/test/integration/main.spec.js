@@ -119,15 +119,19 @@ describe('Other routes', () => {
 
     for (let i = 0; i < 48; i++) {
       const tmpBlock = await fixtures.block(knex, {
-        timestamp: new Date(new Date().getTime() - 3600000 * i)
+        timestamp: new Date(new Date().getTime() - 3600000 * i),
+        height: i + 10
       })
+
       const transaction = await fixtures.transaction(knex, {
         block_hash: tmpBlock.hash,
         type: 0,
         owner: identity.identifier,
         gas_used: 10000
       })
+
       transactions.push(transaction.hash)
+      blocks.push(tmpBlock)
     }
   })
 
@@ -174,7 +178,10 @@ describe('Other routes', () => {
         gasUsed: dataContractTransaction.gas_used,
         status: dataContractTransaction.status,
         error: dataContractTransaction.error,
-        owner: dataContractTransaction.owner
+        owner: {
+          identifier: dataContractTransaction.owner,
+          aliases: [identityAlias.alias]
+        }
       }
 
       assert.deepEqual({ transaction: expectedTransaction }, body)
@@ -195,7 +202,7 @@ describe('Other routes', () => {
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator
         },
-        txs: transactions
+        txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
 
       assert.deepEqual({ block: expectedBlock }, body)
@@ -323,7 +330,7 @@ describe('Other routes', () => {
         api: {
           version: require('../../package.json').version,
           block: {
-            height: 10,
+            height: blocks.length - 1,
             hash: blocks[blocks.length - 1].hash,
             timestamp: blocks[blocks.length - 1].timestamp.toISOString()
           }

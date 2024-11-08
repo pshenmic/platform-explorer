@@ -63,9 +63,9 @@ module.exports = class Transaction {
       status, decodedError ?? error,
       aliases
         ? {
-            identifier: owner,
+            identifier: owner?.trim(),
             aliases
           }
-        : owner)
+        : owner?.trim())
   }
 }
