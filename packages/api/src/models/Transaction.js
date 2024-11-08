@@ -26,11 +26,24 @@ module.exports = class Transaction {
     this.gasUsed = gasUsed ?? null
     this.status = status ?? null
     this.error = error ?? null
-    this.owner = owner ? owner.trim() : null
+    this.owner = owner || null
   }
 
-  // eslint-disable-next-line camelcase
-  static fromRow ({ tx_hash, index, block_hash, block_height, type, data, timestamp, gas_used, status, error, owner }) {
+  /* eslint-disable camelcase */
+  static fromRow ({
+    tx_hash,
+    index,
+    block_hash,
+    block_height,
+    type,
+    data,
+    timestamp,
+    gas_used,
+    status,
+    error,
+    owner,
+    aliases
+  }) {
     let decodedError = null
 
     try {
@@ -43,6 +56,16 @@ module.exports = class Transaction {
       decodedError = 'Cannot deserialize'
     }
 
-    return new Transaction(tx_hash, index, block_hash, block_height, type, data, timestamp, parseInt(gas_used), status, decodedError ?? error, owner)
+    return new Transaction(
+      tx_hash, index, block_hash,
+      block_height, type, data,
+      timestamp, parseInt(gas_used),
+      status, decodedError ?? error,
+      aliases
+        ? {
+            identifier: owner,
+            aliases
+          }
+        : owner)
   }
 }

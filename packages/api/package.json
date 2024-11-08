@@ -12,7 +12,6 @@
     "lint": "standard ."
   },
   "dependencies": {
-    "@dashevo/dapi-client": "github:owl352/dapi-client",
     "@dashevo/dashd-rpc": "19.0.0",
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
@@ -24,7 +23,8 @@
     "fastify-metrics": "^11.0.0",
     "knex": "^2.5.1",
     "node-fetch": "^2.6.11",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "@dashevo/dapi-client": "github:owl352/dapi-client"
   },
   "devDependencies": {
     "standard": "^17.1.0",
