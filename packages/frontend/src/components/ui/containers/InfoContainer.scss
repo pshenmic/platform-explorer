@@ -43,50 +43,18 @@
     }
 
     .chakra-tabs__tablist {
-      padding: 0 18px !important;
+      @include mixins.InfoContainerPadding(padding-left, -8px, true);
+      @include mixins.InfoContainerPadding(padding-right, -8px, true);
       overflow-y: hidden;
       overflow-x: auto;
-    }
-
-    .chakra-tabs__tab-panels {}
-  }
-
-  @media screen and (max-width: $breakpoint-xl) {
-    &--Tabs {
-      .chakra-tabs__tablist {
-        padding: 0 24px;
-        padding-bottom: 1px;
-      }
-
-      .chakra-tabs__tab {
-        padding: 8px;
-      }
-    }
-  }
-
-  @media screen and (max-width: $breakpoint-lg) {
-    &--Tabs {
-      .chakra-tabs__tablist {
-        padding: 0 20px;
-        padding-bottom: 1px;
-      }
-    }
-  }
-
-  @media screen and (max-width: $breakpoint-md) {
-    &--Tabs {
-      .chakra-tabs__tablist {
-        padding: 0 16px;
-        padding-bottom: 1px;
-      }
     }
   }
 
   @media screen and (max-width: $breakpoint-sm) {
     &--Tabs {
       .chakra-tabs__tablist {
-        padding: 0 16px;
-        padding-bottom: 1px;
+        @include mixins.InfoContainerPadding(padding-left, -4px, true);
+        @include mixins.InfoContainerPadding(padding-right, -4px, true);
       }
 
       .chakra-tabs__tab {
