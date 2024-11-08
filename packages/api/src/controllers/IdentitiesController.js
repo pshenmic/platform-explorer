@@ -1,5 +1,8 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
+const { validateAliases } = require('../utils')
+const Identity = require('../models/Identity')
+const { base58 } = require('@scure/base')
 
 class IdentitiesController {
   constructor (knex, dapi) {
@@ -16,21 +19,54 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
+    const validatedAliases = await validateAliases(identity.aliases, identity.identifier, this.dapi)
+
     const balance = await this.dapi.getIdentityBalance(identifier)
 
-    response.send({ ...identity, balance })
+    response.send(Identity.fromObject({ ...identity, aliases: validatedAliases, balance }))
   }
 
   getIdentityByDPNS = async (request, response) => {
     const { dpns } = request.query
 
-    const identity = await this.identitiesDAO.getIdentityByDPNS(dpns)
+    let preIdentity
+    let identity
+
+    if (!dpns.includes('.')) {
+      preIdentity = await this.identitiesDAO.getIdentityByDPNS(dpns)
+
+      if (!preIdentity) {
+        return response.status(404).send({ message: 'not found' })
+      }
+    }
+
+    const [{ contestedState }] = await validateAliases(
+      [preIdentity ? preIdentity.aliases.find(v => v.includes(`${dpns}.`)) : dpns],
+      null,
+      this.dapi
+    )
+
+    if (contestedState) {
+      if (typeof contestedState.finishedVoteInfo?.wonByIdentityId === 'string') {
+        const identifier = base58.encode(Buffer.from(contestedState.finishedVoteInfo?.wonByIdentityId, 'base64'))
+
+        identity = await this.identitiesDAO.getIdentityByIdentifier(identifier)
+      }
+    }
+
+    if (!contestedState) {
+      identity = preIdentity ?? await this.identitiesDAO.getIdentityByDPNS(dpns)
+    }
 
     if (!identity) {
       return response.status(404).send({ message: 'not found' })
     }
 
     const balance = await this.dapi.getIdentityBalance(identity.identifier)
+
+    const validatedAliases = await validateAliases(identity.aliases, identity.identifier, this.dapi)
+
+    identity = Identity.fromObject({ ...identity, aliases: validatedAliases })
 
     response.send({ ...identity, balance })
   }
@@ -42,7 +78,10 @@ class IdentitiesController {
 
     const identitiesWithBalance = await Promise.all(identities.resultSet.map(async identity => {
       const balance = await this.dapi.getIdentityBalance(identity.identifier)
-      return { ...identity, balance }
+
+      const validatedAliases = await validateAliases(identity.aliases, identity.identifier, this.dapi)
+
+      return { ...identity, aliases: validatedAliases, balance }
     }))
 
     response.send({ ...identities, resultSet: identitiesWithBalance })

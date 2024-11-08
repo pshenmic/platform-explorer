@@ -39,6 +39,8 @@ describe('Other routes', () => {
       nextEpoch: 0
     }])
 
+    mock.method(DAPI.prototype, 'getContestedState', async () => null)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -229,7 +231,7 @@ describe('Other routes', () => {
       const expectedIdentity = {
         identifier: identity.identifier,
         revision: 0,
-        balance: 0,
+        balance: null,
         timestamp: block.timestamp.toISOString(),
         txHash: identityTransaction.hash,
         totalTxs: 51,
@@ -252,7 +254,7 @@ describe('Other routes', () => {
       const expectedIdentity = {
         identifier: identity.identifier,
         revision: 0,
-        balance: 0,
+        balance: null,
         timestamp: block.timestamp.toISOString(),
         txHash: identityTransaction.hash,
         totalTxs: 51,

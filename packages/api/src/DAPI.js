@@ -23,6 +23,27 @@ class DAPI {
     const { epochsInfo } = await this.dapi.platform.getEpochsInfo(start, count, { ascending })
     return epochsInfo
   }
+
+  async getContestedState (contractId,
+    documentTypeName,
+    indexName = 'parentNameAndLabel',
+    resultType = 2,
+    indexValuesList, startAtIdentifierInfo,
+    allowIncludeLockedAndAbstainingVoteTally,
+    count
+  ) {
+    const { contestedResourceContenders } = await this.dapi.platform.getContestedResourceVoteState(
+      Buffer.from(contractId, 'base64'),
+      documentTypeName,
+      indexName,
+      resultType,
+      indexValuesList,
+      startAtIdentifierInfo,
+      allowIncludeLockedAndAbstainingVoteTally,
+      count
+    )
+    return contestedResourceContenders
+  }
 }
 
 module.exports = DAPI

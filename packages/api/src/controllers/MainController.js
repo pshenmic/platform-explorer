@@ -6,6 +6,8 @@ const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
+const { validateAliases } = require('../utils')
+const { base58 } = require('@scure/base')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
@@ -115,9 +117,9 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
-        const balance = await this.dapi.getIdentityBalance(identity.identifier)
-
-        return response.send({ identity: { ...identity, balance } })
+        // Sending without actual balance and aliases, because on frontend we were making
+        // request /identity/:identifier for actual data
+        return response.send({ identity })
       }
 
       // search data contracts
@@ -136,12 +138,39 @@ class MainController {
     }
 
     if (/^[^\s.]+(\.[^\s.]+)*$/.test(query)) {
-      const identity = await this.identitiesDAO.getIdentityByDPNS(query)
+      let preIdentity
+      let identity
+
+      if (!query.includes('.')) {
+        preIdentity = await this.identitiesDAO.getIdentityByDPNS(query)
+
+        if (!preIdentity) {
+          return response.status(404).send({ message: 'not found' })
+        }
+      }
+
+      const [{ contestedState }] = await validateAliases(
+        [preIdentity ? preIdentity.aliases.find(v => v.includes(`${query}.`)) : query],
+        null,
+        this.dapi
+      )
+
+      if (contestedState) {
+        if (typeof contestedState.finishedVoteInfo?.wonByIdentityId === 'string') {
+          const identifier = base58.encode(Buffer.from(contestedState.finishedVoteInfo?.wonByIdentityId, 'base64'))
+
+          identity = await this.identitiesDAO.getIdentityByIdentifier(identifier)
+        }
+      }
+
+      if (!contestedState) {
+        identity = preIdentity ?? await this.identitiesDAO.getIdentityByDPNS(query)
+      }
 
       if (identity) {
-        const balance = await this.dapi.getIdentityBalance(identity.identifier)
-
-        return response.send({ identity: { ...identity, balance } })
+        // Sending without actual balance and aliases, because on frontend we were making
+        // request /identity/:identifier for actual data
+        return response.send({ identity })
       }
     }
 
