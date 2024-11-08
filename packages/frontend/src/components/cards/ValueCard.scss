@@ -10,7 +10,9 @@
   align-items: center;
   transition: all $transition-time-def;
 
-  &--Loading {}
+  &--Loading {
+    @include mixins.LoadingLine();
+  }
 
   &--Clickable {
     @media (hover: hover) and (pointer: fine) {
