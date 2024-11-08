@@ -380,7 +380,10 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
     gasUsed: 1337000,
     status: "SUCCESS",
     error: null,
-    owner: "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs"
+    owner: {
+      identifier: "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+      aliases: []
+    }
 }
 ```
 
@@ -419,7 +422,10 @@ GET /transactions?=1&limit=10&order=asc
         gasUsed: 1337000,
         status: "SUCCESS",
         error: null,
-        owner: "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs"
+        owner: {
+          identifier: "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+          aliases: []
+        }
     }, ...
     ]
 }
