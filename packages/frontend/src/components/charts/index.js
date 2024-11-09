@@ -5,6 +5,7 @@ import './charts.scss'
 import { Container } from '@chakra-ui/react'
 import theme from '../../styles/theme'
 import TimeframeMenu from './TimeframeMenu'
+import TimeframeSelector from './TimeframeSelector'
 
 function getDatesTicks (dates, numTicks) {
   if (!dates.length) return []
@@ -28,19 +29,32 @@ const LineChart = ({
   data,
   timespan,
   xAxis = { title: '', type: { axis: 'number' } },
-  yAxis = { title: '', type: { axis: 'number' } }
+  yAxis = { title: '', type: { axis: 'number' } },
+  width,
+  height,
+  dataLoading
 }) => {
   const chartContainer = useRef()
   const [chartElement, setChartElement] = useState(null)
   const [loading, setLoading] = useState(true)
   const [skeleton, setSkeleton] = useState(true)
+  const previousDataRef = useRef(data)
 
   const render = useCallback(() => {
     if (loading || !chartContainer.current) return
     setLoading(true)
     setSkeleton(true)
     setChartElement(null)
-  }, [loading, chartContainer.current])
+  }, [loading, chartContainer])
+
+  useEffect(() => {
+    if (JSON.stringify(previousDataRef.current) !== JSON.stringify(data)) {
+      previousDataRef.current = data
+      render()
+    }
+  }, [data, render])
+
+  useResizeObserver(chartContainer.current, render)
 
   useEffect(() => {
     if (!data?.length) {
@@ -51,7 +65,7 @@ const LineChart = ({
 
     if (chartElement) {
       setLoading(false)
-      setTimeout(() => setSkeleton(false), 1000)
+      setSkeleton(false)
       return
     }
 
@@ -65,18 +79,14 @@ const LineChart = ({
     />)
   }, [chartElement, data, timespan, xAxis, yAxis])
 
-  useResizeObserver(chartContainer.current, render)
-
-  useEffect(() => render, [data, render])
-
   return (
     <Container
       ref={chartContainer}
-      width={'100%'}
-      height={'100%'}
+      width={width || '100%'}
+      height={height || '100%'}
       maxW={'none'}
       p={0} m={0}
-      className={`ChartContainer ${skeleton ? 'loading' : ''}`}
+      className={`ChartContainer ${(skeleton || dataLoading) ? 'loading' : ''}`}
     >
       {chartElement || <></>}
     </Container>
@@ -124,11 +134,11 @@ const LineGraph = ({
     if (xAxisFormatCode === 'number') return isSmallScreen ? 4 : 6
     if (xAxisFormatCode === 'time') return isSmallScreen ? 4 : 6
     if (xAxisFormatCode === 'date' || xAxisFormatCode === 'datetime') {
-      if (typeof timespan === 'undefined') return isSmallScreen ? 4 : 6
       if (timespan === '1w') return isSmallScreen ? 4 : 6
       if (timespan === '3d') return isSmallScreen ? 3 : 4
       if (timespan === '24h') return isSmallScreen ? 4 : 6
       if (timespan === '1h') return isSmallScreen ? 4 : 6
+      return isSmallScreen ? 4 : 6
     }
 
     return 6
@@ -440,5 +450,6 @@ const LineGraph = ({
 
 export {
   LineChart,
-  TimeframeMenu
+  TimeframeMenu,
+  TimeframeSelector
 }

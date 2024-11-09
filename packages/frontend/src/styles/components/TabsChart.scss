@@ -1,0 +1,43 @@
+.TabsChart {
+  height: 100%;
+  transition: all .2s;
+
+  &__ChartContiner {
+    height: 100%;
+    visibility: visible;
+    opacity: 1;
+    transition: all .2s;
+
+    &--Hidden {
+      visibility: hidden;
+      opacity: 0;
+      transition-delay: 0s;
+    }
+  }
+
+  .TimeframeSelector {
+    &__Button {
+      top: -36px;
+      right: 10px;
+    }
+  
+    @media screen and (max-width: 555px) {
+      &__Button {
+        top: 10px;
+        right: 12px;
+        z-index: 11;
+        width: 100px;
+        min-width: max-content;
+        transition: width .2s;
+  
+        &--Active {
+          width: calc(100% - 24px);
+        }
+      }
+
+      .TimeframeMenu {
+        padding-top: 36px !important;
+      }
+    }
+  }
+}

@@ -6,7 +6,7 @@
   
   > p {
     font-weight: 400;
-    font-size: 12px;
+    font-size: 0.75rem;
     color: var(--chakra-colors-gray-250);
 
     @media screen and (max-width: 72.5rem) {
@@ -21,7 +21,7 @@
     border-radius: 10px;
     cursor: pointer;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 0.75rem;
     letter-spacing: 0.04em;
     display: flex;
     align-items: center;

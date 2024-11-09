@@ -11,6 +11,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   align-items: center;
   font-size: 0.75rem;
   font-family: $font-mono;
+  container-type: inline-size;
 
   &--NoTopNavigation {
     .react-calendar__navigation {
@@ -26,6 +27,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
 
   &__Header {
     display: flex;
+    justify-content: center;
     width: 100%;
     margin-bottom: 20px;
   }
@@ -33,6 +35,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   &--SingleCalendar & {
     &__HeaderMonth {
       width: 100%;
+      max-width: none;
     }
   }
 
@@ -42,6 +45,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
     font-family: $font-heading;
     font-size: 0.875rem;
     font-weight: 700;
+    max-width: 350px;
   }
 
   &__Calendar {
@@ -60,15 +64,13 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   }
 
   &__MonthButton, &__Arrow {
-    min-height: 40px;
     color: $font-color;
     border: 1px solid #343F44;
     border-radius: $border-radius;
     background-color: rgba(var(--chakra-colors-gray-800-rgb), .3);
     cursor: pointer;
     transition: all .1s;
-    padding: 10px;
-    margin: 5px;
+    margin: 0 4px;
 
     &:hover {
       background-color: $range-background-color;
@@ -82,6 +84,8 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
 
   &__MonthButton {
     color: var(--chakra-colors-gray-250);
+    padding: 10px 16px;
+    text-transform: uppercase;
 
     &:hover {
       color: var(--chakra-colors-gray-100);
@@ -99,12 +103,102 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   }
 
   &__Arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+
+    svg {
+      width: 8px;
+      height: 8px;
+    }
+
     &--Left {
       margin-right: auto;
+      margin-left: 0;
+  
+      svg {
+        transform: rotate(180deg);
+      }
     }
 
     &--Right {
       margin-left: auto;
+      margin-right: 0;
+    }
+  }
+
+  @container (max-width: 640px) {
+    &__MonthButton {
+      font-size: 0.625rem;
+      padding: 10px 14px;
+    }
+
+    &__Arrow {
+      width: 24px;
+    }
+  }
+
+  @container (max-width: 570px) {
+    &__MonthButton, &__Arrow {
+      border-radius: 8px;
+    }
+
+    &__MonthButton {
+      font-size: 0.5rem;
+      padding: 8px 10px;
+      margin: 0 4px;
+    }
+
+    &__Arrow {
+      width: 20px;
+
+      svg {
+        width: 4px;
+        height: 6px;
+      }
+    }
+  }
+
+  @container (max-width: 450px) {
+    &__MonthButton, &__Arrow {
+      border-radius: 6px;
+    }
+
+    &__MonthButton {
+      font-size: 0.5rem;
+      padding: 6px;
+      margin: 0 2px;
+    }
+
+    &__Arrow {
+      width: 16px;
+
+      svg {
+        width: 4px;
+        height: 6px;
+      }
+    }
+  }
+
+  @container (max-width: 400px) {
+    &__MonthButton, &__Arrow {
+      border-radius: 5px;
+    }
+
+    &__MonthButton {
+      font-size: 0.438rem;
+      padding: 5px;
+      margin: 0px 1px;
+    }
+
+    &__Arrow {
+      width: 14px;
+
+      svg {
+        width: 3px;
+        height: 5px;
+      }
     }
   }
 
@@ -141,6 +235,7 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
 
       &--rangeStart,
       &--rangeEnd {
+        transition: border-radius .2s;
         background-color: $color-brand-normal !important;
         color: $font-color;
 
@@ -223,6 +318,64 @@ $range-background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
     .react-calendar {
       &__tile {
         padding: 12px 6px;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    .react-calendar {
+      &__tile {
+        font-size: 0.7rem;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    .react-calendar {
+      &__tile {
+        font-size: 0.6rem;
+      }
+    }
+
+    &:not(&--SingleCalendar) {
+      .react-calendar {
+        &__viewContainer {
+          flex-direction: column;
+        }
+
+        &__month-view {
+          width: 100%;
+          margin-top: 34px;
+          margin-left: 0;
+          margin-right: 0;
+
+          &:first-child {
+            margin-top: 0;
+          }
+        }
+      }
+
+      .react-calendar__viewContainer {
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+
+
+    &:not(&--SingleCalendar) & {
+      &__Header {
+        flex-direction: column;
+        position: relative;
+      }
+
+      &__HeaderMonth {
+        width: 100%;
+        max-width: none;
+
+        &:nth-child(2) {
+          position: absolute;
+          top: 270px;
+        }
       }
     }
   }

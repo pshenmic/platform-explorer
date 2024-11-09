@@ -1,5 +1,5 @@
-@use '../../../styles/mixins.scss';
-@import '../../../styles/variables.scss';
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
 
 .TimeframeSelector {
   &--MenuActive & {
@@ -16,7 +16,6 @@
     position: absolute;
     z-index: 10;
     width: 100%;
-    // height: 100%;
     height: max-content;
     left: 0;
     backdrop-filter: $blockBackgroundBlur;
@@ -28,8 +27,6 @@
 
   &__Button {
     position: absolute !important;
-    top: -36px;
-    right: 10px;
     transition: all .2s;
     visibility: visible;
     opacity: 1;
@@ -38,6 +35,20 @@
     &--Active {
       background-color: #fff !important;
       color: $color-brand-normal !important;
+    }
+  }
+
+  @media screen and (max-width: 555px) {
+    &__Button {
+      font-size: 0.6rem !important;
+      height: 24px !important;
+    }
+  }
+
+  @media screen and (max-width: 350px) {
+    &__Button {
+      font-size: 0.5rem !important;
+      height: 22px !important;
     }
   }
 }

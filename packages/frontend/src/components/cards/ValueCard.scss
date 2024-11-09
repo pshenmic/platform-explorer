@@ -10,11 +10,21 @@
   align-items: center;
   transition: all $transition-time-def;
 
-  &--Loading {}
+  &--Loading {
+    @include mixins.LoadingLine();
+  }
 
   &--Clickable {
-    &:hover {
-      background-color: var(--chakra-colors-gray-800);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--chakra-colors-gray-800);
+        cursor: pointer;
+      }
+    }
+  
+    &:active {
+      transform: translateY(1px);
+      background-color: var(--chakra-colors-gray-650);
     }
   }
 }

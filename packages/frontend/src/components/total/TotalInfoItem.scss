@@ -78,7 +78,7 @@
   
   &__Title {
     color: $color-brand-normal;
-    font-size: 14px;
+    font-size: 0.875rem;
     text-transform: uppercase;
     text-align: center;
     position: relative;
@@ -109,7 +109,7 @@
   }
 
   &__Value {
-    font-size: 34px;
+    font-size: 2.125rem;
 
     &--Loading {
       @include mixins.LoadingLine;
