@@ -1,6 +1,6 @@
 @import './variables.scss';
 
-@mixin DefListItem {
+@mixin DefListItem($clickable: true) {
   display: flex;
   width: 100%;
   text-decoration: none;
@@ -15,17 +15,19 @@
   background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   transition: all .1s;
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background-color: var(--chakra-colors-gray-750);
-      text-decoration: none;
-      cursor: pointer;
+  @if $clickable {
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--chakra-colors-gray-750);
+        text-decoration: none;
+        cursor: pointer;
+      }
     }
-  }
 
-  &:active {
-    transform: translateY(1px);
-    box-shadow: 0 0px 9999px 0px rgba(0, 0, 0, .25) inset;
+    &:active {
+      transform: translateY(1px);
+      box-shadow: 0 0 9999px 0 rgba(0, 0, 0, .25) inset;
+    }
   }
 
   &:last-child {
@@ -355,8 +357,6 @@
 }
 
 @mixin TooltipElement () {
-  transition: .2s;
-
   &, .chakra-icon {
     transition: .2s;
   }

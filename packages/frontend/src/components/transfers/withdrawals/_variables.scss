@@ -1,10 +1,30 @@
 @mixin Columns () {
   display: grid;
   gap: 16px;
-  grid-template-columns: 133px 70px 78px 78px 118px 18px;
+  grid-template-columns:
+    133px
+    minmax(0, 400px)
+    minmax(0, 400px)
+    minmax(0, 400px)
+    minmax(0, 200px)
+    44px;
 
-  @container (max-width: 810px) {
-    grid-template-columns: 133px 70px 78px 78px 118px 18px;
+  @container (max-width: 700px) {
+    grid-template-columns:
+      133px
+      minmax(0, 400px)
+      minmax(0, 400px)
+      minmax(0, 400px)
+      minmax(50px, 200px)
+      44px;
+  }
+
+  @container (max-width: 430px) {
+    grid-template-columns:
+      133px
+      minmax(0, 400px)
+      minmax(0, 200px)
+      44px;
   }
 }
 
@@ -12,7 +32,15 @@
   display: flex;
   align-items: center;
 
-  &--Hash {
+  &:last-child {
+    justify-content: flex-end;
+  }
+
+  &, a {
+    overflow: hidden;
+  }
+
+  &--TxHash {
     max-width: 600px;
   }
 
@@ -26,18 +54,17 @@
     white-space: nowrap;
   }
 
-  &--GasUsed {
-    width: 150px;
-  }
-
-  @container (max-width: 810px) {
-    &--GasUsed {
-      display: none;
-    }
+  &--Amount {
+    width: 100%;
+    overflow: visible;
   }
 
   @container (max-width: 430px) {
-    &--Sender {
+    &--Document {
+      display: none;
+    }
+
+    &--TxHash {
       display: none;
     }
   }

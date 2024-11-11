@@ -3,7 +3,7 @@
 @import '../../../styles/variables.scss';
 
 .WithdrawalsListItem {
-  @include mixins.DefListItem;
+  @include mixins.DefListItem(false);
   flex-wrap: wrap;
   
   &:hover {
@@ -16,7 +16,15 @@
 
   &__Column {
     @include withdrawals.Column();
-    font-size: 0.688rem;
+
+    &, .Identifier {
+      font-size: 0.688rem;
+    }
+
+    .ValueContainer {
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
 
     &--Timestamp {
       font-size: 0.688rem;
@@ -38,6 +46,10 @@
         align-items: center;
         overflow: hidden;
       }
+    }
+
+    &--Amount {
+      font-weight: 700;
     }
   }
 }

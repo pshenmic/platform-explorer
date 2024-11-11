@@ -15,16 +15,16 @@ function WithdrawalsList ({ withdrawals = [], headerStyles = 'default' }) {
         <GridItem className={'WithdrawalsList__ColumnTitle'}>
           Timestamp
         </GridItem>
-        <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Hash'}>
+        <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--TxHash'}>
           Tx hash
         </GridItem>
-        <GridItem className={'WithdrawalsList__ColumnTitle'}>
+        <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Address'}>
           Address
         </GridItem>
-        <GridItem className={'WithdrawalsList__ColumnTitle'}>
+        <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Document'}>
           Document
         </GridItem>
-        <GridItem className={'WithdrawalsList__ColumnTitle'}>
+        <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Amount'}>
           Amount
         </GridItem>
         <GridItem className={'WithdrawalsList__ColumnTitle'}>
