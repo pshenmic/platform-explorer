@@ -135,6 +135,21 @@ module.exports = ({
       }
     },
     {
+      path: '/dataContract/:identifier/documents/:type',
+      method: 'GET',
+      handler: documentsController.getDocumentsWithTypeByDataContract,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' },
+            type: { type: 'string' },
+          }
+        },
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/document/:identifier',
       method: 'GET',
       handler: documentsController.getDocumentByIdentifier,

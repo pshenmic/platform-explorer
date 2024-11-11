@@ -22,6 +22,9 @@ const schemaTypes = [
         type: ['string', 'null'],
         enum: ['asc', 'desc']
       },
+      orderData: {
+        type: ['array', 'null'],
+      },
       orderBy: {
         type: ['string', 'null'],
         enum: ['block_height', 'documents_count', 'tx_count', 'balance']

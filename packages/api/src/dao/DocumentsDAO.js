@@ -2,7 +2,7 @@ const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 
 module.exports = class DocumentsDAO {
-  constructor (knex) {
+  constructor(knex) {
     this.knex = knex
   }
 
@@ -76,5 +76,14 @@ module.exports = class DocumentsDAO {
     }))
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
+  }
+
+  getDocumentsCountByDataContract = async (identifier) => {
+    const [{count}] = await this.knex('documents')
+      .count('*')
+      .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
+      .where('data_contracts.identifier', identifier)
+
+    return Number(count ?? 0)
   }
 }
