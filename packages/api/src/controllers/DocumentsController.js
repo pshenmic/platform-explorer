@@ -46,13 +46,6 @@ class DocumentsController {
     }
 
     const documentSchemas = JSON.parse(dataContractData.schema)
-    const documentObject = {
-      $format_version: "0",
-      documentSchemas,
-      version: dataContractData.version,
-      ownerId: dataContractData.owner,
-      id: identifier
-    }
     const documentTypes = Object.keys(documentSchemas)
 
     if (!documentTypes.includes(type)) {

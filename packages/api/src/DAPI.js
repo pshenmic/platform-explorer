@@ -24,9 +24,16 @@ class DAPI {
     return epochsInfo
   }
 
-  async getDocuments(type, dataContractObject, options) {
+  async getDocuments(type, documentSchemas, dataContractData, identifier, page, limit) {
     const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
 
+    const documentObject = {
+      $format_version: "0",
+      documentSchemas,
+      version: dataContractData.version,
+      ownerId: dataContractData.owner,
+      id: identifier
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     let startAfter
