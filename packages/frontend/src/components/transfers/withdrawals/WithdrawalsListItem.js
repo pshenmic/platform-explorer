@@ -2,9 +2,10 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import { ArrowCornerIcon } from '../../ui/icons'
 import { Identifier, Credits } from '../../data'
 import { ValueContainer } from '../../ui/containers'
+import { RateTooltip } from '../../ui/Tooltips'
 import './WithdrawalsListItem.scss'
 
-function WithdrawalsListItem ({ withdrawal }) {
+function WithdrawalsListItem ({ withdrawal, rate }) {
   console.log(withdrawal)
 
   // temp
@@ -49,7 +50,9 @@ function WithdrawalsListItem ({ withdrawal }) {
         </GridItem>
 
         <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Amount'}>
-          <Credits>{withdrawal.amount}</Credits>
+          <RateTooltip credits={withdrawal.amount} rate={rate}>
+            <span><Credits>{withdrawal.amount}</Credits></span>
+          </RateTooltip>
         </GridItem>
 
         <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Status'}>
