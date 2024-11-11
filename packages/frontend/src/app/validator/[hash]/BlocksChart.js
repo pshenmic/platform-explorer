@@ -49,7 +49,7 @@ export default function BlocksChart ({ hash, isActive }) {
   }, [timespan, customRange])
 
   const updateMenuHeight = () => {
-    if (menuIsOpen && TimeframeMenuRef.current) {
+    if (menuIsOpen && TimeframeMenuRef?.current) {
       const element = TimeframeMenuRef.current
       const height = element.getBoundingClientRect().height
       setSelectorHeight(height)
@@ -61,11 +61,6 @@ export default function BlocksChart ({ hash, isActive }) {
   useEffect(updateMenuHeight, [menuIsOpen, TimeframeMenuRef])
 
   useResizeObserver(TimeframeMenuRef, updateMenuHeight)
-
-  const handleDateChange = (start, end) => {
-    setCustomRange({ start, end })
-    setTimespan(chartConfig.timespan.values[4])
-  }
 
   if (blocksHistory.error || (!blocksHistory.loading && !blocksHistory.data?.resultSet)) {
     return (<ErrorMessageBlock/>)
@@ -80,7 +75,7 @@ export default function BlocksChart ({ hash, isActive }) {
         changeCallback={setTimespan}
         isActive={isActive}
         openStateCallback={setMenuIsOpen}
-        customRangeCallback={handleDateChange}
+        customRangeCallback={(start, end) => setCustomRange({ start, end })}
       />
       <div className={`TabsChart__ChartContiner ${menuIsOpen ? 'TabsChart__ChartContiner--Hidden' : ''}`}>
         <LineChart
