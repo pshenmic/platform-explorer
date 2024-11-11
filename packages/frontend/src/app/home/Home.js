@@ -162,7 +162,7 @@ function Home () {
             <Heading className={'InfoBlock__Title'} as={'h2'}>Transactions</Heading>
             {!transactions.loading
               ? !transactions.error
-                  ? <TransactionsList transactions={transactions.data.resultSet} showMoreLink={'/transactions'}/>
+                  ? <TransactionsList transactions={transactions.data.resultSet} showMoreLink={'/transactions'} rate={rate.data}/>
                   : <ErrorMessageBlock/>
               : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
           </Flex>

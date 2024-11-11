@@ -31,7 +31,7 @@ function TransactionsListItem ({ transaction, rate }) {
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--GasUsed'}>
             <RateTooltip
               credits={transaction.gasUsed}
-              rate={rate?.data}
+              rate={rate}
               placement={'top'}
             >
               <span><Credits>{transaction.gasUsed}</Credits> Credits</span>

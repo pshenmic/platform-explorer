@@ -15,6 +15,7 @@ import {
 
 function Block ({ hash }) {
   const [block, setBlock] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const txHashes = block.data?.txs || []
   const tdTitleWidth = 250
 
@@ -24,6 +25,10 @@ function Block ({ hash }) {
     Api.getBlockByHash(hash)
       .then(res => fetchHandlerSuccess(setBlock, res))
       .catch(err => fetchHandlerError(setBlock, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
 
   useEffect(fetchData, [hash])
@@ -117,6 +122,7 @@ function Block ({ hash }) {
               <TransactionsList
                 transactions={txHashes.map(hash => ({ hash }))}
                 type={'hashes'}
+                rate={rate.data}
               />
             </Container>
           : null}

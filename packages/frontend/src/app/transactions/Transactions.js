@@ -21,6 +21,7 @@ const paginateConfig = {
 
 function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
@@ -41,6 +42,10 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
         setTotal(res.pagination.total)
       })
       .catch(err => fetchHandlerError(setTransactions, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
 
   useEffect(() => fetchData(currentPage + 1, pageSize), [pageSize, currentPage])
@@ -76,7 +81,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
 
           {!transactions.error
             ? !transactions.loading
-                ? <TransactionsList transactions={transactions.data.resultSet}/>
+                ? <TransactionsList transactions={transactions.data.resultSet} rate={rate.data}/>
                 : <LoadingList itemsCount={pageSize}/>
             : <Container h={20}><ErrorMessageBlock/></Container>
           }
