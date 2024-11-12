@@ -2,6 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
 const { TCP_CONNECT_TIMEOUT } = require('./constants')
+const Intervals = require('./enums/IntervalsEnum')
 
 const getKnex = () => {
   return require('knex')({
@@ -138,19 +139,7 @@ const checkTcpConnect = (port, host) => {
 // and find the interval with less than 2 periods
 // and take the previous interval
 const calculateInterval = (start, end) => {
-  const intervals = {
-    PT5M: 300000,
-    PT30M: 1800000,
-    PT1H: 3600000,
-    PT2H: 7200000,
-    PT12H: 43200000,
-    P1D: 86400000,
-    P1W: 604800000,
-    P1M: 2419200000,
-    P1Y: 29030400000
-  }
-
-  const intervalsInRFC = Object.keys(intervals)
+  const intervalsInRFC = Object.keys(Intervals)
 
   const startTimestamp = start.getTime()
   const endTimestamp = end.getTime()
@@ -158,9 +147,9 @@ const calculateInterval = (start, end) => {
   const period = endTimestamp - startTimestamp
 
   return intervalsInRFC.reduce((previousValue, currentValue, currentIndex, array) => {
-    const parts = period / intervals[currentValue]
+    const parts = period / Intervals[currentValue]
 
-    if (parts <= 2 && currentIndex > 0) {
+    if (parts <= 4 && currentIndex > 0) {
       array.splice(intervalsInRFC.length)
 
       return previousValue
@@ -174,4 +163,61 @@ const calculateInterval = (start, end) => {
   }, intervalsInRFC[0])
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect, calculateInterval }
+// https://github.com/wking/milliseconds-to-iso-8601-duration
+const iso8601duration = function (milliseconds) {
+  if (milliseconds === 0) {
+    return 'P0D'
+  }
+
+  let offset = Math.floor(milliseconds)
+  let days = 0
+
+  if (offset < 0) {
+    days = Math.floor(offset % 86400000)
+    offset -= 86400000 * days
+  }
+
+  milliseconds = offset % 1000
+
+  offset = Math.floor(offset / 1000)
+
+  const seconds = offset % 60
+  offset = Math.floor(offset / 60)
+
+  const minutes = offset % 60
+  offset = Math.floor(offset / 60)
+
+  const hours = offset % 24
+
+  days += Math.floor(offset / 24)
+
+  const parts = ['P']
+
+  if (days) {
+    parts.push(days + 'D')
+  }
+
+  if (hours || minutes || seconds || milliseconds) {
+    parts.push('T')
+    if (hours) {
+      parts.push(hours + 'H')
+    }
+    if (minutes) {
+      parts.push(minutes + 'M')
+    }
+    if (seconds || milliseconds) {
+      parts.push(seconds)
+      if (milliseconds) {
+        milliseconds = milliseconds.toString()
+        while (milliseconds.length < 3) {
+          milliseconds = '0' + milliseconds
+        }
+        parts.push('.' + milliseconds)
+      }
+      parts.push('S')
+    }
+  }
+  return parts.join('')
+}
+
+module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect, calculateInterval, iso8601duration }

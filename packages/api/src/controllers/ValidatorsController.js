@@ -3,9 +3,10 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
-const { checkTcpConnect, calculateInterval } = require('../utils')
+const { checkTcpConnect, calculateInterval, iso8601duration } = require('../utils')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
+const Intervals = require('../enums/IntervalsEnum')
 
 class ValidatorsController {
   constructor (knex, dapi) {
@@ -133,16 +134,12 @@ class ValidatorsController {
     const {
       start = new Date().getTime() - 3600000,
       end = new Date().getTime(),
-      timespan = null
+      timespan = null,
+      intervalsCount = null
     } = request.query
 
-    if (timespan) {
-      const possibleValues = ['1h', '24h', '3d', '1w']
-
-      if (possibleValues.indexOf(timespan) === -1) {
-        return response.status(400)
-          .send({ message: `invalid timespan value ${timespan}. only one of '${possibleValues}' is valid` })
-      }
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
     }
 
     let timespanStart = null
@@ -155,22 +152,26 @@ class ValidatorsController {
       '1w': { offset: 604800000, step: 'PT14H' }
     }[timespan]
 
-    if (start > end) {
-      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
-    }
-
     if (timespanInterval) {
       timespanStart = new Date().getTime() - timespanInterval.offset
       timespanEnd = new Date().getTime()
     }
 
-    const interval = timespanInterval?.step ?? calculateInterval(new Date(start), new Date(end))
+    const intervalInMs =
+      Math.ceil(
+        (new Date(timespanEnd ?? end).getTime() - new Date(timespanStart ?? start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+      ) * 1000
+
+    const interval = intervalsCount
+      ? iso8601duration(intervalInMs)
+      : (timespanInterval?.step ?? calculateInterval(new Date(start), new Date(end)))
 
     const stats = await this.validatorsDAO.getValidatorStatsByProTxHash(
       hash,
       new Date(timespanStart ?? start),
       new Date(timespanEnd ?? end),
-      interval
+      interval,
+      isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
     )
 
     response.send(stats)
