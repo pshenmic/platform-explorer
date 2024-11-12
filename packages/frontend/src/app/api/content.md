@@ -343,9 +343,14 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 ```
 ---
 ### Validator stats by ProTxHash
-Return a series data for the amount of proposed blocks by validator chart with variable timespan (1h, 24h, 3d, 1w)
+Return a series data for the amount of proposed blocks by validator chart with
+
+* `start` lower interval threshold in ISO string ( _optional_ )
+* `end` upper interval threshold in ISO string ( _optional_ )
+* `intervalsCount` intervals count in response ( _optional_ )
+
 ```
-GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?timespan=24h
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
 [
     {
         timestamp: "2024-06-23T13:51:44.154Z",
@@ -772,9 +777,14 @@ Response codes:
 500: Internal Server Error
 ```
 ### Transactions history
-Return a series data for the amount of transactions chart with variable timespan (1h, 24h, 3d, 1w)
+Return a series data for the amount of transactions chart
+
+* `start` lower interval threshold in ISO string ( _optional_ )
+* `end` upper interval threshold in ISO string ( _optional_ )
+* `intervalsCount` intervals count in response ( _optional_ )
+
 ```
-GET /transactions/history?timespan=1h
+GET /transactions/history?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
 [
     {
         timestamp: "2024-04-22T08:45:20.911Z",
@@ -797,7 +807,7 @@ GET /transactions/history?timespan=1h
 Response codes:
 ```
 200: OK
-400: Invalid input, check timespan value
+400: Invalid input, check start/end values
 500: Internal Server Error
 ```
 ### Rate
