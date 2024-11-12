@@ -1659,7 +1659,7 @@ describe('Validators routes', () => {
 
       const expectedStats = []
 
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 13; i++) {
         const nextPeriod = firstTimestamp - 300000 * i
         const prevPeriod = firstTimestamp - 300000 * (i - 1)
 
@@ -1715,6 +1715,43 @@ describe('Validators routes', () => {
       }
 
       assert.deepEqual(expectedStats.reverse(), body)
+    })
+
+    it('should return stats by proTxHash with custom timespan with intervalsCount', async () => {
+      const [, validator] = validators
+
+      const start = new Date()
+      const end = new Date(start.getTime() + 80600000)
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=3`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp).getTime()
+
+      const expectedStats = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - (end - start) / 3 * i
+        const prevPeriod = firstTimestamp - 26867000 * (i - 1)
+
+        const blocksCount = blocks.filter(
+          (block) => new Date(block.timestamp).getTime() <= prevPeriod &&
+            new Date(block.timestamp).getTime() >= nextPeriod &&
+            block.validator === validator.pro_tx_hash
+        ).length
+
+        expectedStats.push(
+          {
+            data: {
+              blocksCount
+            }
+          }
+        )
+      }
+
+      assert.deepEqual(expectedStats.reverse(), body.map(point => ({ data: { blocksCount: point.data.blocksCount } })))
     })
 
     it('should return error on wrong bounds', async () => {
