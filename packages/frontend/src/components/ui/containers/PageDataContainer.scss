@@ -40,7 +40,6 @@ $borderRadius: 20px;
   &__BackLink {
     position: relative;
     z-index: 2;
-    display: block;
     width: 32px;
     height: 24px;
     margin-right: 10px;
@@ -79,7 +78,6 @@ $borderRadius: 20px;
     }
 
     &__Header {
-      padding: 0 12px;
       margin-bottom: 12px;
 
       &::before {

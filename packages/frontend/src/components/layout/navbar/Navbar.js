@@ -11,6 +11,7 @@ import {
   useDisclosure,
   Stack
 } from '@chakra-ui/react'
+import Breadcrumbs from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
@@ -42,11 +43,12 @@ const NavLink = ({ children, to, isActive, className }) => {
 function Navbar () {
   const pathname = usePathname()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const displayBreadcrumbs = pathname.indexOf('/validator/') !== -1
 
   useEffect(onClose, [pathname])
 
   return (
-    <Box px={3} position={'relative'}>
+    <Box position={'relative'}>
       <div className={'NavbarStub'}></div>
       <Flex
         className={'Navbar'}
@@ -87,6 +89,7 @@ function Navbar () {
           ))}
         </Stack>
       </Box>
+      {displayBreadcrumbs && <Breadcrumbs/>}
     </Box>
   )
 }
