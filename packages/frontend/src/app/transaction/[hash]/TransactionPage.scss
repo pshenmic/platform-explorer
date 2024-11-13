@@ -1,0 +1,10 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.TransactionPage {
+  &__RawTransaction {
+    max-width: 510px;
+    overflow-wrap: break-word;
+    word-break: break-all;
+  }
+}
