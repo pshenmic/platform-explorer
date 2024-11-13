@@ -1,8 +1,8 @@
-const { describe, it, before, after, mock } = require('node:test')
+const {describe, it, before, after, mock} = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
-const { getKnex } = require('../../src/utils')
+const {getKnex} = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
@@ -36,9 +36,9 @@ describe('Transaction routes', () => {
     block = await fixtures.block(knex, {
       height: 1, timestamp: startDate
     })
-    identity = await fixtures.identity(knex, { block_hash: block.hash })
+    identity = await fixtures.identity(knex, {block_hash: block.hash})
 
-    transactions = [{ transaction: identity.transaction, block }]
+    transactions = [{transaction: identity.transaction, block}]
 
     // error tx
     const errorTx = await fixtures.transaction(knex, {
@@ -49,7 +49,7 @@ describe('Transaction routes', () => {
       error: 'Cannot deserialize',
       status: 'FAIL'
     })
-    transactions.push({ transaction: errorTx, block })
+    transactions.push({transaction: errorTx, block})
 
     for (let i = 2; i < 30; i++) {
       const block = await fixtures.block(knex, {
@@ -60,7 +60,7 @@ describe('Transaction routes', () => {
         block_hash: block.hash, data: '{}', type: StateTransitionEnum.DATA_CONTRACT_CREATE, owner: identity.identifier
       })
 
-      transactions.push({ transaction, block })
+      transactions.push({transaction, block})
     }
 
     for (let i = 30; i < 60; i++) {
@@ -77,7 +77,7 @@ describe('Transaction routes', () => {
           index: j
         })
 
-        transactions.push({ transaction, block })
+        transactions.push({transaction, block})
       }
     }
   })
@@ -90,7 +90,7 @@ describe('Transaction routes', () => {
   describe('getTransactionByHash()', async () => {
     it('should return transaction', async () => {
       const [transaction] = transactions
-      const { body } = await client.get(`/transaction/${transaction.transaction.hash}`)
+      const {body} = await client.get(`/transaction/${transaction.transaction.hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -112,7 +112,7 @@ describe('Transaction routes', () => {
 
     it('should error transaction', async () => {
       const [, transaction] = transactions
-      const { body } = await client.get(`/transaction/${transaction.transaction.hash}`)
+      const {body} = await client.get(`/transaction/${transaction.transaction.hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -141,7 +141,7 @@ describe('Transaction routes', () => {
 
   describe('getTransactions()', async () => {
     it('should return default set of transactions', async () => {
-      const { body } = await client.get('/transactions')
+      const {body} = await client.get('/transactions')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -169,7 +169,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default set of transactions desc', async () => {
-      const { body } = await client.get('/transactions?order=desc')
+      const {body} = await client.get('/transactions?order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -198,7 +198,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return be able to walk through pages desc', async () => {
-      const { body } = await client.get('/transactions?page=3&limit=3&order=desc')
+      const {body} = await client.get('/transactions?page=3&limit=3&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -227,7 +227,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return be able to walk through pages desc', async () => {
-      const { body } = await client.get('/transactions?page=3&limit=3')
+      const {body} = await client.get('/transactions?page=3&limit=3')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -258,7 +258,7 @@ describe('Transaction routes', () => {
 
   describe('getHistorySeries()', async () => {
     it('should return default series set', async () => {
-      const { body } = await client.get('/transactions/history')
+      const {body} = await client.get('/transactions/history')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -282,8 +282,8 @@ describe('Transaction routes', () => {
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
             txs: txs.length,
-            blockHeight: txs[0]?.block?.height,
-            blockHash: txs[0]?.block?.hash
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
           }
         })
       }
@@ -292,7 +292,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 2H', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}`)
+      const {body} = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -326,11 +326,11 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 24h', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}`)
+      const {body} = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 12)
+      assert.equal(body.length, 4)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -338,8 +338,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 7200000 * i
-        const prevPeriod = firstTimestamp - 7200000 * (i - 1)
+        const nextPeriod = firstTimestamp - 21600000 * i
+        const prevPeriod = firstTimestamp - 21600000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -360,11 +360,45 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 3d', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}`)
+      const {body} = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 3)
+      assert.equal(body.length, 5)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 50400000 * i
+        const prevPeriod = firstTimestamp - 50400000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            txs: txs.length,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 1w', async () => {
+      const {body} = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 7)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -392,13 +426,15 @@ describe('Transaction routes', () => {
 
       assert.deepEqual(expectedSeriesData.reverse(), body)
     })
+    it('should return series of 6 intervals timespan 3d', async () => {
+      const start = new Date(new Date().getTime())
+      const end = new Date(start.getTime() + 10800000)
 
-    it('should return default series set timespan 1w', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}`)
+      const {body} = await client.get(`/transactions/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=3`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 7)
+      assert.equal(body.length, 3)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -406,8 +442,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 86400000 * i
-        const prevPeriod = firstTimestamp - 86400000 * (i - 1)
+        const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 3) * 1000 * i
+        const prevPeriod = firstTimestamp - 3600000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&

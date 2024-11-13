@@ -149,7 +149,7 @@ const calculateInterval = (start, end) => {
   return intervalsInRFC.reduce((previousValue, currentValue, currentIndex, array) => {
     const parts = period / Intervals[currentValue]
 
-    if (parts <= 4 && currentIndex > 0) {
+    if (parts < 4 && currentIndex > 0) {
       array.splice(intervalsInRFC.length)
 
       return previousValue
@@ -160,7 +160,7 @@ const calculateInterval = (start, end) => {
     }
 
     return currentValue
-  }, intervalsInRFC[0])
+  })
 }
 
 // https://github.com/wking/milliseconds-to-iso-8601-duration
