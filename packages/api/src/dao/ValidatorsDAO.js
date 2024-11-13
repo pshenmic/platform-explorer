@@ -204,7 +204,7 @@ module.exports = class ValidatorsDAO {
   getValidatorStatsByProTxHash = async (proTxHash, start, end, interval, intervalInMs) => {
     const startSql = `'${new Date(start.getTime() + intervalInMs).toISOString()}'::timestamptz`
 
-    const endSql = `'${new Date(end.getTime() + intervalInMs).toISOString()}'::timestamptz`
+    const endSql = `'${new Date(end.getTime()).toISOString()}'::timestamptz`
 
     const ranges = this.knex
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))

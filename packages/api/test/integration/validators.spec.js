@@ -1659,7 +1659,7 @@ describe('Validators routes', () => {
 
       const expectedStats = []
 
-      for (let i = 0; i < 13; i++) {
+      for (let i = 0; i < 12; i++) {
         const nextPeriod = firstTimestamp - 300000 * i
         const prevPeriod = firstTimestamp - 300000 * (i - 1)
 
