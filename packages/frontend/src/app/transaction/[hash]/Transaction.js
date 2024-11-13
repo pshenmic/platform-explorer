@@ -1,29 +1,34 @@
 'use client'
 
+import './Transaction.scss'
 import * as Api from '../../../util/Api'
 import { useState, useEffect, useCallback } from 'react'
 import { getTransitionTypeStringById, fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import { Credits } from '../../../components/data'
+import { Credits, Endpoint, InfoLine, IpAddress, DateBlock, Identifier } from '../../../components/data'
 import { LoadingLine, LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import TransactionData from './TransactionData'
 import { CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
 import { RateTooltip } from '../../../components/ui/Tooltips'
-import './Transaction.scss'
-
+import { ValueContainer, PageDataContainer, InfoContainer } from '../../../components/ui/containers'
+import { InfoCard, ValueCard } from '../../../components/cards'
+import { HorisontalSeparator } from '../../../components/ui/separators'
 import {
   Container,
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
   Heading,
   Flex,
-  Code
+  Code, Badge
 } from '@chakra-ui/react'
+import TypeBadge from '../../../components/transactions/TypeBadge'
 
 function Transaction ({ hash }) {
   const [transaction, setTransaction] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [decodedST, setDecodedST] = useState(null)
   const tdTitleWidth = 250
+
+  console.log('transaction', transaction)
 
   const decodeTx = useCallback((tx) => {
     Api.decodeTx(tx)
@@ -51,12 +56,153 @@ function Transaction ({ hash }) {
   useEffect(fetchData, [hash, decodeTx])
 
   const StatusIcon = transaction.data?.status === 'SUCCESS'
-    ? <CheckCircleIcon color={'green.500'} ml={2}/>
-    : <WarningTwoIcon color={'red.500'} ml={2}/>
+    ? <CheckCircleIcon color={'green.default'} mr={'5px'}/>
+    : <WarningTwoIcon color={'red.default'} mr={'5px'}/>
+
+  // temp
+  if (!transaction.data?.error) transaction.data.error = 'Document Ciifrnm8gjhAcRhySwtLhfwguGZ7cetssj3ETMSMX6j3 has invalid revision Some(1). The desired revision is 1'
+  if (!transaction.data?.owner) transaction.data.owner = 'OWnErBelIBErDa1F8NJ16BV7MBgMK4b26RUSesSS31Ec'
 
   return (
-    <Container
-      maxW={'container.lg'}
+    <PageDataContainer
+      className={'TransactionsPage'}
+      backLink={'/transactions'}
+      title={'Transaction Info'}
+    >
+      <div className={'TransactionsPage__CommonInfo'}>
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Timestamp'}
+          value={(<DateBlock timestamp={transaction.data?.timestamp} showTime={true}/>)}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Hash'}
+          value={(
+            <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
+              {transaction.data?.hash}
+            </Identifier>
+          )}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Block Hash'}
+          value={(
+            <ValueCard>
+              <ValueCard>Height: {transaction.data?.blockHeight}</ValueCard>
+              <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
+                {transaction.data?.blockHash}
+              </Identifier>
+            </ValueCard>
+          )}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Index'}
+          value={transaction.data?.index}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Type'}
+          value={(<TypeBadge typeId={transaction.data?.type}/>)}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Status'}
+          value={(
+            <div className={'ValidatorPage__StatusContainer'}>
+              <Badge
+                lineHeight={'20px'}
+                colorScheme={transaction.data?.status === 'SUCCESS' ? 'green' : 'red'}
+              >
+                {StatusIcon}
+                {transaction.data?.status}
+              </Badge>
+              {transaction.data?.error &&
+                <ValueContainer className={'ValidatorPage__ErrorContainer'}>
+                  {transaction.data.error}
+                </ValueContainer>
+              }
+            </div>
+          )}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Owner'}
+          value={(
+            <ValueCard>
+              <Identifier avatar={true} copyButton={true} ellipsis={false} styles={['highlight-both']}>
+                {transaction.data?.owner}
+              </Identifier>
+            </ValueCard>
+          )}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Raw Transaction'}
+          value={''}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Gas Used'}
+          value={''}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Fee Multiplier'}
+          value={''}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+
+        <InfoLine
+          className={'ValidatorPage__InfoLine'}
+          title={'Signature'}
+          value={''}
+          loading={transaction.loading}
+          error={transaction.error}
+        />
+      </div>
+
+      <HorisontalSeparator/>
+
+      <div className={'TransactionsPage__DetailsInfo'}>
+        Details
+      </div>
+
+    </PageDataContainer>
+)
+
+return (
+  <Container
+    maxW={'container.lg'}
       p={3}
       mt={8}
     >
