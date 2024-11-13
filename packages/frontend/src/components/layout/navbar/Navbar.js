@@ -43,9 +43,10 @@ const NavLink = ({ children, to, isActive, className }) => {
 function Navbar () {
   const pathname = usePathname()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const displayBreadcrumbs = pathname.indexOf('/validator/') !== -1
+  const breadcrumbsActiveRoutes = ['/validator/']
+  const displayBreadcrumbs = breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1)
 
-  useEffect(onClose, [pathname])
+  useEffect(onClose, [pathname, onClose])
 
   return (
     <Box position={'relative'}>
