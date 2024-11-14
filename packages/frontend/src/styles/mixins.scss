@@ -312,11 +312,7 @@
 }
 
 @mixin navContainerPadding ($property) {
-  #{$property}: var(--chakra-space-8);
-
-  @media screen and (min-width: $breakpoint-md) {
-    #{$property}: var(--chakra-space-4);
-  }
+  #{$property}: var(--chakra-space-3);
 
   @media screen and (min-width: $breakpoint-lg) {
     #{$property}: var(--chakra-space-5);
