@@ -73,6 +73,8 @@ $borderRadius: 20px;
 
   @media screen and (max-width: $breakpoint-lg) {
     &__Content {
+      @include mixins.pageDataPadding(padding-top);
+      @include mixins.pageDataPadding(padding-bottom);
       border-radius: $borderRadius;
     }
 
