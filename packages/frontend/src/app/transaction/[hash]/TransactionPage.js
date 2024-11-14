@@ -8,7 +8,7 @@ import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { CreditsBlock, InfoLine, DateBlock, Identifier } from '../../../components/data'
 // import { LoadingLine, LoadingList } from '../../../components/loading'
 // import { ErrorMessageBlock } from '../../../components/Errors'
-// import TransactionData from './TransactionData'
+import TransactionData from './TransactionData'
 import { CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
 // import { RateTooltip } from '../../../components/ui/Tooltips'
 import { ValueContainer, PageDataContainer } from '../../../components/ui/containers'
@@ -66,7 +66,7 @@ function Transaction ({ hash }) {
 
   // temp
   if (!transaction.data?.error) transaction.data.error = 'Document Ciifrnm8gjhAcRhySwtLhfwguGZ7cetssj3ETMSMX6j3 has invalid revision Some(1). The desired revision is 1'
-  if (!transaction.data?.owner) transaction.data.owner = 'OWnErBelIBErDa1F8NJ16BV7MBgMK4b26RUSesSS31Ec'
+  if (!transaction.data?.owner) transaction.data.owner = '4qwHscUBwHeCJ1Q2KsMV8jpkkN68LfBxVPmCaKBKhzGK'
   if (!transaction.data?.feeMultiplier) transaction.data.feeMultiplier = '10'
   if (!transaction.data?.signature) transaction.data.signature = '19E4611A8CAF217C18BD978A5BE8D3EFA9C971C394BF8FE9C661AF86164DB517'
 
@@ -156,7 +156,7 @@ function Transaction ({ hash }) {
           className={'TransactionPage__InfoLine'}
           title={'Owner'}
           value={(
-            <ValueCard>
+            <ValueCard link={`/identity/${transaction.data?.owner}`}>
               <Identifier avatar={true} copyButton={true} ellipsis={false} styles={['highlight-both']}>
                 {transaction.data?.owner}
               </Identifier>
@@ -217,7 +217,11 @@ function Transaction ({ hash }) {
       <HorisontalSeparator/>
 
       <div className={'TransactionPage__DetailsInfo'}>
-        Details
+        <div className={'TransactionPage__DetailsInfoTitle'}>
+          Details
+        </div>
+
+        <TransactionData data={decodedST}/>
       </div>
 
     </PageDataContainer>

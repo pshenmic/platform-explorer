@@ -18,7 +18,7 @@
     margin-bottom: 14px;
     justify-content: flex-start;
 
-    &--RawTransaction, &--Status {
+    &--RawTransaction, &--Status, &--Transactions {
       align-items: baseline;
     }
 
@@ -34,6 +34,10 @@
   }
 
   &__StatusContainer {}
+
+  .HorisontalSeparator {
+    margin: 14px 0;
+  }
 
   &__Signature {
     background: transparent;
@@ -66,6 +70,14 @@
 
   &__DetailsInfo {
 
+  }
+
+  &__DetailsInfoTitle {
+    font-family: $font-heading;
+    font-size: 0.75rem;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    font-weight: 700;
   }
 
   &__RawTransaction {
