@@ -262,6 +262,7 @@ export const theme = extendTheme({
           textTransform: 'none',
           display: 'inline-flex',
           alignItems: 'center',
+          lineHeight: '20px',
           bg: backgroundColors[colorScheme] || 'gray.500',
           color: textColor[colorScheme] || 'white'
         }
