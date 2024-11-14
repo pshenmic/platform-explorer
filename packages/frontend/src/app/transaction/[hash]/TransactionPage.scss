@@ -124,8 +124,8 @@
         .Identifier {
           flex-grow: 1;
 
-          .CopyButton {
-            margin-left: auto;
+          .Identifier__SymbolsContainer {
+            flex-grow: 1;
           }
         }
       }
