@@ -32,7 +32,7 @@
   &__Signature {
     background: transparent;
     overflow-wrap: break-word;
-    word-break: break-all;
+    word-break: break-word;
   }
 
   &__ErrorContainer {
@@ -42,7 +42,7 @@
     .ValueContainer__Value {
       overflow: hidden;
       overflow-wrap: break-word;
-      word-break: break-all;
+      word-break: break-word;
     }
   }
 
@@ -66,7 +66,7 @@
     align-items: flex-start;
     max-width: 510px;
     overflow-wrap: break-word;
-    word-break: break-all;
+    word-break: break-word;
 
     .CopyButton {
       margin-left: 12px;
