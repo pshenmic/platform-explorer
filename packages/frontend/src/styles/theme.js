@@ -64,7 +64,9 @@ export const theme = extendTheme({
     },
     green: {
       default: '#1CC400',
-      label: '#81F458'
+      label: '#81F458',
+      emeralds: '#58F4BC',
+      'emeralds-rgb': '88, 244, 188'
     },
     gray: {
       50: '#f0f1f2',
