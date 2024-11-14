@@ -2,6 +2,48 @@
 @import '../../../styles/variables.scss';
 
 .TransactionPage {
+  position: relative;
+
+  &__CommonInfo {
+
+  }
+
+  &__InfoLine {
+    margin-bottom: 14px;
+    justify-content: flex-start;
+
+    &--RawTransaction {
+      align-items: baseline;
+    }
+
+    .InfoLine__Title {
+      width: 200px;
+    }
+
+    .InfoLine__Value {
+      text-align: left;
+    }
+  }
+
+  &__StatusContainer {
+
+  }
+
+  &__BlockHeight {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.625rem;
+    margin-right: 12px;
+  }
+
+  &__BlockHash {
+    //padding: 7px 10px;
+  }
+
+  &__DetailsInfo {
+
+  }
+
   &__RawTransaction {
     max-width: 510px;
     overflow-wrap: break-word;

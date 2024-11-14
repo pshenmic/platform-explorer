@@ -1,6 +1,5 @@
 'use client'
 
-import './TransactionPage.scss'
 import * as Api from '../../../util/Api'
 import { useState, useEffect, useCallback } from 'react'
 // import { getTransitionTypeStringById, fetchHandlerSuccess, fetchHandlerError } from '../../../util'
@@ -24,6 +23,7 @@ import {
   Badge
 } from '@chakra-ui/react'
 import TypeBadge from '../../../components/transactions/TypeBadge'
+import './TransactionPage.scss'
 
 function Transaction ({ hash }) {
   const [transaction, setTransaction] = useState({ data: {}, loading: true, error: false })
@@ -98,8 +98,8 @@ function Transaction ({ hash }) {
           className={'TransactionPage__InfoLine'}
           title={'Block Hash'}
           value={(
-            <ValueCard>
-              <ValueCard>Height: {transaction.data?.blockHeight}</ValueCard>
+            <ValueCard className={'TransactionPage__BlockHash'}>
+              <ValueCard className={'TransactionPage__BlockHeight'}>Height: {transaction.data?.blockHeight}</ValueCard>
               <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
                 {transaction.data?.blockHash}
               </Identifier>
@@ -163,7 +163,7 @@ function Transaction ({ hash }) {
         />
 
         <InfoLine
-          className={'TransactionPage__InfoLine'}
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--RawTransaction'}
           title={'Raw Transaction'}
           value={(
             <ValueCard className={'TransactionPage__RawTransaction'}>
