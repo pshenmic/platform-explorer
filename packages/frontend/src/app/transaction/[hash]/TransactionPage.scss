@@ -12,21 +12,28 @@
     margin-bottom: 14px;
     justify-content: flex-start;
 
-    &--RawTransaction {
+    &--RawTransaction, &--Status {
       align-items: baseline;
     }
 
     .InfoLine__Title {
       width: 200px;
+      line-height: 20px;
     }
 
     .InfoLine__Value {
       text-align: left;
+      font-size: 0.75rem;
     }
   }
 
   &__StatusContainer {
 
+  }
+
+  &__ErrorContainer {
+    margin-top: 8px;
+    font-size: 0.688rem;
   }
 
   &__BlockHeight {

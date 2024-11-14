@@ -126,7 +126,7 @@ function Transaction ({ hash }) {
         />
 
         <InfoLine
-          className={'TransactionPage__InfoLine'}
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--Status'}
           title={'Status'}
           value={(
             <div className={'TransactionPage__StatusContainer'}>
