@@ -3,10 +3,10 @@ import Link from 'next/link'
 import { ChevronLeftIcon } from '@chakra-ui/icons'
 import './PageDataContainer.scss'
 
-function PageDataContainer ({ title, backLink, children }) {
+function PageDataContainer ({ className, title, backLink, children }) {
   return (
     <Container
-      className={'PageDataContainer'}
+      className={`PageDataContainer ${className || ''}`}
       maxW={'none'}
       m={0}
       py={[4, 4, 4, 5]}
