@@ -5,7 +5,13 @@
   position: relative;
 
   &__CommonInfo {
-
+    .InfoLine--Loading .InfoLine {
+      &__Value {
+        height: 28px;
+        flex-grow: 1;
+        width: 100% !important;
+      }
+    }
   }
 
   &__InfoLine {
