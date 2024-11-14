@@ -31,6 +31,8 @@
 
   &__Signature {
     background: transparent;
+    overflow-wrap: break-word;
+    word-break: break-all;
   }
 
   &__ErrorContainer {
@@ -75,6 +77,7 @@
     &__InfoLine {
       margin-bottom: 12px;
       justify-content: space-between;
+      flex-wrap: wrap;
 
       &:not(&--Index):not(&--Type) {
         flex-direction: column;
@@ -99,6 +102,7 @@
       &--GasUsed {
         .CreditsBlock {
           display: flex;
+          flex-wrap: wrap;
 
           .CreditsBlock__Usd {
             margin-left: auto;
@@ -110,6 +114,10 @@
         .DateBlock__Delta {
           margin-left: auto;
         }
+      }
+
+      .InfoLine__Title {
+        width: auto;
       }
 
       .ValueCard {
