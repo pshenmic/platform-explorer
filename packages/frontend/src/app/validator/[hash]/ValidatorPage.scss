@@ -64,7 +64,7 @@
   }
 
   &__ListPagination {
-    margin-top: 20px;
+    @include mixins.InfoContainerPadding(margin-top);
 
     .PageItem {
       &--Previous, &--Next {
