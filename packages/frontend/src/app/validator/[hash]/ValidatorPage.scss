@@ -101,6 +101,10 @@
 
   &__InfoLine {
     margin-bottom: 14px;
+
+    .DateBlock {
+      justify-content: flex-end;
+    }
   }
 
   &__ValueContainer {

@@ -14,6 +14,7 @@ import { CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
 import { ValueContainer, PageDataContainer } from '../../../components/ui/containers'
 import { ValueCard } from '../../../components/cards'
 import { HorisontalSeparator } from '../../../components/ui/separators'
+import { CopyButton } from '../../../components/ui/Buttons'
 import {
   // Container,
   // TableContainer, Table, Thead, Tbody, Tr, Th, Td,
@@ -66,6 +67,8 @@ function Transaction ({ hash }) {
   // temp
   if (!transaction.data?.error) transaction.data.error = 'Document Ciifrnm8gjhAcRhySwtLhfwguGZ7cetssj3ETMSMX6j3 has invalid revision Some(1). The desired revision is 1'
   if (!transaction.data?.owner) transaction.data.owner = 'OWnErBelIBErDa1F8NJ16BV7MBgMK4b26RUSesSS31Ec'
+  if (!transaction.data?.feeMultiplier) transaction.data.feeMultiplier = '10'
+  if (!transaction.data?.signature) transaction.data.signature = '19E4611A8CAF217C18BD978A5BE8D3EFA9C971C394BF8FE9C661AF86164DB517'
 
   return (
     <PageDataContainer
@@ -75,7 +78,7 @@ function Transaction ({ hash }) {
     >
       <div className={'TransactionPage__CommonInfo'}>
         <InfoLine
-          className={'TransactionPage__InfoLine'}
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--Timestamp'}
           title={'Timestamp'}
           value={(<DateBlock timestamp={transaction.data?.timestamp} showTime={true}/>)}
           loading={transaction.loading}
@@ -110,7 +113,7 @@ function Transaction ({ hash }) {
         />
 
         <InfoLine
-          className={'TransactionPage__InfoLine'}
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--Index'}
           title={'Index'}
           value={transaction.data?.index}
           loading={transaction.loading}
@@ -118,7 +121,7 @@ function Transaction ({ hash }) {
         />
 
         <InfoLine
-          className={'TransactionPage__InfoLine'}
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--Type'}
           title={'Type'}
           value={(<TypeBadge typeId={transaction.data?.type}/>)}
           loading={transaction.loading}
@@ -131,6 +134,7 @@ function Transaction ({ hash }) {
           value={(
             <div className={'TransactionPage__StatusContainer'}>
               <Badge
+                className={'TransactionPage__StatusBadge'}
                 lineHeight={'20px'}
                 colorScheme={transaction.data?.status === 'SUCCESS' ? 'green' : 'red'}
               >
@@ -168,6 +172,7 @@ function Transaction ({ hash }) {
           value={(
             <ValueCard className={'TransactionPage__RawTransaction'}>
               {transaction.data?.data}
+              <CopyButton text={transaction.data?.data}/>
             </ValueCard>
           )}
           loading={transaction.loading}
@@ -175,7 +180,7 @@ function Transaction ({ hash }) {
         />
 
         <InfoLine
-          className={'TransactionPage__InfoLine'}
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--GasUsed'}
           title={'Gas Used'}
           value={(
             <CreditsBlock credits={transaction.data?.gasUsed} rate={rate}/>
@@ -187,17 +192,25 @@ function Transaction ({ hash }) {
         <InfoLine
           className={'TransactionPage__InfoLine'}
           title={'Fee Multiplier'}
-          value={transaction.data?.feeMultiplier || 'n/a'}
+          value={(
+            <div>
+              +{transaction.data?.feeMultiplier}%
+            </div>
+          )}
           loading={transaction.loading}
-          error={transaction.error}
+          error={transaction.error || !transaction.data?.feeMultiplier}
         />
 
         <InfoLine
           className={'TransactionPage__InfoLine'}
           title={'Signature'}
-          value={transaction.data?.signature || 'n/a'}
+          value={(
+            <ValueCard className={'TransactionPage__Signature'}>
+              {transaction.data?.signature}
+            </ValueCard>
+          )}
           loading={transaction.loading}
-          error={transaction.error}
+          error={transaction.error || !transaction.data?.signature}
         />
       </div>
 

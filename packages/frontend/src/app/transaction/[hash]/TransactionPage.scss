@@ -27,13 +27,21 @@
     }
   }
 
-  &__StatusContainer {
+  &__StatusContainer {}
 
+  &__Signature {
+    background: transparent;
   }
 
   &__ErrorContainer {
     margin-top: 8px;
     font-size: 0.688rem;
+
+    .ValueContainer__Value {
+      overflow: hidden;
+      overflow-wrap: break-word;
+      word-break: break-all;
+    }
   }
 
   &__BlockHeight {
@@ -41,6 +49,7 @@
     border-radius: 3px;
     font-size: 0.625rem;
     margin-right: 12px;
+    white-space: nowrap;
   }
 
   &__BlockHash {
@@ -52,8 +61,84 @@
   }
 
   &__RawTransaction {
+    align-items: flex-start;
     max-width: 510px;
     overflow-wrap: break-word;
     word-break: break-all;
+
+    .CopyButton {
+      margin-left: 12px;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__InfoLine {
+      margin-bottom: 12px;
+      justify-content: space-between;
+
+      &:not(&--Index):not(&--Type) {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+
+        .InfoLine__Title {
+          width: 100%;
+          margin-bottom: 4px;
+          margin-right: 0;
+        }
+
+        .InfoLine__Value {
+          width: 100%;
+        }
+      }
+
+      &--Status {
+        position: relative;
+      }
+
+      &--GasUsed {
+        .CreditsBlock {
+          display: flex;
+
+          .CreditsBlock__Usd {
+            margin-left: auto;
+          }
+        }
+      }
+
+      &--Timestamp {
+        .DateBlock__Delta {
+          margin-left: auto;
+        }
+      }
+
+      .ValueCard {
+        .Identifier {
+          flex-grow: 1;
+
+          .CopyButton {
+            margin-left: auto;
+          }
+        }
+      }
+    }
+
+    &__StatusBadge {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    &__ErrorContainer {
+      margin-top: 0;
+    }
+
+    &__StatusContainer {
+
+    }
+
+    &__RawTransaction {
+      max-width: none;
+    }
   }
 }
