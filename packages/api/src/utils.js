@@ -40,13 +40,15 @@ const decodeStateTransition = async (client, base64) => {
         id: documentTransition.getId().toString(),
         dataContractId: documentTransition.getDataContractId().toString(),
         action: documentTransition.getAction(),
-        revision: documentTransition.getRevision()
+        revision: documentTransition.getRevision(),
+        signature: documentTransition.toObject()
       }))
 
       break
     }
     case StateTransitionEnum.IDENTITY_CREATE: {
       decoded.identityId = stateTransition.getIdentityId().toString()
+      decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
 
       break
     }
@@ -56,6 +58,7 @@ const decodeStateTransition = async (client, base64) => {
 
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.amount = output.satoshis * 1000
+      decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
 
       break
     }
@@ -76,6 +79,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.recipientId = stateTransition.getRecipientId().toString()
       decoded.amount = stateTransition.getAmount()
+      decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
 
       break
     }
@@ -85,6 +89,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.nonce = parseInt(stateTransition.getNonce())
       decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null
       decoded.coreFeePerByte = stateTransition.getCoreFeePerByte()
+      decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
 
       break
     }
@@ -93,6 +98,8 @@ const decodeStateTransition = async (client, base64) => {
       decoded.contractId = stateTransition.getContestedDocumentResourceVotePoll().contractId.toString()
       decoded.modifiedDataIds = stateTransition.getModifiedDataIds().map(identifier => identifier.toString())
       decoded.ownerId = stateTransition.getOwnerId().toString()
+      decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
+      decoded.feeMultiplier = stateTransition.getFeeMultiplier()
 
       break
     }
