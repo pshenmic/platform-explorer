@@ -4,6 +4,7 @@ const Transaction = require('../models/Transaction')
 const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
+const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
 
 module.exports = class IdentitiesDAO {
   constructor (knex) {
@@ -277,7 +278,6 @@ module.exports = class IdentitiesDAO {
         'transfers.state_transition_hash as tx_hash',
         'state_transitions.block_hash as block_hash',
         'state_transitions.type as type'
-
       )
       .select(this.knex.raw(`rank() over (order by transfers.id ${order}) rank`))
       .whereRaw(`(transfers.sender = '${identifier}' OR transfers.recipient = '${identifier}') ${
@@ -303,5 +303,17 @@ module.exports = class IdentitiesDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     return new PaginatedResultSet(rows.map(row => Transfer.fromRow(row)), page, limit, totalCount)
+  }
+
+  getIdentityWithdrawalsHashesTimestamp = async (identifier, timestamps = []) => {
+    return this.knex('state_transitions')
+      .select('state_transitions.hash', 'blocks.timestamp as timestamp')
+      .whereIn(
+        'blocks.timestamp',
+        timestamps
+      )
+      .andWhere('owner', identifier)
+      .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
+      .leftJoin('blocks', 'block_hash', 'blocks.hash')
   }
 }

@@ -199,9 +199,8 @@ module.exports = ({
     {
       path: '/identity/:identifier/withdrawals',
       method: 'GET',
-      handler: identitiesController.getWithdrawalsByIdentity,
+      handler: identitiesController.getWithdrawalsDocumentsByIdentity,
       schema: {
-        querystring: { $ref: 'paginationOptions#' },
         params: {
           type: 'object',
           properties: {

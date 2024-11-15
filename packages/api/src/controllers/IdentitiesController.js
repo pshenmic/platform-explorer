@@ -1,9 +1,12 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
+const DataContractsDAO = require('../dao/DataContractsDAO')
+const { WITHDRAWAL_CONTRACT } = require('../constants')
 
 class IdentitiesController {
   constructor (knex, dapi) {
     this.identitiesDAO = new IdentitiesDAO(knex)
+    this.dataContractsDAO = new DataContractsDAO(knex)
     this.dapi = dapi
   }
 
@@ -97,6 +100,30 @@ class IdentitiesController {
     )
 
     response.send(withdrawals)
+  }
+
+  getWithdrawalsDocumentsByIdentity = async (request, response) => {
+    const { identifier } = request.params
+    const { startAfter, limit = 100 } = request.query
+
+    const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(WITHDRAWAL_CONTRACT)
+
+    if (!dataContract?.schema) {
+      return response.status(404).send({ message: 'withdrawal contract not found' })
+    }
+
+    const documents = await this.dapi.getDocuments('withdrawal', dataContract, identifier, startAfter, limit)
+
+    const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
+
+    const hashes = await this.identitiesDAO.getIdentityWithdrawalsHashesTimestamp(identifier, timestamps)
+
+    const documentsWithHash = documents.map(document => ({
+      ...document,
+      hash: hashes.find(hash => hash.timestamp === new Date(document.timestamp).toISOString())
+    }))
+
+    response.send(documentsWithHash)
   }
 }
 
