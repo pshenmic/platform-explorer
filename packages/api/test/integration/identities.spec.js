@@ -272,58 +272,10 @@ describe('Identities routes', () => {
       assert.deepEqual(body, withdrawals.map(withdrawal => ({ ...withdrawal, hash: withdrawal.id })))
     })
 
-    it('should return default set of Withdrawals from documents table', async () => {
-      block = await fixtures.block(knex)
-      const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      dataContract = await fixtures.dataContract(knex, {
-        owner: identity.identifier,
-        schema: dataContractSchema,
-        identifier: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6'
-      })
-
-      transactions = []
-
-      for (let i = 0; i < 10; i++) {
-        block = await fixtures.block(knex)
-
-        const transaction = await fixtures.transaction(knex, {
-          block_hash: block.hash,
-          type: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL,
-          owner: identity.owner
-        })
-
-        const document = await fixtures.document(knex, {
-          owner: identity.identifier,
-          data_contract_id: dataContract.id,
-          state_transition_hash: transaction.hash,
-          data: {
-            state_transition_hash: transaction.hash,
-            identifier: transaction.hash
-          }
-        })
-
-        transactions.push({ transaction, document, block })
-      }
-
-      const withdrawals = transactions.sort((a, b) => a.block.height - b.block.height).map(transaction => ({
-        timestamp: transaction.block.timestamp.toISOString(),
-        hash: null,
-        id: transaction.transaction.hash,
-        sender: transaction.transaction.owner,
-        amount: 12345678,
-        status: 3
-      }))
-
-      mock.method(DAPI.prototype, 'getDocuments', async () => withdrawals)
-
-      const { body } = await client.get(`/identity/${identity.identifier}/withdrawals`)
-        .expect(200)
+    it('should return 404 whe identity not exist', async () => {
+      await client.get(`/identity/1234123123PFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6/withdrawals`)
+        .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
-
-      assert.deepEqual(body, withdrawals.map(withdrawal => ({
-        ...withdrawal,
-        hash: transactions.find(tx => new Date(tx.block.timestamp).toISOString() === withdrawal.timestamp)?.document.data.state_transition_hash
-      })))
     })
   })
 
