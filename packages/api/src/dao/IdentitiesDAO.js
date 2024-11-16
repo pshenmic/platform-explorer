@@ -316,4 +316,12 @@ module.exports = class IdentitiesDAO {
       .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
   }
+
+  getDocumentsTxHashesByIdentifiers = async (idetifiers) => {
+    const rows = await this.knex('documents')
+      .select('state_transition_hash')
+      .whereIn('identifier', idetifiers)
+
+    return rows.map(row => row.state_transition_hash)
+  }
 }

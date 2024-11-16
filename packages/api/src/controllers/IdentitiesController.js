@@ -116,14 +116,21 @@ class IdentitiesController {
 
     const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
 
+    const documentsHashes = await this.identitiesDAO.getDocumentsTxHashesByIdentifiers(documents.map(document => document.id))
+
+    if (documentsHashes.length > 0) {
+      return response.send(documents.map(document => ({
+        ...document,
+        hash: documentsHashes.find(hash => document.hash === hash)
+      })))
+    }
+
     const hashes = await this.identitiesDAO.getIdentityWithdrawalsHashesTimestamp(identifier, timestamps)
 
-    const documentsWithHash = documents.map(document => ({
+    response.send(documents.map(document => ({
       ...document,
       hash: hashes.find(hash => hash.timestamp === new Date(document.timestamp).toISOString())
-    }))
-
-    response.send(documentsWithHash)
+    })))
   }
 }
 

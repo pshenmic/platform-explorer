@@ -16,6 +16,6 @@ module.exports = class Withdrawal {
   }
 
   static fromRaw (data = {}) {
-    return new Withdrawal(data.$createdAt, undefined, data.$ownerId, data.$id, data.amount, data.status)
+    return new Withdrawal(data.$createdAt, null, data.$ownerId, data.$id, data.amount, data.status)
   }
 }
