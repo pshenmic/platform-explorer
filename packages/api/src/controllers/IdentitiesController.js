@@ -88,7 +88,7 @@ class IdentitiesController {
 
   getWithdrawalsByIdentity = async (request, response) => {
     const { identifier } = request.params
-    const { startAfter, limit = 100 } = request.query
+    const { limit = 100 } = request.query
 
     const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(WITHDRAWAL_CONTRACT)
 
@@ -96,7 +96,7 @@ class IdentitiesController {
       return response.status(404).send({ message: 'withdrawal contract not found' })
     }
 
-    const documents = await this.dapi.getDocuments('withdrawal', dataContract, identifier, startAfter, limit)
+    const documents = await this.dapi.getDocuments('withdrawal', dataContract, identifier, limit)
 
     const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
 

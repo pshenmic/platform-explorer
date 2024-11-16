@@ -25,7 +25,7 @@ class DAPI {
     return epochsInfo
   }
 
-  async getDocuments (type, dataContractData, identifier, startAfter, limit) {
+  async getDocuments (type, dataContractData, identifier, limit) {
     const dataContractObject = {
       $format_version: '0',
       documentSchemas: JSON.parse(dataContractData.schema),
@@ -36,15 +36,15 @@ class DAPI {
 
     const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
 
-    const data = await this.dapi.platform.getDocuments(Identifier.from(dataContractObject.id), type, {
+    const { documents } = await this.dapi.platform.getDocuments(Identifier.from(dataContractObject.id), type, {
       limit,
-      startAfter,
+      // startAfter: Identifier.from('DJzb8nj7JTHwnvAGEGhyFc5hHLFa5Es9WFAyS4HhhNeF'),
       where: [
         ['$ownerId', '=', identifier]
       ]
     })
 
-    return data.documents.map(
+    return documents.map(
       (document) =>
         Withdrawal.fromRaw(
           this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).toJSON()
