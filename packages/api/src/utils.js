@@ -91,8 +91,11 @@ const decodeStateTransition = async (client, base64) => {
     case StateTransitionEnum.MASTERNODE_VOTE: {
       decoded.contestedResourcesVotePoll = stateTransition.getContestedDocumentResourceVotePoll().indexValues.map(buff => buff.toString('base64'))
       decoded.contractId = stateTransition.getContestedDocumentResourceVotePoll().contractId.toString()
+      decoded.indexName = stateTransition.getContestedDocumentResourceVotePoll().indexName
+      decoded.documentType = stateTransition.getContestedDocumentResourceVotePoll().documentTypeName
       decoded.modifiedDataIds = stateTransition.getModifiedDataIds().map(identifier => identifier.toString())
       decoded.ownerId = stateTransition.getOwnerId().toString()
+      decoded.signature = stateTransition.getSignature().toString('hex')
 
       break
     }
