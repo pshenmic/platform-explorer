@@ -273,7 +273,7 @@ describe('Identities routes', () => {
     })
 
     it('should return 404 whe identity not exist', async () => {
-      await client.get(`/identity/1234123123PFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6/withdrawals`)
+      await client.get('/identity/1234123123PFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6/withdrawals')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
