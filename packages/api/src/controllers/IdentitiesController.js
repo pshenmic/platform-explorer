@@ -1,5 +1,4 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
-const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const { WITHDRAWAL_CONTRACT } = require('../constants')
 
@@ -88,21 +87,6 @@ class IdentitiesController {
   }
 
   getWithdrawalsByIdentity = async (request, response) => {
-    const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc' } = request.query
-
-    const withdrawals = await this.identitiesDAO.getTransfersByIdentity(
-      identifier,
-      Number(page ?? 1),
-      Number(limit ?? 10),
-      order ?? 'asc',
-      IDENTITY_CREDIT_WITHDRAWAL
-    )
-
-    response.send(withdrawals)
-  }
-
-  getWithdrawalsDocumentsByIdentity = async (request, response) => {
     const { identifier } = request.params
     const { startAfter, limit = 100 } = request.query
 

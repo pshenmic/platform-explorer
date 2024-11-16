@@ -199,7 +199,7 @@ module.exports = ({
     {
       path: '/identity/:identifier/withdrawals',
       method: 'GET',
-      handler: identitiesController.getWithdrawalsDocumentsByIdentity,
+      handler: identitiesController.getWithdrawalsByIdentity,
       schema: {
         params: {
           type: 'object',
