@@ -882,7 +882,10 @@ describe('Identities routes', () => {
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
           error: _transaction.transaction.error,
-          owner: _transaction.transaction.owner
+          owner: {
+            identifier: _transaction.transaction.owner,
+            aliases: null
+          }
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -926,7 +929,10 @@ describe('Identities routes', () => {
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
           error: _transaction.transaction.error,
-          owner: _transaction.transaction.owner
+          owner: {
+            identifier: _transaction.transaction.owner,
+            aliases: null
+          }
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -970,7 +976,10 @@ describe('Identities routes', () => {
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
           error: _transaction.transaction.error,
-          owner: _transaction.transaction.owner
+          owner: {
+            identifier: _transaction.transaction.owner,
+            aliases: null
+          }
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -1014,7 +1023,10 @@ describe('Identities routes', () => {
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
           error: _transaction.transaction.error,
-          owner: _transaction.transaction.owner
+          owner: {
+            identifier: _transaction.transaction.owner,
+            aliases: null
+          }
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
