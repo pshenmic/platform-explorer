@@ -4,7 +4,8 @@ const Transaction = require('../models/Transaction')
 const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { validateAliases } = require('../utils')
+const { getAliasInfo } = require('../utils')
+const { base58 } = require('@scure/base')
 
 module.exports = class IdentitiesDAO {
   constructor (knex, dapi) {
@@ -74,21 +75,33 @@ module.exports = class IdentitiesDAO {
       return null
     }
 
-    const identity = Identity.fromRow({ ...row })
+    const identity = Identity.fromRow(row)
+
+    const aliases = await Promise.all(identity.aliases.map(async alias => {
+      const contested = await getAliasInfo(alias, this.dapi)
+
+      const isLocked = base58.encode(
+        Buffer.from(contested.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
+        'base64') !== identifier
+
+      return {
+        alias,
+        status: (contested.contestedState !== null && isLocked) ? 'locked' : 'ok'
+      }
+    }))
+
     return {
       ...identity,
-      aliases: await validateAliases(identity.aliases, identity.identifier, this.dapi),
+      aliases,
       balance: await this.dapi.getIdentityBalance(identity.identifier.trim())
     }
   }
 
-  getIdentityByDPNS = async (dpns) => {
-    const identifier = this.knex('identity_aliases')
-      .select('identity_identifier')
+  getIdentityByDPNSName = async (dpns) => {
+    const [identity] = await this.knex('identity_aliases')
+      .select('identity_identifier', 'alias')
       .whereRaw(`LOWER(alias) LIKE LOWER('${dpns}${dpns.includes('.') ? '' : '.%'}')`)
       .limit(1)
-
-    const identity = await this.getIdentityByIdentifier(identifier)
 
     return identity
   }
@@ -163,7 +176,18 @@ module.exports = class IdentitiesDAO {
     const resultSet = await Promise.all(rows.map(async row => {
       const balance = await this.dapi.getIdentityBalance(row.identifier.trim())
 
-      const validatedAliases = await validateAliases(row.aliases ?? [], row.identifier.trim(), this.dapi)
+      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+        const contested = await getAliasInfo(alias, this.dapi)
+
+        const isLocked = base58.encode(
+          Buffer.from(contested.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
+          'base64') !== row.identifier
+
+        return {
+          alias,
+          status: (contested.contestedState !== null && isLocked) ? 'locked' : 'ok'
+        }
+      }))
 
       return Identity.fromRow({
         ...row,
@@ -172,7 +196,7 @@ module.exports = class IdentitiesDAO {
         total_documents: parseInt(row.total_documents),
         total_txs: parseInt(row.total_txs),
         balance,
-        aliases: validatedAliases
+        aliases
       })
     }))
 

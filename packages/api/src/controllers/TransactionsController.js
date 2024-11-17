@@ -1,11 +1,11 @@
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const utils = require('../utils')
-const { calculateInterval, validateAliases } = require('../utils')
+const { calculateInterval } = require('../utils')
 
 class TransactionsController {
   constructor (client, knex, dapi) {
     this.client = client
-    this.transactionsDAO = new TransactionsDAO(knex)
+    this.transactionsDAO = new TransactionsDAO(knex, dapi)
     this.dapi = dapi
   }
 
@@ -18,17 +18,7 @@ class TransactionsController {
       return reply.status(404).send({ message: 'not found' })
     }
 
-    const validatedAliases = transaction.owner.aliases?.length > 0
-      ? await validateAliases(transaction.owner.aliases ?? [], transaction.owner?.identifier, this.dapi)
-      : []
-
-    reply.send({
-      ...transaction,
-      owner: {
-        ...transaction.owner,
-        aliases: validatedAliases
-      }
-    })
+    reply.send(transaction)
   }
 
   getTransactions = async (request, response) => {
@@ -40,19 +30,7 @@ class TransactionsController {
 
     const transactions = await this.transactionsDAO.getTransactions(Number(page ?? 1), Number(limit ?? 10), order)
 
-    const transactionsWithCorrectAliases = await Promise.all(transactions.resultSet.map(async transaction =>
-      ({
-        ...transaction,
-        owner: {
-          ...transaction.owner,
-          aliases: transaction.owner.aliases?.length > 0
-            ? await validateAliases(transaction.owner.aliases ?? [], transaction.owner?.identifier, this.dapi)
-            : []
-        }
-      })
-    ))
-
-    response.send({ ...transactions, resultSet: transactionsWithCorrectAliases })
+    response.send(transactions)
   }
 
   getTransactionHistory = async (request, response) => {

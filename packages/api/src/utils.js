@@ -2,7 +2,6 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
 const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT } = require('./constants')
-const { base58 } = require('@scure/base')
 const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 
 const getKnex = () => {
@@ -176,47 +175,44 @@ const calculateInterval = (start, end) => {
   }, intervalsInRFC[0])
 }
 
-const getLabelBuffer = (text) =>
-  Buffer.from(`${
-    Buffer.from(`12${`0${(text.length).toString(16)}`.slice(-2)
-    }`, 'hex')}${text}`
+const generateNameIndexBuffer = (name) => {
+  const lengthBuffer = Buffer.alloc(1)
+  lengthBuffer.writeUInt8(name.length.toString(16), 0)
+
+  return Buffer.concat(
+    [
+      Buffer.from('12', 'hex'),
+      lengthBuffer,
+      Buffer.from(name, 'ascii')
+    ]
   )
+}
 
-const validateAliases = async (aliases, identifier, dapi) => {
-  const aliasesWithContestedState = await Promise.all(aliases.map(async (alias) => {
-    const [label, domain] = alias.split('.')
+const getAliasInfo = async (alias, dapi) => {
+  const [label, domain] = alias.split('.')
 
-    const normalizedLabel = convertToHomographSafeChars(label ?? '')
+  const normalizedLabel = convertToHomographSafeChars(label ?? '')
 
-    if (/^[a-zA-Z01]{3,19}$/.test(normalizedLabel)) {
-      const domainBuffer = getLabelBuffer(domain)
-      const labelBuffer = getLabelBuffer(normalizedLabel)
+  if (/^[a-zA-Z01]{3,19}$/.test(normalizedLabel)) {
+    const domainBuffer = generateNameIndexBuffer(domain)
 
-      const contestedState = await dapi.getContestedState(
-        DPNS_CONTRACT,
-        'domain',
-        'parentNameAndLabel',
-        1,
-        [
-          domainBuffer,
-          labelBuffer
-        ]
-      )
+    const labelBuffer = generateNameIndexBuffer(normalizedLabel)
 
-      return { alias, contestedState }
-    }
+    const contestedState = await dapi.getContestedState(
+      DPNS_CONTRACT,
+      'domain',
+      'parentNameAndLabel',
+      1,
+      [
+        domainBuffer,
+        labelBuffer
+      ]
+    )
 
-    return { alias, contestedState: null }
-  }))
+    return { alias, contestedState }
+  }
 
-  return (identifier
-    ? aliasesWithContestedState.filter(alias => (
-      typeof alias.contestedState?.finishedVoteInfo?.wonByIdentityId === 'string'
-        ? base58.encode(Buffer.from(alias.contestedState?.finishedVoteInfo.wonByIdentityId, 'base64')) === identifier
-        : false
-    ) || alias.contestedState === null
-    ).map(v => v.alias)
-    : aliasesWithContestedState)
+  return { alias, contestedState: null }
 }
 
 module.exports = {
@@ -225,6 +221,5 @@ module.exports = {
   getKnex,
   checkTcpConnect,
   calculateInterval,
-  validateAliases,
-  getLabelBuffer
+  getAliasInfo
 }

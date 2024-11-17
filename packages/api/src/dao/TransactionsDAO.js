@@ -1,10 +1,13 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
+const { getAliasInfo } = require('../utils')
+const { base58 } = require('@scure/base')
 
 module.exports = class TransactionsDAO {
-  constructor (knex) {
+  constructor (knex, dapi) {
     this.knex = knex
+    this.dapi = dapi
   }
 
   getTransactionByHash = async (hash) => {
@@ -30,7 +33,20 @@ module.exports = class TransactionsDAO {
       return null
     }
 
-    return Transaction.fromRow(row)
+    const aliases = await Promise.all(row.aliases.map(async alias => {
+      const contested = await getAliasInfo(alias, this.dapi)
+
+      const isLocked = base58.encode(
+        Buffer.from(contested.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
+        'base64') !== row.identifier
+
+      return {
+        alias,
+        status: (contested.contestedState !== null && isLocked) ? 'locked' : 'ok'
+      }
+    }))
+
+    return Transaction.fromRow({ ...row, aliases })
   }
 
   getTransactions = async (page, limit, order) => {
@@ -60,7 +76,22 @@ module.exports = class TransactionsDAO {
       .orderBy('state_transitions.id', order)
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    const resultSet = rows.map((row) => Transaction.fromRow(row))
+    const resultSet = await Promise.all(rows.map(async (row) => {
+      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+        const contested = await getAliasInfo(alias, this.dapi)
+
+        const isLocked = base58.encode(
+          Buffer.from(contested.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
+          'base64') !== row.identifier
+
+        return {
+          alias,
+          status: (contested.contestedState !== null && isLocked) ? 'locked' : 'ok'
+        }
+      }))
+
+      return Transaction.fromRow({ ...row, aliases })
+    }))
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }

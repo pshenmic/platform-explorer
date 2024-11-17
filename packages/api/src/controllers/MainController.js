@@ -6,8 +6,6 @@ const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
-const { validateAliases } = require('../utils')
-const { base58 } = require('@scure/base')
 
 const API_VERSION = require('../../package.json').version
 const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
@@ -17,7 +15,7 @@ class MainController {
     this.blocksDAO = new BlocksDAO(knex)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
-    this.transactionsDAO = new TransactionsDAO(knex)
+    this.transactionsDAO = new TransactionsDAO(knex, dapi)
     this.identitiesDAO = new IdentitiesDAO(knex, dapi)
     this.validatorsDAO = new ValidatorsDAO(knex)
     this.dapi = dapi
@@ -135,35 +133,9 @@ class MainController {
       }
     }
 
+    // by dpns name
     if (/^[^\s.]+(\.[^\s.]+)*$/.test(query)) {
-      let preIdentity
-      let identity
-
-      if (!query.includes('.')) {
-        preIdentity = await this.identitiesDAO.getIdentityByDPNS(query)
-
-        if (!preIdentity) {
-          return response.status(404).send({ message: 'not found' })
-        }
-      }
-
-      const [{ contestedState }] = await validateAliases(
-        [preIdentity ? preIdentity.aliases.find(v => v.includes(`${query}.`)) : query],
-        null,
-        this.dapi
-      )
-
-      if (contestedState) {
-        if (typeof contestedState.finishedVoteInfo?.wonByIdentityId === 'string') {
-          const identifier = base58.encode(Buffer.from(contestedState.finishedVoteInfo?.wonByIdentityId, 'base64'))
-
-          identity = await this.identitiesDAO.getIdentityByIdentifier(identifier)
-        }
-      }
-
-      if (!contestedState) {
-        identity = preIdentity ?? await this.identitiesDAO.getIdentityByDPNS(query)
-      }
+      const identity = await this.identitiesDAO.getIdentityByDPNSName(query)
 
       if (identity) {
         return response.send({ identity })
