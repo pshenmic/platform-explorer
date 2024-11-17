@@ -17,7 +17,7 @@ const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./DAPI')
 const RateController = require('./controllers/RateController')
-const DAPIClient = require("@dashevo/dapi-client");
+const DAPIClient = require('@dashevo/dapi-client')
 const { default: loadWasmDpp } = require('dash').PlatformProtocol
 
 function errorHandler (err, req, reply) {
