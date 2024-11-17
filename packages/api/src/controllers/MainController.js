@@ -117,7 +117,7 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
-        // Sending without actual balance and aliases, because on frontend we were making
+        // Sending without balance and aliases, not available on search, use 
         // request /identity/:identifier for actual data
         return response.send({ identity })
       }
