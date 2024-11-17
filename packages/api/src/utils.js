@@ -124,7 +124,7 @@ const checkTcpConnect = (port, host) => {
 
       connection.once('timeout', async () => {
         await connection.destroy()
-        resolve('ERR_CONNECTION_TIMEOUT')
+        resolve('Connection timeout')
       })
     } catch (e) {
       console.error(e)
