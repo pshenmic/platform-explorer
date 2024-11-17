@@ -17,6 +17,7 @@ const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./DAPI')
 const RateController = require('./controllers/RateController')
+const DAPIClient = require("@dashevo/dapi-client");
 const { default: loadWasmDpp } = require('dash').PlatformProtocol
 
 function errorHandler (err, req, reply) {
@@ -53,7 +54,10 @@ module.exports = {
 
     await client.platform.initialize()
 
-    const dapiClient = client.getDAPIClient()
+    const dapiClient = new DAPIClient({
+      dapiAddresses: (process.env.DAPI_URL ?? '127.0.0.1:1443:self-signed').split(','),
+      network: process.env.NETWORK ?? 'testnet'
+    })
 
     const { dpp } = client.platform
 
