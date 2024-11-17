@@ -109,20 +109,7 @@ describe('Identities routes', () => {
 
       const expectedIdentity = {
         identifier: identity.identifier,
-        owner: identity.identifier,
-        revision: identity.revision,
-        balance: 0,
-        timestamp: block.timestamp.toISOString(),
-        txHash: identity.txHash,
-        totalTxs: 1,
-        totalTransfers: 0,
-        totalDocuments: 0,
-        totalDataContracts: 0,
-        isSystem: false,
-        aliases: [{
-          alias,
-          status: 'ok'
-        }]
+        alias
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -139,20 +126,7 @@ describe('Identities routes', () => {
 
       const expectedIdentity = {
         identifier: identity.identifier,
-        owner: identity.identifier,
-        revision: identity.revision,
-        balance: 0,
-        timestamp: block.timestamp.toISOString(),
-        txHash: identity.txHash,
-        totalTxs: 1,
-        totalTransfers: 0,
-        totalDocuments: 0,
-        totalDataContracts: 0,
-        isSystem: false,
-        aliases: [{
-          alias,
-          status: 'ok'
-        }]
+        alias
       }
 
       assert.deepEqual(body, expectedIdentity)

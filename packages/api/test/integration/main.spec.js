@@ -239,9 +239,9 @@ describe('Other routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedIdentity = {
-        identity:{
+        identity: {
           identifier: identity.identifier,
-          alias: identityAlias.alias,
+          alias: identityAlias.alias
         }
       }
 
