@@ -176,7 +176,7 @@ const calculateInterval = (start, end) => {
   }, intervalsInRFC[0])
 }
 
-const generateNameIndexBuffer = (name) => {
+const buildIndexBuffer = (name) => {
   const lengthBuffer = Buffer.alloc(1)
   lengthBuffer.writeUInt8(name.length.toString(16), 0)
 
@@ -195,9 +195,9 @@ const getAliasInfo = async (alias, dapi) => {
   const normalizedLabel = convertToHomographSafeChars(label ?? '')
 
   if (/^[a-zA-Z01]{3,19}$/.test(normalizedLabel)) {
-    const domainBuffer = generateNameIndexBuffer(domain)
+    const domainBuffer = buildIndexBuffer(domain)
 
-    const labelBuffer = generateNameIndexBuffer(normalizedLabel)
+    const labelBuffer = buildIndexBuffer(normalizedLabel)
 
     const contestedState = await dapi.getContestedState(
       Buffer.from(base58.decode(DPNS_CONTRACT)).toString('base64'),
