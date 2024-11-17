@@ -16,7 +16,6 @@ const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./DAPI')
-const DAPIClient = require('@dashevo/dapi-client')
 const RateController = require('./controllers/RateController')
 const { default: loadWasmDpp } = require('dash').PlatformProtocol
 
@@ -45,16 +44,16 @@ let dapi
 
 module.exports = {
   start: async () => {
-    client = new Dash.Client()
+    client = new Dash.Client({
+      dapiAddresses: (process.env.DAPI_URL ?? '127.0.0.1:1443:self-signed').split(','),
+      network: process.env.NETWORK ?? 'testnet'
+    })
 
     await loadWasmDpp()
 
     await client.platform.initialize()
 
-    const dapiClient = new DAPIClient({
-      dapiAddresses: (process.env.DAPI_URL ?? '127.0.0.1:1443:self-signed').split(','),
-      network: process.env.NETWORK ?? 'testnet'
-    })
+    const dapiClient = client.getDAPIClient()
 
     const { dpp } = client.platform
 
@@ -79,7 +78,7 @@ module.exports = {
     const mainController = new MainController(knex, dapi)
     const epochController = new EpochController(knex, dapi)
     const blocksController = new BlocksController(knex)
-    const transactionsController = new TransactionsController(client, knex)
+    const transactionsController = new TransactionsController(client, knex, dapi)
     const dataContractsController = new DataContractsController(knex)
     const documentsController = new DocumentsController(knex)
     const identitiesController = new IdentitiesController(knex, dapi)

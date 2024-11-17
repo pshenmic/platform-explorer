@@ -3,7 +3,7 @@ const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
 
 class IdentitiesController {
   constructor (knex, dapi) {
-    this.identitiesDAO = new IdentitiesDAO(knex)
+    this.identitiesDAO = new IdentitiesDAO(knex, dapi)
     this.dapi = dapi
   }
 
@@ -16,23 +16,19 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const balance = await this.dapi.getIdentityBalance(identifier)
-
-    response.send({ ...identity, balance })
+    response.send(identity)
   }
 
-  getIdentityByDPNS = async (request, response) => {
+  getIdentityByDPNSName = async (request, response) => {
     const { dpns } = request.query
 
-    const identity = await this.identitiesDAO.getIdentityByDPNS(dpns)
+    const identity = await this.identitiesDAO.getIdentityByDPNSName(dpns)
 
     if (!identity) {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const balance = await this.dapi.getIdentityBalance(identity.identifier)
-
-    response.send({ ...identity, balance })
+    response.send(identity)
   }
 
   getIdentities = async (request, response) => {
@@ -40,12 +36,7 @@ class IdentitiesController {
 
     const identities = await this.identitiesDAO.getIdentities(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
 
-    const identitiesWithBalance = await Promise.all(identities.resultSet.map(async identity => {
-      const balance = await this.dapi.getIdentityBalance(identity.identifier)
-      return { ...identity, balance }
-    }))
-
-    response.send({ ...identities, resultSet: identitiesWithBalance })
+    response.send(identities)
   }
 
   getTransactionsByIdentity = async (request, response) => {

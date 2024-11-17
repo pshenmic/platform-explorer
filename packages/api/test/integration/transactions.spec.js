@@ -6,6 +6,7 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const DAPI = require('../../src/DAPI')
 
 describe('Transaction routes', () => {
   let app
@@ -13,6 +14,7 @@ describe('Transaction routes', () => {
   let knex
 
   let identity
+  let identityAlias
   let block
   let transactions
 
@@ -24,6 +26,8 @@ describe('Transaction routes', () => {
         }
       }
     }))
+
+    mock.method(DAPI.prototype, 'getContestedState', async () => null)
 
     const startDate = new Date(new Date() - 1000 * 60 * 60)
 
@@ -37,6 +41,8 @@ describe('Transaction routes', () => {
       height: 1, timestamp: startDate
     })
     identity = await fixtures.identity(knex, { block_hash: block.hash })
+
+    identityAlias = await fixtures.identity_alias(knex, { alias: 'test.dash', identity })
 
     transactions = [{ transaction: identity.transaction, block }]
 
@@ -104,7 +110,14 @@ describe('Transaction routes', () => {
         type: transaction.transaction.type,
         gasUsed: transaction.transaction.gas_used,
         status: transaction.transaction.status,
-        error: transaction.transaction.error
+        error: transaction.transaction.error,
+        owner: {
+          identifier: transaction.transaction.owner,
+          aliases: [{
+            alias: identityAlias.alias,
+            status: 'ok'
+          }]
+        }
       }
 
       assert.deepEqual(expectedTransaction, body)
@@ -126,7 +139,14 @@ describe('Transaction routes', () => {
         type: transaction.transaction.type,
         gasUsed: 0,
         status: 'FAIL',
-        error: 'Cannot deserialize'
+        error: 'Cannot deserialize',
+        owner: {
+          identifier: transaction.transaction.owner,
+          aliases: [{
+            alias: identityAlias.alias,
+            status: 'ok'
+          }]
+        }
       }
 
       assert.deepEqual(expectedTransaction, body)
@@ -162,7 +182,14 @@ describe('Transaction routes', () => {
           type: transaction.transaction.type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
+          }
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
@@ -191,7 +218,14 @@ describe('Transaction routes', () => {
           type: transaction.transaction.type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
+          }
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
@@ -220,13 +254,20 @@ describe('Transaction routes', () => {
           type: transaction.transaction.type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
+          }
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
     })
 
-    it('should return be able to walk through pages desc', async () => {
+    it('should return be able to walk through pages', async () => {
       const { body } = await client.get('/transactions?page=3&limit=3')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -240,19 +281,26 @@ describe('Transaction routes', () => {
         .sort((a, b) => a.transaction.id - b.transaction.id)
         .slice(6, 9)
         .map(transaction => ({
-          blockHash: transaction.block.hash,
-          blockHeight: transaction.block.height,
-          data: '{}',
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
-          timestamp: transaction.block.timestamp.toISOString(),
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
           type: transaction.transaction.type,
+          data: '{}',
+          timestamp: transaction.block.timestamp.toISOString(),
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
+          }
         }))
 
-      assert.deepEqual(expectedTransactions, body.resultSet)
+      assert.deepEqual(body.resultSet, expectedTransactions)
     })
   })
 
