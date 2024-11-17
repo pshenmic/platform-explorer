@@ -2,6 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
 const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT } = require('./constants')
+const { base58 } = require('@scure/base')
 const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 
 const getKnex = () => {
@@ -199,7 +200,7 @@ const getAliasInfo = async (alias, dapi) => {
     const labelBuffer = generateNameIndexBuffer(normalizedLabel)
 
     const contestedState = await dapi.getContestedState(
-      DPNS_CONTRACT,
+      Buffer.from(base58.decode(DPNS_CONTRACT)).toString('base64'),
       'domain',
       'parentNameAndLabel',
       1,

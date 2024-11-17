@@ -41,7 +41,8 @@ class DAPI {
     documentTypeName,
     indexName,
     resultType,
-    indexValuesList, startAtIdentifierInfo,
+    indexValuesList,
+    startAtIdentifierInfo,
     allowIncludeLockedAndAbstainingVoteTally,
     count
   ) {

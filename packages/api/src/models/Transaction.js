@@ -61,11 +61,10 @@ module.exports = class Transaction {
       block_height, type, data,
       timestamp, parseInt(gas_used),
       status, decodedError ?? error,
-      aliases
-        ? {
-            identifier: owner?.trim(),
-            aliases
-          }
-        : owner?.trim())
+      {
+        identifier: owner?.trim(),
+        aliases: aliases ?? null
+      }
+    )
   }
 }
