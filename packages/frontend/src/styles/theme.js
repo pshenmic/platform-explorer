@@ -46,9 +46,11 @@ export const theme = extendTheme({
   colors: {
     brand: {
       normal: '#008DE4',
+      'normal-rgb': '4, 147, 235',
       deep: '#0E75B5',
       shaded: '#165278',
       light: '#2CBBFF',
+      'light-rgb': '44, 187, 255',
       pressed: '#0493EB'
     },
     white: {
@@ -61,7 +63,8 @@ export const theme = extendTheme({
       default: '#FFD205'
     },
     green: {
-      default: '#81F458'
+      default: '#1CC400',
+      label: '#81F458'
     },
     gray: {
       50: '#f0f1f2',
@@ -216,6 +219,15 @@ export const theme = extendTheme({
         },
         md: {
           fontSize: '12px'
+        }
+      },
+      variants: {
+        customGreen: {
+          bg: 'green.default',
+          color: '#fff',
+          _hover: {
+            bg: 'green.label'
+          }
         }
       }
     },

@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
-import useResizeObserver from '@react-hook/resize-observer'
+import { useState, useEffect } from 'react'
 import Calendar from 'react-calendar'
+import { ChevronIcon } from '../ui/icons'
 import 'react-calendar/dist/Calendar.css'
 import './DateRangePicker.scss'
 
@@ -9,31 +9,17 @@ const DateRangePicker = ({
   noTopNavigation,
   noWeekDay,
   changeHandler,
-  className
+  className,
+  value,
+  showSingleCalendar
 }) => {
   const today = new Date()
   const [range, setRange] = useState([null, null])
-  const [monthsToShow, setMonthsToShow] = useState(5)
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(disableFutureDates ? -monthsToShow : 0)
-  const [showSingleCalendar, setShowSingleCalendar] = useState(window.innerWidth < 600)
+  const monthsToShow = 12
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(disableFutureDates ? (showSingleCalendar ? -monthsToShow : -monthsToShow + 1) : 0)
   const [activeStartDate, setActiveStartDate] = useState(new Date(today.getFullYear(), today.getMonth() - 1, 1))
   const [displayedMonths, setDisplayedMonths] = useState([null, null])
   const [monthPairs, setMonthPairs] = useState([])
-  const calendarRef = useRef(null)
-
-  useResizeObserver(calendarRef, (entry) => {
-    const containerWidth = entry.contentRect.width
-
-    setShowSingleCalendar(window.innerWidth < 600)
-
-    if (containerWidth < 400) {
-      setMonthsToShow(4)
-    } else if (containerWidth < 500) {
-      setMonthsToShow(6)
-    } else {
-      setMonthsToShow(8)
-    }
-  })
 
   useEffect(() => {
     const generateMonthPairs = () => {
@@ -48,7 +34,7 @@ const DateRangePicker = ({
           start2: new Date(date2.getFullYear(), date2.getMonth(), 1),
           end2: new Date(date2.getFullYear(), date2.getMonth() + 1, 0),
           label: `${date1.toLocaleString('en-US', { month: 'long', year: 'numeric' })} - ${date2.toLocaleString('en-US', { month: 'long', year: 'numeric' })}`,
-          labelShort: `${date1.toLocaleString('en-US', { month: 'short' })} - ${date2.toLocaleString('en-US', { month: 'short' })}`
+          labelShort: `${date1.toLocaleString('en-US', { month: 'short' })}-${date2.toLocaleString('en-US', { month: 'short' })}`
         })
       }
       return months
@@ -65,7 +51,9 @@ const DateRangePicker = ({
     setDisplayedMonths([startMonthLabel, nextMonthLabel])
   }, [activeStartDate])
 
-  const handleSetDisplayedMonths = (start1, end2, index) => {
+  useEffect(() => setRange(value), [value])
+
+  const handleSetDisplayedMonths = (start1, end2) => {
     setDisplayedMonths([start1.toLocaleString('en-US', { month: 'long', year: 'numeric' }), end2.toLocaleString('en-US', { month: 'long', year: 'numeric' })])
     setActiveStartDate(start1)
   }
@@ -92,13 +80,10 @@ const DateRangePicker = ({
   }
 
   return (
-    <div
-      ref={calendarRef}
-      className={'DateRangePicker ' +
-        `${showSingleCalendar ? 'DateRangePicker--SingleCalendar' : ''}` +
-        `${className || ''} ` +
-        `${noTopNavigation ? 'DateRangePicker--NoTopNavigation' : ''} ` +
-        `${noWeekDay ? 'DateRangePicker--NoWeekDay' : ''} `}
+    <div className={`DateRangePicker ${className || ''}` +
+      `${showSingleCalendar ? ' DateRangePicker--SingleCalendar' : ''}` +
+      `${noTopNavigation ? ' DateRangePicker--NoTopNavigation' : ''} ` +
+      `${noWeekDay ? ' DateRangePicker--NoWeekDay' : ''} `}
     >
       <div className={'DateRangePicker__Header'}>
         <div className={'DateRangePicker__HeaderMonth'}>
@@ -125,7 +110,7 @@ const DateRangePicker = ({
 
       <div className="DateRangePicker__MonthSelector">
         <button className={'DateRangePicker__Arrow DateRangePicker__Arrow--Left'} onClick={handlePrev}>
-          &lt;
+          <ChevronIcon color={'gray.250'}/>
         </button>
 
         {monthPairs.map((pair, i) => (
@@ -138,12 +123,12 @@ const DateRangePicker = ({
             onClick={() => handleSetDisplayedMonths(pair.start1, pair.end2, i)}
             disabled={disableFutureDates && pair.start1 > today}
           >
-            {showSingleCalendar ? pair.labelShort.split(' - ')[0] : pair.labelShort}
+            {showSingleCalendar ? pair.labelShort.split('-')[0] : pair.labelShort}
           </button>
         ))}
 
         <button className={'DateRangePicker__Arrow DateRangePicker__Arrow--Right'} onClick={handleNext}>
-          &gt;
+          <ChevronIcon color={'gray.250'}/>
         </button>
       </div>
     </div>

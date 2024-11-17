@@ -9,8 +9,7 @@
         white-space: wrap;
         word-break: break-all;
         font-family: $font-mono;
-        font-size: 12pt;
-
+        font-size: 0.75rem;
         flex-grow: 1;
         text-overflow: ellipsis;
         overflow: hidden; 
@@ -19,6 +18,7 @@
 
     &__Timestamp {
         white-space: nowrap;
+        font-size: 0.75rem;
     }
 
     .DocumentsList--SizeM & {

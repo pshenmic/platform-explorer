@@ -68,6 +68,12 @@
     }
   }
 
+  &__ProTxHash {
+    .Identifier__SymbolsContainer {
+      max-width: 232px;
+    }
+  }
+
   @media screen and (max-width: $breakpoint-lg) {
     &__Header {
       .InfoLine {
