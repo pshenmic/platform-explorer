@@ -15,7 +15,7 @@ function IdentitiesListItem ({ identity }) {
         <ImageGenerator className={'IdentitiesListItem__Avatar'} username={identifier} lightness={50} saturation={50} width={28} height={28}/>
 
         {aliases?.length
-          ? <Alias className={'IdentitiesListItem__Alias'}>{aliases[0]}</Alias>
+          ? <Alias className={'IdentitiesListItem__Alias'} alias={aliases[0]?.alias}/>
           : <Identifier
               className={'IdentitiesListItem__Identifier'}
               copyButton={true}
