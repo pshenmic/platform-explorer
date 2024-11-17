@@ -70,9 +70,16 @@ module.exports = class IdentitiesDAO {
 
     const [row] = rows
 
-    const identity = Identity.fromRow({ ...row })
+    if (!row) {
+      return null
+    }
 
-    return { ...identity, aliases: await validateAliases(identity.aliases, identity.identifier, this.dapi) }
+    const identity = Identity.fromRow({ ...row })
+    return {
+      ...identity,
+      aliases: await validateAliases(identity.aliases, identity.identifier, this.dapi),
+      balance: await this.dapi.getIdentityBalance(identity.identifier.trim())
+    }
   }
 
   getIdentityByDPNS = async (dpns) => {
@@ -153,13 +160,23 @@ module.exports = class IdentitiesDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    return new PaginatedResultSet(rows.map(row => Identity.fromRow({
-      ...row,
-      owner: row.identity_owner,
-      total_data_contracts: parseInt(row.total_data_contracts),
-      total_documents: parseInt(row.total_documents),
-      total_txs: parseInt(row.total_txs)
-    })), page, limit, totalCount)
+    const resultSet = await Promise.all(rows.map(async row => {
+      const balance = await this.dapi.getIdentityBalance(row.identifier.trim())
+
+      const validatedAliases = await validateAliases(row.aliases ?? [], row.identifier.trim(), this.dapi)
+
+      return Identity.fromRow({
+        ...row,
+        owner: row.identity_owner,
+        total_data_contracts: parseInt(row.total_data_contracts),
+        total_documents: parseInt(row.total_documents),
+        total_txs: parseInt(row.total_txs),
+        balance,
+        aliases: validatedAliases
+      })
+    }))
+
+    return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }
 
   getDataContractsByIdentity = async (identifier, page, limit, order) => {

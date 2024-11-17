@@ -117,8 +117,6 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
-        // Sending without balance and aliases, not available on search, use
-        // request /identity/:identifier for actual data
         return response.send({ identity })
       }
 
@@ -168,8 +166,6 @@ class MainController {
       }
 
       if (identity) {
-        // Sending without balance and aliases, not available on search, use
-        // request /identity/:identifier for actual data
         return response.send({ identity })
       }
     }
