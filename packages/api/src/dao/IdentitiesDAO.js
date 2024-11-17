@@ -78,15 +78,15 @@ module.exports = class IdentitiesDAO {
     const identity = Identity.fromRow(row)
 
     const aliases = await Promise.all(identity.aliases.map(async alias => {
-      const contested = await getAliasInfo(alias, this.dapi)
+      const aliasInfo = await getAliasInfo(alias, this.dapi)
 
       const isLocked = base58.encode(
-        Buffer.from(contested.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
+        Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
         'base64') !== identifier
 
       return {
         alias,
-        status: (contested.contestedState !== null && isLocked) ? 'locked' : 'ok'
+        status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
       }
     }))
 
@@ -181,15 +181,15 @@ module.exports = class IdentitiesDAO {
       const balance = await this.dapi.getIdentityBalance(row.identifier.trim())
 
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const contested = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias, this.dapi)
 
         const isLocked = base58.encode(
-          Buffer.from(contested.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
+          Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
           'base64') !== row.identifier
 
         return {
           alias,
-          status: (contested.contestedState !== null && isLocked) ? 'locked' : 'ok'
+          status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
         }
       }))
 
