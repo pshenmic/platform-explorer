@@ -180,7 +180,10 @@ describe('Other routes', () => {
         error: dataContractTransaction.error,
         owner: {
           identifier: dataContractTransaction.owner,
-          aliases: [identityAlias.alias]
+          aliases: [{
+            alias: identityAlias.alias,
+            status: 'ok'
+          }]
         }
       }
 
@@ -247,7 +250,10 @@ describe('Other routes', () => {
         totalDataContracts: 1,
         isSystem: false,
         owner: identity.identifier,
-        aliases: ['dpns.dash']
+        aliases: [{
+          alias: 'dpns.dash',
+          status: 'ok'
+        }]
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
@@ -270,7 +276,10 @@ describe('Other routes', () => {
         totalDataContracts: 1,
         isSystem: false,
         owner: identity.identifier,
-        aliases: ['dpns.dash']
+        aliases: [{
+          alias: 'dpns.dash',
+          status: 'ok'
+        }]
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)

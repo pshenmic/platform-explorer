@@ -1,8 +1,8 @@
-const {describe, it, before, after, beforeEach, mock} = require('node:test')
+const { describe, it, before, after, beforeEach, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
-const {getKnex} = require('../../src/utils')
+const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
@@ -57,15 +57,15 @@ describe('Identities routes', () => {
   describe('getIdentityByIdentifier()', async () => {
     it('should return identity by identifier', async () => {
       const block = await fixtures.block(knex)
-      const identity = await fixtures.identity(knex, {block_hash: block.hash})
-      const {alias} = await fixtures.identity_alias(knex,
+      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      const { alias } = await fixtures.identity_alias(knex,
         {
           alias: 'test.dash',
           identity
         }
       )
 
-      const {body} = await client.get(`/identity/${identity.identifier}`)
+      const { body } = await client.get(`/identity/${identity.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -100,10 +100,10 @@ describe('Identities routes', () => {
   describe('getIdentityByDPNS()', async () => {
     it('should return identity by dpns', async () => {
       const block = await fixtures.block(knex)
-      const identity = await fixtures.identity(knex, {block_hash: block.hash})
-      const {alias} = await fixtures.identity_alias(knex, {alias: 'test-name.1.dash', identity})
+      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.1.dash', identity })
 
-      const {body} = await client.get('/dpns/identity?dpns=test-name.1.dash')
+      const { body } = await client.get('/dpns/identity?dpns=test-name.1.dash')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -130,10 +130,10 @@ describe('Identities routes', () => {
 
     it('should return identity by dpns with any case', async () => {
       const block = await fixtures.block(knex)
-      const identity = await fixtures.identity(knex, {block_hash: block.hash})
-      const {alias} = await fixtures.identity_alias(knex, {alias: 'test-name.2.dash', identity})
+      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.2.dash', identity })
 
-      const {body} = await client.get('/dpns/identity?dpns=TeSt-NaME.2.DAsH')
+      const { body } = await client.get('/dpns/identity?dpns=TeSt-NaME.2.DAsH')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -171,14 +171,14 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
-        identity = await fixtures.identity(knex, {block_hash: block.hash})
-        alias = await fixtures.identity_alias(knex, {alias: `#test$${i}`, identity})
-        identities.push({identity, block})
+        block = await fixtures.block(knex, { height: i + 1 })
+        identity = await fixtures.identity(knex, { block_hash: block.hash })
+        alias = await fixtures.identity_alias(knex, { alias: `#test$${i}`, identity })
+        identities.push({ identity, block })
         aliases.push(alias)
       }
 
-      const {body} = await client.get('/identities')
+      const { body } = await client.get('/identities')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -201,7 +201,7 @@ describe('Identities routes', () => {
         isSystem: false,
         aliases: [
           aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-        ].map(alias => ({alias, status: 'ok'}))
+        ].map(alias => ({ alias, status: 'ok' }))
       }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -211,14 +211,14 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
-        identity = await fixtures.identity(knex, {block_hash: block.hash})
-        alias = await fixtures.identity_alias(knex, {alias: `#test1$${i}`, identity})
-        identities.push({identity, block})
+        block = await fixtures.block(knex, { height: i + 1 })
+        identity = await fixtures.identity(knex, { block_hash: block.hash })
+        alias = await fixtures.identity_alias(knex, { alias: `#test1$${i}`, identity })
+        identities.push({ identity, block })
         aliases.push(alias)
       }
 
-      const {body} = await client.get('/identities?order=desc')
+      const { body } = await client.get('/identities?order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -243,7 +243,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({alias, status: 'ok'}))
+          ].map(alias => ({ alias, status: 'ok' }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -254,14 +254,14 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
-        identity = await fixtures.identity(knex, {block_hash: block.hash})
-        alias = await fixtures.identity_alias(knex, {alias: `#test2$${i}`, identity})
-        identities.push({identity, block})
+        block = await fixtures.block(knex, { height: i + 1 })
+        identity = await fixtures.identity(knex, { block_hash: block.hash })
+        alias = await fixtures.identity_alias(knex, { alias: `#test2$${i}`, identity })
+        identities.push({ identity, block })
         aliases.push(alias)
       }
 
-      const {body} = await client.get('/identities?page=2')
+      const { body } = await client.get('/identities?page=2')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -286,7 +286,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({alias, status: 'ok'}))
+          ].map(alias => ({ alias, status: 'ok' }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -297,14 +297,14 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
-        identity = await fixtures.identity(knex, {block_hash: block.hash})
-        alias = await fixtures.identity_alias(knex, {alias: `#test3$${i}`, identity})
-        identities.push({identity, block})
+        block = await fixtures.block(knex, { height: i + 1 })
+        identity = await fixtures.identity(knex, { block_hash: block.hash })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
+        identities.push({ identity, block })
         aliases.push(alias)
       }
 
-      const {body} = await client.get('/identities?page=2&limit=5&order=desc')
+      const { body } = await client.get('/identities?page=2&limit=5&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -330,7 +330,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({alias, status: 'ok'}))
+          ].map(alias => ({ alias, status: 'ok' }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -343,8 +343,8 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         const transactions = []
 
-        block = await fixtures.block(knex, {height: i + 1})
-        identity = await fixtures.identity(knex, {block_hash: block.hash})
+        block = await fixtures.block(knex, { height: i + 1 })
+        identity = await fixtures.identity(knex, { block_hash: block.hash })
 
         for (let j = 0; j < Math.floor(Math.random() * 50); j++) {
           const tx = await fixtures.transaction(knex, {
@@ -358,12 +358,12 @@ describe('Identities routes', () => {
 
         identity.transactions = transactions
 
-        identities.push({identity, block})
-        alias = await fixtures.identity_alias(knex, {alias: `#test3$${i}`, identity})
+        identities.push({ identity, block })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
         aliases.push(alias)
       }
 
-      const {body} = await client.get('/identities?order_by=tx_count&order=desc')
+      const { body } = await client.get('/identities?order_by=tx_count&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -389,7 +389,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({alias, status: 'ok'}))
+          ].map(alias => ({ alias, status: 'ok' }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -400,8 +400,8 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
-        identity = await fixtures.identity(knex, {block_hash: block.hash})
+        block = await fixtures.block(knex, { height: i + 1 })
+        identity = await fixtures.identity(knex, { block_hash: block.hash })
         transferTx = await fixtures.transaction(knex, {
           block_hash: block.hash,
           type: StateTransitionEnum.IDENTITY_TOP_UP,
@@ -415,15 +415,15 @@ describe('Identities routes', () => {
 
         identity.balance = transfer.amount
 
-        identities.push({identity, block, transfer})
-        alias = await fixtures.identity_alias(knex, {alias: `#test3$${i}`, identity})
+        identities.push({ identity, block, transfer })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
         aliases.push(alias)
       }
 
       mock.reset()
 
       mock.method(DAPI.prototype, 'getIdentityBalance', async (identifier) => {
-        const {identity} = identities.find(({identity}) => identity.identifier === identifier)
+        const { identity } = identities.find(({ identity }) => identity.identifier === identifier)
         return identity.balance
       })
       mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
@@ -434,7 +434,7 @@ describe('Identities routes', () => {
         }
       }))
 
-      const {body} = await client.get('/identities?order_by=balance&order=desc')
+      const { body } = await client.get('/identities?order_by=balance&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -460,7 +460,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({alias, status: 'ok'}))
+          ].map(alias => ({ alias, status: 'ok' }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -470,11 +470,11 @@ describe('Identities routes', () => {
   describe('getDataContractsByIdentity()', async () => {
     it('should return default set of data contracts by identity', async () => {
       dataContracts = []
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -484,10 +484,10 @@ describe('Identities routes', () => {
           state_transition_hash: transaction.hash,
           owner: identity.identifier
         })
-        dataContracts.push({dataContract, transaction, identity, block})
+        dataContracts.push({ dataContract, transaction, identity, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/dataContracts`)
+      const { body } = await client.get(`/identity/${identity.identifier}/dataContracts`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -512,11 +512,11 @@ describe('Identities routes', () => {
 
     it('should return default set of data contracts by identity desc', async () => {
       dataContracts = []
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -526,10 +526,10 @@ describe('Identities routes', () => {
           state_transition_hash: transaction.hash,
           owner: identity.identifier
         })
-        dataContracts.push({dataContract, transaction, identity, block})
+        dataContracts.push({ dataContract, transaction, identity, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/dataContracts?order=desc`)
+      const { body } = await client.get(`/identity/${identity.identifier}/dataContracts?order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -557,11 +557,11 @@ describe('Identities routes', () => {
 
     it('should allow walk through pages', async () => {
       dataContracts = []
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -571,10 +571,10 @@ describe('Identities routes', () => {
           state_transition_hash: transaction.hash,
           owner: identity.identifier
         })
-        dataContracts.push({dataContract, transaction, identity, block})
+        dataContracts.push({ dataContract, transaction, identity, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/dataContracts?page=2&limit=5`)
+      const { body } = await client.get(`/identity/${identity.identifier}/dataContracts?page=2&limit=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -602,11 +602,11 @@ describe('Identities routes', () => {
 
     it('should allow walk through pages desc', async () => {
       dataContracts = []
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -616,10 +616,10 @@ describe('Identities routes', () => {
           state_transition_hash: transaction.hash,
           owner: identity.identifier
         })
-        dataContracts.push({dataContract, transaction, identity, block})
+        dataContracts.push({ dataContract, transaction, identity, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/dataContracts?page=2&limit=5&order=desc`)
+      const { body } = await client.get(`/identity/${identity.identifier}/dataContracts?page=2&limit=5&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -649,11 +649,11 @@ describe('Identities routes', () => {
   describe('getDocumentsByIdentity()', async () => {
     it('should return default set of data contracts by identity', async () => {
       documents = []
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         dataContractTransaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -673,10 +673,10 @@ describe('Identities routes', () => {
           owner: identity.identifier,
           data_contract_id: dataContract.id
         })
-        documents.push({document, dataContract, transaction, identity, block})
+        documents.push({ document, dataContract, transaction, identity, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/documents`)
+      const { body } = await client.get(`/identity/${identity.identifier}/documents`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -702,11 +702,11 @@ describe('Identities routes', () => {
 
     it('should return default set of data contracts by identity dsc', async () => {
       documents = []
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         dataContractTransaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -726,10 +726,10 @@ describe('Identities routes', () => {
           owner: identity.identifier,
           data_contract_id: dataContract.id
         })
-        documents.push({document, dataContract, transaction, identity, block})
+        documents.push({ document, dataContract, transaction, identity, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/documents?order=desc`)
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -758,11 +758,11 @@ describe('Identities routes', () => {
 
     it('should be able to walk through pages', async () => {
       documents = []
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         dataContractTransaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -782,10 +782,10 @@ describe('Identities routes', () => {
           owner: identity.identifier,
           data_contract_id: dataContract.id
         })
-        documents.push({document, dataContract, transaction, identity, block})
+        documents.push({ document, dataContract, transaction, identity, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/documents?page=2&limit=3`)
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?page=2&limit=3`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -814,11 +814,11 @@ describe('Identities routes', () => {
 
     it('should be able to walk through pages desc', async () => {
       documents = []
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         dataContractTransaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -838,10 +838,10 @@ describe('Identities routes', () => {
           owner: identity.identifier,
           data_contract_id: dataContract.id
         })
-        documents.push({document, dataContract, transaction, identity, block})
+        documents.push({ document, dataContract, transaction, identity, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/documents?page=2&limit=3&order=desc`)
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?page=2&limit=3&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -871,21 +871,21 @@ describe('Identities routes', () => {
 
   describe('getTransactionsByIdentity()', async () => {
     it('should return default set of transactions by identity', async () => {
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
-      transactions = [{transaction: identity.transaction, block}]
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      transactions = [{ transaction: identity.transaction, block }]
 
       for (let i = 1; i < 30; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
           type: StateTransitionEnum.DOCUMENTS_BATCH
         })
-        transactions.push({transaction, block})
+        transactions.push({ transaction, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/transactions`)
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -915,21 +915,21 @@ describe('Identities routes', () => {
     })
 
     it('should return default set of transactions by identity desc', async () => {
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
-      transactions = [{transaction: identity.transaction, block}]
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      transactions = [{ transaction: identity.transaction, block }]
 
       for (let i = 1; i < 30; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
           type: StateTransitionEnum.DOCUMENTS_BATCH
         })
-        transactions.push({transaction, block})
+        transactions.push({ transaction, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/transactions?order=desc`)
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions?order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -959,21 +959,21 @@ describe('Identities routes', () => {
     })
 
     it('should allow walk through pages', async () => {
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
-      transactions = [{transaction: identity.transaction, block}]
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      transactions = [{ transaction: identity.transaction, block }]
 
       for (let i = 1; i < 30; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
           type: StateTransitionEnum.DOCUMENTS_BATCH
         })
-        transactions.push({transaction, block})
+        transactions.push({ transaction, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/transactions?page=2&limit=4`)
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions?page=2&limit=4`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1003,21 +1003,21 @@ describe('Identities routes', () => {
     })
 
     it('should allow walk through pages desc', async () => {
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
-      transactions = [{transaction: identity.transaction, block}]
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      transactions = [{ transaction: identity.transaction, block }]
 
       for (let i = 1; i < 30; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
           type: StateTransitionEnum.DOCUMENTS_BATCH
         })
-        transactions.push({transaction, block})
+        transactions.push({ transaction, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/transactions?page=2&limit=4&order=desc`)
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions?page=2&limit=4&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1049,12 +1049,12 @@ describe('Identities routes', () => {
 
   describe('getTransfersByIdentity()', async () => {
     it('should return default set of transfers by identity', async () => {
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
       transfers = []
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -1066,10 +1066,10 @@ describe('Identities routes', () => {
           sender: null,
           state_transition_hash: transaction.hash
         })
-        transfers.push({transfer, transaction, block})
+        transfers.push({ transfer, transaction, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/transfers`)
+      const { body } = await client.get(`/identity/${identity.identifier}/transfers`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1095,12 +1095,12 @@ describe('Identities routes', () => {
     })
 
     it('should return default set of transfers by identity desc', async () => {
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
       transfers = []
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -1112,10 +1112,10 @@ describe('Identities routes', () => {
           sender: null,
           state_transition_hash: transaction.hash
         })
-        transfers.push({transfer, transaction, block})
+        transfers.push({ transfer, transaction, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/transfers?order=desc`)
+      const { body } = await client.get(`/identity/${identity.identifier}/transfers?order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1141,12 +1141,12 @@ describe('Identities routes', () => {
     })
 
     it('should allow to walk through pages', async () => {
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
       transfers = []
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -1158,10 +1158,10 @@ describe('Identities routes', () => {
           sender: null,
           state_transition_hash: transaction.hash
         })
-        transfers.push({transfer, transaction, block})
+        transfers.push({ transfer, transaction, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/transfers?page=2&limit=7`)
+      const { body } = await client.get(`/identity/${identity.identifier}/transfers?page=2&limit=7`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1187,12 +1187,12 @@ describe('Identities routes', () => {
     })
 
     it('should allow to walk through pages desc', async () => {
-      block = await fixtures.block(knex, {height: 1})
-      identity = await fixtures.identity(knex, {block_hash: block.hash})
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
       transfers = []
 
       for (let i = 1; i < 31; i++) {
-        block = await fixtures.block(knex, {height: i + 1})
+        block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
@@ -1204,10 +1204,10 @@ describe('Identities routes', () => {
           sender: null,
           state_transition_hash: transaction.hash
         })
-        transfers.push({transfer, transaction, block})
+        transfers.push({ transfer, transaction, block })
       }
 
-      const {body} = await client.get(`/identity/${identity.identifier}/transfers?page=2&limit=7&order=desc`)
+      const { body } = await client.get(`/identity/${identity.identifier}/transfers?page=2&limit=7&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
