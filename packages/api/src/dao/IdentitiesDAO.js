@@ -103,6 +103,10 @@ module.exports = class IdentitiesDAO {
       .whereRaw(`LOWER(alias) LIKE LOWER('${dpns}${dpns.includes('.') ? '' : '.%'}')`)
       .limit(1)
 
+    if (!identity) {
+      return null
+    }
+
     return { identifier: identity.identity_identifier, alias: identity.alias }
   }
 
