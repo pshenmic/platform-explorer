@@ -113,7 +113,10 @@ describe('Transaction routes', () => {
         error: transaction.transaction.error,
         owner: {
           identifier: transaction.transaction.owner,
-          aliases: [identityAlias.alias]
+          aliases: [{
+            alias: identityAlias.alias,
+            status: 'ok'
+          }]
         }
       }
 
@@ -139,7 +142,10 @@ describe('Transaction routes', () => {
         error: 'Cannot deserialize',
         owner: {
           identifier: transaction.transaction.owner,
-          aliases: [identityAlias.alias]
+          aliases: [{
+            alias: identityAlias.alias,
+            status: 'ok'
+          }]
         }
       }
 
@@ -179,7 +185,10 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [identityAlias.alias]
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
           }
         }))
 
@@ -212,7 +221,10 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [identityAlias.alias]
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
           }
         }))
 
@@ -245,14 +257,17 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [identityAlias.alias]
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
           }
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
     })
 
-    it('should return be able to walk through pages desc', async () => {
+    it('should return be able to walk through pages', async () => {
       const { body } = await client.get('/transactions?page=3&limit=3')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -266,23 +281,26 @@ describe('Transaction routes', () => {
         .sort((a, b) => a.transaction.id - b.transaction.id)
         .slice(6, 9)
         .map(transaction => ({
-          blockHash: transaction.block.hash,
-          blockHeight: transaction.block.height,
-          data: '{}',
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
-          timestamp: transaction.block.timestamp.toISOString(),
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
           type: transaction.transaction.type,
+          data: '{}',
+          timestamp: transaction.block.timestamp.toISOString(),
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [identityAlias.alias]
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
           }
         }))
 
-      assert.deepEqual(expectedTransactions, body.resultSet)
+      assert.deepEqual(body.resultSet, expectedTransactions)
     })
   })
 
