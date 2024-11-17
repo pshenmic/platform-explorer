@@ -239,21 +239,10 @@ describe('Other routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedIdentity = {
-        identifier: identity.identifier,
-        revision: 0,
-        balance: 0,
-        timestamp: block.timestamp.toISOString(),
-        txHash: identityTransaction.hash,
-        totalTxs: 51,
-        totalTransfers: 0,
-        totalDocuments: 1,
-        totalDataContracts: 1,
-        isSystem: false,
-        owner: identity.identifier,
-        aliases: [{
-          alias: 'dpns.dash',
-          status: 'ok'
-        }]
+        identity:{
+          identifier: identity.identifier,
+          alias: identityAlias.alias,
+        }
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
