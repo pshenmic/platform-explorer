@@ -884,7 +884,7 @@ describe('Identities routes', () => {
           error: _transaction.transaction.error,
           owner: {
             identifier: _transaction.transaction.owner,
-            aliases: null
+            aliases: []
           }
         }))
 
@@ -931,7 +931,7 @@ describe('Identities routes', () => {
           error: _transaction.transaction.error,
           owner: {
             identifier: _transaction.transaction.owner,
-            aliases: null
+            aliases: []
           }
         }))
 
@@ -978,7 +978,7 @@ describe('Identities routes', () => {
           error: _transaction.transaction.error,
           owner: {
             identifier: _transaction.transaction.owner,
-            aliases: null
+            aliases: []
           }
         }))
 
@@ -1025,7 +1025,7 @@ describe('Identities routes', () => {
           error: _transaction.transaction.error,
           owner: {
             identifier: _transaction.transaction.owner,
-            aliases: null
+            aliases: []
           }
         }))
 
