@@ -6,7 +6,7 @@ const { base58 } = require('@scure/base')
 
 class IdentitiesController {
   constructor (knex, dapi) {
-    this.identitiesDAO = new IdentitiesDAO(knex)
+    this.identitiesDAO = new IdentitiesDAO(knex, dapi)
     this.dapi = dapi
   }
 
@@ -19,14 +19,12 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const validatedAliases = await validateAliases(identity.aliases, identity.identifier, this.dapi)
-
     const balance = await this.dapi.getIdentityBalance(identifier)
 
-    response.send(Identity.fromObject({ ...identity, aliases: validatedAliases, balance }))
+    response.send(Identity.fromObject({ ...identity, balance }))
   }
 
-  getIdentityByDPNS = async (request, response) => {
+  getIdentityByDPNSName = async (request, response) => {
     const { dpns } = request.query
 
     let preIdentity

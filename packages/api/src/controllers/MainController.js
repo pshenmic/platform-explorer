@@ -18,7 +18,7 @@ class MainController {
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex)
-    this.identitiesDAO = new IdentitiesDAO(knex)
+    this.identitiesDAO = new IdentitiesDAO(knex, dapi)
     this.validatorsDAO = new ValidatorsDAO(knex)
     this.dapi = dapi
   }

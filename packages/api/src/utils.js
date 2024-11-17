@@ -3,6 +3,7 @@ const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
 const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT } = require('./constants')
 const { base58 } = require('@scure/base')
+const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 
 const getKnex = () => {
   return require('knex')({
@@ -185,15 +186,7 @@ const validateAliases = async (aliases, identifier, dapi) => {
   const aliasesWithContestedState = await Promise.all(aliases.map(async (alias) => {
     const [label, domain] = alias.split('.')
 
-    const normalizedLabel = label.toLowerCase().replace(/[oli]/g, (match) => {
-      if (match === 'o') {
-        return '0'
-      }
-      if (match === 'l' || match === 'i') {
-        return '1'
-      }
-      return match
-    })
+    const normalizedLabel = convertToHomographSafeChars(label ?? '')
 
     if (/^[a-zA-Z01]{3,19}$/.test(normalizedLabel)) {
       const domainBuffer = getLabelBuffer(domain)

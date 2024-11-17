@@ -24,10 +24,23 @@ class DAPI {
     return epochsInfo
   }
 
+  /**
+   * Fetch the version upgrade votes status
+   * @typedef {getContestedState}
+   * @param {string} contractId - base64 contractId
+   * @param {string} documentTypeName
+   * @param {string} indexName
+   * @param {number} resultType
+   * @param {Array<Buffer>} indexValuesList
+   * @param {Buffer} [startAtIdentifierInfo]
+   * @param {bool} [allowIncludeLockedAndAbstainingVoteTally]
+   * @param {number} [count]
+   * @returns {Promise<contestedResourceContenders>}
+   */
   async getContestedState (contractId,
     documentTypeName,
-    indexName = 'parentNameAndLabel',
-    resultType = 2,
+    indexName,
+    resultType,
     indexValuesList, startAtIdentifierInfo,
     allowIncludeLockedAndAbstainingVoteTally,
     count
