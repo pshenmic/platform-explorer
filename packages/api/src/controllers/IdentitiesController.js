@@ -1,7 +1,6 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
 const { validateAliases } = require('../utils')
-const Identity = require('../models/Identity')
 const { base58 } = require('@scure/base')
 
 class IdentitiesController {
@@ -19,9 +18,7 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const balance = await this.dapi.getIdentityBalance(identifier)
-
-    response.send(Identity.fromObject({ ...identity, balance }))
+    response.send(identity)
   }
 
   getIdentityByDPNSName = async (request, response) => {
@@ -60,13 +57,7 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const balance = await this.dapi.getIdentityBalance(identity.identifier)
-
-    const validatedAliases = await validateAliases(identity.aliases, identity.identifier, this.dapi)
-
-    identity = Identity.fromObject({ ...identity, aliases: validatedAliases })
-
-    response.send({ ...identity, balance })
+    response.send(identity)
   }
 
   getIdentities = async (request, response) => {
@@ -74,15 +65,7 @@ class IdentitiesController {
 
     const identities = await this.identitiesDAO.getIdentities(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
 
-    const identitiesWithBalance = await Promise.all(identities.resultSet.map(async identity => {
-      const balance = await this.dapi.getIdentityBalance(identity.identifier)
-
-      const validatedAliases = await validateAliases(identity.aliases, identity.identifier, this.dapi)
-
-      return { ...identity, aliases: validatedAliases, balance }
-    }))
-
-    response.send({ ...identities, resultSet: identitiesWithBalance })
+    response.send(identities)
   }
 
   getTransactionsByIdentity = async (request, response) => {
