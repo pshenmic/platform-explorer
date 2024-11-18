@@ -1,6 +1,6 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const DataContractsDAO = require('../dao/DataContractsDAO')
-const { WITHDRAWAL_CONTRACT, WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
+const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 
 class IdentitiesController {
