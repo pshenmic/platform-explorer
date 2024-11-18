@@ -1,49 +1,97 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
+const { getAliasInfo } = require('../utils')
+const { base58 } = require('@scure/base')
 
 module.exports = class TransactionsDAO {
-  constructor (knex) {
+  constructor (knex, dapi) {
     this.knex = knex
+    this.dapi = dapi
   }
 
   getTransactionByHash = async (hash) => {
+    const aliasesSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .groupBy('identity_identifier')
+      .as('aliases')
+
     const [row] = await this.knex('state_transitions')
-      .select('state_transitions.hash as tx_hash', 'state_transitions.data as data',
-        'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
-        'state_transitions.type as type', 'state_transitions.index as index', 'blocks.height as block_height',
-        'blocks.hash as block_hash', 'blocks.timestamp as timestamp')
+      .select(
+        'state_transitions.hash as tx_hash', 'state_transitions.data as data',
+        'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
+        'state_transitions.error as error', 'state_transitions.type as type',
+        'state_transitions.index as index', 'blocks.height as block_height',
+        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner',
+        'aliases.aliases as aliases'
+      )
       .whereILike('state_transitions.hash', hash)
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'owner')
 
     if (!row) {
       return null
     }
 
-    return Transaction.fromRow(row)
+    const aliases = await Promise.all(row.aliases.map(async alias => {
+      const aliasInfo = await getAliasInfo(alias, this.dapi)
+
+      const isLocked = base58.encode(
+        Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
+        'base64') !== row.identifier
+
+      return {
+        alias,
+        status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
+      }
+    }))
+
+    return Transaction.fromRow({ ...row, aliases })
   }
 
   getTransactions = async (page, limit, order) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
+    const aliasesSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .groupBy('identity_identifier')
+      .as('aliases')
+
     const subquery = this.knex('state_transitions')
       .select(this.knex('state_transitions').count('hash').as('total_count'), 'state_transitions.hash as tx_hash',
         'state_transitions.data as data', 'state_transitions.type as type', 'state_transitions.index as index',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
-        'state_transitions.block_hash as block_hash', 'state_transitions.id as id')
+        'state_transitions.block_hash as block_hash', 'state_transitions.id as id', 'state_transitions.owner as owner')
       .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
+      .select('aliases')
+      .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'state_transitions.owner')
       .as('state_transitions')
 
     const rows = await this.knex(subquery)
       .select('total_count', 'data', 'type', 'index', 'rank', 'block_hash', 'state_transitions.tx_hash as tx_hash',
-        'gas_used', 'status', 'error', 'blocks.height as block_height', 'blocks.timestamp as timestamp')
+        'gas_used', 'status', 'error', 'blocks.height as block_height', 'blocks.timestamp as timestamp', 'owner', 'aliases')
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('state_transitions.id', order)
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    const resultSet = rows.map((row) => Transaction.fromRow(row))
+    const resultSet = await Promise.all(rows.map(async (row) => {
+      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+        const aliasInfo = await getAliasInfo(alias, this.dapi)
+
+        const isLocked = base58.encode(
+          Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
+          'base64') !== row.identifier
+
+        return {
+          alias,
+          status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
+        }
+      }))
+
+      return Transaction.fromRow({ ...row, aliases })
+    }))
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }

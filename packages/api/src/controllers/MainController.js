@@ -15,8 +15,8 @@ class MainController {
     this.blocksDAO = new BlocksDAO(knex)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
-    this.transactionsDAO = new TransactionsDAO(knex)
-    this.identitiesDAO = new IdentitiesDAO(knex)
+    this.transactionsDAO = new TransactionsDAO(knex, dapi)
+    this.identitiesDAO = new IdentitiesDAO(knex, dapi)
     this.validatorsDAO = new ValidatorsDAO(knex)
     this.dapi = dapi
   }
@@ -115,9 +115,7 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
-        const balance = await this.dapi.getIdentityBalance(identity.identifier)
-
-        return response.send({ identity: { ...identity, balance } })
+        return response.send({ identity })
       }
 
       // search data contracts
@@ -135,13 +133,12 @@ class MainController {
       }
     }
 
+    // by dpns name
     if (/^[^\s.]+(\.[^\s.]+)*$/.test(query)) {
-      const identity = await this.identitiesDAO.getIdentityByDPNS(query)
+      const identity = await this.identitiesDAO.getIdentityByDPNSName(query)
 
       if (identity) {
-        const balance = await this.dapi.getIdentityBalance(identity.identifier)
-
-        return response.send({ identity: { ...identity, balance } })
+        return response.send({ identity })
       }
     }
 

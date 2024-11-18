@@ -4,9 +4,10 @@ const { calculateInterval, iso8601duration } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
 
 class TransactionsController {
-  constructor (client, knex) {
+  constructor (client, knex, dapi) {
     this.client = client
-    this.transactionsDAO = new TransactionsDAO(knex)
+    this.transactionsDAO = new TransactionsDAO(knex, dapi)
+    this.dapi = dapi
   }
 
   getTransactionByHash = async (request, reply) => {

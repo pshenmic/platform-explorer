@@ -191,13 +191,13 @@ function Home () {
                         .map((identitiy, i) => ({
                           columns: [
                             {
-                              value: identitiy?.aliases?.[0] || identitiy.identifier,
+                              value: identitiy?.aliases?.[0]?.alias || identitiy.identifier,
                               avatar: true,
                               avatarSource: identitiy.identifier,
                               mono: true,
-                              dim: !identitiy?.aliases?.[0],
+                              dim: !identitiy?.aliases?.[0]?.alias,
                               ellipsis: true,
-                              format: identitiy?.aliases?.[0] ? 'alias' : 'identifier'
+                              format: identitiy?.aliases?.[0]?.alias ? 'alias' : 'identifier'
                             },
                             {
                               value: identitiy.totalTxs,
@@ -230,13 +230,13 @@ function Home () {
                         .map((identitiy, i) => ({
                           columns: [
                             {
-                              value: identitiy?.aliases?.[0] || identitiy.identifier,
+                              value: identitiy?.aliases?.[0]?.alias || identitiy.identifier,
                               avatar: true,
                               avatarSource: identitiy.identifier,
                               mono: true,
-                              dim: !identitiy?.aliases?.[0],
+                              dim: !identitiy?.aliases?.[0]?.alias,
                               ellipsis: true,
-                              format: identitiy?.aliases?.[0] ? 'alias' : 'identifier'
+                              format: identitiy?.aliases?.[0]?.alias ? 'alias' : 'identifier'
                             },
                             {
                               value: identitiy.balance,

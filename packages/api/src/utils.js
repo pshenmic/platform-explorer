@@ -1,7 +1,9 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT } = require('./constants')
+const { base58 } = require('@scure/base')
+const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 const Intervals = require('./enums/IntervalsEnum')
 
 const getKnex = () => {
@@ -220,4 +222,52 @@ const iso8601duration = function (milliseconds) {
   return parts.join('')
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect, calculateInterval, iso8601duration }
+const buildIndexBuffer = (name) => {
+  const lengthBuffer = Buffer.alloc(1)
+  lengthBuffer.writeUInt8(name.length.toString(16), 0)
+
+  return Buffer.concat(
+    [
+      Buffer.from('12', 'hex'),
+      lengthBuffer,
+      Buffer.from(name, 'ascii')
+    ]
+  )
+}
+
+const getAliasInfo = async (alias, dapi) => {
+  const [label, domain] = alias.split('.')
+
+  const normalizedLabel = convertToHomographSafeChars(label ?? '')
+
+  if (/^[a-zA-Z01]{3,19}$/.test(normalizedLabel)) {
+    const domainBuffer = buildIndexBuffer(domain)
+
+    const labelBuffer = buildIndexBuffer(normalizedLabel)
+
+    const contestedState = await dapi.getContestedState(
+      Buffer.from(base58.decode(DPNS_CONTRACT)).toString('base64'),
+      'domain',
+      'parentNameAndLabel',
+      1,
+      [
+        domainBuffer,
+        labelBuffer
+      ]
+    )
+
+    return { alias, contestedState }
+  }
+
+  return { alias, contestedState: null }
+}
+
+module.exports = {
+  hash,
+  decodeStateTransition,
+  getKnex,
+  checkTcpConnect,
+  calculateInterval,
+  iso8601duration,
+  getAliasInfo
+}

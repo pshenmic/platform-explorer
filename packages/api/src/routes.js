@@ -171,7 +171,7 @@ module.exports = ({
     {
       path: '/dpns/identity',
       method: 'GET',
-      handler: identitiesController.getIdentityByDPNS,
+      handler: identitiesController.getIdentityByDPNSName,
       schema: {
         querystring: {
           type: 'object',
