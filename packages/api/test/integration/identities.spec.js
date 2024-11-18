@@ -168,6 +168,8 @@ describe('Identities routes', () => {
 
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
+    mock.method(DAPI.prototype, 'getContestedState', async () => null)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -196,7 +198,7 @@ describe('Identities routes', () => {
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
       const { alias } = await fixtures.identity_alias(knex,
         {
-          alias: 'test',
+          alias: 'test.dash',
           identity
         }
       )
@@ -217,7 +219,10 @@ describe('Identities routes', () => {
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
-        aliases: [alias]
+        aliases: [{
+          alias,
+          status: 'ok'
+        }]
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -291,17 +296,7 @@ describe('Identities routes', () => {
 
       const expectedIdentity = {
         identifier: identity.identifier,
-        owner: identity.identifier,
-        revision: identity.revision,
-        balance: 0,
-        timestamp: block.timestamp.toISOString(),
-        txHash: identity.txHash,
-        totalTxs: 1,
-        totalTransfers: 0,
-        totalDocuments: 0,
-        totalDataContracts: 0,
-        isSystem: false,
-        aliases: [alias]
+        alias
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -318,17 +313,7 @@ describe('Identities routes', () => {
 
       const expectedIdentity = {
         identifier: identity.identifier,
-        owner: identity.identifier,
-        revision: identity.revision,
-        balance: 0,
-        timestamp: block.timestamp.toISOString(),
-        txHash: identity.txHash,
-        totalTxs: 1,
-        totalTransfers: 0,
-        totalDocuments: 0,
-        totalDataContracts: 0,
-        isSystem: false,
-        aliases: [alias]
+        alias
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -375,7 +360,9 @@ describe('Identities routes', () => {
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
-        aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
+        aliases: [
+          aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+        ].map(alias => ({ alias, status: 'ok' }))
       }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -415,7 +402,9 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
-          aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
+          aliases: [
+            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+          ].map(alias => ({ alias, status: 'ok' }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -456,7 +445,9 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
-          aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
+          aliases: [
+            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+          ].map(alias => ({ alias, status: 'ok' }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -498,8 +489,9 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
-          aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
-
+          aliases: [
+            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+          ].map(alias => ({ alias, status: 'ok' }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -556,7 +548,9 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
-          aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
+          aliases: [
+            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+          ].map(alias => ({ alias, status: 'ok' }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -625,8 +619,9 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
-          aliases: [aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias]
-
+          aliases: [
+            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
+          ].map(alias => ({ alias, status: 'ok' }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -1073,7 +1068,11 @@ describe('Identities routes', () => {
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
-          error: _transaction.transaction.error
+          error: _transaction.transaction.error,
+          owner: {
+            identifier: _transaction.transaction.owner,
+            aliases: []
+          }
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -1116,7 +1115,11 @@ describe('Identities routes', () => {
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
-          error: _transaction.transaction.error
+          error: _transaction.transaction.error,
+          owner: {
+            identifier: _transaction.transaction.owner,
+            aliases: []
+          }
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -1159,7 +1162,11 @@ describe('Identities routes', () => {
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
-          error: _transaction.transaction.error
+          error: _transaction.transaction.error,
+          owner: {
+            identifier: _transaction.transaction.owner,
+            aliases: []
+          }
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
@@ -1202,7 +1209,11 @@ describe('Identities routes', () => {
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
-          error: _transaction.transaction.error
+          error: _transaction.transaction.error,
+          owner: {
+            identifier: _transaction.transaction.owner,
+            aliases: []
+          }
         }))
 
       assert.deepEqual(body.resultSet, expectedTransactions)
