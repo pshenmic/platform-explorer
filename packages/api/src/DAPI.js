@@ -39,7 +39,7 @@ class DAPI {
     const { documents } = await this.dapi.platform.getDocuments(Identifier.from(dataContractObject.id), type, {
       limit,
       where: [
-        ['$ownerId', '=', Identifier.from('A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb')]
+        ['$ownerId', '=', Identifier.from(identifier)]
       ]
     })
 

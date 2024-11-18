@@ -1,6 +1,6 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const DataContractsDAO = require('../dao/DataContractsDAO')
-const { WITHDRAWAL_CONTRACT } = require('../constants')
+const { WITHDRAWAL_CONTRACT, WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 
 class IdentitiesController {
   constructor (knex, dapi) {
@@ -96,7 +96,7 @@ class IdentitiesController {
       return response.status(404).send({ message: 'withdrawal contract not found' })
     }
 
-    const documents = await this.dapi.getDocuments('withdrawal', dataContract, identifier, limit)
+    const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, dataContract, identifier, limit)
 
     const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
 
