@@ -45,6 +45,15 @@ const schemaTypes = [
       end: {
         type: ['string', 'null'],
         format: 'date-time'
+      },
+      timespan: {
+        type: ['string', 'null'],
+        enum: ['1h', '24h', '3d', '1w']
+      },
+      intervalsCount: {
+        type: ['number', 'null'],
+        minimum: 2,
+        maximum: 100
       }
     }
   },

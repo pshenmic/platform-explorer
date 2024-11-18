@@ -119,7 +119,7 @@ function Home () {
               {!dataContracts.loading
                 ? !dataContracts.error
                     ? <SimpleList
-                        items={dataContracts.data.resultSet.map((dataContract, i) => ({
+                        items={dataContracts.data.resultSet.map((dataContract) => ({
                           columns: [
                             {
                               value: dataContract.identifier,
@@ -188,16 +188,16 @@ function Home () {
                     ? <SimpleList
                       items={trendingIdentities.data.resultSet
                         .filter((item, i) => i < trendingIdentities.props.printCount)
-                        .map((identitiy, i) => ({
+                        .map((identitiy) => ({
                           columns: [
                             {
-                              value: identitiy?.aliases?.[0] || identitiy.identifier,
+                              value: identitiy?.aliases?.[0]?.alias || identitiy?.aliases?.[0] || identitiy.identifier,
                               avatar: true,
                               avatarSource: identitiy.identifier,
                               mono: true,
-                              dim: !identitiy?.aliases?.[0],
+                              dim: !identitiy?.aliases?.[0]?.alias,
                               ellipsis: true,
-                              format: identitiy?.aliases?.[0] ? 'alias' : 'identifier'
+                              format: identitiy?.aliases?.[0]?.alias ? 'alias' : 'identifier'
                             },
                             {
                               value: identitiy.totalTxs,
@@ -227,16 +227,16 @@ function Home () {
                     ? <SimpleList
                       items={richestIdentities.data.resultSet
                         .filter((item, i) => i < richestIdentities.props.printCount)
-                        .map((identitiy, i) => ({
+                        .map((identitiy) => ({
                           columns: [
                             {
-                              value: identitiy?.aliases?.[0] || identitiy.identifier,
+                              value: identitiy?.aliases?.[0]?.alias || identitiy?.aliases?.[0] || identitiy.identifier,
                               avatar: true,
                               avatarSource: identitiy.identifier,
                               mono: true,
-                              dim: !identitiy?.aliases?.[0],
+                              dim: !identitiy?.aliases?.[0]?.alias,
                               ellipsis: true,
-                              format: identitiy?.aliases?.[0] ? 'alias' : 'identifier'
+                              format: identitiy?.aliases?.[0]?.alias ? 'alias' : 'identifier'
                             },
                             {
                               value: identitiy.balance,

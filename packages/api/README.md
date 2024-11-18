@@ -48,6 +48,8 @@ Reference:
 * [Blocks](#blocks)
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
+* [Validator Blocks Statistic](#validator-stats-by-protxhash)
+* [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
 * [Data Contract By Identifier](#data-contract-by-identifier)
@@ -375,12 +377,31 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 }
 ```
 ---
+### Validator rewards stats by ProTxHash
+Return a series data for the reward from proposed blocks by validator chart with
+
+* `start` lower interval threshold in ISO string ( _optional_ )
+* `end` upper interval threshold in ISO string ( _optional_ )
+
+
+```
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/reward/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
+[
+    {
+        timestamp: "2024-06-23T13:51:44.154Z",
+        data: {
+            reward: 34000000
+        }
+    },...
+]
+```
+---
 ### Validator stats by ProTxHash
 Return a series data for the amount of proposed blocks by validator chart with
 
 * `start` lower interval threshold in ISO string ( _optional_ )
 * `end` upper interval threshold in ISO string ( _optional_ )
-
+* `intervalsCount` intervals count in response ( _optional_ )
 
 ```
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
@@ -412,7 +433,16 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
     type: 0,
     gasUsed: 1337000,
     status: "SUCCESS",
-    error: null
+    error: null,
+    owner: {
+      identifier: "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+      aliases: [
+        {
+          alias: "alias.dash",
+          status: "locked"
+        }
+      ]
+    }
 }
 ```
 
@@ -450,7 +480,16 @@ GET /transactions?=1&limit=10&order=asc
         type: 0,
         gasUsed: 1337000,
         status: "SUCCESS",
-        error: null
+        error: null,
+        owner: {
+          identifier: "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+          aliases: [
+            {
+              alias: "alias.dash",
+              status: "locked"
+            }
+          ]
+        }
     }, ...
     ]
 }
@@ -599,7 +638,12 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     totalDocuments: 0,
     totalDataContracts: 0,
     isSystem: false,
-    aliases: ["test.dash"...]
+    aliases: [
+      {
+        alias: "alias.dash",
+        status: "locked"
+      }
+    ]
 }
 ```
 Response codes:
@@ -612,21 +656,11 @@ Response codes:
 ### Identity by DPNS
 Return identity by given DPNS/alias
 ```
-GET /dpns/identity?dpns=test-name.1.dash
+GET /dpns/identity?dpns=canuseethat2.dash
 
 {
-    identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    revision: 1,
-    balance: 1000000,
-    timestamp: "2024-03-18T10:13:54.150Z",
-    txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-    totalTxs: 1,
-    totalTransfers: 0,
-    totalDocuments: 0,
-    totalDataContracts: 0,
-    isSystem: false,
-    aliases: []
+  "identity_identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+  "alias": "canuseethat2.dash"
 }
 ```
 Response codes:
@@ -651,20 +685,25 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
         total: 10
     },
     resultSet: [
-    {
-        identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        revision: 1,
-        balance: 1000000,
-        timestamp: "2024-03-18T10:13:54.150Z",
-        txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        totalTxs: 1,
-        totalTransfers: 0,
-        totalDocuments: 0,
-        totalDataContracts: 0,
-        isSystem: false,
-        aliases: ["test.dash"]
-    }, ...
+      {
+          identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+          owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+          revision: 1,
+          balance: 1000000,
+          timestamp: "2024-03-18T10:13:54.150Z",
+          txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
+          totalTxs: 1,
+          totalTransfers: 0,
+          totalDocuments: 0,
+          totalDataContracts: 0,
+          isSystem: false,
+          aliases: [
+            {
+              alias: "alias.dash",
+              status: "locked"
+            }
+          ]
+      }, ...
     ]
 }
 ```
@@ -821,7 +860,8 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1
         timestamp: "2024-03-18T10:13:54.150Z",
         gasUsed: 1337000,
         status: "SUCCESS",
-        error: null
+        error: null,
+        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec"
     }, ...
     ]
 }
@@ -867,6 +907,7 @@ Return a series data for the amount of transactions chart
 
 * `start` lower interval threshold in ISO string ( _optional_ )
 * `end` upper interval threshold in ISO string ( _optional_ )
+* `intervalsCount` intervals count in response ( _optional_ )
 
 ```
 GET /transactions/history?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00

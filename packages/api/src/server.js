@@ -16,8 +16,8 @@ const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./DAPI')
-const DAPIClient = require('@dashevo/dapi-client')
 const RateController = require('./controllers/RateController')
+const DAPIClient = require('@dashevo/dapi-client')
 const { default: loadWasmDpp } = require('dash').PlatformProtocol
 
 function errorHandler (err, req, reply) {
@@ -79,7 +79,7 @@ module.exports = {
     const mainController = new MainController(knex, dapi)
     const epochController = new EpochController(knex, dapi)
     const blocksController = new BlocksController(knex)
-    const transactionsController = new TransactionsController(client, knex)
+    const transactionsController = new TransactionsController(client, knex, dapi)
     const dataContractsController = new DataContractsController(knex)
     const documentsController = new DocumentsController(knex)
     const identitiesController = new IdentitiesController(knex, dapi)
