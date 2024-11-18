@@ -201,7 +201,6 @@ module.exports = ({
       method: 'GET',
       handler: identitiesController.getWithdrawalsByIdentity,
       schema: {
-        querystring: { $ref: 'paginationOptions#' },
         params: {
           type: 'object',
           properties: {

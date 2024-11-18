@@ -1,5 +1,6 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
-const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
+const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
+const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 
 class IdentitiesController {
   constructor (knex, dapi) {
@@ -77,17 +78,24 @@ class IdentitiesController {
 
   getWithdrawalsByIdentity = async (request, response) => {
     const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const { limit = 100 } = request.query
 
-    const withdrawals = await this.identitiesDAO.getTransfersByIdentity(
-      identifier,
-      Number(page ?? 1),
-      Number(limit ?? 10),
-      order ?? 'asc',
-      IDENTITY_CREDIT_WITHDRAWAL
-    )
+    const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, identifier, limit)
 
-    response.send(withdrawals)
+    const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
+
+    const txHashes = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
+
+    if (documents.length === 0) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
+    response.send(documents.map(document => ({
+      ...document,
+      hash: txHashes.find(
+        hash =>
+          new Date(hash.timestamp).toISOString() === new Date(document.timestamp).toISOString())?.hash ?? null
+    })))
   }
 }
 

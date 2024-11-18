@@ -27,7 +27,145 @@ describe('Identities routes', () => {
   let transaction
   let transactions
 
+  let dataContractSchema
+
   before(async () => {
+    dataContractSchema = {
+      withdrawal: {
+        type: 'object',
+        indices: [
+          {
+            name: 'identityStatus',
+            unique: false,
+            properties: [
+              {
+                $ownerId: 'asc'
+              },
+              {
+                status: 'asc'
+              },
+              {
+                $createdAt: 'asc'
+              }
+            ]
+          },
+          {
+            name: 'identityRecent',
+            unique: false,
+            properties: [
+              {
+                $ownerId: 'asc'
+              },
+              {
+                $updatedAt: 'asc'
+              },
+              {
+                status: 'asc'
+              }
+            ]
+          },
+          {
+            name: 'pooling',
+            unique: false,
+            properties: [
+              {
+                status: 'asc'
+              },
+              {
+                pooling: 'asc'
+              },
+              {
+                coreFeePerByte: 'asc'
+              },
+              {
+                $updatedAt: 'asc'
+              }
+            ]
+          },
+          {
+            name: 'transaction',
+            unique: false,
+            properties: [
+              {
+                status: 'asc'
+              },
+              {
+                transactionIndex: 'asc'
+              }
+            ]
+          }
+        ],
+        required: [
+          '$createdAt',
+          '$updatedAt',
+          'amount',
+          'coreFeePerByte',
+          'pooling',
+          'outputScript',
+          'status'
+        ],
+        properties: {
+          amount: {
+            type: 'integer',
+            minimum: 1000,
+            position: 2,
+            description: 'The amount to be withdrawn'
+          },
+          status: {
+            enum: [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            type: 'integer',
+            position: 6,
+            description: '0 - Pending, 1 - Signed, 2 - Broadcasted, 3 - Complete, 4 - Expired'
+          },
+          pooling: {
+            enum: [
+              0,
+              1,
+              2
+            ],
+            type: 'integer',
+            position: 4,
+            description: 'This indicated the level at which Platform should try to pool this transaction'
+          },
+          outputScript: {
+            type: 'array',
+            maxItems: 25,
+            minItems: 23,
+            position: 5,
+            byteArray: true
+          },
+          coreFeePerByte: {
+            type: 'integer',
+            maximum: 4294967295,
+            minimum: 1,
+            position: 3,
+            description: 'This is the fee that you are willing to spend for this transaction in Duffs/Byte'
+          },
+          transactionIndex: {
+            type: 'integer',
+            minimum: 1,
+            position: 0,
+            description: 'Sequential index of asset unlock (withdrawal) transaction. Populated when a withdrawal pooled into withdrawal transaction'
+          },
+          transactionSignHeight: {
+            type: 'integer',
+            minimum: 1,
+            position: 1,
+            description: 'The Core height on which transaction was signed'
+          }
+        },
+        description: 'Withdrawal document to track underlying withdrawal transactions. Withdrawals should be created with IdentityWithdrawalTransition',
+        additionalProperties: false,
+        creationRestrictionMode: 2
+      }
+    }
+
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
     mock.method(DAPI.prototype, 'getContestedState', async () => null)
@@ -92,6 +230,56 @@ describe('Identities routes', () => {
 
     it('should return 404 when identity not found', async () => {
       await client.get('/identity/Cxo56ta5EMrWok8yp2Gpzm8cjBoa3mGYKZaAp9yqD3gW')
+        .expect(404)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+    })
+  })
+
+  describe('getIdentityWithdrawalByIdentifier()', async () => {
+    it('should return default set of Withdrawals from state_transitions table', async () => {
+      block = await fixtures.block(knex)
+      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      dataContract = await fixtures.dataContract(knex, {
+        owner: identity.identifier,
+        schema: dataContractSchema,
+        identifier: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6'
+      })
+
+      transactions = []
+
+      for (let i = 0; i < 10; i++) {
+        block = await fixtures.block(knex)
+
+        const transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          type: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL,
+          owner: identity.owner
+        })
+
+        transactions.push({ transaction, block })
+      }
+
+      const withdrawals = transactions.sort((a, b) => a.block.height - b.block.height).map(transaction => ({
+        timestamp: transaction.block.timestamp.toISOString(),
+        hash: null,
+        id: transaction.transaction.hash,
+        sender: transaction.transaction.owner,
+        amount: 12345678,
+        status: 3
+      }))
+
+      mock.method(DAPI.prototype, 'getDocuments', async () => withdrawals)
+
+      const { body } = await client.get(`/identity/${identity.identifier}/withdrawals`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body, withdrawals.map(withdrawal => ({ ...withdrawal, hash: withdrawal.id })))
+    })
+
+    it('should return 404 whe identity not exist', async () => {
+      mock.method(DAPI.prototype, 'getDocuments', async () => [])
+      await client.get('/identity/1234123123PFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6/withdrawals')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
