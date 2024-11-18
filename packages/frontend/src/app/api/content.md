@@ -366,7 +366,7 @@ Return a series data for the amount of proposed blocks by validator chart with
 
 * `start` lower interval threshold in ISO string ( _optional_ )
 * `end` upper interval threshold in ISO string ( _optional_ )
-
+* `intervalsCount` intervals count in response ( _optional_ )
 
 ```
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
@@ -773,7 +773,10 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1
         gasUsed: 1337000,
         status: "SUCCESS",
         error: null,
-        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec"
+        owner: {
+          identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+          aliases: []
+        }
     }, ...
     ]
 }
@@ -819,6 +822,7 @@ Return a series data for the amount of transactions chart
 
 * `start` lower interval threshold in ISO string ( _optional_ )
 * `end` upper interval threshold in ISO string ( _optional_ )
+* `intervalsCount` intervals count in response ( _optional_ )
 
 ```
 GET /transactions/history?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
