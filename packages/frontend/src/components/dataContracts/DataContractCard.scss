@@ -9,7 +9,7 @@
   }
 
   &__Name {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 
   &__Id {
@@ -18,6 +18,6 @@
     text-overflow: ellipsis;
     color: var(--chakra-colors-gray-500);
     font-family: $font-mono;
-    font-size: 16px;
+    font-size: 1rem;
   }
 }

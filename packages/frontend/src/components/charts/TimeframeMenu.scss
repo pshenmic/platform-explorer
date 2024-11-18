@@ -11,13 +11,6 @@
     justify-content: flex-end;
   }
 
-  &__ValuesTitle {
-    font-family: $font-mono;
-    color: #fff;
-    opacity: .5;
-    font-size: 0.75rem;
-  }
-
   &__Values {
     display: flex;
     flex-wrap: nowrap;
@@ -26,6 +19,9 @@
 
   &__ValueButton {
     margin-left: 10px;
+    font-size: 0.75rem;
+    height: 28px !important;
+    padding: 3px 12px !important;
 
     &--Active {
       background-color: $color-brand-normal !important;
@@ -82,6 +78,15 @@
 
     &__ValueButton {
       margin-bottom: 8px;
+      font-size: 0.6rem !important;
+      height: 24px !important;
+    }
+  }
+
+  @media screen and (max-width: 350px) {
+    &__ValueButton {
+      font-size: 0.5rem !important;
+      height: 22px !important;
     }
   }
 }

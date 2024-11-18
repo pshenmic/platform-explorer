@@ -38,6 +38,11 @@
     }
   }
 
+  &__Loader {
+    width: 100%;
+    @include mixins.LoadingContainer;
+  }
+
   @media screen and (max-width: 640px) {
     &__TimeframeContainer {
       margin-top: 0;

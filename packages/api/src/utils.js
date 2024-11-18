@@ -1,7 +1,9 @@
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT } = require('./constants')
+const { base58 } = require('@scure/base')
+const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 
 const getKnex = () => {
   return require('knex')({
@@ -124,7 +126,7 @@ const checkTcpConnect = (port, host) => {
 
       connection.once('timeout', async () => {
         await connection.destroy()
-        resolve('ERR_CONNECTION_REFUSED')
+        resolve('Connection timeout')
       })
     } catch (e) {
       console.error(e)
@@ -174,4 +176,51 @@ const calculateInterval = (start, end) => {
   }, intervalsInRFC[0])
 }
 
-module.exports = { hash, decodeStateTransition, getKnex, checkTcpConnect, calculateInterval }
+const buildIndexBuffer = (name) => {
+  const lengthBuffer = Buffer.alloc(1)
+  lengthBuffer.writeUInt8(name.length.toString(16), 0)
+
+  return Buffer.concat(
+    [
+      Buffer.from('12', 'hex'),
+      lengthBuffer,
+      Buffer.from(name, 'ascii')
+    ]
+  )
+}
+
+const getAliasInfo = async (alias, dapi) => {
+  const [label, domain] = alias.split('.')
+
+  const normalizedLabel = convertToHomographSafeChars(label ?? '')
+
+  if (/^[a-zA-Z01]{3,19}$/.test(normalizedLabel)) {
+    const domainBuffer = buildIndexBuffer(domain)
+
+    const labelBuffer = buildIndexBuffer(normalizedLabel)
+
+    const contestedState = await dapi.getContestedState(
+      Buffer.from(base58.decode(DPNS_CONTRACT)).toString('base64'),
+      'domain',
+      'parentNameAndLabel',
+      1,
+      [
+        domainBuffer,
+        labelBuffer
+      ]
+    )
+
+    return { alias, contestedState }
+  }
+
+  return { alias, contestedState: null }
+}
+
+module.exports = {
+  hash,
+  decodeStateTransition,
+  getKnex,
+  checkTcpConnect,
+  calculateInterval,
+  getAliasInfo
+}

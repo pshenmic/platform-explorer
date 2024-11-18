@@ -95,6 +95,7 @@ export default function LineChartBlock ({
           : <Container
               w={'100%'}
               h={'100%'}
+              maxW={'none'}
               className={'ChartBlock__Loader'}>
             </Container>}
       </Flex>

@@ -295,19 +295,19 @@
   }
 }
 
-@mixin InfoContainerPadding ($property) {
-  #{$property}: var(--chakra-space-3);
+@mixin InfoContainerPadding($property, $adjustment: 0px, $important: false) {
+  #{$property}: calc(var(--chakra-space-3) + #{$adjustment})#{if($important, ' !important', '')};
 
   @media screen and (min-width: $breakpoint-md) {
-    #{$property}: var(--chakra-space-4);
+    #{$property}: calc(var(--chakra-space-4) + #{$adjustment})#{if($important, ' !important', '')};
   }
 
   @media screen and (min-width: $breakpoint-lg) {
-    #{$property}: var(--chakra-space-5);
+    #{$property}: calc(var(--chakra-space-5) + #{$adjustment})#{if($important, ' !important', '')};
   }
 
   @media screen and (min-width: $breakpoint-xl) {
-    #{$property}: var(--chakra-space-6);
+    #{$property}: calc(var(--chakra-space-6) + #{$adjustment})#{if($important, ' !important', '')};
   }
 }
 

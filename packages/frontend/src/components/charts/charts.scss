@@ -13,7 +13,11 @@
   transition: all 1s;
   margin: 0 -10px !important;
   padding: 0 10px !important;
-  overflow: hidden;
+  overflow-x: clip;
+
+  .loading & {
+    opacity: 0;
+  }
 
   &.loaded {
       visibility: visible;
@@ -21,7 +25,7 @@
   }
 
   &__Tooltip {
-      font-size: 14px;
+      font-size: 0.875rem;
       font-family: var(--chakra-fonts-body);
   }
 
@@ -59,11 +63,11 @@
 
     &--Bold {
       font-weight: bold;
-      font-size: 16px;
+      font-size: 1rem;
     }
 
     &--Tiny {
-      font-size: 13px;
+      font-size: 0.813rem;
     }
   }
 }
@@ -71,19 +75,19 @@
 .Axis {
     font-family: $font-heading;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 0.75rem;
 
     .domain {
       opacity: 0;
     }
 
     &__Label {
-      font-size: 12px;
+      font-size: 0.75rem;
       opacity: .5;
     }
 
     &__TickContainer {
-      font-size: 12px;
+      font-size: 0.75rem;
     }
 
     &--X &__TickContainer {

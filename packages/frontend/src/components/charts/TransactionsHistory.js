@@ -17,6 +17,8 @@ export default function TransactionsHistory ({ height = '220px', blockBorders = 
   const [timespan, setTimespan] = useState(transactionsChartConfig.timespan.default)
 
   useEffect(() => {
+    setTransactionsHistory(state => ({ ...state, loading: true }))
+
     Api.getTransactionsHistory(timespan)
       .then(res => fetchHandlerSuccess(setTransactionsHistory, { resultSet: res }))
       .catch(err => fetchHandlerError(setTransactionsHistory, err))
