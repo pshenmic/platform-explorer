@@ -5,7 +5,6 @@ const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 
 class IdentitiesController {
   constructor (knex, dapi) {
-    this.dataContractsDAO = new DataContractsDAO(knex)
     this.identitiesDAO = new IdentitiesDAO(knex, dapi)
     this.dapi = dapi
   }
