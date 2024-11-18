@@ -342,6 +342,25 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 }
 ```
 ---
+### Validator rewards stats by ProTxHash
+Return a series data for the reward from proposed blocks by validator chart with
+
+* `start` lower interval threshold in ISO string ( _optional_ )
+* `end` upper interval threshold in ISO string ( _optional_ )
+
+
+```
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/reward/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
+[
+    {
+        timestamp: "2024-06-23T13:51:44.154Z",
+        data: {
+            reward: 34000000
+        }
+    },...
+]
+```
+---
 ### Validator stats by ProTxHash
 Return a series data for the amount of proposed blocks by validator chart with
 
