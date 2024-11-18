@@ -119,7 +119,7 @@ function Home () {
               {!dataContracts.loading
                 ? !dataContracts.error
                     ? <SimpleList
-                        items={dataContracts.data.resultSet.map((dataContract, i) => ({
+                        items={dataContracts.data.resultSet.map((dataContract) => ({
                           columns: [
                             {
                               value: dataContract.identifier,
@@ -188,10 +188,10 @@ function Home () {
                     ? <SimpleList
                       items={trendingIdentities.data.resultSet
                         .filter((item, i) => i < trendingIdentities.props.printCount)
-                        .map((identitiy, i) => ({
+                        .map((identitiy) => ({
                           columns: [
                             {
-                              value: identitiy?.aliases?.[0]?.alias || identitiy.identifier,
+                              value: identitiy?.aliases?.[0]?.alias || identitiy?.aliases?.[0] || identitiy.identifier,
                               avatar: true,
                               avatarSource: identitiy.identifier,
                               mono: true,
@@ -227,10 +227,10 @@ function Home () {
                     ? <SimpleList
                       items={richestIdentities.data.resultSet
                         .filter((item, i) => i < richestIdentities.props.printCount)
-                        .map((identitiy, i) => ({
+                        .map((identitiy) => ({
                           columns: [
                             {
-                              value: identitiy?.aliases?.[0]?.alias || identitiy.identifier,
+                              value: identitiy?.aliases?.[0]?.alias || identitiy?.aliases?.[0] || identitiy.identifier,
                               avatar: true,
                               avatarSource: identitiy.identifier,
                               mono: true,

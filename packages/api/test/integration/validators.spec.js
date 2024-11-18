@@ -1717,7 +1717,7 @@ describe('Validators routes', () => {
       assert.deepEqual(expectedStats.reverse(), body)
     })
 
-    it('should return stats by proTxHash with custom timespan with intervalsCount', async () => {
+it('should return stats by proTxHash with custom timespan with intervalsCount', async () => {
       const [, validator] = validators
 
       const start = new Date()
