@@ -305,7 +305,7 @@ module.exports = class IdentitiesDAO {
     return new PaginatedResultSet(rows.map(row => Transfer.fromRow(row)), page, limit, totalCount)
   }
 
-  getIdentityWithdrawalsHashesTimestamp = async (identifier, timestamps = []) => {
+  getIdentityWithdrawalsByTimestamps = async (identifier, timestamps = []) => {
     return this.knex('state_transitions')
       .select('state_transitions.hash', 'blocks.timestamp as timestamp')
       .whereIn(
