@@ -1,6 +1,7 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const { WITHDRAWAL_CONTRACT, WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
+const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 
 class IdentitiesController {
   constructor (knex, dapi) {
@@ -81,9 +82,7 @@ class IdentitiesController {
     const { identifier } = request.params
     const { limit = 100 } = request.query
 
-    const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(WITHDRAWAL_CONTRACT)
-
-    const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, dataContract, identifier, limit)
+    const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, identifier, limit)
 
     const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
 

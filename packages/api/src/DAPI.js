@@ -25,15 +25,7 @@ class DAPI {
     return epochsInfo
   }
 
-  async getDocuments (type, dataContractData, identifier, limit) {
-    const dataContractObject = {
-      $format_version: '0',
-      documentSchemas: JSON.parse(dataContractData.schema),
-      version: dataContractData.version,
-      ownerId: dataContractData.owner,
-      id: dataContractData.identifier
-    }
-
+  async getDocuments (type, dataContractObject, identifier, limit) {
     const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
 
     const { documents } = await this.dapi.platform.getDocuments(Identifier.from(dataContractObject.id), type, {
@@ -50,7 +42,7 @@ class DAPI {
         )
     )
   }
-  
+
   /**
    * Fetch the version upgrade votes status
    * @typedef {getContestedState}
