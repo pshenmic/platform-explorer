@@ -86,6 +86,10 @@ class IdentitiesController {
 
     const txHashes = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
 
+    if (documents.length === 0) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
     response.send(documents.map(document => ({
       ...document,
       hash: txHashes.find(
