@@ -100,20 +100,13 @@ class IdentitiesController {
 
     const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
 
-    const documentsHashes = await this.identitiesDAO.getDocumentsTxHashesByIdentifiers(documents.map(document => document.id))
-
-    if (documentsHashes.length > 0) {
-      return response.send(documents.map(document => ({
-        ...document,
-        hash: documentsHashes.find(hash => document.hash === hash)
-      })))
-    }
-
     const txHashes = await this.identitiesDAO.getIdentityWithdrawalsHashesTimestamp(identifier, timestamps)
 
     response.send(documents.map(document => ({
       ...document,
-      hash: txHashes.find(hash => new Date(hash.timestamp).toISOString() === new Date(document.timestamp).toISOString())?.hash ?? null
+      hash: txHashes.find(
+        hash =>
+          new Date(hash.timestamp).toISOString() === new Date(document.timestamp).toISOString())?.hash ?? null
     })))
   }
 }
