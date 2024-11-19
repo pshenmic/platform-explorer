@@ -186,29 +186,34 @@ function Home () {
               {!trendingIdentities.loading
                 ? !trendingIdentities.error
                     ? <SimpleList
-                      items={trendingIdentities.data.resultSet
-                        .filter((item, i) => i < trendingIdentities.props.printCount)
-                        .map((identitiy) => ({
-                          columns: [
-                            {
-                              value: identitiy?.aliases?.[0]?.alias || identitiy?.aliases?.[0] || identitiy.identifier,
-                              avatar: true,
-                              avatarSource: identitiy.identifier,
-                              mono: true,
-                              dim: !identitiy?.aliases?.[0]?.alias,
-                              ellipsis: true,
-                              format: identitiy?.aliases?.[0]?.alias ? 'alias' : 'identifier'
-                            },
-                            {
-                              value: identitiy.totalTxs,
-                              mono: true
+                        items={trendingIdentities.data.resultSet
+                          .filter((identity, i) => i < trendingIdentities.props.printCount)
+                          .map((identity) => {
+                            const activeAlias = identity?.aliases?.find(alias => alias.status === 'ok')
+                            const value = activeAlias?.alias || identity.identifier
+
+                            return {
+                              columns: [
+                                {
+                                  value,
+                                  avatar: true,
+                                  avatarSource: identity.identifier,
+                                  mono: true,
+                                  dim: !activeAlias,
+                                  ellipsis: true,
+                                  format: activeAlias ? 'alias' : 'identifier'
+                                },
+                                {
+                                  value: identity.totalTxs,
+                                  mono: true
+                                }
+                              ],
+                              link: '/identity/' + identity.identifier
                             }
-                          ],
-                          link: '/identity/' + identitiy.identifier
-                        }))}
-                      columns={['Identifier', 'Tx Count']}
-                      showMoreLink={'/identities'}
-                    />
+                          })}
+                        columns={['Identifier', 'Tx Count']}
+                        showMoreLink={'/identities'}
+                      />
                     : <ErrorMessageBlock/>
                 : <LoadingList itemsCount={trendingIdentities.props.printCount}/>}
             </Flex>
@@ -225,31 +230,36 @@ function Home () {
               {!richestIdentities.loading
                 ? !richestIdentities.error
                     ? <SimpleList
-                      items={richestIdentities.data.resultSet
-                        .filter((item, i) => i < richestIdentities.props.printCount)
-                        .map((identitiy) => ({
-                          columns: [
-                            {
-                              value: identitiy?.aliases?.[0]?.alias || identitiy?.aliases?.[0] || identitiy.identifier,
-                              avatar: true,
-                              avatarSource: identitiy.identifier,
-                              mono: true,
-                              dim: !identitiy?.aliases?.[0]?.alias,
-                              ellipsis: true,
-                              format: identitiy?.aliases?.[0]?.alias ? 'alias' : 'identifier'
-                            },
-                            {
-                              value: identitiy.balance,
-                              mono: true,
-                              format: 'currency',
-                              rate: !rate.loading && !rate.error ? rate.data : null
+                        items={richestIdentities.data.resultSet
+                          .filter((_, i) => i < richestIdentities.props.printCount)
+                          .map((identity) => {
+                            const activeAlias = identity?.aliases?.find(alias => alias.status === 'ok')
+                            const value = activeAlias?.alias || identity.identifier
+
+                            return {
+                              columns: [
+                                {
+                                  value,
+                                  avatar: true,
+                                  avatarSource: identity.identifier,
+                                  mono: true,
+                                  dim: !activeAlias,
+                                  ellipsis: true,
+                                  format: activeAlias ? 'alias' : 'identifier'
+                                },
+                                {
+                                  value: identity.balance,
+                                  mono: true,
+                                  format: 'currency',
+                                  rate: !rate.loading && !rate.error ? rate.data : null
+                                }
+                              ],
+                              link: '/identity/' + identity.identifier
                             }
-                          ],
-                          link: '/identity/' + identitiy.identifier
-                        }))}
-                      columns={['Identifier', 'Balance']}
-                      showMoreLink={'/identities'}
-                    />
+                          })}
+                        columns={['Identifier', 'Balance']}
+                        showMoreLink={'/identities'}
+                      />
                     : <ErrorMessageBlock/>
                 : <LoadingList itemsCount={richestIdentities.props.printCount}/>}
             </Flex>

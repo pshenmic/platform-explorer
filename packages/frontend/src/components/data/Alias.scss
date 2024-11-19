@@ -12,6 +12,10 @@
     white-space: nowrap;
   }
 
+  &--Locked {
+    color: var(--chakra-colors-red-default);
+  }
+
   &__Domain {
     opacity: .5;
   }

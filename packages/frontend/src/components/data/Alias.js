@@ -1,13 +1,14 @@
 import './Alias.scss'
 
-export default function Alias ({ alias, children, ellipsis = true, className }) {
+export default function Alias ({ alias, status, children, ellipsis = true, className }) {
   alias = alias || children
   if (typeof alias !== 'string') return <></>
 
   const dashIndex = alias?.lastIndexOf('.dash')
+  const statusClass = status === 'locked' ? 'Alias--Locked' : ''
 
   return (
-    <div className={`Alias ${ellipsis ? 'Alias--Ellipsis' : ''}  ${className || ''}`}>
+    <div className={`Alias ${statusClass} ${ellipsis ? 'Alias--Ellipsis' : ''}  ${className || ''}`}>
       <span className={'Alias__Name'}>
         {dashIndex !== -1
           ? alias?.slice(0, dashIndex)
