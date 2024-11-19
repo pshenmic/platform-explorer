@@ -22,7 +22,7 @@ function IdentityCard ({ identity, rate, loading = false }) {
                         <ImageGenerator username={identity.identifier} lightness={50} saturation={50} width={42} height={42} />
                       </div>
                       <div className={'IdentityCard__Alias'}>{identity?.aliases?.length
-                        ? <Alias>{identity.aliases[0]}</Alias>
+                        ? <Alias alias={identity?.aliases[0]?.alias || identity?.aliases[0]}/>
                         : <Identifier styles={['highlight-both']}>{identity.identifier}</Identifier>}
                       </div>
                   </div>
