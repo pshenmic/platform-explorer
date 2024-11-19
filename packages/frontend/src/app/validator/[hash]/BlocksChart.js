@@ -1,97 +1,66 @@
 import { useState, useEffect, useRef } from 'react'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import { LineChart, TimeframeMenu } from './../../../components/charts'
+import useResizeObserver from '@react-hook/resize-observer'
+import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates, getDynamicRange } from '../../../util'
+import { LineChart, TimeframeSelector } from './../../../components/charts'
 import * as Api from '../../../util/Api'
-import { Button } from '@chakra-ui/react'
-import { CalendarIcon } from './../../../components/ui/icons'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import './TimeframeSelector.scss'
-import './TabsChart.scss'
 
 const chartConfig = {
   timespan: {
     defaultIndex: 3,
     values: [
       {
-        label: '1 hour',
-        range: '1h'
-      },
-      {
         label: '24 hours',
-        range: '24h'
+        range: getDynamicRange(24 * 60 * 60 * 1000)
       },
       {
         label: '3 days',
-        range: '3d'
+        range: getDynamicRange(3 * 24 * 60 * 60 * 1000)
       },
       {
         label: '1 week',
-        range: '1w'
+        range: getDynamicRange(7 * 24 * 60 * 60 * 1000)
+      },
+      {
+        label: '1 Month',
+        range: getDynamicRange(30 * 24 * 60 * 60 * 1000)
       }
     ]
   }
 }
 
-const TimeframeSelector = ({ config, isActive, changeCallback, openStateCallback, menuRef }) => {
-  const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
-  const [menuIsOpen, setMenuIsOpen] = useState(false)
-
-  const changeHandler = (value) => {
-    setTimespan(value)
-    if (typeof changeCallback === 'function') changeCallback(value)
-    setMenuIsOpen(false)
-  }
-
-  useEffect(() => {
-    if (!isActive) setMenuIsOpen(false)
-  }, [isActive])
-
-  useEffect(() => {
-    if (typeof openStateCallback === 'function') openStateCallback(menuIsOpen)
-  }, [menuIsOpen])
-
-  return (
-    <div className={`TimeframeSelector ${menuIsOpen ? 'TimeframeSelector--MenuActive' : ''}`}>
-      <TimeframeMenu
-        ref={menuRef}
-        className={'TimeframeSelector__Menu'}
-        config={config}
-        changeCallback={changeHandler}
-      />
-
-      <Button
-        className={`TimeframeSelector__Button ${menuIsOpen ? 'TimeframeSelector__Button--Active' : ''}`}
-        onClick={() => setMenuIsOpen(state => !state)}
-      >
-        <CalendarIcon mr={'10px'}/>
-        {timespan.label}
-      </Button>
-    </div>
-  )
-}
-
 export default function BlocksChart ({ hash, isActive }) {
   const [blocksHistory, setBlocksHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(chartConfig.timespan.values[chartConfig.timespan.defaultIndex])
+  const [customRange, setCustomRange] = useState({ start: null, end: null })
   const [menuIsOpen, setMenuIsOpen] = useState(false)
   const TimeframeMenuRef = useRef(null)
   const [selectorHeight, setSelectorHeight] = useState(0)
 
   useEffect(() => {
-    Api.getBlocksStatsByValidator(hash, timespan.range)
+    const { start = null, end = null } = timespan.range
+    if (!start || !end) return
+
+    setBlocksHistory(state => ({ ...state, loading: true }))
+
+    Api.getBlocksStatsByValidator(hash, start, end)
       .then(res => fetchHandlerSuccess(setBlocksHistory, { resultSet: res }))
       .catch(err => fetchHandlerError(setBlocksHistory, err))
-  }, [timespan])
+  }, [timespan, customRange])
 
-  useEffect(() => {
-    if (menuIsOpen && TimeframeMenuRef.current) {
+  const updateMenuHeight = () => {
+    if (menuIsOpen && TimeframeMenuRef?.current) {
       const element = TimeframeMenuRef.current
       const height = element.getBoundingClientRect().height
       setSelectorHeight(height)
     } else {
       setSelectorHeight(0)
     }
-  }, [menuIsOpen, TimeframeMenuRef])
+  }
+
+  useEffect(updateMenuHeight, [menuIsOpen, TimeframeMenuRef])
+
+  useResizeObserver(TimeframeMenuRef, updateMenuHeight)
 
   if (blocksHistory.error || (!blocksHistory.loading && !blocksHistory.data?.resultSet)) {
     return (<ErrorMessageBlock/>)
@@ -99,35 +68,35 @@ export default function BlocksChart ({ hash, isActive }) {
 
   return (
     <div style={{ height: menuIsOpen ? `${Math.max(selectorHeight, 350)}px` : '350px' }} className={'TabsChart'}>
-      {!blocksHistory.loading &&
-        <TimeframeSelector
-          menuRef={TimeframeMenuRef}
-          className={'TabsChart__TimeframeSelector'}
-          config={chartConfig}
-          changeCallback={setTimespan}
-          isActive={isActive}
-          openStateCallback={setMenuIsOpen}
-        />
-      }
+      <TimeframeSelector
+        menuRef={TimeframeMenuRef}
+        className={'TabsChart__TimeframeSelector'}
+        config={chartConfig}
+        changeCallback={setTimespan}
+        isActive={isActive}
+        openStateCallback={setMenuIsOpen}
+        customRangeCallback={(start, end) => setCustomRange({ start, end })}
+      />
       <div className={`TabsChart__ChartContiner ${menuIsOpen ? 'TabsChart__ChartContiner--Hidden' : ''}`}>
         <LineChart
           data={blocksHistory.data?.resultSet?.map((item) => ({
             x: new Date(item.timestamp),
             y: item.data.blocksCount
           })) || []}
+          dataLoading={blocksHistory.loading}
           timespan={timespan.range}
           xAxis={{
             type: (() => {
-              if (timespan.range === '1h') return { axis: 'time' }
-              if (timespan.range === '24h') return { axis: 'time' }
-              if (timespan.range === '3d') return { axis: 'date', tooltip: 'datetime' }
-              if (timespan.range === '1w') return { axis: 'date' }
+              if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7) return { axis: 'date' }
+              if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 3) return { axis: 'date', tooltip: 'datetime' }
+              return { axis: 'time' }
             })()
           }}
           yAxis={{
             type: 'number',
             abbreviation: 'blocks'
           }}
+          height={'350px'}
         />
       </div>
     </div>

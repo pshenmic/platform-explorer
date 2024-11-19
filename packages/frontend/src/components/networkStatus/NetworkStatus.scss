@@ -29,7 +29,7 @@
   }
 
   &__InfoTitle {
-    font-size: 12px;
+    font-size: 0.75rem;
     color: var(--chakra-colors-gray-500);
     font-family: $font-mono;
     white-space: nowrap;
@@ -37,7 +37,7 @@
   }
 
   &__InfoValue {
-    font-size: 14px;
+    font-size: 0.75rem;
     font-weight: bold;
     font-family: $font-heading;
     letter-spacing: 0.4px;

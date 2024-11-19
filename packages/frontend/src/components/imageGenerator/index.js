@@ -8,5 +8,5 @@ export default function ImageGenerator ({ username, saturation, lightness, ...pr
     [username, saturation, lightness]
   )
 
-  return (<Image src={svgURI} alt={username} {...props} />)
+  return (<Image src={svgURI} alt={username || ''} {...props} />)
 }

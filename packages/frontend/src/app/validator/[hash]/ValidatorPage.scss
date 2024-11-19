@@ -49,6 +49,10 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    @include mixins.InfoContainerPadding(padding-left, 0px, true);
+    @include mixins.InfoContainerPadding(padding-right, 0px, true);
   }
 
   &__ChartsContainer {
@@ -70,10 +74,12 @@
 
       &--Previous {
         margin-right: auto;
+        margin-left: 0;
       }
 
       &--Next {
         margin-left: auto;
+        margin-right: 0;
       }
     }
   }
@@ -100,7 +106,6 @@
 
   &__ValueContainer {
     display: flex;
-    flex-wrap: wrap;
     justify-content: flex-end;
     overflow: hidden;
     max-width: 324px;

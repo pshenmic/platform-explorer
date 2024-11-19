@@ -1,9 +1,10 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
-const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
+const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
+const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 
 class IdentitiesController {
   constructor (knex, dapi) {
-    this.identitiesDAO = new IdentitiesDAO(knex)
+    this.identitiesDAO = new IdentitiesDAO(knex, dapi)
     this.dapi = dapi
   }
 
@@ -16,23 +17,19 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const balance = await this.dapi.getIdentityBalance(identifier)
-
-    response.send({ ...identity, balance })
+    response.send(identity)
   }
 
-  getIdentityByDPNS = async (request, response) => {
+  getIdentityByDPNSName = async (request, response) => {
     const { dpns } = request.query
 
-    const identity = await this.identitiesDAO.getIdentityByDPNS(dpns)
+    const identity = await this.identitiesDAO.getIdentityByDPNSName(dpns)
 
     if (!identity) {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const balance = await this.dapi.getIdentityBalance(identity.identifier)
-
-    response.send({ ...identity, balance })
+    response.send(identity)
   }
 
   getIdentities = async (request, response) => {
@@ -40,12 +37,7 @@ class IdentitiesController {
 
     const identities = await this.identitiesDAO.getIdentities(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
 
-    const identitiesWithBalance = await Promise.all(identities.resultSet.map(async identity => {
-      const balance = await this.dapi.getIdentityBalance(identity.identifier)
-      return { ...identity, balance }
-    }))
-
-    response.send({ ...identities, resultSet: identitiesWithBalance })
+    response.send(identities)
   }
 
   getTransactionsByIdentity = async (request, response) => {
@@ -86,17 +78,24 @@ class IdentitiesController {
 
   getWithdrawalsByIdentity = async (request, response) => {
     const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const { limit = 100 } = request.query
 
-    const withdrawals = await this.identitiesDAO.getTransfersByIdentity(
-      identifier,
-      Number(page ?? 1),
-      Number(limit ?? 10),
-      order ?? 'asc',
-      IDENTITY_CREDIT_WITHDRAWAL
-    )
+    const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, identifier, limit)
 
-    response.send(withdrawals)
+    const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
+
+    const txHashes = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
+
+    if (documents.length === 0) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
+    response.send(documents.map(document => ({
+      ...document,
+      hash: txHashes.find(
+        hash =>
+          new Date(hash.timestamp).toISOString() === new Date(document.timestamp).toISOString())?.hash ?? null
+    })))
   }
 }
 

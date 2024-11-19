@@ -1,6 +1,7 @@
 import copyToClipboard from './copyToClipboard'
 import { StateTransitionEnum, TransactionTypesEnum } from '../enums/state.transition.type'
 import currencyRound from './currencyRound'
+import { getDaysBetweenDates, getDynamicRange, getTimeDelta } from './datetime'
 
 function getTransitionTypeStringById (id) {
   const [stateTransitionType] = Object.entries(StateTransitionEnum)
@@ -108,5 +109,7 @@ export {
   getTimeDelta,
   getTransitionTypeKeyById,
   creditsToDash,
-  roundUsd
+  roundUsd,
+  getDaysBetweenDates,
+  getDynamicRange
 }

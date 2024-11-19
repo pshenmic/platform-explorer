@@ -146,7 +146,7 @@ function Identity ({ identifier }) {
                                       <LoadingLine loading={identity.loading}>
                                         <div className={'IdentityInfo__AliasesContainer'}>
                                         {identity?.data.aliases.map((alias, i) => (
-                                          <Alias key={i}>{alias}</Alias>
+                                          <Alias alias={alias.alias || alias} key={i}/>
                                         ))}
                                         </div>
                                       </LoadingLine>
