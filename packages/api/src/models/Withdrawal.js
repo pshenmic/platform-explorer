@@ -1,3 +1,5 @@
+const WithdrawalStatuses = require('../enums/WithdrawalStatusesEnum')
+
 module.exports = class Withdrawal {
   timestamp
   hash
@@ -12,7 +14,9 @@ module.exports = class Withdrawal {
     this.sender = sender ?? null
     this.id = id ?? null
     this.amount = amount ?? null
-    this.status = status ?? null
+    this.status = status
+      ? WithdrawalStatuses[status]
+      : null
   }
 
   static fromRaw (data = {}) {
