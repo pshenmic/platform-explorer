@@ -24,7 +24,7 @@
       color: #fff;
     }
 
-    &--Hash, &--Sender {
+    &--Hash, &--Owner {
       color: var(--chakra-colors-gray-250);
       font-family: $font-mono;
       flex-grow: 1;
@@ -54,9 +54,13 @@
     }
   }
 
+  &__AliasContainer {
+    display: flex;
+  }
+
   @container (max-width: 660px) {
     &__Column {
-      &--Sender {
+      &--Owner {
         .Identifier__SymbolsContainer {
           display: none;
         }

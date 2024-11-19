@@ -23,8 +23,8 @@ export default function TransactionsList ({ transactions = [], showMoreLink, typ
           <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--GasUsed'}>
             Gas used
           </GridItem>
-          <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Sender'}>
-            Sender
+          <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Owner'}>
+            Owner
           </GridItem>
           <GridItem className={'TransactionsList__ColumnTitle'}>
             Type
