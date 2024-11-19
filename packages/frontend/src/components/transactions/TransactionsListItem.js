@@ -13,8 +13,6 @@ import ImageGenerator from '../imageGenerator'
 function TransactionsListItem ({ transaction, rate }) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
 
-  console.log('transaction', transaction)
-
   return (
     <Link
       href={`/transaction/${transaction?.hash}`}
