@@ -2,10 +2,10 @@
 import { StateTransitionEnum } from '../../../enums/state.transition.type'
 // import { Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react'
 import { ValueCard } from '../../../components/cards'
-import { Identifier, InfoLine } from '../../../components/data'
+import { Identifier, InfoLine, CreditsBlock } from '../../../components/data'
 import { TransitionCard } from '../../../components/transactions'
 
-function TransactionData ({ data }) {
+function TransactionData ({ data, rate }) {
   if (data === null) return <></>
 
   console.log('data', data)
@@ -156,11 +156,31 @@ function TransactionData ({ data }) {
   }
 
   if (data.type === StateTransitionEnum.IDENTITY_UPDATE) {
-    return (<>IDENTITY_UPDATE</>)
+    return (<>
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Revision'}
+        value={data?.revision}
+        error={data?.revision === undefined}
+      />
+    </>)
   }
 
   if (data.type === StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL) {
-    return (<>IDENTITY_CREDIT_WITHDRAWAL</>)
+    return (<>
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Amount'}
+        value={<CreditsBlock credits={data?.amount} rate={rate}/>}
+        error={data?.amount === undefined}
+      />
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Identity Nonce'}
+        value={data?.nonce}
+        error={data?.nonce === undefined}
+      />
+    </>)
   }
 
   if (data.type === StateTransitionEnum.IDENTITY_CREDIT_TRANSFER) {

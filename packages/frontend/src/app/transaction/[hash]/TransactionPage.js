@@ -220,7 +220,7 @@ function Transaction ({ hash }) {
           Details
         </div>
 
-        <TransactionData data={decodedST}/>
+        <TransactionData data={decodedST} rate={rate}/>
       </div>
 
     </PageDataContainer>
