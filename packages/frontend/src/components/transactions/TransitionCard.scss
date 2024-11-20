@@ -10,6 +10,12 @@
       margin-bottom: 0;
     }
 
+    &--DataContract {
+      .InfoLine__Value {
+        flex-grow: 0;
+      }
+    }
+
     .InfoLine__Title {
       width: 200px;
     }
