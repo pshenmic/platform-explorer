@@ -5,12 +5,12 @@ import { ValueCard } from '../../../components/cards'
 import { Identifier, InfoLine, CreditsBlock } from '../../../components/data'
 import { TransitionCard } from '../../../components/transactions'
 
-function TransactionData ({ data, rate }) {
+function TransactionData ({ data, type, loading, rate }) {
   if (data === null) return <></>
 
   console.log('data', data)
 
-  if (data.type === StateTransitionEnum.MASTERNODE_VOTE) {
+  if (type === StateTransitionEnum.MASTERNODE_VOTE) {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -22,8 +22,8 @@ function TransactionData ({ data, rate }) {
             </Identifier>
           </ValueCard>
         )}
-        // loading={transaction.loading}
-        // error={transaction.error}
+        loading={loading}
+        error={!data?.proTxHash}
       />
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -35,7 +35,7 @@ function TransactionData ({ data, rate }) {
             </Identifier>
           </ValueCard>
         )}
-        // loading={transaction.loading}
+        loading={loading}
         error={!data?.contractId}
       />
       <InfoLine
@@ -48,20 +48,20 @@ function TransactionData ({ data, rate }) {
             </Identifier>
           </ValueCard>
         )}
-        // loading={transaction.loading}
+        loading={loading}
         error={!data?.ownerId}
       />
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Identity Nonce'}
         value={''}
-        // loading={transaction.loading}
+        loading={loading}
         error={true}
       />
     </>)
   }
 
-  if (data.type === StateTransitionEnum.DATA_CONTRACT_CREATE) {
+  if (type === StateTransitionEnum.DATA_CONTRACT_CREATE) {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -73,13 +73,13 @@ function TransactionData ({ data, rate }) {
             </Identifier>
           </ValueCard>
         )}
-        // loading={transaction.loading}
+        loading={loading}
         error={!data?.dataContractId}
       />
     </>)
   }
 
-  if (data.type === StateTransitionEnum.DOCUMENTS_BATCH) {
+  if (type === StateTransitionEnum.DOCUMENTS_BATCH) {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -91,7 +91,7 @@ function TransactionData ({ data, rate }) {
             </Identifier>
           </ValueCard>
         )}
-        // loading={transaction.loading}
+        loading={loading}
         error={!data?.owner}
       />
 
@@ -103,13 +103,13 @@ function TransactionData ({ data, rate }) {
             <TransitionCard className={'TransactionPage__TransitionCard'} transition={transition} key={i}/>
           ))}
         </>)}
-        // loading={transaction.loading}
+        loading={loading}
         error={data?.transitions === undefined}
       />
     </>)
   }
 
-  if (data.type === StateTransitionEnum.IDENTITY_CREATE) {
+  if (type === StateTransitionEnum.IDENTITY_CREATE) {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -121,17 +121,17 @@ function TransactionData ({ data, rate }) {
             </Identifier>
           </ValueCard>
         )}
-        // loading={transaction.loading}
+        loading={loading}
         error={!data?.identityId}
       />
     </>)
   }
 
-  if (data.type === StateTransitionEnum.IDENTITY_TOP_UP) {
+  if (type === StateTransitionEnum.IDENTITY_TOP_UP) {
     return (<>IDENTITY_TOP_UP</>)
   }
 
-  if (data.type === StateTransitionEnum.DATA_CONTRACT_UPDATE) {
+  if (type === StateTransitionEnum.DATA_CONTRACT_UPDATE) {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -143,6 +143,7 @@ function TransactionData ({ data, rate }) {
             </Identifier>
           </ValueCard>
         )}
+        loading={loading}
         error={!data?.dataContractId}
       />
 
@@ -150,41 +151,81 @@ function TransactionData ({ data, rate }) {
         className={'TransactionPage__InfoLine'}
         title={'Version'}
         value={data?.version}
+        loading={loading}
         error={data?.version === undefined}
       />
     </>)
   }
 
-  if (data.type === StateTransitionEnum.IDENTITY_UPDATE) {
+  if (type === StateTransitionEnum.IDENTITY_UPDATE) {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Revision'}
         value={data?.revision}
+        loading={loading}
         error={data?.revision === undefined}
       />
     </>)
   }
 
-  if (data.type === StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL) {
+  if (type === StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL) {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Amount'}
         value={<CreditsBlock credits={data?.amount} rate={rate}/>}
+        loading={loading}
         error={data?.amount === undefined}
       />
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Identity Nonce'}
         value={data?.nonce}
+        loading={loading}
         error={data?.nonce === undefined}
       />
     </>)
   }
 
-  if (data.type === StateTransitionEnum.IDENTITY_CREDIT_TRANSFER) {
-    return (<>IDENTITY_CREDIT_TRANSFER</>)
+  if (type === StateTransitionEnum.IDENTITY_CREDIT_TRANSFER) {
+    return (<>
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Sender'}
+        value={(
+          <ValueCard link={`/identity/${data?.senderId}`}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {data?.senderId}
+            </Identifier>
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!data?.senderId}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Recipient'}
+        value={(
+          <ValueCard link={`/identity/${data?.recipientId}`}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {data?.recipientId}
+            </Identifier>
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!data?.recipientId}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Amount'}
+        value={<CreditsBlock credits={data?.amount} rate={rate}/>}
+        loading={loading}
+        error={data?.amount === undefined}
+      />
+    </>)
   }
 }
 

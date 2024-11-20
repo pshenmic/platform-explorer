@@ -29,17 +29,14 @@ import './TransactionPage.scss'
 function Transaction ({ hash }) {
   const [transaction, setTransaction] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const [decodedST, setDecodedST] = useState(null)
-  // const tdTitleWidth = 250
+  const [decodedST, setDecodedST] = useState({ data: {}, loading: true, error: false })
 
   console.log('transaction', transaction)
 
   const decodeTx = useCallback((tx) => {
     Api.decodeTx(tx)
-      .then((stateTransition) => {
-        setDecodedST(stateTransition)
-      })
-      .catch(console.log)
+      .then(stateTransition => fetchHandlerSuccess(setDecodedST, stateTransition))
+      .catch(err => fetchHandlerError(setDecodedST, err))
   }, [])
 
   const fetchData = () => {
@@ -220,7 +217,7 @@ function Transaction ({ hash }) {
           Details
         </div>
 
-        <TransactionData data={decodedST} rate={rate}/>
+        <TransactionData data={decodedST.data} rate={rate} type={transaction.data?.type} loading={decodedST.loading}/>
       </div>
 
     </PageDataContainer>
