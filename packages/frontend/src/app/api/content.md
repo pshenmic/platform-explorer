@@ -342,10 +342,34 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 }
 ```
 ---
-### Validator stats by ProTxHash
-Return a series data for the amount of proposed blocks by validator chart with variable timespan (1h, 24h, 3d, 1w)
+### Validator rewards stats by ProTxHash
+Return a series data for the reward from proposed blocks by validator chart with
+
+* `start` lower interval threshold in ISO string ( _optional_ )
+* `end` upper interval threshold in ISO string ( _optional_ )
+
+
 ```
-GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?timespan=24h
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/reward/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
+[
+    {
+        timestamp: "2024-06-23T13:51:44.154Z",
+        data: {
+            reward: 34000000
+        }
+    },...
+]
+```
+---
+### Validator stats by ProTxHash
+Return a series data for the amount of proposed blocks by validator chart with
+
+* `start` lower interval threshold in ISO string ( _optional_ )
+* `end` upper interval threshold in ISO string ( _optional_ )
+* `intervalsCount` intervals count in response ( _optional_ )
+
+```
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
 [
     {
         timestamp: "2024-06-23T13:51:44.154Z",
@@ -374,7 +398,16 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
     type: 0,
     gasUsed: 1337000,
     status: "SUCCESS",
-    error: null
+    error: null,
+    owner: {
+      identifier: "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+      aliases: [
+        {
+          alias: "alias.dash",
+          status: "locked"
+        }
+      ]
+    }
 }
 ```
 
@@ -412,7 +445,16 @@ GET /transactions?=1&limit=10&order=asc
         type: 0,
         gasUsed: 1337000,
         status: "SUCCESS",
-        error: null
+        error: null,
+        owner: {
+          identifier: "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+          aliases: [
+            {
+              alias: "alias.dash",
+              status: "locked"
+            }
+          ]
+        }
     }, ...
     ]
 }
@@ -561,7 +603,12 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     totalDocuments: 0,
     totalDataContracts: 0,
     isSystem: false,
-    aliases: ["test.dash"...]
+    aliases: [
+      {
+        alias: "alias.dash",
+        status: "locked"
+      }
+    ]
 }
 ```
 Response codes:
@@ -574,21 +621,11 @@ Response codes:
 ### Identity by DPNS
 Return identity by given DPNS/alias
 ```
-GET /dpns/identity?dpns=test-name.1.dash
+GET /dpns/identity?dpns=canuseethat2.dash
 
 {
-    identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    revision: 1,
-    balance: 1000000,
-    timestamp: "2024-03-18T10:13:54.150Z",
-    txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-    totalTxs: 1,
-    totalTransfers: 0,
-    totalDocuments: 0,
-    totalDataContracts: 0,
-    isSystem: false,
-    aliases: []
+  "identity_identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+  "alias": "canuseethat2.dash"
 }
 ```
 Response codes:
@@ -613,20 +650,25 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
         total: 10
     },
     resultSet: [
-    {
-        identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        revision: 1,
-        balance: 1000000,
-        timestamp: "2024-03-18T10:13:54.150Z",
-        txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        totalTxs: 1,
-        totalTransfers: 0,
-        totalDocuments: 0,
-        totalDataContracts: 0,
-        isSystem: false,
-        aliases: ["test.dash"]
-    }, ...
+      {
+          identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+          owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+          revision: 1,
+          balance: 1000000,
+          timestamp: "2024-03-18T10:13:54.150Z",
+          txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
+          totalTxs: 1,
+          totalTransfers: 0,
+          totalDocuments: 0,
+          totalDataContracts: 0,
+          isSystem: false,
+          aliases: [
+            {
+              alias: "alias.dash",
+              status: "locked"
+            }
+          ]
+      }, ...
     ]
 }
 ```
@@ -635,7 +677,60 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
+---
+### Identity Withdrawals
+Return all withdrawals for identity
 
+_Note: this request does not contain any pagination data in the response_
+
+* `limit` cannot be more then 100
+```
+GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5
+
+[
+  {
+    "timestamp": 1729096625509,
+    "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
+    "id": "95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs",
+    "amount": 200000,
+    "status": 3
+  },
+  {
+    "timestamp": 1729096140465,
+    "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
+    "id": "DJzb8nj7JTHwnvAGEGhyFc5hHLFa5Es9WFAyS4HhhNeF",
+    "amount": 200000,
+    "status": 3
+  },
+  {
+    "timestamp": 1729096636318,
+    "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
+    "id": "E4gbWCQgqrz9DVrzCeDKhr4PVsfp6CeL5DUAYndRVWdk",
+    "amount": 200000,
+    "status": 3
+  },
+  {
+    "timestamp": 1729096795042,
+    "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
+    "id": "FouX2qY8Eaxj5rSBrH9uxbhAM16ozrUP4sJwdo9pL7Cr",
+    "amount": 200000,
+    "status": 3
+  },
+  {
+    "timestamp": 1729097247874,
+    "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
+    "id": "9VEpb2aJRnCxfi3LjFXWa1zshkBPfzzHHh5yqEkgqw1t",
+    "amount": 200000,
+    "status": 3
+  }
+]
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
 ### Data contracts by Identity
 Return all data contracts by the given identity
 
@@ -730,7 +825,11 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1
         timestamp: "2024-03-18T10:13:54.150Z",
         gasUsed: 1337000,
         status: "SUCCESS",
-        error: null
+        error: null,
+        owner: {
+          identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+          aliases: []
+        }
     }, ...
     ]
 }
@@ -772,9 +871,14 @@ Response codes:
 500: Internal Server Error
 ```
 ### Transactions history
-Return a series data for the amount of transactions chart with variable timespan (1h, 24h, 3d, 1w)
+Return a series data for the amount of transactions chart
+
+* `start` lower interval threshold in ISO string ( _optional_ )
+* `end` upper interval threshold in ISO string ( _optional_ )
+* `intervalsCount` intervals count in response ( _optional_ )
+
 ```
-GET /transactions/history?timespan=1h
+GET /transactions/history?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
 [
     {
         timestamp: "2024-04-22T08:45:20.911Z",
@@ -797,7 +901,7 @@ GET /transactions/history?timespan=1h
 Response codes:
 ```
 200: OK
-400: Invalid input, check timespan value
+400: Invalid input, check start/end values
 500: Internal Server Error
 ```
 ### Rate

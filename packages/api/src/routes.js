@@ -171,7 +171,7 @@ module.exports = ({
     {
       path: '/dpns/identity',
       method: 'GET',
-      handler: identitiesController.getIdentityByDPNS,
+      handler: identitiesController.getIdentityByDPNSName,
       schema: {
         querystring: {
           type: 'object',
@@ -201,7 +201,6 @@ module.exports = ({
       method: 'GET',
       handler: identitiesController.getWithdrawalsByIdentity,
       schema: {
-        querystring: { $ref: 'paginationOptions#' },
         params: {
           type: 'object',
           properties: {
@@ -299,6 +298,20 @@ module.exports = ({
       path: '/validator/:hash/stats',
       method: 'GET',
       handler: validatorsController.getValidatorStatsByProTxHash,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        },
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
+      path: '/validator/:hash/rewards/stats',
+      method: 'GET',
+      handler: validatorsController.getValidatorRewardStatsByProTxHash,
       schema: {
         params: {
           type: 'object',
