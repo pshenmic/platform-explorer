@@ -62,7 +62,21 @@ function TransactionData ({ data }) {
   }
 
   if (data.type === StateTransitionEnum.DATA_CONTRACT_CREATE) {
-    return (<>DATA_CONTRACT_CREATE</>)
+    return (<>
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Data Contract'}
+        value={(
+          <ValueCard link={`/dataContract/${data?.dataContractId}`}>
+            <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {data?.dataContractId}
+            </Identifier>
+          </ValueCard>
+        )}
+        // loading={transaction.loading}
+        error={!data?.dataContractId}
+      />
+    </>)
   }
 
   if (data.type === StateTransitionEnum.DOCUMENTS_BATCH) {
@@ -108,7 +122,7 @@ function TransactionData ({ data }) {
           </ValueCard>
         )}
         // loading={transaction.loading}
-        // error={data?.identityId}
+        error={!data?.identityId}
       />
     </>)
   }
@@ -118,7 +132,27 @@ function TransactionData ({ data }) {
   }
 
   if (data.type === StateTransitionEnum.DATA_CONTRACT_UPDATE) {
-    return (<>DATA_CONTRACT_UPDATE</>)
+    return (<>
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Data Contract'}
+        value={(
+          <ValueCard link={`/identity/${data?.dataContractId}`}>
+            <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {data?.dataContractId}
+            </Identifier>
+          </ValueCard>
+        )}
+        error={!data?.dataContractId}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Version'}
+        value={data?.version}
+        error={data?.version === undefined}
+      />
+    </>)
   }
 
   if (data.type === StateTransitionEnum.IDENTITY_UPDATE) {
