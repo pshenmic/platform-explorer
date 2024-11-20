@@ -3,6 +3,7 @@ import { ArrowCornerIcon } from '../../ui/icons'
 import { Identifier, Credits } from '../../data'
 import { ValueContainer } from '../../ui/containers'
 import { RateTooltip } from '../../ui/Tooltips'
+import StatusIcon from './StatusIcon'
 import './WithdrawalsListItem.scss'
 
 function WithdrawalsListItem ({ withdrawal, rate }) {
@@ -56,7 +57,8 @@ function WithdrawalsListItem ({ withdrawal, rate }) {
         </GridItem>
 
         <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Status'}>
-          {withdrawal.status}
+          {/*{withdrawal.status}*/}
+          <StatusIcon status={withdrawal.status} w={'18px'} h={'18px'}/>
         </GridItem>
       </Grid>
     </div>
