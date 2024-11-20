@@ -1,3 +1,43 @@
-.TransitionCard {
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
 
+.TransitionCard {
+  &__InfoLine {
+    justify-content: flex-start;
+    margin-bottom: 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .InfoLine__Title {
+      width: 200px;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__InfoLine {
+      &:not(&--Revision):not(&--Action) {
+        .InfoLine {
+          .InfoLine__Value {
+            flex-grow: 1;
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__InfoLine {
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      &:not(&--Revision):not(&--Action) {
+        .InfoLine__Title {
+          margin-bottom: 4px;
+          margin-right: 0;
+        }
+      }
+    }
+  }
 }

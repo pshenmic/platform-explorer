@@ -18,8 +18,17 @@
     margin-bottom: 14px;
     justify-content: flex-start;
 
-    &--RawTransaction, &--Status, &--Transactions {
+    &--RawTransaction, &--Status, &--Transitions {
       align-items: baseline;
+    }
+
+    &--Transitions {
+      .InfoLine__Value {
+        flex-grow: 1;
+        overflow: hidden;
+        padding-bottom: 2px;
+        padding-right: 2px;
+      }
     }
 
     .InfoLine__Title {
@@ -97,18 +106,18 @@
       justify-content: space-between;
       flex-wrap: wrap;
 
-      &:not(&--Index):not(&--Type) {
+      &:not(&--Index):not(&--Type):not(.InfoLine--Error) {
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
 
-        .InfoLine__Title {
+        & > .InfoLine__Title {
           width: 100%;
           margin-bottom: 4px;
           margin-right: 0;
         }
 
-        .InfoLine__Value {
+        & > .InfoLine__Value {
           width: 100%;
         }
       }

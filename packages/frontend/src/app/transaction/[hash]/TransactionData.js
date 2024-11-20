@@ -82,11 +82,11 @@ function TransactionData ({ data }) {
       />
 
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Transactions'}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Transitions'}
         title={`Transitions ${data?.transitions !== undefined ? `(${data?.transitions.length})` : ''}`}
         value={(<>
           {data?.transitions?.map((transition, i) => (
-            <TransitionCard transition={transition} key={i}/>
+            <TransitionCard className={'TransactionPage__TransitionCard'} transition={transition} key={i}/>
           ))}
         </>)}
         // loading={transaction.loading}
