@@ -210,16 +210,15 @@ function Transaction ({ hash }) {
         />
       </div>
 
-      <HorisontalSeparator/>
-
-      <div className={'TransactionPage__DetailsInfo'}>
-        <div className={'TransactionPage__DetailsInfoTitle'}>
-          Details
-        </div>
-
-        <TransactionData data={decodedST.data} rate={rate} type={transaction.data?.type} loading={decodedST.loading}/>
-      </div>
-
+      {!transaction.loading && !transaction.error &&
+        <>
+          <HorisontalSeparator/>
+          <div className={'TransactionPage__DetailsInfo'}>
+            <div className={'TransactionPage__DetailsInfoTitle'}>Details</div>
+            <TransactionData data={decodedST.data} rate={rate} type={transaction.data?.type} loading={decodedST.loading}/>
+          </div>
+        </>
+      }
     </PageDataContainer>
   )
 
