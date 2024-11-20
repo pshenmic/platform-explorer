@@ -1,7 +1,7 @@
-import TransactionCard from './TransactionCard'
+import TransitionCard from './TransitionCard'
 import TransactionsList from './TransactionsList'
 
 export {
-  TransactionCard,
+  TransitionCard,
   TransactionsList
 }

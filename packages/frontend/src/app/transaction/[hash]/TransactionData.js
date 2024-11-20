@@ -3,7 +3,7 @@ import { StateTransitionEnum } from '../../../enums/state.transition.type'
 // import { Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react'
 import { ValueCard } from '../../../components/cards'
 import { Identifier, InfoLine } from '../../../components/data'
-import { TransactionCard } from '../../../components/transactions'
+import { TransitionCard } from '../../../components/transactions'
 
 function TransactionData ({ data }) {
   if (data === null) return <></>
@@ -18,7 +18,7 @@ function TransactionData ({ data }) {
         value={(
           <ValueCard>
             <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {/* {data?.proTxHash} */}
+               {data?.proTxHash}
             </Identifier>
           </ValueCard>
         )}
@@ -42,14 +42,14 @@ function TransactionData ({ data }) {
         className={'TransactionPage__InfoLine'}
         title={'Voter Identity'}
         value={(
-          <ValueCard link={`/identity/${data?.identity}`} className={'TransactionPage__BlockHash'}>
+          <ValueCard link={`/identity/${data?.ownerId}`} className={'TransactionPage__BlockHash'}>
             <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {data?.identity}
+              {data?.ownerId}
             </Identifier>
           </ValueCard>
         )}
         // loading={transaction.loading}
-        error={!data?.identity}
+        error={!data?.ownerId}
       />
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -85,8 +85,8 @@ function TransactionData ({ data }) {
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--Transactions'}
         title={`Transitions ${data?.transitions !== undefined ? `(${data?.transitions.length})` : ''}`}
         value={(<>
-          {data?.transitions?.map((transaction, i) => (
-            <TransactionCard transaction={transaction} key={i}/>
+          {data?.transitions?.map((transition, i) => (
+            <TransitionCard transition={transition} key={i}/>
           ))}
         </>)}
         // loading={transaction.loading}
