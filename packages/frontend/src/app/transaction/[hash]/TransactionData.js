@@ -128,7 +128,28 @@ function TransactionData ({ data, type, loading, rate }) {
   }
 
   if (type === StateTransitionEnum.IDENTITY_TOP_UP) {
-    return (<>IDENTITY_TOP_UP</>)
+    return (<>
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Amount'}
+        value={<CreditsBlock credits={data?.amount} rate={rate}/>}
+        loading={loading}
+        error={data?.amount === undefined}
+      />
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Identity'}
+        value={(
+          <ValueCard link={`/identity/${data?.identityId}`}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {data?.identityId}
+            </Identifier>
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!data?.identityId}
+      />
+    </>)
   }
 
   if (type === StateTransitionEnum.DATA_CONTRACT_UPDATE) {
@@ -137,7 +158,7 @@ function TransactionData ({ data, type, loading, rate }) {
         className={'TransactionPage__InfoLine'}
         title={'Data Contract'}
         value={(
-          <ValueCard link={`/identity/${data?.dataContractId}`}>
+          <ValueCard link={`/dataContract/${data?.dataContractId}`}>
             <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
               {data?.dataContractId}
             </Identifier>
