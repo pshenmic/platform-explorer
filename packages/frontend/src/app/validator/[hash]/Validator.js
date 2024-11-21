@@ -485,7 +485,12 @@ function Validator ({ hash }) {
                   {!withdrawals.error
                     ? <div className={'ValidatorPage__List'}>
                         {!withdrawals.loading
-                          ? <WithdrawalsList withdrawals={withdrawals?.data?.resultSet} headerStyles={'light'} rate={rate.data}/>
+                          ? <WithdrawalsList
+                              withdrawals={withdrawals?.data?.resultSet || Object.values(withdrawals.data) || []}
+                              l1explorerBaseUrl={l1explorerBaseUrl}
+                              rate={rate.data}
+                              headerStyles={'light'}
+                            />
                           : <LoadingList itemsCount={pageSize}/>
                         }
                       </div>

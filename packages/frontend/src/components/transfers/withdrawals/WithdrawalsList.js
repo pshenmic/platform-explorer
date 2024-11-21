@@ -3,7 +3,7 @@ import { EmptyListMessage } from '../../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './WithdrawalsList.scss'
 
-function WithdrawalsList ({ withdrawals = [], headerStyles = 'default', rate }) {
+function WithdrawalsList ({ withdrawals = [], headerStyles = 'default', rate, l1explorerBaseUrl }) {
   const headerExtraClass = {
     default: '',
     light: 'BlocksList__ColumnTitles--Light'
@@ -36,6 +36,7 @@ function WithdrawalsList ({ withdrawals = [], headerStyles = 'default', rate }) 
         <WithdrawalsListItem
           key={key}
           withdrawal={withdrawal}
+          l1explorerBaseUrl={l1explorerBaseUrl}
           rate={rate}
         />
       )}

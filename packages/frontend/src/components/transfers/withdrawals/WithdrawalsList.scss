@@ -12,6 +12,7 @@
 
   &__ColumnTitle {
     @include withdrawals.Column();
+    overflow: visible !important;
 
     &:last-child {
       text-align: right;

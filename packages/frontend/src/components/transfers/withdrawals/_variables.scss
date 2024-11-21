@@ -19,11 +19,18 @@
       44px;
   }
 
-  @container (max-width: 430px) {
+  @container (max-width: 550px) {
     grid-template-columns:
       133px
       minmax(0, 400px)
       minmax(0, 200px)
+      44px;
+  }
+
+  @container (max-width: 420px) {
+    grid-template-columns:
+      133px
+      minmax(0, 300px)
       44px;
   }
 }
@@ -59,12 +66,18 @@
     overflow: visible;
   }
 
-  @container (max-width: 430px) {
+  @container (max-width: 550px) {
     &--Document {
       display: none;
     }
 
     &--TxHash {
+      display: none;
+    }
+  }
+
+  @container (max-width: 420px) {
+    &--Address {
       display: none;
     }
   }
