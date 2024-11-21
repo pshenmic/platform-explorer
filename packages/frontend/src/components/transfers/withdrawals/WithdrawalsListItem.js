@@ -14,6 +14,7 @@ const mobileWidth = 550
 function WithdrawalsListItem ({ withdrawal, rate, l1explorerBaseUrl }) {
   const containerRef = useRef(null)
   const [isMobile, setIsMobile] = useState(false)
+  const clickable = isMobile && withdrawal?.hash
 
   useResizeObserver(containerRef, () => {
     const { offsetWidth } = containerRef.current
@@ -21,13 +22,13 @@ function WithdrawalsListItem ({ withdrawal, rate, l1explorerBaseUrl }) {
   })
 
   const Wrapper = forwardRef(function Wrapper (props, ref) {
-    return (isMobile && withdrawal?.hash)
+    return clickable
       ? <Link ref={ref} href={`/transaction/${withdrawal?.hash}`} >{props.children}</Link>
       : <div ref={ref} className={props.className}>{props.children}</div>
   })
 
   const ItemWrapper = ({ isLocal, children, ...props }) => {
-    return (isMobile && withdrawal?.hash)
+    return clickable
       ? <div {...props}>{children}</div>
       : isLocal
         ? <Link {...props}>{children}</Link>
@@ -35,7 +36,7 @@ function WithdrawalsListItem ({ withdrawal, rate, l1explorerBaseUrl }) {
   }
 
   return (
-    <div ref={containerRef} className={`WithdrawalsListItem ${isMobile ? 'WithdrawalsListItem--Clickable' : ''}`}>
+    <div ref={containerRef} className={`WithdrawalsListItem ${clickable ? 'WithdrawalsListItem--Clickable' : ''}`}>
       <Wrapper className={'WithdrawalsListItem__ContentWrapper'}>
         <Grid className={'WithdrawalsListItem__Content'}>
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Timestamp'}>
