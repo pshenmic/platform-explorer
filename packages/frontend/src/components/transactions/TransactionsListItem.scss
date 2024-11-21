@@ -61,8 +61,14 @@
   @container (max-width: 660px) {
     &__Column {
       &--Owner {
-        .Identifier__SymbolsContainer {
+        width: max-content;
+
+        * {
           display: none;
+        }
+
+        .Identifier, .Identifier__Avatar {
+          display: block !important;
         }
 
         .Identifier__Avatar {

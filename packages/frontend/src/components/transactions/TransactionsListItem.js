@@ -22,7 +22,9 @@ function TransactionsListItem ({ transaction, rate }) {
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}>
           {transaction?.timestamp
             ? <>
-                <StatusIcon className={'TransactionsListItem__StatusIcon'} status={transaction.status} w={'18px'} h={'18px'} mr={'8px'}/>
+                {transaction?.status &&
+                  <StatusIcon className={'TransactionsListItem__StatusIcon'} status={transaction.status} w={'18px'} h={'18px'} mr={'8px'}/>
+                }
                 {getTimeDelta(new Date(), new Date(transaction.timestamp))}
               </>
             : 'n/a'
@@ -51,7 +53,7 @@ function TransactionsListItem ({ transaction, rate }) {
                     <Alias alias={activeAlias?.alias || activeAlias}/>
                   </div>
                 : <Identifier avatar={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
-              : 'n/a'
+              : <span>n/a</span>
             }
           </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Type'}>
