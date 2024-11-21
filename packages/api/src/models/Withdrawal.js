@@ -1,4 +1,4 @@
-const WithdrawalStatuses = require('../enums/WithdrawalStatusesEnum')
+const WithdrawalStatus = require('../enums/WithdrawalStatusEnum')
 
 module.exports = class Withdrawal {
   timestamp
@@ -15,7 +15,7 @@ module.exports = class Withdrawal {
     this.id = id ?? null
     this.amount = amount ?? null
     this.status = status
-      ? WithdrawalStatuses[status]
+      ? WithdrawalStatus[status]
       : null
   }
 

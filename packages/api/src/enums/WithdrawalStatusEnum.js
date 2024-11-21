@@ -1,4 +1,4 @@
-const WithdrawalStatuses = {
+const WithdrawalStatus = {
   4: 'EXPIRED',
   3: 'COMPLETE',
   2: 'BROADCASTED',
@@ -6,4 +6,4 @@ const WithdrawalStatuses = {
   0: 'QUEUED'
 }
 
-module.exports = WithdrawalStatuses
+module.exports = WithdrawalStatus
