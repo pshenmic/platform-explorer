@@ -76,6 +76,19 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.dataContractId}
       />
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Contract Owner'}
+        value={(
+          <ValueCard link={`/identity/${data?.ownerId}`}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {data?.ownerId}
+            </Identifier>
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!data?.ownerId}
+      />
     </>)
   }
 
@@ -116,7 +129,7 @@ function TransactionData ({ data, type, loading, rate }) {
         title={'Identity Address'}
         value={(
           <ValueCard link={`/identity/${data?.identityId}`}>
-            <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
               {data?.identityId}
             </Identifier>
           </ValueCard>
@@ -167,7 +180,19 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.dataContractId}
       />
-
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Contract Owner'}
+        value={(
+          <ValueCard link={`/identity/${data?.ownerId}`}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {data?.ownerId}
+            </Identifier>
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!data?.ownerId}
+      />
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Version'}
@@ -180,6 +205,19 @@ function TransactionData ({ data, type, loading, rate }) {
 
   if (type === StateTransitionEnum.IDENTITY_UPDATE) {
     return (<>
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Identity'}
+        value={(
+          <ValueCard link={`/identity/${data?.identityId}`}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {data?.identityId}
+            </Identifier>
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!data?.identityId}
+      />
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Revision'}
@@ -224,7 +262,6 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.senderId}
       />
-
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Recipient'}

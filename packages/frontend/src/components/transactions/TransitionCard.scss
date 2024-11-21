@@ -13,6 +13,11 @@
     &--DataContract {
       .InfoLine__Value {
         flex-grow: 0;
+        max-width: max-content;
+      }
+
+      .Identifier, .Identifier__SymbolsContainer {
+        flex-grow: 1;
       }
     }
 
