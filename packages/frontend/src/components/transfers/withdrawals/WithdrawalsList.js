@@ -42,7 +42,7 @@ function WithdrawalsList ({ withdrawals = [], headerStyles = 'default', rate, l1
       )}
 
       {withdrawals.length === 0 &&
-        <EmptyListMessage>There are no transfers yet.</EmptyListMessage>
+        <EmptyListMessage>There are no withdrawals yet.</EmptyListMessage>
       }
     </div>
   )
