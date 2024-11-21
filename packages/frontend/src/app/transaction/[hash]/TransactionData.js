@@ -1,14 +1,10 @@
-// import Link from 'next/link'
 import { StateTransitionEnum } from '../../../enums/state.transition.type'
-// import { Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react'
 import { ValueCard } from '../../../components/cards'
 import { Identifier, InfoLine, CreditsBlock } from '../../../components/data'
 import { TransitionCard } from '../../../components/transactions'
 
 function TransactionData ({ data, type, loading, rate }) {
   if (data === null) return <></>
-
-  console.log('data', data)
 
   if (type === StateTransitionEnum.MASTERNODE_VOTE) {
     return (<>

@@ -10,7 +10,6 @@ function TransitionCard ({ transition }) {
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--Action'}
           title={'Action'}
           value={transition?.action}
-          // loading={transition.loading}
           error={transition?.action === undefined}
         />
         <InfoLine
@@ -23,14 +22,12 @@ function TransitionCard ({ transition }) {
               </Identifier>
             </ValueCard>
           )}
-          // loading={transition.loading}
-          // error={transition.error}
+          error={!transition.dataContractId}
         />
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--Revision'}
           title={'Revision'}
           value={transition?.revision}
-          // loading={transition.loading}
           error={transition?.revision === undefined}
         />
       </div>
