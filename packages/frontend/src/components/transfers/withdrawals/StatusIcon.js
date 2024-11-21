@@ -7,7 +7,6 @@ function StatusIcon ({ status, ...props }) {
     2: <BroadcastedIcon {...props}/>,
     3: <SuccessIcon {...props}/>,
     4: <ErrorIcon {...props}/>
-
   }
 
   return StatusIcons[status] || <></>
