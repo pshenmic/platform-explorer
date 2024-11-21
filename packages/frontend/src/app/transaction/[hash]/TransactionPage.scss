@@ -71,14 +71,6 @@
     white-space: nowrap;
   }
 
-  &__BlockHash {
-    //padding: 7px 10px;
-  }
-
-  &__DetailsInfo {
-
-  }
-
   &__DetailsInfoTitle {
     font-family: $font-heading;
     font-size: 0.75rem;
@@ -165,10 +157,6 @@
 
     &__ErrorContainer {
       margin-top: 0;
-    }
-
-    &__StatusContainer {
-
     }
 
     &__DetailsInfoTitle {
