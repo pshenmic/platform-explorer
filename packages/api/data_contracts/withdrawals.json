@@ -1,0 +1,141 @@
+{
+  "version": 0,
+  "ownerId": "11111111111111111111111111111111",
+  "id": "4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6",
+  "$format_version": "0",
+  "documentSchemas": {
+    "withdrawal": {
+      "type": "object",
+      "indices": [
+        {
+          "name": "identityStatus",
+          "unique": false,
+          "properties": [
+            {
+              "$ownerId": "asc"
+            },
+            {
+              "status": "asc"
+            },
+            {
+              "$createdAt": "asc"
+            }
+          ]
+        },
+        {
+          "name": "identityRecent",
+          "unique": false,
+          "properties": [
+            {
+              "$ownerId": "asc"
+            },
+            {
+              "$updatedAt": "asc"
+            },
+            {
+              "status": "asc"
+            }
+          ]
+        },
+        {
+          "name": "pooling",
+          "unique": false,
+          "properties": [
+            {
+              "status": "asc"
+            },
+            {
+              "pooling": "asc"
+            },
+            {
+              "coreFeePerByte": "asc"
+            },
+            {
+              "$updatedAt": "asc"
+            }
+          ]
+        },
+        {
+          "name": "transaction",
+          "unique": false,
+          "properties": [
+            {
+              "status": "asc"
+            },
+            {
+              "transactionIndex": "asc"
+            }
+          ]
+        }
+      ],
+      "required": [
+        "$createdAt",
+        "$updatedAt",
+        "amount",
+        "coreFeePerByte",
+        "pooling",
+        "outputScript",
+        "status"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "minimum": 1000,
+          "position": 2,
+          "description": "The amount to be withdrawn"
+        },
+        "status": {
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "type": "integer",
+          "position": 6,
+          "description": "0 - Pending, 1 - Signed, 2 - Broadcasted, 3 - Complete, 4 - Expired"
+        },
+        "pooling": {
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "type": "integer",
+          "position": 4,
+          "description": "This indicated the level at which Platform should try to pool this transaction"
+        },
+        "outputScript": {
+          "type": "array",
+          "maxItems": 25,
+          "minItems": 23,
+          "position": 5,
+          "byteArray": true
+        },
+        "coreFeePerByte": {
+          "type": "integer",
+          "maximum": 4294967295,
+          "minimum": 1,
+          "position": 3,
+          "description": "This is the fee that you are willing to spend for this transaction in Duffs/Byte"
+        },
+        "transactionIndex": {
+          "type": "integer",
+          "minimum": 1,
+          "position": 0,
+          "description": "Sequential index of asset unlock (withdrawal) transaction. Populated when a withdrawal pooled into withdrawal transaction"
+        },
+        "transactionSignHeight": {
+          "type": "integer",
+          "minimum": 1,
+          "position": 1,
+          "description": "The Core height on which transaction was signed"
+        }
+      },
+      "description": "Withdrawal document to track underlying withdrawal transactions. Withdrawals should be created with IdentityWithdrawalTransition",
+      "additionalProperties": false,
+      "creationRestrictionMode": 2
+    }
+  }
+}
