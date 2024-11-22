@@ -33,7 +33,7 @@ module.exports = class TransactionsDAO {
       return null
     }
 
-    const aliases = await Promise.all(row.aliases.map(async alias => {
+    const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
       const aliasInfo = await getAliasInfo(alias, this.dapi)
 
       const isLocked = base58.encode(

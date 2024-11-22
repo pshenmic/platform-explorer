@@ -1,6 +1,7 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
+const PaginatedResultSet = require('../models/PaginatedResultSet')
 
 class IdentitiesController {
   constructor (knex, dapi) {
@@ -90,12 +91,14 @@ class IdentitiesController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    response.send(documents.map(document => ({
+    const resultSet = documents.map(document => ({
       ...document,
       hash: txHashes.find(
         hash =>
           new Date(hash.timestamp).toISOString() === new Date(document.timestamp).toISOString())?.hash ?? null
-    })))
+    }))
+
+    response.send(new PaginatedResultSet(resultSet, null, null, null))
   }
 }
 
