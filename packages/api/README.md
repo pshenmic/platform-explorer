@@ -58,6 +58,7 @@ Reference:
 * [Documents by Data Contract](#documents-by-data-contract)
 * [Identity by Identifier](#identity-by-identifier)
 * [Identity by DPNS](#identity-by-dpns)
+* [Identity Withdrawals](#identity-withdrawals)
 * [Identities](#identities)
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
@@ -722,43 +723,50 @@ _Note: this request does not contain any pagination data in the response_
 ```
 GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5
 
-[
-  {
-    "timestamp": 1729096625509,
-    "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-    "id": "95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs",
-    "amount": 200000,
-    "status": 3
+{
+  pagination: {
+    limit: null,
+    page: null,
+    total: null
   },
-  {
-    "timestamp": 1729096140465,
-    "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-    "id": "DJzb8nj7JTHwnvAGEGhyFc5hHLFa5Es9WFAyS4HhhNeF",
-    "amount": 200000,
-    "status": 3
-  },
-  {
-    "timestamp": 1729096636318,
-    "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-    "id": "E4gbWCQgqrz9DVrzCeDKhr4PVsfp6CeL5DUAYndRVWdk",
-    "amount": 200000,
-    "status": 3
-  },
-  {
-    "timestamp": 1729096795042,
-    "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-    "id": "FouX2qY8Eaxj5rSBrH9uxbhAM16ozrUP4sJwdo9pL7Cr",
-    "amount": 200000,
-    "status": 3
-  },
-  {
-    "timestamp": 1729097247874,
-    "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-    "id": "9VEpb2aJRnCxfi3LjFXWa1zshkBPfzzHHh5yqEkgqw1t",
-    "amount": 200000,
-    "status": 3
-  }
-]
+  resultSet: [
+    {
+      "timestamp": 1729096625509,
+      "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
+      "id": "95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs",
+      "amount": 200000,
+      "status": 3
+    },
+    {
+      "timestamp": 1729096140465,
+      "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
+      "id": "DJzb8nj7JTHwnvAGEGhyFc5hHLFa5Es9WFAyS4HhhNeF",
+      "amount": 200000,
+      "status": 3
+    },
+    {
+      "timestamp": 1729096636318,
+      "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
+      "id": "E4gbWCQgqrz9DVrzCeDKhr4PVsfp6CeL5DUAYndRVWdk",
+      "amount": 200000,
+      "status": 3
+    },
+    {
+      "timestamp": 1729096795042,
+      "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
+      "id": "FouX2qY8Eaxj5rSBrH9uxbhAM16ozrUP4sJwdo9pL7Cr",
+      "amount": 200000,
+      "status": 3
+    },
+    {
+      "timestamp": 1729097247874,
+      "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
+      "id": "9VEpb2aJRnCxfi3LjFXWa1zshkBPfzzHHh5yqEkgqw1t",
+      "amount": 200000,
+      "status": 3
+    }
+  ]
+}
 ```
 Response codes:
 ```

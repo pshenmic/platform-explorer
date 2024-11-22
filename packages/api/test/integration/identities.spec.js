@@ -274,7 +274,7 @@ describe('Identities routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.deepEqual(body, withdrawals.map(withdrawal => ({ ...withdrawal, hash: withdrawal.id })))
+      assert.deepEqual(body.resultSet, withdrawals.map(withdrawal => ({ ...withdrawal, hash: withdrawal.id })))
     })
 
     it('should return 404 whe identity not exist', async () => {
