@@ -1106,7 +1106,7 @@ describe('Identities routes', () => {
       const expectedTransactions = transactions
         .sort((a, b) => b.block.height - a.block.height)
         .slice(0, 10)
-        .map((_transaction, i) => ({
+        .map((_transaction) => ({
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1153,7 +1153,7 @@ describe('Identities routes', () => {
       const expectedTransactions = transactions
         .sort((a, b) => a.block.height - b.block.height)
         .slice(4, 8)
-        .map((_transaction, i) => ({
+        .map((_transaction) => ({
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1200,7 +1200,7 @@ describe('Identities routes', () => {
       const expectedTransactions = transactions
         .sort((a, b) => b.block.height - a.block.height)
         .slice(4, 8)
-        .map((_transaction, i) => ({
+        .map((_transaction) => ({
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1255,7 +1255,7 @@ describe('Identities routes', () => {
       const expectedTransfers = transfers
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
-        .map((_transfer, i) => ({
+        .map((_transfer) => ({
           amount: parseInt(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
@@ -1301,7 +1301,7 @@ describe('Identities routes', () => {
       const expectedTransfers = transfers
         .sort((a, b) => b.block.height - a.block.height)
         .slice(0, 10)
-        .map((_transfer, i) => ({
+        .map((_transfer) => ({
           amount: parseInt(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
@@ -1347,7 +1347,7 @@ describe('Identities routes', () => {
       const expectedTransfers = transfers
         .sort((a, b) => a.block.height - b.block.height)
         .slice(7, 14)
-        .map((_transfer, i) => ({
+        .map((_transfer) => ({
           amount: parseInt(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
@@ -1393,7 +1393,7 @@ describe('Identities routes', () => {
       const expectedTransfers = transfers
         .sort((a, b) => b.block.height - a.block.height)
         .slice(7, 14)
-        .map((_transfer, i) => ({
+        .map((_transfer) => ({
           amount: parseInt(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
