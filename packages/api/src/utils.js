@@ -35,10 +35,22 @@ const decodeStateTransition = async (client, base64) => {
 
   switch (decoded.type) {
     case StateTransitionEnum.DATA_CONTRACT_CREATE: {
+      const dataContractConfig = stateTransition.getDataContract().getConfig()
+
+      decoded.internalConfig = {
+        canBeDeleted: dataContractConfig.canBeDeleted ?? null,
+        readonly: dataContractConfig.readonly ?? null,
+        keepsHistory: dataContractConfig.keepsHistory ?? null,
+        documentsKeepHistoryContractDefault: dataContractConfig.documentsKeepHistoryContractDefault ?? null,
+        documentsMutableContractDefault: dataContractConfig.documentsMutableContractDefault ?? null,
+        documentsCanBeDeletedContractDefault: dataContractConfig.documentsCanBeDeletedContractDefault ?? null,
+        requiresIdentityDecryptionBoundedKey: dataContractConfig.requiresIdentityDecryptionBoundedKey ?? null,
+        requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null
+      }
+
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
       decoded.ownerId = stateTransition.getOwnerId().toString()
       decoded.schema = stateTransition.getDataContract().getDocumentSchemas()
-      decoded.internalConfig = stateTransition.getDataContract().getConfig()
       decoded.signature = Buffer.from(stateTransition.toObject().signature).toString('hex')
       decoded.signatureKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.raw = stateTransition.toBuffer().toString('hex')
@@ -80,10 +92,22 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.DATA_CONTRACT_UPDATE: {
+      const dataContractConfig = stateTransition.getDataContract().getConfig()
+
+      decoded.internalConfig = {
+        canBeDeleted: dataContractConfig.canBeDeleted ?? null,
+        readonly: dataContractConfig.readonly ?? null,
+        keepsHistory: dataContractConfig.keepsHistory ?? null,
+        documentsKeepHistoryContractDefault: dataContractConfig.documentsKeepHistoryContractDefault ?? null,
+        documentsMutableContractDefault: dataContractConfig.documentsMutableContractDefault ?? null,
+        documentsCanBeDeletedContractDefault: dataContractConfig.documentsCanBeDeletedContractDefault ?? null,
+        requiresIdentityDecryptionBoundedKey: dataContractConfig.requiresIdentityDecryptionBoundedKey ?? null,
+        requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null
+      }
+
       decoded.ownerId = stateTransition.getDataContract().getOwnerId().toString()
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
       decoded.schema = stateTransition.getDataContract().getDocumentSchemas()
-      decoded.internalConfig = stateTransition.getDataContract().getConfig()
       decoded.version = stateTransition.getDataContract().getVersion()
       decoded.dataContractOwner = stateTransition.getDataContract().getOwnerId().toString()
       decoded.raw = stateTransition.toBuffer().toString('hex')
@@ -93,9 +117,13 @@ const decodeStateTransition = async (client, base64) => {
     case StateTransitionEnum.IDENTITY_UPDATE: {
       decoded.identityId = stateTransition.getOwnerId().toString()
       decoded.revision = stateTransition.getRevision()
-      decoded.publicKeysToAdd = stateTransition.getPublicKeysToAdd().map(key => key.toJSON())
+      decoded.publicKeysToAdd = stateTransition.getPublicKeysToAdd()
+        .map(key => ({
+          ...key.toJSON(),
+          signature: Buffer.from(key.getSignature()).toString('hex')
+        }))
       decoded.setPublicKeyIdsToDisable = (stateTransition.setPublicKeyIdsToDisable() ?? []).map(key => key.toJSON())
-      decoded.signature = stateTransition.getSignature().toString('base64')
+      decoded.signature = stateTransition.getSignature().toString('hex')
       decoded.raw = stateTransition.toBuffer().toString('hex')
 
       break
