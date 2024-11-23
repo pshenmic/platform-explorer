@@ -15,6 +15,8 @@ Reference:
 * [Blocks](#blocks)
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
+* [Validator Blocks Statistic](#validator-stats-by-protxhash)
+* [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
 * [Data Contract By Identifier](#data-contract-by-identifier)
@@ -424,9 +426,12 @@ Return transaction set paged
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 
 * `limit` cannot be more then 100
+* `owner` Identity identifier
+* `status` can be `SUCCESS`, `FAIL` or `ALL`
+* `filters` array of transactions types
 
 ```
-GET /transactions?=1&limit=10&order=asc
+GET /transactions?=1&limit=10&order=asc&6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&filters=0&filters=1&status=ALL
 
 {
     pagination: {
@@ -826,10 +831,7 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1
         gasUsed: 1337000,
         status: "SUCCESS",
         error: null,
-        owner: {
-          identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-          aliases: []
-        }
+        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec"
     }, ...
     ]
 }
