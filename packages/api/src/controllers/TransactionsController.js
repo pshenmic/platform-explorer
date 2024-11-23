@@ -2,6 +2,7 @@ const TransactionsDAO = require('../dao/TransactionsDAO')
 const utils = require('../utils')
 const { calculateInterval, iso8601duration } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
+const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 class TransactionsController {
   constructor (client, knex, dapi) {
@@ -23,13 +24,38 @@ class TransactionsController {
   }
 
   getTransactions = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      filters = [-1],
+      owner,
+      status = 'ALL'
+    } = request.query
 
     if (order !== 'asc' && order !== 'desc') {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    const transactions = await this.transactionsDAO.getTransactions(Number(page ?? 1), Number(limit ?? 10), order)
+    const stateTransitionIndexes = Object.entries(StateTransitionEnum).map(([, entry]) => entry)
+
+    const validatedFilters =
+      filters.map((filter) =>
+        stateTransitionIndexes.includes(filter) || filter === -1
+      )
+
+    if (validatedFilters.includes(false) || filters.length === 0 || typeof filters !== 'object') {
+      return response.status(400).send({ message: 'invalid filters values' })
+    }
+
+    const transactions = await this.transactionsDAO.getTransactions(
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      filters,
+      owner,
+      status
+    )
 
     response.send(transactions)
   }

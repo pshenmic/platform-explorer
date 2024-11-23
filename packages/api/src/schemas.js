@@ -31,6 +31,19 @@ const schemaTypes = [
         type: ['integer', 'null'],
         minimum: 0,
         maximum: 8
+      },
+      filters: {
+        type: ['array', 'null'],
+        items: {
+          type: 'number'
+        }
+      },
+      status: {
+        type: ['string', 'null'],
+        enum: ['SUCCESS', 'FAIL', 'ALL']
+      },
+      owner: {
+        type: ['string', 'null']
       }
     }
   },
