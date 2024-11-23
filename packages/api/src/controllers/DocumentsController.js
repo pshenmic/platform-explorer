@@ -1,20 +1,40 @@
 const DocumentsDAO = require('../dao/DocumentsDAO')
+const { decodeStateTransition } = require('../utils')
 
 class DocumentsController {
-  constructor (knex) {
+  constructor (client, knex, dapi) {
     this.documentsDAO = new DocumentsDAO(knex)
+    this.client = client
+    this.dapi = dapi
   }
 
   getDocumentByIdentifier = async (request, response) => {
     const { identifier } = request.params
 
-    const document = await this.documentsDAO.getDocumentByIdentifier(identifier)
+    const stateTransitionData = await this.documentsDAO.getDocumentStateTransition(identifier)
 
-    if (!document) {
+    if (!stateTransitionData) {
       response.status(404).send({ message: 'not found' })
     }
 
-    response.send(document)
+    const { transitions } = await decodeStateTransition(this.client, stateTransitionData.data)
+
+    const decodedDocumentTransitionData = transitions.find(transition => transition.id === identifier)
+
+    const [documentFromDapi] = await this.dapi.getDocumentsByIdentifier(
+      decodedDocumentTransitionData.type,
+      {
+        $format_version: '0',
+        ownerId: stateTransitionData.owner,
+        id: stateTransitionData.identifier,
+        version: stateTransitionData.version,
+        documentSchemas: stateTransitionData.schema
+      },
+      identifier,
+      1
+    )
+
+    response.send(documentFromDapi.getData())
   }
 
   getDocumentsByDataContract = async (request, response) => {

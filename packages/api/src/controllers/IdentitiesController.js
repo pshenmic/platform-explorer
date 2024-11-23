@@ -81,7 +81,7 @@ class IdentitiesController {
     const { identifier } = request.params
     const { limit = 100 } = request.query
 
-    const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, identifier, limit)
+    const documents = await this.dapi.getDocumentsByOwner(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, identifier, limit)
 
     const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
 

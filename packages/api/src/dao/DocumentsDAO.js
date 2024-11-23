@@ -77,4 +77,18 @@ module.exports = class DocumentsDAO {
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }
+
+  getDocumentStateTransition = async (identifier) => {
+    const [row] = await this.knex('documents')
+      .select(
+        'state_transitions.data as data', 'data_contracts.schema as schema',
+        'data_contracts.identifier as identifier ', 'data_contracts.owner as owner',
+        'data_contracts.version as version'
+      )
+      .where('documents.identifier', '=', identifier)
+      .leftJoin('state_transitions', 'state_transitions.hash', 'documents.state_transition_hash')
+      .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
+
+    return row
+  }
 }
