@@ -51,7 +51,7 @@ class DAPI {
    * @param {string} indexName
    * @param {number} resultType
    * @param {Array<Buffer>} indexValuesList
-   * @param {Buffer} [startAtIdentifierInfo]
+   * @param {Object} [startAtIdentifierInfo]
    * @param {bool} [allowIncludeLockedAndAbstainingVoteTally]
    * @param {number} [count]
    * @returns {Promise<contestedResourceContenders>}
