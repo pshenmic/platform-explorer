@@ -687,6 +687,8 @@ Return all withdrawals for identity
 _Note: this request does not contain any pagination data in the response_
 
 * `limit` cannot be more then 100
+* returns 404 `not found` if identity don't have withdrawals
+* Pagination always `null`
 ```
 GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5
 
@@ -738,6 +740,7 @@ GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5
 Response codes:
 ```
 200: OK
+404: Not Found
 500: Internal Server Error
 ```
 ---
@@ -918,6 +921,79 @@ GET /rate
 {
     usd: 24.45,
     source: "Kucoin"
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+### Decode State Transitions
+Return a decoded State Transition
+
+Available transactions type for decode
+
+| Transition type              | type index |
+|------------------------------|------------|
+| `DATA_CONTRACT_CREATE`       | 0          |
+| `DOCUMENTS_BATCH`            | 1          |
+| `IDENTITY_CREATE`            | 2          |
+| `IDENTITY_TOP_UP`            | 3          |
+| `DATA_CONTRACT_UPDATE`       | 4          |
+| `IDENTITY_UPDATE`            | 5          |
+| `IDENTITY_CREDIT_WITHDRAWAL` | 6          |
+| `IDENTITY_CREDIT_TRANSFER`   | 7          |
+| `MASTERNODE_VOTE`            | 8          |
+
+```
+POST /transaction/decode
+{
+    "base64": "AAAA56Y/VzBp5vlrJR8JRCPSDLlaZjngwyM50w8dQAmAe3EAAAAAAAEBAAABYpzp8+tOQ8j6k24W7FXjqo7zZmMZcybMIDLw7VfLT0EAAQZsYWJsZXIWBBIEdHlwZRIGb2JqZWN0Egpwcm9wZXJ0aWVzFgISCmNvbnRyYWN0SWQWBBIEdHlwZRIGc3RyaW5nEgltaW5MZW5ndGgDVhIJbWF4TGVuZ3RoA1gSCHBvc2l0aW9uAwASCXNob3J0TmFtZRYEEgR0eXBlEgZzdHJpbmcSCW1heExlbmd0aANAEgltaW5MZW5ndGgDBhIIcG9zaXRpb24DAhIIcmVxdWlyZWQVAhIJc2hvcnROYW1lEgpjb250cmFjdElkEhRhZGRpdGlvbmFsUHJvcGVydGllcxMACgACQR8AOrSAQ3S/emVWILS8WyHcMA97CtY5rH7dB4DSjAm/0x6DZdZcm8jyGIdIuuTUALR8/N724YhxwhOQHqUm5ipN"
+}
+
+Response:
+{
+    "type": 0,
+    "internalConfig": {
+        "canBeDeleted": false,
+        "readonly": false,
+        "keepsHistory": false,
+        "documentsKeepHistoryContractDefault": false,
+        "documentsMutableContractDefault": true,
+        "documentsCanBeDeletedContractDefault": true,
+        "requiresIdentityDecryptionBoundedKey": null,
+        "requiresIdentityEncryptionBoundedKey": null
+    },
+    "dataContractId": "GbGD5YbS9GVh7FSZjz3uUJpbrXo9ctbdKycfTqqg3Cmn",
+    "ownerId": "7dwjL5frrkM69pv3BsKSQb4ELrMYmDeE11KNoDSefG6c",
+    "schema": {
+        "labler": {
+            "type": "object",
+            "properties": {
+                "contractId": {
+                    "type": "string",
+                    "minLength": 43,
+                    "maxLength": 44,
+                    "position": 0
+                },
+                "shortName": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 3,
+                    "position": 1
+                }
+            },
+            "required": [
+                "shortName",
+                "contractId"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "signature": "1f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d",
+    "signatureKeyId": 2,
+    "raw": "000000e7a63f573069e6f96b251f094423d20cb95a6639e0c32339d30f1d4009807b7100000000000101000001629ce9f3eb4e43c8fa936e16ec55e3aa8ef36663197326cc2032f0ed57cb4f410001066c61626c6572160412047479706512066f626a656374120a70726f706572746965731602120a636f6e7472616374496416041204747970651206737472696e6712096d696e4c656e677468035612096d61784c656e67746803581208706f736974696f6e0300120973686f72744e616d6516041204747970651206737472696e6712096d61784c656e677468034012096d696e4c656e67746803061208706f736974696f6e0302120872657175697265641502120973686f72744e616d65120a636f6e7472616374496412146164646974696f6e616c50726f7065727469657313000a0002411f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d"
 }
 ```
 Response codes:
