@@ -33,6 +33,7 @@ Reference:
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Rate](#rate)
+* [State Transition decode](#state-transitions-decode)
 
 ### Status
 Returns basic stats and epoch info
@@ -929,7 +930,6 @@ Response codes:
 500: Internal Server Error
 503: Service Temporarily Unavailable
 ```
-### Decode State Transitions
 Return a decoded State Transition
 
 Available transactions type for decode
