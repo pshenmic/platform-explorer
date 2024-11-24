@@ -102,6 +102,7 @@ module.exports = class IdentitiesDAO {
     const [identity] = await this.knex('identity_aliases')
       .select('identity_identifier', 'alias')
       .whereRaw(`LOWER(alias) LIKE LOWER('${dpns}${dpns.includes('.') ? '' : '.%'}')`)
+      .orderBy('id', 'desc')
       .limit(1)
 
     if (!identity) {
