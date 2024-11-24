@@ -38,12 +38,12 @@ const decodeStateTransition = async (client, base64) => {
       const dataContractConfig = stateTransition.getDataContract().getConfig()
 
       decoded.internalConfig = {
-        canBeDeleted: dataContractConfig.canBeDeleted ?? null,
-        readonly: dataContractConfig.readonly ?? null,
-        keepsHistory: dataContractConfig.keepsHistory ?? null,
-        documentsKeepHistoryContractDefault: dataContractConfig.documentsKeepHistoryContractDefault ?? null,
-        documentsMutableContractDefault: dataContractConfig.documentsMutableContractDefault ?? null,
-        documentsCanBeDeletedContractDefault: dataContractConfig.documentsCanBeDeletedContractDefault ?? null,
+        canBeDeleted: dataContractConfig.canBeDeleted,
+        readonly: dataContractConfig.readonly,
+        keepsHistory: dataContractConfig.keepsHistory,
+        documentsKeepHistoryContractDefault: dataContractConfig.documentsKeepHistoryContractDefault,
+        documentsMutableContractDefault: dataContractConfig.documentsMutableContractDefault,
+        documentsCanBeDeletedContractDefault: dataContractConfig.documentsCanBeDeletedContractDefault,
         requiresIdentityDecryptionBoundedKey: dataContractConfig.requiresIdentityDecryptionBoundedKey ?? null,
         requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null
       }
@@ -95,12 +95,12 @@ const decodeStateTransition = async (client, base64) => {
       const dataContractConfig = stateTransition.getDataContract().getConfig()
 
       decoded.internalConfig = {
-        canBeDeleted: dataContractConfig.canBeDeleted ?? null,
-        readonly: dataContractConfig.readonly ?? null,
-        keepsHistory: dataContractConfig.keepsHistory ?? null,
-        documentsKeepHistoryContractDefault: dataContractConfig.documentsKeepHistoryContractDefault ?? null,
-        documentsMutableContractDefault: dataContractConfig.documentsMutableContractDefault ?? null,
-        documentsCanBeDeletedContractDefault: dataContractConfig.documentsCanBeDeletedContractDefault ?? null,
+        canBeDeleted: dataContractConfig.canBeDeleted,
+        readonly: dataContractConfig.readonly,
+        keepsHistory: dataContractConfig.keepsHistory,
+        documentsKeepHistoryContractDefault: dataContractConfig.documentsKeepHistoryContractDefault,
+        documentsMutableContractDefault: dataContractConfig.documentsMutableContractDefault,
+        documentsCanBeDeletedContractDefault: dataContractConfig.documentsCanBeDeletedContractDefault,
         requiresIdentityDecryptionBoundedKey: dataContractConfig.requiresIdentityDecryptionBoundedKey ?? null,
         requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null
       }
