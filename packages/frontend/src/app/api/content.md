@@ -33,6 +33,7 @@ Reference:
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Rate](#rate)
+* [Decode StateTransition](#decode-state-transitions)
 
 ### Status
 Returns basic stats and epoch info
