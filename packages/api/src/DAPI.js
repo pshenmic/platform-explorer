@@ -51,9 +51,7 @@ class DAPI {
    * @param {string} indexName
    * @param {number} resultType
    * @param {Array<Buffer>} indexValuesList
-   * @param {Object} [startAtIdentifierInfo]
-   * @param {Buffer} startAtIdentifierInfo.start_value
-   * @param {Boolean} startAtIdentifierInfo.start_value_included
+   * @param {StartAtIdentifierInfo} [startAtIdentifierInfo]
    * @param {number} [count]
    * @returns {Promise<contestedResourceContenders>}
    */
