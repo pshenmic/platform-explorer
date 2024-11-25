@@ -7,6 +7,7 @@ use dpp::state_transition::documents_batch_transition::document_create_transitio
 use dpp::state_transition::documents_batch_transition::document_delete_transition::v0::v0_methods::DocumentDeleteTransitionV0Methods;
 use dpp::state_transition::documents_batch_transition::document_replace_transition::v0::v0_methods::DocumentReplaceTransitionV0Methods;
 use dpp::state_transition::documents_batch_transition::document_transition::{DocumentTransition, DocumentTransitionV0Methods};
+use dpp::state_transition::documents_batch_transition::document_transition::action_type::{DocumentTransitionActionType, TransitionActionTypeGetter};
 use dpp::state_transition::documents_batch_transition::document_transition::document_purchase_transition::v0::v0_methods::DocumentPurchaseTransitionV0Methods;
 use dpp::state_transition::documents_batch_transition::document_transition::document_transfer_transition::v0::v0_methods::DocumentTransferTransitionV0Methods;
 use dpp::state_transition::documents_batch_transition::document_transition::document_update_price_transition::v0::v0_methods::DocumentUpdatePriceTransitionV0Methods;
@@ -17,6 +18,8 @@ use tokio_postgres::Row;
 pub struct Document {
     pub id: Option<u32>,
     pub identifier: Identifier,
+    pub document_type_name: String,
+    pub transition_type: DocumentTransitionActionType,
     pub owner: Option<Identifier>,
     pub price: Option<Credits>,
     pub data_contract_identifier: Identifier,
@@ -29,6 +32,7 @@ pub struct Document {
 impl From<DocumentTransition> for Document {
     fn from(value: DocumentTransition) -> Self {
         let revision = value.revision();
+        let transition_type = value.action_type();
 
         match value {
             DocumentTransition::Create(transition) => {
@@ -37,10 +41,13 @@ impl From<DocumentTransition> for Document {
                 let data_decoded = serde_json::to_value(data).unwrap();
                 let identifier = base.id();
                 let data_contract_identifier = base.data_contract_id();
+                let document_type_name = base.document_type_name().clone();
 
                 return Document {
                     id: None,
                     identifier,
+                    document_type_name,
+                    transition_type,
                     owner: None,
                     price: None,
                     data: Some(data_decoded),
@@ -56,10 +63,13 @@ impl From<DocumentTransition> for Document {
                 let data_decoded = serde_json::to_value(data).unwrap();
                 let identifier = base.id();
                 let data_contract_identifier = base.data_contract_id();
+                let document_type_name = base.document_type_name().clone();
 
                 return Document {
                     id: None,
                     identifier,
+                    document_type_name,
+                    transition_type,
                     owner: None,
                     price: None,
                     data: Some(data_decoded),
@@ -73,10 +83,13 @@ impl From<DocumentTransition> for Document {
                 let base = transition.base().clone();
                 let identifier = base.id();
                 let data_contract_identifier = base.data_contract_id();
+                let document_type_name = base.document_type_name().clone();
 
                 return Document {
                     id: None,
                     identifier,
+                    document_type_name,
+                    transition_type,
                     owner: None,
                     price: None,
                     data: None,
@@ -92,10 +105,13 @@ impl From<DocumentTransition> for Document {
                 let owner = transition.recipient_owner_id();
                 let data_contract_identifier = base.data_contract_id();
                 let revision = transition.revision();
+                let document_type_name = base.document_type_name().clone();
 
                 return Document {
                     id: None,
                     identifier,
+                    document_type_name,
+                    transition_type,
                     owner: Some(owner),
                     price: None,
                     data: None,
@@ -111,10 +127,13 @@ impl From<DocumentTransition> for Document {
                 let identifier = base.id();
                 let data_contract_identifier = base.data_contract_id();
                 let revision = transition.revision();
+                let document_type_name = base.document_type_name().clone();
 
                 return Document {
                     id: None,
                     identifier,
+                    document_type_name,
+                    transition_type,
                     owner: None,
                     price: Some(price),
                     data: None,
@@ -129,10 +148,13 @@ impl From<DocumentTransition> for Document {
                 let price = transition.price();
                 let identifier = base.id();
                 let data_contract_identifier = base.data_contract_id();
+                let document_type_name = base.document_type_name().clone();
 
                 return Document {
                     id: None,
                     identifier,
+                    document_type_name,
+                    transition_type,
                     owner: None,
                     price: Some(price),
                     data: None,
@@ -151,12 +173,24 @@ impl From<Row> for Document {
     fn from(row: Row) -> Self {
         let id: i32 = row.get(0);
         let identifier: String = row.get(1);
-        let data_contract_identifier: String = row.get(2);
-        let owner: Option<String> = row.get(3);
-        let price: Option<i64> = row.get(4);
-        let deleted: bool = row.get(5);
-        let revision: i32 = row.get(6);
-        let is_system: bool = row.get(7);
+        let document_type_name: String = row.get(2);
+        let transition_type_i64: i64 = row.get(3);
+        let data_contract_identifier: String = row.get(4);
+        let owner: Option<String> = row.get(5);
+        let price: Option<i64> = row.get(6);
+        let deleted: bool = row.get(7);
+        let revision: i32 = row.get(8);
+        let is_system: bool = row.get(9);
+
+        let transition_type = match transition_type_i64 {
+            0 => DocumentTransitionActionType::Create,
+            1 => DocumentTransitionActionType::Replace,
+            2 => DocumentTransitionActionType::Delete,
+            3 => DocumentTransitionActionType::Transfer,
+            4 => DocumentTransitionActionType::Purchase,
+            5 => DocumentTransitionActionType::UpdatePrice,
+            _ => panic!("Unknown document transition type")
+        };
 
         return Document {
             id: Some(id as u32),
@@ -166,8 +200,25 @@ impl From<Row> for Document {
             data: None,
             deleted,
             identifier: Identifier::from_string(identifier.as_str(), Base58).unwrap(),
+            document_type_name,
             is_system,
             revision: Revision::from(revision as u64),
+            transition_type: DocumentTransitionActionType::try_from(transition_type).unwrap(),
         }
     }
 }
+
+//
+// impl From<i64> for DocumentTransitionActionType {
+//     fn from(value: i64) -> Self {
+//         match value {
+//             0 => DocumentTransitionActionType::Create,
+//             1 => DocumentTransitionActionType::Replace,
+//             2 => DocumentTransitionActionType::Delete,
+//             3 => DocumentTransitionActionType::Transfer,
+//             4 => DocumentTransitionActionType::Purchase,
+//             5 => DocumentTransitionActionType::UpdatePrice,
+//             _ => panic!(format!("Unknown document transition type: {}", value))
+//         }
+//     }
+// }

@@ -45,7 +45,13 @@ impl From<IdentityCreateTransition> for Identity {
                                       Auth::UserPass(core_rpc_user, core_rpc_password)).unwrap();
 
                 let block_hash = rpc.get_block_hash(block_height).unwrap();
-                let transaction = rpc.get_raw_transaction(&Txid::from_hex(&tx_hash).unwrap(), Some(&block_hash)).unwrap();
+                let transaction = match rpc.get_raw_transaction(&Txid::from_hex(&tx_hash).unwrap(), Some(&block_hash)) {
+                    Ok(tx) => tx,
+                    Err(err) => {
+                        println!("Could not find transaction {} in blockhash {}", &tx_hash, &block_hash);
+                        panic!("Err");
+                    }
+                };
 
                 transaction
             }
