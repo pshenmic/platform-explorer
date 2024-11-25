@@ -9,6 +9,7 @@ import { ErrorMessageBlock } from '../../../components/Errors'
 import BlocksList from '../../../components/blocks/BlocksList'
 import TransactionsList from '../../../components/transactions/TransactionsList'
 import BlocksChart from './BlocksChart'
+import RewardsChart from './RewardsChart'
 import Link from 'next/link'
 import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine, Credits } from '../../../components/data'
 import { ValueContainer, PageDataContainer, InfoContainer } from '../../../components/ui/containers'
@@ -34,7 +35,7 @@ function Validator ({ hash }) {
   const [currentPage, setCurrentPage] = useState(1)
   const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [withdrawals, setWithdrawals] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [activeChartTab, setActiveChartTab] = useState(0)
+  const [activeChartTab, setActiveChartTab] = useState(1)
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
@@ -412,19 +413,22 @@ function Validator ({ hash }) {
             <Tabs onChange={(index) => setActiveChartTab(index)} index={activeChartTab}>
               <TabList>
                 <Tab>Proposed Blocks</Tab>
-                <Tab isDisabled>Reward Earned</Tab>
+                <Tab>Reward Earned</Tab>
               </TabList>
               <TabPanels>
                   <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
                     <BlocksChart
-                      blockBorders={false}
                       hash={hash}
                       isActive={activeChartTab === 0}
                       loading={validator.loading}
                     />
                   </TabPanel>
                   <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
-                    Reward Earned
+                    <RewardsChart
+                      hash={hash}
+                      isActive={activeChartTab === 1}
+                      loading={validator.loading}
+                    />
                   </TabPanel>
               </TabPanels>
             </Tabs>
