@@ -111,16 +111,14 @@ const LineGraph = ({
   const svgRef = useRef(null)
   const uniqueComponentId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-  const getFormatByCode = (code) => {
-    if (code === 'number') return d3.format(',.0f')
-    if (code === 'date') return d3.timeFormat('%B %d')
-    if (code === 'datetime') return d3.timeFormat('%B %d, %H:%M')
-    if (code === 'time') return d3.timeFormat('%H:%M')
+  const tickFormats = {
+    number: d3.format(',.0f'),
+    date: d3.timeFormat('%B %d'),
+    datetime: d3.timeFormat('%B %d, %H:%M'),
+    time: d3.timeFormat('%H:%M')
   }
 
-  const xTickFormat = (() => {
-    return getFormatByCode(xAxisFormatCode)
-  })()
+  const xTickFormat = tickFormats[xAxisFormatCode]
 
   const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
 
@@ -319,7 +317,7 @@ const LineGraph = ({
 
     const infoLines = []
     const xFormatCode = typeof xAxis.type.tooltip === 'string' ? xAxis.type.tooltip : xAxis.type.axis
-    const xFormat = getFormatByCode(xFormatCode)
+    const xFormat = tickFormats[xFormatCode]
 
     infoLines.push({
       styles: ['inline', 'tiny'],
