@@ -32,7 +32,7 @@ class IdentitiesController {
       this.dapi
     )
 
-    if (!aliasInfo.contestedState) {
+    if (!aliasInfo.contestedState || aliasInfo.contestedState?.contendersList?.length === 0) {
       identity = await this.identitiesDAO.getIdentityByDPNSName(dpns)
     } else {
       const [contender] = aliasInfo.contestedState.contendersList.sort((a, b) => b.voteCount - a.voteCount)
