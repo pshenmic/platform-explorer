@@ -1,29 +1,29 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
-const {WITHDRAWAL_CONTRACT_TYPE} = require('../constants')
+const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
-const {getAliasInfo} = require("../utils");
-const {base58} = require('@scure/base')
+const { getAliasInfo } = require('../utils')
+const { base58 } = require('@scure/base')
 
 class IdentitiesController {
-  constructor(knex, dapi) {
+  constructor (knex, dapi) {
     this.identitiesDAO = new IdentitiesDAO(knex, dapi)
     this.dapi = dapi
   }
 
   getIdentityByIdentifier = async (request, response) => {
-    const {identifier} = request.params
+    const { identifier } = request.params
 
     const identity = await this.identitiesDAO.getIdentityByIdentifier(identifier)
 
     if (!identity) {
-      return response.status(404).send({message: 'not found'})
+      return response.status(404).send({ message: 'not found' })
     }
 
     response.send(identity)
   }
 
   getIdentityByDPNSName = async (request, response) => {
-    const {dpns} = request.query
+    const { dpns } = request.query
 
     let identity
 
@@ -35,7 +35,7 @@ class IdentitiesController {
     if (!aliasInfo.contestedState) {
       identity = await this.identitiesDAO.getIdentityByDPNSName(dpns)
     } else {
-      const [{identifier}] = aliasInfo.contestedState.contendersList.sort((a, b) => b.voteCount - a.voteCount)
+      const [{ identifier }] = aliasInfo.contestedState.contendersList.sort((a, b) => b.voteCount - a.voteCount)
 
       identity = {
         alias: dpns,
@@ -44,14 +44,14 @@ class IdentitiesController {
     }
 
     if (!identity) {
-      return response.status(404).send({message: 'not found'})
+      return response.status(404).send({ message: 'not found' })
     }
 
     response.send(identity)
   }
 
   getIdentities = async (request, response) => {
-    const {page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height'} = request.query
+    const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
 
     const identities = await this.identitiesDAO.getIdentities(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
 
@@ -59,8 +59,8 @@ class IdentitiesController {
   }
 
   getTransactionsByIdentity = async (request, response) => {
-    const {identifier} = request.params
-    const {page = 1, limit = 10, order = 'asc'} = request.query
+    const { identifier } = request.params
+    const { page = 1, limit = 10, order = 'asc' } = request.query
 
     const transactions = await this.identitiesDAO.getTransactionsByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order)
 
@@ -68,8 +68,8 @@ class IdentitiesController {
   }
 
   getDataContractsByIdentity = async (request, response) => {
-    const {identifier} = request.params
-    const {page = 1, limit = 10, order = 'asc'} = request.query
+    const { identifier } = request.params
+    const { page = 1, limit = 10, order = 'asc' } = request.query
 
     const dataContracts = await this.identitiesDAO.getDataContractsByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order)
 
@@ -77,8 +77,8 @@ class IdentitiesController {
   }
 
   getDocumentsByIdentity = async (request, response) => {
-    const {identifier} = request.params
-    const {page = 1, limit = 10, order = 'asc'} = request.query
+    const { identifier } = request.params
+    const { page = 1, limit = 10, order = 'asc' } = request.query
 
     const documents = await this.identitiesDAO.getDocumentsByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order)
 
@@ -86,8 +86,8 @@ class IdentitiesController {
   }
 
   getTransfersByIdentity = async (request, response) => {
-    const {identifier} = request.params
-    const {page = 1, limit = 10, order = 'asc', type = undefined} = request.query
+    const { identifier } = request.params
+    const { page = 1, limit = 10, order = 'asc', type = undefined } = request.query
 
     const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order, type)
 
@@ -95,8 +95,8 @@ class IdentitiesController {
   }
 
   getWithdrawalsByIdentity = async (request, response) => {
-    const {identifier} = request.params
-    const {limit = 100} = request.query
+    const { identifier } = request.params
+    const { limit = 100 } = request.query
 
     const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, identifier, limit)
 
@@ -105,7 +105,7 @@ class IdentitiesController {
     const txHashes = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
 
     if (documents.length === 0) {
-      return response.status(404).send({message: 'not found'})
+      return response.status(404).send({ message: 'not found' })
     }
 
     response.send(documents.map(document => ({
