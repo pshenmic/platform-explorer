@@ -35,11 +35,15 @@ class IdentitiesController {
     if (!aliasInfo.contestedState) {
       identity = await this.identitiesDAO.getIdentityByDPNSName(dpns)
     } else {
-      const [{ identifier }] = aliasInfo.contestedState.contendersList.sort((a, b) => b.voteCount - a.voteCount)
+      const [contender] = aliasInfo.contestedState.contendersList.sort((a, b) => b.voteCount - a.voteCount)
+
+      if (!contender) {
+        return response.status(404).send({ message: 'not found' })
+      }
 
       identity = {
         alias: dpns,
-        identifier: base58.encode(Buffer.from(identifier, 'base64'))
+        identifier: base58.encode(Buffer.from(contender.identifier, 'base64'))
       }
     }
 
