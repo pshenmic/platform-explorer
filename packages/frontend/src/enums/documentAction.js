@@ -30,12 +30,12 @@ export const DocumentActionInfo = {
   },
   UPDATE_PRICE: {
     title: 'Document Update Price',
-    description: 'Updates the price or value field of a document. Typically used for documents that manage financial or resource-related data.',
+    description: 'Sets or updates the price of a document. Turns the document into NFT that could be transferred or sold to other Identity in the system.',
     color: 'blue'
   },
   PURCHASE: {
     title: 'Document Purchase',
-    description: 'Records a purchase event related to the document. This action is used in transactions involving goods, services, or other assets represented on the platform.',
+    description: 'Purchases a document from the Identity in the Dash Platform. Seller receive credits on the balance of his Identity and ownership is transferred to the buyer.',
     color: 'green'
   }
 }
