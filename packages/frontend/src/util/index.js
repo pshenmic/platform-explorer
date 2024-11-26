@@ -69,6 +69,11 @@ function roundUsd (usd, maxDecimals = 5) {
   return usd.toFixed(precision)
 }
 
+function findActiveAlias (aliases = []) {
+  if (!aliases?.length) return null
+  return aliases?.find(alias => alias.status === 'ok')
+}
+
 export {
   getTransitionTypeStringById,
   fetchHandlerSuccess,
@@ -81,5 +86,6 @@ export {
   creditsToDash,
   roundUsd,
   getDaysBetweenDates,
-  getDynamicRange
+  getDynamicRange,
+  findActiveAlias
 }
