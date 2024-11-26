@@ -3,10 +3,12 @@ const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const PoolingEnum = require('./enums/PoolingEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT } = require('./constants')
-const { base58 } = require('@scure/base')
+const {TCP_CONNECT_TIMEOUT, DPNS_CONTRACT, NETWORK} = require('./constants')
+const {base58} = require('@scure/base')
 const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 const Intervals = require('./enums/IntervalsEnum')
+
+const dashcorelib = require('@dashevo/dashcore-lib')
 
 const getKnex = () => {
   return require('knex')({
@@ -17,7 +19,7 @@ const getKnex = () => {
       user: process.env.POSTGRES_USER,
       database: process.env.POSTGRES_DB,
       password: process.env.POSTGRES_PASS,
-      ssl: process.env.POSTGRES_SSL ? { rejectUnauthorized: false } : false
+      ssl: process.env.POSTGRES_SSL ? {rejectUnauthorized: false} : false
     }
   })
 }
@@ -49,7 +51,7 @@ const decodeStateTransition = async (client, base64) => {
       }
 
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
-      decoded.identityNonce = stateTransition.getIdentityNonce()
+      decoded.identityNonce = Number(stateTransition.getIdentityNonce())
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
       decoded.ownerId = stateTransition.getOwnerId().toString()
       decoded.schema = stateTransition.getDataContract().getDocumentSchemas()
@@ -69,25 +71,15 @@ const decodeStateTransition = async (client, base64) => {
           action: DocumentActionEnum[documentTransition.getAction()]
         }
 
-        // TODO: work work work
         switch (documentTransition.getAction()) {
           case DocumentActionEnum.Create: {
-            // out.data = documentTransition.getData()
+            out.data = documentTransition.getData()
+
             break
           }
           case DocumentActionEnum.Replace: {
-            break
-          }
-          case DocumentActionEnum.Delete: {
-            break
-          }
-          case DocumentActionEnum.Transfer: {
-            break
-          }
-          case DocumentActionEnum.UpdatePrice: {
-            break
-          }
-          case DocumentActionEnum.Purchase: {
+            out.data = documentTransition.getData()
+
             break
           }
         }
@@ -95,6 +87,7 @@ const decodeStateTransition = async (client, base64) => {
         return out
       })
 
+      decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.signature = Buffer.from(stateTransition.getSignature()).toString('hex')
       decoded.publicKeyId = stateTransition.getSignaturePublicKeyId()
       decoded.ownerId = stateTransition.getOwnerId().toString()
@@ -103,11 +96,18 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_CREATE: {
-      decoded.assetLockProof = stateTransition.getAssetLockProof()
+      const assetLockProof = stateTransition.getAssetLockProof()
+
+      decoded.input = dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
+      decoded.assetLockProof = assetLockProof
+      decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
       decoded.raw = stateTransition.toBuffer().toString('hex')
-      decoded.publicKeys = stateTransition.publicKeys
+      decoded.publicKeys = stateTransition.publicKeys.map(key => ({
+        ...key.toJSON(),
+        signature: Buffer.from(key.getSignature()).toString('hex')
+      }))
 
       break
     }
@@ -115,7 +115,7 @@ const decodeStateTransition = async (client, base64) => {
       const assetLockProof = stateTransition.getAssetLockProof()
       const output = assetLockProof.getOutput()
 
-      // TODO: funding address (input) data
+      decoded.input = dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
       decoded.assetLockProof = assetLockProof.toJSON()
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.amount = output.satoshis * 1000
@@ -153,7 +153,8 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_UPDATE: {
-      // TODO: userFeeIncrese anmd identityContractNonce is missing
+      decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
+      decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getOwnerId().toString()
       decoded.revision = stateTransition.getRevision()
       decoded.publicKeysToAdd = stateTransition.getPublicKeysToAdd()
@@ -169,7 +170,8 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_CREDIT_TRANSFER: {
-      // TODO: User fee increase and nonce
+      decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
+      decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.recipientId = stateTransition.getRecipientId().toString()
       decoded.amount = stateTransition.getAmount()
@@ -180,7 +182,9 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL: {
-      // TODO: Identity Nonce is missing, User fee increase, outputAddress
+      decoded.output = dashcorelib.Script(stateTransition.getOutputScript()).toAddress(NETWORK).toString()
+      decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
+      decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.amount = parseInt(stateTransition.getAmount())
       decoded.nonce = parseInt(stateTransition.getNonce())
@@ -363,10 +367,10 @@ const getAliasInfo = async (alias, dapi) => {
       ]
     )
 
-    return { alias, contestedState }
+    return {alias, contestedState}
   }
 
-  return { alias, contestedState: null }
+  return {alias, contestedState: null}
 }
 
 module.exports = {
