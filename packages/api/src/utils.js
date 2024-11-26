@@ -9,7 +9,6 @@ const convertToHomographSafeChars = require('dash/build/utils/convertToHomograph
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
 
-
 const getKnex = () => {
   return require('knex')({
     client: 'pg',
