@@ -19,4 +19,26 @@
     font-size: 100%;
     color: var(--chakra-colors-gray-250);
   }
+
+  &__TableWrapper {
+    border: 1px solid var(--chakra-colors-gray-800);
+    border-radius: var(--chakra-radii-lg);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: var(--chakra-radii-lg);
+    border: none;
+  }
+
+  th, td {
+    border: 1px solid var(--chakra-colors-gray-800);
+    padding: 8px;
+  }
+
+  th {
+    font-weight: bold;
+  }
 }
