@@ -431,7 +431,7 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `filters` array of transactions types
 
 ```
-GET /transactions?=1&limit=10&order=asc&6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&filters=0&filters=1&status=ALL
+GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&filters=0&filters=1&status=ALL
 
 {
     pagination: {
