@@ -14,10 +14,9 @@ import { ErrorMessageBlock } from '../../../components/Errors'
 // import ImageGenerator from '../../../components/imageGenerator'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 // import { Credits, Alias, InfoLine, Identifier, DateBlock, CreditsBlock } from '../../../components/data'
-import { Alias, InfoLine, CreditsBlock } from '../../../components/data'
+import { Alias, InfoLine, CreditsBlock, Identifier, DateBlock } from '../../../components/data'
 
 // import { RateTooltip } from '../../../components/ui/Tooltips'
-import './Identity.scss'
 import {
   // Box,
   // Container,
@@ -26,6 +25,10 @@ import {
 } from '@chakra-ui/react'
 // import BlocksChart from '../../validator/[hash]/BlocksChart'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
+import './Identity.scss'
+import './IdentityTotalCard.scss'
+import ImageGenerator from '../../../components/imageGenerator'
+import { HorisontalSeparator } from '../../../components/ui/separators'
 
 const tabs = [
   'transactions',
@@ -35,6 +38,27 @@ const tabs = [
 ]
 
 const defaultTabName = 'transactions'
+
+function AliasesList ({ aliases = [], smallCount = 5 }) {
+  const [showAll, setShowAll] = useState(false)
+
+  const filteredArray = showAll
+    ? aliases
+    : aliases.filter((item, i) => i < smallCount)
+
+  return (
+    <div className={'AliasesList'}>
+      <div className={'AliasesList__ItemsContainer'}>
+        {filteredArray?.map((alias, i) => (
+          <Alias status={alias.status} key={i}>{alias.alias}</Alias>
+        ))}
+      </div>
+      <div className={'AliasesList__ShowMoreButton'} onClick={() => setShowAll(!showAll)}>
+        {showAll ? 'Show less' : 'Show more'}
+      </div>
+    </div>
+  )
+}
 
 function Identity ({ identifier }) {
   const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
@@ -100,29 +124,89 @@ function Identity ({ identifier }) {
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab, router, pathname])
 
+  console.log('identity', identity)
+
   return (
     <PageDataContainer
-      className={'ValidatorPage'}
+      className={'IdentityPage'}
       backLink={'/validators'}
       title={'Identity info'}
     >
-      <div className={'IdentityPage'}>
-        <div className={'InfoBlock InfoBlock--Gradient IdentityPage__CommonInfo'}>
-          {activeAlias &&
-            <div className={'IdentityPage__HeaderAlias'}>
-              <Alias>{activeAlias.alias}</Alias>
-            </div>
-          }
+      <div className={`InfoBlock InfoBlock--Gradient IdentityPage__CommonInfo IdentityTotalCard ${identity.loading ? 'IdentityTotalCard--Loading' : ''} `}>
+        {activeAlias &&
+          <div className={'IdentityTotalCard__Title'}>
+            <Alias>{activeAlias.alias}</Alias>
+          </div>
+        }
 
-          <div>
-            <InfoLine
-              title={'Balance'}
-              value={<CreditsBlock credits={identity.data?.balance} rate={rate}/>}
-              loading={identity.loading}
-              error={identity.error && !identity.data?.balance}
-            />
+        <div className={'IdentityTotalCard__ContentContainer'}>
+          <div className={'IdentityTotalCard__Column'}>
+            <div className={'IdentityTotalCard__Header'}>
+              <div className={'IdentityTotalCard__Avatar'}>
+                {!identity.error
+                  ? <ImageGenerator
+                    username={identity.data.identifier}
+                    lightness={50}
+                    saturation={50}
+                    width={88}
+                    height={88}/>
+                  : 'n/a'
+                }
+              </div>
+              <div className={'IdentityTotalCard__HeaderLines'}>
+                <InfoLine
+                  title={'Identifier'}
+                  loading={identity.loading}
+                  error={identity.error || (!identity.loading && !identity.data?.identifier)}
+                  value={(
+                    <Identifier
+                      copyButton={true}
+                      styles={['highlight-both']}
+                      ellipsis={false}
+                    >
+                      {identity.data?.identifier}
+                    </Identifier>
+                  )}
+                />
+                <InfoLine
+                  title={'Balance'}
+                  value={<CreditsBlock credits={identity.data?.balance} rate={rate}/>}
+                  loading={identity.loading}
+                  error={identity.error || !identity.data?.balance}
+                />
+              </div>
+            </div>
+
+            <HorisontalSeparator className={'ValidatorCard__Separator'}/>
+
+            <div>
+              <InfoLine
+                title={'Revision'}
+                loading={identity.loading}
+                error={identity.error || (!identity.loading && !identity.data?.revision)}
+                value={identity.data?.revision}
+              />
+              <InfoLine
+                title={'Creation date'}
+                loading={identity.loading}
+                error={identity.error || (!identity.loading && !identity.data?.timestamp)}
+                value={<DateBlock timestamp={identity.data?.timestamp}/>}
+              />
+              <InfoLine
+                title={'Identities names'}
+                loading={identity.loading}
+                error={identity.error || (!identity.loading && identity.data?.aliases === undefined)}
+                value={<AliasesList aliases={identity.data?.aliases}/>}
+              />
+            </div>
+
+          </div>
+
+          <div className={'IdentityTotalCard__Column'}>
+
           </div>
         </div>
+      </div>
 
         <InfoContainer styles={['tabs']} className={'ValidatorPage__ChartsContainer'}>
           <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
@@ -168,7 +252,6 @@ function Identity ({ identifier }) {
             </TabPanels>
           </Tabs>
         </InfoContainer>
-      </div>
     </PageDataContainer>
   )
 
