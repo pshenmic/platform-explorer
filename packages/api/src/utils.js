@@ -99,7 +99,7 @@ const decodeStateTransition = async (client, base64) => {
       const assetLockProof = stateTransition.getAssetLockProof()
 
       decoded.input = dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
-      decoded.assetLockProof = assetLockProof
+      decoded.assetLockProof = assetLockProof.toJSON()
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
