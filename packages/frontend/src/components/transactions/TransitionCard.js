@@ -1,6 +1,7 @@
 import './TransitionCard.scss'
 import { ValueCard } from '../cards'
 import { Identifier, InfoLine } from '../data'
+import DocumentActionBadge from './DocumentActionBadge'
 
 function TransitionCard ({ transition }) {
   return (
@@ -9,7 +10,7 @@ function TransitionCard ({ transition }) {
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--Action'}
           title={'Action'}
-          value={transition?.action}
+          value={<DocumentActionBadge typeId={transition?.action}/>}
           error={transition?.action === undefined}
         />
         <InfoLine
