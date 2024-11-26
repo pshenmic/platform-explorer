@@ -33,7 +33,7 @@ Reference:
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Rate](#rate)
-* [Decode StateTransition](#decode-state-transitions)
+* [Decode Raw Transaction](#decode-raw-transaction)
 
 ### Status
 Returns basic stats and epoch info
@@ -930,7 +930,7 @@ Response codes:
 500: Internal Server Error
 503: Service Temporarily Unavailable
 ```
-### Decode State Transitions
+### Decode Raw Transaction
 Return a decoded State Transition
 
 Available transactions type for decode
@@ -946,6 +946,9 @@ Available transactions type for decode
 | `IDENTITY_CREDIT_WITHDRAWAL` | 6          |
 | `IDENTITY_CREDIT_TRANSFER`   | 7          |
 | `MASTERNODE_VOTE`            | 8          |
+
+- `fundingAddress` can be null
+- `prefundedBalance` can be null
 
 ```
 POST /transaction/decode
@@ -1107,27 +1110,71 @@ POST /transaction/decode
     "type": 1,
     "transitions": [
         {
-            "id": "2qHj3sdxdKD4G7ZXGCuF6cB6ADYdtPs2BKNx24YcH6gW",
+            "id": "Fwvkm4ktZVJEHN34RWm4s3fbNXoC3vNj9MB49LwLdavM",
             "dataContractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
             "revision": 1,
-            "type": "preorder",
-            "action": "Create",
+            "type": "domain",
+            "action": 0,
             "data": {
-                "saltedDomainHash": "DcKS9AWVE1atKvIokA7JNdUNmyj4SbFUvB6e83whw2g="
+                "label": "Microsoft",
+                "normalizedLabel": "m1cr0s0ft",
+                "normalizedParentDomainName": "dash",
+                "parentDomainName": "dash",
+                "preorderSalt": "+nE4I9leD/ua1WdxrrZ4gWQWglNUPwRRjgULjvqGOCs=",
+                "records": {
+                    "identity": "HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT"
+                },
+                "subdomainRules": {
+                    "allowSubdomains": false
+                }
+            },
+            "prefundedBalance": {
+                "parentNameAndLabel": 20000000000
             }
         }
     ],
     "userFeeIncrease": 0,
-    "signature": "20b9322a3e4474de58f9e3f3e2f12141b7f59fcd67f425e37a1cecd6f1ffde990f70272092628ae483ee94e3b4c55d4d22a58f4472cb860d1af023a82c187d6703",
-    "publicKeyId": 1,
-    "ownerId": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
-    "raw": "020098b95bbff1488807c3a4ed36c5fde32f9a6f1e05a622938476652041669e4135010000001b3a7a0da4ccf2b697c9e33d00a39d1b3617ab4143cf0bb5f6b60bddfd5132f701087072656f72646572e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c53155c9fbc0065ee73a4def6d8361b1d6f2e63342c3b1557aaadcbe67f07726b6ea1b011073616c746564446f6d61696e486173680a200dc292f405951356ad2af228900ec935d50d9b28f849b154bc1e9ef37c21c3680000014120b9322a3e4474de58f9e3f3e2f12141b7f59fcd67f425e37a1cecd6f1ffde990f70272092628ae483ee94e3b4c55d4d22a58f4472cb860d1af023a82c187d6703"
+    "signature": "2056f7e8fafc7328ed3026466f90cc0d50ad04714c30d3bc4dc7228440adc2b7974091f27b51dc23de470b5e235741c2a852f74c8ab73d7e83469fe24dcffbe425",
+    "signaturePublicKeyId": 2,
+    "ownerId": "HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT",
+    "raw": "0200f5132a1cc9642bdab3d06533a91a4f8813129c9a27a73ed53e577e747c9a4eac01000000de15c2d39a27cbe01395094153e58ded53c7cf9fabfe6723810b56e6ee35f50a0706646f6d61696ee668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c53155a1a2c90b886fe21aa4d646b03e0d2775df9a16f06157130247dd435334fc051f07056c6162656c12094d6963726f736f66740f6e6f726d616c697a65644c6162656c12096d31637230733066741a6e6f726d616c697a6564506172656e74446f6d61696e4e616d6512046461736810706172656e74446f6d61696e4e616d651204646173680c7072656f7264657253616c740cfa713823d95e0ffb9ad56771aeb6788164168253543f04518e050b8efa86382b077265636f726473160112086964656e7469747910f5132a1cc9642bdab3d06533a91a4f8813129c9a27a73ed53e577e747c9a4eac0e737562646f6d61696e52756c65731601120f616c6c6f77537562646f6d61696e7313000112706172656e744e616d65416e644c6162656cfd00000004a817c8000002412056f7e8fafc7328ed3026466f90cc0d50ad04714c30d3bc4dc7228440adc2b7974091f27b51dc23de470b5e235741c2a852f74c8ab73d7e83469fe24dcffbe425"
 }
 ```
 ```
+IDENTITY_CREATE with chainLock
+
 {
     "type": 2,
-    "input": "yV1ZYoep5FFSBxKWM24JUwKfnAkFHnXXV7",
+    "fundingAddress": null,
+    "assetLockProof": {
+        "coreChainLockedHeight": 1138871,
+        "outPoint": "IQBwUdIgfEXXWSu34+W0sAainP4Yma6oq/AMUO6KQIYAAAAA"
+    },
+    "userFeeIncrease": 0,
+    "identityId": "awCc9STLEgw8pJozBq24QzGK5Th9mow7V3EjjY9M7aG",
+    "signature": "2015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f2141",
+    "raw": "0300010000020000000014b23f76cac0218f7637c924e45212bb260cff29250001fc001160b72021007051d2207c45d7592bb7e3e5b4b006a29cfe1899aea8abf00c50ee8a40860000412015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f214108b1737186062205ee3a5f7e19454121b648e0806c7bc1e8bc073c38217a28e1",
+    "publicKeys": [
+        {
+            "$version": "0",
+            "id": 0,
+            "type": 2,
+            "purpose": 0,
+            "securityLevel": 0,
+            "contractBounds": null,
+            "readOnly": false,
+            "data": "sj92ysAhj3Y3ySTkUhK7Jgz/KSU=",
+            "signature": ""
+        }
+    ]
+}
+```
+```
+IDENTITY_CREATE with instantLock
+
+{
+    "type": 2,
+    "fundingAddress": "yV1ZYoep5FFSBxKWM24JUwKfnAkFHnXXV7",
     "assetLockProof": {
         "instantLock": "AQFPrlxO0Oc23SVhC2X/UbVsvhuUZ1IPDO1AqeO1jkVVsQEAAAB3up1FC5RSBDTF0VM5kiqn34G1E0S5hYhkmkR1Lxo1XNDQXOPfUvP7f8bmTMQU+3zZ0P/E0IjnfZ5UL63jAAAAioZ4ZlISrxNM+jbqQJhACa3KM476MTFmf1pitInS+ycT637M0U3YPMZnm1l1SP6uGL3Dk9riqypQhEIgNZ1Lh8QoUHgI3I32L1bau40eriwYWbnKVLO0gg68hFP1fDT2",
         "transaction": "03000800014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b1010000006a473044022070293df3b93c523373f1f86272c5dba7886ab41cfc50b0b89658c07d0825c16002201afdf3b31393c5b99373597042b4d651028e824fc12f802aa1be51cc165bcf1e012103d55244573359ad586597b9bb4dd31b8f145121b7c01146656bc26c4b99184a47ffffffff0240420f0000000000026a0049ac4c2e000000001976a91441bb9b42b9f0d589008b4a7f6a72a6bb342b386d88ac0000000024010140420f00000000001976a9145f573cd6a8570cb0b74c4b0ea15334e6bd6b34a788ac",
@@ -1188,7 +1235,7 @@ POST /transaction/decode
 ```
 {
     "type": 3,
-    "input": "yfcGcMzUw3RANR5f2qYavnxbQobLD93APi",
+    "fundingAddress": "yfcGcMzUw3RANR5f2qYavnxbQobLD93APi",
     "assetLockProof": {
         "instantLock": "AQHlBKj77xbL0VC5XRKhuYg3RIqJTVfYQ4EWUtu6lmdVmAEAAADvzDrsdTKnOK8vC7BZ9uTw3xT3+j7YvrBwM8ZIWlCo9FQPCW6UgYX1XXl8oLqo9TYuDj4CgSStivEwPNTdAAAAhNXZYqwU/zhpaCKxSFLtKe+V9bhm8Gxtn533AC1gBoLP32Z0htf3AdPB9yoKI314GM4XsMZECqOB1HWu/tHmZ8c7JVg0Vp8OMShvEWWXbBTpy3vy5aAe8o5AtyLSc5VE",
         "transaction": "0300080001e504a8fbef16cbd150b95d12a1b98837448a894d57d843811652dbba96675598010000006b483045022100fe381b9c49799b12d244ce72df91c91692f0641d2d0d17f7a3c852bc176cd93102207540ab621747b840cc907a34bc5bfdae4bda0d46b58c9b626f1e9d28aba37dee0121033fff200eaa61c9704fb66167bcd7c42b0f17bf1c7328df186ac279e1814ee2ddffffffff0240420f0000000000026a00880ec805000000001976a91402d7798539e261e55abe63bea8cf7a7d5fde9e8388ac0000000024010140420f00000000001976a914d398ea1a88b5b1d073e0ab79bdcdee729ae4042188ac",
@@ -1270,7 +1317,7 @@ POST /transaction/decode
 ```
 {
     "type": 6,
-    "output": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
+    "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
     "userFeeIncrease": 0,
     "identityContractNonce": 6,
     "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
