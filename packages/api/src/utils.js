@@ -7,7 +7,6 @@ const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT, NETWORK } = require('./constants')
 const { base58 } = require('@scure/base')
 const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 const Intervals = require('./enums/IntervalsEnum')
-
 const dashcorelib = require('@dashevo/dashcore-lib')
 
 const getKnex = () => {
@@ -56,7 +55,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.ownerId = stateTransition.getOwnerId().toString()
       decoded.schema = stateTransition.getDataContract().getDocumentSchemas()
       decoded.signature = Buffer.from(stateTransition.toObject().signature).toString('hex')
-      decoded.publicKeyId = stateTransition.toObject().signaturePublicKeyId
+      decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.raw = stateTransition.toBuffer().toString('hex')
 
       break
@@ -68,12 +67,20 @@ const decodeStateTransition = async (client, base64) => {
           dataContractId: documentTransition.getDataContractId().toString(),
           revision: documentTransition.getRevision(),
           type: documentTransition.getType(),
-          action: DocumentActionEnum[documentTransition.getAction()]
+          action: documentTransition.getAction()
         }
 
         switch (documentTransition.getAction()) {
           case DocumentActionEnum.Create: {
+            const prefundedBalance = documentTransition.getPrefundedVotingBalance()
+
             out.data = documentTransition.getData()
+            out.prefundedBalance = prefundedBalance
+              ? Object.fromEntries(
+                Object.entries(prefundedBalance)
+                  .map(prefund => [prefund[0], Number(prefund[1])])
+              )
+              : null
 
             break
           }
@@ -89,7 +96,7 @@ const decodeStateTransition = async (client, base64) => {
 
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.signature = Buffer.from(stateTransition.getSignature()).toString('hex')
-      decoded.publicKeyId = stateTransition.getSignaturePublicKeyId()
+      decoded.signaturePublicKeyId = stateTransition.getSignaturePublicKeyId()
       decoded.ownerId = stateTransition.getOwnerId().toString()
       decoded.raw = stateTransition.toBuffer().toString('hex')
 
@@ -98,7 +105,9 @@ const decodeStateTransition = async (client, base64) => {
     case StateTransitionEnum.IDENTITY_CREATE: {
       const assetLockProof = stateTransition.getAssetLockProof()
 
-      decoded.input = dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
+      decoded.fundingAddress = assetLockProof.getOutput
+        ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
+        : null
       decoded.assetLockProof = assetLockProof.toJSON()
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getIdentityId().toString()
@@ -115,7 +124,9 @@ const decodeStateTransition = async (client, base64) => {
       const assetLockProof = stateTransition.getAssetLockProof()
       const output = assetLockProof.getOutput()
 
-      decoded.input = dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
+      decoded.fundingAddress = assetLockProof.getOutput
+        ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
+        : null
       decoded.assetLockProof = assetLockProof.toJSON()
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.amount = output.satoshis * 1000
@@ -139,7 +150,7 @@ const decodeStateTransition = async (client, base64) => {
       }
 
       decoded.identityContractNonce = stateTransition.toObject()['$identity-contract-nonce']
-      decoded.publicKeyId = stateTransition.toObject().signaturePublicKeyId
+      decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.signature = Buffer.from(stateTransition.toObject().signature).toString('hex')
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
       decoded.ownerId = stateTransition.getDataContract().getOwnerId().toString()
@@ -164,7 +175,7 @@ const decodeStateTransition = async (client, base64) => {
         }))
       decoded.setPublicKeyIdsToDisable = (stateTransition.getPublicKeyIdsToDisable() ?? []).map(key => key.toJSON())
       decoded.signature = stateTransition.getSignature().toString('hex')
-      decoded.publicKeyId = stateTransition.toObject().signaturePublicKeyId
+      decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.raw = stateTransition.toBuffer().toString('hex')
 
       break
@@ -175,14 +186,14 @@ const decodeStateTransition = async (client, base64) => {
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.recipientId = stateTransition.getRecipientId().toString()
       decoded.amount = stateTransition.getAmount()
-      decoded.publicKeyId = stateTransition.toObject().signaturePublicKeyId
+      decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
       decoded.raw = stateTransition.toBuffer().toString('hex')
 
       break
     }
     case StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL: {
-      decoded.output = dashcorelib.Script(stateTransition.getOutputScript()).toAddress(NETWORK).toString()
+      decoded.outputAddress = dashcorelib.Script(stateTransition.getOutputScript()).toAddress(NETWORK).toString()
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
       decoded.senderId = stateTransition.getIdentityId().toString()
@@ -191,7 +202,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null
       decoded.coreFeePerByte = stateTransition.getCoreFeePerByte()
       decoded.signature = stateTransition.getSignature()?.toString('hex')
-      decoded.publicKeyId = stateTransition.toObject().signaturePublicKeyId
+      decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.pooling = PoolingEnum[stateTransition.getPooling()]
       decoded.raw = stateTransition.toBuffer().toString('hex')
 
