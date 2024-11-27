@@ -26,7 +26,7 @@ export default function TransactionsList ({ transactions = [], showMoreLink, typ
           <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Owner'}>
             Owner
           </GridItem>
-          <GridItem className={'TransactionsList__ColumnTitle'}>
+          <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Type'}>
             Type
           </GridItem>
         </Grid>

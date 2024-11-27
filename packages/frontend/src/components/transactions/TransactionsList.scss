@@ -30,9 +30,20 @@
   @container (max-width: 660px) {
     &__ColumnTitle {
       &--Owner {
-        width: 0;
-        height: 0;
-        visibility: hidden;
+        white-space: nowrap;
+        width: 20px;
+      }
+
+      &--Type {
+        width: 145px;
+      }
+    }
+  }
+
+  @container (max-width: 350px) {
+    &__ColumnTitle {
+      &--Type {
+        width: max-content;
       }
     }
   }
