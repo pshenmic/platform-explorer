@@ -78,12 +78,14 @@ module.exports = class IdentitiesDAO {
 
     const identity = Identity.fromRow(row)
 
+    identity.aliases = ['xyz.dash']
+
     const aliases = await Promise.all(identity.aliases.map(async alias => {
       const aliasInfo = await getAliasInfo(alias, this.dapi)
 
       const isLocked = base58.encode(
-        Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-        'base64') !== identifier
+        Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
+      ) !== identifier
 
       return {
         alias,
