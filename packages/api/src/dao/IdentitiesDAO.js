@@ -82,8 +82,8 @@ module.exports = class IdentitiesDAO {
       const aliasInfo = await getAliasInfo(alias, this.dapi)
 
       const isLocked = base58.encode(
-        Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-        'base64') !== identifier
+        Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
+      ) !== identifier
 
       return {
         alias,
