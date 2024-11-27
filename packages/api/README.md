@@ -734,40 +734,14 @@ GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5
   },
   resultSet: [
     {
-      "timestamp": 1729096625509,
+      "document": "95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs",
       "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-      "id": "95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs",
+      "status": "COMPLETE",
       "amount": 200000,
-      "status": 3
+      "withdrawalAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+      "hash": "113F86F4D1F48159B0D6690F3C5F8F33E39243086C041CF016454A66AD63F025"
     },
-    {
-      "timestamp": 1729096140465,
-      "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-      "id": "DJzb8nj7JTHwnvAGEGhyFc5hHLFa5Es9WFAyS4HhhNeF",
-      "amount": 200000,
-      "status": 3
-    },
-    {
-      "timestamp": 1729096636318,
-      "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-      "id": "E4gbWCQgqrz9DVrzCeDKhr4PVsfp6CeL5DUAYndRVWdk",
-      "amount": 200000,
-      "status": 3
-    },
-    {
-      "timestamp": 1729096795042,
-      "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-      "id": "FouX2qY8Eaxj5rSBrH9uxbhAM16ozrUP4sJwdo9pL7Cr",
-      "amount": 200000,
-      "status": 3
-    },
-    {
-      "timestamp": 1729097247874,
-      "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-      "id": "9VEpb2aJRnCxfi3LjFXWa1zshkBPfzzHHh5yqEkgqw1t",
-      "amount": 200000,
-      "status": 3
-    }
+    ...
   ]
 }
 ```
