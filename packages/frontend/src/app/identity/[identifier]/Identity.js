@@ -252,7 +252,7 @@ function Identity ({ identifier }) {
                             <TabPanel px={0} h={'100%'}>
                               {!transactions.error
                                 ? !transactions.loading
-                                    ? <TransactionsList transactions={transactions.data.resultSet}/>
+                                    ? <TransactionsList transactions={transactions.data.resultSet} rate={rate.data}/>
                                     : <LoadingList itemsCount={9}/>
                                 : <ErrorMessageBlock/>}
                             </TabPanel>
