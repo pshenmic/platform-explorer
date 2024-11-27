@@ -145,9 +145,9 @@ function Identity ({ identifier }) {
                                     <Td isNumeric className={'Table__Cell--BreakWord'}>
                                       <LoadingLine loading={identity.loading}>
                                         <div className={'IdentityInfo__AliasesContainer'}>
-                                        {identity?.data.aliases.map((alias, i) => (
-                                          <Alias alias={alias.alias || alias} key={i}/>
-                                        ))}
+                                          {identity?.data.aliases.map((alias, i) => (
+                                            <Alias className={'IdentityInfo__Alias'} status={alias?.status} alias={alias?.alias || alias} key={i}/>
+                                          ))}
                                         </div>
                                       </LoadingLine>
                                     </Td>
