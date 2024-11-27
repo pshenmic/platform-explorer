@@ -86,7 +86,7 @@ class IdentitiesController {
     const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, identifier, limit)
 
     if (documents.length === 0) {
-      return response.status(404).send({ message: 'not found' })
+      return response.send(new PaginatedResultSet([], null, null, null))
     }
 
     const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
