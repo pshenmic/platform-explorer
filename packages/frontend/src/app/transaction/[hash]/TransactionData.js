@@ -87,14 +87,14 @@ function TransactionData ({ data, type, loading, rate }) {
         className={'TransactionPage__InfoLine'}
         title={'Owner'}
         value={(
-          <ValueCard link={`/identity/${data?.owner}`}>
-            <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {data?.owner}
+          <ValueCard link={`/identity/${data?.ownerId}`}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {data?.ownerId}
             </Identifier>
           </ValueCard>
         )}
         loading={loading}
-        error={!data?.owner}
+        error={!data?.ownerId}
       />
 
       <InfoLine

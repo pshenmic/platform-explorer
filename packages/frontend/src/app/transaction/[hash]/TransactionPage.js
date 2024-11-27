@@ -14,11 +14,15 @@ import { Badge } from '@chakra-ui/react'
 import TypeBadge from '../../../components/transactions/TypeBadge'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import './TransactionPage.scss'
+import { networks } from '../../../constants/networks'
 
 function Transaction ({ hash }) {
   const [transaction, setTransaction] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [decodedST, setDecodedST] = useState({ data: {}, loading: true, error: false })
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
+  const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
 
   const decodeTx = useCallback((tx) => {
     Api.decodeTx(tx)
@@ -81,7 +85,7 @@ function Transaction ({ hash }) {
             className={'TransactionPage__InfoLine'}
             title={'Block Hash'}
             value={(
-              <ValueCard className={'TransactionPage__BlockHash'}>
+              <ValueCard link={`/block/${transaction.data?.blockHash}`} className={'TransactionPage__BlockHash'}>
                 <ValueCard className={'TransactionPage__BlockHeight'}>Height: {transaction.data?.blockHeight}</ValueCard>
                 <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
                   {transaction.data?.blockHash}
@@ -174,11 +178,11 @@ function Transaction ({ hash }) {
             title={'Fee Multiplier'}
             value={(
               <div>
-                +{transaction.data?.feeMultiplier}%
+                +{decodedST.data?.userFeeIncrease}%
               </div>
             )}
-            loading={transaction.loading}
-            error={transaction.error || !transaction.data?.feeMultiplier}
+            loading={decodedST.loading}
+            error={decodedST.error || (!decodedST.loading && decodedST.data?.userFeeIncrease === undefined)}
           />
 
           <InfoLine
@@ -186,13 +190,67 @@ function Transaction ({ hash }) {
             title={'Signature'}
             value={(
               <ValueCard className={'TransactionPage__Signature'}>
-                {transaction.data?.signature}
+                {decodedST.data?.signature}
               </ValueCard>
             )}
-            loading={transaction.loading}
-            error={transaction.error || !transaction.data?.signature}
+            loading={decodedST.loading}
+            error={decodedST.error || (!decodedST.loading && !decodedST.data?.signature)}
           />
         </div>
+      }
+
+      {(decodedST.data?.assetLockProof ||
+        decodedST.data?.outputAddress ||
+        decodedST.data?.fundingAddress) &&
+        <>
+          <HorisontalSeparator/>
+
+          {decodedST.data?.outputAddress &&
+            <InfoLine
+              className={'TransactionPage__InfoLine TransactionPage__InfoLine--CoreFundingAddress'}
+              title={'Core Withdrawal Address'}
+              value={(
+                <a
+                  href={l1explorerBaseUrl
+                    ? `${l1explorerBaseUrl}/address/${decodedST.data?.outputAddress}`
+                    : '#'}
+                  target={'_blank'}
+                  rel={'noopener noreferrer'}
+                >
+                  <ValueContainer clickable={true} external={true}>
+                    <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
+                      {decodedST.data?.outputAddress}
+                    </Identifier>
+                  </ValueContainer>
+                </a>
+              )}
+              loading={decodedST.loading}
+            />
+          }
+
+          {decodedST.data?.fundingAddress &&
+            <InfoLine
+              className={'TransactionPage__InfoLine TransactionPage__InfoLine--CoreFundingAddress'}
+              title={'Core Funding Address'}
+              value={(
+                <a
+                  href={l1explorerBaseUrl
+                    ? `${l1explorerBaseUrl}/address/${decodedST.data.fundingAddress}`
+                    : '#'}
+                  target={'_blank'}
+                  rel={'noopener noreferrer'}
+                >
+                  <ValueContainer clickable={true} external={true}>
+                    <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
+                      {decodedST.data.fundingAddress}
+                    </Identifier>
+                  </ValueContainer>
+                </a>
+              )}
+              loading={decodedST.loading}
+            />
+          }
+        </>
       }
 
       {!transaction.loading && !transaction.error &&
