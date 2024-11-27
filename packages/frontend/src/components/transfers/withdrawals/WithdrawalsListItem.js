@@ -11,10 +11,11 @@ import useResizeObserver from '@react-hook/resize-observer'
 
 const mobileWidth = 550
 
-function WithdrawalsListItem ({ withdrawal, rate, l1explorerBaseUrl }) {
+function WithdrawalsListItem ({ withdrawal, rate, defaultPayoutAddress, l1explorerBaseUrl }) {
   const containerRef = useRef(null)
   const [isMobile, setIsMobile] = useState(false)
   const clickable = isMobile && withdrawal?.hash
+  const withdrawalAddress = withdrawal?.withdrawalAddress || defaultPayoutAddress
 
   useResizeObserver(containerRef, () => {
     const { offsetWidth } = containerRef.current
@@ -55,15 +56,15 @@ function WithdrawalsListItem ({ withdrawal, rate, l1explorerBaseUrl }) {
           </GridItem>
 
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Address'}>
-            {withdrawal?.recipient
+            {withdrawalAddress
               ? <ItemWrapper
                   isLocal={false}
-                  {...(l1explorerBaseUrl ? { href: `${l1explorerBaseUrl}/address/${withdrawal?.recipient}` } : {})}
+                  {...(l1explorerBaseUrl ? { href: `${l1explorerBaseUrl}/address/${withdrawalAddress}` } : {})}
                   target={l1explorerBaseUrl ? '_blank' : '_self'}
                   rel={'noopener noreferrer'}
                 >
                   <ArrowCornerIcon color={'brand.normal'} w={'10px'} h={'10px'} mr={'10px'}/>
-                  <Identifier styles={['highlight-both']}>{withdrawal.recipient}</Identifier>
+                  <Identifier styles={['highlight-both']}>{withdrawalAddress}</Identifier>
                 </ItemWrapper>
               : '-'
             }
@@ -71,9 +72,9 @@ function WithdrawalsListItem ({ withdrawal, rate, l1explorerBaseUrl }) {
 
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Document'}>
             {withdrawal?.document
-              ? <ItemWrapper isLocal={true} href={'/document/' + withdrawal.recipient}>
+              ? <ItemWrapper isLocal={true} href={'/document/' + withdrawal.document}>
                   <ValueContainer className={''} light={true} clickable={true}>
-                    <Identifier styles={['highlight-both']}>{withdrawal.recipient}</Identifier>
+                    <Identifier styles={['highlight-both']}>{withdrawal.document}</Identifier>
                   </ValueContainer>
                 </ItemWrapper>
               : '-'

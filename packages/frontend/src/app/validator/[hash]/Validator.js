@@ -489,6 +489,7 @@ function Validator ({ hash }) {
                               withdrawals={withdrawals?.data?.resultSet || Object.values(withdrawals.data) || []}
                               l1explorerBaseUrl={l1explorerBaseUrl}
                               rate={rate.data}
+                              defaultPayoutAddress={validator.data?.proTxInfo?.state?.payoutAddress}
                               headerStyles={'light'}
                             />
                           : <LoadingList itemsCount={pageSize}/>
