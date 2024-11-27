@@ -246,12 +246,16 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL: {
-      decoded.outputAddress = dashcorelib.Script(stateTransition.getOutputScript()).toAddress(NETWORK).toString()
-      decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
+      decoded.outputAddress = stateTransition.getOutputScript()
+        ? dashcorelib
+          .Script(stateTransition.getOutputScript())
+          .toAddress(NETWORK)
+          .toString()
+        : null
 
+      decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
       decoded.identityNonce = parseInt(stateTransition.getNonce())
-
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.amount = parseInt(stateTransition.getAmount())
       decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null

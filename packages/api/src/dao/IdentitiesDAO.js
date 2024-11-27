@@ -357,7 +357,7 @@ module.exports = class IdentitiesDAO {
 
   getIdentityWithdrawalsByTimestamps = async (identifier, timestamps = []) => {
     return this.knex('state_transitions')
-      .select('state_transitions.hash', 'blocks.timestamp as timestamp')
+      .select('state_transitions.hash', 'blocks.timestamp as timestamp', 'state_transitions.data as data')
       .whereIn(
         'blocks.timestamp',
         timestamps

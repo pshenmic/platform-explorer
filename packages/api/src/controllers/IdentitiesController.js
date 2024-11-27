@@ -2,11 +2,13 @@ const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
+const { decodeStateTransition } = require('../utils')
 
 class IdentitiesController {
-  constructor (knex, dapi) {
+  constructor (client, knex, dapi) {
     this.identitiesDAO = new IdentitiesDAO(knex, dapi)
     this.dapi = dapi
+    this.client = client
   }
 
   getIdentityByIdentifier = async (request, response) => {
@@ -83,17 +85,31 @@ class IdentitiesController {
 
     const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, identifier, limit)
 
-    const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
-
-    const txHashes = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
-
     if (documents.length === 0) {
-      return response.status(404).send({ message: 'not found' })
+      return response.send(new PaginatedResultSet([], null, null, null))
     }
 
+    const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
+
+    const withdrawals = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
+
+    const decodedTx = await Promise.all(withdrawals.map(async withdrawal => ({
+      ...await decodeStateTransition(this.client, withdrawal.data),
+      timestamp: withdrawal.timestamp
+    })))
+
     const resultSet = documents.map(document => ({
-      ...document,
-      hash: txHashes.find(
+      document: document.id ?? null,
+      sender: document.sender ?? null,
+      status: document.status ?? null,
+      timestamp: document.timestamp ?? null,
+      amount: document.amount ?? null,
+      withdrawalAddress:
+        decodedTx.find(
+          tx => tx.timestamp.getTime() === document.timestamp
+        )?.outputAddress ?? null,
+
+      hash: withdrawals.find(
         hash =>
           new Date(hash.timestamp).toISOString() === new Date(document.timestamp).toISOString())?.hash ?? null
     }))
