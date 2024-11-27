@@ -101,11 +101,14 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 2,
-        fundingAddress: 'yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY',
         assetLockProof: {
-          instantLock: 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq',
-          transaction: '03000800010a33db75202373bdd74aaf28cce1e9ca9f46396a6067de8e83c03a02e2e93948000000006b483045022100a1be790d2e3b5c5a4958c9319f0ed1181c62a9d6a92cd85e4668694cb32037c002200b9c5a9b00099abb7d2435ee071d5c31b88f9593f8aac8e3cc3117f298629f470121029b92e9a5d33bff31f6e274d06159567c4ce09c707def6b8fe4788a0779db485fffffffff0280c3c90100000000026a0058474c00000000001976a914fde116faf385e18395d4f656bd4af0bfb6f7903888ac0000000024010180c3c901000000001976a914c5dc061d4a5b6621bbadfb80d1cc84da8cde84bc88ac',
-          outputIndex: 0
+          coreChainLockedHeight: null,
+          type: 'instantSend',
+          fundingAmount: 34999000,
+          txid: 'fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d',
+          vout: 0,
+          fundingAddress: 'yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY',
+          instantLock: 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq'
         },
         userFeeIncrease: 65,
         identityId: '3B3pVgtqLyZx9tUYoSTubXQMs6BQN6kkLURvGG8ax8NJ',
@@ -154,11 +157,13 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 3,
-        fundingAddress: 'yWxCwVRgqRmePNPJxezgus1T7xSv5q17SU',
         assetLockProof: {
-          instantLock: 'AQHs1rAxR380KAbfV0C3D5O4o+klu/LZDZeaXtFiqNfVZgAAAABk6hdzwsOI+DwiWAOgXQYToU/speBwMPdkn7XFmPQ0d5QP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAApegVl+lFWGGL8UZIARiOy8CcehLnNIkiXGNoQlnwdfh6o9R+qbu+H5wxQIbdw1ptGLMP9P5XmFV3n5JouL9ceXYMfYxW00Fjkx8BbC4wNoUt0zprZD3VncjFQZnzTj0t',
-          transaction: '0300080001ecd6b031477f342806df5740b70f93b8a3e925bbf2d90d979a5ed162a8d7d566000000006a4730440220339d4d894eb2ff9c193bd8c33cdb3030a8be18ddbf30d983e8286c08c6c4c7d90220181741d9eed3814ec077030c26c0b9fff63b9ef10e1e6ca1c87069b261b0127a0121034951bbd5d0d500942426507d4b84e6d88406300ed82009a8db087f493017786affffffff02e093040000000000026a0078aa0a00000000001976a914706db5d1e8fb5f925c6db64104f4b77f0c8b73d488ac00000000240101e0930400000000001976a91474a509b4f3b80ce818465dc0f9f66e2103d9178b88ac',
-          outputIndex: 0
+          coreChainLockedHeight: null,
+          type: 'instantSend',
+          fundingAmount: 999000,
+          txid: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64',
+          vout: 0,
+          fundingAddress: 'yWxCwVRgqRmePNPJxezgus1T7xSv5q17SU'
         },
         identityId: '4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF',
         amount: 300000000,
@@ -285,7 +290,7 @@ describe('Utils', () => {
         identityContractNonce: 1,
         senderId: 'FvqzjDyub72Hk51pcmJvd1JUACuor7vA3aJawiVG7Z17',
         amount: 1000000,
-        nonce: 1,
+        identityNonce: 1,
         outputScript: '76a9148dc5fd6be194390035cca6293a357bac8e3c35c588ac',
         coreFeePerByte: 2,
         signature: '8422df782b5e51b8a53ae46fe9b7a9280df4de575f031e58ed527e7a17c1e9',

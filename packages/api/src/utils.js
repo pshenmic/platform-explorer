@@ -8,6 +8,7 @@ const { base58 } = require('@scure/base')
 const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
+const { InstantAssetLockProof, ChainAssetLockProof } = require('@dashevo/wasm-dpp')
 
 const getKnex = () => {
   return require('knex')({
@@ -105,10 +106,22 @@ const decodeStateTransition = async (client, base64) => {
     case StateTransitionEnum.IDENTITY_CREATE: {
       const assetLockProof = stateTransition.getAssetLockProof()
 
-      decoded.fundingAddress = assetLockProof.getOutput
-        ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
-        : null
-      decoded.assetLockProof = assetLockProof.toJSON()
+      const decodedTransaction =
+        assetLockProof instanceof InstantAssetLockProof
+          ? dashcorelib.Transaction(assetLockProof.getTransaction())
+          : null
+
+      decoded.assetLockProof = {
+        coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
+        type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
+        instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.toJSON().instantLock : null,
+        fundingAmount: decodedTransaction?.outputAmount ?? null,
+        txid: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
+        vout: assetLockProof.getOutPoint().readInt8(32),
+        fundingAddress: assetLockProof.getOutput
+          ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
+          : null
+      }
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
@@ -124,10 +137,21 @@ const decodeStateTransition = async (client, base64) => {
       const assetLockProof = stateTransition.getAssetLockProof()
       const output = assetLockProof.getOutput()
 
-      decoded.fundingAddress = assetLockProof.getOutput
-        ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
-        : null
-      decoded.assetLockProof = assetLockProof.toJSON()
+      const decodedTransaction =
+        assetLockProof instanceof InstantAssetLockProof
+          ? dashcorelib.Transaction(assetLockProof.getTransaction())
+          : null
+
+      decoded.assetLockProof = {
+        coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
+        type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
+        fundingAmount: decodedTransaction?.outputAmount ?? null,
+        txid: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
+        vout: assetLockProof.getOutPoint().readInt8(32),
+        fundingAddress: assetLockProof.getOutput
+          ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
+          : null
+      }
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.amount = output.satoshis * 1000
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
@@ -195,10 +219,12 @@ const decodeStateTransition = async (client, base64) => {
     case StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL: {
       decoded.outputAddress = dashcorelib.Script(stateTransition.getOutputScript()).toAddress(NETWORK).toString()
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
+
       decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
+      decoded.identityNonce = parseInt(stateTransition.getNonce())
+
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.amount = parseInt(stateTransition.getAmount())
-      decoded.nonce = parseInt(stateTransition.getNonce())
       decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null
       decoded.coreFeePerByte = stateTransition.getCoreFeePerByte()
       decoded.signature = stateTransition.getSignature()?.toString('hex')
