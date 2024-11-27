@@ -78,8 +78,6 @@ module.exports = class IdentitiesDAO {
 
     const identity = Identity.fromRow(row)
 
-    identity.aliases = ['xyz.dash']
-
     const aliases = await Promise.all(identity.aliases.map(async alias => {
       const aliasInfo = await getAliasInfo(alias, this.dapi)
 
