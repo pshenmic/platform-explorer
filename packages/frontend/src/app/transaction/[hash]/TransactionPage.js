@@ -11,10 +11,10 @@ import { ValueCard } from '../../../components/cards'
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { CopyButton } from '../../../components/ui/Buttons'
 import { Badge } from '@chakra-ui/react'
-import TypeBadge from '../../../components/transactions/TypeBadge'
+import { TypeBadge, FeeMultiplier } from '../../../components/transactions'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import './TransactionPage.scss'
 import { networks } from '../../../constants/networks'
+import './TransactionPage.scss'
 
 function Transaction ({ hash }) {
   const [transaction, setTransaction] = useState({ data: {}, loading: true, error: false })
@@ -23,6 +23,9 @@ function Transaction ({ hash }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+
+  console.log('transaction', transaction)
+  console.log('decodedST', decodedST)
 
   const decodeTx = useCallback((tx) => {
     Api.decodeTx(tx)
@@ -174,13 +177,9 @@ function Transaction ({ hash }) {
           />
 
           <InfoLine
-            className={'TransactionPage__InfoLine'}
+            className={'TransactionPage__InfoLine TransactionPage__InfoLine--FeeMultiplier'}
             title={'Fee Multiplier'}
-            value={(
-              <div>
-                +{decodedST.data?.userFeeIncrease}%
-              </div>
-            )}
+            value={<FeeMultiplier value={Number(decodedST.data?.userFeeIncrease)}/>}
             loading={decodedST.loading}
             error={decodedST.error || (!decodedST.loading && decodedST.data?.userFeeIncrease === undefined)}
           />
