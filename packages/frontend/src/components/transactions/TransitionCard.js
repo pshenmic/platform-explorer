@@ -3,9 +3,9 @@ import { ValueCard } from '../cards'
 import { Identifier, InfoLine } from '../data'
 import DocumentActionBadge from './DocumentActionBadge'
 
-function TransitionCard ({ transition }) {
+function TransitionCard ({ transition, className }) {
   return (
-    <div className={'TransitionCard'}>
+    <div className={`TransitionCard ${className || ''}`}>
       <div className={'InfoBlock InfoBlock--Gradient'}>
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--Action'}

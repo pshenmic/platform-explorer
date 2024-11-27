@@ -18,7 +18,7 @@
     margin-bottom: 14px;
     justify-content: flex-start !important;
 
-    &--RawTransaction, &--Status, &--Transitions {
+    &--RawTransaction, &--Status, &--Transitions, &--PublicKeys {
       align-items: baseline !important;
     }
 
@@ -90,6 +90,14 @@
 
     .CopyButton {
       margin-left: 12px;
+    }
+  }
+
+  &__PublicKeyCard, &__TransitionCard {
+    margin-bottom: 14px;
+
+    &:last-child {
+      margin-bottom: 0;
     }
   }
 

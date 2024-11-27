@@ -1,7 +1,7 @@
 import { StateTransitionEnum } from '../../../enums/state.transition.type'
 import { ValueCard } from '../../../components/cards'
 import { Identifier, InfoLine, CreditsBlock } from '../../../components/data'
-import { TransitionCard } from '../../../components/transactions'
+import { TransitionCard, PublicKeyCard } from '../../../components/transactions'
 
 function TransactionData ({ data, type, loading, rate }) {
   if (data === null) return <></>
@@ -106,7 +106,7 @@ function TransactionData ({ data, type, loading, rate }) {
 
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--Transitions'}
-        title={`Transitions ${data?.transitions !== undefined ? `(${data?.transitions.length})` : ''}`}
+        title={`Transitions ${data?.transitions !== undefined ? `(${data?.transitions?.length})` : ''}`}
         value={(<>
           {data?.transitions?.map((transition, i) => (
             <TransitionCard className={'TransactionPage__TransitionCard'} transition={transition} key={i}/>
@@ -132,6 +132,18 @@ function TransactionData ({ data, type, loading, rate }) {
         )}
         loading={loading}
         error={!data?.identityId}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
+        title={`Public Keys ${data?.publicKeys !== undefined ? `(${data?.publicKeys?.length})` : ''}`}
+        value={(<>
+          {data?.publicKeys?.map((publicKey, i) => (
+            <PublicKeyCard className={'TransactionPage__PublicKeyCard'} publicKey={publicKey} key={i}/>
+          ))}
+        </>)}
+        loading={loading}
+        error={data?.publicKeys === undefined}
       />
     </>)
   }
