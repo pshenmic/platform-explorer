@@ -949,6 +949,7 @@ Available transactions type for decode
 
 - `fundingAddress` can be null
 - `prefundedBalance` can be null
+- `contractBounds` always null
 
 ```
 POST /transaction/decode
@@ -1161,15 +1162,37 @@ IDENTITY_CREATE with chainLock
     "raw": "0300010000020000000014b23f76cac0218f7637c924e45212bb260cff29250001fc001160b72021007051d2207c45d7592bb7e3e5b4b006a29cfe1899aea8abf00c50ee8a40860000412015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f214108b1737186062205ee3a5f7e19454121b648e0806c7bc1e8bc073c38217a28e1",
     "publicKeys": [
         {
-            "$version": "0",
-            "id": 0,
-            "type": 2,
-            "purpose": 0,
-            "securityLevel": 0,
-            "contractBounds": null,
-            "readOnly": false,
-            "data": "sj92ysAhj3Y3ySTkUhK7Jgz/KSU=",
-            "signature": ""
+            contractBounds: null,
+            id: 0,
+            type: "ECDSA_SECP256K1",
+            data: "0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5",
+            publicKeyHash: "07630dddc55729c043de7bdeb145ee0d44feae3b",
+            purpose: "AUTHENTICATION",
+            securityLevel: "MASTER",
+            readOnly: false,
+            signature: "2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99"
+        },
+        {
+            contractBounds: null,
+            id: 1,
+            type: "ECDSA_SECP256K1",
+            data: "034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf",
+            publicKeyHash: "e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23",
+            purpose: "AUTHENTICATION",
+            securityLevel: "HIGH",
+            readOnly: false,
+            signature: "1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4"
+        },
+        {
+            contractBounds: null,
+            id: 2,
+            type: "ECDSA_SECP256K1",
+            data: "0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4",
+            publicKeyHash: "d53ee3b3518fee80816ab26af98a34ea60ae9af7",
+            purpose: "AUTHENTICATION",
+            securityLevel: "CRITICAL",
+            readOnly: false,
+            signature: "204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75"
         }
     ]
 }
@@ -1195,48 +1218,37 @@ IDENTITY_CREATE with instantLock
     "raw": "03000400000000000000210258abe04886308feb52b8f3d64eace4913c9d049f4dda9a88a217e6ca6b89a107411f60451588fe72a067daaa0a1ee04279e77ce346128560129162386f76d51eccdc1d88704f2262fe173de57e5598010655d410da94ae2e1cf7086049878b08e966000100000200002103e6680bb560e40adb299a6b940d3dcbe2b08e6e1a64bc8f6bc9ec3d638655c3554120066559ccd6cea8ac2d366980f77a94cbfdfbd978803edbf4066f42bc53adcdb51956fb0d3c9cec2012583d17b66456094a8620109d6dae29dc562b2870592940000200000100002102326a8c19a1c58d30d142e113d0ddf381d95a6306f56c9ec4d3cb8c4823685b29411f5bb82721b58d92e67db9fb699ab939ccc4a6d5e2e498e80dfb8a3535c13f571923f045e645a898762f8305a4a2218bfedb060f8a8492c48ae9c96247ce17710b00030003010000210252a2d08f295871ec4b04cb0bcf7b2899b0b004702d9058982dd797141d527e78412044820dc7651186634326922eda85741bb3f9f005057d94b36845a7edc16ed1df4d5ccabd7e7f003e9c189847fbc06e943252640bc47963c42ae6c0d87b7b506b00c601014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b10100000077ba9d450b94520434c5d15339922aa7df81b51344b98588649a44752f1a355cd0d05ce3df52f3fb7fc6e64cc414fb7cd9d0ffc4d088e77d9e542fade30000008a8678665212af134cfa36ea40984009adca338efa3131667f5a62b489d2fb2713eb7eccd14dd83cc6679b597548feae18bdc393dae2ab2a50844220359d4b87c428507808dc8df62f56dabb8d1eae2c1859b9ca54b3b4820ebc8453f57c34f6ef03000800014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b1010000006a473044022070293df3b93c523373f1f86272c5dba7886ab41cfc50b0b89658c07d0825c16002201afdf3b31393c5b99373597042b4d651028e824fc12f802aa1be51cc165bcf1e012103d55244573359ad586597b9bb4dd31b8f145121b7c01146656bc26c4b99184a47ffffffff0240420f0000000000026a0049ac4c2e000000001976a91441bb9b42b9f0d589008b4a7f6a72a6bb342b386d88ac0000000024010140420f00000000001976a9145f573cd6a8570cb0b74c4b0ea15334e6bd6b34a788ac0000411fc5b49ce2feb6cfc94f31de8167b806af0265657d5b8f01584e0db3ca011dba24328998bf40a50dd06b6ab10ed47622f46c07dec4d7cad3625b41aa52c9e11c2f98b95bbff1488807c3a4ed36c5fde32f9a6f1e05a622938476652041669e4135",
     "publicKeys": [
         {
-            "$version": "0",
-            "id": 0,
-            "type": 0,
-            "purpose": 0,
-            "securityLevel": 0,
-            "contractBounds": null,
-            "readOnly": false,
-            "data": "Alir4EiGMI/rUrjz1k6s5JE8nQSfTdqaiKIX5spriaEH",
-            "signature": "1f60451588fe72a067daaa0a1ee04279e77ce346128560129162386f76d51eccdc1d88704f2262fe173de57e5598010655d410da94ae2e1cf7086049878b08e966"
+            contractBounds: null,
+            id: 0,
+            type: "ECDSA_SECP256K1",
+            data: "0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5",
+            publicKeyHash: "07630dddc55729c043de7bdeb145ee0d44feae3b",
+            purpose: "AUTHENTICATION",
+            securityLevel: "MASTER",
+            readOnly: false,
+            signature: "2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99"
         },
         {
-            "$version": "0",
-            "id": 1,
-            "type": 0,
-            "purpose": 0,
-            "securityLevel": 2,
-            "contractBounds": null,
-            "readOnly": false,
-            "data": "A+ZoC7Vg5ArbKZprlA09y+Kwjm4aZLyPa8nsPWOGVcNV",
-            "signature": "20066559ccd6cea8ac2d366980f77a94cbfdfbd978803edbf4066f42bc53adcdb51956fb0d3c9cec2012583d17b66456094a8620109d6dae29dc562b2870592940"
+            contractBounds: null,
+            id: 1,
+            type: "ECDSA_SECP256K1",
+            data: "034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf",
+            publicKeyHash: "e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23",
+            purpose: "AUTHENTICATION",
+            securityLevel: "HIGH",
+            readOnly: false,
+            signature: "1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4"
         },
         {
-            "$version": "0",
-            "id": 2,
-            "type": 0,
-            "purpose": 0,
-            "securityLevel": 1,
-            "contractBounds": null,
-            "readOnly": false,
-            "data": "AjJqjBmhxY0w0ULhE9Dd84HZWmMG9WyexNPLjEgjaFsp",
-            "signature": "1f5bb82721b58d92e67db9fb699ab939ccc4a6d5e2e498e80dfb8a3535c13f571923f045e645a898762f8305a4a2218bfedb060f8a8492c48ae9c96247ce17710b"
-        },
-        {
-            "$version": "0",
-            "id": 3,
-            "type": 0,
-            "purpose": 3,
-            "securityLevel": 1,
-            "contractBounds": null,
-            "readOnly": false,
-            "data": "AlKi0I8pWHHsSwTLC897KJmwsARwLZBYmC3XlxQdUn54",
-            "signature": "2044820dc7651186634326922eda85741bb3f9f005057d94b36845a7edc16ed1df4d5ccabd7e7f003e9c189847fbc06e943252640bc47963c42ae6c0d87b7b506b"
+            contractBounds: null,
+            id: 2,
+            type: "ECDSA_SECP256K1",
+            data: "0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4",
+            publicKeyHash: "d53ee3b3518fee80816ab26af98a34ea60ae9af7",
+            purpose: "AUTHENTICATION",
+            securityLevel: "CRITICAL",
+            readOnly: false,
+            signature: "204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75"
         }
     ]
 }
@@ -1301,28 +1313,39 @@ IDENTITY_CREATE with instantLock
 ```
 ```
 {
-    "type": 5,
-    "identityContractNonce": 1,
-    "userFeeIncrease": 0,
-    "identityId": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-    "revision": 1,
-    "publicKeysToAdd": [
-        {
-            "$version": "0",
-            "id": 4,
-            "type": 0,
-            "purpose": 0,
-            "securityLevel": 3,
-            "contractBounds": null,
-            "readOnly": false,
-            "data": "A7JvfR57PaxWjga4oexTNApkqdKWVD2kvsk+aNq/B3Y5",
-            "signature": "20f16bf7316d821ec37b1068a843dc18137dafe518acf35966fe3fa0b8ae691934717ee113d5b1004c78a544a2529f6898d9ade03f6cb0e226513c3f3c6718fbae"
-        }
-    ],
-    "setPublicKeyIdsToDisable": [],
-    "signature": "20f7ac9de3a6eb4854f9963566bac2a73ec5d26fa36c4328680247ba55bfa2241e4bc2b966b6ed10042752c08bcce829a171df1ce0f9554869f8ea40d486b7aaa9",
-    "signaturePublicKeyId": 0,
-    "raw": "0600e901dfc172a96ce3f7d334d6c0b69df3b01c86d30ff03a7c24f516838f94340d010101000400000300002103b26f7d1e7b3dac568e06b8a1ec53340a64a9d296543da4bec93e68dabf0776394120f16bf7316d821ec37b1068a843dc18137dafe518acf35966fe3fa0b8ae691934717ee113d5b1004c78a544a2529f6898d9ade03f6cb0e226513c3f3c6718fbae0000004120f7ac9de3a6eb4854f9963566bac2a73ec5d26fa36c4328680247ba55bfa2241e4bc2b966b6ed10042752c08bcce829a171df1ce0f9554869f8ea40d486b7aaa9"
+  type: 5,
+  identityContractNonce: 3,
+  userFeeIncrease: 0,
+  identityId: '4NGALjtX2t3AXE3ZCqJiSmYuiWEY3ZPQNUBxNWWRrRSp',
+  revision: 2,
+  publicKeysToAdd: [
+      {
+          contractBounds: null,
+          id: 5,
+          type: "ECDSA_HASH160",
+          data: "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
+          publicKeyHash: "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
+          purpose: "AUTHENTICATION",
+          securityLevel: "HIGH",
+          readOnly: false,
+          signature: ""
+      },
+      {
+          contractBounds: null,
+          id: 6,
+          type: "ECDSA_SECP256K1",
+          data: "026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0",
+          publicKeyHash: "d39eda042126256a372c388bd191532a7c9612ce",
+          purpose: "AUTHENTICATION",
+          securityLevel: "MASTER",
+          readOnly: false,
+          signature: "1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06"
+      }
+  ],
+  setPublicKeyIdsToDisable: [],
+  signature: '1f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1',
+  signaturePublicKeyId: 0,
+  raw: '0600320566816f366803517a7eb44d331ccb0e442fab6396f3d6ac631b1069aae0410203020005020002000014c208ded6d1af562b8e5387c02a446ea6e8bb325f000006000000000021026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0411faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06000000411f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1'
 }
 ```
 ```
