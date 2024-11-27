@@ -19,7 +19,7 @@
     justify-content: flex-start !important;
 
     &--RawTransaction, &--Status, &--Transitions {
-      align-items: baseline;
+      align-items: baseline !important;
     }
 
     &--Transitions {
@@ -50,6 +50,8 @@
     background: transparent;
     overflow-wrap: break-word;
     word-break: break-word;
+    color: var(--chakra-colors-gray-250);
+    max-width: 510px;
   }
 
   &__ErrorContainer {
@@ -106,11 +108,16 @@
           width: 100%;
           margin-bottom: 4px;
           margin-right: 0;
+
         }
 
         & > .InfoLine__Value {
           width: 100%;
         }
+      }
+
+      & > .InfoLine__Title {
+        width: auto;
       }
 
       &--Status {
@@ -132,10 +139,6 @@
         .DateBlock__Delta {
           margin-left: auto;
         }
-      }
-
-      .InfoLine__Title {
-        width: auto;
       }
 
       .ValueCard {
