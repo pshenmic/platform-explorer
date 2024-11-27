@@ -357,6 +357,8 @@
 }
 
 @mixin TooltipElement () {
+  transition: .2s;
+
   &, .chakra-icon {
     transition: .2s;
   }

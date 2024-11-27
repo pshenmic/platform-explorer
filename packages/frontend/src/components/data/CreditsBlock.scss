@@ -31,8 +31,8 @@
     display: inline-block;
     padding: 6px 8px;
     font-size: 0.688rem;
-    color: var(--chakra-colors-green-label);
-    background-color: rgba(88, 244, 188, .2);
+    color: var(--chakra-colors-green-emeralds);
+    background-color: rgba(var(--chakra-colors-green-emeralds-rgb), .2);
     border-radius: 8px;
   }
 }

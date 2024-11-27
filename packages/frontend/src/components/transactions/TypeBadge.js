@@ -3,7 +3,7 @@ import { getTransitionTypeKeyById } from '../../util/index'
 import { TransactionTypesEnum, TransactionTypesColors } from '../../enums/state.transition.type'
 import { Tooltip } from '../ui/Tooltips'
 
-function TypeBadge ({ typeId }) {
+function TypeBadge ({ typeId, ...props }) {
   const TransitionTypeKey = getTransitionTypeKeyById(typeId)
 
   const descriptions = {
@@ -24,7 +24,10 @@ function TypeBadge ({ typeId }) {
       content={descriptions[TransitionTypeKey]}
       placement={'top'}
     >
-      <Badge colorScheme={TransactionTypesColors[TransitionTypeKey]}>
+      <Badge
+        colorScheme={TransactionTypesColors[TransitionTypeKey]}
+        {...props}
+      >
         {TransactionTypesEnum[TransitionTypeKey]}
       </Badge>
     </Tooltip>

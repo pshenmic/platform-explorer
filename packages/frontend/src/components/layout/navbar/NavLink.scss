@@ -11,7 +11,7 @@
   color: var(--chakra-colors-gray-250);
   transition: $transition-time-def;
   white-space: nowrap;
-  padding: 4px 8px;
+  padding: 4px 0;
 
   &--Active {
     color: $color-brand-normal;

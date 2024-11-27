@@ -14,16 +14,22 @@ function IdentitiesListItem ({ identity }) {
       <div className={'IdentitiesListItem__IdentifierContainer'}>
         <ImageGenerator className={'IdentitiesListItem__Avatar'} username={identifier} lightness={50} saturation={50} width={28} height={28}/>
 
-        {aliases?.length
-          ? <Alias className={'IdentitiesListItem__Alias'} alias={aliases[0]?.alias || aliases[0]}/>
-          : <Identifier
-              className={'IdentitiesListItem__Identifier'}
-              copyButton={true}
-              styles={['highlight-both']}
-            >
-              {identifier}
-            </Identifier>
-        }
+        {(() => {
+          const activeAlias = aliases?.find(alias => alias.status === 'ok')
+          return aliases?.find(alias => alias.status === 'ok')
+            ? <Alias
+                className={'IdentitiesListItem__Alias'}
+                alias={activeAlias.alias}
+                status={activeAlias.status}
+              />
+            : <Identifier
+                className={'IdentitiesListItem__Identifier'}
+                copyButton={true}
+                styles={['highlight-both']}
+              >
+                {identifier}
+              </Identifier>
+        })()}
       </div>
 
       {isSystem && <div>SYSTEM</div>}

@@ -10,13 +10,14 @@
   width: 100%;
   background-color: var(--chakra-colors-gray-650);
   border-radius: 0 0 20px 20px;
-  margin-top: 6px;
-  padding: 88px 24px 0 24px;
   margin-top: 0;
-  box-shadow: 0px 20px 32px 0px var(--chakra-colors-gray-900);
+  box-shadow: 0 20px 32px 0 var(--chakra-colors-gray-900);
   transition: all .3s;
   max-height: 100%;
   transform: translateY(calc(20px - 100%));
+  padding-top: 88px;
+  @include mixins.navContainerPadding(padding-left);
+  @include mixins.navContainerPadding(padding-right);
 
   &--Open {
     transform: translateY(0);

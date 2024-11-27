@@ -4,7 +4,7 @@ import { getTimeDelta } from '../../util'
 import { CalendarIcon } from '../ui/icons'
 import './DateBlock.scss'
 
-function DateBlock ({ timestamp, format }) {
+function DateBlock ({ timestamp, format, showTime = false }) {
   const date = new Date(timestamp)
 
   if (String(date) === 'Invalid Date') return null
@@ -12,7 +12,8 @@ function DateBlock ({ timestamp, format }) {
   const options = {
     day: 'numeric',
     month: 'short',
-    year: 'numeric'
+    year: 'numeric',
+    ...(showTime && { hour: '2-digit', minute: '2-digit' })
   }
 
   const formattedDate = date.toLocaleDateString('en-GB', options)

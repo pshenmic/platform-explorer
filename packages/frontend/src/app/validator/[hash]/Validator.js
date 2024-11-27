@@ -18,6 +18,7 @@ import { CircleIcon } from '../../../components/ui/icons'
 import { RateTooltip } from '../../../components/ui/Tooltips'
 import { networks } from '../../../constants/networks'
 import { WithdrawalsList } from '../../../components/transfers'
+import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import './ValidatorPage.scss'
 import {
   Badge,
@@ -25,6 +26,7 @@ import {
 } from '@chakra-ui/react'
 
 function Validator ({ hash }) {
+  const { setBreadcrumbs } = useBreadcrumbs()
   const [validator, setValidator] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [proposedBlocks, setProposedBlocks] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
@@ -36,6 +38,14 @@ function Validator ({ hash }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Home', path: '/' },
+      { label: 'Validators', path: '/validators' },
+      { label: hash, avatar: true }
+    ])
+  }, [setBreadcrumbs, hash])
 
   const poseStatusColor = (validator.data?.proTxInfo?.state?.PoSeBanHeight > 0 &&
     validator.data?.proTxInfo?.state?.PoSeRevivedHeight === -1)

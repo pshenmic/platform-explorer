@@ -1,0 +1,68 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.Breadcrumbs {
+  max-width: var(--chakra-sizes-container-maxPageW);
+  background: rgba(var(--chakra-colors-gray-675-rgb), .5);
+  border-radius: 0 0 20px 20px;
+  margin: -500px auto 0;
+  padding: 512px 12px 12px 12px;
+
+  &__LinksContainer {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+  }
+
+  &__Link {
+    margin: 0;
+
+    a, span {
+      display: flex;
+      align-items: center;
+      padding: 9px 20px;
+      background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
+      color: var(--chakra-colors-brand-normal);
+      transition: $transition-time-def;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-family: $font-mono;
+    }
+
+    a {
+      background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
+
+      &:hover {
+        background: rgba(var(--chakra-colors-brand-normal-rgb), .25);
+      }
+    }
+
+    span {
+      background: rgba(255, 255, 255, .1);
+      color: #ffffff;
+      cursor: default;
+    }
+  }
+
+  &__Avatar {
+    margin-right: 4px;
+  }
+
+  &__Separator {
+    margin: 0 10px;
+
+    svg {
+      width: 6px;
+      height: 10px;
+    }
+  }
+
+  @media screen and (max-width: 1440px) {
+    padding: 512px 24px 12px 24px;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    display: none;
+  }
+}

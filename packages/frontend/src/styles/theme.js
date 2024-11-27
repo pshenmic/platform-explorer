@@ -46,7 +46,7 @@ export const theme = extendTheme({
   colors: {
     brand: {
       normal: '#008DE4',
-      'normal-rgb': '4, 147, 235',
+      'normal-rgb': '0, 141, 228',
       deep: '#0E75B5',
       shaded: '#165278',
       light: '#2CBBFF',
@@ -64,7 +64,9 @@ export const theme = extendTheme({
     },
     green: {
       default: '#1CC400',
-      label: '#81F458'
+      label: '#81F458',
+      emeralds: '#58F4BC',
+      'emeralds-rgb': '88, 244, 188'
     },
     gray: {
       50: '#f0f1f2',
@@ -79,6 +81,7 @@ export const theme = extendTheme({
       600: '#62676a',
       650: '#232C30',
       675: '#21272C',
+      '675-rgb': '33, 39, 44',
       700: '#494e51',
       750: '#39454C',
       800: '#2e393d',
@@ -262,6 +265,7 @@ export const theme = extendTheme({
           textTransform: 'none',
           display: 'inline-flex',
           alignItems: 'center',
+          lineHeight: '20px',
           bg: backgroundColors[colorScheme] || 'gray.500',
           color: textColor[colorScheme] || 'white'
         }
