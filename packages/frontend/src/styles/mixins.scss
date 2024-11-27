@@ -25,7 +25,7 @@
 
   &:active {
     transform: translateY(1px);
-    box-shadow: 0 0px 9999px 0px rgba(0, 0, 0, .25) inset;
+    box-shadow: 0 0 9999px 0 rgba(0, 0, 0, .25) inset;
   }
 
   &:last-child {
@@ -312,11 +312,7 @@
 }
 
 @mixin navContainerPadding ($property) {
-  #{$property}: var(--chakra-space-8);
-
-  @media screen and (min-width: $breakpoint-md) {
-    #{$property}: var(--chakra-space-4);
-  }
+  #{$property}: var(--chakra-space-3);
 
   @media screen and (min-width: $breakpoint-lg) {
     #{$property}: var(--chakra-space-5);
@@ -355,8 +351,6 @@
 }
 
 @mixin TooltipElement () {
-  transition: .2s;
-
   &, .chakra-icon {
     transition: .2s;
   }

@@ -31,5 +31,5 @@ export const TransactionTypesColors = {
   IDENTITY_UPDATE: 'yellow',
   IDENTITY_CREDIT_WITHDRAWAL: 'red',
   IDENTITY_CREDIT_TRANSFER: 'orange',
-  MASTERNODE_VOTING: 'yellow'
+  MASTERNODE_VOTE: 'orange'
 }
