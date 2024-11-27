@@ -91,11 +91,11 @@ class IdentitiesController {
 
     const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
 
-    const txHashes = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
+    const withdrawals = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
 
-    const decodedTx = await Promise.all(txHashes.map(async tx => ({
-      ...await decodeStateTransition(this.client, tx.data),
-      timestamp: tx.timestamp
+    const decodedTx = await Promise.all(withdrawals.map(async withdrawal => ({
+      ...await decodeStateTransition(this.client, withdrawal.data),
+      timestamp: withdrawal.timestamp
     })))
 
     const resultSet = documents.map(document => ({
@@ -109,7 +109,7 @@ class IdentitiesController {
           tx => tx.timestamp.getTime() === document.timestamp
         )?.outputAddress ?? null,
 
-      hash: txHashes.find(
+      hash: withdrawals.find(
         hash =>
           new Date(hash.timestamp).toISOString() === new Date(document.timestamp).toISOString())?.hash ?? null
     }))
