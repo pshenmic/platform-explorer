@@ -282,7 +282,7 @@ describe('Identities routes', () => {
         status: withdrawal.status,
         timestamp: withdrawal.timestamp,
         amount: withdrawal.amount,
-        withdrawalAddress: null,
+        withdrawalAddress: null
       })))
     })
 
