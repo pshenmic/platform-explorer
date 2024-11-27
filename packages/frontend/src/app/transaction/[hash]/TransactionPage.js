@@ -195,8 +195,7 @@ function Transaction ({ hash }) {
         </div>
       }
 
-      {(decodedST.data?.assetLockProof ||
-        decodedST.data?.outputAddress ||
+      {(decodedST.data?.outputAddress ||
         decodedST.data?.fundingAddress) &&
         <>
           <HorisontalSeparator/>
