@@ -236,9 +236,9 @@ function TransactionData ({ data, type, loading, rate }) {
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Identity Nonce'}
-        value={data?.nonce}
+        value={data?.identityNonce}
         loading={loading}
-        error={data?.nonce === undefined}
+        error={data?.identityNonce === undefined}
       />
     </>)
   }
