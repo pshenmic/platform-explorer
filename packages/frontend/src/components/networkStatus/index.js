@@ -22,8 +22,9 @@ function NetworkStatus ({ className }) {
 
   useEffect(fetchData, [fetchData])
 
-  const msFromLastBlock = new Date() - new Date(status?.data?.tenderdash?.block?.timestamp)
-  const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
+  const lastBlockTimestamp = status?.data?.tenderdash?.block?.timestamp
+  const msFromLastBlock = lastBlockTimestamp ? new Date() - new Date(lastBlockTimestamp) : null
+  const networkStatus = msFromLastBlock !== null && msFromLastBlock / 1000 / 60 < 15
   const apiStatus = typeof status?.data?.tenderdash?.block?.timestamp === 'string' &&
     new Date(status?.data?.api?.block?.timestamp).getTime() ===
     new Date(status?.data?.tenderdash?.block?.timestamp).getTime()
