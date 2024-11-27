@@ -58,6 +58,18 @@
     display: flex;
   }
 
+  &__OwnerLink {
+    position: relative;
+    z-index: 2;
+    transition: mixins.$transition-time-def;
+    overflow: hidden;
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(255, 255, 255, .1);
+    }
+  }
+
   @container (max-width: 660px) {
     &__Column {
       &--Owner {
@@ -67,7 +79,7 @@
           display: none;
         }
 
-        .Identifier, .TransactionsListItem__AliasContainer, .Identifier__Avatar {
+        .Identifier, .TransactionsListItem__AliasContainer, .Identifier__Avatar, a {
           display: block !important;
         }
 

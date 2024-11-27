@@ -9,9 +9,11 @@ import StatusIcon from './StatusIcon'
 import { RateTooltip } from '../ui/Tooltips'
 import './TransactionsListItem.scss'
 import ImageGenerator from '../imageGenerator'
+import { useRouter } from 'next/navigation'
 
 function TransactionsListItem ({ transaction, rate }) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
+  const router = useRouter()
 
   return (
     <Link
@@ -47,12 +49,23 @@ function TransactionsListItem ({ transaction, rate }) {
         </GridItem>
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Owner'}>
             {transaction?.owner
-              ? activeAlias
-                ? <div className={'TransactionsListItem__AliasContainer'}>
-                    <ImageGenerator className={'Identifier__Avatar'} username={transaction?.owner?.identifier} lightness={50} saturation={50} width={24} height={24} />
-                    <Alias alias={activeAlias?.alias || activeAlias}/>
-                  </div>
-                : <Identifier avatar={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
+              ? <div
+                  className={'TransactionsListItem__OwnerLink'}
+                  onClick={e => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    router.push(`/identity/${transaction?.owner?.identifier}`)
+                  }}
+                >
+                  {activeAlias
+                    ? <div className={'TransactionsListItem__AliasContainer'}>
+                      <ImageGenerator className={'Identifier__Avatar'} username={transaction?.owner?.identifier}
+                                      lightness={50} saturation={50} width={24} height={24}/>
+                      <Alias alias={activeAlias?.alias || activeAlias}/>
+                    </div>
+                    : <Identifier avatar={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
+                  }
+                </div>
               : <span>n/a</span>
             }
           </GridItem>
