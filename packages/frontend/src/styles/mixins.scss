@@ -1,6 +1,6 @@
 @import './variables.scss';
 
-@mixin DefListItem {
+@mixin DefListItem($clickable: true) {
   display: flex;
   width: 100%;
   text-decoration: none;
@@ -15,17 +15,19 @@
   background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   transition: all .1s;
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background-color: var(--chakra-colors-gray-750);
-      text-decoration: none;
-      cursor: pointer;
+  @if $clickable {
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--chakra-colors-gray-750);
+        text-decoration: none;
+        cursor: pointer;
+      }
     }
-  }
 
-  &:active {
-    transform: translateY(1px);
-    box-shadow: 0 0 9999px 0 rgba(0, 0, 0, .25) inset;
+    &:active {
+      transform: translateY(1px);
+      box-shadow: 0 0 9999px 0 rgba(0, 0, 0, .25) inset;
+    }
   }
 
   &:last-child {
@@ -312,7 +314,11 @@
 }
 
 @mixin navContainerPadding ($property) {
-  #{$property}: var(--chakra-space-3);
+  #{$property}: var(--chakra-space-8);
+
+  @media screen and (min-width: $breakpoint-md) {
+    #{$property}: var(--chakra-space-4);
+  }
 
   @media screen and (min-width: $breakpoint-lg) {
     #{$property}: var(--chakra-space-5);
@@ -351,6 +357,8 @@
 }
 
 @mixin TooltipElement () {
+  transition: .2s;
+
   &, .chakra-icon {
     transition: .2s;
   }

@@ -1,11 +1,12 @@
 import './ValueContainer.scss'
-import { ArrowCornerIcon } from '../../ui/icons'
+import { ArrowCornerIcon } from '../icons'
 
-function ValueContainer ({ children, clickable, external, className, ...props }) {
+function ValueContainer ({ children, clickable, external, light, className, ...props }) {
   let extraClass = ''
 
   if (clickable) extraClass += ' ValueContainer--Clickable'
   if (external) extraClass += ' ValueContainer--External'
+  if (light) extraClass += ' ValueContainer--Light'
 
   return (
     <div className={`ValueContainer ${extraClass} ${className || ''}`} {...props}>
