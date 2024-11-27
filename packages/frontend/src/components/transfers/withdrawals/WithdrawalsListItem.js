@@ -24,7 +24,7 @@ function WithdrawalsListItem ({ withdrawal, rate, defaultPayoutAddress, l1explor
 
   const Wrapper = forwardRef(function Wrapper (props, ref) {
     return clickable
-      ? <Link ref={ref} href={`/transaction/${withdrawal?.hash}`} >{props.children}</Link>
+      ? <Link ref={ref} href={`/transaction/${withdrawal?.hash}`} className={props.className}>{props.children}</Link>
       : <div ref={ref} className={props.className}>{props.children}</div>
   })
 
@@ -46,7 +46,7 @@ function WithdrawalsListItem ({ withdrawal, rate, defaultPayoutAddress, l1explor
 
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--TxHash'}>
             {withdrawal?.hash
-              ? <ItemWrapper isLocal={true} href={'/transaction/' + withdrawal.hash}>
+              ? <ItemWrapper className={'WithdrawalsListItem__ColumnContent'} isLocal={true} href={'/transaction/' + withdrawal.hash}>
                   <ValueContainer className={''} light={true} clickable={true}>
                     <Identifier styles={['highlight-both']}>{withdrawal.hash}</Identifier>
                   </ValueContainer>
@@ -58,6 +58,7 @@ function WithdrawalsListItem ({ withdrawal, rate, defaultPayoutAddress, l1explor
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Address'}>
             {withdrawalAddress
               ? <ItemWrapper
+                  className={'WithdrawalsListItem__ColumnContent'}
                   isLocal={false}
                   {...(l1explorerBaseUrl ? { href: `${l1explorerBaseUrl}/address/${withdrawalAddress}` } : {})}
                   target={l1explorerBaseUrl ? '_blank' : '_self'}
@@ -72,7 +73,7 @@ function WithdrawalsListItem ({ withdrawal, rate, defaultPayoutAddress, l1explor
 
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Document'}>
             {withdrawal?.document
-              ? <ItemWrapper isLocal={true} href={'/document/' + withdrawal.document}>
+              ? <ItemWrapper className={'WithdrawalsListItem__ColumnContent'} isLocal={true} href={'/document/' + withdrawal.document}>
                   <ValueContainer className={''} light={true} clickable={true}>
                     <Identifier styles={['highlight-both']}>{withdrawal.document}</Identifier>
                   </ValueContainer>

@@ -28,6 +28,7 @@
     .ValueContainer {
       padding: 2px 6px;
       border-radius: 4px;
+      width: 100%;
     }
 
     &--Timestamp {
@@ -55,5 +56,11 @@
     &--Amount {
       font-weight: 700;
     }
+  }
+
+  &__ColumnContent {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
   }
 }
