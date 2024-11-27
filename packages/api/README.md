@@ -1180,6 +1180,7 @@ IDENTITY_CREATE with chainLock
     "type": 2,
     "fundingAddress": null,
     "assetLockProof": {
+      coreChainLockedHeight: 1138871,
       type: "chainLock",
       outputAmount: null,
       txid: "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
@@ -1213,12 +1214,13 @@ IDENTITY_CREATE with instantLock
     "type": 2,
     "fundingAddress": "yV1ZYoep5FFSBxKWM24JUwKfnAkFHnXXV7",
     "assetLockProof": {
-      type: "instantSend",
-      outputAmount: 34999000,
-      txid: "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
-      vout: 0,
-      fundingAddress: "yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY",
-      instantLock: 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq'
+        coreChainLockedHeight: null
+        type: "instantSend",
+        outputAmount: 34999000,
+        txid: "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
+        vout: 0,
+        fundingAddress: "yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY",
+        instantLock: 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq'
     },
     "userFeeIncrease": 0,
     "identityId": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
@@ -1276,6 +1278,7 @@ IDENTITY_CREATE with instantLock
 {
     type: 3,
     assetLockProof: {
+        coreChainLockedHeight: null
         type: "instantSend",
         outputAmount: 999000,
         txid: "7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64",

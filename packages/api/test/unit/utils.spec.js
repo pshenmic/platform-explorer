@@ -102,6 +102,7 @@ describe('Utils', () => {
       assert.deepEqual(decoded, {
         type: 2,
         assetLockProof: {
+          coreChainLockedHeight: null,
           type: 'instantSend',
           outputAmount: 34999000,
           txid: 'fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d',
@@ -157,6 +158,7 @@ describe('Utils', () => {
       assert.deepEqual(decoded, {
         type: 3,
         assetLockProof: {
+          coreChainLockedHeight: null,
           type: 'instantSend',
           outputAmount: 999000,
           txid: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64',
