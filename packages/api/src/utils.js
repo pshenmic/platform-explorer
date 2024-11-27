@@ -115,7 +115,7 @@ const decodeStateTransition = async (client, base64) => {
         coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
         instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.toJSON().instantLock : null,
-        outputAmount: decodedTransaction?.outputAmount ?? null,
+        fundingAmount: decodedTransaction?.outputAmount ?? null,
         txid: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
         vout: assetLockProof.getOutPoint().readInt8(32),
         fundingAddress: assetLockProof.getOutput
@@ -145,7 +145,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.assetLockProof = {
         coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
-        outputAmount: decodedTransaction?.outputAmount ?? null,
+        fundingAmount: decodedTransaction?.outputAmount ?? null,
         txid: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
         vout: assetLockProof.getOutPoint().readInt8(32),
         fundingAddress: assetLockProof.getOutput

@@ -104,7 +104,7 @@ describe('Utils', () => {
         assetLockProof: {
           coreChainLockedHeight: null,
           type: 'instantSend',
-          outputAmount: 34999000,
+          fundingAmount: 34999000,
           txid: 'fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d',
           vout: 0,
           fundingAddress: 'yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY',
@@ -160,7 +160,7 @@ describe('Utils', () => {
         assetLockProof: {
           coreChainLockedHeight: null,
           type: 'instantSend',
-          outputAmount: 999000,
+          fundingAmount: 999000,
           txid: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64',
           vout: 0,
           fundingAddress: 'yWxCwVRgqRmePNPJxezgus1T7xSv5q17SU'
