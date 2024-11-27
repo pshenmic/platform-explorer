@@ -1,5 +1,5 @@
 import { Badge } from '@chakra-ui/react'
-import { DocumentActionEnum, DocumentActionInfo } from '../../enums/DocumentAction'
+import { DocumentActionEnum, DocumentActionInfo } from '../../enums/documentAction'
 import { Tooltip } from '../ui/Tooltips'
 
 function DocumentActionBadge ({ typeId }) {
