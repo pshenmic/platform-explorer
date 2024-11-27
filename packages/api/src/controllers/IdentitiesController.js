@@ -104,7 +104,6 @@ class IdentitiesController {
       status: document.status ?? null,
       timestamp: document.timestamp ?? null,
       amount: document.amount ?? null,
-
       withdrawalAddress:
         decodedTx.find(
           tx => tx.timestamp.getTime() === document.timestamp
