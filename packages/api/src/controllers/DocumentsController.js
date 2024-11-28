@@ -11,14 +11,14 @@ class DocumentsController {
   getDocumentByIdentifier = async (request, response) => {
     const { identifier } = request.params
 
-    const stateTransitionData = await this.documentsDAO.getDocumentStateTransition(identifier)
+    const documentData = await this.documentsDAO.getDocumentData(identifier)
 
     // second for system documents, like dash.dash alias
-    if (!stateTransitionData || !stateTransitionData?.data) {
+    if (!documentData || !documentData?.data) {
       response.status(404).send({ message: 'not found' })
     }
 
-    const { transitions } = await decodeStateTransition(this.client, stateTransitionData.data)
+    const { transitions } = await decodeStateTransition(this.client, documentData.data)
 
     const decodedDocumentTransitionData = transitions.find(transition => transition.id === identifier)
 
@@ -26,17 +26,29 @@ class DocumentsController {
       decodedDocumentTransitionData.type,
       {
         $format_version: '0',
-        ownerId: stateTransitionData.owner.trim(),
-        id: stateTransitionData.identifier.trim(),
-        version: stateTransitionData.version,
-        documentSchemas: stateTransitionData.schema
+        ownerId: documentData.data_contract_owner.trim(),
+        id: documentData.data_contract_identifier.trim(),
+        version: documentData.version,
+        documentSchemas: documentData.schema
       },
       identifier,
       undefined,
       1
     )
 
-    response.send(documentFromDapi.getData())
+    // TODO: Add system documents support
+    // Currently only non system
+    response.send({
+      dataContractIdentifier: documentData.data_contract_identifier,
+      deleted: documentData.deleted,
+      identifier: documentFromDapi.getId(),
+      isSystem: false,
+      owner: documentData.owner.trim(),
+      revision: documentFromDapi.getRevision(),
+      timestamp: documentFromDapi.getCreatedAt(),
+      txHash: documentData.hash,
+      data: documentFromDapi.getData()
+    })
   }
 
   getDocumentsByDataContract = async (request, response) => {

@@ -32,7 +32,11 @@ describe('Documents routes', () => {
         type,
         dataContractObject,
         identifier
-      })
+      }),
+      getId: () => identifier,
+      getRevision: () => 1,
+      getCreatedAt: () => (new Date(0)).toISOString()
+
     }])
 
     app = await server.start()
@@ -129,23 +133,33 @@ describe('Documents routes', () => {
       // We can't check the document correctly as we are taking data from DAPI
       // so we'll verify the data we're sending to DAPI.
       const expectedDocument = {
-        type: 'note',
-        identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
-        dataContractObject: {
-          $format_version: '0',
-          ownerId: document.dataContract.owner,
-          id: document.dataContract.identifier,
-          version: 0,
-          documentSchemas: {
-            note: {
-              type: 'object',
-              properties: {
-                message: {
-                  type: 'string',
-                  position: 0
-                }
-              },
-              additionalProperties: false
+        dataContractIdentifier: document.dataContract.identifier,
+        deleted: false,
+        identifier: document.document.identifier,
+        isSystem: false,
+        owner: document.document.owner,
+        revision: 1,
+        timestamp: '1970-01-01T00:00:00.000Z',
+        txHash: document.transaction.hash,
+        data: {
+          type: 'note',
+          identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
+          dataContractObject: {
+            $format_version: '0',
+            ownerId: document.dataContract.owner,
+            id: document.dataContract.identifier,
+            version: 0,
+            documentSchemas: {
+              note: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    position: 0
+                  }
+                },
+                additionalProperties: false
+              }
             }
           }
         }
