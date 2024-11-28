@@ -21,16 +21,17 @@ class DocumentsController {
 
     const decodedDocumentTransitionData = transitions.find(transition => transition.id === identifier)
 
-    const [documentFromDapi] = await this.dapi.getDocumentsByIdentifier(
+    const [documentFromDapi] = await this.dapi.getDocuments(
       decodedDocumentTransitionData.type,
       {
         $format_version: '0',
-        ownerId: stateTransitionData.owner,
-        id: stateTransitionData.identifier,
+        ownerId: stateTransitionData.owner.trim(),
+        id: stateTransitionData.identifier.trim(),
         version: stateTransitionData.version,
         documentSchemas: stateTransitionData.schema
       },
       identifier,
+      undefined,
       1
     )
 

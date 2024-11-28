@@ -83,13 +83,13 @@ class IdentitiesController {
     const { identifier } = request.params
     const { limit = 100 } = request.query
 
-    const documents = await this.dapi.getDocumentsByOwner(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, identifier, limit)
+    const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, undefined, identifier, limit)
 
     if (documents.length === 0) {
       return response.send(new PaginatedResultSet([], null, null, null))
     }
 
-    const timestamps = documents.map(document => new Date(document.timestamp).toISOString())
+    const timestamps = documents.map(document => new Date(document.getCreatedAt()).toISOString())
 
     const withdrawals = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
 
@@ -99,19 +99,20 @@ class IdentitiesController {
     })))
 
     const resultSet = documents.map(document => ({
-      document: document.id ?? null,
-      sender: document.sender ?? null,
-      status: document.status ?? null,
-      timestamp: document.timestamp ?? null,
-      amount: document.amount ?? null,
+      document: document.getId() ?? null,
+      sender: document.getOwnerId() ?? null,
+      status: document.getData().status ?? null,
+      timestamp: document.getCreatedAt() ?? null,
+      amount: document.getData().amount ?? null,
       withdrawalAddress:
         decodedTx.find(
-          tx => tx.timestamp.getTime() === document.timestamp
+          tx => tx.timestamp.getTime() === document.getCreatedAt().getTime()
         )?.outputAddress ?? null,
 
       hash: withdrawals.find(
-        hash =>
-          new Date(hash.timestamp).toISOString() === new Date(document.timestamp).toISOString())?.hash ?? null
+        withdrawal =>
+          withdrawal.timestamp.getTime() === document.getCreatedAt().getTime()
+      )?.hash ?? null
     }))
 
     response.send(new PaginatedResultSet(resultSet, null, null, null))

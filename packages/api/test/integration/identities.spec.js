@@ -261,33 +261,33 @@ describe('Identities routes', () => {
       }
 
       const withdrawals = transactions.sort((a, b) => a.block.height - b.block.height).map(transaction => ({
-        timestamp: transaction.block.timestamp.toISOString(),
+        $createdAt: transaction.block.timestamp.toISOString(),
         hash: null,
-        id: transaction.transaction.hash,
-        sender: transaction.transaction.owner,
+        $id: transaction.transaction.hash,
+        $ownerId: transaction.transaction.owner,
         amount: 12345678,
         status: 'COMPLETE'
       }))
 
-      mock.method(DAPI.prototype, 'getDocumentsByOwner', async () => withdrawals)
+      mock.method(DAPI.prototype, 'getDocuments', async () => withdrawals)
 
       const { body } = await client.get(`/identity/${identity.identifier}/withdrawals`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.deepEqual(body.resultSet, withdrawals.map(withdrawal => ({
-        hash: withdrawal.id,
-        document: withdrawal.id,
-        sender: withdrawal.sender,
+        hash: withdrawal.$id,
+        document: withdrawal.$id,
+        sender: withdrawal.$ownerId,
         status: withdrawal.status,
-        timestamp: withdrawal.timestamp,
+        timestamp: withdrawal.$createdAt,
         amount: withdrawal.amount,
         withdrawalAddress: null
       })))
     })
 
     it('should return 404 whe identity not exist', async () => {
-      mock.method(DAPI.prototype, 'getDocumentsByOwner', async () => [])
+      mock.method(DAPI.prototype, 'getDocuments', async () => [])
       const { body } = await client.get('/identity/1234123123PFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6/withdrawals')
         .expect('Content-Type', 'application/json; charset=utf-8')
 

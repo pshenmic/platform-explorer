@@ -27,7 +27,7 @@ describe('Documents routes', () => {
       }
     }))
 
-    mock.method(DAPI.prototype, 'getDocumentsByIdentifier', async (type, dataContractObject, identifier) => [{
+    mock.method(DAPI.prototype, 'getDocuments', async (type, dataContractObject, identifier) => [{
       getData: () => ({
         type,
         dataContractObject,
