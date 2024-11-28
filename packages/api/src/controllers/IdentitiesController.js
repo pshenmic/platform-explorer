@@ -102,7 +102,7 @@ class IdentitiesController {
     const resultSet = documents.map(document => ({
       document: document.getId(),
       sender: document.getOwnerId(),
-      status: WithdrawalStatusEnum[document.getData().status],
+      status: document.getData().status,
       timestamp: document.getCreatedAt(),
       amount: document.getData().amount,
       withdrawalAddress:

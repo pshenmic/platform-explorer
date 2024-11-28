@@ -283,7 +283,7 @@ describe('Identities routes', () => {
         hash: withdrawal.$id,
         document: withdrawal.$id,
         sender: withdrawal.$ownerId,
-        status: 'QUEUED',
+        status: 0,
         timestamp: withdrawal.$createdAt,
         amount: withdrawal.amount,
         withdrawalAddress: null
