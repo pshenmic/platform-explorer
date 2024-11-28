@@ -266,7 +266,11 @@ describe('Identities routes', () => {
         $id: transaction.transaction.hash,
         $ownerId: transaction.transaction.owner,
         amount: 12345678,
-        status: 'COMPLETE'
+        status: 0,
+        getCreatedAt: () => transaction.block.timestamp,
+        getId: () => transaction.transaction.hash,
+        getOwnerId: () => transaction.transaction.owner,
+        getData: () => ({ status: 0, amount: 12345678 })
       }))
 
       mock.method(DAPI.prototype, 'getDocuments', async () => withdrawals)
@@ -279,7 +283,7 @@ describe('Identities routes', () => {
         hash: withdrawal.$id,
         document: withdrawal.$id,
         sender: withdrawal.$ownerId,
-        status: withdrawal.status,
+        status: 'QUEUED',
         timestamp: withdrawal.$createdAt,
         amount: withdrawal.amount,
         withdrawalAddress: null

@@ -3,6 +3,7 @@ const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { decodeStateTransition } = require('../utils')
+const WithdrawalStatusEnum = require('../enums/WithdrawalStatusEnum')
 
 class IdentitiesController {
   constructor (client, knex, dapi) {
@@ -99,20 +100,20 @@ class IdentitiesController {
     })))
 
     const resultSet = documents.map(document => ({
-      document: document.getId() ?? null,
-      sender: document.getOwnerId() ?? null,
-      status: document.getData().status ?? null,
-      timestamp: document.getCreatedAt() ?? null,
-      amount: document.getData().amount ?? null,
+      document: document.getId(),
+      sender: document.getOwnerId(),
+      status: WithdrawalStatusEnum[document.getData().status],
+      timestamp: document.getCreatedAt(),
+      amount: document.getData().amount,
       withdrawalAddress:
         decodedTx.find(
           tx => tx.timestamp.getTime() === document.getCreatedAt().getTime()
-        )?.outputAddress ?? null,
+        )?.outputAddress,
 
       hash: withdrawals.find(
         withdrawal =>
           withdrawal.timestamp.getTime() === document.getCreatedAt().getTime()
-      )?.hash ?? null
+      )?.hash
     }))
 
     response.send(new PaginatedResultSet(resultSet, null, null, null))
