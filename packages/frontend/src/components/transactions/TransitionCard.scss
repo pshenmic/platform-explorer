@@ -1,7 +1,9 @@
 @use '../../styles/mixins.scss';
+@use './variables' as txs;
 @import '../../styles/variables.scss';
 
 .TransitionCard {
+  @include txs.CardPaddings(padding);
   container-type: inline-size;
 
   &__InfoLine {
