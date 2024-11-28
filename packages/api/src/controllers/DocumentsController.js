@@ -14,11 +14,11 @@ class DocumentsController {
     const documentData = await this.documentsDAO.getDocumentData(identifier)
 
     // second for system documents, like dash.dash alias
-    if (!documentData || !documentData?.data) {
+    if (!documentData || !documentData?.transition_data) {
       response.status(404).send({ message: 'not found' })
     }
 
-    const { transitions } = await decodeStateTransition(this.client, documentData.data)
+    const { transitions } = await decodeStateTransition(this.client, documentData.transition_data)
 
     const decodedDocumentTransitionData = transitions.find(transition => transition.id === identifier)
 
