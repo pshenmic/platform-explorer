@@ -1,0 +1,65 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.PublicKeyCard {
+  padding: 40px;
+
+  &__InfoLine {
+    justify-content: flex-start;
+    margin-bottom: 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &--Data, &--Hash  {
+      white-space: wrap;
+      word-break: break-all;
+    }
+
+    .InfoLine__Title {
+      width: 150px !important;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    padding: 32px;
+
+    &__InfoLine {
+      .InfoLine {
+        .InfoLine__Value {
+          flex-grow: 1;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    padding: 16px;
+
+    &__InfoLine {
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      .InfoLine__Title {
+        width: auto !important;
+      }
+
+      &--Data {
+        flex-wrap: wrap;
+
+        .InfoLine__Title {
+          margin-bottom: 8px;
+        }
+
+        .InfoLine__Value {
+          width: 100%;
+        }
+
+        .ValueCard {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

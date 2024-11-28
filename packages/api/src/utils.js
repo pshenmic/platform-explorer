@@ -8,6 +8,10 @@ const { base58 } = require('@scure/base')
 const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
+const { InstantAssetLockProof, ChainAssetLockProof } = require('@dashevo/wasm-dpp')
+const SecurityLevelEnum = require('./enums/SecurityLevelEnum')
+const KeyPurposeEnum = require('./enums/KeyPurposeEnum')
+const KeyTypeEnum = require('./enums/KeyTypeEnum')
 
 const getKnex = () => {
   return require('knex')({
@@ -105,16 +109,36 @@ const decodeStateTransition = async (client, base64) => {
     case StateTransitionEnum.IDENTITY_CREATE: {
       const assetLockProof = stateTransition.getAssetLockProof()
 
-      decoded.fundingAddress = assetLockProof.getOutput
-        ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
-        : null
-      decoded.assetLockProof = assetLockProof.toJSON()
+      const decodedTransaction =
+        assetLockProof instanceof InstantAssetLockProof
+          ? dashcorelib.Transaction(assetLockProof.getTransaction())
+          : null
+
+      decoded.assetLockProof = {
+        coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
+        type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
+        instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.toJSON().instantLock : null,
+        fundingAmount: decodedTransaction?.outputAmount ?? null,
+        txid: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
+        vout: assetLockProof.getOutPoint().readInt8(32),
+        fundingAddress: assetLockProof.getOutput
+          ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
+          : null
+      }
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
       decoded.raw = stateTransition.toBuffer().toString('hex')
+      // TODO: Add contract bounds
       decoded.publicKeys = stateTransition.publicKeys.map(key => ({
-        ...key.toJSON(),
+        contractBounds: null, // key.toJSON().contractBounds,
+        id: key.getId(),
+        type: KeyTypeEnum[key.getType()],
+        data: Buffer.from(key.getData()).toString('hex'),
+        publicKeyHash: Buffer.from(key.hash()).toString('hex'),
+        purpose: KeyPurposeEnum[key.getPurpose()],
+        securityLevel: SecurityLevelEnum[key.getSecurityLevel()],
+        readOnly: key.isReadOnly(),
         signature: Buffer.from(key.getSignature()).toString('hex')
       }))
 
@@ -124,10 +148,21 @@ const decodeStateTransition = async (client, base64) => {
       const assetLockProof = stateTransition.getAssetLockProof()
       const output = assetLockProof.getOutput()
 
-      decoded.fundingAddress = assetLockProof.getOutput
-        ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
-        : null
-      decoded.assetLockProof = assetLockProof.toJSON()
+      const decodedTransaction =
+        assetLockProof instanceof InstantAssetLockProof
+          ? dashcorelib.Transaction(assetLockProof.getTransaction())
+          : null
+
+      decoded.assetLockProof = {
+        coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
+        type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
+        fundingAmount: decodedTransaction?.outputAmount ?? null,
+        txid: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
+        vout: assetLockProof.getOutPoint().readInt8(32),
+        fundingAddress: assetLockProof.getOutput
+          ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
+          : null
+      }
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.amount = output.satoshis * 1000
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
@@ -168,12 +203,30 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getOwnerId().toString()
       decoded.revision = stateTransition.getRevision()
+      // TODO: Add contract bounds
       decoded.publicKeysToAdd = stateTransition.getPublicKeysToAdd()
         .map(key => ({
-          ...key.toJSON(),
+          contractBounds: null, // key.toJSON().contractBounds,
+          id: key.getId(),
+          type: KeyTypeEnum[key.getType()],
+          data: Buffer.from(key.getData()).toString('hex'),
+          publicKeyHash: Buffer.from(key.hash()).toString('hex'),
+          purpose: KeyPurposeEnum[key.getPurpose()],
+          securityLevel: SecurityLevelEnum[key.getSecurityLevel()],
+          readOnly: key.isReadOnly(),
           signature: Buffer.from(key.getSignature()).toString('hex')
         }))
-      decoded.setPublicKeyIdsToDisable = (stateTransition.getPublicKeyIdsToDisable() ?? []).map(key => key.toJSON())
+      decoded.setPublicKeyIdsToDisable = (stateTransition.getPublicKeyIdsToDisable() ?? []).map(key => ({
+        contractBounds: null, // key.toJSON().contractBounds,
+        id: key.getId(),
+        type: KeyTypeEnum[key.getType()],
+        data: Buffer.from(key.getData()).toString('hex'),
+        publicKeyHash: Buffer.from(key.hash()).toString('hex'),
+        purpose: KeyPurposeEnum[key.getPurpose()],
+        securityLevel: SecurityLevelEnum[key.getSecurityLevel()],
+        readOnly: key.isReadOnly(),
+        signature: Buffer.from(key.getSignature()).toString('hex')
+      }))
       decoded.signature = stateTransition.getSignature().toString('hex')
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.raw = stateTransition.toBuffer().toString('hex')
@@ -193,12 +246,18 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL: {
-      decoded.outputAddress = dashcorelib.Script(stateTransition.getOutputScript()).toAddress(NETWORK).toString()
+      decoded.outputAddress = stateTransition.getOutputScript()
+        ? dashcorelib
+          .Script(stateTransition.getOutputScript())
+          .toAddress(NETWORK)
+          .toString()
+        : null
+
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
+      decoded.identityNonce = parseInt(stateTransition.getNonce())
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.amount = parseInt(stateTransition.getAmount())
-      decoded.nonce = parseInt(stateTransition.getNonce())
       decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null
       decoded.coreFeePerByte = stateTransition.getCoreFeePerByte()
       decoded.signature = stateTransition.getSignature()?.toString('hex')
@@ -218,6 +277,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.indexName = stateTransition.getContestedDocumentResourceVotePoll().indexName
       decoded.choice = stateTransition.getContestedDocumentResourceVotePoll().choice
       decoded.raw = stateTransition.toBuffer().toString('hex')
+      decoded.proTxHash = stateTransition.getProTxHash().toString('hex')
 
       break
     }
