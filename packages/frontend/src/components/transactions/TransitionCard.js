@@ -1,7 +1,8 @@
-import './TransitionCard.scss'
 import { ValueCard } from '../cards'
 import { Identifier, InfoLine } from '../data'
 import DocumentActionBadge from './DocumentActionBadge'
+import { Code } from '@chakra-ui/react'
+import './TransitionCard.scss'
 
 function TransitionCard ({ transition, className }) {
   return (
@@ -42,6 +43,20 @@ function TransitionCard ({ transition, className }) {
           title={'Revision'}
           value={transition?.revision}
           error={transition?.revision === undefined}
+        />
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--Schema'}
+          title={'Schema'}
+          value={(
+            <Code
+              borderRadius={'lg'}
+              px={5}
+              py={4}
+            >
+              {JSON.stringify(transition.data, null, 2)}
+            </Code>
+          )}
+          error={!transition.data}
         />
       </div>
     </div>

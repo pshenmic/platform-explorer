@@ -2,6 +2,8 @@
 @import '../../styles/variables.scss';
 
 .TransitionCard {
+  container-type: inline-size;
+
   &__InfoLine {
     justify-content: flex-start;
     margin-bottom: 14px;
@@ -23,6 +25,31 @@
 
     .InfoLine__Title {
       width: 200px;
+    }
+
+    &--Schema {
+      align-items: flex-start;
+
+      code {
+        max-width: 100%;
+      }
+    }
+  }
+
+  @container (max-width: 600px) {
+    &__InfoLine {
+      &--Schema {
+        flex-wrap: wrap;
+
+        .InfoLine__Title {
+          margin-bottom: 8px;
+        }
+
+        code {
+          width: 100%;
+          margin: 0;
+        }
+      }
     }
   }
 
@@ -47,6 +74,19 @@
         .InfoLine__Title {
           margin-bottom: 4px;
           margin-right: 0;
+        }
+      }
+
+      &--Revision, &--Action {
+        justify-content: space-between;
+
+        .InfoLine__Title, .InfoLine__Value {
+          width: max-content !important;
+        }
+
+        .InfoLine__Value {
+          width: max-content;
+          text-align: right !important;
         }
       }
     }
