@@ -40,6 +40,7 @@ function CopyButton ({ text, className }) {
         copyToClipboard(text, showMessage)
       }}
       minW={0}
+      height={'max-content'}
       p={0}
       className={`CopyButton ${className}`}
       _hover={{ color: 'gray.100' }}
@@ -65,6 +66,7 @@ function CopyButton ({ text, className }) {
           transition={'.2s'}
           boxSizing={'content-box'}
           p={1}
+          m={-1}
         />
       </Tooltip>
     </Button>

@@ -1,21 +1,22 @@
 import TransfersListItem from './TransfersListItem'
+import { EmptyListMessage } from '../ui/lists'
 import './TransfersList.scss'
 
 function TransfersList ({ transfers = [], identityId }) {
   return (
-        <div className={'TransfersList'}>
-            {transfers.map((transfer, key) =>
-                <TransfersListItem
-                    key={key}
-                    transfer={transfer}
-                    identityId={identityId}
-                />
-            )}
+    <div className={'TransfersList'}>
+      {transfers.map((transfer, key) =>
+        <TransfersListItem
+          key={key}
+          transfer={transfer}
+          identityId={identityId}
+        />
+      )}
 
-            {transfers.length === 0 &&
-                <div className={'TransfersList__EmptyMessage'}>There are no transfers yet.</div>
-            }
-        </div>
+      {transfers.length === 0 &&
+        <EmptyListMessage>There are no transfers yet.</EmptyListMessage>
+      }
+    </div>
   )
 }
 

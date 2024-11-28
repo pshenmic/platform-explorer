@@ -21,6 +21,7 @@ const paginateConfig = {
 
 function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
@@ -41,6 +42,10 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
         setTotal(res.pagination.total)
       })
       .catch(err => fetchHandlerError(setTransactions, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
 
   useEffect(() => fetchData(currentPage + 1, pageSize), [pageSize, currentPage])
@@ -72,30 +77,30 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
       className={'Transactions'}
     >
         <Container maxW={'container.xl'} className={'InfoBlock'}>
-            <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
+          <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
 
-            {!transactions.error
-              ? !transactions.loading
-                  ? <TransactionsList transactions={transactions.data.resultSet}/>
-                  : <LoadingList itemsCount={pageSize}/>
-              : <Container h={20}><ErrorMessageBlock/></Container>
-            }
+          {!transactions.error
+            ? !transactions.loading
+                ? <TransactionsList transactions={transactions.data.resultSet} rate={rate.data}/>
+                : <LoadingList itemsCount={pageSize}/>
+            : <Container h={20}><ErrorMessageBlock/></Container>
+          }
 
-            {transactions.data?.resultSet?.length > 0 &&
-              <div className={'ListNavigation'}>
-                <Box display={['none', 'none', 'block']} width={'155px'}/>
-                <Pagination
-                    onPageChange={({ selected }) => setCurrentPage(selected)}
-                    pageCount={pageCount}
-                    forcePage={currentPage}
-                />
-                <PageSizeSelector
-                    PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                    value={pageSize}
-                    items={paginateConfig.pageSize.values}
-                />
-              </div>
-            }
+          {transactions.data?.resultSet?.length > 0 &&
+            <div className={'ListNavigation'}>
+              <Box display={['none', 'none', 'block']} width={'155px'}/>
+              <Pagination
+                onPageChange={({ selected }) => setCurrentPage(selected)}
+                pageCount={pageCount}
+                forcePage={currentPage}
+              />
+              <PageSizeSelector
+                PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
+                value={pageSize}
+                items={paginateConfig.pageSize.values}
+              />
+            </div>
+          }
         </Container>
     </Container>
   )
