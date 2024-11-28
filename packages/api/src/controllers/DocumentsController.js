@@ -13,7 +13,8 @@ class DocumentsController {
 
     const stateTransitionData = await this.documentsDAO.getDocumentStateTransition(identifier)
 
-    if (!stateTransitionData) {
+    // second for system documents, like dash.dash alias
+    if (!stateTransitionData || !stateTransitionData?.data) {
       response.status(404).send({ message: 'not found' })
     }
 
