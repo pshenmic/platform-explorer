@@ -269,7 +269,7 @@ describe('Identities routes', () => {
         status: 'COMPLETE'
       }))
 
-      mock.method(DAPI.prototype, 'getDocuments', async () => withdrawals)
+      mock.method(DAPI.prototype, 'getDocumentsByOwner', async () => withdrawals)
 
       const { body } = await client.get(`/identity/${identity.identifier}/withdrawals`)
         .expect(200)
@@ -287,7 +287,7 @@ describe('Identities routes', () => {
     })
 
     it('should return 404 whe identity not exist', async () => {
-      mock.method(DAPI.prototype, 'getDocuments', async () => [])
+      mock.method(DAPI.prototype, 'getDocumentsByOwner', async () => [])
       const { body } = await client.get('/identity/1234123123PFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6/withdrawals')
         .expect('Content-Type', 'application/json; charset=utf-8')
 
