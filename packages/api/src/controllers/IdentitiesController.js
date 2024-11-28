@@ -3,6 +3,8 @@ const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 const { getAliasInfo } = require('../utils')
 const { base58 } = require('@scure/base')
+const PaginatedResultSet = require('../models/PaginatedResultSet')
+const { decodeStateTransition } = require('../utils')
 
 class IdentitiesController {
   constructor (client, knex, dapi) {
