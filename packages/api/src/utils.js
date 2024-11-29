@@ -278,7 +278,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.choice = stateTransition.getContestedDocumentResourceVotePoll().choice
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.raw = stateTransition.toBuffer().toString('hex')
-      decoded.proTxHash = stateTransition.getProTxHash().toString()
+      decoded.proTxHash = stateTransition.getProTxHash().toString('hex')
 
       break
     }
