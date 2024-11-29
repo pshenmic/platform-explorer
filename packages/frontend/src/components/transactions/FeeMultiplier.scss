@@ -1,0 +1,42 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.FeeMultiplier {
+  font-size: 0.688rem;
+  font-weight: 400;
+  font-family: $font-mono;
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-block;
+
+  &--Green {
+    background-color: #5BF45833;
+    color: #5BF458;
+  }
+
+  &--Yellow {
+    background-color: #DFF45833;
+    color: #DFF458;
+  }
+
+  &--LightOrange {
+    background-color: #F4D25833;
+    color: #F4D258;
+  }
+
+  &--Orange {
+    background-color: #E4980033;
+    color: #E49800;
+  }
+
+  &--RedOrange {
+    background-color: #F4875833;
+    color: #F48758;
+  }
+
+  &--Red {
+    background-color: #F4589033;
+    color: #F45890;
+  }
+}
