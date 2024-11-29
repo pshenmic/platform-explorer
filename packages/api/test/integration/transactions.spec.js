@@ -6,6 +6,7 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const DAPI = require('../../src/DAPI')
 
 describe('Transaction routes', () => {
   let app
@@ -13,6 +14,7 @@ describe('Transaction routes', () => {
   let knex
 
   let identity
+  let identityAlias
   let block
   let transactions
 
@@ -24,6 +26,8 @@ describe('Transaction routes', () => {
         }
       }
     }))
+
+    mock.method(DAPI.prototype, 'getContestedState', async () => null)
 
     const startDate = new Date(new Date() - 1000 * 60 * 60)
 
@@ -37,6 +41,8 @@ describe('Transaction routes', () => {
       height: 1, timestamp: startDate
     })
     identity = await fixtures.identity(knex, { block_hash: block.hash })
+
+    identityAlias = await fixtures.identity_alias(knex, { alias: 'test.dash', identity })
 
     transactions = [{ transaction: identity.transaction, block }]
 
@@ -104,7 +110,14 @@ describe('Transaction routes', () => {
         type: transaction.transaction.type,
         gasUsed: transaction.transaction.gas_used,
         status: transaction.transaction.status,
-        error: transaction.transaction.error
+        error: transaction.transaction.error,
+        owner: {
+          identifier: transaction.transaction.owner,
+          aliases: [{
+            alias: identityAlias.alias,
+            status: 'ok'
+          }]
+        }
       }
 
       assert.deepEqual(expectedTransaction, body)
@@ -126,7 +139,14 @@ describe('Transaction routes', () => {
         type: transaction.transaction.type,
         gasUsed: 0,
         status: 'FAIL',
-        error: 'Cannot deserialize'
+        error: 'Cannot deserialize',
+        owner: {
+          identifier: transaction.transaction.owner,
+          aliases: [{
+            alias: identityAlias.alias,
+            status: 'ok'
+          }]
+        }
       }
 
       assert.deepEqual(expectedTransaction, body)
@@ -162,7 +182,14 @@ describe('Transaction routes', () => {
           type: transaction.transaction.type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
+          }
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
@@ -191,7 +218,14 @@ describe('Transaction routes', () => {
           type: transaction.transaction.type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
+          }
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
@@ -220,13 +254,20 @@ describe('Transaction routes', () => {
           type: transaction.transaction.type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
+          }
         }))
 
       assert.deepEqual(expectedTransactions, body.resultSet)
     })
 
-    it('should return be able to walk through pages desc', async () => {
+    it('should return be able to walk through pages', async () => {
       const { body } = await client.get('/transactions?page=3&limit=3')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -240,19 +281,26 @@ describe('Transaction routes', () => {
         .sort((a, b) => a.transaction.id - b.transaction.id)
         .slice(6, 9)
         .map(transaction => ({
-          blockHash: transaction.block.hash,
-          blockHeight: transaction.block.height,
-          data: '{}',
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
-          timestamp: transaction.block.timestamp.toISOString(),
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
           type: transaction.transaction.type,
+          data: '{}',
+          timestamp: transaction.block.timestamp.toISOString(),
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
-          error: transaction.transaction.error
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
+          }
         }))
 
-      assert.deepEqual(expectedTransactions, body.resultSet)
+      assert.deepEqual(body.resultSet, expectedTransactions)
     })
   })
 
@@ -282,8 +330,8 @@ describe('Transaction routes', () => {
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
             txs: txs.length,
-            blockHeight: txs[0]?.block?.height,
-            blockHash: txs[0]?.block?.hash
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
           }
         })
       }
@@ -330,7 +378,7 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 12)
+      assert.equal(body.length, 4)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -338,8 +386,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 7200000 * i
-        const prevPeriod = firstTimestamp - 7200000 * (i - 1)
+        const nextPeriod = firstTimestamp - 21600000 * i
+        const prevPeriod = firstTimestamp - 21600000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -364,7 +412,7 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 3)
+      assert.equal(body.length, 5)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -372,8 +420,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 86400000 * i
-        const prevPeriod = firstTimestamp - 86400000 * (i - 1)
+        const nextPeriod = firstTimestamp - 50400000 * i
+        const prevPeriod = firstTimestamp - 50400000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -408,6 +456,42 @@ describe('Transaction routes', () => {
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 86400000 * i
         const prevPeriod = firstTimestamp - 86400000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            txs: txs.length,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+    it('should return series of 6 intervals timespan 3d', async () => {
+      const start = new Date(new Date().getTime())
+      const end = new Date(start.getTime() + 10800000)
+
+      const { body } = await client.get(`/transactions/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=3`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 3)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 3) * 1000 * i
+        const prevPeriod = firstTimestamp - 3600000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&

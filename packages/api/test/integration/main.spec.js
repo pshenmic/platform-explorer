@@ -39,6 +39,8 @@ describe('Other routes', () => {
       nextEpoch: 0
     }])
 
+    mock.method(DAPI.prototype, 'getContestedState', async () => null)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -117,15 +119,19 @@ describe('Other routes', () => {
 
     for (let i = 0; i < 48; i++) {
       const tmpBlock = await fixtures.block(knex, {
-        timestamp: new Date(new Date().getTime() - 3600000 * i)
+        timestamp: new Date(new Date().getTime() - 3600000 * i),
+        height: i + 10
       })
+
       const transaction = await fixtures.transaction(knex, {
         block_hash: tmpBlock.hash,
         type: 0,
         owner: identity.identifier,
         gas_used: 10000
       })
+
       transactions.push(transaction.hash)
+      blocks.push(tmpBlock)
     }
   })
 
@@ -171,7 +177,14 @@ describe('Other routes', () => {
         timestamp: block.timestamp.toISOString(),
         gasUsed: dataContractTransaction.gas_used,
         status: dataContractTransaction.status,
-        error: dataContractTransaction.error
+        error: dataContractTransaction.error,
+        owner: {
+          identifier: dataContractTransaction.owner,
+          aliases: [{
+            alias: identityAlias.alias,
+            status: 'ok'
+          }]
+        }
       }
 
       assert.deepEqual({ transaction: expectedTransaction }, body)
@@ -192,7 +205,7 @@ describe('Other routes', () => {
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator
         },
-        txs: transactions
+        txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
 
       assert.deepEqual({ block: expectedBlock }, body)
@@ -227,17 +240,7 @@ describe('Other routes', () => {
 
       const expectedIdentity = {
         identifier: identity.identifier,
-        revision: 0,
-        balance: 0,
-        timestamp: block.timestamp.toISOString(),
-        txHash: identityTransaction.hash,
-        totalTxs: 51,
-        totalTransfers: 0,
-        totalDocuments: 1,
-        totalDataContracts: 1,
-        isSystem: false,
-        owner: identity.identifier,
-        aliases: ['dpns.dash']
+        alias: identityAlias.alias
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
@@ -260,7 +263,10 @@ describe('Other routes', () => {
         totalDataContracts: 1,
         isSystem: false,
         owner: identity.identifier,
-        aliases: ['dpns.dash']
+        aliases: [{
+          alias: 'dpns.dash',
+          status: 'ok'
+        }]
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
@@ -320,7 +326,7 @@ describe('Other routes', () => {
         api: {
           version: require('../../package.json').version,
           block: {
-            height: 10,
+            height: blocks.length - 1,
             hash: blocks[blocks.length - 1].hash,
             timestamp: blocks[blocks.length - 1].timestamp.toISOString()
           }
