@@ -8,17 +8,17 @@
  * @param validatorsController {ValidatorsController}
  */
 module.exports = ({
-  fastify,
-  mainController,
-  epochController,
-  blocksController,
-  transactionsController,
-  dataContractsController,
-  documentsController,
-  identitiesController,
-  validatorsController,
-  rateController
-}) => {
+                    fastify,
+                    mainController,
+                    epochController,
+                    blocksController,
+                    transactionsController,
+                    dataContractsController,
+                    documentsController,
+                    identitiesController,
+                    validatorsController,
+                    rateController
+                  }) => {
   const routes = [
     {
       path: '/status',
@@ -292,6 +292,19 @@ module.exports = ({
       handler: validatorsController.getValidators,
       schema: {
         querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/validator/identity/:identifier',
+      method: 'GET',
+      handler: validatorsController.getValidatorByIdentifier,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
       }
     },
     {

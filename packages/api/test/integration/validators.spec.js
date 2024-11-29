@@ -158,10 +158,10 @@ describe('Validators routes', () => {
           type: IDENTITY_CREDIT_WITHDRAWAL,
           block_hash: blocks[i].hash,
           owner: base58.encode(Buffer.from((
-            (i % 2)
-              ? inactiveValidators
-              : activeValidators)[0].pro_tx_hash,
-          'hex'))
+              (i % 2)
+                ? inactiveValidators
+                : activeValidators)[0].pro_tx_hash,
+            'hex'))
         }
       )
 
@@ -279,6 +279,100 @@ describe('Validators routes', () => {
         totalReward: 0,
         epochReward: 0,
         identity: identity.identifier,
+        identityBalance: 0,
+        epochInfo: { ...fullEpochInfo },
+        withdrawalsCount: 5,
+        lastWithdrawal: transactions[transactions.length - 2].hash,
+        lastWithdrawalTime: timestamp.toISOString(),
+        endpoints
+      }
+
+      assert.deepEqual(body, expectedValidator)
+    })
+
+    it('should return 404 if validator not found', async () => {
+      await client.get('/validator/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF')
+        .expect(404)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+    })
+  })
+
+  describe('getValidatorByIdentity()', async () => {
+    it('should return inactive validator by identifier', async () => {
+      const [validator] = inactiveValidators
+
+      const identifier = base58.encode(Buffer.from(validator.pro_tx_hash, 'hex'))
+
+      const { body } = await client.get(`/validator/identity/${identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedValidator = {
+        proTxHash: validator.pro_tx_hash,
+        isActive: false,
+        proposedBlocksAmount: 0,
+        lastProposedBlockHeader: null,
+        proTxInfo: {
+          type: dashCoreRpcResponse.type,
+          collateralHash: dashCoreRpcResponse.collateralHash,
+          collateralIndex: dashCoreRpcResponse.collateralIndex,
+          collateralAddress: dashCoreRpcResponse.collateralAddress,
+          operatorReward: dashCoreRpcResponse.operatorReward,
+          confirmations: dashCoreRpcResponse.confirmations,
+          state: dashCoreRpcResponse.state
+        },
+        totalReward: 0,
+        epochReward: 0,
+        identity: identifier,
+        identityBalance: 0,
+        epochInfo: { ...fullEpochInfo },
+        withdrawalsCount: 5,
+        lastWithdrawal: transactions[transactions.length - 1].hash,
+        lastWithdrawalTime: timestamp.toISOString(),
+        endpoints
+      }
+
+      assert.deepEqual(body, expectedValidator)
+    })
+
+    it('should return active validator by identifier', async () => {
+      const [validator] = activeValidators
+
+      const identifier = base58.encode(Buffer.from(validator.pro_tx_hash, 'hex'))
+
+      const { body } = await client.get(`/validator/identity/${identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedValidator = {
+        proTxHash: validator.pro_tx_hash,
+        isActive: false,
+        proposedBlocksAmount: blocks.filter((block) => block.validator === validator.pro_tx_hash).length,
+        lastProposedBlockHeader: blocks
+          .filter((block) => block.validator === validator.pro_tx_hash)
+          .map((block) => BlockHeader.fromRow(block))
+          .map((blockHeader) => ({
+            hash: blockHeader.hash,
+            height: blockHeader.height,
+            timestamp: blockHeader.timestamp.toISOString(),
+            blockVersion: blockHeader.blockVersion,
+            appVersion: blockHeader.appVersion,
+            l1LockedHeight: blockHeader.l1LockedHeight,
+            validator: blockHeader.validator
+          }))
+          .toReversed()[0] ?? null,
+        proTxInfo: {
+          type: dashCoreRpcResponse.type,
+          collateralHash: dashCoreRpcResponse.collateralHash,
+          collateralIndex: dashCoreRpcResponse.collateralIndex,
+          collateralAddress: dashCoreRpcResponse.collateralAddress,
+          operatorReward: dashCoreRpcResponse.operatorReward,
+          confirmations: dashCoreRpcResponse.confirmations,
+          state: dashCoreRpcResponse.state
+        },
+        totalReward: 0,
+        epochReward: 0,
+        identity: identifier,
         identityBalance: 0,
         epochInfo: { ...fullEpochInfo },
         withdrawalsCount: 5,
