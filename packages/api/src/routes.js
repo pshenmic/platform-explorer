@@ -8,17 +8,17 @@
  * @param validatorsController {ValidatorsController}
  */
 module.exports = ({
-                    fastify,
-                    mainController,
-                    epochController,
-                    blocksController,
-                    transactionsController,
-                    dataContractsController,
-                    documentsController,
-                    identitiesController,
-                    validatorsController,
-                    rateController
-                  }) => {
+  fastify,
+  mainController,
+  epochController,
+  blocksController,
+  transactionsController,
+  dataContractsController,
+  documentsController,
+  identitiesController,
+  validatorsController,
+  rateController
+}) => {
   const routes = [
     {
       path: '/status',
