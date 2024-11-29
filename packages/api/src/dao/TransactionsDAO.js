@@ -49,14 +49,14 @@ module.exports = class TransactionsDAO {
     return Transaction.fromRow({ ...row, aliases })
   }
 
-  getTransactions = async (page, limit, order, filters, owner, status) => {
+  getTransactions = async (page, limit, order, filters, owner, status, min, max) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
     let filtersQuery = ''
     const filtersBindings = []
 
-    if (!filters.includes(-1)) {
+    if (filters) {
       // Currently knex cannot digest an array of numbers correctly
       // https://github.com/knex/knex/issues/2060
       filtersQuery = filters.length > 1 ? `type in (${filters.join(',')})` : `type = ${filters[0]}`
@@ -64,12 +64,22 @@ module.exports = class TransactionsDAO {
 
     if (owner) {
       filtersBindings.push(owner)
-      filtersQuery = filtersQuery !== '' ? filtersQuery + ' AND owner = ?' : 'owner = ?'
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and owner = ?' : 'owner = ?'
     }
 
     if (status !== 'ALL') {
       filtersBindings.push(status)
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and status = ?' : 'status = ?'
+    }
+
+    if (min) {
+      filtersBindings.push(min)
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and gas_used >= ?' : 'gas_used >= ?'
+    }
+
+    if (max) {
+      filtersBindings.push(max)
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and gas_used <= ?' : 'gas_used <= ?'
     }
 
     const aliasesSubquery = this.knex('identity_aliases')
@@ -84,8 +94,6 @@ module.exports = class TransactionsDAO {
         'state_transitions.block_hash as block_hash', 'state_transitions.id as id', 'state_transitions.owner as owner')
       .whereRaw(filtersQuery, filtersBindings)
       .as('state_transitions')
-
-    console.log(filtersSubquery.toString())
 
     const subquery = this.knex(filtersSubquery)
       .select('tx_hash', 'total_count',

@@ -28,9 +28,11 @@ class TransactionsController {
       page = 1,
       limit = 10,
       order = 'asc',
-      filters = [-1],
+      filters,
       owner,
-      status = 'ALL'
+      status = 'ALL',
+      min,
+      max
     } = request.query
 
     if (order !== 'asc' && order !== 'desc') {
@@ -39,12 +41,9 @@ class TransactionsController {
 
     const stateTransitionIndexes = Object.entries(StateTransitionEnum).map(([, entry]) => entry)
 
-    const validatedFilters =
-      filters.map((filter) =>
-        stateTransitionIndexes.includes(filter) || filter === -1
-      )
+    const validatedFilters = filters?.map((filter) => stateTransitionIndexes.includes(filter))
 
-    if (validatedFilters.includes(false) || filters.length === 0 || typeof filters !== 'object') {
+    if (validatedFilters?.includes(false) || filters?.length === 0) {
       return response.status(400).send({ message: 'invalid filters values' })
     }
 
@@ -54,7 +53,9 @@ class TransactionsController {
       order,
       filters,
       owner,
-      status
+      status,
+      min,
+      max
     )
 
     response.send(transactions)

@@ -63,7 +63,11 @@ describe('Transaction routes', () => {
       })
 
       const transaction = await fixtures.transaction(knex, {
-        block_hash: block.hash, data: '{}', type: StateTransitionEnum.DATA_CONTRACT_CREATE, owner: identity.identifier
+        block_hash: block.hash,
+        data: '{}',
+        type: StateTransitionEnum.DATA_CONTRACT_CREATE,
+        owner: identity.identifier,
+        gas_used: i * 123
       })
 
       transactions.push({ transaction, block })
@@ -286,6 +290,80 @@ describe('Transaction routes', () => {
         .filter(transaction => transaction.transaction.owner === owner)
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return default set of transactions desc with owner and type filter and status', async () => {
+      const owner = transactions[0].transaction.owner
+
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&filters=1&status=FAIL`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 1)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedTransactions = transactions
+        .filter(transaction => transaction.transaction.status === 'FAIL')
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              status: 'ok'
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return default set of transactions desc with owner and type filter and min-max', async () => {
+      const owner = transactions[0].transaction.owner
+
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&filters=0&min=246&max=1107`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 8)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedTransactions = transactions
+        .filter(transaction => transaction.transaction.gas_used <= 1107 && transaction.transaction.gas_used >= 246)
         .map(transaction => ({
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,

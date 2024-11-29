@@ -44,6 +44,12 @@ const schemaTypes = [
       },
       owner: {
         type: ['string', 'null']
+      },
+      min: {
+        type: ['number', 'null']
+      },
+      max: {
+        type: ['number', 'null']
       }
     }
   },

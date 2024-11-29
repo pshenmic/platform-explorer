@@ -431,9 +431,11 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `owner` Identity identifier
 * `status` can be `SUCCESS`, `FAIL` or `ALL`
 * `filters` array of transactions types
+* `min` number of min `gas_used`
+* `max` number of max `gas_used`
 
 ```
-GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&filters=0&filters=1&status=ALL
+GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&filters=0&filters=1&status=ALL&min=0&max=9999999
 
 {
     pagination: {
@@ -1371,8 +1373,8 @@ IDENTITY_CREATE with instantLock
     "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
     "documentTypeName": "domain",
     "indexName": "parentNameAndLabel",
-    "proTxHash": 'ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b',
     "choice": "Abstain",
+    "proTxHash": 'ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b',
     "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
 }
 ```
