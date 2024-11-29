@@ -1,4 +1,4 @@
-import Transaction from './Transaction'
+import Transaction from './TransactionPage'
 
 export function generateMetadata ({ params }) {
   return {
