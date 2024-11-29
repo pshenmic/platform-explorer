@@ -1,0 +1,84 @@
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+  grid-template-columns:
+    133px
+    minmax(0, 400px)
+    minmax(0, 400px)
+    minmax(0, 400px)
+    minmax(0, 200px)
+    44px;
+
+  @container (max-width: 700px) {
+    grid-template-columns:
+      133px
+      minmax(0, 400px)
+      minmax(0, 400px)
+      minmax(0, 400px)
+      minmax(50px, 200px)
+      44px;
+  }
+
+  @container (max-width: 550px) {
+    grid-template-columns:
+      133px
+      minmax(0, 400px)
+      minmax(0, 200px)
+      44px;
+  }
+
+  @container (max-width: 420px) {
+    grid-template-columns:
+      133px
+      minmax(0, 300px)
+      44px;
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+
+  &, a {
+    overflow: hidden;
+  }
+
+  &--TxHash {
+    max-width: 600px;
+  }
+
+  &--Sender {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  &--Type {
+    justify-content: flex-end;
+    white-space: nowrap;
+  }
+
+  &--Amount {
+    width: 100%;
+    overflow: visible;
+  }
+
+  @container (max-width: 550px) {
+    &--Document {
+      display: none;
+    }
+
+    &--TxHash {
+      display: none;
+    }
+  }
+
+  @container (max-width: 420px) {
+    &--Address {
+      display: none;
+    }
+  }
+}

@@ -2,6 +2,7 @@
 @import '../../styles/variables.scss';
 
 .Alias {
+  width: max-content;
   font-family: $font-mono;
   font-size: 0.75rem;
   color: #fff;
@@ -10,6 +11,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  &--Locked {
+    color: var(--chakra-colors-red-default);
   }
 
   &__Domain {

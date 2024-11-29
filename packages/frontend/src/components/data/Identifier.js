@@ -29,7 +29,7 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
   }
 
   return (
-    <div className={`Identifier ${ellipsis && 'Identifier--Ellipsis'} ${className || ''}`}>
+    <div className={`Identifier ${ellipsis ? 'Identifier--Ellipsis' : ''} ${className || ''}`}>
       {avatar && children && (
         <ImageGenerator className={'Identifier__Avatar'} username={children} lightness={50} saturation={50} width={24} height={24} />
       )}
