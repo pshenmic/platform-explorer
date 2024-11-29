@@ -46,7 +46,7 @@ module.exports = class BlockDAO {
     const rows = await this.knex('blocks')
       .select(
         'blocks.hash as hash', 'state_transitions.hash as tx_hash',
-        'blocks.height as block_height', 'blocks.timestamp as timestamp',
+        'blocks.height as height', 'blocks.timestamp as timestamp',
         'blocks.block_version as block_version', 'blocks.app_version as app_version',
         'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator',
         'state_transitions.gas_used as gas_used', 'state_transitions.data as data',
@@ -64,22 +64,24 @@ module.exports = class BlockDAO {
       return null
     }
 
-    const txs = await Promise.all(rows.map(async (row) => {
-      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+    const txs = block.tx_hash
+      ? await Promise.all(rows.map(async (row) => {
+        const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+          const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-        const isLocked = base58.encode(
-          Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-          'base64') !== row.identifier
+          const isLocked = base58.encode(
+            Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
+            'base64') !== row.identifier
 
-        return {
-          alias,
-          status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-        }
+          return {
+            alias,
+            status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
+          }
+        }))
+
+        return Transaction.fromRow({ ...row, aliases })
       }))
-
-      return Transaction.fromRow({ ...row, aliases })
-    }))
+      : []
 
     return Block.fromRow({ header: block, txs })
   }
