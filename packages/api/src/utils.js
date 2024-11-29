@@ -99,6 +99,10 @@ const decodeStateTransition = async (client, base64) => {
       decoded.modifiedDataIds = stateTransition.getModifiedDataIds().map(identifier => identifier.toString())
       decoded.ownerId = stateTransition.getOwnerId().toString()
       decoded.signature = stateTransition.getSignature().toString('hex')
+      decoded.choice = stateTransition.getContestedDocumentResourceVotePoll().choice
+      decoded.proTxHash = stateTransition.getProTxHash().toString()
+      decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
+      decoded.raw = stateTransition.toBuffer().toString('hex')
 
       break
     }
