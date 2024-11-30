@@ -117,17 +117,38 @@ Get a block by hash
 GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
 {
+  "header": {
+    "hash": "04D16F8EE2A892E5F9F884C11DB97CD20BAA4A9539111A9131F847B93422DB26",
+    "height": 37994,
+    "timestamp": "2024-10-20T21:35:48.669Z",
+    "blockVersion": 14,
+    "appVersion": 4,
+    "l1LockedHeight": 1124953,
+    "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234"
+  },
+  "txs": [
     {
-        header: {
-            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-            height: 1337,
-            timestamp: "2024-03-18T10:13:54.150Z",
-            blockVersion: 13,
-            appVersion: 1,
-            l1LockedHeight: 1337
-        },
-        txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
+      "hash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+      "index": 0,
+      "blockHash": "04D16F8EE2A892E5F9F884C11DB97CD20BAA4A9539111A9131F847B93422DB26",
+      "blockHeight": 37994,
+      "type": 1,
+      "data": "AgDuMmDTP4yp4UxhCAbUbbj9M0NSKtDkSMDXiaFYkDf05gEAAAD8TaL0Ynpk50URo4Lr7GID83h4Q7YxOfxNyBcNWF7mwQEIcHJlb3JkZXLmaMZZr2au4ecsGG3ee1t+Ch1xKgnEDVch9iK/U8UxVe4PfekoUsU6NnJAmQzOoXBkr3P+LpzyoMFt1ppC7LqAARBzYWx0ZWREb21haW5IYXNoDLF9yHanBZpOsaoAIQ7+WgMlafEFgvsSfAqiyosXA967AAABQR8wm64iVoCLY0WmrqLS13iPcikGVcuYsqpuoqIWfYRLLlqXQlyHQ5XnsfTKor5spJtUz8gvlN3//sqH+sI8y/gz",
+      "timestamp": "2024-10-20T21:35:48.669Z",
+      "gasUsed": 34509040,
+      "status": "SUCCESS",
+      "error": null,
+      "owner": {
+        "identifier": "H2pb35GtKpjLinncBYeMsXkdDYXCbsFzzVmssce6pSJ1",
+        "aliases": [
+          {
+            "alias": "owl352-testnet.dash",
+            "status": "ok"
+          }
+        ]
+      }
     }
+  ]
 }
 ```
 ---
@@ -1368,8 +1389,8 @@ IDENTITY_CREATE with instantLock
     "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
     "documentTypeName": "domain",
     "indexName": "parentNameAndLabel",
-    "proTxHash": 'ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b',
     "choice": "Abstain",
+    "proTxHash": 'ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b',
     "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
 }
 ```
