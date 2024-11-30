@@ -49,17 +49,17 @@ module.exports = class TransactionsDAO {
     return Transaction.fromRow({ ...row, aliases })
   }
 
-  getTransactions = async (page, limit, order, filters, owner, status, min, max) => {
+  getTransactions = async (page, limit, order, transactionsTypes, owner, status, min, max) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
     let filtersQuery = ''
     const filtersBindings = []
 
-    if (filters) {
+    if (transactionsTypes) {
       // Currently knex cannot digest an array of numbers correctly
       // https://github.com/knex/knex/issues/2060
-      filtersQuery = filters.length > 1 ? `type in (${filters.join(',')})` : `type = ${filters[0]}`
+      filtersQuery = transactionsTypes.length > 1 ? `type in (${transactionsTypes.join(',')})` : `type = ${transactionsTypes[0]}`
     }
 
     if (owner) {

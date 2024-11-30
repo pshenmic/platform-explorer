@@ -277,7 +277,7 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and type filter', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&filters=0&filters=8`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transactionsTypes=0&transactionsTypes=8`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -316,7 +316,7 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and type filter and status', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&filters=1&status=FAIL`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transactionsTypes=1&status=FAIL`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -353,7 +353,7 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and type filter and min-max', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&filters=0&min=246&max=1107`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transactionsTypes=0&min=246&max=1107`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -390,7 +390,7 @@ describe('Transaction routes', () => {
     it('should return empty set of transactions desc with owner and type filter', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&filters=8`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transactionsTypes=7`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 

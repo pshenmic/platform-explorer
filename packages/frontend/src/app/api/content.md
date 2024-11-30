@@ -430,12 +430,12 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `limit` cannot be more then 100
 * `owner` Identity identifier
 * `status` can be `SUCCESS`, `FAIL` or `ALL`
-* `filters` array of transactions types
+* `transactionsTypes` array of transactions types
 * `min` number of min `gas_used`
 * `max` number of max `gas_used`
 
 ```
-GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&filters=0&filters=1&status=ALL&min=0&max=9999999
+GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transactionsTypes=0&transactionsTypes=1&status=ALL&min=0&max=9999999
 
 {
     pagination: {

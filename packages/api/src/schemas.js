@@ -32,10 +32,12 @@ const schemaTypes = [
         minimum: 0,
         maximum: 8
       },
-      filters: {
+      transactionsTypes: {
         type: ['array', 'null'],
         items: {
-          type: 'number'
+          type: 'number',
+          minimum: 0,
+          maximum: 8
         }
       },
       status: {

@@ -2,7 +2,6 @@ const TransactionsDAO = require('../dao/TransactionsDAO')
 const utils = require('../utils')
 const { calculateInterval, iso8601duration } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
-const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 class TransactionsController {
   constructor (client, knex, dapi) {
@@ -28,7 +27,7 @@ class TransactionsController {
       page = 1,
       limit = 10,
       order = 'asc',
-      filters,
+      transactionsTypes,
       owner,
       status = 'ALL',
       min,
@@ -39,11 +38,7 @@ class TransactionsController {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    const stateTransitionIndexes = Object.entries(StateTransitionEnum).map(([, entry]) => entry)
-
-    const validatedFilters = filters?.map((filter) => stateTransitionIndexes.includes(filter))
-
-    if (validatedFilters?.includes(false) || filters?.length === 0) {
+    if (transactionsTypes?.length === 0 && transactionsTypes) {
       return response.status(400).send({ message: 'invalid filters values' })
     }
 
@@ -51,7 +46,7 @@ class TransactionsController {
       Number(page ?? 1),
       Number(limit ?? 10),
       order,
-      filters,
+      transactionsTypes,
       owner,
       status,
       min,
