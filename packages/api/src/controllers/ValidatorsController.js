@@ -86,67 +86,7 @@ class ValidatorsController {
 
     const hash = Buffer.from(base58.decode(identifier)).toString('hex')
 
-    const [currentEpoch] = await this.dapi.getEpochsInfo(1)
-    const epochInfo = Epoch.fromObject(currentEpoch)
-
-    const identityBalance = await this.dapi.getIdentityBalance(identifier)
-
-    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash, identifier, epochInfo)
-
-    if (!validator) {
-      return response.status(404).send({ message: 'not found' })
-    }
-
-    const validators = await TenderdashRPC.getValidators()
-
-    const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
-
-    const isActive = validators.some(validator => validator.pro_tx_hash === hash)
-
-    const [host] = proTxInfo?.state.service ? proTxInfo?.state.service.match(/^\d+\.\d+\.\d+\.\d+/) : [null]
-    const [servicePort] = proTxInfo?.state.service ? proTxInfo?.state.service.match(/\d+$/) : [null]
-
-    const [coreStatus, platformStatus, grpcStatus] = (await Promise.allSettled([
-      checkTcpConnect(servicePort, host),
-      checkTcpConnect(proTxInfo?.state.platformP2PPort, host),
-      checkTcpConnect(proTxInfo?.state.platformHTTPPort, host)
-    ])).map(
-      (e) => ({
-        status: e.value ?? e.reason?.code,
-        message: e.reason?.message ?? null
-      }))
-
-    const endpoints = {
-      coreP2PPortStatus: {
-        host,
-        port: Number(servicePort),
-        ...coreStatus
-      },
-      platformP2PPortStatus: {
-        host,
-        port: Number(proTxInfo?.state.platformP2PPort),
-        ...platformStatus
-      },
-      platformGrpcPortStatus: {
-        host,
-        port: Number(proTxInfo?.state.platformHTTPPort ?? 0),
-        ...grpcStatus
-      }
-    }
-
-    response.send(
-      Validator.fromObject(
-        {
-          ...validator,
-          isActive,
-          proTxInfo: ProTxInfo.fromObject(proTxInfo),
-          identifier,
-          identityBalance,
-          epochInfo,
-          endpoints
-        }
-      )
-    )
+    await this.getValidatorByProTxHash({ ...request, params: { hash } }, response)
   }
 
   getValidators = async (request, response) => {
