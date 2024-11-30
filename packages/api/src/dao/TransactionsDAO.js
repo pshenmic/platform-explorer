@@ -49,22 +49,60 @@ module.exports = class TransactionsDAO {
     return Transaction.fromRow({ ...row, aliases })
   }
 
-  getTransactions = async (page, limit, order) => {
+  getTransactions = async (page, limit, order, transactionsTypes, owner, status, min, max) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
+
+    let filtersQuery = ''
+    const filtersBindings = []
+
+    if (transactionsTypes) {
+      // Currently knex cannot digest an array of numbers correctly
+      // https://github.com/knex/knex/issues/2060
+      filtersQuery = transactionsTypes.length > 1 ? `type in (${transactionsTypes.join(',')})` : `type = ${transactionsTypes[0]}`
+    }
+
+    if (owner) {
+      filtersBindings.push(owner)
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and owner = ?' : 'owner = ?'
+    }
+
+    if (status !== 'ALL') {
+      filtersBindings.push(status)
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and status = ?' : 'status = ?'
+    }
+
+    if (min) {
+      filtersBindings.push(min)
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and gas_used >= ?' : 'gas_used >= ?'
+    }
+
+    if (max) {
+      filtersBindings.push(max)
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and gas_used <= ?' : 'gas_used <= ?'
+    }
 
     const aliasesSubquery = this.knex('identity_aliases')
       .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
       .groupBy('identity_identifier')
       .as('aliases')
 
-    const subquery = this.knex('state_transitions')
+    const filtersSubquery = this.knex('state_transitions')
       .select(this.knex('state_transitions').count('hash').as('total_count'), 'state_transitions.hash as tx_hash',
         'state_transitions.data as data', 'state_transitions.type as type', 'state_transitions.index as index',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
         'state_transitions.block_hash as block_hash', 'state_transitions.id as id', 'state_transitions.owner as owner')
+      .whereRaw(filtersQuery, filtersBindings)
+      .as('state_transitions')
+
+    const subquery = this.knex(filtersSubquery)
+      .select('tx_hash', 'total_count',
+        'data', 'type', 'index',
+        'gas_used', 'status', 'error',
+        'block_hash', 'id', 'owner',
+        'identity_identifier', 'aliases'
+      )
       .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
-      .select('aliases')
       .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'state_transitions.owner')
       .as('state_transitions')
 
@@ -74,6 +112,7 @@ module.exports = class TransactionsDAO {
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('state_transitions.id', order)
+
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const resultSet = await Promise.all(rows.map(async (row) => {
