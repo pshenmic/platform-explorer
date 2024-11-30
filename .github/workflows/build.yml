@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: "Validate branch"
-        if: ${{github.base_ref != 'develop'}}
+        if: ${{github.base_ref == 'master'}}
         run: exit 1
       - name: "Validate label"
         if: |
