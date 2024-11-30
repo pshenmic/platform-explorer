@@ -24,21 +24,19 @@ class TransactionsController {
 
   getTransactions = async (request, response) => {
     const {
-      page = 1,
-      limit = 10,
-      order = 'asc',
-      transactionsTypes,
-      owner,
+      page = 1, limit = 10,
+      order = 'asc', owner,
       status = 'ALL',
-      min,
-      max
+      // eslint-disable-next-line camelcase
+      gas_min, gas_max, transaction_type
     } = request.query
 
     if (order !== 'asc' && order !== 'desc') {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    if (transactionsTypes?.length === 0 && transactionsTypes) {
+    // eslint-disable-next-line camelcase
+    if (transaction_type?.length === 0 && transaction_type) {
       return response.status(400).send({ message: 'invalid filters values' })
     }
 
@@ -46,11 +44,11 @@ class TransactionsController {
       Number(page ?? 1),
       Number(limit ?? 10),
       order,
-      transactionsTypes,
+      transaction_type,
       owner,
       status,
-      min,
-      max
+      gas_min,
+      gas_max
     )
 
     response.send(transactions)

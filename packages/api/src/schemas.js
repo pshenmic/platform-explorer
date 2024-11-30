@@ -32,7 +32,7 @@ const schemaTypes = [
         minimum: 0,
         maximum: 8
       },
-      transactionsTypes: {
+      transaction_type: {
         type: ['array', 'null'],
         items: {
           type: 'number',
@@ -47,10 +47,10 @@ const schemaTypes = [
       owner: {
         type: ['string', 'null']
       },
-      min: {
+      gas_min: {
         type: ['number', 'null']
       },
-      max: {
+      gas_max: {
         type: ['number', 'null']
       }
     }

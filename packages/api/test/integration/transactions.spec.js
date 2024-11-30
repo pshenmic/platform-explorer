@@ -277,7 +277,7 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and type filter', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transactionsTypes=0&transactionsTypes=8`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transaction_type=0&transaction_type=8`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -316,7 +316,7 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and type filter and status', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transactionsTypes=1&status=FAIL`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transaction_type=1&status=FAIL`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -353,7 +353,7 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and type filter and min-max', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transactionsTypes=0&min=246&max=1107`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transaction_type=0&gas_min=246&gas_max=1107`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -390,7 +390,7 @@ describe('Transaction routes', () => {
     it('should return empty set of transactions desc with owner and type filter', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transactionsTypes=7`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transaction_type=7`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
