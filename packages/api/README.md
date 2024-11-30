@@ -48,7 +48,7 @@ Reference:
 * [Blocks](#blocks)
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
-* [Validator by Identity](#validator-by-identity)
+* [Validator by Masternode Identifier](#validator-by-masternode-identifier)
 * [Validator Blocks Statistic](#validator-stats-by-protxhash)
 * [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
 * [Transaction by hash](#transaction-by-hash)
@@ -380,8 +380,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 }
 ```
 ---
-### Validator by Identity
-Get validator by Identity.
+### Validator by Masternode Identifier
+Get validator by Masternode Identity.
 * `lastProposedBlockHeader` field is nullable
 ```
 GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd

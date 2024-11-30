@@ -297,7 +297,7 @@ module.exports = ({
     {
       path: '/validator/identity/:identifier',
       method: 'GET',
-      handler: validatorsController.getValidatorByIdentifier,
+      handler: validatorsController.getValidatorByMasternodeIdentifier,
       schema: {
         params: {
           type: 'object',

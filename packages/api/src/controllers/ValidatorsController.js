@@ -81,12 +81,12 @@ class ValidatorsController {
     )
   }
 
-  getValidatorByIdentifier = async (request, response) => {
+  getValidatorByMasternodeIdentifier = async (request, response) => {
     const { identifier } = request.params
 
-    const hash = Buffer.from(base58.decode(identifier)).toString('hex')
+    const proTxHash = Buffer.from(base58.decode(identifier)).toString('hex')
 
-    await this.getValidatorByProTxHash({ ...request, params: { hash } }, response)
+    await this.getValidatorByProTxHash({ ...request, params: { hash: proTxHash } }, response)
   }
 
   getValidators = async (request, response) => {

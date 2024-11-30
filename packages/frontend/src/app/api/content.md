@@ -15,7 +15,7 @@ Reference:
 * [Blocks](#blocks)
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
-* [Validator by Identity](#validator-by-identity)
+* [Validator by Masternode Identifier](#validator-by-masternode-identifier)
 * [Validator Blocks Statistic](#validator-stats-by-protxhash)
 * [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
 * [Transaction by hash](#transaction-by-hash)
@@ -347,8 +347,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 }
 ```
 ---
-### Validator by Identity
-Get validator by Identity.
+### Validator by Masternode Identifier
+Get validator by Masternode Identity.
 * `lastProposedBlockHeader` field is nullable
 ```
 GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
@@ -879,7 +879,7 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `limit` cannot be more then 100
 
 ```
-GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
 
 {
     pagination: {
@@ -899,10 +899,7 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&l
         gasUsed: 1337000,
         status: "SUCCESS",
         error: null,
-        owner: {
-          identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-          aliases: []
-        }
+        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec"
     }, ...
     ]
 }
@@ -1455,8 +1452,8 @@ IDENTITY_CREATE with instantLock
     "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
     "documentTypeName": "domain",
     "indexName": "parentNameAndLabel",
-    "proTxHash": 'ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b',
     "choice": "Abstain",
+    "proTxHash": 'ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b',
     "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
 }
 ```
