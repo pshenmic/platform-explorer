@@ -57,6 +57,7 @@ module.exports = class BlockDAO {
       .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
       .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'state_transitions.owner')
       .whereILike('blocks.hash', blockHash)
+      .orderBy('state_transitions.index', 'asc')
 
     const [block] = rows
 
