@@ -85,7 +85,8 @@ describe('Other routes', () => {
     dataContractTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
       type: StateTransitionEnum.DATA_CONTRACT_CREATE,
-      owner: identity.identifier
+      owner: identity.identifier,
+      index: 1
     })
     dataContract = await fixtures.dataContract(knex, {
       state_transition_hash: dataContractTransaction.hash,
@@ -95,7 +96,8 @@ describe('Other routes', () => {
     documentTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
       type: StateTransitionEnum.DOCUMENTS_BATCH,
-      owner: identity.identifier
+      owner: identity.identifier,
+      index: 2
     })
     await fixtures.document(knex, {
       state_transition_hash: documentTransaction.hash,
