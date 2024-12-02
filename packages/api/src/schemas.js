@@ -31,6 +31,27 @@ const schemaTypes = [
         type: ['integer', 'null'],
         minimum: 0,
         maximum: 8
+      },
+      transaction_type: {
+        type: ['array', 'null'],
+        items: {
+          type: 'number',
+          minimum: 0,
+          maximum: 8
+        }
+      },
+      status: {
+        type: ['string', 'null'],
+        enum: ['SUCCESS', 'FAIL', 'ALL']
+      },
+      owner: {
+        type: ['string', 'null']
+      },
+      gas_min: {
+        type: ['number', 'null']
+      },
+      gas_max: {
+        type: ['number', 'null']
       }
     }
   },
