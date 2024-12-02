@@ -23,13 +23,33 @@ class TransactionsController {
   }
 
   getTransactions = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const {
+      page = 1, limit = 10,
+      order = 'asc', owner,
+      status = 'ALL',
+      // eslint-disable-next-line camelcase
+      gas_min, gas_max, transaction_type
+    } = request.query
 
     if (order !== 'asc' && order !== 'desc') {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    const transactions = await this.transactionsDAO.getTransactions(Number(page ?? 1), Number(limit ?? 10), order)
+    // eslint-disable-next-line camelcase
+    if (transaction_type?.length === 0 && transaction_type) {
+      return response.status(400).send({ message: 'invalid filters values' })
+    }
+
+    const transactions = await this.transactionsDAO.getTransactions(
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      transaction_type,
+      owner,
+      status,
+      gas_min,
+      gas_max
+    )
 
     response.send(transactions)
   }

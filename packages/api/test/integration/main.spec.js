@@ -85,7 +85,8 @@ describe('Other routes', () => {
     dataContractTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
       type: StateTransitionEnum.DATA_CONTRACT_CREATE,
-      owner: identity.identifier
+      owner: identity.identifier,
+      index: 1
     })
     dataContract = await fixtures.dataContract(knex, {
       state_transition_hash: dataContractTransaction.hash,
@@ -95,7 +96,8 @@ describe('Other routes', () => {
     documentTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
       type: StateTransitionEnum.DOCUMENTS_BATCH,
-      owner: identity.identifier
+      owner: identity.identifier,
+      index: 2
     })
     await fixtures.document(knex, {
       state_transition_hash: documentTransaction.hash,
@@ -149,14 +151,72 @@ describe('Other routes', () => {
       const expectedBlock = {
         header: {
           hash: block.hash,
-          height: block.height,
+          height: 1,
           timestamp: block.timestamp.toISOString(),
           blockVersion: block.block_version,
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator
         },
-        txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
+        txs: [
+          {
+            hash: identityTransaction.hash,
+            index: identityTransaction.index,
+            blockHash: identityTransaction.block_hash,
+            blockHeight: null,
+            type: identityTransaction.type,
+            data: '{}',
+            timestamp: block.timestamp.toISOString(),
+            gasUsed: 0,
+            status: 'SUCCESS',
+            error: null,
+            owner: {
+              identifier: identityTransaction.owner,
+              aliases: [{
+                alias: 'dpns.dash',
+                status: 'ok'
+              }]
+            }
+          },
+          {
+            hash: dataContractTransaction.hash,
+            index: dataContractTransaction.index,
+            blockHash: dataContractTransaction.block_hash,
+            blockHeight: null,
+            type: dataContractTransaction.type,
+            data: '{}',
+            timestamp: block.timestamp.toISOString(),
+            gasUsed: 0,
+            status: 'SUCCESS',
+            error: null,
+            owner: {
+              identifier: dataContractTransaction.owner,
+              aliases: [{
+                alias: 'dpns.dash',
+                status: 'ok'
+              }]
+            }
+          },
+          {
+            hash: documentTransaction.hash,
+            index: documentTransaction.index,
+            blockHash: documentTransaction.block_hash,
+            blockHeight: null,
+            type: documentTransaction.type,
+            data: '{}',
+            timestamp: block.timestamp.toISOString(),
+            gasUsed: 0,
+            status: 'SUCCESS',
+            error: null,
+            owner: {
+              identifier: documentTransaction.owner,
+              aliases: [{
+                alias: 'dpns.dash',
+                status: 'ok'
+              }]
+            }
+          }
+        ]
       }
 
       assert.deepEqual({ block: expectedBlock }, body)
