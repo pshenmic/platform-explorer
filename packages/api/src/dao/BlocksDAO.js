@@ -1,11 +1,11 @@
 const Block = require('../models/Block')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { getAliasInfo } = require('../utils')
-const { base58 } = require('@scure/base')
+const {getAliasInfo, getAliasStateByVote} = require('../utils')
+const {base58} = require('@scure/base')
 const Transaction = require('../models/Transaction')
 
 module.exports = class BlockDAO {
-  constructor (knex, dapi) {
+  constructor(knex, dapi) {
     this.knex = knex
     this.dapi = dapi
   }
@@ -70,22 +70,21 @@ module.exports = class BlockDAO {
         const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
           const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-          const isLocked = base58.encode(
-            Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-            'base64') !== row.identifier
-
-          return {
-            alias,
-            status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-          }
+          return getAliasStateByVote(aliasInfo, alias, row.owner)
         }))
 
-        return Transaction.fromRow({ ...row, aliases })
+        return Transaction.fromRow({...row, aliases})
       }))
       : []
 
-    return Block.fromRow({ header: block, txs })
+    return Block.fromRow({header: block, txs})
   }
+
+  getBlockByHashPart = async (blockHash, limit) =>
+    this.knex('blocks')
+      .select('hash',)
+      .whereILike('hash', `${blockHash}%`)
+      .limit(limit)
 
   getBlocksByValidator = async (validator, page, limit, order) => {
     const fromRank = ((page - 1) * limit) + 1
@@ -117,14 +116,14 @@ module.exports = class BlockDAO {
 
     const blocksMap = rows.reduce((blocks, row) => {
       const block = blocks[row.hash]
-      const { st_hash: txHash } = row
+      const {st_hash: txHash} = row
       const txs = block?.txs || []
 
       if (txHash) {
         txs.push(txHash)
       }
 
-      return { ...blocks, [row.hash]: { ...row, txs } }
+      return {...blocks, [row.hash]: {...row, txs}}
     }, {})
 
     const resultSet = Object.keys(blocksMap).map(blockHash => Block.fromRow({
@@ -149,7 +148,7 @@ module.exports = class BlockDAO {
 
     const txs = results.reduce((acc, value) => value.st_hash ? [...acc, value.st_hash] : acc, [])
 
-    return Block.fromRow({ header: block, txs })
+    return Block.fromRow({header: block, txs})
   }
 
   getBlocks = async (page, limit, order) => {
@@ -176,14 +175,14 @@ module.exports = class BlockDAO {
     // map-reduce Blocks with Transactions
     const blocksMap = rows.reduce((blocks, row) => {
       const block = blocks[row.hash]
-      const { st_hash: txHash } = row
+      const {st_hash: txHash} = row
       const txs = block?.txs || []
 
       if (txHash) {
         txs.push(txHash)
       }
 
-      return { ...blocks, [row.hash]: { ...row, txs } }
+      return {...blocks, [row.hash]: {...row, txs}}
     }, {})
 
     const resultSet = Object.keys(blocksMap).map(blockHash => Block.fromRow({

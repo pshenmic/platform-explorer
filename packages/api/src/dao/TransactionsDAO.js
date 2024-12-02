@@ -1,7 +1,7 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
-const { getAliasInfo } = require('../utils')
+const { getAliasInfo, getAliasStateByVote} = require('../utils')
 const { base58 } = require('@scure/base')
 
 module.exports = class TransactionsDAO {
@@ -9,6 +9,12 @@ module.exports = class TransactionsDAO {
     this.knex = knex
     this.dapi = dapi
   }
+
+  getTransactionsByHashPart = async (hash, limit) =>
+    this.knex('state_transitions')
+      .select('hash')
+      .whereILike('hash', `${hash}%`)
+      .limit(limit)
 
   getTransactionByHash = async (hash) => {
     const aliasesSubquery = this.knex('identity_aliases')
@@ -36,14 +42,7 @@ module.exports = class TransactionsDAO {
     const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
       const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-      const isLocked = base58.encode(
-        Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-        'base64') !== row.identifier
-
-      return {
-        alias,
-        status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-      }
+      return getAliasStateByVote(aliasInfo, alias, row.owner)
     }))
 
     return Transaction.fromRow({ ...row, aliases })
@@ -119,14 +118,7 @@ module.exports = class TransactionsDAO {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
         const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-        const isLocked = base58.encode(
-          Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-          'base64') !== row.identifier
-
-        return {
-          alias,
-          status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-        }
+        return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
 
       return Transaction.fromRow({ ...row, aliases })

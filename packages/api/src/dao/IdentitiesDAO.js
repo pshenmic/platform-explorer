@@ -4,12 +4,12 @@ const Transaction = require('../models/Transaction')
 const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
-const { getAliasInfo } = require('../utils')
-const { base58 } = require('@scure/base')
+const {IDENTITY_CREDIT_WITHDRAWAL} = require('../enums/StateTransitionEnum')
+const {getAliasInfo, getAliasStateByVote} = require('../utils')
+const {base58} = require('@scure/base')
 
 module.exports = class IdentitiesDAO {
-  constructor (knex, dapi) {
+  constructor(knex, dapi) {
     this.knex = knex
     this.dapi = dapi
   }
@@ -81,14 +81,7 @@ module.exports = class IdentitiesDAO {
     const aliases = await Promise.all(identity.aliases.map(async alias => {
       const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-      const isLocked = base58.encode(
-        Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
-      ) !== identifier
-
-      return {
-        alias,
-        status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-      }
+      return getAliasStateByVote(aliasInfo, alias, identifier)
     }))
 
     return {
@@ -108,21 +101,21 @@ module.exports = class IdentitiesDAO {
       return null
     }
 
-    return { identifier: identity.identity_identifier, alias: identity.alias }
+    return {identifier: identity.identity_identifier, alias: identity.alias}
   }
 
   getIdentities = async (page, limit, order, orderBy) => {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
-    const orderByOptions = [{ column: 'identity_id', order }]
+    const orderByOptions = [{column: 'identity_id', order}]
 
     if (orderBy === 'tx_count') {
-      orderByOptions.unshift({ column: 'total_txs', order })
+      orderByOptions.unshift({column: 'total_txs', order})
     }
 
     if (orderBy === 'balance') {
-      orderByOptions.unshift({ column: 'balance', order })
+      orderByOptions.unshift({column: 'balance', order})
     }
 
     const getRankString = () => {
@@ -184,14 +177,7 @@ module.exports = class IdentitiesDAO {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
         const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-        const isLocked = base58.encode(
-          Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-          'base64') !== row.identifier
-
-        return {
-          alias,
-          status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-        }
+        return getAliasStateByVote(aliasInfo, alias, row.identifier.trim());
       }))
 
       return Identity.fromRow({

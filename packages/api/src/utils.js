@@ -417,6 +417,36 @@ const buildIndexBuffer = (name) => {
   )
 }
 
+const getAliasStateByVote = (aliasInfo, alias, identifier) => {
+  let status = null
+
+  if(aliasInfo.contestedState === null){
+    return {
+      alias,
+      status: 'ok',
+      contested: false,
+    }
+  }
+
+  const isLocked = base58.encode(
+    Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
+  ) !== identifier
+
+  if (isLocked) {
+    status = 'locked'
+  }else if (!isLocked && aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === undefined){
+    status = 'pending'
+  }else{
+    status = 'ok'
+  }
+
+  return {
+    alias,
+    status,
+    contested: true,
+  }
+}
+
 const getAliasInfo = async (alias, dapi) => {
   const [label, domain] = alias.split('.')
 
@@ -451,5 +481,6 @@ module.exports = {
   checkTcpConnect,
   calculateInterval,
   iso8601duration,
-  getAliasInfo
+  getAliasInfo,
+  getAliasStateByVote
 }
