@@ -1,0 +1,35 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+$elementsOffset: 0.5em;
+
+.LocalTime {
+  font-family: $font-mono;
+  font-size: 0.75rem;
+
+  &__Time, &__Date, &__TimeZone {
+    margin-right: $elementsOffset;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &__Time {
+    position: relative;
+    color: #ffffff;
+
+    &:after {
+      content: '\00B7';
+      padding-left: $elementsOffset;
+    }
+  }
+
+  &__Date {
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__TimeZone {
+    color: var(--chakra-colors-gray-250);
+  }
+}
