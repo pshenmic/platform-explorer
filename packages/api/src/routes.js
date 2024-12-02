@@ -295,6 +295,19 @@ module.exports = ({
       }
     },
     {
+      path: '/validator/identity/:identifier',
+      method: 'GET',
+      handler: validatorsController.getValidatorByMasternodeIdentifier,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
       path: '/validator/:hash/stats',
       method: 'GET',
       handler: validatorsController.getValidatorStatsByProTxHash,

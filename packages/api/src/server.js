@@ -78,7 +78,7 @@ module.exports = {
 
     const mainController = new MainController(knex, dapi)
     const epochController = new EpochController(knex, dapi)
-    const blocksController = new BlocksController(knex)
+    const blocksController = new BlocksController(knex, dapi)
     const transactionsController = new TransactionsController(client, knex, dapi)
     const dataContractsController = new DataContractsController(knex)
     const documentsController = new DocumentsController(knex)
