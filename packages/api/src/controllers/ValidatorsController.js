@@ -81,6 +81,14 @@ class ValidatorsController {
     )
   }
 
+  getValidatorByMasternodeIdentifier = async (request, response) => {
+    const { identifier } = request.params
+
+    const proTxHash = Buffer.from(base58.decode(identifier)).toString('hex')
+
+    await this.getValidatorByProTxHash({ ...request, params: { hash: proTxHash } }, response)
+  }
+
   getValidators = async (request, response) => {
     const { page = 1, limit = 10, order = 'asc', isActive = undefined } = request.query
 
