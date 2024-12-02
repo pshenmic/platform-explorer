@@ -12,7 +12,7 @@ const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.s
 
 class MainController {
   constructor (knex, dapi) {
-    this.blocksDAO = new BlocksDAO(knex)
+    this.blocksDAO = new BlocksDAO(knex, dapi)
     this.dataContractsDAO = new DataContractsDAO(knex)
     this.documentsDAO = new DocumentsDAO(knex)
     this.transactionsDAO = new TransactionsDAO(knex, dapi)

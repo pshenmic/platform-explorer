@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import './ValueCard.scss'
 
-const Wrapper = (props, ref) => {
+const Wrapper = (props) => {
   return props?.link
     ? <Link onMouseMove={props.onMouseMove} href={props.link} className={props.className}>{props.children}</Link>
     : <div onMouseMove={props.onMouseMove} className={props.className}>{props.children}</div>
@@ -10,7 +10,7 @@ const Wrapper = (props, ref) => {
 export default function ValueCard ({ link, loading, children, className }) {
   return (
     <Wrapper
-      className={`ValueCard ${className} ${loading ? 'ValueCard--Loading' : ''} ${link ? 'ValueCard--Clickable' : ''}`}
+      className={`ValueCard ${className || ''} ${loading ? 'ValueCard--Loading' : ''} ${link ? 'ValueCard--Clickable' : ''}`}
       link={link}
     >
       {children}

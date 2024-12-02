@@ -22,8 +22,9 @@ function NetworkStatus ({ className }) {
 
   useEffect(fetchData, [fetchData])
 
-  const msFromLastBlock = new Date() - new Date(status?.data?.tenderdash?.block?.timestamp)
-  const networkStatus = msFromLastBlock && msFromLastBlock / 1000 / 60 < 15
+  const lastBlockTimestamp = status?.data?.tenderdash?.block?.timestamp
+  const msFromLastBlock = lastBlockTimestamp ? new Date() - new Date(lastBlockTimestamp) : null
+  const networkStatus = msFromLastBlock !== null && msFromLastBlock / 1000 / 60 < 15
   const apiStatus = typeof status?.data?.tenderdash?.block?.timestamp === 'string' &&
     new Date(status?.data?.api?.block?.timestamp).getTime() ===
     new Date(status?.data?.tenderdash?.block?.timestamp).getTime()
@@ -70,7 +71,7 @@ function NetworkStatus ({ className }) {
       <div align={'start'} className={`NetworkStatus__Stat NetworkStatus__Stat--Network ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>Network:</div>
         <div className={'NetworkStatus__InfoValue'}>
-          <Badge lineHeight={'20px'} colorScheme={networkStatus ? 'green' : 'red'} className={'NetworkStatus__Badge'}>
+          <Badge colorScheme={networkStatus ? 'green' : 'red'} className={'NetworkStatus__Badge'}>
             {NetworkStatusIcon}
             {status?.data?.network ? `${status.data.network}` : 'n/a'}
           </Badge>
@@ -80,7 +81,7 @@ function NetworkStatus ({ className }) {
       <div align={'start'} className={`NetworkStatus__Stat NetworkStatus__Stat--Api ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>API:</div>
         <div className={'NetworkStatus__InfoValue'}>
-          <Badge lineHeight={'20px'} colorScheme={apiStatus ? 'green' : 'red'} className={'NetworkStatus__Badge'}>
+          <Badge colorScheme={apiStatus ? 'green' : 'red'} className={'NetworkStatus__Badge'}>
             {ApiStatusIcon}
             {apiStatus ? 'operational' : 'disrupted'}
           </Badge>
@@ -90,7 +91,7 @@ function NetworkStatus ({ className }) {
       <div align={'start'} className={`NetworkStatus__Stat NetworkStatus__Stat--LatestBlock ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>Latest block:</div>
         <div className={'NetworkStatus__InfoValue'}>
-          <Badge lineHeight={'20px'} colorScheme={'gray'} className={'NetworkStatus__Badge'}>
+          <Badge colorScheme={'gray'} className={'NetworkStatus__Badge'}>
             {status?.data?.api?.block?.height !== undefined
               ? <div className={'NetworkStatus__Value'}>
                   <Link href={`/block/${status?.data?.api?.block?.hash}`}>

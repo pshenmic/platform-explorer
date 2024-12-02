@@ -24,6 +24,16 @@
     }
   }
 
+  &--Light {
+    background: rgba(255, 255, 255, .1);
+
+    &.ValueContainer--Clickable {
+      &:hover {
+        background: rgba(255, 255, 255, .15);
+      }
+    }
+  }
+
   &--External {
     background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
 
@@ -37,5 +47,9 @@
       transform: translateY(1px);
       background: rgba(var(--chakra-colors-brand-light-rgb), .15);
     }
+  }
+
+  &__Value {
+    width: 100%;
   }
 }

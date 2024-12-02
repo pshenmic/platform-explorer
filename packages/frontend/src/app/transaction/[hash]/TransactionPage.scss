@@ -1,0 +1,180 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.TransactionPage {
+  position: relative;
+
+  &__CommonInfo, &__DetailsInfo {
+    & > .InfoLine--Loading .InfoLine {
+      &__Value {
+        height: 28px;
+        flex-grow: 1;
+        width: 100% !important;
+      }
+    }
+  }
+
+  &__InfoLine {
+    margin-bottom: 14px;
+    justify-content: flex-start !important;
+
+    &--RawTransaction, &--Status, &--Transitions, &--PublicKeys {
+      align-items: baseline !important;
+    }
+
+    &--Transitions {
+      .InfoLine__Value {
+        flex-grow: 1;
+        overflow: hidden;
+        padding-bottom: 2px;
+        padding-right: 2px;
+      }
+    }
+
+    .InfoLine__Title {
+      width: 200px;
+      line-height: 20px;
+    }
+
+    .InfoLine__Value {
+      text-align: left;
+      font-size: 0.75rem;
+    }
+  }
+
+  .HorisontalSeparator {
+    margin: 14px 0;
+  }
+
+  &__Signature {
+    background: transparent;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    color: var(--chakra-colors-gray-250);
+    max-width: 510px;
+  }
+
+  &__ErrorContainer {
+    margin-top: 8px;
+    font-size: 0.688rem;
+
+    .ValueContainer__Value {
+      overflow: hidden;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+  }
+
+  &__BlockHeight {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.625rem;
+    margin-right: 12px;
+    white-space: nowrap;
+  }
+
+  &__DetailsInfoTitle {
+    font-family: $font-heading;
+    font-size: 0.75rem;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  &__RawTransaction {
+    align-items: flex-start;
+    max-width: 510px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+
+    .CopyButton {
+      margin-left: 12px;
+    }
+  }
+
+  &__PublicKeyCard, &__TransitionCard {
+    margin-bottom: 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__InfoLine {
+      margin-bottom: 12px;
+      justify-content: space-between !important;
+      flex-wrap: wrap;
+
+      &:not(&--Index):not(&--Type):not(&--FeeMultiplier):not(.InfoLine--Error) {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start !important;
+
+        & > .InfoLine__Title {
+          width: 100%;
+          margin-bottom: 4px;
+          margin-right: 0;
+        }
+
+        & > .InfoLine__Value {
+          width: 100%;
+        }
+      }
+
+      & > .InfoLine__Title {
+        width: auto;
+      }
+
+      &--Status {
+        position: relative;
+      }
+
+      &--GasUsed {
+        .CreditsBlock {
+          display: flex;
+          flex-wrap: wrap;
+
+          .CreditsBlock__Usd {
+            margin-left: auto;
+          }
+        }
+      }
+
+      &--Timestamp {
+        .DateBlock__Delta {
+          margin-left: auto;
+        }
+      }
+
+      .ValueCard {
+        .Identifier {
+          flex-grow: 1;
+
+          .Identifier__SymbolsContainer {
+            flex-grow: 1;
+          }
+        }
+      }
+    }
+
+    &__StatusBadge {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    &__ErrorContainer {
+      margin-top: 0;
+    }
+
+    &__DetailsInfoTitle {
+      margin-bottom: 12px;
+    }
+
+    &__RawTransaction, &__Signature {
+      max-width: none;
+    }
+  }
+}
