@@ -253,7 +253,8 @@ describe('Identities routes', () => {
         const transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           type: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL,
-          owner: identity.owner
+          owner: identity.owner,
+          data: 'BQFh0z9HiTN5e+TeiDU8fC2EPCExD20A9u/zFCSnVu59+/0AAAB0alKIAAEAAAEAAUEf89R9GPHIX5QLD/HKJ1xjd86KrnTsfAOxPMxBNDO8cJkAT5yUhcl/sGbQYoHSuNVIZcVVTVnSsYMXIyimihp3Vw=='
         })
 
         transactions.push({ transaction, block })
@@ -274,14 +275,23 @@ describe('Identities routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.deepEqual(body, withdrawals.map(withdrawal => ({ ...withdrawal, hash: withdrawal.id })))
+      assert.deepEqual(body.resultSet, withdrawals.map(withdrawal => ({
+        hash: withdrawal.id,
+        document: withdrawal.id,
+        sender: withdrawal.sender,
+        status: withdrawal.status,
+        timestamp: withdrawal.timestamp,
+        amount: withdrawal.amount,
+        withdrawalAddress: null
+      })))
     })
 
     it('should return 404 whe identity not exist', async () => {
       mock.method(DAPI.prototype, 'getDocuments', async () => [])
-      await client.get('/identity/1234123123PFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6/withdrawals')
-        .expect(404)
+      const { body } = await client.get('/identity/1234123123PFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6/withdrawals')
         .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body.resultSet, [])
     })
   })
 
