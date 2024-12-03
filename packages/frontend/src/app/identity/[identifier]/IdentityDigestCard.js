@@ -12,6 +12,7 @@ function IdentityDigestCard ({ identity, rate, className }) {
 
   if (!identity.data?.lastWithdrawal) identity.data.lastWithdrawal = '6AC5EDA942093A9275A2837CFDF2C18CAAD9D922BA211BD5EA5E6333FE904CE7'
   if (!identity.data?.lastWithdrawalTime) identity.data.lastWithdrawalTime = '2024-11-21T10:26:04.053Z'
+  if (!identity.data?.fundingAddress) identity.data.fundingAddress = '=yS9GnnRdzX9W9G9kxihdgB5VovKWbPGjS1'
 
   return (
     <div className={`IdentityDigestCard ${className || ''}`}>
@@ -36,13 +37,13 @@ function IdentityDigestCard ({ identity, rate, className }) {
           title={'Funding Address'}
           value={(
             <a {...(l1explorerBaseUrl && {
-              href: `${l1explorerBaseUrl}/address/${identity.data?.proTxInfo?.collateralAddress}`,
+              href: `${l1explorerBaseUrl}/address/${identity.data.fundingAddress}`,
               target: '_blank',
               rel: 'noopener noreferrer'
             })}>
               <ValueContainer className={'IdentityDigestCard__ValueContainer'} clickable={!!l1explorerBaseUrl} external={!!l1explorerBaseUrl}>
                 <Identifier styles={['highlight-both']} ellipsis={false}>
-                  {identity.data?.proTxInfo?.collateralAddress || ''}
+                  {identity.data.fundingAddress || null}
                 </Identifier>
               </ValueContainer>
             </a>
@@ -57,7 +58,8 @@ function IdentityDigestCard ({ identity, rate, className }) {
             <Link href={`/transaction/${identity.data?.lastWithdrawal}`}>
               <ValueContainer className={'IdentityDigestCard__ValueContainer'} clickable={true}>
                 {identity.data?.lastWithdrawalTime &&
-                  <DateBlock timestamp={identity.data.lastWithdrawalTime} format={'delta-only'}/>}
+                  <DateBlock timestamp={identity.data.lastWithdrawalTime} format={'delta-only'}/>
+                }
                 <Identifier ellipsis={false} styles={['highlight-both']}>
                   {identity.data?.lastWithdrawal}
                 </Identifier>

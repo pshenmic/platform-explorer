@@ -32,6 +32,12 @@
     width: 100%;
   }
 
+  &__ZeroListBadge {
+    padding: 4px 10px;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-250);
+  }
+
   //&__HeaderLines {
   //  display: flex;
   //  flex-direction: column;
