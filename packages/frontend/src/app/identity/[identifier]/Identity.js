@@ -200,7 +200,7 @@ function Identity ({ identifier }) {
         </div>
       </div>
 
-        <InfoContainer styles={['tabs']} className={'ValidatorPage__ChartsContainer'}>
+        <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
           <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
             <TabList>
               <Tab>Transactions {identity.data?.totalTxs !== undefined ? `(${identity.data.totalTxs})` : ''}</Tab>
