@@ -218,9 +218,9 @@ function Identity ({ identifier }) {
               </TabPanel>
 
               <TabPanel px={0} h={'100%'}>
-                {!transfers.error
-                  ? !transfers.loading
-                      ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.identifier}/>
+                {!dataContracts.error
+                  ? !dataContracts.loading
+                      ? <DataContractsList dataContracts={dataContracts.data.resultSet} size={'m'}/>
                       : <LoadingList itemsCount={9}/>
                   : <ErrorMessageBlock/>}
               </TabPanel>
@@ -235,9 +235,9 @@ function Identity ({ identifier }) {
               </TabPanel>
 
               <TabPanel px={0} h={'100%'}>
-                {!dataContracts.error
-                  ? !dataContracts.loading
-                      ? <DataContractsList dataContracts={dataContracts.data.resultSet} size={'m'}/>
+                {!transfers.error
+                  ? !transfers.loading
+                      ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.identifier}/>
                       : <LoadingList itemsCount={9}/>
                   : <ErrorMessageBlock/>}
               </TabPanel>
