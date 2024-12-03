@@ -15,7 +15,7 @@ import { ErrorMessageBlock } from '../../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 // import { Credits, Alias, InfoLine, Identifier, DateBlock, CreditsBlock } from '../../../components/data'
 import { Alias, InfoLine, CreditsBlock, Identifier, DateBlock } from '../../../components/data'
-
+import IdentityDigestCard from './IdentityDigestCard'
 // import { RateTooltip } from '../../../components/ui/Tooltips'
 import {
   // Box,
@@ -72,6 +72,8 @@ function Identity ({ identifier }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const activeAlias = findActiveAlias(identity.data.aliases)
+
+  console.log('identity', identity)
 
   const fetchData = () => {
     Promise.all([
@@ -203,7 +205,7 @@ function Identity ({ identifier }) {
           </div>
 
           <div className={'IdentityTotalCard__Column'}>
-
+            <IdentityDigestCard identity={identity} rate={rate} className={'IdentityTotalCard__Digest'}/>
           </div>
         </div>
       </div>

@@ -1,0 +1,43 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.IdentityDigestCard {
+  flex-direction: column;
+  padding: 24px;
+  background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+  border-radius: $border-radius-def;
+
+  &, &__Transfers, &__LinesContainer {
+    display: flex;
+    gap: 14px;
+  }
+
+  &__LinesContainer {
+    flex-direction: column;
+  }
+
+  &__Transfer {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 24px;
+    background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+    border-radius: $border-radius-def;
+
+    &--TupUp {
+
+    }
+
+    &--Withdrawals {
+
+    }
+  }
+
+  &__ValueContainer {
+    display: flex;
+    justify-content: flex-end;
+    overflow: hidden;
+    max-width: 324px;
+  }
+}
