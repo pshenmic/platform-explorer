@@ -16,6 +16,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 // import { Credits, Alias, InfoLine, Identifier, DateBlock, CreditsBlock } from '../../../components/data'
 import { Alias, InfoLine, CreditsBlock, Identifier, DateBlock } from '../../../components/data'
 import IdentityDigestCard from './IdentityDigestCard'
+import AliasesList from './AliasesList'
 // import { RateTooltip } from '../../../components/ui/Tooltips'
 import {
   // Box,
@@ -24,7 +25,7 @@ import {
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
 // import BlocksChart from '../../validator/[hash]/BlocksChart'
-import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
+import { InfoContainer, PageDataContainer, ValueContainer } from '../../../components/ui/containers'
 import './Identity.scss'
 import './IdentityTotalCard.scss'
 import ImageGenerator from '../../../components/imageGenerator'
@@ -38,27 +39,6 @@ const tabs = [
 ]
 
 const defaultTabName = 'transactions'
-
-function AliasesList ({ aliases = [], smallCount = 5 }) {
-  const [showAll, setShowAll] = useState(false)
-
-  const filteredArray = showAll
-    ? aliases
-    : aliases.filter((item, i) => i < smallCount)
-
-  return (
-    <div className={'AliasesList'}>
-      <div className={'AliasesList__ItemsContainer'}>
-        {filteredArray?.map((alias, i) => (
-          <Alias status={alias.status} key={i}>{alias.alias}</Alias>
-        ))}
-      </div>
-      <div className={'AliasesList__ShowMoreButton'} onClick={() => setShowAll(!showAll)}>
-        {showAll ? 'Show less' : 'Show more'}
-      </div>
-    </div>
-  )
-}
 
 function Identity ({ identifier }) {
   const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
@@ -194,6 +174,16 @@ function Identity ({ identifier }) {
                 error={identity.error || (!identity.loading && !identity.data?.timestamp)}
                 value={<DateBlock timestamp={identity.data?.timestamp}/>}
               />
+              <InfoLine
+                title={'Identities names'}
+                loading={identity.loading}
+                error={identity.error || (!identity.loading && identity.data?.aliases === undefined)}
+                value={identity.data?.aliases?.length
+                  ? <AliasesList aliases={identity.data?.aliases}/>
+                  : <ValueContainer className={'ValidatorCard__ZeroListBadge'}>none</ValueContainer>
+              }
+              />
+
               <InfoLine
                 title={'Identities names'}
                 loading={identity.loading}
