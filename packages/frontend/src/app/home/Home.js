@@ -21,7 +21,7 @@ import {
 function Home () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [dataContracts, setDataContracts] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
-  const [transactions, setTransactions] = useState({ data: {}, props: { printCount: 8 }, loading: true, error: false })
+  const [transactions, setTransactions] = useState({ data: {}, props: { printCount: 15 }, loading: true, error: false })
   const [richestIdentities, setRichestIdentities] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
   const [trendingIdentities, setTrendingIdentities] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
@@ -34,7 +34,7 @@ function Home () {
         .then(res => fetchHandlerSuccess(setStatus, res))
         .catch(err => fetchHandlerError(setStatus, err)),
 
-      Api.getTransactions(1, 14, 'desc')
+      Api.getTransactions(1, 15, 'desc')
         .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
         .catch(err => fetchHandlerError(setTransactions, err)),
 
