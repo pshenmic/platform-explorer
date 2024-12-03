@@ -2,7 +2,7 @@
 
 import './LocalTime.scss'
 
-function LocalTime () {
+function LocalTime ({ className }) {
   const now = new Date()
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
@@ -18,7 +18,7 @@ function LocalTime () {
   })
 
   return (
-    <div className={'LocalTime'}>
+    <div className={`LocalTime ${className || ''}`}>
       <span className={'LocalTime__Time'}>{time}</span>
       <span className={'LocalTime__Date'}>{date}</span>
       <span className={'LocalTime__TimeZone'}>({timeZone})</span>

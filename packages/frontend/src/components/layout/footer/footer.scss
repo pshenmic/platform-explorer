@@ -82,4 +82,16 @@
       order: 3;
     }
   }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__LocalTime {
+      span {
+        display: block;
+      }
+
+      .LocalTime__Time:after {
+        display: none !important;
+      }
+    }
+  }
 }
