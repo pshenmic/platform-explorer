@@ -84,4 +84,23 @@ module.exports = class DataContractsDAO {
 
     return DataContract.fromRow(row)
   }
+
+  getDataContractByName = async (name) => {
+    const rows = await this.knex('data_contracts')
+      .select(
+        'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.owner as owner', 'data_contracts.is_system as is_system',
+        'data_contracts.version as version', 'data_contracts.schema as schema',
+        'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
+      )
+      .whereILike('data_contracts.name', `${name}%`)
+      .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+
+    if (rows.length === 0) {
+      return null
+    }
+
+    return rows.map(row=>DataContract.fromRow(row))
+  }
 }

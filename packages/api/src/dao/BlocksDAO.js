@@ -80,12 +80,6 @@ module.exports = class BlockDAO {
     return Block.fromRow({header: block, txs})
   }
 
-  getBlockByHashPart = async (blockHash, limit) =>
-    this.knex('blocks')
-      .select('hash',)
-      .whereILike('hash', `${blockHash}%`)
-      .limit(limit)
-
   getBlocksByValidator = async (validator, page, limit, order) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1

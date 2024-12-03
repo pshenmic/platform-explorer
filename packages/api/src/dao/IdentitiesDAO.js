@@ -91,17 +91,24 @@ module.exports = class IdentitiesDAO {
     }
   }
 
-  getIdentityByDPNSName = async (dpns) => {
-    const [identity] = await this.knex('identity_aliases')
+  getIdentitiesByDPNSName = async (dpns) => {
+    const rows = await this.knex('identity_aliases')
       .select('identity_identifier', 'alias')
-      .whereRaw(`LOWER(alias) LIKE LOWER('${dpns}${dpns.includes('.') ? '' : '.%'}')`)
-      .limit(1)
+      .whereILike('alias', `${dpns}%`)
 
-    if (!identity) {
+    if (rows.length === 0) {
       return null
     }
 
-    return {identifier: identity.identity_identifier, alias: identity.alias}
+    return Promise.all(rows.map(async row => {
+      const aliasInfo = await getAliasInfo(row.alias, this.dapi)
+
+      return {
+        identifier: row.identity_identifier,
+        alias: row.alias,
+        status: getAliasStateByVote(aliasInfo, row.alias, row.identity_identifier)
+      }
+    }))
   }
 
   getIdentities = async (page, limit, order, orderBy) => {

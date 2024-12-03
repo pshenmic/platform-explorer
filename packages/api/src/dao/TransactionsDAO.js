@@ -10,12 +10,6 @@ module.exports = class TransactionsDAO {
     this.dapi = dapi
   }
 
-  getTransactionsByHashPart = async (hash, limit) =>
-    this.knex('state_transitions')
-      .select('hash')
-      .whereILike('hash', `${hash}%`)
-      .limit(limit)
-
   getTransactionByHash = async (hash) => {
     const aliasesSubquery = this.knex('identity_aliases')
       .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
