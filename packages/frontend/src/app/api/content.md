@@ -34,6 +34,7 @@ Reference:
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Rate](#rate)
+* [Search](#search)
 * [Decode Raw Transaction](#decode-raw-transaction)
 
 ### Status
