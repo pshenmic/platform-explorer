@@ -93,6 +93,13 @@ module.exports = class DataContractsDAO {
         'data_contracts.version as version', 'data_contracts.schema as schema',
         'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
       )
+      .select(
+        this.knex('documents')
+          .count('*')
+          .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
+          .whereILike('data_contracts.name', `${name}%`)
+          .as('documents_count')
+      )
       .whereILike('data_contracts.name', `${name}%`)
       .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
       .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')

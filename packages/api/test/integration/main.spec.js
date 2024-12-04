@@ -90,7 +90,8 @@ describe('Other routes', () => {
     })
     dataContract = await fixtures.dataContract(knex, {
       state_transition_hash: dataContractTransaction.hash,
-      owner: identity.identifier
+      owner: identity.identifier,
+      name: 'test'
     })
 
     documentTransaction = await fixtures.transaction(knex, {
@@ -293,6 +294,26 @@ describe('Other routes', () => {
       }
 
       assert.deepEqual({ dataContract: expectedDataContract }, body)
+    })
+
+    it('should search by data contract name', async () => {
+      const { body } = await client.get('/search?query=test')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDataContract = {
+        identifier: dataContract.identifier,
+        name: dataContract.name,
+        owner: identity.identifier.trim(),
+        schema: JSON.stringify(dataContract.schema),
+        version: 0,
+        txHash: dataContractTransaction.hash,
+        timestamp: block.timestamp.toISOString(),
+        isSystem: false,
+        documentsCount: 1
+      }
+
+      assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
     })
 
     it('should search by identity DPNS', async () => {
