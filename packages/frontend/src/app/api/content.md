@@ -514,7 +514,8 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
       aliases: [
         {
           alias: "alias.dash",
-          status: "locked"
+          status: "locked",
+          contested: true
         }
       ]
     }
@@ -566,7 +567,8 @@ GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3Tc
           aliases: [
             {
               alias: "alias.dash",
-              status: "locked"
+              status: "locked",
+              contested: true
             }
           ]
         }
@@ -721,7 +723,8 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     aliases: [
       {
         alias: "alias.dash",
-        status: "locked"
+        status: "locked",
+        contested: true
       }
     ]
 }
@@ -780,7 +783,8 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
           aliases: [
             {
               alias: "alias.dash",
-              status: "locked"
+              status: "locked",
+              contested: true
             }
           ]
       }, ...
