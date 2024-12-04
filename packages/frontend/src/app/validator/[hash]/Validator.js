@@ -253,7 +253,7 @@ function Validator ({ hash }) {
                       {validator.data?.lastProposedBlockHeader?.timestamp &&
                         <DateBlock
                           timestamp={validator.data.lastProposedBlockHeader.timestamp}
-                          format={'delta-only'}
+                          format={'deltaOnly'}
                         />
                       }
                       <Identifier ellipsis={false} styles={['highlight-both']}>
@@ -279,7 +279,7 @@ function Validator ({ hash }) {
                   <Link href={`/transaction/${validator.data?.lastWithdrawal}`}>
                     <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
                       {validator.data?.lastWithdrawalTime &&
-                        <DateBlock timestamp={validator.data.lastWithdrawalTime} format={'delta-only'}/>}
+                        <DateBlock timestamp={validator.data.lastWithdrawalTime} format={'deltaOnly'}/>}
                       <Identifier ellipsis={false} styles={['highlight-both']}>
                         {validator.data?.lastWithdrawal}
                       </Identifier>
