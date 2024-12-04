@@ -174,6 +174,7 @@ describe('Other routes', () => {
               identifier: identityTransaction.owner,
               aliases: [{
                 alias: 'dpns.dash',
+                contested: false,
                 status: 'ok'
               }]
             }
@@ -193,7 +194,8 @@ describe('Other routes', () => {
               identifier: dataContractTransaction.owner,
               aliases: [{
                 alias: 'dpns.dash',
-                status: 'ok'
+                status: 'ok',
+                contested: false
               }]
             }
           },
@@ -212,7 +214,8 @@ describe('Other routes', () => {
               identifier: documentTransaction.owner,
               aliases: [{
                 alias: 'dpns.dash',
-                status: 'ok'
+                status: 'ok',
+                contested: false
               }]
             }
           }
@@ -242,6 +245,7 @@ describe('Other routes', () => {
           identifier: dataContractTransaction.owner,
           aliases: [{
             alias: identityAlias.alias,
+            contested: false,
             status: 'ok'
           }]
         }
@@ -298,12 +302,17 @@ describe('Other routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      const expectedIdentity = {
+      const expectedIdentity = [{
         identifier: identity.identifier,
-        alias: identityAlias.alias
-      }
+        alias: identityAlias.alias,
+        status: {
+          alias: identityAlias.alias,
+          contested: false,
+          status: 'ok'
+        }
+      }]
 
-      assert.deepEqual({ identity: expectedIdentity }, body)
+      assert.deepEqual({ identities: expectedIdentity }, body)
     })
 
     it('should search identity', async () => {
@@ -325,6 +334,7 @@ describe('Other routes', () => {
         owner: identity.identifier,
         aliases: [{
           alias: 'dpns.dash',
+          contested: false,
           status: 'ok'
         }]
       }

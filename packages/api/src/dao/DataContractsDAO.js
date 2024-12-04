@@ -101,6 +101,6 @@ module.exports = class DataContractsDAO {
       return null
     }
 
-    return rows.map(row=>DataContract.fromRow(row))
+    return rows.map(row => DataContract.fromRow(row))
   }
 }

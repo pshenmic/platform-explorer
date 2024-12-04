@@ -1,8 +1,7 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
-const { getAliasInfo, getAliasStateByVote} = require('../utils')
-const { base58 } = require('@scure/base')
+const { getAliasInfo, getAliasStateByVote } = require('../utils')
 
 module.exports = class TransactionsDAO {
   constructor (knex, dapi) {

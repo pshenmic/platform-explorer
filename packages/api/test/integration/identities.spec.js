@@ -221,6 +221,7 @@ describe('Identities routes', () => {
         isSystem: false,
         aliases: [{
           alias,
+          contested: false,
           status: 'ok'
         }]
       }
@@ -307,10 +308,15 @@ describe('Identities routes', () => {
 
       const expectedIdentity = {
         identifier: identity.identifier,
-        alias
+        alias,
+        status: {
+          alias,
+          contested: false,
+          status: 'ok'
+        }
       }
 
-      assert.deepEqual(body, expectedIdentity)
+      assert.deepEqual(body, [expectedIdentity])
     })
 
     it('should return identity by dpns with any case', async () => {
@@ -324,10 +330,15 @@ describe('Identities routes', () => {
 
       const expectedIdentity = {
         identifier: identity.identifier,
-        alias
+        alias,
+        status: {
+          alias,
+          contested: false,
+          status: 'ok'
+        }
       }
 
-      assert.deepEqual(body, expectedIdentity)
+      assert.deepEqual(body, [expectedIdentity])
     })
 
     it('should return 404 when identity not found', async () => {
@@ -373,7 +384,7 @@ describe('Identities routes', () => {
         isSystem: false,
         aliases: [
           aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-        ].map(alias => ({ alias, status: 'ok' }))
+        ].map(alias => ({ alias, status: 'ok', contested: false }))
       }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -415,7 +426,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok' }))
+          ].map(alias => ({ alias, status: 'ok', contested: false }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -458,7 +469,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok' }))
+          ].map(alias => ({ alias, status: 'ok', contested: false }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -502,7 +513,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok' }))
+          ].map(alias => ({ alias, status: 'ok', contested: false }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -561,7 +572,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok' }))
+          ].map(alias => ({ alias, status: 'ok', contested: false }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -632,7 +643,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok' }))
+          ].map(alias => ({ alias, status: 'ok', contested: false }))
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)

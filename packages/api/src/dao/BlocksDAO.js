@@ -1,11 +1,10 @@
 const Block = require('../models/Block')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const {getAliasInfo, getAliasStateByVote} = require('../utils')
-const {base58} = require('@scure/base')
+const { getAliasInfo, getAliasStateByVote } = require('../utils')
 const Transaction = require('../models/Transaction')
 
 module.exports = class BlockDAO {
-  constructor(knex, dapi) {
+  constructor (knex, dapi) {
     this.knex = knex
     this.dapi = dapi
   }
@@ -73,11 +72,11 @@ module.exports = class BlockDAO {
           return getAliasStateByVote(aliasInfo, alias, row.owner)
         }))
 
-        return Transaction.fromRow({...row, aliases})
+        return Transaction.fromRow({ ...row, aliases })
       }))
       : []
 
-    return Block.fromRow({header: block, txs})
+    return Block.fromRow({ header: block, txs })
   }
 
   getBlocksByValidator = async (validator, page, limit, order) => {
@@ -110,14 +109,14 @@ module.exports = class BlockDAO {
 
     const blocksMap = rows.reduce((blocks, row) => {
       const block = blocks[row.hash]
-      const {st_hash: txHash} = row
+      const { st_hash: txHash } = row
       const txs = block?.txs || []
 
       if (txHash) {
         txs.push(txHash)
       }
 
-      return {...blocks, [row.hash]: {...row, txs}}
+      return { ...blocks, [row.hash]: { ...row, txs } }
     }, {})
 
     const resultSet = Object.keys(blocksMap).map(blockHash => Block.fromRow({
@@ -142,7 +141,7 @@ module.exports = class BlockDAO {
 
     const txs = results.reduce((acc, value) => value.st_hash ? [...acc, value.st_hash] : acc, [])
 
-    return Block.fromRow({header: block, txs})
+    return Block.fromRow({ header: block, txs })
   }
 
   getBlocks = async (page, limit, order) => {
@@ -169,14 +168,14 @@ module.exports = class BlockDAO {
     // map-reduce Blocks with Transactions
     const blocksMap = rows.reduce((blocks, row) => {
       const block = blocks[row.hash]
-      const {st_hash: txHash} = row
+      const { st_hash: txHash } = row
       const txs = block?.txs || []
 
       if (txHash) {
         txs.push(txHash)
       }
 
-      return {...blocks, [row.hash]: {...row, txs}}
+      return { ...blocks, [row.hash]: { ...row, txs } }
     }, {})
 
     const resultSet = Object.keys(blocksMap).map(blockHash => Block.fromRow({

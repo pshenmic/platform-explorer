@@ -4,12 +4,11 @@ const Transaction = require('../models/Transaction')
 const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const {IDENTITY_CREDIT_WITHDRAWAL} = require('../enums/StateTransitionEnum')
-const {getAliasInfo, getAliasStateByVote} = require('../utils')
-const {base58} = require('@scure/base')
+const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
+const { getAliasInfo, getAliasStateByVote } = require('../utils')
 
 module.exports = class IdentitiesDAO {
-  constructor(knex, dapi) {
+  constructor (knex, dapi) {
     this.knex = knex
     this.dapi = dapi
   }
@@ -115,14 +114,14 @@ module.exports = class IdentitiesDAO {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
-    const orderByOptions = [{column: 'identity_id', order}]
+    const orderByOptions = [{ column: 'identity_id', order }]
 
     if (orderBy === 'tx_count') {
-      orderByOptions.unshift({column: 'total_txs', order})
+      orderByOptions.unshift({ column: 'total_txs', order })
     }
 
     if (orderBy === 'balance') {
-      orderByOptions.unshift({column: 'balance', order})
+      orderByOptions.unshift({ column: 'balance', order })
     }
 
     const getRankString = () => {
@@ -184,7 +183,7 @@ module.exports = class IdentitiesDAO {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
         const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-        return getAliasStateByVote(aliasInfo, alias, row.identifier.trim());
+        return getAliasStateByVote(aliasInfo, alias, row.identifier.trim())
       }))
 
       return Identity.fromRow({

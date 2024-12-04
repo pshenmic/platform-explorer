@@ -3,12 +3,12 @@ const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const PoolingEnum = require('./enums/PoolingEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const {TCP_CONNECT_TIMEOUT, DPNS_CONTRACT, NETWORK} = require('./constants')
-const {base58} = require('@scure/base')
+const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT, NETWORK } = require('./constants')
+const { base58 } = require('@scure/base')
 const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
-const {InstantAssetLockProof, ChainAssetLockProof} = require('@dashevo/wasm-dpp')
+const { InstantAssetLockProof, ChainAssetLockProof } = require('@dashevo/wasm-dpp')
 const SecurityLevelEnum = require('./enums/SecurityLevelEnum')
 const KeyPurposeEnum = require('./enums/KeyPurposeEnum')
 const KeyTypeEnum = require('./enums/KeyTypeEnum')
@@ -22,7 +22,7 @@ const getKnex = () => {
       user: process.env.POSTGRES_USER,
       database: process.env.POSTGRES_DB,
       password: process.env.POSTGRES_PASS,
-      ssl: process.env.POSTGRES_SSL ? {rejectUnauthorized: false} : false
+      ssl: process.env.POSTGRES_SSL ? { rejectUnauthorized: false } : false
     }
   })
 }
@@ -424,7 +424,7 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     return {
       alias,
       status: 'ok',
-      contested: false,
+      contested: false
     }
   }
 
@@ -443,7 +443,7 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   return {
     alias,
     status,
-    contested: true,
+    contested: true
   }
 }
 
@@ -468,10 +468,10 @@ const getAliasInfo = async (alias, dapi) => {
       ]
     )
 
-    return {alias, contestedState}
+    return { alias, contestedState }
   }
 
-  return {alias, contestedState: null}
+  return { alias, contestedState: null }
 }
 
 module.exports = {
