@@ -220,7 +220,7 @@ function Identity ({ identifier }) {
               <TabPanel px={0} h={'100%'}>
                 {!dataContracts.error
                   ? !dataContracts.loading
-                      ? <DataContractsList dataContracts={dataContracts.data.resultSet} size={'m'}/>
+                      ? <DataContractsList dataContracts={dataContracts.data.resultSet}/>
                       : <LoadingList itemsCount={9}/>
                   : <ErrorMessageBlock/>}
               </TabPanel>

@@ -58,7 +58,7 @@ function IdentityDigestCard ({ identity, rate, className }) {
             <Link href={`/transaction/${identity.data?.lastWithdrawal}`}>
               <ValueContainer className={'IdentityDigestCard__ValueContainer'} clickable={true}>
                 {identity.data?.lastWithdrawalTime &&
-                  <DateBlock timestamp={identity.data.lastWithdrawalTime} format={'delta-only'}/>
+                  <DateBlock timestamp={identity.data.lastWithdrawalTime} format={'deltaOnly'}/>
                 }
                 <Identifier ellipsis={false} styles={['highlight-both']}>
                   {identity.data?.lastWithdrawal}
