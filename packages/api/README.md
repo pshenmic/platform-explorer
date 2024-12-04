@@ -774,10 +774,17 @@ Return identity by given DPNS/alias
 ```
 GET /dpns/identity?dpns=canuseethat2.dash
 
-{
-  "identity_identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
-  "alias": "canuseethat2.dash"
-}
+[
+  {
+    "identity_identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+    "alias": "canuseethat2.dash",
+    "status": {
+      "alias": "canuseethat2.dash",
+      "contested": false,
+      "status": "ok"
+    }
+  }
+]
 ```
 Response codes:
 ```
