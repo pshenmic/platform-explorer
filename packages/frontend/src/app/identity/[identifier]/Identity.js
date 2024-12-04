@@ -22,7 +22,7 @@ import {
   // Box,
   // Container,
   // Flex,
-  Tabs, TabList, TabPanels, Tab, TabPanel
+  Tabs, TabList, TabPanels, Tab, TabPanel, Button
 } from '@chakra-ui/react'
 // import BlocksChart from '../../validator/[hash]/BlocksChart'
 import { PublicKeysList } from '../../../components/publicKeys'
@@ -205,7 +205,7 @@ function Identity ({ identifier }) {
                 title={'Public Keys'}
                 loading={identity.loading}
                 error={identity.error}
-                value={<PublicKeysList publicKeys={identity.data?.publicKeys}/>}
+                value={<Button>Show Public keys</Button>}
               />
             </div>
 
@@ -215,6 +215,8 @@ function Identity ({ identifier }) {
             <IdentityDigestCard identity={identity} rate={rate} className={'IdentityTotalCard__Digest'}/>
           </div>
         </div>
+
+        <PublicKeysList publicKeys={identity.data?.publicKeys}/>
       </div>
 
         <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>

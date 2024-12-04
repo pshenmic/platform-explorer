@@ -10,9 +10,9 @@ function IdentityDigestCard ({ identity, rate, className }) {
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
 
-  if (!identity.data?.lastWithdrawal) identity.data.lastWithdrawal = '6AC5EDA942093A9275A2837CFDF2C18CAAD9D922BA211BD5EA5E6333FE904CE7'
-  if (!identity.data?.lastWithdrawalTime) identity.data.lastWithdrawalTime = '2024-11-21T10:26:04.053Z'
-  if (!identity.data?.fundingAddress) identity.data.fundingAddress = '=yS9GnnRdzX9W9G9kxihdgB5VovKWbPGjS1'
+  // if (!identity.data?.lastWithdrawal) identity.data.lastWithdrawal = '6AC5EDA942093A9275A2837CFDF2C18CAAD9D922BA211BD5EA5E6333FE904CE7'
+  // if (!identity.data?.lastWithdrawalTime) identity.data.lastWithdrawalTime = '2024-11-21T10:26:04.053Z'
+  // if (!identity.data?.fundingAddress) identity.data.fundingAddress = '=yS9GnnRdzX9W9G9kxihdgB5VovKWbPGjS1'
 
   return (
     <div className={`IdentityDigestCard ${className || ''}`}>

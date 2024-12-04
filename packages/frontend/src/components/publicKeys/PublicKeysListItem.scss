@@ -1,0 +1,9 @@
+@use '../../styles/mixins.scss';
+@use './variables' as txs;
+@import '../../styles/variables.scss';
+
+.PublicKeysListItem {
+  &__Column {
+    @include txs.Column();
+  }
+}

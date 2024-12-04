@@ -1,24 +1,31 @@
 import { Grid, GridItem } from '@chakra-ui/react'
+import './PublicKeysList.scss'
+import './PublicKeysListItem.scss'
 
 function PublicKeysList ({ publicKeys = [] }) {
-
   return (
     <div className={'PublicKeysList'}>
       <Grid className={'PublicKeysList__ColumnTitles'}>
         <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Timestamp'}>
-          Time
+          Key Id
         </GridItem>
         <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Hash'}>
-          Hash
+          Public Key Hash
         </GridItem>
         <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--GasUsed'}>
-          Gas used
+          Type
         </GridItem>
         <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Owner'}>
-          Owner
+          Purpose
         </GridItem>
         <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
-          Type
+          Security Level
+        </GridItem>
+        <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
+          Read only
+        </GridItem>
+        <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
+          Data
         </GridItem>
       </Grid>
 
