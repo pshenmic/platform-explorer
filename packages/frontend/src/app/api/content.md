@@ -966,6 +966,78 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
+---
+### Search
+This endpoint allows search any types of data
+
+* `query` required and must contains data for search
+* Response may contain array for Identity and Data Contract when searching by part of field
+
+#### Can be found:
+* Block
+  * Full `height`
+  * Full `hash`
+* Transaction
+  * Full `hash`
+* Validator
+  * Full `proTxHash`
+  * Full `Identifier` of Masternode Identity
+* Identity
+  * Full `Identifier`
+  * Part `alias`
+* Data Contract
+  * Full `Identifier`
+  * Part `name`
+* Document
+  * Full `Identifier`
+
+```
+GET /search?query=xyz
+
+{
+  "identities": [
+    {
+      "identifier": "36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm",
+      "alias": "xyz.dash",
+      "status": {
+        "alias": "xyz.dash",
+        "status": "ok",
+        "contested": true
+      }
+    },
+    {
+      "identifier": "5bUPV8KGgL42ZBS9fsmmKU3wweQbVeHHsiVrG3YMHyG5",
+      "alias": "xyz.dash",
+      "status": {
+        "alias": "xyz.dash",
+        "status": "locked",
+        "contested": true
+      }
+    }
+  ]
+}
+```
+
+```
+GET /search?query=36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm
+
+{
+  "identity": {
+    "identifier": "36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm",
+    "alias": "xyz.dash",
+    "status": {
+      "alias": "xyz.dash",
+      "status": "ok",
+      "contested": true
+    }
+  }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
 ### Transactions history
 Return a series data for the amount of transactions chart
 
