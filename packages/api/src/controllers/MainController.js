@@ -146,21 +146,17 @@ class MainController {
     }
 
     // by dpns name
-    if (/^[^\s.]+(\.[^\s.]+)*$/.test(query)) {
-      const identities = await this.identitiesDAO.getIdentitiesByDPNSName(query)
+    const identities = await this.identitiesDAO.getIdentitiesByDPNSName(query)
 
-      if (identities) {
-        output = { ...output, identities }
-      }
+    if (identities) {
+      output = { ...output, identities }
     }
 
     // by data-contract name
-    if (/^[A-z]/.test(query)) {
-      const dataContracts = await this.dataContractsDAO.getDataContractByName(query)
+    const dataContracts = await this.dataContractsDAO.getDataContractByName(query)
 
-      if (dataContracts) {
-        output = { ...output, dataContracts }
-      }
+    if (dataContracts) {
+      output = { ...output, dataContracts }
     }
 
     if (output !== {}) {
