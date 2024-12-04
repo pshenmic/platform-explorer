@@ -4,7 +4,7 @@ const Transaction = require('../models/Transaction')
 const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
+const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
 const { getAliasInfo } = require('../utils')
 const { base58 } = require('@scure/base')
 
@@ -53,18 +53,48 @@ module.exports = class IdentitiesDAO {
       .orWhere('recipient', identifier)
       .as('transfer_alias')
 
-    const rows = await this.knex.with('with_alias', lastRevisionIdentities)
+    const mainQuery = this.knex.with('with_alias', lastRevisionIdentities)
       .select('identifier', 'with_alias.owner as owner', 'revision', 'transfer_id', 'sender',
         'tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'recipient', 'amount')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
       .select(this.knex('state_transitions').count('*').where('owner', identifier).as('total_txs'))
+      .select(this.knex('state_transitions').sum('gas_used').where('owner', identifier).as('total_gas_spent'))
       .select(this.knex(documentsSubQuery).count('*').where('rank', 1).as('total_documents'))
       .select(this.knex(dataContractsSubQuery).count('*').where('rank', 1).as('total_data_contracts'))
       .select(this.knex(transfersSubquery).count('*').as('total_transfers'))
       .select(this.knex(aliasSubquery).select('aliases').limit(1).as('aliases'))
       .from('with_alias')
       .limit(1)
+
+    const rows = await this.knex.with('with_alias', mainQuery)
+      .select(
+        'identifier', 'owner', 'revision',
+        'transfer_id', 'sender', 'tx_hash',
+        'is_system', 'timestamp', 'recipient',
+        'amount', 'total_txs', 'total_gas_spent',
+        'total_documents', 'total_data_contracts',
+        'total_transfers', 'aliases',
+        this.knex.raw('ROUND(total_gas_spent/total_txs) as average_gas_spent')
+      )
+      .select(this.knex('state_transitions')
+        .sum('gas_used')
+        .where('owner', identifier)
+        .andWhere('type', IDENTITY_TOP_UP)
+        .as('top_ups_gas_spent'))
+      .select(this.knex('state_transitions')
+        .sum('gas_used')
+        .where('owner', identifier)
+        .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
+        .as('withdrawals_gas_spent'))
+      .select(this.knex('state_transitions')
+        .select('hash')
+        .where('owner', identifier)
+        .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
+        .orderBy('id', 'desc')
+        .limit(1)
+        .as('last_withdrawal_hash'))
+      .from('with_alias')
 
     if (!rows.length) {
       return null
@@ -91,10 +121,13 @@ module.exports = class IdentitiesDAO {
       }
     }))
 
+    const publicKeys = await this.dapi.getIdentityKeys(row.identifier)
+
     return {
       ...identity,
       aliases,
-      balance: await this.dapi.getIdentityBalance(identity.identifier.trim())
+      balance: await this.dapi.getIdentityBalance(identity.identifier.trim()),
+      publicKeys: publicKeys ?? []
     }
   }
 

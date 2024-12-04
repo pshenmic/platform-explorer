@@ -1,6 +1,8 @@
 const Withdrawal = require('./models/Withdrawal')
 const { Identifier } = require('dash').PlatformProtocol
 
+const { IdentityPublicKey } = require('@dashevo/wasm-dpp/dist/wasm/wasm_dpp')
+
 class DAPI {
   dapi
   dpp
@@ -75,6 +77,25 @@ class DAPI {
       count
     )
     return contestedResourceContenders
+  }
+
+  async getIdentityKeys (identifier, keysIds, limit) {
+    const { identityKeys } = await this.dapi.platform.getIdentityKeys(Identifier.from(identifier), keysIds, limit)
+
+    return identityKeys.map(key => {
+      const serialized = IdentityPublicKey.fromBuffer(Buffer.from(key))
+
+      return {
+        keyId: serialized.getId(),
+        type: serialized.getType(),
+        data: Buffer.from(serialized.getData()).toString('hex'),
+        purpose: serialized.getPurpose(),
+        securityLevel: serialized.getSecurityLevel(),
+        isReadOnly: serialized.isReadOnly(),
+        isMaster: serialized.isMaster(),
+        hash: Buffer.from(serialized.hash()).toString('hex')
+      }
+    })
   }
 }
 
