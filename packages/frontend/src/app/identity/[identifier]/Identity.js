@@ -25,6 +25,7 @@ import {
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
 // import BlocksChart from '../../validator/[hash]/BlocksChart'
+import { PublicKeysList } from '../../../components/publicKeys'
 import { InfoContainer, PageDataContainer, ValueContainer } from '../../../components/ui/containers'
 import './Identity.scss'
 import './IdentityTotalCard.scss'
@@ -54,6 +55,22 @@ function Identity ({ identifier }) {
   const activeAlias = findActiveAlias(identity.data.aliases)
 
   console.log('identity', identity)
+
+  if (!identity.data?.publicKeys) {
+    identity.data.publicKeys = [
+      {
+        contractBounds: null,
+        data: '0258abe04886308feb52b8f3d64eace4913c9d049f4dda9a88a217e6ca6b89a107',
+        id: 0,
+        publicKeyHash: '8186d9a996b9848c09b9ac8340644fa8c2685376',
+        purpose: 'AUTHENTICATION',
+        readOnly: false,
+        securityLevel: 'MASTER',
+        signature: '1f60451588fe72a067daaa0a1ee04279e77ce346128560129162386f76d51eccdc1d88704f2262fe173de57e5598010655d410da94ae2e1cf7086049878b08e966',
+        type: 'ECDSA_SECP256K1'
+      }
+    ]
+  }
 
   const fetchData = () => {
     Promise.all([
@@ -181,14 +198,14 @@ function Identity ({ identifier }) {
                 value={identity.data?.aliases?.length
                   ? <AliasesList aliases={identity.data?.aliases}/>
                   : <ValueContainer className={'ValidatorCard__ZeroListBadge'}>none</ValueContainer>
-              }
+                }
               />
 
               <InfoLine
-                title={'Identities names'}
+                title={'Public Keys'}
                 loading={identity.loading}
-                error={identity.error || (!identity.loading && identity.data?.aliases === undefined)}
-                value={<AliasesList aliases={identity.data?.aliases}/>}
+                error={identity.error}
+                value={<PublicKeysList publicKeys={identity.data?.publicKeys}/>}
               />
             </div>
 
