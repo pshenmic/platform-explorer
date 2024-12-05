@@ -85,6 +85,8 @@ class DAPI {
     return identityKeys.map(key => {
       const serialized = IdentityPublicKey.fromBuffer(Buffer.from(key))
 
+      const { contractBounds } = IdentityPublicKey.fromBuffer(Buffer.from(key)).toObject()
+
       return {
         keyId: serialized.getId(),
         type: serialized.getType(),
@@ -93,7 +95,14 @@ class DAPI {
         securityLevel: serialized.getSecurityLevel(),
         isReadOnly: serialized.isReadOnly(),
         isMaster: serialized.isMaster(),
-        hash: Buffer.from(serialized.hash()).toString('hex')
+        hash: Buffer.from(serialized.hash()).toString('hex'),
+        contractBounds: contractBounds
+          ? {
+              type: contractBounds.type,
+              id: Identifier.from(Buffer.from(contractBounds.id)),
+              typeName: contractBounds.document_type_name
+            }
+          : null
       }
     })
   }
