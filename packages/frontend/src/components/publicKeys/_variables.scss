@@ -5,74 +5,53 @@
   grid-template-columns: 
     minmax(88px, 88px)
     minmax(122px, 122px)
-    minmax(133px, 150px)
-    minmax(113px, 150px)
-    minmax(114px, 114px)
+    minmax(133px, 113px)
+    minmax(113px, 113px)
+    minmax(115px, 115px)
     minmax(78px, 78px)
-    150px;
-
-  //@container (max-width: 810px) {
-  //  grid-template-columns:
-  //    minmax(120px, 120px)
-  //    minmax(0, 240px)
-  //    minmax(0, 1fr)
-  //    auto;
-  //}
-  //
-  //@container (max-width: 660px) {
-  //  grid-template-columns:
-  //    minmax(120px, 120px)
-  //    minmax(0, 600px)
-  //    20px
-  //    auto;
-  //}
-  //
-  //@container (max-width: 430px) {
-  //  gap: 12px;
-  //  grid-template-columns:
-  //    minmax(120px, 120px)
-  //    minmax(0, 600px)
-  //    auto;
-  //}
-  //
-  //@container (max-width: 400px) {
-  //  grid-template-columns:
-  //    minmax(80px, 80px)
-  //    minmax(0, 600px)
-  //    auto;
-  //}
+    auto;
 }
 
 @mixin Column () {
   display: flex;
   align-items: center;
 
-  &--Hash {
-    max-width: 600px;
+  &--Id {
+    max-width: 88px;
+    width: 100%;
   }
 
-  &--Owner {
-    max-width: 400px;
+  &--PublicKeyHash {
+    max-width: 122px;
     width: 100%;
   }
 
   &--Type {
-    justify-content: flex-end;
-    white-space: nowrap;
+    max-width: 113px;
+    width: 100%;
   }
 
-  &--GasUsed {
-    width: 150px;
+  &--Purpose {
+    max-width: 113px;
+    width: 100%;
+  }
+
+  &--SecurityLevel {
+    max-width: 115px;
+    width: 100%;
+  }
+
+  &--ReadOnly {
+    max-width: 78px;
+    width: 100%;
+  }
+
+  &--Data {
+    width: 100%;
   }
 
   @container (max-width: 810px) {
     &--GasUsed {
-      display: none;
-    }
-  }
-
-  @container (max-width: 430px) {
-    &--Owner {
       display: none;
     }
   }

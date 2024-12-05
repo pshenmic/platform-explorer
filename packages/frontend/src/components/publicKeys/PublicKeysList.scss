@@ -1,5 +1,5 @@
 @use '../../styles/mixins.scss';
-@use './variables' as txs;
+@use './variables' as pk;
 @import '../../styles/variables.scss';
 
 .PublicKeysList {
@@ -7,10 +7,10 @@
 
   &__ColumnTitles {
     @include mixins.defListTitles;
-    @include txs.Columns();
+    @include pk.Columns();
   }
 
   &__ColumnTitle {
-    @include txs.Column();
+    @include pk.Column();
   }
 }

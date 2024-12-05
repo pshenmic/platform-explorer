@@ -59,15 +59,34 @@ function Identity ({ identifier }) {
   if (!identity.data?.publicKeys) {
     identity.data.publicKeys = [
       {
-        contractBounds: null,
-        data: '0258abe04886308feb52b8f3d64eace4913c9d049f4dda9a88a217e6ca6b89a107',
-        id: 0,
-        publicKeyHash: '8186d9a996b9848c09b9ac8340644fa8c2685376',
-        purpose: 'AUTHENTICATION',
+        contractBounds: {
+          type: 'documentType',
+          id: '3Fq4GuFDSaPm7qN2rG8chtif6jgZnqyY48rw9caUMGo6',
+          typeName: 'contact'
+        },
+        id: 5,
+        type: 'ECDSA_SECP256K1',
+        data: '023b63a7e2321db63f5dbd26e08e3aa1da974404fd6b9303903195be10fe12e2b0',
+        publicKeyHash: 'aefbbefbbf99eee9e134c0657a13651a5692e98d',
+        purpose: 'ENCRYPTION',
+        securityLevel: 'MEDIUM',
         readOnly: false,
-        securityLevel: 'MASTER',
-        signature: '1f60451588fe72a067daaa0a1ee04279e77ce346128560129162386f76d51eccdc1d88704f2262fe173de57e5598010655d410da94ae2e1cf7086049878b08e966',
-        type: 'ECDSA_SECP256K1'
+        signature: '1f58d5c8ee4e87e6d6fffcfebcaadc030599cc4e18e41f3d7f78bd993666e146973beb1ca57e0366eceef0510e3b55a97db765110d4ff07b9653db237d8a021d51'
+      },
+      {
+        contractBounds: {
+          type: 'documentType',
+          id: '3Fq4GuFDSaPm7qN2rG8chtif6jgZnqyY48rw9caUMGo6',
+          typeName: 'contact'
+        },
+        id: 6,
+        type: 'ECDSA_SECP256K1',
+        data: '026e9189c76f667c774da971d5eacee575acfd747c3ea6ca8af3636f93ac871f73',
+        publicKeyHash: '56db223d9e394d9a15db5064f9e19be3c40d20ff',
+        purpose: 'DECRYPTION',
+        securityLevel: 'MEDIUM',
+        readOnly: false,
+        signature: '1fd753dbf431f8be55fe5545678c05ca81a1b3cfb676ff85fe22caf0042b2ad84b437c203bf16ead8d3f62f74d832d6ca8a492804340d356f1d003856ca50f170a'
       }
     ]
   }

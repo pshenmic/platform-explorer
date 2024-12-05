@@ -1,9 +1,52 @@
 @use '../../styles/mixins.scss';
-@use './variables' as txs;
+@use './variables' as pk;
 @import '../../styles/variables.scss';
 
 .PublicKeysListItem {
+  @include mixins.DefListItem(false);
+  display: block;
+
+  &__Content {
+    @include pk.Columns();
+    align-items: baseline;
+
+    &--Inline {
+      display: inline !important;
+    }
+  }
+
   &__Column {
-    @include txs.Column();
+    @include pk.Column();
+    font-size: 0.688rem;
+
+    &--Id {
+      font-size: 0.75rem;
+      color: #fff;
+    }
+
+    &--Data {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &--PublicKeyHash {
+      font-size: 0.688rem;
+      color: var(--chakra-colors-gray-250);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__PublicKeyHash {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__Data {
+    word-break: break-all;
+    min-width: 100px;
   }
 }
