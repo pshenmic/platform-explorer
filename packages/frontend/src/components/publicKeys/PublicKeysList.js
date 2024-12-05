@@ -1,14 +1,10 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import { ValueCard } from '../../components/cards'
+import PublicKeysListItem from './PublicKeysListItem'
 import './PublicKeysList.scss'
 import './PublicKeysListItem.scss'
-import { ValueContainer } from '../ui/containers'
+import './PublicKeyBoundCard.scss'
 
 function PublicKeysList ({ publicKeys = [] }) {
-  const boundTypeTitles = {
-    documentType: 'Document Type'
-  }
-
   return (
     <div className={'PublicKeysList'}>
       <Grid className={'PublicKeysList__ColumnTitles'}>
@@ -35,51 +31,7 @@ function PublicKeysList ({ publicKeys = [] }) {
         </GridItem>
       </Grid>
 
-      {publicKeys.map((publicKey, i) => (
-        <div className={'PublicKeysList__ListItem PublicKeysListItem'} key={i}>
-          <Grid className={'PublicKeysListItem__Content'}>
-            <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Id'}>
-              {publicKey?.id}
-            </GridItem>
-            <GridItem className={'PublicKeysListItem__Column--PublicKeyHash'}>
-              <ValueCard className={'PublicKeysListItem__PublicKeyHash'} size={'sm'} colorScheme={'transparent'}>
-                {publicKey?.publicKeyHash}
-              </ValueCard>
-            </GridItem>
-            <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Type'}>
-              <ValueContainer colorScheme={'gray'} size={'sm'}>
-                {publicKey?.type}
-              </ValueContainer>
-            </GridItem>
-            <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Purpose'}>
-              <ValueContainer colorScheme={'blue'} size={'sm'}>
-                {publicKey?.purpose}
-              </ValueContainer>
-            </GridItem>
-            <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--SecurityLevel'}>
-              <ValueContainer colorScheme={'green'} size={'sm'}>
-                {publicKey?.securityLevel}
-              </ValueContainer>
-            </GridItem>
-            <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
-              <ValueContainer colorScheme={!publicKey?.readOnly ? 'green' : 'red'} size={'sm'}>
-                {publicKey?.readOnly ? 'True' : 'False'}
-              </ValueContainer>
-            </GridItem>
-            <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Data'}>
-              <ValueCard className={'PublicKeysListItem__Data'}>{publicKey?.data}</ValueCard>
-
-              {publicKey?.contractBounds &&
-                <div className={''}>
-                  <div>Bound to</div>
-                  <div>{publicKey?.contractBounds?.id}</div>
-                  {boundTypeTitles[publicKey?.contractBounds?.type] || publicKey?.contractBounds?.type}: {publicKey?.contractBounds?.typeName}
-                </div>
-              }
-            </GridItem>
-          </Grid>
-        </div>
-      ))}
+      {publicKeys.map((publicKey, i) => <PublicKeysListItem publicKey={publicKey} key={i}/>)}
     </div>
   )
 }

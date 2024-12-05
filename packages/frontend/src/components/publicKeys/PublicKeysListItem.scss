@@ -27,6 +27,10 @@
     &--Data {
       flex-direction: column;
       align-items: flex-start;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     &--PublicKeyHash {
@@ -46,7 +50,19 @@
   }
 
   &__Data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     word-break: break-all;
     min-width: 100px;
+    width: 100%;
+
+    .CopyButton {
+      margin-left: 8px;
+    }
+  }
+
+  &__PublicKeyBounds {
+    max-width: 100%;
   }
 }
