@@ -49,6 +49,8 @@ function Identity ({ identifier }) {
   const [transfers, setTransfers] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  const [showPublicKeys, setShowPublicKeys] = useState(false)
+
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -90,6 +92,8 @@ function Identity ({ identifier }) {
       }
     ]
   }
+
+  // identity.data.publicKeys = []
 
   const fetchData = () => {
     Promise.all([
@@ -199,32 +203,44 @@ function Identity ({ identifier }) {
 
             <div>
               <InfoLine
+                className={'IdentityTotalCard__InfoLine'}
                 title={'Revision'}
+                value={identity.data?.revision}
                 loading={identity.loading}
                 error={identity.error || (!identity.loading && !identity.data?.revision)}
-                value={identity.data?.revision}
               />
               <InfoLine
+                className={'IdentityTotalCard__InfoLine'}
                 title={'Creation date'}
+                value={<DateBlock timestamp={identity.data?.timestamp}/>}
                 loading={identity.loading}
                 error={identity.error || (!identity.loading && !identity.data?.timestamp)}
-                value={<DateBlock timestamp={identity.data?.timestamp}/>}
               />
               <InfoLine
+                className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Names'}
                 title={'Identities names'}
-                loading={identity.loading}
-                error={identity.error || (!identity.loading && identity.data?.aliases === undefined)}
                 value={identity.data?.aliases?.length
                   ? <AliasesList aliases={identity.data?.aliases}/>
                   : <ValueContainer className={'ValidatorCard__ZeroListBadge'}>none</ValueContainer>
                 }
+                loading={identity.loading}
+                error={identity.error || (!identity.loading && identity.data?.aliases === undefined)}
               />
 
               <InfoLine
+                className={'IdentityTotalCard__InfoLine'}
                 title={'Public Keys'}
+                value={(
+                  <Button
+                    size={'sm'}
+                    colorScheme={showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'gray' : 'blue'}
+                    onClick={() => setShowPublicKeys(prev => !prev)}
+                  >
+                    {identity.data?.publicKeys?.length !== undefined ? identity.data?.publicKeys?.length : ''} public keys
+                  </Button>
+                )}
                 loading={identity.loading}
-                error={identity.error}
-                value={<Button>Show Public keys</Button>}
+                error={identity.error || (!identity.loading && identity.data?.publicKeys === undefined)}
               />
             </div>
 
@@ -235,7 +251,9 @@ function Identity ({ identifier }) {
           </div>
         </div>
 
-        <PublicKeysList publicKeys={identity.data?.publicKeys}/>
+        {showPublicKeys && identity.data?.publicKeys?.length > 0 &&
+          <PublicKeysList className={'IdentityTotalCard__PublicKeysList'} publicKeys={identity.data?.publicKeys}/>
+        }
       </div>
 
         <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
@@ -284,198 +302,6 @@ function Identity ({ identifier }) {
         </InfoContainer>
     </PageDataContainer>
   )
-
-  // return (
-  //   <div className={'Identity'}>
-  //       <Container
-  //         maxW={'container.xl'}
-  //         padding={3}
-  //         mt={8}
-  //       >
-  //           <Flex
-  //             w={'100%'}
-  //             justifyContent={'space-between'}
-  //             wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
-  //           >
-  //               <TableContainer
-  //                 width={['100%', '100%', '100%', 'calc(50% - 10px)']}
-  //                 maxW={'none'}
-  //                 borderWidth={'1px'} borderRadius={'block'}
-  //                 m={0}
-  //                 className={'IdentityInfo'}
-  //               >
-  //                   {!identity.error
-  //                     ? <Table variant={'simple'} className={'Table'}>
-  //                           <Thead>
-  //                               <Tr>
-  //                                   <Th pr={0}>Identity info</Th>
-  //                                   <Th className={'TableHeader TableHeader--Name'}>
-  //                                       {identifier
-  //                                         ? <div className={'TableHeader__Content'}>
-  //                                               <ImageGenerator className={'TableHeader__Avatar'} username={identifier} lightness={50} saturation={50} width={32} height={32}/>
-  //                                           </div>
-  //                                         : <Box w={'32px'} h={'32px'} />
-  //                                       }
-  //                                   </Th>
-  //                               </Tr>
-  //                           </Thead>
-  //                           <Tbody>
-  //                               <Tr>
-  //                                   <Td w={tdTitleWidth}>Identifier</Td>
-  //                                   <Td isNumeric className={'Table__Cell--BreakWord'}>
-  //                                       <LoadingLine loading={identity.loading}>
-  //                                         {identity.data?.identifier}
-  //                                       </LoadingLine>
-  //                                   </Td>
-  //                               </Tr>
-  //                               {identity?.data?.aliases?.length > 0 &&
-  //                                 <Tr>
-  //                                   <Td w={tdTitleWidth}>Names</Td>
-  //                                   <Td isNumeric className={'Table__Cell--BreakWord'}>
-  //                                     <LoadingLine loading={identity.loading}>
-  //                                       <div className={'IdentityInfo__AliasesContainer'}>
-  //                                       {identity?.data.aliases.map((alias, i) => (
-  //                                         <Alias alias={alias.alias || alias} key={i}/>
-  //                                       ))}
-  //                                       </div>
-  //                                     </LoadingLine>
-  //                                   </Td>
-  //                                 </Tr>
-  //                               }
-  //                               <Tr>
-  //                                   <Td w={tdTitleWidth}>Balance</Td>
-  //                                   <Td isNumeric>
-  //                                     <LoadingLine loading={identity.loading}>
-  //                                       <RateTooltip
-  //                                         credits={identity.data?.balance}
-  //                                         rate={rate.data}
-  //                                       >
-  //                                         <span><Credits>{identity.data?.balance}</Credits> Credits</span>
-  //                                       </RateTooltip>
-  //                                     </LoadingLine>
-  //                                   </Td>
-  //                               </Tr>
-  //                               <Tr>
-  //                                   <Td w={tdTitleWidth}>System</Td>
-  //                                   <Td isNumeric>
-  //                                       <LoadingLine loading={identity.loading}>{identity.data?.isSystem ? 'true' : 'false'}</LoadingLine>
-  //                                   </Td>
-  //                               </Tr>
-  //
-  //                               {!identity.data.isSystem &&
-  //                                   <Tr>
-  //                                       <Td w={tdTitleWidth}>Created</Td>
-  //                                       <Td isNumeric>
-  //                                           <LoadingLine loading={identity.loading}>
-  //                                               <Link href={`/transaction/${identity.data?.txHash}`}>
-  //                                                   {identity.data?.timestamp && new Date(identity.data?.timestamp).toLocaleString()}
-  //                                               </Link>
-  //                                           </LoadingLine>
-  //                                       </Td>
-  //                                   </Tr>
-  //                               }
-  //
-  //                               <Tr>
-  //                                   <Td w={tdTitleWidth}>Revision</Td>
-  //                                   <Td isNumeric>
-  //                                       <LoadingLine loading={identity.loading}>{identity.data?.revision}</LoadingLine>
-  //                                   </Td>
-  //                               </Tr>
-  //
-  //                               {!identity.data?.isSystem &&
-  //                                   <Tr>
-  //                                       <Td w={tdTitleWidth}>Transactions</Td>
-  //                                       <Td isNumeric>
-  //                                           <LoadingLine loading={identity.loading}>{identity.data?.totalTxs}</LoadingLine>
-  //                                       </Td>
-  //                                   </Tr>
-  //                               }
-  //
-  //                               <Tr>
-  //                                   <Td w={tdTitleWidth}>Transfers</Td>
-  //                                   <Td isNumeric>
-  //                                       <LoadingLine loading={identity.loading}>{identity.data?.totalTransfers}</LoadingLine>
-  //                                   </Td>
-  //                               </Tr>
-  //                               <Tr>
-  //                                   <Td w={tdTitleWidth}>Documents</Td>
-  //                                   <Td isNumeric>
-  //                                       <LoadingLine loading={identity.loading}>{identity.data?.totalDocuments}</LoadingLine>
-  //                                   </Td>
-  //                               </Tr>
-  //                               <Tr>
-  //                                   <Td w={tdTitleWidth}>Data contracts</Td>
-  //                                   <Td isNumeric>
-  //                                       <LoadingLine loading={identity.loading}>{identity.data?.totalDataContracts}</LoadingLine>
-  //                                   </Td>
-  //                               </Tr>
-  //                           </Tbody>
-  //                       </Table>
-  //                     : <Container h={60}><ErrorMessageBlock/></Container>}
-  //               </TableContainer>
-  //
-  //               <Box w={5} h={5} />
-  //
-  //               <Container
-  //                 width={['100%', '100%', '100%', 'calc(50% - 10px)']}
-  //                 maxW={'none'}
-  //                 m={0}
-  //                 className={'InfoBlock'}
-  //               >
-  //                   <Tabs
-  //                     className={'IdentityData'}
-  //                     h={'100%'}
-  //                     display={'flex'}
-  //                     flexDirection={'column'}
-  //                     index={activeTab}
-  //                     onChange={setActiveTab}
-  //                   >
-  //                       <TabList className={'IdentityData__Tabs'}>
-  //                           <Tab className={'IdentityData__Tab'}>Transactions</Tab>
-  //                           <Tab className={'IdentityData__Tab'}>Transfers</Tab>
-  //                           <Tab className={'IdentityData__Tab'}>Documents</Tab>
-  //                           <Tab className={'IdentityData__Tab'}>Data contracts</Tab>
-  //                       </TabList>
-  //
-  //                       <TabPanels flexGrow={1}>
-  //                           <TabPanel px={0} h={'100%'}>
-  //                             {!transactions.error
-  //                               ? !transactions.loading
-  //                                   ? <TransactionsList transactions={transactions.data.resultSet}/>
-  //                                   : <LoadingList itemsCount={9}/>
-  //                               : <ErrorMessageBlock/>}
-  //                           </TabPanel>
-  //
-  //                           <TabPanel px={0} h={'100%'}>
-  //                             {!transfers.error
-  //                               ? !transfers.loading
-  //                                   ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.identifier}/>
-  //                                   : <LoadingList itemsCount={9}/>
-  //                               : <ErrorMessageBlock/>}
-  //                           </TabPanel>
-  //
-  //                           <TabPanel px={0} h={'100%'}>
-  //                             {!documents.error
-  //                               ? !documents.loading
-  //                                   ? <DocumentsList documents={documents.data.resultSet} size={'m'}/>
-  //                                   : <LoadingList itemsCount={9}/>
-  //                               : <ErrorMessageBlock/>}
-  //                           </TabPanel>
-  //
-  //                           <TabPanel px={0} h={'100%'}>
-  //                             {!dataContracts.error
-  //                               ? !dataContracts.loading
-  //                                   ? <DataContractsList dataContracts={dataContracts.data.resultSet} size={'m'}/>
-  //                                   : <LoadingList itemsCount={9}/>
-  //                               : <ErrorMessageBlock/>}
-  //                           </TabPanel>
-  //                       </TabPanels>
-  //                   </Tabs>
-  //               </Container>
-  //           </Flex>
-  //       </Container>
-  //   </div>
-  // )
 }
 
 export default Identity
