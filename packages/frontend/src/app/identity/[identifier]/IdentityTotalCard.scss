@@ -55,6 +55,12 @@
     }
   }
 
+  &__PublicKeysShowButton {
+    width: max-content;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+  }
+
   &__PublicKeysList {
   }
 }
