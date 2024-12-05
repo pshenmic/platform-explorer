@@ -2,7 +2,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import { ValueCard } from '../../components/cards'
 import './PublicKeysList.scss'
 import './PublicKeysListItem.scss'
-import {ValueContainer} from "../ui/containers";
+import { ValueContainer } from '../ui/containers'
 
 function PublicKeysList ({ publicKeys = [] }) {
   const boundTypeTitles = {
