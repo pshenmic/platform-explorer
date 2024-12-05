@@ -61,7 +61,7 @@ function Identity ({ identifier }) {
       {
         contractBounds: {
           type: 'documentType',
-          id: '3Fq4GuFDSaPm7qN2rG8chtif6jgZnqyY48rw9caUMGo6',
+          id: '3LSLuooomkZVVUgT8oDejK92jzcgroqyrMemVC5NX5P5',
           typeName: 'contact'
         },
         id: 5,
@@ -76,7 +76,7 @@ function Identity ({ identifier }) {
       {
         contractBounds: {
           type: 'documentType',
-          id: '3Fq4GuFDSaPm7qN2rG8chtif6jgZnqyY48rw9caUMGo6',
+          id: '3LSLuooomkZVVUgT8oDejK92jzcgroqyrMemVC5NX5P5',
           typeName: 'contact'
         },
         id: 6,
@@ -140,7 +140,7 @@ function Identity ({ identifier }) {
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [activeTab, router, pathname])
+  }, [activeTab, router, pathname, searchParams])
 
   console.log('identity', identity)
 
