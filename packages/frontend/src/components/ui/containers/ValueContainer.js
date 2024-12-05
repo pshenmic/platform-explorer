@@ -1,7 +1,16 @@
 import './ValueContainer.scss'
 import { ArrowCornerIcon } from '../icons'
 
-function ValueContainer ({ children, clickable, colorScheme = 'default', external, light, className, ...props }) {
+function ValueContainer ({
+  children,
+  clickable,
+  colorScheme = 'default',
+  size = 'default',
+  external,
+  light,
+  className,
+  ...props
+}) {
   const colorClasses = {
     default: '',
     red: 'ValueContainer--Red',
@@ -10,13 +19,19 @@ function ValueContainer ({ children, clickable, colorScheme = 'default', externa
     gray: 'ValueContainer--Gray'
   }
 
+  const sizeClasses = {
+    default: '',
+    sm: 'ValueContainer--SizeSm'
+  }
+
   let extraClass = ''
 
-  if (clickable) extraClass += ' ValueContainer--Clickable'
-  if (external) extraClass += ' ValueContainer--External'
-  if (light) extraClass += ' ValueContainer--Light'
+  if (clickable) extraClass += 'ValueContainer--Clickable'
+  if (external) extraClass += 'ValueContainer--External'
+  if (light) extraClass += 'ValueContainer--Light'
 
-  extraClass += colorClasses?.[colorScheme] || colorClasses.default
+  extraClass += ' ' + colorClasses?.[colorScheme] || colorClasses.default
+  extraClass += ' ' + sizeClasses?.[size] || sizeClasses.default
 
   return (
     <div className={`ValueContainer ${extraClass} ${className || ''}`} {...props}>

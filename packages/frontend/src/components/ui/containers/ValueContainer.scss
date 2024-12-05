@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  border-radius: 10px;
+  border-radius: $border-radius-def;
   background: rgba(46, 57, 61, .5);
   padding: 12px;
   transition: all .1s;
@@ -28,6 +28,12 @@
   &--Gray {
     color: #fff;
     background: rgba(255, 255, 255, .2);
+  }
+
+  &--SizeSm {
+    padding: 6px 10px;
+    line-height: 14px;
+    border-radius: 8px;
   }
 
   &--Clickable {
