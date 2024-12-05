@@ -3,10 +3,11 @@
 
 .IdentityTotalCard {
   @include mixins.EntityCard();
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 
   &__Title {
-    margin-bottom: 14px;
-
     .Alias__Name, .Alias__Domain {
       font-family: $font-heading;
       font-size: 0.875rem;
@@ -38,16 +39,6 @@
     color: var(--chakra-colors-gray-250);
   }
 
-  //&__HeaderLines {
-  //  display: flex;
-  //  flex-direction: column;
-  //  justify-content: space-between;
-  //  width: 100%;
-  //  padding: 6px 0;
-  //  overflow: hidden;
-  //  gap: 20px;
-  //}
-
   &__ContentContainer {
     display: flex;
     gap: 40px;
@@ -56,5 +47,14 @@
   &__Column {
     position: relative;
     width: 50%;
+  }
+
+  &__InfoLine {
+    &--Names {
+      align-items: baseline;
+    }
+  }
+
+  &__PublicKeysList {
   }
 }

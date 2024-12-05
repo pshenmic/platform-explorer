@@ -1,12 +1,13 @@
 import { Grid, GridItem } from '@chakra-ui/react'
 import PublicKeysListItem from './PublicKeysListItem'
+import { EmptyListMessage } from '../ui/lists'
 import './PublicKeysList.scss'
 import './PublicKeysListItem.scss'
 import './PublicKeyBoundCard.scss'
 
-function PublicKeysList ({ publicKeys = [] }) {
+function PublicKeysList ({ publicKeys = [], className }) {
   return (
-    <div className={'PublicKeysList'}>
+    <div className={`PublicKeysList ${className || ''}`}>
       <Grid className={'PublicKeysList__ColumnTitles'}>
         <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Timestamp'}>
           Key Id
@@ -31,7 +32,13 @@ function PublicKeysList ({ publicKeys = [] }) {
         </GridItem>
       </Grid>
 
-      {publicKeys.map((publicKey, i) => <PublicKeysListItem publicKey={publicKey} key={i}/>)}
+      {publicKeys?.length > 0 &&
+        publicKeys.map((publicKey, i) => <PublicKeysListItem publicKey={publicKey} key={i}/>)
+      }
+
+      {publicKeys?.length === 0 &&
+        <EmptyListMessage>There are no public keys</EmptyListMessage>
+      }
     </div>
   )
 }
