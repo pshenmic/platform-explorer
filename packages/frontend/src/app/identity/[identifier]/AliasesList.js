@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Alias } from '../../../components/data'
+import { Button } from '@chakra-ui/react'
 
 function AliasesList ({ aliases = [], smallCount = 5 }) {
   const [showAll, setShowAll] = useState(false)
@@ -15,9 +16,14 @@ function AliasesList ({ aliases = [], smallCount = 5 }) {
           <Alias status={alias.status} key={i}>{alias.alias}</Alias>
         ))}
       </div>
-      <div className={'AliasesList__ShowMoreButton'} onClick={() => setShowAll(!showAll)}>
+      <Button
+        onClick={() => setShowAll(!showAll)}
+        className={'AliasesList__ShowMoreButton'}
+        size={'sm'}
+        colorScheme={showAll ? 'gray' : 'blue'}
+      >
         {showAll ? 'Show less' : 'Show more'}
-      </div>
+      </Button>
     </div>
   )
 }
