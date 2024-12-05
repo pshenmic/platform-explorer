@@ -57,13 +57,15 @@ export const theme = extendTheme({
       50: '#FFFFFF'
     },
     red: {
-      default: '#F45858'
+      default: '#F45858',
+      'default-rgb': '244, 88, 88'
     },
     yellow: {
       default: '#FFD205'
     },
     green: {
       default: '#1CC400',
+      'default-rgb': '28, 196, 0',
       label: '#81F458',
       emeralds: '#58F4BC',
       'emeralds-rgb': '88, 244, 188'

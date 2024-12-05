@@ -10,6 +10,26 @@
   padding: 12px;
   transition: all .1s;
 
+  &--Red {
+    color: var(--chakra-colors-red-default);
+    background: rgba(var(--chakra-colors-red-default-rgb), .2);
+  }
+
+  &--Green {
+    color: var(--chakra-colors-green-default);
+    background: rgba(var(--chakra-colors-green-default-rgb), .2);
+  }
+
+  &--Blue {
+    color: var(--chakra-colors-brand-light);
+    background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
+  }
+
+  &--Gray {
+    color: #fff;
+    background: rgba(255, 255, 255, .2);
+  }
+
   &--Clickable {
     @media (hover: hover) and (pointer: fine) {
       &:hover {
