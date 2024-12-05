@@ -700,7 +700,7 @@ describe('Transaction routes', () => {
           new Date(transaction.block.timestamp).getTime() >= nextPeriod
         )
 
-        const gas = txs.reduce((a, b) => a.gas_used + b.gas_used, 0)
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
@@ -716,7 +716,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 2H', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}`)
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -736,12 +736,12 @@ describe('Transaction routes', () => {
           new Date(transaction.block.timestamp).getTime() >= nextPeriod
         )
 
-        const gas = txs.reduce((a, b) => a.gas_used + b.gas_used, 0)
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            gas,
+            gas: txs[0]?.block?.height? gas: null,
             blockHeight: txs[0]?.block?.height ?? null,
             blockHash: txs[0]?.block?.hash ?? null
           }
@@ -752,7 +752,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 24h', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}`)
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -772,12 +772,12 @@ describe('Transaction routes', () => {
           new Date(transaction.block.timestamp).getTime() >= nextPeriod
         )
 
-        const gas = txs.reduce((a, b) => a.gas_used + b.gas_used, 0)
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            gas,
+            gas: txs[0]?.block?.height? gas: null,
             blockHeight: txs[0]?.block?.height ?? null,
             blockHash: txs[0]?.block?.hash ?? null
           }
@@ -788,7 +788,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 3d', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}`)
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -808,12 +808,12 @@ describe('Transaction routes', () => {
           new Date(transaction.block.timestamp).getTime() >= nextPeriod
         )
 
-        const gas = txs.reduce((a, b) => a.gas_used + b.gas_used, 0)
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            gas,
+            gas: txs[0]?.block?.height? gas: null,
             blockHeight: txs[0]?.block?.height ?? null,
             blockHash: txs[0]?.block?.hash ?? null
           }
@@ -824,7 +824,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 1w', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}`)
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -844,12 +844,12 @@ describe('Transaction routes', () => {
           new Date(transaction.block.timestamp).getTime() >= nextPeriod
         )
 
-        const gas = txs.reduce((a, b) => a.gas_used + b.gas_used, 0)
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            gas,
+            gas: txs[0]?.block?.height? gas: null,
             blockHeight: txs[0]?.block?.height ?? null,
             blockHash: txs[0]?.block?.hash ?? null
           }
@@ -862,7 +862,7 @@ describe('Transaction routes', () => {
       const start = new Date(new Date().getTime())
       const end = new Date(start.getTime() + 10800000)
 
-      const { body } = await client.get(`/transactions/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=3`)
+      const { body } = await client.get(`/transactions/gas/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=3`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -882,12 +882,12 @@ describe('Transaction routes', () => {
           new Date(transaction.block.timestamp).getTime() >= nextPeriod
         )
 
-        const gas = txs.reduce((a, b) => a.gas_used + b.gas_used, 0)
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            gas,
+            gas: txs[0]?.block?.height? gas: null,
             blockHeight: txs[0]?.block?.height ?? null,
             blockHash: txs[0]?.block?.hash ?? null
           }
