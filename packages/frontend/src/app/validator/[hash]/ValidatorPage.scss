@@ -99,13 +99,13 @@
     }
   }
 
-  &__InfoLine {
-    margin-bottom: 14px;
+    &__InfoLine {
+      margin-bottom: 14px;
 
-    .DateBlock {
-      justify-content: flex-end;
+      .DateBlock__InfoContainer {
+        justify-content: flex-end;
+      }
     }
-  }
 
   &__ValueContainer {
     display: flex;
