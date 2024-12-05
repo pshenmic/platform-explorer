@@ -212,7 +212,7 @@ const decodeStateTransition = async (client, base64) => {
             contractBounds: contractBounds
               ? {
                   type: contractBounds.type,
-                  id: Identifier.from(Buffer.from(contractBounds.id)),
+                  id: Identifier.from(Buffer.from(contractBounds.id)).toString(),
                   typeName: contractBounds.document_type_name
                 }
               : null,
@@ -233,7 +233,7 @@ const decodeStateTransition = async (client, base64) => {
           contractBounds: contractBounds
             ? {
                 type: contractBounds.type,
-                id: Identifier.from(Buffer.from(contractBounds.id)),
+                id: Identifier.from(Buffer.from(contractBounds.id)).toString(),
                 typeName: contractBounds.document_type_name
               }
             : null,
