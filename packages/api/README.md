@@ -66,6 +66,7 @@ Reference:
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
+* [Transactions gas history](#transactions-gas-history)
 * [Rate](#rate)
 * [Decode Raw Transaction](#decode-raw-transaction)
 
@@ -1023,6 +1024,40 @@ GET /transactions/history?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
           txs: 13,
           blockHeight: 7,
           blockHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
+        }
+    }, ...
+]
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+### Transactions Gas history
+Return a series data for the used gas of transactions chart
+
+* `start` lower interval threshold in ISO string ( _optional_ )
+* `end` upper interval threshold in ISO string ( _optional_ )
+* `intervalsCount` intervals count in response ( _optional_ )
+
+```
+GET /transactions/gas/history?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
+[
+    {
+        timestamp: "2024-04-22T08:45:20.911Z",
+        "data": {
+          "gas": 772831320,
+          "blockHeight": 64060,
+          "blockHash": "4A1F6B5238032DDAC55009A28797D909DB4288D5B5EC14B86DEC6EA8F25EC71A"
+        }
+    },
+    {
+        timestamp: "2024-04-22T08:50:20.911Z",
+        "data": {
+          "gas": 14108752440,
+          "blockHeight": 64333,
+          "blockHash": "507659D9BE2FF76A031F4219061F3D2D39475A7FA4B24F25AEFDB34CD4DF2A57"
         }
     }, ...
 ]

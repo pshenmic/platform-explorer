@@ -287,6 +287,14 @@ module.exports = ({
       }
     },
     {
+      path: '/transactions/gas/history',
+      method: 'GET',
+      handler: transactionsController.getGasHistory,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
       path: '/validators',
       method: 'GET',
       handler: validatorsController.getValidators,
