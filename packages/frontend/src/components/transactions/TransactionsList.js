@@ -4,7 +4,7 @@ import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './TransactionsList.scss'
 
-export default function TransactionsList ({ transactions = [], showMoreLink, type = 'full', headerStyles = 'default', rate }) {
+export default function TransactionsList ({ transactions = [], showMoreLink, variant = 'full', headerStyles = 'default', rate }) {
   const headerExtraClass = {
     default: '',
     light: 'BlocksList__ColumnTitles--Light'
@@ -12,7 +12,7 @@ export default function TransactionsList ({ transactions = [], showMoreLink, typ
 
   return (
     <div className={'TransactionsList'}>
-      {type === 'full' &&
+      {variant === 'full' &&
         <Grid className={`TransactionsList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
           <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Timestamp'}>
             Time
@@ -38,6 +38,7 @@ export default function TransactionsList ({ transactions = [], showMoreLink, typ
               key={key}
               transaction={transaction}
               rate={rate}
+              variant={variant}
             />
         ))
         : <EmptyListMessage>There are no transactions yet.</EmptyListMessage>

@@ -121,7 +121,7 @@ function Block ({ hash }) {
               <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
               <TransactionsList
                 transactions={txHashes.map(hash => ({ hash }))}
-                type={'hashes'}
+                variant={'hashes'}
                 rate={rate.data}
               />
             </Container>

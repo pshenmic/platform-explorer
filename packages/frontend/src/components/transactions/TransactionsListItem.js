@@ -11,16 +11,27 @@ import './TransactionsListItem.scss'
 import ImageGenerator from '../imageGenerator'
 import { useRouter } from 'next/navigation'
 
-function TransactionsListItem ({ transaction, rate }) {
+function TransactionsListItem ({ transaction, rate, variant = 'full' }) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
   const router = useRouter()
+
+  if (variant === 'hashes') {
+    return (
+      <Link
+        href={`/transaction/${transaction?.hash}`}
+        className={'TransactionsListItem'}
+      >
+        <Identifier styles={['highlight-both']}>{transaction?.hash}</Identifier>
+      </Link>
+    )
+  }
 
   return (
     <Link
       href={`/transaction/${transaction?.hash}`}
       className={'TransactionsListItem'}
     >
-      <Grid className={`TransactionsListItem__Content ${!transaction?.timestamp && !transaction?.type ? 'TransactionsListItem__Content--Inline' : ''}`}>
+      <Grid className={'TransactionsListItem__Content'}>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}>
           {transaction?.timestamp
             ? <>
@@ -29,11 +40,14 @@ function TransactionsListItem ({ transaction, rate }) {
                 }
                 {getTimeDelta(new Date(), new Date(transaction.timestamp))}
               </>
-            : 'n/a'
+            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
           }
         </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Hash'}>
-          {transaction?.hash && <Identifier styles={['highlight-both']}>{transaction.hash}</Identifier>}
+          {transaction?.hash
+            ? <Identifier styles={['highlight-both']}>{transaction.hash}</Identifier>
+            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
+          }
         </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--GasUsed'}>
           {transaction?.gasUsed
@@ -44,7 +58,7 @@ function TransactionsListItem ({ transaction, rate }) {
               >
                 <span><Credits>{transaction.gasUsed}</Credits> Credits</span>
               </RateTooltip>
-            : 'n/a'
+            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
           }
         </GridItem>
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Owner'}>
@@ -66,13 +80,13 @@ function TransactionsListItem ({ transaction, rate }) {
                     : <Identifier avatar={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
                   }
                 </div>
-              : <span>n/a</span>
+              : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
             }
           </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Type'}>
           {transaction?.type !== undefined
             ? <TypeBadge className={'TransactionsListItem__TypeBadge'} typeId={transaction.type}/>
-            : 'n/a'
+            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
           }
         </GridItem>
       </Grid>
