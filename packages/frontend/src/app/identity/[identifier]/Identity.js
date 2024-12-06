@@ -232,8 +232,9 @@ function Identity ({ identifier }) {
                 title={'Public Keys'}
                 value={(
                   <Button
+                    className={'IdentityTotalCard__PublicKeysShowButton'}
                     size={'sm'}
-                    colorScheme={showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'gray' : 'blue'}
+                    variant={showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'gray' : 'blue'}
                     onClick={() => setShowPublicKeys(prev => !prev)}
                   >
                     {identity.data?.publicKeys?.length !== undefined ? identity.data?.publicKeys?.length : ''} public keys
