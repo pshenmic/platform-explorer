@@ -25,13 +25,32 @@
     background: rgba(var(--chakra-colors-gray-800-rgb), .5);
     border-radius: $border-radius-def;
 
+    .CreditsBlock {
+      display: flex;
+      flex-direction: column;
+
+      .CreditsBlock__Usd {
+        margin-top: 0.25rem;
+        margin-left: auto;
+      }
+    }
+
+
     &--TupUp {
 
     }
 
     &--Withdrawals {
-
+      .CreditsBlock__Usd {
+        background-color: rgba(var(--chakra-colors-red-default-rgb), .2);
+        color: var(--chakra-colors-red-default);
+      }
     }
+  }
+
+  &__TransferTitle {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
   }
 
   &__ValueContainer {
