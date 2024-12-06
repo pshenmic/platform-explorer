@@ -31,7 +31,7 @@ function SimpleListItem ({ item }) {
         </RateTooltip>
       )
     }
-    if (column.format === 'identifier') return <Identifier styles={['highlight-both']} copyButton={true}>{children}</Identifier>
+    if (column.format === 'identifier') return <Identifier styles={['highlight-both']}>{children}</Identifier>
     if (column.format === 'alias') return <Alias>{children}</Alias>
     return <span>{children}</span>
   }

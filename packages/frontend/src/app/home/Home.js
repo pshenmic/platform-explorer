@@ -102,7 +102,7 @@ function Home () {
           mb={blockOffset}
         >
           <Container mb={0} p={0} maxW={blockMaxWidth}>
-            <TransactionsHistory height={'100%'}/>
+            <TransactionsHistory height={'100%'} blockBorders={false}/>
           </Container>
 
           <Box flexShrink={'0'} w={blockOffset} h={blockOffset} />
@@ -112,7 +112,7 @@ function Home () {
               maxW={'100%'}
               m={0}
               h={'100%'}
-              className={'InfoBlock'}
+              className={'InfoBlock InfoBlock--NoBorder'}
               flexDirection={'column'}
             >
               <Heading className={'InfoBlock__Title'} as={'h2'}>Trending Data Contracts</Heading>
@@ -155,7 +155,7 @@ function Home () {
             maxW={blockMaxWidth}
             order={[4, 4, 0]}
             mb={0}
-            className={'InfoBlock'}
+            className={'InfoBlock InfoBlock--NoBorder'}
             flexDirection={'column'}
             flexGrow={1}
           >
@@ -178,7 +178,7 @@ function Home () {
           >
             <Flex
               maxW={'100%'}
-              className={'InfoBlock'}
+              className={'InfoBlock InfoBlock--NoBorder'}
               flexGrow={'1'}
               flexDirection={'column'}
             >
@@ -222,7 +222,7 @@ function Home () {
 
             <Flex
               maxW={'none'}
-              className={'InfoBlock'}
+              className={'InfoBlock InfoBlock--NoBorder'}
               flexGrow={'1'}
               flexDirection={'column'}
             >
