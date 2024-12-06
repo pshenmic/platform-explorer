@@ -2,21 +2,17 @@ import DataContractsListItem from './DataContractsListItem'
 import { EmptyListMessage } from '../ui/lists'
 import './DataContractsList.scss'
 
-function DataContractsList ({ dataContracts = [], size = 'l' }) {
+function DataContractsList ({ dataContracts = [] }) {
   return (
-        <div className={'DataContractsList ' + 'DataContractsList--Size' + size.toUpperCase()}>
-            {dataContracts.map((dataContract, key) =>
-                <DataContractsListItem
-                    key={key}
-                    size={size}
-                    dataContract={dataContract}
-                />
-            )}
+    <div className={'DataContractsList'}>
+      {dataContracts.map((dataContract, key) =>
+        <DataContractsListItem dataContract={dataContract} key={key}/>
+      )}
 
-            {dataContracts.length === 0 &&
-                <EmptyListMessage>There are no data contracts created yet.</EmptyListMessage>
-            }
-        </div>
+      {dataContracts.length === 0 &&
+        <EmptyListMessage>There are no data contracts created yet.</EmptyListMessage>
+      }
+    </div>
   )
 }
 
