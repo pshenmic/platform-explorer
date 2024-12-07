@@ -119,6 +119,7 @@ describe('Transaction routes', () => {
           identifier: transaction.transaction.owner,
           aliases: [{
             alias: identityAlias.alias,
+            contested: false,
             status: 'ok'
           }]
         }
@@ -127,7 +128,7 @@ describe('Transaction routes', () => {
       assert.deepEqual(expectedTransaction, body)
     })
 
-    it('should error transaction', async () => {
+    it('should return error transaction', async () => {
       const [, transaction] = transactions
       const { body } = await client.get(`/transaction/${transaction.transaction.hash}`)
         .expect(200)
@@ -148,6 +149,7 @@ describe('Transaction routes', () => {
           identifier: transaction.transaction.owner,
           aliases: [{
             alias: identityAlias.alias,
+            contested: false,
             status: 'ok'
           }]
         }
@@ -191,6 +193,7 @@ describe('Transaction routes', () => {
             identifier: transaction.transaction.owner,
             aliases: [{
               alias: identityAlias.alias,
+              contested: false,
               status: 'ok'
             }]
           }
@@ -227,6 +230,7 @@ describe('Transaction routes', () => {
             identifier: transaction.transaction.owner,
             aliases: [{
               alias: identityAlias.alias,
+              contested: false,
               status: 'ok'
             }]
           }
@@ -266,6 +270,7 @@ describe('Transaction routes', () => {
             identifier: transaction.transaction.owner,
             aliases: [{
               alias: identityAlias.alias,
+              contested: false,
               status: 'ok'
             }]
           }
@@ -305,6 +310,7 @@ describe('Transaction routes', () => {
             identifier: transaction.transaction.owner,
             aliases: [{
               alias: identityAlias.alias,
+              contested: false,
               status: 'ok'
             }]
           }
@@ -342,6 +348,7 @@ describe('Transaction routes', () => {
             identifier: transaction.transaction.owner,
             aliases: [{
               alias: identityAlias.alias,
+              contested: false,
               status: 'ok'
             }]
           }
@@ -379,6 +386,7 @@ describe('Transaction routes', () => {
             identifier: transaction.transaction.owner,
             aliases: [{
               alias: identityAlias.alias,
+              contested: false,
               status: 'ok'
             }]
           }
@@ -425,6 +433,7 @@ describe('Transaction routes', () => {
             identifier: transaction.transaction.owner,
             aliases: [{
               alias: identityAlias.alias,
+              contested: false,
               status: 'ok'
             }]
           }
@@ -461,6 +470,7 @@ describe('Transaction routes', () => {
             identifier: transaction.transaction.owner,
             aliases: [{
               alias: identityAlias.alias,
+              contested: false,
               status: 'ok'
             }]
           }
