@@ -5,13 +5,15 @@ const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
-const { getAliasInfo } = require('../utils')
+const { getAliasInfo, decodeStateTransition } = require('../utils')
 const { base58 } = require('@scure/base')
+const DashCoreRPC = require('../dashcoreRpc')
 
 module.exports = class IdentitiesDAO {
-  constructor (knex, dapi) {
+  constructor (knex, dapi, client) {
     this.knex = knex
     this.dapi = dapi
+    this.client = client
   }
 
   getIdentityByIdentifier = async (identifier) => {
@@ -54,16 +56,20 @@ module.exports = class IdentitiesDAO {
       .as('transfer_alias')
 
     const mainQuery = this.knex.with('with_alias', lastRevisionIdentities)
-      .select('identifier', 'with_alias.owner as owner', 'revision', 'transfer_id', 'sender',
-        'tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'recipient', 'amount')
-      .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
-      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+      .select(
+        'identifier', 'with_alias.owner as owner', 'revision',
+        'transfer_id', 'sender', 'tx_hash', 'is_system',
+        'blocks.timestamp as timestamp', 'recipient', 'amount',
+        'state_transitions.data as tx_data'
+      )
       .select(this.knex('state_transitions').count('*').where('owner', identifier).as('total_txs'))
       .select(this.knex('state_transitions').sum('gas_used').where('owner', identifier).as('total_gas_spent'))
       .select(this.knex(documentsSubQuery).count('*').where('rank', 1).as('total_documents'))
       .select(this.knex(dataContractsSubQuery).count('*').where('rank', 1).as('total_data_contracts'))
       .select(this.knex(transfersSubquery).count('*').as('total_transfers'))
       .select(this.knex(aliasSubquery).select('aliases').limit(1).as('aliases'))
+      .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
       .from('with_alias')
       .limit(1)
 
@@ -74,7 +80,7 @@ module.exports = class IdentitiesDAO {
         'is_system', 'timestamp', 'recipient',
         'amount', 'total_txs', 'total_gas_spent',
         'total_documents', 'total_data_contracts',
-        'total_transfers', 'aliases',
+        'total_transfers', 'aliases', 'tx_data',
         this.knex.raw('ROUND(total_gas_spent/total_txs) as average_gas_spent')
       )
       .select(this.knex('state_transitions')
@@ -121,14 +127,27 @@ module.exports = class IdentitiesDAO {
       }
     }))
 
-    const publicKeys = await this.dapi.getIdentityKeys(row.identifier)
+    const publicKeys = await this.dapi.getIdentityKeys(identity.identifier)
 
-    return {
+    let fundingAddress
+
+    if (row.tx_data) {
+      const { assetLockProof } = await decodeStateTransition(this.client, row.tx_data)
+
+      fundingAddress = assetLockProof?.fundingAddress
+    } else {
+      const { state } = await DashCoreRPC.getProTxInfo(Buffer.from(base58.decode(identity.identifier)).toString('hex'))
+
+      fundingAddress = state?.ownerAddress
+    }
+
+    return Identity.fromObject({
       ...identity,
       aliases,
-      balance: await this.dapi.getIdentityBalance(identity.identifier.trim()),
-      publicKeys: publicKeys ?? []
-    }
+      balance: await this.dapi.getIdentityBalance(identity.identifier),
+      publicKeys,
+      fundingAddress
+    })
   }
 
   getIdentityByDPNSName = async (dpns) => {
