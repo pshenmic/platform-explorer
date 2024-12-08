@@ -677,4 +677,224 @@ describe('Transaction routes', () => {
       assert.deepEqual(expectedSeriesData.reverse(), body)
     })
   })
+
+  describe('getGasHistorySeries()', async () => {
+    it('should return default series set', async () => {
+      const { body } = await client.get('/transactions/gas/history')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 12)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 300000 * i
+        const prevPeriod = firstTimestamp - 300000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            gas,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 2H', async () => {
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 4)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 1800000 * i
+        const prevPeriod = firstTimestamp - 1800000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            gas: txs[0]?.block?.height ? gas : null,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 24h', async () => {
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 4)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 21600000 * i
+        const prevPeriod = firstTimestamp - 21600000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            gas: txs[0]?.block?.height ? gas : null,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 3d', async () => {
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 5)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 50400000 * i
+        const prevPeriod = firstTimestamp - 50400000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            gas: txs[0]?.block?.height ? gas : null,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 1w', async () => {
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 7)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 86400000 * i
+        const prevPeriod = firstTimestamp - 86400000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            gas: txs[0]?.block?.height ? gas : null,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+    it('should return series of 6 intervals timespan 3d', async () => {
+      const start = new Date(new Date().getTime())
+      const end = new Date(start.getTime() + 10800000)
+
+      const { body } = await client.get(`/transactions/gas/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=3`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 3)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 3) * 1000 * i
+        const prevPeriod = firstTimestamp - 3600000 * (i - 1)
+
+        const txs = transactions.filter(transaction =>
+          new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
+          new Date(transaction.block.timestamp).getTime() >= nextPeriod
+        )
+
+        const gas = txs.reduce((a, b) => a + b.transaction.gas_used, 0)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            gas: txs[0]?.block?.height ? gas : null,
+            blockHeight: txs[0]?.block?.height ?? null,
+            blockHash: txs[0]?.block?.hash ?? null
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+  })
 })
