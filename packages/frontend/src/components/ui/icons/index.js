@@ -99,6 +99,19 @@ const BroadcastedIcon = (props) => (
   </Icon>
 )
 
+const BigClockIcon = (props) => (
+  <Icon viewBox='0 0 35 34' {...props}>
+    <svg width='35' height='34' viewBox='0 0 35 34' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path fillRule='evenodd' clipRule='evenodd'
+        d='M8 0C3.58172 0 0 3.58172 0 8V26C0 30.4183 3.58172 34 8 34H26C30.4183 34 34 30.4183 34 26V8C34 3.58172 30.4183 0 26 0H8ZM8 1C4.13401 1 1 4.13401 1 8V26C1 29.866 4.13401 33 8 33H26C29.866 33 33 29.866 33 26V8C33 4.13401 29.866 1 26 1H8Z'
+        fill='#93AAB2'/>
+      <path d='M34 10C34.5523 10 35 10.4477 35 11V17C35 17.5523 34.5523 18 34 18V10Z' fill='#93AAB2'/>
+      <path d='M16 12C16 11.4477 16.4477 11 17 11C17.5523 11 18 11.4477 18 12V19H16V12Z' fill='white'/>
+      <path d='M26 19C26.5523 19 27 19.4477 27 20C27 20.5523 26.5523 21 26 21L16 21L16 19L26 19Z' fill='white'/>
+    </svg>
+  </Icon>
+)
+
 export {
   CalendarIcon,
   CalendarIcon2,
@@ -110,5 +123,6 @@ export {
   PooledIcon,
   BroadcastedIcon,
   CloseIcon,
-  ChevronIcon
+  ChevronIcon,
+  BigClockIcon
 }

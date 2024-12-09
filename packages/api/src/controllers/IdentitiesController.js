@@ -26,7 +26,7 @@ class IdentitiesController {
   getIdentityByDPNSName = async (request, response) => {
     const { dpns } = request.query
 
-    const identity = await this.identitiesDAO.getIdentityByDPNSName(dpns)
+    const identity = await this.identitiesDAO.getIdentitiesByDPNSName(dpns)
 
     if (!identity) {
       return response.status(404).send({ message: 'not found' })

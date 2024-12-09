@@ -1,7 +1,6 @@
 const Block = require('../models/Block')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { getAliasInfo } = require('../utils')
-const { base58 } = require('@scure/base')
+const { getAliasInfo, getAliasStateByVote } = require('../utils')
 const Transaction = require('../models/Transaction')
 
 module.exports = class BlockDAO {
@@ -70,14 +69,7 @@ module.exports = class BlockDAO {
         const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
           const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-          const isLocked = base58.encode(
-            Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-            'base64') !== row.identifier
-
-          return {
-            alias,
-            status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-          }
+          return getAliasStateByVote(aliasInfo, alias, row.owner)
         }))
 
         return Transaction.fromRow({ ...row, aliases })
