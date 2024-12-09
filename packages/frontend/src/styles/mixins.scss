@@ -45,6 +45,12 @@
     height: 24px;
     width: 24px;
   }
+
+  &__NotActiveText {
+    font-size: 0.75rem !important;
+    color: var(--chakra-colors-gray-250) !important;
+    text-transform: lowercase !important;
+  }
 }
 
 @mixin defListTitles {
