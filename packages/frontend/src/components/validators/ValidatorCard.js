@@ -15,7 +15,9 @@ export default function ValidatorCard ({ validator, rate, className }) {
                 lightness={50}
                 saturation={50}
                 width={88}
-                height={88}/>
+                height={88}
+                hat={'christmas'}
+              />
             : 'n/a'
           }
         </div>
