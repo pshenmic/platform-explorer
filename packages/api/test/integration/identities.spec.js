@@ -170,6 +170,8 @@ describe('Identities routes', () => {
 
     mock.method(DAPI.prototype, 'getContestedState', async () => null)
 
+    mock.method(DAPI.prototype, 'getIdentityKeys', async () => null)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -195,7 +197,18 @@ describe('Identities routes', () => {
   describe('getIdentityByIdentifier()', async () => {
     it('should return identity by identifier', async () => {
       const block = await fixtures.block(knex)
-      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      const owner = await fixtures.identity(knex, { block_hash: block.hash })
+
+      const transaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        type: StateTransitionEnum.IDENTITY_CREATE,
+        owner: owner.identifier,
+        data: ''
+      })
+      const identity = await fixtures.identity(knex, {
+        block_hash: block.hash,
+        state_transition_hash: transaction.hash
+      })
       const { alias } = await fixtures.identity_alias(knex,
         {
           alias: 'test.dash',
@@ -214,7 +227,7 @@ describe('Identities routes', () => {
         balance: 0,
         timestamp: block.timestamp.toISOString(),
         txHash: identity.txHash,
-        totalTxs: 1,
+        totalTxs: 0,
         totalTransfers: 0,
         totalDocuments: 0,
         totalDataContracts: 0,
@@ -223,7 +236,14 @@ describe('Identities routes', () => {
           alias,
           contested: false,
           status: 'ok'
-        }]
+        }],
+        totalGasSpent: 0,
+        averageGasSpent: 0,
+        topUpsGasSpent: 0,
+        withdrawalsGasSpent: 0,
+        lastWithdrawalHash: null,
+        publicKeys: [],
+        fundingCoreTx: null
       }
 
       assert.deepEqual(body, expectedIdentity)
@@ -384,7 +404,14 @@ describe('Identities routes', () => {
         isSystem: false,
         aliases: [
           aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-        ].map(alias => ({ alias, status: 'ok', contested: false }))
+        ].map(alias => ({ alias, status: 'ok', contested: false })),
+        totalGasSpent: null,
+        averageGasSpent: null,
+        topUpsGasSpent: null,
+        withdrawalsGasSpent: null,
+        lastWithdrawalHash: null,
+        publicKeys: [],
+        fundingCoreTx: null
       }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -426,7 +453,14 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false }))
+          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          totalGasSpent: null,
+          averageGasSpent: null,
+          topUpsGasSpent: null,
+          withdrawalsGasSpent: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -469,7 +503,14 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false }))
+          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          totalGasSpent: null,
+          averageGasSpent: null,
+          topUpsGasSpent: null,
+          withdrawalsGasSpent: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -513,7 +554,14 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false }))
+          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          totalGasSpent: null,
+          averageGasSpent: null,
+          topUpsGasSpent: null,
+          withdrawalsGasSpent: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -572,7 +620,14 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false }))
+          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          totalGasSpent: null,
+          averageGasSpent: null,
+          topUpsGasSpent: null,
+          withdrawalsGasSpent: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -643,7 +698,14 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false }))
+          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          totalGasSpent: null,
+          averageGasSpent: null,
+          topUpsGasSpent: null,
+          withdrawalsGasSpent: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)

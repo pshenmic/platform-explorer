@@ -743,24 +743,76 @@ Return identity by given identifier
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
-    identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    revision: 1,
-    balance: 1000000,
-    timestamp: "2024-03-18T10:13:54.150Z",
-    txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-    totalTxs: 1,
-    totalTransfers: 0,
-    totalDocuments: 0,
-    totalDataContracts: 0,
-    isSystem: false,
-    aliases: [
-      {
-        alias: "alias.dash",
-        status: "locked",
-        contested: true
-      }
-    ]
+  "identifier": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ",
+  "revision": 0,
+  "balance": 49989647300,
+  "timestamp": "2024-10-12T18:51:44.592Z",
+  "txHash": "32FB988D87E4122A2FE030B5014A59A05786C1501FD97D765E2329F89A8AD01D",
+  "totalTxs": 13,
+  "totalTransfers": 7,
+  "totalDocuments": 5,
+  "totalDataContracts": 0,
+  "isSystem": false,
+  "aliases": [
+    {
+      "alias": "owl352.dash",
+      "status": "ok",
+      "contested": false
+    }
+  ],
+  "totalGasSpent": 310352700,
+  "averageGasSpent": 23873285,
+  "topUpsGasSpent": 46350660,
+  "withdrawalsGasSpent": 0,
+  "lastWithdrawalHash": null,
+  "publicKeys": [
+    {
+      "keyId": 0,
+      "type": 0,
+      "data": "0386067dea94b1cfb23bf252084a2020a4a6712df7e4ac16c211558a1dbb66904a",
+      "purpose": 0,
+      "securityLevel": 0,
+      "isReadOnly": false,
+      "isMaster": true,
+      "hash": "5501114f5842004d1ff6c7d04512c438afe0cb11",
+      "contractBounds": null
+    },
+    {
+      "keyId": 1,
+      "type": 0,
+      "data": "038a09509830d2d04685294e920aa29c96d51f9bd81044e2f934a4c198b934b102",
+      "purpose": 0,
+      "securityLevel": 2,
+      "isReadOnly": false,
+      "isMaster": false,
+      "hash": "c563c11128b9e457ad3b7220315b4bf53c8af443",
+      "contractBounds": null
+    },
+    {
+      "keyId": 2,
+      "type": 0,
+      "data": "027734bd9b8864964eb7504a77a986782e9d620e4c6d23e2bd80359e1e81790a1c",
+      "purpose": 0,
+      "securityLevel": 1,
+      "isReadOnly": false,
+      "isMaster": false,
+      "hash": "4bd1a43ea0cf7c18c1f90d1d9c0f08c63743ff1d",
+      "contractBounds": null
+    },
+    {
+      "keyId": 3,
+      "type": 0,
+      "data": "03083620dea1216b47568aead0c7cb6302ae3ca8beaa40c51e25b20f1f02ae06d4",
+      "purpose": 3,
+      "securityLevel": 1,
+      "isReadOnly": false,
+      "isMaster": false,
+      "hash": "f6d941f2d7aa4bc9d90b90bc103bd583c5943af9",
+      "contractBounds": null
+    }
+  ],
+  "fundingCoreTx": "68d77e0d2da31e9cf2758d8f97547c1bc98b75c4e2cebe64dbcaae3bb5cb8a9c",
+  "owner": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ"
 }
 ```
 Response codes:

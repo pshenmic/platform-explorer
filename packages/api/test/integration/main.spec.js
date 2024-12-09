@@ -41,6 +41,8 @@ describe('Other routes', () => {
 
     mock.method(DAPI.prototype, 'getContestedState', async () => null)
 
+    mock.method(DAPI.prototype, 'getIdentityKeys', async () => null)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -69,6 +71,7 @@ describe('Other routes', () => {
     identityTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
       type: StateTransitionEnum.IDENTITY_CREATE,
+      data: '',
       owner: identityIdentifier
     })
     identity = await fixtures.identity(knex, {
@@ -166,7 +169,7 @@ describe('Other routes', () => {
             blockHash: identityTransaction.block_hash,
             blockHeight: null,
             type: identityTransaction.type,
-            data: '{}',
+            data: '',
             timestamp: block.timestamp.toISOString(),
             gasUsed: 0,
             status: 'SUCCESS',
@@ -357,7 +360,14 @@ describe('Other routes', () => {
           alias: 'dpns.dash',
           contested: false,
           status: 'ok'
-        }]
+        }],
+        totalGasSpent: 480000,
+        averageGasSpent: 9412,
+        topUpsGasSpent: 0,
+        withdrawalsGasSpent: 0,
+        lastWithdrawalHash: null,
+        publicKeys: [],
+        fundingCoreTx: null
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
