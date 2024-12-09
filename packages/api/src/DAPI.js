@@ -1,4 +1,3 @@
-const Withdrawal = require('./models/Withdrawal')
 const { Identifier } = require('dash').PlatformProtocol
 
 class DAPI {
@@ -25,21 +24,30 @@ class DAPI {
     return epochsInfo
   }
 
-  async getDocuments (type, dataContractObject, identifier, limit) {
+  /**
+   * Fetch documents from DAPI
+   * Allows **only one field** `identifier`**|**`owner`
+   * @typedef {getDocuments}
+   * @param {string} type
+   * @param {object} dataContractObject
+   * @param {string} identifier
+   * @param {string} owner
+   * @param {number} limit
+  */
+  async getDocuments (type, dataContractObject, identifier, owner, limit) {
     const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
 
     const { documents } = await this.dapi.platform.getDocuments(Identifier.from(dataContractObject.id), type, {
       limit,
       where: [
-        ['$ownerId', '=', Identifier.from(identifier)]
+        identifier
+          ? ['$id', '=', Identifier.from(identifier)]
+          : ['$ownerId', '=', Identifier.from(owner)]
       ]
     })
 
     return documents.map(
-      (document) =>
-        Withdrawal.fromRaw(
-          this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).toJSON()
-        )
+      (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument()
     )
   }
 
