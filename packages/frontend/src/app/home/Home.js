@@ -153,6 +153,7 @@ function Home () {
         >
           <Flex
             maxW={blockMaxWidth}
+            w={'100%'}
             order={[4, 4, 0]}
             mb={0}
             className={'InfoBlock InfoBlock--NoBorder'}
