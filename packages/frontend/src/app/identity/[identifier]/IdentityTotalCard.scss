@@ -1,0 +1,66 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.IdentityTotalCard {
+  @include mixins.EntityCard();
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__Title {
+    .Alias__Name, .Alias__Domain {
+      font-family: $font-heading;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    .Alias__Domain {
+      color: var(--chakra-colors-brand-light);
+      opacity: 1;
+    }
+  }
+
+  &--Loading & {
+    &__Avatar {
+      position: absolute !important;
+      @include mixins.LoadingContainer;
+    }
+  }
+
+  &__Header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__ZeroListBadge {
+    padding: 4px 10px;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__ContentContainer {
+    display: flex;
+    gap: 40px;
+  }
+
+  &__Column {
+    position: relative;
+    width: 50%;
+  }
+
+  &__InfoLine {
+    &--Names {
+      align-items: baseline;
+    }
+  }
+
+  &__PublicKeysShowButton {
+    width: max-content;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+  }
+
+  &__PublicKeysList {
+  }
+}

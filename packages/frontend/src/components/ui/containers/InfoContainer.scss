@@ -49,6 +49,11 @@
       overflow-y: hidden;
       overflow-x: auto;
     }
+
+    .chakra-tabs__tab-panel {
+      @include mixins.InfoContainerPadding(padding-left, 0px, true);
+      @include mixins.InfoContainerPadding(padding-right, 0px, true);
+    }
   }
 
   @media screen and (max-width: $breakpoint-sm) {

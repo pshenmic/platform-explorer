@@ -4,10 +4,28 @@ import { getTimeDelta } from '../../util'
 import { CalendarIcon } from '../ui/icons'
 import './DateBlock.scss'
 
-function DateBlock ({ timestamp, format, showTime = false }) {
+function DateBlock ({ timestamp, format = 'all', showTime = false }) {
   const date = new Date(timestamp)
 
   if (String(date) === 'Invalid Date') return null
+
+  const formats = {
+    all: {
+      calendarIcon: true,
+      date: true,
+      delta: true
+    },
+    deltaOnly: {
+      calendarIcon: false,
+      date: false,
+      delta: true
+    },
+    dateOnly: {
+      calendarIcon: false,
+      date: true,
+      delta: false
+    }
+  }
 
   const options = {
     day: 'numeric',
@@ -20,21 +38,25 @@ function DateBlock ({ timestamp, format, showTime = false }) {
 
   return (
     <div className={'DateBlock'}>
-      {format !== 'delta-only' &&
-        <CalendarIcon
-          className={'DateBlock__CalendarIcon'}
-          color={'gray.250'}
-          w={'12px'}
-          h={'14px'}
-        />
-      }
-      {format !== 'delta-only' &&
-        <div className={'DateBlock__Date'}>
-          {formattedDate}
-        </div>
-      }
-      <div className={'DateBlock__Delta'}>
-        {getTimeDelta(new Date(), date)}
+      <div className={'DateBlock__InfoContainer'}>
+        {formats[format].calendarIcon &&
+          <CalendarIcon
+            className={'DateBlock__CalendarIcon'}
+            color={'gray.250'}
+            w={'12px'}
+            h={'14px'}
+          />
+        }
+        {formats[format].date &&
+          <div className={'DateBlock__Date'}>
+            {formattedDate}
+          </div>
+        }
+        {formats[format].delta &&
+          <div className={'DateBlock__Delta'}>
+            {getTimeDelta(new Date(), date)}
+          </div>
+        }
       </div>
     </div>
   )

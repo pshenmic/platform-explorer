@@ -1,0 +1,16 @@
+@use '../../styles/mixins.scss';
+@use './variables' as pk;
+@import '../../styles/variables.scss';
+
+.PublicKeysList {
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include pk.Columns();
+  }
+
+  &__ColumnTitle {
+    @include pk.Column();
+  }
+}
