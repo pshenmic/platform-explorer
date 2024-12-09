@@ -129,18 +129,28 @@ const decodeStateTransition = async (client, base64) => {
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
       decoded.raw = stateTransition.toBuffer().toString('hex')
-      // TODO: Add contract bounds
-      decoded.publicKeys = stateTransition.publicKeys.map(key => ({
-        contractBounds: null, // key.toJSON().contractBounds,
-        id: key.getId(),
-        type: KeyTypeEnum[key.getType()],
-        data: Buffer.from(key.getData()).toString('hex'),
-        publicKeyHash: Buffer.from(key.hash()).toString('hex'),
-        purpose: KeyPurposeEnum[key.getPurpose()],
-        securityLevel: SecurityLevelEnum[key.getSecurityLevel()],
-        readOnly: key.isReadOnly(),
-        signature: Buffer.from(key.getSignature()).toString('hex')
-      }))
+
+      decoded.publicKeys = stateTransition.publicKeys.map(key => {
+        const { contractBounds } = key.toObject()
+
+        return {
+          contractBounds: contractBounds
+            ? {
+                type: contractBounds.type,
+                id: Identifier.from(Buffer.from(contractBounds.id)).toString(),
+                typeName: contractBounds.document_type_name
+              }
+            : null,
+          id: key.getId(),
+          type: KeyTypeEnum[key.getType()],
+          data: Buffer.from(key.getData()).toString('hex'),
+          publicKeyHash: Buffer.from(key.hash()).toString('hex'),
+          purpose: KeyPurposeEnum[key.getPurpose()],
+          securityLevel: SecurityLevelEnum[key.getSecurityLevel()],
+          readOnly: key.isReadOnly(),
+          signature: Buffer.from(key.getSignature()).toString('hex')
+        }
+      })
 
       break
     }

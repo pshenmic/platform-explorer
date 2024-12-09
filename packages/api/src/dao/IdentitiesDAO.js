@@ -7,7 +7,6 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
 const { getAliasInfo, decodeStateTransition } = require('../utils')
 const { base58 } = require('@scure/base')
-const DashCoreRPC = require('../dashcoreRpc')
 
 module.exports = class IdentitiesDAO {
   constructor (knex, dapi, client) {
@@ -129,16 +128,12 @@ module.exports = class IdentitiesDAO {
 
     const publicKeys = await this.dapi.getIdentityKeys(identity.identifier)
 
-    let fundingAddress
+    let fundingCoreTx = null
 
     if (row.tx_data) {
       const { assetLockProof } = await decodeStateTransition(this.client, row.tx_data)
 
-      fundingAddress = assetLockProof?.fundingAddress
-    } else {
-      const { state } = await DashCoreRPC.getProTxInfo(Buffer.from(base58.decode(identity.identifier)).toString('hex'))
-
-      fundingAddress = state?.ownerAddress
+      fundingCoreTx = assetLockProof?.txid
     }
 
     return Identity.fromObject({
@@ -146,7 +141,7 @@ module.exports = class IdentitiesDAO {
       aliases,
       balance: await this.dapi.getIdentityBalance(identity.identifier),
       publicKeys,
-      fundingAddress
+      fundingCoreTx
     })
   }
 

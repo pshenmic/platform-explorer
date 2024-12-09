@@ -16,7 +16,7 @@ module.exports = class Identity {
   withdrawalsGasSpent
   lastWithdrawalHash
   publicKeys
-  fundingAddress
+  fundingCoreTx
 
   constructor (
     identifier, owner, revision,
@@ -25,7 +25,7 @@ module.exports = class Identity {
     totalTransfers, txHash, isSystem,
     aliases, totalGasSpent, averageGasSpent,
     topUpsGasSpent, withdrawalsGasSpent,
-    lastWithdrawalHash, publicKeys, fundingAddress
+    lastWithdrawalHash, publicKeys, fundingCoreTx
   ) {
     this.identifier = identifier ? identifier.trim() : null
     this.owner = owner ? owner.trim() : null
@@ -45,7 +45,7 @@ module.exports = class Identity {
     this.withdrawalsGasSpent = withdrawalsGasSpent ?? null
     this.lastWithdrawalHash = lastWithdrawalHash ?? null
     this.publicKeys = publicKeys ?? []
-    this.fundingAddress = fundingAddress ?? null
+    this.fundingCoreTx = fundingCoreTx ?? null
   }
 
   static fromObject ({
@@ -55,7 +55,7 @@ module.exports = class Identity {
     totalTransfers, txHash, isSystem,
     aliases, totalGasSpent, averageGasSpent,
     topUpsGasSpent, withdrawalsGasSpent,
-    lastWithdrawalHash, publicKeys, fundingAddress
+    lastWithdrawalHash, publicKeys, fundingCoreTx
   }) {
     return new Identity(
       identifier,
@@ -76,7 +76,7 @@ module.exports = class Identity {
       withdrawalsGasSpent,
       lastWithdrawalHash,
       publicKeys,
-      fundingAddress
+      fundingCoreTx
     )
   }
 
