@@ -6,7 +6,6 @@ const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
 const { getAliasInfo, decodeStateTransition, getAliasStateByVote } = require('../utils')
-const { base58 } = require('@scure/base')
 
 module.exports = class IdentitiesDAO {
   constructor (knex, dapi, client) {
