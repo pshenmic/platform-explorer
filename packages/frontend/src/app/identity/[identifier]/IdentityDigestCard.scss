@@ -1,0 +1,93 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.IdentityDigestCard {
+  @include mixins.InfoContainerPadding(padding, 0px, false);
+  flex-direction: column;
+
+  background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+  border-radius: $border-radius-def;
+
+  &, &__Transfers, &__LinesContainer {
+    display: flex;
+    gap: 14px;
+  }
+
+  &__LinesContainer {
+    flex-direction: column;
+  }
+
+  &__Transfer {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 24px;
+    background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+    border-radius: $border-radius-def;
+
+    .CreditsBlock {
+      display: flex;
+      flex-direction: column;
+
+      .CreditsBlock__Usd {
+        margin-top: 0.25rem;
+        margin-left: auto;
+      }
+    }
+
+    &--TupUp {
+
+    }
+
+    &--Withdrawals {
+      .CreditsBlock__Usd {
+        background-color: rgba(var(--chakra-colors-red-default-rgb), .2);
+        color: var(--chakra-colors-red-default);
+      }
+    }
+  }
+
+  &__TransferTitle {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__ValueContainer {
+    display: flex;
+    justify-content: flex-end;
+    overflow: hidden;
+
+    .DateBlock {
+      margin-bottom: 4px;
+    }
+  }
+
+  &__InfoLine {
+    .DateBlock__InfoContainer {
+      justify-content: flex-end;
+    }
+  }
+
+  @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
+  screen and (max-width: $breakpoint-sm) {
+    &__Transfers {
+      flex-direction: column;
+    }
+
+    &__Transfer {
+      width: 100%;
+
+      .CreditsBlock {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+
+        .CreditsBlock__Usd {
+          margin-top: 0.25rem;
+          margin-bottom: 0.25rem;
+        }
+      }
+    }
+  }
+}

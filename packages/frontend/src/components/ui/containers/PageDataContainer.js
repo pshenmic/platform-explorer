@@ -21,7 +21,9 @@ function PageDataContainer ({ className, title, backLink, children }) {
           {title && <div className={'PageDataContainer__Title'}>{title}</div>}
         </div>
 
-        <div className={'PageDataContainer__Content'}>{children}</div>
+        <div className={'PageDataContainer__ContentContainer'}>
+          <div className={'PageDataContainer__Content'}>{children}</div>
+        </div>
       </Container>
     </Container>
   )
