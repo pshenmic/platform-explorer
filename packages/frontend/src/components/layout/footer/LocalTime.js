@@ -1,27 +1,36 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import './LocalTime.scss'
 
 function LocalTime ({ className }) {
-  const now = new Date()
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const [time, setTime] = useState('')
+  const [date, setDate] = useState('')
+  const [timeZone, setTimeZone] = useState('')
 
-  const time = now.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-
-  const date = now.toLocaleDateString('en-US', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short'
-  })
+  useEffect(() => {
+    const now = new Date()
+    setTime(
+      now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    )
+    setDate(
+      now.toLocaleDateString('en-US', {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short'
+      })
+    )
+    setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+  }, [])
 
   return (
     <div className={`LocalTime ${className || ''}`}>
-      <span className={'LocalTime__Time'}>{time}</span>
-      <span className={'LocalTime__Date'}>{date}</span>
-      <span className={'LocalTime__TimeZone'}>({timeZone})</span>
+      {time && <span className={'LocalTime__Time'}>{time}</span>}
+      {date && <span className={'LocalTime__Date'}>{date}</span>}
+      {timeZone && <span className={'LocalTime__TimeZone'}>({timeZone})</span>}
     </div>
   )
 }
