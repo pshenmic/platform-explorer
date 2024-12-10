@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 @mixin Columns () {
   display: grid;
   gap: 16px;
@@ -10,6 +12,10 @@
     minmax(115px, 115px)
     minmax(78px, 78px)
     auto;
+
+  @container (max-width: 800px) {
+    gap: 8px;
+  }
 }
 
 @mixin Column () {
@@ -47,12 +53,7 @@
   }
 
   &--Data {
+    min-width: 380px;
     width: 100%;
-  }
-
-  @container (max-width: 810px) {
-    &--GasUsed {
-      display: none;
-    }
   }
 }
