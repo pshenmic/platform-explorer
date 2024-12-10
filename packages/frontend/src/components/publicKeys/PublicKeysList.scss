@@ -4,6 +4,11 @@
 
 .PublicKeysList {
   container-type: inline-size;
+  overflow-x: scroll;
+
+  &__ScrollZone {
+    width: fit-content;
+  }
 
   &__ColumnTitles {
     @include mixins.defListTitles;
