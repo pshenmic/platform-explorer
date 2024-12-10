@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 import './LocalTime.scss'
 
 function LocalTime ({ className }) {
-  const [time, setTime] = useState('')
-  const [date, setDate] = useState('')
-  const [timeZone, setTimeZone] = useState('')
+  const [time, setTime] = useState(null)
+  const [date, setDate] = useState(null)
+  const [timeZone, setTimeZone] = useState(null)
 
   useEffect(() => {
     const now = new Date()
