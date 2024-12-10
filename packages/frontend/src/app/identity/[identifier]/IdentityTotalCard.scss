@@ -3,6 +3,7 @@
 
 .IdentityTotalCard {
   @include mixins.EntityCard();
+  @include mixins.InfoContainerPadding(padding, 0px, true);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -62,5 +63,37 @@
   }
 
   &__PublicKeysList {
+
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__InfoLine {
+      &--Names {
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        .InfoLine__Value {
+          margin-left: auto;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__ContentContainer {
+      flex-direction: column;
+    }
+
+    &__Column {
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__Digest {
+      @include mixins.InfoContainerPadding(margin-left, 0px, true, true);
+      @include mixins.InfoContainerPadding(margin-right, 0px, true, true);
+      @include mixins.InfoContainerPadding(margin-bottom, 0px, true, true);
+    }
   }
 }
