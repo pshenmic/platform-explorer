@@ -10,19 +10,15 @@ function LocalTime ({ className }) {
 
   useEffect(() => {
     const now = new Date()
-    setTime(
-      now.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    )
-    setDate(
-      now.toLocaleDateString('en-US', {
-        weekday: 'short',
-        day: '2-digit',
-        month: 'short'
-      })
-    )
+    setTime(now.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }))
+    setDate(now.toLocaleDateString('en-US', {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short'
+    }))
     setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone)
   }, [])
 
