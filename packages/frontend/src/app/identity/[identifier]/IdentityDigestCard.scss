@@ -2,8 +2,9 @@
 @import '../../../styles/variables.scss';
 
 .IdentityDigestCard {
+  @include mixins.InfoContainerPadding(padding, 0px, false);
   flex-direction: column;
-  padding: 24px;
+
   background: rgba(var(--chakra-colors-gray-800-rgb), .5);
   border-radius: $border-radius-def;
 
@@ -35,7 +36,6 @@
       }
     }
 
-
     &--TupUp {
 
     }
@@ -64,10 +64,30 @@
   }
 
   &__InfoLine {
-    margin-bottom: 14px;
-
     .DateBlock__InfoContainer {
       justify-content: flex-end;
+    }
+  }
+
+  @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
+  screen and (max-width: $breakpoint-sm) {
+    &__Transfers {
+      flex-direction: column;
+    }
+
+    &__Transfer {
+      width: 100%;
+
+      .CreditsBlock {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+
+        .CreditsBlock__Usd {
+          margin-top: 0.25rem;
+          margin-bottom: 0.25rem;
+        }
+      }
     }
   }
 }
