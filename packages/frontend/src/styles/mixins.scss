@@ -303,24 +303,29 @@
   }
 }
 
-@mixin InfoContainerPadding($property, $adjustment: 0px, $important: false) {
-  #{$property}: calc(var(--chakra-space-3) + #{$adjustment})#{if($important, ' !important', '')};
+@mixin InfoContainerPadding($property, $adjustment: 0px, $important: false, $invert: false) {
+  $base-value: if($invert, 'calc(0px - var(--chakra-space-3))', 'var(--chakra-space-3)');
+
+  #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
 
   @media screen and (min-width: $breakpoint-md) {
-    #{$property}: calc(var(--chakra-space-4) + #{$adjustment})#{if($important, ' !important', '')};
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-4))', 'var(--chakra-space-4)');
+    #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
   }
 
   @media screen and (min-width: $breakpoint-lg) {
-    #{$property}: calc(var(--chakra-space-5) + #{$adjustment})#{if($important, ' !important', '')};
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-5))', 'var(--chakra-space-5)');
+    #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
   }
 
   @media screen and (min-width: $breakpoint-xl) {
-    #{$property}: calc(var(--chakra-space-6) + #{$adjustment})#{if($important, ' !important', '')};
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-6))', 'var(--chakra-space-6)');
+    #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
   }
 }
 
 @mixin navContainerPadding ($property) {
-  #{$property}: var(--chakra-space-8);
+  #{$property}: var(--chakra-space-3);
 
   @media screen and (min-width: $breakpoint-md) {
     #{$property}: var(--chakra-space-4);
@@ -335,19 +340,23 @@
   }
 }
 
-@mixin pageDataPadding ($property) {
-  #{$property}: var(--chakra-space-4);
+@mixin pageDataPadding($property, $important: false, $invert: false) {
+  $base-value: if($invert, 'calc(0px - var(--chakra-space-3))', 'var(--chakra-space-3)');
+  #{$property}: #{$base-value}#{if($important, ' !important', '')};
 
   @media screen and (min-width: $breakpoint-md) {
-    #{$property}: var(--chakra-space-4);
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-4))', 'var(--chakra-space-4)');
+    #{$property}: #{$base-value}#{if($important, ' !important', '')};
   }
 
   @media screen and (min-width: $breakpoint-lg) {
-    #{$property}: var(--chakra-space-6);
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-6))', 'var(--chakra-space-6)');
+    #{$property}: #{$base-value}#{if($important, ' !important', '')};
   }
 
   @media screen and (min-width: $breakpoint-xl) {
-    #{$property}: var(--chakra-space-8);
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-8))', 'var(--chakra-space-8)');
+    #{$property}: #{$base-value}#{if($important, ' !important', '')};
   }
 }
 
