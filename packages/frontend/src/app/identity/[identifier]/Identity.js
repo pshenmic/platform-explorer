@@ -42,6 +42,17 @@ const tabs = [
 
 const defaultTabName = 'transactions'
 
+const PublicKeys = ({ className, show, publicKeys = [] }) => (
+  <SmoothSize className={className || ''}>
+    {publicKeys.length > 0 &&
+      <PublicKeysList
+        className={`IdentityTotalCard__PublicKeysList ${show ? 'IdentityTotalCard__PublicKeysList--Show' : ''}`}
+        publicKeys={publicKeys}
+      />
+    }
+  </SmoothSize>
+)
+
 function Identity ({ identifier }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -229,9 +240,9 @@ function Identity ({ identifier }) {
                 error={identity.error || (!identity.loading && identity.data?.aliases === undefined)}
               />
               <InfoLine
-                className={'IdentityTotalCard__InfoLine'}
+                className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--PublicKeys'}
                 title={'Public Keys'}
-                value={(
+                value={(<>
                   <Button
                     className={'IdentityTotalCard__PublicKeysShowButton'}
                     size={'sm'}
@@ -241,9 +252,14 @@ function Identity ({ identifier }) {
                     {identity.data?.publicKeys?.length !== undefined ? identity.data?.publicKeys?.length : ''} public keys
                     <ChevronIcon ml={'4px'} h={'10px'} w={'10px'} transform={`rotate(${showPublicKeys ? '-90deg' : '90deg'})`}/>
                   </Button>
-                )}
+                </>)}
                 loading={identity.loading}
                 error={identity.error || (!identity.loading && identity.data?.publicKeys === undefined)}
+              />
+              <PublicKeys
+                publicKeys={identity.data?.publicKeys}
+                show={showPublicKeys}
+                className={'IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Mobile'}
               />
             </div>
           </div>
@@ -252,14 +268,11 @@ function Identity ({ identifier }) {
             <IdentityDigestCard identity={identity} rate={rate} className={'IdentityTotalCard__Digest'}/>
           </div>
         </div>
-        <SmoothSize className={'IdentityTotalCard__PublicKeysListContainer'}>
-          {identity.data?.publicKeys?.length > 0 &&
-            <PublicKeysList
-              className={`IdentityTotalCard__PublicKeysList ${showPublicKeys ? 'IdentityTotalCard__PublicKeysList--Show' : ''}`}
-              publicKeys={identity.data?.publicKeys}
-            />
-          }
-        </SmoothSize>
+        <PublicKeys
+          publicKeys={identity.data?.publicKeys}
+          show={showPublicKeys}
+          className={'IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Desktop'}
+        />
       </div>
 
         <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>

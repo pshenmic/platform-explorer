@@ -79,6 +79,12 @@
     }
   }
 
+  &__PublicKeysListContainer {
+    &--Mobile {
+      display: none !important;
+    }
+  }
+
   @media screen and (max-width: $breakpoint-lg) {
     &__InfoLine {
       &--Names {
@@ -122,6 +128,16 @@
 
     &__InfoLine {
       flex-wrap: wrap;
+    }
+
+    &__PublicKeysListContainer {
+      &--Mobile {
+        display: block !important;
+      }
+
+      &--Desktop {
+        display: none !important;
+      }
     }
   }
 
