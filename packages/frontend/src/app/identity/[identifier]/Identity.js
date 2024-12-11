@@ -31,6 +31,7 @@ import './Identity.scss'
 import './IdentityTotalCard.scss'
 import ImageGenerator from '../../../components/imageGenerator'
 import { HorisontalSeparator } from '../../../components/ui/separators'
+import { ChevronIcon } from '../../../components/ui/icons'
 
 const tabs = [
   'transactions',
@@ -177,6 +178,7 @@ function Identity ({ identifier }) {
               </div>
               <div className={'IdentityTotalCard__HeaderLines'}>
                 <InfoLine
+                  className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Identifier'}
                   title={'Identifier'}
                   loading={identity.loading}
                   error={identity.error || (!identity.loading && !identity.data?.identifier)}
@@ -191,6 +193,7 @@ function Identity ({ identifier }) {
                   )}
                 />
                 <InfoLine
+                  className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Balance'}
                   title={'Balance'}
                   value={<CreditsBlock credits={identity.data?.balance} rate={rate}/>}
                   loading={identity.loading}
@@ -226,7 +229,6 @@ function Identity ({ identifier }) {
                 loading={identity.loading}
                 error={identity.error || (!identity.loading && identity.data?.aliases === undefined)}
               />
-
               <InfoLine
                 className={'IdentityTotalCard__InfoLine'}
                 title={'Public Keys'}
@@ -238,13 +240,13 @@ function Identity ({ identifier }) {
                     onClick={() => setShowPublicKeys(prev => !prev)}
                   >
                     {identity.data?.publicKeys?.length !== undefined ? identity.data?.publicKeys?.length : ''} public keys
+                    <ChevronIcon ml={'4px'} h={'10px'} w={'10px'} transform={`rotate(${showPublicKeys ? '-90deg' : '90deg'})`}/>
                   </Button>
                 )}
                 loading={identity.loading}
                 error={identity.error || (!identity.loading && identity.data?.publicKeys === undefined)}
               />
             </div>
-
           </div>
 
           <div className={'IdentityTotalCard__Column'}>

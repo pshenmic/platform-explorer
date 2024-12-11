@@ -20,5 +20,9 @@
     width: max-content;
     font-weight: 500 !important;
     text-transform: capitalize !important;
+
+    svg {
+      transition: .2s;
+    }
   }
 }
