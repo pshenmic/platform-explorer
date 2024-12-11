@@ -53,6 +53,12 @@
   &__InfoLine {
     &--Names {
       align-items: baseline;
+      flex-wrap: wrap;
+
+      .InfoLine__Value {
+        margin-left: auto;
+        max-width: 100%;
+      }
     }
   }
 

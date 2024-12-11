@@ -14,11 +14,11 @@ function AliasesList ({ aliases = [], smallCount = 5 }) {
 
   return (
     <div className={'AliasesList'}>
-      <SmoothSize>
+      <SmoothSize className={'AliasesList__SmoothSize'}>
         <div className={'AliasesList__ItemsContainer'}>
           {filteredArray?.map((alias, i) => (
             <div className={'AliasesList__Item'} key={i}>
-              <Alias status={alias.status} key={i}>{alias.alias}</Alias>
+              <Alias status={alias.status} ellipsis={false} key={i}>{alias.alias}</Alias>
               <DateBlock timestamp={1233123333332} format={'deltaOnly'}/>
             </div>
           ))}
