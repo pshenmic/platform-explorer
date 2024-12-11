@@ -26,7 +26,7 @@ import {
 } from '@chakra-ui/react'
 // import BlocksChart from '../../validator/[hash]/BlocksChart'
 import { PublicKeysList } from '../../../components/publicKeys'
-import { InfoContainer, PageDataContainer, ValueContainer } from '../../../components/ui/containers'
+import { InfoContainer, PageDataContainer, ValueContainer, SmoothSize } from '../../../components/ui/containers'
 import './Identity.scss'
 import './IdentityTotalCard.scss'
 import ImageGenerator from '../../../components/imageGenerator'
@@ -43,19 +43,18 @@ const tabs = [
 const defaultTabName = 'transactions'
 
 function Identity ({ identifier }) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
   const [dataContracts, setDataContracts] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, loading: true, error: false })
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
+  const activeAlias = findActiveAlias(identity.data.aliases)
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   const [showPublicKeys, setShowPublicKeys] = useState(false)
-
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const activeAlias = findActiveAlias(identity.data.aliases)
 
   console.log('identity', identity)
 
@@ -253,10 +252,14 @@ function Identity ({ identifier }) {
             <IdentityDigestCard identity={identity} rate={rate} className={'IdentityTotalCard__Digest'}/>
           </div>
         </div>
-
-        {showPublicKeys && identity.data?.publicKeys?.length > 0 &&
-          <PublicKeysList className={'IdentityTotalCard__PublicKeysList'} publicKeys={identity.data?.publicKeys}/>
-        }
+        <SmoothSize>
+          {showPublicKeys && identity.data?.publicKeys?.length > 0 &&
+            <PublicKeysList
+              className={'IdentityTotalCard__PublicKeysList'}
+              publicKeys={identity.data?.publicKeys}
+            />
+          }
+        </SmoothSize>
       </div>
 
         <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
