@@ -3,8 +3,9 @@
 @import '../../styles/variables.scss';
 
 .PublicKeysList {
-  container-type: inline-size;
+  @include mixins.BrandScroll();
   overflow-x: scroll;
+  container-type: inline-size;
 
   &__ScrollZone {
     width: fit-content;
