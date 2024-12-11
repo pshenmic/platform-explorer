@@ -17,6 +17,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Alias, InfoLine, CreditsBlock, Identifier, DateBlock } from '../../../components/data'
 import IdentityDigestCard from './IdentityDigestCard'
 import AliasesList from './AliasesList'
+import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 // import { RateTooltip } from '../../../components/ui/Tooltips'
 import {
   // Box,
@@ -57,6 +58,7 @@ function Identity ({ identifier }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const { setBreadcrumbs } = useBreadcrumbs()
   const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
   const [dataContracts, setDataContracts] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, loading: true, error: false })
@@ -66,6 +68,14 @@ function Identity ({ identifier }) {
   const activeAlias = findActiveAlias(identity.data.aliases)
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   const [showPublicKeys, setShowPublicKeys] = useState(false)
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Home', path: '/' },
+      { label: 'Identities', path: '/identities' },
+      { label: identifier, avatar: true }
+    ])
+  }, [setBreadcrumbs, identifier])
 
   console.log('identity', identity)
 
@@ -162,7 +172,7 @@ function Identity ({ identifier }) {
   return (
     <PageDataContainer
       className={'IdentityPage'}
-      backLink={'/validators'}
+      backLink={'/identities'}
       title={'Identity info'}
     >
       <div className={`InfoBlock InfoBlock--Gradient IdentityPage__CommonInfo IdentityTotalCard ${identity.loading ? 'IdentityTotalCard--Loading' : ''} `}>
