@@ -13,7 +13,7 @@ const SmoothSize = ({ className, children, duration = 0.3, smoothHeight = true, 
 
   return (
     <div
-      className={`SmoothSize ${className}`}
+      className={`SmoothSize ${className || ''}`}
       style={{
         position: 'relative',
         overflow: 'hidden',

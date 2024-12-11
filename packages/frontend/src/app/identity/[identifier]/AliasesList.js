@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Alias, DateBlock } from '../../../components/data'
 import { Button } from '@chakra-ui/react'
 import { ChevronIcon } from '../../../components/ui/icons'
+import { SmoothSize } from '../../../components/ui/containers'
 import './AliasesList.scss'
 
 function AliasesList ({ aliases = [], smallCount = 5 }) {
@@ -13,14 +14,16 @@ function AliasesList ({ aliases = [], smallCount = 5 }) {
 
   return (
     <div className={'AliasesList'}>
-      <div className={'AliasesList__ItemsContainer'}>
-        {filteredArray?.map((alias, i) => (
-          <div className={'AliasesList__Item'} key={i}>
-            <Alias status={alias.status} key={i}>{alias.alias}</Alias>
-            <DateBlock timestamp={1233123333332} format={'deltaOnly'}/>
-          </div>
-        ))}
-      </div>
+      <SmoothSize>
+        <div className={'AliasesList__ItemsContainer'}>
+          {filteredArray?.map((alias, i) => (
+            <div className={'AliasesList__Item'} key={i}>
+              <Alias status={alias.status} key={i}>{alias.alias}</Alias>
+              <DateBlock timestamp={1233123333332} format={'deltaOnly'}/>
+            </div>
+          ))}
+        </div>
+      </SmoothSize>
 
       {aliases.length > smallCount &&
         <Button
