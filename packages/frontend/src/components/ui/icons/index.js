@@ -59,12 +59,10 @@ const SuccessIcon = (props) => (
 )
 
 const ErrorIcon = (props) => (
-  <Icon viewBox='0 0 18 18' {...props}>
-    <svg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
-      <rect width='18' height='18' rx='4' fill='#F45858' fillOpacity='0.2'/>
-      <path d='M9.06951 10L9.0695 4.86092' stroke='#F45858' strokeWidth='2' strokeLinecap='round'/>
-      <path d='M9.06951 13L9.06951 13.0102' stroke='#F45858' strokeWidth='2' strokeLinecap='round'/>
-    </svg>
+  <Icon viewBox='0 0 18 18' width='18' height='18' fill='none' {...props}>
+    <rect width='18' height='18' rx='4' fill='#F45858' fillOpacity='0.2'/>
+    <path d='M9.06951 10L9.0695 4.86092' stroke='#F45858' strokeWidth='2' strokeLinecap='round'/>
+    <path d='M9.06951 13L9.06951 13.0102' stroke='#F45858' strokeWidth='2' strokeLinecap='round'/>
   </Icon>
 )
 
@@ -92,7 +90,7 @@ const BroadcastedIcon = (props) => (
   <Icon viewBox='0 0 18 18' {...props}>
     <svg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <rect width='18' height='18' rx='4' fill='#008DE4' fillOpacity='0.2'/>
-      <path d='M4.86093 8.74967L12.5 8.74993M12.5 8.74993L9.5 5.74993M12.5 8.74993L9.5 11.7499' stroke='#2CBBFF' strokeWidth='2' strokeLinecap='round' stroke-linejoin='round'/>
+      <path d='M4.86093 8.74967L12.5 8.74993M12.5 8.74993L9.5 5.74993M12.5 8.74993L9.5 11.7499' stroke='#2CBBFF' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'/>
     </svg>
   </Icon>
 )
