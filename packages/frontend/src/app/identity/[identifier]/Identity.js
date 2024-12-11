@@ -252,10 +252,10 @@ function Identity ({ identifier }) {
             <IdentityDigestCard identity={identity} rate={rate} className={'IdentityTotalCard__Digest'}/>
           </div>
         </div>
-        <SmoothSize>
-          {showPublicKeys && identity.data?.publicKeys?.length > 0 &&
+        <SmoothSize className={'IdentityTotalCard__PublicKeysListContainer'}>
+          {identity.data?.publicKeys?.length > 0 &&
             <PublicKeysList
-              className={'IdentityTotalCard__PublicKeysList'}
+              className={`IdentityTotalCard__PublicKeysList ${showPublicKeys ? 'IdentityTotalCard__PublicKeysList--Show' : ''}`}
               publicKeys={identity.data?.publicKeys}
             />
           }

@@ -15,6 +15,7 @@ const SmoothSize = ({ className, children, duration = 0.3, smoothHeight = true, 
     <div
       className={`SmoothSize ${className}`}
       style={{
+        position: 'relative',
         overflow: 'hidden',
         transition: `width ${duration}s ${easing}, height ${duration}s ${easing}`,
         width: smoothWidth ? `${dimensions.width}px` : 'auto',

@@ -67,7 +67,16 @@
   }
 
   &__PublicKeysList {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    opacity: 0;
+    transition: opacity .3s;
 
+    &--Show {
+      position: relative;
+      opacity: 1;
+    }
   }
 
   @media screen and (max-width: $breakpoint-lg) {
