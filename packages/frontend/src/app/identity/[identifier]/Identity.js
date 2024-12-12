@@ -18,9 +18,9 @@ import './Identity.scss'
 
 const tabs = [
   'transactions',
-  'transfers',
+  'datacontracts',
   'documents',
-  'datacontracts'
+  'transfers'
 ]
 
 const defaultTabName = 'transactions'
@@ -36,7 +36,10 @@ function Identity ({ identifier }) {
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1
+    ? tabs.indexOf(defaultTabName.toLowerCase())
+    : tabs.indexOf(defaultTabName)
+  )
 
   useEffect(() => {
     setBreadcrumbs([
@@ -45,10 +48,6 @@ function Identity ({ identifier }) {
       { label: identifier, avatar: true }
     ])
   }, [setBreadcrumbs, identifier])
-
-  console.log('identity', identity)
-  console.log('documents', documents)
-  console.log('dataContracts', dataContracts)
 
   // mock //
 
@@ -123,6 +122,9 @@ function Identity ({ identifier }) {
   useEffect(() => {
     const tab = searchParams.get('tab')
 
+    console.log('tab from url', tab)
+    console.log('tab && tabs.indexOf(tab.toLowerCase()) !== -1', tab && tabs.indexOf(tab.toLowerCase()) !== -1)
+    console.log('tabs.indexOf(tab.toLowerCase())', tabs.indexOf(tab.toLowerCase()))
     if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
       setActiveTab(tabs.indexOf(tab.toLowerCase()))
       return
@@ -142,7 +144,7 @@ function Identity ({ identifier }) {
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [activeTab, router, pathname, searchParams])
+  }, [activeTab])
 
   return (
     <PageDataContainer
@@ -153,7 +155,7 @@ function Identity ({ identifier }) {
       <IdentityTotalCard identity={identity} rate={rate}/>
 
       <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
-        <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
+        <Tabs onChange={setActiveTab} index={activeTab}>
           <TabList>
             <Tab>Transactions {identity.data?.totalTxs !== undefined
               ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
