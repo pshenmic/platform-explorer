@@ -59,9 +59,6 @@ function Identity ({ identifier }) {
   if (!identity.error && !identity.data?.averageGasSpent) identity.data.averageGasSpent = 500000
 
   if (!identity.data?.publicKeys && identity.data !== null) {
-    console.log('identity.data', identity.data)
-    console.log('identity.data.publicKeys', identity.data.publicKeys)
-
     identity.data.publicKeys = [
       {
         contractBounds: {
@@ -95,8 +92,6 @@ function Identity ({ identifier }) {
       }
     ]
   }
-
-  // identity.data.publicKeys = []
 
   const fetchData = () => {
     Promise.all([
@@ -148,8 +143,6 @@ function Identity ({ identifier }) {
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab, router, pathname, searchParams])
-
-  console.log('identity', identity)
 
   return (
     <PageDataContainer
