@@ -2,30 +2,19 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../../util/Api'
-// import Link from 'next/link'
 import TransactionsList from '../../../components/transactions/TransactionsList'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import DataContractsList from '../../../components/dataContracts/DataContractsList'
 import TransfersList from '../../../components/transfers/TransfersList'
 import { fetchHandlerSuccess, fetchHandlerError, findActiveAlias } from '../../../util'
-// import { LoadingLine, LoadingList } from '../../../components/loading'
 import { LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-// import ImageGenerator from '../../../components/imageGenerator'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-// import { Credits, Alias, InfoLine, Identifier, DateBlock, CreditsBlock } from '../../../components/data'
 import { Alias, InfoLine, CreditsBlock, Identifier, DateBlock } from '../../../components/data'
 import IdentityDigestCard from './IdentityDigestCard'
 import AliasesList from './AliasesList'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
-// import { RateTooltip } from '../../../components/ui/Tooltips'
-import {
-  // Box,
-  // Container,
-  // Flex,
-  Tabs, TabList, TabPanels, Tab, TabPanel, Button
-} from '@chakra-ui/react'
-// import BlocksChart from '../../validator/[hash]/BlocksChart'
+import { Tabs, TabList, TabPanels, Tab, TabPanel, Button } from '@chakra-ui/react'
 import { PublicKeysList } from '../../../components/publicKeys'
 import { InfoContainer, PageDataContainer, ValueContainer, SmoothSize } from '../../../components/ui/containers'
 import ImageGenerator from '../../../components/imageGenerator'
