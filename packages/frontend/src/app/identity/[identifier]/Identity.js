@@ -122,9 +122,6 @@ function Identity ({ identifier }) {
   useEffect(() => {
     const tab = searchParams.get('tab')
 
-    console.log('tab from url', tab)
-    console.log('tab && tabs.indexOf(tab.toLowerCase()) !== -1', tab && tabs.indexOf(tab.toLowerCase()) !== -1)
-    console.log('tabs.indexOf(tab.toLowerCase())', tabs.indexOf(tab.toLowerCase()))
     if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
       setActiveTab(tabs.indexOf(tab.toLowerCase()))
       return
