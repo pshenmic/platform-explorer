@@ -10,10 +10,6 @@ function IdentityDigestCard ({ identity, rate, className }) {
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
 
-  if (!identity.data?.lastWithdrawal) identity.data.lastWithdrawal = '6AC5EDA942093A9275A2837CFDF2C18CAAD9D922BA211BD5EA5E6333FE904CE7'
-  if (!identity.data?.lastWithdrawalTime) identity.data.lastWithdrawalTime = '2024-11-21T10:26:04.053Z'
-  if (!identity.data?.fundingAddress) identity.data.fundingAddress = '=yS9GnnRdzX9W9G9kxihdgB5VovKWbPGjS1'
-
   return (
     <div className={`IdentityDigestCard ${className || ''} ${identity.loading ? 'IdentityDigestCard--Loading' : ''}`}>
       <div className={'IdentityDigestCard__Transfers'}>
@@ -37,19 +33,19 @@ function IdentityDigestCard ({ identity, rate, className }) {
           title={'Funding Address'}
           value={(
             <a {...(l1explorerBaseUrl && {
-              href: `${l1explorerBaseUrl}/address/${identity.data.fundingAddress}`,
+              href: `${l1explorerBaseUrl}/address/${identity.data?.fundingAddress}`,
               target: '_blank',
               rel: 'noopener noreferrer'
             })}>
               <ValueContainer className={'IdentityDigestCard__ValueContainer'} clickable={!!l1explorerBaseUrl} external={!!l1explorerBaseUrl}>
                 <Identifier styles={['highlight-both']} ellipsis={false}>
-                  {identity.data.fundingAddress || null}
+                  {identity.data?.fundingAddress || null}
                 </Identifier>
               </ValueContainer>
             </a>
           )}
           loading={identity.loading}
-          // error={}
+          error={identity.error || (!identity.loading && !identity.data?.fundingAddress)}
         />
         <InfoLine
           className={'IdentityDigestCard__InfoLine'}
@@ -67,21 +63,21 @@ function IdentityDigestCard ({ identity, rate, className }) {
             </Link>
           )}
           loading={identity.loading}
-          error={identity.error}
+          error={identity.error || (!identity.loading && !identity.data?.lastWithdrawal)}
         />
         <InfoLine
           className={'IdentityDigestCard__InfoLine'}
           title={'Total Gas Spent'}
-          value={<CreditsBlock credits={100} rate={rate}/>}
+          value={<CreditsBlock credits={identity.data?.totalGasSpent} rate={rate}/>}
           loading={identity.loading}
-          // error={}
+          error={identity.error || (!identity.loading && identity.data?.totalGasSpent === undefined)}
         />
         <InfoLine
           className={'IdentityDigestCard__InfoLine'}
           title={'Average Gas Spent'}
-          value={<CreditsBlock credits={100} rate={rate}/>}
+          value={<CreditsBlock credits={identity.data?.averageGasSpent} rate={rate}/>}
           loading={identity.loading}
-          // error={}
+          error={identity.error || (!identity.loading && identity.data?.averageGasSpent === undefined)}
         />
       </div>
     </div>

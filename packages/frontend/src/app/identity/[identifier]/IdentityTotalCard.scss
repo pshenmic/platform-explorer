@@ -133,8 +133,7 @@
   }
 
 
-  @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
-  screen and (max-width: $breakpoint-sm) {
+  @media screen and (max-width: $breakpoint-lg) {
     &__InfoLine {
       &--Identifier, &--Balance  {
         flex-direction: column;
