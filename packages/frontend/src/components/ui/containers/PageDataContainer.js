@@ -16,7 +16,7 @@ function PageDataContainer ({ className, title, backLink, children }) {
         <div className={'PageDataContainer__Header'}>
           {backLink &&
             <Link href={backLink} className={'PageDataContainer__BackLink'}>
-              <ChevronIcon2 w={4} h={4} color='brand.normal'/>
+              <ChevronIcon2 w={'8px'} h={'8px'} transform={'rotate(180deg)'} color='brand.normal'/>
             </Link>}
           {title && <div className={'PageDataContainer__Title'}>{title}</div>}
         </div>
