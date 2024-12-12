@@ -6,15 +6,15 @@ import TransactionsList from '../../../components/transactions/TransactionsList'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import DataContractsList from '../../../components/dataContracts/DataContractsList'
 import TransfersList from '../../../components/transfers/TransfersList'
-import { fetchHandlerSuccess, fetchHandlerError, findActiveAlias } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import './Identity.scss'
 import { IdentityTotalCard } from '../../../components/identities'
+import './Identity.scss'
 
 const tabs = [
   'transactions',
