@@ -19,9 +19,7 @@ export default function ValueCard ({ link, loading, colorScheme = 'default', siz
   }
 
   let extraClass = ''
-
   if (link) extraClass += 'ValueCard--Clickable'
-
   extraClass += ' ' + colorClasses?.[colorScheme] || colorClasses.default
   extraClass += ' ' + sizeClasses?.[size] || sizeClasses.default
 
