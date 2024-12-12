@@ -1,9 +1,9 @@
 import './IdentityDigestCard.scss'
-import { CreditsBlock, DateBlock, Identifier, InfoLine } from '../../../components/data'
+import { CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import Link from 'next/link'
-import { ValueContainer } from '../../../components/ui/containers'
-import { LoadingLine } from '../../../components/loading'
-import { networks } from '../../../constants/networks'
+import { ValueContainer } from '../ui/containers'
+import { LoadingLine } from '../loading'
+import { networks } from '../../constants/networks'
 
 function IdentityDigestCard ({ identity, rate, className }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL

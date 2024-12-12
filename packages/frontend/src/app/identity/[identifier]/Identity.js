@@ -10,18 +10,11 @@ import { fetchHandlerSuccess, fetchHandlerError, findActiveAlias } from '../../.
 import { LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Alias, InfoLine, CreditsBlock, Identifier, DateBlock } from '../../../components/data'
-import IdentityDigestCard from './IdentityDigestCard'
-import AliasesList from './AliasesList'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
-import { Tabs, TabList, TabPanels, Tab, TabPanel, Button } from '@chakra-ui/react'
-import { PublicKeysList } from '../../../components/publicKeys'
-import { InfoContainer, PageDataContainer, ValueContainer, SmoothSize } from '../../../components/ui/containers'
-import ImageGenerator from '../../../components/imageGenerator'
-import { HorisontalSeparator } from '../../../components/ui/separators'
-import { ChevronIcon } from '../../../components/ui/icons'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import './Identity.scss'
-import './IdentityTotalCard.scss'
+import { IdentityTotalCard } from '../../../components/identities'
 
 const tabs = [
   'transactions',
@@ -31,17 +24,6 @@ const tabs = [
 ]
 
 const defaultTabName = 'transactions'
-
-const PublicKeys = ({ className, show, publicKeys = [] }) => (
-  <SmoothSize className={className || ''}>
-    {publicKeys.length > 0 &&
-      <PublicKeysList
-        className={`IdentityTotalCard__PublicKeysList ${show ? 'IdentityTotalCard__PublicKeysList--Show' : ''}`}
-        publicKeys={publicKeys}
-      />
-    }
-  </SmoothSize>
-)
 
 function Identity ({ identifier }) {
   const router = useRouter()
@@ -54,9 +36,7 @@ function Identity ({ identifier }) {
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const activeAlias = findActiveAlias(identity.data?.aliases)
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  const [showPublicKeys, setShowPublicKeys] = useState(false)
 
   useEffect(() => {
     setBreadcrumbs([
@@ -170,7 +150,6 @@ function Identity ({ identifier }) {
   }, [activeTab, router, pathname, searchParams])
 
   console.log('identity', identity)
-  console.log('showPublicKeys', showPublicKeys)
 
   return (
     <PageDataContainer
@@ -178,186 +157,70 @@ function Identity ({ identifier }) {
       backLink={'/identities'}
       title={'Identity info'}
     >
-      <div className={`InfoBlock InfoBlock--Gradient IdentityPage__CommonInfo IdentityTotalCard ${identity.loading ? 'IdentityTotalCard--Loading' : ''} `}>
-        {activeAlias &&
-          <div className={'IdentityTotalCard__Title'}>
-            <Alias>{activeAlias.alias}</Alias>
-          </div>
-        }
+      <IdentityTotalCard identity={identity} rate={rate}/>
 
-        <div className={'IdentityTotalCard__ContentContainer'}>
-          <div className={'IdentityTotalCard__Column'}>
-            <div className={'IdentityTotalCard__Header'}>
-              <div className={'IdentityTotalCard__Avatar'}>
-                {!identity.error
-                  ? <ImageGenerator
-                    username={identity.data?.identifier}
-                    lightness={50}
-                    saturation={50}
-                    width={88}
-                    height={88}/>
-                  : 'n/a'
-                }
-              </div>
-              <div className={'IdentityTotalCard__HeaderLines'}>
-                <InfoLine
-                  className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Identifier'}
-                  title={'Identifier'}
-                  loading={identity.loading}
-                  error={identity.error || (!identity.loading && !identity.data?.identifier)}
-                  value={(
-                    <Identifier
-                      copyButton={true}
-                      styles={['highlight-both']}
-                      ellipsis={false}
-                    >
-                      {identity.data?.identifier}
-                    </Identifier>
-                  )}
-                />
-                <InfoLine
-                  className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Balance'}
-                  title={'Balance'}
-                  value={<CreditsBlock credits={identity.data?.balance} rate={rate}/>}
-                  loading={identity.loading}
-                  error={identity.error || !identity.data?.balance}
-                />
-              </div>
-            </div>
+      <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
+        <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
+          <TabList>
+            <Tab>Transactions {identity.data?.totalTxs !== undefined
+              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {identity.data?.totalTxs}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Data contracts {identity.data?.totalDataContracts !== undefined
+              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {identity.data?.totalDataContracts}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Documents {identity.data?.totalDocuments !== undefined
+              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDocuments === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {identity.data?.totalDocuments}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Credit Transfers {identity.data?.totalTransfers !== undefined
+              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{identity.data?.totalTransfers}</span>
+              : ''}
+            </Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel px={0} h={'100%'}>
+              {!transactions.error
+                ? !transactions.loading
+                    ? <TransactionsList transactions={transactions.data?.resultSet}/>
+                    : <LoadingList itemsCount={9}/>
+                : <ErrorMessageBlock/>}
+            </TabPanel>
 
-            <HorisontalSeparator className={'IdentityTotalCard__Separator'}/>
+            <TabPanel px={0} h={'100%'}>
+              {!dataContracts.error
+                ? !dataContracts.loading
+                    ? <DataContractsList dataContracts={dataContracts.data.resultSet}/>
+                    : <LoadingList itemsCount={9}/>
+                : <ErrorMessageBlock/>}
+            </TabPanel>
 
-            <div className={'IdentityTotalCard__CommonLines'}>
-              <InfoLine
-                className={'IdentityTotalCard__InfoLine'}
-                title={'Revision'}
-                value={identity.data?.revision}
-                loading={identity.loading}
-                error={identity.error || (!identity.loading && identity.data?.revision === undefined)}
-              />
-              <InfoLine
-                className={'IdentityTotalCard__InfoLine'}
-                title={'Creation date'}
-                value={<DateBlock timestamp={identity.data?.timestamp}/>}
-                loading={identity.loading}
-                error={identity.error || (!identity.loading && !identity.data?.timestamp)}
-              />
-              <InfoLine
-                className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Names'}
-                title={'Identities names'}
-                value={identity.data?.aliases?.length
-                  ? <AliasesList aliases={identity.data?.aliases}/>
-                  : <ValueContainer className={'IdentityTotalCard__ZeroListBadge'}>none</ValueContainer>
-                }
-                loading={identity.loading}
-                error={identity.error || (!identity.loading && identity.data?.aliases === undefined)}
-              />
-              <InfoLine
-                className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--PublicKeys'}
-                title={'Public Keys'}
-                value={(<>
-                  <Button
-                    className={'IdentityTotalCard__PublicKeysShowButton'}
-                    size={'sm'}
-                    variant={showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'gray' : 'blue'}
-                    onClick={() => setShowPublicKeys(prev => !prev)}
-                  >
-                    {identity.data?.publicKeys?.length !== undefined ? identity.data?.publicKeys?.length : ''} public keys
-                    <ChevronIcon ml={'4px'} h={'10px'} w={'10px'} transform={`rotate(${showPublicKeys ? '-90deg' : '90deg'})`}/>
-                  </Button>
-                </>)}
-                loading={identity.loading}
-                error={identity.error || (!identity.loading && identity.data?.publicKeys === undefined)}
-              />
-              <PublicKeys
-                publicKeys={identity.data?.publicKeys}
-                show={showPublicKeys}
-                className={`IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Mobile ${showPublicKeys
-                  ? ' IdentityTotalCard__PublicKeysListContainer--Opened'
-                  : ' IdentityTotalCard__PublicKeysListContainer--Hidden'}`}
-              />
-            </div>
-          </div>
+            <TabPanel px={0} h={'100%'}>
+              {!documents.error
+                ? !documents.loading
+                    ? <DocumentsList documents={documents.data.resultSet} size={'m'}/>
+                    : <LoadingList itemsCount={9}/>
+                : <ErrorMessageBlock/>
+              }
+            </TabPanel>
 
-          <div className={'IdentityTotalCard__Column'}>
-            <IdentityDigestCard
-              className={'IdentityTotalCard__Digest'}
-              identity={identity}
-              rate={rate}
-            />
-          </div>
-        </div>
-        <PublicKeys
-          publicKeys={identity.data?.publicKeys}
-          show={showPublicKeys}
-          className={`IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Desktop ${showPublicKeys
-            ? ' IdentityTotalCard__PublicKeysListContainer--Opened'
-            : ' IdentityTotalCard__PublicKeysListContainer--Hidden'}`}
-        />
-      </div>
-
-        <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
-          <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
-            <TabList>
-              <Tab>Transactions {identity.data?.totalTxs !== undefined
-                ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                    {identity.data?.totalTxs}
-                  </span>
-                : ''}
-              </Tab>
-              <Tab>Data contracts {identity.data?.totalDataContracts !== undefined
-                ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                    {identity.data?.totalDataContracts}
-                  </span>
-                : ''}
-              </Tab>
-              <Tab>Documents {identity.data?.totalDocuments !== undefined
-                ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDocuments === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                    {identity.data?.totalDocuments}
-                  </span>
-                : ''}
-              </Tab>
-              <Tab>Credit Transfers {identity.data?.totalTransfers !== undefined
-                ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{identity.data?.totalTransfers}</span>
-                : ''}
-              </Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel px={0} h={'100%'}>
-                {!transactions.error
-                  ? !transactions.loading
-                      ? <TransactionsList transactions={transactions.data?.resultSet}/>
-                      : <LoadingList itemsCount={9}/>
-                  : <ErrorMessageBlock/>}
-              </TabPanel>
-
-              <TabPanel px={0} h={'100%'}>
-                {!dataContracts.error
-                  ? !dataContracts.loading
-                      ? <DataContractsList dataContracts={dataContracts.data.resultSet}/>
-                      : <LoadingList itemsCount={9}/>
-                  : <ErrorMessageBlock/>}
-              </TabPanel>
-
-              <TabPanel px={0} h={'100%'}>
-                {!documents.error
-                  ? !documents.loading
-                      ? <DocumentsList documents={documents.data.resultSet} size={'m'}/>
-                      : <LoadingList itemsCount={9}/>
-                  : <ErrorMessageBlock/>
-                }
-              </TabPanel>
-
-              <TabPanel px={0} h={'100%'}>
-                {!transfers.error
-                  ? !transfers.loading
-                      ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.identifier}/>
-                      : <LoadingList itemsCount={9}/>
-                  : <ErrorMessageBlock/>}
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </InfoContainer>
+            <TabPanel px={0} h={'100%'}>
+              {!transfers.error
+                ? !transfers.loading
+                    ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.identifier}/>
+                    : <LoadingList itemsCount={9}/>
+                : <ErrorMessageBlock/>}
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </InfoContainer>
     </PageDataContainer>
   )
 }

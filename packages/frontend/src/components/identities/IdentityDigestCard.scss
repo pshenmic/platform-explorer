@@ -1,5 +1,5 @@
-@use '../../../styles/mixins.scss';
-@import '../../../styles/variables.scss';
+@use '../../styles/mixins';
+@import '../../styles/variables';
 
 .IdentityDigestCard {
   @include mixins.InfoContainerPadding(padding, 0px, false);
