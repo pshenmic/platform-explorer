@@ -48,25 +48,6 @@ const badgeColors = {
   }
 }
 
-const badgeBackgroundColors = {
-  red: '#4E3234',
-  green: '#2B4629',
-  gray: 'gray.600',
-  blue: 'rgba(0, 141, 228, 0.2)',
-  yellow: 'rgba(244, 228, 88, 0.2)',
-  orange: 'rgba(244, 154, 88, 0.2)',
-  emerald: 'rgba(88, 244, 188, 0.2)'
-}
-const badgeTextColor = {
-  red: '#F45858',
-  green: '#81F458',
-  gray: 'gray.50',
-  blue: 'rgb(0, 141, 228)',
-  yellow: '#F4E458',
-  orange: 'rgb(244, 154, 88)',
-  emerald: 'rgb(88, 244, 188)'
-}
-
 export const theme = extendTheme({
   config: {
     useSystemColorMode: false,
@@ -311,24 +292,6 @@ export const theme = extendTheme({
     Badge: {
       baseStyle: props => {
         const { colorScheme } = props
-        // const backgroundColors = {
-        //   red: '#4E3234',
-        //   green: '#2B4629',
-        //   gray: 'gray.600',
-        //   blue: 'rgba(0, 141, 228, 0.2)',
-        //   yellow: 'rgba(244, 228, 88, 0.2)',
-        //   orange: 'rgba(244, 154, 88, 0.2)',
-        //   emerald: 'rgba(88, 244, 188, 0.2)'
-        // }
-        // const textColor = {
-        //   red: '#F45858',
-        //   green: '#81F458',
-        //   gray: 'gray.50',
-        //   blue: 'rgb(0, 141, 228)',
-        //   yellow: '#F4E458',
-        //   orange: 'rgb(244, 154, 88)',
-        //   emerald: 'rgb(88, 244, 188)'
-        // }
 
         return {
           borderWidth: '0px',
@@ -340,8 +303,8 @@ export const theme = extendTheme({
           display: 'inline-flex',
           alignItems: 'center',
           lineHeight: '20px',
-          bg: badgeBackgroundColors[colorScheme] || 'gray.500',
-          color: badgeTextColor[colorScheme] || 'white'
+          bg: badgeColors[colorScheme].bg || 'gray.500',
+          color: badgeColors[colorScheme].text || 'white'
         }
       }
     },
