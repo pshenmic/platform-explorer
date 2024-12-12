@@ -1,9 +1,8 @@
 'use client'
 
-import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
+import { Alias, AliasesList, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
-import AliasesList from '../../app/identity/[identifier]/AliasesList'
 import { SmoothSize, ValueContainer } from '../ui/containers'
 import { Button } from '@chakra-ui/react'
 import { ChevronIcon } from '../ui/icons'

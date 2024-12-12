@@ -1,8 +1,10 @@
+'use client'
+
 import { useState } from 'react'
-import { Alias, DateBlock } from '../../../components/data'
+import { Alias, DateBlock } from './index'
 import { Button } from '@chakra-ui/react'
-import { ChevronIcon } from '../../../components/ui/icons'
-import { SmoothSize } from '../../../components/ui/containers'
+import { ChevronIcon } from '../ui/icons'
+import { SmoothSize } from '../ui/containers'
 import './AliasesList.scss'
 
 function AliasesList ({ aliases = [], smallCount = 5 }) {
