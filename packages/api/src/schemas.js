@@ -6,6 +6,23 @@ const schemaTypes = [
     maxLength: 64
   },
   {
+    $id: 'contestedResource',
+    type: 'object',
+    properties: {
+      count: {
+        type: ['integer', 'null'],
+        minimum: 1,
+        maximum: 100
+      },
+      startResource: {
+        type: ['string', 'null']
+      },
+      ascending: {
+        type: ['boolean', 'null']
+      }
+    }
+  },
+  {
     $id: 'paginationOptions',
     type: 'object',
     properties: {

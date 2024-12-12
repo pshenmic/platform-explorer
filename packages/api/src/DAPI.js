@@ -79,6 +79,43 @@ class DAPI {
     return contestedResourceContenders
   }
 
+  /**
+   * Fetch contested resources
+   * @typedef {getContestedResources}
+   * @param {string} contractId - base64 contractId
+   * @param {string} documentTypeName
+   * @param {string} indexName
+   * @param {Array} startIndexValues - array with values buffer like \x12\x04dash ...
+   * @param {Array} endIndexValues - array with values buffer like \x12\x04dash ...
+   * @param {Object} startAtValueInfo - must include Buffer startValue and boolean startValueIncluded
+   * @param {boolean} orderAscending
+   * @param {number} count
+   * @returns {Promise<contestedResources>}
+   */
+  async getContestedResources (
+    contractId,
+    documentTypeName,
+    indexName,
+    startIndexValues,
+    endIndexValues,
+    startAtValueInfo,
+    orderAscending,
+    count
+  ) {
+    const { contestedResources } = await this.dapi.platform.getContestedResources(
+      Identifier.from(contractId),
+      documentTypeName,
+      indexName,
+      startIndexValues,
+      endIndexValues,
+      startAtValueInfo,
+      count,
+      orderAscending
+    )
+
+    return contestedResources
+  }
+
   async getIdentityKeys (identifier, keysIds, limit) {
     const { identityKeys } = await this.dapi.platform.getIdentityKeys(Identifier.from(identifier), keysIds, limit)
 

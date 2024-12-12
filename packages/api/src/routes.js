@@ -135,6 +135,14 @@ module.exports = ({
       }
     },
     {
+      path: '/aliases/contested',
+      method: 'GET',
+      handler: documentsController.getContestedAliases,
+      schema: {
+        querystring: { $ref: 'contestedResource#' }
+      }
+    },
+    {
       path: '/document/:identifier',
       method: 'GET',
       handler: documentsController.getDocumentByIdentifier,
