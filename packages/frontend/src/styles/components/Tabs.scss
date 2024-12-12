@@ -27,4 +27,16 @@
       background-color: rgba(var(--chakra-colors-gray-250-rgb), .2);
     }
   }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__TabItemsCount {
+      padding: 4px 12px;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__TabItemsCount {
+      padding: 2px 8px;
+    }
+  }
 }
