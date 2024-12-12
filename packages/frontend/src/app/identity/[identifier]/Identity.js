@@ -141,7 +141,7 @@ function Identity ({ identifier }) {
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [activeTab])
+  }, [activeTab, router, pathname])
 
   return (
     <PageDataContainer
