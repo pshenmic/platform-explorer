@@ -44,6 +44,7 @@
     }
 
     .chakra-tabs__tablist {
+      @include mixins.BrandScroll;
       @include mixins.InfoContainerPadding(padding-left, -8px, true);
       @include mixins.InfoContainerPadding(padding-right, -8px, true);
       overflow-y: hidden;
