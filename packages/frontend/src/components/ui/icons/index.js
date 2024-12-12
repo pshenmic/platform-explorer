@@ -34,6 +34,12 @@ const ChevronIcon = (props) => (
   </Icon>
 )
 
+const ChevronIcon2 = (props) => (
+  <Icon width='7' height='10' viewBox='0 0 7 10' fill='none' {...props}>
+    <path d='M1.5 9L5.5 5L1.5 1' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'/>
+  </Icon>
+)
+
 const CircleIcon = (props) => (
   <Icon viewBox='0 0 8 8' {...props}>
     <circle fill='currentColor' cx='4' cy='4' r='4'/>
@@ -120,5 +126,6 @@ export {
   BroadcastedIcon,
   CloseIcon,
   ChevronIcon,
+  ChevronIcon2,
   BigClockIcon
 }

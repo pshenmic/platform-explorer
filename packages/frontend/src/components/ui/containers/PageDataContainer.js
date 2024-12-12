@@ -1,6 +1,6 @@
 import { Container } from '@chakra-ui/react'
 import Link from 'next/link'
-import { ChevronLeftIcon } from '@chakra-ui/icons'
+import { ChevronIcon2 } from '../icons'
 import './PageDataContainer.scss'
 
 function PageDataContainer ({ className, title, backLink, children }) {
@@ -16,7 +16,7 @@ function PageDataContainer ({ className, title, backLink, children }) {
         <div className={'PageDataContainer__Header'}>
           {backLink &&
             <Link href={backLink} className={'PageDataContainer__BackLink'}>
-              <ChevronLeftIcon w={4} h={4} color='brand.normal'/>
+              <ChevronIcon2 w={4} h={4} color='brand.normal'/>
             </Link>}
           {title && <div className={'PageDataContainer__Title'}>{title}</div>}
         </div>
