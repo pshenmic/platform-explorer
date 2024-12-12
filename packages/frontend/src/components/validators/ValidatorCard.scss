@@ -81,9 +81,9 @@
       .InfoLine {
         flex-wrap: wrap;
         justify-content: start;
+        gap: 5px;
 
         &__Title {
-          margin-bottom: 5px;
           width: 100%;
         }
 

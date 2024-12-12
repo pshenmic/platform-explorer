@@ -418,11 +418,7 @@
   }
 
   &__InfoLine {
-    margin-bottom: 14px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
+    gap: 14px;
   }
 }
 
