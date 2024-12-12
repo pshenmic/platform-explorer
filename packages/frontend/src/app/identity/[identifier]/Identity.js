@@ -78,6 +78,8 @@ function Identity ({ identifier }) {
   }, [setBreadcrumbs, identifier])
 
   console.log('identity', identity)
+  console.log('documents', documents)
+  console.log('dataContracts', dataContracts)
 
   if (!identity.data?.publicKeys) {
     identity.data.publicKeys = [
@@ -288,10 +290,28 @@ function Identity ({ identifier }) {
         <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
           <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
             <TabList>
-              <Tab>Transactions {identity.data?.totalTxs !== undefined ? `(${identity.data.totalTxs})` : ''}</Tab>
-              <Tab>Data contracts {identity.data?.totalDataContracts !== undefined ? `(${identity.data.totalDataContracts})` : ''}</Tab>
-              <Tab>Documents {identity.data?.totalDocuments !== undefined ? `(${identity.data.totalDocuments})` : ''}</Tab>
-              <Tab>Credit Transfers {identity.data?.totalTransfers !== undefined ? `(${identity.data.totalTransfers})` : ''}</Tab>
+              <Tab>Transactions {identity.data?.totalTxs !== undefined
+                ? <span className={`Tabs__TabItemsCount ${identity.data.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                    {identity.data.totalTxs}
+                  </span>
+                : ''}
+              </Tab>
+              <Tab>Data contracts {identity.data?.totalDataContracts !== undefined
+                ? <span className={`Tabs__TabItemsCount ${identity.data.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                    {identity.data.totalDataContracts}
+                  </span>
+                : ''}
+              </Tab>
+              <Tab>Documents {identity.data?.totalDocuments !== undefined
+                ? <span className={`Tabs__TabItemsCount ${identity.data.totalDocuments === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                    {identity.data.totalDocuments}
+                  </span>
+                : ''}
+              </Tab>
+              <Tab>Credit Transfers {identity.data?.totalTransfers !== undefined
+                ? <span className={`Tabs__TabItemsCount ${identity.data.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{identity.data.totalTransfers}</span>
+                : ''}
+              </Tab>
             </TabList>
             <TabPanels>
               <TabPanel px={0} h={'100%'}>

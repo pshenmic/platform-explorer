@@ -132,6 +132,7 @@ export const theme = extendTheme({
       100: '#e0e3e5',
       200: '#c6cacd',
       250: '#93aab2',
+      '250-rgb': '147, 170, 178',
       300: '#acb1b4',
       400: '#94999c',
       500: '#7b7f83',
