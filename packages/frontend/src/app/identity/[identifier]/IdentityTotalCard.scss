@@ -115,6 +115,10 @@
     }
   }
 
+  &__Separator {
+    margin: 20px 0;
+  }
+
   @media screen and (max-width: $breakpoint-lg) {
     &__InfoLine {
       &--Names {
@@ -152,6 +156,11 @@
 
   @media screen and (max-width: $breakpoint-md) {
     $gap: 12px;
+
+    &__Separator {
+      @include mixins.InfoContainerPadding(margin-top, 0px, true);
+      @include mixins.InfoContainerPadding(margin-bottom, 0px, true);
+    }
 
     &__ContentContainer {
       flex-direction: column;

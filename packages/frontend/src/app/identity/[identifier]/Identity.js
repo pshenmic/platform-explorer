@@ -28,11 +28,11 @@ import {
 // import BlocksChart from '../../validator/[hash]/BlocksChart'
 import { PublicKeysList } from '../../../components/publicKeys'
 import { InfoContainer, PageDataContainer, ValueContainer, SmoothSize } from '../../../components/ui/containers'
-import './Identity.scss'
-import './IdentityTotalCard.scss'
 import ImageGenerator from '../../../components/imageGenerator'
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ChevronIcon } from '../../../components/ui/icons'
+import './Identity.scss'
+import './IdentityTotalCard.scss'
 
 const tabs = [
   'transactions',
