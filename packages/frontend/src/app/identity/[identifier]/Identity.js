@@ -281,7 +281,11 @@ function Identity ({ identifier }) {
           </div>
 
           <div className={'IdentityTotalCard__Column'}>
-            <IdentityDigestCard identity={identity} rate={rate} className={'IdentityTotalCard__Digest'}/>
+            <IdentityDigestCard
+              className={'IdentityTotalCard__Digest'}
+              identity={identity}
+              rate={rate}
+            />
           </div>
         </div>
         <PublicKeys

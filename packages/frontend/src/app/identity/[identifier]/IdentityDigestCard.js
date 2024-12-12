@@ -15,7 +15,7 @@ function IdentityDigestCard ({ identity, rate, className }) {
   if (!identity.data?.fundingAddress) identity.data.fundingAddress = '=yS9GnnRdzX9W9G9kxihdgB5VovKWbPGjS1'
 
   return (
-    <div className={`IdentityDigestCard ${className || ''}`}>
+    <div className={`IdentityDigestCard ${className || ''} ${identity.loading ? 'IdentityDigestCard--Loading' : ''}`}>
       <div className={'IdentityDigestCard__Transfers'}>
         <div className={'IdentityDigestCard__Transfer IdentityDigestCard__Transfer--TupUp'}>
           <div className={'IdentityDigestCard__TransferTitle'}>Total Top-up’s:</div>

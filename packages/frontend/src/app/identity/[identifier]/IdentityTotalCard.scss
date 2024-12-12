@@ -23,8 +23,20 @@
   }
 
   &--Loading & {
+    &__InfoLine {
+      .InfoLine__Value {
+        height: 24px;
+      }
+    }
+
     &__Avatar {
       @include mixins.LoadingContainer;
+    }
+
+    &__Header {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
     }
   }
 
@@ -131,6 +143,13 @@
     }
   }
 
+  @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
+  screen and (max-width: $breakpoint-md) {
+    &__InfoLine {
+      gap: 4px;
+    }
+  }
+
   @media screen and (max-width: $breakpoint-md) {
     $gap: 12px;
 
@@ -166,6 +185,12 @@
 
     &__InfoLine {
       flex-wrap: wrap;
+    }
+
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
     }
   }
 

@@ -8,9 +8,23 @@
   border-radius: $border-radius-def;
   container-type: inline-size;
 
+  &--Loading {
+    .InfoLine__Value {
+      height: 24px;
+    }
+  }
+
   &, &__Transfers, &__LinesContainer {
     display: flex;
     gap: 14px;
+  }
+
+  &--Loading & {
+    &__Transfers {
+      .LoadingLine {
+        height: 24px;
+      }
+    }
   }
 
   &__LinesContainer {
@@ -73,6 +87,12 @@
 
   @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
   screen and (max-width: $breakpoint-sm) {
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+
     &__Transfers {
       flex-direction: column;
     }
@@ -94,6 +114,12 @@
   }
 
   @container (max-width: 24em) {
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+
     &__InfoLine {
       flex-direction: column;
       align-items: flex-start;
