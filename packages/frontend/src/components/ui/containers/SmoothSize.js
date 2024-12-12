@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react'
 
 const SmoothSize = ({ className, children, duration = 0.3, smoothHeight = true, smoothWidth = false, easing = 'ease' }) => {
