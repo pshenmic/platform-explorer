@@ -171,6 +171,8 @@ function Identity ({ identifier }) {
 
   console.log('identity', identity)
 
+  console.log('showPublicKeys', showPublicKeys)
+
   return (
     <PageDataContainer
       className={'IdentityPage'}
@@ -224,9 +226,9 @@ function Identity ({ identifier }) {
               </div>
             </div>
 
-            <HorisontalSeparator className={'ValidatorCard__Separator'}/>
+            <HorisontalSeparator className={'IdentityTotalCard__Separator'}/>
 
-            <div>
+            <div className={'IdentityTotalCard__CommonLines'}>
               <InfoLine
                 className={'IdentityTotalCard__InfoLine'}
                 title={'Revision'}
@@ -246,7 +248,7 @@ function Identity ({ identifier }) {
                 title={'Identities names'}
                 value={identity.data?.aliases?.length
                   ? <AliasesList aliases={identity.data?.aliases}/>
-                  : <ValueContainer className={'ValidatorCard__ZeroListBadge'}>none</ValueContainer>
+                  : <ValueContainer className={'IdentityTotalCard__ZeroListBadge'}>none</ValueContainer>
                 }
                 loading={identity.loading}
                 error={identity.error || (!identity.loading && identity.data?.aliases === undefined)}
@@ -271,7 +273,9 @@ function Identity ({ identifier }) {
               <PublicKeys
                 publicKeys={identity.data?.publicKeys}
                 show={showPublicKeys}
-                className={'IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Mobile'}
+                className={`IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Mobile ${showPublicKeys
+                  ? ' IdentityTotalCard__PublicKeysListContainer--Opened'
+                  : ' IdentityTotalCard__PublicKeysListContainer--Hidden'}`}
               />
             </div>
           </div>
@@ -283,7 +287,9 @@ function Identity ({ identifier }) {
         <PublicKeys
           publicKeys={identity.data?.publicKeys}
           show={showPublicKeys}
-          className={'IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Desktop'}
+          className={`IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Desktop ${showPublicKeys
+            ? ' IdentityTotalCard__PublicKeysListContainer--Opened'
+            : ' IdentityTotalCard__PublicKeysListContainer--Hidden'}`}
         />
       </div>
 

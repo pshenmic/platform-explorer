@@ -2,11 +2,12 @@
 @import '../../../styles/variables.scss';
 
 .IdentityTotalCard {
+  $gap: 14px;
   @include mixins.EntityCard();
   @include mixins.InfoContainerPadding(padding, 0px, true);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: $gap;
 
   &__Title {
     .Alias__Name, .Alias__Domain {
@@ -42,6 +43,12 @@
   &__ContentContainer {
     display: flex;
     gap: 40px;
+  }
+
+  &__CommonLines {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
 
   &__Column {
@@ -85,6 +92,12 @@
   }
 
   &__PublicKeysListContainer {
+    transition: .3s !important;
+
+    &--Hidden {
+      margin-top: -$gap !important;
+    }
+
     &--Mobile {
       display: none !important;
     }
@@ -119,8 +132,28 @@
   }
 
   @media screen and (max-width: $breakpoint-md) {
+    $gap: 12px;
+
     &__ContentContainer {
       flex-direction: column;
+    }
+
+    &__ContentContainer, &__CommonLines {
+      gap: $gap;
+    }
+
+    &__PublicKeysListContainer {
+      &--Hidden {
+        margin-top: -$gap !important;
+      }
+
+      &--Mobile {
+        display: block !important;
+      }
+
+      &--Desktop {
+        display: none !important;
+      }
     }
 
     &__Column {
@@ -133,16 +166,6 @@
 
     &__InfoLine {
       flex-wrap: wrap;
-    }
-
-    &__PublicKeysListContainer {
-      &--Mobile {
-        display: block !important;
-      }
-
-      &--Desktop {
-        display: none !important;
-      }
     }
   }
 
