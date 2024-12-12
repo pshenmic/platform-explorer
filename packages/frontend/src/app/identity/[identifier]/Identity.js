@@ -54,7 +54,7 @@ function Identity ({ identifier }) {
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const activeAlias = findActiveAlias(identity.data.aliases)
+  const activeAlias = findActiveAlias(identity.data?.aliases)
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   const [showPublicKeys, setShowPublicKeys] = useState(false)
 
@@ -70,7 +70,18 @@ function Identity ({ identifier }) {
   console.log('documents', documents)
   console.log('dataContracts', dataContracts)
 
-  if (!identity.data?.publicKeys) {
+  // mock //
+
+  if (!identity.error && !identity.data?.lastWithdrawal) identity.data.lastWithdrawal = '6AC5EDA942093A9275A2837CFDF2C18CAAD9D922BA211BD5EA5E6333FE904CE7'
+  if (!identity.error && !identity.data?.lastWithdrawalTime) identity.data.lastWithdrawalTime = '2024-11-21T10:26:04.053Z'
+  if (!identity.error && !identity.data?.fundingAddress) identity.data.fundingAddress = '=yS9GnnRdzX9W9G9kxihdgB5VovKWbPGjS1'
+  if (!identity.error && !identity.data?.totalGasSpent) identity.data.totalGasSpent = 1000000
+  if (!identity.error && !identity.data?.averageGasSpent) identity.data.averageGasSpent = 500000
+
+  if (!identity.data?.publicKeys && identity.data !== null) {
+    console.log('identity.data', identity.data)
+    console.log('identity.data.publicKeys', identity.data.publicKeys)
+
     identity.data.publicKeys = [
       {
         contractBounds: {
@@ -159,7 +170,6 @@ function Identity ({ identifier }) {
   }, [activeTab, router, pathname, searchParams])
 
   console.log('identity', identity)
-
   console.log('showPublicKeys', showPublicKeys)
 
   return (
@@ -181,7 +191,7 @@ function Identity ({ identifier }) {
               <div className={'IdentityTotalCard__Avatar'}>
                 {!identity.error
                   ? <ImageGenerator
-                    username={identity.data.identifier}
+                    username={identity.data?.identifier}
                     lightness={50}
                     saturation={50}
                     width={88}
@@ -223,7 +233,7 @@ function Identity ({ identifier }) {
                 title={'Revision'}
                 value={identity.data?.revision}
                 loading={identity.loading}
-                error={identity.error || (!identity.loading && !identity.data?.revision)}
+                error={identity.error || (!identity.loading && identity.data?.revision === undefined)}
               />
               <InfoLine
                 className={'IdentityTotalCard__InfoLine'}
@@ -290,25 +300,25 @@ function Identity ({ identifier }) {
           <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
             <TabList>
               <Tab>Transactions {identity.data?.totalTxs !== undefined
-                ? <span className={`Tabs__TabItemsCount ${identity.data.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                    {identity.data.totalTxs}
+                ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                    {identity.data?.totalTxs}
                   </span>
                 : ''}
               </Tab>
               <Tab>Data contracts {identity.data?.totalDataContracts !== undefined
-                ? <span className={`Tabs__TabItemsCount ${identity.data.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                    {identity.data.totalDataContracts}
+                ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                    {identity.data?.totalDataContracts}
                   </span>
                 : ''}
               </Tab>
               <Tab>Documents {identity.data?.totalDocuments !== undefined
-                ? <span className={`Tabs__TabItemsCount ${identity.data.totalDocuments === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                    {identity.data.totalDocuments}
+                ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDocuments === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                    {identity.data?.totalDocuments}
                   </span>
                 : ''}
               </Tab>
               <Tab>Credit Transfers {identity.data?.totalTransfers !== undefined
-                ? <span className={`Tabs__TabItemsCount ${identity.data.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{identity.data.totalTransfers}</span>
+                ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{identity.data?.totalTransfers}</span>
                 : ''}
               </Tab>
             </TabList>
@@ -316,7 +326,7 @@ function Identity ({ identifier }) {
               <TabPanel px={0} h={'100%'}>
                 {!transactions.error
                   ? !transactions.loading
-                      ? <TransactionsList transactions={transactions.data.resultSet}/>
+                      ? <TransactionsList transactions={transactions.data?.resultSet}/>
                       : <LoadingList itemsCount={9}/>
                   : <ErrorMessageBlock/>}
               </TabPanel>
