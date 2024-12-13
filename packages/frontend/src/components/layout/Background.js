@@ -17,7 +17,8 @@ function Background ({ snow }) {
   ]
   const showDecoration = showOnRoutes.includes(pathname)
 
-  return (<>
+  return (
+    <>
       <div className={`Background ${showDecoration ? 'Background--Light' : ''}`}></div>
       {snow && <Snow/>}
     </>
