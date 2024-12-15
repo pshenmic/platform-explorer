@@ -42,7 +42,7 @@ module.exports = class BlockDAO {
       .groupBy('identity_identifier')
       .as('aliases')
 
-    const rows = await this.knex('blocks')
+    const subquery = this.knex('blocks')
       .select(
         'blocks.hash as hash', 'state_transitions.hash as tx_hash',
         'blocks.height as height', 'blocks.timestamp as timestamp',
@@ -57,6 +57,20 @@ module.exports = class BlockDAO {
       .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'state_transitions.owner')
       .whereILike('blocks.hash', blockHash)
       .orderBy('state_transitions.index', 'asc')
+      .as('subquery')
+
+    const rows = await this.knex(subquery)
+      .select(
+        'hash', 'tx_hash',
+        'height', 'timestamp',
+        'block_version', 'app_version',
+        'l1_locked_height', 'validator',
+        'gas_used', 'data',
+        'status', 'owner',
+        'aliases', 'error', 'block_hash',
+        'index', 'type'
+      )
+      .select(this.knex(subquery).sum('gas_used').as('total_gas_used'))
 
     const [block] = rows
 
