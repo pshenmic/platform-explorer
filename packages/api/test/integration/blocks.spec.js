@@ -152,7 +152,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -182,7 +183,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -212,7 +214,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -243,7 +246,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -274,7 +278,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -308,7 +313,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -350,7 +356,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -379,7 +386,9 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
+
           },
           txs: []
         }))
@@ -408,7 +417,9 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
+
           },
           txs: []
         }))
@@ -437,7 +448,9 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
+
           },
           txs: []
         }))
@@ -466,7 +479,9 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
+
           },
           txs: []
         }))
@@ -495,7 +510,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -524,7 +540,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
