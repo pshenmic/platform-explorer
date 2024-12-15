@@ -54,9 +54,10 @@ class BlocksController {
 
     response.send(
       {
-        block: {
-          ...block,
-          appHash
+        ...block,
+        header: {
+          ...block.header,
+          appHash: appHash ?? null
         },
         quorum
       }
