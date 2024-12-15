@@ -29,7 +29,6 @@ class BlocksController {
 
     let quorum = null
 
-
     // empty block without quorums
     if (block.txs.length > 0) {
       const quorumsList = await DashCoreRPC.getQuorumsListExtended(block.header.l1LockedHeight)
