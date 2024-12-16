@@ -46,6 +46,13 @@
     width: 24px;
   }
 
+  &--Timestamp, &__Column--Timestamp {
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    color: #fff;
+  }
+
   &__NotActiveText {
     font-size: 0.75rem !important;
     color: var(--chakra-colors-gray-250) !important;
@@ -372,8 +379,6 @@
 }
 
 @mixin TooltipElement () {
-  transition: .2s;
-
   &, .chakra-icon {
     transition: .2s;
   }
