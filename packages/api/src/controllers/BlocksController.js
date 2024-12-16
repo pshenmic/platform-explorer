@@ -20,17 +20,19 @@ class BlocksController {
 
     const {
       block: {
-        last_commit: lastCommit,
         header: {
           app_hash: appHash
         }
       }
     } = await TenderdashRPC.getBlockByHash(block.header.hash)
 
+    const { block: blockInfo } = await TenderdashRPC.getBlockByHeight(block.header.height + 1)
+
+    const { last_commit: lastCommit } = blockInfo ?? { last_commit: undefined }
+
     let quorum = null
 
-    // empty block without quorums
-    if (block.txs.length > 0) {
+    if (lastCommit?.quorum_hash !== '' && lastCommit?.quorum_hash !== undefined) {
       const quorumsList = await DashCoreRPC.getQuorumsListExtended(block.header.l1LockedHeight)
 
       const quorumsTypes = Object.keys(quorumsList)
