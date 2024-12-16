@@ -54,6 +54,12 @@
     border-radius: 8px;
   }
 
+  &--SizeXxs {
+    padding: 2px 4px;
+    line-height: 16px;
+    border-radius: 3px;
+  }
+
   &--Clickable {
     @media (hover: hover) and (pointer: fine) {
       &:hover {

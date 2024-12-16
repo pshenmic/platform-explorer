@@ -32,7 +32,8 @@ function ValueContainer ({
   const sizeClasses = {
     default: '',
     sm: 'ValueContainer--SizeSm',
-    xs: 'ValueContainer--SizeXs'
+    xs: 'ValueContainer--SizeXs',
+    xxs: 'ValueContainer--SizeXxs'
   }
 
   let extraClass = ''
