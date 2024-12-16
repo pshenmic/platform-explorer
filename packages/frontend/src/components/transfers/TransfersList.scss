@@ -1,3 +1,28 @@
+
+@use '../../styles/mixins.scss';
+@use './variables' as transfers;
+@import '../../styles/variables.scss';
+
 .TransfersList {
-    
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include transfers.Columns();
+  }
+
+  &__ColumnTitle {
+    @include transfers.Column();
+    overflow: visible !important;
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  &__Column {
+    &--Address {
+
+    }
+  }
 }

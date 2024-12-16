@@ -23,7 +23,7 @@ const tabs = [
   'transfers'
 ]
 
-const defaultTabName = 'transactions'
+const defaultTabName = 'transfers'
 
 function Identity ({ identifier }) {
   const router = useRouter()
@@ -49,48 +49,50 @@ function Identity ({ identifier }) {
     ])
   }, [setBreadcrumbs, identifier])
 
+  console.log('identity', identity)
+
   // mock //
 
-  if (!identity.error && !identity.data?.lastWithdrawal) identity.data.lastWithdrawal = '6AC5EDA942093A9275A2837CFDF2C18CAAD9D922BA211BD5EA5E6333FE904CE7'
-  if (!identity.error && !identity.data?.lastWithdrawalTime) identity.data.lastWithdrawalTime = '2024-11-21T10:26:04.053Z'
-  if (!identity.error && !identity.data?.fundingAddress) identity.data.fundingAddress = '=yS9GnnRdzX9W9G9kxihdgB5VovKWbPGjS1'
-  if (!identity.error && !identity.data?.totalGasSpent) identity.data.totalGasSpent = 1000000
-  if (!identity.error && !identity.data?.averageGasSpent) identity.data.averageGasSpent = 500000
-
-  if (!identity.data?.publicKeys && identity.data !== null) {
-    identity.data.publicKeys = [
-      {
-        contractBounds: {
-          type: 'documentType',
-          id: '3LSLuooomkZVVUgT8oDejK92jzcgroqyrMemVC5NX5P5',
-          typeName: 'contact'
-        },
-        id: 5,
-        type: 'ECDSA_SECP256K1',
-        data: '023b63a7e2321db63f5dbd26e08e3aa1da974404fd6b9303903195be10fe12e2b0',
-        publicKeyHash: 'aefbbefbbf99eee9e134c0657a13651a5692e98d',
-        purpose: 'ENCRYPTION',
-        securityLevel: 'MEDIUM',
-        readOnly: false,
-        signature: '1f58d5c8ee4e87e6d6fffcfebcaadc030599cc4e18e41f3d7f78bd993666e146973beb1ca57e0366eceef0510e3b55a97db765110d4ff07b9653db237d8a021d51'
-      },
-      {
-        contractBounds: {
-          type: 'documentType',
-          id: '3LSLuooomkZVVUgT8oDejK92jzcgroqyrMemVC5NX5P5',
-          typeName: 'contact'
-        },
-        id: 6,
-        type: 'ECDSA_SECP256K1',
-        data: '026e9189c76f667c774da971d5eacee575acfd747c3ea6ca8af3636f93ac871f73',
-        publicKeyHash: '56db223d9e394d9a15db5064f9e19be3c40d20ff',
-        purpose: 'DECRYPTION',
-        securityLevel: 'MEDIUM',
-        readOnly: false,
-        signature: '1fd753dbf431f8be55fe5545678c05ca81a1b3cfb676ff85fe22caf0042b2ad84b437c203bf16ead8d3f62f74d832d6ca8a492804340d356f1d003856ca50f170a'
-      }
-    ]
-  }
+  // if (!identity.error && !identity.data?.lastWithdrawal) identity.data.lastWithdrawal = '6AC5EDA942093A9275A2837CFDF2C18CAAD9D922BA211BD5EA5E6333FE904CE7'
+  // if (!identity.error && !identity.data?.lastWithdrawalTime) identity.data.lastWithdrawalTime = '2024-11-21T10:26:04.053Z'
+  // if (!identity.error && !identity.data?.fundingAddress) identity.data.fundingAddress = '=yS9GnnRdzX9W9G9kxihdgB5VovKWbPGjS1'
+  // if (!identity.error && !identity.data?.totalGasSpent) identity.data.totalGasSpent = 1000000
+  // if (!identity.error && !identity.data?.averageGasSpent) identity.data.averageGasSpent = 500000
+  //
+  // if (!identity.data?.publicKeys && identity.data !== null) {
+  //   identity.data.publicKeys = [
+  //     {
+  //       contractBounds: {
+  //         type: 'documentType',
+  //         id: '3LSLuooomkZVVUgT8oDejK92jzcgroqyrMemVC5NX5P5',
+  //         typeName: 'contact'
+  //       },
+  //       id: 5,
+  //       type: 'ECDSA_SECP256K1',
+  //       data: '023b63a7e2321db63f5dbd26e08e3aa1da974404fd6b9303903195be10fe12e2b0',
+  //       publicKeyHash: 'aefbbefbbf99eee9e134c0657a13651a5692e98d',
+  //       purpose: 'ENCRYPTION',
+  //       securityLevel: 'MEDIUM',
+  //       readOnly: false,
+  //       signature: '1f58d5c8ee4e87e6d6fffcfebcaadc030599cc4e18e41f3d7f78bd993666e146973beb1ca57e0366eceef0510e3b55a97db765110d4ff07b9653db237d8a021d51'
+  //     },
+  //     {
+  //       contractBounds: {
+  //         type: 'documentType',
+  //         id: '3LSLuooomkZVVUgT8oDejK92jzcgroqyrMemVC5NX5P5',
+  //         typeName: 'contact'
+  //       },
+  //       id: 6,
+  //       type: 'ECDSA_SECP256K1',
+  //       data: '026e9189c76f667c774da971d5eacee575acfd747c3ea6ca8af3636f93ac871f73',
+  //       publicKeyHash: '56db223d9e394d9a15db5064f9e19be3c40d20ff',
+  //       purpose: 'DECRYPTION',
+  //       securityLevel: 'MEDIUM',
+  //       readOnly: false,
+  //       signature: '1fd753dbf431f8be55fe5545678c05ca81a1b3cfb676ff85fe22caf0042b2ad84b437c203bf16ead8d3f62f74d832d6ca8a492804340d356f1d003856ca50f170a'
+  //     }
+  //   ]
+  // }
 
   const fetchData = () => {
     Promise.all([
@@ -206,7 +208,7 @@ function Identity ({ identifier }) {
             <TabPanel px={0} h={'100%'}>
               {!transfers.error
                 ? !transfers.loading
-                    ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.identifier}/>
+                    ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.data?.identifier}/>
                     : <LoadingList itemsCount={9}/>
                 : <ErrorMessageBlock/>}
             </TabPanel>

@@ -1,0 +1,60 @@
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+  grid-template-columns:
+    140px
+    minmax(0, 400px)
+    minmax(0, 300px)
+    minmax(185px, 185px)
+    minmax(100px, 100px)
+    102px;
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+
+  &, a {
+    overflow: hidden;
+  }
+
+  &--Timestamp {
+
+  }
+
+  &--TxHash {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  &--Recipient {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  &--Amount {
+    width: 100%;
+    overflow: visible;
+  }
+
+  &--GasUsed {
+    width: 100%;
+    overflow: visible;
+  }
+
+  &--Type {
+
+  }
+
+  @container (max-width: 550px) {
+
+  }
+
+  @container (max-width: 420px) {
+
+  }
+}
