@@ -1,11 +1,11 @@
 process.env.EPOCH_CHANGE_TIME = 3600000
-const { describe, it, before, after, mock } = require('node:test')
+const {describe, it, before, after, mock} = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
-const { getKnex } = require('../../src/utils')
+const {getKnex} = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/DAPI')
 
@@ -43,6 +43,8 @@ describe('Other routes', () => {
 
     mock.method(DAPI.prototype, 'getIdentityKeys', async () => null)
 
+    mock.method(DAPI.prototype, 'getStatus', async () => null)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -65,7 +67,7 @@ describe('Other routes', () => {
     // for the search() test
 
     const identityIdentifier = fixtures.identifier()
-    block = await fixtures.block(knex, { timestamp: new Date(genesisTime + blockDiffTime) })
+    block = await fixtures.block(knex, {timestamp: new Date(genesisTime + blockDiffTime)})
     blocks.push(block)
 
     identityTransaction = await fixtures.transaction(knex, {
@@ -148,7 +150,7 @@ describe('Other routes', () => {
 
   describe('search()', async () => {
     it('should search block by hash', async () => {
-      const { body } = await client.get(`/search?query=${block.hash}`)
+      const {body} = await client.get(`/search?query=${block.hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -226,11 +228,11 @@ describe('Other routes', () => {
         ]
       }
 
-      assert.deepEqual({ block: expectedBlock }, body)
+      assert.deepEqual({block: expectedBlock}, body)
     })
 
     it('should search transaction by hash', async () => {
-      const { body } = await client.get(`/search?query=${dataContractTransaction.hash}`)
+      const {body} = await client.get(`/search?query=${dataContractTransaction.hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -255,11 +257,11 @@ describe('Other routes', () => {
         }
       }
 
-      assert.deepEqual({ transaction: expectedTransaction }, body)
+      assert.deepEqual({transaction: expectedTransaction}, body)
     })
 
     it('should search block by height', async () => {
-      const { body } = await client.get(`/search?query=${block.height}`)
+      const {body} = await client.get(`/search?query=${block.height}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -276,11 +278,11 @@ describe('Other routes', () => {
         txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
 
-      assert.deepEqual({ block: expectedBlock }, body)
+      assert.deepEqual({block: expectedBlock}, body)
     })
 
     it('should search by data contract', async () => {
-      const { body } = await client.get(`/search?query=${dataContract.identifier}`)
+      const {body} = await client.get(`/search?query=${dataContract.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -296,11 +298,11 @@ describe('Other routes', () => {
         documentsCount: 1
       }
 
-      assert.deepEqual({ dataContract: expectedDataContract }, body)
+      assert.deepEqual({dataContract: expectedDataContract}, body)
     })
 
     it('should search by data contract name', async () => {
-      const { body } = await client.get('/search?query=test')
+      const {body} = await client.get('/search?query=test')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -316,13 +318,13 @@ describe('Other routes', () => {
         documentsCount: 1
       }
 
-      assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
+      assert.deepEqual({dataContracts: [expectedDataContract]}, body)
     })
 
     it('should search by identity DPNS', async () => {
       mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
-      const { body } = await client.get(`/search?query=${identityAlias.alias}`)
+      const {body} = await client.get(`/search?query=${identityAlias.alias}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -336,11 +338,11 @@ describe('Other routes', () => {
         }
       }]
 
-      assert.deepEqual({ identities: expectedIdentity }, body)
+      assert.deepEqual({identities: expectedIdentity}, body)
     })
 
     it('should search identity', async () => {
-      const { body } = await client.get(`/search?query=${identity.identifier}`)
+      const {body} = await client.get(`/search?query=${identity.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -370,7 +372,7 @@ describe('Other routes', () => {
         fundingCoreTx: null
       }
 
-      assert.deepEqual({ identity: expectedIdentity }, body)
+      assert.deepEqual({identity: expectedIdentity}, body)
     })
   })
 
@@ -384,8 +386,29 @@ describe('Other routes', () => {
           timestamp: new Date().toISOString()
         }
       }
+      const mockDapiStatus = {
+        version: {
+          software: {
+            dapi: "1.5.1",
+            drive: "1.6.2",
+            tenderdash: "1.4.0"
+          },
+          protocol: {
+            tenderdash: {
+              p2p: 10,
+              block: 14
+            },
+            drive: {
+              latest: 6,
+              current: 6
+            }
+          }
+        }
+      }
+
       mock.reset()
       mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
+      mock.method(DAPI.prototype, 'getStatus', async () => mockDapiStatus)
       mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
         number: 0,
         firstBlockHeight: 0,
@@ -403,7 +426,7 @@ describe('Other routes', () => {
         }
       }))
 
-      const { body } = await client.get('/status')
+      const {body} = await client.get('/status')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -441,6 +464,23 @@ describe('Other routes', () => {
             height: mockTDStatus?.highestBlock?.height,
             hash: mockTDStatus?.highestBlock?.hash,
             timestamp: mockTDStatus?.highestBlock?.timestamp
+          }
+        },
+        versions: {
+          software: {
+            dapi: mockDapiStatus.version.software.dapi ?? null,
+            drive: mockDapiStatus.version.software.drive ?? null,
+            tenderdash: mockDapiStatus.version.software.tenderdash ?? null
+          },
+          protocol: {
+            tenderdash: {
+              p2p: mockDapiStatus.version.protocol.tenderdash.p2p ?? null,
+              block: mockDapiStatus.version.protocol.tenderdash.block ?? null
+            },
+            drive: {
+              latest: mockDapiStatus.version.protocol.drive.latest ?? null,
+              current: mockDapiStatus.version.protocol.drive.current ?? null,
+            }
           }
         }
       }
