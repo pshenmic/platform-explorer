@@ -72,12 +72,12 @@ class MainController {
         },
         protocol: {
           tenderdash: {
-            p2p: status?.version?.protocol.tenderdash.p2p ?? null,
-            block: status?.version?.protocol.tenderdash.block ?? null
+            p2p: status?.version?.protocol.tenderdash?.p2p ?? null,
+            block: status?.version?.protocol.tenderdash?.block ?? null
           },
           drive: {
-            latest: status?.version?.protocol.drive.latest ?? null,
-            current: status?.version?.protocol.drive.current ?? null
+            latest: status?.version?.protocol.drive?.latest ?? null,
+            current: status?.version?.protocol.drive?.current ?? null
           }
         }
       }
