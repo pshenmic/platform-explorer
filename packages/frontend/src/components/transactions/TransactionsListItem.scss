@@ -8,10 +8,6 @@
 
   &__Content {
     @include txs.Columns();
-
-    &--Inline {
-      display: inline !important;
-    }
   }
 
   &__Column {
