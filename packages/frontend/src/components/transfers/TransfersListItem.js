@@ -18,8 +18,6 @@ function TransfersListItem ({ transfer, identityId, rate, l1explorerBaseUrl }) {
   const [isMobile, setIsMobile] = useState(false)
   const clickable = isMobile && transfer?.hash
 
-  console.log('transfer', transfer)
-
   const transferType = transfer.recipient === identityId
     ? transfer.sender ? 'CREDIT_TRANSFER' : 'TOP_UP'
     : transfer.recipient ? 'CREDIT_TRANSFER' : 'CREDIT_WITHDRAWAL'
