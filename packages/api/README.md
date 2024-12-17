@@ -83,41 +83,58 @@ Returns basic stats and epoch info
 HTTP /status
 
 {
-    epoch: {
-        number: 1145,
-        firstBlockHeight: 5380,
-        firstCoreBlockHeight: 1096730,
-        startTime: 1725475350064,
-        feeMultiplier: 1,
-        endTime: 1725478950064
-    },
-    identitiesCount: 12,
-    totalCredits: 100000,
-    totalCollectedFeesDay: 167703567170,
-    transactionsCount: 3,
-    transfersCount: 0,
-    dataContractsCount: 1,
-    documentsCount: 1,
-    network: "dash-testnet-40",
-    api: {
-        version: "1.0.0",
-        block: {
-            height: 20153,
-            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-            timestamp: "2024-06-06T21:50:20.949Z"
-        }
+  "epoch": {
+    "number": 3640,
+    "firstBlockHeight": 72534,
+    "firstCoreBlockHeight": 1160707,
+    "startTime": 1734457229495,
+    "feeMultiplier": 1,
+    "endTime": 1734460829495
+  },
+  "transactionsCount": 25912,
+  "totalCredits": 7288089799960610,
+  "totalCollectedFeesDay": 12733263640,
+  "transfersCount": 1849,
+  "dataContractsCount": 630,
+  "documentsCount": 15384,
+  "identitiesCount": 712,
+  "network": "dash-testnet-51",
+  "api": {
+    "version": "1.0.7",
+    "block": {
+      "height": 72555,
+      "hash": "EDA1CDF601224CD3ED168D35B4699DE2796F774B526103C64D371EF3AAFD8274",
+      "timestamp": "2024-12-17T17:57:08.758Z"
     }
-    platform: {
-        version: "1.0.0-dev.12"
+  },
+  "platform": {
+    "version": "1.5.1"
+  },
+  "tenderdash": {
+    "version": "1.4.0",
+    "block": {
+      "height": 72555,
+      "hash": "EDA1CDF601224CD3ED168D35B4699DE2796F774B526103C64D371EF3AAFD8274",
+      "timestamp": "2024-12-17T17:57:08.758Z"
+    }
+  },
+  "versions": {
+    "software": {
+      "dapi": "1.5.1",
+      "drive": "1.6.2",
+      "tenderdash": "1.4.0"
     },
-    tenderdash: {
-        version: "0.14.0-dev.6",
-        block: {
-            height: 20154,
-            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-            timestamp: "2024-06-06T21:53:27.947Z"
-         }
-    }     
+    "protocol": {
+      "tenderdash": {
+        "p2p": 10,
+        "block": 14
+      },
+      "drive": {
+        "latest": 6,
+        "current": 6
+      }
+    }
+  }
 }
 ```
 ---
