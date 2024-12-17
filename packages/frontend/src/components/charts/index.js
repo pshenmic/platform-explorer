@@ -167,6 +167,15 @@ const LineGraph = ({
     .y0(y(0))
     .y1((d) => y(d.y)))
 
+  const valuesFormat = (value) => {
+    if (typeof value !== 'number' || isNaN(value)) return value
+
+    if (value >= 1e9) return `${(value / 1e9).toFixed(1)}B`
+    if (value >= 1e6) return `${(value / 1e6).toFixed(1)}M`
+    if (value >= 1e3) return `${(value / 1e3).toFixed(1)}k`
+    return value
+  }
+
   useEffect(() => {
     d3.select(gx.current)
       .call((axis) => {
@@ -203,6 +212,7 @@ const LineGraph = ({
       .call(d3.axisLeft(y)
         .tickSize(0)
         .ticks(5)
+        .tickFormat(valuesFormat)
         .tickPadding(10)
       )
 
@@ -324,7 +334,7 @@ const LineGraph = ({
       value: `${xFormat(data[i].x)}: `
     }, {
       styles: ['inline', 'bold'],
-      value: ` ${data[i].y} `
+      value: ` ${new Intl.NumberFormat('fr-FR', { useGrouping: true, grouping: [3], minimumFractionDigits: 0 }).format(data[i].y)} `
     }, {
       styles: ['inline', 'tiny'],
       value: ` ${yAxis.abbreviation}`
