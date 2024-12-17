@@ -4,7 +4,7 @@ import { TransactionTypesEnum, TransactionTypesColors } from '../../enums/state.
 import { Tooltip } from '../ui/Tooltips'
 
 function TypeBadge ({ typeId, type, ...props }) {
-  const TransitionTypeKey = typeId ? getTransitionTypeKeyById(typeId) : type
+  const TransitionTypeKey = typeof typeId === 'number' ? getTransitionTypeKeyById(typeId) : type
 
   const descriptions = {
     DATA_CONTRACT_CREATE: 'Creates a new data contract. This contract defines the schema for storing data on the platform.',
