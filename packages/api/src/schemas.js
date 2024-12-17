@@ -26,7 +26,7 @@ const schemaTypes = [
         type: ['string', 'null'],
         enum: ['block_height', 'documents_count', 'tx_count', 'balance']
       },
-      isActive: {type: ['boolean', 'null']},
+      isActive: { type: ['boolean', 'null'] },
       type: {
         type: ['integer', 'null'],
         minimum: 0,
@@ -49,19 +49,19 @@ const schemaTypes = [
       },
       gas_min: {
         type: ['number', 'null'],
-        minimum: 0,
+        minimum: 0
       },
       gas_max: {
         type: ['number', 'null'],
-        minimum: 0,
+        minimum: 0
       },
       start_epoch_index: {
         type: ['number', 'null'],
-        minimum: 0,
+        minimum: 0
       },
       end_epoch_index: {
         type: ['number', 'null'],
-        minimum: 1,
+        minimum: 1
       },
       validator: {
         type: 'string',
@@ -70,25 +70,25 @@ const schemaTypes = [
       },
       height_min: {
         type: ['number', 'null'],
-        minimum: 1,
+        minimum: 1
       },
       height_max: {
         type: ['number', 'null'],
-        minimum: 2,
+        minimum: 2
       },
       transactions_count_min: {
         type: ['number', 'null'],
-        minimum: 0,
+        minimum: 0
       },
       transactions_count_max: {
         type: ['number', 'null'],
-        minimum: 0,
+        minimum: 0
       },
-      timestamp_start:{
+      timestamp_start: {
         type: ['string', 'null'],
         format: 'date-time'
       },
-      timestamp_end:{
+      timestamp_end: {
         type: ['string', 'null'],
         format: 'date-time'
       }
@@ -127,7 +127,7 @@ const schemaTypes = [
     $id: 'identifierSchema',
     type: 'object',
     properties: {
-      identifier: {$ref: 'identifier#'}
+      identifier: { $ref: 'identifier#' }
     }
   }
 ]
