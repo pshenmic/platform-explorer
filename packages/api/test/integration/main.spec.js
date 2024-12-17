@@ -456,7 +456,7 @@ describe('Other routes', () => {
           }
         },
         tenderdash: {
-          version: mockTDStatus?.version ?? null,
+          version: mockDapiStatus.version.software.tenderdash ?? null,
           block: {
             height: mockTDStatus?.highestBlock?.height,
             hash: mockTDStatus?.highestBlock?.hash,
