@@ -15,6 +15,15 @@
 
   &__Column {
     @include transfers.Column();
+
+    &--Amount, &--GasUsed {
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+  }
+
+  &__ContentWrapper {
+    width: 100%;
   }
 
   //
