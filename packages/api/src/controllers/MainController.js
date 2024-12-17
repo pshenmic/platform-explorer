@@ -9,7 +9,7 @@ const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 
 const API_VERSION = require('../../package.json').version
-const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
+const PLATFORM_VERSION = require('../../package.json').dependencies.dash
 
 class MainController {
   constructor (knex, dapi) {
