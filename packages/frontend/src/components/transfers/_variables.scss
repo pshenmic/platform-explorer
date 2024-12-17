@@ -30,6 +30,7 @@
   }
 
   @container (max-width: 580px) {
+    gap: 8px;
     grid-template-columns:
     70px
     auto
@@ -75,7 +76,6 @@
 
   &--Type {
     width: 100%;
-    //overflow: visible;
     min-width: max-content;
   }
 
