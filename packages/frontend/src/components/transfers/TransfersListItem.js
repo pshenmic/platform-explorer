@@ -9,22 +9,20 @@ import Link from 'next/link'
 import { forwardRef, useRef, useState } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
 import { getTimeDelta } from '../../util'
-import { TypeBadge } from '../transactions'
+import TypeBadge from './TypeBadge'
 
-const mobileWidth = 550
+const mobileWidth = 580
 
 function TransfersListItem ({ transfer, identityId, rate, l1explorerBaseUrl }) {
-  console.log('transfer', transfer)
-
   const containerRef = useRef(null)
   const [isMobile, setIsMobile] = useState(false)
   const clickable = isMobile && transfer?.hash
 
-  console.log('identityId', identityId)
+  console.log('transfer', transfer)
 
   const transferType = transfer.recipient === identityId
-    ? transfer.sender ? 'IDENTITY_CREDIT_TRANSFER' : 'IDENTITY_TOP_UP'
-    : transfer.recipient ? 'IDENTITY_CREDIT_TRANSFER' : 'IDENTITY_CREDIT_WITHDRAWAL'
+    ? transfer.sender ? 'CREDIT_TRANSFER' : 'TOP_UP'
+    : transfer.recipient ? 'CREDIT_TRANSFER' : 'CREDIT_WITHDRAWAL'
 
   useResizeObserver(containerRef, () => {
     const { offsetWidth } = containerRef.current

@@ -1,10 +1,11 @@
-
 @use '../../styles/mixins.scss';
 @use './variables' as transfers;
 @import '../../styles/variables.scss';
 
 .TransfersList {
   container-type: inline-size;
+  overflow-y: auto;
+  @include mixins.BrandScroll;
 
   &__ColumnTitles {
     @include mixins.defListTitles;
@@ -20,9 +21,9 @@
     }
   }
 
-  &__Column {
-    &--Address {
-
+  @container (max-width: 580px) {
+    &__Items, &__ContentContainer {
+      min-width: max-content;
     }
   }
 }
