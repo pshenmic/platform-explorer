@@ -95,6 +95,9 @@ class BlocksController {
     }
 
     const blocks = await this.blocksDAO.getBlocks(
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
       validator,
       gasMin,
       gasMax,
@@ -105,10 +108,7 @@ class BlocksController {
       epochStartTimestamp,
       epochEndTimestamp,
       transactionCountMin,
-      transactionCountMax,
-      Number(page ?? 1),
-      Number(limit ?? 10),
-      order
+      transactionCountMax
     )
 
     response.send(blocks)

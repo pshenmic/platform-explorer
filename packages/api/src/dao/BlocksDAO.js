@@ -145,13 +145,13 @@ module.exports = class BlockDAO {
   }
 
   getBlocks = async (
+    page, limit, order,
     validator,
     gasMin, gasMax,
     heightMin, heightMax,
     startTimestamp, endTimestamp,
     epochStartTimestamp, epochEndTimestamp,
-    transactionCountMin, transactionCountMax,
-    page, limit, order
+    transactionCountMin, transactionCountMax
   ) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1

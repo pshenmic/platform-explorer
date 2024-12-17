@@ -86,7 +86,7 @@ describe('Blocks routes', () => {
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator,
-          totalGasUsed: 0,
+          totalGasUsed: 0
         },
         txs: []
       }
@@ -124,7 +124,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -155,7 +155,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -186,7 +186,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -217,7 +217,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -249,7 +249,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -281,7 +281,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -316,7 +316,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -359,7 +359,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -389,7 +389,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -419,7 +419,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -449,7 +449,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -479,7 +479,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -509,7 +509,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -539,7 +539,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: 0,
+            totalGasUsed: 0
           },
           txs: []
         }))
