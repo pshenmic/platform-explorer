@@ -546,6 +546,37 @@ describe('Blocks routes', () => {
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
 
+    // it('should allow search by validator', async () => {
+    //   const [block] = blocks
+    //
+    //   const { body } = await client.get(`/blocks?validator=${block.validator}&order=desc`)
+    //     .expect(200)
+    //     .expect('Content-Type', 'application/json; charset=utf-8')
+    //
+    //   assert.equal(body.pagination.page, 9)
+    //   assert.equal(body.pagination.limit, 7)
+    //   assert.equal(body.pagination.total, blocks.length)
+    //   assert.equal(body.resultSet.length, 4)
+    //
+    //   const expectedBlocks = blocks
+    //     .sort((a, b) => b.height - a.height)
+    //     .slice(56, 60)
+    //     .map(row => ({
+    //       header: {
+    //         hash: row.hash,
+    //         height: row.height,
+    //         timestamp: row.timestamp.toISOString(),
+    //         blockVersion: row.block_version,
+    //         appVersion: row.app_version,
+    //         l1LockedHeight: row.l1_locked_height,
+    //         validator: row.validator,
+    //         totalGasUsed: 0
+    //       },
+    //       txs: []
+    //     }))
+    //   assert.deepEqual(expectedBlocks, body.resultSet)
+    // })
+
     it('should return less items when there is none on the one bound', async () => {
       const { body } = await client.get('/blocks?limit=10&page=8&order=desc')
         .expect(200)
