@@ -111,35 +111,6 @@ function TransfersListItem ({ transfer, identityId, rate, l1explorerBaseUrl }) {
       </Wrapper>
     </div>
   )
-
-  // return (
-  //   <div className={'TransfersListItem'}>
-  //       <span className={'TransfersListItem__Amount'}>
-  //           { amount } Credits
-  //       </span>
-  //
-  //       <div className={'TransfersListItem__Timestamp'}>
-  //           {new Date(timestamp).toLocaleString()}
-  //       </div>
-  //
-  //       <div className={'TransfersListItem__InfoLine'}>
-  //           <div className={'TransfersListItem__Type'}>
-  //               <Tag bg='whiteAlpha.200' mr={'2'}>
-  //                   { typeIcon } <Box w={1}/> { typeTitle }
-  //               </Tag>
-  //           </div>
-  //
-  //           {(counterparty !== null &&
-  //               <span
-  //                   className={'TransfersListItem__Counterparty'}
-  //                   title={direction}
-  //               >
-  //                   { counterparty }
-  //               </span>
-  //           )}
-  //       </div>
-  //   </div>
-  // )
 }
 
 export default TransfersListItem
