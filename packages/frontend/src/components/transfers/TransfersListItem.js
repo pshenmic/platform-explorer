@@ -2,7 +2,7 @@
 
 import { Grid, GridItem } from '@chakra-ui/react'
 import './TransfersListItem.scss'
-import { ValueContainer } from '../ui/containers'
+import { ValueContainer, LinkContainer } from '../ui/containers'
 import { Credits, Identifier } from '../data'
 import { RateTooltip } from '../ui/Tooltips'
 import Link from 'next/link'
@@ -42,8 +42,18 @@ function TransfersListItem ({ transfer, identityId, rate, l1explorerBaseUrl }) {
   }
 
   const Recipient = () => {
+    if (!transfer?.recipient) return <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
+
     return (
-      <Identifier avatar={true}>{transfer.recipient}</Identifier>
+      <LinkContainer href={`/identity/${transfer?.recipient}`}>
+        <Identifier
+          avatar={true}
+          styles={['highlight-both']}
+          clickable={true}
+        >
+          {transfer.recipient}
+        </Identifier>
+      </LinkContainer>
     )
   }
 
@@ -59,12 +69,15 @@ function TransfersListItem ({ transfer, identityId, rate, l1explorerBaseUrl }) {
 
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--TxHash'}>
           {transfer?.txHash
-            ? <ItemWrapper className={'TransfersListItem__ColumnContent'} isLocal={true} href={'/transaction/' + transfer.txHash}>
+            ? <ItemWrapper
+                className={'TransfersListItem__ColumnContent'} isLocal={true}
+                href={'/transaction/' + transfer.txHash}
+              >
               <ValueContainer className={''} light={true} clickable={true} size={'xxs'}>
                 <Identifier styles={['highlight-both']}>{transfer.txHash}</Identifier>
               </ValueContainer>
             </ItemWrapper>
-            : '-'
+            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
           }
         </GridItem>
 
@@ -77,7 +90,7 @@ function TransfersListItem ({ transfer, identityId, rate, l1explorerBaseUrl }) {
             ? <RateTooltip credits={transfer.amount} rate={rate}>
                 <span><Credits>{transfer.amount}</Credits></span>
               </RateTooltip>
-            : '-'
+            : <span className={'TransactionsListItem__NotActiveText'}>-</span>
           }
         </GridItem>
 
@@ -86,7 +99,7 @@ function TransfersListItem ({ transfer, identityId, rate, l1explorerBaseUrl }) {
             ? <RateTooltip credits={transfer.gasUsed} rate={rate}>
                 <span><Credits>{transfer.gasUsed}</Credits></span>
               </RateTooltip>
-            : '-'
+            : <span className={'TransactionsListItem__NotActiveText'}>-</span>
           }
         </GridItem>
 
