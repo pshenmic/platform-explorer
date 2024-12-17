@@ -9,6 +9,7 @@ const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 
 const API_VERSION = require('../../package.json').version
+
 const PLATFORM_VERSION = require('../../package.json').dependencies.dash
 
 class MainController {
