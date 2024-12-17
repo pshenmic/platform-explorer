@@ -459,7 +459,7 @@ describe('Other routes', () => {
           version: '1' + require('../../package.json').dependencies.dash.substring(1)
         },
         tenderdash: {
-          version: mockTDStatus?.version ?? null,
+          version: mockDapiStatus.version.software.tenderdash ?? null,
           block: {
             height: mockTDStatus?.highestBlock?.height,
             hash: mockTDStatus?.highestBlock?.hash,
