@@ -119,8 +119,8 @@ const LineGraph = ({
   }
 
   const xTickFormat = tickFormats[xAxisFormatCode]
-
-  const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
+  const filteredData = data.filter(d => typeof d.y === 'number' && !isNaN(d.y))
+  const y = d3.scaleLinear(d3.extent(filteredData, d => d.y), [height - marginBottom, marginTop])
 
   const [x, setX] = useState(() => {
     if (xAxisFormatCode === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
