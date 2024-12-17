@@ -180,23 +180,21 @@ function Identity ({ identifier }) {
             </Tab>
           </TabList>
           <TabPanels>
-            <TabPanel px={0} h={'100%'}>
+            <TabPanel>
               {!transactions.error
                 ? !transactions.loading
                     ? <TransactionsList transactions={transactions.data?.resultSet}/>
                     : <LoadingList itemsCount={9}/>
                 : <ErrorMessageBlock/>}
             </TabPanel>
-
-            <TabPanel px={0} h={'100%'}>
+            <TabPanel>
               {!dataContracts.error
                 ? !dataContracts.loading
                     ? <DataContractsList dataContracts={dataContracts.data.resultSet}/>
                     : <LoadingList itemsCount={9}/>
                 : <ErrorMessageBlock/>}
             </TabPanel>
-
-            <TabPanel px={0} h={'100%'}>
+            <TabPanel>
               {!documents.error
                 ? !documents.loading
                     ? <DocumentsList documents={documents.data.resultSet} size={'m'}/>
@@ -204,8 +202,7 @@ function Identity ({ identifier }) {
                 : <ErrorMessageBlock/>
               }
             </TabPanel>
-
-            <TabPanel px={0} h={'100%'}>
+            <TabPanel>
               {!transfers.error
                 ? !transfers.loading
                     ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.data?.identifier}/>
