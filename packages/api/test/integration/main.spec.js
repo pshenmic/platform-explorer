@@ -432,9 +432,6 @@ describe('Other routes', () => {
             timestamp: blocks[blocks.length - 1].timestamp.toISOString()
           }
         },
-        platform: {
-          version: require('../../package.json').dependencies.dash
-        },
         tenderdash: {
           version: mockTDStatus?.version ?? null,
           block: {
