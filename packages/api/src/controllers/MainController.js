@@ -22,9 +22,10 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    const [blocks, stats, tdStatus, epochsInfo, totalCredits, totalCollectedFeesDay] = (await Promise.allSettled([
+    const [blocks, stats, status, tdStatus, epochsInfo, totalCredits, totalCollectedFeesDay] = (await Promise.allSettled([
       this.blocksDAO.getBlocks(1, 1, 'desc'),
       this.blocksDAO.getStats(),
+      this.dapi.getStatus(),
       TenderdashRPC.getStatus(),
       this.dapi.getEpochsInfo(1),
       this.dapi.getTotalCredits(),
@@ -56,11 +57,28 @@ class MainController {
         }
       },
       tenderdash: {
-        version: tdStatus?.version ?? null,
+        version: status?.version?.software.tenderdash ?? null,
         block: {
           height: tdStatus?.highestBlock?.height ?? null,
           hash: tdStatus?.highestBlock?.hash ?? null,
           timestamp: tdStatus?.highestBlock?.timestamp ?? null
+        }
+      },
+      versions: {
+        software: {
+          dapi: status?.version?.software.dapi ?? null,
+          drive: status?.version?.software.drive ?? null,
+          tenderdash: status?.version?.software.tenderdash ?? null
+        },
+        protocol: {
+          tenderdash: {
+            p2p: status?.version?.protocol.tenderdash?.p2p ?? null,
+            block: status?.version?.protocol.tenderdash?.block ?? null
+          },
+          drive: {
+            latest: status?.version?.protocol.drive?.latest ?? null,
+            current: status?.version?.protocol.drive?.current ?? null
+          }
         }
       }
     })
