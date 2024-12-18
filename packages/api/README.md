@@ -83,79 +83,38 @@ Returns basic stats and epoch info
 HTTP /status
 
 {
-  proTxHash: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-  isActive: true,
-  proposedBlocksAmount: 5,
-  lastProposedBlockHeader: {
-    height: 5,
-    timestamp: "2024-06-23T13:51:44.154Z",
-    hash: "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
-    l1LockedHeight: 1337,
-    appVersion: 1,
-    blockVersion: 13,
-    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
-  },
-  proTxInfo: {
-    type: "Evo",
-    collateralHash: "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
-    collateralIndex: 19,
-    collateralAddress: "yYK3Kiq36Xmf1ButkTUYb1iCNtJfSSM4KH",
-    operatorReward: 0,
-    confirmations: 214424,
-    state: {
-      version: 2,
-      service: "35.164.23.245:19999",
-      registeredHeight: 850334,
-      lastPaidHeight: 1064721,
-      consecutivePayments: 0,
-      PoSePenalty: 0,
-      PoSeRevivedHeight: 1027671,
-      PoSeBanHeight: -1,
-      revocationReason: 0,
-      ownerAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-      votingAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-      platformNodeID: "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
-      platformP2PPort: 36656,
-      platformHTTPPort: 1443,
-      payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-      pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730",
-    }
-  },
-  identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
-  identityBalance: 0,
-  epochInfo: {
-    number: 1982,
-    firstBlockHeight: 31976,
-    firstCoreBlockHeight: 1118131,
-    startTime: 1728488466559,
-    feeMultiplier: 1,
-    endTime: 1728492066559
-  },
-  totalReward: 0,
-  epochReward: 0,
-  withdrawalsCount: 1,
-  lastWithdrawal: "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047",
-  lastWithdrawalTime: "2024-10-12T03:15:19.257Z",
-  endpoints: {
-    coreP2PPortStatus: {
-      host: '52.33.28.41',
-      port: 19999,
-      status: 'ERROR',
-      message: null
+    epoch: {
+        number: 1145,
+        firstBlockHeight: 5380,
+        firstCoreBlockHeight: 1096730,
+        startTime: 1725475350064,
+        feeMultiplier: 1,
+        endTime: 1725478950064
     },
-    platformP2PPortStatus: {
-      host: '52.33.28.41',
-      port: 36656,
-      status: 'ERROR',
-      message: null
+    identitiesCount: 12,
+    totalCredits: 100000,
+    totalCollectedFeesDay: 167703567170,
+    transactionsCount: 3,
+    transfersCount: 0,
+    dataContractsCount: 1,
+    documentsCount: 1,
+    network: "dash-testnet-40",
+    api: {
+        version: "1.0.0",
+        block: {
+            height: 20153,
+            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
+            timestamp: "2024-06-06T21:50:20.949Z"
+        }
     },
-    platformGrpcPortStatus: {
-      host: '52.33.28.41',
-      port: 1443,
-      status: 'ERROR',
-      message: null
-    }
-  }
+    tenderdash: {
+        version: "0.14.0-dev.6",
+        block: {
+            height: 20154,
+            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
+            timestamp: "2024-06-06T21:53:27.947Z"
+         }
+    }     
 }
 ```
 ---
