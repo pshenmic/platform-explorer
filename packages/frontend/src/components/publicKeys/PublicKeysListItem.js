@@ -34,7 +34,7 @@ function PublicKeysListItem ({ publicKey, className }) {
           </ValueContainer>
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
-          <ValueContainer colorScheme={!publicKey?.readOnly ? 'green' : 'red'} size={'sm'}>
+          <ValueContainer colorScheme={publicKey?.readOnly ? 'green' : 'red'} size={'sm'}>
             {publicKey?.readOnly ? 'True' : 'False'}
           </ValueContainer>
         </GridItem>
