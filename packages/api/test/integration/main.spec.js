@@ -433,7 +433,7 @@ describe('Other routes', () => {
           }
         },
         platform: {
-          version: '1' + require('../../package.json').dependencies.dash.substring(1)
+          version: require('../../package.json').dependencies.dash
         },
         tenderdash: {
           version: mockTDStatus?.version ?? null,
