@@ -1,6 +1,25 @@
+@use '../../styles/mixins.scss';
+@use './variables' as docs;
+@import '../../styles/variables.scss';
+
 .DocumentsList {
-    
-    @media screen and (max-width: 580px) {
-        column-count: 1 !important;
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include docs.Columns();
+  }
+
+  &__ColumnTitle {
+    @include docs.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &:last-child {
+      text-align: right;
     }
+  }
 }
