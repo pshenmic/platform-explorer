@@ -105,18 +105,19 @@ function IdentityTotalCard ({ identity, rate }) {
             <InfoLine
               className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--PublicKeys'}
               title={'Public Keys'}
-              value={(<>
-                <Button
-                  className={'IdentityTotalCard__PublicKeysShowButton'}
-                  size={'sm'}
-                  variant={showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'gray' : 'blue'}
-                  onClick={() => setShowPublicKeys(prev => !prev)}
-                >
-                  {identity.data?.publicKeys?.length !== undefined ? identity.data?.publicKeys?.length : ''} public keys
-                  <ChevronIcon ml={'4px'} h={'10px'} w={'10px'}
-                               transform={`rotate(${showPublicKeys ? '-90deg' : '90deg'})`}/>
-                </Button>
-              </>)}
+              value={identity.data?.publicKeys?.length
+                ? <Button
+                    className={'IdentityTotalCard__PublicKeysShowButton'}
+                    size={'sm'}
+                    variant={showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'gray' : 'blue'}
+                    onClick={() => setShowPublicKeys(prev => !prev)}
+                  >
+                    {identity.data?.publicKeys?.length !== undefined ? identity.data?.publicKeys?.length : ''} public keys
+                    <ChevronIcon ml={'4px'} h={'10px'} w={'10px'}
+                                 transform={`rotate(${showPublicKeys ? '-90deg' : '90deg'})`}/>
+                  </Button>
+                : <ValueContainer className={'IdentityTotalCard__ZeroListBadge'}>none</ValueContainer>
+              }
               loading={identity.loading}
               error={identity.error || (!identity.loading && identity.data?.publicKeys === undefined)}
             />
