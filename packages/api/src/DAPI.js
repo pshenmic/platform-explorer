@@ -106,6 +106,10 @@ class DAPI {
       }
     })
   }
+
+  async getStatus () {
+    return this.dapi.platform.getStatus()
+  }
 }
 
 module.exports = DAPI
