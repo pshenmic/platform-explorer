@@ -52,10 +52,10 @@ function TransitionCard ({ transition, className }) {
             px={5}
             py={4}
           >
-            {JSON.stringify(transition.data, null, 2)}
+            {JSON.stringify(transition?.data, null, 2)}
           </Code>
         )}
-        error={!transition.data}
+        error={transition?.data === undefined}
       />
     </div>
   )
