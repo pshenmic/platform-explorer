@@ -23,7 +23,7 @@ const tabs = [
   'transfers'
 ]
 
-const defaultTabName = 'transfers'
+const defaultTabName = 'transactions'
 
 function Identity ({ identifier }) {
   const router = useRouter()
@@ -58,38 +58,41 @@ function Identity ({ identifier }) {
   // if (!identity.error && !identity.data?.fundingAddress) identity.data.fundingAddress = '=yS9GnnRdzX9W9G9kxihdgB5VovKWbPGjS1'
   // if (!identity.error && !identity.data?.totalGasSpent) identity.data.totalGasSpent = 1000000
   // if (!identity.error && !identity.data?.averageGasSpent) identity.data.averageGasSpent = 500000
-  //
-  // if (!identity.data?.publicKeys && identity.data !== null) {
+
+  // if (!identity.data?.publicKeys?.length && identity.data !== null) {
   //   identity.data.publicKeys = [
   //     {
-  //       contractBounds: {
-  //         type: 'documentType',
-  //         id: '3LSLuooomkZVVUgT8oDejK92jzcgroqyrMemVC5NX5P5',
-  //         typeName: 'contact'
-  //       },
-  //       id: 5,
+  //       contractBounds: null,
+  //       id: 0,
   //       type: 'ECDSA_SECP256K1',
-  //       data: '023b63a7e2321db63f5dbd26e08e3aa1da974404fd6b9303903195be10fe12e2b0',
-  //       publicKeyHash: 'aefbbefbbf99eee9e134c0657a13651a5692e98d',
-  //       purpose: 'ENCRYPTION',
-  //       securityLevel: 'MEDIUM',
+  //       data: '0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5',
+  //       publicKeyHash: '07630dddc55729c043de7bdeb145ee0d44feae3b',
+  //       purpose: 'AUTHENTICATION',
+  //       securityLevel: 'MASTER',
   //       readOnly: false,
-  //       signature: '1f58d5c8ee4e87e6d6fffcfebcaadc030599cc4e18e41f3d7f78bd993666e146973beb1ca57e0366eceef0510e3b55a97db765110d4ff07b9653db237d8a021d51'
+  //       signature: '2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99'
   //     },
   //     {
-  //       contractBounds: {
-  //         type: 'documentType',
-  //         id: '3LSLuooomkZVVUgT8oDejK92jzcgroqyrMemVC5NX5P5',
-  //         typeName: 'contact'
-  //       },
-  //       id: 6,
+  //       contractBounds: null,
+  //       id: 1,
   //       type: 'ECDSA_SECP256K1',
-  //       data: '026e9189c76f667c774da971d5eacee575acfd747c3ea6ca8af3636f93ac871f73',
-  //       publicKeyHash: '56db223d9e394d9a15db5064f9e19be3c40d20ff',
-  //       purpose: 'DECRYPTION',
-  //       securityLevel: 'MEDIUM',
+  //       data: '034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf',
+  //       publicKeyHash: 'e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23',
+  //       purpose: 'AUTHENTICATION',
+  //       securityLevel: 'HIGH',
+  //       readOnly: true,
+  //       signature: '1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4'
+  //     },
+  //     {
+  //       contractBounds: null,
+  //       id: 2,
+  //       type: 'ECDSA_SECP256K1',
+  //       data: '0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4',
+  //       publicKeyHash: 'd53ee3b3518fee80816ab26af98a34ea60ae9af7',
+  //       purpose: 'AUTHENTICATION',
+  //       securityLevel: 'CRITICAL',
   //       readOnly: false,
-  //       signature: '1fd753dbf431f8be55fe5545678c05ca81a1b3cfb676ff85fe22caf0042b2ad84b437c203bf16ead8d3f62f74d832d6ca8a492804340d356f1d003856ca50f170a'
+  //       signature: '204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75'
   //     }
   //   ]
   // }
