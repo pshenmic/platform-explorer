@@ -84,7 +84,8 @@ describe('Other routes', () => {
 
     identityAlias = await fixtures.identity_alias(knex, {
       alias: 'dpns.dash',
-      identity
+      identity,
+      state_transition_hash: identityTransaction.hash,
     })
 
     dataContractTransaction = await fixtures.transaction(knex, {
