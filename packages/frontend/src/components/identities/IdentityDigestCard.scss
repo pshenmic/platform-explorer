@@ -75,6 +75,7 @@
 
   &__InfoLine {
     gap: 4px;
+    column-gap: 8px;
 
     .DateBlock__InfoContainer {
       justify-content: flex-end;
