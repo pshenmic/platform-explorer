@@ -212,7 +212,8 @@ describe('Identities routes', () => {
       const { alias } = await fixtures.identity_alias(knex,
         {
           alias: 'test.dash',
-          identity
+          identity,
+          state_transition_hash: transaction.hash
         }
       )
 
@@ -320,7 +321,7 @@ describe('Identities routes', () => {
     it('should return identity by dpns', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.1.dash', identity })
+      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.1.dash', identity, state_transition_hash: identity.transaction.hash })
 
       const { body } = await client.get('/dpns/identity?dpns=test-name.1.dash')
         .expect(200)
@@ -342,7 +343,7 @@ describe('Identities routes', () => {
     it('should return identity by dpns with any case', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.2.dash', identity })
+      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.2.dash', identity, state_transition_hash: identity.transaction.hash })
 
       const { body } = await client.get('/dpns/identity?dpns=TeSt-NaME.2.DAsH')
         .expect(200)
@@ -376,7 +377,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -423,7 +424,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test1$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test1$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -473,7 +474,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test2$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test2$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -523,7 +524,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -590,7 +591,7 @@ describe('Identities routes', () => {
         identity.transactions = transactions
 
         identities.push({ identity, block })
-        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity, state_transition_hash: identity.transaction.hash })
         aliases.push(alias)
       }
 
@@ -654,7 +655,7 @@ describe('Identities routes', () => {
         identity.balance = transfer.amount
 
         identities.push({ identity, block, transfer })
-        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity, state_transition_hash: identity.transaction.hash })
         aliases.push(alias)
       }
 
