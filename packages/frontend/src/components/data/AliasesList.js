@@ -20,7 +20,7 @@ function AliasesList ({ aliases = [], smallCount = 5 }) {
         <div className={'AliasesList__ItemsContainer'}>
           {filteredArray?.map((alias, i) => (
             <div className={'AliasesList__Item'} key={i}>
-              <Alias status={i % 2 === 0 ? alias.status : 'locked'} ellipsis={false} key={i}>{alias.alias}</Alias>
+              <Alias status={alias.status} ellipsis={false} key={i}>{alias.alias}</Alias>
               {alias?.timestamp && <DateBlock timestamp={alias.timestamp} format={'deltaOnly'}/>}
             </div>
           ))}
