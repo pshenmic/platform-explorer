@@ -1,8 +1,7 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
-const { getAliasInfo } = require('../utils')
-const { base58 } = require('@scure/base')
+const { getAliasInfo, getAliasStateByVote } = require('../utils')
 
 module.exports = class TransactionsDAO {
   constructor (knex, dapi) {
@@ -36,14 +35,7 @@ module.exports = class TransactionsDAO {
     const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
       const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-      const isLocked = base58.encode(
-        Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-        'base64') !== row.identifier
-
-      return {
-        alias,
-        status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-      }
+      return getAliasStateByVote(aliasInfo, alias, row.owner)
     }))
 
     return Transaction.fromRow({ ...row, aliases })
@@ -119,14 +111,7 @@ module.exports = class TransactionsDAO {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
         const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-        const isLocked = base58.encode(
-          Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-          'base64') !== row.identifier
-
-        return {
-          alias,
-          status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-        }
+        return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
 
       return Transaction.fromRow({ ...row, aliases })
@@ -154,6 +139,13 @@ module.exports = class TransactionsDAO {
           .as('tx_count')
       )
       .select(
+        this.knex('state_transitions')
+          .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
+          .sum('gas_used')
+          .as('gas_used')
+      )
+      .select(
         this.knex('blocks')
           .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
           .select('hash')
@@ -176,6 +168,54 @@ module.exports = class TransactionsDAO {
         timestamp: row.date_from,
         data: {
           txs: parseInt(row.tx_count),
+          blockHeight: row.block_height,
+          blockHash: row.block_hash
+        }
+      }))
+      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+  }
+
+  getGasHistorySeries = async (start, end, interval, intervalInMs) => {
+    const startSql = `'${new Date(start.getTime() + intervalInMs).toISOString()}'::timestamptz`
+
+    const endSql = `'${new Date(end.getTime()).toISOString()}'::timestamptz`
+
+    const ranges = this.knex
+      .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
+      .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
+
+    const rows = await this.knex.with('ranges', ranges)
+      .select('date_from')
+      .select(
+        this.knex('state_transitions')
+          .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
+          .sum('gas_used')
+          .as('gas')
+      )
+      .select(
+        this.knex('blocks')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
+          .select('hash')
+          .orderBy('blocks.height')
+          .limit(1)
+          .as('block_hash')
+      )
+      .select(
+        this.knex('blocks')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
+          .select('height')
+          .orderBy('height')
+          .limit(1)
+          .as('block_height')
+      )
+      .from('ranges')
+
+    return rows
+      .map(row => ({
+        timestamp: row.date_from,
+        data: {
+          gas: parseInt(row.gas),
           blockHeight: row.block_height,
           blockHash: row.block_hash
         }

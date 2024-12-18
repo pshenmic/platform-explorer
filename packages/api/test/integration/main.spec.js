@@ -41,6 +41,8 @@ describe('Other routes', () => {
 
     mock.method(DAPI.prototype, 'getContestedState', async () => null)
 
+    mock.method(DAPI.prototype, 'getIdentityKeys', async () => null)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -69,6 +71,7 @@ describe('Other routes', () => {
     identityTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
       type: StateTransitionEnum.IDENTITY_CREATE,
+      data: '',
       owner: identityIdentifier
     })
     identity = await fixtures.identity(knex, {
@@ -90,7 +93,8 @@ describe('Other routes', () => {
     })
     dataContract = await fixtures.dataContract(knex, {
       state_transition_hash: dataContractTransaction.hash,
-      owner: identity.identifier
+      owner: identity.identifier,
+      name: 'test'
     })
 
     documentTransaction = await fixtures.transaction(knex, {
@@ -165,7 +169,7 @@ describe('Other routes', () => {
             blockHash: identityTransaction.block_hash,
             blockHeight: null,
             type: identityTransaction.type,
-            data: '{}',
+            data: '',
             timestamp: block.timestamp.toISOString(),
             gasUsed: 0,
             status: 'SUCCESS',
@@ -174,6 +178,7 @@ describe('Other routes', () => {
               identifier: identityTransaction.owner,
               aliases: [{
                 alias: 'dpns.dash',
+                contested: false,
                 status: 'ok'
               }]
             }
@@ -193,7 +198,8 @@ describe('Other routes', () => {
               identifier: dataContractTransaction.owner,
               aliases: [{
                 alias: 'dpns.dash',
-                status: 'ok'
+                status: 'ok',
+                contested: false
               }]
             }
           },
@@ -212,7 +218,8 @@ describe('Other routes', () => {
               identifier: documentTransaction.owner,
               aliases: [{
                 alias: 'dpns.dash',
-                status: 'ok'
+                status: 'ok',
+                contested: false
               }]
             }
           }
@@ -242,6 +249,7 @@ describe('Other routes', () => {
           identifier: dataContractTransaction.owner,
           aliases: [{
             alias: identityAlias.alias,
+            contested: false,
             status: 'ok'
           }]
         }
@@ -291,6 +299,26 @@ describe('Other routes', () => {
       assert.deepEqual({ dataContract: expectedDataContract }, body)
     })
 
+    it('should search by data contract name', async () => {
+      const { body } = await client.get('/search?query=test')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDataContract = {
+        identifier: dataContract.identifier,
+        name: dataContract.name,
+        owner: identity.identifier.trim(),
+        schema: JSON.stringify(dataContract.schema),
+        version: 0,
+        txHash: dataContractTransaction.hash,
+        timestamp: block.timestamp.toISOString(),
+        isSystem: false,
+        documentsCount: 1
+      }
+
+      assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
+    })
+
     it('should search by identity DPNS', async () => {
       mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
@@ -298,12 +326,17 @@ describe('Other routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      const expectedIdentity = {
+      const expectedIdentity = [{
         identifier: identity.identifier,
-        alias: identityAlias.alias
-      }
+        alias: identityAlias.alias,
+        status: {
+          alias: identityAlias.alias,
+          contested: false,
+          status: 'ok'
+        }
+      }]
 
-      assert.deepEqual({ identity: expectedIdentity }, body)
+      assert.deepEqual({ identities: expectedIdentity }, body)
     })
 
     it('should search identity', async () => {
@@ -325,8 +358,16 @@ describe('Other routes', () => {
         owner: identity.identifier,
         aliases: [{
           alias: 'dpns.dash',
+          contested: false,
           status: 'ok'
-        }]
+        }],
+        totalGasSpent: 480000,
+        averageGasSpent: 9412,
+        topUpsGasSpent: 0,
+        withdrawalsGasSpent: 0,
+        lastWithdrawalHash: null,
+        publicKeys: [],
+        fundingCoreTx: null
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
@@ -390,9 +431,6 @@ describe('Other routes', () => {
             hash: blocks[blocks.length - 1].hash,
             timestamp: blocks[blocks.length - 1].timestamp.toISOString()
           }
-        },
-        platform: {
-          version: '1' + require('../../package.json').dependencies.dash.substring(1)
         },
         tenderdash: {
           version: mockTDStatus?.version ?? null,

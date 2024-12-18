@@ -6,9 +6,9 @@ const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
+const { base58 } = require('@scure/base')
 
 const API_VERSION = require('../../package.json').version
-const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
 
 class MainController {
   constructor (knex, dapi) {
@@ -55,9 +55,6 @@ class MainController {
           timestamp: currentBlock?.header?.timestamp.toISOString()
         }
       },
-      platform: {
-        version: PLATFORM_VERSION
-      },
       tenderdash: {
         version: tdStatus?.version ?? null,
         block: {
@@ -72,6 +69,8 @@ class MainController {
   search = async (request, response) => {
     const { query } = request.query
 
+    let result = {}
+
     const epoch = Epoch.fromObject({
       startTime: 0,
       endTime: 0
@@ -82,7 +81,7 @@ class MainController {
       const block = await this.blocksDAO.getBlockByHeight(query)
 
       if (block) {
-        return response.send({ block })
+        result = { ...result, block }
       }
     }
 
@@ -91,21 +90,21 @@ class MainController {
       const block = await this.blocksDAO.getBlockByHash(query)
 
       if (block) {
-        return response.send({ block })
+        result = { ...result, block }
       }
 
       // search transactions
       const transaction = await this.transactionsDAO.getTransactionByHash(query)
 
       if (transaction) {
-        return response.send({ transaction })
+        result = { ...result, transaction }
       }
 
-      // search validators
+      // search validators by hash
       const validator = await this.validatorsDAO.getValidatorByProTxHash(query, null, epoch)
 
       if (validator) {
-        return response.send({ validator })
+        result = { ...result, validator }
       }
     }
 
@@ -115,34 +114,52 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
-        return response.send({ identity })
+        result = { ...result, identity }
       }
 
-      // search data contracts
+      // search validator by MasterNode identity
+      const proTxHash = Buffer.from(base58.decode(query)).toString('hex')
+
+      const validator = await this.validatorsDAO.getValidatorByProTxHash(proTxHash, null, epoch)
+
+      if (validator) {
+        result = { ...result, validator }
+      }
+
+      // search data contract by id
       const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(query)
 
       if (dataContract) {
-        return response.send({ dataContract })
+        result = { ...result, dataContract }
       }
 
       // search documents
       const document = await this.documentsDAO.getDocumentByIdentifier(query)
 
       if (document) {
-        return response.send({ document })
+        result = { ...result, document }
       }
     }
 
     // by dpns name
-    if (/^[^\s.]+(\.[^\s.]+)*$/.test(query)) {
-      const identity = await this.identitiesDAO.getIdentityByDPNSName(query)
+    const identities = await this.identitiesDAO.getIdentitiesByDPNSName(query)
 
-      if (identity) {
-        return response.send({ identity })
-      }
+    if (identities) {
+      result = { ...result, identities }
     }
 
-    response.status(404).send({ message: 'not found' })
+    // by data-contract name
+    const dataContracts = await this.dataContractsDAO.getDataContractByName(query)
+
+    if (dataContracts) {
+      result = { ...result, dataContracts }
+    }
+
+    if (Object.keys(result).length === 0) {
+      response.status(404).send({ message: 'not found' })
+    }
+
+    response.send(result)
   }
 }
 
