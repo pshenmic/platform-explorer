@@ -30,40 +30,40 @@ function IdentityDigestCard ({ identity, rate, className }) {
       <div className={'IdentityDigestCard__LinesContainer'}>
         <InfoLine
           className={'IdentityDigestCard__InfoLine'}
-          title={'Funding Address'}
+          title={'Funding Core Transaction'}
           value={(
             <a {...(l1explorerBaseUrl && {
-              href: `${l1explorerBaseUrl}/address/${identity.data?.fundingAddress}`,
+              href: `${l1explorerBaseUrl}/tx/${identity.data?.fundingCoreTx}`,
               target: '_blank',
               rel: 'noopener noreferrer'
             })}>
               <ValueContainer className={'IdentityDigestCard__ValueContainer'} clickable={!!l1explorerBaseUrl} external={!!l1explorerBaseUrl}>
                 <Identifier styles={['highlight-both']} ellipsis={false}>
-                  {identity.data?.fundingAddress || null}
+                  {identity.data?.fundingCoreTx || null}
                 </Identifier>
               </ValueContainer>
             </a>
           )}
           loading={identity.loading}
-          error={identity.error || (!identity.loading && !identity.data?.fundingAddress)}
+          error={identity.error || (!identity.loading && !identity.data?.fundingCoreTx)}
         />
         <InfoLine
           className={'IdentityDigestCard__InfoLine'}
           title={'Last Withdrawal'}
           value={(
-            <Link href={`/transaction/${identity.data?.lastWithdrawal}`}>
+            <Link href={`/transaction/${identity.data?.lastWithdrawalHash}`}>
               <ValueContainer className={'IdentityDigestCard__ValueContainer'} clickable={true}>
                 {identity.data?.lastWithdrawalTime &&
                   <DateBlock timestamp={identity.data.lastWithdrawalTime} format={'deltaOnly'}/>
                 }
                 <Identifier ellipsis={false} styles={['highlight-both']}>
-                  {identity.data?.lastWithdrawal}
+                  {identity.data?.lastWithdrawalHash}
                 </Identifier>
               </ValueContainer>
             </Link>
           )}
           loading={identity.loading}
-          error={identity.error || (!identity.loading && !identity.data?.lastWithdrawal)}
+          error={identity.error || (!identity.loading && !identity.data?.lastWithdrawalHash)}
         />
         <InfoLine
           className={'IdentityDigestCard__InfoLine'}
