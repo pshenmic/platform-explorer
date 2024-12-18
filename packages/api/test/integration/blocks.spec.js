@@ -559,7 +559,7 @@ describe('Blocks routes', () => {
       assert.equal(body.resultSet.length, 10)
 
       const expectedBlocks = blocks
-        .filter(row=>row.validator === block.validator)
+        .filter(row => row.validator === block.validator)
         .sort((a, b) => b.height - a.height)
         .slice(0, 10)
         .map(row => ({
@@ -579,8 +579,7 @@ describe('Blocks routes', () => {
     })
 
     it('should allow search by gas range', async () => {
-
-      const { body } = await client.get(`/blocks?gas_min=0&gas_max=1&order=desc`)
+      const { body } = await client.get('/blocks?gas_min=0&gas_max=1&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -609,8 +608,7 @@ describe('Blocks routes', () => {
     })
 
     it('should return empty array when gas filter to large', async () => {
-
-      const { body } = await client.get(`/blocks?gas_min=1&gas_max=10&order=desc`)
+      const { body } = await client.get('/blocks?gas_min=1&gas_max=10&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -623,8 +621,7 @@ describe('Blocks routes', () => {
     })
 
     it('should allow search by height range', async () => {
-
-      const { body } = await client.get(`/blocks?height_min=1&height_max=9&order=desc`)
+      const { body } = await client.get('/blocks?height_min=1&height_max=9&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -634,7 +631,7 @@ describe('Blocks routes', () => {
       assert.equal(body.resultSet.length, 9)
 
       const expectedBlocks = blocks
-        .filter(row=>row.height>=0&&row.height<=9)
+        .filter(row => row.height >= 0 && row.height <= 9)
         .sort((a, b) => b.height - a.height)
         .slice(0, 9)
         .map(row => ({
@@ -654,8 +651,7 @@ describe('Blocks routes', () => {
     })
 
     it('should  return empty array when height filter to large', async () => {
-
-      const { body } = await client.get(`/blocks?height_min=100&height_max=190&order=desc`)
+      const { body } = await client.get('/blocks?height_min=100&height_max=190&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -668,12 +664,11 @@ describe('Blocks routes', () => {
     })
 
     it('should allow search by transactions count', async () => {
-
       const [block] = blocks
 
-      const identity = await fixtures.identity(knex, {block_hash: block.hash})
+      const identity = await fixtures.identity(knex, { block_hash: block.hash })
 
-      const { body } = await client.get(`/blocks?transactions_count_min=1&transactions_count_max=2&order=desc`)
+      const { body } = await client.get('/blocks?transactions_count_min=1&transactions_count_max=2&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -683,7 +678,7 @@ describe('Blocks routes', () => {
       assert.equal(body.resultSet.length, 1)
 
       const expectedBlocks = blocks
-        .filter(row=>row.hash===block.hash)
+        .filter(row => row.hash === block.hash)
         .sort((a, b) => b.height - a.height)
         .slice(0, 10)
         .map(row => ({
@@ -703,7 +698,6 @@ describe('Blocks routes', () => {
         }))
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
-
 
     it('should return less items when there is none on the one bound', async () => {
       const { body } = await client.get('/blocks?limit=10&page=8&order=desc')
