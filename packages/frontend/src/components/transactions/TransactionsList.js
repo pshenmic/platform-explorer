@@ -7,7 +7,7 @@ import './TransactionsList.scss'
 export default function TransactionsList ({ transactions = [], showMoreLink, variant = 'full', headerStyles = 'default', rate }) {
   const headerExtraClass = {
     default: '',
-    light: 'BlocksList__ColumnTitles--Light'
+    light: 'TransactionsList__ColumnTitles--Light'
   }
 
   return (
