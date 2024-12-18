@@ -9,7 +9,6 @@ const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 
 const API_VERSION = require('../../package.json').version
-const PLATFORM_VERSION = '1' + require('../../package.json').dependencies.dash.substring(1)
 
 class MainController {
   constructor (knex, dapi) {
@@ -55,9 +54,6 @@ class MainController {
           hash: currentBlock?.header?.hash ?? null,
           timestamp: currentBlock?.header?.timestamp.toISOString() ?? null
         }
-      },
-      platform: {
-        version: PLATFORM_VERSION
       },
       tenderdash: {
         version: tdStatus?.version ?? null,
