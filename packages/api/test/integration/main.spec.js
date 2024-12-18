@@ -43,6 +43,8 @@ describe('Other routes', () => {
 
     mock.method(DAPI.prototype, 'getIdentityKeys', async () => null)
 
+    mock.method(DAPI.prototype, 'getStatus', async () => null)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -384,8 +386,29 @@ describe('Other routes', () => {
           timestamp: new Date().toISOString()
         }
       }
+      const mockDapiStatus = {
+        version: {
+          software: {
+            dapi: '1.5.1',
+            drive: '1.6.2',
+            tenderdash: '1.4.0'
+          },
+          protocol: {
+            tenderdash: {
+              p2p: 10,
+              block: 14
+            },
+            drive: {
+              latest: 6,
+              current: 6
+            }
+          }
+        }
+      }
+
       mock.reset()
       mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
+      mock.method(DAPI.prototype, 'getStatus', async () => mockDapiStatus)
       mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
         number: 0,
         firstBlockHeight: 0,
@@ -432,15 +455,29 @@ describe('Other routes', () => {
             timestamp: blocks[blocks.length - 1].timestamp.toISOString()
           }
         },
-        platform: {
-          version: '1' + require('../../package.json').dependencies.dash.substring(1)
-        },
         tenderdash: {
-          version: mockTDStatus?.version ?? null,
+          version: mockDapiStatus.version.software.tenderdash ?? null,
           block: {
             height: mockTDStatus?.highestBlock?.height,
             hash: mockTDStatus?.highestBlock?.hash,
             timestamp: mockTDStatus?.highestBlock?.timestamp
+          }
+        },
+        versions: {
+          software: {
+            dapi: mockDapiStatus.version.software.dapi ?? null,
+            drive: mockDapiStatus.version.software.drive ?? null,
+            tenderdash: mockDapiStatus.version.software.tenderdash ?? null
+          },
+          protocol: {
+            tenderdash: {
+              p2p: mockDapiStatus.version.protocol.tenderdash.p2p ?? null,
+              block: mockDapiStatus.version.protocol.tenderdash.block ?? null
+            },
+            drive: {
+              latest: mockDapiStatus.version.protocol.drive.latest ?? null,
+              current: mockDapiStatus.version.protocol.drive.current ?? null
+            }
           }
         }
       }

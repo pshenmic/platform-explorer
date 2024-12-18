@@ -431,6 +431,7 @@ impl PSQLProcessor {
                 self.dao.create_document(dash_tld_document, None).await.unwrap();
             }
             SystemDataContract::Dashpay => {}
+            SystemDataContract::WalletUtils => {}
         }
     }
 
