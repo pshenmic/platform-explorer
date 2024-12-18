@@ -1,6 +1,6 @@
 import { Badge } from '@chakra-ui/react'
-import './TransactionStatusBadge.scss'
 import { ErrorCircleIcon, CheckmarkIcon } from '../ui/icons'
+import './TransactionStatusBadge.scss'
 
 function TransactionStatusBadge ({ status }) {
   const StatusIcon = status === 'SUCCESS'
