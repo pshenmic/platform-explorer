@@ -84,14 +84,15 @@ const fixtures = {
     return { ...row, txHash: state_transition_hash ?? transaction.hash, id: result[0].id, transaction }
   },
 
-  identity_alias: async (knex, { alias, identity, block_hash } = {}) => {
+  identity_alias: async (knex, { alias, identity, block_hash, state_transition_hash } = {}) => {
     if (!identity) {
       identity = this.identity(knex, { block_hash })
     }
 
     const row = {
       identity_identifier: identity.identifier,
-      alias
+      alias,
+      state_transition_hash
     }
 
     await knex('identity_aliases').insert(row).returning('id')
