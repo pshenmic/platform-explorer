@@ -264,7 +264,7 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_CREDIT_TRANSFER: {
-      decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
+      decoded.nonce = Number(stateTransition.getNonce())
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.recipientId = stateTransition.getRecipientId().toString()
@@ -284,7 +284,6 @@ const decodeStateTransition = async (client, base64) => {
         : null
 
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
-      decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
       decoded.identityNonce = parseInt(stateTransition.getNonce())
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.amount = parseInt(stateTransition.getAmount())
