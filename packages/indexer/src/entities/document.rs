@@ -207,18 +207,3 @@ impl From<Row> for Document {
         }
     }
 }
-
-//
-// impl From<i64> for DocumentTransitionActionType {
-//     fn from(value: i64) -> Self {
-//         match value {
-//             0 => DocumentTransitionActionType::Create,
-//             1 => DocumentTransitionActionType::Replace,
-//             2 => DocumentTransitionActionType::Delete,
-//             3 => DocumentTransitionActionType::Transfer,
-//             4 => DocumentTransitionActionType::Purchase,
-//             5 => DocumentTransitionActionType::UpdatePrice,
-//             _ => panic!(format!("Unknown document transition type: {}", value))
-//         }
-//     }
-// }
