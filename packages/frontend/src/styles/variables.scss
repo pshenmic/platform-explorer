@@ -18,4 +18,7 @@ $color-brand-pressed: var(--chakra-colors-brand-pressed);
 
 $transition-time-def: .15s;
 
-$blockBackgroundBlur: blur(44px)
+$blockBackgroundBlur: blur(44px);
+
+$scrollColor: $color-brand-normal;
+$scrollBackgroundColor: rgba(255, 255, 255, .05);

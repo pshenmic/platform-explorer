@@ -43,7 +43,11 @@ const NavLink = ({ children, to, isActive, className }) => {
 function Navbar () {
   const pathname = usePathname()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const breadcrumbsActiveRoutes = ['/validator/']
+  const breadcrumbsActiveRoutes = [
+    '/validator/',
+    '/transaction/',
+    '/identity/'
+  ]
   const displayBreadcrumbs = breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1)
 
   useEffect(onClose, [pathname, onClose])

@@ -1,27 +1,37 @@
 import Link from 'next/link'
 import ImageGenerator from '../imageGenerator'
 import './DataContractsListItem.scss'
+import { Alias, DateBlock, Identifier } from '../data'
 
 function DataContractsListItem ({ dataContract }) {
-  const { identifier, name, timestamp, isSystem } = dataContract
-
   return (
     <Link
-        href={`/dataContract/${identifier}`}
-        className={'DataContractsListItem'}
+      href={`/dataContract/${dataContract?.identifier}`}
+      className={'DataContractsListItem'}
     >
-        <div className={'DataContractsListItem__IdentifierContainer'}>
-            <ImageGenerator className={'DataContractsListItem__Avatar'} username={identifier} lightness={50} saturation={50} width={28} height={28}/>
-            <div className={'DataContractsListItem__Identifier'}>{name ? <b>{name}</b> : identifier}</div>
+      <div className={'DataContractsListItem__IdentifierContainer'}>
+        {dataContract?.name
+          ? <>
+              <ImageGenerator className={'DataContractsListItem__Avatar'} username={dataContract?.identifier} lightness={50} saturation={50} width={24} height={24}/>
+              <Alias>{dataContract.name}</Alias>
+            </>
+          : <Identifier
+            className={'DataContractsListItem__Identifier'}
+            avatar={true}
+            styles={['highlight-both']}
+            ellipsis={false}
+          >
+            {dataContract.identifier}
+          </Identifier>}
+      </div>
+
+      {dataContract?.isSystem && <div className={'DataContractsListItem__SystemLabel'}>SYSTEM</div>}
+
+      {(typeof dataContract?.timestamp === 'string') &&
+        <div className={'DataContractsListItem__Timestamp'}>
+          <DateBlock timestamp={dataContract?.timestamp} format={'dateOnly'} showTime={true}/>
         </div>
-
-        {isSystem && <div>SYSTEM</div>}
-
-        {(typeof timestamp === 'string') &&
-            <div className={'DataContractsListItem__Timestamp'}>
-                {new Date(timestamp).toLocaleString()}
-            </div>
-        }
+      }
     </Link>
   )
 }

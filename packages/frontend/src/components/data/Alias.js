@@ -1,5 +1,6 @@
-import './Alias.scss'
 import { Tooltip } from '../ui/Tooltips'
+import { ErrorIcon } from '../ui/icons'
+import './Alias.scss'
 
 export default function Alias ({ alias, status, children, ellipsis = true, className }) {
   alias = alias || children
@@ -29,6 +30,8 @@ export default function Alias ({ alias, status, children, ellipsis = true, class
             {alias?.slice(dashIndex)}
           </span>
         }
+
+        {status === 'locked' && <ErrorIcon className={'Alias__LockedIcon'}/>}
       </div>
     </Container>
   )

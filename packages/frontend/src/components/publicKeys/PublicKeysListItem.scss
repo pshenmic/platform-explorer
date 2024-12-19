@@ -1,0 +1,68 @@
+@use '../../styles/mixins.scss';
+@use './variables' as pk;
+@import '../../styles/variables.scss';
+
+.PublicKeysListItem {
+  @include mixins.DefListItem(false);
+  display: block;
+
+  &__Content {
+    @include pk.Columns();
+    align-items: baseline;
+
+    &--Inline {
+      display: inline !important;
+    }
+  }
+
+  &__Column {
+    @include pk.Column();
+    font-size: 0.688rem;
+
+    &--Id {
+      font-size: 0.75rem;
+      color: #fff;
+    }
+
+    &--Data {
+      flex-direction: column;
+      align-items: flex-start;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    &--PublicKeyHash {
+      font-size: 0.688rem;
+      color: var(--chakra-colors-gray-250);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__PublicKeyHash {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__Data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    word-break: break-all;
+    min-width: 100px;
+    width: 100%;
+
+    .CopyButton {
+      margin-left: 8px;
+    }
+  }
+
+  &__PublicKeyBounds {
+    max-width: 100%;
+  }
+}

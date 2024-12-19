@@ -10,6 +10,44 @@ const montserrat = Montserrat({ subsets: ['latin'] })
 const openSans = OpenSans({ subsets: ['latin'] })
 const robotoMono = RobotoMono({ subsets: ['latin'] })
 
+const badgeColors = {
+  red: {
+    bg: '#4E3234',
+    bgHover: '',
+    text: '#F45858'
+  },
+  green: {
+    bg: '#2B4629',
+    bgHover: '',
+    text: '#81F458'
+  },
+  gray: {
+    bg: 'gray.600',
+    bgHover: 'gray.500',
+    text: 'gray.50'
+  },
+  blue: {
+    bg: 'rgba(0, 141, 228, 0.2)',
+    bgHover: 'rgba(44, 187, 255, 0.2)',
+    text: 'rgb(0, 141, 228)'
+  },
+  yellow: {
+    bg: 'rgba(244, 228, 88, 0.2)',
+    bgHover: '',
+    text: '#F4E458'
+  },
+  orange: {
+    bg: 'rgba(244, 154, 88, 0.2)',
+    bgHover: '',
+    text: 'rgb(244, 154, 88)'
+  },
+  emerald: {
+    bg: 'rgba(88, 244, 188, 0.2)',
+    bgHover: '',
+    text: 'rgb(88, 244, 188)'
+  }
+}
+
 export const theme = extendTheme({
   config: {
     useSystemColorMode: false,
@@ -57,13 +95,15 @@ export const theme = extendTheme({
       50: '#FFFFFF'
     },
     red: {
-      default: '#F45858'
+      default: '#F45858',
+      'default-rgb': '244, 88, 88'
     },
     yellow: {
       default: '#FFD205'
     },
     green: {
       default: '#1CC400',
+      'default-rgb': '28, 196, 0',
       label: '#81F458',
       emeralds: '#58F4BC',
       'emeralds-rgb': '88, 244, 188'
@@ -73,6 +113,7 @@ export const theme = extendTheme({
       100: '#e0e3e5',
       200: '#c6cacd',
       250: '#93aab2',
+      '250-rgb': '147, 170, 178',
       300: '#acb1b4',
       400: '#94999c',
       500: '#7b7f83',
@@ -231,30 +272,26 @@ export const theme = extendTheme({
           _hover: {
             bg: 'green.label'
           }
+        },
+        blue: {
+          bg: badgeColors.blue.bg,
+          color: badgeColors.blue.text,
+          _hover: {
+            bg: badgeColors.blue.bgHover
+          }
+        },
+        gray: {
+          bg: badgeColors.gray.bg,
+          color: badgeColors.gray.text,
+          _hover: {
+            bg: badgeColors.gray.bgHover
+          }
         }
       }
     },
     Badge: {
       baseStyle: props => {
         const { colorScheme } = props
-        const backgroundColors = {
-          red: '#4E3234',
-          green: '#2B4629',
-          gray: 'gray.600',
-          blue: 'rgba(0, 141, 228, 0.2)',
-          yellow: 'rgba(244, 228, 88, 0.2)',
-          orange: 'rgba(244, 154, 88, 0.2)',
-          emerald: 'rgba(88, 244, 188, 0.2)'
-        }
-        const textColor = {
-          red: '#F45858',
-          green: '#81F458',
-          gray: 'gray.50',
-          blue: 'rgb(0, 141, 228)',
-          yellow: '#F4E458',
-          orange: 'rgb(244, 154, 88)',
-          emerald: 'rgb(88, 244, 188)'
-        }
 
         return {
           borderWidth: '0px',
@@ -266,8 +303,8 @@ export const theme = extendTheme({
           display: 'inline-flex',
           alignItems: 'center',
           lineHeight: '20px',
-          bg: backgroundColors[colorScheme] || 'gray.500',
-          color: textColor[colorScheme] || 'white'
+          bg: badgeColors[colorScheme].bg || 'gray.500',
+          color: badgeColors[colorScheme].text || 'white'
         }
       }
     },

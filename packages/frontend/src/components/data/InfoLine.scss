@@ -6,12 +6,12 @@
   justify-content: space-between;
   align-items: center;
   font-family: $font-mono;
+  gap: 8px;
 
   &__Title {
     font-size: 0.75rem;
     color: var(--chakra-colors-gray-250);
     flex-shrink: 0;
-    margin-right: 8px;
   }
 
   &__Value {
