@@ -105,9 +105,8 @@ describe('Utils', () => {
           coreChainLockedHeight: null,
           type: 'instantSend',
           fundingAmount: 34999000,
-          txid: 'fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d',
           vout: 0,
-          fundingAddress: 'yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY',
+          fundingCoreTx: 'fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d',
           instantLock: 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq'
         },
         userFeeIncrease: 65,
@@ -161,9 +160,8 @@ describe('Utils', () => {
           coreChainLockedHeight: null,
           type: 'instantSend',
           fundingAmount: 999000,
-          txid: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64',
           vout: 0,
-          fundingAddress: 'yWxCwVRgqRmePNPJxezgus1T7xSv5q17SU'
+          fundingCoreTx: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64'
         },
         identityId: '4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF',
         amount: 300000000,
@@ -277,7 +275,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 7,
-        identityContractNonce: 3,
+        nonce: 3,
         userFeeIncrease: 2,
         senderId: '4CpFVPyU95ZxNeDnRWfkpjUa9J72i3nZ4YPsTnpdUudu',
         recipientId: 'GxdRSLivPDeACYU8Z6JSNvtrRPX7QG715JoumnctbwWN',
@@ -295,7 +293,6 @@ describe('Utils', () => {
         type: 6,
         outputAddress: 'yZF5JqEgS9xT1xSkhhUQACdLLDbqSixL8i',
         userFeeIncrease: 2,
-        identityContractNonce: 1,
         senderId: 'FvqzjDyub72Hk51pcmJvd1JUACuor7vA3aJawiVG7Z17',
         amount: 1000000,
         identityNonce: 1,

@@ -32,6 +32,11 @@ const schemaTypes = [
         minimum: 0,
         maximum: 8
       },
+      hash: {
+        type: 'string',
+        minLength: 64,
+        maxLength: 64
+      },
       transaction_type: {
         type: ['array', 'null'],
         items: {
