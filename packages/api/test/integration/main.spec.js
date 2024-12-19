@@ -369,7 +369,10 @@ describe('Other routes', () => {
         withdrawalsGasSpent: 0,
         lastWithdrawalHash: null,
         publicKeys: [],
-        fundingCoreTx: null
+        fundingCoreTx: null,
+        lastWithdrawalTimestamp: null,
+        totalTopUps: 0,
+        totalWithdrawals: 0
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)

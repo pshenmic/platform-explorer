@@ -242,6 +242,9 @@ describe('Identities routes', () => {
         topUpsGasSpent: 0,
         withdrawalsGasSpent: 0,
         lastWithdrawalHash: null,
+        lastWithdrawalTimestamp: null,
+        totalTopUps: 0,
+        totalWithdrawals: 0,
         publicKeys: [],
         fundingCoreTx: null
       }
@@ -411,7 +414,10 @@ describe('Identities routes', () => {
         withdrawalsGasSpent: null,
         lastWithdrawalHash: null,
         publicKeys: [],
-        fundingCoreTx: null
+        fundingCoreTx: null,
+        lastWithdrawalTimestamp: null,
+        totalTopUps: null,
+        totalWithdrawals: null
       }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -460,7 +466,10 @@ describe('Identities routes', () => {
           withdrawalsGasSpent: null,
           lastWithdrawalHash: null,
           publicKeys: [],
-          fundingCoreTx: null
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -510,7 +519,10 @@ describe('Identities routes', () => {
           withdrawalsGasSpent: null,
           lastWithdrawalHash: null,
           publicKeys: [],
-          fundingCoreTx: null
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -561,7 +573,10 @@ describe('Identities routes', () => {
           withdrawalsGasSpent: null,
           lastWithdrawalHash: null,
           publicKeys: [],
-          fundingCoreTx: null
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -627,7 +642,10 @@ describe('Identities routes', () => {
           withdrawalsGasSpent: null,
           lastWithdrawalHash: null,
           publicKeys: [],
-          fundingCoreTx: null
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -705,7 +723,10 @@ describe('Identities routes', () => {
           withdrawalsGasSpent: null,
           lastWithdrawalHash: null,
           publicKeys: [],
-          fundingCoreTx: null
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
