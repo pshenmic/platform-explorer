@@ -1,8 +1,8 @@
 const DocumentsDAO = require('../dao/DocumentsDAO')
 
 class DocumentsController {
-  constructor (knex) {
-    this.documentsDAO = new DocumentsDAO(knex)
+  constructor (knex, client) {
+    this.documentsDAO = new DocumentsDAO(knex,client)
   }
 
   getDocumentByIdentifier = async (request, response) => {

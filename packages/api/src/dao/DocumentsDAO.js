@@ -1,9 +1,11 @@
 const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
+const {decodeStateTransition} = require("../utils");
 
 module.exports = class DocumentsDAO {
-  constructor (knex) {
+  constructor(knex, client) {
     this.knex = knex
+    this.client = client
   }
 
   getDocumentByIdentifier = async (identifier) => {
@@ -19,7 +21,8 @@ module.exports = class DocumentsDAO {
 
     const rows = await this.knex(subquery)
       .select('identifier', 'document_owner', 'data_contract_identifier', 'data_contract_data',
-        'revision', 'deleted', 'rank', 'tx_hash', 'is_system', 'blocks.timestamp as timestamp')
+        'revision', 'deleted', 'rank', 'tx_hash', 'is_system', 'blocks.timestamp as timestamp',
+        'state_transitions.data as create_tx_data')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .limit(1)
@@ -30,10 +33,16 @@ module.exports = class DocumentsDAO {
       return null
     }
 
+    const decodedTx = row.create_tx_data ? await decodeStateTransition(this.client, row.create_tx_data) : null
+
+    const [transition] = decodedTx?.transitions
+
     return Document.fromRow({
       ...row,
       data: row.data_contract_data,
-      owner: row.document_owner
+      owner: row.document_owner,
+      prefunded_balance: transition.prefundedBalance,
+      type: transition.type,
     })
   }
 

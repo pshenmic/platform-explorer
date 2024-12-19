@@ -11,10 +11,10 @@ const { base58 } = require('@scure/base')
 const API_VERSION = require('../../package.json').version
 
 class MainController {
-  constructor (knex, dapi) {
+  constructor (knex, dapi, client) {
     this.blocksDAO = new BlocksDAO(knex, dapi)
     this.dataContractsDAO = new DataContractsDAO(knex)
-    this.documentsDAO = new DocumentsDAO(knex)
+    this.documentsDAO = new DocumentsDAO(knex, client)
     this.transactionsDAO = new TransactionsDAO(knex, dapi)
     this.identitiesDAO = new IdentitiesDAO(knex, dapi)
     this.validatorsDAO = new ValidatorsDAO(knex)
