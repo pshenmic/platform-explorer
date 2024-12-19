@@ -1,6 +1,6 @@
 {
   "name": "data-contract",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "main": "index.js",
   "scripts": {
     "dataContract:deploy": "node ./src/actions/deployContract.js",
