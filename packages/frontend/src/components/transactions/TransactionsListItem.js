@@ -11,24 +11,12 @@ import './TransactionsListItem.scss'
 import ImageGenerator from '../imageGenerator'
 import { useRouter } from 'next/navigation'
 
-function TransactionsListItem ({ transaction, rate, variant = 'full' }) {
+function TransactionsListItem ({ transaction, rate }) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
   const router = useRouter()
 
-  if (variant === 'hashes') {
-    return (
-      <Link
-        href={`/transaction/${transaction?.hash}`}
-        className={'TransactionsListItem'}
-      >
-        <Identifier styles={['highlight-both']}>{transaction?.hash}</Identifier>
-      </Link>
-    )
-  }
-
   return (
-    <Link
-      href={`/transaction/${transaction?.hash}`}
+    <Link href={`/transaction/${transaction?.hash}`}
       className={'TransactionsListItem'}
     >
       <Grid className={'TransactionsListItem__Content'}>
