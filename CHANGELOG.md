@@ -1,12 +1,186 @@
 # CHANGELOG
 
-### v1.0.2
-
-GitHub Action Deploy release fix
+### v1.0.9
 
 ## Changes
 
-- Skip errors when stopping or removing containers in the CI deploy action @pshenmic
+Xmas Theme, Validator Rewards Chart, Clock with timezone and many small improvements
+
+## API
+
+- User fee increase for the MasternodeVote in decodeStateTransition @owl352 (#347)
+- Identity and transfer fields fix @owl352 (#370)
+- Transaction decode nonce error fix @owl352 (#375)
+- Status versions from DAPI @owl352 (#366)
+- Packages versions fix @owl352 (#367)
+- New fields for identities @owl352 (#357)
+- New logic for search in API @owl352 (#356)
+- Transactions gas history series @owl352 (#358)
+- CI deploy for testnet fix @owl352 (#352)
+- Add transaction model in blocks route @owl352 (#349)
+- Transactions filters @owl352 (#321)
+- Validator By Identity Endpoint @owl352 (#348)
+- Target branch rule for lint action @owl352 (#346)
+- Aliases status fix @owl352 (#335)
+- MasternodeVote proTxHash @owl352 (#333)
+- Withdrawals output address and document id field @owl352 (#332)
+- Public Keys Structure Improvments @owl352 (#331)
+- AssetLockProof structure improvments @owl352 (#330)
+- Expanding decoding response for transactions @owl352 (#312)
+- Replaced status for withdrawals from number to string @owl352 (#319)
+- API container paths fix @owl352 (#317)
+- Withdrawals data from dapi @owl352 (#313)
+- Charts generation improvments @owl352 (#310)
+- Validator rewards statistic @owl352 (#300)
+- Rollback to the previous dapi client initialization method @owl352 (#314)
+- Aliases with ContestedResourceVoteState @owl352 (#306)
+- Incorrect timeout error @owl352 (#297)
+- Upgrade to Dash Platform v1.5.1 @pshenmic (#303)
+- Fix for search query @owl352 (#291)
+- Decode error with null `outputScript` @owl352 (#290)
+- CI deploy for testnet fix @owl352 (#352)
+
+## Frontend
+
+- Update versions render in NetworkStatus @alexeyandreevsky (#376)
+- Implement Christmas elements @alexeyandreevsky (#361)
+- Fix LocalTime render @alexeyandreevsky (#362)
+- Implement Rewards Chart on validator page @alexeyandreevsky (#326)
+- Update transactions list format @alexeyandreevsky (#374)
+- Transactions list on block page @alexeyandreevsky (#344)
+- Fix transactions list on home page @alexeyandreevsky (#336)
+- Add tooltip to withdrawals status @alexeyandreevsky (#337)
+- Home page styles update @alexeyandreevsky (#355)
+- Implement clock and time zone info in Footer @alexeyandreevsky (#353)
+- Frontend bug fix @alexeyandreevsky (#334)
+- Implement a list of withdrawals on the validator page @alexeyandreevsky (#307)
+- Update transactions page @alexeyandreevsky (#305)
+- Breadcrumb Implementation @alexeyandreevsky (#309)
+- Add status state for Alias @alexeyandreevsky (#318)
+- Improve transaction page @alexeyandreevsky (#311)
+- Implement Tables in Markdown @alexeyandreevsky (#329)
+- Add support for old alias format @alexeyandreevsky (#316)
+- Update alias display for new format @alexeyandreevsky (#315)
+- Implement date range picker in validator proposed blocks chart @alexeyandreevsky (#298)
+- Fix network selector @alexeyandreevsky (#293)
+- Update Validator page @alexeyandreevsky (#296)
+- Implement identities aliases in Top Identities cards @alexeyandreevsky (#292)
+- Update the render endpoint error state @alexeyandreevsky (#294)
+- Implement "All" option for items on page selector in the validators list @alexeyandreevsky (#295)
+- Fix platform node id reference @pshenmic (#289)
+
+## Indexer
+
+- Add transaction hash in the identity names @pshenmic (#368)
+- Target branch rule for lint action @owl352 (#346)
+- Upgrade to Dash Platform v1.5.1 @pshenmic (#303)
+
+### v1.0.8
+
+## Changes
+
+- Implement document transfers \& purchases in the indexer @pshenmic (#270)
+
+## API
+
+- Upgrade to Dash Platform v1.4.0-dev.8 @pshenmic (#274)
+- USD rate  @owl352 (#261)
+- Total collected fees in the past day @owl352 (#260)
+- Identities sort by balance test fix @owl352 (#257)
+- Default value for epoch on Tenderdash error in /status @owl352 (#258)
+- Tests for epochs @owl352 (#255)
+- Case sensitivity in search @owl352 (#253)
+- Auto publish release @owl352 (#256)
+- Upgrade to platform v1.3.0 @pshenmic (#263)
+- Identity field for Validators @owl352 (#254)
+
+## Frontend
+
+- Redesign common elements @alexeyandreevsky (#269)
+- Fix state switch handler in validators list @alexeyandreevsky (#266)
+- Implement a new design for the validators page on the frontend @alexeyandreevsky (#259)
+- Auto publish release @owl352 (#256)
+- Implement new data on frontend @alexeyandreevsky (#247)
+
+
+### v1.0.7
+
+## Changes
+
+- Implement document transfers \& purchases in the indexer @pshenmic (#270)
+
+## API
+
+- Upgrade to Dash Platform v1.4.0-dev.8 @pshenmic (#274)
+- USD rate  @owl352 (#261)
+- Total collected fees in the past day @owl352 (#260)
+- Identities sort by balance test fix @owl352 (#257)
+- Default value for epoch on Tenderdash error in /status @owl352 (#258)
+- Tests for epochs @owl352 (#255)
+- Case sensitivity in search @owl352 (#253)
+- Auto publish release @owl352 (#256)
+- Upgrade to platform v1.3.0 @pshenmic (#263)
+- Identity field for Validators @owl352 (#254)
+
+## Frontend
+
+- Redesign common elements @alexeyandreevsky (#269)
+- Fix state switch handler in validators list @alexeyandreevsky (#266)
+- Implement a new design for the validators page on the frontend @alexeyandreevsky (#259)
+- Auto publish release @owl352 (#256)
+- Implement new data on frontend @alexeyandreevsky (#247)
+
+
+### v1.0.6
+
+## Changes
+
+- Revert base64 check for masternode identities @pshenmic (#252)
+
+
+### v1.0.5
+
+## Changes
+
+- Add validator's identities in the indexer @pshenmic (#249)
+
+## API
+
+- Query epoch from DAPI @owl352 (#250)
+
+## Frontend
+
+- Improve mobile menu @alexeyandreevsky (#243)
+- Update validators list filter @alexeyandreevsky (#248)
+
+
+### v1.0.4
+
+## Changes
+
+- Do not create system identities @pshenmic (#246)
+
+## API
+
+- Fix for default dapi address @owl352 (#245)
+- Add platform total credits API in the status @owl352 (#224)
+- Fetch Identity balance from DAPI GRPC @owl352 (#227)
+- Removed case sensitivity for hash @owl352 (#240)
+
+## Frontend
+
+- Update network selector @alexeyandreevsky (#244)
+
+
+### v1.0.3
+
+Homepage major redesign
+
+## Changes
+
+## Frontend
+
+- Implement new design of the Home Page on frontend @alexeyandreevsky (#225)
 
 ### v1.0.1
 
