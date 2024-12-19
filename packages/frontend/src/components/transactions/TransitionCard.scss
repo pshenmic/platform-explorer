@@ -29,7 +29,7 @@
       width: 200px;
     }
 
-    &--Schema {
+    &--Data {
       align-items: flex-start;
 
       code {
@@ -40,7 +40,7 @@
 
   @container (max-width: 600px) {
     &__InfoLine {
-      &--Schema {
+      &--Data {
         flex-wrap: wrap;
 
         .InfoLine__Title {

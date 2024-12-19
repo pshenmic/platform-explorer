@@ -44,8 +44,8 @@ function TransitionCard ({ transition, className }) {
         error={transition?.revision === undefined}
       />
       <InfoLine
-        className={'TransitionCard__InfoLine TransitionCard__InfoLine--Schema'}
-        title={'Schema'}
+        className={'TransitionCard__InfoLine TransitionCard__InfoLine--Data'}
+        title={'Data'}
         value={(
           <Code
             borderRadius={'lg'}
