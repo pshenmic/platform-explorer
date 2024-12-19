@@ -1,5 +1,10 @@
 @import './variables.scss';
 
+@mixin AvatarSize() {
+  height: 24px;
+  width: 24px;
+}
+
 @mixin DefListItem($clickable: true) {
   display: flex;
   width: 100%;
@@ -41,9 +46,15 @@
   }
 
   &__Avatar {
+    @include AvatarSize;
+    flex-shrink: 0;
     margin-right: 12px;
-    height: 28px;
-    width: 28px;
+  }
+
+  &__NotActiveText {
+    font-size: 0.75rem !important;
+    color: var(--chakra-colors-gray-250) !important;
+    text-transform: lowercase !important;
   }
 }
 

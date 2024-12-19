@@ -16,7 +16,6 @@ import {
 function Block ({ hash }) {
   const [block, setBlock] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const txHashes = block.data?.txs || []
   const tdTitleWidth = 250
 
   const fetchData = () => {
@@ -95,7 +94,7 @@ function Block ({ hash }) {
                     <Tr>
                         <Td w={tdTitleWidth}>Transactions count</Td>
                         <Td>
-                          <LoadingLine loading={block.loading}>{txHashes?.length}</LoadingLine>
+                          <LoadingLine loading={block.loading}>{block.data?.txs?.length}</LoadingLine>
                         </Td>
                     </Tr>
                     <Tr>
@@ -111,7 +110,7 @@ function Block ({ hash }) {
               : <Container h={20}><ErrorMessageBlock/></Container>}
         </TableContainer>
 
-        {txHashes.length
+        {block.data?.txs?.length
           ? <Container
               width={'100%'}
               maxW={'none'}
@@ -119,11 +118,7 @@ function Block ({ hash }) {
               className={'InfoBlock'}
             >
               <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
-              <TransactionsList
-                transactions={txHashes.map(hash => ({ hash }))}
-                type={'hashes'}
-                rate={rate.data}
-              />
+              <TransactionsList transactions={block.data?.txs} rate={rate.data}/>
             </Container>
           : null}
     </Container>

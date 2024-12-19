@@ -119,6 +119,10 @@ const getBlocksStatsByValidator = (proTxHash, start, end) => {
   return call(`validator/${proTxHash}/stats?start=${start}&end=${end}`, 'GET')
 }
 
+const getRewardsStatsByValidator = (proTxHash, start, end) => {
+  return call(`validator/${proTxHash}/rewards/stats?start=${start}&end=${end}`, 'GET')
+}
+
 const getStatus = () => {
   return call('status', 'GET')
 }
@@ -159,6 +163,7 @@ export {
   getValidatorByProTxHash,
   getBlocksByValidator,
   getBlocksStatsByValidator,
+  getRewardsStatsByValidator,
   getEpoch,
   getRate
 }

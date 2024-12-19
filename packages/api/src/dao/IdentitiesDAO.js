@@ -4,14 +4,14 @@ const Transaction = require('../models/Transaction')
 const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
-const { getAliasInfo } = require('../utils')
-const { base58 } = require('@scure/base')
+const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
+const { getAliasInfo, decodeStateTransition, getAliasStateByVote } = require('../utils')
 
 module.exports = class IdentitiesDAO {
-  constructor (knex, dapi) {
+  constructor (knex, dapi, client) {
     this.knex = knex
     this.dapi = dapi
+    this.client = client
   }
 
   getIdentityByIdentifier = async (identifier) => {
@@ -53,18 +53,71 @@ module.exports = class IdentitiesDAO {
       .orWhere('recipient', identifier)
       .as('transfer_alias')
 
-    const rows = await this.knex.with('with_alias', lastRevisionIdentities)
-      .select('identifier', 'with_alias.owner as owner', 'revision', 'transfer_id', 'sender',
-        'tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'recipient', 'amount')
-      .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
-      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+    const mainQuery = this.knex.with('with_alias', lastRevisionIdentities)
+      .select(
+        'identifier', 'with_alias.owner as owner', 'revision',
+        'transfer_id', 'sender', 'tx_hash', 'is_system',
+        'blocks.timestamp as timestamp', 'recipient', 'amount',
+        'state_transitions.data as tx_data'
+      )
       .select(this.knex('state_transitions').count('*').where('owner', identifier).as('total_txs'))
+      .select(this.knex('state_transitions').sum('gas_used').where('owner', identifier).as('total_gas_spent'))
       .select(this.knex(documentsSubQuery).count('*').where('rank', 1).as('total_documents'))
       .select(this.knex(dataContractsSubQuery).count('*').where('rank', 1).as('total_data_contracts'))
       .select(this.knex(transfersSubquery).count('*').as('total_transfers'))
       .select(this.knex(aliasSubquery).select('aliases').limit(1).as('aliases'))
+      .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
       .from('with_alias')
       .limit(1)
+
+    const statisticSubquery = this.knex('state_transitions')
+      .whereRaw(`owner = identifier and type=${IDENTITY_CREDIT_WITHDRAWAL}`)
+      .as('statistic')
+
+    const rows = await this.knex.with('with_alias', mainQuery)
+      .select(
+        'identifier', 'owner', 'revision',
+        'transfer_id', 'sender', 'tx_hash',
+        'is_system', 'timestamp', 'recipient',
+        'amount', 'total_txs', 'total_gas_spent',
+        'total_documents', 'total_data_contracts',
+        'total_transfers', 'aliases', 'tx_data',
+        this.knex.raw('ROUND(total_gas_spent/total_txs) as average_gas_spent')
+      )
+      .select(this.knex('state_transitions')
+        .sum('gas_used')
+        .where('owner', identifier)
+        .andWhere('type', IDENTITY_TOP_UP)
+        .as('top_ups_gas_spent'))
+      .select(this.knex('state_transitions')
+        .sum('gas_used')
+        .where('owner', identifier)
+        .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
+        .as('withdrawals_gas_spent'))
+      .select(this.knex(statisticSubquery)
+        .select('hash')
+        .where('type', IDENTITY_CREDIT_WITHDRAWAL)
+        .orderBy('id', 'desc')
+        .limit(1)
+        .as('last_withdrawal_hash'))
+      .select(this.knex(statisticSubquery)
+        .select('timestamp')
+        .where('type', IDENTITY_CREDIT_WITHDRAWAL)
+        .orderBy('id', 'desc')
+        .limit(1)
+        .as('last_withdrawal_timestamp'))
+      .select(
+        this.knex(statisticSubquery)
+          .count('id')
+          .whereRaw(`type=${IDENTITY_CREDIT_WITHDRAWAL}`)
+          .as('total_withdrawals'))
+      .select(
+        this.knex(statisticSubquery)
+          .count('id')
+          .whereRaw(`type=${IDENTITY_TOP_UP}`)
+          .as('total_top_ups'))
+      .from('with_alias')
 
     if (!rows.length) {
       return null
@@ -81,34 +134,46 @@ module.exports = class IdentitiesDAO {
     const aliases = await Promise.all(identity.aliases.map(async alias => {
       const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-      const isLocked = base58.encode(
-        Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
-      ) !== identifier
-
-      return {
-        alias,
-        status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-      }
+      return getAliasStateByVote(aliasInfo, alias, identifier)
     }))
 
-    return {
+    const publicKeys = await this.dapi.getIdentityKeys(identity.identifier)
+
+    let fundingCoreTx = null
+
+    if (row.tx_data) {
+      const { assetLockProof } = await decodeStateTransition(this.client, row.tx_data)
+
+      fundingCoreTx = assetLockProof?.fundingCoreTx
+    }
+
+    return Identity.fromObject({
       ...identity,
       aliases,
-      balance: await this.dapi.getIdentityBalance(identity.identifier.trim())
-    }
+      balance: await this.dapi.getIdentityBalance(identity.identifier),
+      publicKeys,
+      fundingCoreTx
+    })
   }
 
-  getIdentityByDPNSName = async (dpns) => {
-    const [identity] = await this.knex('identity_aliases')
+  getIdentitiesByDPNSName = async (dpns) => {
+    const rows = await this.knex('identity_aliases')
       .select('identity_identifier', 'alias')
-      .whereRaw(`LOWER(alias) LIKE LOWER('${dpns}${dpns.includes('.') ? '' : '.%'}')`)
-      .limit(1)
+      .whereILike('alias', `${dpns}%`)
 
-    if (!identity) {
+    if (rows.length === 0) {
       return null
     }
 
-    return { identifier: identity.identity_identifier, alias: identity.alias }
+    return Promise.all(rows.map(async row => {
+      const aliasInfo = await getAliasInfo(row.alias, this.dapi)
+
+      return {
+        identifier: row.identity_identifier,
+        alias: row.alias,
+        status: getAliasStateByVote(aliasInfo, row.alias, row.identity_identifier)
+      }
+    }))
   }
 
   getIdentities = async (page, limit, order, orderBy) => {
@@ -184,14 +249,7 @@ module.exports = class IdentitiesDAO {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
         const aliasInfo = await getAliasInfo(alias, this.dapi)
 
-        const isLocked = base58.encode(
-          Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? ''),
-          'base64') !== row.identifier
-
-        return {
-          alias,
-          status: (aliasInfo.contestedState !== null && isLocked) ? 'locked' : 'ok'
-        }
+        return getAliasStateByVote(aliasInfo, alias, row.identifier.trim())
       }))
 
       return Identity.fromRow({
@@ -317,9 +375,19 @@ module.exports = class IdentitiesDAO {
     return new PaginatedResultSet(rows.map(row => Transaction.fromRow(row)), page, limit, totalCount)
   }
 
-  getTransfersByIdentity = async (identifier, page, limit, order, type) => {
+  getTransfersByIdentity = async (identifier, hash, page, limit, order, type) => {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
+
+    let searchQuery = `(transfers.sender = '${identifier}' OR transfers.recipient = '${identifier}')`
+
+    if (typeof type === 'number') {
+      searchQuery = searchQuery + ` AND state_transitions.type = ${type}`
+    }
+
+    if (hash) {
+      searchQuery = searchQuery + ` AND state_transitions.hash = '${hash}'`
+    }
 
     const subquery = this.knex('transfers')
       .select(
@@ -327,14 +395,11 @@ module.exports = class IdentitiesDAO {
         'transfers.sender as sender', 'transfers.recipient as recipient',
         'transfers.state_transition_hash as tx_hash',
         'state_transitions.block_hash as block_hash',
-        'state_transitions.type as type'
+        'state_transitions.type as type',
+        'state_transitions.gas_used as gas_used'
       )
       .select(this.knex.raw(`rank() over (order by transfers.id ${order}) rank`))
-      .whereRaw(`(transfers.sender = '${identifier}' OR transfers.recipient = '${identifier}') ${
-        typeof type === 'number'
-          ? `AND state_transitions.type = ${type}`
-          : ''
-      }`)
+      .whereRaw(searchQuery)
       .leftJoin('state_transitions', 'state_transitions.hash', 'transfers.state_transition_hash')
 
     const rows = await this.knex.with('with_alias', subquery)
@@ -342,7 +407,7 @@ module.exports = class IdentitiesDAO {
         'rank', 'amount', 'block_hash', 'type',
         'sender', 'recipient', 'with_alias.id',
         'tx_hash', 'blocks.timestamp as timestamp',
-        'block_hash'
+        'block_hash', 'gas_used'
       )
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'with_alias.block_hash')

@@ -23,13 +23,33 @@ class TransactionsController {
   }
 
   getTransactions = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const {
+      page = 1, limit = 10,
+      order = 'asc', owner,
+      status = 'ALL',
+      // eslint-disable-next-line camelcase
+      gas_min, gas_max, transaction_type
+    } = request.query
 
     if (order !== 'asc' && order !== 'desc') {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    const transactions = await this.transactionsDAO.getTransactions(Number(page ?? 1), Number(limit ?? 10), order)
+    // eslint-disable-next-line camelcase
+    if (transaction_type?.length === 0 && transaction_type) {
+      return response.status(400).send({ message: 'invalid filters values' })
+    }
+
+    const transactions = await this.transactionsDAO.getTransactions(
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      transaction_type,
+      owner,
+      status,
+      gas_min,
+      gas_max
+    )
 
     response.send(transactions)
   }
@@ -71,6 +91,52 @@ class TransactionsController {
       : (timespanInterval?.step ?? calculateInterval(new Date(start), new Date(end)))
 
     const timeSeries = await this.transactionsDAO.getHistorySeries(
+      new Date(timespanStart ?? start),
+      new Date(timespanEnd ?? end),
+      interval,
+      isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
+    )
+
+    response.send(timeSeries)
+  }
+
+  getGasHistory = async (request, response) => {
+    const {
+      start = new Date().getTime() - 3600000,
+      end = new Date().getTime(),
+      timespan = null,
+      intervalsCount = null
+    } = request.query
+
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    let timespanStart = null
+    let timespanEnd = null
+
+    const timespanInterval = {
+      '1h': { offset: 3600000, step: 'PT5M' },
+      '24h': { offset: 86400000, step: 'PT2H' },
+      '3d': { offset: 259200000, step: 'PT6H' },
+      '1w': { offset: 604800000, step: 'PT14H' }
+    }[timespan]
+
+    if (timespanInterval) {
+      timespanStart = new Date().getTime() - timespanInterval.offset
+      timespanEnd = new Date().getTime()
+    }
+
+    const intervalInMs =
+      Math.ceil(
+        (new Date(timespanEnd ?? end).getTime() - new Date(timespanStart ?? start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+      ) * 1000
+
+    const interval = intervalsCount
+      ? iso8601duration(intervalInMs)
+      : (timespanInterval?.step ?? calculateInterval(new Date(start), new Date(end)))
+
+    const timeSeries = await this.transactionsDAO.getGasHistorySeries(
       new Date(timespanStart ?? start),
       new Date(timespanEnd ?? end),
       interval,

@@ -75,7 +75,19 @@
       background-size: contain;
     }
   }
-  
+
+  .TotalInfo--Christmas & {
+    &--Blocks {
+      &::before {
+        background: url('/images/icons/block-present.svg') no-repeat center;
+        background-size: contain;
+        height: 48px;
+        width: 48px;
+        margin-bottom: 16px;
+      }
+    }
+  }
+
   &__Title {
     color: $color-brand-normal;
     font-size: 0.875rem;

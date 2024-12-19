@@ -105,9 +105,8 @@ describe('Utils', () => {
           coreChainLockedHeight: null,
           type: 'instantSend',
           fundingAmount: 34999000,
-          txid: 'fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d',
           vout: 0,
-          fundingAddress: 'yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY',
+          fundingCoreTx: 'fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d',
           instantLock: 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq'
         },
         userFeeIncrease: 65,
@@ -161,9 +160,8 @@ describe('Utils', () => {
           coreChainLockedHeight: null,
           type: 'instantSend',
           fundingAmount: 999000,
-          txid: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64',
           vout: 0,
-          fundingAddress: 'yWxCwVRgqRmePNPJxezgus1T7xSv5q17SU'
+          fundingCoreTx: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64'
         },
         identityId: '4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF',
         amount: 300000000,
@@ -229,38 +227,46 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 5,
-        identityContractNonce: 3,
+        identityContractNonce: 2,
         userFeeIncrease: 0,
-        identityId: '4NGALjtX2t3AXE3ZCqJiSmYuiWEY3ZPQNUBxNWWRrRSp',
-        revision: 2,
+        identityId: 'AGQc1dwAc46Js6fvSBSqV2Zi7fCq2YvoAwEb1SmYtXuM',
+        revision: 1,
         publicKeysToAdd: [
           {
-            contractBounds: null,
+            contractBounds: {
+              type: 'documentType',
+              id: '3Fq4GuFDSaPm7qN2rG8chtif6jgZnqyY48rw9caUMGo6',
+              typeName: 'contact'
+            },
             id: 5,
-            type: 'ECDSA_HASH160',
-            data: 'c208ded6d1af562b8e5387c02a446ea6e8bb325f',
-            publicKeyHash: 'c208ded6d1af562b8e5387c02a446ea6e8bb325f',
-            purpose: 'AUTHENTICATION',
-            securityLevel: 'HIGH',
+            type: 'ECDSA_SECP256K1',
+            data: '023b63a7e2321db63f5dbd26e08e3aa1da974404fd6b9303903195be10fe12e2b0',
+            publicKeyHash: 'aefbbefbbf99eee9e134c0657a13651a5692e98d',
+            purpose: 'ENCRYPTION',
+            securityLevel: 'MEDIUM',
             readOnly: false,
-            signature: ''
+            signature: '1f58d5c8ee4e87e6d6fffcfebcaadc030599cc4e18e41f3d7f78bd993666e146973beb1ca57e0366eceef0510e3b55a97db765110d4ff07b9653db237d8a021d51'
           },
           {
-            contractBounds: null,
+            contractBounds: {
+              type: 'documentType',
+              id: '3Fq4GuFDSaPm7qN2rG8chtif6jgZnqyY48rw9caUMGo6',
+              typeName: 'contact'
+            },
             id: 6,
             type: 'ECDSA_SECP256K1',
-            data: '026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0',
-            publicKeyHash: 'd39eda042126256a372c388bd191532a7c9612ce',
-            purpose: 'AUTHENTICATION',
-            securityLevel: 'MASTER',
+            data: '026e9189c76f667c774da971d5eacee575acfd747c3ea6ca8af3636f93ac871f73',
+            publicKeyHash: '56db223d9e394d9a15db5064f9e19be3c40d20ff',
+            purpose: 'DECRYPTION',
+            securityLevel: 'MEDIUM',
             readOnly: false,
-            signature: '1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06'
+            signature: '1fd753dbf431f8be55fe5545678c05ca81a1b3cfb676ff85fe22caf0042b2ad84b437c203bf16ead8d3f62f74d832d6ca8a492804340d356f1d003856ca50f170a'
           }
         ],
         setPublicKeyIdsToDisable: [],
-        signature: '1f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1',
+        signature: '1f2aed7dde98c36f35e1a58faac11b4ec6f84f72cf1529425f30822a09f227216719fe576a1c30361b1cc86a149dfd2eff30f3fd5890dc8d1c8f7789f8ade0b5e5',
         signaturePublicKeyId: 0,
-        raw: '0600320566816f366803517a7eb44d331ccb0e442fab6396f3d6ac631b1069aae0410203020005020002000014c208ded6d1af562b8e5387c02a446ea6e8bb325f000006000000000021026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0411faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06000000411f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1'
+        raw: '060089ab954c07d311e0956d0ae1920e0787e5ce9c17bb2b8476d9a17605c36b28bc010202000500010301012183d7c08fb0c9bf280d0cd299fcdf2359db9bc3048b1648ec3775f190e1c7bd07636f6e746163740021023b63a7e2321db63f5dbd26e08e3aa1da974404fd6b9303903195be10fe12e2b0411f58d5c8ee4e87e6d6fffcfebcaadc030599cc4e18e41f3d7f78bd993666e146973beb1ca57e0366eceef0510e3b55a97db765110d4ff07b9653db237d8a021d51000600020301012183d7c08fb0c9bf280d0cd299fcdf2359db9bc3048b1648ec3775f190e1c7bd07636f6e746163740021026e9189c76f667c774da971d5eacee575acfd747c3ea6ca8af3636f93ac871f73411fd753dbf431f8be55fe5545678c05ca81a1b3cfb676ff85fe22caf0042b2ad84b437c203bf16ead8d3f62f74d832d6ca8a492804340d356f1d003856ca50f170a000000411f2aed7dde98c36f35e1a58faac11b4ec6f84f72cf1529425f30822a09f227216719fe576a1c30361b1cc86a149dfd2eff30f3fd5890dc8d1c8f7789f8ade0b5e5'
       })
     })
 
@@ -269,7 +275,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 7,
-        identityContractNonce: 3,
+        nonce: 3,
         userFeeIncrease: 2,
         senderId: '4CpFVPyU95ZxNeDnRWfkpjUa9J72i3nZ4YPsTnpdUudu',
         recipientId: 'GxdRSLivPDeACYU8Z6JSNvtrRPX7QG715JoumnctbwWN',
@@ -287,7 +293,6 @@ describe('Utils', () => {
         type: 6,
         outputAddress: 'yZF5JqEgS9xT1xSkhhUQACdLLDbqSixL8i',
         userFeeIncrease: 2,
-        identityContractNonce: 1,
         senderId: 'FvqzjDyub72Hk51pcmJvd1JUACuor7vA3aJawiVG7Z17',
         amount: 1000000,
         identityNonce: 1,

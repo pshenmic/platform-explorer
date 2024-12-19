@@ -287,11 +287,32 @@ module.exports = ({
       }
     },
     {
+      path: '/transactions/gas/history',
+      method: 'GET',
+      handler: transactionsController.getGasHistory,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
       path: '/validators',
       method: 'GET',
       handler: validatorsController.getValidators,
       schema: {
         querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/validator/identity/:identifier',
+      method: 'GET',
+      handler: validatorsController.getValidatorByMasternodeIdentifier,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
       }
     },
     {
