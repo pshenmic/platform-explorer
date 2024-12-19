@@ -277,7 +277,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 7,
-        identityContractNonce: 3,
+        nonce: 3,
         userFeeIncrease: 2,
         senderId: '4CpFVPyU95ZxNeDnRWfkpjUa9J72i3nZ4YPsTnpdUudu',
         recipientId: 'GxdRSLivPDeACYU8Z6JSNvtrRPX7QG715JoumnctbwWN',
@@ -295,7 +295,6 @@ describe('Utils', () => {
         type: 6,
         outputAddress: 'yZF5JqEgS9xT1xSkhhUQACdLLDbqSixL8i',
         userFeeIncrease: 2,
-        identityContractNonce: 1,
         senderId: 'FvqzjDyub72Hk51pcmJvd1JUACuor7vA3aJawiVG7Z17',
         amount: 1000000,
         identityNonce: 1,
