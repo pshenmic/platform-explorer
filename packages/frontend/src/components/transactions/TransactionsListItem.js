@@ -16,9 +16,7 @@ function TransactionsListItem ({ transaction, rate }) {
   const router = useRouter()
 
   return (
-    <Link href={`/transaction/${transaction?.hash}`}
-      className={'TransactionsListItem'}
-    >
+    <Link href={`/transaction/${transaction?.hash}`} className={'TransactionsListItem'}>
       <Grid className={'TransactionsListItem__Content'}>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}>
           {transaction?.timestamp
