@@ -21,7 +21,7 @@ export default function BlocksChart ({ hash, isActive }) {
 
   return (
     <TabsChartBlock
-      isActive={isActive}
+      menuIsActive={isActive}
       timespanChangeCallback={setTimespan}
       timespan={timespan}
       data={blocksHistory.data?.resultSet?.map((item) => ({
