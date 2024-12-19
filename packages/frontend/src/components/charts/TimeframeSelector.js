@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import TimeframeMenu from './TimeframeMenu'
 import { Button } from '@chakra-ui/react'
-import { CalendarIcon2, CloseIcon } from '../../components/ui/icons'
+import { CalendarIcon2, CloseIcon } from '../ui/icons'
 import './TimeframeSelector.scss'
 
 export default function TimeframeSelector ({
   config,
-  isActive,
+  menuIsActive,
   changeCallback,
   openStateCallback,
   menuRef,
@@ -22,12 +22,12 @@ export default function TimeframeSelector ({
   }
 
   useEffect(() => {
-    if (!isActive) setMenuIsOpen(false)
-  }, [isActive])
+    if (!menuIsActive) setMenuIsOpen(false)
+  }, [menuIsActive])
 
   useEffect(() => {
     if (typeof openStateCallback === 'function') openStateCallback(menuIsOpen)
-  }, [menuIsOpen])
+  }, [menuIsOpen, openStateCallback])
 
   return (
     <div className={`TimeframeSelector ${menuIsOpen ? 'TimeframeSelector--MenuActive' : ''} ${className || ''}`}>
