@@ -8,7 +8,7 @@ import { defaultChartConfig } from './config'
 import './TabsChartBlock.scss'
 
 export default function TabsChartBlock ({
-  menuIsActive,
+  menuIsActive = true,
   timespanChangeCallback,
   loading,
   error,
