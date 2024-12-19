@@ -4,7 +4,7 @@ import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates } from '../
 import TabsChartBlock from '../../../components/charts/TabsChartBlock'
 import { defaultChartConfig } from '../../../components/charts/config'
 
-export default function RewardsChart ({ hash, isActive }) {
+export default function RewardsChart ({ hash, isActive, loading }) {
   const [rewardsHistory, setRewardsHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 
@@ -28,8 +28,8 @@ export default function RewardsChart ({ hash, isActive }) {
         x: new Date(item.timestamp),
         y: item.data.reward
       })) || []}
-      loading={rewardsHistory.loading}
-      error={rewardsHistory.error}
+      loading={loading || rewardsHistory.loading}
+      error={!hash || rewardsHistory.error}
       xAxis={{
         type: (() => {
           if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7) return { axis: 'date' }
