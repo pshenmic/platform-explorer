@@ -6,6 +6,7 @@ import Endpoint from './Endpoint'
 import IpAddress from './IpAddress'
 import InfoLine from './InfoLine'
 import Alias from './Alias'
+import VoteChoice from './VoteChoice'
 
 export {
   Identifier,
@@ -15,5 +16,6 @@ export {
   Endpoint,
   IpAddress,
   InfoLine,
-  Alias
+  Alias,
+  VoteChoice
 }
