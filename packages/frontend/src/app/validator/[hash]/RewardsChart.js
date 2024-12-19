@@ -48,8 +48,6 @@ export default function RewardsChart ({ hash, isActive }) {
       .catch(err => fetchHandlerError(setRewardsHistory, err))
   }, [timespan, customRange])
 
-  console.log('rewards', rewardsHistory)
-
   const updateMenuHeight = () => {
     if (menuIsOpen && TimeframeMenuRef?.current) {
       const element = TimeframeMenuRef.current
