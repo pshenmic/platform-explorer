@@ -179,19 +179,20 @@ impl PostgresDAO {
         Ok(())
     }
 
-    pub async fn create_identity_alias(&self, identity: Identity, alias: String) -> Result<(), PoolError> {
+    pub async fn create_identity_alias(&self, identity: Identity, alias: String, st_hash: String) -> Result<(), PoolError> {
         let client = self.connection_pool.get().await.unwrap();
 
-        let query = "INSERT INTO identity_aliases(identity_identifier,alias) VALUES ($1, $2);";
+        let query = "INSERT INTO identity_aliases(identity_identifier,alias,state_transition_hash) VALUES ($1, $2, $3);";
 
         let stmt = client.prepare_cached(query).await.unwrap();
 
         client.query(&stmt, &[
             &identity.identifier.to_string(Base58),
             &alias,
+            &st_hash,
         ]).await.unwrap();
 
-        println!("Created Identity Alias {} -> {}", identity.identifier.to_string(Base58), alias);
+        println!("Created Identity Alias {} -> {} ({})", identity.identifier.to_string(Base58), alias, &st_hash);
 
         Ok(())
     }
