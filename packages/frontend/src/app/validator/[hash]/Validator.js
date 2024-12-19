@@ -35,7 +35,7 @@ function Validator ({ hash }) {
   const [currentPage, setCurrentPage] = useState(1)
   const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [withdrawals, setWithdrawals] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [activeChartTab, setActiveChartTab] = useState(1)
+  const [activeChartTab, setActiveChartTab] = useState(0)
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
