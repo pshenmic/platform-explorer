@@ -75,7 +75,6 @@ export default function BlocksChart ({ hash, isActive }) {
         changeCallback={setTimespan}
         isActive={isActive}
         openStateCallback={setMenuIsOpen}
-        customRangeCallback={(start, end) => setCustomRange({ start, end })}
       />
       <div className={`TabsChart__ChartContiner ${menuIsOpen ? 'TabsChart__ChartContiner--Hidden' : ''}`}>
         <LineChart
