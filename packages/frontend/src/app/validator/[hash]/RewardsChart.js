@@ -4,19 +4,19 @@ import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates } from '../
 import TabsChartBlock from '../../../components/charts/TabsChartBlock'
 import { defaultChartConfig } from '../../../components/charts/config'
 
-export default function BlocksChart ({ hash, isActive, loading }) {
-  const [blocksHistory, setBlocksHistory] = useState({ data: {}, loading: true, error: false })
+export default function RewardsChart ({ hash, isActive, loading }) {
+  const [rewardsHistory, setRewardsHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 
   useEffect(() => {
     const { start = null, end = null } = timespan?.range
     if (!start || !end) return
 
-    setBlocksHistory(state => ({ ...state, loading: true }))
+    setRewardsHistory(state => ({ ...state, loading: true }))
 
-    Api.getBlocksStatsByValidator(hash, start, end)
-      .then(res => fetchHandlerSuccess(setBlocksHistory, { resultSet: res }))
-      .catch(err => fetchHandlerError(setBlocksHistory, err))
+    Api.getRewardsStatsByValidator(hash, start, end)
+      .then(res => fetchHandlerSuccess(setRewardsHistory, { resultSet: res }))
+      .catch(err => fetchHandlerError(setRewardsHistory, err))
   }, [timespan, hash])
 
   return (
@@ -24,12 +24,12 @@ export default function BlocksChart ({ hash, isActive, loading }) {
       menuIsActive={isActive}
       timespanChangeCallback={setTimespan}
       timespan={timespan}
-      data={blocksHistory.data?.resultSet?.map((item) => ({
+      data={rewardsHistory.data?.resultSet?.map((item) => ({
         x: new Date(item.timestamp),
-        y: item.data.blocksCount
+        y: item.data.reward
       })) || []}
-      loading={loading || blocksHistory.loading}
-      error={!hash || blocksHistory.error}
+      loading={loading || rewardsHistory.loading}
+      error={!hash || rewardsHistory.error}
       xAxis={{
         type: (() => {
           if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7) return { axis: 'date' }
@@ -39,7 +39,7 @@ export default function BlocksChart ({ hash, isActive, loading }) {
       }}
       yAxis={{
         type: 'number',
-        abbreviation: 'blocks'
+        abbreviation: 'Credits'
       }}
     />
   )

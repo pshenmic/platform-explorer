@@ -73,18 +73,55 @@ HTTP /status
             hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
             timestamp: "2024-06-06T21:50:20.949Z"
         }
+  "epoch": {
+    "number": 3640,
+    "firstBlockHeight": 72534,
+    "firstCoreBlockHeight": 1160707,
+    "startTime": 1734457229495,
+    "feeMultiplier": 1,
+    "endTime": 1734460829495
+  },
+  "transactionsCount": 25912,
+  "totalCredits": 7288089799960610,
+  "totalCollectedFeesDay": 12733263640,
+  "transfersCount": 1849,
+  "dataContractsCount": 630,
+  "documentsCount": 15384,
+  "identitiesCount": 712,
+  "network": "dash-testnet-51",
+  "api": {
+    "version": "1.0.7",
+    "block": {
+      "height": 72555,
+      "hash": "EDA1CDF601224CD3ED168D35B4699DE2796F774B526103C64D371EF3AAFD8274",
+      "timestamp": "2024-12-17T17:57:08.758Z"
     }
-    platform: {
-        version: "1.0.0-dev.12"
+  },
+  "tenderdash": {
+    "version": "1.4.0",
+    "block": {
+      "height": 72555,
+      "hash": "EDA1CDF601224CD3ED168D35B4699DE2796F774B526103C64D371EF3AAFD8274",
+      "timestamp": "2024-12-17T17:57:08.758Z"
+    }
+  },
+  "versions": {
+    "software": {
+      "dapi": "1.5.1",
+      "drive": "1.6.2",
+      "tenderdash": "1.4.0"
     },
-    tenderdash: {
-        version: "0.14.0-dev.6",
-        block: {
-            height: 20154,
-            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-            timestamp: "2024-06-06T21:53:27.947Z"
-         }
-    }     
+    "protocol": {
+      "tenderdash": {
+        "p2p": 10,
+        "block": 14
+      },
+      "drive": {
+        "latest": 6,
+        "current": 6
+      }
+    }
+  }
 }
 ```
 ---
@@ -710,7 +747,7 @@ Return identity by given identifier
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
-  "identifier": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ",
+  "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
   "revision": 0,
   "balance": 49989647300,
   "timestamp": "2024-10-12T18:51:44.592Z",
@@ -732,6 +769,9 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
   "topUpsGasSpent": 46350660,
   "withdrawalsGasSpent": 0,
   "lastWithdrawalHash": null,
+  "lastWithdrawalTimestamp": null,
+  "totalTopUps": 0,
+  "totalWithdrawals": 0,
   "publicKeys": [
     {
       "keyId": 0,
@@ -1005,7 +1045,7 @@ Response codes:
 Return all transfers made by the given identity
 * `limit` cannot be more then 100
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&limit=10&order=asc&type=1
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
 {
     pagination: {
@@ -1022,7 +1062,7 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&li
         txHash: "445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118",
         type: 6,
         blockHash: "73171E0A8DCC10C6DA501E1C70A9C1E0BD6F1F8F834C2A1E787AF19B1F361D5E"
-    }, ...
+    }
     ]
 }
 ```

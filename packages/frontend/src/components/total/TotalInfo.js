@@ -3,10 +3,22 @@ import './TotalInfoItem.scss'
 import { Container, Flex } from '@chakra-ui/react'
 import Link from 'next/link'
 
-export default function TotalInfo ({ blocks, transactions, dataContracts, documents, identities, loading }) {
+export default function TotalInfo ({
+  blocks,
+  transactions,
+  dataContracts,
+  documents,
+  identities,
+  loading,
+  event = null
+}) {
+  const eventClasses = {
+    christmas: 'TotalInfo--Christmas'
+  }
+
   return (
     <Container
-      className={'TotalInfo'}
+      className={`TotalInfo ${event ? eventClasses?.[event] : ''}`}
       maxW={'none'}
       borderColor={'gray.800'}
       p={0}

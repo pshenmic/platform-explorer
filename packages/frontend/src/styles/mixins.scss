@@ -1,5 +1,10 @@
 @import './variables.scss';
 
+@mixin AvatarSize() {
+  height: 24px;
+  width: 24px;
+}
+
 @mixin DefListItem($clickable: true) {
   display: flex;
   width: 100%;
@@ -41,9 +46,9 @@
   }
 
   &__Avatar {
+    @include AvatarSize;
+    flex-shrink: 0;
     margin-right: 12px;
-    height: 24px;
-    width: 24px;
   }
 
   &--Timestamp, &__Column--Timestamp {
