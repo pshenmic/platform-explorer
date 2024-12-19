@@ -123,7 +123,7 @@ function Identity ({ identifier }) {
                                     <Th className={'TableHeader TableHeader--Name'}>
                                         {identifier
                                           ? <div className={'TableHeader__Content'}>
-                                                <ImageGenerator className={'TableHeader__Avatar'} username={identifier} lightness={50} saturation={50} width={32} height={32}/>
+                                                <ImageGenerator className={'TableHeader__Avatar'} hat={'christmas'} username={identifier} lightness={50} saturation={50} width={32} height={32}/>
                                             </div>
                                           : <Box w={'32px'} h={'32px'} />
                                         }

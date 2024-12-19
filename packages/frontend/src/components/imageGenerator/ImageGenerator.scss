@@ -1,0 +1,22 @@
+.ImageGenerator {
+  position: relative;
+
+  &__Hat {
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    &--Christmas {
+      background: url('/images/christmas-hat.svg') center no-repeat;
+      background-size: contain;
+      transform: translate(-45%, -35%);
+      width: 100%;
+      height: 48%;
+    }
+  }
+
+  &__Image {
+    width: 100%;
+    height: 100%;
+  }
+}
