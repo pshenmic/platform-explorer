@@ -21,7 +21,7 @@ export default function RewardsChart ({ hash, isActive }) {
 
   return (
     <TabsChartBlock
-      isActive={isActive}
+      menuIsActive={isActive}
       timespanChangeCallback={setTimespan}
       timespan={timespan}
       data={rewardsHistory.data?.resultSet?.map((item) => ({

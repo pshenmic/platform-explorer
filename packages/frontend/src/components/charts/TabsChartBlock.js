@@ -8,7 +8,7 @@ import { defaultChartConfig } from './config'
 import './TabsChartBlock.scss'
 
 export default function TabsChartBlock ({
-  isActive,
+  menuIsActive,
   timespanChangeCallback,
   loading,
   error,
@@ -51,7 +51,7 @@ export default function TabsChartBlock ({
         className={'TabsChartBlock__TimeframeSelector'}
         config={chartConfig}
         changeCallback={timespanChangeCallback}
-        isActive={isActive}
+        menuIsActive={menuIsActive}
         openStateCallback={setMenuIsOpen}
       />
       <div className={`TabsChartBlock__ChartContiner ${menuIsOpen ? 'TabsChartBlock__ChartContiner--Hidden' : ''}`}>
