@@ -1,8 +1,8 @@
 const BlocksDAO = require('../dao/BlocksDAO')
 
 class BlocksController {
-  constructor (knex) {
-    this.blocksDAO = new BlocksDAO(knex)
+  constructor (knex, dapi) {
+    this.blocksDAO = new BlocksDAO(knex, dapi)
   }
 
   getBlockByHash = async (request, response) => {

@@ -92,7 +92,8 @@ impl From<SystemDataContract> for DataContract {
             SystemDataContract::MasternodeRewards => "MasternodeRewards",
             SystemDataContract::FeatureFlags => "FeatureFlags",
             SystemDataContract::DPNS => "DPNS",
-            SystemDataContract::Dashpay => "Dashpay"
+            SystemDataContract::Dashpay => "Dashpay",
+            SystemDataContract::WalletUtils => "WalletUtils"
         };
         let identifier = data_contract.id();
         let source = data_contract.source(platform_version).unwrap();

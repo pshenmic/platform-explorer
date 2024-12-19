@@ -1,9 +1,12 @@
 const Block = require('../models/Block')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
+const { getAliasInfo, getAliasStateByVote } = require('../utils')
+const Transaction = require('../models/Transaction')
 
 module.exports = class BlockDAO {
-  constructor (knex) {
+  constructor (knex, dapi) {
     this.knex = knex
+    this.dapi = dapi
   }
 
   getStats = async () => {
@@ -34,19 +37,44 @@ module.exports = class BlockDAO {
   }
 
   getBlockByHash = async (blockHash) => {
-    const results = await this.knex
-      .select('blocks.hash as hash', 'state_transitions.hash as st_hash', 'blocks.height as height', 'blocks.timestamp as timestamp', 'blocks.block_version as block_version', 'blocks.app_version as app_version', 'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator')
-      .from('blocks')
-      .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
-      .whereILike('blocks.hash', blockHash)
+    const aliasesSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .groupBy('identity_identifier')
+      .as('aliases')
 
-    const [block] = results
+    const rows = await this.knex('blocks')
+      .select(
+        'blocks.hash as hash', 'state_transitions.hash as tx_hash',
+        'blocks.height as height', 'blocks.timestamp as timestamp',
+        'blocks.block_version as block_version', 'blocks.app_version as app_version',
+        'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator',
+        'state_transitions.gas_used as gas_used', 'state_transitions.data as data',
+        'state_transitions.status as status', 'state_transitions.owner as owner',
+        'aliases.aliases as aliases', 'state_transitions.error as error', 'block_hash',
+        'state_transitions.index as index', 'state_transitions.type as type'
+      )
+      .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
+      .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'state_transitions.owner')
+      .whereILike('blocks.hash', blockHash)
+      .orderBy('state_transitions.index', 'asc')
+
+    const [block] = rows
 
     if (!block) {
       return null
     }
 
-    const txs = results.reduce((acc, value) => value.st_hash ? [...acc, value.st_hash] : acc, [])
+    const txs = block.tx_hash
+      ? await Promise.all(rows.map(async (row) => {
+        const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+          const aliasInfo = await getAliasInfo(alias, this.dapi)
+
+          return getAliasStateByVote(aliasInfo, alias, row.owner)
+        }))
+
+        return Transaction.fromRow({ ...row, aliases })
+      }))
+      : []
 
     return Block.fromRow({ header: block, txs })
   }

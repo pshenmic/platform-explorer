@@ -146,7 +146,7 @@ impl PSQLProcessor {
                 let identity = self.dao.get_identity_by_identifier(identity_identifier.clone()).await.unwrap().expect(&format!("Could not find identity with identifier {}", identity_identifier));
                 let alias = format!("{}.{}", label, normalized_parent_domain_name);
 
-                self.dao.create_identity_alias(identity, alias).await.unwrap();
+                self.dao.create_identity_alias(identity, alias, st_hash.clone()).await.unwrap();
             }
 
             if document_type == "dataContracts" && document_transition.data_contract_id() == self.platform_explorer_identifier {
@@ -434,6 +434,7 @@ impl PSQLProcessor {
                 self.dao.create_document(dash_tld_document, None).await.unwrap();
             }
             SystemDataContract::Dashpay => {}
+            SystemDataContract::WalletUtils => {}
         }
     }
 

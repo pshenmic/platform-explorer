@@ -6,7 +6,7 @@ const { decodeStateTransition } = require('../utils')
 
 class IdentitiesController {
   constructor (client, knex, dapi) {
-    this.identitiesDAO = new IdentitiesDAO(knex, dapi)
+    this.identitiesDAO = new IdentitiesDAO(knex, dapi, client)
     this.dapi = dapi
     this.client = client
   }
@@ -26,7 +26,7 @@ class IdentitiesController {
   getIdentityByDPNSName = async (request, response) => {
     const { dpns } = request.query
 
-    const identity = await this.identitiesDAO.getIdentityByDPNSName(dpns)
+    const identity = await this.identitiesDAO.getIdentitiesByDPNSName(dpns)
 
     if (!identity) {
       return response.status(404).send({ message: 'not found' })
