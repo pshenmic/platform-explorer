@@ -802,6 +802,9 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
   "topUpsGasSpent": 46350660,
   "withdrawalsGasSpent": 0,
   "lastWithdrawalHash": null,
+  "lastWithdrawalTimestamp": null,
+  "totalTopUps": 0,
+  "totalWithdrawals": 0,
   "publicKeys": [
     {
       "keyId": 0,
@@ -1074,8 +1077,9 @@ Response codes:
 ### Transfers by Identity
 Return all transfers made by the given identity
 * `limit` cannot be more then 100
+* `type` cannot be less, then 0 and more then 8
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&limit=10&order=asc&type=1
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
 {
     pagination: {
@@ -1092,7 +1096,7 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&li
         txHash: "445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118",
         type: 6,
         blockHash: "73171E0A8DCC10C6DA501E1C70A9C1E0BD6F1F8F834C2A1E787AF19B1F361D5E"
-    }, ...
+    }
     ]
 }
 ```
