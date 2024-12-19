@@ -83,6 +83,7 @@ function Home () {
         documents={status.data?.documentsCount}
         identities={status.data?.identitiesCount}
         loading={status.loading}
+        event={'christmas'}
       />
     </Container>
 

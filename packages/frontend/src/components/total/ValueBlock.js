@@ -1,7 +1,10 @@
 import './ValueBlock.scss'
 
-export default function ValueBlock ({ title, value, icon, formats = [], className }) {
+export default function ValueBlock ({ title, value, icon, formats = [], event = null, className }) {
   const iconClass = `ValueBlock--${icon}`
+  const eventClasses = {
+    christmas: 'ValueBlock--Christmas'
+  }
 
   const formatClass = formats.map(format => {
     if (format === 'elipsed') return 'ValueBlock__Value--Elipsed'
@@ -9,7 +12,7 @@ export default function ValueBlock ({ title, value, icon, formats = [], classNam
   }).join(' ')
 
   return (
-    <div className={`ValueBlock ${iconClass} ${className}`}>
+    <div className={`ValueBlock ${iconClass || ''} ${className || ''} ${event ? eventClasses?.[event] : ''}`}>
         {icon &&
             <div className={'ValueBlock__Icon'}></div>
         }

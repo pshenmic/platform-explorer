@@ -3,7 +3,7 @@ import ValueBlock from './ValueBlock'
 import { Box } from '@chakra-ui/react'
 import './TotalCards.scss'
 
-export default function TotalCards ({ cards, loading = false }) {
+export default function TotalCards ({ cards, event = null, loading = false }) {
   return (
     <div className={'TotalCards'}>
         {cards.map((card, i) => (
@@ -14,6 +14,7 @@ export default function TotalCards ({ cards, loading = false }) {
                     value={card.value}
                     icon={card.icon}
                     formats={card.format}
+                    event={event}
                   />
                 : <Box h={'27px'}/>
               }

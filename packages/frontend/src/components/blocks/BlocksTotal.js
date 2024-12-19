@@ -25,6 +25,7 @@ export default function BlocksTotal () {
 
   return (
     <TotalCards
+      event={'christmas'}
       cards={[
         {
           title: 'Epoch:',

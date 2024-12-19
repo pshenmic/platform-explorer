@@ -1,9 +1,10 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import Snow from './Snow'
 import './Background.scss'
 
-function Background () {
+function Background ({ snow }) {
   const pathname = usePathname()
   const showOnRoutes = [
     '/',
@@ -17,7 +18,10 @@ function Background () {
   const showDecoration = showOnRoutes.includes(pathname)
 
   return (
-    <div className={`Background ${showDecoration ? 'Background--Light' : ''}`}></div>
+    <>
+      <div className={`Background ${showDecoration ? 'Background--Light' : ''}`}></div>
+      {snow && <Snow/>}
+    </>
   )
 }
 
