@@ -47,6 +47,28 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.ownerId}
       />
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Document Type'}
+        value={(
+          <ValueCard link={`/identity/${data?.ownerId}`} className={'TransactionPage__BlockHash'}>
+            {data?.documentTypeName}
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!data?.documentTypeName}
+      />
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Index Name'}
+        value={(
+          <ValueCard link={`/identity/${data?.ownerId}`} className={'TransactionPage__BlockHash'}>
+            {data?.indexName}
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!data?.indexName}
+      />
     </>)
   }
 
