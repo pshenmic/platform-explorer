@@ -297,7 +297,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.contractId = stateTransition.getContestedDocumentResourceVotePoll().contractId.toString()
       decoded.modifiedDataIds = stateTransition.getModifiedDataIds().map(identifier => identifier.toString())
       decoded.ownerId = stateTransition.getOwnerId().toString()
-      decoded.signature = stateTransition.getSignature().toString('hex')
+      decoded.signature = stateTransition.getSignature().toString('hex') ?? null
       decoded.documentTypeName = stateTransition.getContestedDocumentResourceVotePoll().documentTypeName
       decoded.indexName = stateTransition.getContestedDocumentResourceVotePoll().indexName
       decoded.choice = stateTransition.getContestedDocumentResourceVotePoll().choice
