@@ -117,14 +117,12 @@ const decodeStateTransition = async (client, base64) => {
       decoded.assetLockProof = {
         coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
-        instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.toJSON().instantLock : null,
+        instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.getInstantLock().toString('base64') : null,
         fundingAmount: decodedTransaction?.outputAmount ?? null,
-        txid: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
-        vout: assetLockProof.getOutPoint().readInt8(32),
-        fundingAddress: assetLockProof.getOutput
-          ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
-          : null
+        fundingCoreTx: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
+        vout: assetLockProof.getOutPoint().readInt8(32)
       }
+
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
@@ -167,12 +165,10 @@ const decodeStateTransition = async (client, base64) => {
         coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
         fundingAmount: decodedTransaction?.outputAmount ?? null,
-        txid: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
-        vout: assetLockProof.getOutPoint().readInt8(32),
-        fundingAddress: assetLockProof.getOutput
-          ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
-          : null
+        fundingCoreTx: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
+        vout: assetLockProof.getOutPoint().readInt8(32)
       }
+
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.amount = output.satoshis * 1000
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
@@ -213,7 +209,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getOwnerId().toString()
       decoded.revision = stateTransition.getRevision()
-      // TODO: Add contract bounds
+
       decoded.publicKeysToAdd = stateTransition.getPublicKeysToAdd()
         .map(key => {
           const { contractBounds } = key.toObject()

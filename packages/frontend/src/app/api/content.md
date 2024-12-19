@@ -747,7 +747,7 @@ Return identity by given identifier
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
-  "identifier": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ",
+  "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
   "revision": 0,
   "balance": 49989647300,
   "timestamp": "2024-10-12T18:51:44.592Z",
@@ -769,6 +769,9 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
   "topUpsGasSpent": 46350660,
   "withdrawalsGasSpent": 0,
   "lastWithdrawalHash": null,
+  "lastWithdrawalTimestamp": null,
+  "totalTopUps": 0,
+  "totalWithdrawals": 0,
   "publicKeys": [
     {
       "keyId": 0,

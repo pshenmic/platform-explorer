@@ -71,6 +71,10 @@ module.exports = class IdentitiesDAO {
       .from('with_alias')
       .limit(1)
 
+    const statisticSubquery = this.knex('state_transitions')
+      .whereRaw(`owner = identifier and type=${IDENTITY_CREDIT_WITHDRAWAL}`)
+      .as('statistic')
+
     const rows = await this.knex.with('with_alias', mainQuery)
       .select(
         'identifier', 'owner', 'revision',
@@ -91,13 +95,28 @@ module.exports = class IdentitiesDAO {
         .where('owner', identifier)
         .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
         .as('withdrawals_gas_spent'))
-      .select(this.knex('state_transitions')
+      .select(this.knex(statisticSubquery)
         .select('hash')
-        .where('owner', identifier)
-        .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
+        .where('type', IDENTITY_CREDIT_WITHDRAWAL)
         .orderBy('id', 'desc')
         .limit(1)
         .as('last_withdrawal_hash'))
+      .select(this.knex(statisticSubquery)
+        .select('timestamp')
+        .where('type', IDENTITY_CREDIT_WITHDRAWAL)
+        .orderBy('id', 'desc')
+        .limit(1)
+        .as('last_withdrawal_timestamp'))
+      .select(
+        this.knex(statisticSubquery)
+          .count('id')
+          .whereRaw(`type=${IDENTITY_CREDIT_WITHDRAWAL}`)
+          .as('total_withdrawals'))
+      .select(
+        this.knex(statisticSubquery)
+          .count('id')
+          .whereRaw(`type=${IDENTITY_TOP_UP}`)
+          .as('total_top_ups'))
       .from('with_alias')
 
     if (!rows.length) {
@@ -125,7 +144,7 @@ module.exports = class IdentitiesDAO {
     if (row.tx_data) {
       const { assetLockProof } = await decodeStateTransition(this.client, row.tx_data)
 
-      fundingCoreTx = assetLockProof?.txid
+      fundingCoreTx = assetLockProof?.fundingCoreTx
     }
 
     return Identity.fromObject({

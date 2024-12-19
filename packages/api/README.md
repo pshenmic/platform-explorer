@@ -802,6 +802,9 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
   "topUpsGasSpent": 46350660,
   "withdrawalsGasSpent": 0,
   "lastWithdrawalHash": null,
+  "lastWithdrawalTimestamp": null,
+  "totalTopUps": 0,
+  "totalWithdrawals": 0,
   "publicKeys": [
     {
       "keyId": 0,
