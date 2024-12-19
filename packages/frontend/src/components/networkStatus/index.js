@@ -60,12 +60,12 @@ function NetworkStatus ({ className }) {
 
       <div className={`NetworkStatus__Stat NetworkStatus__Stat--PlatformVersion ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>Platform version:</div>
-        <div className={'NetworkStatus__InfoValue'}>1.7.0</div>
+        <div className={'NetworkStatus__InfoValue'}>{status?.data?.versions?.software?.drive !== undefined ? `v${status?.data?.versions?.software?.drive}` : '-'}</div>
       </div>
 
       <div className={`NetworkStatus__Stat NetworkStatus__Stat--TenderdashVersion ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>Tenderdash version:</div>
-        <div className={'NetworkStatus__InfoValue'}>1.4.0</div>
+        <div className={'NetworkStatus__InfoValue'}>{status?.data?.versions?.software?.tenderdash ? `v${status?.data?.versions?.software?.tenderdash}` : '-'}</div>
       </div>
 
       <div align={'start'} className={`NetworkStatus__Stat NetworkStatus__Stat--Network ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>

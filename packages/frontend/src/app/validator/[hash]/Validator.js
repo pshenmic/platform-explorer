@@ -9,6 +9,7 @@ import { ErrorMessageBlock } from '../../../components/Errors'
 import BlocksList from '../../../components/blocks/BlocksList'
 import TransactionsList from '../../../components/transactions/TransactionsList'
 import BlocksChart from './BlocksChart'
+import RewardsChart from './RewardsChart'
 import Link from 'next/link'
 import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine, Credits } from '../../../components/data'
 import { ValueContainer, PageDataContainer, InfoContainer } from '../../../components/ui/containers'
@@ -412,19 +413,22 @@ function Validator ({ hash }) {
             <Tabs onChange={(index) => setActiveChartTab(index)} index={activeChartTab}>
               <TabList>
                 <Tab>Proposed Blocks</Tab>
-                <Tab isDisabled>Reward Earned</Tab>
+                <Tab>Reward Earned</Tab>
               </TabList>
               <TabPanels>
                   <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
                     <BlocksChart
-                      blockBorders={false}
                       hash={hash}
                       isActive={activeChartTab === 0}
                       loading={validator.loading}
                     />
                   </TabPanel>
                   <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
-                    Reward Earned
+                    <RewardsChart
+                      hash={hash}
+                      isActive={activeChartTab === 1}
+                      loading={validator.loading}
+                    />
                   </TabPanel>
               </TabPanels>
             </Tabs>
