@@ -72,9 +72,16 @@ class IdentitiesController {
 
   getTransfersByIdentity = async (request, response) => {
     const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc', type = undefined } = request.query
+    const { page = 1, limit = 10, order = 'asc', type, hash } = request.query
 
-    const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order, type)
+    const transfers = await this.identitiesDAO.getTransfersByIdentity(
+      identifier,
+      hash,
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      type
+    )
 
     response.send(transfers)
   }
