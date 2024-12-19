@@ -422,11 +422,11 @@ const LineGraph = ({
 
             <g transform={'translate(15,-15)'}>
                 <defs>
-                    <linearGradient id={`AreaFill-${uniqueComponentId}`} x1="0%" y1="100%" x2="0%" y2="0%">
-                        <stop stopColor="#0F4D74" stopOpacity="0.02" offset="0%" />
-                        <stop stopColor="#0E75B5" stopOpacity="0.4" offset="100%" />
+                    <linearGradient id={`AreaFill-${uniqueComponentId}`} x1='0%' y1='100%' x2='0%' y2='0%'>
+                        <stop stopColor='#0F4D74' stopOpacity='0.02' offset='0%' />
+                        <stop stopColor='#0E75B5' stopOpacity='0.4' offset='100%' />
                     </linearGradient>
-                    <clipPath id="clipPath">
+                    <clipPath id={`clipPath-${uniqueComponentId}`}>
                         <rect
                             x={marginLeft - 20}
                             y={marginTop}
@@ -436,7 +436,7 @@ const LineGraph = ({
                     </clipPath>
                 </defs>
 
-                <path d={area(data)} fill={`url(#AreaFill-${uniqueComponentId})`} clipPath={'url(#clipPath)'}/>
+                <path d={area(data)} fill={`url(#AreaFill-${uniqueComponentId})`} clipPath={`url(#clipPath-${uniqueComponentId})`}/>
 
                 <g filter={`url(#shadow-${uniqueComponentId})`}>
                     <path ref={graphicLine} d={line(data)} stroke={'#008DE4'} strokeWidth={3} fill={'none'} strokeLinejoin={'round'}/>
