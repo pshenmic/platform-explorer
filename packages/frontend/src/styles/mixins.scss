@@ -5,6 +5,12 @@
   width: 24px;
 }
 
+@mixin NotActiveText() {
+  font-size: 0.75rem !important;
+  color: var(--chakra-colors-gray-250) !important;
+  text-transform: lowercase !important;
+}
+
 @mixin DefListItem($clickable: true) {
   display: flex;
   width: 100%;
@@ -59,9 +65,7 @@
   }
 
   &__NotActiveText {
-    font-size: 0.75rem !important;
-    color: var(--chakra-colors-gray-250) !important;
-    text-transform: lowercase !important;
+    @include NotActiveText;
   }
 }
 
