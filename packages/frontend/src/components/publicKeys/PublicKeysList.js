@@ -10,25 +10,25 @@ function PublicKeysList ({ publicKeys = [], className }) {
     <div className={`PublicKeysList ${className || ''}`}>
       <div className={'PublicKeysList__ScrollZone'}>
         <Grid className={'PublicKeysList__ColumnTitles'}>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Timestamp'}>
+          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Id'}>
             Key Id
           </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Hash'}>
+          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--PublicKeyHash'}>
             Public Key Hash
           </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--GasUsed'}>
+          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
             Type
           </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Owner'}>
+          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Purpose'}>
             Purpose
           </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
+          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--SecurityLevel'}>
             Security Level
           </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
-            Read only
+          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--ReadOnly'}>
+            Read Only
           </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
+          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Data'}>
             Data
           </GridItem>
         </Grid>
