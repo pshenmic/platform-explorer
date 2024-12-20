@@ -16,13 +16,13 @@ function IdentityDigestCard ({ identity, rate, className }) {
         <div className={'IdentityDigestCard__Transfer IdentityDigestCard__Transfer--TupUp'}>
           <div className={'IdentityDigestCard__TransferTitle'}>Total Top-up’s:</div>
           <LoadingLine loading={identity.loading}>
-            <CreditsBlock credits={100000} rate={rate}/>
+            <CreditsBlock credits={identity.data?.totalTopUpsAmount} rate={rate}/>
           </LoadingLine>
         </div>
         <div className={'IdentityDigestCard__Transfer IdentityDigestCard__Transfer--Withdrawals'}>
           <div className={'IdentityDigestCard__TransferTitle'}>Total Withdrawals:</div>
           <LoadingLine loading={identity.loading}>
-            <CreditsBlock credits={10000} rate={rate}/>
+            <CreditsBlock credits={identity.data?.totalWithdrawalsAmount} rate={rate}/>
           </LoadingLine>
         </div>
       </div>
@@ -53,8 +53,8 @@ function IdentityDigestCard ({ identity, rate, className }) {
           value={(
             <Link href={`/transaction/${identity.data?.lastWithdrawalHash}`}>
               <ValueContainer className={'IdentityDigestCard__ValueContainer'} clickable={true}>
-                {identity.data?.lastWithdrawalTime &&
-                  <DateBlock timestamp={identity.data.lastWithdrawalTime} format={'deltaOnly'}/>
+                {identity.data?.lastWithdrawalTimestamp &&
+                  <DateBlock timestamp={identity.data?.lastWithdrawalTimestamp} format={'deltaOnly'}/>
                 }
                 <Identifier ellipsis={false} styles={['highlight-both']}>
                   {identity.data?.lastWithdrawalHash}
