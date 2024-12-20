@@ -2,48 +2,52 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../../util/Api'
-import Link from 'next/link'
 import TransactionsList from '../../../components/transactions/TransactionsList'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import DataContractsList from '../../../components/dataContracts/DataContractsList'
 import TransfersList from '../../../components/transfers/TransfersList'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import { LoadingLine, LoadingList } from '../../../components/loading'
+import { LoadingList } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import ImageGenerator from '../../../components/imageGenerator'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Credits, Alias } from '../../../components/data'
-import { RateTooltip } from '../../../components/ui/Tooltips'
+import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
+import { IdentityTotalCard } from '../../../components/identities'
 import './Identity.scss'
-import {
-  Box,
-  Container,
-  TableContainer, Table, Thead, Tbody, Tr, Th, Td,
-  Tabs, TabList, TabPanels, Tab, TabPanel,
-  Flex
-} from '@chakra-ui/react'
 
 const tabs = [
   'transactions',
-  'transfers',
+  'datacontracts',
   'documents',
-  'datacontracts'
+  'transfers'
 ]
 
 const defaultTabName = 'transactions'
 
 function Identity ({ identifier }) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const { setBreadcrumbs } = useBreadcrumbs()
   const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
   const [dataContracts, setDataContracts] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, loading: true, error: false })
   const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  const tdTitleWidth = 100
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1
+    ? tabs.indexOf(defaultTabName.toLowerCase())
+    : tabs.indexOf(defaultTabName)
+  )
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Home', path: '/' },
+      { label: 'Identities', path: '/identities' },
+      { label: identifier, avatar: true }
+    ])
+  }, [setBreadcrumbs, identifier])
 
   const fetchData = () => {
     Promise.all([
@@ -97,195 +101,73 @@ function Identity ({ identifier }) {
   }, [activeTab, router, pathname])
 
   return (
-    <div className={'Identity'}>
-        <Container
-            maxW={'container.xl'}
-            padding={3}
-            mt={8}
-        >
-            <Flex
-                w={'100%'}
-                justifyContent={'space-between'}
-                wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
-            >
-                <TableContainer
-                    width={['100%', '100%', '100%', 'calc(50% - 10px)']}
-                    maxW={'none'}
-                    borderWidth={'1px'} borderRadius={'block'}
-                    m={0}
-                    className={'IdentityInfo'}
-                  >
-                    {!identity.error
-                      ? <Table variant={'simple'} className={'Table'}>
-                            <Thead>
-                                <Tr>
-                                    <Th pr={0}>Identity info</Th>
-                                    <Th className={'TableHeader TableHeader--Name'}>
-                                        {identifier
-                                          ? <div className={'TableHeader__Content'}>
-                                                <ImageGenerator className={'TableHeader__Avatar'} hat={'christmas'} username={identifier} lightness={50} saturation={50} width={32} height={32}/>
-                                            </div>
-                                          : <Box w={'32px'} h={'32px'} />
-                                        }
-                                    </Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                <Tr>
-                                    <Td w={tdTitleWidth}>Identifier</Td>
-                                    <Td isNumeric className={'Table__Cell--BreakWord'}>
-                                        <LoadingLine loading={identity.loading}>
-                                          {identity.data?.identifier}
-                                        </LoadingLine>
-                                    </Td>
-                                </Tr>
-                                {identity?.data?.aliases?.length > 0 &&
-                                  <Tr>
-                                    <Td w={tdTitleWidth}>Names</Td>
-                                    <Td isNumeric className={'Table__Cell--BreakWord'}>
-                                      <LoadingLine loading={identity.loading}>
-                                        <div className={'IdentityInfo__AliasesContainer'}>
-                                          {identity?.data.aliases.map((alias, i) => (
-                                            <Alias className={'IdentityInfo__Alias'} status={alias?.status} alias={alias?.alias || alias} key={i}/>
-                                          ))}
-                                        </div>
-                                      </LoadingLine>
-                                    </Td>
-                                  </Tr>
-                                }
-                                <Tr>
-                                    <Td w={tdTitleWidth}>Balance</Td>
-                                    <Td isNumeric>
-                                      <LoadingLine loading={identity.loading}>
-                                        <RateTooltip
-                                          credits={identity.data?.balance}
-                                          rate={rate.data}
-                                        >
-                                          <span><Credits>{identity.data?.balance}</Credits> Credits</span>
-                                        </RateTooltip>
-                                      </LoadingLine>
-                                    </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td w={tdTitleWidth}>System</Td>
-                                    <Td isNumeric>
-                                        <LoadingLine loading={identity.loading}>{identity.data?.isSystem ? 'true' : 'false'}</LoadingLine>
-                                    </Td>
-                                </Tr>
+    <PageDataContainer
+      className={'IdentityPage'}
+      backLink={'/identities'}
+      title={'Identity info'}
+    >
+      <IdentityTotalCard identity={identity} rate={rate}/>
 
-                                {!identity.data.isSystem &&
-                                    <Tr>
-                                        <Td w={tdTitleWidth}>Created</Td>
-                                        <Td isNumeric>
-                                            <LoadingLine loading={identity.loading}>
-                                                <Link href={`/transaction/${identity.data?.txHash}`}>
-                                                    {identity.data?.timestamp && new Date(identity.data?.timestamp).toLocaleString()}
-                                                </Link>
-                                            </LoadingLine>
-                                        </Td>
-                                    </Tr>
-                                }
-
-                                <Tr>
-                                    <Td w={tdTitleWidth}>Revision</Td>
-                                    <Td isNumeric>
-                                        <LoadingLine loading={identity.loading}>{identity.data?.revision}</LoadingLine>
-                                    </Td>
-                                </Tr>
-
-                                {!identity.data?.isSystem &&
-                                    <Tr>
-                                        <Td w={tdTitleWidth}>Transactions</Td>
-                                        <Td isNumeric>
-                                            <LoadingLine loading={identity.loading}>{identity.data?.totalTxs}</LoadingLine>
-                                        </Td>
-                                    </Tr>
-                                }
-
-                                <Tr>
-                                    <Td w={tdTitleWidth}>Transfers</Td>
-                                    <Td isNumeric>
-                                        <LoadingLine loading={identity.loading}>{identity.data?.totalTransfers}</LoadingLine>
-                                    </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td w={tdTitleWidth}>Documents</Td>
-                                    <Td isNumeric>
-                                        <LoadingLine loading={identity.loading}>{identity.data?.totalDocuments}</LoadingLine>
-                                    </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td w={tdTitleWidth}>Data contracts</Td>
-                                    <Td isNumeric>
-                                        <LoadingLine loading={identity.loading}>{identity.data?.totalDataContracts}</LoadingLine>
-                                    </Td>
-                                </Tr>
-                            </Tbody>
-                        </Table>
-                      : <Container h={60}><ErrorMessageBlock/></Container>}
-                </TableContainer>
-
-                <Box w={5} h={5} />
-
-                <Container
-                  width={['100%', '100%', '100%', 'calc(50% - 10px)']}
-                  maxW={'none'}
-                  m={0}
-                  className={'InfoBlock'}
-                >
-                    <Tabs
-                      className={'IdentityData'}
-                      h={'100%'}
-                      display={'flex'}
-                      flexDirection={'column'}
-                      index={activeTab}
-                      onChange={setActiveTab}
-                    >
-                        <TabList className={'IdentityData__Tabs'}>
-                            <Tab className={'IdentityData__Tab'}>Transactions</Tab>
-                            <Tab className={'IdentityData__Tab'}>Transfers</Tab>
-                            <Tab className={'IdentityData__Tab'}>Documents</Tab>
-                            <Tab className={'IdentityData__Tab'}>Data contracts</Tab>
-                        </TabList>
-
-                        <TabPanels flexGrow={1}>
-                            <TabPanel px={0} h={'100%'}>
-                              {!transactions.error
-                                ? !transactions.loading
-                                    ? <TransactionsList transactions={transactions.data.resultSet} rate={rate.data}/>
-                                    : <LoadingList itemsCount={9}/>
-                                : <ErrorMessageBlock/>}
-                            </TabPanel>
-
-                            <TabPanel px={0} h={'100%'}>
-                              {!transfers.error
-                                ? !transfers.loading
-                                    ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.identifier}/>
-                                    : <LoadingList itemsCount={9}/>
-                                : <ErrorMessageBlock/>}
-                            </TabPanel>
-
-                            <TabPanel px={0} h={'100%'}>
-                              {!documents.error
-                                ? !documents.loading
-                                    ? <DocumentsList documents={documents.data.resultSet} size={'m'}/>
-                                    : <LoadingList itemsCount={9}/>
-                                : <ErrorMessageBlock/>}
-                            </TabPanel>
-
-                            <TabPanel px={0} h={'100%'}>
-                              {!dataContracts.error
-                                ? !dataContracts.loading
-                                    ? <DataContractsList dataContracts={dataContracts.data.resultSet} size={'m'}/>
-                                    : <LoadingList itemsCount={9}/>
-                                : <ErrorMessageBlock/>}
-                            </TabPanel>
-                        </TabPanels>
-                    </Tabs>
-                </Container>
-            </Flex>
-        </Container>
-    </div>
+      <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
+        <Tabs onChange={setActiveTab} index={activeTab}>
+          <TabList>
+            <Tab>Transactions {identity.data?.totalTxs !== undefined
+              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {identity.data?.totalTxs}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Data contracts {identity.data?.totalDataContracts !== undefined
+              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {identity.data?.totalDataContracts}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Documents {identity.data?.totalDocuments !== undefined
+              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDocuments === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {identity.data?.totalDocuments}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Credit Transfers {identity.data?.totalTransfers !== undefined
+              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{identity.data?.totalTransfers}</span>
+              : ''}
+            </Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              {!transactions.error
+                ? !transactions.loading
+                    ? <TransactionsList transactions={transactions.data?.resultSet}/>
+                    : <LoadingList itemsCount={9}/>
+                : <ErrorMessageBlock/>}
+            </TabPanel>
+            <TabPanel>
+              {!dataContracts.error
+                ? !dataContracts.loading
+                    ? <DataContractsList dataContracts={dataContracts.data.resultSet}/>
+                    : <LoadingList itemsCount={9}/>
+                : <ErrorMessageBlock/>}
+            </TabPanel>
+            <TabPanel>
+              {!documents.error
+                ? !documents.loading
+                    ? <DocumentsList documents={documents.data.resultSet} size={'m'}/>
+                    : <LoadingList itemsCount={9}/>
+                : <ErrorMessageBlock/>
+              }
+            </TabPanel>
+            <TabPanel>
+              {!transfers.error
+                ? !transfers.loading
+                    ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.data?.identifier}/>
+                    : <LoadingList itemsCount={9}/>
+                : <ErrorMessageBlock/>}
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </InfoContainer>
+    </PageDataContainer>
   )
 }
 

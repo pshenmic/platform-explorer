@@ -2,13 +2,18 @@
 @import '../../styles/variables.scss';
 
 .DateBlock {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   font-family: $font-mono;
-  white-space: nowrap;
 
-  &__CalendarIcon, &__Date {
+  &__InfoContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    white-space: nowrap;
+    margin-top: -4px;
+    margin-bottom: -4px;
+  }
+
+  &__CalendarIcon, &__Date, &__Delta {
     margin-top: 4px;
     margin-bottom: 4px;
   }

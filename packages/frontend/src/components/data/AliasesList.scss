@@ -1,0 +1,33 @@
+@use '../../styles/mixins';
+@import '../../styles/variables';
+
+.AliasesList {
+  &, &__ItemsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+  }
+
+  &__Item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    max-width: 100%;
+  }
+
+  &__ShowMoreButton {
+    width: max-content;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+
+    svg {
+      transition: .2s;
+    }
+  }
+
+  &__SmoothSize {
+    max-width: 100%;
+  }
+}
