@@ -2,35 +2,36 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import { ValueCard } from '../../components/cards'
 import PublicKeyBoundCard from './PublicKeyBoundCard'
 import { ValueContainer } from '../ui/containers'
+import { CopyButton } from '../ui/Buttons'
+import * as pkEnums from '../../enums/publicKey'
 import './PublicKeysListItem.scss'
 import './PublicKeyBoundCard.scss'
-import { CopyButton } from '../ui/Buttons'
 
 function PublicKeysListItem ({ publicKey, className }) {
   return (
     <div className={`PublicKeysListItem ${className || ''}`}>
       <Grid className={'PublicKeysListItem__Content'}>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Id'}>
-          {publicKey?.id}
+          {publicKey?.keyId}
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column--PublicKeyHash'}>
           <ValueCard className={'PublicKeysListItem__PublicKeyHash'} size={'sm'} colorScheme={'transparent'}>
-            {publicKey?.publicKeyHash}
+            {publicKey?.hash}
           </ValueCard>
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Type'}>
           <ValueContainer colorScheme={'gray'} size={'sm'}>
-            {publicKey?.type}
+            {pkEnums.KeyTypeEnum?.[publicKey?.type]}
           </ValueContainer>
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Purpose'}>
           <ValueContainer colorScheme={'blue'} size={'sm'}>
-            {publicKey?.purpose}
+            {pkEnums.KeyPurposeTitle?.[pkEnums.KeyPurposeEnum?.[publicKey?.purpose]]}
           </ValueContainer>
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--SecurityLevel'}>
           <ValueContainer colorScheme={'green'} size={'sm'}>
-            {publicKey?.securityLevel}
+            {pkEnums.SecurityLevelTitle?.[pkEnums.SecurityLevelEnum?.[publicKey?.securityLevel]]}
           </ValueContainer>
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
