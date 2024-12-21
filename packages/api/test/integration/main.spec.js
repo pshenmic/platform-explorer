@@ -163,7 +163,8 @@ describe('Other routes', () => {
           blockVersion: block.block_version,
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
-          validator: block.validator
+          validator: block.validator,
+          totalGasUsed: 0
         },
         txs: [
           {
@@ -274,7 +275,8 @@ describe('Other routes', () => {
           blockVersion: block.block_version,
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
-          validator: block.validator
+          validator: block.validator,
+          totalGasUsed: null
         },
         txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
