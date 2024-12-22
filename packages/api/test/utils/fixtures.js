@@ -155,7 +155,7 @@ const fixtures = {
       data_contract_id,
       owner,
       is_system: is_system ?? false,
-      transition_type: transition_type?? 0,
+      transition_type: transition_type ?? 0,
       document_type_name: document_type_name ?? 'type_name'
     }
 
