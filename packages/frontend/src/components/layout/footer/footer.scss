@@ -12,10 +12,6 @@
   justify-content: space-between;
   gap: 16px;
 
-  @media screen and (max-width: $breakpoint-lg) {
-    flex-direction: column;
-    gap: 12px;
-  }
 
   > * {
     flex: 1;
@@ -58,6 +54,44 @@
       position: relative;
       width: 20px;
       height: 20px;
+    }
+  }
+
+  &__TimezoneContainer {
+    display: flex;
+    align-items: center;
+  }
+
+  &__ClockIcon {
+    margin-right: 0.75rem;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    gap: 12px;
+
+    &__WrapperNetwork {
+      order: 1;
+    }
+
+    &__TimezoneContainer {
+      order: 2;
+    }
+
+    &__Copyright {
+      order: 3;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__LocalTime {
+      span {
+        display: block;
+      }
+
+      .LocalTime__Time:after {
+        display: none !important;
+      }
     }
   }
 }

@@ -41,6 +41,10 @@ describe('Other routes', () => {
 
     mock.method(DAPI.prototype, 'getContestedState', async () => null)
 
+    mock.method(DAPI.prototype, 'getIdentityKeys', async () => null)
+
+    mock.method(DAPI.prototype, 'getStatus', async () => null)
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -69,6 +73,7 @@ describe('Other routes', () => {
     identityTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
       type: StateTransitionEnum.IDENTITY_CREATE,
+      data: '',
       owner: identityIdentifier
     })
     identity = await fixtures.identity(knex, {
@@ -79,23 +84,27 @@ describe('Other routes', () => {
 
     identityAlias = await fixtures.identity_alias(knex, {
       alias: 'dpns.dash',
-      identity
+      identity,
+      state_transition_hash: identityTransaction.hash
     })
 
     dataContractTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
       type: StateTransitionEnum.DATA_CONTRACT_CREATE,
-      owner: identity.identifier
+      owner: identity.identifier,
+      index: 1
     })
     dataContract = await fixtures.dataContract(knex, {
       state_transition_hash: dataContractTransaction.hash,
-      owner: identity.identifier
+      owner: identity.identifier,
+      name: 'test'
     })
 
     documentTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
       type: StateTransitionEnum.DOCUMENTS_BATCH,
-      owner: identity.identifier
+      owner: identity.identifier,
+      index: 2
     })
     await fixtures.document(knex, {
       state_transition_hash: documentTransaction.hash,
@@ -149,14 +158,75 @@ describe('Other routes', () => {
       const expectedBlock = {
         header: {
           hash: block.hash,
-          height: block.height,
+          height: 1,
           timestamp: block.timestamp.toISOString(),
           blockVersion: block.block_version,
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator
         },
-        txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
+        txs: [
+          {
+            hash: identityTransaction.hash,
+            index: identityTransaction.index,
+            blockHash: identityTransaction.block_hash,
+            blockHeight: null,
+            type: identityTransaction.type,
+            data: '',
+            timestamp: block.timestamp.toISOString(),
+            gasUsed: 0,
+            status: 'SUCCESS',
+            error: null,
+            owner: {
+              identifier: identityTransaction.owner,
+              aliases: [{
+                alias: 'dpns.dash',
+                contested: false,
+                status: 'ok'
+              }]
+            }
+          },
+          {
+            hash: dataContractTransaction.hash,
+            index: dataContractTransaction.index,
+            blockHash: dataContractTransaction.block_hash,
+            blockHeight: null,
+            type: dataContractTransaction.type,
+            data: '{}',
+            timestamp: block.timestamp.toISOString(),
+            gasUsed: 0,
+            status: 'SUCCESS',
+            error: null,
+            owner: {
+              identifier: dataContractTransaction.owner,
+              aliases: [{
+                alias: 'dpns.dash',
+                status: 'ok',
+                contested: false
+              }]
+            }
+          },
+          {
+            hash: documentTransaction.hash,
+            index: documentTransaction.index,
+            blockHash: documentTransaction.block_hash,
+            blockHeight: null,
+            type: documentTransaction.type,
+            data: '{}',
+            timestamp: block.timestamp.toISOString(),
+            gasUsed: 0,
+            status: 'SUCCESS',
+            error: null,
+            owner: {
+              identifier: documentTransaction.owner,
+              aliases: [{
+                alias: 'dpns.dash',
+                status: 'ok',
+                contested: false
+              }]
+            }
+          }
+        ]
       }
 
       assert.deepEqual({ block: expectedBlock }, body)
@@ -182,6 +252,7 @@ describe('Other routes', () => {
           identifier: dataContractTransaction.owner,
           aliases: [{
             alias: identityAlias.alias,
+            contested: false,
             status: 'ok'
           }]
         }
@@ -231,6 +302,26 @@ describe('Other routes', () => {
       assert.deepEqual({ dataContract: expectedDataContract }, body)
     })
 
+    it('should search by data contract name', async () => {
+      const { body } = await client.get('/search?query=test')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDataContract = {
+        identifier: dataContract.identifier,
+        name: dataContract.name,
+        owner: identity.identifier.trim(),
+        schema: JSON.stringify(dataContract.schema),
+        version: 0,
+        txHash: dataContractTransaction.hash,
+        timestamp: block.timestamp.toISOString(),
+        isSystem: false,
+        documentsCount: 1
+      }
+
+      assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
+    })
+
     it('should search by identity DPNS', async () => {
       mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
@@ -238,12 +329,17 @@ describe('Other routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      const expectedIdentity = {
+      const expectedIdentity = [{
         identifier: identity.identifier,
-        alias: identityAlias.alias
-      }
+        alias: identityAlias.alias,
+        status: {
+          alias: identityAlias.alias,
+          contested: false,
+          status: 'ok'
+        }
+      }]
 
-      assert.deepEqual({ identity: expectedIdentity }, body)
+      assert.deepEqual({ identities: expectedIdentity }, body)
     })
 
     it('should search identity', async () => {
@@ -265,8 +361,19 @@ describe('Other routes', () => {
         owner: identity.identifier,
         aliases: [{
           alias: 'dpns.dash',
+          contested: false,
           status: 'ok'
-        }]
+        }],
+        totalGasSpent: 480000,
+        averageGasSpent: 9412,
+        totalTopUpsAmount: 0,
+        totalWithdrawalsAmount: 0,
+        lastWithdrawalHash: null,
+        publicKeys: [],
+        fundingCoreTx: null,
+        lastWithdrawalTimestamp: null,
+        totalTopUps: 0,
+        totalWithdrawals: 0
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
@@ -283,8 +390,29 @@ describe('Other routes', () => {
           timestamp: new Date().toISOString()
         }
       }
+      const mockDapiStatus = {
+        version: {
+          software: {
+            dapi: '1.5.1',
+            drive: '1.6.2',
+            tenderdash: '1.4.0'
+          },
+          protocol: {
+            tenderdash: {
+              p2p: 10,
+              block: 14
+            },
+            drive: {
+              latest: 6,
+              current: 6
+            }
+          }
+        }
+      }
+
       mock.reset()
       mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
+      mock.method(DAPI.prototype, 'getStatus', async () => mockDapiStatus)
       mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
         number: 0,
         firstBlockHeight: 0,
@@ -331,15 +459,29 @@ describe('Other routes', () => {
             timestamp: blocks[blocks.length - 1].timestamp.toISOString()
           }
         },
-        platform: {
-          version: '1' + require('../../package.json').dependencies.dash.substring(1)
-        },
         tenderdash: {
-          version: mockTDStatus?.version ?? null,
+          version: mockDapiStatus.version.software.tenderdash ?? null,
           block: {
             height: mockTDStatus?.highestBlock?.height,
             hash: mockTDStatus?.highestBlock?.hash,
             timestamp: mockTDStatus?.highestBlock?.timestamp
+          }
+        },
+        versions: {
+          software: {
+            dapi: mockDapiStatus.version.software.dapi ?? null,
+            drive: mockDapiStatus.version.software.drive ?? null,
+            tenderdash: mockDapiStatus.version.software.tenderdash ?? null
+          },
+          protocol: {
+            tenderdash: {
+              p2p: mockDapiStatus.version.protocol.tenderdash.p2p ?? null,
+              block: mockDapiStatus.version.protocol.tenderdash.block ?? null
+            },
+            drive: {
+              latest: mockDapiStatus.version.protocol.drive.latest ?? null,
+              current: mockDapiStatus.version.protocol.drive.current ?? null
+            }
           }
         }
       }

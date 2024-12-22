@@ -15,6 +15,7 @@ Reference:
 * [Blocks](#blocks)
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
+* [Validator by Masternode Identifier](#validator-by-masternode-identifier)
 * [Validator Blocks Statistic](#validator-stats-by-protxhash)
 * [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
 * [Transaction by hash](#transaction-by-hash)
@@ -32,7 +33,9 @@ Reference:
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
+* [Transactions gas history](#transactions-gas-history)
 * [Rate](#rate)
+* [Search](#search)
 * [Decode Raw Transaction](#decode-raw-transaction)
 
 ### Status
@@ -70,18 +73,55 @@ HTTP /status
             hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
             timestamp: "2024-06-06T21:50:20.949Z"
         }
+  "epoch": {
+    "number": 3640,
+    "firstBlockHeight": 72534,
+    "firstCoreBlockHeight": 1160707,
+    "startTime": 1734457229495,
+    "feeMultiplier": 1,
+    "endTime": 1734460829495
+  },
+  "transactionsCount": 25912,
+  "totalCredits": 7288089799960610,
+  "totalCollectedFeesDay": 12733263640,
+  "transfersCount": 1849,
+  "dataContractsCount": 630,
+  "documentsCount": 15384,
+  "identitiesCount": 712,
+  "network": "dash-testnet-51",
+  "api": {
+    "version": "1.0.7",
+    "block": {
+      "height": 72555,
+      "hash": "EDA1CDF601224CD3ED168D35B4699DE2796F774B526103C64D371EF3AAFD8274",
+      "timestamp": "2024-12-17T17:57:08.758Z"
     }
-    platform: {
-        version: "1.0.0-dev.12"
+  },
+  "tenderdash": {
+    "version": "1.4.0",
+    "block": {
+      "height": 72555,
+      "hash": "EDA1CDF601224CD3ED168D35B4699DE2796F774B526103C64D371EF3AAFD8274",
+      "timestamp": "2024-12-17T17:57:08.758Z"
+    }
+  },
+  "versions": {
+    "software": {
+      "dapi": "1.5.1",
+      "drive": "1.6.2",
+      "tenderdash": "1.4.0"
     },
-    tenderdash: {
-        version: "0.14.0-dev.6",
-        block: {
-            height: 20154,
-            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-            timestamp: "2024-06-06T21:53:27.947Z"
-         }
-    }     
+    "protocol": {
+      "tenderdash": {
+        "p2p": 10,
+        "block": 14
+      },
+      "drive": {
+        "latest": 6,
+        "current": 6
+      }
+    }
+  }
 }
 ```
 ---
@@ -117,17 +157,38 @@ Get a block by hash
 GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
 {
+  "header": {
+    "hash": "04D16F8EE2A892E5F9F884C11DB97CD20BAA4A9539111A9131F847B93422DB26",
+    "height": 37994,
+    "timestamp": "2024-10-20T21:35:48.669Z",
+    "blockVersion": 14,
+    "appVersion": 4,
+    "l1LockedHeight": 1124953,
+    "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234"
+  },
+  "txs": [
     {
-        header: {
-            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-            height: 1337,
-            timestamp: "2024-03-18T10:13:54.150Z",
-            blockVersion: 13,
-            appVersion: 1,
-            l1LockedHeight: 1337
-        },
-        txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
+      "hash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+      "index": 0,
+      "blockHash": "04D16F8EE2A892E5F9F884C11DB97CD20BAA4A9539111A9131F847B93422DB26",
+      "blockHeight": 37994,
+      "type": 1,
+      "data": "AgDuMmDTP4yp4UxhCAbUbbj9M0NSKtDkSMDXiaFYkDf05gEAAAD8TaL0Ynpk50URo4Lr7GID83h4Q7YxOfxNyBcNWF7mwQEIcHJlb3JkZXLmaMZZr2au4ecsGG3ee1t+Ch1xKgnEDVch9iK/U8UxVe4PfekoUsU6NnJAmQzOoXBkr3P+LpzyoMFt1ppC7LqAARBzYWx0ZWREb21haW5IYXNoDLF9yHanBZpOsaoAIQ7+WgMlafEFgvsSfAqiyosXA967AAABQR8wm64iVoCLY0WmrqLS13iPcikGVcuYsqpuoqIWfYRLLlqXQlyHQ5XnsfTKor5spJtUz8gvlN3//sqH+sI8y/gz",
+      "timestamp": "2024-10-20T21:35:48.669Z",
+      "gasUsed": 34509040,
+      "status": "SUCCESS",
+      "error": null,
+      "owner": {
+        "identifier": "H2pb35GtKpjLinncBYeMsXkdDYXCbsFzzVmssce6pSJ1",
+        "aliases": [
+          {
+            "alias": "owl352-testnet.dash",
+            "status": "ok"
+          }
+        ]
+      }
     }
+  ]
 }
 ```
 ---
@@ -346,6 +407,89 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 }
 ```
 ---
+### Validator by Masternode Identifier
+Get validator by Masternode Identity.
+* `lastProposedBlockHeader` field is nullable
+```
+GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
+
+{
+  proTxHash: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+  isActive: true,
+  proposedBlocksAmount: 5,
+  lastProposedBlockHeader: {
+    height: 5,
+    timestamp: "2024-06-23T13:51:44.154Z",
+    hash: "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
+    l1LockedHeight: 1337,
+    appVersion: 1,
+    blockVersion: 13,
+    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+  },
+  proTxInfo: {
+    type: "Evo",
+    collateralHash: "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
+    collateralIndex: 19,
+    collateralAddress: "yYK3Kiq36Xmf1ButkTUYb1iCNtJfSSM4KH",
+    operatorReward: 0,
+    confirmations: 214424,
+    state: {
+      version: 2,
+      service: "35.164.23.245:19999",
+      registeredHeight: 850334,
+      lastPaidHeight: 1064721,
+      consecutivePayments: 0,
+      PoSePenalty: 0,
+      PoSeRevivedHeight: 1027671,
+      PoSeBanHeight: -1,
+      revocationReason: 0,
+      ownerAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+      votingAddress: "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
+      platformNodeID: "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
+      platformP2PPort: 36656,
+      platformHTTPPort: 1443,
+      payoutAddress: "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+      pubKeyOperator: "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730",
+    }
+  },
+  identity: "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
+  identityBalance: 0,
+  epochInfo: {
+    number: 1982,
+    firstBlockHeight: 31976,
+    firstCoreBlockHeight: 1118131,
+    startTime: 1728488466559,
+    feeMultiplier: 1,
+    endTime: 1728492066559
+  },
+  totalReward: 0,
+  epochReward: 0,
+  withdrawalsCount: 1,
+  lastWithdrawal: "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047",
+  lastWithdrawalTime: "2024-10-12T03:15:19.257Z",
+  endpoints: {
+    coreP2PPortStatus: {
+      host: '52.33.28.41',
+      port: 19999,
+      status: 'ERROR',
+      message: null
+    },
+    platformP2PPortStatus: {
+      host: '52.33.28.41',
+      port: 36656,
+      status: 'ERROR',
+      message: null
+    },
+    platformGrpcPortStatus: {
+      host: '52.33.28.41',
+      port: 1443,
+      status: 'ERROR',
+      message: null
+    }
+  }
+}
+```
+---
 ### Validator rewards stats by ProTxHash
 Return a series data for the reward from proposed blocks by validator chart with
 
@@ -408,7 +552,8 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
       aliases: [
         {
           alias: "alias.dash",
-          status: "locked"
+          status: "locked",
+          contested: true
         }
       ]
     }
@@ -428,9 +573,14 @@ Return transaction set paged
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 
 * `limit` cannot be more then 100
+* `owner` Identity identifier
+* `status` can be `SUCCESS`, `FAIL` or `ALL`
+* `transaction_type` number of tx type. Can be set multiple times
+* `gas_min` number of min `gas_used`
+* `gas_max` number of max `gas_used`
 
 ```
-GET /transactions?=1&limit=10&order=asc
+GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
 
 {
     pagination: {
@@ -455,7 +605,8 @@ GET /transactions?=1&limit=10&order=asc
           aliases: [
             {
               alias: "alias.dash",
-              status: "locked"
+              status: "locked",
+              contested: true
             }
           ]
         }
@@ -596,23 +747,79 @@ Return identity by given identifier
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
-    identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    revision: 1,
-    balance: 1000000,
-    timestamp: "2024-03-18T10:13:54.150Z",
-    txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-    totalTxs: 1,
-    totalTransfers: 0,
-    totalDocuments: 0,
-    totalDataContracts: 0,
-    isSystem: false,
-    aliases: [
-      {
-        alias: "alias.dash",
-        status: "locked"
-      }
-    ]
+  "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+  "revision": 0,
+  "balance": 49989647300,
+  "timestamp": "2024-10-12T18:51:44.592Z",
+  "txHash": "32FB988D87E4122A2FE030B5014A59A05786C1501FD97D765E2329F89A8AD01D",
+  "totalTxs": 13,
+  "totalTransfers": 7,
+  "totalDocuments": 5,
+  "totalDataContracts": 0,
+  "isSystem": false,
+  "aliases": [
+    {
+      "alias": "owl352.dash",
+      "status": "ok",
+      "contested": false
+    }
+  ],
+  "totalGasSpent": 310352700,
+  "averageGasSpent": 23873285,
+  "totalTopUpsAmount": 46350660,
+  "totalWithdrawalsAmount": 0,
+  "lastWithdrawalHash": null,
+  "lastWithdrawalTimestamp": null,
+  "totalTopUps": 0,
+  "totalWithdrawals": 0,
+  "publicKeys": [
+    {
+      "keyId": 0,
+      "type": 0,
+      "data": "0386067dea94b1cfb23bf252084a2020a4a6712df7e4ac16c211558a1dbb66904a",
+      "purpose": 0,
+      "securityLevel": 0,
+      "isReadOnly": false,
+      "isMaster": true,
+      "hash": "5501114f5842004d1ff6c7d04512c438afe0cb11",
+      "contractBounds": null
+    },
+    {
+      "keyId": 1,
+      "type": 0,
+      "data": "038a09509830d2d04685294e920aa29c96d51f9bd81044e2f934a4c198b934b102",
+      "purpose": 0,
+      "securityLevel": 2,
+      "isReadOnly": false,
+      "isMaster": false,
+      "hash": "c563c11128b9e457ad3b7220315b4bf53c8af443",
+      "contractBounds": null
+    },
+    {
+      "keyId": 2,
+      "type": 0,
+      "data": "027734bd9b8864964eb7504a77a986782e9d620e4c6d23e2bd80359e1e81790a1c",
+      "purpose": 0,
+      "securityLevel": 1,
+      "isReadOnly": false,
+      "isMaster": false,
+      "hash": "4bd1a43ea0cf7c18c1f90d1d9c0f08c63743ff1d",
+      "contractBounds": null
+    },
+    {
+      "keyId": 3,
+      "type": 0,
+      "data": "03083620dea1216b47568aead0c7cb6302ae3ca8beaa40c51e25b20f1f02ae06d4",
+      "purpose": 3,
+      "securityLevel": 1,
+      "isReadOnly": false,
+      "isMaster": false,
+      "hash": "f6d941f2d7aa4bc9d90b90bc103bd583c5943af9",
+      "contractBounds": null
+    }
+  ],
+  "fundingCoreTx": "68d77e0d2da31e9cf2758d8f97547c1bc98b75c4e2cebe64dbcaae3bb5cb8a9c",
+  "owner": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ"
 }
 ```
 Response codes:
@@ -627,10 +834,17 @@ Return identity by given DPNS/alias
 ```
 GET /dpns/identity?dpns=canuseethat2.dash
 
-{
-  "identity_identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
-  "alias": "canuseethat2.dash"
-}
+[
+  {
+    "identity_identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+    "alias": "canuseethat2.dash",
+    "status": {
+      "alias": "canuseethat2.dash",
+      "contested": false,
+      "status": "ok"
+    }
+  }
+]
 ```
 Response codes:
 ```
@@ -669,7 +883,8 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
           aliases: [
             {
               alias: "alias.dash",
-              status: "locked"
+              status: "locked",
+              contested: true
             }
           ]
       }, ...
@@ -830,7 +1045,7 @@ Response codes:
 Return all transfers made by the given identity
 * `limit` cannot be more then 100
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&limit=10&order=asc&type=1
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
 {
     pagination: {
@@ -847,8 +1062,80 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?page=1&li
         txHash: "445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118",
         type: 6,
         blockHash: "73171E0A8DCC10C6DA501E1C70A9C1E0BD6F1F8F834C2A1E787AF19B1F361D5E"
-    }, ...
+    }
     ]
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
+### Search
+This endpoint allows search any types of data
+
+* `query` required and must contains data for search
+* Response may contain array for Identity and Data Contract when searching by part of field
+
+#### Can be found:
+* Block
+  * Full `height`
+  * Full `hash`
+* Transaction
+  * Full `hash`
+* Validator
+  * Full `proTxHash`
+  * Full `Identifier` of Masternode Identity
+* Identity
+  * Full `Identifier`
+  * Part `alias`
+* Data Contract
+  * Full `Identifier`
+  * Part `name`
+* Document
+  * Full `Identifier`
+
+```
+GET /search?query=xyz
+
+{
+  "identities": [
+    {
+      "identifier": "36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm",
+      "alias": "xyz.dash",
+      "status": {
+        "alias": "xyz.dash",
+        "status": "ok",
+        "contested": true
+      }
+    },
+    {
+      "identifier": "5bUPV8KGgL42ZBS9fsmmKU3wweQbVeHHsiVrG3YMHyG5",
+      "alias": "xyz.dash",
+      "status": {
+        "alias": "xyz.dash",
+        "status": "locked",
+        "contested": true
+      }
+    }
+  ]
+}
+```
+
+```
+GET /search?query=36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm
+
+{
+  "identity": {
+    "identifier": "36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm",
+    "alias": "xyz.dash",
+    "status": {
+      "alias": "xyz.dash",
+      "status": "ok",
+      "contested": true
+    }
+  }
 }
 ```
 Response codes:
@@ -880,6 +1167,40 @@ GET /transactions/history?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
           txs: 13,
           blockHeight: 7,
           blockHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
+        }
+    }, ...
+]
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+### Transactions Gas history
+Return a series data for the used gas of transactions chart
+
+* `start` lower interval threshold in ISO string ( _optional_ )
+* `end` upper interval threshold in ISO string ( _optional_ )
+* `intervalsCount` intervals count in response ( _optional_ )
+
+```
+GET /transactions/gas/history?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
+[
+    {
+        timestamp: "2024-04-22T08:45:20.911Z",
+        "data": {
+          "gas": 772831320,
+          "blockHeight": 64060,
+          "blockHash": "4A1F6B5238032DDAC55009A28797D909DB4288D5B5EC14B86DEC6EA8F25EC71A"
+        }
+    },
+    {
+        timestamp: "2024-04-22T08:50:20.911Z",
+        "data": {
+          "gas": 14108752440,
+          "blockHeight": 64333,
+          "blockHash": "507659D9BE2FF76A031F4219061F3D2D39475A7FA4B24F25AEFDB34CD4DF2A57"
         }
     }, ...
 ]
@@ -1368,8 +1689,8 @@ IDENTITY_CREATE with instantLock
     "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
     "documentTypeName": "domain",
     "indexName": "parentNameAndLabel",
-    "proTxHash": 'ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b',
     "choice": "Abstain",
+    "proTxHash": 'ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b',
     "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
 }
 ```

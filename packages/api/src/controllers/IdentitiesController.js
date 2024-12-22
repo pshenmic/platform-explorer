@@ -6,7 +6,7 @@ const { decodeStateTransition } = require('../utils')
 
 class IdentitiesController {
   constructor (client, knex, dapi) {
-    this.identitiesDAO = new IdentitiesDAO(knex, dapi)
+    this.identitiesDAO = new IdentitiesDAO(knex, dapi, client)
     this.dapi = dapi
     this.client = client
   }
@@ -26,7 +26,7 @@ class IdentitiesController {
   getIdentityByDPNSName = async (request, response) => {
     const { dpns } = request.query
 
-    const identity = await this.identitiesDAO.getIdentityByDPNSName(dpns)
+    const identity = await this.identitiesDAO.getIdentitiesByDPNSName(dpns)
 
     if (!identity) {
       return response.status(404).send({ message: 'not found' })
@@ -72,9 +72,16 @@ class IdentitiesController {
 
   getTransfersByIdentity = async (request, response) => {
     const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc', type = undefined } = request.query
+    const { page = 1, limit = 10, order = 'asc', type, hash } = request.query
 
-    const transfers = await this.identitiesDAO.getTransfersByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order, type)
+    const transfers = await this.identitiesDAO.getTransfersByIdentity(
+      identifier,
+      hash,
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      type
+    )
 
     response.send(transfers)
   }

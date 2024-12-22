@@ -8,10 +8,6 @@
 
   &__Content {
     @include txs.Columns();
-
-    &--Inline {
-      display: inline !important;
-    }
   }
 
   &__Column {
@@ -83,6 +79,7 @@
         .Identifier,
         .TransactionsListItem__AliasContainer,
         .Identifier__Avatar,
+        img,
         a {
           display: block !important;
         }
