@@ -78,6 +78,22 @@
         max-width: 100%;
       }
     }
+
+    &--Identifier {
+      .InfoLine__Value {
+        container-type: inline-size;
+        width: 100%;
+      }
+
+
+      .Identifier__SymbolsContainer {
+        margin-left: auto;
+
+        @container (max-width: 22rem) {
+          max-width: 10rem;
+        }
+      }
+    }
   }
 
   &__PublicKeysShowButton {
@@ -150,6 +166,12 @@
   screen and (max-width: $breakpoint-md) {
     &__InfoLine {
       gap: 4px;
+
+      &--Identifier {
+        .Identifier__SymbolsContainer {
+          margin-left: 0;
+        }
+      }
     }
   }
 

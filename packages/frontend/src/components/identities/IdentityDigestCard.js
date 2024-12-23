@@ -48,7 +48,7 @@ function IdentityDigestCard ({ identity, rate, className }) {
           error={identity.error || (!identity.loading && !identity.data?.fundingCoreTx)}
         />
         <InfoLine
-          className={'IdentityDigestCard__InfoLine'}
+          className={'IdentityDigestCard__InfoLine IdentityDigestCard__InfoLine--LastWithdrawal'}
           title={'Last Withdrawal'}
           value={(
             <Link href={`/transaction/${identity.data?.lastWithdrawalHash}`}>

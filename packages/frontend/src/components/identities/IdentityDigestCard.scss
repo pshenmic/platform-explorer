@@ -80,6 +80,12 @@
     .DateBlock__InfoContainer {
       justify-content: flex-end;
     }
+
+    &--LastWithdrawal {
+      .Identifier__SymbolsContainer {
+        max-width: 14.75rem;
+      }
+    }
   }
 
   @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
@@ -136,6 +142,12 @@
 
         &__Usd {
           margin-left: auto;
+        }
+      }
+
+      &--LastWithdrawal {
+        .Identifier__SymbolsContainer {
+          max-width: none;
         }
       }
     }
