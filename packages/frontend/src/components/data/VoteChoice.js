@@ -1,5 +1,5 @@
-import { ValueContainer } from '../ui/containers'
-import { Identifier } from './index'
+import ValueContainer from '../ui/containers/ValueContainer'
+import Identifier from './Identifier'
 
 function VoteChoice ({ choiceStr }) {
   if (typeof choiceStr !== 'string') return 'n/a'
