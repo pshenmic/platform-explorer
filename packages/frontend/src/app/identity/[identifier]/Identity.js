@@ -6,8 +6,7 @@ import TransactionsList from '../../../components/transactions/TransactionsList'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import DataContractsList from '../../../components/dataContracts/DataContractsList'
 import TransfersList from '../../../components/transfers/TransfersList'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import { LoadingList } from '../../../components/loading'
+import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, setLoadingProp } from '../../../util'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
@@ -31,11 +30,12 @@ function Identity ({ identifier }) {
   const searchParams = useSearchParams()
   const { setBreadcrumbs } = useBreadcrumbs()
   const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
-  const [dataContracts, setDataContracts] = useState({ data: {}, loading: true, error: false })
-  const [documents, setDocuments] = useState({ data: {}, loading: true, error: false })
-  const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
-  const [transfers, setTransfers] = useState({ data: {}, loading: true, error: false })
+  const [dataContracts, setDataContracts] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [documents, setDocuments] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [transfers, setTransfers] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
+  const pageSize = 10
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1
     ? tabs.indexOf(defaultTabName.toLowerCase())
     : tabs.indexOf(defaultTabName)
@@ -49,32 +49,51 @@ function Identity ({ identifier }) {
     ])
   }, [setBreadcrumbs, identifier])
 
-  const fetchData = () => {
-    Promise.all([
-      Api.getIdentity(identifier)
-        .then(paginatedTransactions => fetchHandlerSuccess(setIdentity, paginatedTransactions))
-        .catch(err => fetchHandlerError(setIdentity, err)),
-      Api.getDataContractsByIdentity(identifier)
-        .then(paginatedDataContracts => fetchHandlerSuccess(setDataContracts, paginatedDataContracts))
-        .catch(err => fetchHandlerError(setDataContracts, err)),
-      Api.getDocumentsByIdentity(identifier)
-        .then(paginatedTransactions => fetchHandlerSuccess(setDocuments, paginatedTransactions))
-        .catch(err => fetchHandlerError(setDocuments, err)),
-      Api.getTransactionsByIdentity(identifier)
-        .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
-        .catch(err => fetchHandlerError(setTransactions, err)),
-      Api.getTransfersByIdentity(identifier)
-        .then(paginatedTransactions => fetchHandlerSuccess(setTransfers, paginatedTransactions))
-        .catch(err => fetchHandlerError(setTransfers, err))
-    ])
-      .catch(console.error)
+  useEffect(() => {
+    Api.getIdentity(identifier)
+      .then(paginatedTransactions => fetchHandlerSuccess(setIdentity, paginatedTransactions))
+      .catch(err => fetchHandlerError(setIdentity, err))
 
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
-  }
+  }, [identifier])
 
-  useEffect(fetchData, [identifier])
+  useEffect(() => {
+    if (!identifier) return
+    setLoadingProp(setTransactions)
+
+    Api.getTransactionsByIdentity(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
+      .then(paginatedDataContracts => fetchHandlerSuccess(setTransactions, paginatedDataContracts))
+      .catch(err => fetchHandlerError(setTransactions, err))
+  }, [identifier, transactions.props.currentPage])
+
+  useEffect(() => {
+    if (!identifier) return
+    setLoadingProp(setDataContracts)
+
+    Api.getDataContractsByIdentity(identifier, dataContracts.props.currentPage + 1, pageSize, 'desc')
+      .then(paginatedDataContracts => fetchHandlerSuccess(setDataContracts, paginatedDataContracts))
+      .catch(err => fetchHandlerError(setDataContracts, err))
+  }, [identifier, dataContracts.props.currentPage])
+
+  useEffect(() => {
+    if (!identifier) return
+    setLoadingProp(setTransfers)
+
+    Api.getTransfersByIdentity(identifier, transfers.props.currentPage + 1, pageSize, 'desc')
+      .then(paginatedDataContracts => fetchHandlerSuccess(setTransfers, paginatedDataContracts))
+      .catch(err => fetchHandlerError(setTransfers, err))
+  }, [identifier, transfers.props.currentPage])
+
+  useEffect(() => {
+    if (!identifier) return
+    setLoadingProp(setDocuments)
+
+    Api.getDocumentsByIdentity(identifier, documents.props.currentPage + 1, pageSize, 'desc')
+      .then(paginatedDataContracts => fetchHandlerSuccess(setDocuments, paginatedDataContracts))
+      .catch(err => fetchHandlerError(setDocuments, err))
+  }, [identifier, dataContracts.props.currentPage])
 
   useEffect(() => {
     const tab = searchParams.get('tab')
@@ -137,32 +156,65 @@ function Identity ({ identifier }) {
           <TabPanels>
             <TabPanel>
               {!transactions.error
-                ? !transactions.loading
-                    ? <TransactionsList transactions={transactions.data?.resultSet}/>
-                    : <LoadingList itemsCount={9}/>
-                : <ErrorMessageBlock/>}
+                ? <TransactionsList
+                    transactions={transactions.data?.resultSet}
+                    pagination={{
+                      onPageChange: pagination => paginationHandler(setTransactions, pagination.selected),
+                      pageCount: Math.ceil(transactions.data?.pagination?.total / pageSize) || 1,
+                      forcePage: transactions?.props?.currentPage
+                    }}
+                    loading={transactions.loading}
+                    itemsCount={pageSize}
+                  />
+                : <ErrorMessageBlock/>
+              }
             </TabPanel>
             <TabPanel>
               {!dataContracts.error
-                ? !dataContracts.loading
-                    ? <DataContractsList dataContracts={dataContracts.data.resultSet}/>
-                    : <LoadingList itemsCount={9}/>
-                : <ErrorMessageBlock/>}
+                ? <DataContractsList
+                    dataContracts={dataContracts.data.resultSet}
+                    pagination={{
+                      onPageChange: pagination => paginationHandler(setDataContracts, pagination.selected),
+                      pageCount: Math.ceil(dataContracts.data?.pagination?.total / pageSize) || 1,
+                      forcePage: dataContracts?.props?.currentPage
+                    }}
+                    loading={dataContracts.loading}
+                    itemsCount={pageSize}
+                  />
+                : <ErrorMessageBlock/>
+              }
             </TabPanel>
             <TabPanel>
               {!documents.error
-                ? !documents.loading
-                    ? <DocumentsList documents={documents.data.resultSet} size={'m'}/>
-                    : <LoadingList itemsCount={9}/>
+                ? <DocumentsList
+                    documents={documents.data.resultSet}
+                    size={'m'}
+                    pagination={{
+                      onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
+                      pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
+                      forcePage: documents?.props?.currentPage
+                    }}
+                    loading={documents.loading}
+                    itemsCount={pageSize}
+                  />
                 : <ErrorMessageBlock/>
               }
             </TabPanel>
             <TabPanel>
               {!transfers.error
-                ? !transfers.loading
-                    ? <TransfersList transfers={transfers.data.resultSet} identityId={identity.data?.identifier}/>
-                    : <LoadingList itemsCount={9}/>
-                : <ErrorMessageBlock/>}
+                ? <TransfersList
+                    transfers={transfers.data.resultSet}
+                    identityId={identity.data?.identifier}
+                    pagination={{
+                      onPageChange: pagination => paginationHandler(setTransfers, pagination.selected),
+                      pageCount: Math.ceil(transfers.data?.pagination?.total / pageSize) || 1,
+                      forcePage: transfers?.props?.currentPage
+                    }}
+                    loading={transfers.loading}
+                    itemsCount={pageSize}
+                  />
+                : <ErrorMessageBlock/>
+              }
             </TabPanel>
           </TabPanels>
         </Tabs>
