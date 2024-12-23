@@ -60,7 +60,7 @@ export default function TransactionsList ({
 
       {pagination &&
         <Pagination
-          className={'TransfersList__Pagination'}
+          className={'TransactionsList__Pagination'}
           onPageChange={pagination.onPageChange}
           pageCount={pagination.pageCount}
           forcePage={pagination.forcePage}
