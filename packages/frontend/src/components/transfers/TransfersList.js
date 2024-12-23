@@ -1,9 +1,12 @@
 import TransfersListItem from './TransfersListItem'
 import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
+import { LoadingList } from '../loading'
+import Pagination from '../pagination'
+import { ErrorMessageBlock } from '../Errors'
 import './TransfersList.scss'
 
-function TransfersList ({ transfers = [], identityId, headerStyles }) {
+function TransfersList ({ transfers = [], identityId, pagination, headerStyles, loading, itemsCount }) {
   const headerExtraClass = {
     default: '',
     light: 'BlocksList__ColumnTitles--Light'
@@ -33,20 +36,35 @@ function TransfersList ({ transfers = [], identityId, headerStyles }) {
           </GridItem>
         </Grid>
 
-        <div className={'TransfersList__Items'}>
-          {transfers.map((transfer, key) =>
-            <TransfersListItem
-              key={key}
-              transfer={transfer}
-              identityId={identityId}
-            />
-          )}
+        {!loading
+          ? <div className={'TransfersList__Items'}>
+            {transfers?.map((transfer, key) =>
+              <TransfersListItem
+                key={key}
+                transfer={transfer}
+                identityId={identityId}
+              />
+            )}
 
-          {transfers.length === 0 &&
-            <EmptyListMessage>There are no transfers yet.</EmptyListMessage>
-          }
-        </div>
+            {transfers?.length === 0 &&
+              <EmptyListMessage>There are no transfers yet.</EmptyListMessage>
+            }
+
+            {transfers === undefined && <ErrorMessageBlock/>}
+          </div>
+          : <LoadingList itemsCount={itemsCount}/>
+        }
       </div>
+
+      {pagination &&
+        <Pagination
+          className={'TransfersList__Pagination'}
+          onPageChange={pagination.onPageChange}
+          pageCount={pagination.pageCount}
+          forcePage={pagination.forcePage}
+          justify={true}
+        />
+      }
     </div>
   )
 }

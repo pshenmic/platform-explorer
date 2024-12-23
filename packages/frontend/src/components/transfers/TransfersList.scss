@@ -3,9 +3,10 @@
 @import '../../styles/variables.scss';
 
 .TransfersList {
+  @include mixins.BrandScroll;
+  @include mixins.List;
   container-type: inline-size;
   overflow-y: auto;
-  @include mixins.BrandScroll;
 
   &__ColumnTitles {
     @include mixins.defListTitles;
