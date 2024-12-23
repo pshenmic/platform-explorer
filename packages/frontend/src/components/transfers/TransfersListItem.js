@@ -13,7 +13,7 @@ import './TransfersListItem.scss'
 
 const mobileWidth = 580
 
-function TransfersListItem ({ transfer, identityId, rate, l1explorerBaseUrl }) {
+function TransfersListItem ({ transfer, identityId, rate }) {
   const containerRef = useRef(null)
   const [isMobile, setIsMobile] = useState(false)
   const clickable = isMobile && transfer?.hash
@@ -42,7 +42,7 @@ function TransfersListItem ({ transfer, identityId, rate, l1explorerBaseUrl }) {
   }
 
   const Recipient = () => {
-    if (!transfer?.recipient) return <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
+    if (!transfer?.recipient) return <span className={'TransactionsListItem__NotActiveText'}>-</span>
 
     return (
       <LinkContainer href={`/identity/${transfer?.recipient}`}>
