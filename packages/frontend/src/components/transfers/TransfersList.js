@@ -15,7 +15,7 @@ function TransfersList ({ transfers = [], identityId, pagination, headerStyles, 
   return (
     <div className={'TransfersList'}>
       <div className={'TransfersList__ContentContainer'}>
-        <Grid className={`TransfersList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
+        <Grid className={`TransfersList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
           <GridItem className={'TransfersList__ColumnTitle'}>
             Time
           </GridItem>
