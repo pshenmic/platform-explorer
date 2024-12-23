@@ -42,6 +42,20 @@ function fetchHandlerError (setter, error) {
   }))
 }
 
+function paginationHandler (setter, currentPage) {
+  setter(state => ({
+    ...state,
+    props: {
+      ...state.props,
+      currentPage
+    }
+  }))
+}
+
+function setLoadingProp (setter, value = true) {
+  setter(state => ({ ...state, loading: value }))
+}
+
 function numberFormat (number) {
   return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(number)
 }
@@ -78,6 +92,8 @@ export {
   getTransitionTypeStringById,
   fetchHandlerSuccess,
   fetchHandlerError,
+  paginationHandler,
+  setLoadingProp,
   numberFormat,
   currencyRound,
   copyToClipboard,
