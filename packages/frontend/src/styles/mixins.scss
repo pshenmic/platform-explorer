@@ -11,6 +11,12 @@
   text-transform: lowercase !important;
 }
 
+@mixin List() {
+  &__Pagination {
+    margin-top: 2rem;
+  }
+}
+
 @mixin DefListItem($clickable: true) {
   display: flex;
   width: 100%;
