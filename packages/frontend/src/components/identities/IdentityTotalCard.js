@@ -42,6 +42,7 @@ function IdentityTotalCard ({ identity, rate }) {
               {!identity.error
                 ? <ImageGenerator
                   username={identity.data?.identifier}
+                  hat={'christmas'}
                   lightness={50}
                   saturation={50}
                   width={88}
@@ -112,7 +113,7 @@ function IdentityTotalCard ({ identity, rate }) {
                     variant={showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'gray' : 'blue'}
                     onClick={() => setShowPublicKeys(prev => !prev)}
                   >
-                    {identity.data?.publicKeys?.length !== undefined ? identity.data?.publicKeys?.length : ''} public keys
+                    {identity.data?.publicKeys?.length} public keys
                     <ChevronIcon ml={'4px'} h={'10px'} w={'10px'}
                                  transform={`rotate(${showPublicKeys ? '-90deg' : '90deg'})`}/>
                   </Button>
