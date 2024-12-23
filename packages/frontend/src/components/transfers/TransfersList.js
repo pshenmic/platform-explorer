@@ -6,7 +6,7 @@ import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import './TransfersList.scss'
 
-function TransfersList ({ transfers = [], identityId, pagination, headerStyles, loading, itemsCount }) {
+function TransfersList ({ transfers = [], identityId, pagination, headerStyles, loading, itemsCount = 10 }) {
   const headerExtraClass = {
     default: '',
     light: 'BlocksList__ColumnTitles--Light'
