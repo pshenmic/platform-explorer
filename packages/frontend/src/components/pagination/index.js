@@ -7,7 +7,9 @@ function Pagination ({
   pageCount,
   forcePage,
   pageRangeDisplayed = 2,
-  marginPagesDisplayed = 1
+  marginPagesDisplayed = 1,
+  justify = false,
+  className
 }) {
   pageCount = Math.max(pageCount, 1)
 
@@ -28,7 +30,7 @@ function Pagination ({
       nextLinkClassName={'PageLink'}
       breakClassName={'PageItem PageItem--BreakLink'}
       breakLinkClassName={'PageLink PageLink--Break'}
-      containerClassName={'Pagination'}
+      containerClassName={`Pagination ${className || ''} ${justify ? 'Pagination--Justify' : ''}`}
       activeClassName={'active'}
       renderOnZeroPageCount={true}
       forcePage={forcePage}
