@@ -125,7 +125,7 @@ function DataContract ({ identifier }) {
                             <div className={'TableHeader__Content'}>
                                 {dataContract?.data?.name || ''}
                                 {dataContract.data?.identifier
-                                  ? <ImageGenerator className={'TableHeader__Avatar'} username={dataContract.data?.identifier} lightness={50} saturation={50} width={32} height={32}/>
+                                  ? <ImageGenerator className={'TableHeader__Avatar'} hat={'christmas'} username={dataContract.data?.identifier} lightness={50} saturation={50} width={32} height={32}/>
                                   : <Box w={'32px'} h={'32px'} />
                                 }
                             </div>

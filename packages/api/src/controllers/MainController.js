@@ -174,7 +174,7 @@ class MainController {
     }
 
     if (Object.keys(result).length === 0) {
-      response.status(404).send({ message: 'not found' })
+      return response.status(404).send({ message: 'not found' })
     }
 
     response.send(result)

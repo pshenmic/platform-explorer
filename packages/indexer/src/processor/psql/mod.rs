@@ -18,6 +18,7 @@ use dpp::state_transition::documents_batch_transition::{DocumentsBatchTransition
 use sha256::digest;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
 use dpp::state_transition::documents_batch_transition::document_transition::{DocumentTransition, DocumentTransitionV0Methods};
+use dpp::state_transition::documents_batch_transition::document_transition::action_type::DocumentTransitionActionType;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
@@ -420,12 +421,14 @@ impl PSQLProcessor {
                         215, 242, 197, 63, 70, 169, 23, 171, 110, 91, 57, 162, 215, 188, 38, 11, 100, 146, 137, 69, 55,
                         68, 209, 224, 212, 242, 106, 141, 142, 255, 55, 207,
                     ]).unwrap(),
+                    document_type_name: String::from("domain"),
                     data_contract_identifier,
                     data: Some(serde_json::to_value(dash_tld_document_values).unwrap()),
                     deleted: false,
                     revision: 0,
                     is_system: true,
                     price: None,
+                    transition_type: DocumentTransitionActionType::Create,
                 };
 
                 self.dao.create_document(dash_tld_document, None).await.unwrap();

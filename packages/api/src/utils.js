@@ -301,6 +301,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.documentTypeName = stateTransition.getContestedDocumentResourceVotePoll().documentTypeName
       decoded.indexName = stateTransition.getContestedDocumentResourceVotePoll().indexName
       decoded.choice = stateTransition.getContestedDocumentResourceVotePoll().choice
+      decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.raw = stateTransition.toBuffer().toString('hex')
       decoded.proTxHash = stateTransition.getProTxHash().toString('hex')
 

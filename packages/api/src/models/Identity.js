@@ -12,8 +12,8 @@ module.exports = class Identity {
   aliases
   totalGasSpent
   averageGasSpent
-  topUpsGasSpent
-  withdrawalsGasSpent
+  totalTopUpsAmount
+  totalWithdrawalsAmount
   lastWithdrawalHash
   publicKeys
   fundingCoreTx
@@ -27,7 +27,7 @@ module.exports = class Identity {
     totalDataContracts, totalDocuments,
     totalTransfers, txHash, isSystem,
     aliases, totalGasSpent, averageGasSpent,
-    topUpsGasSpent, withdrawalsGasSpent,
+    totalTopUpsAmount, totalWithdrawalsAmount,
     lastWithdrawalHash, lastWithdrawalTimestamp,
     totalTopUps, totalWithdrawals, publicKeys,
     fundingCoreTx
@@ -46,8 +46,8 @@ module.exports = class Identity {
     this.aliases = aliases ?? []
     this.totalGasSpent = totalGasSpent ?? null
     this.averageGasSpent = averageGasSpent ?? null
-    this.topUpsGasSpent = topUpsGasSpent ?? null
-    this.withdrawalsGasSpent = withdrawalsGasSpent ?? null
+    this.totalTopUpsAmount = totalTopUpsAmount ?? null
+    this.totalWithdrawalsAmount = totalWithdrawalsAmount ?? null
     this.lastWithdrawalHash = lastWithdrawalHash ?? null
     this.publicKeys = publicKeys ?? []
     this.fundingCoreTx = fundingCoreTx ?? null
@@ -62,7 +62,7 @@ module.exports = class Identity {
     totalDataContracts, totalDocuments,
     totalTransfers, txHash, isSystem,
     aliases, totalGasSpent, averageGasSpent,
-    topUpsGasSpent, withdrawalsGasSpent,
+    totalTopUpsAmount, totalWithdrawalsAmount,
     lastWithdrawalHash, publicKeys, fundingCoreTx,
     totalTopUps, totalWithdrawals, lastWithdrawalTimestamp
   }) {
@@ -81,8 +81,8 @@ module.exports = class Identity {
       aliases,
       totalGasSpent,
       averageGasSpent,
-      topUpsGasSpent,
-      withdrawalsGasSpent,
+      totalTopUpsAmount,
+      totalWithdrawalsAmount,
       lastWithdrawalHash,
       lastWithdrawalTimestamp,
       totalTopUps,
@@ -99,7 +99,7 @@ module.exports = class Identity {
     total_data_contracts, total_documents,
     total_transfers, tx_hash, is_system,
     aliases, total_gas_spent, average_gas_spent,
-    top_ups_gas_spent, withdrawals_gas_spent,
+    total_top_ups_amount, total_withdrawals_amount,
     last_withdrawal_hash, last_withdrawal_timestamp,
     total_top_ups, total_withdrawals
   }) {
@@ -118,8 +118,8 @@ module.exports = class Identity {
       aliases,
       Number(total_gas_spent),
       Number(average_gas_spent),
-      Number(top_ups_gas_spent),
-      Number(withdrawals_gas_spent),
+      Number(total_top_ups_amount),
+      Number(total_withdrawals_amount),
       last_withdrawal_hash,
       last_withdrawal_timestamp,
       Number(total_top_ups),
