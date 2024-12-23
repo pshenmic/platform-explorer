@@ -8,6 +8,9 @@ import './PublicKeysListItem.scss'
 import './PublicKeyBoundCard.scss'
 
 function PublicKeysListItem ({ publicKey, className }) {
+  const securityLevel = pkEnums.SecurityLevelInfo?.[pkEnums.SecurityLevelEnum?.[publicKey?.securityLevel]]
+  const purpose = pkEnums.KeyPurposeInfo?.[pkEnums.KeyPurposeEnum?.[publicKey?.purpose]]
+
   return (
     <div className={`PublicKeysListItem ${className || ''}`}>
       <Grid className={'PublicKeysListItem__Content'}>
@@ -25,13 +28,13 @@ function PublicKeysListItem ({ publicKey, className }) {
           </ValueContainer>
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Purpose'}>
-          <ValueContainer colorScheme={'blue'} size={'sm'}>
-            {pkEnums.KeyPurposeTitle?.[pkEnums.KeyPurposeEnum?.[publicKey?.purpose]]}
+          <ValueContainer colorScheme={purpose?.colorScheme} size={'sm'}>
+            {purpose?.title}
           </ValueContainer>
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--SecurityLevel'}>
-          <ValueContainer colorScheme={'green'} size={'sm'}>
-            {pkEnums.SecurityLevelTitle?.[pkEnums.SecurityLevelEnum?.[publicKey?.securityLevel]]}
+          <ValueContainer colorScheme={securityLevel?.colorScheme} size={'sm'}>
+            {securityLevel?.title}
           </ValueContainer>
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>

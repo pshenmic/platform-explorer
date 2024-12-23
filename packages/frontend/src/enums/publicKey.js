@@ -5,11 +5,23 @@ export const SecurityLevelEnum = {
   3: 'MEDIUM'
 }
 
-export const SecurityLevelTitle = {
-  MASTER: 'Master',
-  CRITICAL: 'Critical',
-  HIGH: 'High',
-  MEDIUM: 'Medium'
+export const SecurityLevelInfo = {
+  MASTER: {
+    title: 'Master',
+    colorScheme: 'green'
+  },
+  CRITICAL: {
+    title: 'Critical',
+    colorScheme: 'red'
+  },
+  HIGH: {
+    title: 'High',
+    colorScheme: 'orange'
+  },
+  MEDIUM: {
+    title: 'Medium',
+    colorScheme: 'blue'
+  }
 }
 
 export const KeyTypeEnum = {
@@ -30,12 +42,33 @@ export const KeyPurposeEnum = {
   6: 'OWNER'
 }
 
-export const KeyPurposeTitle = {
-  AUTHENTICATION: 'Authentication',
-  ENCRYPTION: 'Encryption',
-  DECRYPTION: 'Decryption',
-  TRANSFER: 'Transfer',
-  SYSTEM: 'System',
-  VOTING: 'Voting',
-  OWNER: 'Owner'
+export const KeyPurposeInfo = {
+  AUTHENTICATION: {
+    title: 'Authentication',
+    colorScheme: 'blue'
+  },
+  ENCRYPTION: {
+    title: 'Encryption',
+    colorScheme: 'blue'
+  },
+  DECRYPTION: {
+    title: 'Decryption',
+    colorScheme: 'green'
+  },
+  TRANSFER: {
+    title: 'Transfer',
+    colorScheme: 'orange'
+  },
+  SYSTEM: {
+    title: 'System',
+    colorScheme: 'gray'
+  },
+  VOTING: {
+    title: 'Voting',
+    colorScheme: 'orange'
+  },
+  OWNER: {
+    title: 'Owner',
+    colorScheme: 'red'
+  }
 }
