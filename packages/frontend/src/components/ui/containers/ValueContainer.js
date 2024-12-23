@@ -26,7 +26,8 @@ function ValueContainer ({
     green: 'ValueContainer--Green',
     blue: 'ValueContainer--Blue',
     lightGray: 'ValueContainer--LightGray',
-    gray: 'ValueContainer--Gray'
+    gray: 'ValueContainer--Gray',
+    orange: 'ValueContainer--Orange'
   }
 
   const sizeClasses = {
