@@ -17,11 +17,9 @@ export default function DocumentsList ({ documents = [], size = 'l', pagination,
                 document={document}
               />
             )}
-
             {documents?.length === 0 &&
               <EmptyListMessage>There are no documents created yet.</EmptyListMessage>
             }
-
             {documents === undefined && <ErrorMessageBlock/>}
           </div>
         : <LoadingList itemsCount={itemsCount}/>
@@ -29,7 +27,7 @@ export default function DocumentsList ({ documents = [], size = 'l', pagination,
 
       {pagination &&
         <Pagination
-          className={'TransfersList__Pagination'}
+          className={'DocumentsList__Pagination'}
           onPageChange={pagination.onPageChange}
           pageCount={pagination.pageCount}
           forcePage={pagination.forcePage}
