@@ -1,15 +1,7 @@
 import copyToClipboard from './copyToClipboard'
-import { StateTransitionEnum, TransactionTypesEnum } from '../enums/state.transition.type'
+import { StateTransitionEnum } from '../enums/state.transition.type'
 import currencyRound from './currencyRound'
 import { getDaysBetweenDates, getDynamicRange, getTimeDelta } from './datetime'
-
-function getTransitionTypeStringById (id) {
-  const [stateTransitionType] = Object.entries(StateTransitionEnum)
-    .filter(([key]) => StateTransitionEnum[key] === id)
-    .map(([key]) => key)
-
-  return TransactionTypesEnum[stateTransitionType] ?? 'UNKNOWN'
-}
 
 function getTransitionTypeKeyById (id) {
   const [stateTransitionType] = Object.entries(StateTransitionEnum)
@@ -89,7 +81,6 @@ function findActiveAlias (aliases = []) {
 }
 
 export {
-  getTransitionTypeStringById,
   fetchHandlerSuccess,
   fetchHandlerError,
   paginationHandler,

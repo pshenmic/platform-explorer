@@ -13,14 +13,10 @@ import './TransfersListItem.scss'
 
 const mobileWidth = 580
 
-function TransfersListItem ({ transfer, identityId, rate }) {
+function TransfersListItem ({ transfer, rate }) {
   const containerRef = useRef(null)
   const [isMobile, setIsMobile] = useState(false)
   const clickable = isMobile && transfer?.hash
-
-  const transferType = transfer.recipient === identityId
-    ? transfer.sender ? 'CREDIT_TRANSFER' : 'TOP_UP'
-    : transfer.recipient ? 'CREDIT_TRANSFER' : 'CREDIT_WITHDRAWAL'
 
   useResizeObserver(containerRef, () => {
     const { offsetWidth } = containerRef.current
@@ -105,7 +101,7 @@ function TransfersListItem ({ transfer, identityId, rate }) {
           </GridItem>
 
           <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Type'}>
-            <TypeBadge type={transferType}/>
+            <TypeBadge type={transfer.type}/>
           </GridItem>
         </Grid>
       </Wrapper>
