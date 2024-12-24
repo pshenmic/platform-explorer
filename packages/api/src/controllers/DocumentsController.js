@@ -1,9 +1,9 @@
 const DocumentsDAO = require('../dao/DocumentsDAO')
 const DataContractsDAO = require('../dao/DataContractsDAO')
-const {decodeStateTransition} = require('../utils')
+const { decodeStateTransition } = require('../utils')
 
 class DocumentsController {
-  constructor(client, knex, dapi) {
+  constructor (client, knex, dapi) {
     this.documentsDAO = new DocumentsDAO(knex)
     this.datacContractsDAO = new DataContractsDAO(knex)
     this.client = client
@@ -11,8 +11,8 @@ class DocumentsController {
   }
 
   getDocumentByIdentifier = async (request, response) => {
-    const {identifier} = request.params
-    const {type_name: typeName, contract_id: contractId} = request.query
+    const { identifier } = request.params
+    const { type_name: typeName, contract_id: contractId } = request.query
 
     const documentData = await this.documentsDAO.getDocumentByIdentifier(identifier)
 
@@ -20,8 +20,8 @@ class DocumentsController {
       return response.send(documentData)
     }
 
-    if(!typeName || !contractId){
-      return response.status(404).send({message: 'not found. Try to set type and data contract id'})
+    if (!typeName || !contractId) {
+      return response.status(404).send({ message: 'not found. Try to set type and data contract id' })
     }
 
     let dataContract
@@ -37,17 +37,21 @@ class DocumentsController {
         ownerId: documentData?.data_contract_owner.trim() ?? dataContract.owner,
         id: documentData?.data_contract_identifier.trim() ?? dataContract.identifier,
         version: documentData?.version ?? dataContract.version,
-        documentSchemas: JSON.parse(documentData?.schema ?? dataContract.schema) ,
+        documentSchemas: JSON.parse(documentData?.schema ?? dataContract.schema)
       },
       identifier,
       undefined,
       1
     )
 
+    if (!documentFromDapi && !documentData) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
     response.send({
       dataContractIdentifier: documentData?.data_contract_identifier ?? dataContract.identifier,
       deleted: documentData?.deleted ?? false,
-      identifier: documentFromDapi.getId(),
+      identifier: documentFromDapi?.getId() ?? documentData.identifier,
       isSystem: documentData?.isSystem ?? false,
       owner: documentFromDapi.getOwnerId(),
       revision: documentFromDapi.getRevision(),
@@ -55,15 +59,15 @@ class DocumentsController {
       txHash: documentData?.txHash ?? null,
       data: JSON.stringify(documentFromDapi.getData()),
       typeName: documentData?.typeName ?? null,
-      transitionType: documentData?.transitionType ?? null,
+      transitionType: documentData?.transitionType ?? null
     })
   }
 
   getDocumentsByDataContract = async (request, response) => {
-    const {identifier} = request.params
-    const {page = 1, limit = 10, order = 'asc'} = request.query
+    const { identifier } = request.params
+    const { page = 1, limit = 10, order = 'asc', type } = request.query
 
-    const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, Number(page ?? 1), Number(limit ?? 10), order)
+    const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, type, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(documents)
   }

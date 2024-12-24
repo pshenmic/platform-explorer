@@ -685,20 +685,24 @@ Response codes:
 ```
 ---
 ### Document by Identifier
-Return last revision of the document by given identifier
+Return last revision of the document by given identifier.
+
+Allows to get withdrawals documents by contract id and document type
 ```
-GET /document/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
+GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
-    identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    dataContractIdentifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    revision: 0,
-    txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-    deleted: false
-    data: "{}",
-    timestamp: "2024-03-18T10:13:54.150Z",
-    owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    isSystem: false
+  "identifier": "FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ",
+  "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+  "revision": 1,
+  "txHash": "DB51A0366133EC56098815D3BF66F374BD3E53951B415C5D4F487BAB6DAD271D",
+  "deleted": false,
+  "data": "{\"saltedDomainHash\":\"fFfVmDpvXdr5psoak2U5yeUntEEy3M9pAFHVIn+yEvU=\"}",
+  "timestamp": "2024-08-25T18:31:50.335Z",
+  "isSystem": false,
+  "typeName": "preorder",
+  "transitionType": "0",
+  "owner": "Gn15UqiQ6gpqzXcDhv4adwsJ1KgpG6xx9e3rij9n4ctP"
 }
 ```
 Response codes:
@@ -712,27 +716,30 @@ Response codes:
 Return all documents by the given data contract identifier
 * `limit` cannot be more then 100
 ```
-GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
+GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&type=preorder
 
 {
-    pagination: {
-        page: 1,
-        limit: 10,
-        total: 10
-    },
-    resultSet: [
+  "resultSet": [
     {
-        identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        dataContractIdentifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        revision: 0,
-        txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        deleted: false
-        data: "{}",
-        timestamp: "2024-03-18T10:13:54.150Z",
-        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        isSystem: false
-    }, ...
-    ]
+      "identifier": "2qHj3sdxdKD4G7ZXGCuF6cB6ADYdtPs2BKNx24YcH6gW",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "revision": 1,
+      "txHash": "EDBC1D2AC12B8BE211086E3B8DD8018C5FB2FECBD46EB77205F9AF24E73BADAD",
+      "deleted": false,
+      "data": "{\"saltedDomainHash\":\"DcKS9AWVE1atKvIokA7JNdUNmyj4SbFUvB6e83whw2g=\"}",
+      "timestamp": "2024-08-25T09:11:05.698Z",
+      "isSystem": false,
+      "typeName": "preorder",
+      "transitionType": "0",
+      "owner": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv"
+    },
+    ...
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 750
+  }
 }
 ```
 Response codes:
