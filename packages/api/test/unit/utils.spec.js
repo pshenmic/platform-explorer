@@ -104,7 +104,7 @@ describe('Utils', () => {
         assetLockProof: {
           coreChainLockedHeight: null,
           type: 'instantSend',
-          fundingAmount: 34999000,
+          fundingAmount: 30000000,
           vout: 0,
           fundingCoreTx: 'fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d',
           instantLock: 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq'
@@ -159,7 +159,7 @@ describe('Utils', () => {
         assetLockProof: {
           coreChainLockedHeight: null,
           type: 'instantSend',
-          fundingAmount: 999000,
+          fundingAmount: 300000,
           vout: 0,
           fundingCoreTx: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64'
         },
