@@ -1,59 +1,67 @@
 const DocumentsDAO = require('../dao/DocumentsDAO')
-const { decodeStateTransition } = require('../utils')
+const DataContractsDAO = require('../dao/DataContractsDAO')
+const {decodeStateTransition} = require('../utils')
 
 class DocumentsController {
-  constructor (client, knex, dapi) {
+  constructor(client, knex, dapi) {
     this.documentsDAO = new DocumentsDAO(knex)
+    this.datacContractsDAO = new DataContractsDAO(knex)
     this.client = client
     this.dapi = dapi
   }
 
   getDocumentByIdentifier = async (request, response) => {
-    const { identifier } = request.params
+    const {identifier} = request.params
+    const {type_name: typeName, contract_id: contractId} = request.query
 
-    const documentData = await this.documentsDAO.getDocumentData(identifier)
+    const documentData = await this.documentsDAO.getDocumentByIdentifier(identifier)
 
-    // second for system documents, like dash.dash alias
-    if (!documentData || !documentData?.transition_data) {
-      response.status(404).send({ message: 'not found' })
+    if (documentData) {
+      return response.send(documentData)
     }
 
-    const { transitions } = await decodeStateTransition(this.client, documentData.transition_data)
+    if(!typeName || !contractId){
+      return response.status(404).send({message: 'not found. Try to set type and data contract id'})
+    }
 
-    const decodedDocumentTransitionData = transitions.find(transition => transition.id === identifier)
+    let dataContract
+
+    if (contractId) {
+      dataContract = await this.datacContractsDAO.getDataContractByIdentifier(contractId)
+    }
 
     const [documentFromDapi] = await this.dapi.getDocuments(
-      decodedDocumentTransitionData.type,
+      documentData?.type ?? typeName,
       {
         $format_version: '0',
-        ownerId: documentData.data_contract_owner.trim(),
-        id: documentData.data_contract_identifier.trim(),
-        version: documentData.version,
-        documentSchemas: documentData.schema
+        ownerId: documentData?.data_contract_owner.trim() ?? dataContract.owner,
+        id: documentData?.data_contract_identifier.trim() ?? dataContract.identifier,
+        version: documentData?.version ?? dataContract.version,
+        documentSchemas: JSON.parse(documentData?.schema ?? dataContract.schema) ,
       },
       identifier,
       undefined,
       1
     )
 
-    // TODO: Add system documents support
-    // Currently only non system
     response.send({
-      dataContractIdentifier: documentData.data_contract_identifier,
-      deleted: documentData.deleted,
+      dataContractIdentifier: documentData?.data_contract_identifier ?? dataContract.identifier,
+      deleted: documentData?.deleted ?? false,
       identifier: documentFromDapi.getId(),
-      isSystem: false,
-      owner: documentData.owner.trim(),
+      isSystem: documentData?.isSystem ?? false,
+      owner: documentFromDapi.getOwnerId(),
       revision: documentFromDapi.getRevision(),
       timestamp: documentFromDapi.getCreatedAt(),
-      txHash: documentData.hash,
-      data: documentFromDapi.getData()
+      txHash: documentData?.txHash ?? null,
+      data: JSON.stringify(documentFromDapi.getData()),
+      typeName: documentData?.typeName ?? null,
+      transitionType: documentData?.transitionType ?? null,
     })
   }
 
   getDocumentsByDataContract = async (request, response) => {
-    const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const {identifier} = request.params
+    const {page = 1, limit = 10, order = 'asc'} = request.query
 
     const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, Number(page ?? 1), Number(limit ?? 10), order)
 

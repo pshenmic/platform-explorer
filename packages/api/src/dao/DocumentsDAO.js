@@ -11,7 +11,9 @@ module.exports = class DocumentsDAO {
       .select('documents.id', 'documents.identifier as identifier', 'documents.owner as document_owner',
         'data_contracts.identifier as data_contract_identifier', 'documents.data as data_contract_data',
         'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
-        'documents.deleted as deleted', 'documents.is_system as is_system')
+        'documents.deleted as deleted', 'documents.is_system as is_system', 'document_type_name',
+        'transition_type'
+      )
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
       .where('documents.identifier', '=', identifier)
@@ -19,7 +21,8 @@ module.exports = class DocumentsDAO {
 
     const rows = await this.knex(subquery)
       .select('identifier', 'document_owner', 'data_contract_identifier', 'data_contract_data',
-        'revision', 'deleted', 'rank', 'tx_hash', 'is_system', 'blocks.timestamp as timestamp')
+        'revision', 'deleted', 'rank', 'tx_hash', 'is_system', 'blocks.timestamp as timestamp',
+        'document_type_name', 'transition_type')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .limit(1)
@@ -76,19 +79,5 @@ module.exports = class DocumentsDAO {
     }))
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
-  }
-
-  getDocumentData = async (identifier) => {
-    const [row] = await this.knex('documents')
-      .select(
-        'state_transitions.data as transition_data', 'data_contracts.schema as schema', 'state_transitions.hash as hash',
-        'data_contracts.identifier as data_contract_identifier ', 'data_contracts.owner as data_contract_owner',
-        'data_contracts.version as version', 'documents.deleted as deleted', 'documents.owner as owner'
-      )
-      .where('documents.identifier', '=', identifier)
-      .leftJoin('state_transitions', 'state_transitions.hash', 'documents.state_transition_hash')
-      .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
-
-    return row
   }
 }
