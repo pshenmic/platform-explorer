@@ -1,10 +1,10 @@
 import { ValueCard } from '../cards'
-import { Identifier, InfoLine } from '../data'
+import { Identifier, InfoLine, PrefundedBalance } from '../data'
 import DocumentActionBadge from './DocumentActionBadge'
 import { Code } from '@chakra-ui/react'
 import './TransitionCard.scss'
 
-function TransitionCard ({ transition, className }) {
+function TransitionCard ({ transition, rate, className }) {
   return (
     <div className={`InfoBlock InfoBlock--Gradient TransitionCard ${className || ''}`}>
       <InfoLine
@@ -57,6 +57,14 @@ function TransitionCard ({ transition, className }) {
         )}
         error={transition?.data === undefined}
       />
+
+      {transition?.prefundedBalance &&
+        <InfoLine
+          className={'TransitionCard__InfoLine'}
+          title={'Prefunded Voting Balance'}
+          value={<PrefundedBalance prefundedBalance={transition?.prefundedBalance} rate={rate}/>}
+        />
+      }
     </div>
   )
 }
