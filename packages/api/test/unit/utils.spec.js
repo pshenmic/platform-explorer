@@ -159,7 +159,7 @@ describe('Utils', () => {
         assetLockProof: {
           coreChainLockedHeight: null,
           type: 'instantSend',
-          fundingAmount: 30000000,
+          fundingAmount: 300000,
           vout: 0,
           fundingCoreTx: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64'
         },
