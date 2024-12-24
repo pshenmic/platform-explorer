@@ -1,0 +1,100 @@
+@import '../../styles/variables.scss';
+
+@mixin Columns () {
+  width: 100%;
+  display: grid;
+  gap: 16px;
+  grid-template-columns:
+    70px
+    minmax(0, 400px)
+    minmax(0, 300px)
+    minmax(185px, 185px)
+    minmax(100px, 100px)
+    128px;
+
+  @container (max-width: 50em) {
+    grid-template-columns:
+    70px
+    minmax(0, 400px)
+    minmax(0, 300px)
+    minmax(185px, 185px)
+    128px;
+  }
+
+  @container (max-width: 44em) {
+    grid-template-columns:
+    70px
+    minmax(0px, 200px)
+    minmax(185px, 185px)
+    128px;
+  }
+
+  @container (max-width: 580px) {
+    gap: 8px;
+    grid-template-columns:
+    70px
+    auto
+    128px;
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+
+  &, a {
+    overflow: hidden;
+  }
+
+  &--TxHash {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  &--Recipient {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  &--Amount {
+    width: 100%;
+    overflow: visible;
+  }
+
+  &--GasUsed {
+    width: 100%;
+    overflow: visible;
+  }
+
+  &--Type {
+    width: 100%;
+    min-width: max-content;
+  }
+
+  @container (max-width: 50em) {
+    &--GasUsed {
+      display: none;
+    }
+  }
+
+  @container (max-width: 44em) {
+    &--Amount {
+      width: 100%;
+      overflow: visible;
+    }
+
+    &--Recipient {
+      display: none;
+    }
+  }
+
+  @container (max-width: 580px) {
+    &--TxHash {
+      display: none;
+    }
+  }
+}

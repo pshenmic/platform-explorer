@@ -3,6 +3,7 @@
 @import '../../styles/variables.scss';
 
 .TransactionsList {
+  @include mixins.List;
   container-type: inline-size;
 
   &__ColumnTitles {

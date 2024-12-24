@@ -15,9 +15,23 @@
 
   &--Locked {
     color: var(--chakra-colors-red-default);
+    text-decoration: line-through
+  }
+
+  &--Locked & {
+    &__Domain {
+      opacity: 1;
+    }
   }
 
   &__Domain {
     opacity: .5;
+  }
+
+  &__LockedIcon {
+    display: inline-block;
+    width: 18px !important;
+    height: 18px !important;
+    margin-left: 8px;
   }
 }

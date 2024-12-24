@@ -42,6 +42,20 @@ function fetchHandlerError (setter, error) {
   }))
 }
 
+function paginationHandler (setter, currentPage) {
+  setter(state => ({
+    ...state,
+    props: {
+      ...state.props,
+      currentPage
+    }
+  }))
+}
+
+function setLoadingProp (setter, value = true) {
+  setter(state => ({ ...state, loading: value }))
+}
+
 function numberFormat (number) {
   return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(number)
 }
@@ -69,10 +83,17 @@ function roundUsd (usd, maxDecimals = 5) {
   return usd.toFixed(precision)
 }
 
+function findActiveAlias (aliases = []) {
+  if (!aliases?.length) return null
+  return aliases?.find(alias => alias.status === 'ok')
+}
+
 export {
   getTransitionTypeStringById,
   fetchHandlerSuccess,
   fetchHandlerError,
+  paginationHandler,
+  setLoadingProp,
   numberFormat,
   currencyRound,
   copyToClipboard,
@@ -81,5 +102,6 @@ export {
   creditsToDash,
   roundUsd,
   getDaysBetweenDates,
-  getDynamicRange
+  getDynamicRange,
+  findActiveAlias
 }

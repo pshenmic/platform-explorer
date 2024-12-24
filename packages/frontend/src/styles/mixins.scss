@@ -5,11 +5,23 @@
   width: 24px;
 }
 
+@mixin NotActiveText() {
+  font-size: 0.75rem !important;
+  color: var(--chakra-colors-gray-250) !important;
+  text-transform: lowercase !important;
+}
+
+@mixin List() {
+  &__Pagination {
+    margin-top: 2rem;
+  }
+}
+
 @mixin DefListItem($clickable: true) {
   display: flex;
   width: 100%;
   text-decoration: none;
-  padding: 6px 12px;
+  padding: 7px 12px;
   margin-bottom: 8px;
   line-height: 24px;
   color: var(--chakra-colors-gray-100);
@@ -51,10 +63,15 @@
     margin-right: 12px;
   }
 
+  &--Timestamp, &__Column--Timestamp {
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    color: #fff;
+  }
+
   &__NotActiveText {
-    font-size: 0.75rem !important;
-    color: var(--chakra-colors-gray-250) !important;
-    text-transform: lowercase !important;
+    @include NotActiveText;
   }
 }
 
@@ -308,24 +325,29 @@
   }
 }
 
-@mixin InfoContainerPadding($property, $adjustment: 0px, $important: false) {
-  #{$property}: calc(var(--chakra-space-3) + #{$adjustment})#{if($important, ' !important', '')};
+@mixin InfoContainerPadding($property, $adjustment: 0px, $important: false, $invert: false) {
+  $base-value: if($invert, 'calc(0px - var(--chakra-space-3))', 'var(--chakra-space-3)');
+
+  #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
 
   @media screen and (min-width: $breakpoint-md) {
-    #{$property}: calc(var(--chakra-space-4) + #{$adjustment})#{if($important, ' !important', '')};
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-4))', 'var(--chakra-space-4)');
+    #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
   }
 
   @media screen and (min-width: $breakpoint-lg) {
-    #{$property}: calc(var(--chakra-space-5) + #{$adjustment})#{if($important, ' !important', '')};
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-5))', 'var(--chakra-space-5)');
+    #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
   }
 
   @media screen and (min-width: $breakpoint-xl) {
-    #{$property}: calc(var(--chakra-space-6) + #{$adjustment})#{if($important, ' !important', '')};
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-6))', 'var(--chakra-space-6)');
+    #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
   }
 }
 
 @mixin navContainerPadding ($property) {
-  #{$property}: var(--chakra-space-8);
+  #{$property}: var(--chakra-space-3);
 
   @media screen and (min-width: $breakpoint-md) {
     #{$property}: var(--chakra-space-4);
@@ -340,19 +362,23 @@
   }
 }
 
-@mixin pageDataPadding ($property) {
-  #{$property}: var(--chakra-space-4);
+@mixin pageDataPadding($property, $important: false, $invert: false) {
+  $base-value: if($invert, 'calc(0px - var(--chakra-space-3))', 'var(--chakra-space-3)');
+  #{$property}: #{$base-value}#{if($important, ' !important', '')};
 
   @media screen and (min-width: $breakpoint-md) {
-    #{$property}: var(--chakra-space-4);
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-4))', 'var(--chakra-space-4)');
+    #{$property}: #{$base-value}#{if($important, ' !important', '')};
   }
 
   @media screen and (min-width: $breakpoint-lg) {
-    #{$property}: var(--chakra-space-6);
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-6))', 'var(--chakra-space-6)');
+    #{$property}: #{$base-value}#{if($important, ' !important', '')};
   }
 
   @media screen and (min-width: $breakpoint-xl) {
-    #{$property}: var(--chakra-space-8);
+    $base-value: if($invert, 'calc(0px - var(--chakra-space-8))', 'var(--chakra-space-8)');
+    #{$property}: #{$base-value}#{if($important, ' !important', '')};
   }
 }
 
@@ -368,8 +394,6 @@
 }
 
 @mixin TooltipElement () {
-  transition: .2s;
-
   &, .chakra-icon {
     transition: .2s;
   }
@@ -385,5 +409,59 @@
     .chakra-icon {
       color: $color-brand-light;
     }
+  }
+}
+
+@mixin EntityCard () {
+  &__Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-500);
+    width: 88px;
+    height: 88px;
+    border: 1px solid rgba(137, 126, 126, 0.1);
+    flex-shrink: 0;
+    margin-right: 24px;
+  }
+
+  &__HeaderLines {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: 6px 0;
+    overflow: hidden;
+  }
+
+  &__InfoLine {
+    gap: 14px;
+  }
+}
+
+@mixin BrandScroll () {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: $scrollColor $scrollBackgroundColor;
+
+  &::-webkit-scrollbar {
+    height: 2px;
+    width: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $scrollColor;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: $scrollBackgroundColor;
+  }
+
+  @supports (scrollbar-width: thin) {
+    scrollbar-width: thin;
+    scrollbar-color: $scrollColor $scrollBackgroundColor;
   }
 }

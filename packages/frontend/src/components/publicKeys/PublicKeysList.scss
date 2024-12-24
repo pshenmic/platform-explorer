@@ -1,0 +1,23 @@
+@use '../../styles/mixins.scss';
+@use './variables' as pk;
+@import '../../styles/variables.scss';
+
+.PublicKeysList {
+  @include mixins.BrandScroll();
+  overflow-x: scroll;
+  container-type: inline-size;
+
+  &__ScrollZone {
+    width: fit-content;
+    min-width: 100%;
+  }
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include pk.Columns();
+  }
+
+  &__ColumnTitle {
+    @include pk.Column();
+  }
+}

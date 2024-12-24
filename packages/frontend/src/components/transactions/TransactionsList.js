@@ -2,9 +2,20 @@ import Link from 'next/link'
 import TransactionsListItem from './TransactionsListItem'
 import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
+import { LoadingList } from '../loading'
+import Pagination from '../pagination'
+import { ErrorMessageBlock } from '../Errors'
 import './TransactionsList.scss'
 
-export default function TransactionsList ({ transactions = [], showMoreLink, headerStyles = 'default', rate }) {
+export default function TransactionsList ({
+  transactions = [],
+  showMoreLink,
+  headerStyles = 'default',
+  rate,
+  pagination,
+  loading,
+  itemsCount = 10
+}) {
   const headerExtraClass = {
     default: '',
     light: 'BlocksList__ColumnTitles--Light'
@@ -30,15 +41,31 @@ export default function TransactionsList ({ transactions = [], showMoreLink, hea
         </GridItem>
       </Grid>
 
-      {transactions?.length > 0
-        ? transactions.map((transaction, key) => (
-            <TransactionsListItem
-              key={key}
-              transaction={transaction}
-              rate={rate}
-            />
-        ))
-        : <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
+      {!loading
+        ? <div className={'TransactionsList__Items'}>
+            {transactions?.map((transaction, key) => (
+              <TransactionsListItem
+                key={key}
+                transaction={transaction}
+                rate={rate}
+              />
+            ))}
+            {transactions?.length === 0 &&
+              <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
+            }
+            {transactions === undefined && <ErrorMessageBlock/>}
+          </div>
+        : <LoadingList itemsCount={itemsCount}/>
+      }
+
+      {pagination &&
+        <Pagination
+          className={'TransactionsList__Pagination'}
+          onPageChange={pagination.onPageChange}
+          pageCount={pagination.pageCount}
+          forcePage={pagination.forcePage}
+          justify={true}
+        />
       }
 
       {showMoreLink &&

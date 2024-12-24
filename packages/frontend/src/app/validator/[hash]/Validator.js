@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, getTimeDelta } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, getTimeDelta } from '../../../util'
 import { LoadingList } from '../../../components/loading'
 import Pagination from '../../../components/pagination'
 import { ErrorMessageBlock } from '../../../components/Errors'
@@ -94,16 +94,6 @@ function Validator ({ hash }) {
       .then(res => fetchHandlerSuccess(setWithdrawals, res))
       .catch(err => fetchHandlerError(setWithdrawals, err))
   }, [validator, withdrawals.props.currentPage])
-
-  function paginationHandler (setter, currentPage) {
-    setter(state => ({
-      ...state,
-      props: {
-        ...state.props,
-        currentPage
-      }
-    }))
-  }
 
   const handlePageClick = useCallback(({ selected }) => {
     setCurrentPage(selected)
@@ -254,7 +244,7 @@ function Validator ({ hash }) {
                       {validator.data?.lastProposedBlockHeader?.timestamp &&
                         <DateBlock
                           timestamp={validator.data.lastProposedBlockHeader.timestamp}
-                          format={'delta-only'}
+                          format={'deltaOnly'}
                         />
                       }
                       <Identifier ellipsis={false} styles={['highlight-both']}>
@@ -280,7 +270,7 @@ function Validator ({ hash }) {
                   <Link href={`/transaction/${validator.data?.lastWithdrawal}`}>
                     <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
                       {validator.data?.lastWithdrawalTime &&
-                        <DateBlock timestamp={validator.data.lastWithdrawalTime} format={'delta-only'}/>}
+                        <DateBlock timestamp={validator.data.lastWithdrawalTime} format={'deltaOnly'}/>}
                       <Identifier ellipsis={false} styles={['highlight-both']}>
                         {validator.data?.lastWithdrawal}
                       </Identifier>

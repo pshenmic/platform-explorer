@@ -1,6 +1,9 @@
+@use '../../styles/mixins.scss';
+
 .DocumentsList {
-    
-    @media screen and (max-width: 580px) {
-        column-count: 1 !important;
-    }
+  @include mixins.List;
+
+  @media screen and (max-width: 580px) {
+    column-count: 1 !important;
+  }
 }

@@ -1,0 +1,38 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.LinkContainer {
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    display: block;
+    bottom: 0;
+    background: $color-brand-normal;
+    width: 80%;
+    height: 0;
+    opacity: 0;
+    transition: $transition-time-def;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      &:after {
+        height: 1px;
+        opacity: 1;
+        width: 100%;
+        bottom: 0;
+      }
+    }
+  }
+
+  &:active {
+    &:after {
+      opacity: .7;
+      width: 99%;
+    }
+  }
+}
