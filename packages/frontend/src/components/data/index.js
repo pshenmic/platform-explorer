@@ -7,6 +7,7 @@ import IpAddress from './IpAddress'
 import InfoLine from './InfoLine'
 import Alias from './Alias'
 import VoteChoice from './VoteChoice'
+import PrefundedBalance from './PrefundedBalance'
 
 export {
   Identifier,
@@ -17,5 +18,6 @@ export {
   IpAddress,
   InfoLine,
   Alias,
-  VoteChoice
+  VoteChoice,
+  PrefundedBalance
 }
