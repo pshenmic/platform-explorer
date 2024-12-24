@@ -1,0 +1,6 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.TransactionStatusBadge {
+  padding: 0 12px 0 6px !important;
+}
