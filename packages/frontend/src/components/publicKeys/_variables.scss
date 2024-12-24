@@ -6,7 +6,7 @@
 
   grid-template-columns: 
     minmax(50px, 50px)
-    minmax(122px, 122px)
+    minmax(180px, 180px)
     minmax(133px, 113px)
     minmax(113px, 113px)
     minmax(115px, 115px)
@@ -28,7 +28,7 @@
   }
 
   &--PublicKeyHash {
-    max-width: 122px;
+    max-width: 180px;
     width: 100%;
   }
 

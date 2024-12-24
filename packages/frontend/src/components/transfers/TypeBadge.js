@@ -1,39 +1,28 @@
 import { Badge } from '@chakra-ui/react'
-import { TransactionTypesEnum, TransactionTypesColors } from '../../enums/state.transition.type'
+import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { Tooltip } from '../ui/Tooltips'
+import { getTransitionTypeKeyById } from '../../util'
 
 function TypeBadge ({ type, ...props }) {
+  const transitionType = getTransitionTypeKeyById(type)
   const TransferTypesTitle = {
-    TOP_UP: 'Credit Top Up',
-    CREDIT_WITHDRAWAL: 'Credit Withdrawal',
-    CREDIT_TRANSFER: 'Credit Transfer'
-  }
-
-  const TransferTransitionTypes = {
-    TOP_UP: 'IDENTITY_TOP_UP',
-    CREDIT_WITHDRAWAL: 'IDENTITY_CREDIT_WITHDRAWAL',
-    CREDIT_TRANSFER: 'IDENTITY_CREDIT_TRANSFER'
-  }
-
-  const transitionType = TransferTransitionTypes[type]
-
-  const descriptions = {
-    TOP_UP: 'Adds credits to an existing decentralized identity (DID) balance.',
-    CREDIT_WITHDRAWAL: 'Withdraws credits from the platform, converting them into Dash.',
-    CREDIT_TRANSFER: 'Transfers credits between identities or other network participants.'
+    IDENTITY_TOP_UP: 'Credit Top Up',
+    IDENTITY_CREDIT_WITHDRAWAL: 'Credit Withdrawal',
+    IDENTITY_CREATE: 'Identity create',
+    IDENTITY_CREDIT_TRANSFER: 'Credit Transfer'
   }
 
   return (
     <Tooltip
-      title={TransactionTypesEnum[transitionType]}
-      content={descriptions[type]}
+      title={TransferTypesTitle[transitionType]}
+      content={TransactionTypesInfo?.[transitionType]?.description}
       placement={'top'}
     >
       <Badge
-        colorScheme={TransactionTypesColors[transitionType]}
+        colorScheme={TransactionTypesInfo?.[transitionType]?.colorScheme}
         {...props}
       >
-        {TransferTypesTitle[type]}
+        {TransferTypesTitle[transitionType]}
       </Badge>
     </Tooltip>
   )

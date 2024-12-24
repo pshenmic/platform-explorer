@@ -29,7 +29,6 @@
       align-items: flex-start;
       overflow: hidden;
       display: flex;
-      flex-direction: column;
       gap: 4px;
     }
 
@@ -42,18 +41,12 @@
     }
   }
 
-  &__PublicKeyHash {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &__Data {
+  &__Data, &__PublicKeyHash {
     display: flex;
     justify-content: space-between;
     align-items: center;
     word-break: break-all;
+    white-space: break-spaces;
     min-width: 100px;
     width: 100%;
 
