@@ -154,7 +154,7 @@ module.exports = class IdentitiesDAO {
       ...identity,
       aliases,
       balance: await this.dapi.getIdentityBalance(identity.identifier),
-      publicKeys: publicKeys.map(key => ({
+      publicKeys: publicKeys?.map(key => ({
         keyId: key.keyId,
         type: key.type,
         data: key.data,
