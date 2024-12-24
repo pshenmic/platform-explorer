@@ -286,12 +286,16 @@ describe('Identities routes', () => {
       }
 
       const withdrawals = transactions.sort((a, b) => a.block.height - b.block.height).map(transaction => ({
-        timestamp: transaction.block.timestamp.toISOString(),
+        $createdAt: transaction.block.timestamp.toISOString(),
         hash: null,
-        id: transaction.transaction.hash,
-        sender: transaction.transaction.owner,
+        $id: transaction.transaction.hash,
+        $ownerId: transaction.transaction.owner,
         amount: 12345678,
-        status: 'COMPLETE'
+        status: 0,
+        getCreatedAt: () => transaction.block.timestamp,
+        getId: () => transaction.transaction.hash,
+        getOwnerId: () => transaction.transaction.owner,
+        getData: () => ({ status: 0, amount: 12345678 })
       }))
 
       mock.method(DAPI.prototype, 'getDocuments', async () => withdrawals)
@@ -301,11 +305,11 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.deepEqual(body.resultSet, withdrawals.map(withdrawal => ({
-        hash: withdrawal.id,
-        document: withdrawal.id,
-        sender: withdrawal.sender,
-        status: withdrawal.status,
-        timestamp: withdrawal.timestamp,
+        hash: withdrawal.$id,
+        document: withdrawal.$id,
+        sender: withdrawal.$ownerId,
+        status: 0,
+        timestamp: withdrawal.$createdAt,
         amount: withdrawal.amount,
         withdrawalAddress: null
       })))
