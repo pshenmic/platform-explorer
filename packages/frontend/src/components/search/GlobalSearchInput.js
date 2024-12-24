@@ -53,8 +53,10 @@ function GlobalSearchInput () {
         block: `/block/${searchResult?.block?.header?.hash}`,
         transaction: `/transaction/${searchResult?.transaction?.hash}`,
         dataContract: `/dataContract/${searchResult?.dataContract?.identifier}`,
+        dataContracts: `/dataContract/${searchResult?.dataContracts?.[0].identifier}`,
         document: `/document/${searchResult?.document?.identifier}`,
         identity: `/identity/${searchResult?.identity?.identifier}`,
+        identities: `/identity/${searchResult?.identities?.[0].identifier}`,
         validator: `/validator/${searchResult?.validator?.proTxHash}`
       }
 
