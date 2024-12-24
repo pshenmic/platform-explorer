@@ -25,13 +25,13 @@ function TransfersList ({ transfers = [], identityId, pagination, headerStyles, 
           <GridItem className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Recipient'}>
             To
           </GridItem>
-          <GridItem className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Document'}>
+          <GridItem className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Amount'}>
             Amount
           </GridItem>
           <GridItem className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--GasUsed'}>
             Gas used
           </GridItem>
-          <GridItem className={'TransfersList__ColumnTitle'}>
+          <GridItem className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Type'}>
             Type
           </GridItem>
         </Grid>
