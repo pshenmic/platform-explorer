@@ -3,8 +3,8 @@ import { getTransitionTypeKeyById } from '../../util/index'
 import { TransactionTypesEnum, TransactionTypesColors } from '../../enums/state.transition.type'
 import { Tooltip } from '../ui/Tooltips'
 
-function TypeBadge ({ typeId, ...props }) {
-  const TransitionTypeKey = getTransitionTypeKeyById(typeId)
+function TypeBadge ({ typeId, type, ...props }) {
+  const TransitionTypeKey = typeof typeId === 'number' ? getTransitionTypeKeyById(typeId) : type
 
   const descriptions = {
     DATA_CONTRACT_CREATE: 'Creates a new data contract. This contract defines the schema for storing data on the platform.',

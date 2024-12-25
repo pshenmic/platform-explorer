@@ -12,15 +12,25 @@ import { CopyButton } from '../../../components/ui/Buttons'
 import { TypeBadge, FeeMultiplier, TransactionStatusBadge } from '../../../components/transactions'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { networks } from '../../../constants/networks'
+import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import './TransactionPage.scss'
 
 function Transaction ({ hash }) {
+  const { setBreadcrumbs } = useBreadcrumbs()
   const [transaction, setTransaction] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [decodedST, setDecodedST] = useState({ data: {}, loading: true, error: false })
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Home', path: '/' },
+      { label: 'Transactions', path: '/identities' },
+      { label: hash }
+    ])
+  }, [setBreadcrumbs, hash])
 
   const decodeTx = useCallback((tx) => {
     Api.decodeTx(tx)
