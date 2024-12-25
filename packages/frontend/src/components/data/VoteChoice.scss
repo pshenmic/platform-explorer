@@ -17,6 +17,8 @@
   }
 
   &__Parameter {
-    padding: 0.125rem 0.625rem  ;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 0.125rem 0.625rem;
   }
 }
