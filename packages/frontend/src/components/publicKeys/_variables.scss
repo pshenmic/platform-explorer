@@ -1,0 +1,59 @@
+@import '../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+
+  grid-template-columns: 
+    minmax(50px, 50px)
+    minmax(180px, 180px)
+    minmax(133px, 113px)
+    minmax(113px, 113px)
+    minmax(115px, 115px)
+    minmax(78px, 78px)
+    auto;
+
+  @container (max-width: 800px) {
+    gap: 8px;
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &--Id {
+    max-width: 88px;
+    width: 100%;
+  }
+
+  &--PublicKeyHash {
+    max-width: 180px;
+    width: 100%;
+  }
+
+  &--Type {
+    max-width: 113px;
+    width: 100%;
+  }
+
+  &--Purpose {
+    max-width: 113px;
+    width: 100%;
+  }
+
+  &--SecurityLevel {
+    max-width: 115px;
+    width: 100%;
+  }
+
+  &--ReadOnly {
+    max-width: 78px;
+    width: 100%;
+  }
+
+  &--Data {
+    min-width: 380px;
+    width: 100%;
+  }
+}

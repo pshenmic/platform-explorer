@@ -7,6 +7,27 @@
   list-style: none;
   padding: 0;
   margin: 0;
+
+  &--Justify {
+    .PageItem--Previous {
+      margin-right: auto;
+      margin-left: 0;
+    }
+
+    .PageItem--Next {
+      margin-left: auto;
+      margin-right: 0;
+    }
+
+    .PageItem--Previous, .PageItem--Next {
+      display: block;
+    }
+
+      .PageItem.disabled {
+      cursor: default;
+      opacity: 0.3;
+    }
+  }
 }
   
 .PageItem {

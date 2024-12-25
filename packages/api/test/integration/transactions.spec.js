@@ -42,7 +42,7 @@ describe('Transaction routes', () => {
     })
     identity = await fixtures.identity(knex, { block_hash: block.hash })
 
-    identityAlias = await fixtures.identity_alias(knex, { alias: 'test.dash', identity })
+    identityAlias = await fixtures.identity_alias(knex, { alias: 'test.dash', identity, state_transition_hash: identity.transaction.hash })
 
     transactions = [{ transaction: identity.transaction, block }]
 

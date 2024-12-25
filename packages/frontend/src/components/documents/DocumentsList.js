@@ -1,8 +1,11 @@
 import DocumentsListItem from './DocumentsListItem'
 import { EmptyListMessage } from '../ui/lists'
+// import Pagination from '../pagination'
+// import { LoadingList } from '../loading'
+// import { ErrorMessageBlock } from '../Errors'
 import './DocumentsList.scss'
 import { Grid, GridItem } from '@chakra-ui/react'
-import Link from 'next/link'
+// import Link from 'next/link'
 
 export default function DocumentsList ({ documents = [], headerStyles, variant, size = 'l' }) {
   const headerExtraClass = {

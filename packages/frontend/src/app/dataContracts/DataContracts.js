@@ -85,7 +85,7 @@ function DataContractsLayout ({ defaultPage = 1, defaultPageSize }) {
 
             {!dataContracts.loading
               ? !dataContracts.error
-                  ? <DataContractsList dataContracts={dataContracts.data.resultSet} size={'l'}/>
+                  ? <DataContractsList dataContracts={dataContracts.data.resultSet}/>
                   : <Container h={20}><ErrorMessageBlock/></Container>
               : <LoadingList itemsCount={pageSize}/>}
 
