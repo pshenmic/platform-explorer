@@ -10,7 +10,8 @@ const Wrapper = (props) => {
 export default function ValueCard ({ link, loading, colorScheme = 'default', size = 'default', children, className }) {
   const colorClasses = {
     default: '',
-    transparent: 'ValueCard--BgTransparent'
+    transparent: 'ValueCard--BgTransparent',
+    green: 'ValueCard--Green'
   }
 
   const sizeClasses = {
