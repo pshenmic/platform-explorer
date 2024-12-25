@@ -14,10 +14,10 @@ class DocumentsController {
     const { identifier } = request.params
     const { type_name: typeName, contract_id: contractId } = request.query
 
-    const documentData = await this.documentsDAO.getDocumentByIdentifier(identifier)
+    const document = await this.documentsDAO.getDocumentByIdentifier(identifier)
 
-    if (documentData) {
-      return response.send(documentData)
+    if (document) {
+      return response.send(document)
     }
 
     if (!typeName || !contractId) {
@@ -31,35 +31,35 @@ class DocumentsController {
     }
 
     const [documentFromDapi] = await this.dapi.getDocuments(
-      documentData?.type ?? typeName,
+      document?.type ?? typeName,
       {
         $format_version: '0',
-        ownerId: documentData?.data_contract_owner.trim() ?? dataContract.owner,
-        id: documentData?.data_contract_identifier.trim() ?? dataContract.identifier,
-        version: documentData?.version ?? dataContract.version,
-        documentSchemas: JSON.parse(documentData?.schema ?? dataContract.schema)
+        ownerId: document?.data_contract_owner.trim() ?? dataContract.owner,
+        id: document?.data_contract_identifier.trim() ?? dataContract.identifier,
+        version: document?.version ?? dataContract.version,
+        documentSchemas: JSON.parse(document?.schema ?? dataContract.schema)
       },
       identifier,
       undefined,
       1
     )
 
-    if (!documentFromDapi && !documentData) {
+    if (!documentFromDapi && !document) {
       return response.status(404).send({ message: 'not found' })
     }
 
     response.send(Document.fromObject({
-      dataContractIdentifier: documentData?.data_contract_identifier ?? dataContract.identifier,
-      deleted: documentData?.deleted ?? false,
-      identifier: documentFromDapi?.getId() ?? documentData.identifier,
-      isSystem: documentData?.isSystem ?? false,
+      dataContractIdentifier: document?.data_contract_identifier ?? dataContract.identifier,
+      deleted: document?.deleted ?? false,
+      identifier: documentFromDapi?.getId() ?? document.identifier,
+      isSystem: document?.isSystem ?? false,
       owner: documentFromDapi.getOwnerId(),
       revision: documentFromDapi.getRevision(),
       timestamp: documentFromDapi.getCreatedAt(),
-      txHash: documentData?.txHash ?? null,
+      txHash: document?.txHash ?? null,
       data: JSON.stringify(documentFromDapi.getData()),
-      typeName: documentData?.typeName ?? null,
-      transitionType: documentData?.transitionType ?? null
+      typeName: document?.typeName ?? null,
+      transitionType: document?.transitionType ?? null
     }))
   }
 
