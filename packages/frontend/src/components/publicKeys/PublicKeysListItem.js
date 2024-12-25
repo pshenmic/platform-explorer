@@ -21,7 +21,8 @@ function PublicKeysListItem ({ publicKey, className }) {
           {publicKey?.hash !== undefined
             ? <ValueCard className={'PublicKeysListItem__PublicKeyHash'} size={'sm'} colorScheme={'transparent'}>
                 {publicKey?.hash}
-              </ValueCard>
+                <CopyButton text={publicKey?.hash}/>
+            </ValueCard>
             : <span className={'PublicKeysListItem__NotActiveText'}>n/a</span>
           }
         </GridItem>
@@ -51,7 +52,7 @@ function PublicKeysListItem ({ publicKey, className }) {
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
           {publicKey?.readOnly !== undefined
-            ? <ValueContainer colorScheme={publicKey?.readOnly ? 'green' : 'red'} size={'sm'}>
+            ? <ValueContainer colorScheme={publicKey?.readOnly ? 'red' : 'green'} size={'sm'}>
                 {publicKey?.readOnly ? 'True' : 'False'}
               </ValueContainer>
             : <span className={'PublicKeysListItem__NotActiveText'}>n/a</span>

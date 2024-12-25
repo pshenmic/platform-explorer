@@ -204,7 +204,6 @@ function Identity ({ identifier }) {
               {!transfers.error
                 ? <TransfersList
                     transfers={transfers.data.resultSet}
-                    identityId={identity.data?.identifier}
                     pagination={{
                       onPageChange: pagination => paginationHandler(setTransfers, pagination.selected),
                       pageCount: Math.ceil(transfers.data?.pagination?.total / pageSize) || 1,
