@@ -7,7 +7,6 @@
   container-type: inline-size;
 
   &__InfoLine {
-    justify-content: flex-start;
     margin-bottom: 14px;
 
     &:last-child {
@@ -36,6 +35,10 @@
         max-width: 100%;
       }
     }
+  }
+
+  .InfoLine {
+    justify-content: flex-start;
   }
 
   @container (max-width: 600px) {
