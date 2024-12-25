@@ -38,9 +38,12 @@ module.exports = class BlockDAO {
 
   getBlockByHash = async (blockHash) => {
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier', this.knex.raw('array_agg(\'{"alias": "\' || alias || \'", "timestamp": "\' || timestamp || \'"}\') as aliases'))
+      .where('identity_identifier', '=', identifier)
       .groupBy('identity_identifier')
-      .as('aliases')
+      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
+      .leftJoin('blocks', 'block_hash', 'blocks.hash')
+      .as('identity_alias')
 
     const rows = await this.knex('blocks')
       .select(
@@ -67,7 +70,7 @@ module.exports = class BlockDAO {
     const txs = block.tx_hash
       ? await Promise.all(rows.map(async (row) => {
         const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-          const aliasInfo = await getAliasInfo(alias, this.dapi)
+          const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
           return getAliasStateByVote(aliasInfo, alias, row.owner)
         }))

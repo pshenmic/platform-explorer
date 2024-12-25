@@ -209,10 +209,13 @@ module.exports = class IdentitiesDAO {
         acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
     }
 
-    const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+    const aliasSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', this.knex.raw('array_agg(\'{"alias": "\' || alias || \'", "timestamp": "\' || timestamp || \'"}\') as aliases'))
+      .where('identity_identifier', '=', identifier)
       .groupBy('identity_identifier')
-      .as('aliases')
+      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
+      .leftJoin('blocks', 'block_hash', 'blocks.hash')
+      .as('identity_alias')
 
     const subquery = this.knex('identities')
       .select('identities.id as identity_id', 'identities.identifier as identifier', 'identities.owner as identity_owner',
@@ -261,7 +264,7 @@ module.exports = class IdentitiesDAO {
       const balance = await this.dapi.getIdentityBalance(row.identifier.trim())
 
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
         return getAliasStateByVote(aliasInfo, alias, row.identifier.trim())
       }))
