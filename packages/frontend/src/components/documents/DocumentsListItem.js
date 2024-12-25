@@ -1,73 +1,35 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import { Identifier, Credits } from '../data'
-import { ValueContainer } from '../ui/containers'
-import { RateTooltip } from '../ui/Tooltips'
+import { Identifier } from '../data'
+import { LinkContainer } from '../ui/containers'
 import Link from 'next/link'
-import { forwardRef, useRef, useState } from 'react'
-import useResizeObserver from '@react-hook/resize-observer'
+import { getTimeDelta } from '../../util'
 import './DocumentsListItem.scss'
 
-const mobileWidth = 550
-
-function DocumentsListItem ({ document, withdrawal }) {
-  const containerRef = useRef(null)
-  const [isMobile, setIsMobile] = useState(false)
-  const clickable = isMobile && withdrawal?.hash
-
-  console.log('document', document)
-
-  useResizeObserver(containerRef, () => {
-    const { offsetWidth } = containerRef.current
-    setIsMobile(offsetWidth <= mobileWidth)
-  })
-
-  const Wrapper = forwardRef(function Wrapper (props, ref) {
-    return clickable
-      ? <Link ref={ref} href={`/transaction/${withdrawal?.hash}`} className={props.className}>{props.children}</Link>
-      : <div ref={ref} className={props.className}>{props.children}</div>
-  })
-
-  const ItemWrapper = ({ isLocal, children, ...props }) => {
-    return clickable
-      ? <div {...props}>{children}</div>
-      : isLocal
-        ? <Link {...props}>{children}</Link>
-        : <a {...props}>{children}</a>
-  }
-
+function DocumentsListItem ({ document }) {
   return (
-    <div ref={containerRef} className={`DocumentsListItem ${clickable ? 'DocumentsListItem--Clickable' : ''}`}>
-      <Wrapper className={'DocumentsListItem__ContentWrapper'}>
-        <Grid className={'DocumentsListItem__Content'}>
-          <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Timestamp'}>
-            {new Date(document?.timestamp).toLocaleString()}
+    <Link href={`/document/${document?.identifier}`} className={'DocumentsListItem'}>
+      <Grid className={'DocumentsListItem__Content'}>
+        <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Timestamp'}>
+          {getTimeDelta(new Date(), new Date(document?.timestamp))}
+        </GridItem>
 
-          </GridItem>
+        <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Identifier'}>
+          {document?.identifier
+            ? <Identifier ellipsis={true} styles={['highlight-both']}>{document?.identifier}</Identifier>
+            : <span className={'DocumentsListItem__NotActiveText'}>-</span>
+          }
+        </GridItem>
 
-          <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Identifier'}>
-            {document?.identifier
-              ? <ItemWrapper className={'DocumentsListItem__ColumnContent'} isLocal={true} href={'/document/' + document?.identifier}>
-                <ValueContainer className={''} light={true} clickable={true}>
-                  <Identifier styles={['highlight-both']}>{document?.identifier}</Identifier>
-                </ValueContainer>
-              </ItemWrapper>
-              : '-'
-            }
-          </GridItem>
-
-          <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Owner'}>
-            {document?.owner
-              ? <ItemWrapper className={'DocumentsListItem__ColumnContent'} isLocal={true} href={'/identity/' + document?.owner}>
-                <ValueContainer className={''} light={true} clickable={true}>
-                  <Identifier styles={['highlight-both']}>{document?.owner}</Identifier>
-                </ValueContainer>
-              </ItemWrapper>
-              : '-'
-            }
-          </GridItem>
-        </Grid>
-      </Wrapper>
-    </div>
+        <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Owner'}>
+          {document?.owner
+            ? <LinkContainer className={'DocumentsListItem__ColumnContent'} isLocal={true} href={'/identity/' + document?.owner}>
+                <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{document?.owner}</Identifier>
+              </LinkContainer>
+            : <span className={'DocumentsListItem__NotActiveText'}>-</span>
+          }
+        </GridItem>
+      </Grid>
+    </Link>
   )
 }
 

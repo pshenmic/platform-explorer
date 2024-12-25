@@ -3,34 +3,43 @@
   gap: 16px;
 
   grid-template-columns: 
-    minmax(120px, 120px)
+    70px
     auto
-    minmax(0, 400px)
+    minmax(0, 400px);
+
+  @container (max-width: 22rem) {
+    grid-template-columns:
+      70px
+      auto;
+  }
 }
 
 @mixin Column () {
   display: flex;
   align-items: center;
 
-  &:last-child {
-    text-align: right;
+  &--Timestamp {
+    max-width: 70px;
   }
 
-  &--Hash {
+  &--Identifier {
     max-width: 600px;
+    width: 100%;
+    overflow: hidden;
   }
 
   &--Owner {
-    //max-width: 400px;
-    //width: 100%;
+    overflow: hidden;
   }
 
-  &--Type {
-    justify-content: flex-end;
-    white-space: nowrap;
-  }
+  @container (max-width: 22rem) {
+    &--Owner {
+      display: none;
+    }
 
-  &--GasUsed {
-    width: 150px;
+    &--Identifier {
+      max-width: none;
+      width: 100%;
+    }
   }
 }
