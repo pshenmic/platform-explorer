@@ -243,6 +243,47 @@ describe('Documents routes', () => {
       assert.deepEqual(body.resultSet, expectedDocuments)
     })
 
+    it('should return default set of documents by type name', async () => {
+      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?type_name=note`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 1)
+      assert.equal(body.pagination.total, 1)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .slice(0, 1)
+        .map(({ block, document, dataContract, transaction }) => ({
+          identifier: document.identifier,
+          dataContractIdentifier: dataContract.identifier,
+          revision: document.revision,
+          txHash: transaction.hash,
+          deleted: document.deleted,
+          data: JSON.stringify(document.data?.dataContractObject
+            ? {
+                type: document.data.type,
+                identifier: document.data.identifier,
+                dataContractObject: {
+                  id: document.data?.dataContractObject?.id ?? null,
+                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
+                  version: document.data?.dataContractObject?.version ?? null,
+                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
+                }
+              }
+            : {}),
+          transitionType: 0,
+          typeName: document.document_type_name,
+          timestamp: block.timestamp,
+          owner: document.owner,
+          isSystem: document.is_system
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
     it('should return default set of documents desc', async () => {
       const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?order=desc`)
         .expect(200)
