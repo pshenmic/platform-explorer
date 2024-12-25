@@ -999,7 +999,9 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&li
         deleted: false,
         data: null,
         timestamp: "2024-03-18T10:13:54.150Z",
-        isSystem: false
+        isSystem: false,
+        transitionType: 0,
+        typeName: 'type_name'
     }, ...
     ]
 }
