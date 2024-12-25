@@ -43,7 +43,7 @@ module.exports = class BlockDAO {
           array_agg(
             json_build_object(
               'alias', alias,
-              'timestamp', timestamp
+              'timestamp', timestamp::timestamptz
             )
           ) as aliases
         `)
@@ -78,11 +78,9 @@ module.exports = class BlockDAO {
     const txs = block.tx_hash
       ? await Promise.all(rows.map(async (row) => {
         const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-          const parsedAlias = JSON.parse(alias)
+          const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-          const aliasInfo = await getAliasInfo(parsedAlias.alias, this.dapi)
-
-          return getAliasStateByVote(aliasInfo, parsedAlias, row.owner)
+          return getAliasStateByVote(aliasInfo, alias, row.owner)
         }))
 
         return Transaction.fromRow({ ...row, aliases })

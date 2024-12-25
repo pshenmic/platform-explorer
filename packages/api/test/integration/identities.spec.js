@@ -237,7 +237,7 @@ describe('Identities routes', () => {
           alias,
           contested: false,
           status: 'ok',
-          timestamp: '1970-01-01 00:00:00+00'
+          timestamp: '1970-01-01T00:00:00+00:00'
         }],
         totalGasSpent: 0,
         averageGasSpent: 0,
@@ -411,7 +411,7 @@ describe('Identities routes', () => {
         isSystem: false,
         aliases: [
           aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-        ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01 00:00:00+00' })),
+        ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
         totalGasSpent: null,
         averageGasSpent: null,
         totalTopUpsAmount: null,
@@ -463,7 +463,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01 00:00:00+00' })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -516,7 +516,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01 00:00:00+00' })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -570,7 +570,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01 00:00:00+00' })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -639,7 +639,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01 00:00:00+00' })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -720,7 +720,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01 00:00:00+00' })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,

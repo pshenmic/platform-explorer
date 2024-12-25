@@ -16,7 +16,7 @@ module.exports = class TransactionsDAO {
           array_agg(
             json_build_object(
               'alias', alias,
-              'timestamp', timestamp
+              'timestamp', timestamp::timestamptz
             )
           ) as aliases
         `)

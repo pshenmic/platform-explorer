@@ -21,7 +21,7 @@ module.exports = class IdentitiesDAO {
           array_agg(
             json_build_object(
               'alias', alias,
-              'timestamp', timestamp
+              'timestamp', timestamp::timestamptz
             )
           ) as aliases
         `)
@@ -146,11 +146,9 @@ module.exports = class IdentitiesDAO {
     const identity = Identity.fromRow(row)
 
     const aliases = await Promise.all(identity.aliases.map(async alias => {
-      const parsedAlias = JSON.parse(alias)
+      const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-      const aliasInfo = await getAliasInfo(parsedAlias.alias, this.dapi)
-
-      return getAliasStateByVote(aliasInfo, parsedAlias, identifier)
+      return getAliasStateByVote(aliasInfo, alias, identifier)
     }))
 
     const publicKeys = await this.dapi.getIdentityKeys(identity.identifier)
@@ -226,7 +224,7 @@ module.exports = class IdentitiesDAO {
           array_agg(
             json_build_object(
               'alias', alias,
-              'timestamp', timestamp
+              'timestamp', timestamp::timestamptz
             )
           ) as aliases
         `)
@@ -283,11 +281,9 @@ module.exports = class IdentitiesDAO {
       const balance = await this.dapi.getIdentityBalance(row.identifier.trim())
 
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const parsedAlias = JSON.parse(alias)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-        const aliasInfo = await getAliasInfo(parsedAlias.alias, this.dapi)
-
-        return getAliasStateByVote(aliasInfo, parsedAlias, row.identifier.trim())
+        return getAliasStateByVote(aliasInfo, alias, row.identifier.trim())
       }))
 
       return Identity.fromRow({
