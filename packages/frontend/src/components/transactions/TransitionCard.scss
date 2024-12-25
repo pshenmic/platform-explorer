@@ -40,13 +40,11 @@
 
   @container (max-width: 600px) {
     &__InfoLine {
-      &--Data {
+      &--Data, &--PrefundedBalance {
         flex-wrap: wrap;
+      }
 
-        .InfoLine__Title {
-          margin-bottom: 8px;
-        }
-
+      &--Data {
         code {
           width: 100%;
           margin: 0;

@@ -1,6 +1,7 @@
 .PrefundedBalance {
   max-width: max-content;
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 
   &__Title, &__Value {

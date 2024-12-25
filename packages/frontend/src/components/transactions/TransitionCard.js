@@ -60,7 +60,7 @@ function TransitionCard ({ transition, rate, className }) {
 
       {transition?.prefundedBalance &&
         <InfoLine
-          className={'TransitionCard__InfoLine'}
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--PrefundedBalance'}
           title={'Prefunded Voting Balance'}
           value={<PrefundedBalance prefundedBalance={transition?.prefundedBalance} rate={rate}/>}
         />
