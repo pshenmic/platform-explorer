@@ -40,12 +40,12 @@ module.exports = class DocumentsDAO {
     })
   }
 
-  getDocumentsByDataContract = async (identifier, type, page, limit, order) => {
+  getDocumentsByDataContract = async (identifier, typeName, page, limit, order) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
-    const typrQuery = type
-      ? `document_type_name = '${type}'`
+    const typrQuery = typeName
+      ? `document_type_name = '${typeName}'`
       : 'true'
 
     const subquery = this.knex('documents')

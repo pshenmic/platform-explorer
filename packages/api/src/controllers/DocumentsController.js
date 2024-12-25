@@ -1,6 +1,5 @@
 const DocumentsDAO = require('../dao/DocumentsDAO')
 const DataContractsDAO = require('../dao/DataContractsDAO')
-const { decodeStateTransition } = require('../utils')
 const Document = require('../models/Document')
 
 class DocumentsController {
@@ -66,9 +65,9 @@ class DocumentsController {
 
   getDocumentsByDataContract = async (request, response) => {
     const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc', type } = request.query
+    const { page = 1, limit = 10, order = 'asc', type_name: typeName } = request.query
 
-    const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, type, Number(page ?? 1), Number(limit ?? 10), order)
+    const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, typeName, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(documents)
   }
