@@ -450,5 +450,6 @@ module.exports = class IdentitiesDAO {
       .andWhere('owner', identifier)
       .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
+      .orderBy('id', 'desc')
   }
 }
