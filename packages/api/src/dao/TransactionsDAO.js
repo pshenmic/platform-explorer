@@ -12,11 +12,10 @@ module.exports = class TransactionsDAO {
   getTransactionByHash = async (hash) => {
     const aliasesSubquery = this.knex('identity_aliases')
       .select('identity_identifier', this.knex.raw('array_agg(\'{"alias": "\' || alias || \'", "timestamp": "\' || timestamp || \'"}\') as aliases'))
-      .where('identity_identifier', '=', identifier)
       .groupBy('identity_identifier')
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
-      .as('identity_alias')
+      .as('aliases')
 
     const [row] = await this.knex('state_transitions')
       .select(
@@ -36,9 +35,11 @@ module.exports = class TransactionsDAO {
     }
 
     const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-      const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+      const parsedAlias = JSON.parse(alias)
 
-      return getAliasStateByVote(aliasInfo, alias, row.owner)
+      const aliasInfo = await getAliasInfo(parsedAlias.alias, this.dapi)
+
+      return getAliasStateByVote(aliasInfo, parsedAlias, row.owner)
     }))
 
     return Transaction.fromRow({ ...row, aliases })

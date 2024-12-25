@@ -185,7 +185,7 @@ module.exports = class IdentitiesDAO {
       return {
         identifier: row.identity_identifier,
         alias: row.alias,
-        status: getAliasStateByVote(aliasInfo, row.alias, row.identity_identifier)
+        status: getAliasStateByVote(aliasInfo, { alias: row.alias }, row.identity_identifier)
       }
     }))
   }
@@ -211,7 +211,6 @@ module.exports = class IdentitiesDAO {
 
     const aliasSubquery = this.knex('identity_aliases')
       .select('identity_identifier', this.knex.raw('array_agg(\'{"alias": "\' || alias || \'", "timestamp": "\' || timestamp || \'"}\') as aliases'))
-      .where('identity_identifier', '=', identifier)
       .groupBy('identity_identifier')
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
