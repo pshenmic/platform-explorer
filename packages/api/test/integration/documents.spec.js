@@ -48,7 +48,7 @@ describe('Documents routes', () => {
 
     documents = []
 
-    block = await fixtures.block(knex, { height: 1 })
+    block = await fixtures.block(knex, { height: 1, timestamp: new Date(0).toISOString() })
     identity = await fixtures.identity(knex, { block_hash: block.hash })
 
     const dataContractTransaction = await fixtures.transaction(knex, {
@@ -85,6 +85,29 @@ describe('Documents routes', () => {
       owner: identity.identifier,
       is_system: true,
       state_transition_hash: documentTransaction.hash,
+      document_type_name: 'note',
+      data: {
+        type: 'note',
+        identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
+        dataContractObject: {
+          $format_version: '0',
+          ownerId: dataContract.owner,
+          id: dataContract.identifier,
+          version: 0,
+          documentSchemas: {
+            note: {
+              type: 'object',
+              properties: {
+                message: {
+                  type: 'string',
+                  position: 0
+                }
+              },
+              additionalProperties: false
+            }
+          }
+        }
+      },
       identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL'
     })
 
@@ -136,19 +159,21 @@ describe('Documents routes', () => {
         dataContractIdentifier: document.dataContract.identifier,
         deleted: false,
         identifier: document.document.identifier,
-        isSystem: false,
+        isSystem: true,
         owner: document.document.owner,
-        revision: 1,
+        revision: 0,
         timestamp: '1970-01-01T00:00:00.000Z',
         txHash: document.transaction.hash,
-        data: {
+        typeName: 'note',
+        transitionType: 0,
+        data: JSON.stringify({
           type: 'note',
           identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
           dataContractObject: {
-            $format_version: '0',
-            ownerId: document.dataContract.owner,
             id: document.dataContract.identifier,
+            ownerId: document.dataContract.owner,
             version: 0,
+            $format_version: '0',
             documentSchemas: {
               note: {
                 type: 'object',
@@ -162,7 +187,7 @@ describe('Documents routes', () => {
               }
             }
           }
-        }
+        })
       }
 
       assert.deepEqual(body, expectedDocument)
@@ -195,8 +220,22 @@ describe('Documents routes', () => {
           revision: document.revision,
           txHash: transaction.hash,
           deleted: document.deleted,
-          data: JSON.stringify(document.data),
-          timestamp: block.timestamp.toISOString(),
+          data: JSON.stringify(document.data?.dataContractObject
+            ? {
+                type: document.data.type,
+                identifier: document.data.identifier,
+                dataContractObject: {
+                  id: document.data?.dataContractObject?.id ?? null,
+                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
+                  version: document.data?.dataContractObject?.version ?? null,
+                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
+                }
+              }
+            : {}),
+          transitionType: 0,
+          typeName: document.document_type_name,
+          timestamp: block.timestamp,
           owner: document.owner,
           isSystem: document.is_system
         }))
@@ -223,8 +262,22 @@ describe('Documents routes', () => {
           revision: document.revision,
           txHash: document.is_system ? null : transaction.hash,
           deleted: document.deleted,
-          data: JSON.stringify(document.data),
-          timestamp: document.is_system ? null : block.timestamp.toISOString(),
+          data: JSON.stringify(document.data?.dataContractObject
+            ? {
+                type: document.data.type,
+                identifier: document.data.identifier,
+                dataContractObject: {
+                  id: document.data?.dataContractObject?.id ?? null,
+                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
+                  version: document.data?.dataContractObject?.version ?? null,
+                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
+                }
+              }
+            : {}),
+          transitionType: 0,
+          typeName: 'type_name',
+          timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
           isSystem: document.is_system
         }))
@@ -246,8 +299,22 @@ describe('Documents routes', () => {
           revision: document.revision,
           txHash: transaction.hash,
           deleted: document.deleted,
-          data: JSON.stringify(document.data),
-          timestamp: block.timestamp.toISOString(),
+          data: JSON.stringify(document.data?.dataContractObject
+            ? {
+                type: document.data.type,
+                identifier: document.data.identifier,
+                dataContractObject: {
+                  id: document.data?.dataContractObject?.id ?? null,
+                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
+                  version: document.data?.dataContractObject?.version ?? null,
+                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
+                }
+              }
+            : {}),
+          transitionType: 0,
+          typeName: 'type_name',
+          timestamp: block.timestamp,
           owner: document.owner,
           isSystem: document.is_system
         }))
@@ -269,8 +336,22 @@ describe('Documents routes', () => {
           revision: document.revision,
           txHash: document.is_system ? null : transaction.hash,
           deleted: document.deleted,
-          data: JSON.stringify(document.data),
-          timestamp: document.is_system ? null : block.timestamp.toISOString(),
+          data: JSON.stringify(document.data?.dataContractObject
+            ? {
+                type: document.data.type,
+                identifier: document.data.identifier,
+                dataContractObject: {
+                  id: document.data?.dataContractObject?.id ?? null,
+                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
+                  version: document.data?.dataContractObject?.version ?? null,
+                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
+                }
+              }
+            : {}),
+          transitionType: 0,
+          typeName: 'type_name',
+          timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
           isSystem: document.is_system
         }))
