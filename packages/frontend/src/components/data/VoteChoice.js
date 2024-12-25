@@ -25,7 +25,11 @@ function VoteChoice ({ choiceStr }) {
         colorScheme={colorScheme?.[type] || 'grey'}
       >
         <span>{choice}:</span>
-        <ValueCard className={'VoteChoice__Parameter'} colorScheme={colorScheme?.[type] || 'grey'}>
+        <ValueCard
+          link={`/identity/${parameter}`}
+          className={'VoteChoice__Parameter'}
+          colorScheme={colorScheme?.[type] || 'grey'}
+        >
           <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {parameter}
           </Identifier>
