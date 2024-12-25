@@ -1,3 +1,30 @@
+@use '../../styles/mixins.scss';
+@use './variables' as transfers;
+@import '../../styles/variables.scss';
+
 .TransfersList {
-    
+  @include mixins.BrandScroll;
+  @include mixins.List;
+  container-type: inline-size;
+  overflow-y: auto;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include transfers.Columns();
+  }
+
+  &__ColumnTitle {
+    @include transfers.Column();
+    overflow: visible !important;
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  @container (max-width: 580px) {
+    &__Items, &__ContentContainer {
+      min-width: max-content;
+    }
+  }
 }

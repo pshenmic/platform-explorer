@@ -88,6 +88,7 @@ module.exports = class IdentitiesDAO {
       .select(this.knex('transfers')
         .select(this.knex.raw('sum(amount)'))
         .where('recipient', identifier)
+        .orWhere('sender', identifier)
         .andWhere('type', IDENTITY_TOP_UP)
         .leftJoin('state_transitions', 'state_transition_hash', 'hash')
         .as('total_top_ups_amount'))
@@ -153,7 +154,16 @@ module.exports = class IdentitiesDAO {
       ...identity,
       aliases,
       balance: await this.dapi.getIdentityBalance(identity.identifier),
-      publicKeys,
+      publicKeys: publicKeys?.map(key => ({
+        keyId: key.keyId,
+        type: key.type,
+        data: key.data,
+        purpose: key.purpose,
+        securityLevel: key.securityLevel,
+        readOnly: key.isReadOnly,
+        hash: key.hash,
+        contractBounds: key.contractBounds
+      })),
       fundingCoreTx
     })
   }

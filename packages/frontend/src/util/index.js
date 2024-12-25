@@ -1,15 +1,7 @@
 import copyToClipboard from './copyToClipboard'
-import { StateTransitionEnum, TransactionTypesEnum } from '../enums/state.transition.type'
+import { StateTransitionEnum } from '../enums/state.transition.type'
 import currencyRound from './currencyRound'
 import { getDaysBetweenDates, getDynamicRange, getTimeDelta } from './datetime'
-
-function getTransitionTypeStringById (id) {
-  const [stateTransitionType] = Object.entries(StateTransitionEnum)
-    .filter(([key]) => StateTransitionEnum[key] === id)
-    .map(([key]) => key)
-
-  return TransactionTypesEnum[stateTransitionType] ?? 'UNKNOWN'
-}
 
 function getTransitionTypeKeyById (id) {
   const [stateTransitionType] = Object.entries(StateTransitionEnum)
@@ -42,6 +34,20 @@ function fetchHandlerError (setter, error) {
   }))
 }
 
+function paginationHandler (setter, currentPage) {
+  setter(state => ({
+    ...state,
+    props: {
+      ...state.props,
+      currentPage
+    }
+  }))
+}
+
+function setLoadingProp (setter, value = true) {
+  setter(state => ({ ...state, loading: value }))
+}
+
 function numberFormat (number) {
   return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(number)
 }
@@ -69,10 +75,16 @@ function roundUsd (usd, maxDecimals = 5) {
   return usd.toFixed(precision)
 }
 
+function findActiveAlias (aliases = []) {
+  if (!aliases?.length) return null
+  return aliases?.find(alias => alias.status === 'ok')
+}
+
 export {
-  getTransitionTypeStringById,
   fetchHandlerSuccess,
   fetchHandlerError,
+  paginationHandler,
+  setLoadingProp,
   numberFormat,
   currencyRound,
   copyToClipboard,
@@ -81,5 +93,6 @@ export {
   creditsToDash,
   roundUsd,
   getDaysBetweenDates,
-  getDynamicRange
+  getDynamicRange,
+  findActiveAlias
 }

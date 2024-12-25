@@ -1,0 +1,40 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.PublicKeyBoundCard {
+  display: flex;
+  gap: 4px;
+  font-size: 0.75rem;
+
+  &__Title {
+    white-space: nowrap;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__Id {
+    overflow: hidden;
+    font-size: 0.75rem;
+
+    .ValueContainer__Value {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__Type {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: 6px;
+  }
+
+  &__TypeTitle {
+    white-space: nowrap;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__TypeValue {
+    color: #ffffff;
+  }
+}
