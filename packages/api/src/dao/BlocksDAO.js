@@ -38,7 +38,16 @@ module.exports = class BlockDAO {
 
   getBlockByHash = async (blockHash) => {
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(\'{"alias": "\' || alias || \'", "timestamp": "\' || timestamp || \'"}\') as aliases'))
+      .select('identity_identifier',
+        this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'timestamp', timestamp
+            )
+          ) as aliases
+        `)
+      )
       .groupBy('identity_identifier')
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
