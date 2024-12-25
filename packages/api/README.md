@@ -1014,7 +1014,7 @@ Response codes:
 Return all documents by the given identity
 * `limit` cannot be more then 100
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&type_name=preorder
 
 {
     pagination: {
@@ -1034,7 +1034,7 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&li
         timestamp: "2024-03-18T10:13:54.150Z",
         isSystem: false,
         transitionType: 0,
-        typeName: 'type_name'
+        typeName: 'preorder'
     }, ...
     ]
 }
