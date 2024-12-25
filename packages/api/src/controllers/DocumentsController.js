@@ -1,6 +1,7 @@
 const DocumentsDAO = require('../dao/DocumentsDAO')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const { decodeStateTransition } = require('../utils')
+const Document = require('../models/Document')
 
 class DocumentsController {
   constructor (client, knex, dapi) {
@@ -48,7 +49,7 @@ class DocumentsController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    response.send({
+    response.send(Document.fromObject({
       dataContractIdentifier: documentData?.data_contract_identifier ?? dataContract.identifier,
       deleted: documentData?.deleted ?? false,
       identifier: documentFromDapi?.getId() ?? documentData.identifier,
@@ -60,7 +61,7 @@ class DocumentsController {
       data: JSON.stringify(documentFromDapi.getData()),
       typeName: documentData?.typeName ?? null,
       transitionType: documentData?.transitionType ?? null
-    })
+    }))
   }
 
   getDocumentsByDataContract = async (request, response) => {
