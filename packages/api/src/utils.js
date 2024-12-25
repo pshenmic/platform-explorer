@@ -12,6 +12,7 @@ const { InstantAssetLockProof, ChainAssetLockProof, Identifier } = require('@das
 const SecurityLevelEnum = require('./enums/SecurityLevelEnum')
 const KeyPurposeEnum = require('./enums/KeyPurposeEnum')
 const KeyTypeEnum = require('./enums/KeyTypeEnum')
+const Alias = require('./models/Alias')
 
 const getKnex = () => {
   return require('knex')({
@@ -232,27 +233,7 @@ const decodeStateTransition = async (client, base64) => {
             signature: Buffer.from(key.getSignature()).toString('hex')
           }
         })
-      decoded.setPublicKeyIdsToDisable = (stateTransition.getPublicKeyIdsToDisable() ?? []).map(key => {
-        const { contractBounds } = key.toObject()
-
-        return {
-          contractBounds: contractBounds
-            ? {
-                type: contractBounds.type,
-                id: Identifier.from(Buffer.from(contractBounds.id)).toString(),
-                typeName: contractBounds.document_type_name
-              }
-            : null,
-          id: key.getId(),
-          type: KeyTypeEnum[key.getType()],
-          data: Buffer.from(key.getData()).toString('hex'),
-          publicKeyHash: Buffer.from(key.hash()).toString('hex'),
-          purpose: KeyPurposeEnum[key.getPurpose()],
-          securityLevel: SecurityLevelEnum[key.getSecurityLevel()],
-          readOnly: key.isReadOnly(),
-          signature: Buffer.from(key.getSignature()).toString('hex')
-        }
-      })
+      decoded.setPublicKeyIdsToDisable = (stateTransition.getPublicKeyIdsToDisable() ?? [])
       decoded.signature = stateTransition.getSignature().toString('hex')
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.raw = stateTransition.toBuffer().toString('hex')
@@ -447,11 +428,12 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   let status = null
 
   if (aliasInfo.contestedState === null) {
-    return {
-      alias,
+    return Alias.fromObject({
+      alias: alias.alias,
       status: 'ok',
-      contested: false
-    }
+      contested: false,
+      timestamp: alias.timestamp
+    })
   }
 
   const isLocked = base58.encode(
@@ -466,15 +448,16 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     status = 'ok'
   }
 
-  return {
+  return Alias.fromObject({
     alias,
     status,
-    contested: true
-  }
+    contested: true,
+    timestamp: alias.timestamp
+  })
 }
 
-const getAliasInfo = async (alias, dapi) => {
-  const [label, domain] = alias.split('.')
+const getAliasInfo = async (aliasText, dapi) => {
+  const [label, domain] = aliasText.split('.')
 
   const normalizedLabel = convertToHomographSafeChars(label ?? '')
 
@@ -494,10 +477,10 @@ const getAliasInfo = async (alias, dapi) => {
       ]
     )
 
-    return { alias, contestedState }
+    return { alias: aliasText, contestedState }
   }
 
-  return { alias, contestedState: null }
+  return { alias: aliasText, contestedState: null }
 }
 
 module.exports = {

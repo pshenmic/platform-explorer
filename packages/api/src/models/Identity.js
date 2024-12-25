@@ -115,7 +115,7 @@ module.exports = class Identity {
       Number(total_transfers),
       tx_hash,
       is_system,
-      aliases,
+      aliases ? aliases.map(JSON.parse) : null,
       Number(total_gas_spent),
       Number(average_gas_spent),
       Number(total_top_ups_amount),
