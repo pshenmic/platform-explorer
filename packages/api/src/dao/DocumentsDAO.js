@@ -44,7 +44,7 @@ module.exports = class DocumentsDAO {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
-    const typrQuery = typeName
+    const typeQuery = typeName
       ? `document_type_name = '${typeName}'`
       : 'true'
 
@@ -56,7 +56,7 @@ module.exports = class DocumentsDAO {
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
       .where('data_contracts.identifier', identifier)
-      .andWhereRaw(typrQuery)
+      .andWhereRaw(typeQuery)
 
     const filteredDocuments = this.knex.with('with_alias', subquery)
       .select('id', 'identifier', 'document_owner', 'rank', 'revision', 'data_contract_identifier',

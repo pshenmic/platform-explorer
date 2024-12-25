@@ -918,7 +918,7 @@ describe('Identities routes', () => {
   })
 
   describe('getDocumentsByIdentity()', async () => {
-    it('should return default set of data contracts by identity', async () => {
+    it('should return default set of documents by identity', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash })
@@ -965,13 +965,15 @@ describe('Identities routes', () => {
         deleted: false,
         data: null,
         timestamp: _document.block.timestamp.toISOString(),
-        isSystem: false
+        isSystem: false,
+        transitionType: 0,
+        typeName: 'type_name'
       }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
     })
 
-    it('should return default set of data contracts by identity dsc', async () => {
+    it('should return default set of documents by identity dsc', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash })
@@ -1021,7 +1023,69 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false
+          isSystem: false,
+          transitionType: 0,
+          typeName: 'type_name'
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return default set of documents by identity and type_name dsc', async () => {
+      documents = []
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+
+      for (let i = 1; i < 31; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        dataContractTransaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: StateTransitionEnum.DATA_CONTRACT_CREATE
+        })
+        dataContract = await fixtures.dataContract(knex, {
+          state_transition_hash: dataContractTransaction.hash,
+          owner: identity.identifier
+        })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: StateTransitionEnum.DOCUMENTS_BATCH
+        })
+        document = await fixtures.document(knex, {
+          state_transition_hash: transaction.hash,
+          owner: identity.identifier,
+          data_contract_id: dataContract.id,
+          document_type_name: i % 2 === 0 ? 'my_type' : 'non_my_type'
+        })
+        documents.push({ document, dataContract, transaction, identity, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?order=desc&type_name=my_type`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, documents.length / 2)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({ document }) => document.document_type_name === 'my_type')
+        .sort((a, b) => b.document.id - a.document.id)
+        .slice(0, 10)
+        .map((_document) => ({
+          identifier: _document.document.identifier,
+          owner: identity.identifier,
+          dataContractIdentifier: _document.dataContract.identifier,
+          revision: 0,
+          txHash: _document.transaction.hash,
+          deleted: false,
+          data: null,
+          timestamp: _document.block.timestamp.toISOString(),
+          isSystem: false,
+          transitionType: 0,
+          typeName: 'my_type'
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1077,7 +1141,9 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false
+          isSystem: false,
+          transitionType: 0,
+          typeName: 'type_name'
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1133,7 +1199,9 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false
+          isSystem: false,
+          transitionType: 0,
+          typeName: 'type_name'
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
