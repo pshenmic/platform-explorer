@@ -40,6 +40,10 @@
         }
       }
     }
+
+    &.ValueCard--Clickable:hover {
+      background: rgba(var(--chakra-colors-green-default-rgb), .3);
+    }
   }
 
   &--Clickable {
