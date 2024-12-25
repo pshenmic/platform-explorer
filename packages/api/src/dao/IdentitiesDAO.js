@@ -137,9 +137,11 @@ module.exports = class IdentitiesDAO {
     const identity = Identity.fromRow(row)
 
     const aliases = await Promise.all(identity.aliases.map(async alias => {
-      const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+      const parsedAlias = JSON.parse(alias)
 
-      return getAliasStateByVote(aliasInfo, alias, identifier)
+      const aliasInfo = await getAliasInfo(parsedAlias.alias, this.dapi)
+
+      return getAliasStateByVote(aliasInfo, parsedAlias, identifier)
     }))
 
     const publicKeys = await this.dapi.getIdentityKeys(identity.identifier)
@@ -214,7 +216,7 @@ module.exports = class IdentitiesDAO {
       .groupBy('identity_identifier')
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
-      .as('identity_alias')
+      .as('aliases')
 
     const subquery = this.knex('identities')
       .select('identities.id as identity_id', 'identities.identifier as identifier', 'identities.owner as identity_owner',
@@ -223,7 +225,7 @@ module.exports = class IdentitiesDAO {
       .select(this.knex.raw('COALESCE((select sum(amount) from transfers where recipient = identifier), 0) - COALESCE((select sum(amount) from transfers where sender = identifier), 0) as balance'))
       .select(this.knex('state_transitions').count('*').whereRaw('owner = identifier').as('total_txs'))
       .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
-      .leftJoin(aliasesSubquery, 'identity_identifier', 'identifier')
+      .leftJoin(aliasSubquery, 'identity_identifier', 'identifier')
       .as('identities')
 
     const filteredIdentities = this.knex(subquery)
@@ -263,9 +265,11 @@ module.exports = class IdentitiesDAO {
       const balance = await this.dapi.getIdentityBalance(row.identifier.trim())
 
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+        const parsedAlias = JSON.parse(alias)
 
-        return getAliasStateByVote(aliasInfo, alias, row.identifier.trim())
+        const aliasInfo = await getAliasInfo(parsedAlias.alias, this.dapi)
+
+        return getAliasStateByVote(aliasInfo, parsedAlias, row.identifier.trim())
       }))
 
       return Identity.fromRow({
