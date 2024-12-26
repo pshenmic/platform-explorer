@@ -117,14 +117,12 @@ const decodeStateTransition = async (client, base64) => {
       decoded.assetLockProof = {
         coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
-        instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.toJSON().instantLock : null,
-        fundingAmount: decodedTransaction?.outputAmount ?? null,
-        txid: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
-        vout: assetLockProof.getOutPoint().readInt8(32),
-        fundingAddress: assetLockProof.getOutput
-          ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
-          : null
+        instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.getInstantLock().toString('base64') : null,
+        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis ?? null,
+        fundingCoreTx: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
+        vout: assetLockProof.getOutPoint().readInt8(32)
       }
+
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
@@ -166,13 +164,11 @@ const decodeStateTransition = async (client, base64) => {
       decoded.assetLockProof = {
         coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
-        fundingAmount: decodedTransaction?.outputAmount ?? null,
-        txid: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
-        vout: assetLockProof.getOutPoint().readInt8(32),
-        fundingAddress: assetLockProof.getOutput
-          ? dashcorelib.Script(assetLockProof.getOutput().script).toAddress(NETWORK).toString()
-          : null
+        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis ?? null,
+        fundingCoreTx: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
+        vout: assetLockProof.getOutPoint().readInt8(32)
       }
+
       decoded.identityId = stateTransition.getIdentityId().toString()
       decoded.amount = output.satoshis * 1000
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
@@ -213,7 +209,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getOwnerId().toString()
       decoded.revision = stateTransition.getRevision()
-      // TODO: Add contract bounds
+
       decoded.publicKeysToAdd = stateTransition.getPublicKeysToAdd()
         .map(key => {
           const { contractBounds } = key.toObject()
@@ -264,7 +260,7 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_CREDIT_TRANSFER: {
-      decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
+      decoded.nonce = Number(stateTransition.getNonce())
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.recipientId = stateTransition.getRecipientId().toString()
@@ -284,7 +280,6 @@ const decodeStateTransition = async (client, base64) => {
         : null
 
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
-      decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
       decoded.identityNonce = parseInt(stateTransition.getNonce())
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.amount = parseInt(stateTransition.getAmount())
@@ -306,6 +301,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.documentTypeName = stateTransition.getContestedDocumentResourceVotePoll().documentTypeName
       decoded.indexName = stateTransition.getContestedDocumentResourceVotePoll().indexName
       decoded.choice = stateTransition.getContestedDocumentResourceVotePoll().choice
+      decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.raw = stateTransition.toBuffer().toString('hex')
       decoded.proTxHash = stateTransition.getProTxHash().toString('hex')
 

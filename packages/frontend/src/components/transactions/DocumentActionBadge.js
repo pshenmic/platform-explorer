@@ -10,12 +10,12 @@ function DocumentActionBadge ({ typeId }) {
 
   return (
     <Tooltip
-      title={actionInfo.title}
-      content={actionInfo.description}
+      title={actionInfo?.title}
+      content={actionInfo?.description}
       placement={'top'}
     >
-      <Badge colorScheme={actionInfo.color}>
-        {actionInfo.title}
+      <Badge colorScheme={actionInfo?.colorScheme}>
+        {actionInfo?.title}
       </Badge>
     </Tooltip>
   )

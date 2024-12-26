@@ -7,30 +7,17 @@ import TypeBadge from './TypeBadge'
 import { Identifier, Credits, Alias } from '../data'
 import StatusIcon from './StatusIcon'
 import { RateTooltip } from '../ui/Tooltips'
-import './TransactionsListItem.scss'
 import ImageGenerator from '../imageGenerator'
 import { useRouter } from 'next/navigation'
+import { LinkContainer } from '../ui/containers'
+import './TransactionsListItem.scss'
 
-function TransactionsListItem ({ transaction, rate, variant = 'full' }) {
+function TransactionsListItem ({ transaction, rate }) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
   const router = useRouter()
 
-  if (variant === 'hashes') {
-    return (
-      <Link
-        href={`/transaction/${transaction?.hash}`}
-        className={'TransactionsListItem'}
-      >
-        <Identifier styles={['highlight-both']}>{transaction?.hash}</Identifier>
-      </Link>
-    )
-  }
-
   return (
-    <Link
-      href={`/transaction/${transaction?.hash}`}
-      className={'TransactionsListItem'}
-    >
+    <Link href={`/transaction/${transaction?.hash}`} className={'TransactionsListItem'}>
       <Grid className={'TransactionsListItem__Content'}>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}>
           {transaction?.timestamp
@@ -63,7 +50,7 @@ function TransactionsListItem ({ transaction, rate, variant = 'full' }) {
         </GridItem>
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Owner'}>
             {transaction?.owner
-              ? <div
+              ? <LinkContainer
                   className={'TransactionsListItem__OwnerLink'}
                   onClick={e => {
                     e.stopPropagation()
@@ -79,7 +66,7 @@ function TransactionsListItem ({ transaction, rate, variant = 'full' }) {
                     </div>
                     : <Identifier avatar={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
                   }
-                </div>
+                </LinkContainer>
               : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
             }
           </GridItem>

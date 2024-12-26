@@ -1,8 +1,9 @@
 @import '../../styles/variables.scss';
 
 .Background {
-  background-color: #0F1315;
+  background-color: #171E21;
   overflow: hidden;
+  pointer-events: none;
   z-index: -1;
 
   &, &:after {
@@ -15,12 +16,11 @@
 
   &::after {
     content: '';
-    background-image: url('/images/grain-texture.jpg');
+    background-image: url('/images/grain-texture.png');
     background-position: left;
     background-repeat: repeat;
     opacity: .5;
     z-index: -1;
-    mix-blend-mode: soft-light;
   }
 
   &--Light {

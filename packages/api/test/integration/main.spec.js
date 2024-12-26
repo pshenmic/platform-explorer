@@ -84,7 +84,8 @@ describe('Other routes', () => {
 
     identityAlias = await fixtures.identity_alias(knex, {
       alias: 'dpns.dash',
-      identity
+      identity,
+      state_transition_hash: identityTransaction.hash
     })
 
     dataContractTransaction = await fixtures.transaction(knex, {
@@ -365,11 +366,14 @@ describe('Other routes', () => {
         }],
         totalGasSpent: 480000,
         averageGasSpent: 9412,
-        topUpsGasSpent: 0,
-        withdrawalsGasSpent: 0,
+        totalTopUpsAmount: 0,
+        totalWithdrawalsAmount: 0,
         lastWithdrawalHash: null,
         publicKeys: [],
-        fundingCoreTx: null
+        fundingCoreTx: null,
+        lastWithdrawalTimestamp: null,
+        totalTopUps: 0,
+        totalWithdrawals: 0
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)

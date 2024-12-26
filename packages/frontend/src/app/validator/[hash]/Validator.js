@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, getTimeDelta } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, getTimeDelta } from '../../../util'
 import { LoadingList } from '../../../components/loading'
 import Pagination from '../../../components/pagination'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import BlocksList from '../../../components/blocks/BlocksList'
 import TransactionsList from '../../../components/transactions/TransactionsList'
 import BlocksChart from './BlocksChart'
+import RewardsChart from './RewardsChart'
 import Link from 'next/link'
 import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine, Credits } from '../../../components/data'
 import { ValueContainer, PageDataContainer, InfoContainer } from '../../../components/ui/containers'
@@ -93,16 +94,6 @@ function Validator ({ hash }) {
       .then(res => fetchHandlerSuccess(setWithdrawals, res))
       .catch(err => fetchHandlerError(setWithdrawals, err))
   }, [validator, withdrawals.props.currentPage])
-
-  function paginationHandler (setter, currentPage) {
-    setter(state => ({
-      ...state,
-      props: {
-        ...state.props,
-        currentPage
-      }
-    }))
-  }
 
   const handlePageClick = useCallback(({ selected }) => {
     setCurrentPage(selected)
@@ -253,7 +244,7 @@ function Validator ({ hash }) {
                       {validator.data?.lastProposedBlockHeader?.timestamp &&
                         <DateBlock
                           timestamp={validator.data.lastProposedBlockHeader.timestamp}
-                          format={'delta-only'}
+                          format={'deltaOnly'}
                         />
                       }
                       <Identifier ellipsis={false} styles={['highlight-both']}>
@@ -279,7 +270,7 @@ function Validator ({ hash }) {
                   <Link href={`/transaction/${validator.data?.lastWithdrawal}`}>
                     <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
                       {validator.data?.lastWithdrawalTime &&
-                        <DateBlock timestamp={validator.data.lastWithdrawalTime} format={'delta-only'}/>}
+                        <DateBlock timestamp={validator.data.lastWithdrawalTime} format={'deltaOnly'}/>}
                       <Identifier ellipsis={false} styles={['highlight-both']}>
                         {validator.data?.lastWithdrawal}
                       </Identifier>
@@ -412,19 +403,22 @@ function Validator ({ hash }) {
             <Tabs onChange={(index) => setActiveChartTab(index)} index={activeChartTab}>
               <TabList>
                 <Tab>Proposed Blocks</Tab>
-                <Tab isDisabled>Reward Earned</Tab>
+                <Tab>Reward Earned</Tab>
               </TabList>
               <TabPanels>
                   <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
                     <BlocksChart
-                      blockBorders={false}
                       hash={hash}
                       isActive={activeChartTab === 0}
                       loading={validator.loading}
                     />
                   </TabPanel>
                   <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
-                    Reward Earned
+                    <RewardsChart
+                      hash={hash}
+                      isActive={activeChartTab === 1}
+                      loading={validator.loading}
+                    />
                   </TabPanel>
               </TabPanels>
             </Tabs>
