@@ -12,6 +12,9 @@ const Tabs = {
       zIndex: '123',
       marginBottom: '0 !important',
       borderRadius: '4px 4px 0 0',
+      borderBottom: 0,
+      border: '0px transparent',
+      mb: '0px',
       p: {
         base: `${tabPaddingSize.base}px`,
         sm: `${tabPaddingSize.sm}px`,
@@ -36,9 +39,9 @@ const Tabs = {
         color: 'brand.normal !important',
         marginBottom: 0,
         borderBottom: 0,
+        borderColor: 'transparent',
 
         _after: {
-          display: 'block',
           backgroundColor: 'brand.normal !important',
           opacity: 1,
           visibility: 'visible',
@@ -50,7 +53,6 @@ const Tabs = {
 
         _after: {
           content: '""',
-          display: 'block',
           backgroundColor: 'whiteAlpha.400',
           opacity: 1,
           visibility: 'visible',
