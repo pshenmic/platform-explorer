@@ -1,3 +1,9 @@
+const tabPaddingSize = {
+  base: 6,
+  sm: 8,
+  xl: 10
+}
+
 const Tabs = {
   baseStyle: {
     tab: {
@@ -7,37 +13,52 @@ const Tabs = {
       marginBottom: '0 !important',
       borderRadius: '4px 4px 0 0',
       p: {
-        base: '6px',
-        sm: '8px',
-        xl: '10px'
+        base: `${tabPaddingSize.base}px`,
+        sm: `${tabPaddingSize.sm}px`,
+        xl: `${tabPaddingSize.xl}px`
+      },
+
+      _after: {
+        content: '""',
+        display: 'block',
+        position: 'absolute',
+        bottom: 0,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: `calc(100% - ${tabPaddingSize.base * 6}px)`,
+        height: '1px',
+        opacity: 0,
+        visibility: 'hidden',
+        transition: 'all .2s'
       },
 
       _selected: {
-        color: 'brand.normal',
+        color: 'brand.normal !important',
         marginBottom: 0,
         borderBottom: 0,
 
         _after: {
-          content: '""',
           display: 'block',
-          width: {
-            base: 'calc(100% - 12px)',
-            sm: 'calc(100% - 16px)',
-            xl: 'calc(100% - 20px)'
-          },
-          height: '1px',
-          backgroundColor: 'brand.normal',
-          position: 'absolute',
-          bottom: 0,
-          left: '50%',
-          transform: 'translateX(-50%)'
+          backgroundColor: 'brand.normal !important',
+          opacity: 1,
+          visibility: 'visible',
+          width: `calc(100% - ${tabPaddingSize.base * 2}px)`
         }
       },
       _hover: {
-        backgroundColor: 'whiteAlpha.100'
+        color: 'white',
+
+        _after: {
+          content: '""',
+          display: 'block',
+          backgroundColor: 'whiteAlpha.400',
+          opacity: 1,
+          visibility: 'visible',
+          width: `calc(100% - ${tabPaddingSize.base * 2}px)`
+        }
       },
       _active: {
-        backgroundColor: 'whiteAlpha.50'
+        backgroundColor: 'transparent'
       }
     },
     tablist: {
