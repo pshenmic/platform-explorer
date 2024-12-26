@@ -749,7 +749,7 @@ Response codes:
 Return all documents by the given data contract identifier
 * `limit` cannot be more then 100
 ```
-GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&type=inormation
+GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
 
 {
     pagination: {
@@ -1013,7 +1013,7 @@ Response codes:
 Return all documents by the given identity
 * `limit` cannot be more then 100
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&type=inormation
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
 
 {
     pagination: {
