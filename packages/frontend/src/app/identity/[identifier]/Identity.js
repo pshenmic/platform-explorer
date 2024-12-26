@@ -116,13 +116,12 @@ function Identity ({ identifier }) {
       urlParameters.set('tab', tabs[activeTab])
     }
 
-    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab, router, pathname])
 
   return (
     <PageDataContainer
       className={'IdentityPage'}
-      backLink={'/identities'}
       title={'Identity info'}
     >
       <IdentityTotalCard identity={identity} rate={rate}/>
