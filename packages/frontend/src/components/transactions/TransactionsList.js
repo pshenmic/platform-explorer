@@ -18,7 +18,7 @@ export default function TransactionsList ({
 }) {
   const headerExtraClass = {
     default: '',
-    light: 'BlocksList__ColumnTitles--Light'
+    light: 'TransactionsList__ColumnTitles--Light'
   }
 
   return (

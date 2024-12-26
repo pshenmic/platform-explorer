@@ -1,0 +1,45 @@
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+
+  grid-template-columns: 
+    70px
+    auto
+    minmax(0, 400px);
+
+  @container (max-width: 22rem) {
+    grid-template-columns:
+      70px
+      auto;
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &--Timestamp {
+    max-width: 70px;
+  }
+
+  &--Identifier {
+    max-width: 600px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &--Owner {
+    overflow: hidden;
+  }
+
+  @container (max-width: 22rem) {
+    &--Owner {
+      display: none;
+    }
+
+    &--Identifier {
+      max-width: none;
+      width: 100%;
+    }
+  }
+}
