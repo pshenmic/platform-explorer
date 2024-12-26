@@ -122,7 +122,6 @@ function Identity ({ identifier }) {
   return (
     <PageDataContainer
       className={'IdentityPage'}
-      backLink={'/identities'}
       title={'Identity info'}
     >
       <IdentityTotalCard identity={identity} rate={rate}/>
