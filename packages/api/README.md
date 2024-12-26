@@ -216,7 +216,9 @@ GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
         "aliases": [
           {
             "alias": "owl352-testnet.dash",
-            "status": "ok"
+            "status": "ok",
+            "contested": false,
+            "timestamp": "2024-08-26 13:29:44.606+00"
           }
         ]
       }
@@ -586,7 +588,8 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
         {
           alias: "alias.dash",
           status: "locked",
-          contested: true
+          "contested": true,
+          "timestamp": "2024-08-26 13:29:44.606+00"
         }
       ]
     }
@@ -639,7 +642,8 @@ GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3Tc
             {
               alias: "alias.dash",
               status: "locked",
-              contested: true
+              "contested": true,
+              "timestamp": "2024-08-26 13:29:44.606+00"
             }
           ]
         }
@@ -794,7 +798,8 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     {
       "alias": "owl352.dash",
       "status": "ok",
-      "contested": false
+      "contested": false,
+      "timestamp": "2024-08-26 13:29:44.606+00"
     }
   ],
   "totalGasSpent": 310352700,
@@ -917,7 +922,8 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
             {
               alias: "alias.dash",
               status: "locked",
-              contested: true
+              "contested": true,
+              "timestamp": "2024-08-26 13:29:44.606+00"
             }
           ]
       }, ...
