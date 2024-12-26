@@ -101,6 +101,25 @@ const BroadcastedIcon = (props) => (
   </Icon>
 )
 
+const CheckmarkIcon = (props) => (
+  <Icon viewBox='0 0 12 13' {...props}>
+    <svg width='12' height='13' viewBox='0 0 12 13' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <circle cx='6' cy='6.5' r='6' fill='#1CC400'/>
+      <path d='M3.33301 6.16667L5.33301 8.16667L8.99967 4.5' stroke='white' strokeWidth='1.33333' strokeLinecap='round'/>
+    </svg>
+  </Icon>
+)
+
+const ErrorCircleIcon = (props) => (
+  <Icon viewBox='0 0 12 13' {...props}>
+    <svg width='12' height='13' viewBox='0 0 12 13' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <circle cx='6' cy='6.5' r='6' fill='#F45858'/>
+      <path d='M6 8.05273L6 3.05273' stroke='white' strokeLinecap='round'/>
+      <path d='M6 9.94737L6 9.94727' stroke='white' strokeLinecap='round'/>
+    </svg>
+  </Icon>
+)
+
 const BigClockIcon = (props) => (
   <Icon viewBox='0 0 35 34' {...props}>
     <svg width='35' height='34' viewBox='0 0 35 34' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -137,5 +156,7 @@ export {
   ChevronIcon,
   ChevronIcon2,
   BigClockIcon,
+  CheckmarkIcon,
+  ErrorCircleIcon,
   PshenmicLogoIcon
 }

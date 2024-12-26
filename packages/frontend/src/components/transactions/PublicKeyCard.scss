@@ -1,8 +1,9 @@
 @use '../../styles/mixins.scss';
+@use './variables' as txs;
 @import '../../styles/variables.scss';
 
 .PublicKeyCard {
-  padding: 40px;
+  @include txs.CardPaddings(padding);
 
   &__InfoLine {
     justify-content: flex-start;
@@ -23,8 +24,6 @@
   }
 
   @media screen and (max-width: $breakpoint-md) {
-    padding: 32px;
-
     &__InfoLine {
       .InfoLine {
         .InfoLine__Value {
@@ -35,8 +34,6 @@
   }
 
   @media screen and (max-width: $breakpoint-sm) {
-    padding: 16px;
-
     &__InfoLine {
       flex-wrap: wrap;
       justify-content: space-between;
