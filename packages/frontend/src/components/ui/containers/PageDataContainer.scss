@@ -50,6 +50,10 @@ $borderRadius: 20px;
     justify-content: center;
     transition: all .1s;
 
+    svg {
+      transform: rotate(180deg);
+    }
+
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         background-color: rgba(24, 167, 255, .2);

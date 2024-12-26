@@ -1,7 +1,7 @@
 import { Container } from '@chakra-ui/react'
 import { ChevronIcon2 } from '../icons'
-import './PageDataContainer.scss'
 import BackButton from '../Buttons/BackButton'
+import './PageDataContainer.scss'
 
 function PageDataContainer ({ className, title, backLink, children }) {
   return (
@@ -15,7 +15,7 @@ function PageDataContainer ({ className, title, backLink, children }) {
       <Container maxW={'container.maxPageW'} px={[0]} py={0}>
         <div className={'PageDataContainer__Header'}>
           <BackButton link={backLink} className={'PageDataContainer__BackLink'}>
-            <ChevronIcon2 w={4} h={4} color={'brand.normal'}/>
+            <ChevronIcon2 w={'8px'} h={'8px'} color={'brand.normal'}/>
           </BackButton>
           {title && <div className={'PageDataContainer__Title'}>{title}</div>}
         </div>
