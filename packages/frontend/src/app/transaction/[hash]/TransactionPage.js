@@ -64,7 +64,6 @@ function Transaction ({ hash }) {
   return (
     <PageDataContainer
       className={'TransactionPage'}
-      backLink={'/transactions'}
       title={'Transaction Info'}
     >
       {transaction.error && <ErrorMessageBlock h={'450px'}/>}

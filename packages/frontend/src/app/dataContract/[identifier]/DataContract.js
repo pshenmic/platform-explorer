@@ -86,7 +86,7 @@ function DataContract ({ identifier }) {
       urlParameters.set('tab', tabs[activeTab])
     }
 
-    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab])
 
   const handlePageClick = ({ selected }) => {
