@@ -461,11 +461,11 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     }
   }
 
-  const isLocked = base58.encode(
+  const bs58Identifier = base58.encode(
     Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
-  ) !== identifier
+  )
 
-  if (isLocked) {
+  if (identifier !== bs58Identifier && bs58Identifier !== '') {
     status = 'locked'
   } else if (aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === undefined) {
     status = 'pending'
