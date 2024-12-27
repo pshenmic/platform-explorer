@@ -747,7 +747,7 @@ Return identity by given identifier
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
-  "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+  "identifier": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ",
   "revision": 0,
   "balance": 49989647300,
   "timestamp": "2024-10-12T18:51:44.592Z",
@@ -1044,6 +1044,7 @@ Response codes:
 ### Transfers by Identity
 Return all transfers made by the given identity
 * `limit` cannot be more then 100
+* `type` cannot be less, then 0 and more then 8
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
@@ -1413,6 +1414,7 @@ POST /transaction/decode
             "type": "domain",
             "action": 0,
             "data": {
+                "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
                 "label": "Microsoft",
                 "normalizedLabel": "m1cr0s0ft",
                 "normalizedParentDomainName": "dash",
