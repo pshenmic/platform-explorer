@@ -263,8 +263,7 @@ impl PostgresDAO {
     pub async fn get_document_by_identifier(&self, identifier: Identifier) -> Result<Option<Document>, PoolError> {
         let client = self.connection_pool.get().await?;
 
-        let stmt = client.prepare_cached("SELECT documents.id, documents.identifier, \
-        documents.document_type_name, documents.transition_type, \
+        let stmt = client.prepare_cached("SELECT documents.id, documents.identifier,\
         data_contracts.identifier,documents.owner,documents.price,\
         documents.deleted,documents.revision,documents.is_system \
         FROM documents \
