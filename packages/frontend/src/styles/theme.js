@@ -108,6 +108,10 @@ export const theme = extendTheme({
       emeralds: '#58F4BC',
       'emeralds-rgb': '88, 244, 188'
     },
+    orange: {
+      default: '#f49a58',
+      'default-rgb': '244, 154, 88'
+    },
     gray: {
       50: '#f0f1f2',
       100: '#e0e3e5',
