@@ -25,8 +25,14 @@ export default function Alias ({ alias, status, children, ellipsis = true, class
     pending: 'Alias is pending'
   }
 
+  const Container = ({ children }) => (
+    titles?.[status]
+      ? <Tooltip content={titles?.[status]} placement={'top'}>{children}</Tooltip>
+      : children
+  )
+
   return (
-    <Tooltip content={titles?.[status]} placement={'top'}>
+    <Container>
       <div className={`Alias ${statusClasses?.[status] || ''} ${ellipsis ? 'Alias--Ellipsis' : ''}  ${className || ''}`}>
         <span className={'Alias__Name'}>
           {dashIndex !== -1
@@ -43,6 +49,6 @@ export default function Alias ({ alias, status, children, ellipsis = true, class
 
         <StatusIcon className={'Alias__LockedIcon'}/>
       </div>
-    </Tooltip>
+    </Container>
   )
 }

@@ -446,7 +446,7 @@ const buildIndexBuffer = (name) => {
 const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   let status = null
 
-  if (aliasInfo.contestedState === null) {
+  if (!aliasInfo.contestedState) {
     return {
       alias,
       status: 'ok',
@@ -458,12 +458,12 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
   )
 
-  if (identifier !== bs58Identifier && bs58Identifier !== '') {
+  if (identifier === bs58Identifier) {
+    status = 'ok'
+  } else if (bs58Identifier !== '' || aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === '') {
     status = 'locked'
   } else if (aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === undefined) {
     status = 'pending'
-  } else {
-    status = 'ok'
   }
 
   return {
