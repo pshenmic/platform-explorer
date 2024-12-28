@@ -446,6 +446,7 @@ const buildIndexBuffer = (name) => {
 const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   let status = null
 
+  
   if (!aliasInfo.contestedState) {
     return {
       alias,
