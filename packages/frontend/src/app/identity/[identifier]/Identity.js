@@ -93,7 +93,7 @@ function Identity ({ identifier }) {
     Api.getDocumentsByIdentity(identifier, documents.props.currentPage + 1, pageSize, 'desc')
       .then(paginatedDataContracts => fetchHandlerSuccess(setDocuments, paginatedDataContracts))
       .catch(err => fetchHandlerError(setDocuments, err))
-  }, [identifier, dataContracts.props.currentPage])
+  }, [identifier, documents.props.currentPage])
 
   useEffect(() => {
     const tab = searchParams.get('tab')
@@ -187,7 +187,6 @@ function Identity ({ identifier }) {
               {!documents.error
                 ? <DocumentsList
                     documents={documents.data.resultSet}
-                    size={'m'}
                     pagination={{
                       onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
                       pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
