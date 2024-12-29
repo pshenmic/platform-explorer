@@ -232,27 +232,7 @@ const decodeStateTransition = async (client, base64) => {
             signature: Buffer.from(key.getSignature()).toString('hex')
           }
         })
-      decoded.setPublicKeyIdsToDisable = (stateTransition.getPublicKeyIdsToDisable() ?? []).map(key => {
-        const { contractBounds } = key.toObject()
-
-        return {
-          contractBounds: contractBounds
-            ? {
-                type: contractBounds.type,
-                id: Identifier.from(Buffer.from(contractBounds.id)).toString(),
-                typeName: contractBounds.document_type_name
-              }
-            : null,
-          id: key.getId(),
-          type: KeyTypeEnum[key.getType()],
-          data: Buffer.from(key.getData()).toString('hex'),
-          publicKeyHash: Buffer.from(key.hash()).toString('hex'),
-          purpose: KeyPurposeEnum[key.getPurpose()],
-          securityLevel: SecurityLevelEnum[key.getSecurityLevel()],
-          readOnly: key.isReadOnly(),
-          signature: Buffer.from(key.getSignature()).toString('hex')
-        }
-      })
+      decoded.setPublicKeyIdsToDisable = stateTransition.getPublicKeyIdsToDisable() ?? []
       decoded.signature = stateTransition.getSignature().toString('hex')
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.raw = stateTransition.toBuffer().toString('hex')
