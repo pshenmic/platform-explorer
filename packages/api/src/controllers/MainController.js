@@ -69,6 +69,7 @@ class MainController {
           timestamp: tdStatus?.highestBlock?.timestamp ?? null
         }
       },
+
       indexer: {
         status: indexerSynced ? 'synced' : 'not synced',
         syncProgress: indexerHeight / tdHeight * 100
