@@ -1,5 +1,6 @@
 const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
+const DocumentTransaction = require('../models/DocumentTransaction')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
 const { decodeStateTransition } = require('../utils')
 
@@ -154,11 +155,14 @@ module.exports = class DocumentsDAO {
 
     const rows = await this.knex(subquery)
       .select('revision', 'gas_used', 'subquery.owner', 'hash', 'timestamp', 'transition_type', 'data')
+      .select(this.knex(subquery).count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)
 
-    console.log()
+    const [row] = rows
 
-    return rows
+    const totalCount = row?.total_count
+
+    return new PaginatedResultSet(rows.map(DocumentTransaction.fromRow), page, limit, Number(totalCount))
   }
 }

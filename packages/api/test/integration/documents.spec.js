@@ -151,6 +151,28 @@ describe('Documents routes', () => {
     })
   })
 
+  describe('getDocumentTransactions()', async () => {
+    it('should return document transactions by identifier', async () => {
+      const [document] = documents.filter(e => !e.document.is_system)
+
+      const { body } = await client.get(`/document/${document.document.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDocument = {
+        revision: document.document.revision,
+        gasUsed: document.transaction.gas_used,
+        owner: document.transaction.owner,
+        hash: document.transaction.hash,
+        timestamp: document.block.timestamp.toISOString(),
+        transitionType: document.document.transition_type,
+        data: {}
+      }
+
+      assert.deepEqual(body.resultSet, [expectedDocument])
+    })
+  })
+
   describe('getDocumentsByDataContract()', async () => {
     it('should return default set of documents', async () => {
       const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents`)
