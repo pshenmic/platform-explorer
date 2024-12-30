@@ -72,7 +72,7 @@ module.exports = class IdentitiesDAO {
       .limit(1)
 
     const statisticSubquery = this.knex('state_transitions')
-      .whereRaw(`owner = identifier and type=${IDENTITY_CREDIT_WITHDRAWAL}`)
+      .whereRaw('owner = identifier and type = ?', [IDENTITY_CREDIT_WITHDRAWAL])
       .as('statistic')
 
     const rows = await this.knex.with('with_alias', mainQuery)
@@ -113,12 +113,12 @@ module.exports = class IdentitiesDAO {
       .select(
         this.knex(statisticSubquery)
           .count('id')
-          .whereRaw(`type=${IDENTITY_CREDIT_WITHDRAWAL}`)
+          .whereRaw('type=?', [IDENTITY_CREDIT_WITHDRAWAL])
           .as('total_withdrawals'))
       .select(
         this.knex(statisticSubquery)
           .count('id')
-          .whereRaw(`type=${IDENTITY_TOP_UP}`)
+          .whereRaw('type=?', [IDENTITY_TOP_UP])
           .as('total_top_ups'))
       .from('with_alias')
 
@@ -392,14 +392,17 @@ module.exports = class IdentitiesDAO {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
-    let searchQuery = `(transfers.sender = '${identifier}' OR transfers.recipient = '${identifier}')`
+    let searchQuery = '(transfers.sender = ? OR transfers.recipient = ?)'
+    const searchBingings = [identifier, identifier]
 
     if (typeof type === 'number') {
-      searchQuery = searchQuery + ` AND state_transitions.type = ${type}`
+      searchQuery = searchQuery + ' AND state_transitions.type = ?'
+      searchBingings.push(type)
     }
 
     if (hash) {
-      searchQuery = searchQuery + ` AND state_transitions.hash = '${hash}'`
+      searchQuery = searchQuery + ' AND state_transitions.hash = ?'
+      searchBingings.push(hash)
     }
 
     const subquery = this.knex('transfers')
@@ -412,7 +415,7 @@ module.exports = class IdentitiesDAO {
         'state_transitions.gas_used as gas_used'
       )
       .select(this.knex.raw(`rank() over (order by transfers.id ${order}) rank`))
-      .whereRaw(searchQuery)
+      .whereRaw(searchQuery, searchBingings)
       .leftJoin('state_transitions', 'state_transitions.hash', 'transfers.state_transition_hash')
 
     const rows = await this.knex.with('with_alias', subquery)

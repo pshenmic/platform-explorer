@@ -83,12 +83,6 @@ module.exports = class DocumentsDAO {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
-    let query = `data_contracts.identifier = '${identifier}'`
-
-    if (typeName) {
-      query = `${query} and document_type_name='${typeName}'`
-    }
-
     const dataSubquery = this.knex('documents')
       .select('documents.data as data', 'documents.identifier as identifier')
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.revision desc) rank'))
@@ -108,7 +102,7 @@ module.exports = class DocumentsDAO {
         'documents.deleted as deleted', 'documents.is_system as is_system')
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
-      .whereRaw(query)
+      .whereRaw(`data_contracts.identifier = ? ${typeName ? 'and document_type_name = ?' : ''}`, typeName ? [identifier, typeName] : [identifier])
 
     const filteredDocuments = this.knex.with('with_alias', subquery)
       .select('id', 'identifier', 'document_owner', 'rank', 'revision', 'data_contract_identifier',
