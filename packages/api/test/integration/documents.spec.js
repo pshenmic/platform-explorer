@@ -68,6 +68,23 @@ describe('Documents routes', () => {
 
       documents.push({ transaction: documentTransaction, block, dataContract, document })
     }
+
+    for (let i = 5; i < 30; i++) {
+      const documentTransaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        type: StateTransitionEnum.DATA_CONTRACT_CREATE,
+        owner: identity.identifier,
+        data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ=='
+      })
+      const document = await fixtures.document(knex, {
+        data_contract_id: dataContract.id,
+        state_transition_hash: documentTransaction.hash,
+        owner: identity.identifier,
+        document_type_name: 'test'
+      })
+
+      documents.push({ transaction: documentTransaction, block, dataContract, document })
+    }
   })
 
   after(async () => {
@@ -141,7 +158,7 @@ describe('Documents routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, 55)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
@@ -165,13 +182,44 @@ describe('Documents routes', () => {
       assert.deepEqual(body.resultSet, expectedDocuments)
     })
 
+    it('should return default set of documents by type_name', async () => {
+      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?type_name=test`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, 25)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({document})=>document.document_type_name==='test')
+        .slice(0, 10)
+        .map(({ block, document, dataContract, transaction }) => ({
+          identifier: document.identifier,
+          dataContractIdentifier: dataContract.identifier,
+          revision: document.revision,
+          txHash: document.is_system ? null : transaction.hash,
+          deleted: document.deleted,
+          data: JSON.stringify(document.data),
+          timestamp: document.is_system ? null : block.timestamp.toISOString(),
+          owner: document.owner,
+          isSystem: document.is_system,
+          entropy: null,
+          typeName: 'test',
+          prefundedBalance: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
     it('should return default set of documents desc', async () => {
       const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, 55)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
@@ -189,7 +237,7 @@ describe('Documents routes', () => {
           owner: document.owner,
           isSystem: document.is_system,
           entropy: null,
-          typeName: 'type_name',
+          typeName: 'test',
           prefundedBalance: null
         }))
 
@@ -241,7 +289,7 @@ describe('Documents routes', () => {
           owner: document.owner,
           isSystem: document.is_system,
           entropy: null,
-          typeName: 'type_name',
+          typeName: 'test',
           prefundedBalance: null
         }))
 
