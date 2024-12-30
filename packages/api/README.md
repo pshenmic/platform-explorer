@@ -63,6 +63,7 @@ Reference:
 * [Identities](#identities)
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
+* [Document Transactions](#document-transactions)
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
@@ -720,18 +721,71 @@ Response codes:
 ### Document by Identifier
 Return last revision of the document by given identifier
 ```
-GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
+GET /document/47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ
 
 {
-    identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    dataContractIdentifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    revision: 0,
-    txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-    deleted: false
-    data: "{}",
-    timestamp: "2024-03-18T10:13:54.150Z",
-    owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    isSystem: false
+  "identifier": "47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ",
+  "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+  "revision": 1,
+  "txHash": "5CA1D01931D7C236194D3364D410946FAF6C12FDC0FB56DB3B05ADB881B43B1A",
+  "deleted": false,
+  "data": "{\"label\":\"web\",\"records\":{\"identity\":\"8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6\"},\"preorderSalt\":\"HVKEY/12WglST1QCqxH9/yJsp8MMb+1GLc8xWw23PCI=\",\"subdomainRules\":{\"allowSubdomains\":false},\"normalizedLabel\":\"web\",\"parentDomainName\":\"dash\",\"normalizedParentDomainName\":\"dash\"}",
+  "timestamp": "2024-12-27T14:31:00.798Z",
+  "isSystem": false,
+  "entropy": "7beffbed25071ab26c0c7c50b3bab098f42126f2a91f9355f492a2d83beb74aa",
+  "prefundedBalance": {
+    "parentNameAndLabel": 20000000000
+  },
+  "typeName": "domain",
+  "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
+}
+```
+Response codes:
+```
+200: OK
+404: Not found
+500: Internal Server Error
+```
+---
+### Document Transactions
+Return transactions for selected document
+
+* Valid `order_by` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+
+```
+GET /document/ELEeNjGbqCsHNtkoJ51pFHvUyCk5sxgU1jYVuySMhQwN/transactions
+
+{
+  "resultSet": [
+    {
+      "revision": 1,
+      "gasUsed": 38201380,
+      "owner": "Gn15UqiQ6gpqzXcDhv4adwsJ1KgpG6xx9e3rij9n4ctP",
+      "hash": "437C949982B41E00506B88C62A94B3E032FADFB010BCA91F3A4C874EB75F9E23",
+      "timestamp": "2024-08-25T18:32:24.454Z",
+      "transitionType": 0,
+      "data": {
+        "label": "BurgerJoint2",
+        "records": {
+          "identity": "Gn15UqiQ6gpqzXcDhv4adwsJ1KgpG6xx9e3rij9n4ctP"
+        },
+        "preorderSalt": "GV43pQXjfaSZ5FryGKsyKJBja2L+fwxXz9Npe0MH2WQ=",
+        "subdomainRules": {
+          "allowSubdomains": false
+        },
+        "normalizedLabel": "burgerj01nt2",
+        "parentDomainName": "dash",
+        "normalizedParentDomainName": "dash"
+      }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1
+  }
 }
 ```
 Response codes:
@@ -744,28 +798,32 @@ Response codes:
 ### Documents by Data Contract
 Return all documents by the given data contract identifier
 * `limit` cannot be more then 100
+* `type_name` optional
 ```
-GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
+GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?type_name=domain&page=1&limit=10&order=desc
 
 {
-    pagination: {
-        page: 1,
-        limit: 10,
-        total: 10
-    },
-    resultSet: [
+  "resultSet": [
     {
-        identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        dataContractIdentifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        revision: 0,
-        txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        deleted: false
-        data: "{}",
-        timestamp: "2024-03-18T10:13:54.150Z",
-        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        isSystem: false
+      "identifier": "47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "revision": 1,
+      "txHash": "5CA1D01931D7C236194D3364D410946FAF6C12FDC0FB56DB3B05ADB881B43B1A",
+      "deleted": false,
+      "data": "{\"label\":\"web\",\"records\":{\"identity\":\"8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6\"},\"preorderSalt\":\"HVKEY/12WglST1QCqxH9/yJsp8MMb+1GLc8xWw23PCI=\",\"subdomainRules\":{\"allowSubdomains\":false},\"normalizedLabel\":\"web\",\"parentDomainName\":\"dash\",\"normalizedParentDomainName\":\"dash\"}",
+      "timestamp": "2024-12-27T14:31:00.798Z",
+      "isSystem": false,
+      "entropy": null,
+      "prefundedBalance": null,
+      "typeName": "domain",
+      "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
     }, ...
-    ]
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 521
+  }
 }
 ```
 Response codes:
@@ -1006,28 +1064,32 @@ Response codes:
 ### Documents by Identity
 Return all documents by the given identity
 * `limit` cannot be more then 100
+* `type_name` document type name _optional_
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
+GET /identity/8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6/documents?type_name=domain&page=1&limit=10&order=desc
 
 {
-    pagination: {
-        page: 1,
-        limit: 10,
-        total: 10
-    },
-    resultSet: [
+  "resultSet": [
     {
-        identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        dataContractIdentifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        revision: 0,
-        txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        deleted: false,
-        data: null,
-        timestamp: "2024-03-18T10:13:54.150Z",
-        isSystem: false
+      "identifier": "47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "revision": 1,
+      "txHash": "5CA1D01931D7C236194D3364D410946FAF6C12FDC0FB56DB3B05ADB881B43B1A",
+      "deleted": false,
+      "data": null,
+      "timestamp": "2024-12-27T14:31:00.798Z",
+      "isSystem": false,
+      "entropy": null,
+      "prefundedBalance": null,
+      "typeName": "domain",
+      "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
     }, ...
-    ]
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 4
+  }
 }
 ```
 Response codes:

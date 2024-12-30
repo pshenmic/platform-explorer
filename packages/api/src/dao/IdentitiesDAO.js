@@ -322,7 +322,7 @@ module.exports = class IdentitiesDAO {
     })), page, limit, totalCount)
   }
 
-  getDocumentsByIdentity = async (identifier, page, limit, order) => {
+  getDocumentsByIdentity = async (identifier, typeName, page, limit, order) => {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
@@ -332,6 +332,7 @@ module.exports = class IdentitiesDAO {
         'documents.deleted as deleted', 'documents.is_system as document_is_system')
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
       .where('documents.owner', '=', identifier)
+      .andWhereRaw(typeName ? 'document_type_name = ?' : '?', [typeName ?? true])
 
     const filteredDocuments = this.knex.with('with_alias', subquery)
       .select('with_alias.id as document_id', 'identifier', 'document_owner', 'revision', 'data_contract_id',
