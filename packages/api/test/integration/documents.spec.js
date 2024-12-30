@@ -193,7 +193,7 @@ describe('Documents routes', () => {
       assert.equal(body.pagination.limit, 10)
 
       const expectedDocuments = documents
-        .filter(({document})=>document.document_type_name==='test')
+        .filter(({ document }) => document.document_type_name === 'test')
         .slice(0, 10)
         .map(({ block, document, dataContract, transaction }) => ({
           identifier: document.identifier,
