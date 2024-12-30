@@ -19,6 +19,6 @@ module.exports = class DocumentTransaction {
 
   /* eslint-disable-next-line camelcase */
   static fromRow ({ revision, gas_used, owner, hash, timestamp, transition_type, data, total_count }) {
-    return new DocumentTransaction(Number(revision), Number(gas_used), owner, hash, timestamp, Number(transition_type), data, Number(total_count))
+    return new DocumentTransaction(Number(revision), Number(gas_used), owner?.trim(), hash, timestamp, Number(transition_type), data, Number(total_count))
   }
 }
