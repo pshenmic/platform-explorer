@@ -57,6 +57,9 @@ const schemaTypes = [
       },
       gas_max: {
         type: ['number', 'null']
+      },
+      type_name: {
+        type: ['string', 'null']
       }
     }
   },

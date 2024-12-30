@@ -960,6 +960,9 @@ describe('Identities routes', () => {
         txHash: _document.transaction.hash,
         deleted: false,
         data: null,
+        entropy: null,
+        prefundedBalance: null,
+        typeName: 'type_name',
         timestamp: _document.block.timestamp.toISOString(),
         isSystem: false
       }))
@@ -1016,6 +1019,9 @@ describe('Identities routes', () => {
           txHash: _document.transaction.hash,
           deleted: false,
           data: null,
+          entropy: null,
+          prefundedBalance: null,
+          typeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           isSystem: false
         }))
@@ -1072,6 +1078,9 @@ describe('Identities routes', () => {
           txHash: _document.transaction.hash,
           deleted: false,
           data: null,
+          entropy: null,
+          prefundedBalance: null,
+          typeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           isSystem: false
         }))
@@ -1128,6 +1137,9 @@ describe('Identities routes', () => {
           txHash: _document.transaction.hash,
           deleted: false,
           data: null,
+          entropy: null,
+          prefundedBalance: null,
+          typeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           isSystem: false
         }))

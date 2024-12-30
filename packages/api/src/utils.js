@@ -71,7 +71,8 @@ const decodeStateTransition = async (client, base64) => {
           dataContractId: documentTransition.getDataContractId().toString(),
           revision: documentTransition.getRevision(),
           type: documentTransition.getType(),
-          action: documentTransition.getAction()
+          action: documentTransition.getAction(),
+          entropy: Buffer.from(documentTransition.getEntropy() ?? []).toString('hex')
         }
 
         switch (documentTransition.getAction()) {

@@ -55,7 +55,10 @@ describe('Documents routes', () => {
 
     for (let i = 5; i < 30; i++) {
       const documentTransaction = await fixtures.transaction(knex, {
-        block_hash: block.hash, type: StateTransitionEnum.DATA_CONTRACT_CREATE, owner: identity.identifier
+        block_hash: block.hash,
+        type: StateTransitionEnum.DATA_CONTRACT_CREATE,
+        owner: identity.identifier,
+        data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ=='
       })
       const document = await fixtures.document(knex, {
         data_contract_id: dataContract.id,
@@ -88,6 +91,9 @@ describe('Documents routes', () => {
         deleted: document.document.deleted,
         data: JSON.stringify(document.document.data),
         timestamp: document.block.timestamp.toISOString(),
+        entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
+        typeName: 'type_name',
+        prefundedBalance: null,
         owner: document.document.owner,
         isSystem: false
       }
@@ -110,6 +116,9 @@ describe('Documents routes', () => {
         deleted: document.document.deleted,
         data: JSON.stringify(document.document.data),
         timestamp: null,
+        entropy: null,
+        typeName: 'type_name',
+        prefundedBalance: null,
         owner: document.document.owner,
         isSystem: true
       }
@@ -147,7 +156,10 @@ describe('Documents routes', () => {
           data: JSON.stringify(document.data),
           timestamp: document.is_system ? null : block.timestamp.toISOString(),
           owner: document.owner,
-          isSystem: document.is_system
+          isSystem: document.is_system,
+          entropy: null,
+          typeName: 'type_name',
+          prefundedBalance: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -175,7 +187,10 @@ describe('Documents routes', () => {
           data: JSON.stringify(document.data),
           timestamp: document.is_system ? null : block.timestamp.toISOString(),
           owner: document.owner,
-          isSystem: document.is_system
+          isSystem: document.is_system,
+          entropy: null,
+          typeName: 'type_name',
+          prefundedBalance: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -198,7 +213,10 @@ describe('Documents routes', () => {
           data: JSON.stringify(document.data),
           timestamp: document.is_system ? null : block.timestamp.toISOString(),
           owner: document.owner,
-          isSystem: document.is_system
+          isSystem: document.is_system,
+          entropy: null,
+          typeName: 'type_name',
+          prefundedBalance: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -221,7 +239,10 @@ describe('Documents routes', () => {
           data: JSON.stringify(document.data),
           timestamp: document.is_system ? null : block.timestamp.toISOString(),
           owner: document.owner,
-          isSystem: document.is_system
+          isSystem: document.is_system,
+          entropy: null,
+          typeName: 'type_name',
+          prefundedBalance: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)

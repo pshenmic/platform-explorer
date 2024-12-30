@@ -148,6 +148,19 @@ module.exports = ({
       }
     },
     {
+      path: '/document/:identifier/transactions',
+      method: 'GET',
+      handler: documentsController.getDocumentTransactions,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
       path: '/identities',
       method: 'GET',
       handler: identitiesController.getIdentities,
