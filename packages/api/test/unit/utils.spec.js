@@ -359,26 +359,32 @@ describe('Utils', () => {
         }
       }
 
-      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, {
+        alias: mockVote.alias,
+        timestamp: ''
+      }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
       assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'ok',
         contested: true,
-        timestamp: null
+        timestamp: ''
       }))
     })
 
     it('should return ok if we not contested', () => {
       const mockVote = { contestedState: null }
 
-      const info = utils.getAliasStateByVote(mockVote, { alias: 'alias343' }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, {
+        alias: 'alias343',
+        timestamp: ''
+      }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
       assert.deepEqual(info, Alias.fromObject({
         alias: 'alias343',
         status: 'ok',
         contested: false,
-        timestamp: null
+        timestamp: ''
       }))
     })
 
@@ -398,13 +404,16 @@ describe('Utils', () => {
         }
       }
 
-      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, {
+        alias: mockVote.alias,
+        timestamp: ''
+      }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
       assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'pending',
         contested: true,
-        timestamp: null
+        timestamp: ''
       }))
     })
 
@@ -432,13 +441,16 @@ describe('Utils', () => {
         }
       }
 
-      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, {
+        alias: mockVote.alias,
+        timestamp: ''
+      }, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
       assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'locked',
         contested: true,
-        timestamp: null
+        timestamp: ''
       }))
     })
 
@@ -466,13 +478,16 @@ describe('Utils', () => {
         }
       }
 
-      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, {
+        alias: mockVote.alias,
+        timestamp: ''
+      }, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
       assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'locked',
         contested: true,
-        timestamp: null
+        timestamp: ''
       }))
     })
   })
