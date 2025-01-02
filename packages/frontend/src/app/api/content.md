@@ -50,65 +50,46 @@ Returns basic stats and epoch info
 HTTP /status
 
 {
-    epoch: {
-        number: 1145,
-        firstBlockHeight: 5380,
-        firstCoreBlockHeight: 1096730,
-        startTime: 1725475350064,
-        feeMultiplier: 1,
-        endTime: 1725478950064
-    },
-    identitiesCount: 12,
-    totalCredits: 100000,
-    totalCollectedFeesDay: 167703567170,
-    transactionsCount: 3,
-    transfersCount: 0,
-    dataContractsCount: 1,
-    documentsCount: 1,
-    network: "dash-testnet-40",
-    api: {
-        version: "1.0.0",
-        block: {
-            height: 20153,
-            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-            timestamp: "2024-06-06T21:50:20.949Z"
-        }
   "epoch": {
-    "number": 3640,
-    "firstBlockHeight": 72534,
-    "firstCoreBlockHeight": 1160707,
-    "startTime": 1734457229495,
+    "number": 3926,
+    "firstBlockHeight": 77795,
+    "firstCoreBlockHeight": 1167247,
+    "startTime": 1735486842745,
     "feeMultiplier": 1,
-    "endTime": 1734460829495
+    "endTime": 1735490442745
   },
-  "transactionsCount": 25912,
-  "totalCredits": 7288089799960610,
-  "totalCollectedFeesDay": 12733263640,
-  "transfersCount": 1849,
-  "dataContractsCount": 630,
-  "documentsCount": 15384,
-  "identitiesCount": 712,
+  "transactionsCount": 201,
+  "totalCredits": 7797729400736590,
+  "totalCollectedFeesDay": 0,
+  "transfersCount": 44,
+  "dataContractsCount": 39,
+  "documentsCount": 115,
+  "identitiesCount": 62,
   "network": "dash-testnet-51",
   "api": {
-    "version": "1.0.7",
+    "version": "1.0.8",
     "block": {
-      "height": 72555,
-      "hash": "EDA1CDF601224CD3ED168D35B4699DE2796F774B526103C64D371EF3AAFD8274",
-      "timestamp": "2024-12-17T17:57:08.758Z"
+      "height": 919,
+      "hash": "0B18C97D80A5480635DCA717B53ACE8A8FF6D1EE6DD99A73AEBC8207AA23ACD3",
+      "timestamp": "2024-08-26T22:50:21.503Z"
     }
   },
   "tenderdash": {
     "version": "1.4.0",
     "block": {
-      "height": 72555,
-      "hash": "EDA1CDF601224CD3ED168D35B4699DE2796F774B526103C64D371EF3AAFD8274",
-      "timestamp": "2024-12-17T17:57:08.758Z"
+      "height": 77800,
+      "hash": "1AC55D4514D007461AB44D2DF23CFEF36AD8EAA11932C146A05D8635D7DD40E7",
+      "timestamp": "2024-12-29T15:55:49.194Z"
     }
+  },
+  "indexer": {
+    "status": "syncing",
+    "syncProgress": 1.18123393316195
   },
   "versions": {
     "software": {
-      "dapi": "1.5.1",
-      "drive": "1.6.2",
+      "dapi": "1.7.1",
+      "drive": "1.7.1",
       "tenderdash": "1.4.0"
     },
     "protocol": {
@@ -117,8 +98,8 @@ HTTP /status
         "block": 14
       },
       "drive": {
-        "latest": 6,
-        "current": 6
+        "latest": 7,
+        "current": 7
       }
     }
   }

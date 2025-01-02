@@ -459,6 +459,10 @@ describe('Other routes', () => {
         dataContractsCount: 1,
         documentsCount: 1,
         network: null,
+        indexer: {
+          status: 'syncing',
+          syncProgress: (blocks.length) / mockTDStatus?.highestBlock?.height * 100
+        },
         api: {
           version: require('../../package.json').version,
           block: {

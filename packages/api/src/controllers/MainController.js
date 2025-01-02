@@ -38,6 +38,11 @@ class MainController {
 
     const epoch = epochInfo ? Epoch.fromObject(epochInfo) : null
 
+    const tdHeight = tdStatus?.highestBlock?.height
+    const indexerHeight = blocks?.pagination.total
+
+    const indexerSynced = (tdHeight - indexerHeight) <= 1
+
     response.send({
       epoch,
       transactionsCount: stats?.transactionsCount,
@@ -63,6 +68,10 @@ class MainController {
           hash: tdStatus?.highestBlock?.hash ?? null,
           timestamp: tdStatus?.highestBlock?.timestamp ?? null
         }
+      },
+      indexer: {
+        status: indexerSynced ? 'synced' : 'syncing',
+        syncProgress: indexerHeight / tdHeight * 100
       },
       versions: {
         software: {
