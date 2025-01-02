@@ -20,7 +20,6 @@ function IdentitiesListItem ({ identity }) {
             ? <Alias
                 className={'IdentitiesListItem__Alias'}
                 alias={activeAlias.alias}
-                status={activeAlias.status}
               />
             : <Identifier
                 className={'IdentitiesListItem__Identifier'}

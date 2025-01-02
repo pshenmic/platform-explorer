@@ -1,9 +1,9 @@
 import { Container } from '@chakra-ui/react'
-import Link from 'next/link'
 import { ChevronIcon2 } from '../icons'
+import BackButton from '../Buttons/BackButton'
 import './PageDataContainer.scss'
 
-function PageDataContainer ({ className, title, backLink, children }) {
+function PageDataContainer ({ className, title, children }) {
   return (
     <Container
       className={`PageDataContainer ${className || ''}`}
@@ -14,10 +14,9 @@ function PageDataContainer ({ className, title, backLink, children }) {
     >
       <Container maxW={'container.maxPageW'} px={[0]} py={0}>
         <div className={'PageDataContainer__Header'}>
-          {backLink &&
-            <Link href={backLink} className={'PageDataContainer__BackLink'}>
-              <ChevronIcon2 w={'8px'} h={'8px'} transform={'rotate(180deg)'} color='brand.normal'/>
-            </Link>}
+          <BackButton className={'PageDataContainer__BackLink'}>
+            <ChevronIcon2 w={'8px'} h={'8px'} color={'brand.normal'}/>
+          </BackButton>
           {title && <div className={'PageDataContainer__Title'}>{title}</div>}
         </div>
 

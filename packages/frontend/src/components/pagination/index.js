@@ -1,6 +1,7 @@
 import './Pagination.scss'
 
 import ReactPaginate from 'react-paginate'
+import { ChevronIcon } from '../ui/icons'
 
 function Pagination ({
   onPageChange,
@@ -16,12 +17,12 @@ function Pagination ({
   return (
     <ReactPaginate
       breakLabel={'...'}
-      nextLabel={'>'}
+      nextLabel={<ChevronIcon/>}
       onPageChange={onPageChange}
       pageRangeDisplayed={pageRangeDisplayed}
       marginPagesDisplayed={marginPagesDisplayed}
       pageCount={pageCount}
-      previousLabel={'<'}
+      previousLabel={<ChevronIcon/>}
       pageClassName={'PageItem'}
       pageLinkClassName={'PageLink'}
       previousClassName={'PageItem PageItem--Previous'}

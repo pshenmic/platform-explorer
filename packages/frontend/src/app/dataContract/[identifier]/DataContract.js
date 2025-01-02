@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import * as Api from '../../../util/Api'
-import Pagination from '../../../components/pagination'
 import DocumentsList from '../../../components/documents/DocumentsList'
-import { LoadingLine, LoadingBlock, LoadingList } from '../../../components/loading'
+import { LoadingLine, LoadingBlock } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import ImageGenerator from '../../../components/imageGenerator'
@@ -87,7 +86,7 @@ function DataContract ({ identifier }) {
       urlParameters.set('tab', tabs[activeTab])
     }
 
-    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab])
 
   const handlePageClick = ({ selected }) => {
@@ -218,25 +217,19 @@ function DataContract ({ identifier }) {
                     <TabPanel p={0}>
                         <Box>
                           {!documents.error
-                            ? !documents.loading
-                                ? <Box mt={4}>
-                                    <DocumentsList
-                                        documents={documents.data.resultSet}
-                                        columnsCount={2}
-                                    />
-                                </Box>
-                                : <LoadingList itemsCount={9}/>
+                            ? <Box mt={4}>
+                                <DocumentsList
+                                  documents={documents.data.resultSet}
+                                  loading={documents.loading}
+                                  pagination={{
+                                    onPageChange: handlePageClick,
+                                    pageCount,
+                                    forcePage: currentPage
+                                  }}
+                                />
+                              </Box>
                             : <Container h={20}><ErrorMessageBlock/></Container>
-                            }
-                            {documents.data?.resultSet?.length > 0 &&
-                                <div className={'ListNavigation ListNavigation--Center'}>
-                                    <Pagination
-                                        onPageChange={handlePageClick}
-                                        pageCount={pageCount}
-                                        forcePage={currentPage}
-                                    />
-                                </div>
-                            }
+                          }
                         </Box>
                     </TabPanel>
                     <TabPanel px={0}>

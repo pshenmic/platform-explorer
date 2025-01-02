@@ -5,13 +5,11 @@ import { useState, useEffect, useCallback } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { CreditsBlock, InfoLine, DateBlock, Identifier } from '../../../components/data'
 import TransactionData from './TransactionData'
-import { CheckCircleIcon, WarningTwoIcon } from '@chakra-ui/icons'
 import { ValueContainer, PageDataContainer } from '../../../components/ui/containers'
 import { ValueCard } from '../../../components/cards'
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { CopyButton } from '../../../components/ui/Buttons'
-import { Badge } from '@chakra-ui/react'
-import { TypeBadge, FeeMultiplier } from '../../../components/transactions'
+import { TypeBadge, FeeMultiplier, TransactionStatusBadge } from '../../../components/transactions'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { networks } from '../../../constants/networks'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
@@ -57,14 +55,9 @@ function Transaction ({ hash }) {
 
   useEffect(fetchData, [hash, decodeTx])
 
-  const StatusIcon = transaction.data?.status === 'SUCCESS'
-    ? <CheckCircleIcon color={'green.default'} mr={'5px'}/>
-    : <WarningTwoIcon color={'red.default'} mr={'5px'}/>
-
   return (
     <PageDataContainer
       className={'TransactionPage'}
-      backLink={'/transactions'}
       title={'Transaction Info'}
     >
       {transaction.error && <ErrorMessageBlock h={'450px'}/>}
@@ -127,14 +120,7 @@ function Transaction ({ hash }) {
             title={'Status'}
             value={(
               <div className={'TransactionPage__StatusContainer'}>
-                <Badge
-                  className={'TransactionPage__StatusBadge'}
-                  lineHeight={'20px'}
-                  colorScheme={transaction.data?.status === 'SUCCESS' ? 'green' : 'red'}
-                >
-                  {StatusIcon}
-                  {transaction.data?.status}
-                </Badge>
+                <TransactionStatusBadge status={transaction.data?.status} />
                 {transaction.data?.error &&
                   <ValueContainer className={'TransactionPage__ErrorContainer'}>
                     {transaction.data.error}

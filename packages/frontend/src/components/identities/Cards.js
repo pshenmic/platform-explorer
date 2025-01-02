@@ -25,10 +25,7 @@ function IdentityCard ({ identity, rate, loading = false }) {
                       {(() => {
                         const activeAlias = identity?.aliases?.find(alias => alias.status === 'ok')
                         return activeAlias
-                          ? <Alias
-                              alias={activeAlias.alias}
-                              status={activeAlias.status}
-                            />
+                          ? <Alias alias={activeAlias.alias}/>
                           : <Identifier styles={['highlight-both']}>
                               {identity.identifier}
                             </Identifier>

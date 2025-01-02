@@ -2,7 +2,7 @@ import { Box, Flex } from '@chakra-ui/react'
 import Image from 'next/image'
 import './footer.scss'
 import version from './version'
-import { BigClockIcon } from '../../ui/icons'
+import { BigClockIcon, PshenmicLogoIcon } from '../../ui/icons'
 import LocalTime from './LocalTime'
 
 const socialNetwork = [
@@ -30,12 +30,13 @@ function Footer () {
 
           <Flex flexDirection={'column'} justifyContent={'center'}>
             <a
+              className={'Footer__PshenmicLogo'}
               href={'https://pshenmic.dev/'}
               target={'_blank'}
               rel={'noopener noreferrer'}
               aria-label={'Go to Pschenmic Dev'}
             >
-              pshenmic.dev
+              <PshenmicLogoIcon w={'95px'} h={'8px'}/>
             </a>
             <LocalTime className={'Footer__LocalTime'}/>
           </Flex>

@@ -54,6 +54,7 @@ const decodeStateTransition = async (client, base64) => {
         requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null
       }
 
+      decoded.version = stateTransition.getDataContract().getVersion()
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
       decoded.identityNonce = Number(stateTransition.getIdentityNonce())
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
@@ -233,7 +234,7 @@ const decodeStateTransition = async (client, base64) => {
             signature: Buffer.from(key.getSignature()).toString('hex')
           }
         })
-      decoded.setPublicKeyIdsToDisable = (stateTransition.getPublicKeyIdsToDisable() ?? [])
+      decoded.setPublicKeyIdsToDisable = stateTransition.getPublicKeyIdsToDisable() ?? []
       decoded.signature = stateTransition.getSignature().toString('hex')
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.raw = stateTransition.toBuffer().toString('hex')
@@ -270,6 +271,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.pooling = PoolingEnum[stateTransition.getPooling()]
       decoded.raw = stateTransition.toBuffer().toString('hex')
+      decoded.nonce = Number(stateTransition.getNonce())
 
       break
     }
@@ -285,6 +287,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.raw = stateTransition.toBuffer().toString('hex')
       decoded.proTxHash = stateTransition.getProTxHash().toString('hex')
+      decoded.nonce = Number(stateTransition.getIdentityContractNonce())
 
       break
     }
@@ -436,16 +439,16 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     })
   }
 
-  const isLocked = base58.encode(
+  const bs58Identifier = base58.encode(
     Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
-  ) !== identifier
+  )
 
-  if (isLocked) {
+  if (identifier === bs58Identifier) {
+    status = 'ok'
+  } else if (bs58Identifier !== '' || aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === '') {
     status = 'locked'
   } else if (aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === undefined) {
     status = 'pending'
-  } else {
-    status = 'ok'
   }
 
   return Alias.fromObject({

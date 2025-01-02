@@ -101,6 +101,25 @@ const BroadcastedIcon = (props) => (
   </Icon>
 )
 
+const CheckmarkIcon = (props) => (
+  <Icon viewBox='0 0 12 13' {...props}>
+    <svg width='12' height='13' viewBox='0 0 12 13' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <circle cx='6' cy='6.5' r='6' fill='#1CC400'/>
+      <path d='M3.33301 6.16667L5.33301 8.16667L8.99967 4.5' stroke='white' strokeWidth='1.33333' strokeLinecap='round'/>
+    </svg>
+  </Icon>
+)
+
+const ErrorCircleIcon = (props) => (
+  <Icon viewBox='0 0 12 13' {...props}>
+    <svg width='12' height='13' viewBox='0 0 12 13' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <circle cx='6' cy='6.5' r='6' fill='#F45858'/>
+      <path d='M6 8.05273L6 3.05273' stroke='white' strokeLinecap='round'/>
+      <path d='M6 9.94737L6 9.94727' stroke='white' strokeLinecap='round'/>
+    </svg>
+  </Icon>
+)
+
 const BigClockIcon = (props) => (
   <Icon viewBox='0 0 35 34' {...props}>
     <svg width='35' height='34' viewBox='0 0 35 34' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -111,6 +130,15 @@ const BigClockIcon = (props) => (
       <path d='M16 12C16 11.4477 16.4477 11 17 11C17.5523 11 18 11.4477 18 12V19H16V12Z' fill='white'/>
       <path d='M26 19C26.5523 19 27 19.4477 27 20C27 20.5523 26.5523 21 26 21L16 21L16 19L26 19Z' fill='white'/>
     </svg>
+  </Icon>
+)
+
+const PshenmicLogoIcon = (props) => (
+  <Icon viewBox='0 0 95 8' {...props}>
+    <path
+      d='M0 8V2H6V3H7V5H6V6H2V8H0ZM2 5H5V3H2V5ZM8 7V6H13V5H9V4H8V3H9V2H14V3H10V4H14V5H15V6H14V7H8ZM16 7V0H18V2H22V3H23V7H21V3H18V7H16ZM25 7V6H24V3H25V2H30V3H31V5H26V6H30V7H25ZM26 4H29V3H26V4ZM32 7V2H38V3H39V7H37V3H34V7H32ZM40 7V2H46V3H47V7H45V3H44V7H42V3H41V7H40ZM51 1V0H53V1H51ZM49 7V6H51V3H50V2H53V6H55V7H49ZM57 7V6H56V3H57V2H63V3H58V6H63V7H57ZM66 7V5H68V7H66ZM73 7V6H72V3H73V2H77V0H79V7H73ZM74 6H77V3H74V6ZM81 7V6H80V3H81V2H86V3H87V5H82V6H86V7H81ZM82 4H85V3H82V4ZM91 7V6H90V5H89V2H91V5H93V2H95V5H94V6H93V7H91Z'
+      fill='currentColor'
+    />
   </Icon>
 )
 
@@ -127,5 +155,8 @@ export {
   CloseIcon,
   ChevronIcon,
   ChevronIcon2,
-  BigClockIcon
+  BigClockIcon,
+  CheckmarkIcon,
+  ErrorCircleIcon,
+  PshenmicLogoIcon
 }

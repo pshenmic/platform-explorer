@@ -1,8 +1,8 @@
-import './ValidatorCard.scss'
 import { Identifier, InfoLine, CreditsBlock } from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import Link from 'next/link'
+import './ValidatorCard.scss'
 
 export default function ValidatorCard ({ validator, rate, className }) {
   return (
@@ -54,62 +54,65 @@ export default function ValidatorCard ({ validator, rate, className }) {
 
       <HorisontalSeparator className={'ValidatorCard__Separator'}/>
 
-      {/* Will be activated later /*}
+      <div className={'ValidatorCard__CommonInfo'}>
 
-      {/* <InfoLine
-        className={'ValidatorCard__InfoLine'}
-        title={'Creation Date'}
-        value={<DateBlock timestamp={1727887511000}/>}
-        loading={validator.loading}
-        error={validator.error}
-      /> */}
+        {/* Will be activated later /*}
 
-      {/* <InfoLine
-        className={'ValidatorCard__InfoLine'}
-        title={'Block Height'}
-        value={(
-          <span className={'ValidatorCard__BlockHeighValue'}>#10225</span>
-        )}
-        loading={validator.loading}
-        error={validator.error}
-      /> */}
+        {/* <InfoLine
+          className={'ValidatorCard__InfoLine'}
+          title={'Creation Date'}
+          value={<DateBlock timestamp={1727887511000}/>}
+          loading={validator.loading}
+          error={validator.error}
+        /> */}
 
-      <InfoLine
-        className={'ValidatorCard__InfoLine'}
-        title={'Identity Address'}
-        value={(
-          <Link href={`/identity/${validator.data?.identity}`}>
+        {/* <InfoLine
+          className={'ValidatorCard__InfoLine'}
+          title={'Block Height'}
+          value={(
+            <span className={'ValidatorCard__BlockHeighValue'}>#10225</span>
+          )}
+          loading={validator.loading}
+          error={validator.error}
+        /> */}
+
+        <InfoLine
+          className={'ValidatorCard__InfoLine ValidatorCard__InfoLine--IdentityAddress'}
+          title={'Identity Address'}
+          value={(
+            <Link href={`/identity/${validator.data?.identity}`}>
+              <Identifier
+                className={''}
+                copyButton={true}
+                styles={['highlight-both']}
+                ellipsis={false}
+                clickable={true}
+              >
+                {validator.data?.identity}
+              </Identifier>
+            </Link>
+          )}
+          loading={validator.loading}
+          error={validator.error}
+        />
+
+        <InfoLine
+          className={'ValidatorCard__InfoLine  ValidatorCard__InfoLine--NodeId'}
+          title={'Node ID'}
+          value={(
             <Identifier
               className={''}
               copyButton={true}
               styles={['highlight-both']}
               ellipsis={false}
-              clickable={true}
             >
-              {validator.data?.identity}
+              {validator.data?.proTxInfo?.state?.platformNodeID}
             </Identifier>
-          </Link>
-        )}
-        loading={validator.loading}
-        error={validator.error}
-      />
-
-      <InfoLine
-        className={'ValidatorCard__InfoLine'}
-        title={'Node ID'}
-        value={(
-          <Identifier
-            className={''}
-            copyButton={true}
-            styles={['highlight-both']}
-            ellipsis={false}
-          >
-            {validator.data?.proTxInfo?.state?.platformNodeID}
-          </Identifier>
-        )}
-        loading={validator.loading}
-        error={validator.error}
-      />
+          )}
+          loading={validator.loading}
+          error={validator.error}
+        />
+      </div>
     </div>
   )
 }
