@@ -457,8 +457,10 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     status = 'pending'
   }
 
+  console.log()
+
   return Alias.fromObject({
-    alias,
+    alias: alias.alias ?? alias,
     status,
     contested: true,
     timestamp: alias.timestamp
