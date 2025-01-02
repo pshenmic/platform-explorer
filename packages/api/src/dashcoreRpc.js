@@ -43,6 +43,46 @@ class DashCoreRPC {
       throw new ServiceNotAvailableError()
     }
   }
+
+  static async getQuorumsListExtended (height) {
+    try {
+      const args = ['listextended']
+      if (height) args.push(height)
+
+      const { result } = await rpc.quorum(...args)
+
+      return result
+    } catch (e) {
+      console.error(e)
+      throw new ServiceNotAvailableError()
+    }
+  }
+
+  static async getQuorumInfo (quorumHash, llmqType = 1) {
+    try {
+      const { result } = await rpc.quorum('info', llmqType, quorumHash)
+
+      return result
+    } catch (e) {
+      console.error(e)
+      throw new ServiceNotAvailableError()
+    }
+  }
+
+  static async getNodeMemberOfQuorum (proTxHash, count) {
+    try {
+      const args = ['memberof', proTxHash]
+
+      if (count) args.push(count)
+
+      const { result } = await rpc.quorum(args)
+
+      return result
+    } catch (e) {
+      console.error(e)
+      throw new ServiceNotAvailableError()
+    }
+  }
 }
 
 module.exports = DashCoreRPC

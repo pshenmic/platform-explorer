@@ -24,6 +24,8 @@ describe('Blocks routes', () => {
       }
     }))
 
+    mock.method(tenderdashRpc, 'getBlockByHash', async () => ({ block: { header: {} } }))
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -85,9 +87,12 @@ describe('Blocks routes', () => {
           blockVersion: block.block_version,
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
-          validator: block.validator
+          validator: block.validator,
+          appHash: null,
+          totalGasUsed: 0
         },
-        txs: []
+        txs: [],
+        quorum: null
       }
 
       assert.deepEqual(expectedBlock, body)
@@ -122,7 +127,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -152,7 +158,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -182,7 +189,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -212,7 +220,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -243,7 +252,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -274,7 +284,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -308,7 +319,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -350,7 +362,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -379,7 +392,9 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
+
           },
           txs: []
         }))
@@ -408,7 +423,9 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
+
           },
           txs: []
         }))
@@ -437,7 +454,9 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
+
           },
           txs: []
         }))
@@ -466,7 +485,9 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
+
           },
           txs: []
         }))
@@ -495,7 +516,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))
@@ -524,7 +546,8 @@ describe('Blocks routes', () => {
             blockVersion: row.block_version,
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
-            validator: row.validator
+            validator: row.validator,
+            totalGasUsed: null
           },
           txs: []
         }))

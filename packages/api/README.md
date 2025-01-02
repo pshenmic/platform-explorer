@@ -187,41 +187,72 @@ HTTP /epoch/0
 ### Block by hash
 Get a block by hash
 ```
-GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
+GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
 
 {
-  "header": {
-    "hash": "04D16F8EE2A892E5F9F884C11DB97CD20BAA4A9539111A9131F847B93422DB26",
-    "height": 37994,
-    "timestamp": "2024-10-20T21:35:48.669Z",
-    "blockVersion": 14,
-    "appVersion": 4,
-    "l1LockedHeight": 1124953,
-    "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234"
-  },
-  "txs": [
-    {
-      "hash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
-      "index": 0,
-      "blockHash": "04D16F8EE2A892E5F9F884C11DB97CD20BAA4A9539111A9131F847B93422DB26",
-      "blockHeight": 37994,
-      "type": 1,
-      "data": "AgDuMmDTP4yp4UxhCAbUbbj9M0NSKtDkSMDXiaFYkDf05gEAAAD8TaL0Ynpk50URo4Lr7GID83h4Q7YxOfxNyBcNWF7mwQEIcHJlb3JkZXLmaMZZr2au4ecsGG3ee1t+Ch1xKgnEDVch9iK/U8UxVe4PfekoUsU6NnJAmQzOoXBkr3P+LpzyoMFt1ppC7LqAARBzYWx0ZWREb21haW5IYXNoDLF9yHanBZpOsaoAIQ7+WgMlafEFgvsSfAqiyosXA967AAABQR8wm64iVoCLY0WmrqLS13iPcikGVcuYsqpuoqIWfYRLLlqXQlyHQ5XnsfTKor5spJtUz8gvlN3//sqH+sI8y/gz",
-      "timestamp": "2024-10-20T21:35:48.669Z",
-      "gasUsed": 34509040,
-      "status": "SUCCESS",
-      "error": null,
-      "owner": {
-        "identifier": "H2pb35GtKpjLinncBYeMsXkdDYXCbsFzzVmssce6pSJ1",
-        "aliases": [
-          {
-            "alias": "owl352-testnet.dash",
-            "status": "ok"
-          }
-        ]
+  "block": {
+    "header": {
+      "hash": "12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7",
+      "height": 70565,
+      "timestamp": "2024-12-14T01:30:09.847Z",
+      "blockVersion": 14,
+      "appVersion": 6,
+      "l1LockedHeight": 1158282,
+      "validator": "6D1B185BA036EFCD44A77E05A9AAF69A0C4E40976AEC00B04773E52863320966",
+      "totalGasUsed": 46821100
+    },
+    "txs": [
+      {
+        "hash": "5517F421003E0CB8996F589BE72EA7DEB9AA43551C971A1CD4FF16A253D180E6",
+        "index": 0,
+        "blockHash": "12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7",
+        "blockHeight": null,
+        "type": 1,
+        "data": "AgCxs+8LeHUz7Fs2jgGvfJz6qUsoX2WboZonZXgh5/x4wQEAAADZAZoaHQB/PNiJr83QV1vOFwRf6c4ZemiqLJ45UP8LkgsLdHhfbWV0YWRhdGGfCkD1ODprciI20XhvfS2OI1dX4hhz6ODezDLTqlizMDf4nnO3kBwqTNWXh4sDqGM5BSfCH3jDxgIJXFY8DDMEAxFlbmNyeXB0ZWRNZXRhZGF0YQr7AWCvJxNt0KNyffpwQKeDtF0507lUwIkG8QCNc/5VOeedyUhO7EfIhyksbs3TUYb40mIAKbQyvE+33cneO1t9DNugH9ETtz5te3YXysx4EWLh3uiL0Xlo9PnthXxUH87hSt1jnw3Q9vM8SJxWXuOT8aAn3C+yHOPn8lBfB89iWDbCRuY91jtfd6b3+5ma8WCFtX4UyPt7Nj0xT4XhIW3xCsEeM4A3wScjzJD5PauX/btJxf5sl76NdOint8/ZVZykVbIdBQp39IEgwKMvXzY393WvUG6/l0zRX8nkbl80P0jqBokOntoQOuGisVZKtj4Z6gSSPsGBBlX38t6pOqVeFcb4LRityyxZOXr7XGu+kDpmrllDRoUl98Muj9he50Ax3KJoAgMYEpo7EpMcQlHDa47hdiix3K4gV3vJKqvWy3OOlyIUxfKWGQjD81DOTgdZJttQBz0vFag6Ycxl120Lga+3EmVuY3J5cHRpb25LZXlJbmRleAMACGtleUluZGV4AwIAAAFBHzdEml1PfuYb0KHR1d+7rj9QSCafJu93jopzP+mBGHtzb6rlFL5i1y+G473ebo+sugMPL5UcFoY12VIaRp/vD7U=",
+        "timestamp": "2024-12-14T01:30:09.847Z",
+        "gasUsed": 46821100,
+        "status": "SUCCESS",
+        "error": null,
+        "owner": {
+          "identifier": "CxgJDaEz4HsxuHdThYFiLKf4Pk9Pb1XufeRvTkmBRyKn",
+          "aliases": [
+            {
+              "alias": "z-test-001.dash",
+              "status": "ok",
+              "contested": false
+            }
+          ]
+        }
       }
-    }
-  ]
+    ],
+    "appHash": "206BF1F0D61261D7CA63A48DBF50A4BAC8432584E461BDFE5CB43AEAE00A68EC"
+  },
+  "quorum": {
+    "creationHeight": 1157976,
+    "minedBlockHash": "000000b12c65bf9429890d962f7e96a311a23524d90c8cc69c73c0d52435af4d",
+    "numValidMembers": 50,
+    "healthRatio": "1.00",
+    "type": "llmq_50_60",
+    "quorumHash": "000000e64f89cc3d56790d210d603ee612f3311fe363bc6b34cb07e5816aea1f",
+    "quorumIndex": 0,
+    "quorumPublicKey": "ab04f183011ac2fe90d0d333f9b8c10a8f66d56148ea912b431412eb54249d43df08f8b3f2ed35d500abb8bb066e113c",
+    "previousConsecutiveDKGFailures": null,
+    "members": [
+      {
+        "proTxHash": "c0aae8ab24aab988cc84385d16af7ffcfd365d0e016f5799759e0525a435a617",
+        "service": "52.32.118.225:19999",
+        "pubKeyOperator": "892a3de6fe305d39d81ecc9dbc7c85bc6eb57434618903f45ac8996aecfa9a7945e2cc48c40c1540172096229780519e",
+        "valid": true
+      },
+      {
+        "proTxHash": "5d906997d8b370d37f813ed55c664457fc98acabfbf5e5602952f710b54bd4e5",
+        "service": "35.87.238.118:19999",
+        "pubKeyOperator": "155b2a1aa71cbb3b5fc81b00242805a6d573826679a2b6a5c49bec714829322efe8af0c1640ba3b59811c70e17b488a5",
+        "valid": true
+      },
+      ...
+    ]
+  }
 }
 ```
 ---
