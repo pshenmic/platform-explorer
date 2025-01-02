@@ -12,7 +12,7 @@ class DocumentsController {
 
   getDocumentByIdentifier = async (request, response) => {
     const { identifier } = request.params
-    const { type_name: typeName, contract_id: contractId } = request.query
+    const { document_type_name: documentTypeName, contract_id: contractId } = request.query
 
     const document = await this.documentsDAO.getDocumentByIdentifier(identifier)
 
@@ -20,8 +20,8 @@ class DocumentsController {
       return response.send(document)
     }
 
-    if (!typeName || !contractId) {
-      return response.status(404).send({ message: 'not found. Try to set type and data contract id' })
+    if (!documentTypeName || !contractId) {
+      return response.status(400).send({ message: 'Contract id and document type name not specified' })
     }
 
     let dataContract
@@ -35,7 +35,7 @@ class DocumentsController {
     }
 
     const [extendedDocument] = await this.dapi.getDocuments(
-      typeName,
+      documentTypeName,
       {
         $format_version: '0',
         ownerId: dataContract.owner,
@@ -56,22 +56,22 @@ class DocumentsController {
       dataContractIdentifier: dataContract.identifier,
       deleted: false,
       identifier: extendedDocument?.getId(),
-      isSystem: false,
+      system: false,
       owner: extendedDocument.getOwnerId(),
       revision: extendedDocument.getRevision(),
       timestamp: extendedDocument.getCreatedAt(),
       txHash: document?.txHash ?? null,
       data: JSON.stringify(extendedDocument.getData()),
-      typeName,
+      typeName: documentTypeName,
       transitionType: null
     }))
   }
 
   getDocumentsByDataContract = async (request, response) => {
     const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc', type_name: typeName } = request.query
+    const { page = 1, limit = 10, order = 'asc', document_type_name: documentTypeName } = request.query
 
-    const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, typeName, Number(page ?? 1), Number(limit ?? 10), order)
+    const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, documentTypeName, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(documents)
   }

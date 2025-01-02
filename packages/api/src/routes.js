@@ -148,7 +148,7 @@ module.exports = ({
         querystring: {
           type: 'object',
           properties: {
-            type_name: { type: ['string', 'null'] },
+            document_type_name: { type: ['string', 'null'] },
             contract_id: { $ref: 'identifier#' }
           }
         }
