@@ -53,6 +53,7 @@ const decodeStateTransition = async (client, base64) => {
         requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null
       }
 
+      decoded.version = stateTransition.getDataContract().getVersion()
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
       decoded.identityNonce = Number(stateTransition.getIdentityNonce())
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
@@ -260,7 +261,6 @@ const decodeStateTransition = async (client, base64) => {
         : null
 
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
-      decoded.identityNonce = parseInt(stateTransition.getNonce())
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.amount = parseInt(stateTransition.getAmount())
       decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null
@@ -269,6 +269,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.pooling = PoolingEnum[stateTransition.getPooling()]
       decoded.raw = stateTransition.toBuffer().toString('hex')
+      decoded.nonce = Number(stateTransition.getNonce())
 
       break
     }
@@ -284,6 +285,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.raw = stateTransition.toBuffer().toString('hex')
       decoded.proTxHash = stateTransition.getProTxHash().toString('hex')
+      decoded.nonce = Number(stateTransition.getIdentityContractNonce())
 
       break
     }
