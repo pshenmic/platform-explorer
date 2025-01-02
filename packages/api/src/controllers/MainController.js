@@ -70,7 +70,7 @@ class MainController {
         }
       },
       indexer: {
-        status: indexerSynced ? 'synced' : 'not synced',
+        status: indexerSynced ? 'synced' : 'syncing',
         syncProgress: indexerHeight / tdHeight * 100
       },
       versions: {

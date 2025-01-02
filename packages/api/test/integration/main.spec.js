@@ -452,7 +452,7 @@ describe('Other routes', () => {
         documentsCount: 1,
         network: null,
         indexer: {
-          status: 'not synced',
+          status: 'syncing',
           syncProgress: (blocks.length) / mockTDStatus?.highestBlock?.height * 100
         },
         api: {
