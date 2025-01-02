@@ -1462,6 +1462,7 @@ POST /transaction/decode
             "type": "domain",
             "action": 0,
             "data": {
+                "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
                 "label": "Microsoft",
                 "normalizedLabel": "m1cr0s0ft",
                 "normalizedParentDomainName": "dash",

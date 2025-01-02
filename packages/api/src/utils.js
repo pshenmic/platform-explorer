@@ -80,6 +80,8 @@ const decodeStateTransition = async (client, base64) => {
           case DocumentActionEnum.Create: {
             const prefundedBalance = documentTransition.getPrefundedVotingBalance()
 
+            out.entropy = Buffer.from(documentTransition.getEntropy()).toString('hex')
+
             out.data = documentTransition.getData()
             out.prefundedBalance = prefundedBalance
               ? Object.fromEntries(
@@ -93,7 +95,12 @@ const decodeStateTransition = async (client, base64) => {
           case DocumentActionEnum.Replace: {
             out.data = documentTransition.getData()
 
+            out.entropy = Buffer.from(documentTransition.getEntropy()).toString('hex')
+
             break
+          }
+          case DocumentActionEnum.Delete: {
+            out.entropy = Buffer.from(documentTransition.getEntropy()).toString('hex')
           }
         }
 
