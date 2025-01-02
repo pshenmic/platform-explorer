@@ -165,7 +165,8 @@ describe('Other routes', () => {
           blockVersion: block.block_version,
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
-          validator: block.validator
+          validator: block.validator,
+          totalGasUsed: 0
         },
         txs: [
           {
@@ -184,7 +185,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 contested: false,
-                status: 'ok'
+                status: 'ok',
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           },
@@ -204,7 +206,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 status: 'ok',
-                contested: false
+                contested: false,
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           },
@@ -224,7 +227,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 status: 'ok',
-                contested: false
+                contested: false,
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           }
@@ -255,7 +259,8 @@ describe('Other routes', () => {
           aliases: [{
             alias: identityAlias.alias,
             contested: false,
-            status: 'ok'
+            status: 'ok',
+            timestamp: '1970-01-01T00:00:00+00:00'
           }]
         }
       }
@@ -276,7 +281,8 @@ describe('Other routes', () => {
           blockVersion: block.block_version,
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
-          validator: block.validator
+          validator: block.validator,
+          totalGasUsed: null
         },
         txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
@@ -360,7 +366,8 @@ describe('Other routes', () => {
         status: {
           alias: identityAlias.alias,
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: null
         }
       }]
 
@@ -387,7 +394,8 @@ describe('Other routes', () => {
         aliases: [{
           alias: 'dpns.dash',
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: '1970-01-01T00:00:00+00:00'
         }],
         totalGasSpent: 480000,
         averageGasSpent: 9412,
@@ -476,6 +484,10 @@ describe('Other routes', () => {
         dataContractsCount: 1,
         documentsCount: 1,
         network: null,
+        indexer: {
+          status: 'syncing',
+          syncProgress: (blocks.length) / mockTDStatus?.highestBlock?.height * 100
+        },
         api: {
           version: require('../../package.json').version,
           block: {

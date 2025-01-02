@@ -196,7 +196,7 @@ describe('Identities routes', () => {
 
   describe('getIdentityByIdentifier()', async () => {
     it('should return identity by identifier', async () => {
-      const block = await fixtures.block(knex)
+      const block = await fixtures.block(knex, { timestamp: new Date(0) })
       const owner = await fixtures.identity(knex, { block_hash: block.hash })
 
       const transaction = await fixtures.transaction(knex, {
@@ -236,7 +236,8 @@ describe('Identities routes', () => {
         aliases: [{
           alias,
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: '1970-01-01T00:00:00+00:00'
         }],
         totalGasSpent: 0,
         averageGasSpent: 0,
@@ -285,13 +286,17 @@ describe('Identities routes', () => {
         transactions.push({ transaction, block })
       }
 
-      const withdrawals = transactions.sort((a, b) => a.block.height - b.block.height).map(transaction => ({
-        timestamp: transaction.block.timestamp.toISOString(),
+      const withdrawals = transactions.sort((a, b) => b.block.height - a.block.height).map(transaction => ({
+        $createdAt: transaction.block.timestamp.toISOString(),
         hash: null,
-        id: transaction.transaction.hash,
-        sender: transaction.transaction.owner,
+        $id: transaction.transaction.hash,
+        $ownerId: transaction.transaction.owner,
         amount: 12345678,
-        status: 'COMPLETE'
+        status: 0,
+        getCreatedAt: () => transaction.block.timestamp,
+        getId: () => transaction.transaction.hash,
+        getOwnerId: () => transaction.transaction.owner,
+        getData: () => ({ status: 0, amount: 12345678 })
       }))
 
       mock.method(DAPI.prototype, 'getDocuments', async () => withdrawals)
@@ -301,11 +306,11 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.deepEqual(body.resultSet, withdrawals.map(withdrawal => ({
-        hash: withdrawal.id,
-        document: withdrawal.id,
-        sender: withdrawal.sender,
-        status: withdrawal.status,
-        timestamp: withdrawal.timestamp,
+        hash: withdrawal.$id,
+        document: withdrawal.$id,
+        sender: withdrawal.$ownerId,
+        status: 0,
+        timestamp: withdrawal.$createdAt,
         amount: withdrawal.amount,
         withdrawalAddress: null
       })))
@@ -336,7 +341,8 @@ describe('Identities routes', () => {
         status: {
           alias,
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: null
         }
       }
 
@@ -358,7 +364,8 @@ describe('Identities routes', () => {
         status: {
           alias,
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: null
         }
       }
 
@@ -378,7 +385,7 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
         alias = await fixtures.identity_alias(knex, { alias: `#test$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
@@ -408,7 +415,7 @@ describe('Identities routes', () => {
         isSystem: false,
         aliases: [
           aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-        ].map(alias => ({ alias, status: 'ok', contested: false })),
+        ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
         totalGasSpent: null,
         averageGasSpent: null,
         totalTopUpsAmount: null,
@@ -428,7 +435,7 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
         alias = await fixtures.identity_alias(knex, { alias: `#test1$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
@@ -460,7 +467,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -481,7 +488,7 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
         alias = await fixtures.identity_alias(knex, { alias: `#test2$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
@@ -513,7 +520,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -534,7 +541,7 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
         alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
@@ -567,7 +574,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -590,7 +597,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         const transactions = []
 
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
 
         for (let j = 0; j < Math.floor(Math.random() * 50); j++) {
@@ -636,7 +643,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -657,7 +664,7 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
         transferTx = await fixtures.transaction(knex, {
           block_hash: block.hash,
@@ -717,7 +724,7 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -914,7 +921,7 @@ describe('Identities routes', () => {
   })
 
   describe('getDocumentsByIdentity()', async () => {
-    it('should return default set of data contracts by identity', async () => {
+    it('should return default set of documents by identity', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash })
@@ -964,13 +971,15 @@ describe('Identities routes', () => {
         prefundedBalance: null,
         typeName: 'type_name',
         timestamp: _document.block.timestamp.toISOString(),
-        isSystem: false
+        system: false,
+        transitionType: 0,
+        typeName: 'type_name'
       }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
     })
 
-    it('should return default set of data contracts by identity dsc', async () => {
+    it('should return default set of documents by identity dsc', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash })
@@ -1023,7 +1032,69 @@ describe('Identities routes', () => {
           prefundedBalance: null,
           typeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false
+          system: false,
+          transitionType: 0,
+          typeName: 'type_name'
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return default set of documents by identity and type_name dsc', async () => {
+      documents = []
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+
+      for (let i = 1; i < 31; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        dataContractTransaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: StateTransitionEnum.DATA_CONTRACT_CREATE
+        })
+        dataContract = await fixtures.dataContract(knex, {
+          state_transition_hash: dataContractTransaction.hash,
+          owner: identity.identifier
+        })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: StateTransitionEnum.DOCUMENTS_BATCH
+        })
+        document = await fixtures.document(knex, {
+          state_transition_hash: transaction.hash,
+          owner: identity.identifier,
+          data_contract_id: dataContract.id,
+          document_type_name: i % 2 === 0 ? 'my_type' : 'non_my_type'
+        })
+        documents.push({ document, dataContract, transaction, identity, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?order=desc&document_type_name=my_type`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, documents.length / 2)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({ document }) => document.document_type_name === 'my_type')
+        .sort((a, b) => b.document.id - a.document.id)
+        .slice(0, 10)
+        .map((_document) => ({
+          identifier: _document.document.identifier,
+          owner: identity.identifier,
+          dataContractIdentifier: _document.dataContract.identifier,
+          revision: 0,
+          txHash: _document.transaction.hash,
+          deleted: false,
+          data: null,
+          timestamp: _document.block.timestamp.toISOString(),
+          system: false,
+          transitionType: 0,
+          typeName: 'my_type'
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1082,7 +1153,9 @@ describe('Identities routes', () => {
           prefundedBalance: null,
           typeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false
+          system: false,
+          transitionType: 0,
+          typeName: 'type_name'
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1141,7 +1214,9 @@ describe('Identities routes', () => {
           prefundedBalance: null,
           typeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false
+          system: false,
+          transitionType: 0,
+          typeName: 'type_name'
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)

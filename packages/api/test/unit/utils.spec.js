@@ -11,6 +11,7 @@ const identityCreditTransfer = require('./mocks/identity_credit_transfer.json')
 const identityWithdrawal = require('./mocks/identity_withdrawal.json')
 const masternodeVote = require('./mocks/masternode_vote.json')
 const Dash = require('dash')
+const Alias = require('../../src/models/Alias')
 
 describe('Utils', () => {
   let client
@@ -37,6 +38,7 @@ describe('Utils', () => {
           requiresIdentityEncryptionBoundedKey: null
         },
         userFeeIncrease: 0,
+        version: 1,
         identityNonce: 10,
         dataContractId: 'GbGD5YbS9GVh7FSZjz3uUJpbrXo9ctbdKycfTqqg3Cmn',
         ownerId: '7dwjL5frrkM69pv3BsKSQb4ELrMYmDeE11KNoDSefG6c',
@@ -84,6 +86,8 @@ describe('Utils', () => {
             type: 'note',
             entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
             action: 0,
+            nonce: 2,
+            entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
             data: {
               message: 'Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT'
             }
@@ -296,7 +300,7 @@ describe('Utils', () => {
         userFeeIncrease: 2,
         senderId: 'FvqzjDyub72Hk51pcmJvd1JUACuor7vA3aJawiVG7Z17',
         amount: 1000000,
-        identityNonce: 1,
+        nonce: 1,
         outputScript: '76a9148dc5fd6be194390035cca6293a357bac8e3c35c588ac',
         coreFeePerByte: 2,
         signature: '8422df782b5e51b8a53ae46fe9b7a9280df4de575f031e58ed527e7a17c1e9',
@@ -326,7 +330,8 @@ describe('Utils', () => {
         choice: 'TowardsIdentity(4VRAaVi8vq492FznoHKTsQd4odaXa7vDxdghpTSQBVSV)',
         raw: '0800bc77a5a2cec455c79fb92fb683dbd87a2a92b663c9a46d0c50d11889b4aeb121126fac34e15653f82356cffd3d37c5cd84c1f634d4043340dbae781d93d6b87e000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c02120464617368120874657374303130300033daa5a3e330b61e5a4416ab224f0a45ef4e4cab1357b5f4a86fae9314717a561000411f6c69fa9201b57bb7e7c24b392de9056cce5a66bcf2154d57631419e9c68efa8e4d1ca11e81c35de31dd52321d0fbb25f6ff17f5ff69a9cf47fce54746ee72644',
         proTxHash: 'bc77a5a2cec455c79fb92fb683dbd87a2a92b663c9a46d0c50d11889b4aeb121',
-        userFeeIncrease: 0
+        userFeeIncrease: 0,
+        nonce: 16
       })
     })
   })
@@ -355,25 +360,33 @@ describe('Utils', () => {
         }
       }
 
-      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, {
+        alias: mockVote.alias,
+        timestamp: ''
+      }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
-      assert.deepEqual(info, {
+      assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'ok',
-        contested: true
-      })
+        contested: true,
+        timestamp: ''
+      }))
     })
 
     it('should return ok if we not contested', () => {
       const mockVote = { contestedState: null }
 
-      const info = utils.getAliasStateByVote(mockVote, 'alias343', 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, {
+        alias: 'alias343',
+        timestamp: ''
+      }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
-      assert.deepEqual(info, {
+      assert.deepEqual(info, Alias.fromObject({
         alias: 'alias343',
         status: 'ok',
-        contested: false
-      })
+        contested: false,
+        timestamp: ''
+      }))
     })
 
     it('should return pending if we don\'t have winner', () => {
@@ -392,13 +405,17 @@ describe('Utils', () => {
         }
       }
 
-      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, {
+        alias: mockVote.alias,
+        timestamp: ''
+      }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
-      assert.deepEqual(info, {
+      assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'pending',
-        contested: true
-      })
+        contested: true,
+        timestamp: ''
+      }))
     })
 
     it('should return locked if our identifier not equal to winner identifier', () => {
@@ -425,13 +442,17 @@ describe('Utils', () => {
         }
       }
 
-      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, {
+        alias: mockVote.alias,
+        timestamp: ''
+      }, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
-      assert.deepEqual(info, {
+      assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'locked',
-        contested: true
-      })
+        contested: true,
+        timestamp: ''
+      }))
     })
 
     it('should return locked if winner identifier equal "" (empty string)', () => {
@@ -458,13 +479,17 @@ describe('Utils', () => {
         }
       }
 
-      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, {
+        alias: mockVote.alias,
+        timestamp: ''
+      }, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
-      assert.deepEqual(info, {
+      assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'locked',
-        contested: true
-      })
+        contested: true,
+        timestamp: ''
+      }))
     })
   })
 })

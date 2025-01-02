@@ -12,6 +12,7 @@ const { InstantAssetLockProof, ChainAssetLockProof, Identifier } = require('@das
 const SecurityLevelEnum = require('./enums/SecurityLevelEnum')
 const KeyPurposeEnum = require('./enums/KeyPurposeEnum')
 const KeyTypeEnum = require('./enums/KeyTypeEnum')
+const Alias = require('./models/Alias')
 
 const getKnex = () => {
   return require('knex')({
@@ -53,6 +54,7 @@ const decodeStateTransition = async (client, base64) => {
         requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null
       }
 
+      decoded.version = stateTransition.getDataContract().getVersion()
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
       decoded.identityNonce = Number(stateTransition.getIdentityNonce())
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
@@ -72,12 +74,14 @@ const decodeStateTransition = async (client, base64) => {
           revision: documentTransition.getRevision(),
           type: documentTransition.getType(),
           action: documentTransition.getAction(),
-          entropy: Buffer.from(documentTransition.getEntropy() ?? []).toString('hex')
+          nonce: Number(documentTransition.getIdentityContractNonce())
         }
 
         switch (documentTransition.getAction()) {
           case DocumentActionEnum.Create: {
             const prefundedBalance = documentTransition.getPrefundedVotingBalance()
+
+            out.entropy = Buffer.from(documentTransition.getEntropy()).toString('hex')
 
             out.data = documentTransition.getData()
             out.prefundedBalance = prefundedBalance
@@ -92,7 +96,12 @@ const decodeStateTransition = async (client, base64) => {
           case DocumentActionEnum.Replace: {
             out.data = documentTransition.getData()
 
+            out.entropy = Buffer.from(documentTransition.getEntropy()).toString('hex')
+
             break
+          }
+          case DocumentActionEnum.Delete: {
+            out.entropy = Buffer.from(documentTransition.getEntropy()).toString('hex')
           }
         }
 
@@ -233,27 +242,7 @@ const decodeStateTransition = async (client, base64) => {
             signature: Buffer.from(key.getSignature()).toString('hex')
           }
         })
-      decoded.setPublicKeyIdsToDisable = (stateTransition.getPublicKeyIdsToDisable() ?? []).map(key => {
-        const { contractBounds } = key.toObject()
-
-        return {
-          contractBounds: contractBounds
-            ? {
-                type: contractBounds.type,
-                id: Identifier.from(Buffer.from(contractBounds.id)).toString(),
-                typeName: contractBounds.document_type_name
-              }
-            : null,
-          id: key.getId(),
-          type: KeyTypeEnum[key.getType()],
-          data: Buffer.from(key.getData()).toString('hex'),
-          publicKeyHash: Buffer.from(key.hash()).toString('hex'),
-          purpose: KeyPurposeEnum[key.getPurpose()],
-          securityLevel: SecurityLevelEnum[key.getSecurityLevel()],
-          readOnly: key.isReadOnly(),
-          signature: Buffer.from(key.getSignature()).toString('hex')
-        }
-      })
+      decoded.setPublicKeyIdsToDisable = stateTransition.getPublicKeyIdsToDisable() ?? []
       decoded.signature = stateTransition.getSignature().toString('hex')
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.raw = stateTransition.toBuffer().toString('hex')
@@ -281,7 +270,6 @@ const decodeStateTransition = async (client, base64) => {
         : null
 
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
-      decoded.identityNonce = parseInt(stateTransition.getNonce())
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.amount = parseInt(stateTransition.getAmount())
       decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null
@@ -290,6 +278,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.pooling = PoolingEnum[stateTransition.getPooling()]
       decoded.raw = stateTransition.toBuffer().toString('hex')
+      decoded.nonce = Number(stateTransition.getNonce())
 
       break
     }
@@ -305,6 +294,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.raw = stateTransition.toBuffer().toString('hex')
       decoded.proTxHash = stateTransition.getProTxHash().toString('hex')
+      decoded.nonce = Number(stateTransition.getIdentityContractNonce())
 
       break
     }
@@ -447,12 +437,13 @@ const buildIndexBuffer = (name) => {
 const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   let status = null
 
-  if (!aliasInfo.contestedState) {
-    return {
-      alias,
+  if (aliasInfo.contestedState === null) {
+    return Alias.fromObject({
+      alias: alias.alias,
       status: 'ok',
-      contested: false
-    }
+      contested: false,
+      timestamp: alias.timestamp
+    })
   }
 
   const bs58Identifier = base58.encode(
@@ -467,15 +458,16 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     status = 'pending'
   }
 
-  return {
-    alias,
+  return Alias.fromObject({
+    alias: alias.alias ?? alias,
     status,
-    contested: true
-  }
+    contested: true,
+    timestamp: alias.timestamp
+  })
 }
 
-const getAliasInfo = async (alias, dapi) => {
-  const [label, domain] = alias.split('.')
+const getAliasInfo = async (aliasText, dapi) => {
+  const [label, domain] = aliasText.split('.')
 
   const normalizedLabel = convertToHomographSafeChars(label ?? '')
 
@@ -495,10 +487,10 @@ const getAliasInfo = async (alias, dapi) => {
       ]
     )
 
-    return { alias, contestedState }
+    return { alias: aliasText, contestedState }
   }
 
-  return { alias, contestedState: null }
+  return { alias: aliasText, contestedState: null }
 }
 
 module.exports = {

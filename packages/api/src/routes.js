@@ -144,6 +144,13 @@ module.exports = ({
           properties: {
             identifier: { $ref: 'identifier#' }
           }
+        },
+        querystring: {
+          type: 'object',
+          properties: {
+            document_type_name: { type: ['string', 'null'] },
+            contract_id: { $ref: 'identifier#' }
+          }
         }
       }
     },
