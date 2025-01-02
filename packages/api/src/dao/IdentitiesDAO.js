@@ -326,11 +326,11 @@ module.exports = class IdentitiesDAO {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
-    let typeQuery ='documents.owner = ?'
+    let typeQuery = 'documents.owner = ?'
 
     const queryBindings = [identifier]
 
-    if(typeName){
+    if (typeName) {
       typeQuery = typeQuery + ' and document_type_name = ?'
 
       queryBindings.push(typeName)

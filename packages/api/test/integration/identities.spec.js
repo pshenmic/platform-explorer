@@ -1066,7 +1066,7 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, documents.length/2)
+      assert.equal(body.pagination.total, documents.length / 2)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
