@@ -101,16 +101,16 @@ module.exports = class DocumentsDAO {
 
     const subquery = this.knex('documents')
       .select('documents.id as id', 'documents.identifier as identifier', 'documents.owner as document_owner',
-        'data_contracts.identifier as data_contract_identifier', 'document_type_name',
+        'data_contracts.identifier as data_contract_identifier', 'document_type_name', 'documents.data as document_data',
         'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
-        'documents.deleted as deleted', 'documents.is_system as is_system', 'document_type_name', 'transition_type')
+        'documents.deleted as deleted', 'documents.is_system as is_system', 'transition_type')
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
       .where('data_contracts.identifier', identifier)
       .andWhereRaw(typeQuery)
 
     const filteredDocuments = this.knex.with('with_alias', subquery)
-      .select('id', 'identifier', 'document_owner', 'rank', 'revision', 'data_contract_identifier',
+      .select('id', 'with_alias.identifier as identifier', 'document_owner', 'rank', 'revision', 'data_contract_identifier',
         'tx_hash', 'deleted', 'is_system', 'document_data', 'document_type_name', 'transition_type',
         this.knex('with_alias').count('*').as('total_count').where('rank', '1'))
       .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
@@ -119,7 +119,7 @@ module.exports = class DocumentsDAO {
       .as('documents')
 
     const rows = await this.knex(filteredDocuments)
-      .select('documents.id as id', 'identifier', 'document_owner', 'row_number', 'revision', 'data_contract_identifier',
+      .select('documents.id as id', 'documents.identifier as identifier', 'document_owner', 'row_number', 'revision', 'data_contract_identifier',
         'tx_hash', 'deleted', 'document_data', 'total_count', 'is_system', 'blocks.timestamp as timestamp',
         'document_type_name', 'transition_type')
       .whereBetween('row_number', [fromRank, toRank])

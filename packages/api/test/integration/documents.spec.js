@@ -179,7 +179,7 @@ describe('Documents routes', () => {
         txHash: document.transaction.hash,
         deleted: document.document.deleted,
         data: JSON.stringify(document.document.data),
-        timestamp: document.block.timestamp.toISOString(),
+        timestamp: document.block.timestamp,
         entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
         typeName: 'type_name',
         prefundedBalance: null,
@@ -236,7 +236,7 @@ describe('Documents routes', () => {
         gasUsed: document.transaction.gas_used,
         owner: document.transaction.owner,
         hash: document.transaction.hash,
-        timestamp: document.block.timestamp.toISOString(),
+        timestamp: document.block.timestamp,
         transitionType: document.document.transition_type,
         data: {}
       }
@@ -265,7 +265,7 @@ describe('Documents routes', () => {
           txHash: document.is_system ? null : transaction.hash,
           deleted: document.deleted,
           data: JSON.stringify(document.data),
-          timestamp: document.is_system ? null : block.timestamp.toISOString(),
+          timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
           isSystem: document.is_system,
           entropy: null,
