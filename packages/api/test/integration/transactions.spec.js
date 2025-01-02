@@ -59,7 +59,8 @@ describe('Transaction routes', () => {
 
     for (let i = 2; i < 30; i++) {
       const block = await fixtures.block(knex, {
-        height: i + 1, timestamp: new Date(startDate.getTime() + i * 1000 * 60)
+        height: i + 1,
+        timestamp: new Date(startDate.getTime() + i * 1000 * 60)
       })
 
       const transaction = await fixtures.transaction(knex, {
@@ -120,7 +121,8 @@ describe('Transaction routes', () => {
           aliases: [{
             alias: identityAlias.alias,
             contested: false,
-            status: 'ok'
+            status: 'ok',
+            timestamp: transaction.block.timestamp.toISOString().replace('Z', '+00:00')
           }]
         }
       }
@@ -150,7 +152,8 @@ describe('Transaction routes', () => {
           aliases: [{
             alias: identityAlias.alias,
             contested: false,
-            status: 'ok'
+            status: 'ok',
+            timestamp: transaction.block.timestamp.toISOString().replace('Z', '+00:00')
           }]
         }
       }
@@ -194,7 +197,8 @@ describe('Transaction routes', () => {
             aliases: [{
               alias: identityAlias.alias,
               contested: false,
-              status: 'ok'
+              status: 'ok',
+              timestamp: null
             }]
           }
         }))
@@ -231,7 +235,8 @@ describe('Transaction routes', () => {
             aliases: [{
               alias: identityAlias.alias,
               contested: false,
-              status: 'ok'
+              status: 'ok',
+              timestamp: null
             }]
           }
         }))
@@ -271,7 +276,8 @@ describe('Transaction routes', () => {
             aliases: [{
               alias: identityAlias.alias,
               contested: false,
-              status: 'ok'
+              status: 'ok',
+              timestamp: null
             }]
           }
         }))
@@ -311,7 +317,8 @@ describe('Transaction routes', () => {
             aliases: [{
               alias: identityAlias.alias,
               contested: false,
-              status: 'ok'
+              status: 'ok',
+              timestamp: null
             }]
           }
         }))
@@ -349,7 +356,8 @@ describe('Transaction routes', () => {
             aliases: [{
               alias: identityAlias.alias,
               contested: false,
-              status: 'ok'
+              status: 'ok',
+              timestamp: null
             }]
           }
         }))
@@ -387,7 +395,8 @@ describe('Transaction routes', () => {
             aliases: [{
               alias: identityAlias.alias,
               contested: false,
-              status: 'ok'
+              status: 'ok',
+              timestamp: null
             }]
           }
         }))
@@ -434,7 +443,8 @@ describe('Transaction routes', () => {
             aliases: [{
               alias: identityAlias.alias,
               contested: false,
-              status: 'ok'
+              status: 'ok',
+              timestamp: null
             }]
           }
         }))
@@ -471,7 +481,8 @@ describe('Transaction routes', () => {
             aliases: [{
               alias: identityAlias.alias,
               contested: false,
-              status: 'ok'
+              status: 'ok',
+              timestamp: null
             }]
           }
         }))

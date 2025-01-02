@@ -183,7 +183,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 contested: false,
-                status: 'ok'
+                status: 'ok',
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           },
@@ -203,7 +204,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 status: 'ok',
-                contested: false
+                contested: false,
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           },
@@ -223,7 +225,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 status: 'ok',
-                contested: false
+                contested: false,
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           }
@@ -254,7 +257,8 @@ describe('Other routes', () => {
           aliases: [{
             alias: identityAlias.alias,
             contested: false,
-            status: 'ok'
+            status: 'ok',
+            timestamp: '1970-01-01T00:00:00+00:00'
           }]
         }
       }
@@ -337,7 +341,8 @@ describe('Other routes', () => {
         status: {
           alias: identityAlias.alias,
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: null
         }
       }]
 
@@ -364,7 +369,8 @@ describe('Other routes', () => {
         aliases: [{
           alias: 'dpns.dash',
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: '1970-01-01T00:00:00+00:00'
         }],
         totalGasSpent: 480000,
         averageGasSpent: 9412,

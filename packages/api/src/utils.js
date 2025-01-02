@@ -12,6 +12,7 @@ const { InstantAssetLockProof, ChainAssetLockProof, Identifier } = require('@das
 const SecurityLevelEnum = require('./enums/SecurityLevelEnum')
 const KeyPurposeEnum = require('./enums/KeyPurposeEnum')
 const KeyTypeEnum = require('./enums/KeyTypeEnum')
+const Alias = require('./models/Alias')
 
 const getKnex = () => {
   return require('knex')({
@@ -428,12 +429,13 @@ const buildIndexBuffer = (name) => {
 const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   let status = null
 
-  if (!aliasInfo.contestedState) {
-    return {
-      alias,
+  if (aliasInfo.contestedState === null) {
+    return Alias.fromObject({
+      alias: alias.alias,
       status: 'ok',
-      contested: false
-    }
+      contested: false,
+      timestamp: alias.timestamp
+    })
   }
 
   const bs58Identifier = base58.encode(
@@ -448,15 +450,16 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     status = 'pending'
   }
 
-  return {
+  return Alias.fromObject({
     alias,
     status,
-    contested: true
-  }
+    contested: true,
+    timestamp: alias.timestamp
+  })
 }
 
-const getAliasInfo = async (alias, dapi) => {
-  const [label, domain] = alias.split('.')
+const getAliasInfo = async (aliasText, dapi) => {
+  const [label, domain] = aliasText.split('.')
 
   const normalizedLabel = convertToHomographSafeChars(label ?? '')
 
@@ -476,10 +479,10 @@ const getAliasInfo = async (alias, dapi) => {
       ]
     )
 
-    return { alias, contestedState }
+    return { alias: aliasText, contestedState }
   }
 
-  return { alias, contestedState: null }
+  return { alias: aliasText, contestedState: null }
 }
 
 module.exports = {
