@@ -175,7 +175,6 @@ describe('Documents routes', () => {
       // so we'll verify the data we're sending to DAPI.
       const expectedDocument = {
         dataContractIdentifier: document.dataContract.identifier,
-        deleted: false,
         revision: 0,
         txHash: document.transaction.hash,
         deleted: document.document.deleted,
@@ -201,9 +200,7 @@ describe('Documents routes', () => {
       const expectedDocument = {
         identifier: document.document.identifier,
         system: true,
-        owner: document.document.owner,
         revision: 0,
-        txHash: null,
         deleted: document.document.deleted,
         data: JSON.stringify(document.document.data),
         timestamp: null,
@@ -211,33 +208,8 @@ describe('Documents routes', () => {
         typeName: 'type_name',
         prefundedBalance: null,
         owner: document.document.owner,
-        isSystem: true
-        timestamp: '1970-01-01T00:00:00.000Z',
         txHash: document.transaction.hash,
-        typeName: 'note',
-        transitionType: 0,
-        data: JSON.stringify({
-          type: 'note',
-          identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
-          dataContractObject: {
-            id: document.dataContract.identifier,
-            ownerId: document.dataContract.owner,
-            version: 0,
-            $format_version: '0',
-            documentSchemas: {
-              note: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    position: 0
-                  }
-                },
-                additionalProperties: false
-              }
-            }
-          }
-        })
+        transitionType: 0
       }
 
       assert.deepEqual(body, expectedDocument)
@@ -383,7 +355,6 @@ describe('Documents routes', () => {
           owner: document.owner,
           system: document.is_system,
           entropy: null,
-          typeName: 'test',
           prefundedBalance: null
         }))
 
@@ -428,7 +399,6 @@ describe('Documents routes', () => {
           owner: document.owner,
           system: document.is_system,
           entropy: null,
-          typeName: 'test',
           prefundedBalance: null
         }))
 
@@ -468,7 +438,6 @@ describe('Documents routes', () => {
           owner: document.owner,
           system: document.is_system,
           entropy: null,
-          typeName: 'type_name',
           prefundedBalance: null
         }))
 
@@ -508,7 +477,6 @@ describe('Documents routes', () => {
           owner: document.owner,
           system: document.is_system,
           entropy: null,
-          typeName: 'test',
           prefundedBalance: null
         }))
 

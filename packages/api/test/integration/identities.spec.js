@@ -972,8 +972,7 @@ describe('Identities routes', () => {
         typeName: 'type_name',
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
-        transitionType: 0,
-        typeName: 'type_name'
+        transitionType: 0
       }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1033,8 +1032,7 @@ describe('Identities routes', () => {
           typeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: 0,
-          typeName: 'type_name'
+          transitionType: 0
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1154,8 +1152,7 @@ describe('Identities routes', () => {
           typeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: 0,
-          typeName: 'type_name'
+          transitionType: 0
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1215,8 +1212,7 @@ describe('Identities routes', () => {
           typeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: 0,
-          typeName: 'type_name'
+          transitionType: 0
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
