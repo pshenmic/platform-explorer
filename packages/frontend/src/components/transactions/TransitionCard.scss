@@ -1,9 +1,12 @@
 @use '../../styles/mixins.scss';
+@use './variables' as txs;
 @import '../../styles/variables.scss';
 
 .TransitionCard {
+  @include txs.CardPaddings(padding);
+  container-type: inline-size;
+
   &__InfoLine {
-    justify-content: flex-start;
     margin-bottom: 14px;
 
     &:last-child {
@@ -23,6 +26,33 @@
 
     .InfoLine__Title {
       width: 200px;
+    }
+
+    &--Data {
+      align-items: flex-start;
+
+      code {
+        max-width: 100%;
+      }
+    }
+  }
+
+  .InfoLine {
+    justify-content: flex-start;
+  }
+
+  @container (max-width: 600px) {
+    &__InfoLine {
+      &--Data, &--PrefundedBalance {
+        flex-wrap: wrap;
+      }
+
+      &--Data {
+        code {
+          width: 100%;
+          margin: 0;
+        }
+      }
     }
   }
 
@@ -47,6 +77,19 @@
         .InfoLine__Title {
           margin-bottom: 4px;
           margin-right: 0;
+        }
+      }
+
+      &--Revision, &--Action {
+        justify-content: space-between;
+
+        .InfoLine__Title, .InfoLine__Value {
+          width: max-content !important;
+        }
+
+        .InfoLine__Value {
+          width: max-content;
+          text-align: right !important;
         }
       }
     }

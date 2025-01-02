@@ -1,6 +1,6 @@
 import { StateTransitionEnum } from '../../../enums/state.transition.type'
 import { ValueCard } from '../../../components/cards'
-import { Identifier, InfoLine, CreditsBlock } from '../../../components/data'
+import { Identifier, InfoLine, CreditsBlock, VoteChoice } from '../../../components/data'
 import { TransitionCard, PublicKeyCard } from '../../../components/transactions'
 
 function TransactionData ({ data, type, loading, rate }) {
@@ -14,7 +14,7 @@ function TransactionData ({ data, type, loading, rate }) {
         value={(
           <ValueCard>
             <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
-               {data?.proTxHash}
+              {data?.proTxHash}
             </Identifier>
           </ValueCard>
         )}
@@ -46,6 +46,37 @@ function TransactionData ({ data, type, loading, rate }) {
         )}
         loading={loading}
         error={!data?.ownerId}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Choice'}
+        value={<VoteChoice choiceStr={data?.choice}/>}
+        loading={loading}
+        error={!data?.choice}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Document Type'}
+        value={(
+          <ValueCard className={'TransactionPage__DocumentType'}>
+            {data?.documentTypeName}
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!data?.documentTypeName}
+      />
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Index Name'}
+        value={(
+          <ValueCard className={'TransactionPage__IndexName'}>
+            {data?.indexName}
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!data?.indexName}
       />
     </>)
   }

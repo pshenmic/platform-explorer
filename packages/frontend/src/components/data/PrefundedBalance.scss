@@ -1,0 +1,11 @@
+.PrefundedBalance {
+  max-width: max-content;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  &__Title, &__Value {
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+}

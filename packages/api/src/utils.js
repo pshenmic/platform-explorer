@@ -232,27 +232,7 @@ const decodeStateTransition = async (client, base64) => {
             signature: Buffer.from(key.getSignature()).toString('hex')
           }
         })
-      decoded.setPublicKeyIdsToDisable = (stateTransition.getPublicKeyIdsToDisable() ?? []).map(key => {
-        const { contractBounds } = key.toObject()
-
-        return {
-          contractBounds: contractBounds
-            ? {
-                type: contractBounds.type,
-                id: Identifier.from(Buffer.from(contractBounds.id)).toString(),
-                typeName: contractBounds.document_type_name
-              }
-            : null,
-          id: key.getId(),
-          type: KeyTypeEnum[key.getType()],
-          data: Buffer.from(key.getData()).toString('hex'),
-          publicKeyHash: Buffer.from(key.hash()).toString('hex'),
-          purpose: KeyPurposeEnum[key.getPurpose()],
-          securityLevel: SecurityLevelEnum[key.getSecurityLevel()],
-          readOnly: key.isReadOnly(),
-          signature: Buffer.from(key.getSignature()).toString('hex')
-        }
-      })
+      decoded.setPublicKeyIdsToDisable = stateTransition.getPublicKeyIdsToDisable() ?? []
       decoded.signature = stateTransition.getSignature().toString('hex')
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.raw = stateTransition.toBuffer().toString('hex')
@@ -446,7 +426,7 @@ const buildIndexBuffer = (name) => {
 const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   let status = null
 
-  if (aliasInfo.contestedState === null) {
+  if (!aliasInfo.contestedState) {
     return {
       alias,
       status: 'ok',
@@ -454,16 +434,16 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     }
   }
 
-  const isLocked = base58.encode(
+  const bs58Identifier = base58.encode(
     Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
-  ) !== identifier
+  )
 
-  if (isLocked) {
+  if (identifier === bs58Identifier) {
+    status = 'ok'
+  } else if (bs58Identifier !== '' || aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === '') {
     status = 'locked'
   } else if (aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === undefined) {
     status = 'pending'
-  } else {
-    status = 'ok'
   }
 
   return {

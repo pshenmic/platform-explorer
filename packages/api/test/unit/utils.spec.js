@@ -329,4 +329,141 @@ describe('Utils', () => {
       })
     })
   })
+  describe('getAliasStateByVote()', () => {
+    it('should return ok if our identifier equal to winner identifier', () => {
+      const mockVote = {
+        alias: 'pshenmic.dash',
+        contestedState: {
+          contendersList: [
+            {
+              identifier: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+              voteCount: 16,
+              document: ''
+            }
+          ],
+          abstainVoteTally: 0,
+          lockVoteTally: 0,
+          finishedVoteInfo: {
+            finishedVoteOutcome: 0,
+            wonByIdentityId: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+            finishedAtBlockHeight: 24407,
+            finishedAtCoreBlockHeight: 2158202,
+            finishedAtBlockTimeMs: 1729411671125,
+            finishedAtEpoch: 5
+          }
+        }
+      }
+
+      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+
+      assert.deepEqual(info, {
+        alias: mockVote.alias,
+        status: 'ok',
+        contested: true
+      })
+    })
+
+    it('should return ok if we not contested', () => {
+      const mockVote = { contestedState: null }
+
+      const info = utils.getAliasStateByVote(mockVote, 'alias343', 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+
+      assert.deepEqual(info, {
+        alias: 'alias343',
+        status: 'ok',
+        contested: false
+      })
+    })
+
+    it('should return pending if we don\'t have winner', () => {
+      const mockVote = {
+        alias: 'pshenmic.dash',
+        contestedState: {
+          contendersList: [
+            {
+              identifier: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+              voteCount: 16,
+              document: ''
+            }
+          ],
+          abstainVoteTally: 0,
+          lockVoteTally: 0
+        }
+      }
+
+      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+
+      assert.deepEqual(info, {
+        alias: mockVote.alias,
+        status: 'pending',
+        contested: true
+      })
+    })
+
+    it('should return locked if our identifier not equal to winner identifier', () => {
+      const mockVote = {
+        alias: 'pshenmic.dash',
+        contestedState: {
+          contendersList: [
+            {
+              identifier: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+              voteCount: 16,
+              document: ''
+            }
+          ],
+          abstainVoteTally: 0,
+          lockVoteTally: 0,
+          finishedVoteInfo: {
+            finishedVoteOutcome: 0,
+            wonByIdentityId: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+            finishedAtBlockHeight: 24407,
+            finishedAtCoreBlockHeight: 2158202,
+            finishedAtBlockTimeMs: 1729411671125,
+            finishedAtEpoch: 5
+          }
+        }
+      }
+
+      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+
+      assert.deepEqual(info, {
+        alias: mockVote.alias,
+        status: 'locked',
+        contested: true
+      })
+    })
+
+    it('should return locked if winner identifier equal "" (empty string)', () => {
+      const mockVote = {
+        alias: 'pshenmic.dash',
+        contestedState: {
+          contendersList: [
+            {
+              identifier: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+              voteCount: 16,
+              document: ''
+            }
+          ],
+          abstainVoteTally: 0,
+          lockVoteTally: 0,
+          finishedVoteInfo: {
+            finishedVoteOutcome: 0,
+            wonByIdentityId: '',
+            finishedAtBlockHeight: 24407,
+            finishedAtCoreBlockHeight: 2158202,
+            finishedAtBlockTimeMs: 1729411671125,
+            finishedAtEpoch: 5
+          }
+        }
+      }
+
+      const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+
+      assert.deepEqual(info, {
+        alias: mockVote.alias,
+        status: 'locked',
+        contested: true
+      })
+    })
+  })
 })

@@ -10,9 +10,49 @@
     align-items: center;
   }
 
+  &__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__InfoLine {
+    &--IdentityAddress, &--NodeId {
+      .InfoLine__Value {
+        width: 100%;
+      }
+
+      .Identifier {
+        container-type: inline-size;
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+
+    &--IdentityAddress {
+      .Identifier__SymbolsContainer {
+        @container (max-width: 22rem) {
+          max-width: 10rem;
+        }
+
+        @container (max-width: 11.5rem) {
+          max-width: 7rem;
+        }
+      }
+    }
+
+    &--NodeId {
+      .Identifier__SymbolsContainer {
+        @container (max-width: 20rem) {
+          max-width: 9.2rem;
+        }
+      }
+    }
+  }
+
   .InfoLine--Loading .InfoLine {
     &__Value {
-      height: 30px;
+      height: 26px !important;
     }
   }
 
@@ -71,6 +111,34 @@
   @media screen and (max-width: $breakpoint-md) {
     &__ProTxHash {
       padding-right: 100px;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__CommonInfo {
+      .InfoLine {
+        flex-wrap: wrap;
+        justify-content: start;
+      }
+
+      .InfoLine--Loading .InfoLine {
+        &__Value {
+          min-width: 40px;
+          width: 100% !important;
+        }
+      }
+    }
+
+    &__InfoLine {
+      &--IdentityAddress, &--NodeId {
+        .Identifier {
+          justify-content: flex-start;
+        }
+      }
+
+      .InfoLine__Title {
+        margin-right: auto;
+      }
     }
   }
 }

@@ -13,6 +13,10 @@
     white-space: nowrap;
   }
 
+  &--Pending {
+    color: var(--chakra-colors-orange-default);
+  }
+
   &--Locked {
     color: var(--chakra-colors-red-default);
     text-decoration: line-through

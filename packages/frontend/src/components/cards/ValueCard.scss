@@ -24,6 +24,28 @@
     background: transparent;
   }
 
+  &--Green {
+    color: var(--chakra-colors-green-default);
+    background: rgba(var(--chakra-colors-green-default-rgb), .2);
+    border-color: rgba(var(--chakra-colors-green-default-rgb), 0.4);
+
+    .CopyButton {
+      svg {
+        color: rgba(255, 255, 255, .85);
+      }
+
+      &:hover {
+        svg {
+          color: #fff;
+        }
+      }
+    }
+
+    &.ValueCard--Clickable:hover {
+      background: rgba(var(--chakra-colors-green-default-rgb), .3);
+    }
+  }
+
   &--Clickable {
     @media (hover: hover) and (pointer: fine) {
       &:hover {

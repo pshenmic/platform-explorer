@@ -108,7 +108,6 @@ function Validator ({ hash }) {
   return (
     <PageDataContainer
       className={'ValidatorPage'}
-      backLink={'/validators'}
       title={'Validator Info'}
     >
       <div className={'ValidatorPage__ContentContainer'}>
