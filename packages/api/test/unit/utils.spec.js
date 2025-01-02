@@ -11,6 +11,7 @@ const identityCreditTransfer = require('./mocks/identity_credit_transfer.json')
 const identityWithdrawal = require('./mocks/identity_withdrawal.json')
 const masternodeVote = require('./mocks/masternode_vote.json')
 const Dash = require('dash')
+const Alias = require('../../src/models/Alias')
 
 describe('Utils', () => {
   let client
@@ -358,23 +359,25 @@ describe('Utils', () => {
 
       const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
-      assert.deepEqual(info, {
+      assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'ok',
-        contested: true
-      })
+        contested: true,
+        timestamp: null
+      }))
     })
 
     it('should return ok if we not contested', () => {
       const mockVote = { contestedState: null }
 
-      const info = utils.getAliasStateByVote(mockVote, 'alias343', 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
+      const info = utils.getAliasStateByVote(mockVote, { alias: 'alias343' }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
-      assert.deepEqual(info, {
+      assert.deepEqual(info, Alias.fromObject({
         alias: 'alias343',
         status: 'ok',
-        contested: false
-      })
+        contested: false,
+        timestamp: null
+      }))
     })
 
     it('should return pending if we don\'t have winner', () => {
@@ -395,11 +398,12 @@ describe('Utils', () => {
 
       const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
-      assert.deepEqual(info, {
+      assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'pending',
-        contested: true
-      })
+        contested: true,
+        timestamp: null
+      }))
     })
 
     it('should return locked if our identifier not equal to winner identifier', () => {
@@ -428,11 +432,12 @@ describe('Utils', () => {
 
       const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
-      assert.deepEqual(info, {
+      assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'locked',
-        contested: true
-      })
+        contested: true,
+        timestamp: null
+      }))
     })
 
     it('should return locked if winner identifier equal "" (empty string)', () => {
@@ -461,11 +466,12 @@ describe('Utils', () => {
 
       const info = utils.getAliasStateByVote(mockVote, mockVote.alias, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
-      assert.deepEqual(info, {
+      assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'locked',
-        contested: true
-      })
+        contested: true,
+        timestamp: null
+      }))
     })
   })
 })

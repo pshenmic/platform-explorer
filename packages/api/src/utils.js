@@ -262,7 +262,6 @@ const decodeStateTransition = async (client, base64) => {
         : null
 
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
-      decoded.identityNonce = parseInt(stateTransition.getNonce())
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.amount = parseInt(stateTransition.getAmount())
       decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null
