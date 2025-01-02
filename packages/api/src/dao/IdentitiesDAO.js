@@ -326,17 +326,22 @@ module.exports = class IdentitiesDAO {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
-    const typeQuery = typeName
-      ? `document_type_name = '${typeName}'`
-      : 'true'
+    let typeQuery ='documents.owner = ?'
+
+    const queryBindings = [identifier]
+
+    if(typeName){
+      typeQuery = typeQuery + ' and document_type_name = ?'
+
+      queryBindings.push(typeName)
+    }
 
     const subquery = this.knex('documents')
       .select('documents.id', 'documents.identifier as identifier', 'documents.owner as document_owner', 'documents.data_contract_id as data_contract_id',
         'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
         'documents.deleted as deleted', 'documents.is_system as document_is_system', 'document_type_name', 'transition_type')
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
-      .where('documents.owner', '=', identifier)
-      .andWhereRaw(typeQuery)
+      .andWhereRaw(typeQuery, queryBindings)
 
     const filteredDocuments = this.knex.with('with_alias', subquery)
       .select('with_alias.id as document_id', 'identifier', 'document_owner', 'revision', 'data_contract_id',

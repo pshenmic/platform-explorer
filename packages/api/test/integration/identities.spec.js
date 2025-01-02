@@ -965,7 +965,7 @@ describe('Identities routes', () => {
         deleted: false,
         data: null,
         timestamp: _document.block.timestamp.toISOString(),
-        isSystem: false,
+        system: false,
         transitionType: 0,
         typeName: 'type_name'
       }))
@@ -1023,7 +1023,7 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false,
+          system: false,
           transitionType: 0,
           typeName: 'type_name'
         }))
@@ -1061,12 +1061,12 @@ describe('Identities routes', () => {
         documents.push({ document, dataContract, transaction, identity, block })
       }
 
-      const { body } = await client.get(`/identity/${identity.identifier}/documents?order=desc&type_name=my_type`)
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?order=desc&document_type_name=my_type`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, documents.length / 2)
+      assert.equal(body.pagination.total, documents.length/2)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
@@ -1083,7 +1083,7 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false,
+          system: false,
           transitionType: 0,
           typeName: 'my_type'
         }))
@@ -1141,7 +1141,7 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false,
+          system: false,
           transitionType: 0,
           typeName: 'type_name'
         }))
@@ -1199,7 +1199,7 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false,
+          system: false,
           transitionType: 0,
           typeName: 'type_name'
         }))

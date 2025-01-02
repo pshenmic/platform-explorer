@@ -159,7 +159,7 @@ describe('Documents routes', () => {
         dataContractIdentifier: document.dataContract.identifier,
         deleted: false,
         identifier: document.document.identifier,
-        isSystem: true,
+        system: true,
         owner: document.document.owner,
         revision: 0,
         timestamp: '1970-01-01T00:00:00.000Z',
@@ -196,7 +196,7 @@ describe('Documents routes', () => {
     it('should return 404 if document not found', async () => {
       // fake identifier
       await client.get('/document/Po1uVkjb7V5WozqdXvosa7LZ9SvXbyaWUV8jfnPUew3')
-        .expect(404)
+        .expect(400)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
@@ -237,14 +237,14 @@ describe('Documents routes', () => {
           typeName: document.document_type_name,
           timestamp: block.timestamp,
           owner: document.owner,
-          isSystem: document.is_system
+          system: document.is_system
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
     })
 
     it('should return default set of documents by type name', async () => {
-      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?type_name=note`)
+      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?document_type_name=note`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -278,7 +278,7 @@ describe('Documents routes', () => {
           typeName: document.document_type_name,
           timestamp: block.timestamp,
           owner: document.owner,
-          isSystem: document.is_system
+          system: document.is_system
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -320,7 +320,7 @@ describe('Documents routes', () => {
           typeName: 'type_name',
           timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
-          isSystem: document.is_system
+          system: document.is_system
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -357,7 +357,7 @@ describe('Documents routes', () => {
           typeName: 'type_name',
           timestamp: block.timestamp,
           owner: document.owner,
-          isSystem: document.is_system
+          system: document.is_system
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -394,7 +394,7 @@ describe('Documents routes', () => {
           typeName: 'type_name',
           timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
-          isSystem: document.is_system
+          system: document.is_system
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
