@@ -83,7 +83,7 @@ HTTP /status
     }
   },
   "indexer": {
-    "status": "not synced",
+    "status": "syncing",
     "syncProgress": 1.18123393316195
   },
   "versions": {
