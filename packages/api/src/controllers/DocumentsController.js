@@ -30,36 +30,40 @@ class DocumentsController {
       dataContract = await this.datacContractsDAO.getDataContractByIdentifier(contractId)
     }
 
+    if (!dataContract) {
+      return response.status(404).send({ message: 'data contract not found' })
+    }
+
     const [documentFromDapi] = await this.dapi.getDocuments(
-      document?.type ?? typeName,
+      typeName,
       {
         $format_version: '0',
-        ownerId: document?.data_contract_owner.trim() ?? dataContract.owner,
-        id: document?.data_contract_identifier.trim() ?? dataContract.identifier,
-        version: document?.version ?? dataContract.version,
-        documentSchemas: JSON.parse(document?.schema ?? dataContract.schema)
+        ownerId: dataContract.owner,
+        id: dataContract.identifier,
+        version: dataContract.version,
+        documentSchemas: JSON.parse(dataContract.schema)
       },
       identifier,
       undefined,
       1
     )
 
-    if (!documentFromDapi && !document) {
+    if (!documentFromDapi) {
       return response.status(404).send({ message: 'not found' })
     }
 
     response.send(Document.fromObject({
-      dataContractIdentifier: document?.data_contract_identifier ?? dataContract.identifier,
-      deleted: document?.deleted ?? false,
-      identifier: documentFromDapi?.getId() ?? document.identifier,
-      isSystem: document?.isSystem ?? false,
+      dataContractIdentifier: dataContract.identifier,
+      deleted: false,
+      identifier: documentFromDapi?.getId(),
+      isSystem: false,
       owner: documentFromDapi.getOwnerId(),
       revision: documentFromDapi.getRevision(),
       timestamp: documentFromDapi.getCreatedAt(),
       txHash: document?.txHash ?? null,
       data: JSON.stringify(documentFromDapi.getData()),
-      typeName: document?.typeName ?? null,
-      transitionType: document?.transitionType ?? null
+      typeName,
+      transitionType: null
     }))
   }
 
