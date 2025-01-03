@@ -343,10 +343,11 @@ describe('Other routes', () => {
         deleted: document.deleted,
         data: JSON.stringify(document.data),
         timestamp: new Date(0).toISOString(),
-        isSystem: false,
+        system: false,
         entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
         prefundedBalance: null,
-        typeName: document.document_type_name,
+        documentTypeName: document.document_type_name,
+        transitionType: 0,
         owner: document.owner
       }
 
