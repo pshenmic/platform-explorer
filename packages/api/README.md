@@ -716,14 +716,14 @@ GET /document/47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ
   "revision": 1,
   "txHash": "5CA1D01931D7C236194D3364D410946FAF6C12FDC0FB56DB3B05ADB881B43B1A",
   "deleted": false,
-  "data": "{\"label\":\"web\",\"records\":{\"identity\":\"8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6\"},\"preorderSalt\":\"HVKEY/12WglST1QCqxH9/yJsp8MMb+1GLc8xWw23PCI=\",\"subdomainRules\":{\"allowSubdomains\":false},\"normalizedLabel\":\"web\",\"parentDomainName\":\"dash\",\"normalizedParentDomainName\":\"dash\"}",
+  "data": {"saltedDomainHash":"DcKS9AWVE1atKvIokA7JNdUNmyj4SbFUvB6e83whw2g="},
   "timestamp": "2024-12-27T14:31:00.798Z",
   "isSystem": false,
   "entropy": "7beffbed25071ab26c0c7c50b3bab098f42126f2a91f9355f492a2d83beb74aa",
   "prefundedVotingBalance": {
     "parentNameAndLabel": 20000000000
   },
-  "typeName": "domain",
+  "typeName": "preorder",
   "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
 }
 ```
