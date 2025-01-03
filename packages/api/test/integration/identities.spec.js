@@ -968,11 +968,12 @@ describe('Identities routes', () => {
         deleted: false,
         data: null,
         entropy: null,
-        prefundedBalance: null,
+        prefundedVotingBalance: null,
         documentTypeName: 'type_name',
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
-        transitionType: 0
+        transitionType: 0,
+        nonce: null
       }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1028,11 +1029,12 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           entropy: null,
-          prefundedBalance: null,
+          prefundedVotingBalance: null,
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: 0
+          transitionType: 0,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1093,8 +1095,9 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           documentTypeName: 'my_type',
-          prefundedBalance: null,
-          entropy: null
+          prefundedVotingBalance: null,
+          entropy: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1150,11 +1153,12 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           entropy: null,
-          prefundedBalance: null,
+          prefundedVotingBalance: null,
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: 0
+          transitionType: 0,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1210,11 +1214,12 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           entropy: null,
-          prefundedBalance: null,
+          prefundedVotingBalance: null,
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: 0
+          transitionType: 0,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)

@@ -165,9 +165,10 @@ describe('Documents routes', () => {
         timestamp: document.block.timestamp,
         entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
         documentTypeName: document.document.document_type_name,
-        prefundedBalance: null,
+        prefundedVotingBalance: null,
         owner: document.document.owner,
         system: document.document.is_system,
+        nonce: 2,
         transitionType: 0
       }
 
@@ -191,9 +192,10 @@ describe('Documents routes', () => {
         timestamp: new Date(0).toISOString(),
         entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
         documentTypeName: document.document.document_type_name,
-        prefundedBalance: null,
+        prefundedVotingBalance: null,
         owner: document.document.owner,
         txHash: document.transaction.hash,
+        nonce: 2,
         transitionType: 0
       }
 
@@ -256,7 +258,8 @@ describe('Documents routes', () => {
           entropy: null,
           documentTypeName: document.document_type_name,
           transitionType: document.transition_type,
-          prefundedBalance: null
+          prefundedVotingBalance: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -296,11 +299,12 @@ describe('Documents routes', () => {
             : {}),
           transitionType: 0,
           entropy: null,
-          prefundedBalance: null,
+          prefundedVotingBalance: null,
           documentTypeName: document.document_type_name,
           timestamp: block.timestamp,
           owner: document.owner,
-          system: document.is_system
+          system: document.is_system,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -331,7 +335,8 @@ describe('Documents routes', () => {
           owner: document.owner,
           system: document.is_system,
           entropy: null,
-          prefundedBalance: null
+          prefundedVotingBalance: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -375,7 +380,8 @@ describe('Documents routes', () => {
           owner: document.owner,
           system: document.is_system,
           entropy: null,
-          prefundedBalance: null
+          prefundedVotingBalance: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -414,7 +420,8 @@ describe('Documents routes', () => {
           owner: document.owner,
           system: document.is_system,
           entropy: null,
-          prefundedBalance: null
+          prefundedVotingBalance: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -453,7 +460,8 @@ describe('Documents routes', () => {
           owner: document.owner,
           system: document.is_system,
           entropy: null,
-          prefundedBalance: null
+          prefundedVotingBalance: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
