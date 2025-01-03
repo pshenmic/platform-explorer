@@ -1,4 +1,5 @@
 const { describe, it, before, after, mock } = require('node:test')
+const DAPI = require('../../src/DAPI')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
@@ -26,6 +27,18 @@ describe('Documents routes', () => {
       }
     }))
 
+    mock.method(DAPI.prototype, 'getDocuments', async (type, dataContractObject, identifier) => [{
+      getData: () => ({
+        type,
+        dataContractObject,
+        identifier
+      }),
+      getId: () => identifier,
+      getRevision: () => 1,
+      getCreatedAt: () => (new Date(0)).toISOString()
+
+    }])
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -35,27 +48,87 @@ describe('Documents routes', () => {
 
     documents = []
 
-    block = await fixtures.block(knex, { height: 1 })
+    block = await fixtures.block(knex, { height: 1, timestamp: new Date(0).toISOString() })
     identity = await fixtures.identity(knex, { block_hash: block.hash })
 
     const dataContractTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash, type: StateTransitionEnum.DATA_CONTRACT_CREATE, owner: identity.identifier
     })
     dataContract = await fixtures.dataContract(knex, {
-      state_transition_hash: dataContractTransaction.hash, owner: identity.identifier, schema: '{}'
+      state_transition_hash: dataContractTransaction.hash,
+      owner: identity.identifier,
+      schema: JSON.stringify(
+        {
+          note: {
+            type: 'object',
+            properties: {
+              message: {
+                type: 'string',
+                position: 0
+              }
+            },
+            additionalProperties: false
+          }
+        }
+      )
     })
 
-    for (let i = 0; i < 5; i++) {
+    const documentTransaction = await fixtures.transaction(knex, {
+      block_hash: block.hash,
+      type: StateTransitionEnum.DOCUMENTS_BATCH,
+      owner: identity.identifier,
+      data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ=='
+    })
+
+    const documentForDapiSearch = await fixtures.document(knex, {
+      data_contract_id: dataContract.id,
+      owner: identity.identifier,
+      is_system: true,
+      state_transition_hash: documentTransaction.hash,
+      document_type_name: 'note',
+      data: {
+        type: 'note',
+        identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
+        dataContractObject: {
+          $format_version: '0',
+          ownerId: dataContract.owner,
+          id: dataContract.identifier,
+          version: 0,
+          documentSchemas: {
+            note: {
+              type: 'object',
+              properties: {
+                message: {
+                  type: 'string',
+                  position: 0
+                }
+              },
+              additionalProperties: false
+            }
+          }
+        }
+      },
+      identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL'
+    })
+
+    documents.push({ transaction: documentTransaction, block, dataContract, document: documentForDapiSearch })
+
+    for (let i = 0; i < 4; i++) {
       const document = await fixtures.document(knex, {
-        data_contract_id: dataContract.id, owner: identity.identifier, is_system: true
+        data_contract_id: dataContract.id,
+        owner: identity.identifier,
+        is_system: true,
+        state_transition_hash: documentTransaction.hash
       })
 
-      documents.push({ transaction: null, block: null, dataContract, document })
+      documents.push({ transaction: documentTransaction, block, dataContract, document })
     }
 
     for (let i = 5; i < 30; i++) {
       const documentTransaction = await fixtures.transaction(knex, {
-        block_hash: block.hash, type: StateTransitionEnum.DATA_CONTRACT_CREATE, owner: identity.identifier
+        block_hash: block.hash,
+        type: StateTransitionEnum.DOCUMENTS_BATCH,
+        owner: identity.identifier
       })
       const document = await fixtures.document(knex, {
         data_contract_id: dataContract.id,
@@ -74,44 +147,47 @@ describe('Documents routes', () => {
 
   describe('getDocumentByIdentifier()', async () => {
     it('should return document by identifier', async () => {
-      const [document] = documents.filter(e => !e.document.is_system)
+      const [document] = documents
 
       const { body } = await client.get(`/document/${document.document.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      // We can't check the document correctly as we are taking data from DAPI
+      // so we'll verify the data we're sending to DAPI.
       const expectedDocument = {
-        identifier: document.document.identifier,
         dataContractIdentifier: document.dataContract.identifier,
+        deleted: false,
+        identifier: document.document.identifier,
+        system: true,
+        owner: document.document.owner,
         revision: 0,
+        timestamp: '1970-01-01T00:00:00.000Z',
         txHash: document.transaction.hash,
-        deleted: document.document.deleted,
-        data: JSON.stringify(document.document.data),
-        timestamp: document.block.timestamp.toISOString(),
-        owner: document.document.owner,
-        isSystem: false
-      }
-
-      assert.deepEqual(body, expectedDocument)
-    })
-
-    it('should return system document', async () => {
-      const [document] = documents.filter(e => e.document.is_system)
-
-      const { body } = await client.get(`/document/${document.document.identifier}`)
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      const expectedDocument = {
-        identifier: document.document.identifier,
-        dataContractIdentifier: document.dataContract.identifier,
-        revision: 0,
-        txHash: null,
-        deleted: document.document.deleted,
-        data: JSON.stringify(document.document.data),
-        timestamp: null,
-        owner: document.document.owner,
-        isSystem: true
+        typeName: 'note',
+        transitionType: 0,
+        data: JSON.stringify({
+          type: 'note',
+          identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
+          dataContractObject: {
+            id: document.dataContract.identifier,
+            ownerId: document.dataContract.owner,
+            version: 0,
+            $format_version: '0',
+            documentSchemas: {
+              note: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    position: 0
+                  }
+                },
+                additionalProperties: false
+              }
+            }
+          }
+        })
       }
 
       assert.deepEqual(body, expectedDocument)
@@ -120,7 +196,7 @@ describe('Documents routes', () => {
     it('should return 404 if document not found', async () => {
       // fake identifier
       await client.get('/document/Po1uVkjb7V5WozqdXvosa7LZ9SvXbyaWUV8jfnPUew3')
-        .expect(404)
+        .expect(400)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
@@ -142,12 +218,67 @@ describe('Documents routes', () => {
           identifier: document.identifier,
           dataContractIdentifier: dataContract.identifier,
           revision: document.revision,
-          txHash: document.is_system ? null : transaction.hash,
+          txHash: transaction.hash,
           deleted: document.deleted,
-          data: JSON.stringify(document.data),
-          timestamp: document.is_system ? null : block.timestamp.toISOString(),
+          data: JSON.stringify(document.data?.dataContractObject
+            ? {
+                type: document.data.type,
+                identifier: document.data.identifier,
+                dataContractObject: {
+                  id: document.data?.dataContractObject?.id ?? null,
+                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
+                  version: document.data?.dataContractObject?.version ?? null,
+                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
+                }
+              }
+            : {}),
+          transitionType: 0,
+          typeName: document.document_type_name,
+          timestamp: block.timestamp,
           owner: document.owner,
-          isSystem: document.is_system
+          system: document.is_system
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return default set of documents by type name', async () => {
+      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?document_type_name=note`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 1)
+      assert.equal(body.pagination.total, 1)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .slice(0, 1)
+        .map(({ block, document, dataContract, transaction }) => ({
+          identifier: document.identifier,
+          dataContractIdentifier: dataContract.identifier,
+          revision: document.revision,
+          txHash: transaction.hash,
+          deleted: document.deleted,
+          data: JSON.stringify(document.data?.dataContractObject
+            ? {
+                type: document.data.type,
+                identifier: document.data.identifier,
+                dataContractObject: {
+                  id: document.data?.dataContractObject?.id ?? null,
+                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
+                  version: document.data?.dataContractObject?.version ?? null,
+                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
+                }
+              }
+            : {}),
+          transitionType: 0,
+          typeName: document.document_type_name,
+          timestamp: block.timestamp,
+          owner: document.owner,
+          system: document.is_system
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -172,10 +303,24 @@ describe('Documents routes', () => {
           revision: document.revision,
           txHash: document.is_system ? null : transaction.hash,
           deleted: document.deleted,
-          data: JSON.stringify(document.data),
-          timestamp: document.is_system ? null : block.timestamp.toISOString(),
+          data: JSON.stringify(document.data?.dataContractObject
+            ? {
+                type: document.data.type,
+                identifier: document.data.identifier,
+                dataContractObject: {
+                  id: document.data?.dataContractObject?.id ?? null,
+                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
+                  version: document.data?.dataContractObject?.version ?? null,
+                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
+                }
+              }
+            : {}),
+          transitionType: 0,
+          typeName: 'type_name',
+          timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
-          isSystem: document.is_system
+          system: document.is_system
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -193,12 +338,26 @@ describe('Documents routes', () => {
           identifier: document.identifier,
           dataContractIdentifier: dataContract.identifier,
           revision: document.revision,
-          txHash: document.is_system ? null : transaction.hash,
+          txHash: transaction.hash,
           deleted: document.deleted,
-          data: JSON.stringify(document.data),
-          timestamp: document.is_system ? null : block.timestamp.toISOString(),
+          data: JSON.stringify(document.data?.dataContractObject
+            ? {
+                type: document.data.type,
+                identifier: document.data.identifier,
+                dataContractObject: {
+                  id: document.data?.dataContractObject?.id ?? null,
+                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
+                  version: document.data?.dataContractObject?.version ?? null,
+                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
+                }
+              }
+            : {}),
+          transitionType: 0,
+          typeName: 'type_name',
+          timestamp: block.timestamp,
           owner: document.owner,
-          isSystem: document.is_system
+          system: document.is_system
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -218,10 +377,24 @@ describe('Documents routes', () => {
           revision: document.revision,
           txHash: document.is_system ? null : transaction.hash,
           deleted: document.deleted,
-          data: JSON.stringify(document.data),
-          timestamp: document.is_system ? null : block.timestamp.toISOString(),
+          data: JSON.stringify(document.data?.dataContractObject
+            ? {
+                type: document.data.type,
+                identifier: document.data.identifier,
+                dataContractObject: {
+                  id: document.data?.dataContractObject?.id ?? null,
+                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
+                  version: document.data?.dataContractObject?.version ?? null,
+                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
+                }
+              }
+            : {}),
+          transitionType: 0,
+          typeName: 'type_name',
+          timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
-          isSystem: document.is_system
+          system: document.is_system
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)

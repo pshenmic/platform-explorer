@@ -12,11 +12,14 @@ module.exports = class Identity {
   aliases
   totalGasSpent
   averageGasSpent
-  topUpsGasSpent
-  withdrawalsGasSpent
+  totalTopUpsAmount
+  totalWithdrawalsAmount
   lastWithdrawalHash
   publicKeys
   fundingCoreTx
+  totalTopUps
+  totalWithdrawals
+  lastWithdrawalTimestamp
 
   constructor (
     identifier, owner, revision,
@@ -24,8 +27,10 @@ module.exports = class Identity {
     totalDataContracts, totalDocuments,
     totalTransfers, txHash, isSystem,
     aliases, totalGasSpent, averageGasSpent,
-    topUpsGasSpent, withdrawalsGasSpent,
-    lastWithdrawalHash, publicKeys, fundingCoreTx
+    totalTopUpsAmount, totalWithdrawalsAmount,
+    lastWithdrawalHash, lastWithdrawalTimestamp,
+    totalTopUps, totalWithdrawals, publicKeys,
+    fundingCoreTx
   ) {
     this.identifier = identifier ? identifier.trim() : null
     this.owner = owner ? owner.trim() : null
@@ -41,11 +46,14 @@ module.exports = class Identity {
     this.aliases = aliases ?? []
     this.totalGasSpent = totalGasSpent ?? null
     this.averageGasSpent = averageGasSpent ?? null
-    this.topUpsGasSpent = topUpsGasSpent ?? null
-    this.withdrawalsGasSpent = withdrawalsGasSpent ?? null
+    this.totalTopUpsAmount = totalTopUpsAmount ?? null
+    this.totalWithdrawalsAmount = totalWithdrawalsAmount ?? null
     this.lastWithdrawalHash = lastWithdrawalHash ?? null
     this.publicKeys = publicKeys ?? []
     this.fundingCoreTx = fundingCoreTx ?? null
+    this.totalTopUps = totalTopUps ?? null
+    this.totalWithdrawals = totalWithdrawals ?? null
+    this.lastWithdrawalTimestamp = lastWithdrawalTimestamp ?? null
   }
 
   static fromObject ({
@@ -54,8 +62,9 @@ module.exports = class Identity {
     totalDataContracts, totalDocuments,
     totalTransfers, txHash, isSystem,
     aliases, totalGasSpent, averageGasSpent,
-    topUpsGasSpent, withdrawalsGasSpent,
-    lastWithdrawalHash, publicKeys, fundingCoreTx
+    totalTopUpsAmount, totalWithdrawalsAmount,
+    lastWithdrawalHash, publicKeys, fundingCoreTx,
+    totalTopUps, totalWithdrawals, lastWithdrawalTimestamp
   }) {
     return new Identity(
       identifier,
@@ -72,9 +81,12 @@ module.exports = class Identity {
       aliases,
       totalGasSpent,
       averageGasSpent,
-      topUpsGasSpent,
-      withdrawalsGasSpent,
+      totalTopUpsAmount,
+      totalWithdrawalsAmount,
       lastWithdrawalHash,
+      lastWithdrawalTimestamp,
+      totalTopUps,
+      totalWithdrawals,
       publicKeys,
       fundingCoreTx
     )
@@ -87,8 +99,9 @@ module.exports = class Identity {
     total_data_contracts, total_documents,
     total_transfers, tx_hash, is_system,
     aliases, total_gas_spent, average_gas_spent,
-    top_ups_gas_spent, withdrawals_gas_spent,
-    last_withdrawal_hash
+    total_top_ups_amount, total_withdrawals_amount,
+    last_withdrawal_hash, last_withdrawal_timestamp,
+    total_top_ups, total_withdrawals
   }) {
     return new Identity(
       identifier?.trim(),
@@ -105,9 +118,12 @@ module.exports = class Identity {
       aliases,
       Number(total_gas_spent),
       Number(average_gas_spent),
-      Number(top_ups_gas_spent),
-      Number(withdrawals_gas_spent),
-      last_withdrawal_hash
+      Number(total_top_ups_amount),
+      Number(total_withdrawals_amount),
+      last_withdrawal_hash,
+      last_withdrawal_timestamp,
+      Number(total_top_ups),
+      Number(total_withdrawals)
     )
   }
 }

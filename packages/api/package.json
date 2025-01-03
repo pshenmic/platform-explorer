@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -14,7 +14,7 @@
   "dependencies": {
     "@dashevo/wasm-dpp": "github:owl352/wasm-dpp",
     "@dashevo/dapi-client": "github:owl352/dapi-client",
-    "@dashevo/dashd-rpc": "19.0.0",
+    "@dashevo/dashd-rpc": "github:owl352/dashd-rpc",
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
     "bs58": "^6.0.0",

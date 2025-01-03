@@ -24,6 +24,8 @@ describe('Blocks routes', () => {
       }
     }))
 
+    mock.method(tenderdashRpc, 'getBlockByHash', async () => ({ block: { header: {} } }))
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -86,9 +88,11 @@ describe('Blocks routes', () => {
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator,
+          appHash: null,
           totalGasUsed: 0
         },
-        txs: []
+        txs: [],
+        quorum: null
       }
 
       assert.deepEqual(expectedBlock, body)

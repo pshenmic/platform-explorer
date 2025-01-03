@@ -5,10 +5,65 @@
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  border-radius: 10px;
+  border-radius: $border-radius-def;
   background: rgba(46, 57, 61, .5);
   padding: 12px;
   transition: all .1s;
+
+  &--Elipsed {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &--Red {
+    color: var(--chakra-colors-red-default);
+    background: rgba(var(--chakra-colors-red-default-rgb), .2);
+  }
+
+  &--Green {
+    color: var(--chakra-colors-green-default);
+    background: rgba(var(--chakra-colors-green-default-rgb), .2);
+  }
+
+  &--Blue {
+    color: var(--chakra-colors-brand-light);
+    background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
+  }
+
+  &--LightGray {
+    color: #fff;
+    background: #404E53;
+  }
+
+  &--Gray {
+    color: #fff;
+    background: rgba(255, 255, 255, .2);
+  }
+
+  &--Orange {
+    color: rgb(244, 154, 88);
+    background: rgba(244, 154, 88, 0.2);
+  }
+
+  &--SizeSm {
+    padding: 6px 10px;
+    line-height: 14px;
+    border-radius: 8px;
+  }
+
+  &--SizeXs {
+    padding: 4px 6px;
+    line-height: 16px;
+    border-radius: 8px;
+  }
+
+  &--SizeXxs {
+    padding: 2px 4px;
+    line-height: 16px;
+    border-radius: 3px;
+  }
 
   &--Clickable {
     @media (hover: hover) and (pointer: fine) {

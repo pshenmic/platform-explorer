@@ -84,14 +84,15 @@ const fixtures = {
     return { ...row, txHash: state_transition_hash ?? transaction.hash, id: result[0].id, transaction }
   },
 
-  identity_alias: async (knex, { alias, identity, block_hash } = {}) => {
+  identity_alias: async (knex, { alias, identity, block_hash, state_transition_hash } = {}) => {
     if (!identity) {
       identity = this.identity(knex, { block_hash })
     }
 
     const row = {
       identity_identifier: identity.identifier,
-      alias
+      alias,
+      state_transition_hash
     }
 
     await knex('identity_aliases').insert(row).returning('id')
@@ -129,7 +130,9 @@ const fixtures = {
     state_transition_hash,
     data_contract_id,
     owner,
-    is_system
+    is_system,
+    transition_type,
+    document_type_name
   }) => {
     if (!identifier) {
       identifier = generateIdentifier()
@@ -151,7 +154,9 @@ const fixtures = {
       deleted: deleted ?? false,
       data_contract_id,
       owner,
-      is_system: is_system ?? false
+      is_system: is_system ?? false,
+      transition_type: transition_type ?? 0,
+      document_type_name: document_type_name ?? 'type_name'
     }
 
     const result = await knex('documents').insert(row).returning('id')

@@ -196,7 +196,7 @@ describe('Identities routes', () => {
 
   describe('getIdentityByIdentifier()', async () => {
     it('should return identity by identifier', async () => {
-      const block = await fixtures.block(knex)
+      const block = await fixtures.block(knex, { timestamp: new Date(0) })
       const owner = await fixtures.identity(knex, { block_hash: block.hash })
 
       const transaction = await fixtures.transaction(knex, {
@@ -212,7 +212,8 @@ describe('Identities routes', () => {
       const { alias } = await fixtures.identity_alias(knex,
         {
           alias: 'test.dash',
-          identity
+          identity,
+          state_transition_hash: transaction.hash
         }
       )
 
@@ -235,13 +236,17 @@ describe('Identities routes', () => {
         aliases: [{
           alias,
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: '1970-01-01T00:00:00+00:00'
         }],
         totalGasSpent: 0,
         averageGasSpent: 0,
-        topUpsGasSpent: 0,
-        withdrawalsGasSpent: 0,
+        totalTopUpsAmount: 0,
+        totalWithdrawalsAmount: 0,
         lastWithdrawalHash: null,
+        lastWithdrawalTimestamp: null,
+        totalTopUps: 0,
+        totalWithdrawals: 0,
         publicKeys: [],
         fundingCoreTx: null
       }
@@ -281,13 +286,17 @@ describe('Identities routes', () => {
         transactions.push({ transaction, block })
       }
 
-      const withdrawals = transactions.sort((a, b) => a.block.height - b.block.height).map(transaction => ({
-        timestamp: transaction.block.timestamp.toISOString(),
+      const withdrawals = transactions.sort((a, b) => b.block.height - a.block.height).map(transaction => ({
+        $createdAt: transaction.block.timestamp.toISOString(),
         hash: null,
-        id: transaction.transaction.hash,
-        sender: transaction.transaction.owner,
+        $id: transaction.transaction.hash,
+        $ownerId: transaction.transaction.owner,
         amount: 12345678,
-        status: 'COMPLETE'
+        status: 0,
+        getCreatedAt: () => transaction.block.timestamp,
+        getId: () => transaction.transaction.hash,
+        getOwnerId: () => transaction.transaction.owner,
+        getData: () => ({ status: 0, amount: 12345678 })
       }))
 
       mock.method(DAPI.prototype, 'getDocuments', async () => withdrawals)
@@ -297,11 +306,11 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.deepEqual(body.resultSet, withdrawals.map(withdrawal => ({
-        hash: withdrawal.id,
-        document: withdrawal.id,
-        sender: withdrawal.sender,
-        status: withdrawal.status,
-        timestamp: withdrawal.timestamp,
+        hash: withdrawal.$id,
+        document: withdrawal.$id,
+        sender: withdrawal.$ownerId,
+        status: 0,
+        timestamp: withdrawal.$createdAt,
         amount: withdrawal.amount,
         withdrawalAddress: null
       })))
@@ -320,7 +329,7 @@ describe('Identities routes', () => {
     it('should return identity by dpns', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.1.dash', identity })
+      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.1.dash', identity, state_transition_hash: identity.transaction.hash })
 
       const { body } = await client.get('/dpns/identity?dpns=test-name.1.dash')
         .expect(200)
@@ -332,7 +341,8 @@ describe('Identities routes', () => {
         status: {
           alias,
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: null
         }
       }
 
@@ -342,7 +352,7 @@ describe('Identities routes', () => {
     it('should return identity by dpns with any case', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.2.dash', identity })
+      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.2.dash', identity, state_transition_hash: identity.transaction.hash })
 
       const { body } = await client.get('/dpns/identity?dpns=TeSt-NaME.2.DAsH')
         .expect(200)
@@ -354,7 +364,8 @@ describe('Identities routes', () => {
         status: {
           alias,
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: null
         }
       }
 
@@ -374,9 +385,9 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -404,14 +415,17 @@ describe('Identities routes', () => {
         isSystem: false,
         aliases: [
           aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-        ].map(alias => ({ alias, status: 'ok', contested: false })),
+        ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
         totalGasSpent: null,
         averageGasSpent: null,
-        topUpsGasSpent: null,
-        withdrawalsGasSpent: null,
+        totalTopUpsAmount: null,
+        totalWithdrawalsAmount: null,
         lastWithdrawalHash: null,
         publicKeys: [],
-        fundingCoreTx: null
+        fundingCoreTx: null,
+        lastWithdrawalTimestamp: null,
+        totalTopUps: null,
+        totalWithdrawals: null
       }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -421,9 +435,9 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test1$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test1$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -453,14 +467,17 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
-          topUpsGasSpent: null,
-          withdrawalsGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
           lastWithdrawalHash: null,
           publicKeys: [],
-          fundingCoreTx: null
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -471,9 +488,9 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test2$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test2$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -503,14 +520,17 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
-          topUpsGasSpent: null,
-          withdrawalsGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
           lastWithdrawalHash: null,
           publicKeys: [],
-          fundingCoreTx: null
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -521,9 +541,9 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity, state_transition_hash: identity.transaction.hash })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -554,14 +574,17 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
-          topUpsGasSpent: null,
-          withdrawalsGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
           lastWithdrawalHash: null,
           publicKeys: [],
-          fundingCoreTx: null
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -574,7 +597,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         const transactions = []
 
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
 
         for (let j = 0; j < Math.floor(Math.random() * 50); j++) {
@@ -590,7 +613,7 @@ describe('Identities routes', () => {
         identity.transactions = transactions
 
         identities.push({ identity, block })
-        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity, state_transition_hash: identity.transaction.hash })
         aliases.push(alias)
       }
 
@@ -620,14 +643,17 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
-          topUpsGasSpent: null,
-          withdrawalsGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
           lastWithdrawalHash: null,
           publicKeys: [],
-          fundingCoreTx: null
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -638,7 +664,7 @@ describe('Identities routes', () => {
       const aliases = []
 
       for (let i = 0; i < 30; i++) {
-        block = await fixtures.block(knex, { height: i + 1 })
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
         transferTx = await fixtures.transaction(knex, {
           block_hash: block.hash,
@@ -654,7 +680,7 @@ describe('Identities routes', () => {
         identity.balance = transfer.amount
 
         identities.push({ identity, block, transfer })
-        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity })
+        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity, state_transition_hash: identity.transaction.hash })
         aliases.push(alias)
       }
 
@@ -698,14 +724,17 @@ describe('Identities routes', () => {
           isSystem: false,
           aliases: [
             aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false })),
+          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
           totalGasSpent: null,
           averageGasSpent: null,
-          topUpsGasSpent: null,
-          withdrawalsGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
           lastWithdrawalHash: null,
           publicKeys: [],
-          fundingCoreTx: null
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
@@ -892,7 +921,7 @@ describe('Identities routes', () => {
   })
 
   describe('getDocumentsByIdentity()', async () => {
-    it('should return default set of data contracts by identity', async () => {
+    it('should return default set of documents by identity', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash })
@@ -939,13 +968,15 @@ describe('Identities routes', () => {
         deleted: false,
         data: null,
         timestamp: _document.block.timestamp.toISOString(),
-        isSystem: false
+        system: false,
+        transitionType: 0,
+        typeName: 'type_name'
       }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
     })
 
-    it('should return default set of data contracts by identity dsc', async () => {
+    it('should return default set of documents by identity dsc', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash })
@@ -995,7 +1026,69 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false
+          system: false,
+          transitionType: 0,
+          typeName: 'type_name'
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return default set of documents by identity and type_name dsc', async () => {
+      documents = []
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+
+      for (let i = 1; i < 31; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        dataContractTransaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: StateTransitionEnum.DATA_CONTRACT_CREATE
+        })
+        dataContract = await fixtures.dataContract(knex, {
+          state_transition_hash: dataContractTransaction.hash,
+          owner: identity.identifier
+        })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: StateTransitionEnum.DOCUMENTS_BATCH
+        })
+        document = await fixtures.document(knex, {
+          state_transition_hash: transaction.hash,
+          owner: identity.identifier,
+          data_contract_id: dataContract.id,
+          document_type_name: i % 2 === 0 ? 'my_type' : 'non_my_type'
+        })
+        documents.push({ document, dataContract, transaction, identity, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?order=desc&document_type_name=my_type`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, documents.length / 2)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({ document }) => document.document_type_name === 'my_type')
+        .sort((a, b) => b.document.id - a.document.id)
+        .slice(0, 10)
+        .map((_document) => ({
+          identifier: _document.document.identifier,
+          owner: identity.identifier,
+          dataContractIdentifier: _document.dataContract.identifier,
+          revision: 0,
+          txHash: _document.transaction.hash,
+          deleted: false,
+          data: null,
+          timestamp: _document.block.timestamp.toISOString(),
+          system: false,
+          transitionType: 0,
+          typeName: 'my_type'
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1051,7 +1144,9 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false
+          system: false,
+          transitionType: 0,
+          typeName: 'type_name'
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1107,7 +1202,9 @@ describe('Identities routes', () => {
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
-          isSystem: false
+          system: false,
+          transitionType: 0,
+          typeName: 'type_name'
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1315,7 +1412,8 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.IDENTITY_TOP_UP
+          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          gas_used: 123
         })
         transfer = await fixtures.transfer(knex, {
           amount: 1000,
@@ -1345,10 +1443,101 @@ describe('Identities routes', () => {
           timestamp: _transfer.block.timestamp.toISOString(),
           txHash: _transfer.transfer.state_transition_hash,
           type: _transfer.transaction.type,
-          blockHash: _transfer.block.hash
+          blockHash: _transfer.block.hash,
+          gasUsed: _transfer.transaction.gas_used
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
+    })
+
+    it('should return default set of transfers by identity and type', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      transfers = []
+
+      for (let i = 1; i < 31; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          owner: identity.identifier,
+          type: i % 2 === 0 ? 5 : 6,
+          gas_used: 123
+        })
+        transfer = await fixtures.transfer(knex, {
+          amount: 1000,
+          recipient: identity.identifier,
+          sender: null,
+          state_transition_hash: transaction.hash
+        })
+        transfers.push({ transfer, transaction, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transfers?type=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, 15)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedTransfers = transfers
+        .filter(_transfer => _transfer.transaction.type === 5)
+        .sort((a, b) => a.block.height - b.block.height)
+        .slice(0, 10)
+        .map((_transfer) => ({
+          amount: parseInt(_transfer.transfer.amount),
+          sender: _transfer.transfer.sender,
+          recipient: _transfer.transfer.recipient,
+          timestamp: _transfer.block.timestamp.toISOString(),
+          txHash: _transfer.transfer.state_transition_hash,
+          type: _transfer.transaction.type,
+          blockHash: _transfer.block.hash,
+          gasUsed: _transfer.transaction.gas_used
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTransfers)
+    })
+
+    it('should return transfer by identity and tx hash', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      transfers = []
+
+      transaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        owner: identity.identifier,
+        type: StateTransitionEnum.IDENTITY_TOP_UP,
+        gas_used: 123
+      })
+      transfer = await fixtures.transfer(knex, {
+        amount: 1000,
+        recipient: identity.identifier,
+        sender: null,
+        state_transition_hash: transaction.hash
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transfers?hash=${transaction.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 1)
+      assert.equal(body.pagination.total, 1)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedTransfers = {
+        amount: transfer.amount,
+        sender: null,
+        recipient: identity.identifier,
+        timestamp: block.timestamp.toISOString(),
+        txHash: transaction.hash,
+        type: transaction.type,
+        blockHash: block.hash,
+        gasUsed: transaction.gas_used
+      }
+
+      assert.deepEqual(body.resultSet, [expectedTransfers])
     })
 
     it('should return default set of transfers by identity desc', async () => {
@@ -1361,7 +1550,8 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.IDENTITY_TOP_UP
+          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          gas_used: 12
         })
         transfer = await fixtures.transfer(knex, {
           amount: 1000,
@@ -1391,7 +1581,8 @@ describe('Identities routes', () => {
           timestamp: _transfer.block.timestamp.toISOString(),
           txHash: _transfer.transfer.state_transition_hash,
           type: _transfer.transaction.type,
-          blockHash: _transfer.block.hash
+          blockHash: _transfer.block.hash,
+          gasUsed: _transfer.transaction.gas_used
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -1407,7 +1598,8 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.IDENTITY_TOP_UP
+          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          gas_used: 22
         })
         transfer = await fixtures.transfer(knex, {
           amount: 1000,
@@ -1437,7 +1629,8 @@ describe('Identities routes', () => {
           timestamp: _transfer.block.timestamp.toISOString(),
           txHash: _transfer.transfer.state_transition_hash,
           type: _transfer.transaction.type,
-          blockHash: _transfer.block.hash
+          blockHash: _transfer.block.hash,
+          gasUsed: _transfer.transaction.gas_used
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -1453,7 +1646,8 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.IDENTITY_TOP_UP
+          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          gas_used: 33
         })
         transfer = await fixtures.transfer(knex, {
           amount: 1000,
@@ -1483,7 +1677,8 @@ describe('Identities routes', () => {
           timestamp: _transfer.block.timestamp.toISOString(),
           txHash: _transfer.transfer.state_transition_hash,
           type: _transfer.transaction.type,
-          blockHash: _transfer.block.hash
+          blockHash: _transfer.block.hash,
+          gasUsed: _transfer.transaction.gas_used
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)

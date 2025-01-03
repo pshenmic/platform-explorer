@@ -84,7 +84,8 @@ describe('Other routes', () => {
 
     identityAlias = await fixtures.identity_alias(knex, {
       alias: 'dpns.dash',
-      identity
+      identity,
+      state_transition_hash: identityTransaction.hash
     })
 
     dataContractTransaction = await fixtures.transaction(knex, {
@@ -182,7 +183,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 contested: false,
-                status: 'ok'
+                status: 'ok',
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           },
@@ -202,7 +204,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 status: 'ok',
-                contested: false
+                contested: false,
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           },
@@ -222,7 +225,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 status: 'ok',
-                contested: false
+                contested: false,
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           }
@@ -253,7 +257,8 @@ describe('Other routes', () => {
           aliases: [{
             alias: identityAlias.alias,
             contested: false,
-            status: 'ok'
+            status: 'ok',
+            timestamp: '1970-01-01T00:00:00+00:00'
           }]
         }
       }
@@ -336,7 +341,8 @@ describe('Other routes', () => {
         status: {
           alias: identityAlias.alias,
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: null
         }
       }]
 
@@ -363,15 +369,19 @@ describe('Other routes', () => {
         aliases: [{
           alias: 'dpns.dash',
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: '1970-01-01T00:00:00+00:00'
         }],
         totalGasSpent: 480000,
         averageGasSpent: 9412,
-        topUpsGasSpent: 0,
-        withdrawalsGasSpent: 0,
+        totalTopUpsAmount: 0,
+        totalWithdrawalsAmount: 0,
         lastWithdrawalHash: null,
         publicKeys: [],
-        fundingCoreTx: null
+        fundingCoreTx: null,
+        lastWithdrawalTimestamp: null,
+        totalTopUps: 0,
+        totalWithdrawals: 0
       }
 
       assert.deepEqual({ identity: expectedIdentity }, body)
@@ -449,6 +459,10 @@ describe('Other routes', () => {
         dataContractsCount: 1,
         documentsCount: 1,
         network: null,
+        indexer: {
+          status: 'syncing',
+          syncProgress: (blocks.length) / mockTDStatus?.highestBlock?.height * 100
+        },
         api: {
           version: require('../../package.json').version,
           block: {

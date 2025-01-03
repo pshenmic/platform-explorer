@@ -33,8 +33,8 @@ $borderRadius: 20px;
     overflow: hidden;
     border-radius: 0 0 $borderRadius $borderRadius;
     background: var(--chakra-colors-gray-675);
-    @include mixins.pageDataPadding(padding-left);
-    @include mixins.pageDataPadding(padding-right);
+    @include mixins.pageDataPadding(padding-left, true);
+    @include mixins.pageDataPadding(padding-right, true);
   }
 
   &__BackLink {
@@ -49,6 +49,10 @@ $borderRadius: 20px;
     align-items: center;
     justify-content: center;
     transition: all .1s;
+
+    svg {
+      transform: rotate(180deg);
+    }
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
@@ -73,8 +77,8 @@ $borderRadius: 20px;
 
   @media screen and (max-width: $breakpoint-lg) {
     &__Content {
-      @include mixins.pageDataPadding(padding-top);
-      @include mixins.pageDataPadding(padding-bottom);
+      @include mixins.pageDataPadding(padding-top, true);
+      @include mixins.pageDataPadding(padding-bottom, true);
       border-radius: $borderRadius;
     }
 
@@ -84,6 +88,13 @@ $borderRadius: 20px;
       &::before {
         border-radius: 20px;
       }
+    }
+  }
+
+  @media screen and (max-width: 420px) {
+    &__ContentContainer {
+      @include mixins.pageDataPadding(margin-right, true, true);
+      @include mixins.pageDataPadding(margin-left, true, true);
     }
   }
 }

@@ -109,19 +109,18 @@ const LineGraph = ({
   const xAxisFormatCode = typeof xAxis.type === 'string' ? xAxis.type : xAxis.type.axis
   const [chartWidth, setChartWidth] = useState(0)
   const svgRef = useRef(null)
+  const uniqueComponentId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-  const getFormatByCode = (code) => {
-    if (code === 'number') return d3.format(',.0f')
-    if (code === 'date') return d3.timeFormat('%B %d')
-    if (code === 'datetime') return d3.timeFormat('%B %d, %H:%M')
-    if (code === 'time') return d3.timeFormat('%H:%M')
+  const tickFormats = {
+    number: d3.format(',.0f'),
+    date: d3.timeFormat('%B %d'),
+    datetime: d3.timeFormat('%B %d, %H:%M'),
+    time: d3.timeFormat('%H:%M')
   }
 
-  const xTickFormat = (() => {
-    return getFormatByCode(xAxisFormatCode)
-  })()
-
-  const y = d3.scaleLinear(d3.extent(data, d => d.y), [height - marginBottom, marginTop])
+  const xTickFormat = tickFormats[xAxisFormatCode]
+  const filteredData = data.filter(d => typeof d.y === 'number' && !isNaN(d.y))
+  const y = d3.scaleLinear(d3.extent(filteredData, d => d.y), [height - marginBottom, marginTop])
 
   const [x, setX] = useState(() => {
     if (xAxisFormatCode === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
@@ -168,6 +167,15 @@ const LineGraph = ({
     .y0(y(0))
     .y1((d) => y(d.y)))
 
+  const valuesFormat = (value) => {
+    if (typeof value !== 'number' || isNaN(value)) return value
+
+    if (value >= 1e9) return `${(value / 1e9).toFixed(1)}B`
+    if (value >= 1e6) return `${(value / 1e6).toFixed(1)}M`
+    if (value >= 1e3) return `${(value / 1e3).toFixed(1)}k`
+    return value
+  }
+
   useEffect(() => {
     d3.select(gx.current)
       .call((axis) => {
@@ -204,6 +212,7 @@ const LineGraph = ({
       .call(d3.axisLeft(y)
         .tickSize(0)
         .ticks(5)
+        .tickFormat(valuesFormat)
         .tickPadding(10)
       )
 
@@ -318,14 +327,14 @@ const LineGraph = ({
 
     const infoLines = []
     const xFormatCode = typeof xAxis.type.tooltip === 'string' ? xAxis.type.tooltip : xAxis.type.axis
-    const xFormat = getFormatByCode(xFormatCode)
+    const xFormat = tickFormats[xFormatCode]
 
     infoLines.push({
       styles: ['inline', 'tiny'],
       value: `${xFormat(data[i].x)}: `
     }, {
       styles: ['inline', 'bold'],
-      value: ` ${data[i].y} `
+      value: ` ${new Intl.NumberFormat('fr-FR', { useGrouping: true, grouping: [3], minimumFractionDigits: 0 }).format(data[i].y)} `
     }, {
       styles: ['inline', 'tiny'],
       value: ` ${yAxis.abbreviation}`
@@ -379,7 +388,7 @@ const LineGraph = ({
             overflow={'visible'}
             viewBox={`0 0 ${width} ${height}`}
         >
-            <filter id="shadow">
+            <filter id={`shadow-${uniqueComponentId}`}>
                 <feDropShadow dx='0.2' dy='0.4' stdDeviation='.15'/>
             </filter>
 
@@ -413,11 +422,11 @@ const LineGraph = ({
 
             <g transform={'translate(15,-15)'}>
                 <defs>
-                    <linearGradient id="AreaFill" x1="0%" y1="100%" x2="0%" y2="0%">
-                        <stop stopColor="#0F4D74" stopOpacity="0.02" offset="0%" />
-                        <stop stopColor="#0E75B5" stopOpacity="0.4" offset="100%" />
+                    <linearGradient id={`AreaFill-${uniqueComponentId}`} x1='0%' y1='100%' x2='0%' y2='0%'>
+                        <stop stopColor='#0F4D74' stopOpacity='0.02' offset='0%' />
+                        <stop stopColor='#0E75B5' stopOpacity='0.4' offset='100%' />
                     </linearGradient>
-                    <clipPath id="clipPath">
+                    <clipPath id={`clipPath-${uniqueComponentId}`}>
                         <rect
                             x={marginLeft - 20}
                             y={marginTop}
@@ -427,9 +436,9 @@ const LineGraph = ({
                     </clipPath>
                 </defs>
 
-                <path d={area(data)} fill="url(#AreaFill)" clipPath={'url(#clipPath)'}/>
+                <path d={area(data)} fill={`url(#AreaFill-${uniqueComponentId})`} clipPath={`url(#clipPath-${uniqueComponentId})`}/>
 
-                <g filter='url(#shadow)'>
+                <g filter={`url(#shadow-${uniqueComponentId})`}>
                     <path ref={graphicLine} d={line(data)} stroke={'#008DE4'} strokeWidth={3} fill={'none'} strokeLinejoin={'round'}/>
 
                     <g fill='#008DE4'>
@@ -441,7 +450,7 @@ const LineGraph = ({
                     <circle r={3}/>
                 </g>
 
-                <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'} filter='url(#shadow)'></g>
+                <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'} filter={`url(#shadow-${uniqueComponentId})`}></g>
             </g>
         </svg>
     </div>

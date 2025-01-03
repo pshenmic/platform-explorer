@@ -16,9 +16,20 @@ module.exports = class IdentitiesDAO {
 
   getIdentityByIdentifier = async (identifier) => {
     const aliasSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier',
+        this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'timestamp', timestamp::timestamptz
+            )
+          ) as aliases
+        `)
+      )
       .where('identity_identifier', '=', identifier)
       .groupBy('identity_identifier')
+      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
+      .leftJoin('blocks', 'block_hash', 'blocks.hash')
       .as('identity_alias')
 
     const subquery = this.knex('identities')
@@ -71,6 +82,10 @@ module.exports = class IdentitiesDAO {
       .from('with_alias')
       .limit(1)
 
+    const statisticSubquery = this.knex('state_transitions')
+      .whereRaw(`owner = identifier and type=${IDENTITY_CREDIT_WITHDRAWAL}`)
+      .as('statistic')
+
     const rows = await this.knex.with('with_alias', mainQuery)
       .select(
         'identifier', 'owner', 'revision',
@@ -81,23 +96,41 @@ module.exports = class IdentitiesDAO {
         'total_transfers', 'aliases', 'tx_data',
         this.knex.raw('ROUND(total_gas_spent/total_txs) as average_gas_spent')
       )
-      .select(this.knex('state_transitions')
-        .sum('gas_used')
-        .where('owner', identifier)
+      .select(this.knex('transfers')
+        .select(this.knex.raw('sum(amount)'))
+        .where('recipient', identifier)
+        .orWhere('sender', identifier)
         .andWhere('type', IDENTITY_TOP_UP)
-        .as('top_ups_gas_spent'))
-      .select(this.knex('state_transitions')
-        .sum('gas_used')
-        .where('owner', identifier)
+        .leftJoin('state_transitions', 'state_transition_hash', 'hash')
+        .as('total_top_ups_amount'))
+      .select(this.knex('transfers')
+        .select(this.knex.raw('sum(amount)'))
+        .where('sender', identifier)
         .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
-        .as('withdrawals_gas_spent'))
-      .select(this.knex('state_transitions')
+        .leftJoin('state_transitions', 'state_transition_hash', 'hash')
+        .as('total_withdrawals_amount'))
+      .select(this.knex(statisticSubquery)
         .select('hash')
-        .where('owner', identifier)
-        .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
+        .where('type', IDENTITY_CREDIT_WITHDRAWAL)
         .orderBy('id', 'desc')
         .limit(1)
         .as('last_withdrawal_hash'))
+      .select(this.knex(statisticSubquery)
+        .select('timestamp')
+        .where('type', IDENTITY_CREDIT_WITHDRAWAL)
+        .orderBy('id', 'desc')
+        .limit(1)
+        .as('last_withdrawal_timestamp'))
+      .select(
+        this.knex(statisticSubquery)
+          .count('id')
+          .whereRaw(`type=${IDENTITY_CREDIT_WITHDRAWAL}`)
+          .as('total_withdrawals'))
+      .select(
+        this.knex(statisticSubquery)
+          .count('id')
+          .whereRaw(`type=${IDENTITY_TOP_UP}`)
+          .as('total_top_ups'))
       .from('with_alias')
 
     if (!rows.length) {
@@ -113,7 +146,7 @@ module.exports = class IdentitiesDAO {
     const identity = Identity.fromRow(row)
 
     const aliases = await Promise.all(identity.aliases.map(async alias => {
-      const aliasInfo = await getAliasInfo(alias, this.dapi)
+      const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
       return getAliasStateByVote(aliasInfo, alias, identifier)
     }))
@@ -125,14 +158,23 @@ module.exports = class IdentitiesDAO {
     if (row.tx_data) {
       const { assetLockProof } = await decodeStateTransition(this.client, row.tx_data)
 
-      fundingCoreTx = assetLockProof?.txid
+      fundingCoreTx = assetLockProof?.fundingCoreTx
     }
 
     return Identity.fromObject({
       ...identity,
       aliases,
       balance: await this.dapi.getIdentityBalance(identity.identifier),
-      publicKeys,
+      publicKeys: publicKeys?.map(key => ({
+        keyId: key.keyId,
+        type: key.type,
+        data: key.data,
+        purpose: key.purpose,
+        securityLevel: key.securityLevel,
+        readOnly: key.isReadOnly,
+        hash: key.hash,
+        contractBounds: key.contractBounds
+      })),
       fundingCoreTx
     })
   }
@@ -152,7 +194,7 @@ module.exports = class IdentitiesDAO {
       return {
         identifier: row.identity_identifier,
         alias: row.alias,
-        status: getAliasStateByVote(aliasInfo, row.alias, row.identity_identifier)
+        status: getAliasStateByVote(aliasInfo, { alias: row.alias }, row.identity_identifier)
       }
     }))
   }
@@ -176,9 +218,20 @@ module.exports = class IdentitiesDAO {
         acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
     }
 
-    const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+    const aliasSubquery = this.knex('identity_aliases')
+      .select('identity_identifier',
+        this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'timestamp', timestamp::timestamptz
+            )
+          ) as aliases
+        `)
+      )
       .groupBy('identity_identifier')
+      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
+      .leftJoin('blocks', 'block_hash', 'blocks.hash')
       .as('aliases')
 
     const subquery = this.knex('identities')
@@ -188,7 +241,7 @@ module.exports = class IdentitiesDAO {
       .select(this.knex.raw('COALESCE((select sum(amount) from transfers where recipient = identifier), 0) - COALESCE((select sum(amount) from transfers where sender = identifier), 0) as balance'))
       .select(this.knex('state_transitions').count('*').whereRaw('owner = identifier').as('total_txs'))
       .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
-      .leftJoin(aliasesSubquery, 'identity_identifier', 'identifier')
+      .leftJoin(aliasSubquery, 'identity_identifier', 'identifier')
       .as('identities')
 
     const filteredIdentities = this.knex(subquery)
@@ -228,7 +281,7 @@ module.exports = class IdentitiesDAO {
       const balance = await this.dapi.getIdentityBalance(row.identifier.trim())
 
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
         return getAliasStateByVote(aliasInfo, alias, row.identifier.trim())
       }))
@@ -291,20 +344,30 @@ module.exports = class IdentitiesDAO {
     })), page, limit, totalCount)
   }
 
-  getDocumentsByIdentity = async (identifier, page, limit, order) => {
+  getDocumentsByIdentity = async (identifier, typeName, page, limit, order) => {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
+
+    let typeQuery = 'documents.owner = ?'
+
+    const queryBindings = [identifier]
+
+    if (typeName) {
+      typeQuery = typeQuery + ' and document_type_name = ?'
+
+      queryBindings.push(typeName)
+    }
 
     const subquery = this.knex('documents')
       .select('documents.id', 'documents.identifier as identifier', 'documents.owner as document_owner', 'documents.data_contract_id as data_contract_id',
         'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
-        'documents.deleted as deleted', 'documents.is_system as document_is_system')
+        'documents.deleted as deleted', 'documents.is_system as document_is_system', 'document_type_name', 'transition_type')
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
-      .where('documents.owner', '=', identifier)
+      .andWhereRaw(typeQuery, queryBindings)
 
     const filteredDocuments = this.knex.with('with_alias', subquery)
       .select('with_alias.id as document_id', 'identifier', 'document_owner', 'revision', 'data_contract_id',
-        'deleted', 'tx_hash', 'document_is_system', 'rank')
+        'deleted', 'tx_hash', 'document_is_system', 'rank', 'document_type_name', 'transition_type')
       .select(this.knex('with_alias').count('*').where('rank', 1).as('total_count'))
       .select(this.knex.raw(`rank() over (order by with_alias.id ${order}) row_number`))
       .from('with_alias')
@@ -313,7 +376,7 @@ module.exports = class IdentitiesDAO {
 
     const rows = await this.knex(filteredDocuments)
       .select('document_id', 'documents.identifier as identifier', 'document_owner', 'data_contracts.identifier as data_contract_identifier',
-        'revision', 'deleted', 'tx_hash', 'total_count', 'row_number',
+        'revision', 'deleted', 'tx_hash', 'total_count', 'row_number', 'document_type_name', 'transition_type',
         'data_contract_id', 'blocks.timestamp as timestamp', 'document_is_system')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
@@ -356,9 +419,19 @@ module.exports = class IdentitiesDAO {
     return new PaginatedResultSet(rows.map(row => Transaction.fromRow(row)), page, limit, totalCount)
   }
 
-  getTransfersByIdentity = async (identifier, page, limit, order, type) => {
+  getTransfersByIdentity = async (identifier, hash, page, limit, order, type) => {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
+
+    let searchQuery = `(transfers.sender = '${identifier}' OR transfers.recipient = '${identifier}')`
+
+    if (typeof type === 'number') {
+      searchQuery = searchQuery + ` AND state_transitions.type = ${type}`
+    }
+
+    if (hash) {
+      searchQuery = searchQuery + ` AND state_transitions.hash = '${hash}'`
+    }
 
     const subquery = this.knex('transfers')
       .select(
@@ -366,14 +439,11 @@ module.exports = class IdentitiesDAO {
         'transfers.sender as sender', 'transfers.recipient as recipient',
         'transfers.state_transition_hash as tx_hash',
         'state_transitions.block_hash as block_hash',
-        'state_transitions.type as type'
+        'state_transitions.type as type',
+        'state_transitions.gas_used as gas_used'
       )
       .select(this.knex.raw(`rank() over (order by transfers.id ${order}) rank`))
-      .whereRaw(`(transfers.sender = '${identifier}' OR transfers.recipient = '${identifier}') ${
-        typeof type === 'number'
-          ? `AND state_transitions.type = ${type}`
-          : ''
-      }`)
+      .whereRaw(searchQuery)
       .leftJoin('state_transitions', 'state_transitions.hash', 'transfers.state_transition_hash')
 
     const rows = await this.knex.with('with_alias', subquery)
@@ -381,7 +451,7 @@ module.exports = class IdentitiesDAO {
         'rank', 'amount', 'block_hash', 'type',
         'sender', 'recipient', 'with_alias.id',
         'tx_hash', 'blocks.timestamp as timestamp',
-        'block_hash'
+        'block_hash', 'gas_used'
       )
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'with_alias.block_hash')
@@ -404,5 +474,6 @@ module.exports = class IdentitiesDAO {
       .andWhere('owner', identifier)
       .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
+      .orderBy('id', 'desc')
   }
 }

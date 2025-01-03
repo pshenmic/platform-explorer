@@ -2,23 +2,57 @@
 @import '../../styles/variables.scss';
 
 .ValidatorCard {
+  @include mixins.EntityCard();
+
   &__Header {
     display: flex;
     width: 100%;
     align-items: center;
+  }
 
-    .InfoLine {
-      margin-bottom: 20px;
-      
-      &:last-child {
-        margin-bottom: 0;
+  &__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__InfoLine {
+    &--IdentityAddress, &--NodeId {
+      .InfoLine__Value {
+        width: 100%;
+      }
+
+      .Identifier {
+        container-type: inline-size;
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+
+    &--IdentityAddress {
+      .Identifier__SymbolsContainer {
+        @container (max-width: 22rem) {
+          max-width: 10rem;
+        }
+
+        @container (max-width: 11.5rem) {
+          max-width: 7rem;
+        }
+      }
+    }
+
+    &--NodeId {
+      .Identifier__SymbolsContainer {
+        @container (max-width: 20rem) {
+          max-width: 9.2rem;
+        }
       }
     }
   }
 
   .InfoLine--Loading .InfoLine {
     &__Value {
-      height: 30px;
+      height: 26px !important;
     }
   }
 
@@ -29,43 +63,12 @@
     }
   }
 
-  &__Avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: $font-mono;
-    font-size: 0.75rem;
-    color: var(--chakra-colors-gray-500);
-    width: 88px;
-    height: 88px;
-    border: 1px solid rgba(137, 126, 126, 0.1);
-    flex-shrink: 0;
-    margin-right: 24px;
-  }
-
-  &__HeaderLines {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    padding: 6px 0;
-    overflow: hidden;
-  }
-
   &__Separator {
     margin: 12px 0;
   }
 
   &__BlockHeighValue {
     font-size: 0.813rem;
-  }
-
-  &__InfoLine {
-    margin-bottom: 14px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
   }
 
   &__ProTxHash {
@@ -79,9 +82,9 @@
       .InfoLine {
         flex-wrap: wrap;
         justify-content: start;
+        gap: 5px;
 
         &__Title {
-          margin-bottom: 5px;
           width: 100%;
         }
 
@@ -108,6 +111,34 @@
   @media screen and (max-width: $breakpoint-md) {
     &__ProTxHash {
       padding-right: 100px;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__CommonInfo {
+      .InfoLine {
+        flex-wrap: wrap;
+        justify-content: start;
+      }
+
+      .InfoLine--Loading .InfoLine {
+        &__Value {
+          min-width: 40px;
+          width: 100% !important;
+        }
+      }
+    }
+
+    &__InfoLine {
+      &--IdentityAddress, &--NodeId {
+        .Identifier {
+          justify-content: flex-start;
+        }
+      }
+
+      .InfoLine__Title {
+        margin-right: auto;
+      }
     }
   }
 }

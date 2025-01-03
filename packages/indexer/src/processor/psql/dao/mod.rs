@@ -106,7 +106,7 @@ impl PostgresDAO {
         let id = document.identifier;
         let revision = document.revision;
         let revision_i32 = revision as i32;
-
+        let transition_type = document.transition_type as i64;
         let data = document.data;
         let is_system = document.is_system;
 
@@ -130,13 +130,15 @@ impl PostgresDAO {
                                             document.data_contract_identifier.to_string(Base58)));
         let data_contract_id = data_contract.id.unwrap() as i32;
 
-        let query = "INSERT INTO documents(identifier,owner,revision,data,deleted,\
-        state_transition_hash,data_contract_id,is_system) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
+        let query = "INSERT INTO documents(identifier,document_type_name,transition_type,owner,revision,data,deleted,\
+        state_transition_hash,data_contract_id,is_system) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
 
         let stmt = client.prepare_cached(query).await.unwrap();
 
         client.query(&stmt, &[
             &id.to_string(Base58),
+            &document.document_type_name,
+            &transition_type,
             &owner.to_string(Base58),
             &revision_i32,
             &data,
@@ -179,19 +181,20 @@ impl PostgresDAO {
         Ok(())
     }
 
-    pub async fn create_identity_alias(&self, identity: Identity, alias: String) -> Result<(), PoolError> {
+    pub async fn create_identity_alias(&self, identity: Identity, alias: String, st_hash: String) -> Result<(), PoolError> {
         let client = self.connection_pool.get().await.unwrap();
 
-        let query = "INSERT INTO identity_aliases(identity_identifier,alias) VALUES ($1, $2);";
+        let query = "INSERT INTO identity_aliases(identity_identifier,alias,state_transition_hash) VALUES ($1, $2, $3);";
 
         let stmt = client.prepare_cached(query).await.unwrap();
 
         client.query(&stmt, &[
             &identity.identifier.to_string(Base58),
             &alias,
+            &st_hash,
         ]).await.unwrap();
 
-        println!("Created Identity Alias {} -> {}", identity.identifier.to_string(Base58), alias);
+        println!("Created Identity Alias {} -> {} ({})", identity.identifier.to_string(Base58), alias, &st_hash);
 
         Ok(())
     }
@@ -261,7 +264,7 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await?;
 
         let stmt = client.prepare_cached("SELECT documents.id, documents.identifier,\
-        data_contracts.identifier,documents.owner,documents.price,\
+        documents.document_type_name,documents.transition_type,data_contracts.identifier,documents.owner,documents.price,\
         documents.deleted,documents.revision,documents.is_system \
         FROM documents \
         LEFT JOIN data_contracts ON data_contracts.id = documents.data_contract_id \

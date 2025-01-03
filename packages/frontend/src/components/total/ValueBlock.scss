@@ -2,101 +2,113 @@
 @import '../../styles/variables.scss';
 
 .ValueBlock {
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding-left: 44px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 44px;
 
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+  }
+
+  &--Blocks {
     &::before {
-        content: '';
-        display: block;
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 28px;
-        height: 28px;
+      background: url('/images/icons/block.svg') no-repeat center;
+      background-size: contain;
     }
+  }
 
+  &--Transactions {
+    &::before {
+      background: url('/images/icons/transactions.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--Timer {
+    &::before {
+      background: url('/images/icons/timer.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--Epoch {
+    &::before {
+      background: url('/images/icons/timer.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--Sandglass {
+    &::before {
+      background: url('/images/icons/sandglass.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--Nodes {
+    &::before {
+      background: url('/images/icons/nodes.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--Coins {
+    &::before {
+      background: url('/images/icons/coins.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--StarCheck {
+    &::before {
+      background: url('/images/icons/star-check.svg') no-repeat center;
+      background-size: contain;
+    }
+  }
+
+  &--Christmas.ValueBlock {
     &--Blocks {
-        &::before {
-            background: url("/images/icons/transactions.svg") no-repeat center;
-            background-size: contain;
-        }
+      &::before {
+        background: url('/images/icons/block-present.svg') no-repeat center;
+        background-size: contain;
+        width: 30px;
+        height: 30px;
+        margin: -1px;
+      }
+    }
+  }
+
+  &__Title {
+    color:  var(--chakra-colors-brand-deep);
+    font-size: 1rem;
+    margin-right: 10px;
+    white-space: nowrap;
+  }
+
+  &__Value {
+    font-size: 1.125rem;
+
+    &--Loading {
+      @include mixins.LoadingLine;
+
+      opacity: .5;
+      border-radius: 5px;
+      animation-delay: 100ms;
     }
 
-    &--Transactions {
-        &::before {
-            background: url('/images/icons/block.svg') no-repeat center;
-            background-size: contain;
-        }
+    &--Elipsed {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-
-    &--Timer {
-        &::before {
-            background: url('/images/icons/timer.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &--Epoch {
-        &::before {
-            background: url('/images/icons/timer.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &--Sandglass {
-        &::before {
-            background: url('/images/icons/sandglass.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &--Nodes {
-        &::before {
-            background: url('/images/icons/nodes.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &--Coins {
-        &::before {
-            background: url('/images/icons/coins.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &--StarCheck {
-        &::before {
-            background: url('/images/icons/star-check.svg') no-repeat center;
-            background-size: contain;
-        }
-    }
-
-    &__Title {
-        color:  var(--chakra-colors-brand-deep);
-        font-size: 1rem;
-        margin-right: 10px;
-        white-space: nowrap;
-    }
-    
-    &__Value {
-        font-size: 1.125rem;
-
-        &--Loading {
-            @include mixins.LoadingLine;
-    
-            opacity: .5;
-            border-radius: 5px;
-            animation-delay: 100ms;
-        }
-
-        &--Elipsed {
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    }
+  }
 }

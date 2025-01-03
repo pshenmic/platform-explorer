@@ -32,6 +32,11 @@ const schemaTypes = [
         minimum: 0,
         maximum: 8
       },
+      hash: {
+        type: 'string',
+        minLength: 64,
+        maxLength: 64
+      },
       transaction_type: {
         type: ['array', 'null'],
         items: {
@@ -54,6 +59,9 @@ const schemaTypes = [
       gas_max: {
         type: ['number', 'null'],
         minimum: 0
+      },
+      document_type_name: {
+        type: ['string', 'null']
       },
       start_epoch_index: {
         type: ['number', 'null'],

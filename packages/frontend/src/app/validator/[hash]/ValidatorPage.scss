@@ -94,18 +94,18 @@
 
     .InfoLine--Loading .InfoLine {
       &__Value {
-        height: 32px;
+        height: 28px;
       }
     }
   }
 
-  &__InfoLine {
-    margin-bottom: 14px;
+    &__InfoLine {
+      margin-bottom: 14px;
 
-    .DateBlock {
-      justify-content: flex-end;
+      .DateBlock__InfoContainer {
+        justify-content: flex-end;
+      }
     }
-  }
 
   &__ValueContainer {
     display: flex;
@@ -129,9 +129,14 @@
     }
 
     .PageDataContainer__Content {
-      padding: 0;
       border-radius: 0;
       background: transparent;
+    }
+  }
+
+  @media screen and (min-width: 421px) and (max-width: $breakpoint-lg) {
+    .PageDataContainer__Content {
+      padding: 0 !important;
     }
   }
 
@@ -145,6 +150,12 @@
       .PageItem:not(.PageItem--Previous):not(.PageItem--Next) {
         margin: 0 4px;
       }
+    }
+  }
+
+  @media screen and (max-width: 420px) {
+    .PageDataContainer__Content {
+      padding-bottom: 0 !important;
     }
   }
 }

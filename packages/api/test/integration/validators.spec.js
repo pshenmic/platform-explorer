@@ -358,6 +358,7 @@ describe('Validators routes', () => {
             timestamp: blockHeader.timestamp.toISOString(),
             blockVersion: blockHeader.blockVersion,
             appVersion: blockHeader.appVersion,
+            totalGasUsed: 0,
             l1LockedHeight: blockHeader.l1LockedHeight,
             validator: blockHeader.validator,
             totalGasUsed: 0
@@ -477,6 +478,7 @@ describe('Validators routes', () => {
                   height: blockHeader.height,
                   timestamp: blockHeader.timestamp.toISOString(),
                   blockVersion: blockHeader.blockVersion,
+                  totalGasUsed: null,
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,

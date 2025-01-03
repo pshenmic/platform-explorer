@@ -1,25 +1,28 @@
 import './Pagination.scss'
 
 import ReactPaginate from 'react-paginate'
+import { ChevronIcon } from '../ui/icons'
 
 function Pagination ({
   onPageChange,
   pageCount,
   forcePage,
   pageRangeDisplayed = 2,
-  marginPagesDisplayed = 1
+  marginPagesDisplayed = 1,
+  justify = false,
+  className
 }) {
   pageCount = Math.max(pageCount, 1)
 
   return (
     <ReactPaginate
       breakLabel={'...'}
-      nextLabel={'>'}
+      nextLabel={<ChevronIcon/>}
       onPageChange={onPageChange}
       pageRangeDisplayed={pageRangeDisplayed}
       marginPagesDisplayed={marginPagesDisplayed}
       pageCount={pageCount}
-      previousLabel={'<'}
+      previousLabel={<ChevronIcon/>}
       pageClassName={'PageItem'}
       pageLinkClassName={'PageLink'}
       previousClassName={'PageItem PageItem--Previous'}
@@ -28,7 +31,7 @@ function Pagination ({
       nextLinkClassName={'PageLink'}
       breakClassName={'PageItem PageItem--BreakLink'}
       breakLinkClassName={'PageLink PageLink--Break'}
-      containerClassName={'Pagination'}
+      containerClassName={`Pagination ${className || ''} ${justify ? 'Pagination--Justify' : ''}`}
       activeClassName={'active'}
       renderOnZeroPageCount={true}
       forcePage={forcePage}

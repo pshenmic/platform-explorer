@@ -10,24 +10,31 @@ import { EpochTooltip } from '../ui/Tooltips'
 import Link from 'next/link'
 import './NetworkStatus.scss'
 
+function checkApiStatus (status) {
+  if (!status?.data?.tenderdash?.block?.timestamp || !status?.data?.api?.block?.timestamp) return false
+
+  const tenderdashTimestamp = new Date(status?.data?.tenderdash?.block?.timestamp).getTime()
+  const apiTimestamp = new Date(status?.data?.api?.block?.timestamp).getTime()
+
+  return !Number.isNaN(apiTimestamp) && !Number.isNaN(tenderdashTimestamp) &&
+    Math.abs(apiTimestamp - tenderdashTimestamp) <= 10 * 60 * 1000
+}
+
 function NetworkStatus ({ className }) {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
+  const lastBlockTimestamp = status?.data?.tenderdash?.block?.timestamp
+  const msFromLastBlock = lastBlockTimestamp ? new Date() - new Date(lastBlockTimestamp) : null
+  const networkStatus = msFromLastBlock !== null && msFromLastBlock / 1000 / 60 < 15
+  const apiStatus = checkApiStatus(status)
 
   const fetchData = useCallback(() => {
     Api.getStatus()
       .then(res => fetchHandlerSuccess(setStatus, res))
       .catch(err => fetchHandlerError(setStatus, err))
-      .finally(() => setTimeout(fetchData, 60000))
+      .finally(() => setTimeout(fetchData, 15000))
   }, [])
 
   useEffect(fetchData, [fetchData])
-
-  const lastBlockTimestamp = status?.data?.tenderdash?.block?.timestamp
-  const msFromLastBlock = lastBlockTimestamp ? new Date() - new Date(lastBlockTimestamp) : null
-  const networkStatus = msFromLastBlock !== null && msFromLastBlock / 1000 / 60 < 15
-  const apiStatus = typeof status?.data?.tenderdash?.block?.timestamp === 'string' &&
-    new Date(status?.data?.api?.block?.timestamp).getTime() ===
-    new Date(status?.data?.tenderdash?.block?.timestamp).getTime()
 
   const NetworkStatusIcon = networkStatus
     ? <CheckCircleIcon mr={2}/>
@@ -60,12 +67,12 @@ function NetworkStatus ({ className }) {
 
       <div className={`NetworkStatus__Stat NetworkStatus__Stat--PlatformVersion ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>Platform version:</div>
-        <div className={'NetworkStatus__InfoValue'}>{status?.data?.platform?.version !== undefined ? `v${status.data.platform.version}` : '-'}</div>
+        <div className={'NetworkStatus__InfoValue'}>{status?.data?.versions?.software?.drive !== undefined ? `v${status?.data?.versions?.software?.drive}` : '-'}</div>
       </div>
 
       <div className={`NetworkStatus__Stat NetworkStatus__Stat--TenderdashVersion ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
         <div className={'NetworkStatus__InfoTitle'}>Tenderdash version:</div>
-        <div className={'NetworkStatus__InfoValue'}>{status?.data?.tenderdash?.version ? `v${status.data.tenderdash.version}` : '-'}</div>
+        <div className={'NetworkStatus__InfoValue'}>{status?.data?.versions?.software?.tenderdash ? `v${status?.data?.versions?.software?.tenderdash}` : '-'}</div>
       </div>
 
       <div align={'start'} className={`NetworkStatus__Stat NetworkStatus__Stat--Network ${status?.loading ? 'NetworkStatus__Stat--Loading' : ''}`}>
