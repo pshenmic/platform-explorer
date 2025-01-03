@@ -56,9 +56,9 @@ class MainController {
       api: {
         version: API_VERSION,
         block: {
-          height: currentBlock?.header?.height,
-          hash: currentBlock?.header?.hash,
-          timestamp: currentBlock?.header?.timestamp.toISOString()
+          height: currentBlock?.header?.height ?? null,
+          hash: currentBlock?.header?.hash ?? null,
+          timestamp: currentBlock?.header?.timestamp.toISOString() ?? null
         }
       },
       tenderdash: {
