@@ -27,7 +27,6 @@ module.exports = class DocumentsDAO {
       .select(
         this.knex(subquery)
           .select('documents.data')
-          .where('transition_type', '<', DocumentActionEnum.Delete)
           .orderBy('documents.id', 'desc')
           .limit(1)
           .as('data')
@@ -75,7 +74,8 @@ module.exports = class DocumentsDAO {
     return Document.fromObject({
       ...document,
       entropy: transitionWithEntropy?.entropy,
-      prefundedBalance: transitionWithEntropy?.prefundedBalance
+      prefundedVotingBalance: transitionWithEntropy?.prefundedVotingBalance,
+      nonce: transitionWithEntropy?.nonce
     })
   }
 
@@ -83,14 +83,17 @@ module.exports = class DocumentsDAO {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
-    const typeQuery = typeName
-      ? `document_type_name = '${typeName}'`
-      : 'true'
+    let typeQuery = 'data_contracts.identifier = ?'
+    const queryBindings = [identifier]
+
+    if (typeName) {
+      typeQuery = typeQuery + ' and document_type_name = ?'
+      queryBindings.push(typeName)
+    }
 
     const dataSubquery = this.knex('documents')
       .select('documents.data as data', 'documents.identifier as identifier')
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.revision desc) rank'))
-      .where('transition_type', '<', DocumentActionEnum.Delete)
       .orderBy('documents.id', 'desc')
       .as('documents_data')
 
@@ -106,8 +109,7 @@ module.exports = class DocumentsDAO {
         'documents.deleted as deleted', 'documents.is_system as is_system', 'transition_type')
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
-      .where('data_contracts.identifier', identifier)
-      .andWhereRaw(typeQuery)
+      .whereRaw(typeQuery, queryBindings)
 
     const filteredDocuments = this.knex.with('with_alias', subquery)
       .select('id', 'with_alias.identifier as identifier', 'document_owner', 'rank', 'revision', 'data_contract_identifier',

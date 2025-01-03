@@ -55,15 +55,12 @@ class DocumentsController {
     response.send(Document.fromObject({
       dataContractIdentifier: dataContract.identifier,
       deleted: false,
-      identifier: extendedDocument?.getId(),
-      system: false,
-      owner: extendedDocument.getOwnerId(),
-      revision: extendedDocument.getRevision(),
-      timestamp: extendedDocument.getCreatedAt(),
-      txHash: document?.txHash ?? null,
-      data: JSON.stringify(extendedDocument.getData()),
-      typeName: documentTypeName,
-      transitionType: null
+      identifier: extendedDocument?.getId().toString(),
+      owner: extendedDocument?.getOwnerId().toString(),
+      revision: extendedDocument?.getRevision(),
+      timestamp: extendedDocument?.getCreatedAt(),
+      data: JSON.stringify(extendedDocument?.getData() ?? {}),
+      typeName: documentTypeName
     }))
   }
 

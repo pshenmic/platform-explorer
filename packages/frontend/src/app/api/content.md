@@ -687,7 +687,7 @@ GET /document/47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ
   "timestamp": "2024-12-27T14:31:00.798Z",
   "isSystem": false,
   "entropy": "7beffbed25071ab26c0c7c50b3bab098f42126f2a91f9355f492a2d83beb74aa",
-  "prefundedBalance": {
+  "prefundedVotingBalance": {
     "parentNameAndLabel": 20000000000
   },
   "typeName": "domain",
@@ -768,7 +768,7 @@ GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?type_na
       "timestamp": "2024-12-27T14:31:00.798Z",
       "isSystem": false,
       "entropy": null,
-      "prefundedBalance": null,
+      "prefundedVotingBalance": null,
       "typeName": "domain",
       "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
     }, ...
@@ -1036,7 +1036,7 @@ GET /identity/8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6/documents?type_name=d
       "timestamp": "2024-12-27T14:31:00.798Z",
       "isSystem": false,
       "entropy": null,
-      "prefundedBalance": null,
+      "prefundedVotingBalance": null,
       "typeName": "domain",
       "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
     }, ...
@@ -1296,7 +1296,7 @@ Available transactions type for decode
 | `MASTERNODE_VOTE`            | 8          |
 
 - `fundingAddress` can be null
-- `prefundedBalance` can be null
+- `prefundedVotingBalance` can be null
 - `contractBounds` always null
 
 ```
@@ -1478,7 +1478,7 @@ POST /transaction/decode
                     "allowSubdomains": false
                 }
             },
-            "prefundedBalance": {
+            "prefundedVotingBalance": {
                 "parentNameAndLabel": 20000000000
             }
         }

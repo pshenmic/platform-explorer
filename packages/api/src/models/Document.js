@@ -8,11 +8,12 @@ module.exports = class Document {
   timestamp
   system
   entropy
-  prefundedBalance
+  prefundedVotingBalance
   documentTypeName
   transitionType
+  nonce
 
-  constructor (identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, isSystem, documentTypeName, transitionType, entropy, prefundedBalance) {
+  constructor (identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, isSystem, documentTypeName, transitionType, entropy, prefundedVotingBalance, nonce) {
     this.identifier = identifier ? identifier.trim() : null
     this.owner = owner ? owner.trim() : null
     this.dataContractIdentifier = dataContractIdentifier ? dataContractIdentifier.trim() : null
@@ -27,7 +28,8 @@ module.exports = class Document {
     this.documentTypeName = documentTypeName ?? null
     this.transitionType = transitionType ?? null
     this.entropy = entropy ?? null
-    this.prefundedBalance = prefundedBalance ?? null
+    this.prefundedVotingBalance = prefundedVotingBalance ?? null
+    this.nonce = nonce ?? null
   }
 
   // eslint-disable-next-line camelcase
@@ -35,7 +37,7 @@ module.exports = class Document {
     return new Document(identifier, owner, data_contract_identifier, revision, tx_hash, deleted, data ? JSON.stringify(data) : null, timestamp, is_system, document_type_name, Number(transition_type))
   }
 
-  static fromObject ({ identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, system, documentTypeName, transitionType, entropy, prefundedBalance }) {
-    return new Document(identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, system, documentTypeName, transitionType, entropy, prefundedBalance)
+  static fromObject ({ identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, system, documentTypeName, transitionType, entropy, prefundedVotingBalance, nonce }) {
+    return new Document(identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, system, documentTypeName, transitionType, entropy, prefundedVotingBalance, nonce)
   }
 }
