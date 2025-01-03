@@ -82,7 +82,7 @@ describe('Utils', () => {
             id: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
             dataContractId: 'FhKAsUnPbqe7K4TZxgRdtPUrfSvNCtYV8iPsvjX7ZG58',
             revision: 1,
-            prefundedBalance: null,
+            prefundedVotingBalance: null,
             type: 'note',
             entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
             action: 0,
