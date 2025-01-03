@@ -14,7 +14,7 @@ class MainController {
   constructor (knex, dapi, client) {
     this.blocksDAO = new BlocksDAO(knex, dapi)
     this.dataContractsDAO = new DataContractsDAO(knex)
-    this.documentsDAO = new DocumentsDAO(knex)
+    this.documentsDAO = new DocumentsDAO(knex, client)
     this.transactionsDAO = new TransactionsDAO(knex, dapi)
     this.identitiesDAO = new IdentitiesDAO(knex, dapi, client)
     this.validatorsDAO = new ValidatorsDAO(knex)

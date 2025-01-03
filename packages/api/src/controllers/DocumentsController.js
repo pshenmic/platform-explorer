@@ -4,7 +4,7 @@ const Document = require('../models/Document')
 
 class DocumentsController {
   constructor (client, knex, dapi) {
-    this.documentsDAO = new DocumentsDAO(knex)
+    this.documentsDAO = new DocumentsDAO(knex, client)
     this.datacContractsDAO = new DataContractsDAO(knex)
     this.client = client
     this.dapi = dapi
@@ -55,15 +55,12 @@ class DocumentsController {
     response.send(Document.fromObject({
       dataContractIdentifier: dataContract.identifier,
       deleted: false,
-      identifier: extendedDocument?.getId(),
-      system: false,
-      owner: extendedDocument.getOwnerId(),
-      revision: extendedDocument.getRevision(),
-      timestamp: extendedDocument.getCreatedAt(),
-      txHash: document?.txHash ?? null,
-      data: JSON.stringify(extendedDocument.getData()),
-      typeName: documentTypeName,
-      transitionType: null
+      identifier: extendedDocument?.getId().toString(),
+      owner: extendedDocument?.getOwnerId().toString(),
+      revision: extendedDocument?.getRevision(),
+      timestamp: extendedDocument?.getCreatedAt(),
+      data: JSON.stringify(extendedDocument?.getData() ?? {}),
+      typeName: documentTypeName
     }))
   }
 
@@ -74,6 +71,15 @@ class DocumentsController {
     const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, documentTypeName, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(documents)
+  }
+
+  getDocumentTransactions = async (request, response) => {
+    const { identifier } = request.params
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+
+    const transactions = await this.documentsDAO.getDocumentTransactions(identifier, Number(page ?? 1), Number(limit ?? 10), order)
+
+    response.send(transactions)
   }
 }
 
