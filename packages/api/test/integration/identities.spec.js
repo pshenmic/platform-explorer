@@ -969,7 +969,7 @@ describe('Identities routes', () => {
         data: null,
         entropy: null,
         prefundedBalance: null,
-        typeName: 'type_name',
+        documentTypeName: 'type_name',
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
         transitionType: 0
@@ -1029,7 +1029,7 @@ describe('Identities routes', () => {
           data: null,
           entropy: null,
           prefundedBalance: null,
-          typeName: 'type_name',
+          documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0
@@ -1092,7 +1092,9 @@ describe('Identities routes', () => {
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0,
-          typeName: 'my_type'
+          documentTypeName: 'my_type',
+          prefundedBalance: null,
+          entropy: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1149,7 +1151,7 @@ describe('Identities routes', () => {
           data: null,
           entropy: null,
           prefundedBalance: null,
-          typeName: 'type_name',
+          documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0
@@ -1209,7 +1211,7 @@ describe('Identities routes', () => {
           data: null,
           entropy: null,
           prefundedBalance: null,
-          typeName: 'type_name',
+          documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0

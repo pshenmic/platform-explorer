@@ -88,25 +88,7 @@ describe('Documents routes', () => {
       document_type_name: 'note',
       data: {
         type: 'note',
-        identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
-        dataContractObject: {
-          $format_version: '0',
-          ownerId: dataContract.owner,
-          id: dataContract.identifier,
-          version: 0,
-          documentSchemas: {
-            note: {
-              type: 'object',
-              properties: {
-                message: {
-                  type: 'string',
-                  position: 0
-                }
-              },
-              additionalProperties: false
-            }
-          }
-        }
+        identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL'
       },
       identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL'
     })
@@ -175,16 +157,18 @@ describe('Documents routes', () => {
       // so we'll verify the data we're sending to DAPI.
       const expectedDocument = {
         dataContractIdentifier: document.dataContract.identifier,
+        identifier: document.document.identifier,
         revision: 0,
         txHash: document.transaction.hash,
         deleted: document.document.deleted,
         data: JSON.stringify(document.document.data),
         timestamp: document.block.timestamp,
         entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
-        typeName: 'type_name',
+        documentTypeName: document.document.document_type_name,
         prefundedBalance: null,
         owner: document.document.owner,
-        isSystem: false
+        system: document.document.is_system,
+        transitionType: 0
       }
 
       assert.deepEqual(body, expectedDocument)
@@ -198,14 +182,15 @@ describe('Documents routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedDocument = {
+        dataContractIdentifier: document.dataContract.identifier,
         identifier: document.document.identifier,
         system: true,
         revision: 0,
         deleted: document.document.deleted,
         data: JSON.stringify(document.document.data),
-        timestamp: null,
-        entropy: null,
-        typeName: 'type_name',
+        timestamp: new Date(0).toISOString(),
+        entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
+        documentTypeName: document.document.document_type_name,
         prefundedBalance: null,
         owner: document.document.owner,
         txHash: document.transaction.hash,
@@ -262,14 +247,15 @@ describe('Documents routes', () => {
           identifier: document.identifier,
           dataContractIdentifier: dataContract.identifier,
           revision: document.revision,
-          txHash: document.is_system ? null : transaction.hash,
+          txHash: transaction.hash ?? null,
           deleted: document.deleted,
           data: JSON.stringify(document.data),
-          timestamp: document.is_system ? null : block.timestamp,
+          timestamp: block.timestamp,
           owner: document.owner,
-          isSystem: document.is_system,
+          system: document.is_system,
           entropy: null,
-          typeName: 'type_name',
+          documentTypeName: document.document_type_name,
+          transitionType: document.transition_type,
           prefundedBalance: null
         }))
 
@@ -277,7 +263,7 @@ describe('Documents routes', () => {
     })
 
     it('should return default set of documents by type_name', async () => {
-      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?type_name=test`)
+      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?document_type_name=test`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -309,7 +295,9 @@ describe('Documents routes', () => {
               }
             : {}),
           transitionType: 0,
-          typeName: document.document_type_name,
+          entropy: null,
+          prefundedBalance: null,
+          documentTypeName: document.document_type_name,
           timestamp: block.timestamp,
           owner: document.owner,
           system: document.is_system
@@ -336,21 +324,9 @@ describe('Documents routes', () => {
           revision: document.revision,
           txHash: transaction.hash,
           deleted: document.deleted,
-          data: JSON.stringify(document.data?.dataContractObject
-            ? {
-                type: document.data.type,
-                identifier: document.data.identifier,
-                dataContractObject: {
-                  id: document.data?.dataContractObject?.id ?? null,
-                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
-                  version: document.data?.dataContractObject?.version ?? null,
-                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
-                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
-                }
-              }
-            : {}),
+          data: JSON.stringify(document.data),
           transitionType: 0,
-          typeName: document.document_type_name,
+          documentTypeName: document.document_type_name,
           timestamp: block.timestamp,
           owner: document.owner,
           system: document.is_system,
@@ -394,7 +370,7 @@ describe('Documents routes', () => {
               }
             : {}),
           transitionType: 0,
-          typeName: 'type_name',
+          documentTypeName: document.document_type_name,
           timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
           system: document.is_system,
@@ -433,7 +409,7 @@ describe('Documents routes', () => {
               }
             : {}),
           transitionType: 0,
-          typeName: 'type_name',
+          documentTypeName: 'type_name',
           timestamp: block.timestamp,
           owner: document.owner,
           system: document.is_system,
@@ -472,7 +448,7 @@ describe('Documents routes', () => {
               }
             : {}),
           transitionType: 0,
-          typeName: 'type_name',
+          documentTypeName: document.document_type_name,
           timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
           system: document.is_system,
