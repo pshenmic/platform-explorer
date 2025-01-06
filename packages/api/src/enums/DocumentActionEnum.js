@@ -10,7 +10,7 @@ const DocumentActionEnum = {
   Delete: 2,
   Transfer: 3,
   Purchase: 4,
-  UpdatePrice: 5,
+  UpdatePrice: 5
 }
 
 module.exports = DocumentActionEnum
