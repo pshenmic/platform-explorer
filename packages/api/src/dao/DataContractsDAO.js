@@ -68,7 +68,7 @@ module.exports = class DataContractsDAO {
         'data_contracts.version as version', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
       .select(this.knex('documents').count('*')
         .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
-        .whereRaw('data_contracts.identifier = ?', [identifier])
+        .whereRaw('data_contracts.identifier = ? and revision = ?', [identifier, 1])
         .as('documents_count'))
       .leftJoin('state_transitions', 'data_contracts.state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
