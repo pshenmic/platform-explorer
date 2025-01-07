@@ -158,7 +158,7 @@ describe('Documents routes', () => {
       const expectedDocument = {
         dataContractIdentifier: document.dataContract.identifier,
         identifier: document.document.identifier,
-        revision: 0,
+        revision: 1,
         txHash: document.transaction.hash,
         deleted: document.document.deleted,
         data: JSON.stringify(document.document.data),
@@ -186,7 +186,7 @@ describe('Documents routes', () => {
         dataContractIdentifier: document.dataContract.identifier,
         identifier: document.document.identifier,
         system: true,
-        revision: 0,
+        revision: 1,
         deleted: document.document.deleted,
         data: JSON.stringify(document.document.data),
         timestamp: new Date(0).toISOString(),

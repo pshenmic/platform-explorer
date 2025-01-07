@@ -338,7 +338,7 @@ describe('Other routes', () => {
       const expectedDataContract = {
         identifier: document.identifier,
         dataContractIdentifier: dataContract.identifier,
-        revision: 0,
+        revision: 1,
         txHash: document.state_transition_hash,
         deleted: document.deleted,
         data: JSON.stringify(document.data),
