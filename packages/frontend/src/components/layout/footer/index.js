@@ -58,7 +58,7 @@ function Footer () {
             ))}
             </div>)
           : null}
-        <p className={'Footer__Copyright'}>2024 © Dash Platform Explorer v{version} MIT LICENCE</p>
+        <p className={'Footer__Copyright'}>{new Date().getFullYear()} © Dash Platform Explorer v{version} MIT LICENCE</p>
       </Flex>
     </Box>
   )
