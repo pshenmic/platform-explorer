@@ -4,7 +4,7 @@
 
 .PublicKeysList {
   @include mixins.BrandScroll();
-  overflow-x: scroll;
+  overflow-x: auto;
   container-type: inline-size;
 
   &__ScrollZone {
