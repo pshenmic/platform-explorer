@@ -1,9 +1,12 @@
+'use client'
+
 import { Box, Flex } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import './footer.scss'
 import version from './version'
 import { BigClockIcon, PshenmicLogoIcon } from '../../ui/icons'
 import LocalTime from './LocalTime'
+import './footer.scss'
 
 const socialNetwork = [
   { img: '/images/icons/github.svg', href: 'https://github.com/pshenmic/platform-explorer/', alt: 'github', ariaLabel: 'Go to GitHub' },
@@ -12,6 +15,9 @@ const socialNetwork = [
 ]
 
 function Footer () {
+  const [currentYear, setCurrentYear] = useState(null)
+  useEffect(() => setCurrentYear(new Date().getFullYear()), [])
+
   return (
     <Box
       marginTop={'auto'}
@@ -58,7 +64,7 @@ function Footer () {
             ))}
             </div>)
           : null}
-        <p className={'Footer__Copyright'}>{new Date().getFullYear()} © Dash Platform Explorer v{version} MIT LICENCE</p>
+        <p className={'Footer__Copyright'}>{currentYear} © Dash Platform Explorer v{version} MIT LICENCE</p>
       </Flex>
     </Box>
   )
