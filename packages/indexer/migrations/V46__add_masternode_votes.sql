@@ -1,0 +1,12 @@
+CREATE TABLE masternode_votes (
+    id SERIAL PRIMARY KEY,
+    pro_tx_hash char(64) NOT NULL,
+    state_transition_hash char(64) NOT NULL references state_transitions(hash),
+    voter_identity_id varchar(64) NOT NULL,
+    choice SMALLINT NOT NULL,
+    towards_identity_identifier char(44) DEFAULT NULL,
+    data_contract_id int NOT NULL references data_contracts(id),
+    document_type_name char(64) NOT NULL,
+    index_name char(64) NOT NULL,
+    index_values JSONB NOT NULL
+);
