@@ -42,7 +42,6 @@ function IdentityTotalCard ({ identity, rate }) {
               {!identity.error
                 ? <ImageGenerator
                   username={identity.data?.identifier}
-                  hat={'christmas'}
                   lightness={50}
                   saturation={50}
                   width={88}
