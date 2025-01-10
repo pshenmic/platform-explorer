@@ -24,14 +24,14 @@ module.exports = class EpochDAO {
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .as('voters_subquery')
 
-    const votesSubSubQuery = this.knex('masternode_votes')
+    const votesBaseSubquery = this.knex('masternode_votes')
       .where('timestamp', '>', new Date(epoch.startTime).toISOString())
       .andWhere('timestamp', '<=', epochEnd.toISOString())
       .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .as('total_votes')
 
-    const votesSubquery = this.knex(votesSubSubQuery)
+    const votesSubquery = this.knex(votesBaseSubquery)
       .select('index_values')
       .select(this.knex.raw('count(*) as rating'))
       .orderBy('rating', 'desc')
@@ -41,8 +41,6 @@ module.exports = class EpochDAO {
 
     const votes = this.knex(votesSubquery)
       .select('choice')
-      .where('timestamp', '>', new Date(epoch.startTime).toISOString())
-      .andWhere('timestamp', '<=', epochEnd.toISOString())
       .leftJoin('masternode_votes', 'masternode_votes.index_values', 'votes_subquery.index_values')
       .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
@@ -107,10 +105,10 @@ module.exports = class EpochDAO {
         this.knex(votersSubquery).select('voter_yes').limit(1).as('voter_yes'),
         this.knex(votersSubquery).select('voter_abstain').limit(1).as('voter_abstain'),
         this.knex(votersSubquery).select('voter_lock').limit(1).as('voter_lock'),
-        this.knex(votesSubSubQuery)
+        this.knex(votesBaseSubquery)
           .count('*')
           .as('total_votes'),
-        this.knex(votesSubSubQuery)
+        this.knex(votesBaseSubquery)
           .sum('gas_used')
           .as('total_votes_gas_used')
       )
