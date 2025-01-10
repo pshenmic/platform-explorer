@@ -10,7 +10,7 @@ export default function RateTooltip ({ credits, dash, usd, rate, children, place
     <Tooltip
       label={(
         <div className={'RateTooltip'}>
-          {typeof dash === 'number' && <div className={'RateTooltip__Dash'}>{removeTrailingZeros(Number(Number(dash).toFixed(8)), 8)} Dash</div>}
+          {typeof dash === 'number' && <div className={'RateTooltip__Dash'}>{removeTrailingZeros(Number(dash).toFixed(8))} Dash</div>}
           {typeof usd === 'number' && <div className={'RateTooltip__Usd'}>~{roundUsd(Number(usd))}$</div>}
         </div>
       )}
