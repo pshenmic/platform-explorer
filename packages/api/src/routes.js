@@ -3,9 +3,14 @@
  * @param fastify {Fastify}
  * @param mainController {MainController}
  * @param epochController {EpochController}
- * @param blockController {BlocksController}
+ * @param blocksController {BlocksController}
  * @param transactionsController {TransactionsController}
+ * @param dataContractsController {DataContractsController}
+ * @param documentsController {DocumentsController}
+ * @param identitiesController {IdentitiesContrtoller}
  * @param validatorsController {ValidatorsController}
+ * @param rateController {RateController}
+ * @param masternodeVotesController {MasternodeVotesController}
  */
 module.exports = ({
   fastify,
@@ -17,7 +22,8 @@ module.exports = ({
   documentsController,
   identitiesController,
   validatorsController,
-  rateController
+  rateController,
+  masternodeVotesController
 }) => {
   const routes = [
     {
@@ -359,6 +365,30 @@ module.exports = ({
           type: 'object',
           properties: {
             hash: { $ref: 'hash#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/masternodes/votes',
+      method: 'GET',
+      handler: masternodeVotesController.getMasternodeVotes,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/masternodes/votes/search',
+      method: 'GET',
+      handler: masternodeVotesController.masternodeVoteSearch,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            query: { type: 'string' },
+            page: { $ref: 'paginationOptions#/properties/page' },
+            limit: { $ref: 'paginationOptions#/properties/limit' },
+            order: { $ref: 'paginationOptions#/properties/order' }
           }
         }
       }

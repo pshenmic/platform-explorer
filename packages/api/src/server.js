@@ -18,6 +18,7 @@ const BlocksDAO = require('./dao/BlocksDAO')
 const DAPI = require('./DAPI')
 const RateController = require('./controllers/RateController')
 const DAPIClient = require('@dashevo/dapi-client')
+const MasternodeVotesController = require('./controllers/MasternodeVotesController')
 const { default: loadWasmDpp } = require('dash').PlatformProtocol
 
 function errorHandler (err, req, reply) {
@@ -85,6 +86,7 @@ module.exports = {
     const identitiesController = new IdentitiesController(client, knex, dapi)
     const validatorsController = new ValidatorsController(knex, dapi)
     const rateController = new RateController()
+    const masternodeVotesController = new MasternodeVotesController(knex)
 
     Routes({
       fastify,
@@ -96,7 +98,8 @@ module.exports = {
       documentsController,
       identitiesController,
       validatorsController,
-      rateController
+      rateController,
+      masternodeVotesController
     })
 
     fastify.setErrorHandler(errorHandler)

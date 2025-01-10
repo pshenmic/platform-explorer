@@ -24,6 +24,8 @@ class EpochController {
 
       response.send(epochInfo)
     } catch (e) {
+      console.error(e)
+
       response.status(400).send({ message: 'not found' })
     }
   }
