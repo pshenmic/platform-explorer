@@ -84,11 +84,11 @@ const schemaTypes = [
         type: ['number', 'null'],
         minimum: 2
       },
-      transactions_count_min: {
+      tx_count_min: {
         type: ['number', 'null'],
         minimum: 0
       },
-      transactions_count_max: {
+      tx_count_max: {
         type: ['number', 'null'],
         minimum: 0
       },

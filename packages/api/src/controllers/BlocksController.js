@@ -93,8 +93,8 @@ class BlocksController {
       validator,
       height_max: heightMax,
       height_min: heightMin,
-      transactions_count_min: transactionCountMin,
-      transactions_count_max: transactionCountMax,
+      tx_count_min: transactionCountMin,
+      tx_count_max: transactionCountMax,
       timestamp_start: timestampStart,
       timestamp_end: timestampEnd
     } = request.query

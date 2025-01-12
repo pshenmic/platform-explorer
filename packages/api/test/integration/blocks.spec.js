@@ -672,7 +672,7 @@ describe('Blocks routes', () => {
 
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
 
-      const { body } = await client.get('/blocks?transactions_count_min=1&transactions_count_max=2&order=desc')
+      const { body } = await client.get('/blocks?txs_count_min=1&txs_count_max=2&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
