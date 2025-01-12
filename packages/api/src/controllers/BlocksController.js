@@ -1,4 +1,5 @@
 const BlocksDAO = require('../dao/BlocksDAO')
+const { EPOCH_CHANGE_TIME } = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
 const TenderdashRPC = require('../tenderdashRpc')
 const Quorum = require('../models/Quorum')
@@ -7,6 +8,7 @@ const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
 class BlocksController {
   constructor (knex, dapi) {
     this.blocksDAO = new BlocksDAO(knex, dapi)
+    this.dapi = dapi
   }
 
   getBlockByHash = async (request, response) => {
@@ -80,9 +82,83 @@ class BlocksController {
   }
 
   getBlocks = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      start_epoch_index: startEpochIndex,
+      end_epoch_index: endEpochIndex,
+      gas_min: gasMin,
+      gas_max: gasMax,
+      validator,
+      height_max: heightMax,
+      height_min: heightMin,
+      tx_count_min: transactionCountMin,
+      tx_count_max: transactionCountMax,
+      timestamp_start: timestampStart,
+      timestamp_end: timestampEnd
+    } = request.query
 
-    const blocks = await this.blocksDAO.getBlocks(Number(page ?? 1), Number(limit ?? 10), order)
+    let epochStartTimestamp
+    let epochEndTimestamp
+
+    if (gasMin && gasMax && gasMax < gasMin) {
+      return response.status(400).send('Bad gas range')
+    }
+
+    if (heightMin && heightMax && heightMax < heightMin) {
+      return response.status(400).send('Bad height range')
+    }
+
+    if (transactionCountMin && transactionCountMax && transactionCountMax < transactionCountMin) {
+      return response.status(400).send('Bad transaction range')
+    }
+
+    if (timestampStart && !timestampEnd) {
+      return response.status(400).send('Request must have start and end timestamps')
+    }
+
+    if (startEpochIndex) {
+      if (endEpochIndex <= startEpochIndex) {
+        return response.status(400).send('Bad epochs range')
+      }
+
+      const [startEpoch] = await this.dapi.getEpochsInfo(
+        1,
+        Number(startEpochIndex),
+        true
+      )
+
+      epochStartTimestamp = startEpoch?.startTime
+
+      if (endEpochIndex) {
+        const [endEpoch] = await this.dapi.getEpochsInfo(
+          1,
+          Number(endEpochIndex),
+          true
+        )
+        epochEndTimestamp = endEpoch?.startTime + EPOCH_CHANGE_TIME
+      } else {
+        epochEndTimestamp = new Date().getTime()
+      }
+    }
+
+    const blocks = await this.blocksDAO.getBlocks(
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      validator,
+      gasMin,
+      gasMax,
+      heightMin,
+      heightMax,
+      timestampStart,
+      timestampEnd,
+      epochStartTimestamp,
+      epochEndTimestamp,
+      transactionCountMin,
+      transactionCountMax
+    )
 
     response.send(blocks)
   }
