@@ -39,21 +39,22 @@ class BlocksController {
 
       const quorumsTypes = Object.keys(quorumsList)
 
-      const [quorumType] = quorumsTypes
-        .filter(type =>
-          quorumsList[type]
-            .some(quorum =>
-              Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()
-              )
+      const [quorumType] = quorumsTypes.filter(type =>
+        quorumsList[type]
+          .some(quorum =>
+            Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()
             )
-        )
+          )
+      )
 
-      const quorumInfo = quorumsList[quorumType]
-        .find(quorum => Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()))
+      if (quorumType) {
+        const quorumInfo = quorumsList[quorumType]
+          .find(quorum => Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()))
 
-      const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(lastCommit.quorum_hash, QuorumTypeEnum[quorumType])
+        const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(lastCommit.quorum_hash, QuorumTypeEnum[quorumType])
 
-      quorum = Quorum.fromObject({ ...quorumDetailedInfo, ...quorumInfo[lastCommit.quorum_hash.toLowerCase()] })
+        quorum = Quorum.fromObject({ ...quorumDetailedInfo, ...quorumInfo[lastCommit.quorum_hash.toLowerCase()] })
+      }
     }
 
     response.send(
