@@ -128,7 +128,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -159,7 +159,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -190,7 +190,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -221,7 +221,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -253,7 +253,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -285,7 +285,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -320,7 +320,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -363,7 +363,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -393,8 +393,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
-
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -424,8 +423,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
-
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -455,8 +453,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
-
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -486,8 +483,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
-
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -517,7 +513,7 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
+            totalGasUsed: 0
           },
           txs: []
         }))
@@ -547,9 +543,162 @@ describe('Blocks routes', () => {
             appVersion: row.app_version,
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
-            totalGasUsed: null
+            totalGasUsed: 0
           },
           txs: []
+        }))
+      assert.deepEqual(expectedBlocks, body.resultSet)
+    })
+
+    it('should allow search by validator', async () => {
+      const [block] = blocks
+
+      const { body } = await client.get(`/blocks?validator=${block.validator}&order=desc`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 15)
+      assert.equal(body.resultSet.length, 10)
+
+      const expectedBlocks = blocks
+        .filter(row => row.validator === block.validator)
+        .sort((a, b) => b.height - a.height)
+        .slice(0, 10)
+        .map(row => ({
+          header: {
+            hash: row.hash,
+            height: row.height,
+            timestamp: row.timestamp.toISOString(),
+            blockVersion: row.block_version,
+            appVersion: row.app_version,
+            l1LockedHeight: row.l1_locked_height,
+            validator: row.validator,
+            totalGasUsed: 0
+          },
+          txs: []
+        }))
+      assert.deepEqual(expectedBlocks, body.resultSet)
+    })
+
+    it('should allow search by gas range', async () => {
+      const { body } = await client.get('/blocks?gas_min=0&gas_max=1&order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 60)
+      assert.equal(body.resultSet.length, 10)
+
+      const expectedBlocks = blocks
+        .sort((a, b) => b.height - a.height)
+        .slice(0, 10)
+        .map(row => ({
+          header: {
+            hash: row.hash,
+            height: row.height,
+            timestamp: row.timestamp.toISOString(),
+            blockVersion: row.block_version,
+            appVersion: row.app_version,
+            l1LockedHeight: row.l1_locked_height,
+            validator: row.validator,
+            totalGasUsed: 0
+          },
+          txs: []
+        }))
+      assert.deepEqual(expectedBlocks, body.resultSet)
+    })
+
+    it('should return empty array when gas filter to large', async () => {
+      const { body } = await client.get('/blocks?gas_min=1&gas_max=10&order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, -1)
+      assert.equal(body.resultSet.length, 0)
+
+      assert.deepEqual([], body.resultSet)
+    })
+
+    it('should allow search by height range', async () => {
+      const { body } = await client.get('/blocks?height_min=1&height_max=9&order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 9)
+      assert.equal(body.resultSet.length, 9)
+
+      const expectedBlocks = blocks
+        .filter(row => row.height >= 0 && row.height <= 9)
+        .sort((a, b) => b.height - a.height)
+        .slice(0, 9)
+        .map(row => ({
+          header: {
+            hash: row.hash,
+            height: row.height,
+            timestamp: row.timestamp.toISOString(),
+            blockVersion: row.block_version,
+            appVersion: row.app_version,
+            l1LockedHeight: row.l1_locked_height,
+            validator: row.validator,
+            totalGasUsed: 0
+          },
+          txs: []
+        }))
+      assert.deepEqual(expectedBlocks, body.resultSet)
+    })
+
+    it('should  return empty array when height filter to large', async () => {
+      const { body } = await client.get('/blocks?height_min=100&height_max=190&order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, -1)
+      assert.equal(body.resultSet.length, 0)
+
+      assert.deepEqual([], body.resultSet)
+    })
+
+    it('should allow search by transactions count', async () => {
+      const [block] = blocks
+
+      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+
+      const { body } = await client.get('/blocks?tx_count_min=1&tx_count_max=2&order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 1)
+      assert.equal(body.resultSet.length, 1)
+
+      const expectedBlocks = blocks
+        .filter(row => row.hash === block.hash)
+        .sort((a, b) => b.height - a.height)
+        .slice(0, 10)
+        .map(row => ({
+          header: {
+            hash: row.hash,
+            height: row.height,
+            timestamp: row.timestamp.toISOString(),
+            blockVersion: row.block_version,
+            appVersion: row.app_version,
+            l1LockedHeight: row.l1_locked_height,
+            validator: row.validator,
+            totalGasUsed: 0
+          },
+          txs: [
+            identity.state_transition_hash
+          ]
         }))
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
