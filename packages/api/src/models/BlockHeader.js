@@ -21,6 +21,7 @@ module.exports = class BlockHeader {
 
   // eslint-disable-next-line camelcase
   static fromRow ({ hash, height, timestamp, block_version, app_version, l1_locked_height, validator, total_gas_used }) {
-    return new BlockHeader(hash, height, new Date(timestamp), block_version, app_version, l1_locked_height, validator, Number(total_gas_used))
+    // eslint-disable-next-line camelcase
+    return new BlockHeader(hash, height, new Date(timestamp), block_version, app_version, l1_locked_height, validator, Number(total_gas_used ?? 0))
   }
 }

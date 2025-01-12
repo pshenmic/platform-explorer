@@ -24,15 +24,18 @@ use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTr
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
 use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
+use dpp::state_transition::masternode_vote_transition::MasternodeVoteTransition;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
 use crate::entities::data_contract::DataContract;
 use crate::entities::document::Document;
 use crate::entities::identity::Identity;
+use crate::entities::masternode_vote::MasternodeVote;
 use crate::entities::transfer::Transfer;
 use crate::entities::validator::Validator;
 use crate::models::{TransactionResult, TransactionStatus};
 
+#[derive(Debug)]
 pub enum ProcessorError {
     DatabaseError,
     TenderdashTxResultNotExists,
@@ -326,10 +329,22 @@ impl PSQLProcessor {
 
                 println!("Processed IdentityCreditTransfer at block hash {}", block_hash);
             }
-            StateTransition::MasternodeVote(_) => {
+            StateTransition::MasternodeVote(_st) => {
+                self.handle_masternode_vote(_st, st_hash).await.unwrap();
+
+                println!("Processed Masternode vote at block hash {}", block_hash);
             }
         }
     }
+
+    pub async fn handle_masternode_vote(&self, state_transition: MasternodeVoteTransition, st_hash: String) -> Result<(), ProcessorError> {
+        let masternode_vote = MasternodeVote::from(state_transition);
+
+        self.dao.create_masternode_vote(masternode_vote, st_hash.clone()).await.unwrap();
+
+        Ok(())
+    }
+
 
     pub async fn handle_validator(&self, validator: Validator) -> Result<(), ProcessorError> {
         let existing = self.dao.get_validator_by_pro_tx_hash(validator.pro_tx_hash.clone()).await?;

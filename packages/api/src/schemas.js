@@ -53,13 +53,52 @@ const schemaTypes = [
         type: ['string', 'null']
       },
       gas_min: {
-        type: ['number', 'null']
+        type: ['number', 'null'],
+        minimum: 0
       },
       gas_max: {
-        type: ['number', 'null']
+        type: ['number', 'null'],
+        minimum: 0
       },
       document_type_name: {
         type: ['string', 'null']
+      },
+      start_epoch_index: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      end_epoch_index: {
+        type: ['number', 'null'],
+        minimum: 1
+      },
+      validator: {
+        type: 'string',
+        minLength: 64,
+        maxLength: 64
+      },
+      height_min: {
+        type: ['number', 'null'],
+        minimum: 1
+      },
+      height_max: {
+        type: ['number', 'null'],
+        minimum: 2
+      },
+      tx_count_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      tx_count_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      timestamp_start: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      },
+      timestamp_end: {
+        type: ['string', 'null'],
+        format: 'date-time'
       }
     }
   },

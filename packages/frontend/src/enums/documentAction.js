@@ -3,8 +3,8 @@ export const DocumentActionEnum = {
   1: 'REPLACE',
   2: 'DELETE',
   3: 'TRANSFER',
-  4: 'UPDATE_PRICE',
-  5: 'PURCHASE'
+  4: 'PURCHASE',
+  5: 'UPDATE_PRICE'
 }
 
 export const DocumentActionInfo = {

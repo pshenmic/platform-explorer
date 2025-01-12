@@ -169,42 +169,98 @@ module.exports = class BlockDAO {
     return Block.fromRow({ header: block, txs })
   }
 
-  getBlocks = async (page, limit, order) => {
+  getBlocks = async (
+    page, limit, order,
+    validator,
+    gasMin, gasMax,
+    heightMin, heightMax,
+    startTimestamp, endTimestamp,
+    epochStartTimestamp, epochEndTimestamp,
+    transactionCountMin, transactionCountMax
+  ) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
+    const epochQuery = (epochStartTimestamp && epochEndTimestamp)
+      ? [
+          'timestamp BETWEEN ? AND ?',
+          [new Date(epochStartTimestamp).toISOString(), new Date(epochEndTimestamp).toISOString()]
+        ]
+      : ['true']
+
+    const heightQuery = heightMin
+      ? [
+          heightMax ? 'height BETWEEN ? AND ?' : 'height >= ?',
+          heightMax ? [heightMin, heightMax] : [heightMin]
+        ]
+      : ['true']
+
+    const timestampQuery = startTimestamp && endTimestamp
+      ? [
+          'timestamp BETWEEN ? AND ?',
+          [new Date(startTimestamp).toISOString(), new Date(endTimestamp).toISOString()]
+        ]
+      : ['true']
+
+    const validatorQuery = validator
+      ? [
+          'validator = ?',
+          validator
+        ]
+      : ['true']
+
+    const gasQuery = gasMin
+      ? [
+          gasMax ? 'total_gas_used BETWEEN ? AND ?' : 'total_gas_used >= ?',
+          gasMax ? [gasMin, gasMax] : [gasMin]
+        ]
+      : ['true']
+
+    const transactionsQuery = transactionCountMin
+      ? [
+          transactionCountMax ? 'cardinality(txs.txs) BETWEEN ? AND ?' : 'cardinality(txs.txs) >= ?',
+          transactionCountMax ? [transactionCountMin, transactionCountMax] : [transactionCountMin]
+        ]
+      : ['true']
+
     const subquery = this.knex('blocks')
-      .select(this.knex('blocks').count('height').as('total_count'),
+      .select(
         'blocks.hash as hash', 'blocks.height as height', 'blocks.timestamp as timestamp',
         'blocks.block_version as block_version', 'blocks.app_version as app_version',
         'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator')
-      .select(this.knex.raw(`rank() over (order by blocks.height ${order}) rank`))
+      .whereRaw(...epochQuery)
+      .andWhereRaw(...heightQuery)
+      .andWhereRaw(...timestampQuery)
+      .andWhereRaw(...validatorQuery)
       .as('blocks')
 
-    const rows = await this.knex(subquery)
-      .select('rank', 'total_count', 'blocks.hash as hash', 'height', 'timestamp', 'block_version',
-        'app_version', 'l1_locked_height', 'state_transitions.hash as st_hash', 'validator')
-      .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
+    const transactionsSubquery = this.knex('state_transitions')
+      .select('block_hash', this.knex.raw('sum(gas_used) as total_gas_used'), this.knex.raw('array_agg(hash) as txs'))
+      .groupBy('block_hash')
+      .as('txs')
+
+    const gasSubQuery = this.knex(subquery)
+      .select(
+        'hash', 'height', 'timestamp', 'block_version',
+        'app_version', 'l1_locked_height', 'txs.txs', 'validator', 'total_gas_used')
+      .select(this.knex.raw(`rank() over (order by blocks.height ${order}) rank`))
+      .leftJoin(transactionsSubquery, 'txs.block_hash', 'blocks.hash')
+      .whereRaw(...gasQuery)
+      .andWhereRaw(...transactionsQuery)
+      .as('gas')
+
+    const rows = await this.knex(gasSubQuery)
+      .select('rank', 'hash', 'height', 'timestamp', 'block_version',
+        'app_version', 'l1_locked_height', 'txs', 'validator', 'total_gas_used',
+        this.knex(gasSubQuery).count('height').as('total_count')
+      )
       .whereBetween('rank', [fromRank, toRank])
-      .orderBy('blocks.height', order)
+      .orderBy('height', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    // map-reduce Blocks with Transactions
-    const blocksMap = rows.reduce((blocks, row) => {
-      const block = blocks[row.hash]
-      const { st_hash: txHash } = row
-      const txs = block?.txs || []
-
-      if (txHash) {
-        txs.push(txHash)
-      }
-
-      return { ...blocks, [row.hash]: { ...row, txs } }
-    }, {})
-
-    const resultSet = Object.keys(blocksMap).map(blockHash => Block.fromRow({
-      header: blocksMap[blockHash], txs: blocksMap[blockHash].txs
+    const resultSet = rows.map(block => Block.fromRow({
+      header: block, txs: block.txs ?? []
     }))
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
