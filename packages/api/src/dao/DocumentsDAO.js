@@ -1,6 +1,5 @@
 const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const DocumentTransaction = require('../models/DocumentTransaction')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
 const { decodeStateTransition } = require('../utils')
 
@@ -165,6 +164,6 @@ module.exports = class DocumentsDAO {
 
     const totalCount = row?.total_count
 
-    return new PaginatedResultSet(rows.map(DocumentTransaction.fromRow), page, limit, Number(totalCount))
+    return new PaginatedResultSet(rows.map(Document.fromRow), page, limit, Number(totalCount))
   }
 }
