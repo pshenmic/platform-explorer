@@ -155,7 +155,7 @@ module.exports = class DocumentsDAO {
       .as('subquery')
 
     const rows = await this.knex(subquery)
-      .select('revision', 'gas_used', 'subquery.owner', 'hash', 'timestamp', 'transition_type', 'data')
+      .select('revision', 'gas_used', 'subquery.owner', 'hash as tx_hash', 'timestamp', 'transition_type', 'data')
       .select(this.knex(subquery).count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)

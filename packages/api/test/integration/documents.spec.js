@@ -220,12 +220,19 @@ describe('Documents routes', () => {
 
       const expectedDocument = {
         revision: document.document.revision,
-        gasUsed: document.transaction.gas_used,
         owner: document.transaction.owner,
-        hash: document.transaction.hash,
+        txHash: document.transaction.hash,
         timestamp: document.block.timestamp,
         transitionType: document.document.transition_type,
-        data: {}
+        data: '{}',
+        dataContractIdentifier: null,
+        deleted: null,
+        documentTypeName: null,
+        entropy: null,
+        identifier: null,
+        nonce: null,
+        prefundedVotingBalance: null,
+        system: null
       }
 
       assert.deepEqual(body.resultSet, [expectedDocument])
