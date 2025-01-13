@@ -5,7 +5,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { CheckCircleIcon, WarningIcon, InfoIcon } from '@chakra-ui/icons'
 import EpochProgress from './EpochProgress'
 import { Badge } from '@chakra-ui/react'
-import { fetchHandlerSuccess, fetchHandlerError, getTimeDelta } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { TimeDelta } from '../data'
 import { EpochTooltip } from '../ui/Tooltips'
 import Link from 'next/link'
 import './NetworkStatus.scss'
@@ -102,8 +103,8 @@ function NetworkStatus ({ className }) {
             {status?.data?.api?.block?.height !== undefined
               ? <div className={'NetworkStatus__Value'}>
                   <Link href={`/block/${status?.data?.api?.block?.hash}`}>
-                    #{status?.data?.api?.block?.height},
-                    {status?.data?.api?.block?.timestamp && ' ' + getTimeDelta(new Date(), new Date(status.data.api.block?.timestamp))}
+                    #{status?.data?.api?.block?.height}
+                    {status?.data?.api?.block?.timestamp && <>, <TimeDelta endDate={status?.data?.api?.block?.timestamp}/></>}
                   </Link>
                 </div>
               : <div className={'NetworkStatus__Value'}>n/a</div>}
