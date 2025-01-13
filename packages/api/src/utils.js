@@ -96,12 +96,7 @@ const decodeStateTransition = async (client, base64) => {
           case DocumentActionEnum.Replace: {
             out.data = documentTransition.getData()
 
-            out.entropy = Buffer.from(documentTransition.getEntropy()).toString('hex')
-
             break
-          }
-          case DocumentActionEnum.Delete: {
-            out.entropy = Buffer.from(documentTransition.getEntropy()).toString('hex')
           }
         }
 
