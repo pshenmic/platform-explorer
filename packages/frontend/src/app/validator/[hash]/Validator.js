@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, getTimeDelta } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError, paginationHandler } from '../../../util'
 import { LoadingList } from '../../../components/loading'
 import Pagination from '../../../components/pagination'
 import { ErrorMessageBlock } from '../../../components/Errors'
@@ -11,7 +11,7 @@ import TransactionsList from '../../../components/transactions/TransactionsList'
 import BlocksChart from './BlocksChart'
 import RewardsChart from './RewardsChart'
 import Link from 'next/link'
-import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine, Credits } from '../../../components/data'
+import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine, Credits, TimeDelta } from '../../../components/data'
 import { ValueContainer, PageDataContainer, InfoContainer } from '../../../components/ui/containers'
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
@@ -197,7 +197,7 @@ function Validator ({ hash }) {
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Next epoch starts in'}
-                value={getTimeDelta(new Date(), new Date(validator.data?.epochInfo?.endTime), 'detailed')}
+                value={<TimeDelta endDate={validator.data?.epochInfo?.endTime} format={'detailed'}/>}
                 loading={validator.loading}
                 error={validator.error || !validator.data?.epochInfo?.endTime}
               />
