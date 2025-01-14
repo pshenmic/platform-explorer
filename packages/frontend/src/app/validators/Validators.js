@@ -122,7 +122,7 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
               forcePage={currentPage}
             />
             <PageSizeSelector
-              PageSizeSelectHandler={e => setPageSize(e.target.value)}
+              PageSizeSelectHandler={e => setPageSize(e.value)}
               value={pageSize}
               items={paginateConfig.pageSize.values}
             />
