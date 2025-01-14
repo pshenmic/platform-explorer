@@ -24,6 +24,7 @@
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.12.1",
     "react-scripts": "5.0.1",
+    "react-select": "^5.9.0",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
     "resize-observer-polyfill": "^1.5.1",
