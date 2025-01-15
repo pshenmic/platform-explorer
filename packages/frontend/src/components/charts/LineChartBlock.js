@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { LineChart } from '../../components/charts/index.js'
-import { Container, Heading, Flex, Button } from '@chakra-ui/react'
+import { useEffect, useRef, useState } from 'react'
+import { LineChart, TimeframeSelector } from '../../components/charts/index.js'
+import { Container, Heading, Flex } from '@chakra-ui/react'
 import { WarningTwoIcon } from '@chakra-ui/icons'
 import './ChartBlock.scss'
+import useResizeObserver from "@react-hook/resize-observer";
+import { defaultChartConfig } from './config'
 
 function ErrorMessageBlock () {
   return (
@@ -21,15 +23,9 @@ function ErrorMessageBlock () {
   )
 }
 
-const defChartConfig = {
-  timespan: {
-    default: '1w',
-    values: ['1h', '24h', '3d', '1w']
-  }
-}
-
 export default function LineChartBlock ({
-  height = '220px',
+  heightPx = 300,
+  menuIsActive = true,
   data,
   xAxis,
   yAxis,
@@ -40,7 +36,7 @@ export default function LineChartBlock ({
   config,
   blockBorders = true
 }) {
-  const chartConfig = config || defChartConfig
+  const chartConfig = config || defaultChartConfig
   const [timespan, setTimespan] = useState(chartConfig.timespan.default)
 
   function timespanChangeHandler (value) {
@@ -48,40 +44,55 @@ export default function LineChartBlock ({
     if (typeof timespanChange === 'function') timespanChange(value)
   }
 
+  const [menuIsOpen, setMenuIsOpen] = useState(false)
+  const TimeframeMenuRef = useRef(null)
+  const [selectorHeight, setSelectorHeight] = useState(0)
+
+  const updateMenuHeight = () => {
+    if (menuIsOpen && TimeframeMenuRef?.current) {
+      const element = TimeframeMenuRef.current
+      const height = element.getBoundingClientRect().height
+      setSelectorHeight(height)
+    } else {
+      setSelectorHeight(0)
+    }
+  }
+
+  useEffect(updateMenuHeight, [menuIsOpen, TimeframeMenuRef])
+
+  useResizeObserver(TimeframeMenuRef, updateMenuHeight)
+
   return (<>
     <Flex
-        className={`ChartBlock InfoBlock ${!blockBorders ? 'InfoBlock--NoBorder' : ''}`}
+        className={`ChartBlock InfoBlock ${!blockBorders ? 'InfoBlock--NoBorder' : ''} ${menuIsOpen ? 'ChartBlock--MenuIsOpen' : ''}`}
         maxW={'none'}
         width={'100%'}
         borderWidth={'1px'} borderRadius={'block'}
         direction={'column'}
-        pb={'10px !important'}
-        height={height}
+        style={{
+          minHeight: menuIsOpen ? `${Math.max(selectorHeight, heightPx)}px` : `${heightPx}px`
+        }}
     >
       <Heading className={'InfoBlock__Title'} as={'h1'}>{title}</Heading>
 
-      <div className={'ChartBlock__TimeframeContainer'}>
-        <span className={'ChartBlock__TimeframeTitle'}>Timeframe:</span>
-        <div className={'ChartBlock__TimeframeButtons'}>
-          {chartConfig.timespan.values.map(iTimespan => {
-            return (
-              <Button
-                className={`ChartBlock__TimeframeButton ${timespan === iTimespan ? 'ChartBlock__TimeframeButton--Active' : ''}`}
-                onClick={() => timespanChangeHandler(iTimespan)}
-                key={'ts' + iTimespan}>{iTimespan}</Button>
-            )
-          })}
-        </div>
-      </div>
+      <TimeframeSelector
+        menuRef={TimeframeMenuRef}
+        className={'ChartBlock__TimeframeSelector'}
+        config={chartConfig}
+        changeCallback={timespanChangeHandler}
+        menuIsActive={menuIsActive}
+        openStateCallback={setMenuIsOpen}
+      />
 
       <Flex
-          height={'100%'}
-          maxW={'none'}
-          flexGrow={'1'}
-          mt={2}
-          mb={4}
-          p={0}
-          flexDirection={'column'}
+        className={`ChartBlock__ChartContainer ${menuIsOpen ? 'ChartBlock__ChartContainer--Hidden' : ''}`}
+        height={'100%'}
+        maxW={'none'}
+        flexGrow={'1'}
+        mt={2}
+        mb={4}
+        p={0}
+        flexDirection={'column'}
       >
         {!loading
           ? (!error && data?.length)
