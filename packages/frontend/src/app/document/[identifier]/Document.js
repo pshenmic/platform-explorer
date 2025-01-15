@@ -6,9 +6,7 @@ import * as Api from '../../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { LoadingLine, LoadingBlock } from '../../../components/loading'
-
-import './Document.scss'
-
+import { useSearchParams } from 'next/navigation'
 import {
   Box,
   Container,
@@ -17,15 +15,19 @@ import {
   Flex,
   Code
 } from '@chakra-ui/react'
+import './Document.scss'
 
 function Document ({ identifier }) {
   const [document, setDocument] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
   const tdTitleWidth = 100
+  const searchParams = useSearchParams()
+  const dataContractId = searchParams.get('contract_id') || null
+  const typeName = searchParams.get('document_type_name') || null
 
   const fetchData = () => {
     setDocument(state => ({ ...state, loading: true }))
 
-    Api.getDocumentByIdentifier(identifier)
+    Api.getDocumentByIdentifier(identifier, dataContractId, typeName)
       .then(document => fetchHandlerSuccess(setDocument, document))
       .catch(err => fetchHandlerError(setDocument, err))
   }
