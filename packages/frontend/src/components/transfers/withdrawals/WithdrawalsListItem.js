@@ -73,7 +73,7 @@ function WithdrawalsListItem ({ withdrawal, rate, defaultPayoutAddress, l1explor
 
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Document'}>
             {withdrawal?.document
-              ? <ItemWrapper className={'WithdrawalsListItem__ColumnContent'} isLocal={true} href={'/document/' + withdrawal.document}>
+              ? <ItemWrapper className={'WithdrawalsListItem__ColumnContent'} isLocal={true} href={'/document/' + withdrawal.document + '?contract_id=4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6'}>
                   <ValueContainer className={''} light={true} clickable={true}>
                     <Identifier styles={['highlight-both']}>{withdrawal.document}</Identifier>
                   </ValueContainer>
