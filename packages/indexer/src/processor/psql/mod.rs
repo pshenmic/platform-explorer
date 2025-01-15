@@ -472,6 +472,9 @@ impl PSQLProcessor {
         println!("Processing SystemDataContract::Dashpay");
         self.process_system_data_contract(SystemDataContract::Dashpay).await;
 
+        println!("Processing SystemDataContract::WalletUtils");
+        self.process_system_data_contract(SystemDataContract::WalletUtils).await;
+
         println!("Finished initChain processing");
     }
 }
