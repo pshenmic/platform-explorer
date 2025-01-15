@@ -5,7 +5,7 @@ import { LineChart, TimeframeSelector } from '../../components/charts/index.js'
 import { Container, Heading, Flex } from '@chakra-ui/react'
 import { WarningTwoIcon } from '@chakra-ui/icons'
 import './ChartBlock.scss'
-import useResizeObserver from "@react-hook/resize-observer";
+import useResizeObserver from '@react-hook/resize-observer'
 import { defaultChartConfig } from './config'
 
 function ErrorMessageBlock () {
