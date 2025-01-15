@@ -428,10 +428,10 @@ const LineGraph = ({
                     </linearGradient>
                     <clipPath id={`clipPath-${uniqueComponentId}`}>
                         <rect
-                            x={marginLeft - 20}
-                            y={marginTop}
-                            width={width - (marginLeft - 20 + marginRight)}
-                            height={height - (marginTop + marginBottom)}
+                            x={Math.max(marginLeft - 20, 0)}
+                            y={Math.max(marginTop, 0)}
+                            width={Math.max(width - (marginLeft - 20 + marginRight), 0)}
+                            height={Math.max(height - (marginTop + marginBottom), 0)}
                         ></rect>
                     </clipPath>
                 </defs>
