@@ -50,7 +50,6 @@
     }
 
     .TimeframeMenu {
-      //padding: 36px 0 12px !important;
       padding-bottom: 12px !important;
     }
 
@@ -64,7 +63,6 @@
     }
 
     @container (max-width: 400px) {
-
       .TimeframeMenu__ValuesContainer {
         margin-top: 90px;
       }
@@ -80,12 +78,6 @@
           width: calc(100% - 24px);
         }
       }
-
-      .TimeframeMenu {
-        padding-top: 36px 0 12px !important;
-        //padding: 36px 0 12px !important;
-
-      }
     }
   }
 
@@ -97,7 +89,6 @@
   &__TimeframeButton {
     font-family: $font-heading;
     font-size: 12px;
-    margin-right: 10px;
     height: 27px !important;
     margin: 5px;
 
