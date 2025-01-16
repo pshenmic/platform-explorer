@@ -36,6 +36,7 @@
     visibility: visible;
     opacity: 1;
     transition: all .2s;
+    transition-delay: .2s;
 
     &--Hidden {
       visibility: hidden;
