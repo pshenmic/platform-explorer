@@ -767,9 +767,9 @@ Response codes:
 ### Documents by Data Contract
 Return all documents by the given data contract identifier
 * `limit` cannot be more then 100
-* `type_name` optional
+* `document_type_name` optional
 ```
-GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?type_name=domain&page=1&limit=10&order=desc
+GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?document_type_name=domain&page=1&limit=10&order=desc
 
 {
   "resultSet": [
