@@ -723,7 +723,7 @@ Return last revision of the document by given identifier.
 
 Allows to get withdrawals documents by contract id and document type
 ```
-GET /document/47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ
+GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
   "identifier": "47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ",
@@ -800,7 +800,7 @@ Response codes:
 ### Documents by Data Contract
 Return all documents by the given data contract identifier
 * `limit` cannot be more then 100
-* `type_name` optional
+* `document_type_name` optional
 ```
 GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?type_name=domain&page=1&limit=10&order=desc
 
@@ -1068,9 +1068,9 @@ Response codes:
 ### Documents by Identity
 Return all documents by the given identity
 * `limit` cannot be more then 100
-* `type_name` document type name _optional_
+* `document_type_name` document type name _optional_
 ```
-GET /identity/8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6/documents?type_name=domain&page=1&limit=10&order=desc
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&document_type_name=preorder
 
 {
   "resultSet": [
