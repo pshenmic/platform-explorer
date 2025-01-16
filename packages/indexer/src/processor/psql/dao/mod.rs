@@ -8,6 +8,7 @@ use base64::{Engine as _, engine::{general_purpose}};
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::{Base58};
 use dpp::voting::vote_choices::resource_vote_choice::ResourceVoteChoice;
+use serde_json::{Map, Number, Value};
 use crate::entities::block_header::BlockHeader;
 use crate::entities::data_contract::DataContract;
 use crate::entities::identity::Identity;
@@ -110,6 +111,16 @@ impl PostgresDAO {
         let revision_i32 = revision as i32;
         let transition_type = document.transition_type as i64;
         let data = document.data;
+        let prefunded_voting_balance: Option<Value> = document.prefunded_voting_balance
+            .map(|prefunded_voting_balance| {
+                let (index_name, credits) = prefunded_voting_balance;
+
+                let mut map: Map<String, Value> = Map::new();
+                map.insert(index_name, Value::Number(Number::from(credits)));
+
+                return serde_json::to_value(map).unwrap();
+            });
+
         let is_system = document.is_system;
 
         let owner: Identifier = match document.owner {
@@ -133,7 +144,7 @@ impl PostgresDAO {
         let data_contract_id = data_contract.id.unwrap() as i32;
 
         let query = "INSERT INTO documents(identifier,document_type_name,transition_type,owner,revision,data,deleted,\
-        state_transition_hash,data_contract_id,is_system) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
+        state_transition_hash,data_contract_id,is_system,prefunded_voting_balance) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
 
         let stmt = client.prepare_cached(query).await.unwrap();
 
@@ -147,7 +158,8 @@ impl PostgresDAO {
             &document.deleted,
             &st_hash,
             &data_contract_id,
-            &is_system
+            &is_system,
+            &prefunded_voting_balance
         ]).await.unwrap();
 
         println!("Created document {} [{} revision] [is_deleted {}]",

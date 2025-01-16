@@ -444,6 +444,7 @@ impl PSQLProcessor {
                     is_system: true,
                     price: None,
                     transition_type: DocumentTransitionActionType::Create,
+                    prefunded_voting_balance: None,
                 };
 
                 self.dao.create_document(dash_tld_document, None).await.unwrap();
