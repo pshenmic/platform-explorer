@@ -68,10 +68,12 @@ const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy) => {
 }
 
 const getDocumentByIdentifier = (identifier, dataContractId, typeName) => {
-  // const parameters = '?' + `contract_id=${dataContractId}`
-  // document_type_name=withdrawal
-  // https://testnet.platform-explorer.pshenmic.dev/document/kc1bVgbqtu8TM6Qr2chWwxosmPiv2iJAJsqnqRUWqu5?type_name=withdrawals&contract_id=4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6
-  return call(`document/${identifier}?${dataContractId ? `contract_id=${dataContractId}` : ''}${typeName ? `&document_type_name=${typeName}` : ''}`, 'GET')
+  const params = []
+  if (dataContractId) params.push(`contract_id=${dataContractId}`)
+  if (typeName) params.push(`document_type_name=${typeName}`)
+  const queryParams = params.join('&')
+
+  return call(`document/${identifier}?${queryParams ? `?${queryParams}` : ''}`, 'GET')
 }
 
 const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc') => {
