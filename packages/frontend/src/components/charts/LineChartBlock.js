@@ -101,6 +101,7 @@ export default function LineChartBlock ({
                   timespan={timespan}
                   xAxis={xAxis}
                   yAxis={yAxis}
+                  chartIsHidden={menuIsOpen}
               />
               : <ErrorMessageBlock/>
           : <Container
