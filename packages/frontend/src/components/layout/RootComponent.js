@@ -16,7 +16,7 @@ export default function RootComponent ({ children }) {
 
   return (
     <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
-      <Background snow={true}/>
+      <Background snow={false}/>
       <BreadcrumbsProvider>
         <Navbar/>
         {children}
