@@ -264,6 +264,18 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={data?.revision === undefined}
       />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
+        title={`Add Public Keys ${data?.publicKeys !== undefined ? `(${data?.publicKeysToAdd?.length})` : ''}`}
+        value={(<>
+          {data?.publicKeysToAdd?.map((publicKey, i) => (
+            <PublicKeyCard className={'TransactionPage__PublicKeyCard'} publicKey={publicKey} key={i}/>
+          ))}
+        </>)}
+        loading={loading}
+        error={data?.publicKeysToAdd === undefined}
+      />
     </>)
   }
 
