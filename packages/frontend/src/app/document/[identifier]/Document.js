@@ -21,8 +21,8 @@ function Document ({ identifier }) {
   const [document, setDocument] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
   const tdTitleWidth = 100
   const searchParams = useSearchParams()
-  const dataContractId = searchParams.get('contract_id') || null
-  const typeName = searchParams.get('document_type_name') || null
+  const dataContractId = searchParams.get('contract-id') || null
+  const typeName = searchParams.get('document-type-name') || null
 
   const fetchData = () => {
     setDocument(state => ({ ...state, loading: true }))
