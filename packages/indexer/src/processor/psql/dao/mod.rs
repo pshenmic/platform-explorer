@@ -279,7 +279,7 @@ impl PostgresDAO {
 
         let stmt = client.prepare_cached("SELECT documents.id, documents.identifier,\
         documents.document_type_name,documents.transition_type,data_contracts.identifier,documents.owner,documents.price,\
-        documents.deleted,documents.revision,documents.is_system \
+        documents.deleted,documents.revision,documents.is_system,documents.prefunded_voting_balance \
         FROM documents \
         LEFT JOIN data_contracts ON data_contracts.id = documents.data_contract_id \
         WHERE documents.identifier = $1 \
