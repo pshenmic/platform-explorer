@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates } from '../../util'
-import { defaultChartConfig } from '../../components/charts/config'
+import { defaultChartConfig } from './config'
 import LineChartBlock from './LineChartBlock'
 
 export default function TransactionsHistory ({ heightPx = 300, blockBorders = true }) {
