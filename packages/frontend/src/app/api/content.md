@@ -689,7 +689,7 @@ Return last revision of the document by given identifier.
 
 Allows to get withdrawals documents by contract id and document type
 ```
-GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
+GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
   "identifier": "FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ",
@@ -983,7 +983,7 @@ Response codes:
 Return all documents by the given identity
 * `limit` cannot be more then 100
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&type_name=preorder
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&document_type_name=preorder
 
 {
     pagination: {

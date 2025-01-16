@@ -55,9 +55,9 @@ class DocumentsController {
     response.send(Document.fromObject({
       dataContractIdentifier: dataContract.identifier,
       deleted: false,
-      identifier: extendedDocument?.getId(),
+      identifier: extendedDocument?.getId().toString(),
       system: false,
-      owner: extendedDocument.getOwnerId(),
+      owner: extendedDocument.getOwnerId().toString(),
       revision: extendedDocument.getRevision(),
       timestamp: extendedDocument.getCreatedAt(),
       txHash: document?.txHash ?? null,
