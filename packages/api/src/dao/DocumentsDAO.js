@@ -105,14 +105,14 @@ module.exports = class DocumentsDAO {
       .select('documents.id as id', 'documents.identifier as identifier', 'documents.owner as document_owner',
         'data_contracts.identifier as data_contract_identifier', 'document_type_name', 'documents.data as document_data',
         'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
-        'documents.deleted as deleted', 'documents.is_system as is_system', 'transition_type')
+        'documents.deleted as deleted', 'documents.is_system as is_system', 'transition_type', 'prefunded_voting_balance')
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
       .whereRaw(typeQuery, queryBindings)
 
     const filteredDocuments = this.knex.with('with_alias', subquery)
       .select('id', 'with_alias.identifier as identifier', 'document_owner', 'rank', 'revision', 'data_contract_identifier',
-        'tx_hash', 'deleted', 'is_system', 'document_data', 'document_type_name', 'transition_type',
+        'tx_hash', 'deleted', 'is_system', 'document_data', 'document_type_name', 'transition_type', 'prefunded_voting_balance',
         this.knex('with_alias').count('*').as('total_count').where('rank', '1'))
       .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
       .from('with_alias')
@@ -121,7 +121,69 @@ module.exports = class DocumentsDAO {
 
     const rows = await this.knex(filteredDocuments)
       .select('documents.id as id', 'documents.identifier as identifier', 'document_owner', 'row_number', 'revision', 'data_contract_identifier',
-        'tx_hash', 'deleted', 'document_data', 'total_count', 'is_system', 'blocks.timestamp as timestamp',
+        'tx_hash', 'deleted', 'document_data', 'total_count', 'is_system', 'blocks.timestamp as timestamp', 'prefunded_voting_balance',
+        'document_type_name', 'transition_type')
+      .whereBetween('row_number', [fromRank, toRank])
+      .leftJoin('state_transitions', 'tx_hash', 'state_transitions.hash')
+      .leftJoin(filterDataSubquery, 'documents.identifier', '=', 'documents_data.identifier')
+      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .orderBy('id', order)
+
+    const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
+
+    const resultSet = rows.map((row) => Document.fromRow({
+      ...row,
+      owner: row.document_owner,
+      data: row.document_data
+    }))
+
+    return new PaginatedResultSet(resultSet, page, limit, totalCount)
+  }
+
+  getContestedDocuments = async (typeName, page, limit, order) => {
+    const fromRank = ((page - 1) * limit) + 1
+    const toRank = fromRank + limit - 1
+
+    let typeQuery = 'prefunded_voting_balance is not null'
+    const queryBindings = []
+
+    if (typeName) {
+      typeQuery = typeQuery + ' AND document_type_name = ?'
+      queryBindings.push(typeName)
+    }
+
+    const dataSubquery = this.knex('documents')
+      .select('documents.data as data', 'documents.identifier as identifier')
+      .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.revision desc) rank'))
+      .orderBy('documents.id', 'desc')
+      .as('documents_data')
+
+    const filterDataSubquery = this.knex(dataSubquery)
+      .select('data', 'identifier')
+      .where('documents_data.rank', '1')
+      .as('documents_data')
+
+    const subquery = this.knex('documents')
+      .select('documents.id as id', 'documents.identifier as identifier', 'documents.owner as document_owner',
+        'data_contracts.identifier as data_contract_identifier', 'document_type_name', 'documents.data as document_data',
+        'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
+        'documents.deleted as deleted', 'documents.is_system as is_system', 'transition_type', 'prefunded_voting_balance')
+      .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
+      .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
+      .whereRaw(typeQuery, typeName)
+
+    const filteredDocuments = this.knex.with('with_alias', subquery)
+      .select('id', 'with_alias.identifier as identifier', 'document_owner', 'rank', 'revision', 'data_contract_identifier',
+        'tx_hash', 'deleted', 'is_system', 'document_data', 'document_type_name', 'transition_type', 'prefunded_voting_balance',
+        this.knex('with_alias').count('*').as('total_count').where('rank', '1'))
+      .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
+      .from('with_alias')
+      .where('rank', '1')
+      .as('documents')
+
+    const rows = await this.knex(filteredDocuments)
+      .select('documents.id as id', 'documents.identifier as identifier', 'document_owner', 'row_number', 'revision', 'data_contract_identifier',
+        'tx_hash', 'deleted', 'document_data', 'total_count', 'is_system', 'blocks.timestamp as timestamp', 'prefunded_voting_balance',
         'document_type_name', 'transition_type')
       .whereBetween('row_number', [fromRank, toRank])
       .leftJoin('state_transitions', 'tx_hash', 'state_transitions.hash')
