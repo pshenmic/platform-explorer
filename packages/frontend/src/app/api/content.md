@@ -35,6 +35,8 @@ Reference:
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Transactions gas history](#transactions-gas-history)
+* [Contested Data Contracts](#contested-data-contracts)
+* [Contested Documents](#contested-documents)
 * [Rate](#rate)
 * [Search](#search)
 * [Decode Raw Transaction](#decode-raw-transaction)
@@ -179,6 +181,7 @@ GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
 ### Blocks by validator
 Return all blocks proposed by the specific validators
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 ```
 GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
 
@@ -208,6 +211,7 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
 ### Blocks
 Return all blocks with pagination info
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 ```
 GET /blocks?start_epoch_index=1000&end_epoch_index=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8
 
@@ -253,6 +257,7 @@ Return all validators with pagination info.
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
 * `limit` cannot be more then 100 (0 = all validators)
+* `page` cannot be less then 1
 ```
 GET /validators
 
@@ -573,6 +578,7 @@ Return transaction set paged
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 * `owner` Identity identifier
 * `status` can be `SUCCESS`, `FAIL` or `ALL`
 * `transaction_type` number of tx type. Can be set multiple times
@@ -654,6 +660,7 @@ Return dataContracts set paged and order by block height or documents count.
 * Valid `order_by` values are `block_height` or `documents_count`
 * `name` field is nullable
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 
 ```
 GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
@@ -767,6 +774,7 @@ Response codes:
 ### Documents by Data Contract
 Return all documents by the given data contract identifier
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 * `document_type_name` optional
 ```
 GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?document_type_name=domain&page=1&limit=10&order=desc
@@ -919,6 +927,7 @@ Return all identities paged and order by block height, tx count or balance.
 
 * Valid `order_by` values are `block_height`, `tx_count` or `balance`
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 ```
 GET /identities?page=1&limit=10&order=asc&order_by=block_height
 
@@ -965,6 +974,7 @@ Return all withdrawals for identity
 _Note: this request does not contain any pagination data in the response_
 
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 * returns 404 `not found` if identity don't have withdrawals
 * Pagination always `null`
 ```
@@ -1002,6 +1012,7 @@ Return all data contracts by the given identity
 
 * `name` field is nullable
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=1&limit=10&order=asc
 
@@ -1035,6 +1046,7 @@ Response codes:
 ### Documents by Identity
 Return all documents by the given identity
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 * `document_type_name` document type name _optional_
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&document_type_name=preorder
@@ -1074,6 +1086,7 @@ Return all transactions made by the given identity
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
@@ -1110,6 +1123,7 @@ Response codes:
 ### Transfers by Identity
 Return all transfers made by the given identity
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 * `type` cannot be less, then 0 and more then 8
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
@@ -1210,6 +1224,7 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
+___
 ### Transactions history
 Return a series data for the amount of transactions chart
 
@@ -1244,6 +1259,7 @@ Response codes:
 400: Invalid input, check start/end values
 500: Internal Server Error
 ```
+___
 ### Transactions Gas history
 Return a series data for the used gas of transactions chart
 
@@ -1278,6 +1294,88 @@ Response codes:
 400: Invalid input, check start/end values
 500: Internal Server Error
 ```
+___
+### Contested Data Contracts
+Return a series Data Contracts, which contains contested types
+
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+* Valid `order_by` values are `block_height` or `documents_count`
+
+```
+GET /contested/dataContracts?limit=10&page=1&order=asc&order_by=block_height
+{
+  "resultSet": [
+    {
+      "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "name": "DPNS",
+      "owner": "11111111111111111111111111111111",
+      "schema": null,
+      "version": 0,
+      "txHash": null,
+      "timestamp": null,
+      "isSystem": true,
+      "documentsCount": 1413,
+      "contestedDocumentsCount": 231
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1
+  }
+}
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
+### Contested Documents
+Return a series contested documents
+
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+```
+GET /contested/documents?limit=10&page=1&order=asc&document_type_name=domain
+{
+  "resultSet": [
+    {
+      "identifier": "nLxqkMa9GRgfFGJpW9aE8ykYHxSR8Nat49cCNHXZR5a",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "revision": 1,
+      "txHash": "069422484BEEF731CFDBA601BDAC80BCF1FB009FACE7EE4897F3D4AE72EF85D8",
+      "deleted": false,
+      "data": "{\"label\":\"test111\",\"records\":{\"identity\":\"AC5EoXmLSpM6Q9S2BFMrfFFqmhCSiE5yKVdA3L5DkcjU\"},\"preorderSalt\":\"gIUpKYlk2J7wIxr6IWoPrtLW6+wNnaeKp4mfED6aLeI=\",\"subdomainRules\":{\"allowSubdomains\":false},\"normalizedLabel\":\"test111\",\"parentDomainName\":\"dash\",\"normalizedParentDomainName\":\"dash\"}",
+      "timestamp": "2024-08-26T22:14:06.680Z",
+      "system": false,
+      "entropy": null,
+      "prefundedVotingBalance": {
+        "parentNameAndLabel": 20000000000
+      },
+      "documentTypeName": "domain",
+      "transitionType": 0,
+      "nonce": null,
+      "owner": "AC5EoXmLSpM6Q9S2BFMrfFFqmhCSiE5yKVdA3L5DkcjU"
+    },
+    ...
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 231
+  }
+}
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
 ### Rate
 Return a rate DASH to USD
 ```
@@ -1293,6 +1391,7 @@ Response codes:
 500: Internal Server Error
 503: Service Temporarily Unavailable
 ```
+___
 ### Decode Raw Transaction
 Return a decoded State Transition
 
