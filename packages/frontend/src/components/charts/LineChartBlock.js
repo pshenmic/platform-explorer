@@ -70,7 +70,8 @@ export default function LineChartBlock ({
         borderWidth={'1px'} borderRadius={'block'}
         direction={'column'}
         style={{
-          minHeight: menuIsOpen ? `${Math.max(selectorHeight, heightPx)}px` : `${heightPx}px`
+          height: menuIsOpen ? `${Math.max(selectorHeight, heightPx)}px` : `${heightPx}px`,
+          minHeight: '100%'
         }}
     >
       <Heading className={'InfoBlock__Title'} as={'h1'}>{title}</Heading>
@@ -101,7 +102,6 @@ export default function LineChartBlock ({
                   timespan={timespan}
                   xAxis={xAxis}
                   yAxis={yAxis}
-                  chartIsHidden={menuIsOpen}
               />
               : <ErrorMessageBlock/>
           : <Container

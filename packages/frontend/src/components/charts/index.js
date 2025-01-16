@@ -32,8 +32,7 @@ const LineChart = ({
   yAxis = { title: '', type: { axis: 'number' } },
   width,
   height,
-  dataLoading,
-  chartIsHidden = false
+  dataLoading
 }) => {
   const chartContainer = useRef()
   const [chartElement, setChartElement] = useState(null)
@@ -54,10 +53,6 @@ const LineChart = ({
       render()
     }
   }, [data, render])
-
-  useEffect(() => {
-    if (!chartIsHidden) render()
-  }, [chartIsHidden])
 
   useResizeObserver(chartContainer.current, render)
 
