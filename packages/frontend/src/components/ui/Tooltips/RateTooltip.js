@@ -1,5 +1,5 @@
 import Tooltip from './Tooltip'
-import { roundUsd, creditsToDash } from '../../../util'
+import { roundUsd, removeTrailingZeros, creditsToDash } from '../../../util'
 import './RateTooltip.scss'
 
 export default function RateTooltip ({ credits, dash, usd, rate, children, placement }) {
@@ -10,7 +10,7 @@ export default function RateTooltip ({ credits, dash, usd, rate, children, place
     <Tooltip
       label={(
         <div className={'RateTooltip'}>
-          {typeof dash === 'number' && <div className={'RateTooltip__Dash'}>{Number(dash).toFixed(8)} Dash</div>}
+          {typeof dash === 'number' && <div className={'RateTooltip__Dash'}>{removeTrailingZeros(Number(dash).toFixed(8))} Dash</div>}
           {typeof usd === 'number' && <div className={'RateTooltip__Usd'}>~{roundUsd(Number(usd))}$</div>}
         </div>
       )}
