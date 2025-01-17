@@ -83,12 +83,12 @@ const getTransactionsByIdentity = (identifier, page = 1, limit = 10, order = 'as
   return call(`identity/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
-const getDataContractsByIdentity = (identifier) => {
-  return call(`identity/${identifier}/dataContracts`, 'GET')
+const getDataContractsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
+  return call(`identity/${identifier}/dataContracts?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
-const getDocumentsByIdentity = (identifier) => {
-  return call(`identity/${identifier}/documents`, 'GET')
+const getDocumentsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
+  return call(`identity/${identifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getWithdrawalsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
