@@ -474,4 +474,166 @@ describe('Documents routes', () => {
       assert.deepEqual(body.resultSet, expectedDocuments)
     })
   })
+
+  describe('getContestedDocuments()', async () => {
+    before(async () => {
+      for (let i = 5; i < 30; i++) {
+        const contestedDataContract = await fixtures.dataContract(knex,
+          {
+            owner: identity.identifier
+          })
+
+        const documentTransaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          type: StateTransitionEnum.DOCUMENTS_BATCH,
+          owner: identity.identifier,
+          data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ=='
+        })
+        const document = await fixtures.document(knex, {
+          data_contract_id: contestedDataContract.id,
+          state_transition_hash: documentTransaction.hash,
+          owner: identity.identifier,
+          document_type_name: 'test',
+          prefunded_voting_balance: {}
+        })
+
+        documents.push({ transaction: documentTransaction, block, dataContract: contestedDataContract, document })
+      }
+    })
+
+    it('should return default set of contested documents', async () => {
+      const { body } = await client.get('/contested/documents')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, 25)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({ document }) => document.prefunded_voting_balance !== undefined)
+        .slice(0, 10)
+        .map(({ block, document, dataContract, transaction }) => ({
+          identifier: document.identifier,
+          dataContractIdentifier: dataContract.identifier,
+          revision: document.revision,
+          txHash: transaction.hash ?? null,
+          deleted: document.deleted,
+          data: JSON.stringify(document.data),
+          timestamp: block.timestamp,
+          owner: document.owner,
+          system: document.is_system,
+          entropy: null,
+          documentTypeName: document.document_type_name,
+          transitionType: document.transition_type,
+          prefundedVotingBalance: {},
+          nonce: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return default set of contested documents order desc', async () => {
+      const { body } = await client.get('/contested/documents?order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, 25)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({ document }) => document.prefunded_voting_balance !== undefined)
+        .sort((a, b) => b.document.id - a.document.id)
+        .slice(0, 10)
+        .map(({ block, document, dataContract, transaction }) => ({
+          identifier: document.identifier,
+          dataContractIdentifier: dataContract.identifier,
+          revision: document.revision,
+          txHash: transaction.hash ?? null,
+          deleted: document.deleted,
+          data: JSON.stringify(document.data),
+          timestamp: block.timestamp,
+          owner: document.owner,
+          system: document.is_system,
+          entropy: null,
+          documentTypeName: document.document_type_name,
+          transitionType: document.transition_type,
+          prefundedVotingBalance: {},
+          nonce: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should allows to walk though pages of contested documents order desc', async () => {
+      const { body } = await client.get('/contested/documents?order=desc&limit=10&page=2')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, 25)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({ document }) => document.prefunded_voting_balance !== undefined)
+        .sort((a, b) => b.document.id - a.document.id)
+        .slice(10, 20)
+        .map(({ block, document, dataContract, transaction }) => ({
+          identifier: document.identifier,
+          dataContractIdentifier: dataContract.identifier,
+          revision: document.revision,
+          txHash: transaction.hash ?? null,
+          deleted: document.deleted,
+          data: JSON.stringify(document.data),
+          timestamp: block.timestamp,
+          owner: document.owner,
+          system: document.is_system,
+          entropy: null,
+          documentTypeName: document.document_type_name,
+          transitionType: document.transition_type,
+          prefundedVotingBalance: {},
+          nonce: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return part of set on data end of contested documents order desc', async () => {
+      const { body } = await client.get('/contested/documents?order=desc&limit=10&page=3')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 5)
+      assert.equal(body.pagination.total, 25)
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({ document }) => document.prefunded_voting_balance !== undefined)
+        .sort((a, b) => b.document.id - a.document.id)
+        .slice(20, 30)
+        .map(({ block, document, dataContract, transaction }) => ({
+          identifier: document.identifier,
+          dataContractIdentifier: dataContract.identifier,
+          revision: document.revision,
+          txHash: transaction.hash ?? null,
+          deleted: document.deleted,
+          data: JSON.stringify(document.data),
+          timestamp: block.timestamp,
+          owner: document.owner,
+          system: document.is_system,
+          entropy: null,
+          documentTypeName: document.document_type_name,
+          transitionType: document.transition_type,
+          prefundedVotingBalance: {},
+          nonce: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+  })
 })
