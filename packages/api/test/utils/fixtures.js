@@ -132,7 +132,8 @@ const fixtures = {
     owner,
     is_system,
     transition_type,
-    document_type_name
+    document_type_name,
+    prefunded_voting_balance
   }) => {
     if (!identifier) {
       identifier = generateIdentifier()
@@ -156,7 +157,8 @@ const fixtures = {
       owner,
       is_system: is_system ?? false,
       transition_type: transition_type ?? 0,
-      document_type_name: document_type_name ?? 'type_name'
+      document_type_name: document_type_name ?? 'type_name',
+      prefunded_voting_balance
     }
 
     const result = await knex('documents').insert(row).returning('id')

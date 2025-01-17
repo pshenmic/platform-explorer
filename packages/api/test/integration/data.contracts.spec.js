@@ -89,10 +89,13 @@ describe('DataContracts routes', () => {
         documents: dataContracts[dataContracts.length - 1].dataContract.documents
       })
       const document = await fixtures.document(knex, {
-        data_contract_id: dataContract.id, owner: identity.identifier, is_system: true
+        data_contract_id: dataContract.id,
+        owner: identity.identifier,
+        is_system: true,
+        prefunded_voting_balance: i % 2 === 0 ? {} : undefined
       })
       dataContract.documents.push(document)
-      documents.push({ transaction: null, block: null, dataContract, document })
+      documents.push({ transaction: contractCreateTransaction, block: block2, dataContract, document })
       dataContracts[dataContracts.length - 1].transaction = contractCreateTransaction
       dataContracts[dataContracts.length - 1].dataContract = dataContract
     }
@@ -290,23 +293,49 @@ describe('DataContracts routes', () => {
       assert.deepEqual(body, expectedDataContract)
     })
 
-    //
-    // it('should return last revision of data contract by identifier', async () => {
-    //     const {body} = await client.get('/dataContract/Gc7HqRGqmA4ZSafQ6zXeKH8Rh4AjNjjWsztotJDLpMXa')
-    //         .expect(200)
-    //         .expect('Content-Type', 'application/json; charset=utf-8');
-    //
-    //     assert.equal(body.identifier, 'Gc7HqRGqmA4ZSafQ6zXeKH8Rh4AjNjjWsztotJDLpMXa')
-    //     assert.equal(body.txHash, '4107CE20DB3BE2B2A3B3F3ABA9F68438428E734E4ACF39D4F6D03B0F9B187829')
-    //     assert.equal(body.owner, 'FRMXvU2vRqk9xTya3MTB58ieBt27izpPyoX3fVLf3HuA')
-    //     assert.equal(body.version, 2)
-    //     assert.equal(body.timestamp, '2024-02-22T14:23:57.592Z')
-    // });
-
     it('should return 404 if data contract not found', async () => {
       await client.get('/dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
+    })
+  })
+
+  describe('getContestedDataContract()', async () => {
+    it('should return contested data contract', async () => {
+      const contestedDocuments = documents.filter(({ document }) => document.prefunded_voting_balance !== undefined)
+
+      const { body } = await client.get('/contested/dataContracts')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDataContracts =
+        contestedDocuments
+          .sort((a, b) => (b.dataContract.documents.length - a.dataContract.documents.length ||
+            b.dataContract.id - a.dataContract.id))
+          .filter((item, index) => contestedDocuments.findIndex(({ dataContract }) => item.dataContract.identifier === dataContract.identifier) === index)
+          .slice(0, 10)
+          .map(({ transaction, dataContract, block }) => ({
+            identifier: dataContract.identifier,
+            name: dataContract.name,
+            owner: identity.identifier,
+            schema: null,
+            version: dataContract.version,
+            txHash: transaction.hash,
+            timestamp: block.timestamp.toISOString(),
+            isSystem: dataContract.is_system,
+            documentsCount: dataContract.documents.length,
+            contestedDocumentsCount: contestedDocuments.length
+          }))
+
+      assert.deepEqual(body.resultSet, expectedDataContracts)
+    })
+
+    it('should return empty result on bad pagination', async () => {
+      const { body } = await client.get('/contested/dataContracts?page=100&limit=100')
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body.resultSet, [])
+      assert.deepEqual(body.pagination.total, -1)
     })
   })
 })
