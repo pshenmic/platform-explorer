@@ -67,8 +67,13 @@ const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy) => {
   return call(`dataContracts?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
 
-const getDocumentByIdentifier = (identifier) => {
-  return call(`document/${identifier}`, 'GET')
+const getDocumentByIdentifier = (identifier, dataContractId, typeName) => {
+  const params = []
+  if (dataContractId) params.push(`contract_id=${dataContractId}`)
+  if (typeName) params.push(`document_type_name=${typeName}`)
+  const queryParams = params.join('&')
+
+  return call(`document/${identifier}?${queryParams ? `?${queryParams}` : ''}`, 'GET')
 }
 
 const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc') => {
