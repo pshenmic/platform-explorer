@@ -24,14 +24,6 @@ class DataContractsController {
 
     response.send(dataContracts)
   }
-
-  getDataContractsWithContestedDocuments = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
-
-    const dataContracts = await this.dataContractsDAO.getDataContractsWithContestedDocuments(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
-
-    response.send(dataContracts)
-  }
 }
 
 module.exports = DataContractsController

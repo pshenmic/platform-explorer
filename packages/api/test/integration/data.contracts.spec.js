@@ -299,43 +299,4 @@ describe('DataContracts routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
-
-  describe('getContestedDataContract()', async () => {
-    it('should return contested data contract', async () => {
-      const contestedDocuments = documents.filter(({ document }) => document.prefunded_voting_balance !== undefined)
-
-      const { body } = await client.get('/contested/dataContracts')
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      const expectedDataContracts =
-        contestedDocuments
-          .sort((a, b) => (b.dataContract.documents.length - a.dataContract.documents.length ||
-            b.dataContract.id - a.dataContract.id))
-          .filter((item, index) => contestedDocuments.findIndex(({ dataContract }) => item.dataContract.identifier === dataContract.identifier) === index)
-          .slice(0, 10)
-          .map(({ transaction, dataContract, block }) => ({
-            identifier: dataContract.identifier,
-            name: dataContract.name,
-            owner: identity.identifier,
-            schema: null,
-            version: dataContract.version,
-            txHash: transaction.hash,
-            timestamp: block.timestamp.toISOString(),
-            isSystem: dataContract.is_system,
-            documentsCount: dataContract.documents.length,
-            contestedDocumentsCount: contestedDocuments.length
-          }))
-
-      assert.deepEqual(body.resultSet, expectedDataContracts)
-    })
-
-    it('should return empty result on bad pagination', async () => {
-      const { body } = await client.get('/contested/dataContracts?page=100&limit=100')
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      assert.deepEqual(body.resultSet, [])
-      assert.deepEqual(body.pagination.total, -1)
-    })
-  })
 })

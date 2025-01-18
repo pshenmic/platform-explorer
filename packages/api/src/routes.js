@@ -135,22 +135,6 @@ module.exports = ({
       }
     },
     {
-      path: '/contested/documents',
-      method: 'GET',
-      handler: documentsController.getContestedDocuments,
-      schema: {
-        querystring: { $ref: 'paginationOptions#' }
-      }
-    },
-    {
-      path: '/contested/dataContracts',
-      method: 'GET',
-      handler: dataContractsController.getDataContractsWithContestedDocuments,
-      schema: {
-        querystring: { $ref: 'paginationOptions#' }
-      }
-    },
-    {
       path: '/document/:identifier',
       method: 'GET',
       handler: documentsController.getDocumentByIdentifier,
@@ -171,9 +155,9 @@ module.exports = ({
       }
     },
     {
-      path: '/document/:identifier/transactions',
+      path: '/document/:identifier/revisions',
       method: 'GET',
-      handler: documentsController.getDocumentTransactions,
+      handler: documentsController.getDocumentRevisions,
       schema: {
         params: {
           type: 'object',
