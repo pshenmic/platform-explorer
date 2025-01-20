@@ -2,8 +2,14 @@ import { StateTransitionEnum } from '../../../enums/state.transition.type'
 import { ValueCard } from '../../../components/cards'
 import { Identifier, InfoLine, CreditsBlock, VoteChoice } from '../../../components/data'
 import { TransitionCard, PublicKeyCard } from '../../../components/transactions'
+import { ValueContainer } from '../../../components/ui/containers'
+import { networks } from '../../../constants/networks'
 
 function TransactionData ({ data, type, loading, rate }) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
+  const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+
   if (data === null) return <></>
 
   if (type === StateTransitionEnum.MASTERNODE_VOTE) {
@@ -170,6 +176,54 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.identityId}
       />
+
+      {data?.assetLockProof?.instantLock &&
+        <InfoLine
+          className={'TransactionPage__InfoLine'}
+          title={'Asset Lock Proof'}
+          value={(
+            <ValueCard className={'TransactionPage__AssetLockProof'}>
+              {data?.assetLockProof?.instantLock}
+            </ValueCard>
+          )}
+          loading={loading}
+          error={!data?.assetLockProof?.instantLock}
+        />
+      }
+
+      {data?.assetLockProof?.fundingCoreTx &&
+        <InfoLine
+          className={'TransactionPage__InfoLine'}
+          title={'Core Transaction Hash'}
+          value={(
+            <a
+              href={l1explorerBaseUrl
+                ? `${l1explorerBaseUrl}/tx/${data?.assetLockProof?.fundingCoreTx}`
+                : '#'}
+              target={'_blank'}
+              rel={'noopener noreferrer'}
+            >
+              <ValueContainer elipsed={true} clickable={true} external={true}>
+                <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                  {data?.assetLockProof?.fundingCoreTx}
+                </Identifier>
+              </ValueContainer>
+            </a>
+          )}
+          loading={loading}
+          error={!data?.assetLockProof?.fundingCoreTx}
+        />
+      }
+
+      {data?.assetLockProof?.fundingAmount &&
+        <InfoLine
+          className={'TransactionPage__InfoLine'}
+          title={'Funding Amount'}
+          value={<CreditsBlock credits={data?.assetLockProof?.fundingAmount} rate={rate}/>}
+          loading={loading}
+          error={!data?.assetLockProof?.fundingAmount}
+        />
+      }
 
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}

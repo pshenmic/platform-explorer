@@ -46,7 +46,7 @@
     margin: 14px 0;
   }
 
-  &__Signature {
+  &__Signature, &__AssetLockProof {
     background: transparent;
     overflow-wrap: break-word;
     word-break: break-word;
@@ -172,7 +172,7 @@
       margin-bottom: 12px;
     }
 
-    &__RawTransaction, &__Signature {
+    &__RawTransaction, &__Signature, &__AssetLockProof {
       max-width: none;
     }
   }
