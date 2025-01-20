@@ -319,6 +319,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.identityId}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Revision'}
@@ -326,6 +327,16 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={data?.revision === undefined}
       />
+
+      {data?.identityContractNonce &&
+        <InfoLine
+          className={'TransactionPage__InfoLine'}
+          title={'Identity Contract Nonce'}
+          value={data?.identityContractNonce}
+          loading={loading}
+          error={data?.identityContractNonce === undefined}
+        />
+      }
 
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
