@@ -20,11 +20,12 @@ import { RateTooltip } from '../../../components/ui/Tooltips'
 import { networks } from '../../../constants/networks'
 import { WithdrawalsList } from '../../../components/transfers'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
-import './ValidatorPage.scss'
+import { defaultChartConfig } from '../../../components/charts/config'
 import {
   Badge,
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
+import './ValidatorPage.scss'
 
 function Validator ({ hash }) {
   const { setBreadcrumbs } = useBreadcrumbs()
@@ -39,6 +40,7 @@ function Validator ({ hash }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+  const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 
   useEffect(() => {
     setBreadcrumbs([
@@ -410,6 +412,8 @@ function Validator ({ hash }) {
                       hash={hash}
                       isActive={activeChartTab === 0}
                       loading={validator.loading}
+                      timespanChangeCallback={setTimespan}
+                      timespan={timespan}
                     />
                   </TabPanel>
                   <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
@@ -417,6 +421,8 @@ function Validator ({ hash }) {
                       hash={hash}
                       isActive={activeChartTab === 1}
                       loading={validator.loading}
+                      timespanChangeCallback={setTimespan}
+                      timespan={timespan}
                     />
                   </TabPanel>
               </TabPanels>

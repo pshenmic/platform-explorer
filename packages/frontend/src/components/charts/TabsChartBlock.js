@@ -51,10 +51,11 @@ export default function TabsChartBlock ({
         className={'TabsChartBlock__TimeframeSelector'}
         config={chartConfig}
         changeCallback={timespanChangeCallback}
+        forceTimespan={timespan}
         menuIsActive={menuIsActive}
         openStateCallback={setMenuIsOpen}
       />
-      <div className={`TabsChartBlock__ChartContiner ${menuIsOpen ? 'TabsChartBlock__ChartContiner--Hidden' : ''}`}>
+      <div className={`TabsChartBlock__ChartContainer ${menuIsOpen ? 'TabsChartBlock__ChartContainer--Hidden' : ''}`}>
         <LineChart
           data={data}
           dataLoading={loading}

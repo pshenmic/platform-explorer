@@ -27,7 +27,7 @@ function Transaction ({ hash }) {
   useEffect(() => {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
-      { label: 'Transactions', path: '/identities' },
+      { label: 'Transactions', path: '/transactions' },
       { label: hash }
     ])
   }, [setBreadcrumbs, hash])

@@ -1,12 +1,14 @@
-import { useState, forwardRef } from 'react'
+import { useState, forwardRef, useEffect } from 'react'
 import { Button } from '@chakra-ui/react'
 import { DateRangePicker } from '../calendar'
 import './TimeframeMenu.scss'
 
-const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallback, className }, ref) {
+const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, forceTimespan, changeCallback, className }, ref) {
   const [timespan, setTimespan] = useState(config.timespan.values[config.timespan.defaultIndex])
   const [selectedRange, setSelectedRange] = useState(null)
   const [calendarValue, setCalendarValue] = useState(null)
+
+  useEffect(() => setTimespan(forceTimespan), [forceTimespan])
 
   const changeHandler = (value) => {
     setTimespan(value)
@@ -55,7 +57,7 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, changeCallbac
         <div className={'TimeframeMenu__Values'}>
           {config.timespan.values.map((iTimespan, i) => (
             <Button
-              className={`TimeframeMenu__ValueButton ${iTimespan.label === timespan.label ? 'TimeframeMenu__ValueButton--Active' : ''}`}
+              className={`TimeframeMenu__ValueButton ${iTimespan.label === timespan?.label ? 'TimeframeMenu__ValueButton--Active' : ''}`}
               onClick={() => {
                 changeHandler(iTimespan)
                 clearCalendarRange()
