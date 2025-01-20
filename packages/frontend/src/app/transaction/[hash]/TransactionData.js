@@ -338,17 +338,33 @@ function TransactionData ({ data, type, loading, rate }) {
         />
       }
 
-      <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
-        title={`Add Public Keys ${data?.publicKeys !== undefined ? `(${data?.publicKeysToAdd?.length})` : ''}`}
-        value={(<>
-          {data?.publicKeysToAdd?.map((publicKey, i) => (
-            <PublicKeyCard className={'TransactionPage__PublicKeyCard'} publicKey={publicKey} key={i}/>
-          ))}
-        </>)}
-        loading={loading}
-        error={data?.publicKeysToAdd === undefined}
-      />
+      {data?.publicKeysToAdd?.length > 0 &&
+        <InfoLine
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
+          title={`Add Public Keys ${data?.publicKeys !== undefined ? `(${data?.publicKeysToAdd?.length})` : ''}`}
+          value={(<>
+            {data?.publicKeysToAdd?.map((publicKey, i) => (
+              <PublicKeyCard className={'TransactionPage__PublicKeyCard'} publicKey={publicKey} key={i}/>
+            ))}
+          </>)}
+          loading={loading}
+          error={data?.publicKeysToAdd === undefined}
+        />
+      }
+
+      {data?.setPublicKeyIdsToDisable?.length > 0 &&
+        <InfoLine
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
+          title={`Disable Public Keys ${data?.setPublicKeyIdsToDisable !== undefined ? `(${data?.setPublicKeyIdsToDisable?.length})` : ''}`}
+          value={(<>
+            {data?.setPublicKeyIdsToDisable?.map((publicKey, i) => (
+              <PublicKeyCard className={'TransactionPage__PublicKeyCard'} publicKey={{ id: publicKey }} key={i}/>
+            ))}
+          </>)}
+          loading={loading}
+          error={data?.setPublicKeyIdsToDisable === undefined}
+        />
+      }
     </>)
   }
 
