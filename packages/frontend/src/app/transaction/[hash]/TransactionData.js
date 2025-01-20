@@ -6,11 +6,64 @@ import { ValueContainer } from '../../../components/ui/containers'
 import { networks } from '../../../constants/networks'
 import { CopyButton } from '../../../components/ui/Buttons'
 
-function TransactionData ({ data, type, loading, rate }) {
+function AssetLockProof ({ assetLockProof = {}, rate, loading }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
 
+  return (<>
+    {assetLockProof?.instantLock &&
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Asset Lock Proof'}
+        value={(
+          <ValueCard className={'TransactionPage__AssetLockProof'}>
+            {assetLockProof?.instantLock}
+            <CopyButton text={assetLockProof?.instantLock}/>
+          </ValueCard>
+        )}
+        loading={loading}
+        error={!assetLockProof?.instantLock}
+      />
+    }
+
+    {assetLockProof?.fundingCoreTx &&
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Core Transaction Hash'}
+        value={(
+          <a
+            href={l1explorerBaseUrl
+              ? `${l1explorerBaseUrl}/tx/${assetLockProof?.fundingCoreTx}`
+              : '#'}
+            target={'_blank'}
+            rel={'noopener noreferrer'}
+          >
+            <ValueContainer elipsed={true} clickable={true} external={true}>
+              <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                {assetLockProof?.fundingCoreTx}
+              </Identifier>
+            </ValueContainer>
+          </a>
+        )}
+        loading={loading}
+        error={!assetLockProof?.fundingCoreTx}
+      />
+    }
+
+    {assetLockProof?.fundingAmount &&
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Funding Amount'}
+        value={<CreditsBlock credits={assetLockProof?.fundingAmount} rate={rate}/>}
+        loading={loading}
+        error={!assetLockProof?.fundingAmount}
+      />
+    }
+  </>)
+}
+
+function TransactionData ({ data, type, loading, rate }) {
   if (data === null) return <></>
 
   if (type === StateTransitionEnum.MASTERNODE_VOTE) {
@@ -178,54 +231,11 @@ function TransactionData ({ data, type, loading, rate }) {
         error={!data?.identityId}
       />
 
-      {data?.assetLockProof?.instantLock &&
-        <InfoLine
-          className={'TransactionPage__InfoLine'}
-          title={'Asset Lock Proof'}
-          value={(
-            <ValueCard className={'TransactionPage__AssetLockProof'}>
-              {data?.assetLockProof?.instantLock}
-              <CopyButton text={data?.assetLockProof?.instantLock}/>
-            </ValueCard>
-          )}
-          loading={loading}
-          error={!data?.assetLockProof?.instantLock}
-        />
-      }
-
-      {data?.assetLockProof?.fundingCoreTx &&
-        <InfoLine
-          className={'TransactionPage__InfoLine'}
-          title={'Core Transaction Hash'}
-          value={(
-            <a
-              href={l1explorerBaseUrl
-                ? `${l1explorerBaseUrl}/tx/${data?.assetLockProof?.fundingCoreTx}`
-                : '#'}
-              target={'_blank'}
-              rel={'noopener noreferrer'}
-            >
-              <ValueContainer elipsed={true} clickable={true} external={true}>
-                <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
-                  {data?.assetLockProof?.fundingCoreTx}
-                </Identifier>
-              </ValueContainer>
-            </a>
-          )}
-          loading={loading}
-          error={!data?.assetLockProof?.fundingCoreTx}
-        />
-      }
-
-      {data?.assetLockProof?.fundingAmount &&
-        <InfoLine
-          className={'TransactionPage__InfoLine'}
-          title={'Funding Amount'}
-          value={<CreditsBlock credits={data?.assetLockProof?.fundingAmount} rate={rate}/>}
-          loading={loading}
-          error={!data?.assetLockProof?.fundingAmount}
-        />
-      }
+      <AssetLockProof
+        assetLockProof={data?.assetLockProof}
+        rate={rate}
+        loading={loading}
+      />
 
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
@@ -263,6 +273,13 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.identityId}
       />
+      {data?.assetLockProof &&
+        <AssetLockProof
+          assetLockProof={data?.assetLockProof}
+          rate={rate}
+          loading={loading}
+        />
+      }
     </>)
   }
 
@@ -328,13 +345,13 @@ function TransactionData ({ data, type, loading, rate }) {
         error={data?.revision === undefined}
       />
 
-      {data?.identityContractNonce &&
+      {data?.identityContractNonce !== undefined &&
         <InfoLine
           className={'TransactionPage__InfoLine'}
           title={'Identity Contract Nonce'}
           value={data?.identityContractNonce}
           loading={loading}
-          error={data?.identityContractNonce === undefined}
+          error={data?.identityContractNonce === null}
         />
       }
 
