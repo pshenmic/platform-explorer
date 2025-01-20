@@ -32,7 +32,7 @@ const fieldsOfTypes = {
     'DocumentIdentifier',
     'DocumentType',
     'IdentityContractNonce',
-    'LastRevisionData'// 'Data'
+    'Data'// 'LastRevisionData'
   ],
   TRANSFER: [
     'DataContractIdentifier',
@@ -79,6 +79,7 @@ function TransitionCard ({ transition, rate, className }) {
   const fields = fieldsOfTypes?.[DocumentActionEnum?.[transition?.action]]
 
   console.log('fields', fields)
+  console.log('transition:')
   console.log(transition)
 
   return (
