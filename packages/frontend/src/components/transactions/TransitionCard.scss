@@ -24,6 +24,12 @@
       }
     }
 
+    &--DocumentType {
+      .ValueContainer {
+        max-width: max-content;
+      }
+    }
+
     .InfoLine__Title {
       width: 200px;
     }
