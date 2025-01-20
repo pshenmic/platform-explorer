@@ -186,6 +186,7 @@ function Transaction ({ hash }) {
             value={(
               <ValueCard className={'TransactionPage__Signature'}>
                 {decodedST.data?.signature}
+                <CopyButton text={decodedST.data?.signature}/>
               </ValueCard>
             )}
             loading={decodedST.loading}

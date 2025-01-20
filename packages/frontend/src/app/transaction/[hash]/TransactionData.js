@@ -4,6 +4,7 @@ import { Identifier, InfoLine, CreditsBlock, VoteChoice } from '../../../compone
 import { TransitionCard, PublicKeyCard } from '../../../components/transactions'
 import { ValueContainer } from '../../../components/ui/containers'
 import { networks } from '../../../constants/networks'
+import { CopyButton } from '../../../components/ui/Buttons'
 
 function TransactionData ({ data, type, loading, rate }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
@@ -184,6 +185,7 @@ function TransactionData ({ data, type, loading, rate }) {
           value={(
             <ValueCard className={'TransactionPage__AssetLockProof'}>
               {data?.assetLockProof?.instantLock}
+              <CopyButton text={data?.assetLockProof?.instantLock}/>
             </ValueCard>
           )}
           loading={loading}
