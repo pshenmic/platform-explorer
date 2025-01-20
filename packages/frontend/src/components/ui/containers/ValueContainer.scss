@@ -17,6 +17,10 @@
     text-overflow: ellipsis;
   }
 
+  &--Elipsed &__Value {
+     overflow: hidden;
+  }
+
   &--Red {
     color: var(--chakra-colors-red-default);
     background: rgba(var(--chakra-colors-red-default-rgb), .2);
