@@ -12,15 +12,16 @@ const fieldsOfTypes = {
     'DocumentIdentifier',
     'DocumentType',
     'Revision',
-    'IdentityNonce',
-    'Data'
+    'IdentityContractNonce',
+    'Data',
+    'PrefundedVotingBalance'
   ],
   REPLACE: [
     'DataContractIdentifier',
     'DocumentIdentifier',
     'DocumentType',
     'Revision',
-    'IdentityNonce',
+    'IdentityContractNonce',
     'LastTimeCreated',
     'LastTimeUpdated',
     'LastTimeTransferred',
@@ -30,8 +31,8 @@ const fieldsOfTypes = {
     'DataContractIdentifier',
     'DocumentIdentifier',
     'DocumentType',
-    'IdentityNonce',
-    'Data'
+    'IdentityContractNonce',
+    'LastRevisionData'// 'Data'
   ],
   TRANSFER: [
     'DataContractIdentifier',
@@ -39,7 +40,7 @@ const fieldsOfTypes = {
     'SenderIdentifier',
     'ReceiverIdentifier',
     'Revision',
-    'IdentityNonce',
+    'IdentityContractNonce',
     'LastTimeCreated',
     'LastTimeUpdated',
     'LastTimeTransferred',
@@ -53,7 +54,7 @@ const fieldsOfTypes = {
     'DocumentType',
     'Price',
     'Revision',
-    'IdentityNonce',
+    'IdentityContractNonce',
     'LastTimeCreated',
     'LastTimeUpdated',
     'LastTimeTransferred',
@@ -66,7 +67,7 @@ const fieldsOfTypes = {
     'ReceiverIdentifier',
     'Price',
     'Revision',
-    'IdentityNonce',
+    'IdentityContractNonce',
     'LastTimeCreated',
     'LastTimeUpdated',
     'LastTimeTransferred',
@@ -78,7 +79,7 @@ function TransitionCard ({ transition, rate, className }) {
   const fields = fieldsOfTypes?.[DocumentActionEnum?.[transition?.action]]
 
   console.log('fields', fields)
-  console.log('transition', transition)
+  console.log(transition)
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient TransitionCard ${className || ''}`}>
@@ -140,10 +141,10 @@ function TransitionCard ({ transition, rate, className }) {
         />
       }
 
-      {fields.indexOf('IdentityNonce') !== -1 &&
+      {fields.indexOf('IdentityContractNonce') !== -1 &&
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--Nonce'}
-          title={'Identity Nonce'}
+          title={'Identity Contract Nonce'}
           value={transition?.nonce}
           error={transition?.nonce === undefined}
         />
