@@ -5,6 +5,7 @@ import { TransitionCard, PublicKeyCard } from '../../../components/transactions'
 import { ValueContainer } from '../../../components/ui/containers'
 import { networks } from '../../../constants/networks'
 import { CopyButton } from '../../../components/ui/Buttons'
+import { InternalConfigCard } from '../../../components/dataContracts'
 
 function AssetLockProof ({ assetLockProof = {}, loading }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
@@ -203,12 +204,22 @@ function TransactionData ({ data, type, loading, rate }) {
       />
 
       <InfoLine
-        className={'TransactionPage__InfoLine'}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Schema'}
         title={'Schema'}
         value={<CodeBlock code={JSON.stringify(data?.schema)}/>}
         loading={loading}
         error={data?.schema === undefined}
       />
+
+      {data?.internalConfig &&
+        <InfoLine
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--InternalConfig TransactionPage__InfoLine--Baseline'}
+          title={'Internal Config'}
+          value={<InternalConfigCard config={data?.internalConfig}/>}
+          loading={loading}
+          error={data?.schema === undefined}
+        />
+      }
     </>)
   }
 

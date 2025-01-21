@@ -18,7 +18,23 @@
     margin-bottom: 14px;
     justify-content: flex-start !important;
 
-    &--RawTransaction, &--Status, &--Transitions, &--PublicKeys {
+    &--Schema {
+      align-items: flex-start !important;
+
+      .InfoLine__Value {
+        width: 100%;
+      }
+    }
+
+    &--InternalConfig {
+      width: 100%;
+
+      .InfoLine__Value {
+        width: 100%;
+      }
+    }
+
+    &--Baseline, &--RawTransaction, &--Status, &--Transitions, &--PublicKeys {
       align-items: baseline !important;
     }
 
