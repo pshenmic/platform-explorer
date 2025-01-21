@@ -6,7 +6,7 @@ import { ValueContainer } from '../../../components/ui/containers'
 import { networks } from '../../../constants/networks'
 import { CopyButton } from '../../../components/ui/Buttons'
 
-function AssetLockProof ({ assetLockProof = {}, rate, loading }) {
+function AssetLockProof ({ assetLockProof = {}, loading }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
@@ -48,16 +48,6 @@ function AssetLockProof ({ assetLockProof = {}, rate, loading }) {
         )}
         loading={loading}
         error={!assetLockProof?.fundingCoreTx}
-      />
-    }
-
-    {assetLockProof?.fundingAmount &&
-      <InfoLine
-        className={'TransactionPage__InfoLine'}
-        title={'Funding Amount'}
-        value={<CreditsBlock credits={assetLockProof?.fundingAmount} rate={rate}/>}
-        loading={loading}
-        error={!assetLockProof?.fundingAmount}
       />
     }
   </>)
