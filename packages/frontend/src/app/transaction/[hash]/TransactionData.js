@@ -104,7 +104,7 @@ function TransactionData ({ data, type, loading, rate }) {
         error={!data?.ownerId}
       />
       <InfoLine
-        className={'TransactionPage__InfoLine'}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Nonce'}
         title={'Identity Nonce'}
         value={data?.nonce}
         loading={loading}
@@ -172,7 +172,7 @@ function TransactionData ({ data, type, loading, rate }) {
         error={!data?.ownerId}
       />
       <InfoLine
-        className={'TransactionPage__InfoLine'}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Nonce'}
         title={'Identity Nonce'}
         value={data?.identityNonce}
         loading={loading}
@@ -343,7 +343,7 @@ function TransactionData ({ data, type, loading, rate }) {
 
       {data?.identityContractNonce !== undefined &&
         <InfoLine
-          className={'TransactionPage__InfoLine'}
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--Nonce'}
           title={'Identity Contract Nonce'}
           value={data?.identityContractNonce}
           loading={loading}
@@ -390,6 +390,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={data?.amount === undefined}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Identity'}
@@ -403,8 +404,9 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={data?.amount === undefined}
       />
+
       <InfoLine
-        className={'TransactionPage__InfoLine'}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Nonce'}
         title={'Identity Nonce'}
         value={data?.nonce}
         loading={loading}
@@ -412,7 +414,7 @@ function TransactionData ({ data, type, loading, rate }) {
       />
 
       <InfoLine
-        className={'TransactionPage__InfoLine'}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Pooling'}
         title={'Pooling'}
         value={(
           <ValueContainer colorScheme={poolingColors?.[data?.pooling]} size={'sm'}>
@@ -421,6 +423,20 @@ function TransactionData ({ data, type, loading, rate }) {
         )}
         loading={loading}
         error={data?.pooling === undefined}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--OutputScript'}
+        title={'Output Script'}
+        value={(
+          <ValueCard className={'TransactionPage__OutputScript'}>
+            <Identifier copyButton={true} ellipsis={false}>
+              {data?.outputScript}
+            </Identifier>
+          </ValueCard>
+        )}
+        loading={loading}
+        error={data?.outputScript === undefined}
       />
     </>)
   }
