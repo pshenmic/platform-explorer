@@ -203,7 +203,7 @@ function TransactionData ({ data, type, loading, rate }) {
       />
 
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        className={'TransactionPage__InfoLine'}
         title={'Schema'}
         value={<CodeBlock code={JSON.stringify(data?.schema)}/>}
         loading={loading}
