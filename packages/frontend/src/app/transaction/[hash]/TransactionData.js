@@ -77,6 +77,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.proTxHash}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Data Contract'}
@@ -90,6 +91,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.contractId}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Voter Identity'}
@@ -103,6 +105,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.ownerId}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--Nonce'}
         title={'Identity Nonce'}
@@ -110,6 +113,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.nonce}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Choice'}
@@ -129,6 +133,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.documentTypeName}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Index Name'}
@@ -158,6 +163,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.dataContractId}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Contract Owner'}
@@ -171,6 +177,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.ownerId}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--Nonce'}
         title={'Identity Nonce'}
@@ -256,6 +263,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={data?.amount === undefined}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Identity'}
@@ -269,6 +277,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.identityId}
       />
+
       {data?.assetLockProof &&
         <AssetLockProof
           assetLockProof={data?.assetLockProof}
@@ -294,6 +303,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.dataContractId}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Contract Owner'}
@@ -307,6 +317,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.ownerId}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Version'}
@@ -456,6 +467,7 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.senderId}
       />
+
       <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Recipient'}
