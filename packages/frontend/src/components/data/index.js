@@ -9,6 +9,7 @@ import Alias from './Alias'
 import AliasesList from './AliasesList'
 import VoteChoice from './VoteChoice'
 import PrefundedBalance from './PrefundedBalance'
+import CodeBlock from './CodeBlock'
 
 export {
   Identifier,
@@ -21,5 +22,6 @@ export {
   Alias,
   AliasesList,
   VoteChoice,
-  PrefundedBalance
+  PrefundedBalance,
+  CodeBlock
 }
