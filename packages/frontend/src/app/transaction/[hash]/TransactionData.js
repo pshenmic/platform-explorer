@@ -1,6 +1,6 @@
 import { StateTransitionEnum } from '../../../enums/state.transition.type'
 import { ValueCard } from '../../../components/cards'
-import { Identifier, InfoLine, CreditsBlock, VoteChoice } from '../../../components/data'
+import { Identifier, InfoLine, CreditsBlock, VoteChoice, CodeBlock } from '../../../components/data'
 import { TransitionCard, PublicKeyCard } from '../../../components/transactions'
 import { ValueContainer } from '../../../components/ui/containers'
 import { networks } from '../../../constants/networks'
@@ -155,7 +155,7 @@ function TransactionData ({ data, type, loading, rate }) {
         title={'Data Contract'}
         value={(
           <ValueCard link={`/dataContract/${data?.dataContractId}`}>
-            <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
               {data?.dataContractId}
             </Identifier>
           </ValueCard>
@@ -180,10 +180,34 @@ function TransactionData ({ data, type, loading, rate }) {
 
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        title={'Version'}
+        value={data?.version}
+        loading={loading}
+        error={data?.version === undefined}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
         title={'Identity Nonce'}
         value={data?.identityNonce}
         loading={loading}
         error={data?.identityNonce === undefined}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        title={'Signature Public Key Id'}
+        value={data?.signaturePublicKeyId}
+        loading={loading}
+        error={data?.signaturePublicKeyId === undefined}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        title={'Schema'}
+        value={<CodeBlock code={JSON.stringify(data?.schema)}/>}
+        loading={loading}
+        error={data?.schema === undefined}
       />
     </>)
   }
