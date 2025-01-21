@@ -54,6 +54,12 @@ function AssetLockProof ({ assetLockProof = {}, loading }) {
 }
 
 function TransactionData ({ data, type, loading, rate }) {
+  const poolingColors = {
+    Standard: 'green',
+    Never: 'red',
+    'If Available': 'orange'
+  }
+
   if (data === null) return <></>
 
   if (type === StateTransitionEnum.MASTERNODE_VOTE) {
@@ -386,10 +392,35 @@ function TransactionData ({ data, type, loading, rate }) {
       />
       <InfoLine
         className={'TransactionPage__InfoLine'}
-        title={'Identity Nonce'}
-        value={data?.identityNonce}
+        title={'Identity'}
+        value={(
+          <ValueCard link={`/identity/${data?.senderId}`}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {data?.senderId}
+            </Identifier>
+          </ValueCard>
+        )}
         loading={loading}
-        error={data?.identityNonce === undefined}
+        error={data?.amount === undefined}
+      />
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Identity Nonce'}
+        value={data?.nonce}
+        loading={loading}
+        error={data?.nonce === undefined}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Pooling'}
+        value={(
+          <ValueContainer colorScheme={poolingColors?.[data?.pooling]} size={'sm'}>
+            {data?.pooling}
+          </ValueContainer>
+        )}
+        loading={loading}
+        error={data?.pooling === undefined}
       />
     </>)
   }
