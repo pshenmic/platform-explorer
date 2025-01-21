@@ -107,7 +107,7 @@ function TransactionData ({ data, type, loading, rate }) {
       />
 
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Nonce'}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
         title={'Identity Nonce'}
         value={data?.nonce}
         loading={loading}
@@ -179,7 +179,7 @@ function TransactionData ({ data, type, loading, rate }) {
       />
 
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Nonce'}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
         title={'Identity Nonce'}
         value={data?.identityNonce}
         loading={loading}
@@ -354,7 +354,7 @@ function TransactionData ({ data, type, loading, rate }) {
 
       {data?.identityContractNonce !== undefined &&
         <InfoLine
-          className={'TransactionPage__InfoLine TransactionPage__InfoLine--Nonce'}
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
           title={'Identity Contract Nonce'}
           value={data?.identityContractNonce}
           loading={loading}
@@ -417,11 +417,19 @@ function TransactionData ({ data, type, loading, rate }) {
       />
 
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Nonce'}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
         title={'Identity Nonce'}
         value={data?.nonce}
         loading={loading}
         error={data?.nonce === undefined}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        title={'Signature Public Key Id'}
+        value={data?.signaturePublicKeyId}
+        loading={loading}
+        error={data?.signaturePublicKeyId === undefined}
       />
 
       <InfoLine
