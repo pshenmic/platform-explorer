@@ -497,6 +497,22 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={data?.amount === undefined}
       />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        title={'Identity Nonce'}
+        value={data?.nonce}
+        loading={loading}
+        error={!data?.nonce}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        title={'Signature Public Key Id'}
+        value={data?.signaturePublicKeyId}
+        loading={loading}
+        error={data?.signaturePublicKeyId === undefined}
+      />
     </>)
   }
 }
