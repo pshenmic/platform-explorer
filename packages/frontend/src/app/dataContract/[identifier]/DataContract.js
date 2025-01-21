@@ -8,8 +8,8 @@ import { LoadingLine, LoadingBlock } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import ImageGenerator from '../../../components/imageGenerator'
-import { DataContractSchema } from '../../../components/dataContracts'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { CodeBlock } from '../../../components/data'
 import {
   Box,
   Container,
@@ -237,7 +237,7 @@ function DataContract ({ identifier }) {
                           {!dataContract.error
                             ? <LoadingBlock loading={dataContract.loading}>
                                 {dataContract.data?.schema
-                                  ? <DataContractSchema schema={dataContract.data?.schema}/>
+                                  ? <CodeBlock code={dataContract.data?.schema}/>
                                   : <Container h={20}><ErrorMessageBlock/></Container>}
                               </LoadingBlock>
                             : <Container h={20}><ErrorMessageBlock/></Container>
