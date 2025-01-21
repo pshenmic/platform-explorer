@@ -360,6 +360,33 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={data?.version === undefined}
       />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        title={'Identity Contract Nonce'}
+        value={data?.identityContractNonce}
+        loading={loading}
+        error={data?.identityContractNonce === undefined}
+      />
+
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Schema'}
+        title={'Schema'}
+        value={<CodeBlock code={JSON.stringify(data?.schema)}/>}
+        loading={loading}
+        error={data?.schema === undefined}
+      />
+
+      {data?.internalConfig &&
+        <InfoLine
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--InternalConfig TransactionPage__InfoLine--Baseline'}
+          title={'Internal Config'}
+          value={<InternalConfigCard config={data?.internalConfig}/>}
+          loading={loading}
+          error={data?.schema === undefined}
+        />
+      }
+
     </>)
   }
 
