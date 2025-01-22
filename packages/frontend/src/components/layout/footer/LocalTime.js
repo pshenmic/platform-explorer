@@ -9,17 +9,36 @@ function LocalTime ({ className }) {
   const [timeZone, setTimeZone] = useState(null)
 
   useEffect(() => {
-    const now = new Date()
-    setTime(now.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    }))
-    setDate(now.toLocaleDateString('en-US', {
-      weekday: 'short',
-      day: '2-digit',
-      month: 'short'
-    }))
+    const updateTime = () => {
+      const now = new Date()
+      setTime(
+        now.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      )
+      setDate(
+        now.toLocaleDateString('en-US', {
+          weekday: 'short',
+          day: '2-digit',
+          month: 'short'
+        })
+      )
+    }
+
     setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+    updateTime()
+
+    const now = new Date()
+    const millisecondsUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
+
+    const timeout = setTimeout(() => {
+      updateTime()
+      const interval = setInterval(updateTime, 60000)
+      return () => clearInterval(interval)
+    }, millisecondsUntilNextMinute)
+
+    return () => clearTimeout(timeout)
   }, [])
 
   return (
