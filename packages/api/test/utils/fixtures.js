@@ -17,7 +17,7 @@ const fixtures = {
       app_version: app_version ?? 1,
       l1_locked_height: l1_locked_height ?? 1337,
       validator: validator ?? (await fixtures.validator(knex)).pro_tx_hash,
-      app_hash: app_hash ?? generateHash(),
+      app_hash: app_hash ?? generateHash()
     }
 
     await knex('blocks').insert(row)
