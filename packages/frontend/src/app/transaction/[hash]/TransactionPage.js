@@ -24,9 +24,6 @@ function Transaction ({ hash }) {
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
 
-  console.log('transaction', transaction)
-  console.log('decodedST', decodedST)
-
   useEffect(() => {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
