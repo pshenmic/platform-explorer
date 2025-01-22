@@ -1,6 +1,6 @@
-import './Credits.scss'
+import './BigNumber.scss'
 
-function Credits ({ children }) {
+function BigNumber ({ children }) {
   if (children === undefined) return null
 
   const numberStr = children.toString()
@@ -14,15 +14,15 @@ function Credits ({ children }) {
     }, [])
 
   return (
-    <span className={'Credits'}>
+    <span className={'BigNumber'}>
       {parts.map((part, i) => (
         <span key={i}>
-          <span className={'Credits__Group'}>{part}</span>
-          {i < parts.length - 1 && <span className={'Credits__Space'}></span>}
+          <span className={'BigNumber__Group'}>{part}</span>
+          {i < parts.length - 1 && <span className={'BigNumber__Space'}></span>}
         </span>
       ))}
     </span>
   )
 }
 
-export default Credits
+export default BigNumber
