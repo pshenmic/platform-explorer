@@ -8,7 +8,7 @@ const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase(
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
 const fixtures = {
   identifier: () => generateIdentifier(),
-  block: async (knex, { hash, height, timestamp, block_version, app_version, l1_locked_height, validator } = {}) => {
+  block: async (knex, { hash, height, timestamp, block_version, app_version, l1_locked_height, validator, app_hash } = {}) => {
     const row = {
       hash: hash ?? generateHash(),
       height: height ?? 1,
@@ -16,7 +16,8 @@ const fixtures = {
       block_version: block_version ?? 13,
       app_version: app_version ?? 1,
       l1_locked_height: l1_locked_height ?? 1337,
-      validator: validator ?? (await fixtures.validator(knex)).pro_tx_hash
+      validator: validator ?? (await fixtures.validator(knex)).pro_tx_hash,
+      app_hash: app_hash ?? generateHash(),
     }
 
     await knex('blocks').insert(row)
