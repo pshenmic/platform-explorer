@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Alias, Identifier } from '../data'
+import { Alias, Identifier, BigNumber } from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './DataContractsListItem.scss'
@@ -30,7 +30,7 @@ function DataContractsListItem ({ dataContract }) {
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--DocumentsCount'}>
           <ValueContainer colorScheme={dataContract?.documentsCount > 0 ? 'brand' : 'darkGray'} size={'xs'}>
-            {dataContract?.documentsCount}
+            <BigNumber>{dataContract?.documentsCount}</BigNumber>
           </ValueContainer>
         </GridItem>
 
