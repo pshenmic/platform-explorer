@@ -116,6 +116,7 @@ function TransitionCard ({ transition, rate, className }) {
           error={!transition.id}
         />
       }
+
       {fields.indexOf('DocumentType') !== -1 &&
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--DocumentType'}
