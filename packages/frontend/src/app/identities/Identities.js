@@ -91,17 +91,17 @@ function Identities ({ defaultPage = 1, defaultPageSize }) {
 
               {identities.data?.resultSet?.length > 0 &&
                 <div className={'ListNavigation'}>
-                    <Box display={['none', 'none', 'block']} width={'155px'}/>
-                    <Pagination
-                        onPageChange={({ selected }) => setCurrentPage(selected)}
-                        pageCount={pageCount}
-                        forcePage={currentPage}
-                    />
-                    <PageSizeSelector
-                        PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                        value={pageSize}
-                        items={paginateConfig.pageSize.values}
-                    />
+                  <Box display={['none', 'none', 'block']} width={'155px'}/>
+                  <Pagination
+                    onPageChange={({ selected }) => setCurrentPage(selected)}
+                    pageCount={pageCount}
+                    forcePage={currentPage}
+                  />
+                  <PageSizeSelector
+                    PageSizeSelectHandler={e => setPageSize(e.value)}
+                    value={pageSize}
+                    items={paginateConfig.pageSize.values}
+                  />
                 </div>
               }
           </Container>
