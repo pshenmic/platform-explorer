@@ -1,8 +1,9 @@
 import { Tooltip } from '../ui/Tooltips'
 import { ErrorIcon, QueuedIcon } from '../ui/icons'
+import ImageGenerator from '../imageGenerator'
 import './Alias.scss'
 
-export default function Alias ({ alias, status, children, ellipsis = true, className }) {
+export default function Alias ({ alias, status, children, ellipsis = true, avatarSource, className }) {
   alias = alias || children
   if (typeof alias !== 'string') return <></>
 
@@ -34,6 +35,10 @@ export default function Alias ({ alias, status, children, ellipsis = true, class
   return (
     <Container>
       <div className={`Alias ${statusClasses?.[status] || ''} ${ellipsis ? 'Alias--Ellipsis' : ''}  ${className || ''}`}>
+        {avatarSource && (
+          <ImageGenerator className={'Alias__Avatar'} username={avatarSource} lightness={50} saturation={50} width={24} height={24} />
+        )}
+
         <span className={'Alias__Name'}>
           {dashIndex !== -1
             ? alias?.slice(0, dashIndex)
