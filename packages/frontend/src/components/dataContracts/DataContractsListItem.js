@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import ImageGenerator from '../imageGenerator'
 import { Alias, Identifier } from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
 import { Grid, GridItem } from '@chakra-ui/react'
@@ -17,23 +16,13 @@ function DataContractsListItem ({ dataContract }) {
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Identifier'}>
           <div className={'DataContractsListItem__IdentifierContainer'}>
             {dataContract?.name
-              ? <>
-                <ImageGenerator
-                  className={'DataContractsListItem__Avatar'}
-                  username={dataContract?.identifier}
-                  lightness={50}
-                  saturation={50}
-                  width={24}
-                  height={24}
-                />
-                <Alias>{dataContract.name}</Alias>
-              </>
+              ? <Alias avatarSource={dataContract?.identifier}>{dataContract.name}</Alias>
               : <Identifier
-                className={'DataContractsListItem__Identifier'}
-                avatar={true}
-                styles={['highlight-both']}
-                ellipsis={true}
-              >
+                  className={'DataContractsListItem__Identifier'}
+                  avatar={true}
+                  styles={['highlight-both']}
+                  ellipsis={true}
+                >
                 {dataContract.identifier}
               </Identifier>}
           </div>
