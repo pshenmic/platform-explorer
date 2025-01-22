@@ -10,12 +10,12 @@
 
   &__Line {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
   }
 
   &__Title {
+    white-space: break-spaces;
     width: 16.875rem;
     color: var(--chakra-colors-gray-250);
     font-size: 0.75rem;
@@ -38,6 +38,16 @@
 
     &__Line {
       justify-content: space-between;
+    }
+  }
+
+  @media screen and (max-width: 18em) {
+    &__Line {
+      flex-wrap: wrap;
+    }
+
+    &__ValueContainer {
+      margin-left: auto;
     }
   }
 }
