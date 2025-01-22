@@ -2,11 +2,15 @@ import { ValueContainer } from '../ui/containers'
 import './InternalConfigCard.scss'
 
 function InternalConfigCard ({ config, className }) {
-  console.log('config', config)
+  const boolColors = {
+    true: 'green',
+    false: 'red'
+  }
 
-  const getColorScheme = (boolValue) => {
-    if (boolValue) return 'green'
-    return 'red'
+  const storageKeyRequirementsColors = {
+    Unique: 'green',
+    Multiple: 'blue',
+    MultipleReferenceToLatest: 'orange'
   }
 
   return (
@@ -19,7 +23,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={getColorScheme(config?.canBeDeleted)}
+          colorScheme={boolColors?.[config?.canBeDeleted]}
         >
           {config?.canBeDeleted ? 'Yes' : 'No'}
         </ValueContainer>
@@ -32,7 +36,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={getColorScheme(config?.readonly)}
+          colorScheme={boolColors?.[config?.readonly]}
         >
           {config?.readonly ? 'Yes' : 'No'}
         </ValueContainer>
@@ -45,7 +49,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={getColorScheme(config?.keepsHistory)}
+          colorScheme={boolColors?.[config?.keepsHistory]}
         >
           {config?.keepsHistory ? 'Yes' : 'No'}
         </ValueContainer>
@@ -58,7 +62,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={getColorScheme(config?.documentsKeepHistoryContractDefault)}
+          colorScheme={boolColors?.[config?.documentsKeepHistoryContractDefault]}
         >
           {config?.documentsKeepHistoryContractDefault ? 'Yes' : 'No'}
         </ValueContainer>
@@ -71,7 +75,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={getColorScheme(config?.documentsMutableContractDefault)}
+          colorScheme={boolColors?.[config?.documentsMutableContractDefault]}
         >
           {config?.documentsMutableContractDefault ? 'Yes' : 'No'}
         </ValueContainer>
@@ -84,7 +88,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={getColorScheme(config?.documentsCanBeDeletedContractDefault)}
+          colorScheme={boolColors?.[config?.documentsCanBeDeletedContractDefault]}
         >
           {config?.documentsCanBeDeletedContractDefault ? 'Yes' : 'No'}
         </ValueContainer>
@@ -98,13 +102,14 @@ function InternalConfigCard ({ config, className }) {
           <ValueContainer
             className={'InternalConfigCard__ValueContainer'}
             size={'sm'}
+            colorScheme={storageKeyRequirementsColors?.[config?.requiresIdentityEncryptionBoundedKey] || 'gray'}
           >
             {config?.requiresIdentityEncryptionBoundedKey}
           </ValueContainer>
         </div>
       }
 
-      {config?.requiresIdentityDecryptionBoundedKey !== null &&
+      {config?.requiresIdentityDecryptionBoundedKey &&
         <div className={'InternalConfigCard__Line'}>
           <div className={'InternalConfigCard__Title'}>
             Decryption Key Requirements
@@ -112,6 +117,7 @@ function InternalConfigCard ({ config, className }) {
           <ValueContainer
             className={'InternalConfigCard__ValueContainer'}
             size={'sm'}
+            colorScheme={storageKeyRequirementsColors?.[config?.requiresIdentityDecryptionBoundedKey] || 'gray'}
           >
             {config?.requiresIdentityDecryptionBoundedKey}
           </ValueContainer>
