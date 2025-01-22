@@ -12,10 +12,18 @@
 
   &__Column {
     @include dc.Column();
+    font-size: 0.75rem;
+
 
     &--Timestamp {
-      font-size: 0.75rem;
       text-align: right;
+    }
+
+    &--DocumentsCount {
+      .ValueContainer {
+        padding: 4px 8px;
+        border-radius: 11px;
+      }
     }
   }
 

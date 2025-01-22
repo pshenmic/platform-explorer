@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import ImageGenerator from '../imageGenerator'
-import './DataContractsListItem.scss'
 import { Alias, Identifier } from '../data'
+import ValueContainer from '../ui/containers/ValueContainer'
 import { Grid, GridItem } from '@chakra-ui/react'
+import './DataContractsListItem.scss'
 
 function DataContractsListItem ({ dataContract }) {
   console.log('dataContract', dataContract)
@@ -39,7 +40,9 @@ function DataContractsListItem ({ dataContract }) {
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--DocumentsCount'}>
-          {dataContract?.documentsCount}
+          <ValueContainer colorScheme={dataContract?.documentsCount > 0 ? 'brand' : 'darkGray'} size={'xs'}>
+            {dataContract?.documentsCount}
+          </ValueContainer>
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}>
