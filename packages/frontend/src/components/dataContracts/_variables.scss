@@ -1,0 +1,36 @@
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+
+  grid-template-columns:
+    minmax(0, 999rem)
+    auto
+    9rem;
+
+  @container (max-width: 22.5rem) {
+    grid-template-columns:
+      minmax(0, 999rem)
+      9rem;
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &--Identifier {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &--DocumentsCount {
+    width: max-content;
+    text-align: right;
+  }
+
+  @container (max-width: 22.5rem) {
+    &--DocumentsCount {
+      display: none;
+    }
+  }
+}

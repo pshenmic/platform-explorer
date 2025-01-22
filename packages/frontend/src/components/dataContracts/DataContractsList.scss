@@ -1,6 +1,26 @@
 @use '../../styles/mixins.scss';
+@use './variables' as dc;
 @import '../../styles/variables.scss';
 
 .DataContractsList {
   @include mixins.List;
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include dc.Columns();
+  }
+
+  &__ColumnTitle {
+    @include dc.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &:last-child {
+      text-align: right;
+    }
+  }
 }

@@ -1,37 +1,65 @@
 @use '../../styles/mixins.scss';
+@use './variables' as dc;
 @import '../../styles/variables.scss';
 
 .DataContractsListItem {
   @include mixins.DefListItem;
+  display: block;
 
-  width: 100%;
-  justify-content: space-between;
+  &__Content {
+    @include dc.Columns();
+  }
 
-  &__Identifier {
-    text-overflow: ellipsis;
+  &__Column {
+    @include dc.Column();
+
+    &--Timestamp {
+      font-size: 0.75rem;
+      text-align: right;
+    }
+  }
+
+  &__ColumnContent {
+    margin-left: auto;
     overflow: hidden;
-    line-height: 24px;
-    white-space: nowrap;
-    margin-right: 16px;
   }
 
   &__SystemLabel {
-    font-size: 0.75rem;
-  }
-
-  &__Timestamp {
-    white-space: nowrap;
-  }
-
-  @media screen and (max-width: $breakpoint-sm) {
-    flex-wrap: wrap;
-
-    &__Identifier {
-      width: 100%;
-    }
-
-    &__Timestamp {
-      white-space: wrap;
-    }
+    margin-left: auto;
   }
 }
+
+//.DataContractsListItem {
+//  @include mixins.DefListItem;
+//
+//  width: 100%;
+//  justify-content: space-between;
+//
+//  &__Identifier {
+//    text-overflow: ellipsis;
+//    overflow: hidden;
+//    line-height: 24px;
+//    white-space: nowrap;
+//    margin-right: 16px;
+//  }
+//
+//  &__SystemLabel {
+//    font-size: 0.75rem;
+//  }
+//
+//  &__Timestamp {
+//    white-space: nowrap;
+//  }
+//
+//  @media screen and (max-width: $breakpoint-sm) {
+//    flex-wrap: wrap;
+//
+//    &__Identifier {
+//      width: 100%;
+//    }
+//
+//    &__Timestamp {
+//      white-space: wrap;
+//    }
+//  }
+//}
