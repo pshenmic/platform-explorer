@@ -46,8 +46,8 @@ export default function TimeframeSelector ({
         <CloseIcon
           color={'gray.250'}
           style={{ transition: 'all .1s' }}
-          ml={menuIsOpen ? '10px' : 0}
-          w={menuIsOpen ? '8px' : 0}
+          ml={menuIsOpen ? '10px' : '0px'}
+          w={menuIsOpen ? '8px' : '0px'}
           h={'8px'}
         />
       </Button>
