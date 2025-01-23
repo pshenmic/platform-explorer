@@ -99,7 +99,16 @@ const fixtures = {
 
     return { ...row }
   },
-  dataContract: async (knex, { identifier, name, schema, version, state_transition_hash, owner, is_system, documents = [] } = {}) => {
+  dataContract: async (knex, {
+    identifier,
+    name,
+    schema,
+    version,
+    state_transition_hash,
+    owner,
+    is_system,
+    documents = []
+  } = {}) => {
     if (!identifier) {
       identifier = generateIdentifier()
     }
@@ -198,7 +207,47 @@ const fixtures = {
 
     return { ...row, id: result.id }
   },
+  masternodeVote: async (knex, {
+    pro_tx_hash,
+    state_transition_hash,
+    voter_identity_id,
+    choice,
+    towards_identity_identifier,
+    data_contract_id,
+    document_type_name,
+    index_name,
+    index_values
+  } = {}) => {
+    if (!state_transition_hash) {
+      throw new Error('state_transition_hash must be provided for masternodeVote fixture')
+    }
+
+    if (!voter_identity_id) {
+      throw new Error('voter_identity_id must be provided for masternodeVote fixture')
+    }
+
+    if (!data_contract_id) {
+      throw new Error('data_contract_id must be provided for masternodeVote fixture')
+    }
+
+    const row = {
+      pro_tx_hash: pro_tx_hash ?? generateHash(),
+      state_transition_hash,
+      voter_identity_id,
+      choice: choice ?? 0,
+      towards_identity_identifier: towards_identity_identifier ?? null,
+      data_contract_id,
+      document_type_name: document_type_name ?? 'type_name',
+      index_name: index_name ?? 'default_index',
+      index_values: index_values ?? '[]'
+    }
+
+    const [result] = await knex('masternode_votes').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
   cleanup: async (knex) => {
+    await knex.raw('DELETE FROM masternode_votes')
     await knex.raw('DELETE FROM identities')
     await knex.raw('DELETE FROM identity_aliases')
     await knex.raw('DELETE FROM documents')
