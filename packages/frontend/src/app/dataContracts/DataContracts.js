@@ -84,7 +84,7 @@ function DataContractsLayout ({ defaultPage = 1, defaultPageSize }) {
 
             {!dataContracts.error
               ? <DataContractsList
-                  dataContracts={dataContracts.data.resultSet}
+                  dataContracts={dataContracts.data?.resultSet}
                   loading={dataContracts.loading}
                   itemsCount={pageSize}
                 />
