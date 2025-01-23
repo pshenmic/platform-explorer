@@ -1,5 +1,5 @@
 import { ValueCard } from '../cards'
-import { Identifier, InfoLine, PrefundedBalance } from '../data'
+import { CreditsBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
 import { DocumentActionEnum } from '../../enums/documentAction'
 import DocumentActionBadge from './DocumentActionBadge'
 import { ValueContainer } from '../ui/containers'
@@ -32,13 +32,14 @@ const fieldsOfTypes = {
     'DocumentIdentifier',
     'DocumentType',
     'IdentityContractNonce',
-    'Data'// 'LastRevisionData'
+    'Data'
   ],
   TRANSFER: [
     'DataContractIdentifier',
     'DocumentIdentifier',
     'SenderIdentifier',
     'ReceiverIdentifier',
+    'DocumentType',
     'Revision',
     'IdentityContractNonce',
     'LastTimeCreated',
@@ -65,6 +66,7 @@ const fieldsOfTypes = {
     'DocumentIdentifier',
     'SenderIdentifier',
     'ReceiverIdentifier',
+    'DocumentType',
     'Price',
     'Revision',
     'IdentityContractNonce',
@@ -75,7 +77,7 @@ const fieldsOfTypes = {
   ]
 }
 
-function TransitionCard ({ transition, rate, className }) {
+function TransitionCard ({ transition, owner, rate, className }) {
   const fields = fieldsOfTypes?.[DocumentActionEnum?.[transition?.action]]
 
   return (
@@ -117,6 +119,60 @@ function TransitionCard ({ transition, rate, className }) {
         />
       }
 
+      {fields.indexOf('ReceiverIdentifier') !== -1 && // transfer
+        transition?.receiverId &&
+          <>
+            {owner &&
+              <InfoLine
+                className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+                title={'Sender Identifier:'}
+                value={(
+                  <ValueCard link={`/identity/${owner}`}>
+                    <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                      {owner}
+                    </Identifier>
+                  </ValueCard>
+                )}
+              />
+            }
+
+            <InfoLine
+              className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+              title={'Receiver Identifier'}
+              value={(
+                <ValueCard link={`/identity/${transition?.receiverId}`}>
+                  <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                    {transition?.receiverId}
+                  </Identifier>
+                </ValueCard>
+              )}
+            />
+          </>
+      }
+
+      {fields.indexOf('SellerIdentifier') !== -1 && owner && // purchase
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+          title={'Seller Identifier'}
+          value={(
+            <ValueCard link={`/identity/${owner}`}>
+              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                {owner}
+              </Identifier>
+            </ValueCard>
+          )}
+        />
+      }
+
+      {fields.indexOf('Price') !== -1 &&
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+          title={'Price'}
+          value={<CreditsBlock credits={transition?.price} rate={rate}/>}
+          error={!transition?.price}
+        />
+      }
+
       {fields.indexOf('DocumentType') !== -1 &&
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--DocumentType'}
@@ -148,7 +204,7 @@ function TransitionCard ({ transition, rate, className }) {
         />
       }
 
-      {fields.indexOf('Data') !== -1 &&
+      {fields.indexOf('Data') !== -1 && transition?.data &&
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--Data'}
           title={'Data'}

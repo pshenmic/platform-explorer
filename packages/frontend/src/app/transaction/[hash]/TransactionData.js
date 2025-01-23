@@ -244,7 +244,12 @@ function TransactionData ({ data, type, loading, rate }) {
         title={`Transitions ${data?.transitions !== undefined ? `(${data?.transitions?.length})` : ''}`}
         value={(<>
           {data?.transitions?.map((transition, i) => (
-            <TransitionCard className={'TransactionPage__TransitionCard'} transition={transition} key={i}/>
+            <TransitionCard
+              className={'TransactionPage__TransitionCard'}
+              transition={transition}
+              owner={data?.ownerId}
+              rate={rate}
+              key={i}/>
           ))}
         </>)}
         loading={loading}
