@@ -98,6 +98,11 @@ const decodeStateTransition = async (client, base64) => {
 
             break
           }
+          case DocumentActionEnum.UpdatePrice: {
+            out.price = Number(documentTransition.get_price())
+
+            break
+          }
           case DocumentActionEnum.Purchase: {
             out.price = Number(documentTransition.get_price())
 
