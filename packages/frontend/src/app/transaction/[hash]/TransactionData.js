@@ -226,20 +226,6 @@ function TransactionData ({ data, type, loading, rate }) {
   if (type === StateTransitionEnum.DOCUMENTS_BATCH) {
     return (<>
       <InfoLine
-        className={'TransactionPage__InfoLine'}
-        title={'Owner'}
-        value={(
-          <ValueCard link={`/identity/${data?.ownerId}`}>
-            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {data?.ownerId}
-            </Identifier>
-          </ValueCard>
-        )}
-        loading={loading}
-        error={!data?.ownerId}
-      />
-
-      <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--Transitions'}
         title={`Transitions ${data?.transitions !== undefined ? `(${data?.transitions?.length})` : ''}`}
         value={(<>
