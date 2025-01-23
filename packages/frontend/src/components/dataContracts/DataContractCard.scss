@@ -23,4 +23,8 @@
       display: none;
     }
   }
+
+  @media screen and (max-width: $breakpoint-md) {
+    padding: 14px 16px;
+  }
 }
