@@ -14,7 +14,6 @@
   &--Clickable {
     transition: box-shadow .1s;
 
-
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         cursor: pointer;
