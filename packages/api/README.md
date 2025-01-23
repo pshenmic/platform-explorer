@@ -68,6 +68,8 @@ Reference:
 * [Transactions history](#transactions-history)
 * [Transactions gas history](#transactions-gas-history)
 * [Rate](#rate)
+* [Masternode Votes](#masternode-votes)
+* [Masternode Votes Search](#masternode-votes-search)
 * [Search](#search)
 * [Decode Raw Transaction](#decode-raw-transaction)
 
@@ -1109,6 +1111,87 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E
         blockHash: "73171E0A8DCC10C6DA501E1C70A9C1E0BD6F1F8F834C2A1E787AF19B1F361D5E"
     }
     ]
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
+### Masternode Votes
+Return list of votes by params
+* `limit` cannot be more than 100
+* `type` cannot be less than 0 and more than 8
+* `choice` cannot be less than 0 and more than 3
+```
+GET /masternodes/votes?timestamp_start=2024-09-18T01:10:57.833Z&timestamp_end=2024-09-19T01:10:57.833Z&voter_identity=2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9&choice=0&towards_identity=LgdvpQHb7mvrab6Vv49iTz912aHBVjpTJ6rXGRDQL2s
+
+{
+  "resultSet": [
+    {
+      "proTxHash": "bc77a5a2cec455c79fb92fb683dbd87a2a92b663c9a46d0c50d11889b4aeb121",
+      "txHash": "499C9C0830F98B395CFC440EE34A96C550DF5000A78B5604BC2B50B4545E0D2C",
+      "voterIdentifier": "2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9",
+      "choice": 0,
+      "timestamp": "2024-09-18T19:27:17.212Z",
+      "towardsIdentity": "LgdvpQHb7mvrab6Vv49iTz912aHBVjpTJ6rXGRDQL2s ",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "documentTypeName": "domain",
+      "indexName": "parentNameAndLabel",
+      "indexValues": [
+        "dash",
+        "test001"
+      ],
+      "powerMultiplier": null
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1
+  }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
+### Masternode Votes Search
+Search for masternode votes by voter identity or tx hash
+* `limit` cannot be more than 100
+* `type` cannot be less than 0 and more than 8
+* `query` must be tx hash or voter identity
+```
+GET /masternodes/votes/search?query=2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9
+
+{
+  "resultSet": [
+    {
+      "proTxHash": "bc77a5a2cec455c79fb92fb683dbd87a2a92b663c9a46d0c50d11889b4aeb121",
+      "txHash": "B5B44A711FEC6D61AE524FAD59789955D40FFAE2ED9F1DB2AD55871E9A270617",
+      "voterIdentifier": "2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9",
+      "choice": 0,
+      "timestamp": "2024-09-09T21:57:51.394Z",
+      "towardsIdentity": "4zSRishbrvJpW2XPm9jxD9xHVqKxQDwNU3F5sGejB61L",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "documentTypeName": "domain",
+      "indexName": "parentNameAndLabel",
+      "indexValues": [
+        "dash",
+        "test111"
+      ],
+      "powerMultiplier": null
+    },
+    ...
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 20
+  }
 }
 ```
 Response codes:

@@ -26,7 +26,7 @@ class MasternodeVotesController {
       const vote = await this.masternodeVotesDAO.getMasternodeVoteByTx(query)
 
       if (!vote) {
-        return response.status(404).send('not found')
+        return response.status(404).send({ message: 'not found' })
       }
 
       return response.send(new PaginatedResultSet([vote], 1, 1, 1))
@@ -38,10 +38,6 @@ class MasternodeVotesController {
     } else {
       return response.status(400).send({ message: 'bad query format' })
     }
-  }
-
-  getVoters = async (request, response) => {
-
   }
 }
 

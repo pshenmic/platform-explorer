@@ -27,40 +27,38 @@ module.exports = class MasternodeVotesDAO {
     const towardsIdentityFilter = towardsIdentity
       ? [
           'towards_identity_identifier = ?',
-          [voterIdentity]
+          [towardsIdentity]
         ]
       : ['true']
 
     const choiceFilter = choice
       ? [
-          'towards_identity_identifier = ?',
-          [voterIdentity]
+          'choice = ?',
+          [choice]
         ]
       : ['true']
 
     // TODO: Implement Power filter
 
     const subquery = this.knex('masternode_votes')
-      .select('id', 'pro_tx_hash', 'state_transition_hash', 'voter_identity_id', 'choice',
+      .select('masternode_votes.id as id', 'pro_tx_hash', 'masternode_votes.state_transition_hash as state_transition_hash', 'voter_identity_id', 'choice',
         'towards_identity_identifier', 'data_contract_id', 'document_type_name', 'index_name', 'index_values',
         'data_contracts.identifier as data_contract_identifier', 'blocks.timestamp as timestamp')
-      .select(this.knex.raw(`rank() over (order by id ${order}) rank`))
-      .select(this.knex('masternode_votes').count('id').as('total_count'))
+      .select(this.knex.raw(`rank() over (order by masternode_votes.id ${order}) rank`))
       .whereRaw(...timestampFilter)
       .whereRaw(...voterIdentityFilter)
       .whereRaw(...towardsIdentityFilter)
       .whereRaw(...choiceFilter)
-      .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
+      .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
+      .leftJoin('state_transitions', 'masternode_votes.state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .as('subquery')
 
     const rows = await this.knex(subquery)
       .select('pro_tx_hash', 'subquery.state_transition_hash as state_transition_hash', 'choice',
-        'timestamp', 'towards_identity_identifier', 'total_count', 'voter_identity_id',
+        'subquery.timestamp as timestamp', 'towards_identity_identifier', 'voter_identity_id',
         'data_contract_identifier', 'document_type_name', 'index_name', 'index_values')
-      .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-      .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
+      .select(this.knex(subquery).count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('subquery.id', order)
 
