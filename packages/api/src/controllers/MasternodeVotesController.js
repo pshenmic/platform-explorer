@@ -29,7 +29,7 @@ class MasternodeVotesController {
         return response.status(404).send({ message: 'not found' })
       }
 
-      return response.send(new PaginatedResultSet([vote], 1, 1, 1))
+      return response.send(new PaginatedResultSet([vote], 1, 10, 1))
     } else if (/^[0-9A-z]{43,44}$/.test(query)) {
       // by identity
       const votes = await this.masternodeVotesDAO.getMasternodeVotesByIdentity(query, Number(page ?? 1), Number(limit ?? 10), order)
