@@ -114,23 +114,41 @@ Returns info about epoch by specific index
 * tps - Transactions per second
 * totalCollectedFees - total number or fees spent per epoch
 * bestValidator - validator with most validated blocks
+* epoch number can be null
 
 
 ```
-HTTP /epoch/0
+HTTP /epoch/2492
 
 {
-    epoch: {
-        number: 0,
-        firstBlockHeight: 1,
-        firstCoreBlockHeight: 1090319,
-        startTime: 1721353209000,
-        feeMultiplier: 1,
-        endTime: 1721356809000
-    },
-    tps: 0.01666666666,
-    totalCollectedFees: 30,
-    bestValidator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+  "epoch": {
+    "number": 2492,
+    "firstBlockHeight": 44046,
+    "firstCoreBlockHeight": 1131311,
+    "startTime": 1730324534559,
+    "feeMultiplier": 1,
+    "endTime": 1730328026683
+  },
+  "tps": 0.0140315750528904,
+  "totalCollectedFees": 1897008860,
+  "bestValidator": "87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918",
+  "topVotedResource": {
+    "resource": [
+      "dash",
+      "asdthree0"
+    ],
+    "yes": 7,
+    "abstain": 1,
+    "lock": 4
+  },
+  "bestVoter": {
+    "identifier": "4GfuwhaXL5YSerKKwJ19X2s5yXn8dC738tqfcvncqNgM",
+    "yes": 2,
+    "abstain": 1,
+    "lock": 2
+  },
+  "totalVotesCount": 12,
+  "totalVotesGasUsed": 120000000
 }
 ```
 ---
