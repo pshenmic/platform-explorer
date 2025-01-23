@@ -1,7 +1,7 @@
 'use client'
 
-import { getTimeDelta } from '../../util'
 import { CalendarIcon } from '../ui/icons'
+import { TimeDelta } from './index'
 import './DateBlock.scss'
 
 function DateBlock ({ timestamp, format = 'all', showTime = false }) {
@@ -54,7 +54,7 @@ function DateBlock ({ timestamp, format = 'all', showTime = false }) {
         }
         {formats[format].delta &&
           <div className={'DateBlock__Delta'}>
-            {getTimeDelta(new Date(), date)}
+            <TimeDelta endDate={date}/>
           </div>
         }
       </div>

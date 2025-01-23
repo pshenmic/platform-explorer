@@ -8,6 +8,7 @@ import Alias from './Alias'
 import AliasesList from './AliasesList'
 import VoteChoice from './VoteChoice'
 import PrefundedBalance from './PrefundedBalance'
+import TimeDelta from './TimeDelta'
 import BigNumber from './BigNumber'
 
 export {
@@ -21,5 +22,6 @@ export {
   AliasesList,
   VoteChoice,
   PrefundedBalance,
+  TimeDelta,
   BigNumber
 }

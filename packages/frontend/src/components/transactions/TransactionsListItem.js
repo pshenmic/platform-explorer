@@ -1,10 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { getTimeDelta } from '../../util/index'
 import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
-import { Identifier, BigNumber, Alias } from '../data'
+import { Identifier, BigNumber, Alias, TimeDelta } from '../data'
 import StatusIcon from './StatusIcon'
 import { RateTooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
@@ -25,7 +24,7 @@ function TransactionsListItem ({ transaction, rate }) {
                 {transaction?.status &&
                   <StatusIcon className={'TransactionsListItem__StatusIcon'} status={transaction.status} w={'18px'} h={'18px'} mr={'8px'}/>
                 }
-                {getTimeDelta(new Date(), new Date(transaction.timestamp))}
+                <TimeDelta endDate={new Date(transaction.timestamp)}/>
               </>
             : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
           }
