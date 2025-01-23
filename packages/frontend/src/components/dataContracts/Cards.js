@@ -1,15 +1,20 @@
 'use client'
 
+import { useState } from 'react'
 import { Flex, Box } from '@chakra-ui/react'
 import Link from 'next/link'
-import { CardsGrid, CardsGridItems, CardsGridItem, CardsGridHeader, CardsGridTitle } from '../cards'
+import { InfoCard } from '../cards'
 import { ErrorMessageBlock } from '../Errors'
 import ImageGenerator from '../imageGenerator'
+import { Identifier } from '../data'
+import { Slider, SliderElement } from '../ui/Slider'
+import { WheelControls } from '../ui/Slider/plugins'
 import './DataContractCard.scss'
+import './DataContractCards.scss'
 
-function DataContractCard ({ dataContract, loading = false }) {
+function DataContractCard ({ dataContract, className, loading = false }) {
   return (
-    <CardsGridItem className={'DataContractCard'} loading={loading} clickable={true}>
+    <InfoCard className={`DataContractCard ${className || ''}`} loading={loading} clickable={true}>
       {!loading
         ? <Link href={`/dataContract/${dataContract.identifier}`}>
           <Flex mb={1} alignItems={'center'}>
@@ -18,33 +23,62 @@ function DataContractCard ({ dataContract, loading = false }) {
             </div>
             <div className={'DataContractCard__Name'}>{dataContract.name}</div>
           </Flex>
-          <div className={'DataContractCard__Id'}>{dataContract.identifier}</div>
+          <Identifier className={'DataContractCard__Id'} ellipsis={true} styles={['highlight-both']}>{dataContract.identifier}</Identifier>
         </Link>
         : <Box h={'55px'}/>
       }
-    </CardsGridItem>
+    </InfoCard>
   )
 }
 
-function DataContractCards ({ title, items, className }) {
+function DataContractCards ({ items, className }) {
+  const [sliderLoaded, setSliderLoaded] = useState(false)
+
+  const chunkArray = (array, chunkSize) => {
+    const result = []
+    for (let i = 0; i < array.length; i += chunkSize) {
+      result.push(array.slice(i, i + chunkSize))
+    }
+    return result
+  }
+
+  const columns = chunkArray(items?.data?.resultSet, 3)
+
   return (
     !items.error
-      ? <CardsGrid className={className} itemsCount={items?.data?.resultSet?.length || null}>
-          {title &&
-            <CardsGridHeader>
-              <CardsGridTitle>{title}</CardsGridTitle>
-            </CardsGridHeader>
-          }
-
-          <CardsGridItems>
-            {!items.loading
-              ? items?.data?.resultSet?.length
-                ? items.data.resultSet.map((dataContract, i) => <DataContractCard dataContract={dataContract} key={i}/>)
-                : <ErrorMessageBlock h={250} text={'Data Contracts not found'}/>
-              : Array.from({ length: 4 }, (x, i) => <DataContractCard loading={true} key={i}/>)
-            }
-          </CardsGridItems>
-        </CardsGrid>
+      ? <div className={`DataContractCards ${className || ''}`}>
+          <Slider
+            className={'DataContractCards__Slider'}
+            settings={{
+              rubberband: false,
+              renderMode: 'performance',
+              breakpoints: {
+                '(max-width: 48em)': {
+                  slides: {
+                    origin: 'center',
+                    perView: 1.1
+                  }
+                }
+              },
+              slides: { perView: 2 }
+            }}
+            createdCallback={() => setSliderLoaded(true)}
+            plugins={[WheelControls]}
+          >
+            {columns.map((column, columnIndex) => (
+              <SliderElement className={'DataContractCards__CardsColumn'} key={columnIndex} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {column.map((dataContract, i) => (
+                  <DataContractCard
+                    className={'DataContractCards__Card'}
+                    dataContract={dataContract}
+                    loading={!sliderLoaded}
+                    key={i}
+                  />
+                ))}
+              </SliderElement>
+            ))}
+          </Slider>
+        </div>
       : <ErrorMessageBlock h={250}/>
   )
 }
