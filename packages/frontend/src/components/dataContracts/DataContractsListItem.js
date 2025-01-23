@@ -5,8 +5,6 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import './DataContractsListItem.scss'
 
 function DataContractsListItem ({ dataContract }) {
-  console.log('dataContract', dataContract)
-
   return (
     <Link
       href={`/dataContract/${dataContract?.identifier}`}
