@@ -426,7 +426,7 @@ dependencies = [
 [[package]]
 name = "dashcore"
 version = "0.35.0"
-source = "git+https://github.com/dashpay/rust-dashcore?tag=v0.35.0#521a76bfd7eaa90d2d89dc576808ec5772544f07"
+source = "git+https://github.com/dashpay/rust-dashcore.git?tag=v0.35.0#521a76bfd7eaa90d2d89dc576808ec5772544f07"
 dependencies = [
  "anyhow",
  "bech32",
@@ -446,7 +446,7 @@ dependencies = [
 [[package]]
 name = "dashcore-private"
 version = "0.1.0"
-source = "git+https://github.com/dashpay/rust-dashcore?tag=v0.35.0#521a76bfd7eaa90d2d89dc576808ec5772544f07"
+source = "git+https://github.com/dashpay/rust-dashcore.git?tag=v0.35.0#521a76bfd7eaa90d2d89dc576808ec5772544f07"
 
 [[package]]
 name = "dashcore-rpc"
@@ -478,7 +478,7 @@ dependencies = [
 [[package]]
 name = "dashcore_hashes"
 version = "0.14.0"
-source = "git+https://github.com/dashpay/rust-dashcore?tag=v0.35.0#521a76bfd7eaa90d2d89dc576808ec5772544f07"
+source = "git+https://github.com/dashpay/rust-dashcore.git?tag=v0.35.0#521a76bfd7eaa90d2d89dc576808ec5772544f07"
 dependencies = [
  "dashcore-private",
  "secp256k1",
@@ -1573,9 +1573,9 @@ dependencies = [
 
 [[package]]
 name = "openssl-probe"
-version = "0.1.5"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
+checksum = "d05e27ee213611ffe7d6348b942e8f942b37114c00cc03cec254295a4a17852e"
 
 [[package]]
 name = "openssl-sys"
@@ -2071,9 +2071,9 @@ checksum = "fe834bc780604f4674073badbad26d7219cadfb4a2275802db12cbae17498401"
 
 [[package]]
 name = "rustix"
-version = "0.38.43"
+version = "0.38.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a78891ee6bf2340288408954ac787aa063d8e8817e9f53abb37c695c6d834ef6"
+checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
 dependencies = [
  "bitflags 2.8.0",
  "errno",
@@ -2747,9 +2747,9 @@ checksum = "5c1cb5db39152898a79168971543b1cb5020dff7fe43c8dc468b0885f5e29df5"
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.14"
+version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "adb9e6ca4f869e1180728b7950e35922a7fc6397f7b641499e8f3ef06e50dc83"
+checksum = "11cd88e12b17c6494200a9c1b683a04fcac9573ed74cd1b62aeb2727c5592243"
 
 [[package]]
 name = "unicode-normalization"
