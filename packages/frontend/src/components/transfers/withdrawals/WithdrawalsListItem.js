@@ -1,6 +1,6 @@
 import { Grid, GridItem } from '@chakra-ui/react'
 import { ArrowCornerIcon } from '../../ui/icons'
-import { Identifier, Credits } from '../../data'
+import { Identifier, BigNumber } from '../../data'
 import { ValueContainer } from '../../ui/containers'
 import { RateTooltip } from '../../ui/Tooltips'
 import StatusIcon from './StatusIcon'
@@ -87,7 +87,7 @@ function WithdrawalsListItem ({ withdrawal, rate, defaultPayoutAddress, l1explor
 
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Amount'}>
             <RateTooltip credits={withdrawal.amount} rate={rate}>
-              <span><Credits>{withdrawal.amount}</Credits></span>
+              <span><BigNumber>{withdrawal.amount}</BigNumber></span>
             </RateTooltip>
           </GridItem>
 
