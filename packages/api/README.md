@@ -69,7 +69,6 @@ Reference:
 * [Transactions gas history](#transactions-gas-history)
 * [Rate](#rate)
 * [Masternode Votes](#masternode-votes)
-* [Masternode Votes Search](#masternode-votes-search)
 * [Search](#search)
 * [Decode Raw Transaction](#decode-raw-transaction)
 
