@@ -62,6 +62,7 @@ module.exports = class ValidatorsDAO {
         'blocks.l1_locked_height as l1_locked_height',
         'blocks.app_version as app_version',
         'blocks.block_version as block_version',
+        'blocks.app_hash as app_hash',
         'total_collected_reward',
         'total_collected_reward_by_epoch'
       )
@@ -71,6 +72,7 @@ module.exports = class ValidatorsDAO {
     const [row] = await this.knex(subquery)
       .select(
         'id',
+        'app_hash',
         'pro_tx_hash',
         'proposed_blocks_amount',
         'block_hash',
@@ -163,6 +165,7 @@ module.exports = class ValidatorsDAO {
         'blocks.timestamp as latest_timestamp',
         'blocks.l1_locked_height as l1_locked_height',
         'blocks.app_version as app_version',
+        'blocks.app_hash as app_hash',
         'blocks.block_version as block_version'
       )
       .modify(function (knex) {
@@ -189,7 +192,8 @@ module.exports = class ValidatorsDAO {
         'latest_timestamp',
         'l1_locked_height',
         'app_version',
-        'block_version'
+        'block_version',
+        'app_hash'
       )
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)

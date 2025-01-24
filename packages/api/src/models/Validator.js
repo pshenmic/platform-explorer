@@ -63,7 +63,8 @@ module.exports = class Validator {
     total_collected_reward_by_epoch,
     withdrawals_count,
     last_withdrawal,
-    last_withdrawal_time
+    last_withdrawal_time,
+    app_hash
   }) {
     return new Validator(
       pro_tx_hash,
@@ -77,7 +78,8 @@ module.exports = class Validator {
           block_version: Number(block_version),
           app_version: Number(app_version),
           l1_locked_height: Number(l1_locked_height),
-          validator: pro_tx_hash
+          validator: pro_tx_hash,
+          app_hash
         })
         : null,
       null,
