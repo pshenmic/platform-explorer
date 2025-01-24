@@ -88,25 +88,7 @@ describe('Documents routes', () => {
       document_type_name: 'note',
       data: {
         type: 'note',
-        identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
-        dataContractObject: {
-          $format_version: '0',
-          ownerId: dataContract.owner,
-          id: dataContract.identifier,
-          version: 0,
-          documentSchemas: {
-            note: {
-              type: 'object',
-              properties: {
-                message: {
-                  type: 'string',
-                  position: 0
-                }
-              },
-              additionalProperties: false
-            }
-          }
-        }
+        identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL'
       },
       identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL'
     })
@@ -128,12 +110,30 @@ describe('Documents routes', () => {
       const documentTransaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
         type: StateTransitionEnum.DOCUMENTS_BATCH,
-        owner: identity.identifier
+        owner: identity.identifier,
+        data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ=='
       })
       const document = await fixtures.document(knex, {
         data_contract_id: dataContract.id,
         state_transition_hash: documentTransaction.hash,
         owner: identity.identifier
+      })
+
+      documents.push({ transaction: documentTransaction, block, dataContract, document })
+    }
+
+    for (let i = 5; i < 30; i++) {
+      const documentTransaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        type: StateTransitionEnum.DOCUMENTS_BATCH,
+        owner: identity.identifier,
+        data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ=='
+      })
+      const document = await fixtures.document(knex, {
+        data_contract_id: dataContract.id,
+        state_transition_hash: documentTransaction.hash,
+        owner: identity.identifier,
+        document_type_name: 'test'
       })
 
       documents.push({ transaction: documentTransaction, block, dataContract, document })
@@ -157,37 +157,46 @@ describe('Documents routes', () => {
       // so we'll verify the data we're sending to DAPI.
       const expectedDocument = {
         dataContractIdentifier: document.dataContract.identifier,
-        deleted: false,
+        identifier: document.document.identifier,
+        revision: 1,
+        txHash: document.transaction.hash,
+        deleted: document.document.deleted,
+        data: JSON.stringify(document.document.data),
+        timestamp: document.block.timestamp,
+        entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
+        documentTypeName: document.document.document_type_name,
+        prefundedVotingBalance: null,
+        owner: document.document.owner,
+        system: document.document.is_system,
+        nonce: 2,
+        transitionType: 0
+      }
+
+      assert.deepEqual(body, expectedDocument)
+    })
+
+    it('should return system document', async () => {
+      const [document] = documents.filter(e => e.document.is_system)
+
+      const { body } = await client.get(`/document/${document.document.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDocument = {
+        dataContractIdentifier: document.dataContract.identifier,
         identifier: document.document.identifier,
         system: true,
+        revision: 1,
+        deleted: document.document.deleted,
+        data: JSON.stringify(document.document.data),
+        timestamp: new Date(0).toISOString(),
+        entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
+        documentTypeName: document.document.document_type_name,
+        prefundedVotingBalance: null,
         owner: document.document.owner,
-        revision: 0,
-        timestamp: '1970-01-01T00:00:00.000Z',
         txHash: document.transaction.hash,
-        typeName: 'note',
-        transitionType: 0,
-        data: JSON.stringify({
-          type: 'note',
-          identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
-          dataContractObject: {
-            id: document.dataContract.identifier,
-            ownerId: document.dataContract.owner,
-            version: 0,
-            $format_version: '0',
-            documentSchemas: {
-              note: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    position: 0
-                  }
-                },
-                additionalProperties: false
-              }
-            }
-          }
-        })
+        nonce: 2,
+        transitionType: 0
       }
 
       assert.deepEqual(body, expectedDocument)
@@ -201,6 +210,35 @@ describe('Documents routes', () => {
     })
   })
 
+  describe('getDocumentRevisions()', async () => {
+    it('should return document transactions by identifier', async () => {
+      const [document] = documents.filter(e => !e.document.is_system)
+
+      const { body } = await client.get(`/document/${document.document.identifier}/revisions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDocument = {
+        revision: document.document.revision,
+        owner: document.transaction.owner,
+        txHash: document.transaction.hash,
+        timestamp: document.block.timestamp,
+        transitionType: document.document.transition_type,
+        data: '{}',
+        dataContractIdentifier: null,
+        deleted: null,
+        documentTypeName: null,
+        entropy: null,
+        identifier: null,
+        nonce: null,
+        prefundedVotingBalance: null,
+        system: null
+      }
+
+      assert.deepEqual(body.resultSet, [expectedDocument])
+    })
+  })
+
   describe('getDocumentsByDataContract()', async () => {
     it('should return default set of documents', async () => {
       const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents`)
@@ -208,11 +246,44 @@ describe('Documents routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, 55)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
       const expectedDocuments = documents
+        .slice(0, 10)
+        .map(({ block, document, dataContract, transaction }) => ({
+          identifier: document.identifier,
+          dataContractIdentifier: dataContract.identifier,
+          revision: document.revision,
+          txHash: transaction.hash ?? null,
+          deleted: document.deleted,
+          data: JSON.stringify(document.data),
+          timestamp: block.timestamp,
+          owner: document.owner,
+          system: document.is_system,
+          entropy: null,
+          documentTypeName: document.document_type_name,
+          transitionType: document.transition_type,
+          prefundedVotingBalance: null,
+          nonce: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return default set of documents by type_name', async () => {
+      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?document_type_name=test`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, 25)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({ document }) => document.document_type_name === 'test')
         .slice(0, 10)
         .map(({ block, document, dataContract, transaction }) => ({
           identifier: document.identifier,
@@ -234,10 +305,13 @@ describe('Documents routes', () => {
               }
             : {}),
           transitionType: 0,
-          typeName: document.document_type_name,
+          entropy: null,
+          prefundedVotingBalance: null,
+          documentTypeName: document.document_type_name,
           timestamp: block.timestamp,
           owner: document.owner,
-          system: document.is_system
+          system: document.is_system,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -261,24 +335,15 @@ describe('Documents routes', () => {
           revision: document.revision,
           txHash: transaction.hash,
           deleted: document.deleted,
-          data: JSON.stringify(document.data?.dataContractObject
-            ? {
-                type: document.data.type,
-                identifier: document.data.identifier,
-                dataContractObject: {
-                  id: document.data?.dataContractObject?.id ?? null,
-                  ownerId: document.data?.dataContractObject?.ownerId ?? null,
-                  version: document.data?.dataContractObject?.version ?? null,
-                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
-                  documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
-                }
-              }
-            : {}),
+          data: JSON.stringify(document.data),
           transitionType: 0,
-          typeName: document.document_type_name,
+          documentTypeName: document.document_type_name,
           timestamp: block.timestamp,
           owner: document.owner,
-          system: document.is_system
+          system: document.is_system,
+          entropy: null,
+          prefundedVotingBalance: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -290,7 +355,7 @@ describe('Documents routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, 55)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
@@ -317,10 +382,13 @@ describe('Documents routes', () => {
               }
             : {}),
           transitionType: 0,
-          typeName: 'type_name',
+          documentTypeName: document.document_type_name,
           timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
-          system: document.is_system
+          system: document.is_system,
+          entropy: null,
+          prefundedVotingBalance: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -354,10 +422,13 @@ describe('Documents routes', () => {
               }
             : {}),
           transitionType: 0,
-          typeName: 'type_name',
+          documentTypeName: 'type_name',
           timestamp: block.timestamp,
           owner: document.owner,
-          system: document.is_system
+          system: document.is_system,
+          entropy: null,
+          prefundedVotingBalance: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -391,10 +462,13 @@ describe('Documents routes', () => {
               }
             : {}),
           transitionType: 0,
-          typeName: 'type_name',
+          documentTypeName: document.document_type_name,
           timestamp: document.is_system ? null : block.timestamp,
           owner: document.owner,
-          system: document.is_system
+          system: document.is_system,
+          entropy: null,
+          prefundedVotingBalance: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)

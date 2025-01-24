@@ -963,14 +963,17 @@ describe('Identities routes', () => {
         identifier: _document.document.identifier,
         owner: identity.identifier,
         dataContractIdentifier: _document.dataContract.identifier,
-        revision: 0,
+        revision: 1,
         txHash: _document.transaction.hash,
         deleted: false,
         data: null,
+        entropy: null,
+        prefundedVotingBalance: null,
+        documentTypeName: 'type_name',
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
         transitionType: 0,
-        typeName: 'type_name'
+        nonce: null
       }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1021,14 +1024,17 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: identity.identifier,
           dataContractIdentifier: _document.dataContract.identifier,
-          revision: 0,
+          revision: 1,
           txHash: _document.transaction.hash,
           deleted: false,
           data: null,
+          entropy: null,
+          prefundedVotingBalance: null,
+          documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0,
-          typeName: 'type_name'
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1081,14 +1087,17 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: identity.identifier,
           dataContractIdentifier: _document.dataContract.identifier,
-          revision: 0,
+          revision: 1,
           txHash: _document.transaction.hash,
           deleted: false,
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0,
-          typeName: 'my_type'
+          documentTypeName: 'my_type',
+          prefundedVotingBalance: null,
+          entropy: null,
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1139,14 +1148,17 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: identity.identifier,
           dataContractIdentifier: _document.dataContract.identifier,
-          revision: 0,
+          revision: 1,
           txHash: _document.transaction.hash,
           deleted: false,
           data: null,
+          entropy: null,
+          prefundedVotingBalance: null,
+          documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0,
-          typeName: 'type_name'
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1197,14 +1209,17 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: identity.identifier,
           dataContractIdentifier: _document.dataContract.identifier,
-          revision: 0,
+          revision: 1,
           txHash: _document.transaction.hash,
           deleted: false,
           data: null,
+          entropy: null,
+          prefundedVotingBalance: null,
+          documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0,
-          typeName: 'type_name'
+          nonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)

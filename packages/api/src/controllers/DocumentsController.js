@@ -4,7 +4,7 @@ const Document = require('../models/Document')
 
 class DocumentsController {
   constructor (client, knex, dapi) {
-    this.documentsDAO = new DocumentsDAO(knex)
+    this.documentsDAO = new DocumentsDAO(knex, client)
     this.datacContractsDAO = new DataContractsDAO(knex)
     this.client = client
     this.dapi = dapi
@@ -74,6 +74,15 @@ class DocumentsController {
     const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, documentTypeName, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(documents)
+  }
+
+  getDocumentRevisions = async (request, response) => {
+    const { identifier } = request.params
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+
+    const transactions = await this.documentsDAO.getDocumentRevisions(identifier, Number(page ?? 1), Number(limit ?? 10), order)
+
+    response.send(transactions)
   }
 }
 

@@ -79,14 +79,14 @@ const decodeStateTransition = async (client, base64) => {
 
         switch (documentTransition.getAction()) {
           case DocumentActionEnum.Create: {
-            const prefundedBalance = documentTransition.getPrefundedVotingBalance()
+            const prefundedVotingBalance = documentTransition.getPrefundedVotingBalance()
 
             out.entropy = Buffer.from(documentTransition.getEntropy()).toString('hex')
 
             out.data = documentTransition.getData()
-            out.prefundedBalance = prefundedBalance
+            out.prefundedVotingBalance = prefundedVotingBalance
               ? Object.fromEntries(
-                Object.entries(prefundedBalance)
+                Object.entries(prefundedVotingBalance)
                   .map(prefund => [prefund[0], Number(prefund[1])])
               )
               : null
