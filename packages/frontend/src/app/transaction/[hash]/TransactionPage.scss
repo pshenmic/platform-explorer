@@ -21,6 +21,7 @@
     &--VoteIndexValues {
       .InfoLine__Value {
         width: 100%;
+        overflow: hidden;
       }
     }
 
@@ -144,8 +145,20 @@
     overflow: hidden;
 
     .VoteIndexValues {
-      width: 34.25rem;
+      min-width: 34.25rem;
+      width: max-content;
       max-width: 100%;
+    }
+
+    @container (max-width: 34.25rem) {
+      .VoteIndexValues {
+        min-width: auto;
+        width: auto;
+      }
+    }
+
+    .InfoLine__Value {
+      overflow: hidden;
     }
   }
 
