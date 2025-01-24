@@ -265,7 +265,8 @@ describe('Validators routes', () => {
             appVersion: blockHeader.appVersion,
             l1LockedHeight: blockHeader.l1LockedHeight,
             validator: blockHeader.validator,
-            totalGasUsed: 0
+            totalGasUsed: 0,
+            appHash: blockHeader.appHash
           }))
           .toReversed()[0] ?? null,
         proTxInfo: {
@@ -360,6 +361,7 @@ describe('Validators routes', () => {
             appVersion: blockHeader.appVersion,
             l1LockedHeight: blockHeader.l1LockedHeight,
             validator: blockHeader.validator,
+            appHash: blockHeader.appHash,
             totalGasUsed: 0
           }))
           .toReversed()[0] ?? null,
@@ -425,7 +427,8 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
-                  totalGasUsed: 0
+                  totalGasUsed: 0,
+                  appHash: blockHeader.appHash
                 }))
                 .toReversed()[0] ?? null,
               proTxInfo: {
@@ -480,7 +483,8 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
-                  totalGasUsed: 0
+                  totalGasUsed: 0,
+                  appHash: blockHeader.appHash
                 }))
                 .toReversed()[0] ?? null,
               proTxInfo: {
@@ -594,7 +598,8 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
-                  totalGasUsed: 0
+                  totalGasUsed: 0,
+                  appHash: blockHeader.appHash
                 }))
                 .toReversed()[0] ?? null,
               proTxInfo: {
@@ -654,6 +659,7 @@ describe('Validators routes', () => {
                     appVersion: blockHeader.appVersion,
                     l1LockedHeight: blockHeader.l1LockedHeight,
                     validator: blockHeader.validator,
+                    appHash: blockHeader.appHash,
                     totalGasUsed: 0
                   }))
                   .toReversed()[0] ?? null,
@@ -712,6 +718,7 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
+                  appHash: blockHeader.appHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -900,6 +907,7 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
+                  appHash: blockHeader.appHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -955,6 +963,7 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
+                  appHash: blockHeader.appHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1012,6 +1021,7 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
+                  appHash: blockHeader.appHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1069,6 +1079,7 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
+                  appHash: blockHeader.appHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1126,6 +1137,7 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
+                  appHash: blockHeader.appHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1183,6 +1195,7 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
+                  appHash: blockHeader.appHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1241,6 +1254,7 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
+                  appHash: blockHeader.appHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1298,6 +1312,7 @@ describe('Validators routes', () => {
                   appVersion: blockHeader.appVersion,
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
+                  appHash: blockHeader.appHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,

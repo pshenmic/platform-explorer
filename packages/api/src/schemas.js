@@ -99,6 +99,26 @@ const schemaTypes = [
       timestamp_end: {
         type: ['string', 'null'],
         format: 'date-time'
+      },
+      voter_identity: {
+        type: ['string', 'null'],
+        minLength: 43,
+        maxLength: 44
+      },
+      towards_identity: {
+        type: ['string', 'null'],
+        minLength: 43,
+        maxLength: 44
+      },
+      choice: {
+        type: ['number', 'null'],
+        minimum: 0,
+        maximum: 2
+      },
+      power: {
+        type: ['number', 'null'],
+        minimum: 0,
+        maximum: 1
       }
     }
   },

@@ -38,6 +38,7 @@ Reference:
 * [Contested Data Contracts](#contested-data-contracts)
 * [Contested Documents](#contested-documents)
 * [Rate](#rate)
+* [Masternode Votes](#masternode-votes)
 * [Search](#search)
 * [Decode Raw Transaction](#decode-raw-transaction)
 
@@ -115,23 +116,41 @@ Returns info about epoch by specific index
 * tps - Transactions per second
 * totalCollectedFees - total number or fees spent per epoch
 * bestValidator - validator with most validated blocks
+* epoch number can be null
 
 
 ```
-HTTP /epoch/0
+HTTP /epoch/2492
 
 {
-    epoch: {
-        number: 0,
-        firstBlockHeight: 1,
-        firstCoreBlockHeight: 1090319,
-        startTime: 1721353209000,
-        feeMultiplier: 1,
-        endTime: 1721356809000
-    },
-    tps: 0.01666666666,
-    totalCollectedFees: 30,
-    bestValidator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+  "epoch": {
+    "number": 2492,
+    "firstBlockHeight": 44046,
+    "firstCoreBlockHeight": 1131311,
+    "startTime": 1730324534559,
+    "feeMultiplier": 1,
+    "endTime": 1730328026683
+  },
+  "tps": 0.0140315750528904,
+  "totalCollectedFees": 1897008860,
+  "bestValidator": "87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918",
+  "topVotedResource": {
+    "resource": [
+      "dash",
+      "asdthree0"
+    ],
+    "yes": 7,
+    "abstain": 1,
+    "lock": 4
+  },
+  "bestVoter": {
+    "identifier": "4GfuwhaXL5YSerKKwJ19X2s5yXn8dC738tqfcvncqNgM",
+    "yes": 2,
+    "abstain": 1,
+    "lock": 2
+  },
+  "totalVotesCount": 12,
+  "totalVotesGasUsed": 120000000
 }
 ```
 ---
@@ -148,7 +167,8 @@ GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
     "blockVersion": 14,
     "appVersion": 4,
     "l1LockedHeight": 1124953,
-    "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234"
+    "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234",
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
   },
   "txs": [
     {
@@ -200,7 +220,8 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
             blockVersion: 13,
             appVersion: 1,
             validator: "B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18",
-            l1LockedHeight: 1337
+            l1LockedHeight: 1337,
+            "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
         },
         txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
     }, ...
@@ -226,7 +247,8 @@ GET /blocks?start_epoch_index=1000&end_epoch_index=1200&height_min=2000&height_m
         "appVersion": 1,
         "l1LockedHeight": 1093395,
         "validator": "C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8",
-        "totalGasUsed": 509281140
+        "totalGasUsed": 509281140,
+        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
       },
       "txs": [
         "EA0A1997F31D5204EB9FC6E49CDEF1E9A7FB446AB1D4B9995A9C7ED3C6CE718B",
@@ -274,7 +296,8 @@ GET /validators
         l1LockedHeight: 1337,
         appVersion: 1,
         blockVersion: 13
-        validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+        validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
       },
       proTxInfo: {
         type: "Evo",
@@ -345,7 +368,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     l1LockedHeight: 1337,
     appVersion: 1,
     blockVersion: 13,
-    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+    appHash: "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
   },
   proTxInfo: {
     type: "Evo",
@@ -428,7 +452,8 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
     l1LockedHeight: 1337,
     appVersion: 1,
     blockVersion: 13,
-    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+    appHash: "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
   },
   proTxInfo: {
     type: "Evo",
@@ -1145,6 +1170,46 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E
         blockHash: "73171E0A8DCC10C6DA501E1C70A9C1E0BD6F1F8F834C2A1E787AF19B1F361D5E"
     }
     ]
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
+### Masternode Votes
+Return list of votes by params
+* `limit` cannot be more than 100
+* `type` cannot be less than 0 and more than 8
+* `choice` cannot be less than 0 and more than 3
+```
+GET /masternodes/votes?timestamp_start=2024-09-18T01:10:57.833Z&timestamp_end=2024-09-19T01:10:57.833Z&voter_identity=2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9&choice=0&towards_identity=LgdvpQHb7mvrab6Vv49iTz912aHBVjpTJ6rXGRDQL2s
+
+{
+  "resultSet": [
+    {
+      "proTxHash": "bc77a5a2cec455c79fb92fb683dbd87a2a92b663c9a46d0c50d11889b4aeb121",
+      "txHash": "499C9C0830F98B395CFC440EE34A96C550DF5000A78B5604BC2B50B4545E0D2C",
+      "voterIdentifier": "2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9",
+      "choice": 0,
+      "timestamp": "2024-09-18T19:27:17.212Z",
+      "towardsIdentity": "LgdvpQHb7mvrab6Vv49iTz912aHBVjpTJ6rXGRDQL2s ",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "documentTypeName": "domain",
+      "indexName": "parentNameAndLabel",
+      "indexValues": [
+        "dash",
+        "test001"
+      ],
+      "powerMultiplier": null
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1
+  }
 }
 ```
 Response codes:
