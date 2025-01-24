@@ -1,0 +1,35 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.VoteIndexValues {
+  background-color: var(--chakra-colors-gray-650);
+  border: 1px solid #404E53;
+  border-radius: mixins.$border-radius-def;
+  font-size: 0.75rem;
+  font-family: $font-mono;
+
+  &__Row, &__Titles {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0.75rem;
+    border-bottom: 1px solid #404E53;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__Col, &__Title {
+    white-space: wrap;
+    word-break: break-all;
+
+    &:nth-child(2) {
+      flex-shrink: 0;
+    }
+  }
+
+  &__Titles {
+    color: var(--chakra-colors-gray-250);
+  }
+}

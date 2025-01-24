@@ -10,6 +10,7 @@ import VoteChoice from './VoteChoice'
 import PrefundedBalance from './PrefundedBalance'
 import TimeDelta from './TimeDelta'
 import BigNumber from './BigNumber'
+import CodeBlock from './CodeBlock'
 
 export {
   Identifier,
@@ -23,5 +24,6 @@ export {
   VoteChoice,
   PrefundedBalance,
   TimeDelta,
-  BigNumber
+  BigNumber,
+  CodeBlock
 }

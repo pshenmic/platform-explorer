@@ -1,9 +1,9 @@
 import DataContractsList from './DataContractsList'
 import { DataContractCards } from './Cards'
-import DataContractSchema from './DataContractSchema'
+import InternalConfigCard from './InternalConfigCard'
 
 export {
   DataContractsList,
   DataContractCards,
-  DataContractSchema
+  InternalConfigCard
 }

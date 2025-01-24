@@ -1,10 +1,85 @@
 import { ValueCard } from '../cards'
-import { Identifier, InfoLine, PrefundedBalance } from '../data'
+import { CreditsBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
+import { DocumentActionEnum } from '../../enums/documentAction'
 import DocumentActionBadge from './DocumentActionBadge'
+import { ValueContainer } from '../ui/containers'
 import { Code } from '@chakra-ui/react'
 import './TransitionCard.scss'
 
-function TransitionCard ({ transition, rate, className }) {
+const fieldsOfTypes = {
+  CREATE: [
+    'DataContractIdentifier',
+    'DocumentIdentifier',
+    'DocumentType',
+    'Revision',
+    'IdentityContractNonce',
+    'Data',
+    'PrefundedVotingBalance'
+  ],
+  REPLACE: [
+    'DataContractIdentifier',
+    'DocumentIdentifier',
+    'DocumentType',
+    'Revision',
+    'IdentityContractNonce',
+    'LastTimeCreated',
+    'LastTimeUpdated',
+    'LastTimeTransferred',
+    'Data'
+  ],
+  DELETE: [
+    'DataContractIdentifier',
+    'DocumentIdentifier',
+    'DocumentType',
+    'IdentityContractNonce',
+    'Data'
+  ],
+  TRANSFER: [
+    'DataContractIdentifier',
+    'DocumentIdentifier',
+    'SenderIdentifier',
+    'ReceiverIdentifier',
+    'DocumentType',
+    'Revision',
+    'IdentityContractNonce',
+    'LastTimeCreated',
+    'LastTimeUpdated',
+    'LastTimeTransferred',
+    'Data'
+  ],
+  PURCHASE: [
+    'DataContractIdentifier',
+    'DocumentIdentifier',
+    'BuyerIdentifier',
+    'SellerIdentifier',
+    'DocumentType',
+    'Price',
+    'Revision',
+    'IdentityContractNonce',
+    'LastTimeCreated',
+    'LastTimeUpdated',
+    'LastTimeTransferred',
+    'Data'
+  ],
+  UPDATE_PRICE: [
+    'DataContractIdentifier',
+    'DocumentIdentifier',
+    'SenderIdentifier',
+    'ReceiverIdentifier',
+    'DocumentType',
+    'Price',
+    'Revision',
+    'IdentityContractNonce',
+    'LastTimeCreated',
+    'LastTimeUpdated',
+    'LastTimeTransferred',
+    'Data'
+  ]
+}
+
+function TransitionCard ({ transition, owner, rate, className }) {
+  const fields = fieldsOfTypes?.[DocumentActionEnum?.[transition?.action]]
+
   return (
     <div className={`InfoBlock InfoBlock--Gradient TransitionCard ${className || ''}`}>
       <InfoLine
@@ -13,50 +88,138 @@ function TransitionCard ({ transition, rate, className }) {
         value={<DocumentActionBadge typeId={transition?.action}/>}
         error={transition?.action === undefined}
       />
-      <InfoLine
-        className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
-        title={'Data Contract Identifier'}
-        value={(
-          <ValueCard link={`/dataContract/${transition.dataContractId}`}>
-            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {transition.dataContractId}
-            </Identifier>
-          </ValueCard>
-        )}
-        error={!transition.dataContractId}
-      />
-      <InfoLine
-        className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
-        title={'Document Identifier'}
-        value={(
-          <ValueCard link={`/document/${transition.id}`}>
-            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {transition.id}
-            </Identifier>
-          </ValueCard>
-        )}
-        error={!transition.id}
-      />
-      <InfoLine
-        className={'TransitionCard__InfoLine TransitionCard__InfoLine--Revision'}
-        title={'Revision'}
-        value={transition?.revision}
-        error={transition?.revision === undefined}
-      />
-      <InfoLine
-        className={'TransitionCard__InfoLine TransitionCard__InfoLine--Data'}
-        title={'Data'}
-        value={(
-          <Code
-            borderRadius={'lg'}
-            px={5}
-            py={4}
-          >
-            {JSON.stringify(transition?.data, null, 2)}
-          </Code>
-        )}
-        error={transition?.data === undefined}
-      />
+
+      {fields.indexOf('DataContractIdentifier') !== -1 &&
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+          title={'Data Contract Identifier'}
+          value={(
+            <ValueCard link={`/dataContract/${transition.dataContractId}`}>
+              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                {transition.dataContractId}
+              </Identifier>
+            </ValueCard>
+          )}
+          error={!transition.dataContractId}
+        />
+      }
+
+      {fields.indexOf('DocumentIdentifier') !== -1 &&
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+          title={'Document Identifier'}
+          value={(
+            <ValueCard link={`/document/${transition.id}`}>
+              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                {transition.id}
+              </Identifier>
+            </ValueCard>
+          )}
+          error={!transition.id}
+        />
+      }
+
+      {fields.indexOf('ReceiverIdentifier') !== -1 && // transfer
+        transition?.receiverId &&
+          <>
+            {owner &&
+              <InfoLine
+                className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+                title={'Sender Identifier:'}
+                value={(
+                  <ValueCard link={`/identity/${owner}`}>
+                    <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                      {owner}
+                    </Identifier>
+                  </ValueCard>
+                )}
+              />
+            }
+
+            <InfoLine
+              className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+              title={'Receiver Identifier'}
+              value={(
+                <ValueCard link={`/identity/${transition?.receiverId}`}>
+                  <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                    {transition?.receiverId}
+                  </Identifier>
+                </ValueCard>
+              )}
+            />
+          </>
+      }
+
+      {fields.indexOf('SellerIdentifier') !== -1 && owner && // purchase
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+          title={'Seller Identifier'}
+          value={(
+            <ValueCard link={`/identity/${owner}`}>
+              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                {owner}
+              </Identifier>
+            </ValueCard>
+          )}
+        />
+      }
+
+      {fields.indexOf('Price') !== -1 &&
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+          title={'Price'}
+          value={<CreditsBlock credits={transition?.price} rate={rate}/>}
+          error={!transition?.price}
+        />
+      }
+
+      {fields.indexOf('DocumentType') !== -1 &&
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DocumentType'}
+          title={'Document Type'}
+          value={(
+            <ValueContainer>
+              {transition?.type}
+            </ValueContainer>
+          )}
+          error={!transition?.type}
+        />
+      }
+
+      {fields.indexOf('Revision') !== -1 &&
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--Revision'}
+          title={'Revision'}
+          value={transition?.revision}
+          error={transition?.revision === undefined}
+        />
+      }
+
+      {fields.indexOf('IdentityContractNonce') !== -1 &&
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--Nonce'}
+          title={'Identity Contract Nonce'}
+          value={transition?.nonce}
+          error={transition?.nonce === undefined}
+        />
+      }
+
+      {fields.indexOf('Data') !== -1 && transition?.data &&
+        <InfoLine
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--Data'}
+          title={'Data'}
+          value={(
+            <Code
+              borderRadius={'lg'}
+              px={5}
+              py={4}
+            >
+              {JSON.stringify(transition?.data, null, 2)}
+            </Code>
+          )}
+          error={transition?.data === undefined}
+        />
+      }
 
       {transition?.prefundedBalance &&
         <InfoLine

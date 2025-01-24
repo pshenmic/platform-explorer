@@ -133,7 +133,7 @@ function Transaction ({ hash }) {
           />
 
           <InfoLine
-            className={'TransactionPage__InfoLine'}
+            className={'TransactionPage__InfoLine TransactionPage__InfoLine--Owner'}
             title={'Owner'}
             value={(
               <ValueCard link={`/identity/${transaction.data?.owner?.identifier}`}>
@@ -183,6 +183,7 @@ function Transaction ({ hash }) {
             value={(
               <ValueCard className={'TransactionPage__Signature'}>
                 {decodedST.data?.signature}
+                <CopyButton text={decodedST.data?.signature}/>
               </ValueCard>
             )}
             loading={decodedST.loading}
@@ -196,9 +197,18 @@ function Transaction ({ hash }) {
         <>
           <HorisontalSeparator/>
 
+          {decodedST.data?.coreFeePerByte &&
+            <InfoLine
+              className={'TransactionPage__InfoLine TransactionPage__InfoLine--CoreFeePerByte'}
+              title={'Core Fee Per Byte'}
+              value={<>{decodedST.data?.coreFeePerByte} Duff</>}
+              loading={decodedST.loading}
+            />
+          }
+
           {decodedST.data?.outputAddress &&
             <InfoLine
-              className={'TransactionPage__InfoLine TransactionPage__InfoLine--CoreFundingAddress'}
+              className={'TransactionPage__InfoLine TransactionPage__InfoLine--CoreWithdrawalAddress'}
               title={'Core Withdrawal Address'}
               value={(
                 <a
@@ -211,29 +221,6 @@ function Transaction ({ hash }) {
                   <ValueContainer clickable={true} external={true}>
                     <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
                       {decodedST.data?.outputAddress}
-                    </Identifier>
-                  </ValueContainer>
-                </a>
-              )}
-              loading={decodedST.loading}
-            />
-          }
-
-          {decodedST.data?.fundingAddress &&
-            <InfoLine
-              className={'TransactionPage__InfoLine TransactionPage__InfoLine--CoreFundingAddress'}
-              title={'Core Funding Address'}
-              value={(
-                <a
-                  href={l1explorerBaseUrl
-                    ? `${l1explorerBaseUrl}/address/${decodedST.data.fundingAddress}`
-                    : '#'}
-                  target={'_blank'}
-                  rel={'noopener noreferrer'}
-                >
-                  <ValueContainer clickable={true} external={true}>
-                    <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
-                      {decodedST.data.fundingAddress}
                     </Identifier>
                   </ValueContainer>
                 </a>
