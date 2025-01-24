@@ -318,8 +318,8 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await.unwrap();
 
         let stmt = client.prepare_cached("INSERT INTO blocks(hash, height, \
-        timestamp, block_version, app_version, l1_locked_height, validator) \
-        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING hash;").await.unwrap();
+        timestamp, block_version, app_version, l1_locked_height, validator, app_hash) \
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING hash;").await.unwrap();
 
         let rows = client.query(&stmt, &[
             &block_header.hash,
@@ -328,12 +328,13 @@ impl PostgresDAO {
             &block_header.block_version,
             &block_header.app_version,
             &block_header.l1_locked_height,
-            &block_header.proposer_pro_tx_hash
+            &block_header.proposer_pro_tx_hash,
+            &block_header.app_hash
         ]).await.unwrap();
 
         let block_hash: String = rows[0].get(0);
 
-        return block_hash;
+        block_hash
     }
 
     pub async fn get_validator_by_pro_tx_hash(&self, pro_tx_hash: String) -> Result<Option<Validator>, PoolError> {

@@ -49,7 +49,8 @@ pub struct TDBlockHeader {
     #[serde(rename = "time")]
     #[serde(with = "from_iso8601")]
     pub timestamp: DateTime<Utc>,
-    pub proposer_pro_tx_hash: String
+    pub proposer_pro_tx_hash: String,
+    pub app_hash: String
 }
 
 #[derive(Deserialize)]
