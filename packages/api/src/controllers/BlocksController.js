@@ -20,14 +20,6 @@ class BlocksController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const {
-      block: {
-        header: {
-          app_hash: appHash
-        }
-      }
-    } = await TenderdashRPC.getBlockByHash(block.header.hash)
-
     const { block: blockInfo } = await TenderdashRPC.getBlockByHeight(block.header.height + 1)
 
     const { last_commit: lastCommit } = blockInfo ?? { last_commit: undefined }
@@ -61,8 +53,7 @@ class BlocksController {
       {
         ...block,
         header: {
-          ...block.header,
-          appHash: appHash ?? null
+          ...block.header
         },
         quorum
       }

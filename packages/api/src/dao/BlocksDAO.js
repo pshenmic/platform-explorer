@@ -62,7 +62,7 @@ module.exports = class BlockDAO {
         'state_transitions.gas_used as gas_used', 'state_transitions.data as data',
         'state_transitions.status as status', 'state_transitions.owner as owner',
         'aliases.aliases as aliases', 'state_transitions.error as error', 'block_hash',
-        'state_transitions.index as index', 'state_transitions.type as type'
+        'state_transitions.index as index', 'state_transitions.type as type', 'app_hash'
       )
       .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
       .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'state_transitions.owner')
@@ -72,14 +72,14 @@ module.exports = class BlockDAO {
 
     const rows = await this.knex(subquery)
       .select(
-        'hash', 'tx_hash',
-        'height', 'timestamp',
-        'block_version', 'app_version',
-        'l1_locked_height', 'validator',
-        'gas_used', 'data',
-        'status', 'owner',
         'aliases', 'error', 'block_hash',
-        'index', 'type'
+        'l1_locked_height', 'validator',
+        'block_version', 'app_version',
+        'index', 'type', 'app_hash',
+        'height', 'timestamp',
+        'gas_used', 'data',
+        'hash', 'tx_hash',
+        'status', 'owner'
       )
       .select(this.knex(subquery).sum('gas_used').as('total_gas_used'))
 
@@ -117,6 +117,7 @@ module.exports = class BlockDAO {
         'blocks.app_version as app_version',
         'blocks.l1_locked_height as l1_locked_height',
         'blocks.validator as validator',
+        'blocks.app_hash as app_hash',
         this.knex.raw(`rank() over (partition by blocks.validator order by blocks.height ${order}) as rank`)
       )
       .whereILike('blocks.validator', validator)
@@ -124,7 +125,7 @@ module.exports = class BlockDAO {
 
     const rows = await this.knex(subquery)
       .select(this.knex('blocks').count('height').as('total_count').whereILike('blocks.validator', validator),
-        'blocks.hash as hash', 'height', 'timestamp', 'block_version',
+        'blocks.hash as hash', 'height', 'timestamp', 'block_version', 'app_hash',
         'app_version', 'l1_locked_height', 'state_transitions.hash as st_hash', 'validator')
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('blocks.height', order)
@@ -153,7 +154,10 @@ module.exports = class BlockDAO {
 
   getBlockByHeight = async (height) => {
     const results = await this.knex
-      .select('blocks.hash as hash', 'state_transitions.hash as st_hash', 'blocks.height as height', 'blocks.timestamp as timestamp', 'blocks.block_version as block_version', 'blocks.app_version as app_version', 'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator')
+      .select(
+        'blocks.hash as hash', 'state_transitions.hash as st_hash', 'blocks.height as height',
+        'blocks.timestamp as timestamp', 'blocks.block_version as block_version', 'blocks.app_version as app_version',
+        'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator', 'blocks.app_hash as app_hash')
       .from('blocks')
       .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
       .where('blocks.height', height)
@@ -227,7 +231,9 @@ module.exports = class BlockDAO {
       .select(
         'blocks.hash as hash', 'blocks.height as height', 'blocks.timestamp as timestamp',
         'blocks.block_version as block_version', 'blocks.app_version as app_version',
-        'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator')
+        'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator',
+        'blocks.app_hash as app_hash'
+      )
       .whereRaw(...epochQuery)
       .andWhereRaw(...heightQuery)
       .andWhereRaw(...timestampQuery)
@@ -241,7 +247,7 @@ module.exports = class BlockDAO {
 
     const gasSubQuery = this.knex(subquery)
       .select(
-        'hash', 'height', 'timestamp', 'block_version',
+        'hash', 'height', 'timestamp', 'block_version', 'app_hash',
         'app_version', 'l1_locked_height', 'txs.txs', 'validator', 'total_gas_used')
       .select(this.knex.raw(`rank() over (order by blocks.height ${order}) rank`))
       .leftJoin(transactionsSubquery, 'txs.block_hash', 'blocks.hash')
@@ -250,7 +256,7 @@ module.exports = class BlockDAO {
       .as('gas')
 
     const rows = await this.knex(gasSubQuery)
-      .select('rank', 'hash', 'height', 'timestamp', 'block_version',
+      .select('rank', 'hash', 'height', 'timestamp', 'block_version', 'app_hash',
         'app_version', 'l1_locked_height', 'txs', 'validator', 'total_gas_used',
         this.knex(gasSubQuery).count('height').as('total_count')
       )
