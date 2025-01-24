@@ -102,7 +102,7 @@ function Home () {
           mb={blockOffset}
         >
           <Container mb={0} p={0} maxW={blockMaxWidth}>
-            <TransactionsHistory height={'100%'} blockBorders={false}/>
+            <TransactionsHistory blockBorders={false}/>
           </Container>
 
           <Box flexShrink={'0'} w={blockOffset} h={blockOffset} />

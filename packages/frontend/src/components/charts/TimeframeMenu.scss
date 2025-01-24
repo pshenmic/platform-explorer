@@ -13,12 +13,12 @@
 
   &__Values {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: flex-end;
+    gap: 8px;
   }
 
   &__ValueButton {
-    margin-left: 10px;
     font-size: 0.75rem;
     height: 28px !important;
     padding: 3px 12px !important;
@@ -73,11 +73,9 @@
   @media screen and (max-width: 555px) {
     &__Values {
       flex-wrap: wrap;
-      margin-bottom: -8px;
     }
 
     &__ValueButton {
-      margin-bottom: 8px;
       font-size: 0.6rem !important;
       height: 24px !important;
     }
