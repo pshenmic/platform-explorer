@@ -116,7 +116,7 @@ function TransactionData ({ data, type, loading, rate }) {
       />
 
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--VoteChoice'}
+        className={`TransactionPage__InfoLine TransactionPage__InfoLine--VoteChoice ${!data?.choice?.includes('TowardsIdentity') ? 'TransactionPage__InfoLine--Inline' : ''}`}
         title={'Choice'}
         value={<VoteChoice choiceStr={data?.choice}/>}
         loading={loading}

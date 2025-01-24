@@ -196,6 +196,16 @@
         }
       }
 
+      &--VoteChoice {
+        .VoteChoice--TowardsIdentity {
+          max-width: none;
+
+          .ValueContainer__Value {
+            justify-content: space-between;
+          }
+        }
+      }
+
       .ValueCard, .ValueContainer {
         .Identifier {
           flex-grow: 1;

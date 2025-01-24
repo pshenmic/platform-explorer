@@ -18,10 +18,16 @@ function VoteChoice ({ choiceStr }) {
     ABSTAIN: 'orange'
   }
 
+  const choiceClasses = {
+    TOWARDSIDENTITY: 'VoteChoice--TowardsIdentity',
+    LOCK: 'VoteChoice--Lock',
+    ABSTAIN: 'VoteChoice--Abstain'
+  }
+
   if (parameter) {
     return (
       <ValueContainer
-        className={'VoteChoice VoteChoice--TowardsIdentity'}
+        className={`VoteChoice ${choiceClasses?.[type] || ''}`}
         colorScheme={colorScheme?.[type] || 'grey'}
       >
         <span>{choice}:</span>
