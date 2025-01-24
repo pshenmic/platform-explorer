@@ -1,8 +1,8 @@
 import './VoteIndexValues.scss'
 
-function VoteIndexValues ({ indexValues }) {
+function VoteIndexValues ({ indexValues, className }) {
   return (
-    <div className={'VoteIndexValues'}>
+    <div className={`VoteIndexValues ${className || ''}`}>
       <div className={'VoteIndexValues__Titles'}>
         <div className={'VoteIndexValues__Title'}>Base 64</div>
         <div className={'VoteIndexValues__Title'}>Decoded</div>

@@ -149,9 +149,13 @@ function TransactionData ({ data, type, loading, rate }) {
 
       {data?.indexValues &&
         <InfoLine
-          className={'TransactionPage__InfoLine TransactionPage__InfoLine--Baseline'}
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--VoteIndexValues TransactionPage__InfoLine--Baseline'}
           title={'Index Values'}
-          value={<VoteIndexValues indexValues={data?.indexValues}/>}
+          value={(
+            <div className={'TransactionPage__VoteIndexValuesContainer'}>
+              <VoteIndexValues indexValues={data?.indexValues}/>
+            </div>
+          )}
           loading={loading}
           error={!data?.indexValues}
         />

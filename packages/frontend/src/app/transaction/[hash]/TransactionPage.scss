@@ -18,6 +18,12 @@
     margin-bottom: 14px;
     justify-content: flex-start !important;
 
+    &--VoteIndexValues {
+      .InfoLine__Value {
+        width: 100%;
+      }
+    }
+
     &--Schema {
       align-items: flex-start !important;
 
@@ -126,6 +132,17 @@
     }
   }
 
+  &__VoteIndexValuesContainer {
+    container-type: inline-size;
+    width: 100%;
+    overflow: hidden;
+
+    .VoteIndexValues {
+      width: 34.25rem;
+      max-width: 100%;
+    }
+  }
+
   @media screen and (max-width: $breakpoint-md) {
     &__InfoLine {
       margin-bottom: 12px;
@@ -181,6 +198,16 @@
             flex-grow: 1;
           }
         }
+      }
+    }
+
+    &__VoteIndexValuesContainer {
+      container-type: inline-size;
+      width: 100%;
+      overflow: hidden;
+
+      .VoteIndexValues {
+        width: 100%;
       }
     }
 
