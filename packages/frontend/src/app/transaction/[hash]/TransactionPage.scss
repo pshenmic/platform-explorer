@@ -24,6 +24,12 @@
       }
     }
 
+    &--VoteChoice {
+      .InfoLine__Value {
+        overflow: hidden;
+      }
+    }
+
     &--Schema {
       align-items: flex-start !important;
 

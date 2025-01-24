@@ -116,7 +116,7 @@ function TransactionData ({ data, type, loading, rate }) {
       />
 
       <InfoLine
-        className={'TransactionPage__InfoLine'}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--VoteChoice'}
         title={'Choice'}
         value={<VoteChoice choiceStr={data?.choice}/>}
         loading={loading}
