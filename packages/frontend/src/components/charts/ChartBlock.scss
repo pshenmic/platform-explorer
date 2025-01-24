@@ -2,8 +2,22 @@
 @import '../../styles/variables.scss';
 
 .ChartBlock {
+  container-type: inline-size;
+  height: 100%;
   min-height: 300px;
   padding-bottom: 0 !important;
+  overflow: hidden;
+  transition: .1s;
+
+  .InfoBlock__Title, .TimeframeSelector__Button  {
+    position: relative;
+    z-index: 555;
+  }
+
+  &--MenuIsOpen {
+    padding-bottom: 24px !important;
+  }
+
 
   &__TimeframeTitle {
     margin: 5px 5px 5px 0;
@@ -17,6 +31,57 @@
     margin-top: -20px;
   }
 
+  &__ChartContainer {
+    height: 100%;
+    visibility: visible;
+    opacity: 1;
+    transition: all .2s;
+    transition-delay: .2s;
+
+    &--Hidden {
+      visibility: hidden;
+      opacity: 0;
+      transition-delay: 0s;
+    }
+  }
+
+  .TimeframeSelector {
+    &__Menu {
+      top: 0;
+    }
+
+    .TimeframeMenu {
+      padding-bottom: 12px !important;
+    }
+
+    .TimeframeMenu__ValuesContainer {
+      margin-top: 52px;
+    }
+
+    &__Button {
+      top: 12px;
+      right: 16px;
+    }
+
+    @container (max-width: 400px) {
+      .TimeframeMenu__ValuesContainer {
+        margin-top: 90px;
+      }
+
+      &__Button {
+        top: 50px;
+        z-index: 11;
+        width: 100px;
+        min-width: max-content;
+        transition: width .2s;
+
+        &--Active {
+          width: calc(100% - 24px);
+        }
+      }
+    }
+  }
+
   &__TimeframeButtons {
     display: flex;
     flex-wrap: wrap;
@@ -25,7 +90,6 @@
   &__TimeframeButton {
     font-family: $font-heading;
     font-size: 12px;
-    margin-right: 10px;
     height: 27px !important;
     margin: 5px;
 

@@ -25,7 +25,9 @@ function ValueContainer ({
     red: 'ValueContainer--Red',
     green: 'ValueContainer--Green',
     blue: 'ValueContainer--Blue',
+    brand: 'ValueContainer--Brand',
     lightGray: 'ValueContainer--LightGray',
+    darkGray: 'ValueContainer--DarkGray',
     gray: 'ValueContainer--Gray',
     orange: 'ValueContainer--Orange'
   }

@@ -2,7 +2,7 @@
 
 import { Grid, GridItem } from '@chakra-ui/react'
 import { LinkContainer } from '../ui/containers'
-import { Credits, Identifier, TimeDelta } from '../data'
+import { BigNumber, Identifier, TimeDelta } from '../data'
 import { RateTooltip } from '../ui/Tooltips'
 import Link from 'next/link'
 import { useRef } from 'react'
@@ -64,7 +64,7 @@ function TransfersListItem ({ transfer, rate }) {
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Amount'}>
           {transfer?.amount
             ? <RateTooltip credits={transfer.amount} rate={rate}>
-                <span><Credits>{transfer.amount}</Credits></span>
+                <span><BigNumber>{transfer.amount}</BigNumber></span>
               </RateTooltip>
             : <span className={'TransactionsListItem__NotActiveText'}>-</span>
           }
@@ -73,7 +73,7 @@ function TransfersListItem ({ transfer, rate }) {
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--GasUsed'}>
           {transfer?.gasUsed
             ? <RateTooltip credits={transfer.gasUsed} rate={rate}>
-                <span><Credits>{transfer.gasUsed}</Credits></span>
+                <span><BigNumber>{transfer.gasUsed}</BigNumber></span>
               </RateTooltip>
             : <span className={'TransactionsListItem__NotActiveText'}>-</span>
           }

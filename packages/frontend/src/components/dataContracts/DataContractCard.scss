@@ -2,22 +2,29 @@
 @import '../../styles/variables.scss';
 
 .DataContractCard {
+  padding: 24px 30px;
+
   &__Img {
     margin-right: 8px;
-    width: 28px;
-    height: 28px;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
   }
 
   &__Name {
-    font-size: 1.125rem;
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: $font-heading;
+    font-style: italic;
   }
 
-  &__Id {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--chakra-colors-gray-500);
-    font-family: $font-mono;
-    font-size: 1rem;
+  @media screen and (min-width: 600px) {
+    .SliderNavigation {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    padding: 14px 16px;
   }
 }

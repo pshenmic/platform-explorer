@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
-import { Identifier, Credits, Alias, TimeDelta } from '../data'
+import { Identifier, BigNumber, Alias, TimeDelta } from '../data'
 import StatusIcon from './StatusIcon'
 import { RateTooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
@@ -42,7 +42,7 @@ function TransactionsListItem ({ transaction, rate }) {
                 rate={rate}
                 placement={'top'}
               >
-                <span><Credits>{transaction.gasUsed}</Credits> Credits</span>
+                <span><BigNumber>{transaction.gasUsed}</BigNumber> Credits</span>
               </RateTooltip>
             : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
           }

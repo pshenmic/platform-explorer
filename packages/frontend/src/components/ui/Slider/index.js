@@ -13,7 +13,8 @@ function Slider ({
   className,
   showProgressBar = true,
   showNavButtons = true,
-  autoPlaySpeed = 5000
+  autoPlaySpeed = 5000,
+  createdCallback
 }) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const totalSlides = React.Children.count(children)
@@ -23,6 +24,9 @@ function Slider ({
     slideChanged (s) {
       setCurrentSlide(s.track.details.rel)
       resetProgress()
+    },
+    created () {
+      if (typeof createdCallback === 'function') createdCallback(true)
     }
   }, plugins)
   const resetProgress = () => setProgress(0)

@@ -13,7 +13,19 @@
 
 @mixin List() {
   &__Pagination {
-    margin-top: 2rem;
+    margin-top: 2rem !important;
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__Pagination {
+      margin-top: 1.5rem !important;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__Pagination {
+      margin-top: 1rem !important;
+    }
   }
 }
 

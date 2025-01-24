@@ -155,6 +155,19 @@ module.exports = ({
       }
     },
     {
+      path: '/document/:identifier/revisions',
+      method: 'GET',
+      handler: documentsController.getDocumentRevisions,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
       path: '/identities',
       method: 'GET',
       handler: identitiesController.getIdentities,

@@ -17,7 +17,6 @@ pub struct BlockHeader {
 
 impl From<Row> for BlockHeader {
     fn from(row: Row) -> Self {
-        // hash,block_height,timestamp,block_version,app_version,l1_locked_height,chain
         let hash: String = row.get(0);
         let height: i32 = row.get(1);
         let timestamp:SystemTime = row.get(2);

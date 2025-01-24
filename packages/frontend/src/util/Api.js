@@ -39,8 +39,8 @@ const getBlockByHash = (hash) => {
   return call(`block/${hash}`, 'GET')
 }
 
-const getTransactionsHistory = (timespan = '24h') => {
-  return call(`transactions/history?timespan=${timespan}`, 'GET')
+const getTransactionsHistory = (start, end) => {
+  return call(`transactions/history?start=${start}&end=${end}`, 'GET')
 }
 
 const getTransactions = (page = 1, limit = 30, order = 'asc') => {
