@@ -5,7 +5,7 @@ import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
 import ListColumnsHeader from './ListColumnsHeader'
-import { Credits, Identifier, Alias } from '../../data'
+import { BigNumber, Identifier, Alias } from '../../data'
 import { RateTooltip } from '../Tooltips'
 
 function EmptyListMessage ({ children }) {
@@ -26,7 +26,7 @@ function SimpleListItem ({ item }) {
       return (
         <RateTooltip credits={credits} rate={column?.rate}>
           <span>
-            <Credits>{children}</Credits>
+            <BigNumber>{children}</BigNumber>
           </span>
         </RateTooltip>
       )

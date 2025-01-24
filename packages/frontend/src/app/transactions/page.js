@@ -26,7 +26,7 @@ function TransactionsRoute ({ searchParams }) {
       <Intro
         title={'Transactions'}
         description={<Markdown>{introContent}</Markdown>}
-        block={<TransactionsHistory height={'400px'} blockBorders={false}/>}
+        block={<TransactionsHistory heightPx={400} blockBorders={false}/>}
       />
     </Container>
     <Transactions defaultPage={page} defaultPageSize={pageSize}/>

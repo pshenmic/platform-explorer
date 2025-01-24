@@ -1,12 +1,15 @@
-import { Code, Button } from '@chakra-ui/react'
-import { useState, useRef, useEffect } from 'react'
-import { CopyButton } from '../ui/Buttons'
-import './DataContractSchema.scss'
+'use client'
 
-function DataContractSchema ({ schema }) {
+import { useEffect, useRef, useState } from 'react'
+import { Code, Button } from '@chakra-ui/react'
+import { CopyButton } from '../ui/Buttons'
+import { SmoothSize } from '../ui/containers'
+import './CodeBlock.scss'
+
+function CodeBlock ({ code }) {
   const [fullSize, setFullSize] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
-  const parsedSchema = schema ? JSON.stringify(JSON.parse(schema), null, 2) : ''
+  const parsedCode = code ? JSON.stringify(JSON.parse(code), null, 2) : ''
   const codeContainerRef = useRef(null)
   const codeRef = useRef(null)
 
@@ -30,26 +33,28 @@ function DataContractSchema ({ schema }) {
   }, [])
 
   return (
-    <div className={'DataContractSchema'}>
-      <div className={'DataContractSchema__CodeContainer'} >
-        <Code
-          className={`DataContractSchema__Code ${fullSize ? 'DataContractSchema__Code--FullSize' : ''}`}
-          borderRadius={'lg'}
-          px={5}
-          py={4}
-          ref={codeContainerRef}
-        >
-          <div ref={codeRef}>{parsedSchema}</div>
-        </Code>
+    <div className={'CodeBlock'}>
+      <div className={'CodeBlock__CodeContainer'}>
+        <SmoothSize>
+          <Code
+            className={`CodeBlock__Code ${fullSize ? 'CodeBlock__Code--FullSize' : ''}`}
+            borderRadius={'lg'}
+            px={5}
+            py={4}
+            ref={codeContainerRef}
+          >
+            <div ref={codeRef}>{parsedCode}</div>
+          </Code>
+        </SmoothSize>
 
-        <CopyButton className={'DataContractSchema__CopyButton'} text={parsedSchema}/>
+        <CopyButton className={'CodeBlock__CopyButton'} text={parsedCode}/>
       </div>
 
       {(isOverflowing || fullSize) &&
         <Button
           size={'sm'}
           onClick={() => setFullSize(state => !state)}
-          className={'DataContractSchema__FullSizeButton'}
+          className={'CodeBlock__FullSizeButton'}
         >
           {fullSize ? 'Hide code' : 'Show full code'}
         </Button>
@@ -58,4 +63,4 @@ function DataContractSchema ({ schema }) {
   )
 }
 
-export default DataContractSchema
+export default CodeBlock

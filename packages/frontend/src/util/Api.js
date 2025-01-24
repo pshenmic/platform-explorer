@@ -39,8 +39,8 @@ const getBlockByHash = (hash) => {
   return call(`block/${hash}`, 'GET')
 }
 
-const getTransactionsHistory = (timespan = '24h') => {
-  return call(`transactions/history?timespan=${timespan}`, 'GET')
+const getTransactionsHistory = (start, end) => {
+  return call(`transactions/history?start=${start}&end=${end}`, 'GET')
 }
 
 const getTransactions = (page = 1, limit = 30, order = 'asc') => {
@@ -67,8 +67,13 @@ const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy) => {
   return call(`dataContracts?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
 
-const getDocumentByIdentifier = (identifier) => {
-  return call(`document/${identifier}`, 'GET')
+const getDocumentByIdentifier = (identifier, dataContractId, typeName) => {
+  const params = []
+  if (dataContractId) params.push(`contract_id=${dataContractId}`)
+  if (typeName) params.push(`document_type_name=${typeName}`)
+  const queryParams = params.join('&')
+
+  return call(`document/${identifier}?${queryParams ? `?${queryParams}` : ''}`, 'GET')
 }
 
 const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc') => {
@@ -83,12 +88,12 @@ const getTransactionsByIdentity = (identifier, page = 1, limit = 10, order = 'as
   return call(`identity/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
-const getDataContractsByIdentity = (identifier) => {
-  return call(`identity/${identifier}/dataContracts`, 'GET')
+const getDataContractsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
+  return call(`identity/${identifier}/dataContracts?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
-const getDocumentsByIdentity = (identifier) => {
-  return call(`identity/${identifier}/documents`, 'GET')
+const getDocumentsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
+  return call(`identity/${identifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getWithdrawalsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {

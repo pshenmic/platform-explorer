@@ -1,5 +1,50 @@
 # CHANGELOG
 
+### v1.0.11
+
+## Changes
+
+## API
+
+- Aliases status fix @owl352 (#395)
+
+## Frontend
+
+- Fix nested link warning @alexeyandreevsky (#393)
+- Remove Alias status Tooltip in lists @alexeyandreevsky (#396)
+- Update description on Identities page @alexeyandreevsky (#397)
+
+### v1.0.10
+
+### Changes
+
+## API
+
+- Aliases status fix @owl352 (#392)
+- Identity Public keys structure fix @owl352 (#382)
+- Add document transition type and document type name @pshenmic (#373)
+- Identity topUps and withdrawals amount @owl352 (#378)
+
+## Frontend
+
+- Update Aliases status @alexeyandreevsky (#391)
+- Improve transaction page @alexeyandreevsky (#338)
+- Update pagination styles @alexeyandreevsky (#387)
+- Update back button @alexeyandreevsky (#363)
+- Embed pshenmic logo in footer @alexeyandreevsky (#388)
+- Update Identifiers styles on the specific Validator page @alexeyandreevsky (#386)
+- Update tabs style @alexeyandreevsky (#385)
+- Improve documents list @alexeyandreevsky (#369)
+- Identity page hotfixes @alexeyandreevsky (#383)
+- Improve Identity page @alexeyandreevsky (#327)
+- Global search fix @alexeyandreevsky (#381)
+- Improve network status check @alexeyandreevsky (#380)
+
+## Indexer
+
+- Indexer hotfixes @pshenmic (#390)
+- Add document transition type and document type name @pshenmic (#373)
+
 ### v1.0.9
 
 ## Changes

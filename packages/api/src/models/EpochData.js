@@ -3,17 +3,58 @@ module.exports = class EpochData {
   tps
   totalCollectedFees
   bestValidator
+  topVotedResource
+  bestVoter
+  totalVotesCount
+  totalVotesGasUsed
 
-  constructor (epoch, tps, totalCollectedFees, bestValidator) {
+  constructor (epoch, tps, totalCollectedFees, bestValidator, topVotedResource, bestVoter, totalVotesCount, totalVotesGasUsed) {
     this.epoch = epoch ?? null
     this.tps = tps ?? null
     this.totalCollectedFees = totalCollectedFees ?? null
     this.bestValidator = bestValidator ?? null
+    this.topVotedResource = topVotedResource ?? null
+    this.bestVoter = bestVoter ?? null
+    this.totalVotesCount = totalVotesCount ?? null
+    this.totalVotesGasUsed = totalVotesGasUsed ?? null
   }
 
-  // eslint-disable-next-line camelcase
-  static fromObject ({ epoch, tps, total_collected_fees, best_validator }) {
-    // eslint-disable-next-line camelcase
-    return new EpochData(epoch, Number(tps ?? 0), Number(total_collected_fees ?? 0), best_validator)
+  /* eslint-disable camelcase */
+  static fromObject ({
+    epoch,
+    tps,
+    total_collected_fees,
+    best_validator,
+    voter_identity_id,
+    voter_yes,
+    voter_abstain,
+    voter_lock,
+    top_voted_resource,
+    resource_votes_yes,
+    resource_votes_abstain,
+    resource_votes_lock,
+    total_votes,
+    total_votes_gas_used
+  }) {
+    return new EpochData(
+      epoch,
+      Number(tps ?? 0),
+      Number(total_collected_fees ?? 0),
+      best_validator,
+      {
+        resource: top_voted_resource ?? null,
+        yes: Number(resource_votes_yes ?? 0),
+        abstain: Number(resource_votes_abstain ?? 0),
+        lock: Number(resource_votes_lock ?? 0)
+      },
+      {
+        identifier: voter_identity_id ?? null,
+        yes: Number(voter_yes ?? 0),
+        abstain: Number(voter_abstain ?? 0),
+        lock: Number(voter_lock ?? 0)
+      },
+      Number(total_votes ?? 0),
+      Number(total_votes_gas_used ?? 0)
+    )
   }
 }

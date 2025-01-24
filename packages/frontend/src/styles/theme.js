@@ -1,5 +1,10 @@
 import { extendTheme } from '@chakra-ui/react'
 import tabsTheme from './components/Tabs'
+import { colors } from './colors'
+import Badge from './components/Badge'
+import { global } from './global'
+import Button from './components/Button'
+import Progress from './components/Progress'
 import {
   Montserrat,
   Open_Sans as OpenSans,
@@ -9,44 +14,6 @@ import {
 const montserrat = Montserrat({ subsets: ['latin'] })
 const openSans = OpenSans({ subsets: ['latin'] })
 const robotoMono = RobotoMono({ subsets: ['latin'] })
-
-const badgeColors = {
-  red: {
-    bg: '#4E3234',
-    bgHover: '',
-    text: '#F45858'
-  },
-  green: {
-    bg: '#2B4629',
-    bgHover: '',
-    text: '#81F458'
-  },
-  gray: {
-    bg: 'gray.600',
-    bgHover: 'gray.500',
-    text: 'gray.50'
-  },
-  blue: {
-    bg: 'rgba(0, 141, 228, 0.2)',
-    bgHover: 'rgba(44, 187, 255, 0.2)',
-    text: 'rgb(0, 141, 228)'
-  },
-  yellow: {
-    bg: 'rgba(244, 228, 88, 0.2)',
-    bgHover: '',
-    text: '#F4E458'
-  },
-  orange: {
-    bg: 'rgba(244, 154, 88, 0.2)',
-    bgHover: '',
-    text: 'rgb(244, 154, 88)'
-  },
-  emerald: {
-    bg: 'rgba(88, 244, 188, 0.2)',
-    bgHover: '',
-    text: 'rgb(88, 244, 188)'
-  }
-}
 
 export const theme = extendTheme({
   config: {
@@ -81,150 +48,12 @@ export const theme = extendTheme({
   blockOffset: [3, 4, 5, 5, 10],
   initialColorMode: 'dark',
   useSystemColorMode: false,
-  colors: {
-    brand: {
-      normal: '#008DE4',
-      'normal-rgb': '0, 141, 228',
-      deep: '#0E75B5',
-      shaded: '#165278',
-      light: '#2CBBFF',
-      'light-rgb': '44, 187, 255',
-      pressed: '#0493EB'
-    },
-    white: {
-      50: '#FFFFFF'
-    },
-    red: {
-      default: '#F45858',
-      'default-rgb': '244, 88, 88'
-    },
-    yellow: {
-      default: '#FFD205'
-    },
-    green: {
-      default: '#1CC400',
-      'default-rgb': '28, 196, 0',
-      label: '#81F458',
-      emeralds: '#58F4BC',
-      'emeralds-rgb': '88, 244, 188'
-    },
-    orange: {
-      default: '#f49a58',
-      'default-rgb': '244, 154, 88'
-    },
-    gray: {
-      50: '#f0f1f2',
-      100: '#e0e3e5',
-      200: '#c6cacd',
-      250: '#93aab2',
-      '250-rgb': '147, 170, 178',
-      300: '#acb1b4',
-      400: '#94999c',
-      500: '#7b7f83',
-      525: '#849099',
-      550: '#52585d6b',
-      600: '#62676a',
-      650: '#232C30',
-      675: '#21272C',
-      '675-rgb': '33, 39, 44',
-      700: '#494e51',
-      750: '#39454C',
-      800: '#2e393d',
-      '800-rgb': '46, 57, 61',
-      900: '#181d20'
-    }
-  },
+  colors,
   radii: {
     block: '30px'
   },
   styles: {
-    global: {
-      '*': {
-        borderColor: 'rgba(255, 255, 255, 0.07)'
-      },
-      'html, body': {
-        color: 'white',
-        scrollBehavior: 'smooth',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column'
-      },
-      h1: {
-        fontSize: '4xl',
-        my: '6'
-      },
-      h2: {
-        fontSize: '3xl',
-        my: '4'
-      },
-      h3: {
-        fontSize: 'xl',
-        my: '2'
-      },
-      h4: {
-        fontSize: 'lg',
-        my: '2'
-      },
-      h5: {
-        fontSize: 'md',
-        my: '2'
-      },
-      h6: {
-        fontSize: 'sm',
-        my: '2'
-      },
-      p: {
-        my: 2
-      },
-      ul: {
-        ml: 5,
-        my: 5,
-
-        li: {
-          my: 1
-        }
-      },
-      pre: {
-        p: 4,
-        my: 2,
-        borderRadius: 'lg',
-        background: 'gray.800',
-        whiteSpace: 'break-spaces',
-
-        code: {
-          background: 'transparent',
-          p: 0
-        }
-      },
-      code: {
-        px: 2,
-        py: 1,
-        mx: 1,
-        borderRadius: 'lg',
-        fontFamily: 'mono',
-        background: 'gray.800',
-        display: 'inline-block'
-      },
-      Container: {
-        a: {
-          color: 'brand.normal',
-
-          _hover: {
-            color: 'brand.deep'
-          }
-        }
-      },
-      Table: {
-        a: {
-          borderBottom: '1px solid',
-
-          _hover: {
-            borderBottom: 'none',
-            color: 'gray.200'
-          }
-        }
-      }
-    }
+    global
   },
   components: {
     Tabs: tabsTheme,
@@ -253,97 +82,9 @@ export const theme = extendTheme({
         borderRadius: 'lg'
       }
     },
-    Button: {
-      baseStyle: {
-        fontFamily: 'heading',
-        textTransform: 'uppercase',
-        borderRadius: '10px',
-        letterSpacing: '0.4px',
-        fontWeight: '700'
-      },
-      sizes: {
-        sm: {
-          fontSize: '12px'
-        },
-        md: {
-          fontSize: '12px'
-        }
-      },
-      variants: {
-        customGreen: {
-          bg: 'green.default',
-          color: '#fff',
-          _hover: {
-            bg: 'green.label'
-          }
-        },
-        blue: {
-          bg: badgeColors.blue.bg,
-          color: badgeColors.blue.text,
-          _hover: {
-            bg: badgeColors.blue.bgHover
-          }
-        },
-        gray: {
-          bg: badgeColors.gray.bg,
-          color: badgeColors.gray.text,
-          _hover: {
-            bg: badgeColors.gray.bgHover
-          }
-        }
-      }
-    },
-    Badge: {
-      baseStyle: props => {
-        const { colorScheme } = props
-
-        return {
-          borderWidth: '0px',
-          padding: '0 12px',
-          borderRadius: '999px',
-          fontFamily: 'mono',
-          fontSize: '0.625rem',
-          textTransform: 'none',
-          display: 'inline-flex',
-          alignItems: 'center',
-          lineHeight: '20px',
-          bg: badgeColors[colorScheme].bg || 'gray.500',
-          color: badgeColors[colorScheme].text || 'white'
-        }
-      }
-    },
-    Progress: {
-      baseStyle: props => {
-        const { colorScheme } = props
-        const trackColor = {
-          red: '#4E3234',
-          green: '#2B4629',
-          gray: 'gray.600',
-          blue: 'rgba(0, 141, 228, 0.3)',
-          yellow: 'rgba(244, 228, 88, 0.2)',
-          orange: 'rgba(244, 154, 88, 0.2)',
-          emerald: 'rgba(88, 244, 188, 0.2)'
-        }
-        const filledColor = {
-          red: '#F45858',
-          green: '#81F458',
-          gray: 'gray.200',
-          blue: 'rgba(0, 141, 228, 1)',
-          yellow: '#F4E458',
-          orange: 'rgb(244, 154, 88)',
-          emerald: 'rgb(88, 244, 188)'
-        }
-
-        return {
-          track: {
-            bg: trackColor[colorScheme] || 'rgba(0, 141, 228, 0.3)'
-          },
-          filledTrack: {
-            bg: filledColor[colorScheme] || 'rgba(0, 141, 228, 1)'
-          }
-        }
-      }
-    }
+    Button,
+    Badge,
+    Progress
   }
 })
 

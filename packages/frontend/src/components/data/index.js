@@ -1,5 +1,4 @@
 import Identifier from './Identifier'
-import Credits from './Credits'
 import CreditsBlock from './CreditsBlock'
 import DateBlock from './DateBlock'
 import Endpoint from './Endpoint'
@@ -9,10 +8,12 @@ import Alias from './Alias'
 import AliasesList from './AliasesList'
 import VoteChoice from './VoteChoice'
 import PrefundedBalance from './PrefundedBalance'
+import TimeDelta from './TimeDelta'
+import BigNumber from './BigNumber'
+import CodeBlock from './CodeBlock'
 
 export {
   Identifier,
-  Credits,
   CreditsBlock,
   DateBlock,
   Endpoint,
@@ -21,5 +22,8 @@ export {
   Alias,
   AliasesList,
   VoteChoice,
-  PrefundedBalance
+  PrefundedBalance,
+  TimeDelta,
+  BigNumber,
+  CodeBlock
 }

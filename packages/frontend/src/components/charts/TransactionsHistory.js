@@ -2,24 +2,21 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates } from '../../util'
+import { defaultChartConfig } from './config'
 import LineChartBlock from './LineChartBlock'
 
-const transactionsChartConfig = {
-  timespan: {
-    default: '1w',
-    values: ['1h', '24h', '3d', '1w']
-  }
-}
-
-export default function TransactionsHistory ({ height = '220px', blockBorders = true }) {
+export default function TransactionsHistory ({ heightPx = 300, blockBorders = true }) {
   const [transactionsHistory, setTransactionsHistory] = useState({ data: {}, loading: true, error: false })
-  const [timespan, setTimespan] = useState(transactionsChartConfig.timespan.default)
+  const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 
   useEffect(() => {
+    const { start = null, end = null } = timespan?.range
+    if (!start || !end) return
+
     setTransactionsHistory(state => ({ ...state, loading: true }))
 
-    Api.getTransactionsHistory(timespan)
+    Api.getTransactionsHistory(start, end)
       .then(res => fetchHandlerSuccess(setTransactionsHistory, { resultSet: res }))
       .catch(err => fetchHandlerError(setTransactionsHistory, err))
   }, [timespan])
@@ -36,10 +33,9 @@ export default function TransactionsHistory ({ height = '220px', blockBorders = 
         })) || []}
         xAxis={{
           type: (() => {
-            if (timespan === '1h') return { axis: 'time' }
-            if (timespan === '24h') return { axis: 'time' }
-            if (timespan === '3d') return { axis: 'date', tooltip: 'datetime' }
-            if (timespan === '1w') return { axis: 'date' }
+            if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7) return { axis: 'date' }
+            if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 3) return { axis: 'date', tooltip: 'datetime' }
+            return { axis: 'time' }
           })(),
           abbreviation: '',
           title: ''
@@ -49,7 +45,7 @@ export default function TransactionsHistory ({ height = '220px', blockBorders = 
           title: '',
           abbreviation: 'txs'
         }}
-        height={height}
+        heightPx={heightPx}
         blockBorders={blockBorders}
     />
   )

@@ -75,6 +75,14 @@ function roundUsd (usd, maxDecimals = 5) {
   return usd.toFixed(precision)
 }
 
+function removeTrailingZeros (value, maxDecimals = 8) {
+  if (typeof value !== 'number') value = Number(value)
+  if (isNaN(value)) return value
+
+  const fixedValue = value.toFixed(maxDecimals)
+  return parseFloat(fixedValue)
+}
+
 function findActiveAlias (aliases = []) {
   if (!aliases?.length) return null
   return aliases?.find(alias => alias.status === 'ok')
@@ -92,6 +100,7 @@ export {
   getTransitionTypeKeyById,
   creditsToDash,
   roundUsd,
+  removeTrailingZeros,
   getDaysBetweenDates,
   getDynamicRange,
   findActiveAlias

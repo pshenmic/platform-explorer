@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import DataContractsList from '../../components/dataContracts/DataContractsList'
 import Pagination from '../../components/pagination'
-import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -83,25 +82,28 @@ function DataContractsLayout ({ defaultPage = 1, defaultPageSize }) {
         >
             <Heading className={'InfoBlock__Title'} as={'h1'}>Data contracts</Heading>
 
-            {!dataContracts.loading
-              ? !dataContracts.error
-                  ? <DataContractsList dataContracts={dataContracts.data.resultSet}/>
-                  : <Container h={20}><ErrorMessageBlock/></Container>
-              : <LoadingList itemsCount={pageSize}/>}
+            {!dataContracts.error
+              ? <DataContractsList
+                  dataContracts={dataContracts.data?.resultSet}
+                  loading={dataContracts.loading}
+                  itemsCount={pageSize}
+                />
+              : <Container h={20}><ErrorMessageBlock/></Container>
+            }
 
             {dataContracts.data?.resultSet?.length > 0 &&
               <div className={'ListNavigation'}>
-                  <Box display={['none', 'none', 'block']} width={'155px'}/>
-                  <Pagination
-                      onPageChange={({ selected }) => setCurrentPage(selected)}
-                      pageCount={pageCount}
-                      forcePage={currentPage}
-                  />
-                  <PageSizeSelector
-                      PageSizeSelectHandler={(e) => setPageSize(Number(e.target.value))}
-                      value={pageSize}
-                      items={paginateConfig.pageSize.values}
-                  />
+                <Box display={['none', 'none', 'block']} width={'155px'}/>
+                <Pagination
+                  onPageChange={({ selected }) => setCurrentPage(selected)}
+                  pageCount={pageCount}
+                  forcePage={currentPage}
+                />
+                <PageSizeSelector
+                  PageSizeSelectHandler={e => setPageSize(e.value)}
+                  value={pageSize}
+                  items={paginateConfig.pageSize.values}
+                />
               </div>
             }
         </Container>

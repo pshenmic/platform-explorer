@@ -25,6 +25,7 @@ describe('Other routes', () => {
   let dataContractTransaction
   let dataContract
   let documentTransaction
+  let document
   let transactions
 
   before(async () => {
@@ -104,9 +105,10 @@ describe('Other routes', () => {
       block_hash: block.hash,
       type: StateTransitionEnum.DOCUMENTS_BATCH,
       owner: identity.identifier,
+      data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ==',
       index: 2
     })
-    await fixtures.document(knex, {
+    document = await fixtures.document(knex, {
       state_transition_hash: documentTransaction.hash,
       owner: identity.identifier,
       data_contract_id: dataContract.id
@@ -163,7 +165,9 @@ describe('Other routes', () => {
           blockVersion: block.block_version,
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
-          validator: block.validator
+          validator: block.validator,
+          totalGasUsed: 0,
+          appHash: block.app_hash
         },
         txs: [
           {
@@ -182,7 +186,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 contested: false,
-                status: 'ok'
+                status: 'ok',
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           },
@@ -202,7 +207,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 status: 'ok',
-                contested: false
+                contested: false,
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           },
@@ -212,7 +218,7 @@ describe('Other routes', () => {
             blockHash: documentTransaction.block_hash,
             blockHeight: null,
             type: documentTransaction.type,
-            data: '{}',
+            data: documentTransaction.data,
             timestamp: block.timestamp.toISOString(),
             gasUsed: 0,
             status: 'SUCCESS',
@@ -222,7 +228,8 @@ describe('Other routes', () => {
               aliases: [{
                 alias: 'dpns.dash',
                 status: 'ok',
-                contested: false
+                contested: false,
+                timestamp: '1970-01-01T00:00:00+00:00'
               }]
             }
           }
@@ -253,7 +260,8 @@ describe('Other routes', () => {
           aliases: [{
             alias: identityAlias.alias,
             contested: false,
-            status: 'ok'
+            status: 'ok',
+            timestamp: '1970-01-01T00:00:00+00:00'
           }]
         }
       }
@@ -274,7 +282,9 @@ describe('Other routes', () => {
           blockVersion: block.block_version,
           appVersion: block.app_version,
           l1LockedHeight: block.l1_locked_height,
-          validator: block.validator
+          validator: block.validator,
+          totalGasUsed: 0,
+          appHash: block.app_hash
         },
         txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
@@ -322,6 +332,31 @@ describe('Other routes', () => {
       assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
     })
 
+    it('should search by document', async () => {
+      const { body } = await client.get(`/search?query=${document.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDataContract = {
+        identifier: document.identifier,
+        dataContractIdentifier: dataContract.identifier,
+        revision: 1,
+        txHash: document.state_transition_hash,
+        deleted: document.deleted,
+        data: JSON.stringify(document.data),
+        timestamp: new Date(0).toISOString(),
+        system: false,
+        entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
+        prefundedVotingBalance: null,
+        documentTypeName: document.document_type_name,
+        transitionType: 0,
+        owner: document.owner,
+        nonce: 2
+      }
+
+      assert.deepEqual({ document: expectedDataContract }, body)
+    })
+
     it('should search by identity DPNS', async () => {
       mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
 
@@ -335,7 +370,8 @@ describe('Other routes', () => {
         status: {
           alias: identityAlias.alias,
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: null
         }
       }]
 
@@ -362,7 +398,8 @@ describe('Other routes', () => {
         aliases: [{
           alias: 'dpns.dash',
           contested: false,
-          status: 'ok'
+          status: 'ok',
+          timestamp: '1970-01-01T00:00:00+00:00'
         }],
         totalGasSpent: 480000,
         averageGasSpent: 9412,
@@ -451,6 +488,10 @@ describe('Other routes', () => {
         dataContractsCount: 1,
         documentsCount: 1,
         network: null,
+        indexer: {
+          status: 'syncing',
+          syncProgress: (blocks.length) / mockTDStatus?.highestBlock?.height * 100
+        },
         api: {
           version: require('../../package.json').version,
           block: {

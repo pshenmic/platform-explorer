@@ -10,7 +10,7 @@ function PrefundedBalance ({ prefundedBalance, rate }) {
   for (const [title, value] of Object.entries(prefundedBalance)) {
     elements.push(
       <ValueCard className={'PrefundedBalance'}>
-        <ValueContainer className={'PrefundedBalance__Title'}>
+        <ValueContainer colorScheme={'lightGray'} className={'PrefundedBalance__Title'}>
           {title}
         </ValueContainer>
         <ValueContainer className={'PrefundedBalance__Value'} colorScheme={'green'}>

@@ -1,0 +1,59 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.CodeBlock {
+  &__CodeContainer {
+    position: relative;
+    z-index: 1;
+    margin: 0 -15px;
+
+    &::before {
+      content:  '';
+      position: absolute;
+      z-index: -1;
+      width: calc(100% - 30px);
+      height: 100%;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--chakra-colors-gray-800);
+      border-radius: $border-radius-def;
+    }
+  }
+
+  &__Code {
+    padding: 10px 30px !important;
+    margin: 0;
+    white-space: break-spaces;
+    word-wrap: break-word;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100px;
+    max-height: 450px;
+    background: transparent !important;
+
+    &--FullSize {
+      height: 100% !important;
+      max-height: none;
+      resize: none;
+    }
+  }
+
+  &__FullSizeButton {
+    display: block !important;
+    margin: 10px auto 0;
+  }
+
+  &__CopyButton {
+    position: absolute !important;
+    top: 10px;
+    right: 22px;
+  }
+
+  @media screen and (max-width: 1020px) {
+    &__CodeContainer {
+      width: calc(100% + 30px);
+    }
+  }
+}

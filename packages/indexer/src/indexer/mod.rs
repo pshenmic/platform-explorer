@@ -162,6 +162,7 @@ impl Indexer {
         let block_version = block.block.header.version.block.parse::<i32>()?;
         let app_version = block.block.header.version.app.parse::<i32>()?;
         let core_chain_locked_height = block.block.header.core_chain_locked_height;
+        let app_hash = block.block.header.app_hash;
 
         let block = Block {
             header: BlockHeader {
@@ -172,6 +173,7 @@ impl Indexer {
                 block_version,
                 app_version,
                 l1_locked_height: core_chain_locked_height,
+                app_hash,
                 proposer_pro_tx_hash: block.block.header.proposer_pro_tx_hash,
             },
             txs,

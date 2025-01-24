@@ -61,14 +61,14 @@ impl From<IdentityCreateTransition> for Identity {
 
         let credits = outpoint.value * 1000;
 
-        return Identity {
+        Identity {
             id: None,
             identifier: state_transition.identity_id(),
             owner: state_transition.owner_id(),
             balance: Some(credits),
             revision: Revision::from(0 as u64),
             is_system: false,
-        };
+        }
     }
 }
 
@@ -78,14 +78,14 @@ impl From<IdentityUpdateTransition> for Identity {
         let owner = state_transition.owner_id();
         let revision = state_transition.revision();
 
-        return Identity {
+        Identity {
             id: None,
             identifier,
             owner,
             balance: None,
             revision,
             is_system: false,
-        };
+        }
     }
 }
 
@@ -96,14 +96,14 @@ impl From<SystemDataContract> for Identity {
         let identifier = Identifier::from(source.owner_id_bytes);
         let owner = Identifier::from(source.owner_id_bytes);
 
-        return Identity {
+        Identity {
             id: None,
             identifier,
             owner,
             revision: 0,
             balance: None,
             is_system: true,
-        };
+        }
     }
 }
 
@@ -115,14 +115,14 @@ impl From<Row> for Identity {
         let revision: i32 = row.get(3);
         let is_system: bool = row.get(4);
 
-        return Identity {
+        Identity {
             id: Some(id as u32),
             owner: Identifier::from_string(&owner.trim(), Base58).unwrap(),
             revision: Revision::from(revision as u64),
             identifier: Identifier::from_string(&identifier.trim(), Base58).unwrap(),
             is_system,
             balance: None,
-        };
+        }
     }
 }
 impl From<Validator> for Identity {
@@ -133,14 +133,14 @@ impl From<Validator> for Identity {
         let revision = 0u64;
         let is_system: bool = false;
 
-        return Identity {
+        Identity {
             id: None,
             owner: identifier,
             revision,
             identifier,
             is_system,
             balance: None,
-        };
+        }
     }
 }
 

@@ -18,8 +18,43 @@
     margin-bottom: 14px;
     justify-content: flex-start !important;
 
-    &--RawTransaction, &--Status, &--Transitions, &--PublicKeys {
+    &--VoteIndexValues {
+      .InfoLine__Value {
+        width: 100%;
+        overflow: hidden;
+      }
+    }
+
+    &--VoteChoice {
+      .InfoLine__Value {
+        overflow: hidden;
+      }
+    }
+
+    &--Schema {
+      align-items: flex-start !important;
+
+      .InfoLine__Value {
+        width: 100%;
+      }
+    }
+
+    &--InternalConfig {
+      width: 100%;
+
+      .InfoLine__Value {
+        width: 100%;
+      }
+    }
+
+    &--Baseline, &--RawTransaction, &--Status, &--Transitions, &--PublicKeys {
       align-items: baseline !important;
+    }
+
+    &--Pooling {
+      .ValueContainer, .ValueCard {
+        max-width: max-content;
+      }
     }
 
     &--Transitions {
@@ -46,12 +81,15 @@
     margin: 14px 0;
   }
 
-  &__Signature {
-    background: transparent;
+  &__Signature, &__AssetLockProof, &__OutputScript {
     overflow-wrap: break-word;
     word-break: break-word;
     color: var(--chakra-colors-gray-250);
     max-width: 510px;
+
+    .CopyButton {
+      margin-left: 4px;
+    }
   }
 
   &__ErrorContainer {
@@ -100,13 +138,36 @@
     }
   }
 
+  &__VoteIndexValuesContainer {
+    container-type: inline-size;
+    width: 100%;
+    overflow: hidden;
+
+    .VoteIndexValues {
+      min-width: 34.25rem;
+      width: max-content;
+      max-width: 100%;
+    }
+
+    @container (max-width: 34.25rem) {
+      .VoteIndexValues {
+        min-width: auto;
+        width: auto;
+      }
+    }
+
+    .InfoLine__Value {
+      overflow: hidden;
+    }
+  }
+
   @media screen and (max-width: $breakpoint-md) {
     &__InfoLine {
       margin-bottom: 12px;
       justify-content: space-between !important;
       flex-wrap: wrap;
 
-      &:not(&--Index):not(&--Type):not(&--FeeMultiplier):not(.InfoLine--Error) {
+      &:not(&--Inline):not(&--Index):not(&--Type):not(&--FeeMultiplier):not(.InfoLine--Error):not(&--CoreFeePerByte):not(&--Status):not(&--Pooling) {
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start !important;
@@ -147,7 +208,17 @@
         }
       }
 
-      .ValueCard {
+      &--VoteChoice {
+        .VoteChoice--TowardsIdentity {
+          max-width: none;
+
+          .ValueContainer__Value {
+            justify-content: space-between;
+          }
+        }
+      }
+
+      .ValueCard, .ValueContainer {
         .Identifier {
           flex-grow: 1;
 
@@ -155,6 +226,16 @@
             flex-grow: 1;
           }
         }
+      }
+    }
+
+    &__VoteIndexValuesContainer {
+      container-type: inline-size;
+      width: 100%;
+      overflow: hidden;
+
+      .VoteIndexValues {
+        width: 100%;
       }
     }
 
@@ -172,7 +253,7 @@
       margin-bottom: 12px;
     }
 
-    &__RawTransaction, &__Signature {
+    &__RawTransaction, &__Signature, &__AssetLockProof, &__OutputScript {
       max-width: none;
     }
   }

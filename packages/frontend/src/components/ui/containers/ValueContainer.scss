@@ -6,7 +6,7 @@
   align-items: center;
   flex-wrap: nowrap;
   border-radius: $border-radius-def;
-  background: rgba(46, 57, 61, .5);
+  background-color: var(--chakra-colors-gray-650);
   padding: 12px;
   transition: all .1s;
 
@@ -17,14 +17,18 @@
     text-overflow: ellipsis;
   }
 
+  &--Elipsed &__Value {
+     overflow: hidden;
+  }
+
   &--Red {
     color: var(--chakra-colors-red-default);
     background: rgba(var(--chakra-colors-red-default-rgb), .2);
   }
 
   &--Green {
-    color: var(--chakra-colors-green-default);
-    background: rgba(var(--chakra-colors-green-default-rgb), .2);
+    color: var(--chakra-colors-green-label);
+    background: rgba(var(--chakra-colors-green-label-rgb), .2);
   }
 
   &--Blue {
@@ -32,9 +36,19 @@
     background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
   }
 
+  &--Brand {
+    color: #fff;
+    background: var(--chakra-colors-brand-normal);
+  }
+
   &--LightGray {
     color: #fff;
     background: #404E53;
+  }
+
+  &--DarkGray {
+    color: #fff;
+    background: var(--chakra-colors-gray-800);
   }
 
   &--Gray {
@@ -69,13 +83,13 @@
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         cursor: pointer;
-        background: rgba(46, 57, 61, .7);
+        background-color: var(--chakra-colors-gray-800);
       }
     }
 
     &:active {
       transform: translateY(1px);
-      background: rgba(46, 57, 61, 0.6);
+      background-color: var(--chakra-colors-gray-650);
     }
   }
 

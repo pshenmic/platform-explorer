@@ -30,11 +30,15 @@ Reference:
 * [Identities](#identities)
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
+* [Document Transactions](#document-transactions)
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Transactions gas history](#transactions-gas-history)
+* [Contested Data Contracts](#contested-data-contracts)
+* [Contested Documents](#contested-documents)
 * [Rate](#rate)
+* [Masternode Votes](#masternode-votes)
 * [Search](#search)
 * [Decode Raw Transaction](#decode-raw-transaction)
 
@@ -50,65 +54,46 @@ Returns basic stats and epoch info
 HTTP /status
 
 {
-    epoch: {
-        number: 1145,
-        firstBlockHeight: 5380,
-        firstCoreBlockHeight: 1096730,
-        startTime: 1725475350064,
-        feeMultiplier: 1,
-        endTime: 1725478950064
-    },
-    identitiesCount: 12,
-    totalCredits: 100000,
-    totalCollectedFeesDay: 167703567170,
-    transactionsCount: 3,
-    transfersCount: 0,
-    dataContractsCount: 1,
-    documentsCount: 1,
-    network: "dash-testnet-40",
-    api: {
-        version: "1.0.0",
-        block: {
-            height: 20153,
-            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-            timestamp: "2024-06-06T21:50:20.949Z"
-        }
   "epoch": {
-    "number": 3640,
-    "firstBlockHeight": 72534,
-    "firstCoreBlockHeight": 1160707,
-    "startTime": 1734457229495,
+    "number": 3926,
+    "firstBlockHeight": 77795,
+    "firstCoreBlockHeight": 1167247,
+    "startTime": 1735486842745,
     "feeMultiplier": 1,
-    "endTime": 1734460829495
+    "endTime": 1735490442745
   },
-  "transactionsCount": 25912,
-  "totalCredits": 7288089799960610,
-  "totalCollectedFeesDay": 12733263640,
-  "transfersCount": 1849,
-  "dataContractsCount": 630,
-  "documentsCount": 15384,
-  "identitiesCount": 712,
+  "transactionsCount": 201,
+  "totalCredits": 7797729400736590,
+  "totalCollectedFeesDay": 0,
+  "transfersCount": 44,
+  "dataContractsCount": 39,
+  "documentsCount": 115,
+  "identitiesCount": 62,
   "network": "dash-testnet-51",
   "api": {
-    "version": "1.0.7",
+    "version": "1.0.8",
     "block": {
-      "height": 72555,
-      "hash": "EDA1CDF601224CD3ED168D35B4699DE2796F774B526103C64D371EF3AAFD8274",
-      "timestamp": "2024-12-17T17:57:08.758Z"
+      "height": 919,
+      "hash": "0B18C97D80A5480635DCA717B53ACE8A8FF6D1EE6DD99A73AEBC8207AA23ACD3",
+      "timestamp": "2024-08-26T22:50:21.503Z"
     }
   },
   "tenderdash": {
     "version": "1.4.0",
     "block": {
-      "height": 72555,
-      "hash": "EDA1CDF601224CD3ED168D35B4699DE2796F774B526103C64D371EF3AAFD8274",
-      "timestamp": "2024-12-17T17:57:08.758Z"
+      "height": 77800,
+      "hash": "1AC55D4514D007461AB44D2DF23CFEF36AD8EAA11932C146A05D8635D7DD40E7",
+      "timestamp": "2024-12-29T15:55:49.194Z"
     }
+  },
+  "indexer": {
+    "status": "syncing",
+    "syncProgress": 1.18123393316195
   },
   "versions": {
     "software": {
-      "dapi": "1.5.1",
-      "drive": "1.6.2",
+      "dapi": "1.7.1",
+      "drive": "1.7.1",
       "tenderdash": "1.4.0"
     },
     "protocol": {
@@ -117,8 +102,8 @@ HTTP /status
         "block": 14
       },
       "drive": {
-        "latest": 6,
-        "current": 6
+        "latest": 7,
+        "current": 7
       }
     }
   }
@@ -131,30 +116,48 @@ Returns info about epoch by specific index
 * tps - Transactions per second
 * totalCollectedFees - total number or fees spent per epoch
 * bestValidator - validator with most validated blocks
+* epoch number can be null
 
 
 ```
-HTTP /epoch/0
+HTTP /epoch/2492
 
 {
-    epoch: {
-        number: 0,
-        firstBlockHeight: 1,
-        firstCoreBlockHeight: 1090319,
-        startTime: 1721353209000,
-        feeMultiplier: 1,
-        endTime: 1721356809000
-    },
-    tps: 0.01666666666,
-    totalCollectedFees: 30,
-    bestValidator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+  "epoch": {
+    "number": 2492,
+    "firstBlockHeight": 44046,
+    "firstCoreBlockHeight": 1131311,
+    "startTime": 1730324534559,
+    "feeMultiplier": 1,
+    "endTime": 1730328026683
+  },
+  "tps": 0.0140315750528904,
+  "totalCollectedFees": 1897008860,
+  "bestValidator": "87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918",
+  "topVotedResource": {
+    "resource": [
+      "dash",
+      "asdthree0"
+    ],
+    "yes": 7,
+    "abstain": 1,
+    "lock": 4
+  },
+  "bestVoter": {
+    "identifier": "4GfuwhaXL5YSerKKwJ19X2s5yXn8dC738tqfcvncqNgM",
+    "yes": 2,
+    "abstain": 1,
+    "lock": 2
+  },
+  "totalVotesCount": 12,
+  "totalVotesGasUsed": 120000000
 }
 ```
 ---
 ### Block by hash
 Get a block by hash
 ```
-GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
+GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
 
 {
   "header": {
@@ -164,7 +167,8 @@ GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
     "blockVersion": 14,
     "appVersion": 4,
     "l1LockedHeight": 1124953,
-    "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234"
+    "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234",
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
   },
   "txs": [
     {
@@ -183,7 +187,9 @@ GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
         "aliases": [
           {
             "alias": "owl352-testnet.dash",
-            "status": "ok"
+            "status": "ok",
+            "contested": false,
+            "timestamp": "2024-08-26 13:29:44.606+00"
           }
         ]
       }
@@ -195,6 +201,7 @@ GET /block/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 ### Blocks by validator
 Return all blocks proposed by the specific validators
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 ```
 GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
 
@@ -213,7 +220,8 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
             blockVersion: 13,
             appVersion: 1,
             validator: "B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18",
-            l1LockedHeight: 1337
+            l1LockedHeight: 1337,
+            "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
         },
         txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
     }, ...
@@ -224,28 +232,45 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
 ### Blocks
 Return all blocks with pagination info
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 ```
-GET /blocks
+GET /blocks?start_epoch_index=1000&end_epoch_index=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8
 
 {
-    pagination: {
-        page: 1,
-        limit: 10,
-        total: 10
-    },
-    resultSet: [
+  "resultSet": [
     {
-        header: {
-            hash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-            height: 1337,
-            timestamp: "2024-03-18T10:13:54.150Z",
-            blockVersion: 13,
-            appVersion: 1,
-            l1LockedHeight: 1337
-        },
-        txs: ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
-    }, ...
-    ]
+      "header": {
+        "hash": "667043D129E088F4D467C56B9A496FA79C82979DC1A53636C24E7CF384AEFEFB",
+        "height": 2653,
+        "timestamp": "2024-08-30T09:43:34.043Z",
+        "blockVersion": 14,
+        "appVersion": 1,
+        "l1LockedHeight": 1093395,
+        "validator": "C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8",
+        "totalGasUsed": 509281140,
+        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+      },
+      "txs": [
+        "EA0A1997F31D5204EB9FC6E49CDEF1E9A7FB446AB1D4B9995A9C7ED3C6CE718B",
+        "38D6CC1BD7C999A913C20A9637059CCD5174E75EEA11FD3CD3F00872F23E1EC7",
+        "2BD1D1074BD4D1BF44B454A478BF28D5C56AFB7755AC4EAD537E46191087F0B2",
+        "E69BBC5871008F1B1A7011E5ED8BC68C05D7873A46358FC28C1FB43F016D51AD",
+        "A2B663CB5C8600C49E9F13AE4AA93D93BB68B3B5670CD2AF91F1C4EA801A9FD3",
+        "32F07D735F7FB2AAA6E9A60F66B3934DB89DBA30FDC01F70BDA160D530E895E6",
+        "AFDC21861488981E0E40A8627D044A74A99B24CB627D02BF58985265C23E24BA",
+        "E5687BC511C4425B4D6509E5854B23E0B2A0A7C7D91DC877C5D238A9400DD7B8",
+        "FE1027D26715DDF148AA31289E51E7C47ECFC8E9E6B4927CB37D7892FB175043",
+        "8D38D5DDD3C0DBEF2716581A100C5EA64D298C4860884B68845EE3B0675B1380",
+        "5B69FB56BC9B7E6816BC7375499ED4729F2D471E9A34716D5E14BBA290769681"
+      ]
+    },
+    ...
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 4
+  }
 }
 ```
 ---
@@ -254,6 +279,7 @@ Return all validators with pagination info.
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
 * `limit` cannot be more then 100 (0 = all validators)
+* `page` cannot be less then 1
 ```
 GET /validators
 
@@ -270,7 +296,8 @@ GET /validators
         l1LockedHeight: 1337,
         appVersion: 1,
         blockVersion: 13
-        validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+        validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
       },
       proTxInfo: {
         type: "Evo",
@@ -341,7 +368,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     l1LockedHeight: 1337,
     appVersion: 1,
     blockVersion: 13,
-    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+    appHash: "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
   },
   proTxInfo: {
     type: "Evo",
@@ -424,7 +452,8 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
     l1LockedHeight: 1337,
     appVersion: 1,
     blockVersion: 13,
-    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0"
+    validator: "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
+    appHash: "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
   },
   proTxInfo: {
     type: "Evo",
@@ -553,7 +582,8 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
         {
           alias: "alias.dash",
           status: "locked",
-          contested: true
+          "contested": true,
+          "timestamp": "2024-08-26 13:29:44.606+00"
         }
       ]
     }
@@ -573,6 +603,7 @@ Return transaction set paged
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 * `owner` Identity identifier
 * `status` can be `SUCCESS`, `FAIL` or `ALL`
 * `transaction_type` number of tx type. Can be set multiple times
@@ -606,7 +637,8 @@ GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3Tc
             {
               alias: "alias.dash",
               status: "locked",
-              contested: true
+              "contested": true,
+              "timestamp": "2024-08-26 13:29:44.606+00"
             }
           ]
         }
@@ -653,6 +685,7 @@ Return dataContracts set paged and order by block height or documents count.
 * Valid `order_by` values are `block_height` or `documents_count`
 * `name` field is nullable
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 
 ```
 GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
@@ -685,20 +718,75 @@ Response codes:
 ```
 ---
 ### Document by Identifier
-Return last revision of the document by given identifier
+Return last revision of the document by given identifier.
+
+Allows to get withdrawals documents by contract id and document type
 ```
-GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
+GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
 {
-    identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    dataContractIdentifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    revision: 0,
-    txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-    deleted: false
-    data: "{}",
-    timestamp: "2024-03-18T10:13:54.150Z",
-    owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    isSystem: false
+  "identifier": "47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ",
+  "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+  "revision": 1,
+  "txHash": "5CA1D01931D7C236194D3364D410946FAF6C12FDC0FB56DB3B05ADB881B43B1A",
+  "deleted": false,
+  "data": {"saltedDomainHash":"DcKS9AWVE1atKvIokA7JNdUNmyj4SbFUvB6e83whw2g="},
+  "timestamp": "2024-12-27T14:31:00.798Z",
+  "isSystem": false,
+  "entropy": "7beffbed25071ab26c0c7c50b3bab098f42126f2a91f9355f492a2d83beb74aa",
+  "prefundedVotingBalance": {
+    "parentNameAndLabel": 20000000000
+  },
+  "typeName": "preorder",
+  "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
+}
+```
+Response codes:
+```
+200: OK
+404: Not found
+500: Internal Server Error
+```
+---
+### Document Transactions
+Return transactions for selected document
+
+* Valid `order_by` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+
+```
+GET /document/ELEeNjGbqCsHNtkoJ51pFHvUyCk5sxgU1jYVuySMhQwN/transactions
+
+{
+  "resultSet": [
+    {
+      "revision": 1,
+      "gasUsed": 38201380,
+      "owner": "Gn15UqiQ6gpqzXcDhv4adwsJ1KgpG6xx9e3rij9n4ctP",
+      "hash": "437C949982B41E00506B88C62A94B3E032FADFB010BCA91F3A4C874EB75F9E23",
+      "timestamp": "2024-08-25T18:32:24.454Z",
+      "transitionType": 0,
+      "data": {
+        "label": "BurgerJoint2",
+        "records": {
+          "identity": "Gn15UqiQ6gpqzXcDhv4adwsJ1KgpG6xx9e3rij9n4ctP"
+        },
+        "preorderSalt": "GV43pQXjfaSZ5FryGKsyKJBja2L+fwxXz9Npe0MH2WQ=",
+        "subdomainRules": {
+          "allowSubdomains": false
+        },
+        "normalizedLabel": "burgerj01nt2",
+        "parentDomainName": "dash",
+        "normalizedParentDomainName": "dash"
+      }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1
+  }
 }
 ```
 Response codes:
@@ -711,28 +799,33 @@ Response codes:
 ### Documents by Data Contract
 Return all documents by the given data contract identifier
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `document_type_name` optional
 ```
-GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
+GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?document_type_name=domain&page=1&limit=10&order=desc
 
 {
-    pagination: {
-        page: 1,
-        limit: 10,
-        total: 10
-    },
-    resultSet: [
+  "resultSet": [
     {
-        identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        dataContractIdentifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        revision: 0,
-        txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        deleted: false
-        data: "{}",
-        timestamp: "2024-03-18T10:13:54.150Z",
-        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        isSystem: false
+      "identifier": "47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "revision": 1,
+      "txHash": "5CA1D01931D7C236194D3364D410946FAF6C12FDC0FB56DB3B05ADB881B43B1A",
+      "deleted": false,
+      "data": "{\"label\":\"web\",\"records\":{\"identity\":\"8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6\"},\"preorderSalt\":\"HVKEY/12WglST1QCqxH9/yJsp8MMb+1GLc8xWw23PCI=\",\"subdomainRules\":{\"allowSubdomains\":false},\"normalizedLabel\":\"web\",\"parentDomainName\":\"dash\",\"normalizedParentDomainName\":\"dash\"}",
+      "timestamp": "2024-12-27T14:31:00.798Z",
+      "isSystem": false,
+      "entropy": null,
+      "prefundedVotingBalance": null,
+      "typeName": "domain",
+      "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
     }, ...
-    ]
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 521
+  }
 }
 ```
 Response codes:
@@ -744,10 +837,10 @@ Response codes:
 ### Identity by Identifier
 Return identity by given identifier
 ```
-GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
+GET /identity/3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ
 
 {
-  "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+  "identifier": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ",
   "revision": 0,
   "balance": 49989647300,
   "timestamp": "2024-10-12T18:51:44.592Z",
@@ -761,7 +854,8 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
     {
       "alias": "owl352.dash",
       "status": "ok",
-      "contested": false
+      "contested": false,
+      "timestamp": "2024-08-26 13:29:44.606+00"
     }
   ],
   "totalGasSpent": 310352700,
@@ -858,6 +952,7 @@ Return all identities paged and order by block height, tx count or balance.
 
 * Valid `order_by` values are `block_height`, `tx_count` or `balance`
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 ```
 GET /identities?page=1&limit=10&order=asc&order_by=block_height
 
@@ -884,7 +979,8 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
             {
               alias: "alias.dash",
               status: "locked",
-              contested: true
+              "contested": true,
+              "timestamp": "2024-08-26 13:29:44.606+00"
             }
           ]
       }, ...
@@ -903,6 +999,7 @@ Return all withdrawals for identity
 _Note: this request does not contain any pagination data in the response_
 
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 * returns 404 `not found` if identity don't have withdrawals
 * Pagination always `null`
 ```
@@ -940,6 +1037,7 @@ Return all data contracts by the given identity
 
 * `name` field is nullable
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=1&limit=10&order=asc
 
@@ -973,28 +1071,33 @@ Response codes:
 ### Documents by Identity
 Return all documents by the given identity
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `document_type_name` document type name _optional_
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&document_type_name=preorder
 
 {
-    pagination: {
-        page: 1,
-        limit: 10,
-        total: 10
-    },
-    resultSet: [
+  "resultSet": [
     {
-        identifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        owner: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        dataContractIdentifier: "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        revision: 0,
-        txHash: "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        deleted: false,
-        data: null,
-        timestamp: "2024-03-18T10:13:54.150Z",
-        isSystem: false
+      "identifier": "47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "revision": 1,
+      "txHash": "5CA1D01931D7C236194D3364D410946FAF6C12FDC0FB56DB3B05ADB881B43B1A",
+      "deleted": false,
+      "data": null,
+      "timestamp": "2024-12-27T14:31:00.798Z",
+      "isSystem": false,
+      "entropy": null,
+      "prefundedVotingBalance": null,
+      "typeName": "domain",
+      "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
     }, ...
-    ]
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 4
+  }
 }
 ```
 Response codes:
@@ -1008,6 +1111,7 @@ Return all transactions made by the given identity
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
 
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
@@ -1044,6 +1148,8 @@ Response codes:
 ### Transfers by Identity
 Return all transfers made by the given identity
 * `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `type` cannot be less, then 0 and more then 8
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
@@ -1064,6 +1170,46 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E
         blockHash: "73171E0A8DCC10C6DA501E1C70A9C1E0BD6F1F8F834C2A1E787AF19B1F361D5E"
     }
     ]
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
+### Masternode Votes
+Return list of votes by params
+* `limit` cannot be more than 100
+* `type` cannot be less than 0 and more than 8
+* `choice` cannot be less than 0 and more than 3
+```
+GET /masternodes/votes?timestamp_start=2024-09-18T01:10:57.833Z&timestamp_end=2024-09-19T01:10:57.833Z&voter_identity=2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9&choice=0&towards_identity=LgdvpQHb7mvrab6Vv49iTz912aHBVjpTJ6rXGRDQL2s
+
+{
+  "resultSet": [
+    {
+      "proTxHash": "bc77a5a2cec455c79fb92fb683dbd87a2a92b663c9a46d0c50d11889b4aeb121",
+      "txHash": "499C9C0830F98B395CFC440EE34A96C550DF5000A78B5604BC2B50B4545E0D2C",
+      "voterIdentifier": "2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9",
+      "choice": 0,
+      "timestamp": "2024-09-18T19:27:17.212Z",
+      "towardsIdentity": "LgdvpQHb7mvrab6Vv49iTz912aHBVjpTJ6rXGRDQL2s ",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "documentTypeName": "domain",
+      "indexName": "parentNameAndLabel",
+      "indexValues": [
+        "dash",
+        "test001"
+      ],
+      "powerMultiplier": null
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1
+  }
 }
 ```
 Response codes:
@@ -1143,6 +1289,7 @@ Response codes:
 200: OK
 500: Internal Server Error
 ```
+___
 ### Transactions history
 Return a series data for the amount of transactions chart
 
@@ -1177,6 +1324,7 @@ Response codes:
 400: Invalid input, check start/end values
 500: Internal Server Error
 ```
+___
 ### Transactions Gas history
 Return a series data for the used gas of transactions chart
 
@@ -1211,6 +1359,88 @@ Response codes:
 400: Invalid input, check start/end values
 500: Internal Server Error
 ```
+___
+### Contested Data Contracts
+Return a series Data Contracts, which contains contested types
+
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+* Valid `order_by` values are `block_height` or `documents_count`
+
+```
+GET /contested/dataContracts?limit=10&page=1&order=asc&order_by=block_height
+{
+  "resultSet": [
+    {
+      "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "name": "DPNS",
+      "owner": "11111111111111111111111111111111",
+      "schema": null,
+      "version": 0,
+      "txHash": null,
+      "timestamp": null,
+      "isSystem": true,
+      "documentsCount": 1413,
+      "contestedDocumentsCount": 231
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1
+  }
+}
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
+### Contested Documents
+Return a series contested documents
+
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+```
+GET /contested/documents?limit=10&page=1&order=asc&document_type_name=domain
+{
+  "resultSet": [
+    {
+      "identifier": "nLxqkMa9GRgfFGJpW9aE8ykYHxSR8Nat49cCNHXZR5a",
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "revision": 1,
+      "txHash": "069422484BEEF731CFDBA601BDAC80BCF1FB009FACE7EE4897F3D4AE72EF85D8",
+      "deleted": false,
+      "data": "{\"label\":\"test111\",\"records\":{\"identity\":\"AC5EoXmLSpM6Q9S2BFMrfFFqmhCSiE5yKVdA3L5DkcjU\"},\"preorderSalt\":\"gIUpKYlk2J7wIxr6IWoPrtLW6+wNnaeKp4mfED6aLeI=\",\"subdomainRules\":{\"allowSubdomains\":false},\"normalizedLabel\":\"test111\",\"parentDomainName\":\"dash\",\"normalizedParentDomainName\":\"dash\"}",
+      "timestamp": "2024-08-26T22:14:06.680Z",
+      "system": false,
+      "entropy": null,
+      "prefundedVotingBalance": {
+        "parentNameAndLabel": 20000000000
+      },
+      "documentTypeName": "domain",
+      "transitionType": 0,
+      "nonce": null,
+      "owner": "AC5EoXmLSpM6Q9S2BFMrfFFqmhCSiE5yKVdA3L5DkcjU"
+    },
+    ...
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 231
+  }
+}
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
 ### Rate
 Return a rate DASH to USD
 ```
@@ -1226,6 +1456,7 @@ Response codes:
 500: Internal Server Error
 503: Service Temporarily Unavailable
 ```
+___
 ### Decode Raw Transaction
 Return a decoded State Transition
 
@@ -1244,7 +1475,7 @@ Available transactions type for decode
 | `MASTERNODE_VOTE`            | 8          |
 
 - `fundingAddress` can be null
-- `prefundedBalance` can be null
+- `prefundedVotingBalance` can be null
 - `contractBounds` always null
 
 ```
@@ -1413,6 +1644,7 @@ POST /transaction/decode
             "type": "domain",
             "action": 0,
             "data": {
+                "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
                 "label": "Microsoft",
                 "normalizedLabel": "m1cr0s0ft",
                 "normalizedParentDomainName": "dash",
@@ -1425,7 +1657,7 @@ POST /transaction/decode
                     "allowSubdomains": false
                 }
             },
-            "prefundedBalance": {
+            "prefundedVotingBalance": {
                 "parentNameAndLabel": 20000000000
             }
         }
@@ -1677,7 +1909,7 @@ IDENTITY_CREATE with instantLock
 ```
 {
     "type": 8,
-    "contestedResourcesVotePoll": [
+    "indexValues": [
         "EgRkYXNo",
         "EgN5MDE="
     ],

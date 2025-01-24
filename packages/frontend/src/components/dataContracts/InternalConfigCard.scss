@@ -1,0 +1,53 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.InternalConfigCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: $font-mono;
+  padding: 2.5rem !important;
+
+  &__Line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__Title {
+    white-space: break-spaces;
+    width: 16.875rem;
+    color: var(--chakra-colors-gray-250);
+    font-size: 0.75rem;
+
+    &:after {
+      content: ':';
+    }
+  }
+
+  &__ValueContainer {
+    font-size: 0.688rem;
+  }
+
+  &__ValueContainer {
+    max-width: max-content;
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    padding: 1rem !important;
+
+    &__Line {
+      justify-content: space-between;
+    }
+  }
+
+  @media screen and (max-width: 18em) {
+    &__Line {
+      flex-wrap: wrap;
+    }
+
+    &__ValueContainer {
+      margin-left: auto;
+    }
+  }
+}

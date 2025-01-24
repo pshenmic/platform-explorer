@@ -30,7 +30,13 @@
 
   @media screen and (max-width: $breakpoint-md) {
     &__Slider {
-     width: calc(100% + 20px);
+      width: calc(100% + 20px);
+    }
+
+    .Slider__Carousel {
+      width: 110%;
+      margin: 0 calc(-5% - 4px);
+      overflow: visible;
     }
 
     &__CardsColumn {

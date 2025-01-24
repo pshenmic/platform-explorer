@@ -17,6 +17,10 @@ describe('Epoch routes', () => {
   let identities
   let transactions
   let validator
+  let dataContracts
+  let documents
+  let masternodeVotes
+  let masternodeVotesGas
 
   before(async () => {
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
@@ -49,6 +53,10 @@ describe('Epoch routes', () => {
     blocks = []
     transactions = []
     identities = []
+    dataContracts = []
+    documents = []
+    masternodeVotes = []
+    masternodeVotesGas = 0
 
     await fixtures.cleanup(knex)
 
@@ -67,9 +75,36 @@ describe('Epoch routes', () => {
         gas_used: Math.ceil(Math.random() * 1000),
         owner: identity.identifier
       })
+      const dataContract = await fixtures.dataContract(knex, {
+        owner: identity.identifier
+      })
+      const document = await fixtures.document(knex, {
+        owner: identity.identifier,
+        data_contract_id: dataContract.id
+      })
+
+      const masternodeVotesPart = []
+
+      for (let v = 0; v < i; v++) {
+        const masternodeVote = await fixtures.masternodeVote(knex, {
+          state_transition_hash: transaction.hash,
+          voter_identity_id: identity.identifier,
+          data_contract_id: dataContract.id,
+          choice: v % 2 === 0 ? 0 : 1,
+          index_values: JSON.stringify([i])
+        })
+
+        masternodeVotesGas = masternodeVotesGas + transaction.gas_used
+
+        masternodeVotesPart.push(masternodeVote)
+      }
+
       blocks.push(block)
       transactions.push(transaction)
       identities.push(identity)
+      dataContracts.push(dataContract)
+      documents.push(document)
+      masternodeVotes.push(masternodeVotesPart)
     }
   })
 
@@ -95,7 +130,21 @@ describe('Epoch routes', () => {
         },
         tps: (identities.length + transactions.length) / 1800,
         totalCollectedFees: transactions.reduce((acc, tx) => acc + tx.gas_used, 0),
-        bestValidator: validator.pro_tx_hash
+        bestValidator: validator.pro_tx_hash,
+        bestVoter: {
+          abstain: 15,
+          yes: 15,
+          lock: 0,
+          identifier: masternodeVotes[masternodeVotes.length - 1][0].voter_identity_id
+        },
+        topVotedResource: {
+          abstain: 15,
+          yes: 15,
+          lock: 0,
+          resource: [30]
+        },
+        totalVotesCount: 465,
+        totalVotesGasUsed: masternodeVotesGas
       }
       assert.deepEqual(body, expectedBlock)
     })

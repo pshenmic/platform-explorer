@@ -14,7 +14,7 @@ class MainController {
   constructor (knex, dapi, client) {
     this.blocksDAO = new BlocksDAO(knex, dapi)
     this.dataContractsDAO = new DataContractsDAO(knex)
-    this.documentsDAO = new DocumentsDAO(knex)
+    this.documentsDAO = new DocumentsDAO(knex, client)
     this.transactionsDAO = new TransactionsDAO(knex, dapi)
     this.identitiesDAO = new IdentitiesDAO(knex, dapi, client)
     this.validatorsDAO = new ValidatorsDAO(knex)
@@ -38,6 +38,11 @@ class MainController {
 
     const epoch = epochInfo ? Epoch.fromObject(epochInfo) : null
 
+    const tdHeight = tdStatus?.highestBlock?.height
+    const indexerHeight = blocks?.pagination.total
+
+    const indexerSynced = (tdHeight - indexerHeight) <= 1
+
     response.send({
       epoch,
       transactionsCount: stats?.transactionsCount,
@@ -51,9 +56,9 @@ class MainController {
       api: {
         version: API_VERSION,
         block: {
-          height: currentBlock?.header?.height,
-          hash: currentBlock?.header?.hash,
-          timestamp: currentBlock?.header?.timestamp.toISOString()
+          height: currentBlock?.header?.height ?? null,
+          hash: currentBlock?.header?.hash ?? null,
+          timestamp: currentBlock?.header?.timestamp.toISOString() ?? null
         }
       },
       tenderdash: {
@@ -63,6 +68,10 @@ class MainController {
           hash: tdStatus?.highestBlock?.hash ?? null,
           timestamp: tdStatus?.highestBlock?.timestamp ?? null
         }
+      },
+      indexer: {
+        status: indexerSynced ? 'synced' : 'syncing',
+        syncProgress: indexerHeight / tdHeight * 100
       },
       versions: {
         software: {

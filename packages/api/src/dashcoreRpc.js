@@ -12,36 +12,57 @@ const config = {
 const rpc = new RpcClient(config)
 
 class DashCoreRPC {
-  static async getRawTransaction (proTxHash) {
+  static async callMethod (method, args, onError = (e) => {}) {
     try {
-      const { result } = await rpc.getRawTransaction(proTxHash, 1)
+      const { result } = await rpc[method](...args)
 
       return result
     } catch (e) {
-      console.error(e)
-      throw new ServiceNotAvailableError()
-    }
-  }
+      const handlerResponse = await onError(e)
 
-  static async getProTxInfo (proTxHash, blockHash = undefined) {
-    try {
-      const args = ['info', proTxHash]
-      if (blockHash) args.push(blockHash)
-
-      const { result } = await rpc.protx(...args)
-
-      return result
-    } catch (e) {
-      if (e.code === -8) {
-        const { blockhash } = await this.getRawTransaction(proTxHash)
-        const result = await this.getProTxInfo(proTxHash, blockhash)
-
-        return result
+      if (handlerResponse) {
+        return handlerResponse
       }
 
       console.error(e)
       throw new ServiceNotAvailableError()
     }
+  }
+
+  static async getRawTransaction (proTxHash) {
+    return await this.callMethod('getRawTransaction', [proTxHash, 1])
+  }
+
+  static async getProTxInfo (proTxHash, blockHash = undefined) {
+    const args = ['info', proTxHash]
+    if (blockHash) args.push(blockHash)
+
+    return await this.callMethod('protx', args, async (e) => {
+      if (e.code === -8) {
+        const { blockhash } = await this.getRawTransaction(proTxHash)
+
+        return await this.getProTxInfo(proTxHash, blockhash)
+      }
+    })
+  }
+
+  static async getQuorumsListExtended (height) {
+    const args = ['listextended']
+    if (height) args.push(height)
+
+    return await this.callMethod('quorum', args)
+  }
+
+  static async getQuorumInfo (quorumHash, llmqType = 1) {
+    return await this.callMethod('quorum', ['info', llmqType, quorumHash])
+  }
+
+  static async getNodeMemberOfQuorum (proTxHash, count) {
+    const args = ['memberof', proTxHash]
+
+    if (count) args.push(count)
+
+    return await this.callMethod('quorum', args)
   }
 }
 

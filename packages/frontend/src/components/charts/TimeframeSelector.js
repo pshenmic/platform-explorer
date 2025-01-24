@@ -10,10 +10,13 @@ export default function TimeframeSelector ({
   changeCallback,
   openStateCallback,
   menuRef,
+  forceTimespan,
   className
 }) {
   const [timespan, setTimespan] = useState(config.timespan.values[config.timespan.defaultIndex])
   const [menuIsOpen, setMenuIsOpen] = useState(false)
+
+  useEffect(() => setTimespan(forceTimespan), [forceTimespan])
 
   const changeHandler = (value) => {
     setTimespan(value)
@@ -36,18 +39,19 @@ export default function TimeframeSelector ({
         className={'TimeframeSelector__Menu'}
         config={config}
         changeCallback={changeHandler}
+        forceTimespan={timespan}
       />
       <Button
         className={`TimeframeSelector__Button ${menuIsOpen ? 'TimeframeSelector__Button--Active' : ''}`}
         onClick={() => setMenuIsOpen(state => !state)}
       >
         <CalendarIcon2 mr={'10px'}/>
-        {timespan.label}
+        {timespan?.label}
         <CloseIcon
           color={'gray.250'}
           style={{ transition: 'all .1s' }}
-          ml={menuIsOpen ? '10px' : 0}
-          w={menuIsOpen ? '8px' : 0}
+          ml={menuIsOpen ? '10px' : '0px'}
+          w={menuIsOpen ? '8px' : '0px'}
           h={'8px'}
         />
       </Button>

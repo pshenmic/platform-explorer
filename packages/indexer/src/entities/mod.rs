@@ -5,3 +5,4 @@ pub mod document;
 pub mod identity;
 pub mod transfer;
 pub mod validator;
+pub mod masternode_vote;

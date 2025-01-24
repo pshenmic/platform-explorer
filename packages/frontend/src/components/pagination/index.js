@@ -17,12 +17,12 @@ function Pagination ({
   return (
     <ReactPaginate
       breakLabel={'...'}
-      nextLabel={<ChevronIcon/>}
+      nextLabel={<ChevronIcon color={'gray.250'}/>}
       onPageChange={onPageChange}
       pageRangeDisplayed={pageRangeDisplayed}
       marginPagesDisplayed={marginPagesDisplayed}
       pageCount={pageCount}
-      previousLabel={<ChevronIcon/>}
+      previousLabel={<ChevronIcon color={'gray.250'}/>}
       pageClassName={'PageItem'}
       pageLinkClassName={'PageLink'}
       previousClassName={'PageItem PageItem--Previous'}
