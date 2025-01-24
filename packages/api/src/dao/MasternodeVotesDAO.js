@@ -6,16 +6,9 @@ module.exports = class MasternodeVotesDAO {
     this.knex = knex
   }
 
-  getMasternodeVotes = async (timestampStart, timestampEnd, voterIdentity, towardsIdentity, choice, power, voterId, page, limit, order) => {
+  getMasternodeVotes = async (timestampStart, timestampEnd, voterIdentity, towardsIdentity, choice, power, page, limit, order) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
-
-    const voterIdFilter = voterId
-      ? [
-          'voter_identity_id = ?',
-          [voterId]
-        ]
-      : ['true']
 
     const timestampFilter = timestampStart && timestampEnd
       ? [
@@ -56,7 +49,6 @@ module.exports = class MasternodeVotesDAO {
       .whereRaw(...voterIdentityFilter)
       .whereRaw(...towardsIdentityFilter)
       .whereRaw(...choiceFilter)
-      .whereRaw(...voterIdFilter)
       .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
       .leftJoin('state_transitions', 'masternode_votes.state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
