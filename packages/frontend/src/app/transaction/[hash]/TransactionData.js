@@ -1,7 +1,7 @@
 import { StateTransitionEnum } from '../../../enums/state.transition.type'
 import { ValueCard } from '../../../components/cards'
 import { Identifier, InfoLine, CreditsBlock, VoteChoice, CodeBlock } from '../../../components/data'
-import { TransitionCard, PublicKeyCard } from '../../../components/transactions'
+import { TransitionCard, PublicKeyCard, VoteIndexValues } from '../../../components/transactions'
 import { ValueContainer } from '../../../components/ui/containers'
 import { networks } from '../../../constants/networks'
 import { CopyButton } from '../../../components/ui/Buttons'
@@ -146,6 +146,16 @@ function TransactionData ({ data, type, loading, rate }) {
         loading={loading}
         error={!data?.indexName}
       />
+
+      {data?.indexValues &&
+        <InfoLine
+          className={'TransactionPage__InfoLine TransactionPage__InfoLine--Baseline'}
+          title={'Index Values'}
+          value={<VoteIndexValues indexValues={data?.indexValues}/>}
+          loading={loading}
+          error={!data?.indexValues}
+        />
+      }
     </>)
   }
 

@@ -4,6 +4,7 @@ import FeeMultiplier from './FeeMultiplier'
 import TypeBadge from './TypeBadge'
 import PublicKeyCard from './PublicKeyCard'
 import TransactionStatusBadge from './TransactionStatusBadge'
+import VoteIndexValues from './VoteIndexValues'
 
 export {
   TransitionCard,
@@ -11,5 +12,6 @@ export {
   FeeMultiplier,
   TypeBadge,
   PublicKeyCard,
-  TransactionStatusBadge
+  TransactionStatusBadge,
+  VoteIndexValues
 }
