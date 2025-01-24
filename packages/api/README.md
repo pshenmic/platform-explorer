@@ -1148,7 +1148,6 @@ Return list of votes by params
 * `limit` cannot be more than 100
 * `type` cannot be less than 0 and more than 8
 * `choice` cannot be less than 0 and more than 3
-* `query` must be tx hash or voter identity
 ```
 GET /masternodes/votes?timestamp_start=2024-09-18T01:10:57.833Z&timestamp_end=2024-09-19T01:10:57.833Z&voter_identity=2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9&choice=0&towards_identity=LgdvpQHb7mvrab6Vv49iTz912aHBVjpTJ6rXGRDQL2s
 
