@@ -3,6 +3,8 @@
 
 .Alias {
   width: max-content;
+  display: flex;
+  align-items: center;
   font-family: $font-mono;
   font-size: 0.75rem;
   color: #fff;
@@ -27,6 +29,13 @@
       opacity: 1;
     }
   }
+
+  &__Avatar {
+    @include mixins.AvatarSize;
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+
 
   &__Domain {
     opacity: .5;

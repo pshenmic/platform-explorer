@@ -6,6 +6,7 @@
   display: flex;
   padding: 64px;
   width: 100%;
+  gap: 2.5rem;
 
   &__Title {
     font-style: italic;
@@ -24,12 +25,12 @@
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    margin-left: 84px;
   }
 
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 75em) {
     flex-wrap: wrap;
-    padding: 40px;
+    padding: 2.5rem;
+    gap: 2.5rem;
 
     &__Info, &__Block {
       width: 100%;
@@ -38,5 +39,10 @@
     &__Block {
       margin-left: 0;
     }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    gap: 1.5rem;
+    padding: 1.5rem;
   }
 }

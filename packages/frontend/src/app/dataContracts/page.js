@@ -4,6 +4,7 @@ import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { Container } from '@chakra-ui/react'
 import Cards from './Cards'
+import './DataContractsIntro.scss'
 
 export const metadata = {
   title: 'Data Contracts — Dash Platform Explorer',
@@ -24,6 +25,7 @@ function DataContractsRoute ({ searchParams }) {
       mb={0}
     >
       <Intro
+        className={'DataContractsIntro'}
         title={'Data contracts'}
         description={<Markdown>{introContent}</Markdown>}
         block={<Cards/>}

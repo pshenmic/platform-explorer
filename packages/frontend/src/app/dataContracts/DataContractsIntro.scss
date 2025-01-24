@@ -1,0 +1,19 @@
+@import '../../styles/variables.scss';
+
+.DataContractsIntro {
+  .Intro__Info {
+    width: 360px;
+  }
+
+  @media screen and (max-width: 75em) {
+    overflow: hidden;
+
+    .Intro__Info {
+      width: 100%;
+    }
+
+    .Intro__Block {
+      overflow: visible;
+    }
+  }
+}
