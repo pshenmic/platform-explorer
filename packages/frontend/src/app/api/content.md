@@ -1791,7 +1791,7 @@ IDENTITY_CREATE with instantLock
 ```
 {
     "type": 8,
-    "contestedResourcesVotePoll": [
+    "indexValues": [
         "EgRkYXNo",
         "EgN5MDE="
     ],
