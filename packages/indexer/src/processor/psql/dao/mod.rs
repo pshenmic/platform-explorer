@@ -237,7 +237,7 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await?;
 
         let stmt = client.prepare_cached("SELECT hash,height,timestamp,\
-        block_version,app_version,l1_locked_height,validator FROM blocks where height = $1;").await.unwrap();
+        block_version,app_version,l1_locked_height,validator,app_hash FROM blocks where height = $1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[
             &block_height
