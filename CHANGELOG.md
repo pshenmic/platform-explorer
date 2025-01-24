@@ -1,5 +1,59 @@
 # CHANGELOG
 
+### v1.0.12
+
+## Changes
+
+## API
+
+- Masternodes Votes API @owl352 (#425)
+- New fields for documents and list of documents by document type @owl352 (#406)
+- Naming fix for decoded MN vote TX @owl352 (#441)
+- Update price field price API  @owl352 (#440)
+- Receiver Id and Purchase price API @owl352 (#439)
+- Fix of documents from dapi search and documentation  @owl352 (#432)
+- Entropy error fix @owl352 (#426)
+- Document Batch Action Enum fix @owl352 (#411)
+- Quorums and DashcoreRPC code duplication fixes @owl352 (#410)
+- Blocks list filters and `totalGasUsed` field @owl352 (#365)
+- Aliases structure fix @owl352 (#409)
+- Decoded Document Batch Tx Nonce @owl352 (#408)
+- Indexer syncing progress for `/status` @owl352 (#403)
+- Entropy field for Documents batch  @owl352 (#394)
+- Aliases timestamps @owl352 (#384)
+- Nonce and version for decoded state transitions @owl352 (#377)
+- Documents from DAPI @owl352 (#322)
+- Quorum info for specific block route @owl352 (#364)
+- `setPublicKeyIdsToDisable` error fix @owl352 (#405)
+
+## Frontend
+
+- Improve Transaction page @AlexeyTripleA (#436)
+- Improve Data Contracts page @AlexeyTripleA (#438)
+- Update transactions chart format @AlexeyTripleA (#431)
+- Implement time update function @AlexeyTripleA (#424)
+- Update pagination styles @AlexeyTripleA (#420)
+- Improve charts on the Validator page @AlexeyTripleA (#430)
+- Refactoring code of theme.js @AlexeyTripleA (#428)
+- Fix transaction breadcrumbs @AlexeyTripleA (#427)
+- Update smooth size container @AlexeyTripleA (#421)
+- Remove trailing zeros @AlexeyTripleA (#423)
+- Update documents request to api @AlexeyTripleA (#433)
+- Fix pagination of lists on the Identity page @AlexeyTripleA (#435)
+- Disable Christmas elements @AlexeyTripleA (#422)
+- Set current year in footer dynamically @AlexeyTripleA (#417)
+- Fix scrollbar of public keys list @AlexeyTripleA (#416)
+- Fix document action enum @AlexeyTripleA (#415)
+- Fix pagination of documents on Identity page @AlexeyTripleA (#404)
+
+## Indexer
+
+- Fix indexer block header typo @pshenmic (#443)
+- Add app hash in the indexer @pshenmic (#437)
+- Index prefunded voting balance in the documents @pshenmic (#434)
+- Add WalletUtils contract  @pshenmic (#429)
+- Masternode votes in the indexer @pshenmic (#418)
+
 ### v1.0.11
 
 ## Changes
