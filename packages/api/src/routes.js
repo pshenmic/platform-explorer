@@ -376,22 +376,6 @@ module.exports = ({
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       }
-    },
-    {
-      path: '/masternodes/votes/search',
-      method: 'GET',
-      handler: masternodeVotesController.masternodeVoteSearch,
-      schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            query: { type: 'string' },
-            page: { $ref: 'paginationOptions#/properties/page' },
-            limit: { $ref: 'paginationOptions#/properties/limit' },
-            order: { $ref: 'paginationOptions#/properties/order' }
-          }
-        }
-      }
     }
   ]
 
