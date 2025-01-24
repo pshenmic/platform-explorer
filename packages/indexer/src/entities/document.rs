@@ -27,6 +27,7 @@ pub struct Document {
     pub deleted: bool,
     pub revision: Revision,
     pub is_system: bool,
+    pub prefunded_voting_balance: Option<(String, Credits)>,
 }
 
 impl From<DocumentTransition> for Document {
@@ -42,6 +43,7 @@ impl From<DocumentTransition> for Document {
                 let identifier = base.id();
                 let data_contract_identifier = base.data_contract_id();
                 let document_type_name = base.document_type_name().clone();
+                let prefunded_voting_balance = transition.prefunded_voting_balance().clone();
 
                 return Document {
                     id: None,
@@ -55,6 +57,7 @@ impl From<DocumentTransition> for Document {
                     revision: revision.unwrap(),
                     deleted: false,
                     is_system: false,
+                    prefunded_voting_balance,
                 };
             }
             DocumentTransition::Replace(transition) => {
@@ -77,6 +80,7 @@ impl From<DocumentTransition> for Document {
                     revision: revision.unwrap(),
                     deleted: false,
                     is_system: false,
+                    prefunded_voting_balance: None,
                 };
             }
             DocumentTransition::Delete(transition) => {
@@ -97,6 +101,7 @@ impl From<DocumentTransition> for Document {
                     revision: Revision::from(0 as u64),
                     deleted: true,
                     is_system: false,
+                    prefunded_voting_balance: None,
                 };
             }
             DocumentTransition::Transfer(transition) => {
@@ -119,6 +124,7 @@ impl From<DocumentTransition> for Document {
                     revision,
                     deleted: true,
                     is_system: false,
+                    prefunded_voting_balance: None,
                 };
             }
             DocumentTransition::UpdatePrice(transition) => {
@@ -141,6 +147,7 @@ impl From<DocumentTransition> for Document {
                     revision,
                     deleted: true,
                     is_system: false,
+                    prefunded_voting_balance: None,
                 };
             }
             DocumentTransition::Purchase(transition) => {
@@ -162,6 +169,7 @@ impl From<DocumentTransition> for Document {
                     revision: Revision::from(0 as u64),
                     deleted: true,
                     is_system: false,
+                    prefunded_voting_balance: None,
                 };
             }
         }
@@ -181,6 +189,7 @@ impl From<Row> for Document {
         let deleted: bool = row.get(7);
         let revision: i32 = row.get(8);
         let is_system: bool = row.get(9);
+        let prefunded_voting_balance: Option<Value> = row.get(10);
 
         let transition_type = match transition_type_i64 {
             0 => DocumentTransitionActionType::Create,
@@ -204,6 +213,13 @@ impl From<Row> for Document {
             is_system,
             revision: Revision::from(revision as u64),
             transition_type: DocumentTransitionActionType::try_from(transition_type).unwrap(),
+            prefunded_voting_balance: prefunded_voting_balance.map(|value|{
+                let test = value.as_object().unwrap();
+
+                let (index_name, credits) = test.iter().nth(0).unwrap();
+
+                (index_name.to_string(), credits.as_u64().unwrap())
+            }),
         }
     }
 }

@@ -8,6 +8,7 @@ use base64::{Engine as _, engine::{general_purpose}};
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::{Base58};
 use dpp::voting::vote_choices::resource_vote_choice::ResourceVoteChoice;
+use serde_json::{Map, Number, Value};
 use crate::entities::block_header::BlockHeader;
 use crate::entities::data_contract::DataContract;
 use crate::entities::identity::Identity;
@@ -110,6 +111,16 @@ impl PostgresDAO {
         let revision_i32 = revision as i32;
         let transition_type = document.transition_type as i64;
         let data = document.data;
+        let prefunded_voting_balance: Option<Value> = document.prefunded_voting_balance
+            .map(|prefunded_voting_balance| {
+                let (index_name, credits) = prefunded_voting_balance;
+
+                let mut map: Map<String, Value> = Map::new();
+                map.insert(index_name, Value::Number(Number::from(credits)));
+
+                return serde_json::to_value(map).unwrap();
+            });
+
         let is_system = document.is_system;
 
         let owner: Identifier = match document.owner {
@@ -133,7 +144,7 @@ impl PostgresDAO {
         let data_contract_id = data_contract.id.unwrap() as i32;
 
         let query = "INSERT INTO documents(identifier,document_type_name,transition_type,owner,revision,data,deleted,\
-        state_transition_hash,data_contract_id,is_system) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
+        state_transition_hash,data_contract_id,is_system,prefunded_voting_balance) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
 
         let stmt = client.prepare_cached(query).await.unwrap();
 
@@ -147,7 +158,8 @@ impl PostgresDAO {
             &document.deleted,
             &st_hash,
             &data_contract_id,
-            &is_system
+            &is_system,
+            &prefunded_voting_balance
         ]).await.unwrap();
 
         println!("Created document {} [{} revision] [is_deleted {}]",
@@ -267,7 +279,7 @@ impl PostgresDAO {
 
         let stmt = client.prepare_cached("SELECT documents.id, documents.identifier,\
         documents.document_type_name,documents.transition_type,data_contracts.identifier,documents.owner,documents.price,\
-        documents.deleted,documents.revision,documents.is_system \
+        documents.deleted,documents.revision,documents.is_system,documents.prefunded_voting_balance \
         FROM documents \
         LEFT JOIN data_contracts ON data_contracts.id = documents.data_contract_id \
         WHERE documents.identifier = $1 \
@@ -306,8 +318,8 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await.unwrap();
 
         let stmt = client.prepare_cached("INSERT INTO blocks(hash, height, \
-        timestamp, block_version, app_version, l1_locked_height, validator) \
-        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING hash;").await.unwrap();
+        timestamp, block_version, app_version, l1_locked_height, validator, app_hash) \
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING hash;").await.unwrap();
 
         let rows = client.query(&stmt, &[
             &block_header.hash,
@@ -316,12 +328,13 @@ impl PostgresDAO {
             &block_header.block_version,
             &block_header.app_version,
             &block_header.l1_locked_height,
-            &block_header.proposer_pro_tx_hash
+            &block_header.proposer_pro_tx_hash,
+            &block_header.app_hash
         ]).await.unwrap();
 
         let block_hash: String = rows[0].get(0);
 
-        return block_hash;
+        block_hash
     }
 
     pub async fn get_validator_by_pro_tx_hash(&self, pro_tx_hash: String) -> Result<Option<Validator>, PoolError> {

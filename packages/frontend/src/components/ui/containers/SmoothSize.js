@@ -1,17 +1,16 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
+import useResizeObserver from '@react-hook/resize-observer'
 
 const SmoothSize = ({ className, children, duration = 0.3, smoothHeight = true, smoothWidth = false, easing = 'ease' }) => {
   const containerRef = useRef(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
-  useEffect(() => {
-    if (containerRef.current) {
-      const { scrollWidth, scrollHeight } = containerRef.current
-      setDimensions({ width: scrollWidth, height: scrollHeight })
-    }
-  }, [children])
+  useResizeObserver(containerRef, (entry) => {
+    const { width, height } = entry.contentRect
+    setDimensions({ width, height })
+  })
 
   return (
     <div

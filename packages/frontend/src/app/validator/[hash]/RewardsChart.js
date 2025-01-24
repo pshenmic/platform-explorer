@@ -2,11 +2,9 @@ import * as Api from '../../../util/Api'
 import { useState, useEffect } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates } from '../../../util'
 import TabsChartBlock from '../../../components/charts/TabsChartBlock'
-import { defaultChartConfig } from '../../../components/charts/config'
 
-export default function RewardsChart ({ hash, isActive, loading }) {
+export default function RewardsChart ({ hash, isActive, loading, timespan, timespanChangeCallback }) {
   const [rewardsHistory, setRewardsHistory] = useState({ data: {}, loading: true, error: false })
-  const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 
   useEffect(() => {
     const { start = null, end = null } = timespan?.range
@@ -22,7 +20,7 @@ export default function RewardsChart ({ hash, isActive, loading }) {
   return (
     <TabsChartBlock
       menuIsActive={isActive}
-      timespanChangeCallback={setTimespan}
+      timespanChangeCallback={timespanChangeCallback}
       timespan={timespan}
       data={rewardsHistory.data?.resultSet?.map((item) => ({
         x: new Date(item.timestamp),

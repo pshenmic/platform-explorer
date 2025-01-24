@@ -25,14 +25,16 @@ function getTimeDelta (startDate, endDate, format) {
   const seconds = Math.floor((absoluteDiff % (1000 * 60)) / 1000)
 
   if (!format || format === 'default') {
+    const timeDirection = isFuture ? 'left' : 'ago'
+
     if (days > 0) {
-      return `${days}d ${isFuture ? 'left' : 'ago'}`
+      return `${days}d ${timeDirection}`
     } else if (hours > 0) {
-      return `${hours}h ${isFuture ? 'left' : 'ago'}`
+      return `${hours}h ${timeDirection}`
     } else if (minutes > 0) {
-      return `${minutes} min. ${isFuture ? 'left' : 'ago'}`
+      return `${minutes} min. ${timeDirection}`
     } else {
-      return `${seconds} sec. ${isFuture ? 'left' : 'ago'}`
+      return `${seconds} sec. ${timeDirection}`
     }
   }
 

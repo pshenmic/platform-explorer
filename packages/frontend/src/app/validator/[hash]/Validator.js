@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, getTimeDelta } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError, paginationHandler } from '../../../util'
 import { LoadingList } from '../../../components/loading'
 import Pagination from '../../../components/pagination'
 import { ErrorMessageBlock } from '../../../components/Errors'
@@ -11,7 +11,7 @@ import TransactionsList from '../../../components/transactions/TransactionsList'
 import BlocksChart from './BlocksChart'
 import RewardsChart from './RewardsChart'
 import Link from 'next/link'
-import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine, Credits } from '../../../components/data'
+import { Identifier, DateBlock, Endpoint, IpAddress, InfoLine, Credits, TimeDelta } from '../../../components/data'
 import { ValueContainer, PageDataContainer, InfoContainer } from '../../../components/ui/containers'
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
@@ -20,11 +20,12 @@ import { RateTooltip } from '../../../components/ui/Tooltips'
 import { networks } from '../../../constants/networks'
 import { WithdrawalsList } from '../../../components/transfers'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
-import './ValidatorPage.scss'
+import { defaultChartConfig } from '../../../components/charts/config'
 import {
   Badge,
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
+import './ValidatorPage.scss'
 
 function Validator ({ hash }) {
   const { setBreadcrumbs } = useBreadcrumbs()
@@ -39,6 +40,7 @@ function Validator ({ hash }) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
   const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+  const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 
   useEffect(() => {
     setBreadcrumbs([
@@ -197,7 +199,7 @@ function Validator ({ hash }) {
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Next epoch starts in'}
-                value={getTimeDelta(new Date(), new Date(validator.data?.epochInfo?.endTime), 'detailed')}
+                value={<TimeDelta endDate={validator.data?.epochInfo?.endTime} format={'detailed'}/>}
                 loading={validator.loading}
                 error={validator.error || !validator.data?.epochInfo?.endTime}
               />
@@ -410,6 +412,8 @@ function Validator ({ hash }) {
                       hash={hash}
                       isActive={activeChartTab === 0}
                       loading={validator.loading}
+                      timespanChangeCallback={setTimespan}
+                      timespan={timespan}
                     />
                   </TabPanel>
                   <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
@@ -417,6 +421,8 @@ function Validator ({ hash }) {
                       hash={hash}
                       isActive={activeChartTab === 1}
                       loading={validator.loading}
+                      timespanChangeCallback={setTimespan}
+                      timespan={timespan}
                     />
                   </TabPanel>
               </TabPanels>

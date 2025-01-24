@@ -444,6 +444,7 @@ impl PSQLProcessor {
                     is_system: true,
                     price: None,
                     transition_type: DocumentTransitionActionType::Create,
+                    prefunded_voting_balance: None,
                 };
 
                 self.dao.create_document(dash_tld_document, None).await.unwrap();
@@ -471,6 +472,9 @@ impl PSQLProcessor {
 
         println!("Processing SystemDataContract::Dashpay");
         self.process_system_data_contract(SystemDataContract::Dashpay).await;
+
+        println!("Processing SystemDataContract::WalletUtils");
+        self.process_system_data_contract(SystemDataContract::WalletUtils).await;
 
         println!("Finished initChain processing");
     }
