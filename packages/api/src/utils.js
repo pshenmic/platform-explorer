@@ -98,6 +98,21 @@ const decodeStateTransition = async (client, base64) => {
 
             break
           }
+          case DocumentActionEnum.UpdatePrice: {
+            out.price = Number(documentTransition.get_price())
+
+            break
+          }
+          case DocumentActionEnum.Purchase: {
+            out.price = Number(documentTransition.get_price())
+
+            break
+          }
+          case DocumentActionEnum.Transfer: {
+            out.receiverId = documentTransition.getReceiverId().toString()
+
+            break
+          }
         }
 
         return out
@@ -278,7 +293,7 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.MASTERNODE_VOTE: {
-      decoded.contestedResourcesVotePoll = stateTransition.getContestedDocumentResourceVotePoll().indexValues.map(buff => buff.toString('base64'))
+      decoded.indexValues = stateTransition.getContestedDocumentResourceVotePoll().indexValues.map(buff => buff.toString('base64'))
       decoded.contractId = stateTransition.getContestedDocumentResourceVotePoll().contractId.toString()
       decoded.modifiedDataIds = stateTransition.getModifiedDataIds().map(identifier => identifier.toString())
       decoded.ownerId = stateTransition.getOwnerId().toString()

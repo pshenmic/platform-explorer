@@ -314,7 +314,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 8,
-        contestedResourcesVotePoll: [
+        indexValues: [
           'EgRkYXNo',
           'Egh0ZXN0MDEwMA=='
         ],

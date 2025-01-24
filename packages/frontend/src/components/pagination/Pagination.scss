@@ -32,8 +32,9 @@
   
 .PageItem {
   margin: 0 6px;
-  background-color: var(--chakra-colors-gray-800);
+  background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
   border-radius: $border-radius-def;
+  border: 1px solid #343F44;
 
   &--Next, &--Previous {
     svg {
@@ -60,14 +61,18 @@
 
   &:not(.active) {
     &:hover:not(.disabled) {
-      background-color: rgba(255, 255, 255, .1)
+      background-color: var(--chakra-colors-gray-750);
     }
   }
 
   &.active {
-    &, &:hover {
+    &, a {
       cursor: default;
+    }
+
+    &, &:hover {
       background-color: var(--chakra-colors-brand-normal);
+      border-color: var(--chakra-colors-brand-normal);
     }
   }
 }
