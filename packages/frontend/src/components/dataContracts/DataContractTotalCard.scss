@@ -1,0 +1,9 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.DataContractTotalCard {
+  &__Avatar {
+    width: 88px;
+    height: 88px;
+  }
+}

@@ -17,6 +17,7 @@ import {
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
+import { DataContractTotalCard } from '../../../components/dataContracts'
 
 const pagintationConfig = {
   itemsOnPage: {
@@ -111,9 +112,7 @@ function DataContract ({ identifier }) {
       className={'DataContract'}
       title={'Data Contract info'}
     >
-      <div className={'InfoBlock InfoBlock--Gradient'}>
-
-      </div>
+      <DataContractTotalCard dataContract={dataContract}/>
 
         <Container
           maxW={'container.lg'}
