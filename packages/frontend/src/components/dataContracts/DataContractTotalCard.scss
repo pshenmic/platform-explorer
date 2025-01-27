@@ -2,8 +2,13 @@
 @import '../../styles/variables.scss';
 
 .DataContractTotalCard {
-  &__Avatar {
-    width: 88px;
-    height: 88px;
+  @include mixins.EntityCard();
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__Title {
+    font-weight: 700;
+    font-size: 0.875rem;
   }
 }

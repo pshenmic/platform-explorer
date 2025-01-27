@@ -425,6 +425,12 @@
 }
 
 @mixin EntityCard () {
+  &__Header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+
   &__Avatar {
     display: flex;
     align-items: center;

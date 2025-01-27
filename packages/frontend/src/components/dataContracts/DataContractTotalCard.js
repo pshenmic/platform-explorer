@@ -9,7 +9,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
   return (
     <div className={`InfoBlock InfoBlock--Gradient DataContractTotalCard ${dataContract.loading ? 'DataContractTotalCard--Loading' : ''} ${className || ''}`}>
       {dataContract.data?.name &&
-        <div className={'DataContractTotalCard__ContractName'}>
+        <div className={'DataContractTotalCard__Title'}>
           {dataContract.data.name}
         </div>
       }
