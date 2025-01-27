@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { DataContractTotalCard } from '../../../components/dataContracts'
+import './DataContract.scss'
 
 const pagintationConfig = {
   itemsOnPage: {
@@ -112,13 +113,31 @@ function DataContract ({ identifier }) {
       className={'DataContract'}
       title={'Data Contract info'}
     >
-      <DataContractTotalCard dataContract={dataContract}/>
+      <div className={'DataContract__InfoBlocks'}>
+        <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract}/>
+        <div className={'DataContract__InfoBlock DataContract__InfoContainer'}>
+          <div>
+            <div>
+              Total transactions
+            </div>
+            <div>40</div>
+          </div>
 
-        <Container
-          maxW={'container.lg'}
-          padding={3}
-          mt={8}
-          className={'DataContract'}
+          <div>
+            <div>
+              Total Documents
+            </div>
+            <div>40</div>
+          </div>
+
+        </div>
+      </div>
+
+      <Container
+        maxW={'container.lg'}
+        padding={3}
+        mt={8}
+        className={'DataContract'}
         >
           <TableContainer
             maxW={'none'}

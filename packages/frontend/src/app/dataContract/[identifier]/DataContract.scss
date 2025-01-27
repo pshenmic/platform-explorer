@@ -1,27 +1,42 @@
 @use '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
-.DataContractSchema {
-    white-space: break-spaces;
-    height: 80%;
-    padding: 0 10px;
-    word-wrap: break-word;
-    box-sizing: border-box;
-    width: 100%;
-    max-height: 400px;
-    overflow-y: auto;
-    overflow-x: hidden;
+.DataContract {
+  &__InfoBlocks {
+    display: flex;
+    gap: 1.5rem;
+  }
 
-    &__Code {
-        padding: 10px;
-        font-family: $font-mono;
-        font-size: 12pt;
-        width: 100%;
-    }
+  &__InfoBlock {
+    width: 50%;
+  }
+
+  &__InfoContainer {
+    background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+  }
 }
 
-@media screen and (max-width: 1020px) {
-    .DataContractSchema {
-        width: 100%;
-    }
-}
+//.DataContractSchema {
+//  white-space: break-spaces;
+//  height: 80%;
+//  padding: 0 10px;
+//  word-wrap: break-word;
+//  box-sizing: border-box;
+//  width: 100%;
+//  max-height: 400px;
+//  overflow-y: auto;
+//  overflow-x: hidden;
+//
+//  &__Code {
+//    padding: 10px;
+//    font-family: $font-mono;
+//    font-size: 12pt;
+//    width: 100%;
+//  }
+//}
+//
+//@media screen and (max-width: 1020px) {
+//  .DataContractSchema {
+//    width: 100%;
+//  }
+//}
