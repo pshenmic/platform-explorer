@@ -16,7 +16,7 @@ import {
   TableContainer, Table, Thead, Tbody, Tr, Th, Td,
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
-import { PageDataContainer } from '../../../components/ui/containers'
+import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 
 const pagintationConfig = {
   itemsOnPage: {
@@ -45,6 +45,7 @@ function DataContract ({ identifier }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const [activeChartTab, setActiveChartTab] = useState(0)
 
   const fetchData = () => {
     Promise.all([
@@ -210,23 +211,14 @@ function DataContract ({ identifier }) {
               : <Container h={60}><ErrorMessageBlock/></Container>}
           </TableContainer>
 
-          <Container
-            width={'100%'}
-            maxW={'none'}
-            mt={5}
-            className={'InfoBlock'}
-            p={0}
-          >
-            <Tabs
-              onChange={setActiveTab}
-              index={activeTab}
-            >
+          <InfoContainer styles={['tabs']} className={''}>
+            <Tabs onChange={(index) => setActiveChartTab(index)} index={activeChartTab}>
               <TabList>
                 <Tab>Documents</Tab>
                 <Tab>Schema</Tab>
               </TabList>
               <TabPanels>
-                <TabPanel p={0}>
+                <TabPanel className={''} position={'relative'}>
                   <Box>
                     {!documents.error
                       ? <Box mt={4}>
@@ -244,7 +236,7 @@ function DataContract ({ identifier }) {
                     }
                   </Box>
                 </TabPanel>
-                <TabPanel px={0}>
+                <TabPanel className={''} position={'relative'}>
                   <Box>
                     {!dataContract.error
                       ? <LoadingBlock loading={dataContract.loading}>
@@ -258,10 +250,60 @@ function DataContract ({ identifier }) {
                 </TabPanel>
               </TabPanels>
             </Tabs>
-          </Container>
+          </InfoContainer>
         </Container>
     </PageDataContainer>
   )
 }
 
 export default DataContract
+
+// <Container
+// width={'100%'}
+// maxW={'none'}
+// mt={5}
+// className={'InfoBlock'}
+// p={0}
+//   >
+//   <Tabs
+// onChange={setActiveTab}
+// index={activeTab}
+//   >
+//   <TabList>
+//   <Tab>Documents</Tab>
+// <Tab>Schema</Tab>
+// </TabList>
+// <TabPanels>
+//   <TabPanel p={0}>
+//     <Box>
+//       {!documents.error
+//         ? <Box mt={4}>
+//           <DocumentsList
+//             documents={documents.data.resultSet}
+//             loading={documents.loading}
+//             pagination={{
+//               onPageChange: handlePageClick,
+//               pageCount,
+//               forcePage: currentPage
+//             }}
+//           />
+//         </Box>
+//         : <Container h={20}><ErrorMessageBlock/></Container>
+//       }
+//     </Box>
+//   </TabPanel>
+//   <TabPanel px={0}>
+//     <Box>
+//       {!dataContract.error
+//         ? <LoadingBlock loading={dataContract.loading}>
+//           {dataContract.data?.schema
+//             ? <CodeBlock code={dataContract.data?.schema}/>
+//             : <Container h={20}><ErrorMessageBlock/></Container>}
+//         </LoadingBlock>
+//         : <Container h={20}><ErrorMessageBlock/></Container>
+//       }
+//     </Box>
+//   </TabPanel>
+// </TabPanels>
+// </Tabs>
+// </Container>
