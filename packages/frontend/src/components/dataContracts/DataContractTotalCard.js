@@ -1,6 +1,7 @@
 import ImageGenerator from '../imageGenerator'
 import { DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
+import { ValueCard } from '../cards'
 import './DataContractTotalCard.scss'
 
 function DataContractTotalCard ({ dataContract, rate, className }) {
@@ -52,15 +53,17 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
             loading={dataContract.loading}
             error={dataContract.error}
             value={
-              <Identifier
-                avatar={true}
-                className={''}
-                copyButton={true}
-                styles={['highlight-both']}
-                ellipsis={false}
-              >
-                {dataContract.data?.owner}
-              </Identifier>
+              <ValueCard link={`/identity/${dataContract.data?.owner}`}>
+                <Identifier
+                  avatar={true}
+                  className={''}
+                  copyButton={true}
+                  styles={['highlight-both']}
+                  ellipsis={false}
+                >
+                  {dataContract.data?.owner}
+                </Identifier>
+              </ValueCard>
             }
           />
         </div>
