@@ -1,5 +1,5 @@
 import ImageGenerator from '../imageGenerator'
-import { Identifier, InfoLine } from '../data'
+import { DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import './DataContractTotalCard.scss'
 
@@ -71,7 +71,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
       <div className={'DataContractTotalCard__CommonInfo'}>
 
         <InfoLine
-          title={'Version'}
+          title={'Revision'}
           value={dataContract.data?.version}
           loading={dataContract.loading}
           error={dataContract.error}
@@ -79,7 +79,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
 
         <InfoLine
           title={'Creation Date'}
-          value={'datee'}
+          value={<DateBlock timestamp={dataContract.data?.timestamp}/>}
           loading={dataContract.loading}
           error={dataContract.error}
         />
