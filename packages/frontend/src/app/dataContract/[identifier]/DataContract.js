@@ -1,23 +1,20 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import * as Api from '../../../util/Api'
 import DocumentsList from '../../../components/documents/DocumentsList'
-import { LoadingLine, LoadingBlock } from '../../../components/loading'
+import { LoadingBlock } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import ImageGenerator from '../../../components/imageGenerator'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CodeBlock } from '../../../components/data'
+import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
+import { DataContractDigestCard, DataContractTotalCard } from '../../../components/dataContracts'
 import {
   Box,
   Container,
-  TableContainer, Table, Thead, Tbody, Tr, Th, Td,
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
-import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import { DataContractDigestCard, DataContractTotalCard } from '../../../components/dataContracts'
 import './DataContract.scss'
 
 const pagintationConfig = {
@@ -43,7 +40,7 @@ function DataContract ({ identifier }) {
   const [currentPage, setCurrentPage] = useState(0)
   const pageCount = Math.ceil(total / pageSize)
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  const tdTitleWidth = 250
+  // const tdTitleWidth = 250
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -93,6 +90,7 @@ function DataContract ({ identifier }) {
     router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab])
 
+  // mock
   if (!dataContract.data?.topIdentity) dataContract.data.topIdentity = 'HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT'
 
   const handlePageClick = ({ selected }) => {
@@ -117,152 +115,151 @@ function DataContract ({ identifier }) {
     >
       <div className={'DataContract__InfoBlocks'}>
         <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract}/>
-
         <DataContractDigestCard dataContract={dataContract}/>
       </div>
 
-      <Container
-        maxW={'container.lg'}
-        padding={3}
-        mt={8}
-        className={'DataContract'}
-        >
-          <TableContainer
-            maxW={'none'}
-            borderWidth={'1px'} borderRadius={'block'}
-          >
-            {!dataContract.error
-              ? <Table variant={'simple'}>
-                <Thead>
-                  <Tr>
-                    <Th>Data contract info</Th>
-                    <Th isNumeric className={'TableHeader TableHeader--Name'}>
-                      <div className={'TableHeader__Content'}>
-                        {dataContract?.data?.name || ''}
-                        {dataContract.data?.identifier
-                          ? <ImageGenerator className={'TableHeader__Avatar'} username={dataContract.data?.identifier}
-                                            lightness={50} saturation={50} width={32} height={32}/>
-                          : <Box w={'32px'} h={'32px'}/>
-                        }
-                      </div>
-                    </Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  <Tr>
-                    <Td w={tdTitleWidth}>Identifier</Td>
-                    <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
-                      <LoadingLine loading={dataContract.loading}>{dataContract.data?.identifier}</LoadingLine>
-                    </Td>
-                  </Tr>
-                  {dataContract.data?.name &&
-                    <Tr>
-                      <Td w={tdTitleWidth}>Name</Td>
-                      <Td>
-                        <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
-                      </Td>
-                    </Tr>
-                  }
-                  <Tr>
-                    <Td w={tdTitleWidth}>Owner</Td>
-                    <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
-                      <LoadingLine loading={dataContract.loading}>
-                        {dataContract.data?.isSystem
-                          ? dataContract.data?.owner
-                          : <Link href={`/identity/${dataContract.data?.owner}`}>{dataContract.data?.owner}</Link>
-                        }
-                      </LoadingLine>
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td w={tdTitleWidth}>System</Td>
-                    <Td>
-                      <LoadingLine
-                        loading={dataContract.loading}>{dataContract.data?.isSystem ? 'true' : 'false'}</LoadingLine>
-                    </Td>
-                  </Tr>
-                  {!dataContract.data?.isSystem &&
-                    <Tr>
-                      <Td w={tdTitleWidth}>Created</Td>
-                      <Td>
-                        <LoadingLine
-                          loading={dataContract.loading}>{new Date(dataContract.data?.timestamp).toLocaleString()}</LoadingLine>
-                      </Td>
-                    </Tr>
-                  }
-                  <Tr>
-                    <Td w={tdTitleWidth}>Documents Count</Td>
-                    <Td>
-                      <LoadingLine loading={dataContract.loading}>{dataContract.data?.documentsCount}</LoadingLine>
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td w={tdTitleWidth}>Revision</Td>
-                    <Td>
-                      <LoadingLine loading={dataContract.loading}>{dataContract.data?.version}</LoadingLine>
-                    </Td>
-                  </Tr>
-                  {!dataContract.data?.isSystem &&
-                    <Tr w={tdTitleWidth}>
-                      <Td>Transaction</Td>
-                      <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
-                        <LoadingLine loading={dataContract.loading}>
-                          <Link href={`/transaction/${dataContract.data?.txHash}`}>{dataContract.data?.txHash}</Link>
-                        </LoadingLine>
-                      </Td>
-                    </Tr>
-                  }
-                </Tbody>
-              </Table>
-              : <Container h={60}><ErrorMessageBlock/></Container>}
-          </TableContainer>
-
-          <InfoContainer styles={['tabs']} className={''}>
-            <Tabs onChange={(index) => setActiveChartTab(index)} index={activeChartTab}>
-              <TabList>
-                <Tab>Documents</Tab>
-                <Tab>Schema</Tab>
-              </TabList>
-              <TabPanels>
-                <TabPanel className={''} position={'relative'}>
-                  <Box>
-                    {!documents.error
-                      ? <Box mt={4}>
-                        <DocumentsList
-                          documents={documents.data.resultSet}
-                          loading={documents.loading}
-                          pagination={{
-                            onPageChange: handlePageClick,
-                            pageCount,
-                            forcePage: currentPage
-                          }}
-                        />
-                      </Box>
-                      : <Container h={20}><ErrorMessageBlock/></Container>
-                    }
+      <InfoContainer styles={['tabs']} className={''}>
+        <Tabs onChange={(index) => setActiveChartTab(index)} index={activeChartTab}>
+          <TabList>
+            <Tab>Documents</Tab>
+            <Tab>Schema</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel className={''} position={'relative'}>
+              <Box>
+                {!documents.error
+                  ? <Box mt={4}>
+                    <DocumentsList
+                      documents={documents.data.resultSet}
+                      loading={documents.loading}
+                      pagination={{
+                        onPageChange: handlePageClick,
+                        pageCount,
+                        forcePage: currentPage
+                      }}
+                    />
                   </Box>
-                </TabPanel>
-                <TabPanel className={''} position={'relative'}>
-                  <Box>
-                    {!dataContract.error
-                      ? <LoadingBlock loading={dataContract.loading}>
-                        {dataContract.data?.schema
-                          ? <CodeBlock code={dataContract.data?.schema}/>
-                          : <Container h={20}><ErrorMessageBlock/></Container>}
-                      </LoadingBlock>
-                      : <Container h={20}><ErrorMessageBlock/></Container>
-                    }
-                  </Box>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </InfoContainer>
-        </Container>
+                  : <Container h={20}><ErrorMessageBlock/></Container>
+                }
+              </Box>
+            </TabPanel>
+            <TabPanel className={''} position={'relative'}>
+              <Box>
+                {!dataContract.error
+                  ? <LoadingBlock loading={dataContract.loading}>
+                    {dataContract.data?.schema
+                      ? <CodeBlock code={dataContract.data?.schema}/>
+                      : <Container h={20}><ErrorMessageBlock/></Container>}
+                  </LoadingBlock>
+                  : <Container h={20}><ErrorMessageBlock/></Container>
+                }
+              </Box>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </InfoContainer>
     </PageDataContainer>
   )
 }
 
 export default DataContract
+
+// <Container
+// maxW={'container.lg'}
+// padding={3}
+// mt={8}
+// className={'DataContract'}
+//   >
+//   <TableContainer
+// maxW={'none'}
+// borderWidth={'1px'} borderRadius={'block'}
+//   >
+//   {!dataContract.error
+//   ? <Table variant={'simple'}>
+//     <Thead>
+//       <Tr>
+//         <Th>Data contract info</Th>
+//         <Th isNumeric className={'TableHeader TableHeader--Name'}>
+//           <div className={'TableHeader__Content'}>
+//             {dataContract?.data?.name || ''}
+//             {dataContract.data?.identifier
+//               ? <ImageGenerator className={'TableHeader__Avatar'} username={dataContract.data?.identifier}
+//                                 lightness={50} saturation={50} width={32} height={32}/>
+//               : <Box w={'32px'} h={'32px'}/>
+//             }
+//           </div>
+//         </Th>
+//       </Tr>
+//     </Thead>
+//     <Tbody>
+//       <Tr>
+//         <Td w={tdTitleWidth}>Identifier</Td>
+//         <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
+//           <LoadingLine loading={dataContract.loading}>{dataContract.data?.identifier}</LoadingLine>
+//         </Td>
+//       </Tr>
+//       {dataContract.data?.name &&
+//         <Tr>
+//           <Td w={tdTitleWidth}>Name</Td>
+//           <Td>
+//             <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
+//           </Td>
+//         </Tr>
+//       }
+//       <Tr>
+//         <Td w={tdTitleWidth}>Owner</Td>
+//         <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
+//           <LoadingLine loading={dataContract.loading}>
+//             {dataContract.data?.isSystem
+//               ? dataContract.data?.owner
+//               : <Link href={`/identity/${dataContract.data?.owner}`}>{dataContract.data?.owner}</Link>
+//             }
+//           </LoadingLine>
+//         </Td>
+//       </Tr>
+//       <Tr>
+//         <Td w={tdTitleWidth}>System</Td>
+//         <Td>
+//           <LoadingLine
+//             loading={dataContract.loading}>{dataContract.data?.isSystem ? 'true' : 'false'}</LoadingLine>
+//         </Td>
+//       </Tr>
+//       {!dataContract.data?.isSystem &&
+//         <Tr>
+//           <Td w={tdTitleWidth}>Created</Td>
+//           <Td>
+//             <LoadingLine
+//               loading={dataContract.loading}>{new Date(dataContract.data?.timestamp).toLocaleString()}</LoadingLine>
+//           </Td>
+//         </Tr>
+//       }
+//       <Tr>
+//         <Td w={tdTitleWidth}>Documents Count</Td>
+//         <Td>
+//           <LoadingLine loading={dataContract.loading}>{dataContract.data?.documentsCount}</LoadingLine>
+//         </Td>
+//       </Tr>
+//       <Tr>
+//         <Td w={tdTitleWidth}>Revision</Td>
+//         <Td>
+//           <LoadingLine loading={dataContract.loading}>{dataContract.data?.version}</LoadingLine>
+//         </Td>
+//       </Tr>
+//       {!dataContract.data?.isSystem &&
+//         <Tr w={tdTitleWidth}>
+//           <Td>Transaction</Td>
+//           <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
+//             <LoadingLine loading={dataContract.loading}>
+//               <Link href={`/transaction/${dataContract.data?.txHash}`}>{dataContract.data?.txHash}</Link>
+//             </LoadingLine>
+//           </Td>
+//         </Tr>
+//       }
+//     </Tbody>
+//   </Table>
+//   : <Container h={60}><ErrorMessageBlock/></Container>}
+// </TableContainer>
+// </Container>
 
 // <Container
 // width={'100%'}

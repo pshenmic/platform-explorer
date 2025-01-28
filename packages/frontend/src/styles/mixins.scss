@@ -458,6 +458,12 @@
   &__InfoLine {
     gap: 14px;
   }
+
+  &__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 }
 
 @mixin DigestCard () {

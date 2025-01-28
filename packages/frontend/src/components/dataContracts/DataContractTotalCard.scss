@@ -3,12 +3,10 @@
 
 .DataContractTotalCard {
   @include mixins.EntityCard();
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
 
   &__Title {
     font-weight: 700;
     font-size: 0.875rem;
+    margin-bottom: 0.875rem;
   }
 }
