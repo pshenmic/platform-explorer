@@ -7,12 +7,25 @@
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
+  container-type: inline-size;
+
+  &__InfoContainer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    svg {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
 
   &__InfoContainerTitle {
     color: var(--chakra-colors-gray-250);
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    white-space: nowrap;
 
     span:after {
       content: ':';
@@ -23,14 +36,15 @@
     font-size: 0.813rem;
   }
 
-  &__InfoContainer {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+  @container (max-width: 37.5rem) and (max-width: 37.5rem) {
+    &__RowContainer {
+      flex-wrap: wrap;
+    }
+  }
 
-    svg {
-      width: 1.75rem;
-      height: 1.75rem;
+  @media screen and (max-width: $breakpoint-sm) {
+    &__InfoLine {
+      flex-wrap: wrap;
     }
   }
 }

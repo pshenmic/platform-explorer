@@ -12,7 +12,7 @@ function DataContractDigestCard ({ dataContract, rate }) {
             <TransactionsIcon/>
             <span>Total transactions</span>
           </div>
-          <div>40</div>
+          <div>40000</div>
         </div>
 
         <div className={'DataContractDigestCard__InfoContainer'}>
@@ -20,7 +20,7 @@ function DataContractDigestCard ({ dataContract, rate }) {
             <DocumentIcon/>
             <span>Total Documents</span>
           </div>
-          <div className={'DataContractDigestCard__InfoContainerValue'}>40</div>
+          <div className={'DataContractDigestCard__InfoContainerValue'}>{dataContract.data?.documentsCount}</div>
         </div>
       </div>
 
