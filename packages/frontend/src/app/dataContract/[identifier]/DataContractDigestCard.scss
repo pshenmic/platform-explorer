@@ -1,0 +1,33 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.DataContractDigestCard {
+  @include mixins.DigestCard();
+  border-radius: $border-radius-medium;
+
+  &__InfoContainerTitle {
+    color: var(--chakra-colors-gray-250);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    span:after {
+      content: ':';
+    }
+  }
+
+  &__InfoContainerValue {
+    font-size: 0.813rem;
+  }
+
+  &__InfoContainer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    svg {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+}
