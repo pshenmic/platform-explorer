@@ -35,12 +35,12 @@ const defaultTabName = 'documents'
 function DataContract ({ identifier }) {
   const [dataContract, setDataContract] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const pageSize = pagintationConfig.itemsOnPage.default
   const [total, setTotal] = useState(1)
   const [currentPage, setCurrentPage] = useState(0)
   const pageCount = Math.ceil(total / pageSize)
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  // const tdTitleWidth = 250
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -59,7 +59,10 @@ function DataContract ({ identifier }) {
           fetchHandlerSuccess(setDocuments, res)
           setTotal(res.pagination.total)
         })
-        .catch(err => fetchHandlerError(setDocuments, err))
+        .catch(err => fetchHandlerError(setDocuments, err)),
+      Api.getRate()
+        .then(res => fetchHandlerSuccess(setRate, res))
+        .catch(err => fetchHandlerError(setRate, err))
     ])
       .catch(console.error)
   }
@@ -115,7 +118,7 @@ function DataContract ({ identifier }) {
     >
       <div className={'DataContract__InfoBlocks'}>
         <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract}/>
-        <DataContractDigestCard dataContract={dataContract}/>
+        <DataContractDigestCard dataContract={dataContract} rate={rate}/>
       </div>
 
       <InfoContainer styles={['tabs']} className={''}>
