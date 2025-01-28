@@ -1,7 +1,7 @@
 import { DocumentIcon, TransactionsIcon } from '../ui/icons'
 import { CreditsBlock, Identifier, InfoLine } from '../data'
 import { ValueCard } from '../cards'
-import './DataContractTotalCard.scss'
+import './DataContractDigestCard.scss'
 
 function DataContractDigestCard ({ dataContract, rate }) {
   return (
