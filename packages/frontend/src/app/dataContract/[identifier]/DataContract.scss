@@ -19,6 +19,16 @@
     width: 50%;
   }
 
+  @media screen and (max-width: $breakpoint-lg) {
+    &__InfoBlocks {
+      flex-direction: column;
+    }
+
+    &__InfoBlock {
+      width: 100%;
+    }
+  }
+
   @media screen and (max-width: $breakpoint-md) {
     $gap: 0.75rem;
 

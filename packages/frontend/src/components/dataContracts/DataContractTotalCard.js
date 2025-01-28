@@ -39,6 +39,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
               <Identifier
                 className={''}
                 copyButton={true}
+                // styles={['highlight-both', 'size-44']}
                 styles={['highlight-both', 'size-44']}
                 ellipsis={false}
               >
@@ -59,6 +60,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
                   className={''}
                   copyButton={true}
                   styles={['highlight-both', 'size-32']}
+                  // styles={['highlight-both']}
                   ellipsis={false}
                 >
                   {dataContract.data?.owner}

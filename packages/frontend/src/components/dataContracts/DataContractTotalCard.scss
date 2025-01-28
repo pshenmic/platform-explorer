@@ -10,10 +10,18 @@
     margin-bottom: 0.875rem;
   }
 
+  &__HeaderLines {
+    width: 100%;
+  }
+
   &__Identifier, &__Owner {
     .InfoLine__Value {
       width: 100%;
       text-align: right;
+
+      .InfoLine__Value {
+        container-type: normal !important;
+      }
 
       .Identifier {
         justify-content: flex-end;
@@ -27,6 +35,10 @@
       width: 100%;
     }
 
+    .InfoLine__Title {
+      margin-right: auto;
+    }
+
     .ValueCard {
       width: max-content;
       max-width: 100%;
@@ -36,6 +48,51 @@
     .Identifier {
       container-type: normal !important;
       width: max-content;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__Header {
+      .InfoLine {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 5px;
+
+        &__Title {
+          width: 100%;
+        }
+
+        &__Value {
+          width: 100%;
+          justify-content: flex-start;
+          text-align: left;
+        }
+      }
+    }
+
+    &__Identifier {
+      .Identifier {
+        justify-content: flex-start !important;
+      }
+    }
+
+    &__HeaderLines {
+      padding-right: 90px;
+    }
+
+    &__Owner {
+      .ValueCard {
+        width: max-content;
+        max-width: 100%;
+        margin-left: 0;
+      }
+    }
+
+    &__Avatar {
+      position: absolute;
+      right: 16px;
+      top: 20px;
+      margin-right: 0;
     }
   }
 }
