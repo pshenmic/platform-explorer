@@ -17,7 +17,7 @@ import {
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import { DataContractTotalCard } from '../../../components/dataContracts'
+import { DataContractDigestCard, DataContractTotalCard } from '../../../components/dataContracts'
 import './DataContract.scss'
 
 const pagintationConfig = {
@@ -93,6 +93,8 @@ function DataContract ({ identifier }) {
     router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab])
 
+  if (!dataContract.data?.topIdentity) dataContract.data.topIdentity = 'HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT'
+
   const handlePageClick = ({ selected }) => {
     setDocuments(state => ({ ...state, loading: true }))
     setCurrentPage(selected)
@@ -115,22 +117,8 @@ function DataContract ({ identifier }) {
     >
       <div className={'DataContract__InfoBlocks'}>
         <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract}/>
-        <div className={'DataContract__InfoBlock DataContract__InfoContainer'}>
-          <div>
-            <div>
-              Total transactions
-            </div>
-            <div>40</div>
-          </div>
 
-          <div>
-            <div>
-              Total Documents
-            </div>
-            <div>40</div>
-          </div>
-
-        </div>
+        <DataContractDigestCard dataContract={dataContract}/>
       </div>
 
       <Container
