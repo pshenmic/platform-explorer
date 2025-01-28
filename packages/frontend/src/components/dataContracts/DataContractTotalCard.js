@@ -39,7 +39,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
               <Identifier
                 className={''}
                 copyButton={true}
-                styles={['highlight-both']}
+                styles={['highlight-both', 'size-44']}
                 ellipsis={false}
               >
                 {dataContract.data?.identifier}
@@ -48,7 +48,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
           />
 
           <InfoLine
-            className={'DataContractTotalCard__Identifier'}
+            className={'DataContractTotalCard__Owner'}
             title={'Owner'}
             loading={dataContract.loading}
             error={dataContract.error}
@@ -58,7 +58,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
                   avatar={true}
                   className={''}
                   copyButton={true}
-                  styles={['highlight-both']}
+                  styles={['highlight-both', 'size-32']}
                   ellipsis={false}
                 >
                   {dataContract.data?.owner}

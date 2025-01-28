@@ -9,4 +9,33 @@
     font-size: 0.875rem;
     margin-bottom: 0.875rem;
   }
+
+  &__Identifier, &__Owner {
+    .InfoLine__Value {
+      width: 100%;
+      text-align: right;
+
+      .Identifier {
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  &__Owner {
+    .InfoLine__Value {
+      container-type: inline-size;
+      width: 100%;
+    }
+
+    .ValueCard {
+      width: max-content;
+      max-width: 100%;
+      margin-left: auto;
+    }
+
+    .Identifier {
+      container-type: normal !important;
+      width: max-content;
+    }
+  }
 }
