@@ -4,9 +4,7 @@ import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import './DataContractTotalCard.scss'
 
-function DataContractTotalCard ({ dataContract, rate, className }) {
-  console.log('dataContract', dataContract)
-
+function DataContractTotalCard ({ dataContract, className }) {
   return (
     <div className={`InfoBlock InfoBlock--Gradient DataContractTotalCard ${dataContract.loading ? 'DataContractTotalCard--Loading' : ''} ${className || ''}`}>
       {dataContract.data?.name &&
@@ -72,7 +70,6 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
       <HorisontalSeparator className={'DataContractTotalCard__Separator'}/>
 
       <div className={'DataContractTotalCard__CommonInfo'}>
-
         <InfoLine
           title={'Revision'}
           value={dataContract.data?.version}
