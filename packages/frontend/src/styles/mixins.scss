@@ -81,10 +81,6 @@
     white-space: nowrap;
     color: #fff;
   }
-
-  &__NotActiveText {
-    @include NotActiveText;
-  }
 }
 
 @mixin defListTitles {
