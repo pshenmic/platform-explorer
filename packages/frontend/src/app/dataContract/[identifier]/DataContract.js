@@ -44,7 +44,6 @@ function DataContract ({ identifier }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [activeChartTab, setActiveChartTab] = useState(0)
 
   const fetchData = () => {
     Promise.all([
@@ -122,7 +121,7 @@ function DataContract ({ identifier }) {
       </div>
 
       <InfoContainer styles={['tabs']} className={''}>
-        <Tabs onChange={(index) => setActiveChartTab(index)} index={activeChartTab}>
+        <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
           <TabList>
             <Tab>Documents</Tab>
             <Tab>Schema</Tab>
@@ -149,9 +148,9 @@ function DataContract ({ identifier }) {
             <TabPanel className={''} position={'relative'}>
               <Box>
                 {!dataContract.error
-                  ? <LoadingBlock loading={dataContract.loading}>
+                  ? <LoadingBlock h={'250px'} loading={dataContract.loading}>
                     {dataContract.data?.schema
-                      ? <CodeBlock code={dataContract.data?.schema}/>
+                      ? <CodeBlock smoothSize={activeTab === 1} className={'DataContract__Schema'} code={dataContract.data?.schema}/>
                       : <Container h={20}><ErrorMessageBlock/></Container>}
                   </LoadingBlock>
                   : <Container h={20}><ErrorMessageBlock/></Container>
