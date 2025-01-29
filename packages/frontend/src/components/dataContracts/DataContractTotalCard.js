@@ -34,13 +34,12 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
             className={'DataContractTotalCard__Identifier'}
             title={'Identifier'}
             loading={dataContract.loading}
-            error={dataContract.error}
+            error={dataContract.error || !dataContract.data?.identifier}
             value={
               <Identifier
                 className={''}
                 copyButton={true}
-                // styles={['highlight-both', 'size-44']}
-                styles={['highlight-both', 'size-44']}
+                styles={['highlight-both', `size-${dataContract.data?.identifier?.length}`]}
                 ellipsis={false}
               >
                 {dataContract.data?.identifier}
@@ -59,8 +58,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
                   avatar={true}
                   className={''}
                   copyButton={true}
-                  styles={['highlight-both', 'size-32']}
-                  // styles={['highlight-both']}
+                  styles={['highlight-both']}
                   ellipsis={false}
                 >
                   {dataContract.data?.owner}

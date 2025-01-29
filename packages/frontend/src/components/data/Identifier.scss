@@ -13,6 +13,13 @@
   &--Size32, &--Size44 {
     container-type: inline-size;
     width: 100%;
+    overflow: hidden;
+  }
+
+  &--Size32 & , &--Size44 & {
+    &__SymbolsContainer {
+      width: max-content;
+    }
   }
 
   &--Ellipsis {
@@ -29,21 +36,21 @@
 
   &--Size44:not(&--Ellipsis) &__SymbolsContainer {
     @container (max-width: 22rem) {
-      max-width: 10rem;
+      width: calc(22ch);
     }
 
     @container (max-width: 12rem) {
-      max-width: 7rem;
+      width: calc(15ch);
     }
   }
 
   &--Size32:not(&--Ellipsis) &__SymbolsContainer {
     @container (max-width: 20rem) {
-      max-width: 7.5rem;
+      width: calc(16ch);
     }
 
     @container (max-width: 13rem) {
-      max-width: 4rem;
+      width: calc(11ch);
     }
   }
 

@@ -35,7 +35,7 @@ function DataContractDigestCard ({ dataContract, rate }) {
       </div>
 
       <InfoLine
-        className={'DataContractDigestCard__InfoLine'}
+        className={'DataContractDigestCard__InfoLine DataContractDigestCard__InfoLine--TopIdentity'}
         title={'Top Identity'}
         value={(
           <ValueCard link={`/identity/${dataContract.data?.topIdentity}`}>

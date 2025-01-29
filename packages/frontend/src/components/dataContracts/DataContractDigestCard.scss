@@ -20,6 +20,14 @@
     }
   }
 
+  &__InfoLine {
+    &--TopIdentity {
+      .InfoLine__Value {
+        overflow: hidden;
+      }
+    }
+  }
+
   &__InfoContainerTitle {
     color: var(--chakra-colors-gray-250);
     display: flex;

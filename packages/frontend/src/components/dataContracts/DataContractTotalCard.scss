@@ -19,10 +19,6 @@
       width: 100%;
       text-align: right;
 
-      .InfoLine__Value {
-        container-type: normal !important;
-      }
-
       .Identifier {
         justify-content: flex-end;
       }
@@ -30,24 +26,9 @@
   }
 
   &__Owner {
-    .InfoLine__Value {
-      container-type: inline-size;
-      width: 100%;
-    }
-
-    .InfoLine__Title {
-      margin-right: auto;
-    }
-
     .ValueCard {
-      width: max-content;
-      max-width: 100%;
+      max-width: max-content;
       margin-left: auto;
-    }
-
-    .Identifier {
-      container-type: normal !important;
-      width: max-content;
     }
   }
 
