@@ -97,7 +97,11 @@ function DataContract ({ identifier }) {
       <InfoContainer styles={['tabs']}>
         <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
           <TabList>
-            <Tab>Documents</Tab>
+            <Tab>Documents {dataContract.data?.documentsCount !== undefined
+              ? <span className={`Tabs__TabItemsCount ${dataContract.data?.documentsCount === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {dataContract.data?.documentsCount}
+                </span>
+              : ''}</Tab>
             <Tab>Schema</Tab>
           </TabList>
           <TabPanels>
