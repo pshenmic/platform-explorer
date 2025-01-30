@@ -7,7 +7,7 @@ import { SmoothSize } from '../ui/containers'
 import './CodeBlock.scss'
 
 function CodeBlock ({ code, smoothSize = true, className = '' }) {
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false)
   const [fullSize, setFullSize] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
   const parsedCode = code ? JSON.stringify(JSON.parse(code), null, 2) : ''
