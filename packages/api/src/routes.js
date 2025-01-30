@@ -179,14 +179,7 @@ module.exports = ({
       method: 'GET',
       handler: contestedController.getContestedResource,
       schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            resource_value: {
-              type: 'array'
-            }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -194,14 +187,7 @@ module.exports = ({
       method: 'GET',
       handler: contestedController.getVotesForResource,
       schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            resource_value: {
-              type: 'array'
-            }
-          }
-        }
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {

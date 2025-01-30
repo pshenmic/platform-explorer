@@ -35,8 +35,8 @@ Reference:
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Transactions gas history](#transactions-gas-history)
-* [Contested Data Contracts](#contested-data-contracts)
-* [Contested Documents](#contested-documents)
+* [Votes fro contested resource](#votes-for-contested-resource)
+* [Contested Documents](#contested-resource-value)
 * [Rate](#rate)
 * [Masternode Votes](#masternode-votes)
 * [Search](#search)
@@ -1360,28 +1360,30 @@ Response codes:
 500: Internal Server Error
 ```
 ___
-### Contested Data Contracts
-Return a series Data Contracts, which contains contested types
+### Votes for Contested Resource
+Returns set of votes for selected resource
 
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* Valid `order_by` values are `block_height` or `documents_count`
-
+* `choice` optional
 ```
-GET /contested/dataContracts?limit=10&page=1&order=asc&order_by=block_height
+GET /contested/votes?resource_value=dash&resource_value=xyz&choice=1&page=1&limit=10&order=asc
 {
   "resultSet": [
     {
-      "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-      "name": "DPNS",
-      "owner": "11111111111111111111111111111111",
-      "schema": null,
-      "version": 0,
-      "txHash": null,
-      "timestamp": null,
-      "isSystem": true,
-      "documentsCount": 1413,
-      "contestedDocumentsCount": 231
+      "proTxHash": "61d33f478933797be4de88353c7c2d843c21310f6d00f6eff31424a756ee7dfb",
+      "txHash": "36011F1807FED828951DAA04B44E38163FB0162108FD1341038DBE58051F4421",
+      "voterIdentifier": "8AfS9TuU4gSxyqxUDGNhziNp1RGoCQwa1GqAS8ZBwXjU",
+      "choice": 1,
+      "timestamp": "2024-10-22T16:35:47.046Z",
+      "towardsIdentity": null,
+      "identityAliases": [],
+      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+      "documentTypeName": "domain",
+      "indexName": "parentNameAndLabel",
+      "indexValues": [
+        "dash",
+        "xyz"
+      ],
+      "powerMultiplier": null
     }
   ],
   "pagination": {
@@ -1398,40 +1400,80 @@ Response codes:
 500: Internal Server Error
 ```
 ___
-### Contested Documents
-Return a series contested documents
+### Contested Resource Value
+Return info about contested resource value
 
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
 ```
-GET /contested/documents?limit=10&page=1&order=asc&document_type_name=domain
+GET /contested?resource_value=dash&resource_value=xyz
 {
-  "resultSet": [
+  "contenders": [
     {
-      "identifier": "nLxqkMa9GRgfFGJpW9aE8ykYHxSR8Nat49cCNHXZR5a",
-      "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-      "revision": 1,
-      "txHash": "069422484BEEF731CFDBA601BDAC80BCF1FB009FACE7EE4897F3D4AE72EF85D8",
-      "deleted": false,
-      "data": "{\"label\":\"test111\",\"records\":{\"identity\":\"AC5EoXmLSpM6Q9S2BFMrfFFqmhCSiE5yKVdA3L5DkcjU\"},\"preorderSalt\":\"gIUpKYlk2J7wIxr6IWoPrtLW6+wNnaeKp4mfED6aLeI=\",\"subdomainRules\":{\"allowSubdomains\":false},\"normalizedLabel\":\"test111\",\"parentDomainName\":\"dash\",\"normalizedParentDomainName\":\"dash\"}",
-      "timestamp": "2024-08-26T22:14:06.680Z",
-      "system": false,
-      "entropy": null,
-      "prefundedVotingBalance": {
-        "parentNameAndLabel": 20000000000
-      },
-      "documentTypeName": "domain",
-      "transitionType": 0,
-      "nonce": null,
-      "owner": "AC5EoXmLSpM6Q9S2BFMrfFFqmhCSiE5yKVdA3L5DkcjU"
+      "identifier": "36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm",
+      "timestamp": "2024-10-22T15:53:29.063Z",
+      "documentIdentifier": "9aEkDDuCDQSm98AXNHGLbrtvHXe4dq1xaoC8wuA9nDn ",
+      "documentStateTransition": null,
+      "aliases": [
+        {
+          "alias": "0000-0000-0000-00001.dash",
+          "status": "ok",
+          "contested": false,
+          "timestamp": null
+        },
+        {
+          "alias": "xyz.dash",
+          "status": "ok",
+          "contested": true,
+          "timestamp": null
+        },
+        {
+          "alias": "000000000000000000.dash",
+          "status": "pending",
+          "contested": true,
+          "timestamp": null
+        }
+      ],
+      "yesVotes": 2,
+      "abstainVotes": 1,
+      "notMeVotes": 0
     },
-    ...
+    {
+      "identifier": "5bUPV8KGgL42ZBS9fsmmKU3wweQbVeHHsiVrG3YMHyG5",
+      "timestamp": "2024-10-22T16:06:01.346Z",
+      "documentIdentifier": "Hck3wJDPPdfVCzffCh1xs5WUfBY7hJ3srCvhC7EcytG1",
+      "documentStateTransition": null,
+      "aliases": [
+        {
+          "alias": "xyz.dash",
+          "status": "locked",
+          "contested": true,
+          "timestamp": null
+        }
+      ],
+      "yesVotes": 0,
+      "abstainVotes": 1,
+      "notMeVotes": 2
+    }
   ],
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 231
-  }
+  "indexName": "parentNameAndLabel",
+  "resourceValue": [
+    "dash",
+    "xyz"
+  ],
+  "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+  "prefundedVotingBalance": {
+    "parentNameAndLabel": 20000000000
+  },
+  "documentTypeName": "domain",
+  "timestamp": "2024-10-22T16:06:01.346Z",
+  "totalGasUsed": 139430280,
+  "totalDocumentsGasUsed": 109430280,
+  "totalVotesGasUsed": 30000000,
+  "totalCountVotes": 3,
+  "totalCountLock": 0,
+  "totalCountAbstain": 1,
+  "totalCountYes": 2,
+  "status": "finished",
+  "endTimestamp": null
 }
 ```
 Response codes:
