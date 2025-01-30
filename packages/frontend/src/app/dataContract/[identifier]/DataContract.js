@@ -10,11 +10,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CodeBlock } from '../../../components/data'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { DataContractDigestCard, DataContractTotalCard } from '../../../components/dataContracts'
-import {
-  Box,
-  Container,
-  Tabs, TabList, TabPanels, Tab, TabPanel
-} from '@chakra-ui/react'
+import { Container, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import './DataContract.scss'
 
 const pagintationConfig = {
@@ -107,8 +103,7 @@ function DataContract ({ identifier }) {
           <TabPanels>
             <TabPanel position={'relative'}>
               {!documents.error
-                ? <Box mt={4}>
-                  <DocumentsList
+                ? <DocumentsList
                     documents={documents.data.resultSet}
                     loading={documents.loading}
                     pagination={{
@@ -117,7 +112,6 @@ function DataContract ({ identifier }) {
                       forcePage: documents.props.currentPage
                     }}
                   />
-                </Box>
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
