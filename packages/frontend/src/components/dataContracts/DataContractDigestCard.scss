@@ -4,9 +4,6 @@
 .DataContractDigestCard {
   @include mixins.DigestCard();
   border-radius: $border-radius-medium;
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
   container-type: inline-size;
 
   &__InfoContainer {

@@ -469,7 +469,9 @@
   @include InfoContainerPadding(padding, 0px, false);
   font-family: $font-mono;
   font-size: 0.75rem;
+  display: flex;
   flex-direction: column;
+  gap: 0.875rem;
   background: rgba(var(--chakra-colors-gray-800-rgb), .5);
   border-radius: $border-radius-def;
   container-type: inline-size;
