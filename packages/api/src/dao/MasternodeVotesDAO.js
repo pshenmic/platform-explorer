@@ -1,6 +1,6 @@
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const {getAliasInfo, getAliasStateByVote} = require("../utils");
+const { getAliasInfo, getAliasStateByVote } = require('../utils')
 
 module.exports = class MasternodeVotesDAO {
   constructor (knex, dapi) {
@@ -42,9 +42,9 @@ module.exports = class MasternodeVotesDAO {
 
     const resourceFilter = resourceValue
       ? [
-        'index_values = ?',
-        [JSON.stringify(resourceValue)]
-      ]
+          'index_values = ?',
+          [JSON.stringify(resourceValue)]
+        ]
       : ['true']
 
     // TODO: Implement Power filter

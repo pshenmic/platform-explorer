@@ -16,7 +16,7 @@ module.exports = class ContestedResource {
   status
   endTimestamp
 
-  constructor(contenders, indexName, resourceValue, dataContractIdentifier, prefundedVotingBalance, documentTypeName, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountYes, status, endTimestamp) {
+  constructor (contenders, indexName, resourceValue, dataContractIdentifier, prefundedVotingBalance, documentTypeName, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountYes, status, endTimestamp) {
     this.contenders = contenders ?? null
     this.indexName = indexName ?? null
     this.resourceValue = resourceValue ?? null
@@ -35,24 +35,25 @@ module.exports = class ContestedResource {
     this.endTimestamp = endTimestamp ?? null
   }
 
-  static fromRaw({
-                   contenders,
-                   index_name,
-                   resource_value,
-                   data_contract_identifier,
-                   prefunded_voting_balance,
-                   document_type_name,
-                   timestamp,
-                   totalGasUsed,
-                   totalDocumentsGasUsed,
-                   totalVotesGasUsed,
-                   totalCountVotes,
-                   totalCountLock,
-                   totalCountAbstain,
-                   totalCountYes,
-                   status,
-                   endTimestamp
-                 }) {
-    return new ContestedResource(contenders, index_name, resource_value, data_contract_identifier, prefunded_voting_balance, document_type_name, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountYes, status?'finished':'pending', endTimestamp)
+  /* eslint-disable camelcase */
+  static fromRaw ({
+    contenders,
+    index_name,
+    resource_value,
+    data_contract_identifier,
+    prefunded_voting_balance,
+    document_type_name,
+    timestamp,
+    totalGasUsed,
+    totalDocumentsGasUsed,
+    totalVotesGasUsed,
+    totalCountVotes,
+    totalCountLock,
+    totalCountAbstain,
+    totalCountYes,
+    status,
+    endTimestamp
+  }) {
+    return new ContestedResource(contenders, index_name, resource_value, data_contract_identifier, prefunded_voting_balance, document_type_name, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountYes, status ? 'finished' : 'pending', endTimestamp)
   }
 }

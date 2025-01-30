@@ -1,10 +1,10 @@
-const ChoiceEnum = require("../enums/ChoiceEnum");
-const ContestedResource = require("../models/ContestedResource");
-const {buildIndexBuffer, getAliasInfo, getAliasStateByVote} = require("../utils");
-const {base58} = require("@scure/base");
+const ChoiceEnum = require('../enums/ChoiceEnum')
+const ContestedResource = require('../models/ContestedResource')
+const { buildIndexBuffer, getAliasInfo, getAliasStateByVote } = require('../utils')
+const { base58 } = require('@scure/base')
 
 module.exports = class ContestedDAO {
-  constructor(knex, dapi) {
+  constructor (knex, dapi) {
     this.knex = knex
     this.dapi = dapi
   }
@@ -16,7 +16,7 @@ module.exports = class ContestedDAO {
       .as('aliases')
 
     const documentsPrefundingIndexeKeysSubquery = this.knex('documents')
-      .select('id', 'data_contract_id', 'data', )
+      .select('id', 'data_contract_id', 'data')
       .select(this.knex.raw('jsonb_object_keys(prefunded_voting_balance) as key'))
       .whereRaw('prefunded_voting_balance is not null')
       .as('sub')
@@ -38,7 +38,7 @@ module.exports = class ContestedDAO {
       .select(
         'document_id', 'field_index', 'name as index_name',
         'data', 'data_contract_identifier',
-        this.knex.raw('jsonb_object_keys(property) as property_keys'),
+        this.knex.raw('jsonb_object_keys(property) as property_keys')
       )
       .fromRaw('?, jsonb_array_elements(index_elements.index_element -> \'properties\') WITH ORDINALITY AS t(property,field_index)', filteredIndexElementSubquery)
       .as('keys_subquery')
@@ -60,7 +60,7 @@ module.exports = class ContestedDAO {
         'documents.state_transition_hash as state_transition_hash', 'documents.owner as owner',
         'documents.identifier as document_identifier', 'documents.document_type_name as document_type_name',
         'documents.prefunded_voting_balance as prefunded_voting_balance'
-        )
+      )
       .leftJoin('documents', 'documents.id', 'document_id')
       .leftJoin('state_transitions', 'documents.state_transition_hash', 'hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
@@ -68,7 +68,7 @@ module.exports = class ContestedDAO {
 
     const rows = await this.knex(documentGasSubquery)
       .select('resource_value', 'data_contract_identifier', 'document_tx_gas_used',
-        'prefunded_voting_balance', 'gas_used as vote_gas_used',  'document_timestamp',
+        'prefunded_voting_balance', 'gas_used as vote_gas_used', 'document_timestamp',
         'masternode_votes.choice as choice', 'contested_documents_sub.state_transition_hash as state_transition_hash',
         'masternode_votes.state_transition_hash as masternode_vote_tx',
         'masternode_votes.towards_identity_identifier as towards_identity', 'contested_documents_sub.index_name as index_name',
@@ -79,17 +79,16 @@ module.exports = class ContestedDAO {
       .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'contested_documents_sub.owner')
       .leftJoin('state_transitions', 'masternode_votes.state_transition_hash', 'hash')
 
-
     const uniqueVotes = rows
       .filter((item, pos, self) =>
-        (item.owner === item.towards_identity || item.towards_identity === null)
-        && self.findIndex((row) => row.masternode_vote_tx === item.masternode_vote_tx) === pos
+        (item.owner === item.towards_identity || item.towards_identity === null) &&
+        self.findIndex((row) => row.masternode_vote_tx === item.masternode_vote_tx) === pos
       )
 
     const uniqueContenders = rows
       .filter((item, pos, self) =>
-        self.findIndex((row) => row.owner === item.owner) === pos
-        && self.findIndex((row) => row.document_identifier === item.document_identifier) === pos
+        self.findIndex((row) => row.owner === item.owner) === pos &&
+        self.findIndex((row) => row.document_identifier === item.document_identifier) === pos
       )
 
     const [row] = rows.sort((a, b) => new Date(b.timestamp ?? new Date()).getTime() - new Date(a.timestamp ?? new Date()).getTime())
@@ -123,7 +122,7 @@ module.exports = class ContestedDAO {
         timestamp: row.timestamp ?? null,
         documentIdentifier: row.document_identifier ?? null,
         documentStateTransition: row.document_state_transition_hash ?? null,
-        aliases: aliases??[],
+        aliases: aliases ?? [],
         yesVotes: uniqueVotes.filter((vote) => vote.owner === row.owner).reduce((accumulator, currentValue) => {
           if (currentValue.choice === ChoiceEnum.YES) {
             return accumulator + 1
@@ -150,8 +149,8 @@ module.exports = class ContestedDAO {
 
     let status
 
-    if (row.data_contract_identifier && row.index_name && row.document_type_name, row.resource_value) {
-      const {finishedVoteInfo} = await this.dapi.getContestedState(
+    if (row.data_contract_identifier && row.index_name && row.document_type_name && row.resource_value) {
+      const { finishedVoteInfo } = await this.dapi.getContestedState(
         base58.decode(row.data_contract_identifier),
         row.document_type_name,
         row.index_name,
@@ -162,13 +161,12 @@ module.exports = class ContestedDAO {
       status = typeof finishedVoteInfo !== 'undefined'
     }
 
-
     return ContestedResource.fromRaw({
       ...row,
       contenders,
       totalGasUsed: totalVotesGasUsed + totalDocumentsGasUsed,
-      totalDocumentsGasUsed: totalDocumentsGasUsed,
-      totalVotesGasUsed: totalVotesGasUsed,
+      totalDocumentsGasUsed,
+      totalVotesGasUsed,
       totalCountYes,
       totalCountAbstain,
       totalCountLock,
@@ -177,6 +175,3 @@ module.exports = class ContestedDAO {
     })
   }
 }
-
-
-

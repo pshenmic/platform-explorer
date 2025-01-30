@@ -1,7 +1,7 @@
 const MasternodeVotesDAO = require('../dao/MasternodeVotesDAO')
 
 class MasternodeVotesController {
-  constructor(knex, dapi) {
+  constructor (knex, dapi) {
     this.masternodeVotesDAO = new MasternodeVotesDAO(knex, dapi)
   }
 
