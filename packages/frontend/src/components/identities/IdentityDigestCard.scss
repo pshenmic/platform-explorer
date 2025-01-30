@@ -4,12 +4,6 @@
 .IdentityDigestCard {
   @include mixins.DigestCard();
 
-  &--Loading {
-    .InfoLine__Value {
-      height: 24px;
-    }
-  }
-
   &, &__Transfers, &__LinesContainer {
     display: flex;
     gap: 14px;
@@ -21,10 +15,6 @@
         height: 24px;
       }
     }
-  }
-
-  &__LinesContainer {
-    flex-direction: column;
   }
 
   &__Transfer {
@@ -62,6 +52,7 @@
   &__ValueContainer {
     display: flex;
     justify-content: flex-end;
+    flex-direction: column;
     overflow: hidden;
 
     .DateBlock {

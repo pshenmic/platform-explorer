@@ -1,36 +1,30 @@
 import { DocumentIcon, TransactionsIcon } from '../ui/icons'
-import { CreditsBlock, Identifier, InfoLine, NotActive } from '../data'
+import { CreditsBlock, Identifier, InfoLine } from '../data'
 import { ValueCard } from '../cards'
 import './DataContractDigestCard.scss'
 
 function DataContractDigestCard ({ dataContract, rate }) {
   return (
-    <div className={'DataContract__InfoBlock DataContract__DigestCard DataContractDigestCard'}>
+    <div className={`DataContract__InfoBlock DataContract__DigestCard DataContractDigestCard ${dataContract.loading ? 'DataContractDigestCard--Loading' : ''}`}>
       <div className={'DataContractDigestCard__RowContainer'}>
         <div className={'DataContractDigestCard__InfoContainer'}>
-          <div className={'DataContractDigestCard__InfoContainerTitle'}>
-            <TransactionsIcon/>
-            <span>Total transactions</span>
-          </div>
-          <div>
-            {dataContract.data?.transactionsCount !== undefined
-              ? dataContract.data?.transactionsCount
-              : <NotActive/>
-            }
-          </div>
+          <InfoLine
+            className={'DataContractDigestCard__InfoLine DataContractDigestCard__InfoLine--TotalTransactions'}
+            title={(<span><TransactionsIcon/>Total transactions</span>)}
+            value={dataContract.data?.transactionsCount}
+            loading={dataContract.loading}
+            error={dataContract.error || dataContract.data?.transactionsCount === undefined}
+          />
         </div>
 
         <div className={'DataContractDigestCard__InfoContainer'}>
-          <div className={'DataContractDigestCard__InfoContainerTitle'}>
-            <DocumentIcon/>
-            <span>Total Documents</span>
-          </div>
-          <div className={'DataContractDigestCard__InfoContainerValue'}>
-            {dataContract.data?.documentsCount !== undefined
-              ? dataContract.data?.documentsCount
-              : <NotActive/>
-            }
-          </div>
+          <InfoLine
+            className={'DataContractDigestCard__InfoLine DataContractDigestCard__InfoLine--DocumentsCount'}
+            title={(<span><DocumentIcon/>Total Documents</span>)}
+            value={dataContract.data?.documentsCount}
+            loading={dataContract.loading}
+            error={dataContract.error || dataContract.data?.documentsCount === undefined}
+          />
         </div>
       </div>
 
