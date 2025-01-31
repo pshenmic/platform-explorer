@@ -6,19 +6,23 @@ export const defaultChartConfig = {
     values: [
       {
         label: '24 hours',
-        range: getDynamicRange(24 * 60 * 60 * 1000)
+        range: getDynamicRange(24 * 60 * 60 * 1000),
+        intervalsCount: 24
       },
       {
         label: '3 days',
-        range: getDynamicRange(3 * 24 * 60 * 60 * 1000)
+        range: getDynamicRange(3 * 24 * 60 * 60 * 1000),
+        intervalsCount: 36
       },
       {
         label: '1 week',
-        range: getDynamicRange(7 * 24 * 60 * 60 * 1000)
+        range: getDynamicRange(7 * 24 * 60 * 60 * 1000),
+        intervalsCount: 56
       },
       {
         label: '1 Month',
-        range: getDynamicRange(30 * 24 * 60 * 60 * 1000)
+        range: getDynamicRange(30 * 24 * 60 * 60 * 1000),
+        intervalsCount: 31
       }
     ]
   }
