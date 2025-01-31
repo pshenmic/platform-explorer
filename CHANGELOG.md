@@ -4,6 +4,14 @@
 
 ## Changes
 
+## Frontend
+
+- Fix non-existent component bug @AlexeyTripleA (#444)
+
+### v1.0.12
+
+## Changes
+
 ## API
 
 - Masternodes Votes API @owl352 (#425)
