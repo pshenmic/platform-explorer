@@ -12,6 +12,6 @@ CREATE TABLE masternode_votes (
 );
 
 CREATE INDEX masternode_votes_towards_identity_identifier ON masternode_votes(towards_identity_identifier);
-CREATE INDEX masternode_votes_index_values ON masternode_votes(index_values);
+CREATE INDEX masternode_votes_index_values ON masternode_votes USING GIN (index_values jsonb_path_ops);
 CREATE INDEX masternode_towards_choice ON masternode_votes (towards_identity_identifier, choice);
 CREATE INDEX masternode_choice ON masternode_votes (choice);

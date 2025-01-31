@@ -28,6 +28,10 @@ class ContestedController {
 
     const votes = await this.masternodeVotesDAO.getMasternodeVotes(choice, resourceValue, undefined, undefined, undefined, undefined, undefined, Number(page ?? 1), Number(limit ?? 10), order)
 
+    if (!votes) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
     response.send(votes)
   }
 }

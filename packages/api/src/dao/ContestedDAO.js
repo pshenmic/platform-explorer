@@ -15,10 +15,13 @@ module.exports = class ContestedDAO {
       .groupBy('identity_identifier')
       .as('aliases')
 
-    const documentsPrefundingIndexeKeysSubquery = this.knex('documents')
+    const prefundedDocumentsSubquery = this.knex('documents')
+      .whereRaw('prefunded_voting_balance is not null')
+      .as('sub')
+
+    const documentsPrefundingIndexeKeysSubquery = this.knex(prefundedDocumentsSubquery)
       .select('id', 'data_contract_id', 'data')
       .select(this.knex.raw('jsonb_object_keys(prefunded_voting_balance) as key'))
-      .whereRaw('prefunded_voting_balance is not null')
       .as('sub')
 
     const dataContractsWithContestedDocs = this.knex(documentsPrefundingIndexeKeysSubquery)
@@ -51,7 +54,7 @@ module.exports = class ContestedDAO {
 
     const contestedDocumentsSubquery = this.knex(documentsResourceValues)
       .select('resource_value', 'document_id', 'data_contract_identifier', 'index_name')
-      .whereRaw('resource_value = ?', [JSON.stringify(resourceValue)])
+      .whereRaw('resource_value <@ ?', [JSON.stringify(resourceValue)])
       .as('contested_documents_sub')
 
     const documentGasSubquery = this.knex(contestedDocumentsSubquery)
@@ -73,11 +76,15 @@ module.exports = class ContestedDAO {
         'masternode_votes.state_transition_hash as masternode_vote_tx',
         'masternode_votes.towards_identity_identifier as towards_identity', 'contested_documents_sub.index_name as index_name',
         'contested_documents_sub.owner as owner', 'document_identifier', 'document_timestamp as timestamp',
-        'contested_documents_sub.document_type_name as document_type_name', 'aliases'
+        'contested_documents_sub.document_type_name as document_type_name'
       )
-      .leftJoin('masternode_votes', 'masternode_votes.index_values', 'contested_documents_sub.resource_value')
+      .joinRaw('left join masternode_votes ON masternode_votes.index_values <@ contested_documents_sub.resource_value')// ('masternode_votes', 'masternode_votes.index_values', 'contested_documents_sub.resource_value')
       .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'contested_documents_sub.owner')
       .leftJoin('state_transitions', 'masternode_votes.state_transition_hash', 'hash')
+
+    if (rows.length === 0) {
+      return null
+    }
 
     const uniqueVotes = rows
       .filter((item, pos, self) =>

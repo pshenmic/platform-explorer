@@ -9,4 +9,4 @@ CREATE TABLE documents (
 );
 
 CREATE INDEX documents_data ON documents USING GIN ("data" jsonb_path_ops);
-CREATE INDEX idx_documents_state_transition_hash ON documents(state_transition_hash);
+CREATE UNIQUE INDEX idx_documents_state_transition_hash ON documents(state_transition_hash);
