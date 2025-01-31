@@ -22,7 +22,7 @@ export const defaultChartConfig = {
       {
         label: '1 Month',
         range: getDynamicRange(30 * 24 * 60 * 60 * 1000),
-        intervalsCount: 62
+        intervalsCount: 31
       }
     ]
   }
