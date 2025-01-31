@@ -106,6 +106,7 @@ describe('Epoch routes', () => {
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
           indexValues: [],
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -136,6 +137,7 @@ describe('Epoch routes', () => {
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
           indexValues: [],
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -166,6 +168,7 @@ describe('Epoch routes', () => {
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
           indexValues: [],
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -196,6 +199,7 @@ describe('Epoch routes', () => {
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
           indexValues: [],
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -226,6 +230,7 @@ describe('Epoch routes', () => {
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
           indexValues: [],
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -257,6 +262,7 @@ describe('Epoch routes', () => {
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
           indexValues: [],
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -288,6 +294,7 @@ describe('Epoch routes', () => {
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
           indexValues: [],
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -319,6 +326,7 @@ describe('Epoch routes', () => {
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
           indexValues: [],
+          identityAliases: [],
           powerMultiplier: null
         }))
 
