@@ -58,41 +58,29 @@ class TransactionsController {
     const {
       start = new Date().getTime() - 3600000,
       end = new Date().getTime(),
-      timespan = null,
       intervalsCount = null
     } = request.query
+
+    if (!start || !end) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
 
     if (start > end) {
       return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
     }
 
-    let timespanStart = null
-    let timespanEnd = null
-
-    const timespanInterval = {
-      '1h': { offset: 3600000, step: 'PT5M' },
-      '24h': { offset: 86400000, step: 'PT2H' },
-      '3d': { offset: 259200000, step: 'PT6H' },
-      '1w': { offset: 604800000, step: 'PT14H' }
-    }[timespan]
-
-    if (timespanInterval) {
-      timespanStart = new Date().getTime() - timespanInterval.offset
-      timespanEnd = new Date().getTime()
-    }
-
     const intervalInMs =
       Math.ceil(
-        (new Date(timespanEnd ?? end).getTime() - new Date(timespanStart ?? start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+        (new Date(end).getTime() - new Date(start).getTime()) / Number(intervalsCount ?? NaN) / 1000
       ) * 1000
 
     const interval = intervalsCount
       ? iso8601duration(intervalInMs)
-      : (timespanInterval?.step ?? calculateInterval(new Date(start), new Date(end)))
+      : calculateInterval(new Date(start), new Date(end))
 
     const timeSeries = await this.transactionsDAO.getHistorySeries(
-      new Date(timespanStart ?? start),
-      new Date(timespanEnd ?? end),
+      new Date(start),
+      new Date(end),
       interval,
       isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
     )
@@ -104,41 +92,29 @@ class TransactionsController {
     const {
       start = new Date().getTime() - 3600000,
       end = new Date().getTime(),
-      timespan = null,
       intervalsCount = null
     } = request.query
+
+    if (!start || !end) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
 
     if (start > end) {
       return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
     }
 
-    let timespanStart = null
-    let timespanEnd = null
-
-    const timespanInterval = {
-      '1h': { offset: 3600000, step: 'PT5M' },
-      '24h': { offset: 86400000, step: 'PT2H' },
-      '3d': { offset: 259200000, step: 'PT6H' },
-      '1w': { offset: 604800000, step: 'PT14H' }
-    }[timespan]
-
-    if (timespanInterval) {
-      timespanStart = new Date().getTime() - timespanInterval.offset
-      timespanEnd = new Date().getTime()
-    }
-
     const intervalInMs =
       Math.ceil(
-        (new Date(timespanEnd ?? end).getTime() - new Date(timespanStart ?? start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+        (new Date(end).getTime() - new Date(start).getTime()) / Number(intervalsCount ?? NaN) / 1000
       ) * 1000
 
     const interval = intervalsCount
       ? iso8601duration(intervalInMs)
-      : (timespanInterval?.step ?? calculateInterval(new Date(start), new Date(end)))
+      : calculateInterval(new Date(start), new Date(end))
 
     const timeSeries = await this.transactionsDAO.getGasHistorySeries(
-      new Date(timespanStart ?? start),
-      new Date(timespanEnd ?? end),
+      new Date(start),
+      new Date(end),
       interval,
       isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
     )
