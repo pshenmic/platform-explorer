@@ -16,7 +16,7 @@ export default function TransactionsHistory ({ heightPx = 300, blockBorders = tr
 
     setTransactionsHistory(state => ({ ...state, loading: true }))
 
-    Api.getTransactionsHistory(start, end)
+    Api.getTransactionsHistory(start, end, timespan.intervalsCount)
       .then(res => fetchHandlerSuccess(setTransactionsHistory, { resultSet: res }))
       .catch(err => fetchHandlerError(setTransactionsHistory, err))
   }, [timespan])
