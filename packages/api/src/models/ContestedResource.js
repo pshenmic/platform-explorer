@@ -54,6 +54,6 @@ module.exports = class ContestedResource {
     status,
     endTimestamp
   }) {
-    return new ContestedResource(contenders, index_name, resource_value, data_contract_identifier, prefunded_voting_balance, document_type_name, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountYes, status ? 'finished' : 'pending', endTimestamp)
+    return new ContestedResource(contenders, index_name, resource_value, data_contract_identifier?.trim(), prefunded_voting_balance, document_type_name, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountYes, status ? 'finished' : 'pending', endTimestamp)
   }
 }
