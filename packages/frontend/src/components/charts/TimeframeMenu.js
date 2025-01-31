@@ -47,8 +47,9 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, forceTimespan
       const daysRange = getDaysBetweenDates(selectedRange.start, selectedRange.end)
 
       if (daysRange > 50) return Math.min(daysRange, 100)
-      if (daysRange > 7) return Math.min(daysRange * 2, 100)
-      if (daysRange > 2) return Math.min(daysRange * 4, 100)
+      if (daysRange > 25) return Math.min(daysRange * 2, 100)
+      if (daysRange > 7) return Math.min(daysRange * 4, 100)
+      if (daysRange > 2) return Math.min(daysRange * 11, 100)
       return 24
     })()
 
