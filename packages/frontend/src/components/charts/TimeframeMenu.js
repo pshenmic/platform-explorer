@@ -1,6 +1,7 @@
 import { useState, forwardRef, useEffect } from 'react'
 import { Button } from '@chakra-ui/react'
 import { DateRangePicker } from '../calendar'
+import { getDaysBetweenDates } from '../../util'
 import './TimeframeMenu.scss'
 
 const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, forceTimespan, changeCallback, className }, ref) {
@@ -42,12 +43,22 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, forceTimespan
 
     const label = `${labelFormatDate(selectedRange.start)} - ${labelFormatDate(selectedRange.end)}`
 
+    const intervalsCount = (() => {
+      const daysRange = getDaysBetweenDates(selectedRange.start, selectedRange.end)
+
+      if (daysRange > 50) return Math.min(daysRange, 100)
+      if (daysRange > 7) return Math.min(daysRange * 2, 100)
+      if (daysRange > 2) return Math.min(daysRange * 4, 100)
+      return 24
+    })()
+
     changeHandler({
       label,
       range: {
         start: selectedRange.start.toISOString(),
         end: selectedRange.end.toISOString()
-      }
+      },
+      intervalsCount
     })
   }
 
