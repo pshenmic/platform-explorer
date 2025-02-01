@@ -39,8 +39,8 @@ const getBlockByHash = (hash) => {
   return call(`block/${hash}`, 'GET')
 }
 
-const getTransactionsHistory = (start, end) => {
-  return call(`transactions/history?start=${start}&end=${end}`, 'GET')
+const getTransactionsHistory = (start, end, intervalsCount) => {
+  return call(`transactions/history?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
 const getTransactions = (page = 1, limit = 30, order = 'asc') => {
@@ -120,12 +120,12 @@ const getValidatorByProTxHash = (proTxHash) => {
   return call(`validator/${proTxHash}`, 'GET')
 }
 
-const getBlocksStatsByValidator = (proTxHash, start, end) => {
-  return call(`validator/${proTxHash}/stats?start=${start}&end=${end}`, 'GET')
+const getBlocksStatsByValidator = (proTxHash, start, end, intervalsCount) => {
+  return call(`validator/${proTxHash}/stats?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
-const getRewardsStatsByValidator = (proTxHash, start, end) => {
-  return call(`validator/${proTxHash}/rewards/stats?start=${start}&end=${end}`, 'GET')
+const getRewardsStatsByValidator = (proTxHash, start, end, intervalsCount) => {
+  return call(`validator/${proTxHash}/rewards/stats?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
 const getStatus = () => {
