@@ -1,6 +1,14 @@
 # CHANGELOG
 
-### v1.0.12
+### v1.0.14
+
+## Changes
+
+## Frontend
+
+- Fix timespan title in chart on the Home page @AlexeyTripleA (#446)
+
+### v1.0.13
 
 ## Changes
 
