@@ -12,7 +12,7 @@ export default function RewardsChart ({ hash, isActive, loading, timespan, times
 
     setRewardsHistory(state => ({ ...state, loading: true }))
 
-    Api.getRewardsStatsByValidator(hash, start, end)
+    Api.getRewardsStatsByValidator(hash, start, end, timespan?.intervalsCount)
       .then(res => fetchHandlerSuccess(setRewardsHistory, { resultSet: res }))
       .catch(err => fetchHandlerError(setRewardsHistory, err))
   }, [timespan, hash])
