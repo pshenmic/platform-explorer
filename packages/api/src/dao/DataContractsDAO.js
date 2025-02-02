@@ -1,9 +1,9 @@
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const {decodeStateTransition, getAliasInfo, getAliasStateByVote} = require("../utils");
+const { decodeStateTransition, getAliasInfo, getAliasStateByVote } = require('../utils')
 
 module.exports = class DataContractsDAO {
-  constructor(knex, client, dapi) {
+  constructor (knex, client, dapi) {
     this.knex = knex
     this.client = client
     this.dapi = dapi
@@ -13,10 +13,10 @@ module.exports = class DataContractsDAO {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
-    const orderByOptions = [{column: 'filtered_data_contracts.id', order}]
+    const orderByOptions = [{ column: 'filtered_data_contracts.id', order }]
 
     if (orderBy === 'documents_count') {
-      orderByOptions.unshift({column: 'documents_count', order})
+      orderByOptions.unshift({ column: 'documents_count', order })
     }
 
     const getRankString = () => {
@@ -98,7 +98,6 @@ module.exports = class DataContractsDAO {
       .select(this.knex.raw('count(*) as total_count'))
       .leftJoin('state_transitions', 'hash', 'state_transition_hash')
 
-
     const rows = await this.knex('data_contracts')
       .with('gas_sub', gasSubquery)
       .select('data_contracts.identifier as identifier', 'data_contracts.name as name', 'data_contracts.owner as owner',
@@ -161,7 +160,6 @@ module.exports = class DataContractsDAO {
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('rank', order)
 
-
     if (rows.length === 0) {
       return null
     }
@@ -179,14 +177,14 @@ module.exports = class DataContractsDAO {
         type: decodedTx.type,
         action: decodedTx.transitions?.map(transition => ({
           action: transition.action,
-          id: transition.id,
+          id: transition.id
         })) ?? null,
         owner: row.owner,
-        aliases: aliases,
+        aliases,
         timestamp: row.timestamp,
         gasUsed: row.gas_used,
         error: row.error,
-        hash: row.state_transition_hash,
+        hash: row.state_transition_hash
       }
     }))
 
