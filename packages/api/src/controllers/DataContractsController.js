@@ -1,8 +1,8 @@
 const DataContractsDAO = require('../dao/DataContractsDAO')
 
 class DataContractsController {
-  constructor (knex) {
-    this.dataContractsDAO = new DataContractsDAO(knex)
+  constructor (knex, client, dapi) {
+    this.dataContractsDAO = new DataContractsDAO(knex, client, dapi)
   }
 
   getDataContractByIdentifier = async (request, response) => {
@@ -23,6 +23,15 @@ class DataContractsController {
     const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
 
     response.send(dataContracts)
+  }
+
+  getDataContractTransactions = async (request, response) => {
+    const {identifier} = request.params
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+
+    const transactions = await this.dataContractsDAO.getDataContractTransactions(identifier, Number(page ?? 1), Number(limit ?? 10), order)
+
+    response.send(transactions)
   }
 }
 
