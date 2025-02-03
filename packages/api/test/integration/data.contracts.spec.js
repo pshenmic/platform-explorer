@@ -1,10 +1,11 @@
-const { describe, it, before, after } = require('node:test')
+const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+const DAPI = require('../../src/DAPI')
 
 describe('DataContracts routes', () => {
   let app
@@ -17,6 +18,8 @@ describe('DataContracts routes', () => {
   let dataContracts
   let documents
 
+  let diferentVersionsDataContract
+
   before(async () => {
     app = await server.start()
     client = supertest(app.server)
@@ -24,9 +27,12 @@ describe('DataContracts routes', () => {
 
     await fixtures.cleanup(knex)
 
+    mock.method(DAPI.prototype, 'getContestedState', async () => null)
+
     height = 1
     dataContracts = []
     documents = []
+    diferentVersionsDataContract = []
     block = await fixtures.block(knex)
     identity = await fixtures.identity(knex, { block_hash: block.hash })
 
@@ -46,7 +52,8 @@ describe('DataContracts routes', () => {
       const transaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
         type: StateTransitionEnum.DATA_CONTRACT_CREATE,
-        owner: identity.identifier
+        owner: identity.identifier,
+        data: 'AAAANB6g6fZVacLiESmz0Z1FUW4fi2YzEfBw1Val4hjUsnIAAAAAAAEBAAABcZnx9oQEyG7PYNnLk67zGPoPKwjln/0Xa970MVT/3msAAQ1kYXRhQ29udHJhY3RzFgQSBHR5cGUSBm9iamVjdBIKcHJvcGVydGllcxYCEgppZGVudGlmaWVyFgQSBHR5cGUSBnN0cmluZxIJbWluTGVuZ3RoA1YSCW1heExlbmd0aANYEghwb3NpdGlvbgMAEgRuYW1lFgQSBHR5cGUSBnN0cmluZxIJbWF4TGVuZ3RoA0ASCW1pbkxlbmd0aAMGEghwb3NpdGlvbgMCEghyZXF1aXJlZBUCEgppZGVudGlmaWVyEgRuYW1lEhRhZGRpdGlvbmFsUHJvcGVydGllcxMAAQACQSAyv1MhMb7BIg1n8F0cn2etI1ONNbxCBSCSrdja5W6F1TRtKQiW4Dckvj5otqvvquK14L8RZMgT1Rhz/GupDl+Z'
       })
       const dataContract = await fixtures.dataContract(knex, {
         state_transition_hash: transaction.hash,
@@ -62,7 +69,8 @@ describe('DataContracts routes', () => {
     const contractCreateTransaction = await fixtures.transaction(knex, {
       block_hash: block2.hash,
       type: StateTransitionEnum.DATA_CONTRACT_CREATE,
-      owner: identity.identifier
+      owner: identity.identifier,
+      data: 'AAAANB6g6fZVacLiESmz0Z1FUW4fi2YzEfBw1Val4hjUsnIAAAAAAAEBAAABcZnx9oQEyG7PYNnLk67zGPoPKwjln/0Xa970MVT/3msAAQ1kYXRhQ29udHJhY3RzFgQSBHR5cGUSBm9iamVjdBIKcHJvcGVydGllcxYCEgppZGVudGlmaWVyFgQSBHR5cGUSBnN0cmluZxIJbWluTGVuZ3RoA1YSCW1heExlbmd0aANYEghwb3NpdGlvbgMAEgRuYW1lFgQSBHR5cGUSBnN0cmluZxIJbWF4TGVuZ3RoA0ASCW1pbkxlbmd0aAMGEghwb3NpdGlvbgMCEghyZXF1aXJlZBUCEgppZGVudGlmaWVyEgRuYW1lEhRhZGRpdGlvbmFsUHJvcGVydGllcxMAAQACQSAyv1MhMb7BIg1n8F0cn2etI1ONNbxCBSCSrdja5W6F1TRtKQiW4Dckvj5otqvvquK14L8RZMgT1Rhz/GupDl+Z'
     })
     const dataContract = await fixtures.dataContract(knex, {
       state_transition_hash: contractCreateTransaction.hash,
@@ -72,12 +80,14 @@ describe('DataContracts routes', () => {
     dataContract.documents = []
     dataContracts.push({ transaction: contractCreateTransaction, block: block2, dataContract })
 
-    // create some documents in different data contract revisions
+    diferentVersionsDataContract.push({ dataContract: dataContracts[dataContracts.length - 1].dataContract, transaction: dataContracts[dataContracts.length - 1].transaction })
+    // create some documents in different data contract versions
     for (let i = 0; i < 5; i++) {
       const contractCreateTransaction = await fixtures.transaction(knex, {
         block_hash: block2.hash,
         type: StateTransitionEnum.DATA_CONTRACT_UPDATE,
-        owner: identity.identifier
+        owner: identity.identifier,
+        data: 'AAAANB6g6fZVacLiESmz0Z1FUW4fi2YzEfBw1Val4hjUsnIAAAAAAAEBAAABcZnx9oQEyG7PYNnLk67zGPoPKwjln/0Xa970MVT/3msAAQ1kYXRhQ29udHJhY3RzFgQSBHR5cGUSBm9iamVjdBIKcHJvcGVydGllcxYCEgppZGVudGlmaWVyFgQSBHR5cGUSBnN0cmluZxIJbWluTGVuZ3RoA1YSCW1heExlbmd0aANYEghwb3NpdGlvbgMAEgRuYW1lFgQSBHR5cGUSBnN0cmluZxIJbWF4TGVuZ3RoA0ASCW1pbkxlbmd0aAMGEghwb3NpdGlvbgMCEghyZXF1aXJlZBUCEgppZGVudGlmaWVyEgRuYW1lEhRhZGRpdGlvbmFsUHJvcGVydGllcxMAAQACQSAyv1MhMb7BIg1n8F0cn2etI1ONNbxCBSCSrdja5W6F1TRtKQiW4Dckvj5otqvvquK14L8RZMgT1Rhz/GupDl+Z'
       })
       const dataContract = await fixtures.dataContract(knex, {
         state_transition_hash: contractCreateTransaction.hash,
@@ -88,14 +98,25 @@ describe('DataContracts routes', () => {
         name: 'L33T D4T4C087R4CT',
         documents: dataContracts[dataContracts.length - 1].dataContract.documents
       })
+
+      const documentTransaction = await fixtures.transaction(knex, {
+        block_hash: block2.hash,
+        type: StateTransitionEnum.DOCUMENTS_BATCH,
+        owner: identity.identifier,
+        data: 'AgBxmfH2hATIbs9g2cuTrvMY+g8rCOWf/Rdr3vQxVP/eawEDAABF/LZHZLWdw2w3F4+EpbOlpl8RNK6icPPgAI9u0KsLgwMFQ2xhaW2q3m53l6rTxI+1VTW/2E/dRKsBVNmCJOId0FU9WzapBQRiKSUxGfUgcL2NTlWbhbJM3jqldTUNCUFqM2l63hfROQABQR8ouGytATEcwiRiyIQUYhv0HL3oiPWMtzS8SE668LoJ+Geo+PQq0fMsigWlNUNG4bz3UYQfwiubqFmrX8XflISM'
+      })
+
       const document = await fixtures.document(knex, {
         data_contract_id: dataContract.id,
         owner: identity.identifier,
         is_system: true,
-        prefunded_voting_balance: i % 2 === 0 ? {} : undefined
+        prefunded_voting_balance: i % 2 === 0 ? {} : undefined,
+        state_transition_hash: documentTransaction.hash
       })
+
+      diferentVersionsDataContract.push({ dataContract, transaction: contractCreateTransaction })
       dataContract.documents.push(document)
-      documents.push({ transaction: contractCreateTransaction, block: block2, dataContract, document })
+      documents.push({ transaction: documentTransaction, block: block2, dataContract, document })
       dataContracts[dataContracts.length - 1].transaction = contractCreateTransaction
       dataContracts[dataContracts.length - 1].dataContract = dataContract
     }
@@ -323,6 +344,176 @@ describe('DataContracts routes', () => {
 
     it('should return 404 if data contract not found', async () => {
       await client.get('/dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec')
+        .expect(404)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+    })
+  })
+
+  describe('getDataContractTransactions()', async () => {
+    it('should return data contract transactions by identifier', async () => {
+      const [dataContract] = dataContracts.filter(dataContract => dataContract.dataContract.documents?.length > 0).sort((a, b) => a.dataContract.id - b.dataContract.id)
+
+      const { body } = await client.get(`/dataContract/${dataContract.dataContract.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body.resultSet.length, 10)
+      assert.deepEqual(body.pagination.page, 1)
+      assert.deepEqual(body.pagination.limit, 10)
+      assert.deepEqual(body.pagination.total, 11)
+
+      const dataContractVersions = diferentVersionsDataContract.sort((a, b) => a.dataContract.id - b.dataContract.id).map(dataContractVersion => ({
+        type: 0,
+        action: null,
+        owner: dataContractVersion.dataContract.owner,
+        aliases: [],
+        timestamp: dataContract.block.timestamp.toISOString(),
+        gasUsed: 0,
+        error: null,
+        hash: dataContractVersion.transaction.hash
+      }))
+
+      const documentsTransactions = documents.sort((a, b) => a.dataContract.id - b.dataContract.id).map(({ document, transaction, block }) => ({
+        type: 1,
+        action: [{
+          action: 3,
+          id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
+        }],
+        owner: document.owner,
+        aliases: [],
+        timestamp: block.timestamp.toISOString(),
+        gasUsed: 0,
+        error: null,
+        hash: transaction.hash
+      }))
+
+      const expectedDataTransactions = [
+        dataContractVersions[0],
+        dataContractVersions[1],
+        documentsTransactions[0],
+        dataContractVersions[2],
+        documentsTransactions[1],
+        dataContractVersions[3],
+        documentsTransactions[2],
+        dataContractVersions[4],
+        documentsTransactions[3],
+        dataContractVersions[5],
+        documentsTransactions[4]
+      ]
+
+      assert.deepEqual(body.resultSet, expectedDataTransactions.slice(0, 10))
+    })
+
+    it('should return data contract transactions by identifier with custom page size', async () => {
+      const [dataContract] = dataContracts.filter(dataContract => dataContract.dataContract.documents?.length > 0).sort((a, b) => a.dataContract.id - b.dataContract.id)
+
+      const { body } = await client.get(`/dataContract/${dataContract.dataContract.identifier}/transactions?limit=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body.resultSet.length, 5)
+      assert.deepEqual(body.pagination.page, 1)
+      assert.deepEqual(body.pagination.limit, 5)
+      assert.deepEqual(body.pagination.total, 11)
+
+      const dataContractVersions = diferentVersionsDataContract.sort((a, b) => a.dataContract.id - b.dataContract.id).map(dataContractVersion => ({
+        type: 0,
+        action: null,
+        owner: dataContractVersion.dataContract.owner,
+        aliases: [],
+        timestamp: dataContract.block.timestamp.toISOString(),
+        gasUsed: 0,
+        error: null,
+        hash: dataContractVersion.transaction.hash
+      }))
+
+      const documentsTransactions = documents.sort((a, b) => a.dataContract.id - b.dataContract.id).map(({ document, transaction, block }) => ({
+        type: 1,
+        action: [{
+          action: 3,
+          id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
+        }],
+        owner: document.owner,
+        aliases: [],
+        timestamp: block.timestamp.toISOString(),
+        gasUsed: 0,
+        error: null,
+        hash: transaction.hash
+      }))
+
+      const expectedDataTransactions = [
+        dataContractVersions[0],
+        dataContractVersions[1],
+        documentsTransactions[0],
+        dataContractVersions[2],
+        documentsTransactions[1],
+        dataContractVersions[3],
+        documentsTransactions[2],
+        dataContractVersions[4],
+        documentsTransactions[3],
+        dataContractVersions[5],
+        documentsTransactions[4]
+      ]
+
+      assert.deepEqual(body.resultSet, expectedDataTransactions.slice(0, 5))
+    })
+
+    it('should return data contract transactions by identifier with custom page size and order desc', async () => {
+      const [dataContract] = dataContracts.filter(dataContract => dataContract.dataContract.documents?.length > 0).sort((a, b) => a.dataContract.id - b.dataContract.id)
+
+      const { body } = await client.get(`/dataContract/${dataContract.dataContract.identifier}/transactions?limit=5&order=desc`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body.resultSet.length, 5)
+      assert.deepEqual(body.pagination.page, 1)
+      assert.deepEqual(body.pagination.limit, 5)
+      assert.deepEqual(body.pagination.total, 11)
+
+      const dataContractVersions = diferentVersionsDataContract.sort((a, b) => a.dataContract.id - b.dataContract.id).map(dataContractVersion => ({
+        type: 0,
+        action: null,
+        owner: dataContractVersion.dataContract.owner,
+        aliases: [],
+        timestamp: dataContract.block.timestamp.toISOString(),
+        gasUsed: 0,
+        error: null,
+        hash: dataContractVersion.transaction.hash
+      }))
+
+      const documentsTransactions = documents.sort((a, b) => a.dataContract.id - b.dataContract.id).map(({ document, transaction, block }) => ({
+        type: 1,
+        action: [{
+          action: 3,
+          id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
+        }],
+        owner: document.owner,
+        aliases: [],
+        timestamp: block.timestamp.toISOString(),
+        gasUsed: 0,
+        error: null,
+        hash: transaction.hash
+      }))
+
+      const expectedDataTransactions = [
+        dataContractVersions[0],
+        dataContractVersions[1],
+        documentsTransactions[0],
+        dataContractVersions[2],
+        documentsTransactions[1],
+        dataContractVersions[3],
+        documentsTransactions[2],
+        dataContractVersions[4],
+        documentsTransactions[3],
+        dataContractVersions[5],
+        documentsTransactions[4]
+      ]
+
+      assert.deepEqual(body.resultSet, expectedDataTransactions.slice(0, 5).toReversed())
+    })
+
+    it('should return 404 if data contract not found', async () => {
+      await client.get('/dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })

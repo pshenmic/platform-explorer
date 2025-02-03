@@ -31,6 +31,10 @@ class DataContractsController {
 
     const transactions = await this.dataContractsDAO.getDataContractTransactions(identifier, Number(page ?? 1), Number(limit ?? 10), order)
 
+    if (!transactions) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
     response.send(transactions)
   }
 }

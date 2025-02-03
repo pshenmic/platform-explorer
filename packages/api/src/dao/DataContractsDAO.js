@@ -82,12 +82,12 @@ module.exports = class DataContractsDAO {
       .select('documents.state_transition_hash as state_transition_hash')
       .where('data_contracts.identifier', '=', identifier)
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
-      // .as('documents_txs')
+    // .as('documents_txs')
 
     const dataContractsTransactionsSubquery = this.knex('data_contracts')
       .select('state_transition_hash')
       .where('identifier', '=', identifier)
-      // .as('data_contracts_txs')
+    // .as('data_contracts_txs')
 
     const unionTransactionsSubquery = this.knex
       .union([documentsTransactionsSubquery, dataContractsTransactionsSubquery])
@@ -149,23 +149,29 @@ module.exports = class DataContractsDAO {
 
     const additionalDataSubquery = this.knex(unionSubquery)
       .select('timestamp', 'sub.state_transition_hash as state_transition_hash', 'owner', 'gas_used', 'data', 'error', 'aliases')
-      .select(this.knex.raw('rank() over (order by timestamp asc) as rank'))
+      .select(this.knex.raw('rank() over (order by state_transitions.id asc) as rank'))
       .leftJoin('state_transitions', 'sub.state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .leftJoin(aliasesSubquery, 'owner', 'aliases.identity_identifier')
       .as('additional_subquery')
 
     const rows = await this.knex(additionalDataSubquery)
-      .select('timestamp', 'state_transition_hash', 'owner', 'gas_used', 'data', 'error', 'aliases')
+      .select('timestamp', 'state_transition_hash', 'owner', 'gas_used', 'data', 'error', 'aliases', 'rank')
+      .select(this.knex(additionalDataSubquery).count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('rank', order)
+      .groupBy('timestamp', 'state_transition_hash', 'owner', 'gas_used', 'data', 'error', 'aliases', 'rank')
 
     if (rows.length === 0) {
       return null
     }
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const decodedTx = await decodeStateTransition(this.client, row.data)
+      let decodedTx
+
+      if (row.data) {
+        decodedTx = await decodeStateTransition(this.client, row.data)
+      }
 
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
         const aliasInfo = await getAliasInfo(alias, this.dapi)
@@ -174,21 +180,21 @@ module.exports = class DataContractsDAO {
       }))
 
       return {
-        type: decodedTx.type,
-        action: decodedTx.transitions?.map(transition => ({
+        type: decodedTx?.type ?? null,
+        action: decodedTx?.transitions?.map(transition => ({
           action: transition.action,
           id: transition.id
         })) ?? null,
-        owner: row.owner,
-        aliases,
+        owner: row.owner?.trim() ?? null,
+        aliases: aliases ?? [],
         timestamp: row.timestamp,
-        gasUsed: row.gas_used,
+        gasUsed: Number(row.gas_used ?? 0),
         error: row.error,
         hash: row.state_transition_hash
       }
     }))
 
-    return resultSet
+    return new PaginatedResultSet(resultSet, page, limit, Number(rows[0]?.total_count ?? -1))
   }
 
   getDataContractByName = async (name) => {
