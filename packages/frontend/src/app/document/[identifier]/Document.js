@@ -6,10 +6,12 @@ import { fetchHandlerSuccess, fetchHandlerError, paginationHandler } from '../..
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { useSearchParams } from 'next/navigation'
 import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
-import './Document.scss'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import { DocumentTotalCard, DocumentDigestCard } from '../../../components/documents'
+import { DocumentTotalCard } from '../../../components/documents'
 import { TransactionsList } from '../../../components/transactions'
+import { LoadingBlock } from '../../../components/loading'
+import { CodeBlock } from '../../../components/data'
+import './Document.scss'
 
 const pagintationConfig = {
   itemsOnPage: {
@@ -23,17 +25,23 @@ function Document ({ identifier }) {
   const [document, setDocument] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
   const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const searchParams = useSearchParams()
-  const dataContractId = searchParams.get('contract-id') || null
+  const DocumentId = searchParams.get('contract-id') || null
   const typeName = searchParams.get('document-type-name') || null
   const pageSize = pagintationConfig.itemsOnPage.default
 
   const fetchData = () => {
     setDocument(state => ({ ...state, loading: true }))
 
-    Api.getDocumentByIdentifier(identifier, dataContractId, typeName)
+    Api.getDocumentByIdentifier(identifier, DocumentId, typeName)
       .then(document => fetchHandlerSuccess(setDocument, document))
       .catch(err => fetchHandlerError(setDocument, err))
+
+    Api.getTransactionsByDocument(identifier, transactions.props.currentPage, pageSize, 'desc')
+      .then(document => fetchHandlerSuccess(setTransactions, document))
+      .catch(err => fetchHandlerError(setTransactions, err))
   }
+
+  console.log('transactions', transactions)
 
   useEffect(fetchData, [identifier])
 
@@ -42,9 +50,21 @@ function Document ({ identifier }) {
       className={'Document'}
       title={'Document info'}
     >
-      <div className={'DataContract__InfoBlocks'}>
-        <DocumentTotalCard className={'DataContract__InfoBlock'} document={document}/>
-        <DocumentDigestCard dataContract={document} loading={document.loading}/>
+      <div className={'Document__InfoBlocks'}>
+        <DocumentTotalCard className={'Document__InfoBlock'} document={document}/>
+
+        <div className={'Document__InfoBlock Document__Data'}>
+
+          <div className={'Document__DataTitle'}>Data</div>
+          {!document.error
+            ? <LoadingBlock h={'250px'} loading={document.loading}>
+                {document.data?.data
+                  ? <CodeBlock className={'DataContract__DataBlock'} code={document.data?.data}/>
+                  : <Container h={20}><ErrorMessageBlock/></Container>}
+              </LoadingBlock>
+            : <Container h={20}><ErrorMessageBlock/></Container>
+          }
+        </div>
       </div>
 
       <InfoContainer styles={['tabs']}>
@@ -55,7 +75,7 @@ function Document ({ identifier }) {
                   {document.data?.transactionsCount}
                 </span>
               : ''}</Tab>
-            <Tab>Schema</Tab>
+            {/*<Tab>Schema</Tab>*/}
           </TabList>
           <TabPanels>
             <TabPanel position={'relative'}>
