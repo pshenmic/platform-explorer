@@ -32,7 +32,7 @@ function DocumentTotalCard ({ document, rate, className }) {
 
         <div className={'DocumentTotalCard__HeaderLines'}>
           <InfoLine
-            className={'DocumentTotalCard__Identifier'}
+            className={'DocumentTotalCard__InfoLine DocumentTotalCard__Identifier'}
             title={'Identifier'}
             loading={document.loading}
             error={document.error || !document.data?.identifier}
@@ -49,7 +49,7 @@ function DocumentTotalCard ({ document, rate, className }) {
           />
 
           <InfoLine
-            className={'DocumentTotalCard__DataContract'}
+            className={'DocumentTotalCard__InfoLine DocumentTotalCard__DataContract'}
             title={'Data Contract'}
             loading={document.loading}
             error={document.error}
@@ -69,7 +69,7 @@ function DocumentTotalCard ({ document, rate, className }) {
           />
 
           <InfoLine
-            className={'DocumentTotalCard__Owner'}
+            className={'DocumentTotalCard__InfoLine DocumentTotalCard__Owner'}
             title={'Owner'}
             loading={document.loading}
             error={document.error}
@@ -89,6 +89,7 @@ function DocumentTotalCard ({ document, rate, className }) {
           />
 
           <InfoLine
+            className={'DocumentTotalCard__InfoLine DocumentTotalCard__InfoLine--Revision'}
             title={'Revision'}
             value={document.data?.revision}
             loading={document.loading}
@@ -102,7 +103,7 @@ function DocumentTotalCard ({ document, rate, className }) {
       <div className={'DocumentTotalCard__CommonInfo'}>
 
         <InfoLine
-          className={'DocumentTotalCard__Entropy'}
+          className={'DocumentTotalCard__InfoLine DocumentTotalCard__InfoLine--Entropy DocumentTotalCard__Entropy'}
           title={'Entropy'}
           loading={document.loading}
           error={document.error || !document.data?.entropy}
@@ -119,13 +120,15 @@ function DocumentTotalCard ({ document, rate, className }) {
         />
 
         <InfoLine
+          className={'DocumentTotalCard__InfoLine'}
           title={'System'}
           value={<Badge colorScheme={'gray'}>{document.data?.system ? 'Yes' : 'No'}</Badge>}
           loading={document.loading}
-          error={document.error || !document.data?.timestamp}
+          error={document.error || !document.data?.system}
         />
 
         <InfoLine
+          className={'DocumentTotalCard__InfoLine'}
           title={'Identity Contract Nonce'}
           value={document.data?.nonce}
           loading={document.loading}
@@ -133,6 +136,7 @@ function DocumentTotalCard ({ document, rate, className }) {
         />
 
         <InfoLine
+          className={'DocumentTotalCard__InfoLine'}
           title={'Deleted'}
           value={<Badge colorScheme={'gray'}>{document.data?.deleted ? 'true' : 'false'}</Badge>}
           loading={document.loading}
@@ -141,6 +145,7 @@ function DocumentTotalCard ({ document, rate, className }) {
 
         {document.data?.prefundedVotingBalance &&
           <InfoLine
+            className={'DocumentTotalCard__InfoLine'}
             title={'Prefunded Voting Balance'}
             value={<PrefundedBalance prefundedBalance={document.data?.prefundedVotingBalance} rate={rate}/>}
             loading={document.loading}
@@ -149,6 +154,7 @@ function DocumentTotalCard ({ document, rate, className }) {
         }
 
         <InfoLine
+          className={'DocumentTotalCard__InfoLine DocumentTotalCard__InfoLine--Timestamp'}
           title={'Timestamp'}
           value={<DateBlock timestamp={document.data?.timestamp}/>}
           loading={document.loading}
