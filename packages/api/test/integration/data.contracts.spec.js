@@ -123,7 +123,11 @@ describe('DataContracts routes', () => {
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
           isSystem: dataContract.is_system,
-          documentsCount: dataContract.documents.length
+          documentsCount: dataContract.documents.length,
+          averageGasUsed: null,
+          identitiesInteracted: null,
+          topIdentity: null,
+          totalGasUsed: null
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -151,7 +155,11 @@ describe('DataContracts routes', () => {
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
           isSystem: dataContract.is_system,
-          documentsCount: dataContract.documents.length
+          documentsCount: dataContract.documents.length,
+          averageGasUsed: null,
+          identitiesInteracted: null,
+          topIdentity: null,
+          totalGasUsed: null
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -179,7 +187,11 @@ describe('DataContracts routes', () => {
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
           isSystem: dataContract.is_system,
-          documentsCount: dataContract.documents.length
+          documentsCount: dataContract.documents.length,
+          averageGasUsed: null,
+          identitiesInteracted: null,
+          topIdentity: null,
+          totalGasUsed: null
         }))
 
       assert.equal(body.resultSet.length, 6)
@@ -207,7 +219,11 @@ describe('DataContracts routes', () => {
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
           isSystem: dataContract.is_system,
-          documentsCount: dataContract.documents.length
+          documentsCount: dataContract.documents.length,
+          averageGasUsed: null,
+          identitiesInteracted: null,
+          topIdentity: null,
+          totalGasUsed: null
         }))
 
       assert.equal(body.resultSet.length, 6)
@@ -236,7 +252,11 @@ describe('DataContracts routes', () => {
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
           isSystem: dataContract.is_system,
-          documentsCount: dataContract.documents.length
+          documentsCount: dataContract.documents.length,
+          averageGasUsed: null,
+          identitiesInteracted: null,
+          topIdentity: null,
+          totalGasUsed: null
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -265,7 +285,11 @@ describe('DataContracts routes', () => {
         txHash: null,
         timestamp: null,
         isSystem: true,
-        documentsCount: 0
+        documentsCount: 0,
+        averageGasUsed: 0,
+        identitiesInteracted: 0,
+        topIdentity: null,
+        totalGasUsed: 0
       }
 
       assert.deepEqual(body, expectedDataContract)
@@ -287,7 +311,11 @@ describe('DataContracts routes', () => {
         txHash: dataContract.transaction.hash,
         timestamp: dataContract.block.timestamp.toISOString(),
         isSystem: false,
-        documentsCount: dataContract.dataContract.documents.length
+        documentsCount: dataContract.dataContract.documents.length,
+        averageGasUsed: 0,
+        identitiesInteracted: 1,
+        topIdentity: dataContract.dataContract.owner,
+        totalGasUsed: 0
       }
 
       assert.deepEqual(body, expectedDataContract)
