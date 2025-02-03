@@ -76,6 +76,10 @@ const getDocumentByIdentifier = (identifier, dataContractId, typeName) => {
   return call(`document/${identifier}?${queryParams ? `?${queryParams}` : ''}`, 'GET')
 }
 
+const getDocumentRevisions = (identifier, page = 1, limit = 30, order = 'asc') => {
+  return call(`document/${identifier}/revisions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+}
+
 const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc') => {
   return call(`dataContract/${dataContractIdentifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
@@ -155,6 +159,7 @@ export {
   decodeTx,
   getDocumentsByDataContract,
   getDocumentByIdentifier,
+  getDocumentRevisions,
   getDataContractByIdentifier,
   getDataContracts,
   getIdentities,
