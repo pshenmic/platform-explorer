@@ -2,6 +2,7 @@ import ImageGenerator from '../imageGenerator'
 import { DateBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
+import { Badge } from '@chakra-ui/react'
 import './DocumentTotalCard.js.scss'
 
 function DocumentTotalCard ({ document, rate, className }) {
@@ -104,7 +105,7 @@ function DocumentTotalCard ({ document, rate, className }) {
           className={'DocumentTotalCard__Entropy'}
           title={'Entropy'}
           loading={document.loading}
-          error={document.error || !document.data?.identifier}
+          error={document.error || !document.data?.entropy}
           value={
             <Identifier
               className={''}
@@ -119,7 +120,7 @@ function DocumentTotalCard ({ document, rate, className }) {
 
         <InfoLine
           title={'System'}
-          value={document.data?.system ? 'yes' : 'no'}
+          value={<Badge colorScheme={'gray'}>{document.data?.system ? 'Yes' : 'No'}</Badge>}
           loading={document.loading}
           error={document.error || !document.data?.timestamp}
         />
@@ -131,9 +132,9 @@ function DocumentTotalCard ({ document, rate, className }) {
           error={document.error || document.data?.nonce === undefined}
         />
 
-        <InfoLine // Prefunded Voting Balance:
+        <InfoLine
           title={'Deleted'}
-          value={document.data?.deleted ? 'true' : 'false'}
+          value={<Badge colorScheme={'gray'}>{document.data?.deleted ? 'true' : 'false'}</Badge>}
           loading={document.loading}
           error={document.error || document.data?.deleted === undefined}
         />

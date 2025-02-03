@@ -4,7 +4,11 @@
 .DocumentTotalCard {
   @include mixins.EntityCard();
 
-  &__Identifier, &__Owner {
+  &__Header {
+    align-items: flex-start;
+  }
+
+  &__Identifier, &__Owner, &__Entropy  {
     .InfoLine__Value {
       width: 100%;
       text-align: right;
