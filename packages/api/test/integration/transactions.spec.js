@@ -497,7 +497,7 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 12)
+      assert.equal(body.length, 13)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -531,7 +531,7 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 4)
+      assert.equal(body.length, 5)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -565,7 +565,7 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 4)
+      assert.equal(body.length, 5)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -599,7 +599,7 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 5)
+      assert.equal(body.length, 6)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -633,7 +633,7 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 7)
+      assert.equal(body.length, 8)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -669,7 +669,7 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 3)
+      assert.equal(body.length, 4)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)

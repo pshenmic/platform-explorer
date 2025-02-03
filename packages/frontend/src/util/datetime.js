@@ -1,4 +1,5 @@
 function getDaysBetweenDates (startDate, endDate) {
+  if (!startDate || !endDate) return 0
   const start = new Date(startDate)
   const end = new Date(endDate)
   const diffInMilliseconds = Math.abs(end - start)

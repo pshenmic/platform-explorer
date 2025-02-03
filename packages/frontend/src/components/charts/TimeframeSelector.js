@@ -16,7 +16,7 @@ export default function TimeframeSelector ({
   const [timespan, setTimespan] = useState(config.timespan.values[config.timespan.defaultIndex])
   const [menuIsOpen, setMenuIsOpen] = useState(false)
 
-  useEffect(() => setTimespan(forceTimespan), [forceTimespan])
+  useEffect(() => forceTimespan && setTimespan(forceTimespan), [forceTimespan])
 
   const changeHandler = (value) => {
     setTimespan(value)
