@@ -30,7 +30,7 @@ Reference:
 * [Identities](#identities)
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
-* [Document Transactions](#document-transactions)
+* [Document Revisions](#document-revisions)
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
@@ -748,15 +748,15 @@ Response codes:
 500: Internal Server Error
 ```
 ---
-### Document Transactions
-Return transactions for selected document
+### Document Revisions
+Return revisions for selected document
 
 * Valid `order_by` values are `asc` or `desc`
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 
 ```
-GET /document/ELEeNjGbqCsHNtkoJ51pFHvUyCk5sxgU1jYVuySMhQwN/transactions
+GET /document/ELEeNjGbqCsHNtkoJ51pFHvUyCk5sxgU1jYVuySMhQwN/revisions
 
 {
   "resultSet": [
