@@ -35,10 +35,6 @@ function Document ({ identifier }) {
     Api.getDocumentByIdentifier(identifier, DocumentId, typeName)
       .then(document => fetchHandlerSuccess(setDocument, document))
       .catch(err => fetchHandlerError(setDocument, err))
-
-    Api.getTransactionsByDocument(identifier, transactions.props.currentPage, pageSize, 'desc')
-      .then(document => fetchHandlerSuccess(setTransactions, document))
-      .catch(err => fetchHandlerError(setTransactions, err))
   }
 
   console.log('transactions', transactions)
