@@ -37,8 +37,6 @@ function Document ({ identifier }) {
       .catch(err => fetchHandlerError(setDocument, err))
   }
 
-  console.log('transactions', transactions)
-
   useEffect(fetchData, [identifier])
 
   return (

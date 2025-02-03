@@ -1,10 +1,12 @@
 import ImageGenerator from '../imageGenerator'
-import { DateBlock, Identifier, InfoLine } from '../data'
+import { DateBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import './DocumentTotalCard.js.scss'
 
-function DocumentTotalCard ({ document, className }) {
+function DocumentTotalCard ({ document, rate, className }) {
+  console.log('document', document)
+
   return (
     <div className={`InfoBlock InfoBlock--Gradient DocumentTotalCard ${document?.loading ? 'DocumentTotalCard--Loading' : ''} ${className || ''}`}>
       {document?.data?.name &&
@@ -46,6 +48,26 @@ function DocumentTotalCard ({ document, className }) {
           />
 
           <InfoLine
+            className={'DocumentTotalCard__DataContract'}
+            title={'Data Contract'}
+            loading={document.loading}
+            error={document.error}
+            value={
+              <ValueCard link={`/dataContract/${document.data?.dataContractIdentifier}`}>
+                <Identifier
+                  avatar={true}
+                  className={''}
+                  copyButton={true}
+                  styles={['highlight-both']}
+                  ellipsis={false}
+                >
+                  {document.data?.dataContractIdentifier}
+                </Identifier>
+              </ValueCard>
+            }
+          />
+
+          <InfoLine
             className={'DocumentTotalCard__Owner'}
             title={'Owner'}
             loading={document.loading}
@@ -64,24 +86,72 @@ function DocumentTotalCard ({ document, className }) {
               </ValueCard>
             }
           />
+
+          <InfoLine
+            title={'Revision'}
+            value={document.data?.revision}
+            loading={document.loading}
+            error={document.error || document.data?.revision === undefined}
+          />
         </div>
       </div>
 
       <HorisontalSeparator className={'DocumentTotalCard__Separator'}/>
 
       <div className={'DocumentTotalCard__CommonInfo'}>
+
         <InfoLine
-          title={'Revision'}
-          value={document.data?.version}
+          className={'DocumentTotalCard__Entropy'}
+          title={'Entropy'}
           loading={document.loading}
-          error={document.error}
+          error={document.error || !document.data?.identifier}
+          value={
+            <Identifier
+              className={''}
+              copyButton={true}
+              styles={['highlight-both', `size-${document.data?.entropy?.length}`]}
+              ellipsis={false}
+            >
+              {document.data?.entropy}
+            </Identifier>
+          }
         />
 
         <InfoLine
-          title={'Creation Date'}
+          title={'System'}
+          value={document.data?.system ? 'yes' : 'no'}
+          loading={document.loading}
+          error={document.error || !document.data?.timestamp}
+        />
+
+        <InfoLine
+          title={'Identity Contract Nonce'}
+          value={document.data?.nonce}
+          loading={document.loading}
+          error={document.error || document.data?.nonce === undefined}
+        />
+
+        <InfoLine // Prefunded Voting Balance:
+          title={'Deleted'}
+          value={document.data?.deleted ? 'true' : 'false'}
+          loading={document.loading}
+          error={document.error || document.data?.deleted === undefined}
+        />
+
+        {document.data?.prefundedVotingBalance &&
+          <InfoLine
+            title={'Prefunded Voting Balance'}
+            value={<PrefundedBalance prefundedBalance={document.data?.prefundedVotingBalance} rate={rate}/>}
+            loading={document.loading}
+            error={document.error}
+          />
+        }
+
+        <InfoLine
+          title={'Timestamp'}
           value={<DateBlock timestamp={document.data?.timestamp}/>}
           loading={document.loading}
-          error={document.error}
+          error={document.error || !document.data?.timestamp}
         />
       </div>
     </div>
