@@ -75,7 +75,6 @@ function Document ({ identifier }) {
                   {document.data?.transactionsCount}
                 </span>
               : ''}</Tab>
-            {/*<Tab>Schema</Tab>*/}
           </TabList>
           <TabPanels>
             <TabPanel position={'relative'}>
