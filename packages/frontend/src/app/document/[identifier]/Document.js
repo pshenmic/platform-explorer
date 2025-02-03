@@ -43,7 +43,7 @@ function Document ({ identifier }) {
       title={'Document info'}
     >
       <div className={'DataContract__InfoBlocks'}>
-        <DocumentTotalCard className={'DataContract__InfoBlock'} dataContract={document}/>
+        <DocumentTotalCard className={'DataContract__InfoBlock'} document={document}/>
         <DocumentDigestCard dataContract={document} loading={document.loading}/>
       </div>
 

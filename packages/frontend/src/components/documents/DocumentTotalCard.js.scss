@@ -1,3 +1,24 @@
-.DocumentTotalCard {
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
 
+.DocumentTotalCard {
+  @include mixins.EntityCard();
+
+  &__Identifier, &__Owner {
+    .InfoLine__Value {
+      width: 100%;
+      text-align: right;
+
+      .Identifier {
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  &__Owner {
+    .ValueCard {
+      max-width: max-content;
+      margin-left: auto;
+    }
+  }
 }
