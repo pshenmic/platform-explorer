@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, paginationHandler } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, setLoadingProp } from '../../../util'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { useSearchParams } from 'next/navigation'
 import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import { DocumentTotalCard } from '../../../components/documents'
-import { TransactionsList } from '../../../components/transactions'
+import { DocumentTotalCard, DocumentsRevisionsList } from '../../../components/documents'
 import { LoadingBlock } from '../../../components/loading'
 import { CodeBlock } from '../../../components/data'
 import './Document.scss'
@@ -23,7 +22,7 @@ const pagintationConfig = {
 
 function Document ({ identifier }) {
   const [document, setDocument] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
-  const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [revisions, setRevisions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const searchParams = useSearchParams()
   const DocumentId = searchParams.get('contract-id') || null
   const typeName = searchParams.get('document-type-name') || null
@@ -39,6 +38,17 @@ function Document ({ identifier }) {
 
   useEffect(fetchData, [identifier])
 
+  useEffect(() => {
+    if (!identifier) return
+    setLoadingProp(setRevisions)
+
+    Api.getDocumentRevisions(identifier, revisions.props.currentPage + 1, pageSize, 'desc')
+      .then(paginatedDataContracts => fetchHandlerSuccess(setRevisions, paginatedDataContracts))
+      .catch(err => fetchHandlerError(setRevisions, err))
+  }, [identifier, revisions.props.currentPage])
+
+  console.log('revisions', revisions)
+
   return (
     <PageDataContainer
       className={'Document'}
@@ -48,7 +58,6 @@ function Document ({ identifier }) {
         <DocumentTotalCard className={'Document__InfoBlock'} document={document}/>
 
         <div className={'Document__InfoBlock Document__Data'}>
-
           <div className={'Document__DataTitle'}>Data</div>
           {!document.error
             ? <LoadingBlock h={'250px'} loading={document.loading}>
@@ -64,24 +73,25 @@ function Document ({ identifier }) {
       <InfoContainer styles={['tabs']}>
         <Tabs>
           <TabList>
-            <Tab>Transactions {document.data?.transactionsCount !== undefined
+            <Tab>Revision {document.data?.transactionsCount !== undefined
               ? <span className={`Tabs__TabItemsCount ${document.data?.transactionsCount === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
                   {document.data?.transactionsCount}
                 </span>
-              : ''}</Tab>
+              : ''}
+            </Tab>
           </TabList>
           <TabPanels>
             <TabPanel position={'relative'}>
-              {!transactions.error
-                ? <TransactionsList
-                  transactions={transactions.data?.resultSet}
-                  loading={transactions.loading}
-                  pagination={{
-                    onPageChange: pagination => paginationHandler(setTransactions, pagination.selected),
-                    pageCount: Math.ceil(transactions.data?.pagination?.total / pageSize) || 1,
-                    forcePage: transactions.props.currentPage
-                  }}
-                />
+              {!revisions.error
+                ? <DocumentsRevisionsList
+                    revisions={revisions.data?.resultSet}
+                    loading={revisions.loading}
+                    pagination={{
+                      onPageChange: pagination => paginationHandler(setRevisions, pagination.selected),
+                      pageCount: Math.ceil(revisions.data?.pagination?.total / pageSize) || 1,
+                      forcePage: revisions.props.currentPage
+                    }}
+                  />
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>

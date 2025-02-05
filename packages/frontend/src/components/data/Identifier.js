@@ -11,8 +11,6 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
     return null
   })()
 
-  console.log('styles', styles)
-
   const sizeClass = (() => {
     if (styles.includes('size-32')) return 'Identifier--Size32'
     if (styles.includes('size-43')) return 'Identifier--Size44'

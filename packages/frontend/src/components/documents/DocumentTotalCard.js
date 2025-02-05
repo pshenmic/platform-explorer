@@ -6,8 +6,6 @@ import { Badge } from '@chakra-ui/react'
 import './DocumentTotalCard.js.scss'
 
 function DocumentTotalCard ({ document, rate, className }) {
-  console.log('document', document)
-
   return (
     <div className={`InfoBlock InfoBlock--Gradient DocumentTotalCard ${document?.loading ? 'DocumentTotalCard--Loading' : ''} ${className || ''}`}>
       {document?.data?.name &&
