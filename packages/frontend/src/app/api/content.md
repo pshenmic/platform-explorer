@@ -30,7 +30,7 @@ Reference:
 * [Identities](#identities)
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
-* [Document Transactions](#document-transactions)
+* [Document Revisions](#document-revisions)
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
@@ -748,38 +748,34 @@ Response codes:
 500: Internal Server Error
 ```
 ---
-### Document Transactions
-Return transactions for selected document
+### Document Revisions
+Return revisions for selected document
 
 * Valid `order_by` values are `asc` or `desc`
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 
 ```
-GET /document/ELEeNjGbqCsHNtkoJ51pFHvUyCk5sxgU1jYVuySMhQwN/transactions
+GET /document/y5DhJmM4unLTEaKAkMTbQHMoM8hh47ddowKYusgtHwL/revisions
 
 {
   "resultSet": [
     {
+      "identifier": "y5DhJmM4unLTEaKAkMTbQHMoM8hh47ddowKYusgtHwL",
+      "dataContractIdentifier": null,
       "revision": 1,
-      "gasUsed": 38201380,
-      "owner": "Gn15UqiQ6gpqzXcDhv4adwsJ1KgpG6xx9e3rij9n4ctP",
-      "hash": "437C949982B41E00506B88C62A94B3E032FADFB010BCA91F3A4C874EB75F9E23",
-      "timestamp": "2024-08-25T18:32:24.454Z",
+      "txHash": "8851ACE1E6EE41C3B7B812DD98867BD472135C54E6438111586E2510EC6E43E3",
+      "deleted": null,
+      "data": "{\"hash\":\"00000000001f60ce3577bb4ae48df85617143d082872231b01ef3f0f5300\",\"timeToLock\":0,\"receiveTime\":1732222851,\"isChainLocked\":false}",
+      "timestamp": "2024-11-21T16:01:22.905Z",
+      "system": null,
+      "entropy": null,
+      "prefundedVotingBalance": null,
+      "documentTypeName": null,
       "transitionType": 0,
-      "data": {
-        "label": "BurgerJoint2",
-        "records": {
-          "identity": "Gn15UqiQ6gpqzXcDhv4adwsJ1KgpG6xx9e3rij9n4ctP"
-        },
-        "preorderSalt": "GV43pQXjfaSZ5FryGKsyKJBja2L+fwxXz9Npe0MH2WQ=",
-        "subdomainRules": {
-          "allowSubdomains": false
-        },
-        "normalizedLabel": "burgerj01nt2",
-        "parentDomainName": "dash",
-        "normalizedParentDomainName": "dash"
-      }
+      "nonce": null,
+      "gasUsed": 78317180,
+      "owner": "AVGaxbN1apFAM4aWtkjUJvPhT1Nr3AeKzgb22sqWvKNe"
     }
   ],
   "pagination": {
