@@ -1,8 +1,9 @@
 import { Grid, GridItem } from '@chakra-ui/react'
 import { BigNumber, Identifier, NotActive, TimeDelta } from '../../data'
-import { LinkContainer, ValueContainer } from '../../ui/containers'
+import { LinkContainer } from '../../ui/containers'
 import { useRouter } from 'next/navigation'
 import { RateTooltip } from '../../ui/Tooltips'
+import Link from 'next/link'
 import './DocumentsRevisionsListItem.scss'
 
 function DocumentsRevisionsListItem ({ revision, rate }) {
@@ -12,7 +13,7 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
   console.log('revision?.txHash', revision?.txHash)
 
   return (
-    <div className={'DocumentsRevisionsListItem'}>
+    <Link href={`/transaction/${revision?.txHash}`} className={'DocumentsRevisionsListItem'}>
       <Grid className={'DocumentsRevisionsListItem__Content'}>
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Timestamp'}>
           <TimeDelta endDate={revision?.timestamp}/>
@@ -20,14 +21,7 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
 
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--TxHash'}>
           {revision?.txHash
-            ? <ValueContainer
-                link={`/transaction/${revision?.txHash}`}
-                light={true}
-                size={'xxs'}
-                clickable={true}
-              >
-                <Identifier ellipsis={true} styles={['highlight-both']}>{revision?.txHash}</Identifier>
-              </ValueContainer>
+            ? <Identifier ellipsis={true} styles={['highlight-both']}>{revision?.txHash}</Identifier>
             : <NotActive/>
           }
         </GridItem>
@@ -61,7 +55,7 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
           {revision?.revision}
         </GridItem>
       </Grid>
-    </div>
+    </Link>
   )
 }
 
