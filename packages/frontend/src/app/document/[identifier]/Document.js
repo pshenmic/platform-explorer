@@ -36,8 +36,12 @@ function Document ({ identifier }) {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
       { label: 'Data Contracts', path: '/dataContracts' },
-      { label: document?.data?.dataContractIdentifier, path: `/dataContract/${document?.data?.dataContractIdentifier}`, avatar: true },
-      { label: undefined, path: `/dataContract/${document?.data?.dataContractIdentifier}`, avatar: true },
+      {
+        label: document?.data?.dataContractIdentifier,
+        path: `/dataContract/${document?.data?.dataContractIdentifier}`,
+        avatar: true,
+        shrink: true
+      },
       { label: identifier, avatar: true }
     ])
   }, [setBreadcrumbs, identifier, document])
