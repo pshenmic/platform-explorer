@@ -63,6 +63,13 @@
     margin-bottom: 0;
   }
 
+  &__Column {
+    &--Credits, &--Number {
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+  }
+
   &__IdentifierContainer {
     display: flex;
     align-items: center;

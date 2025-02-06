@@ -48,7 +48,7 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
           }
         </GridItem>
 
-        <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--GasUsed'}>
+        <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--GasUsed DocumentsRevisionsListItem__Column--Credits'}>
           {revision?.gasUsed
             ? <RateTooltip credits={revision?.gasUsed} rate={rate}>
               <span><BigNumber>{revision?.gasUsed}</BigNumber></span>
@@ -57,7 +57,7 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
           }
         </GridItem>
 
-        <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Revision'}>
+        <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Revision DocumentsRevisionsListItem__Column--Number'}>
           {revision?.revision}
         </GridItem>
       </Grid>
