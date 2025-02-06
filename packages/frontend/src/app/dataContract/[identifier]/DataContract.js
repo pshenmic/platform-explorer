@@ -44,9 +44,9 @@ function DataContract ({ identifier }) {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
       { label: 'Data Contracts', path: '/dataContracts' },
-      { label: identifier, avatar: true }
+      { label: dataContract.data?.name || identifier, avatarSource: identifier }
     ])
-  }, [setBreadcrumbs, identifier])
+  }, [setBreadcrumbs, identifier, dataContract])
 
   useEffect(() => {
     Api.getDataContractByIdentifier(identifier)
