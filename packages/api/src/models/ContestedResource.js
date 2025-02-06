@@ -12,11 +12,11 @@ module.exports = class ContestedResource {
   totalCountVotes
   totalCountLock
   totalCountAbstain
-  totalCountYes
+  totalCountTowardsIdentity
   status
   endTimestamp
 
-  constructor (contenders, indexName, resourceValue, dataContractIdentifier, prefundedVotingBalance, documentTypeName, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountYes, status, endTimestamp) {
+  constructor (contenders, indexName, resourceValue, dataContractIdentifier, prefundedVotingBalance, documentTypeName, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountTowardsIdentity, status, endTimestamp) {
     this.contenders = contenders ?? null
     this.indexName = indexName ?? null
     this.resourceValue = resourceValue ?? null
@@ -30,7 +30,7 @@ module.exports = class ContestedResource {
     this.totalCountVotes = totalCountVotes ?? null
     this.totalCountLock = totalCountLock ?? null
     this.totalCountAbstain = totalCountAbstain ?? null
-    this.totalCountYes = totalCountYes
+    this.totalCountTowardsIdentity = totalCountTowardsIdentity ?? null
     this.status = status ?? null
     this.endTimestamp = endTimestamp ?? null
   }

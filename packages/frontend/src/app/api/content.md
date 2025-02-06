@@ -22,7 +22,7 @@ Reference:
 * [Transactions](#transactions)
 * [Data Contract By Identifier](#data-contract-by-identifier)
 * [Data Contracts](#data-contracts)
-* [Data Contract Transactions](#data-contract-transactions)
+* * [Data Contract Transactions](#data-contract-transactions)
 * [Document by Identifier](#document-by-identifier)
 * [Documents by Data Contract](#documents-by-data-contract)
 * [Identity by Identifier](#identity-by-identifier)
@@ -1418,7 +1418,7 @@ Returns set of votes for selected resource
   * `WyJkYXNoIiwieHl6Il0=` = `'["dash", "xyz"]'`
 * `choice` optional
 ```
-GET /contested/WyJkYXNoIiwieHl6Il0=/votes?choice=1&page=1&limit=10&order=asc
+GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&page=1&limit=10&order=asc
 {
   "resultSet": [
     {
@@ -1460,7 +1460,7 @@ Return info about contested resource value
   * `WyJkYXNoIiwieHl6Il0=` = `'["dash", "xyz"]'`
 
 ```
-GET /contested/WyJkYXNoIiwieHl6Il0=
+GET /contestedResource/WyJkYXNoIiwieHl6Il0=
 {
   "contenders": [
     {
@@ -1488,7 +1488,7 @@ GET /contested/WyJkYXNoIiwieHl6Il0=
           "timestamp": null
         }
       ],
-      "yesVotes": 2,
+      "totalCountTowardsIdentity": 2,
       "abstainVotes": 1,
       "lockVotes": 0
     },
@@ -1505,7 +1505,7 @@ GET /contested/WyJkYXNoIiwieHl6Il0=
           "timestamp": null
         }
       ],
-      "yesVotes": 0,
+      "totalCountTowardsIdentity": 0,
       "abstainVotes": 1,
       "lockVotes": 2
     }

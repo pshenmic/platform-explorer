@@ -24,7 +24,7 @@ module.exports = ({
   validatorsController,
   rateController,
   masternodeVotesController,
-  contestedController
+  contestedResourcesController
 }) => {
   const routes = [
     {
@@ -189,9 +189,9 @@ module.exports = ({
       }
     },
     {
-      path: '/contested/:resourceValue',
+      path: '/contestedResource/:resourceValue',
       method: 'GET',
-      handler: contestedController.getContestedResource,
+      handler: contestedResourcesController.getContestedResource,
       schema: {
         params: {
           type: 'object',
@@ -202,9 +202,9 @@ module.exports = ({
       }
     },
     {
-      path: '/contested/:resourceValue/votes',
+      path: '/contestedResource/:resourceValue/votes',
       method: 'GET',
-      handler: contestedController.getVotesForResource,
+      handler: contestedResourcesController.getContestedResourceVotes,
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       },

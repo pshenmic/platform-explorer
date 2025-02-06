@@ -8,7 +8,7 @@ class ContestedResourcesController {
   getContestedResource = async (request, response) => {
     const { resourceValue } = request.params
 
-    if (!resourceValue || resourceValue?.length === 0) {
+    if (!resourceValue) {
       response.status(400).send({ message: 'resourceValue must be set and cannot be empty' })
     }
 
@@ -19,11 +19,11 @@ class ContestedResourcesController {
     response.send(resource)
   }
 
-  getVotesForResource = async (request, response) => {
+  getContestedResourceVotes = async (request, response) => {
     const { choice, page = 1, limit = 10, order = 'asc' } = request.query
     const { resourceValue } = request.params
 
-    if (!resourceValue || resourceValue?.length === 0) {
+    if (!resourceValue) {
       response.status(400).send({ message: 'resourceValue must be set and cannot be empty' })
     }
 

@@ -142,7 +142,7 @@ describe('Contested documents routes', () => {
 
   describe('getContestedResource()', async () => {
     it('should return default set of Masternode votes', async () => {
-      const { body } = await client.get(`/contested/${resourceValue}`)
+      const { body } = await client.get(`/contestedResource/${resourceValue}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -153,7 +153,7 @@ describe('Contested documents routes', () => {
           documentIdentifier: resource.document.identifier,
           documentStateTransition: resource.document.state_transition_hash,
           aliases: [],
-          yesVotes: contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length,
+          totalCountTowardsIdentity: contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length,
           abstainVotes: 3,
           lockVotes: 7 - contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length
         })),
@@ -171,7 +171,7 @@ describe('Contested documents routes', () => {
         totalCountVotes: contestedResources.length,
         totalCountLock: 3,
         totalCountAbstain: 3,
-        totalCountYes: 4,
+        totalCountTowardsIdentity: 4,
         status: 'finished',
         endTimestamp: null
       }
@@ -180,7 +180,7 @@ describe('Contested documents routes', () => {
     })
 
     it('should return votes for value', async () => {
-      const { body } = await client.get(`/contested/${resourceValue}/votes`)
+      const { body } = await client.get(`/contestedResource/${resourceValue}/votes`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -212,7 +212,7 @@ describe('Contested documents routes', () => {
     })
 
     it('should return votes for value by choice', async () => {
-      const { body } = await client.get(`/contested/${resourceValue}/votes?choice=2`)
+      const { body } = await client.get(`/contestedResource/${resourceValue}/votes?choice=2`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 

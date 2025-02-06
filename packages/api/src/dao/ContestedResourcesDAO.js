@@ -131,27 +131,20 @@ module.exports = class ContestedDAO {
         documentIdentifier: row.document_identifier?.trim() ?? null,
         documentStateTransition: row.document_state_transition_hash ?? null,
         aliases: aliases ?? [],
-        yesVotes: uniqueVotes.filter((vote) => vote.towards_identity === row.owner).reduce((accumulator, currentValue) => {
-          if (currentValue.choice === ChoiceEnum.YES) {
-            return accumulator + 1
-          } else {
-            return accumulator
-          }
-        }, 0) ?? null,
-        abstainVotes: uniqueVotes.reduce((accumulator, currentValue) => {
-          if (currentValue.choice === ChoiceEnum.ABSTAIN) {
-            return accumulator + 1
-          } else {
-            return accumulator
-          }
-        }, 0) ?? null,
-        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => {
-          if (currentValue.choice !== ChoiceEnum.ABSTAIN && currentValue.towards_identity !== row.owner) {
-            return accumulator + 1
-          } else {
-            return accumulator
-          }
-        }, 0) ?? null
+        totalCountTowardsIdentity: uniqueVotes
+          .filter((vote) => vote.towards_identity === row.owner)
+          .reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.YES
+            ? accumulator + 1
+            : accumulator
+          , 0) ?? null,
+        abstainVotes: uniqueVotes.reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.ABSTAIN
+          ? accumulator + 1
+          : accumulator
+        , 0) ?? null,
+        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => currentValue.choice !== ChoiceEnum.ABSTAIN && currentValue.towards_identity !== row.owner
+          ? accumulator + 1
+          : accumulator
+        , 0) ?? null
       }
     }))
 
