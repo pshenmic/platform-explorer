@@ -122,7 +122,7 @@ function DocumentTotalCard ({ document, rate, className }) {
           title={'System'}
           value={<Badge colorScheme={'gray'}>{document.data?.system ? 'Yes' : 'No'}</Badge>}
           loading={document.loading}
-          error={document.error || !document.data?.system}
+          error={document.error || (typeof document.data?.system !== 'boolean' && !document.data?.system)}
         />
 
         <InfoLine
