@@ -87,7 +87,7 @@ function Document ({ identifier }) {
       <InfoContainer styles={['tabs']}>
         <Tabs>
           <TabList>
-            <Tab>Revision {revisions.data?.pagination?.total !== undefined
+            <Tab>Revisions {revisions.data?.pagination?.total !== undefined
               ? <span className={`Tabs__TabItemsCount ${revisions.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
                   {revisions.data?.pagination?.total}
                 </span>
