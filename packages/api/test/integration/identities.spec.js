@@ -779,7 +779,11 @@ describe('Identities routes', () => {
         txHash: _dataContract.transaction.hash,
         timestamp: _dataContract.block.timestamp.toISOString(),
         isSystem: false,
-        documentsCount: 0
+        documentsCount: 0,
+        averageGasUsed: null,
+        identitiesInteracted: null,
+        topIdentity: null,
+        totalGasUsed: null
       }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -824,7 +828,11 @@ describe('Identities routes', () => {
           txHash: _dataContract.transaction.hash,
           timestamp: _dataContract.block.timestamp.toISOString(),
           isSystem: false,
-          documentsCount: 0
+          documentsCount: 0,
+          averageGasUsed: null,
+          identitiesInteracted: null,
+          topIdentity: null,
+          totalGasUsed: null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -869,7 +877,11 @@ describe('Identities routes', () => {
           txHash: _dataContract.transaction.hash,
           timestamp: _dataContract.block.timestamp.toISOString(),
           isSystem: false,
-          documentsCount: 0
+          documentsCount: 0,
+          averageGasUsed: null,
+          identitiesInteracted: null,
+          topIdentity: null,
+          totalGasUsed: null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -914,7 +926,11 @@ describe('Identities routes', () => {
           txHash: _dataContract.transaction.hash,
           timestamp: _dataContract.block.timestamp.toISOString(),
           isSystem: false,
-          documentsCount: 0
+          documentsCount: 0,
+          averageGasUsed: null,
+          identitiesInteracted: null,
+          topIdentity: null,
+          totalGasUsed: null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -973,7 +989,8 @@ describe('Identities routes', () => {
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
         transitionType: 0,
-        nonce: null
+        nonce: null,
+        gasUsed: null
       }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1034,6 +1051,7 @@ describe('Identities routes', () => {
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0,
+          gasUsed: null,
           nonce: null
         }))
 
@@ -1097,6 +1115,7 @@ describe('Identities routes', () => {
           documentTypeName: 'my_type',
           prefundedVotingBalance: null,
           entropy: null,
+          gasUsed: null,
           nonce: null
         }))
 
@@ -1158,6 +1177,7 @@ describe('Identities routes', () => {
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0,
+          gasUsed: null,
           nonce: null
         }))
 
@@ -1219,6 +1239,7 @@ describe('Identities routes', () => {
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
           transitionType: 0,
+          gasUsed: null,
           nonce: null
         }))
 

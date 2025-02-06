@@ -127,6 +127,20 @@ module.exports = ({
       }
     },
     {
+      path: '/dataContract/:identifier/transactions',
+      method: 'GET',
+      handler: dataContractsController.getDataContractTransactions,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/dataContract/:identifier/documents',
       method: 'GET',
       handler: documentsController.getDocumentsByDataContract,

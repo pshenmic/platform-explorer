@@ -306,7 +306,11 @@ describe('Other routes', () => {
         txHash: dataContractTransaction.hash,
         timestamp: block.timestamp.toISOString(),
         isSystem: false,
-        documentsCount: 1
+        documentsCount: 1,
+        averageGasUsed: 0,
+        identitiesInteracted: 1,
+        totalGasUsed: 0,
+        topIdentity: dataContract.owner
       }
 
       assert.deepEqual({ dataContract: expectedDataContract }, body)
@@ -326,7 +330,11 @@ describe('Other routes', () => {
         txHash: dataContractTransaction.hash,
         timestamp: block.timestamp.toISOString(),
         isSystem: false,
-        documentsCount: 1
+        documentsCount: 1,
+        averageGasUsed: null,
+        identitiesInteracted: null,
+        totalGasUsed: null,
+        topIdentity: null
       }
 
       assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
@@ -351,6 +359,7 @@ describe('Other routes', () => {
         documentTypeName: document.document_type_name,
         transitionType: 0,
         owner: document.owner,
+        gasUsed: null,
         nonce: 2
       }
 
