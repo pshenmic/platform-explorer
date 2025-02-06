@@ -47,8 +47,6 @@ function Document ({ identifier }) {
       .catch(err => fetchHandlerError(setRevisions, err))
   }, [identifier, revisions.props.currentPage])
 
-  console.log('revisions', revisions)
-
   return (
     <PageDataContainer
       className={'Document'}
@@ -60,7 +58,7 @@ function Document ({ identifier }) {
         <div className={'Document__InfoBlock Document__Data'}>
           <div className={'Document__DataTitle'}>Data</div>
           {!document.error
-            ? <LoadingBlock h={'250px'} loading={document.loading}>
+            ? <LoadingBlock h={'100%'} loading={document.loading}>
                 {document.data?.data
                   ? <CodeBlock className={'DataContract__DataBlock'} code={document.data?.data}/>
                   : <Container h={20}><ErrorMessageBlock/></Container>}
