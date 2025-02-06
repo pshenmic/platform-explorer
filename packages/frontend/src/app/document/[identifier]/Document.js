@@ -31,8 +31,6 @@ function Document ({ identifier }) {
   const pageSize = pagintationConfig.itemsOnPage.default
 
   useEffect(() => {
-    console.log('.document', document)
-
     setBreadcrumbs([
       { label: 'Home', path: '/' },
       { label: 'Data Contracts', path: '/dataContracts' },
