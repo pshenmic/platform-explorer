@@ -359,6 +359,7 @@ describe('Other routes', () => {
         documentTypeName: document.document_type_name,
         transitionType: 0,
         owner: document.owner,
+        gasUsed: null,
         nonce: 2
       }
 
