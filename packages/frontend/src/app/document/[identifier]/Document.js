@@ -36,6 +36,9 @@ function Document ({ identifier }) {
       .catch(err => fetchHandlerError(setDocument, err))
   }
 
+  console.log('document', document)
+  console.log('revisions', revisions)
+
   useEffect(fetchData, [identifier])
 
   useEffect(() => {
@@ -71,9 +74,9 @@ function Document ({ identifier }) {
       <InfoContainer styles={['tabs']}>
         <Tabs>
           <TabList>
-            <Tab>Revision {document.data?.transactionsCount !== undefined
-              ? <span className={`Tabs__TabItemsCount ${document.data?.transactionsCount === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                  {document.data?.transactionsCount}
+            <Tab>Revision {revisions.data?.pagination?.total !== undefined
+              ? <span className={`Tabs__TabItemsCount ${revisions.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {revisions.data?.pagination?.total}
                 </span>
               : ''}
             </Tab>
