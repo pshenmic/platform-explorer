@@ -11,6 +11,7 @@ import { CodeBlock } from '../../../components/data'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { DataContractDigestCard, DataContractTotalCard } from '../../../components/dataContracts'
 import { Container, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import './DataContract.scss'
 
 const pagintationConfig = {
@@ -29,6 +30,7 @@ const tabs = [
 const defaultTabName = 'documents'
 
 function DataContract ({ identifier }) {
+  const { setBreadcrumbs } = useBreadcrumbs()
   const [dataContract, setDataContract] = useState({ data: {}, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
@@ -37,6 +39,14 @@ function DataContract ({ identifier }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Home', path: '/' },
+      { label: 'Data Contracts', path: '/dataContracts' },
+      { label: identifier, avatar: true }
+    ])
+  }, [setBreadcrumbs, identifier])
 
   useEffect(() => {
     Api.getDataContractByIdentifier(identifier)
