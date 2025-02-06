@@ -10,6 +10,7 @@ import { InfoContainer, PageDataContainer } from '../../../components/ui/contain
 import { DocumentTotalCard, DocumentsRevisionsList } from '../../../components/documents'
 import { LoadingBlock } from '../../../components/loading'
 import { CodeBlock } from '../../../components/data'
+import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import './Document.scss'
 
 const pagintationConfig = {
@@ -21,12 +22,25 @@ const pagintationConfig = {
 }
 
 function Document ({ identifier }) {
+  const { setBreadcrumbs } = useBreadcrumbs()
   const [document, setDocument] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
   const [revisions, setRevisions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const searchParams = useSearchParams()
   const DocumentId = searchParams.get('contract-id') || null
   const typeName = searchParams.get('document-type-name') || null
   const pageSize = pagintationConfig.itemsOnPage.default
+
+  useEffect(() => {
+    console.log('.document', document)
+
+    setBreadcrumbs([
+      { label: 'Home', path: '/' },
+      { label: 'Data Contracts', path: '/dataContracts' },
+      { label: document?.data?.dataContractIdentifier, path: `/dataContract/${document?.data?.dataContractIdentifier}`, avatar: true },
+      { label: undefined, path: `/dataContract/${document?.data?.dataContractIdentifier}`, avatar: true },
+      { label: identifier, avatar: true }
+    ])
+  }, [setBreadcrumbs, identifier, document])
 
   const fetchData = () => {
     setDocument(state => ({ ...state, loading: true }))
