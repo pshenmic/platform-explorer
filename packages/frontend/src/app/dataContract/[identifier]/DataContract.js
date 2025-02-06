@@ -72,9 +72,6 @@ function DataContract ({ identifier }) {
     router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab])
 
-  // // mock
-  // if (!dataContract.data?.topIdentity) dataContract.data.topIdentity = 'HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT'
-
   useEffect(() => {
     if (!identifier) return
     setLoadingProp(setDocuments)
