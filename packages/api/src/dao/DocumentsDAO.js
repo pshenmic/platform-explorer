@@ -146,7 +146,7 @@ module.exports = class DocumentsDAO {
 
     const subquery = this.knex('documents')
       .select(
-        'documents.id as id', 'revision', 'transition_type', 'gas_used', 'timestamp',
+        'documents.id as id', 'revision', 'transition_type', 'gas_used', 'timestamp', 'identifier',
         'documents.owner as owner', 'state_transitions.hash as hash', 'documents.data as data')
       .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
       .where('documents.identifier', '=', identifier)
@@ -155,7 +155,7 @@ module.exports = class DocumentsDAO {
       .as('subquery')
 
     const rows = await this.knex(subquery)
-      .select('revision', 'gas_used', 'subquery.owner', 'hash as tx_hash', 'timestamp', 'transition_type', 'data')
+      .select('revision', 'gas_used', 'subquery.owner', 'hash as tx_hash', 'timestamp', 'transition_type', 'data', 'identifier')
       .select(this.knex(subquery).count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)

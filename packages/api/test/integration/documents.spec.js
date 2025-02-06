@@ -169,6 +169,7 @@ describe('Documents routes', () => {
         owner: document.document.owner,
         system: document.document.is_system,
         nonce: 2,
+        gasUsed: null,
         transitionType: 0
       }
 
@@ -196,6 +197,7 @@ describe('Documents routes', () => {
         owner: document.document.owner,
         txHash: document.transaction.hash,
         nonce: 2,
+        gasUsed: null,
         transitionType: 0
       }
 
@@ -229,9 +231,10 @@ describe('Documents routes', () => {
         deleted: null,
         documentTypeName: null,
         entropy: null,
-        identifier: null,
+        identifier: document.document.identifier,
         nonce: null,
         prefundedVotingBalance: null,
+        gasUsed: 0,
         system: null
       }
 
@@ -266,6 +269,7 @@ describe('Documents routes', () => {
           documentTypeName: document.document_type_name,
           transitionType: document.transition_type,
           prefundedVotingBalance: null,
+          gasUsed: null,
           nonce: null
         }))
 
@@ -311,6 +315,7 @@ describe('Documents routes', () => {
           timestamp: block.timestamp,
           owner: document.owner,
           system: document.is_system,
+          gasUsed: null,
           nonce: null
         }))
 
@@ -343,6 +348,7 @@ describe('Documents routes', () => {
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
+          gasUsed: null,
           nonce: null
         }))
 
@@ -388,6 +394,7 @@ describe('Documents routes', () => {
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
+          gasUsed: null,
           nonce: null
         }))
 
@@ -428,6 +435,7 @@ describe('Documents routes', () => {
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
+          gasUsed: null,
           nonce: null
         }))
 
@@ -468,6 +476,7 @@ describe('Documents routes', () => {
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
+          gasUsed: null,
           nonce: null
         }))
 
