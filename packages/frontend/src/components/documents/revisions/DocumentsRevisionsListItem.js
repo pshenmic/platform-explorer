@@ -9,9 +9,6 @@ import './DocumentsRevisionsListItem.scss'
 function DocumentsRevisionsListItem ({ revision, rate }) {
   const router = useRouter()
 
-  console.log('revision', revision)
-  console.log('revision?.txHash', revision?.txHash)
-
   return (
     <Link href={`/transaction/${revision?.txHash}`} className={'DocumentsRevisionsListItem'}>
       <Grid className={'DocumentsRevisionsListItem__Content'}>
