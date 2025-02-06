@@ -1,8 +1,8 @@
 const MasternodeVotesDAO = require('../dao/MasternodeVotesDAO')
 
 class MasternodeVotesController {
-  constructor (knex) {
-    this.masternodeVotesDAO = new MasternodeVotesDAO(knex)
+  constructor (knex, dapi) {
+    this.masternodeVotesDAO = new MasternodeVotesDAO(knex, dapi)
   }
 
   getMasternodeVotes = async (request, response) => {
@@ -12,7 +12,7 @@ class MasternodeVotesController {
       voter_identity: voterIdentity, towards_identity: towardsIdentity, choice, power
     } = request.query
 
-    const masternodeVotes = await this.masternodeVotesDAO.getMasternodeVotes(timestampStart, timestampEnd, voterIdentity, towardsIdentity, choice, power, Number(page ?? 1), Number(limit ?? 10), order)
+    const masternodeVotes = await this.masternodeVotesDAO.getMasternodeVotes(choice, timestampStart, timestampEnd, voterIdentity, towardsIdentity, power, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(masternodeVotes)
   }

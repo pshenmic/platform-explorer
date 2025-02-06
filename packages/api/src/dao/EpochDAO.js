@@ -13,7 +13,7 @@ module.exports = class EpochDAO {
     const votersSubquery = this.knex('masternode_votes')
       .select('voter_identity_id')
       .select(this.knex.raw('count(*) as rating'))
-      .select(this.knex.raw(`SUM(CASE WHEN choice=${ChoiceEnum.YES} THEN 1 ELSE 0 END) as voter_yes`))
+      .select(this.knex.raw(`SUM(CASE WHEN choice=${ChoiceEnum.TowardsIdentity} THEN 1 ELSE 0 END) as voter_yes`))
       .select(this.knex.raw(`SUM(CASE WHEN choice=${ChoiceEnum.ABSTAIN} THEN 1 ELSE 0 END) as voter_abstain`))
       .select(this.knex.raw(`SUM(CASE WHEN choice=${ChoiceEnum.LOCK} THEN 1 ELSE 0 END) as voter_lock`))
       .where('timestamp', '>', new Date(epoch.startTime).toISOString())
@@ -91,7 +91,7 @@ module.exports = class EpochDAO {
         this.knex(votesSubquery).select('index_values').as('top_voted_resource'),
         this.knex(votes)
           .count('* as yes')
-          .where('choice', '=', ChoiceEnum.YES)
+          .where('choice', '=', ChoiceEnum.TowardsIdentity)
           .as('resource_votes_yes'),
         this.knex(votes)
           .count('* as abstain')
