@@ -1,5 +1,5 @@
 import ImageGenerator from '../imageGenerator'
-import { DateBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
+import { DateBlock, Identifier, InfoLine, NotActive, PrefundedBalance } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { Badge } from '@chakra-ui/react'
@@ -24,7 +24,7 @@ function DocumentTotalCard ({ document, rate, className }) {
               width={88}
               height={88}
             />
-            : 'n/a'
+            : <NotActive/>
           }
         </div>
 
