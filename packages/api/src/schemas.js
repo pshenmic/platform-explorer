@@ -119,9 +119,6 @@ const schemaTypes = [
         type: ['number', 'null'],
         minimum: 0,
         maximum: 1
-      },
-      resource_value: {
-        type: 'array'
       }
     }
   },

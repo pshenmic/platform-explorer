@@ -19,7 +19,7 @@ const DAPI = require('./DAPI')
 const RateController = require('./controllers/RateController')
 const DAPIClient = require('@dashevo/dapi-client')
 const MasternodeVotesController = require('./controllers/MasternodeVotesController')
-const ContestedController = require('./controllers/ContestedController')
+const ContestedController = require('./controllers/ContestedResourcesController')
 const { default: loadWasmDpp } = require('dash').PlatformProtocol
 
 function errorHandler (err, req, reply) {

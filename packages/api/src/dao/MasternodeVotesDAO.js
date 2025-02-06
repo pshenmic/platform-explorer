@@ -8,7 +8,7 @@ module.exports = class MasternodeVotesDAO {
     this.dapi = dapi
   }
 
-  getMasternodeVotes = async (choice, resourceValue, timestampStart, timestampEnd, voterIdentity, towardsIdentity, power, page, limit, order) => {
+  getMasternodeVotes = async (choice, timestampStart, timestampEnd, voterIdentity, towardsIdentity, power, page, limit, order) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
@@ -40,13 +40,6 @@ module.exports = class MasternodeVotesDAO {
         ]
       : ['true']
 
-    const resourceFilter = resourceValue
-      ? [
-          'index_values = ?',
-          [JSON.stringify(resourceValue)]
-        ]
-      : ['true']
-
     // TODO: Implement Power filter
 
     const aliasesSubquery = this.knex('identity_aliases')
@@ -63,7 +56,6 @@ module.exports = class MasternodeVotesDAO {
       .whereRaw(...voterIdentityFilter)
       .whereRaw(...towardsIdentityFilter)
       .whereRaw(...choiceFilter)
-      .whereRaw(...resourceFilter)
       .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
       .leftJoin('state_transitions', 'masternode_votes.state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')

@@ -238,38 +238,6 @@ describe('Masternode routes', () => {
       assert.deepStrictEqual(body.resultSet, expectedVotes)
     })
 
-    it('should allow filter by resource value', async () => {
-      const { body } = await client.get('/contested/votes?resource_value=dash&resource_value=xyz')
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.limit, 10)
-      assert.equal(body.pagination.total, 25)
-      assert.equal(body.pagination.page, 1)
-
-      const expectedVotes = masternodeVotes
-        .filter(vote => vote.mnVote.index_values === JSON.stringify((['dash', 'xyz'])))
-        .sort((a, b) => a.mnVote.id - b.mnVote.id)
-        .slice(0, 10)
-        .map(({ block, voterIdentity, transaction, mnVote }) => ({
-          proTxHash: mnVote.pro_tx_hash,
-          txHash: mnVote.state_transition_hash,
-          voterIdentifier: mnVote.voter_identity_id,
-          choice: mnVote.choice,
-          timestamp: block.timestamp,
-          towardsIdentity: mnVote.towards_identity_identifier,
-          dataContractIdentifier: dataContract.identifier,
-          documentTypeName: mnVote.document_type_name,
-          indexName: mnVote.index_name,
-          indexValues: JSON.parse(mnVote.index_values),
-          identityAliases: [],
-          powerMultiplier: null
-        }))
-
-      assert.deepStrictEqual(body.resultSet, expectedVotes)
-    })
-
     it('should allow filter by timestamp', async () => {
       const { body } = await client.get(`/masternodes/votes?timestamp_start=${new Date(0).toISOString()}&timestamp_end=${new Date(4200000).toISOString()}`)
         .expect(200)

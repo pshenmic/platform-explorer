@@ -1396,9 +1396,11 @@ ___
 ### Votes for Contested Resource
 Returns set of votes for selected resource
 
+* `resourceValue` must be specified after `/contested/` in json base64
+  * `WyJkYXNoIiwieHl6Il0=` = `'["dash", "xyz"]'`
 * `choice` optional
 ```
-GET /contested/votes?resource_value=dash&resource_value=xyz&choice=1&page=1&limit=10&order=asc
+GET /contested/WyJkYXNoIiwieHl6Il0=/votes?choice=1&page=1&limit=10&order=asc
 {
   "resultSet": [
     {
@@ -1436,8 +1438,11 @@ ___
 ### Contested Resource Value
 Return info about contested resource value
 
+* `resourceValue` must be specified after `/contested/` in json base64
+  * `WyJkYXNoIiwieHl6Il0=` = `'["dash", "xyz"]'`
+
 ```
-GET /contested?resource_value=dash&resource_value=xyz
+GET /contested/WyJkYXNoIiwieHl6Il0=
 {
   "contenders": [
     {

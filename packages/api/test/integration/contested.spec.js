@@ -16,6 +16,8 @@ describe('Contested documents routes', () => {
   let dataContract
   let contestedResources
 
+  let resourceValue
+
   before(async () => {
     app = await server.start()
     client = supertest(app.server)
@@ -26,6 +28,7 @@ describe('Contested documents routes', () => {
 
     contestedResources = []
 
+    resourceValue = Buffer.from('["dash", "xyz"]').toString('base64')
     block = await fixtures.block(knex)
     identity = await fixtures.identity(knex, { block_hash: block.hash })
     dataContract = await fixtures.dataContract(knex, {
@@ -139,7 +142,7 @@ describe('Contested documents routes', () => {
 
   describe('getContestedResource()', async () => {
     it('should return default set of Masternode votes', async () => {
-      const { body } = await client.get('/contested?resource_value=dash&resource_value=xyz')
+      const { body } = await client.get(`/contested/${resourceValue}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -174,6 +177,70 @@ describe('Contested documents routes', () => {
       }
 
       assert.deepEqual(body, expectedResource)
+    })
+
+    it('should return votes for value', async () => {
+      const { body } = await client.get(`/contested/${resourceValue}/votes`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 10)
+      assert.equal(body.pagination.page, 1)
+
+      const expectedVotes = contestedResources
+        .filter(vote => vote.masternodeVote.index_values === JSON.stringify((['dash', 'xyz'])))
+        .sort((a, b) => a.masternodeVote.id - b.masternodeVote.id)
+        .slice(0, 10)
+        .map(({ block, masternodeVote }) => ({
+          proTxHash: masternodeVote.pro_tx_hash,
+          txHash: masternodeVote.state_transition_hash,
+          voterIdentifier: masternodeVote.voter_identity_id,
+          choice: masternodeVote.choice,
+          timestamp: block.timestamp.toISOString(),
+          towardsIdentity: masternodeVote.towards_identity_identifier,
+          dataContractIdentifier: dataContract.identifier,
+          documentTypeName: masternodeVote.document_type_name,
+          indexName: masternodeVote.index_name,
+          indexValues: JSON.parse(masternodeVote.index_values),
+          identityAliases: [],
+          powerMultiplier: null
+        }))
+
+      assert.deepStrictEqual(body.resultSet, expectedVotes)
+    })
+
+    it('should return votes for value by choice', async () => {
+      const { body } = await client.get(`/contested/${resourceValue}/votes?choice=2`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 3)
+      assert.equal(body.pagination.page, 1)
+
+      const expectedVotes = contestedResources
+        .filter(vote => (vote.masternodeVote.choice === 2))
+        .sort((a, b) => a.masternodeVote.id - b.masternodeVote.id)
+        .slice(0, 10)
+        .map(({ block, masternodeVote }) => ({
+          proTxHash: masternodeVote.pro_tx_hash,
+          txHash: masternodeVote.state_transition_hash,
+          voterIdentifier: masternodeVote.voter_identity_id,
+          choice: masternodeVote.choice,
+          timestamp: block.timestamp.toISOString(),
+          towardsIdentity: masternodeVote.towards_identity_identifier,
+          dataContractIdentifier: dataContract.identifier,
+          documentTypeName: masternodeVote.document_type_name,
+          indexName: masternodeVote.index_name,
+          indexValues: JSON.parse(masternodeVote.index_values),
+          identityAliases: [],
+          powerMultiplier: null
+        }))
+
+      assert.deepStrictEqual(body.resultSet, expectedVotes)
     })
   })
 })
