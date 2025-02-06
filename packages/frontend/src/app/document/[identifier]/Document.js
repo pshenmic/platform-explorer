@@ -36,9 +36,6 @@ function Document ({ identifier }) {
       .catch(err => fetchHandlerError(setDocument, err))
   }
 
-  console.log('document', document)
-  console.log('revisions', revisions)
-
   useEffect(fetchData, [identifier])
 
   useEffect(() => {
