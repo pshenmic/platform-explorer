@@ -79,7 +79,7 @@ function DataContract ({ identifier }) {
     if (!identifier) return
     setLoadingProp(setDocuments)
 
-    Api.getDocumentsByDataContract(identifier, documents.props.currentPage + 1, pageSize)
+    Api.getDocumentsByDataContract(identifier, documents.props.currentPage + 1, pageSize, 'desc')
       .then(res => fetchHandlerSuccess(setDocuments, res))
       .catch(err => fetchHandlerError(setDocuments, err))
   }, [identifier, documents.props.currentPage])
