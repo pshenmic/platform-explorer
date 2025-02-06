@@ -143,7 +143,7 @@ module.exports = class ContestedDAO {
             return accumulator
           }
         }, 0) ?? null,
-        notMeVotes: uniqueVotes.reduce((accumulator, currentValue) => {
+        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => {
           if (currentValue.choice !== ChoiceEnum.ABSTAIN && currentValue.towards_identity !== row.owner) {
             return accumulator + 1
           } else {

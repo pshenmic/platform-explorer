@@ -152,7 +152,7 @@ describe('Contested documents routes', () => {
           aliases: [],
           yesVotes: contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length,
           abstainVotes: 3,
-          notMeVotes: 7 - contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length
+          lockVotes: 7 - contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length
         })),
         indexName: 'parentNameAndLabel',
         resourceValue: ['dash', 'xyz'],

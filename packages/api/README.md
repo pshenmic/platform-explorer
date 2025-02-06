@@ -1467,7 +1467,7 @@ GET /contested?resource_value=dash&resource_value=xyz
       ],
       "yesVotes": 2,
       "abstainVotes": 1,
-      "notMeVotes": 0
+      "lockVotes": 0
     },
     {
       "identifier": "5bUPV8KGgL42ZBS9fsmmKU3wweQbVeHHsiVrG3YMHyG5",
@@ -1484,7 +1484,7 @@ GET /contested?resource_value=dash&resource_value=xyz
       ],
       "yesVotes": 0,
       "abstainVotes": 1,
-      "notMeVotes": 2
+      "lockVotes": 2
     }
   ],
   "indexName": "parentNameAndLabel",
