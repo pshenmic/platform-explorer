@@ -68,7 +68,7 @@ Reference:
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Transactions gas history](#transactions-gas-history)
-* [Votes fro contested resource](#votes-for-contested-resource)
+* [Votes for contested resource](#votes-for-contested-resource)
 * [Contested Documents](#contested-resource-value)
 * [Rate](#rate)
 * [Masternode Votes](#masternode-votes)
