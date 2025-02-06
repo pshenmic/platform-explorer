@@ -61,7 +61,7 @@ function Document ({ identifier }) {
         <div className={'Document__InfoBlock Document__Data'}>
           <div className={'Document__DataTitle'}>Data</div>
           {!document.error
-            ? <LoadingBlock h={'100%'} loading={document.loading}>
+            ? <LoadingBlock h={'100%'} minH={'200px'} loading={document.loading}>
                 {document.data?.data
                   ? <CodeBlock className={'DataContract__DataBlock'} code={document.data?.data}/>
                   : <Container h={20}><ErrorMessageBlock/></Container>}
