@@ -70,7 +70,7 @@ Reference:
 * [Transactions history](#transactions-history)
 * [Transactions gas history](#transactions-gas-history)
 * [Votes for contested resource](#votes-for-contested-resource)
-* [Contested Documents](#contested-resource-value)
+* [Contested Resource Value](#contested-resource-value)
 * [Rate](#rate)
 * [Masternode Votes](#masternode-votes)
 * [Search](#search)
