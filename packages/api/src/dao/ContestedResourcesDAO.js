@@ -101,8 +101,8 @@ module.exports = class ContestedDAO {
 
     const [firstTx] = rows.sort((a, b) => new Date(a.timestamp ?? new Date()).getTime() - new Date(b.timestamp ?? new Date()).getTime())
 
-    const totalCountYes = uniqueVotes
-      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.YES ? 1 : 0), 0)
+    const totalCountTowardsIdentity = uniqueVotes
+      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.TowardsIdentity ? 1 : 0), 0)
 
     const totalCountAbstain = uniqueVotes
       .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.ABSTAIN ? 1 : 0), 0)
@@ -133,7 +133,7 @@ module.exports = class ContestedDAO {
         aliases: aliases ?? [],
         totalCountTowardsIdentity: uniqueVotes
           .filter((vote) => vote.towards_identity === row.owner)
-          .reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.YES
+          .reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.TowardsIdentity
             ? accumulator + 1
             : accumulator
           , 0) ?? null,
@@ -168,7 +168,7 @@ module.exports = class ContestedDAO {
       totalGasUsed: totalVotesGasUsed + totalDocumentsGasUsed,
       totalDocumentsGasUsed,
       totalVotesGasUsed,
-      totalCountYes,
+      totalCountTowardsIdentity,
       totalCountAbstain,
       totalCountLock,
       totalCountVotes,
