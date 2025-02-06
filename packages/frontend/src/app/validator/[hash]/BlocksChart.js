@@ -12,7 +12,7 @@ export default function BlocksChart ({ hash, isActive, loading, timespan, timesp
 
     setBlocksHistory(state => ({ ...state, loading: true }))
 
-    Api.getBlocksStatsByValidator(hash, start, end)
+    Api.getBlocksStatsByValidator(hash, start, end, timespan?.intervalsCount)
       .then(res => fetchHandlerSuccess(setBlocksHistory, { resultSet: res }))
       .catch(err => fetchHandlerError(setBlocksHistory, err))
   }, [timespan, hash])
