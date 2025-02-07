@@ -97,7 +97,7 @@ function DataContract ({ identifier }) {
     if (!identifier) return
     setLoadingProp(setTransactions)
 
-    Api.getDataContractTransactions(identifier, transactions.props.currentPage + 1, pageSize, 'asc')
+    Api.getDataContractTransactions(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
       .then(res => {
         fetchHandlerSuccess(setDataContract, { transactionsCount: res?.pagination?.total })
         fetchHandlerSuccess(setTransactions, res)
