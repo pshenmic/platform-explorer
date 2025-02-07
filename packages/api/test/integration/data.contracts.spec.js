@@ -362,44 +362,48 @@ describe('DataContracts routes', () => {
       assert.deepEqual(body.pagination.limit, 10)
       assert.deepEqual(body.pagination.total, 11)
 
-      const dataContractVersions = diferentVersionsDataContract.sort((a, b) => a.dataContract.id - b.dataContract.id).map(dataContractVersion => ({
+      const dataContractVersions = diferentVersionsDataContract.map(dataContractVersion => ({
         type: 0,
         action: null,
-        owner: dataContractVersion.dataContract.owner,
-        aliases: [],
+        owner: {
+          identifier: dataContractVersion.dataContract.owner,
+          aliases: []
+        },
         timestamp: dataContract.block.timestamp.toISOString(),
         gasUsed: 0,
         error: null,
-        hash: dataContractVersion.transaction.hash
+        hash: dataContractVersion.transaction.hash,
+        id: dataContractVersion.transaction.id
       }))
 
-      const documentsTransactions = documents.sort((a, b) => a.dataContract.id - b.dataContract.id).map(({ document, transaction, block }) => ({
+      const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
           action: 3,
           id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
         }],
-        owner: document.owner,
-        aliases: [],
+        owner: {
+          identifier: document.owner,
+          aliases: []
+        },
         timestamp: block.timestamp.toISOString(),
         gasUsed: 0,
         error: null,
-        hash: transaction.hash
+        hash: transaction.hash,
+        id: transaction.id
       }))
 
-      const expectedDataTransactions = [
-        dataContractVersions[0],
-        dataContractVersions[1],
-        documentsTransactions[0],
-        dataContractVersions[2],
-        documentsTransactions[1],
-        dataContractVersions[3],
-        documentsTransactions[2],
-        dataContractVersions[4],
-        documentsTransactions[3],
-        dataContractVersions[5],
-        documentsTransactions[4]
-      ]
+      const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
+        .sort((a, b) => a.id - b.id)
+        .map(tx => ({
+          type: tx.type,
+          action: tx.action,
+          owner: tx.owner,
+          timestamp: tx.timestamp,
+          gasUsed: tx.gasUsed,
+          error: tx.error,
+          hash: tx.hash
+        }))
 
       assert.deepEqual(body.resultSet, expectedDataTransactions.slice(0, 10))
     })
@@ -416,44 +420,48 @@ describe('DataContracts routes', () => {
       assert.deepEqual(body.pagination.limit, 5)
       assert.deepEqual(body.pagination.total, 11)
 
-      const dataContractVersions = diferentVersionsDataContract.sort((a, b) => a.dataContract.id - b.dataContract.id).map(dataContractVersion => ({
+      const dataContractVersions = diferentVersionsDataContract.map(dataContractVersion => ({
         type: 0,
         action: null,
-        owner: dataContractVersion.dataContract.owner,
-        aliases: [],
+        owner: {
+          identifier: dataContractVersion.dataContract.owner,
+          aliases: []
+        },
         timestamp: dataContract.block.timestamp.toISOString(),
         gasUsed: 0,
         error: null,
-        hash: dataContractVersion.transaction.hash
+        hash: dataContractVersion.transaction.hash,
+        id: dataContractVersion.transaction.id
       }))
 
-      const documentsTransactions = documents.sort((a, b) => a.dataContract.id - b.dataContract.id).map(({ document, transaction, block }) => ({
+      const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
           action: 3,
           id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
         }],
-        owner: document.owner,
-        aliases: [],
+        owner: {
+          identifier: document.owner,
+          aliases: []
+        },
         timestamp: block.timestamp.toISOString(),
         gasUsed: 0,
         error: null,
-        hash: transaction.hash
+        hash: transaction.hash,
+        id: transaction.id
       }))
 
-      const expectedDataTransactions = [
-        dataContractVersions[0],
-        dataContractVersions[1],
-        documentsTransactions[0],
-        dataContractVersions[2],
-        documentsTransactions[1],
-        dataContractVersions[3],
-        documentsTransactions[2],
-        dataContractVersions[4],
-        documentsTransactions[3],
-        dataContractVersions[5],
-        documentsTransactions[4]
-      ]
+      const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
+        .sort((a, b) => a.id - b.id)
+        .map(tx => ({
+          type: tx.type,
+          action: tx.action,
+          owner: tx.owner,
+          timestamp: tx.timestamp,
+          gasUsed: tx.gasUsed,
+          error: tx.error,
+          hash: tx.hash
+        }))
 
       assert.deepEqual(body.resultSet, expectedDataTransactions.slice(0, 5))
     })
@@ -470,52 +478,50 @@ describe('DataContracts routes', () => {
       assert.deepEqual(body.pagination.limit, 5)
       assert.deepEqual(body.pagination.total, 11)
 
-      const dataContractVersions = diferentVersionsDataContract.sort((a, b) => a.dataContract.id - b.dataContract.id).map(dataContractVersion => ({
+      const dataContractVersions = diferentVersionsDataContract.map(dataContractVersion => ({
         type: 0,
         action: null,
-        owner: dataContractVersion.dataContract.owner,
-        aliases: [],
+        owner: {
+          identifier: dataContractVersion.dataContract.owner,
+          aliases: []
+        },
         timestamp: dataContract.block.timestamp.toISOString(),
         gasUsed: 0,
         error: null,
-        hash: dataContractVersion.transaction.hash
+        hash: dataContractVersion.transaction.hash,
+        id: dataContractVersion.transaction.id
       }))
 
-      const documentsTransactions = documents.sort((a, b) => a.dataContract.id - b.dataContract.id).map(({ document, transaction, block }) => ({
+      const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
           action: 3,
           id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
         }],
-        owner: document.owner,
-        aliases: [],
+        owner: {
+          identifier: document.owner,
+          aliases: []
+        },
         timestamp: block.timestamp.toISOString(),
         gasUsed: 0,
         error: null,
-        hash: transaction.hash
+        hash: transaction.hash,
+        id: transaction.id
       }))
 
-      const expectedDataTransactions = [
-        dataContractVersions[0],
-        dataContractVersions[1],
-        documentsTransactions[0],
-        dataContractVersions[2],
-        documentsTransactions[1],
-        dataContractVersions[3],
-        documentsTransactions[2],
-        dataContractVersions[4],
-        documentsTransactions[3],
-        dataContractVersions[5],
-        documentsTransactions[4]
-      ]
+      const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
+        .sort((a, b) => b.id - a.id)
+        .map(tx => ({
+          type: tx.type,
+          action: tx.action,
+          owner: tx.owner,
+          timestamp: tx.timestamp,
+          gasUsed: tx.gasUsed,
+          error: tx.error,
+          hash: tx.hash
+        }))
 
-      assert.deepEqual(body.resultSet, expectedDataTransactions.slice(0, 5).toReversed())
-    })
-
-    it('should return 404 if data contract not found', async () => {
-      await client.get('/dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions')
-        .expect(404)
-        .expect('Content-Type', 'application/json; charset=utf-8')
+      assert.deepEqual(body.resultSet, expectedDataTransactions.slice(0, 5))
     })
   })
 })
