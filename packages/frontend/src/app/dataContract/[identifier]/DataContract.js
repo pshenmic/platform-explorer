@@ -108,7 +108,8 @@ function DataContract ({ identifier }) {
               ? <span className={`Tabs__TabItemsCount ${dataContract.data?.documentsCount === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
                   {dataContract.data?.documentsCount}
                 </span>
-              : ''}</Tab>
+              : ''}
+            </Tab>
             <Tab>Schema</Tab>
           </TabList>
           <TabPanels>
