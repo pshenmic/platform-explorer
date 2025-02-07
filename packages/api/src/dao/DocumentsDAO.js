@@ -16,6 +16,12 @@ module.exports = class DocumentsDAO {
       .groupBy('identity_identifier')
       .as('aliases')
 
+    const gasSubquery = this.knex('documents')
+      .select(this.knex.raw('sum(gas_used) as total_gas_used'))
+      .where('documents.identifier', '=', identifier)
+      .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
+      .as('subquery')
+
     const subquery = this.knex('documents')
       .select('documents.id as id', 'documents.identifier as identifier', 'documents.owner as document_owner',
         'data_contracts.identifier as data_contract_identifier', 'documents.data as data', 'document_type_name',
@@ -50,6 +56,7 @@ module.exports = class DocumentsDAO {
           .limit(1)
           .as('create_tx_data')
       )
+      .select(this.knex(gasSubquery).select('total_gas_used').as('total_gas_used'))
       .orderBy('documents.id', 'desc')
       .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'document_owner')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
@@ -86,12 +93,15 @@ module.exports = class DocumentsDAO {
       }
     })
 
-    return Document.fromObject({
-      ...document,
-      entropy: transitionWithEntropy?.entropy,
-      prefundedVotingBalance: transitionWithEntropy?.prefundedVotingBalance,
-      nonce: transitionWithEntropy?.nonce
-    })
+    return {
+      ...Document.fromObject({
+        ...document,
+        entropy: transitionWithEntropy?.entropy,
+        prefundedVotingBalance: transitionWithEntropy?.prefundedVotingBalance,
+        nonce: transitionWithEntropy?.nonce
+      }),
+      totalGasUsed: Number(row.total_gas_used ?? 0)
+    }
   }
 
   getDocumentsByDataContract = async (identifier, typeName, page, limit, order) => {
