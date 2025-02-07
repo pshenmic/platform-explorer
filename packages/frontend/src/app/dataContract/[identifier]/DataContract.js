@@ -55,13 +55,6 @@ function DataContract ({ identifier }) {
       .then(res => fetchHandlerSuccess(setDataContract, res))
       .catch(err => fetchHandlerError(setDataContract, err))
 
-    Api.getDataContractTransactions(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
-      .then(res => {
-        fetchHandlerSuccess(setDataContract, { transactionsCount: res?.pagination?.total })
-        fetchHandlerSuccess(setTransactions, res)
-      })
-      .catch(err => fetchHandlerError(setTransactions, err))
-
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
@@ -99,6 +92,18 @@ function DataContract ({ identifier }) {
       .then(res => fetchHandlerSuccess(setDocuments, res))
       .catch(err => fetchHandlerError(setDocuments, err))
   }, [identifier, documents.props.currentPage])
+
+  useEffect(() => {
+    if (!identifier) return
+    setLoadingProp(setTransactions)
+
+    Api.getDataContractTransactions(identifier, transactions.props.currentPage + 1, pageSize, 'asc')
+      .then(res => {
+        fetchHandlerSuccess(setDataContract, { transactionsCount: res?.pagination?.total })
+        fetchHandlerSuccess(setTransactions, res)
+      })
+      .catch(err => fetchHandlerError(setTransactions, err))
+  }, [identifier, transactions.props.currentPage])
 
   return (
     <PageDataContainer
