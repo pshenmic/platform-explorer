@@ -27,7 +27,9 @@ function DocumentsListItem ({ document }) {
         <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Owner'}>
           {document?.owner
             ? activeAlias
-              ? <Alias avatarSource={document?.owner?.identifier || null}>{activeAlias.alias}</Alias>
+              ? <Alias avatarSource={document?.owner?.identifier || null}>
+                  {activeAlias.alias}
+                </Alias>
               : <LinkContainer
                   className={'DocumentsListItem__ColumnContent'}
                   onClick={e => {
