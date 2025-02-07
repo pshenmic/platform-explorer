@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError, findActiveAlias } from '../../../util'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { LoadingLine, LoadingBlock } from '../../../components/loading'
 import { useSearchParams } from 'next/navigation'
+import { Alias, Identifier } from '../../../components/data'
 import {
   Box,
   Container,
@@ -19,6 +20,7 @@ import './Document.scss'
 
 function Document ({ identifier }) {
   const [document, setDocument] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
+  const activeAlias = findActiveAlias(document?.data?.owner?.aliases)
   const tdTitleWidth = 100
   const searchParams = useSearchParams()
   const dataContractId = searchParams.get('contract-id') || null
@@ -74,7 +76,12 @@ function Document ({ identifier }) {
                                 <Td w={tdTitleWidth}>Owner</Td>
                                 <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
                                     <LoadingLine loading={document.loading}>
-                                        <Link href={`/identity/${document.data?.owner}`}>{document.data?.owner}</Link>
+                                        <Link href={`/identity/${document.data?.owner?.identifier}`}>
+                                          {activeAlias
+                                            ? <Alias avatarSource={document.data?.owner?.identifier}>activeAlias.alias</Alias>
+                                            : <Identifier ellipsis={true} styles={['highlight-both']}>{document.data?.owner?.identifier}</Identifier>
+                                          }
+                                        </Link>
                                     </LoadingLine>
                                 </Td>
                             </Tr>
