@@ -56,7 +56,10 @@ function DataContract ({ identifier }) {
       .catch(err => fetchHandlerError(setDataContract, err))
 
     Api.getDataContractTransactions(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
-      .then(res => fetchHandlerSuccess(setTransactions, res))
+      .then(res => {
+        fetchHandlerSuccess(setDataContract, { transactionsCount: res?.pagination?.total })
+        fetchHandlerSuccess(setTransactions, res)
+      })
       .catch(err => fetchHandlerError(setTransactions, err))
 
     Api.getRate()
