@@ -12,7 +12,7 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
   })()
 
   const HighlightedID = ({ children, mode }) => {
-    if (!children) return <span>n/a</span>
+    if (!children || typeof children !== 'string') return <span>n/a</span>
 
     const highlightedCount = 5
     const firstPart = children.slice(0, highlightedCount)
