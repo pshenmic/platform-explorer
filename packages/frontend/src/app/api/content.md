@@ -22,7 +22,7 @@ Reference:
 * [Transactions](#transactions)
 * [Data Contract By Identifier](#data-contract-by-identifier)
 * [Data Contracts](#data-contracts)
-* * [Data Contract Transactions](#data-contract-transactions)
+* [Data Contract Transactions](#data-contract-transactions)
 * [Document by Identifier](#document-by-identifier)
 * [Documents by Data Contract](#documents-by-data-contract)
 * [Identity by Identifier](#identity-by-identifier)
@@ -793,7 +793,17 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
     "parentNameAndLabel": 20000000000
   },
   "typeName": "preorder",
-  "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
+  "owner": {
+    "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
+    "aliases": [
+      {
+        "alias": "User-777.dash",
+        "status": "ok",
+        "contested": false,
+        "timestamp": null
+      }
+    ]
+  }
 }
 ```
 Response codes:
@@ -830,7 +840,17 @@ GET /document/y5DhJmM4unLTEaKAkMTbQHMoM8hh47ddowKYusgtHwL/revisions
       "transitionType": 0,
       "nonce": null,
       "gasUsed": 78317180,
-      "owner": "AVGaxbN1apFAM4aWtkjUJvPhT1Nr3AeKzgb22sqWvKNe"
+      "owner": {
+        "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
+        "aliases": [
+          {
+            "alias": "User-777.dash",
+            "status": "ok",
+            "contested": false,
+            "timestamp": null
+          }
+        ]
+      }
     }
   ],
   "pagination": {
@@ -869,7 +889,17 @@ GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?documen
       "entropy": null,
       "prefundedVotingBalance": null,
       "typeName": "domain",
-      "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
+      "owner": {
+        "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
+        "aliases": [
+          {
+            "alias": "User-777.dash",
+            "status": "ok",
+            "contested": false,
+            "timestamp": null
+          }
+        ]
+      }
     }, ...
   ],
   "pagination": {

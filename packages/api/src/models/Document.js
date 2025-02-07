@@ -16,7 +16,7 @@ module.exports = class Document {
 
   constructor (identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, isSystem, documentTypeName, transitionType, prefundedVotingBalance, gasUsed, entropy, nonce) {
     this.identifier = identifier ? identifier.trim() : null
-    this.owner = owner ? owner.trim() : null
+    this.owner = owner ?? null
     this.dataContractIdentifier = dataContractIdentifier ? dataContractIdentifier.trim() : null
     this.revision = revision ?? null
     this.deleted = deleted ?? null
