@@ -826,6 +826,8 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
     "parentNameAndLabel": 20000000000
   },
   "typeName": "preorder",
+  "gasUsed": null,
+  "totalGasUsed": 15999780,
   "owner": {
     "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
     "aliases": [

@@ -173,6 +173,7 @@ describe('Documents routes', () => {
         system: document.document.is_system,
         nonce: 2,
         gasUsed: null,
+        totalGasUsed: 0,
         transitionType: 0
       }
 
@@ -204,6 +205,7 @@ describe('Documents routes', () => {
         txHash: document.transaction.hash,
         nonce: 2,
         gasUsed: null,
+        totalGasUsed: 0,
         transitionType: 0
       }
 

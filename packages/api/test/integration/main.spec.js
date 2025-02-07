@@ -370,6 +370,7 @@ describe('Other routes', () => {
           ]
         },
         gasUsed: null,
+        totalGasUsed: 0,
         nonce: 2
       }
 
