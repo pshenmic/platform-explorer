@@ -26,20 +26,19 @@ function DocumentsListItem ({ document }) {
 
         <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Owner'}>
           {document?.owner
-            ? activeAlias
-              ? <Alias avatarSource={document?.owner?.identifier || null}>
-                  {activeAlias.alias}
-                </Alias>
-              : <LinkContainer
-                  className={'DocumentsListItem__ColumnContent'}
-                  onClick={e => {
-                    e.stopPropagation()
-                    e.preventDefault()
-                    router.push(`/identity/${document?.owner}`)
-                  }}
-                >
-                  <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{document?.owner}</Identifier>
-                </LinkContainer>
+            ? <LinkContainer
+                className={'DocumentsListItem__ColumnContent'}
+                onClick={e => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  router.push(`/identity/${document?.owner?.identifier}`)
+                }}
+              >
+                {activeAlias
+                  ? <Alias avatarSource={document?.owner?.identifier || null}>{activeAlias?.alias}</Alias>
+                  : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{document?.owner?.identifier}</Identifier>
+                }
+              </LinkContainer>
             : <span className={'DocumentsListItem__NotActiveText'}>-</span>
           }
         </GridItem>
