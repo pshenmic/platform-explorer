@@ -1,12 +1,14 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import { BigNumber, Identifier, NotActive, TimeDelta } from '../../data'
+import { Alias, BigNumber, Identifier, NotActive, TimeDelta } from '../../data'
 import { LinkContainer } from '../../ui/containers'
 import { useRouter } from 'next/navigation'
 import { RateTooltip } from '../../ui/Tooltips'
 import Link from 'next/link'
+import { findActiveAlias } from '../../../util'
 import './DocumentsRevisionsListItem.scss'
 
 function DocumentsRevisionsListItem ({ revision, rate }) {
+  const activeAlias = findActiveAlias(revision.owner?.aliases)
   const router = useRouter()
 
   return (
@@ -33,7 +35,10 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
                   router.push(`/identity/${revision?.owner?.identifier}`)
                 }}
               >
-                <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{revision?.owner?.identifier}</Identifier>
+                {activeAlias
+                  ? <Alias avatarSource={revision?.owner?.identifier || null}>{activeAlias?.alias}</Alias>
+                  : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{revision?.owner?.identifier}</Identifier>
+                }
               </LinkContainer>
             : <NotActive/>
           }
