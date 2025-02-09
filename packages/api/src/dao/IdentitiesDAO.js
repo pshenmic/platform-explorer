@@ -387,7 +387,7 @@ module.exports = class IdentitiesDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     return new PaginatedResultSet(rows.map(row => Document.fromRow({
-      ...row, is_system: row.document_is_system, owner: row.document_owner
+      ...row, is_system: row.document_is_system, owner: row.document_owner?.trim()
     })), page, limit, totalCount)
   }
 

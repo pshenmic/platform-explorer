@@ -5,7 +5,7 @@ const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 
-describe('Epoch routes', () => {
+describe('Masternode routes', () => {
   let app
   let client
   let knex
@@ -46,7 +46,8 @@ describe('Epoch routes', () => {
         voter_identity_id: voterIdentity.identifier,
         data_contract_id: dataContract.id,
         voter_id: i % 2 === 0 ? voterIdentity.identifier : identity.identifier,
-        choice: i % 3 === 0 ? 0 : 2
+        choice: i % 3 === 0 ? 0 : 2,
+        index_values: JSON.stringify(i % 2 === 0 ? ['dash', 'xyz'] : [])
       })
 
       if (i === 0) {
@@ -105,7 +106,8 @@ describe('Epoch routes', () => {
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
-          indexValues: [],
+          indexValues: JSON.parse(mnVote.index_values),
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -135,7 +137,8 @@ describe('Epoch routes', () => {
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
-          indexValues: [],
+          indexValues: JSON.parse(mnVote.index_values),
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -165,7 +168,8 @@ describe('Epoch routes', () => {
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
-          indexValues: [],
+          indexValues: JSON.parse(mnVote.index_values),
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -195,7 +199,8 @@ describe('Epoch routes', () => {
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
-          indexValues: [],
+          indexValues: JSON.parse(mnVote.index_values),
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -225,7 +230,8 @@ describe('Epoch routes', () => {
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
-          indexValues: [],
+          indexValues: JSON.parse(mnVote.index_values),
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -256,7 +262,8 @@ describe('Epoch routes', () => {
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
-          indexValues: [],
+          indexValues: JSON.parse(mnVote.index_values),
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -287,7 +294,8 @@ describe('Epoch routes', () => {
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
-          indexValues: [],
+          indexValues: JSON.parse(mnVote.index_values),
+          identityAliases: [],
           powerMultiplier: null
         }))
 
@@ -318,7 +326,8 @@ describe('Epoch routes', () => {
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: mnVote.document_type_name,
           indexName: mnVote.index_name,
-          indexValues: [],
+          indexValues: JSON.parse(mnVote.index_values),
+          identityAliases: [],
           powerMultiplier: null
         }))
 

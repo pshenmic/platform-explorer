@@ -63,6 +63,10 @@ const getDataContractByIdentifier = (identifier) => {
   return call(`dataContract/${identifier}`, 'GET')
 }
 
+const getDataContractTransactions = (identifier, page = 1, limit = 30, order = 'asc') => {
+  return call(`dataContract/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+}
+
 const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy) => {
   return call(`dataContracts?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
@@ -166,6 +170,7 @@ export {
   getIdentity,
   getTransactionsByIdentity,
   getDataContractsByIdentity,
+  getDataContractTransactions,
   getDocumentsByIdentity,
   getTransfersByIdentity,
   getWithdrawalsByIdentity,

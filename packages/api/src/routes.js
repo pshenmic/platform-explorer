@@ -23,7 +23,8 @@ module.exports = ({
   identitiesController,
   validatorsController,
   rateController,
-  masternodeVotesController
+  masternodeVotesController,
+  contestedResourcesController
 }) => {
   const routes = [
     {
@@ -184,6 +185,33 @@ module.exports = ({
           properties: {
             identifier: { $ref: 'identifier#' }
           }
+        }
+      }
+    },
+    {
+      path: '/contestedResource/:resourceValue',
+      method: 'GET',
+      handler: contestedResourcesController.getContestedResource,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            resourceValue: { type: 'string' }
+          }
+        }
+      }
+    },
+    {
+      path: '/contestedResource/:resourceValue/votes',
+      method: 'GET',
+      handler: contestedResourcesController.getContestedResourceVotes,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      },
+      params: {
+        type: 'object',
+        properties: {
+          resourceValue: { type: 'string' }
         }
       }
     },

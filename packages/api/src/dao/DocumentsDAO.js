@@ -1,15 +1,21 @@
 const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
-const { decodeStateTransition } = require('../utils')
+const { decodeStateTransition, getAliasInfo, getAliasStateByVote } = require('../utils')
 
 module.exports = class DocumentsDAO {
-  constructor (knex, client) {
+  constructor (knex, dapi, client) {
     this.knex = knex
     this.client = client
+    this.dapi = dapi
   }
 
   getDocumentByIdentifier = async (identifier) => {
+    const aliasesSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .groupBy('identity_identifier')
+      .as('aliases')
+
     const subquery = this.knex('documents')
       .select('documents.id as id', 'documents.identifier as identifier', 'documents.owner as document_owner',
         'data_contracts.identifier as data_contract_identifier', 'documents.data as data', 'document_type_name',
@@ -21,7 +27,7 @@ module.exports = class DocumentsDAO {
       .as('documents')
 
     const rows = await this.knex(subquery)
-      .select('identifier', 'document_owner', 'data_contract_identifier', 'transition_type',
+      .select('identifier', 'document_owner', 'data_contract_identifier', 'transition_type', 'aliases.aliases as aliases',
         'deleted', 'tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'document_type_name')
       .select(
         this.knex(subquery)
@@ -45,6 +51,7 @@ module.exports = class DocumentsDAO {
           .as('create_tx_data')
       )
       .orderBy('documents.id', 'desc')
+      .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'document_owner')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .limit(1)
@@ -54,6 +61,12 @@ module.exports = class DocumentsDAO {
     if (!row) {
       return null
     }
+
+    const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+      const aliasInfo = await getAliasInfo(alias, this.dapi)
+
+      return getAliasStateByVote(aliasInfo, { alias }, row.document_owner)
+    }))
 
     let transitions = []
 
@@ -67,7 +80,10 @@ module.exports = class DocumentsDAO {
 
     const document = Document.fromRow({
       ...row,
-      owner: row.document_owner
+      owner: {
+        identifier: row.document_owner?.trim(),
+        aliases: aliases ?? []
+      }
     })
 
     return Document.fromObject({
@@ -89,6 +105,11 @@ module.exports = class DocumentsDAO {
       typeQuery = typeQuery + ' and document_type_name = ?'
       queryBindings.push(typeName)
     }
+
+    const aliasesSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .groupBy('identity_identifier')
+      .as('aliases')
 
     const dataSubquery = this.knex('documents')
       .select('documents.data as data', 'documents.identifier as identifier')
@@ -122,19 +143,31 @@ module.exports = class DocumentsDAO {
     const rows = await this.knex(filteredDocuments)
       .select('documents.id as id', 'documents.identifier as identifier', 'document_owner', 'row_number', 'revision', 'data_contract_identifier',
         'tx_hash', 'deleted', 'document_data', 'total_count', 'is_system', 'blocks.timestamp as timestamp', 'prefunded_voting_balance',
-        'document_type_name', 'transition_type')
+        'document_type_name', 'transition_type', 'aliases')
       .whereBetween('row_number', [fromRank, toRank])
       .leftJoin('state_transitions', 'tx_hash', 'state_transitions.hash')
       .leftJoin(filterDataSubquery, 'documents.identifier', '=', 'documents_data.identifier')
+      .leftJoin(aliasesSubquery, 'document_owner', 'identity_identifier')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .orderBy('id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    const resultSet = rows.map((row) => Document.fromRow({
-      ...row,
-      owner: row.document_owner,
-      data: row.document_data
+    const resultSet = await Promise.all(rows.map(async (row) => {
+      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+        const aliasInfo = await getAliasInfo(alias, this.dapi)
+
+        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+      }))
+
+      return Document.fromRow({
+        ...row,
+        data: row.document_data,
+        owner: {
+          identifier: row.document_owner?.trim(),
+          aliases: aliases ?? []
+        }
+      })
     }))
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
@@ -143,6 +176,11 @@ module.exports = class DocumentsDAO {
   getDocumentRevisions = async (identifier, page, limit, order) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
+
+    const aliasesSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .groupBy('identity_identifier')
+      .as('aliases')
 
     const subquery = this.knex('documents')
       .select(
@@ -155,15 +193,32 @@ module.exports = class DocumentsDAO {
       .as('subquery')
 
     const rows = await this.knex(subquery)
-      .select('revision', 'gas_used', 'subquery.owner', 'hash as tx_hash', 'timestamp', 'transition_type', 'data', 'identifier')
+      .select('revision', 'gas_used', 'subquery.owner', 'hash as tx_hash', 'timestamp', 'transition_type', 'data', 'identifier', 'aliases')
       .select(this.knex(subquery).count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
+      .leftJoin(aliasesSubquery, 'identity_identifier', 'owner')
       .orderBy('id', order)
 
     const [row] = rows
 
     const totalCount = row?.total_count
 
-    return new PaginatedResultSet(rows.map(Document.fromRow), page, limit, Number(totalCount))
+    const resultSet = await Promise.all(rows.map(async (row) => {
+      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+        const aliasInfo = await getAliasInfo(alias, this.dapi)
+
+        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+      }))
+
+      return Document.fromRow({
+        ...row,
+        owner: {
+          identifier: row.owner?.trim(),
+          aliases: aliases ?? []
+        }
+      })
+    }))
+
+    return new PaginatedResultSet(resultSet, page, limit, Number(totalCount))
   }
 }

@@ -358,7 +358,17 @@ describe('Other routes', () => {
         prefundedVotingBalance: null,
         documentTypeName: document.document_type_name,
         transitionType: 0,
-        owner: document.owner,
+        owner: {
+          identifier: document.owner,
+          aliases: [
+            {
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }
+          ]
+        },
         gasUsed: null,
         nonce: 2
       }

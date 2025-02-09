@@ -1,11 +1,13 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import { Identifier, NotActive, TimeDelta } from '../data'
+import { Alias, Identifier, NotActive, TimeDelta } from '../data'
 import { LinkContainer } from '../ui/containers'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { findActiveAlias } from '../../util'
 import './DocumentsListItem.scss'
 
 function DocumentsListItem ({ document }) {
+  const activeAlias = findActiveAlias(document?.owner?.aliases)
   const router = useRouter()
 
   return (
@@ -29,10 +31,13 @@ function DocumentsListItem ({ document }) {
                 onClick={e => {
                   e.stopPropagation()
                   e.preventDefault()
-                  router.push(`/identity/${document?.owner}`)
+                  router.push(`/identity/${document?.owner?.identifier}`)
                 }}
               >
-                <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{document?.owner}</Identifier>
+                {activeAlias
+                  ? <Alias avatarSource={document?.owner?.identifier || null}>{activeAlias?.alias}</Alias>
+                  : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{document?.owner?.identifier}</Identifier>
+                }
               </LinkContainer>
             : <NotActive/>
           }
