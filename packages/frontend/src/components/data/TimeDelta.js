@@ -1,13 +1,17 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getTimeDelta } from '../../util'
+import { NotActive } from './index'
 
 function TimeDelta ({ startDate, endDate, format = 'default' }) {
-  const [timeDelta, setTimeDelta] = useState('n/a')
+  const [timeDelta, setTimeDelta] = useState(null)
 
   useEffect(() => {
-    if (!endDate) return
+    if (!endDate) {
+      setTimeDelta(null)
+      return
+    }
 
     let timeout
 
@@ -33,7 +37,7 @@ function TimeDelta ({ startDate, endDate, format = 'default' }) {
     return () => clearTimeout(timeout)
   }, [startDate, endDate, format])
 
-  return <>{timeDelta}</>
+  return <>{timeDelta || <NotActive/>}</>
 }
 
 export default TimeDelta

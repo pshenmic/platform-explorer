@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
-import { Identifier, BigNumber, Alias, TimeDelta } from '../data'
+import { Identifier, BigNumber, Alias, TimeDelta, NotActive } from '../data'
 import StatusIcon from './StatusIcon'
 import { RateTooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
@@ -26,13 +26,13 @@ function TransactionsListItem ({ transaction, rate }) {
                 }
                 <TimeDelta endDate={new Date(transaction.timestamp)}/>
               </>
-            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
+            : <NotActive/>
           }
         </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Hash'}>
           {transaction?.hash
             ? <Identifier styles={['highlight-both']}>{transaction.hash}</Identifier>
-            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
+            : <NotActive/>
           }
         </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--GasUsed'}>
@@ -44,7 +44,7 @@ function TransactionsListItem ({ transaction, rate }) {
               >
                 <span><BigNumber>{transaction.gasUsed}</BigNumber> Credits</span>
               </RateTooltip>
-            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
+            : <NotActive/>
           }
         </GridItem>
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Owner'}>
@@ -66,13 +66,13 @@ function TransactionsListItem ({ transaction, rate }) {
                     : <Identifier avatar={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
                   }
                 </LinkContainer>
-              : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
+              : <NotActive/>
             }
           </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Type'}>
           {transaction?.type !== undefined
             ? <TypeBadge className={'TransactionsListItem__TypeBadge'} typeId={transaction.type}/>
-            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
+            : <NotActive/>
           }
         </GridItem>
       </Grid>

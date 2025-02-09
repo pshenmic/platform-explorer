@@ -1,0 +1,28 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as rev;
+@import '../../../styles/variables.scss';
+
+.DocumentsRevisionsListItem {
+  @include mixins.DefListItem;
+  display: block;
+
+  &__Content {
+    @include rev.Columns();
+  }
+
+  &__Column {
+    @include rev.Column();
+
+    &--Revision {
+      justify-content: flex-end;
+    }
+
+    .ValueContainer {
+      max-width: 100%;
+    }
+  }
+
+  &__ColumnContent {
+    overflow: hidden;
+  }
+}

@@ -35,8 +35,4 @@
     background-color: rgba(var(--chakra-colors-green-emeralds-rgb), .2);
     border-radius: 8px;
   }
-
-  &__NotActive {
-    @include mixins.NotActiveText;
-  }
 }

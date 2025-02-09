@@ -11,6 +11,7 @@ import PrefundedBalance from './PrefundedBalance'
 import TimeDelta from './TimeDelta'
 import BigNumber from './BigNumber'
 import CodeBlock from './CodeBlock'
+import NotActive from './NotActive'
 
 export {
   Identifier,
@@ -25,5 +26,6 @@ export {
   PrefundedBalance,
   TimeDelta,
   BigNumber,
-  CodeBlock
+  CodeBlock,
+  NotActive
 }
