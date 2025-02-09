@@ -4,7 +4,7 @@ const Document = require('../models/Document')
 
 class DocumentsController {
   constructor (client, knex, dapi) {
-    this.documentsDAO = new DocumentsDAO(knex, client)
+    this.documentsDAO = new DocumentsDAO(knex, dapi, client)
     this.datacContractsDAO = new DataContractsDAO(knex)
     this.client = client
     this.dapi = dapi

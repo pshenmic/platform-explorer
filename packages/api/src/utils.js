@@ -511,5 +511,6 @@ module.exports = {
   calculateInterval,
   iso8601duration,
   getAliasInfo,
-  getAliasStateByVote
+  getAliasStateByVote,
+  buildIndexBuffer
 }

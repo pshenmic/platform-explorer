@@ -166,7 +166,10 @@ describe('Documents routes', () => {
         entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
         documentTypeName: document.document.document_type_name,
         prefundedVotingBalance: null,
-        owner: document.document.owner,
+        owner: {
+          identifier: document.document.owner,
+          aliases: []
+        },
         system: document.document.is_system,
         nonce: 2,
         gasUsed: null,
@@ -194,7 +197,10 @@ describe('Documents routes', () => {
         entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
         documentTypeName: document.document.document_type_name,
         prefundedVotingBalance: null,
-        owner: document.document.owner,
+        owner: {
+          identifier: document.document.owner,
+          aliases: []
+        },
         txHash: document.transaction.hash,
         nonce: 2,
         gasUsed: null,
@@ -222,7 +228,10 @@ describe('Documents routes', () => {
 
       const expectedDocument = {
         revision: document.document.revision,
-        owner: document.transaction.owner,
+        owner: {
+          identifier: document.document.owner,
+          aliases: []
+        },
         txHash: document.transaction.hash,
         timestamp: document.block.timestamp,
         transitionType: document.document.transition_type,
@@ -263,7 +272,10 @@ describe('Documents routes', () => {
           deleted: document.deleted,
           data: JSON.stringify(document.data),
           timestamp: block.timestamp,
-          owner: document.owner,
+          owner: {
+            identifier: document.owner,
+            aliases: []
+          },
           system: document.is_system,
           entropy: null,
           documentTypeName: document.document_type_name,
@@ -313,7 +325,10 @@ describe('Documents routes', () => {
           prefundedVotingBalance: null,
           documentTypeName: document.document_type_name,
           timestamp: block.timestamp,
-          owner: document.owner,
+          owner: {
+            identifier: document.owner,
+            aliases: []
+          },
           system: document.is_system,
           gasUsed: null,
           nonce: null
@@ -344,7 +359,10 @@ describe('Documents routes', () => {
           transitionType: 0,
           documentTypeName: document.document_type_name,
           timestamp: block.timestamp,
-          owner: document.owner,
+          owner: {
+            identifier: document.owner,
+            aliases: []
+          },
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
@@ -390,7 +408,10 @@ describe('Documents routes', () => {
           transitionType: 0,
           documentTypeName: document.document_type_name,
           timestamp: document.is_system ? null : block.timestamp,
-          owner: document.owner,
+          owner: {
+            identifier: document.owner,
+            aliases: []
+          },
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
@@ -431,7 +452,10 @@ describe('Documents routes', () => {
           transitionType: 0,
           documentTypeName: 'type_name',
           timestamp: block.timestamp,
-          owner: document.owner,
+          owner: {
+            identifier: document.owner,
+            aliases: []
+          },
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
@@ -472,7 +496,10 @@ describe('Documents routes', () => {
           transitionType: 0,
           documentTypeName: document.document_type_name,
           timestamp: document.is_system ? null : block.timestamp,
-          owner: document.owner,
+          owner: {
+            identifier: document.owner,
+            aliases: []
+          },
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
