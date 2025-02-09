@@ -72,7 +72,7 @@ function DocumentTotalCard ({ document, rate, className }) {
             loading={document.loading}
             error={document.error}
             value={
-              <ValueCard link={`/identity/${document.data?.owner}`}>
+              <ValueCard link={`/identity/${document.data?.owner?.identifier}`}>
                 <Identifier
                   avatar={true}
                   className={''}
@@ -80,7 +80,7 @@ function DocumentTotalCard ({ document, rate, className }) {
                   styles={['highlight-both']}
                   ellipsis={false}
                 >
-                  {document.data?.owner}
+                  {document.data?.owner?.identifier}
                 </Identifier>
               </ValueCard>
             }

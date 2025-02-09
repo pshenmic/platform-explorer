@@ -24,16 +24,16 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
         </GridItem>
 
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Owner'}>
-          {revision?.owner
+          {revision?.owner?.identifier
             ? <LinkContainer
                 className={'DocumentsRevisionsListItem__ColumnContent'}
                 onClick={e => {
                   e.stopPropagation()
                   e.preventDefault()
-                  router.push(`/identity/${revision?.owner}`)
+                  router.push(`/identity/${revision?.owner?.identifier}`)
                 }}
               >
-                <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{revision?.owner}</Identifier>
+                <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{revision?.owner?.identifier}</Identifier>
               </LinkContainer>
             : <NotActive/>
           }
