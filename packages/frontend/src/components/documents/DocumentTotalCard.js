@@ -1,11 +1,16 @@
 import ImageGenerator from '../imageGenerator'
-import { DateBlock, Identifier, InfoLine, NotActive, PrefundedBalance } from '../data'
+import { Alias, DateBlock, Identifier, InfoLine, NotActive, PrefundedBalance } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { Badge } from '@chakra-ui/react'
+import { findActiveAlias } from '../../util'
 import './DocumentTotalCard.js.scss'
 
 function DocumentTotalCard ({ document, rate, className }) {
+  const activeAlias = findActiveAlias(document.data?.owner?.aliases)
+
+  console.log('activeAlias', activeAlias)
+
   return (
     <div className={`InfoBlock InfoBlock--Gradient DocumentTotalCard ${document?.loading ? 'DocumentTotalCard--Loading' : ''} ${className || ''}`}>
       {document?.data?.name &&
@@ -73,15 +78,18 @@ function DocumentTotalCard ({ document, rate, className }) {
             error={document.error}
             value={
               <ValueCard link={`/identity/${document.data?.owner?.identifier}`}>
-                <Identifier
-                  avatar={true}
-                  className={''}
-                  copyButton={true}
-                  styles={['highlight-both']}
-                  ellipsis={false}
-                >
-                  {document.data?.owner?.identifier}
-                </Identifier>
+                {activeAlias
+                  ? <Alias avatarSource={document.data?.owner?.identifier || null}>{activeAlias?.alias}</Alias>
+                  : <Identifier
+                      avatar={true}
+                      className={''}
+                      copyButton={true}
+                      styles={['highlight-both']}
+                      ellipsis={false}
+                    >
+                      {document.data?.owner?.identifier}
+                    </Identifier>
+                }
               </ValueCard>
             }
           />
