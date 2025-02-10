@@ -24,6 +24,7 @@ const pagintationConfig = {
 }
 
 const tabs = [
+  'transactions',
   'documents',
   'schema'
 ]
