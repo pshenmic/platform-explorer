@@ -23,7 +23,7 @@ const pagintationConfig = {
 
 function Document ({ identifier }) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [document, setDocument] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
+  const [document, setDocument] = useState({ data: {}, loading: true, error: false })
   const [revisions, setRevisions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const searchParams = useSearchParams()
   const DocumentId = searchParams.get('contract-id') || null
@@ -45,7 +45,7 @@ function Document ({ identifier }) {
     ])
   }, [setBreadcrumbs, identifier, document])
 
-  console.log('document', document?.documentTypeName)
+  console.log('document', document)
 
   const fetchData = () => {
     setDocument(state => ({ ...state, loading: true }))
