@@ -1,10 +1,13 @@
 import ImageGenerator from '../imageGenerator'
-import { DateBlock, Identifier, InfoLine } from '../data'
+import { Alias, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
+import { findActiveAlias } from '../../util'
 import './DataContractTotalCard.scss'
 
 function DataContractTotalCard ({ dataContract, className }) {
+  const activeAlias = findActiveAlias(dataContract?.data?.owner?.aliases)
+
   return (
     <div className={`InfoBlock InfoBlock--Gradient DataContractTotalCard ${dataContract.loading ? 'DataContractTotalCard--Loading' : ''} ${className || ''}`}>
       {dataContract.data?.name &&
@@ -51,16 +54,19 @@ function DataContractTotalCard ({ dataContract, className }) {
             loading={dataContract.loading}
             error={dataContract.error}
             value={
-              <ValueCard link={`/identity/${dataContract.data?.owner}`}>
-                <Identifier
-                  avatar={true}
-                  className={''}
-                  copyButton={true}
-                  styles={['highlight-both']}
-                  ellipsis={false}
-                >
-                  {dataContract.data?.owner}
-                </Identifier>
+              <ValueCard link={`/identity/${dataContract.data?.owner?.identifier}`}>
+                {activeAlias
+                  ? <Alias avatarSource={dataContract.data?.owner?.identifier}>{activeAlias.alias}</Alias>
+                  : <Identifier
+                      avatar={true}
+                      className={''}
+                      copyButton={true}
+                      styles={['highlight-both']}
+                      ellipsis={false}
+                    >
+                      {dataContract.data?.owner?.identifier}
+                    </Identifier>
+                }
               </ValueCard>
             }
           />
