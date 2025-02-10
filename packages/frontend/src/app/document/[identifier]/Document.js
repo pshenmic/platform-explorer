@@ -78,7 +78,7 @@ function Document ({ identifier }) {
                                     <LoadingLine loading={document.loading}>
                                         <Link href={`/identity/${document.data?.owner?.identifier}`}>
                                           {activeAlias
-                                            ? <Alias avatarSource={document.data?.owner?.identifier}>activeAlias.alias</Alias>
+                                            ? <Alias avatarSource={document.data?.owner?.identifier}>{activeAlias.alias}</Alias>
                                             : <Identifier ellipsis={true} styles={['highlight-both']}>{document.data?.owner?.identifier}</Identifier>
                                           }
                                         </Link>
