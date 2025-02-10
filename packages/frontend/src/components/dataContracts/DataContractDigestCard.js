@@ -1,9 +1,12 @@
 import { DocumentIcon, TransactionsIcon } from '../ui/icons'
-import { CreditsBlock, Identifier, InfoLine } from '../data'
+import { Alias, CreditsBlock, Identifier, InfoLine } from '../data'
 import { ValueCard } from '../cards'
+import { findActiveAlias } from '../../util'
 import './DataContractDigestCard.scss'
 
 function DataContractDigestCard ({ dataContract, rate }) {
+  const topIdentityActiveAlias = findActiveAlias(dataContract?.data?.topIdentity?.aliases)
+
   return (
     <div className={`DataContract__InfoBlock DataContract__DigestCard DataContractDigestCard ${dataContract.loading ? 'DataContractDigestCard--Loading' : ''}`}>
       <div className={'DataContractDigestCard__RowContainer'}>
@@ -32,10 +35,13 @@ function DataContractDigestCard ({ dataContract, rate }) {
         className={'DataContractDigestCard__InfoLine DataContractDigestCard__InfoLine--TopIdentity'}
         title={'Top Identity'}
         value={(
-          <ValueCard link={`/identity/${dataContract.data?.topIdentity}`}>
-            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {dataContract.data?.topIdentity}
-            </Identifier>
+          <ValueCard link={`/identity/${dataContract.data?.topIdentity?.identifier}`}>
+            {topIdentityActiveAlias
+              ? <Alias avatarSource={dataContract.data?.topIdentity?.identifier}>{topIdentityActiveAlias.alias}</Alias>
+              : <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                {dataContract.data?.topIdentity?.identifier}
+              </Identifier>
+            }
           </ValueCard>
         )}
         loading={dataContract.loading}
