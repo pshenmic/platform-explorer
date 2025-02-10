@@ -9,8 +9,6 @@ import './DocumentTotalCard.js.scss'
 function DocumentTotalCard ({ document, rate, className }) {
   const activeAlias = findActiveAlias(document.data?.owner?.aliases)
 
-  console.log('activeAlias', activeAlias)
-
   return (
     <div className={`InfoBlock InfoBlock--Gradient DocumentTotalCard ${document?.loading ? 'DocumentTotalCard--Loading' : ''} ${className || ''}`}>
       {document?.data?.name &&
