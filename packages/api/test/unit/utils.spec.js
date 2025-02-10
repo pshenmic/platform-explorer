@@ -12,6 +12,7 @@ const identityWithdrawal = require('./mocks/identity_withdrawal.json')
 const masternodeVote = require('./mocks/masternode_vote.json')
 const Dash = require('dash')
 const Alias = require('../../src/models/Alias')
+const { buildIndexBuffer } = require('../../src/utils')
 
 describe('Utils', () => {
   let client
@@ -332,6 +333,24 @@ describe('Utils', () => {
         userFeeIncrease: 0,
         nonce: 16
       })
+    })
+  })
+
+  describe('buildIndexBuffer()', () => {
+    it('should build buffer for short value', async () => {
+      const value = 'dash'
+
+      const buildedValue = buildIndexBuffer(value).toString('base64')
+
+      assert.deepEqual(buildedValue, 'EgRkYXNo')
+    })
+
+    it('should build buffer for long value', async () => {
+      const value = 'qu1ntup1ec0asta1'
+
+      const buildedValue = buildIndexBuffer(value).toString('base64')
+
+      assert.deepEqual(buildedValue, 'EhBxdTFudHVwMWVjMGFzdGEx')
     })
   })
   describe('getAliasStateByVote()', () => {
