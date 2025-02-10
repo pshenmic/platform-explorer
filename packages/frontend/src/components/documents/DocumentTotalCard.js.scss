@@ -5,7 +5,14 @@
   @include mixins.EntityCard();
 
   &__Header {
-    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__Avatar {
+    margin: 0;
+    position: static !important;
+    order: -1;
   }
 
   &__InfoLine {
@@ -30,7 +37,11 @@
   }
 
   @media screen and (max-width: $breakpoint-md) {
-    &__Header {
+    &__Avatar {
+      order: 0;
+    }
+
+      &__Header {
       .InfoLine {
         gap: 5px;
         flex-wrap: wrap;
@@ -64,10 +75,6 @@
       }
     }
 
-    &__HeaderLines {
-      padding-right: 100px;
-    }
-
     &__Avatar {
       position: absolute;
       right: 16px;
@@ -82,10 +89,6 @@
         width: 100%;
         justify-content: space-between !important;
       }
-    }
-
-    &__Identifier {
-      padding-right: 100px;
     }
 
     &__HeaderLines {

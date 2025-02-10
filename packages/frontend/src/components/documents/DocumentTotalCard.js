@@ -18,19 +18,6 @@ function DocumentTotalCard ({ document, rate, className }) {
       }
 
       <div className={'DocumentTotalCard__Header'}>
-        <div className={'DocumentTotalCard__Avatar'}>
-          {!document?.error
-            ? <ImageGenerator
-              username={document.data?.identifier}
-              lightness={50}
-              saturation={50}
-              width={88}
-              height={88}
-            />
-            : <NotActive/>
-          }
-        </div>
-
         <div className={'DocumentTotalCard__HeaderLines'}>
           <InfoLine
             className={'DocumentTotalCard__InfoLine DocumentTotalCard__Identifier'}
@@ -48,63 +35,66 @@ function DocumentTotalCard ({ document, rate, className }) {
               </Identifier>
             }
           />
+        </div>
+        <div className={'DocumentTotalCard__Avatar'}>
+          {!document?.error
+            ? <ImageGenerator
+              username={document.data?.identifier}
+              lightness={50}
+              saturation={50}
+              width={88}
+              height={88}
+            />
+            : <NotActive/>
+          }
+        </div>
+      </div>
 
-          <InfoLine
-            className={'DocumentTotalCard__InfoLine DocumentTotalCard__DataContract'}
-            title={'Data Contract'}
-            loading={document.loading}
-            error={document.error}
-            value={
-              <ValueCard link={`/dataContract/${document.data?.dataContractIdentifier}`}>
-                <Identifier
+      <div className={'DocumentTotalCard__CommonInfo'}>
+        <InfoLine
+          className={'DocumentTotalCard__InfoLine DocumentTotalCard__DataContract'}
+          title={'Data Contract'}
+          loading={document.loading}
+          error={document.error}
+          value={
+            <ValueCard link={`/dataContract/${document.data?.dataContractIdentifier}`}>
+              <Identifier
+                avatar={true}
+                className={''}
+                copyButton={true}
+                styles={['highlight-both']}
+                ellipsis={false}
+              >
+                {document.data?.dataContractIdentifier}
+              </Identifier>
+            </ValueCard>
+          }
+        />
+
+        <InfoLine
+          className={'DocumentTotalCard__InfoLine DocumentTotalCard__Owner'}
+          title={'Owner'}
+          loading={document.loading}
+          error={document.error}
+          value={
+            <ValueCard link={`/identity/${document.data?.owner?.identifier}`}>
+              {activeAlias
+                ? <Alias avatarSource={document.data?.owner?.identifier || null}>{activeAlias?.alias}</Alias>
+                : <Identifier
                   avatar={true}
                   className={''}
                   copyButton={true}
                   styles={['highlight-both']}
                   ellipsis={false}
                 >
-                  {document.data?.dataContractIdentifier}
+                  {document.data?.owner?.identifier}
                 </Identifier>
-              </ValueCard>
-            }
-          />
+              }
+            </ValueCard>
+          }
+        />
 
-          <InfoLine
-            className={'DocumentTotalCard__InfoLine DocumentTotalCard__Owner'}
-            title={'Owner'}
-            loading={document.loading}
-            error={document.error}
-            value={
-              <ValueCard link={`/identity/${document.data?.owner?.identifier}`}>
-                {activeAlias
-                  ? <Alias avatarSource={document.data?.owner?.identifier || null}>{activeAlias?.alias}</Alias>
-                  : <Identifier
-                      avatar={true}
-                      className={''}
-                      copyButton={true}
-                      styles={['highlight-both']}
-                      ellipsis={false}
-                    >
-                      {document.data?.owner?.identifier}
-                    </Identifier>
-                }
-              </ValueCard>
-            }
-          />
-
-          <InfoLine
-            className={'DocumentTotalCard__InfoLine DocumentTotalCard__InfoLine--Revision'}
-            title={'Revision'}
-            value={document.data?.revision}
-            loading={document.loading}
-            error={document.error || document.data?.revision === undefined}
-          />
-        </div>
-      </div>
-
-      <HorisontalSeparator className={'DocumentTotalCard__Separator'}/>
-
-      <div className={'DocumentTotalCard__CommonInfo'}>
+        <HorisontalSeparator className={'DocumentTotalCard__Separator'}/>
 
         <InfoLine
           className={'DocumentTotalCard__InfoLine DocumentTotalCard__InfoLine--Entropy DocumentTotalCard__Entropy'}
@@ -129,6 +119,14 @@ function DocumentTotalCard ({ document, rate, className }) {
           value={<Badge colorScheme={'gray'}>{document.data?.system ? 'Yes' : 'No'}</Badge>}
           loading={document.loading}
           error={document.error || (typeof document.data?.system !== 'boolean' && !document.data?.system)}
+        />
+
+        <InfoLine
+          className={'DocumentTotalCard__InfoLine DocumentTotalCard__InfoLine--Revision'}
+          title={'Revision'}
+          value={document.data?.revision}
+          loading={document.loading}
+          error={document.error || document.data?.revision === undefined}
         />
 
         <InfoLine
