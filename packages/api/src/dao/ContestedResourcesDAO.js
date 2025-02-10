@@ -19,6 +19,7 @@ module.exports = class ContestedDAO {
 
     const prefundedDocumentsSubquery = this.knex('documents')
       .whereRaw('prefunded_voting_balance is not null')
+      .andWhereRaw('data is not null')
       .as('sub')
 
     const documentsPrefundingIndexeKeysSubquery = this.knex(prefundedDocumentsSubquery)
@@ -145,6 +146,154 @@ module.exports = class ContestedDAO {
           ? accumulator + 1
           : accumulator
         , 0) ?? null
+      }
+    }))
+
+    let status
+
+    if (firstTx.data_contract_identifier && firstTx.index_name && firstTx.document_type_name && firstTx.resource_value) {
+      const { finishedVoteInfo } = await this.dapi.getContestedState(
+        base58.decode(firstTx.data_contract_identifier),
+        firstTx.document_type_name,
+        firstTx.index_name,
+        1,
+        firstTx.resource_value.map(buildIndexBuffer)
+      )
+
+      status = typeof finishedVoteInfo !== 'undefined'
+    }
+
+    return ContestedResource.fromRaw({
+      ...firstTx,
+      contenders,
+      totalGasUsed: totalVotesGasUsed + totalDocumentsGasUsed,
+      totalDocumentsGasUsed,
+      totalVotesGasUsed,
+      totalCountTowardsIdentity,
+      totalCountAbstain,
+      totalCountLock,
+      totalCountVotes,
+      status
+    })
+  }
+
+  getContestedResources = async (page, limit, order) => {
+    const fromRank = (page - 1) * limit + 1
+    const toRank = fromRank + limit - 1
+
+    const aliasesSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .groupBy('identity_identifier')
+      .as('aliases')
+
+    const prefundedDocumentsSubquery = this.knex('documents')
+      .whereRaw('prefunded_voting_balance is not null')
+      .andWhereRaw('data is not null')
+      .groupBy('identifier', 'id', 'data_contract_id')
+      .as('sub')
+
+    const documentsPrefundingIndexeKeysSubquery = this.knex(prefundedDocumentsSubquery)
+      .select('id', 'data_contract_id', 'data', 'state_transition_hash')
+      .select(this.knex.raw('jsonb_object_keys(prefunded_voting_balance) as key'))
+      .as('sub')
+
+    const dataContractsWithContestedDocs = this.knex(documentsPrefundingIndexeKeysSubquery)
+      .select('schema', 'sub.id as document_id', 'data', 'sub.key as key')
+      .leftJoin('data_contracts', 'sub.data_contract_id', 'data_contracts.id')
+      .as('data_contracts_with_contested')
+
+    const filteredIndexElementSubquery = this.knex
+      .select('index_element', 'data', 'document_id', 'data_contracts_with_contested.key as key')
+      .select(this.knex.raw('index_element->>\'name\' as name'))
+      .whereRaw('index_element->>\'name\' = data_contracts_with_contested.key')
+      .fromRaw('?, jsonb_each(schema) AS key_value(key, value), jsonb_array_elements(value->\'indices\') AS index_element', dataContractsWithContestedDocs)
+      .as('index_elements')
+
+    const keysSubquery = this.knex
+      .select(
+        'document_id', 'field_index', 'name as index_name', 'data',
+        this.knex.raw('jsonb_object_keys(property) as property_keys')
+      )
+      .fromRaw('?, jsonb_array_elements(index_elements.index_element -> \'properties\') WITH ORDINALITY AS t(property,field_index)', filteredIndexElementSubquery)
+      .as('keys_subquery')
+
+    const resourceValuesSubquery = this.knex(keysSubquery)
+      .select('document_id')
+      .select(this.knex.raw('jsonb_agg(data->property_keys order by field_index asc) as resource_value'))
+      .groupBy('document_id')
+      .as('resource_values')
+
+    const rankSubquery = this.knex(resourceValuesSubquery)
+      .select('document_id', 'resource_value')
+      .select(this.knex.raw('row_number() over (PARTITION BY resource_value order by document_id) as value_rank'))
+      .as('ranked_documents')
+
+    return this.knex(rankSubquery)
+      .select('document_id', 'resource_value')
+      .where('value_rank', '=', '1')
+
+
+    if (rows.length === 0) {
+      return null
+    }
+
+    const uniqueVotes = rows
+      .filter((item, pos, self) =>
+        self.findIndex((row) => row.masternode_vote_tx === item.masternode_vote_tx) === pos
+      )
+
+    const uniqueContenders = rows
+      .filter((item, pos, self) =>
+        self.findIndex((row) => row.owner === item.owner) === pos &&
+        self.findIndex((row) => row.document_identifier === item.document_identifier) === pos
+      )
+
+    const [firstTx] = rows.sort((a, b) => new Date(a.timestamp ?? new Date()).getTime() - new Date(b.timestamp ?? new Date()).getTime())
+
+    const totalCountTowardsIdentity = uniqueVotes
+      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.TowardsIdentity ? 1 : 0), 0)
+
+    const totalCountAbstain = uniqueVotes
+      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.ABSTAIN ? 1 : 0), 0)
+
+    const totalCountLock = uniqueVotes
+      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.LOCK ? 1 : 0), 0)
+
+    const totalCountVotes = uniqueVotes.length
+
+    const totalVotesGasUsed = uniqueVotes
+      .reduce((accumulator, currentValue) => accumulator + Number((currentValue.vote_gas_used ?? 0)), 0)
+
+    const totalDocumentsGasUsed = uniqueContenders
+      .reduce((accumulator, currentValue) => accumulator + Number((currentValue.document_tx_gas_used ?? 0)), 0)
+
+    const contenders = await Promise.all(uniqueContenders.map(async (row) => {
+      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+        const aliasInfo = await getAliasInfo(alias, this.dapi)
+
+        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+      }))
+
+      return {
+        identifier: row.owner?.trim() ?? null,
+        timestamp: row.timestamp ?? null,
+        documentIdentifier: row.document_identifier?.trim() ?? null,
+        documentStateTransition: row.document_state_transition_hash ?? null,
+        aliases: aliases ?? [],
+        totalCountTowardsIdentity: uniqueVotes
+          .filter((vote) => vote.towards_identity === row.owner)
+          .reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.TowardsIdentity
+              ? accumulator + 1
+              : accumulator
+            , 0) ?? null,
+        abstainVotes: uniqueVotes.reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.ABSTAIN
+            ? accumulator + 1
+            : accumulator
+          , 0) ?? null,
+        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => currentValue.choice !== ChoiceEnum.ABSTAIN && currentValue.towards_identity !== row.owner
+            ? accumulator + 1
+            : accumulator
+          , 0) ?? null
       }
     }))
 
