@@ -40,9 +40,12 @@ function Document ({ identifier }) {
         avatar: true,
         shrink: true
       },
+      { label: document?.data?.documentTypeName },
       { label: identifier, avatar: true }
     ])
   }, [setBreadcrumbs, identifier, document])
+
+  console.log('document', document?.documentTypeName)
 
   const fetchData = () => {
     setDocument(state => ({ ...state, loading: true }))
