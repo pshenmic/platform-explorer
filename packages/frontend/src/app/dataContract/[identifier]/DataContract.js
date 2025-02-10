@@ -24,6 +24,7 @@ const pagintationConfig = {
 }
 
 const tabs = [
+  'transactions',
   'documents',
   'schema'
 ]
@@ -118,9 +119,9 @@ function DataContract ({ identifier }) {
       <InfoContainer styles={['tabs']}>
         <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
           <TabList>
-            <Tab>Transactions {transactions.data?.resultSet?.length !== undefined
-              ? <span className={`Tabs__TabItemsCount ${transactions.data?.resultSet?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                  {transactions.data?.resultSet?.length}
+            <Tab>Transactions {transactions.data?.pagination?.total !== undefined
+              ? <span className={`Tabs__TabItemsCount ${transactions.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {transactions.data?.pagination?.total}
                 </span>
               : ''}
             </Tab>
