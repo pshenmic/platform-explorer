@@ -2,7 +2,7 @@
 
 import { Grid, GridItem } from '@chakra-ui/react'
 import { LinkContainer } from '../ui/containers'
-import { BigNumber, Identifier, TimeDelta } from '../data'
+import { BigNumber, Identifier, NotActive, TimeDelta } from '../data'
 import { RateTooltip } from '../ui/Tooltips'
 import Link from 'next/link'
 import { useRef } from 'react'
@@ -15,7 +15,7 @@ function TransfersListItem ({ transfer, rate }) {
   const router = useRouter()
 
   const Recipient = () => {
-    if (!transfer?.recipient) return <span className={'TransactionsListItem__NotActiveText'}>-</span>
+    if (!transfer?.recipient) return <NotActive>-</NotActive>
 
     return (
       <LinkContainer
@@ -46,14 +46,14 @@ function TransfersListItem ({ transfer, rate }) {
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Timestamp'}>
           {transfer?.timestamp
             ? <span><TimeDelta endDate={transfer.timestamp}/></span>
-            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
+            : <NotActive/>
           }
         </GridItem>
 
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--TxHash'}>
           {transfer?.txHash
             ? <Identifier styles={['highlight-both']}>{transfer.txHash}</Identifier>
-            : <span className={'TransactionsListItem__NotActiveText'}>n/a</span>
+            : <NotActive/>
           }
         </GridItem>
 
@@ -66,7 +66,7 @@ function TransfersListItem ({ transfer, rate }) {
             ? <RateTooltip credits={transfer.amount} rate={rate}>
                 <span><BigNumber>{transfer.amount}</BigNumber></span>
               </RateTooltip>
-            : <span className={'TransactionsListItem__NotActiveText'}>-</span>
+            : <NotActive>-</NotActive>
           }
         </GridItem>
 
@@ -75,12 +75,15 @@ function TransfersListItem ({ transfer, rate }) {
             ? <RateTooltip credits={transfer.gasUsed} rate={rate}>
                 <span><BigNumber>{transfer.gasUsed}</BigNumber></span>
               </RateTooltip>
-            : <span className={'TransactionsListItem__NotActiveText'}>-</span>
+            : <NotActive>-</NotActive>
           }
         </GridItem>
 
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Type'}>
-          <TypeBadge type={transfer.type}/>
+          {transfer?.type
+            ? <TypeBadge type={transfer?.type}/>
+            : <NotActive/>
+          }
         </GridItem>
       </Grid>
     </Link>

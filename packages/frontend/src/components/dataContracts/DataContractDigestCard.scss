@@ -1,0 +1,47 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.DataContractDigestCard {
+  @include mixins.DigestCard();
+  border-radius: $border-radius-medium;
+  container-type: inline-size;
+
+  &__InfoLine {
+    &--TopIdentity {
+      .InfoLine__Value {
+        overflow: hidden;
+      }
+    }
+
+    &--TotalTransactions, &--DocumentsCount {
+      width: 100%;
+
+      .InfoLine__Title {
+        &, span {
+          align-items: center;
+          display: flex;
+        }
+
+        span {
+          gap: 0.75rem;
+        }
+      }
+
+      .InfoLine__Value {
+        font-size: 0.813rem;
+      }
+    }
+  }
+
+  @container (max-width: 37.5rem) and (max-width: 37.5rem) {
+    &__RowContainer {
+      flex-wrap: wrap;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__InfoLine {
+      flex-wrap: wrap;
+    }
+  }
+}

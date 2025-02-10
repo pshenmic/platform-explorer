@@ -29,10 +29,4 @@
       max-width: 100%;
     }
   }
-
-  &--Error & {
-    &__Value {
-      color: var(--chakra-colors-gray-250);
-    }
-  }
 }

@@ -10,6 +10,18 @@
   white-space: wrap;
   word-break: break-all;
 
+  &--Size32, &--Size44 {
+    container-type: inline-size;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &--Size32 & , &--Size44 & {
+    &__SymbolsContainer {
+      width: max-content;
+    }
+  }
+
   &--Ellipsis {
     overflow: hidden;
   }
@@ -19,6 +31,26 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+  }
+
+  &--Size44:not(&--Ellipsis) &__SymbolsContainer {
+    @container (max-width: 22rem) {
+      width: calc(22ch);
+    }
+
+    @container (max-width: 12rem) {
+      width: calc(15ch);
+    }
+  }
+
+  &--Size32:not(&--Ellipsis) &__SymbolsContainer {
+    @container (max-width: 20rem) {
+      width: calc(16ch);
+    }
+
+    @container (max-width: 13rem) {
+      width: calc(11ch);
     }
   }
 

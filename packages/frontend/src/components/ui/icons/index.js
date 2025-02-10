@@ -142,6 +142,38 @@ const PshenmicLogoIcon = (props) => (
   </Icon>
 )
 
+const TransactionsIcon = (props) => (
+  <Icon viewBox='0 0 28 25' width='28' height='25' fill='none' {...props}>
+    <svg width='28' height='25' viewBox='0 0 28 25' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M4.08358 24.0306L4.08358 18.1973L17.5002 18.1973M17.5002 18.1973L13.4169 22.2806M17.5002 18.1973L13.4169 14.1139M23.9169 10.6139L23.9169 4.7806L10.5002 4.7806M10.5002 4.7806L14.5836 8.86393M10.5002 4.7806L14.5836 0.697266M8.16699 4.78048C8.16699 6.71347 6.59999 8.28048 4.66699 8.28048C2.734 8.28048 1.16699 6.71347 1.16699 4.78048C1.16699 2.84748 2.734 1.28048 4.66699 1.28048C6.59999 1.28048 8.16699 2.84748 8.16699 4.78048ZM26.8337 18.1971C26.8337 20.1301 25.2667 21.6971 23.3337 21.6971C21.4007 21.6971 19.8337 20.1301 19.8337 18.1971C19.8337 16.2641 21.4007 14.6971 23.3337 14.6971C25.2667 14.6971 26.8337 16.2641 26.8337 18.1971Z'
+        stroke='url(#paint0_linear_5608_6617)' strokeWidth='0.875'/>
+      <defs>
+        <linearGradient id='paint0_linear_5608_6617' x1='14.0003' y1='0.697266' x2='14.0003' y2='24.0306'
+                        gradientUnits='userSpaceOnUse'>
+          <stop stopColor='#008DE4'/>
+          <stop offset='1' stopColor='#008DE4' stopOpacity='0.6'/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </Icon>
+)
+
+const DocumentIcon = (props) => (
+  <Icon viewBox='0 0 20 27' width='20' height='27' fill='none' {...props}>
+    <path
+      d='M11.7503 0.529297V8.11263H19.3337M11.7503 0.529297L19.3337 8.11263M11.7503 0.529297H0.666992V26.196H19.3337V8.11263M4.75033 17.446H15.2503M4.75033 14.5293H15.2503M4.75033 20.3626H15.2503'
+      stroke='url(#paint0_linear_5608_6624)' strokeWidth='0.875'/>
+    <defs>
+      <linearGradient id='paint0_linear_5608_6624' x1='10.0003' y1='0.529297' x2='10.0003' y2='26.196'
+                      gradientUnits='userSpaceOnUse'>
+        <stop stopColor='#008DE4'/>
+        <stop offset='1' stopColor='#008DE4' stopOpacity='0.6'/>
+      </linearGradient>
+    </defs>
+  </Icon>
+)
+
 export {
   CalendarIcon,
   CalendarIcon2,
@@ -158,5 +190,7 @@ export {
   BigClockIcon,
   CheckmarkIcon,
   ErrorCircleIcon,
-  PshenmicLogoIcon
+  PshenmicLogoIcon,
+  TransactionsIcon,
+  DocumentIcon
 }

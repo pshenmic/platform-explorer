@@ -1,5 +1,6 @@
 import BigNumber from './BigNumber'
 import { roundUsd, removeTrailingZeros, creditsToDash } from '../../util'
+import { NotActive } from './index'
 import './CreditsBlock.scss'
 
 export default function CreditsBlock ({ credits, rate }) {
@@ -15,7 +16,7 @@ export default function CreditsBlock ({ credits, rate }) {
               </span>
             }
         </>
-        : <span className={'CreditsBlock__NotActive'}>n/a</span>
+        : <NotActive/>
       }
     </span>
   )

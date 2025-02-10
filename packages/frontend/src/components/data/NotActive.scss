@@ -1,0 +1,6 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.NotActive {
+  @include mixins.NotActiveText;
+}

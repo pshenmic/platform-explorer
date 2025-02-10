@@ -20,17 +20,18 @@ const Breadcrumbs = () => {
   return (
     <div className={'Breadcrumbs'}>
       <ul className={'Breadcrumbs__LinksContainer'}>
-        {breadcrumbs.map((link, i) => (
-          <li className={'Breadcrumbs__Link'} key={i}>
-            <LinkContainer href={i !== breadcrumbs.length - 1 ? link.path : null} key={i}>
-              {link.avatar &&
-                <ImageGenerator className={'Breadcrumbs__Avatar'} username={link.label} lightness={50} saturation={50} width={16} height={16} />}
+        {breadcrumbs.map((link, i) => link?.label
+          ? <li className={'Breadcrumbs__Link'} key={i}>
+            <LinkContainer href={i !== breadcrumbs.length - 1 ? link?.path : null} key={i}>
+              {(link?.avatar || link?.avatarSource) &&
+                <ImageGenerator className={'Breadcrumbs__Avatar'} username={link?.avatarSource || link.label} lightness={50} saturation={50} width={16} height={16} />}
               {link.label}
             </LinkContainer>
 
             {i !== breadcrumbs.length - 1 && <div className={'Breadcrumbs__Separator'}><ChevronIcon color={'brand.normal'}/></div>}
           </li>
-        ))}
+          : ''
+        )}
       </ul>
     </div>
   )

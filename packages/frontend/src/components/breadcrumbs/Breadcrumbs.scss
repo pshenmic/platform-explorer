@@ -5,8 +5,11 @@
   max-width: var(--chakra-sizes-container-maxPageW);
   background: rgba(var(--chakra-colors-gray-675-rgb), .5);
   border-radius: 0 0 20px 20px;
-  margin: -500px auto 0;
-  padding: 512px 12px 12px 12px;
+  margin: -31.25rem auto 0;
+  padding-top: 32rem;
+  padding-bottom: 0.75rem;
+  @include mixins.navContainerPadding(padding-left);
+  @include mixins.navContainerPadding(padding-right);
 
   &__LinksContainer {
     display: flex;
@@ -60,10 +63,6 @@
       width: 6px;
       height: 10px;
     }
-  }
-
-  @media screen and (max-width: 1440px) {
-    padding: 512px 24px 12px 24px;
   }
 
   @media screen and (max-width: $breakpoint-lg) {

@@ -46,7 +46,8 @@ function Navbar () {
   const breadcrumbsActiveRoutes = [
     '/validator/',
     '/transaction/',
-    '/identity/'
+    '/identity/',
+    '/dataContract/'
   ]
   const displayBreadcrumbs = breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1)
 

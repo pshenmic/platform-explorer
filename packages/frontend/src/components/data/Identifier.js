@@ -11,6 +11,12 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
     return null
   })()
 
+  const sizeClass = (() => {
+    if (styles.includes('size-32')) return 'Identifier--Size32'
+    if (styles.includes('size-44')) return 'Identifier--Size44'
+    return ''
+  })()
+
   const HighlightedID = ({ children, mode }) => {
     if (!children || typeof children !== 'string') return <span>n/a</span>
 
@@ -29,7 +35,7 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
   }
 
   return (
-    <div className={`Identifier ${ellipsis ? 'Identifier--Ellipsis' : ''} ${className || ''}`}>
+    <div className={`Identifier ${sizeClass} ${ellipsis ? 'Identifier--Ellipsis' : ''} ${className || ''}`}>
       {avatar && children && (
         <ImageGenerator className={'Identifier__Avatar'} username={children} lightness={50} saturation={50} width={24} height={24} />
       )}

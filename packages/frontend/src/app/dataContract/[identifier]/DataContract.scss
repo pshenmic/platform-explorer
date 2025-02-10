@@ -1,27 +1,48 @@
 @use '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
-.DataContractSchema {
-    white-space: break-spaces;
-    height: 80%;
-    padding: 0 10px;
-    word-wrap: break-word;
-    box-sizing: border-box;
-    width: 100%;
-    max-height: 400px;
-    overflow-y: auto;
-    overflow-x: hidden;
+.DataContract {
+  $gap: 1.5rem;
 
-    &__Code {
-        padding: 10px;
-        font-family: $font-mono;
-        font-size: 12pt;
-        width: 100%;
-    }
-}
+  .PageDataContainer__Content {
+    display: flex;
+    flex-direction: column;
+    gap: $gap;
+  }
 
-@media screen and (max-width: 1020px) {
-    .DataContractSchema {
-        width: 100%;
+  &__InfoBlocks {
+    display: flex;
+    gap: $gap;
+  }
+
+  &__InfoBlock {
+    width: 50%;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__InfoBlocks {
+      flex-direction: column;
     }
+
+    &__InfoBlock {
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    $gap: 0.75rem;
+
+    .PageDataContainer__Content {
+      gap: $gap;
+    }
+
+    &__InfoBlocks {
+      flex-direction: column;
+      gap: $gap;
+    }
+
+    &__InfoBlock {
+      width: 100%;
+    }
+  }
 }
