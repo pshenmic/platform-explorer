@@ -4,7 +4,7 @@ import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { Badge } from '@chakra-ui/react'
 import { findActiveAlias } from '../../util'
-import './DocumentTotalCard.js.scss'
+import './DocumentTotalCard.scss'
 
 function DocumentTotalCard ({ document, rate, className }) {
   const activeAlias = findActiveAlias(document.data?.owner?.aliases)
