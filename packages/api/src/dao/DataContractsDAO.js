@@ -130,6 +130,10 @@ module.exports = class DataContractsDAO {
 
     const [row] = rows
 
+    if (!row) {
+      return null
+    }
+
     const ownerAliases = await Promise.all((row.owner_aliases ?? []).map(async alias => {
       const aliasInfo = await getAliasInfo(alias, this.dapi)
 
@@ -148,18 +152,14 @@ module.exports = class DataContractsDAO {
       }))
     }
 
-    if (!row) {
-      return null
-    }
-
     return DataContract.fromRow({
       ...row,
       owner: {
-        identifier: row.owner?.trim(),
+        identifier: row.owner?.trim() ?? null,
         aliases: ownerAliases
       },
       top_identity: {
-        identifier: row.top_identity?.trim(),
+        identifier: row.top_identity?.trim() ?? null,
         aliases: topIdentityAliases
       }
     })
