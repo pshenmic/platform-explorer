@@ -16,14 +16,14 @@ module.exports = class DataContract {
   constructor (identifier, name, owner, schema, version, txHash, timestamp, isSystem, documentsCount, topIdentity, identitiesInteracted, totalGasUsed, averageGasUsed) {
     this.identifier = identifier ? identifier.trim() : null
     this.name = name ? name.trim() : null
-    this.owner = owner ? owner.trim() : null
+    this.owner = owner ?? null
     this.schema = schema ?? null
     this.version = version ?? null
     this.txHash = txHash ?? null
     this.timestamp = timestamp ?? null
     this.isSystem = isSystem ?? null
     this.documentsCount = documentsCount ?? null
-    this.topIdentity = topIdentity ? topIdentity.trim() : null
+    this.topIdentity = topIdentity ?? null
     this.identitiesInteracted = identitiesInteracted ?? null
     this.totalGasUsed = totalGasUsed ?? null
     this.averageGasUsed = averageGasUsed ?? null
