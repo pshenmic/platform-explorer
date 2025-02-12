@@ -1,11 +1,10 @@
 import { DocumentIcon, TransactionsIcon } from '../ui/icons'
-import { Alias, CreditsBlock, Identifier, InfoLine } from '../data'
+import { CreditsBlock, Identifier, InfoLine } from '../data'
 import { ValueCard } from '../cards'
-import { findActiveAlias } from '../../util'
 import './BlockDigestCard.scss'
 
 function BlockDigestCard ({ block, rate }) {
-  const topIdentityActiveAlias = findActiveAlias(block?.data?.topIdentity?.aliases)
+  console.log(block)
 
   return (
     <div
@@ -16,9 +15,9 @@ function BlockDigestCard ({ block, rate }) {
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--TotalTransactions'}
             title={(<span><TransactionsIcon/>Total transactions</span>)}
-            value={block.data?.transactionsCount}
+            value={block?.data?.txs?.length}
             loading={block.loading}
-            error={block.error || block.data?.transactionsCount === undefined}
+            error={block.error || block?.data?.txs?.length === undefined}
           />
         </div>
 
@@ -28,7 +27,7 @@ function BlockDigestCard ({ block, rate }) {
             title={(<span><DocumentIcon/>Epoch</span>)}
             value={'123'}
             loading={block.loading}
-            error={block.error || block.data?.documentsCount === undefined}
+            error={block.error}
           />
         </div>
       </div>
@@ -38,9 +37,9 @@ function BlockDigestCard ({ block, rate }) {
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--TotalTransactions'}
             title={(<span><TransactionsIcon/>Quorum Index</span>)}
-            value={'123'}
+            value={block?.data?.quorum?.quorumIndex}
             loading={block.loading}
-            error={block.error || block.data?.transactionsCount === undefined}
+            error={block.error || block?.data?.quorum?.quorumIndex === undefined}
           />
         </div>
 
@@ -48,9 +47,9 @@ function BlockDigestCard ({ block, rate }) {
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--DocumentsCount'}
             title={(<span><DocumentIcon/>Quorum Members</span>)}
-            value={'123'}
+            value={block?.data?.quorum?.members?.length}
             loading={block.loading}
-            error={block.error || block.data?.documentsCount === undefined}
+            error={block.error || block?.data?.quorum?.members?.length === undefined}
           />
         </div>
       </div>
