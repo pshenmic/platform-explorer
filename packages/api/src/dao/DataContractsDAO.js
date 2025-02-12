@@ -25,7 +25,7 @@ module.exports = class DataContractsDAO {
     }
 
     const sumDocuments = this.knex('documents')
-      .select('documents.id', 'data_contracts.identifier as dc_identifier', 'documents.data_contract_id')
+      .select('documents.id', 'data_contracts.identifier as dc_identifier', 'documents.data_contract_id', 'revision')
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
       .as('sum_documents')
 
@@ -37,6 +37,7 @@ module.exports = class DataContractsDAO {
       .select(this.knex(sumDocuments)
         .count('*')
         .whereRaw('data_contracts.identifier = sum_documents.dc_identifier')
+        .andWhere('revision', '=', '1')
         .as('documents_count'))
       .select(this.knex.raw('rank() over (partition by identifier order by version desc) rank'))
 
@@ -65,6 +66,10 @@ module.exports = class DataContractsDAO {
   }
 
   getDataContractByIdentifier = async (identifier) => {
+    const aliasesSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .groupBy('identity_identifier')
+
     const identitiesSubquery = this.knex('documents')
       .select(this.knex.raw('COUNT(*) OVER(PARTITION BY documents.owner) as documents_count'))
       .select('documents.owner as identity')
@@ -82,12 +87,10 @@ module.exports = class DataContractsDAO {
       .select('documents.state_transition_hash as state_transition_hash')
       .where('data_contracts.identifier', '=', identifier)
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
-    // .as('documents_txs')
 
     const dataContractsTransactionsSubquery = this.knex('data_contracts')
       .select('state_transition_hash')
       .where('identifier', '=', identifier)
-    // .as('data_contracts_txs')
 
     const unionTransactionsSubquery = this.knex
       .union([documentsTransactionsSubquery, dataContractsTransactionsSubquery])
@@ -98,7 +101,7 @@ module.exports = class DataContractsDAO {
       .select(this.knex.raw('count(*) as total_count'))
       .leftJoin('state_transitions', 'hash', 'state_transition_hash')
 
-    const rows = await this.knex('data_contracts')
+    const dataSubquery = this.knex('data_contracts')
       .with('gas_sub', gasSubquery)
       .select('data_contracts.identifier as identifier', 'data_contracts.name as name', 'data_contracts.owner as owner',
         'data_contracts.schema as schema', 'data_contracts.is_system as is_system',
@@ -116,6 +119,14 @@ module.exports = class DataContractsDAO {
       .where('data_contracts.identifier', identifier)
       .orderBy('data_contracts.id', 'desc')
       .limit(1)
+      .as('data_sub')
+
+    const rows = await this.knex(dataSubquery)
+      .with('aliases_subquery', aliasesSubquery)
+      .select('identifier', 'owner', 'name', 'schema', 'is_system', 'version', 'tx_hash', 'timestamp',
+        'documents_count', 'top_identity', 'identities_interacted', 'total_gas_used', 'average_gas_used')
+      .select(this.knex('aliases_subquery').select('aliases').whereRaw('identity_identifier = owner').limit(1).as('owner_aliases'))
+      .select(this.knex('aliases_subquery').select('aliases').whereRaw('identity_identifier = top_identity').limit(1).as('top_identity_aliases'))
 
     const [row] = rows
 
@@ -123,7 +134,35 @@ module.exports = class DataContractsDAO {
       return null
     }
 
-    return DataContract.fromRow(row)
+    const ownerAliases = await Promise.all((row.owner_aliases ?? []).map(async alias => {
+      const aliasInfo = await getAliasInfo(alias, this.dapi)
+
+      return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+    }))
+
+    let topIdentityAliases = []
+
+    if (row.owner === row.top_identity) {
+      topIdentityAliases = ownerAliases
+    } else {
+      topIdentityAliases = await Promise.all((row.top_identity_aliases ?? []).map(async alias => {
+        const aliasInfo = await getAliasInfo(alias, this.dapi)
+
+        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+      }))
+    }
+
+    return DataContract.fromRow({
+      ...row,
+      owner: {
+        identifier: row.owner?.trim() ?? null,
+        aliases: ownerAliases
+      },
+      top_identity: {
+        identifier: row.top_identity?.trim() ?? null,
+        aliases: topIdentityAliases
+      }
+    })
   }
 
   getDataContractTransactions = async (identifier, page, limit, order) => {
