@@ -15,7 +15,9 @@ import {
   // Heading, Tabs, TabList, Tab, TabPanels, TabPanel
   Tabs, TabList, Tab, TabPanels, TabPanel
 } from '@chakra-ui/react'
+import { BlockDigestCard, BlockTotalCard } from '../../../components/blocks'
 // import {CodeBlock} from "../../../components/data";
+import './Block.scss'
 
 function Block ({ hash }) {
   const [block, setBlock] = useState({ data: {}, loading: true, error: false })
@@ -43,8 +45,8 @@ function Block ({ hash }) {
       title={'Block info'}
     >
       <div className={'Block__InfoBlocks'}>
-        <div>Block total card</div>
-        <div>Block digest card</div>
+        <BlockTotalCard className={'Block__InfoBlock'} block={block}/>
+        <BlockDigestCard className={'Block__InfoBlock'} block={block}/>
       </div>
 
       <InfoContainer styles={['tabs']}>

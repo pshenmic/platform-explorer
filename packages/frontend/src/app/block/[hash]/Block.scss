@@ -1,0 +1,19 @@
+.Block {
+  $gap: 1.5rem;
+
+  .PageDataContainer__Content {
+    display: flex;
+    flex-direction: column;
+    gap: $gap;
+  }
+
+  &__InfoBlocks {
+    display: flex;
+    width: 100%;
+    gap: $gap;
+  }
+
+  &__InfoBlock {
+    width: 50%;
+  }
+}
