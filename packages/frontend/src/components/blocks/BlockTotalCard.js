@@ -5,22 +5,22 @@ import { ValueCard } from '../cards'
 import { findActiveAlias } from '../../util'
 import './BlockTotalCard.scss'
 
-function BlockTotalCard ({ dataContract, className }) {
-  const activeAlias = findActiveAlias(dataContract?.data?.owner?.aliases)
+function BlockTotalCard ({ block, className }) {
+  const activeAlias = findActiveAlias(block?.data?.owner?.aliases)
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient BlockTotalCard ${dataContract.loading ? 'BlockTotalCard--Loading' : ''} ${className || ''}`}>
-      {dataContract.data?.name &&
+    <div className={`InfoBlock InfoBlock--Gradient BlockTotalCard ${block?.loading ? 'BlockTotalCard--Loading' : ''} ${className || ''}`}>
+      {block.data?.name &&
         <div className={'BlockTotalCard__Title'}>
-          {dataContract.data.name}
+          {block.data.name}
         </div>
       }
 
       <div className={'BlockTotalCard__Header'}>
         <div className={'BlockTotalCard__Avatar'}>
-          {!dataContract.error
+          {!block.error
             ? <ImageGenerator
-              username={dataContract.data?.identifier}
+              username={block.data?.identifier}
               lightness={50}
               saturation={50}
               width={88}
@@ -34,16 +34,16 @@ function BlockTotalCard ({ dataContract, className }) {
           <InfoLine
             className={'BlockTotalCard__Identifier'}
             title={'Identifier'}
-            loading={dataContract.loading}
-            error={dataContract.error || !dataContract.data?.identifier}
+            loading={block.loading}
+            error={block.error || !block.data?.identifier}
             value={
               <Identifier
                 className={''}
                 copyButton={true}
-                styles={['highlight-both', `size-${dataContract.data?.identifier?.length}`]}
+                styles={['highlight-both', `size-${block.data?.identifier?.length}`]}
                 ellipsis={false}
               >
-                {dataContract.data?.identifier}
+                {block.data?.identifier}
               </Identifier>
             }
           />
@@ -51,12 +51,12 @@ function BlockTotalCard ({ dataContract, className }) {
           <InfoLine
             className={'BlockTotalCard__Owner'}
             title={'Owner'}
-            loading={dataContract.loading}
-            error={dataContract.error}
+            loading={block.loading}
+            error={block.error}
             value={
-              <ValueCard link={`/identity/${dataContract.data?.owner?.identifier}`}>
+              <ValueCard link={`/identity/${block.data?.owner?.identifier}`}>
                 {activeAlias
-                  ? <Alias avatarSource={dataContract.data?.owner?.identifier}>{activeAlias.alias}</Alias>
+                  ? <Alias avatarSource={block.data?.owner?.identifier}>{activeAlias.alias}</Alias>
                   : <Identifier
                       avatar={true}
                       className={''}
@@ -64,7 +64,7 @@ function BlockTotalCard ({ dataContract, className }) {
                       styles={['highlight-both']}
                       ellipsis={false}
                     >
-                      {dataContract.data?.owner?.identifier}
+                      {block.data?.owner?.identifier}
                     </Identifier>
                 }
               </ValueCard>
@@ -78,16 +78,16 @@ function BlockTotalCard ({ dataContract, className }) {
       <div className={'BlockTotalCard__CommonInfo'}>
         <InfoLine
           title={'Revision'}
-          value={dataContract.data?.version}
-          loading={dataContract.loading}
-          error={dataContract.error}
+          value={block.data?.version}
+          loading={block.loading}
+          error={block.error}
         />
 
         <InfoLine
           title={'Creation Date'}
-          value={<DateBlock timestamp={dataContract.data?.timestamp}/>}
-          loading={dataContract.loading}
-          error={dataContract.error}
+          value={<DateBlock timestamp={block.data?.timestamp}/>}
+          loading={block.loading}
+          error={block.error}
         />
       </div>
     </div>

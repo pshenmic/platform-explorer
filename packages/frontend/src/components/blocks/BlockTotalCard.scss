@@ -1,3 +1,6 @@
-.BlockTotalCard {
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
 
+.BlockTotalCard {
+  @include mixins.EntityCard();
 }
