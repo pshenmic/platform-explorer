@@ -4,6 +4,7 @@ const { buildIndexBuffer, getAliasInfo, getAliasStateByVote } = require('../util
 const { base58 } = require('@scure/base')
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
+const {CONTESTED_RESOURCE_VOTE_DEADLINE} = require("../constants");
 
 module.exports = class ContestedDAO {
   constructor (knex, dapi) {
@@ -181,11 +182,6 @@ module.exports = class ContestedDAO {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
-    const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
-      .groupBy('identity_identifier')
-      .as('aliases')
-
     const prefundedDocumentsSubquery = this.knex('documents')
       .whereRaw('prefunded_voting_balance is not null')
       .andWhereRaw('data is not null')
@@ -225,104 +221,52 @@ module.exports = class ContestedDAO {
 
     const rankSubquery = this.knex(resourceValuesSubquery)
       .select('document_id', 'resource_value')
-      .select(this.knex.raw('row_number() over (PARTITION BY resource_value order by document_id) as value_rank'))
+      .select(this.knex.raw(`row_number() over (PARTITION BY resource_value order by document_id ${order}) as value_rank`))
       .as('ranked_documents')
 
-    return this.knex(rankSubquery)
+    const paginationRankSubquery = this.knex(rankSubquery)
       .select('document_id', 'resource_value')
+      .select(this.knex.raw(`rank() over (order by document_id ${order})`))
       .where('value_rank', '=', '1')
 
+    const rows = await this.knex
+      .with('ranked_documents', paginationRankSubquery)
+      .from('ranked_documents')
+      .select('documents.document_type_name as document_type_name', 'documents.id as document_id', 'resource_value', 'prefunded_voting_balance',
+        'data_contracts.identifier as data_contract_identifier', 'timestamp', 'choice')
+      .select(this.knex('ranked_documents').select(this.knex.raw('count(*)')).limit(1).as('total_count'))
+      .leftJoin('documents', 'documents.id', 'document_id')
+      .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
+      .leftJoin('state_transitions', 'documents.state_transition_hash', 'hash')
+      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .whereBetween('rank', [fromRank, toRank])
+      .orderBy('document_id', order)
+      .joinRaw('left join masternode_votes ON resource_value <@ index_values')
 
-    if (rows.length === 0) {
-      return null
+
+    if(rows.length===0){
+      return new PaginatedResultSet([], page, limit, -1)
     }
 
-    const uniqueVotes = rows
-      .filter((item, pos, self) =>
-        self.findIndex((row) => row.masternode_vote_tx === item.masternode_vote_tx) === pos
+    const [{total_count:totalCount}] = rows
+
+    const uniqueResources = rows
+      .filter((item, pos, self) => self
+        .findIndex((row) => row.document_id === item.document_id) === pos
       )
 
-    const uniqueContenders = rows
-      .filter((item, pos, self) =>
-        self.findIndex((row) => row.owner === item.owner) === pos &&
-        self.findIndex((row) => row.document_identifier === item.document_identifier) === pos
-      )
-
-    const [firstTx] = rows.sort((a, b) => new Date(a.timestamp ?? new Date()).getTime() - new Date(b.timestamp ?? new Date()).getTime())
-
-    const totalCountTowardsIdentity = uniqueVotes
-      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.TowardsIdentity ? 1 : 0), 0)
-
-    const totalCountAbstain = uniqueVotes
-      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.ABSTAIN ? 1 : 0), 0)
-
-    const totalCountLock = uniqueVotes
-      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.LOCK ? 1 : 0), 0)
-
-    const totalCountVotes = uniqueVotes.length
-
-    const totalVotesGasUsed = uniqueVotes
-      .reduce((accumulator, currentValue) => accumulator + Number((currentValue.vote_gas_used ?? 0)), 0)
-
-    const totalDocumentsGasUsed = uniqueContenders
-      .reduce((accumulator, currentValue) => accumulator + Number((currentValue.document_tx_gas_used ?? 0)), 0)
-
-    const contenders = await Promise.all(uniqueContenders.map(async (row) => {
-      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
-
-        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
-      }))
-
-      return {
-        identifier: row.owner?.trim() ?? null,
-        timestamp: row.timestamp ?? null,
-        documentIdentifier: row.document_identifier?.trim() ?? null,
-        documentStateTransition: row.document_state_transition_hash ?? null,
-        aliases: aliases ?? [],
-        totalCountTowardsIdentity: uniqueVotes
-          .filter((vote) => vote.towards_identity === row.owner)
-          .reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.TowardsIdentity
-              ? accumulator + 1
-              : accumulator
-            , 0) ?? null,
-        abstainVotes: uniqueVotes.reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.ABSTAIN
-            ? accumulator + 1
-            : accumulator
-          , 0) ?? null,
-        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => currentValue.choice !== ChoiceEnum.ABSTAIN && currentValue.towards_identity !== row.owner
-            ? accumulator + 1
-            : accumulator
-          , 0) ?? null
-      }
+    const resourcesWithVotes = uniqueResources.map(row => ContestedResource.fromObject({
+      resourceValue: row.resource_value ?? null,
+      timestamp: row.timestamp ?? null,
+      dataContractIdentifier: row.data_contract_identifier ?? null,
+      documentTypeName: row.document_type_name ?? null,
+      indexName: Object.keys(row.prefunded_voting_balance)[0]??null,
+      totalCountTowardsIdentity: rows.filter((resource)=>resource.document_id === row.document_id && resource.choice === ChoiceEnum.TowardsIdentity).length,
+      totalCountAbstain: rows.filter((resource)=>resource.document_id === row.document_id && resource.choice === ChoiceEnum.ABSTAIN).length,
+      totalCountLock: rows.filter((resource)=>resource.document_id === row.document_id && resource.choice === ChoiceEnum.LOCK).length
     }))
 
-    let status
-
-    if (firstTx.data_contract_identifier && firstTx.index_name && firstTx.document_type_name && firstTx.resource_value) {
-      const { finishedVoteInfo } = await this.dapi.getContestedState(
-        base58.decode(firstTx.data_contract_identifier),
-        firstTx.document_type_name,
-        firstTx.index_name,
-        1,
-        firstTx.resource_value.map(buildIndexBuffer)
-      )
-
-      status = typeof finishedVoteInfo !== 'undefined'
-    }
-
-    return ContestedResource.fromRaw({
-      ...firstTx,
-      contenders,
-      totalGasUsed: totalVotesGasUsed + totalDocumentsGasUsed,
-      totalDocumentsGasUsed,
-      totalVotesGasUsed,
-      totalCountTowardsIdentity,
-      totalCountAbstain,
-      totalCountLock,
-      totalCountVotes,
-      status
-    })
+    return new PaginatedResultSet(resourcesWithVotes, page, limit, Number(totalCount??0))
   }
 
   getVotesForContestedResource = async (choice, resourceValue, page, limit, order) => {
@@ -375,5 +319,21 @@ module.exports = class ContestedDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count ?? 0) : 0
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)
+  }
+
+  getContestedResourcesStatus = async () => {
+    const pendingTimestamp = new Date(new Date().getTime() - CONTESTED_RESOURCE_VOTE_DEADLINE)
+
+    const prefundedDocumentsSubquery = await this.knex('documents')
+      .select(this.knex.raw('count(*) as total_contested_documents_count'))
+      .select(this.knex.raw(`count(CASE WHEN timestamp>'${pendingTimestamp.toISOString()}'::timestamptz THEN 1 END) as pending_contested_documents_count`))
+      .where('revision', '=', 1)
+      .andWhereRaw('prefunded_voting_balance is not null')
+      .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
+      .leftJoin('blocks', 'blocks.hash', 'block_hash')
+
+
+
+    const rows = await this.knex('masternode_votes')
   }
 }

@@ -45,6 +45,12 @@ class ContestedResourcesController {
 
     response.send(votes)
   }
+
+  getContestedResourcesStatus = async (request, response) => {
+    const status = await this.contestedResourcesDAO.getContestedResourcesStatus()
+
+    response.send(status)
+  }
 }
 
 module.exports = ContestedResourcesController

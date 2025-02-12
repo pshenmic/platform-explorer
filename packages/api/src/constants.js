@@ -3,6 +3,7 @@ const TenderdashRPC = require('./tenderdashRpc')
 let genesisTime
 
 module.exports = {
+  CONTESTED_RESOURCE_VOTE_DEADLINE: Number(process.env.CONTESTED_RESOURCE_VOTE_DEADLINE ?? 25200000),
   WITHDRAWAL_CONTRACT_TYPE: 'withdrawal',
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
   TCP_CONNECT_TIMEOUT: Number(process.env.TCP_CONNECT_TIMEOUT),
