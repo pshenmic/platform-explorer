@@ -2,5 +2,5 @@
 @import '../../styles/variables.scss';
 
 .BlockDigestCard {
-
+  @include mixins.DigestCard();
 }

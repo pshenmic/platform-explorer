@@ -8,7 +8,9 @@ function BlockDigestCard ({ block, rate }) {
   const topIdentityActiveAlias = findActiveAlias(block?.data?.topIdentity?.aliases)
 
   return (
-    <div className={`Block__InfoBlock Block__DigestCard BlockDigestCard ${block.loading ? 'BlockDigestCard--Loading' : ''}`}>
+    <div
+      className={`Block__InfoBlock Block__DigestCard BlockDigestCard ${block.loading ? 'BlockDigestCard--Loading' : ''}`}>
+
       <div className={'BlockDigestCard__RowContainer'}>
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
@@ -23,8 +25,30 @@ function BlockDigestCard ({ block, rate }) {
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--DocumentsCount'}
-            title={(<span><DocumentIcon/>Total Documents</span>)}
-            value={block.data?.documentsCount}
+            title={(<span><DocumentIcon/>Epoch</span>)}
+            value={'123'}
+            loading={block.loading}
+            error={block.error || block.data?.documentsCount === undefined}
+          />
+        </div>
+      </div>
+
+      <div className={'BlockDigestCard__RowContainer'}>
+        <div className={'BlockDigestCard__InfoContainer'}>
+          <InfoLine
+            className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--TotalTransactions'}
+            title={(<span><TransactionsIcon/>Quorum Index</span>)}
+            value={'123'}
+            loading={block.loading}
+            error={block.error || block.data?.transactionsCount === undefined}
+          />
+        </div>
+
+        <div className={'BlockDigestCard__InfoContainer'}>
+          <InfoLine
+            className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--DocumentsCount'}
+            title={(<span><DocumentIcon/>Quorum Members</span>)}
+            value={'123'}
             loading={block.loading}
             error={block.error || block.data?.documentsCount === undefined}
           />
@@ -33,15 +57,12 @@ function BlockDigestCard ({ block, rate }) {
 
       <InfoLine
         className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--TopIdentity'}
-        title={'Top Identity'}
+        title={'Validator'}
         value={(
           <ValueCard link={`/identity/${block.data?.topIdentity?.identifier}`}>
-            {topIdentityActiveAlias
-              ? <Alias avatarSource={block.data?.topIdentity?.identifier}>{topIdentityActiveAlias.alias}</Alias>
-              : <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-                {block.data?.topIdentity?.identifier}
-              </Identifier>
-            }
+            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              {block.data?.topIdentity?.identifier}
+            </Identifier>
           </ValueCard>
         )}
         loading={block.loading}
@@ -50,26 +71,10 @@ function BlockDigestCard ({ block, rate }) {
 
       <InfoLine
         className={'BlockDigestCard__InfoLine'}
-        title={'Identities Interacted'}
-        value={block.data?.identitiesInteracted}
-        loading={block.loading}
-        error={block.error || !block.data?.identitiesInteracted}
-      />
-
-      <InfoLine
-        className={'BlockDigestCard__InfoLine'}
-        title={'Total Gas Spent'}
-        value={<CreditsBlock credits={block.data?.totalGasUsed} rate={rate}/>}
+        title={'Total Fees'}
+        value={<CreditsBlock credits={123} rate={rate}/>}
         loading={block.loading}
         error={block.error || !block.data?.totalGasUsed}
-      />
-
-      <InfoLine
-        className={'BlockDigestCard__InfoLine'}
-        title={'Average Gas Spent'}
-        value={<CreditsBlock credits={block.data?.averageGasUsed} rate={rate}/>}
-        loading={block.loading}
-        error={block.error || !block.data?.averageGasUsed}
       />
     </div>
   )
