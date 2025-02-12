@@ -77,7 +77,7 @@ function DataContractTotalCard ({ dataContract, className }) {
 
       <div className={'DataContractTotalCard__CommonInfo'}>
         <InfoLine
-          title={'Revision'}
+          title={'Version'}
           value={dataContract.data?.version}
           loading={dataContract.loading}
           error={dataContract.error}
