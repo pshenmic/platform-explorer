@@ -690,6 +690,7 @@ Response codes:
 Return data contract by given identifier
 
 * `name` field is nullable
+* `topIdentity` - identity with the largest number of documents
 
 ```
 GET /dataContract/H4wBXB2RCu58EP7H7gGyehVmD7ij5MLZkAXW9SVUGPYb
