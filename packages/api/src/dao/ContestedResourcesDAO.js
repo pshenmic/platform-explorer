@@ -5,6 +5,7 @@ const { base58 } = require('@scure/base')
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const {CONTESTED_RESOURCE_VOTE_DEADLINE} = require("../constants");
+const ContestedResourceStatus = require("../models/ContestedResourcesStatus");
 
 module.exports = class ContestedDAO {
   constructor (knex, dapi) {
@@ -174,7 +175,8 @@ module.exports = class ContestedDAO {
       totalCountAbstain,
       totalCountLock,
       totalCountVotes,
-      status
+      status,
+      endTimestamp: firstTx.timestamp ? new Date(new Date(firstTx.timestamp).getTime()+CONTESTED_RESOURCE_VOTE_DEADLINE) : null,
     })
   }
 
@@ -258,6 +260,7 @@ module.exports = class ContestedDAO {
     const resourcesWithVotes = uniqueResources.map(row => ContestedResource.fromObject({
       resourceValue: row.resource_value ?? null,
       timestamp: row.timestamp ?? null,
+      endTimestamp: row.timestamp ? new Date(new Date(row.timestamp).getTime()+CONTESTED_RESOURCE_VOTE_DEADLINE):null,
       dataContractIdentifier: row.data_contract_identifier ?? null,
       documentTypeName: row.document_type_name ?? null,
       indexName: Object.keys(row.prefunded_voting_balance)[0]??null,
@@ -324,16 +327,120 @@ module.exports = class ContestedDAO {
   getContestedResourcesStatus = async () => {
     const pendingTimestamp = new Date(new Date().getTime() - CONTESTED_RESOURCE_VOTE_DEADLINE)
 
-    const prefundedDocumentsSubquery = await this.knex('documents')
+    const prefundedDocumentsSubquery = this.knex('documents')
+      .whereRaw('prefunded_voting_balance is not null')
+      .andWhereRaw('data is not null')
+      .groupBy('identifier', 'id', 'data_contract_id')
+      .as('sub')
+
+    const documentsPrefundingIndexeKeysSubquery = this.knex(prefundedDocumentsSubquery)
+      .select('id', 'data_contract_id', 'data', 'state_transition_hash')
+      .select(this.knex.raw('jsonb_object_keys(prefunded_voting_balance) as key'))
+      .as('sub')
+
+    const dataContractsWithContestedDocs = this.knex(documentsPrefundingIndexeKeysSubquery)
+      .select('schema', 'sub.id as document_id', 'data', 'sub.key as key')
+      .leftJoin('data_contracts', 'sub.data_contract_id', 'data_contracts.id')
+      .as('data_contracts_with_contested')
+
+    const filteredIndexElementSubquery = this.knex
+      .select('index_element', 'data', 'document_id', 'data_contracts_with_contested.key as key')
+      .select(this.knex.raw('index_element->>\'name\' as name'))
+      .whereRaw('index_element->>\'name\' = data_contracts_with_contested.key')
+      .fromRaw('?, jsonb_each(schema) AS key_value(key, value), jsonb_array_elements(value->\'indices\') AS index_element', dataContractsWithContestedDocs)
+      .as('index_elements')
+
+    const keysSubquery = this.knex
+      .select(
+        'document_id', 'field_index', 'name as index_name', 'data',
+        this.knex.raw('jsonb_object_keys(property) as property_keys')
+      )
+      .fromRaw('?, jsonb_array_elements(index_elements.index_element -> \'properties\') WITH ORDINALITY AS t(property,field_index)', filteredIndexElementSubquery)
+      .as('keys_subquery')
+
+    const resourceValuesSubquery = this.knex(keysSubquery)
+      .select('document_id')
+      .select(this.knex.raw('jsonb_agg(data->property_keys order by field_index asc) as resource_value'))
+      .groupBy('document_id')
+      .as('resource_values')
+
+    const rankSubquery = this.knex(resourceValuesSubquery)
+      .select('document_id', 'resource_value')
+      .select(this.knex.raw(`row_number() over (PARTITION BY resource_value order by document_id desc) as value_rank`))
+      .as('ranked_documents')
+
+    const paginationRankSubquery = this.knex(rankSubquery)
+      .select('document_id', 'resource_value')
+      .where('value_rank', '=', '1')
+      .as('sub')
+
+    const timestampResourceSubquery = this.knex(paginationRankSubquery)
+      .select('resource_value', 'timestamp')
+      .where('timestamp', '<', new Date().toISOString())
+      .andWhere('timestamp', '>', new Date(new Date().getTime()-CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString())
+      .leftJoin('documents', 'id', 'document_id')
+      .leftJoin('state_transitions', 'state_transition_hash', 'hash')
+      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .orderBy('timestamp', 'desc')
+      .limit(1)
+      .as('joined_subquery')
+
+    const lastContestedResourceValue = this.knex(timestampResourceSubquery)
+      .select('resource_value', 'timestamp', 'choice')
+      .select(this.knex.raw('NULL::bigint as total_contested_documents_count'))
+      .select(this.knex.raw('NULL::bigint as pending_contested_documents_count'))
+      .select(this.knex.raw('NULL::bigint as total_votes_count'))
+      .joinRaw('LEFT JOIN masternode_votes ON resource_value <@ index_values')
+
+    const statusSubquery = this.knex('documents')
+      .select(this.knex.raw('NULL::jsonb as resource_value'))
+      .select(this.knex.raw('NULL::timestamptz as timestamp'))
+      .select(this.knex.raw('NULL::bigint as choice'))
       .select(this.knex.raw('count(*) as total_contested_documents_count'))
       .select(this.knex.raw(`count(CASE WHEN timestamp>'${pendingTimestamp.toISOString()}'::timestamptz THEN 1 END) as pending_contested_documents_count`))
+      .select(this.knex('masternode_votes').count('*').as('total_votes_count'))
       .where('revision', '=', 1)
       .andWhereRaw('prefunded_voting_balance is not null')
       .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
 
+    const rows = await this.knex.union(statusSubquery, lastContestedResourceValue)
 
+    const [status] = rows.filter(row=>row.total_contested_documents_count!==null)
 
-    const rows = await this.knex('masternode_votes')
+    if(rows.length < 2) {
+      return ContestedResourceStatus.fromRow(status)
+    }
+
+    const [{resource_value: resourceValue, timestamp}] = rows.filter(row=>row.resource_value!==null)
+
+    const endingResourceValue = rows
+      .filter(row=>row.resourceValue!==null)
+      .reduce((accumulator, currentValue)=>{
+        switch (Number(currentValue.choice??-1)) {
+          case ChoiceEnum.TowardsIdentity:
+            accumulator.totalCountTowardsIdentity += 1
+            break
+          case ChoiceEnum.ABSTAIN:
+            accumulator.totalCountAbstain += 1
+            break
+          case ChoiceEnum.LOCK:
+            accumulator.totalCountLock += 1
+            break
+        }
+        return accumulator
+      }, ContestedResource.fromObject({
+        totalCountTowardsIdentity: 0,
+        totalCountLock: 0,
+        totalCountAbstain: 0,
+        resourceValue: resourceValue,
+        timestamp: timestamp,
+        endTimestamp: new Date(new Date(timestamp).getTime()+CONTESTED_RESOURCE_VOTE_DEADLINE)
+      }))
+
+    return ContestedResourceStatus.fromObject({
+      ...ContestedResourceStatus.fromRow(status),
+      endingResourceValue: endingResourceValue
+    })
   }
 }
