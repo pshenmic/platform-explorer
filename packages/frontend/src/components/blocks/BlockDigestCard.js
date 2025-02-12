@@ -1,4 +1,4 @@
-import { DocumentIcon, TransactionsIcon } from '../ui/icons'
+import { DocumentIcon, MembersIcon, QueuePositionIcon, TransactionsIcon } from '../ui/icons'
 import { CreditsBlock, Identifier, InfoLine } from '../data'
 import { ValueCard } from '../cards'
 import './BlockDigestCard.scss'
@@ -36,7 +36,7 @@ function BlockDigestCard ({ block, rate }) {
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--TotalTransactions'}
-            title={(<span><TransactionsIcon/>Quorum Index</span>)}
+            title={(<span><QueuePositionIcon/>Quorum Index</span>)}
             value={block?.data?.quorum?.quorumIndex}
             loading={block.loading}
             error={block.error || block?.data?.quorum?.quorumIndex === undefined}
@@ -46,7 +46,7 @@ function BlockDigestCard ({ block, rate }) {
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--DocumentsCount'}
-            title={(<span><DocumentIcon/>Quorum Members</span>)}
+            title={(<span><MembersIcon/>Quorum Members</span>)}
             value={block?.data?.quorum?.members?.length}
             loading={block.loading}
             error={block.error || block?.data?.quorum?.members?.length === undefined}
@@ -58,14 +58,19 @@ function BlockDigestCard ({ block, rate }) {
         className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--TopIdentity'}
         title={'Validator'}
         value={(
-          <ValueCard link={`/identity/${block.data?.topIdentity?.identifier}`}>
-            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {block.data?.topIdentity?.identifier}
+          <ValueCard link={`/validator/${block.data?.header?.validator}`}>
+            <Identifier
+              avatar={true}
+              copyButton={true}
+              ellipsis={true}
+              styles={['highlight-both']}
+            >
+              {block.data?.header?.validator}
             </Identifier>
           </ValueCard>
         )}
         loading={block.loading}
-        error={block.error || !block.data?.topIdentity}
+        error={block.error || !block.data?.header?.validator}
       />
 
       <InfoLine
