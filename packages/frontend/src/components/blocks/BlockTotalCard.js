@@ -1,8 +1,6 @@
 import { DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueContainer } from '../ui/containers'
-// import { ValueCard } from '../cards'
-// import { findActiveAlias } from '../../util'
 import './BlockTotalCard.scss'
 
 function BlockTotalCard ({ block, className }) {
