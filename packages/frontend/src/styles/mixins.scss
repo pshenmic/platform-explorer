@@ -81,10 +81,6 @@
     white-space: nowrap;
     color: #fff;
   }
-
-  &__NotActiveText {
-    @include NotActiveText;
-  }
 }
 
 @mixin defListTitles {
@@ -425,6 +421,18 @@
 }
 
 @mixin EntityCard () {
+  &--Loading {
+    .InfoLine__Value {
+      height: 1.5rem;
+    }
+  }
+
+  &__Header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+
   &__Avatar {
     display: flex;
     align-items: center;
@@ -451,6 +459,68 @@
 
   &__InfoLine {
     gap: 14px;
+  }
+
+  &__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+@mixin DigestCard () {
+  @include InfoContainerPadding(padding, 0px, false);
+  font-family: $font-mono;
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+  border-radius: $border-radius-def;
+  container-type: inline-size;
+
+  &--Loading {
+    .InfoLine__Value {
+      height: 1.5rem;
+    }
+  }
+
+  &--Loading & {
+    &__InfoContainer {
+      overflow: hidden;
+    }
+
+    &__InfoContainerValue {
+      width: 100px;
+      max-width: 100%;
+    }
+  }
+
+  &__RowContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.875rem;
+  }
+
+  &__InfoContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 24px;
+    background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+    border-radius: $border-radius-def;
+    width: 100%;
+
+    svg {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+
+  &__LinesContainer {
+    flex-direction: column;
   }
 }
 

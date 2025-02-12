@@ -2,17 +2,7 @@
 @import '../../styles/variables';
 
 .IdentityDigestCard {
-  @include mixins.InfoContainerPadding(padding, 0px, false);
-  flex-direction: column;
-  background: rgba(var(--chakra-colors-gray-800-rgb), .5);
-  border-radius: $border-radius-def;
-  container-type: inline-size;
-
-  &--Loading {
-    .InfoLine__Value {
-      height: 24px;
-    }
-  }
+  @include mixins.DigestCard();
 
   &, &__Transfers, &__LinesContainer {
     display: flex;
@@ -25,10 +15,6 @@
         height: 24px;
       }
     }
-  }
-
-  &__LinesContainer {
-    flex-direction: column;
   }
 
   &__Transfer {

@@ -1,5 +1,5 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import { Alias, Identifier, TimeDelta } from '../data'
+import { Alias, Identifier, NotActive, TimeDelta } from '../data'
 import { LinkContainer } from '../ui/containers'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -14,13 +14,13 @@ function DocumentsListItem ({ document }) {
     <Link href={`/document/${document?.identifier}`} className={'DocumentsListItem'}>
       <Grid className={'DocumentsListItem__Content'}>
         <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Timestamp'}>
-          <TimeDelta endDate={new Date(document?.timestamp)}/>
+          <TimeDelta endDate={document?.timestamp}/>
         </GridItem>
 
         <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Identifier'}>
           {document?.identifier
             ? <Identifier ellipsis={true} styles={['highlight-both']}>{document?.identifier}</Identifier>
-            : <span className={'DocumentsListItem__NotActiveText'}>-</span>
+            : <NotActive/>
           }
         </GridItem>
 
@@ -39,7 +39,7 @@ function DocumentsListItem ({ document }) {
                   : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{document?.owner?.identifier}</Identifier>
                 }
               </LinkContainer>
-            : <span className={'DocumentsListItem__NotActiveText'}>-</span>
+            : <NotActive/>
           }
         </GridItem>
       </Grid>

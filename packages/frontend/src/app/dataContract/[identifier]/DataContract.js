@@ -1,21 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import * as Api from '../../../util/Api'
 import DocumentsList from '../../../components/documents/DocumentsList'
-import { LoadingLine, LoadingBlock } from '../../../components/loading'
+import { LoadingBlock } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import ImageGenerator from '../../../components/imageGenerator'
+import { fetchHandlerSuccess, fetchHandlerError, setLoadingProp, paginationHandler } from '../../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CodeBlock } from '../../../components/data'
-import {
-  Box,
-  Container,
-  TableContainer, Table, Thead, Tbody, Tr, Th, Td,
-  Tabs, TabList, TabPanels, Tab, TabPanel
-} from '@chakra-ui/react'
+import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
+import { DataContractDigestCard, DataContractTotalCard } from '../../../components/dataContracts'
+import { Container, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
+import { TransactionsList } from '../../../components/transactions'
+import './DataContract.scss'
 
 const pagintationConfig = {
   itemsOnPage: {
@@ -26,6 +24,7 @@ const pagintationConfig = {
 }
 
 const tabs = [
+  'transactions',
   'documents',
   'schema'
 ]
@@ -33,37 +32,34 @@ const tabs = [
 const defaultTabName = 'documents'
 
 function DataContract ({ identifier }) {
+  const { setBreadcrumbs } = useBreadcrumbs()
   const [dataContract, setDataContract] = useState({ data: {}, loading: true, error: false })
-  const [documents, setDocuments] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
+  const [documents, setDocuments] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const pageSize = pagintationConfig.itemsOnPage.default
-  const [total, setTotal] = useState(1)
-  const [currentPage, setCurrentPage] = useState(0)
-  const pageCount = Math.ceil(total / pageSize)
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  const tdTitleWidth = 250
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const fetchData = () => {
-    Promise.all([
-      Api.getDataContractByIdentifier(identifier)
-        .then(res => fetchHandlerSuccess(setDataContract, res))
-        .catch(err => fetchHandlerError(setDataContract, err)),
-      Api.getDocumentsByDataContract(
-        identifier,
-        pagintationConfig.defaultPage,
-        pageSize)
-        .then(res => {
-          fetchHandlerSuccess(setDocuments, res)
-          setTotal(res.pagination.total)
-        })
-        .catch(err => fetchHandlerError(setDocuments, err))
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Home', path: '/' },
+      { label: 'Data Contracts', path: '/dataContracts' },
+      { label: dataContract.data?.name || identifier, avatarSource: identifier }
     ])
-      .catch(console.error)
-  }
+  }, [setBreadcrumbs, identifier, dataContract])
 
-  useEffect(fetchData, [identifier])
+  useEffect(() => {
+    Api.getDataContractByIdentifier(identifier)
+      .then(res => fetchHandlerSuccess(setDataContract, res))
+      .catch(err => fetchHandlerError(setDataContract, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
+  }, [identifier])
 
   useEffect(() => {
     const tab = searchParams.get('tab')
@@ -89,165 +85,97 @@ function DataContract ({ identifier }) {
     router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab])
 
-  const handlePageClick = ({ selected }) => {
-    setDocuments(state => ({ ...state, loading: true }))
-    setCurrentPage(selected)
+  useEffect(() => {
+    if (!identifier) return
+    setLoadingProp(setDocuments)
 
-    Api.getDocumentsByDataContract(
-      identifier,
-      selected + 1,
-      pagintationConfig.itemsOnPage.default)
-      .then(res => setDocuments({ data: res, loading: false, error: false }))
-      .catch(err => {
-        console.error(err)
-        setDocuments({ data: null, loading: false, error: true })
+    Api.getDocumentsByDataContract(identifier, documents.props.currentPage + 1, pageSize, 'desc')
+      .then(res => fetchHandlerSuccess(setDocuments, res))
+      .catch(err => fetchHandlerError(setDocuments, err))
+  }, [identifier, documents.props.currentPage])
+
+  useEffect(() => {
+    if (!identifier) return
+    setLoadingProp(setTransactions)
+
+    Api.getDataContractTransactions(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
+      .then(res => {
+        fetchHandlerSuccess(setDataContract, { transactionsCount: res?.pagination?.total })
+        fetchHandlerSuccess(setTransactions, res)
       })
-  }
+      .catch(err => fetchHandlerError(setTransactions, err))
+  }, [identifier, transactions.props.currentPage])
 
   return (
-    <Container
-        maxW={'container.lg'}
-        padding={3}
-        mt={8}
-        className={'DataContract'}
+    <PageDataContainer
+      className={'DataContract'}
+      title={'Data Contract info'}
     >
-        <TableContainer
-            maxW={'none'}
-            borderWidth={'1px'} borderRadius={'block'}
-        >
-          {!dataContract.error
-            ? <Table variant={'simple'}>
-                <Thead>
-                    <Tr>
-                        <Th>Data contract info</Th>
-                        <Th isNumeric className={'TableHeader TableHeader--Name'}>
-                            <div className={'TableHeader__Content'}>
-                                {dataContract?.data?.name || ''}
-                                {dataContract.data?.identifier
-                                  ? <ImageGenerator className={'TableHeader__Avatar'} username={dataContract.data?.identifier} lightness={50} saturation={50} width={32} height={32}/>
-                                  : <Box w={'32px'} h={'32px'} />
-                                }
-                            </div>
-                        </Th>
-                    </Tr>
-                </Thead>
-                <Tbody>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Identifier</Td>
-                        <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
-                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.identifier}</LoadingLine>
-                        </Td>
-                    </Tr>
-                    {dataContract.data?.name &&
-                        <Tr>
-                            <Td w={tdTitleWidth}>Name</Td>
-                            <Td>
-                                <LoadingLine loading={dataContract.loading}>{dataContract.data?.name}</LoadingLine>
-                            </Td>
-                        </Tr>
-                    }
-                    <Tr>
-                        <Td w={tdTitleWidth}>Owner</Td>
-                        <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
-                            <LoadingLine loading={dataContract.loading}>
-                              {dataContract.data?.isSystem
-                                ? dataContract.data?.owner
-                                : <Link href={`/identity/${dataContract.data?.owner}`}>{dataContract.data?.owner}</Link>
-                              }
-                            </LoadingLine>
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>System</Td>
-                        <Td>
-                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.isSystem ? 'true' : 'false'}</LoadingLine>
-                        </Td>
-                    </Tr>
-                    {!dataContract.data?.isSystem &&
-                        <Tr>
-                            <Td w={tdTitleWidth}>Created</Td>
-                            <Td>
-                                <LoadingLine loading={dataContract.loading}>{new Date(dataContract.data?.timestamp).toLocaleString()}</LoadingLine>
-                            </Td>
-                        </Tr>
-                    }
-                    <Tr>
-                        <Td w={tdTitleWidth}>Documents Count</Td>
-                        <Td>
-                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.documentsCount}</LoadingLine>
-                        </Td>
-                    </Tr>
-                    <Tr>
-                        <Td w={tdTitleWidth}>Revision</Td>
-                        <Td>
-                            <LoadingLine loading={dataContract.loading}>{dataContract.data?.version}</LoadingLine>
-                        </Td>
-                    </Tr>
-                    {!dataContract.data?.isSystem &&
-                        <Tr w={tdTitleWidth}>
-                            <Td>Transaction</Td>
-                            <Td className={'Table__Cell--BreakWord Table__Cell--Mono'}>
-                                <LoadingLine loading={dataContract.loading}>
-                                    <Link href={`/transaction/${dataContract.data?.txHash}`}>{dataContract.data?.txHash}</Link>
-                                </LoadingLine>
-                            </Td>
-                        </Tr>
-                    }
-                </Tbody>
-              </Table>
-            : <Container h={60}><ErrorMessageBlock/></Container>}
-        </TableContainer>
+      <div className={'DataContract__InfoBlocks'}>
+        <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract}/>
+        <DataContractDigestCard dataContract={dataContract} rate={rate} loading={dataContract.loading}/>
+      </div>
 
-        <Container
-            width={'100%'}
-            maxW={'none'}
-            mt={5}
-            className={'InfoBlock'}
-            p={0}
-        >
-            <Tabs
-              onChange={setActiveTab}
-              index={activeTab}
-            >
-                <TabList>
-                    <Tab>Documents</Tab>
-                    <Tab>Schema</Tab>
-                </TabList>
-                <TabPanels>
-                    <TabPanel p={0}>
-                        <Box>
-                          {!documents.error
-                            ? <Box mt={4}>
-                                <DocumentsList
-                                  documents={documents.data.resultSet}
-                                  loading={documents.loading}
-                                  pagination={{
-                                    onPageChange: handlePageClick,
-                                    pageCount,
-                                    forcePage: currentPage
-                                  }}
-                                />
-                              </Box>
-                            : <Container h={20}><ErrorMessageBlock/></Container>
-                          }
-                        </Box>
-                    </TabPanel>
-                    <TabPanel px={0}>
-                        <Box>
-                          {!dataContract.error
-                            ? <LoadingBlock loading={dataContract.loading}>
-                                {dataContract.data?.schema
-                                  ? <CodeBlock code={dataContract.data?.schema}/>
-                                  : <Container h={20}><ErrorMessageBlock/></Container>}
-                              </LoadingBlock>
-                            : <Container h={20}><ErrorMessageBlock/></Container>
-                          }
-                        </Box>
-                    </TabPanel>
-                </TabPanels>
-            </Tabs>
-        </Container>
-    </Container>
+      <InfoContainer styles={['tabs']}>
+        <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
+          <TabList>
+            <Tab>Transactions {transactions.data?.pagination?.total !== undefined
+              ? <span className={`Tabs__TabItemsCount ${transactions.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {transactions.data?.pagination?.total}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Documents {dataContract.data?.documentsCount !== undefined
+              ? <span className={`Tabs__TabItemsCount ${dataContract.data?.documentsCount === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {dataContract.data?.documentsCount}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Schema</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel position={'relative'}>
+              {!transactions.error
+                ? <TransactionsList
+                    transactions={transactions.data?.resultSet}
+                    loading={transactions.loading}
+                    pagination={{
+                      onPageChange: pagination => paginationHandler(setTransactions, pagination.selected),
+                      pageCount: Math.ceil(transactions.data?.pagination?.total / pageSize) || 1,
+                      forcePage: transactions.props.currentPage
+                    }}
+                  />
+                : <Container h={20}><ErrorMessageBlock/></Container>
+              }
+            </TabPanel>
+            <TabPanel position={'relative'}>
+              {!documents.error
+                ? <DocumentsList
+                    documents={documents.data?.resultSet}
+                    loading={documents.loading}
+                    pagination={{
+                      onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
+                      pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
+                      forcePage: documents.props.currentPage
+                    }}
+                  />
+                : <Container h={20}><ErrorMessageBlock/></Container>
+              }
+            </TabPanel>
+            <TabPanel position={'relative'}>
+              {!dataContract.error
+                ? <LoadingBlock h={'250px'} loading={dataContract.loading}>
+                  {dataContract.data?.schema
+                    ? <CodeBlock smoothSize={activeTab === 1} className={'DataContract__Schema'} code={dataContract.data?.schema}/>
+                    : <Container h={20}><ErrorMessageBlock/></Container>}
+                </LoadingBlock>
+                : <Container h={20}><ErrorMessageBlock/></Container>
+              }
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </InfoContainer>
+    </PageDataContainer>
   )
 }
 
