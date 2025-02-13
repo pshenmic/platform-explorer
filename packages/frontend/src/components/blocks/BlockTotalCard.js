@@ -2,6 +2,7 @@ import { DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueContainer } from '../ui/containers'
 import './BlockTotalCard.scss'
+import { BlockIcon } from '../ui/icons'
 
 function BlockTotalCard ({ block, className }) {
   const blockData = block?.data?.header
@@ -18,7 +19,7 @@ function BlockTotalCard ({ block, className }) {
 
       <div className={'BlockTotalCard__Header'}>
         <div className={'BlockTotalCard__Avatar'}>
-          block icon
+          <BlockIcon/>
         </div>
 
         <div className={'BlockTotalCard__HeaderLines'}>
