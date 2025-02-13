@@ -226,6 +226,22 @@ const MembersIcon = (props) => (
   </Icon>
 )
 
+const BlockIcon = (props) => (
+  <Icon viewBox='0 0 48 48' width='48' height='48' fill='none' {...props}>
+    <svg width='48' height='48' viewBox='0 0 48 48' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M44 13.8462L24 2L4 13.8462M44 13.8462L24 25.6923M44 13.8462V34.1538L24 46M4 13.8462L24 25.6923M4 13.8462V34.1538L24 46M24 25.6923V46'
+        stroke='url(#paint0_linear_5884_2200)' strokeWidth='1.5' strokeLinecap='round'/>
+      <defs>
+        <linearGradient id='paint0_linear_5884_2200' x1='24' y1='2' x2='24' y2='46' gradientUnits='userSpaceOnUse'>
+          <stop stopColor='#008DE4'/>
+          <stop offset='1' stopColor='#008DE4' stopOpacity='0.6'/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </Icon>
+)
+
 export {
   CalendarIcon,
   CalendarIcon2,
@@ -246,5 +262,6 @@ export {
   TransactionsIcon,
   DocumentIcon,
   QueuePositionIcon,
-  MembersIcon
+  MembersIcon,
+  BlockIcon
 }
