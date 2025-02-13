@@ -22,17 +22,35 @@
     margin: 0;
     display: flex;
     align-items: center;
+    max-width: 100%;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    &--Shrink {
+      flex-shrink: 1;
+
+      a, span {
+        flex-shrink: 1;
+        min-width: 0;
+      }
+    }
+
+    &:last-child {
+      flex-shrink: 0;
+    }
 
     a, span {
       display: flex;
       align-items: center;
-      padding: 9px 20px;
+      padding: 0.5rem 0.75rem;
       background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
       color: var(--chakra-colors-brand-normal);
       transition: $transition-time-def;
       border-radius: 10px;
       font-size: 0.75rem;
       font-family: $font-mono;
+      white-space: nowrap;
+      max-width: 100%;
     }
 
     a {
@@ -54,10 +72,18 @@
     margin-right: 4px;
     width: 16px;
     height: 16px;
+    flex-shrink: 0;
+  }
+
+  &__Label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__Separator {
     margin: 0 10px;
+    flex-shrink: 0;
 
     svg {
       width: 6px;

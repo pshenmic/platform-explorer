@@ -21,11 +21,11 @@ const Breadcrumbs = () => {
     <div className={'Breadcrumbs'}>
       <ul className={'Breadcrumbs__LinksContainer'}>
         {breadcrumbs.map((link, i) => link?.label
-          ? <li className={'Breadcrumbs__Link'} key={i}>
+          ? <li className={`Breadcrumbs__Link ${link?.shrink ? 'Breadcrumbs__Link--Shrink' : ''}`} key={i}>
             <LinkContainer href={i !== breadcrumbs.length - 1 ? link?.path : null} key={i}>
               {(link?.avatar || link?.avatarSource) &&
                 <ImageGenerator className={'Breadcrumbs__Avatar'} username={link?.avatarSource || link.label} lightness={50} saturation={50} width={16} height={16} />}
-              {link.label}
+              <div className={'Breadcrumbs__Label'}>{link.label}</div>
             </LinkContainer>
 
             {i !== breadcrumbs.length - 1 && <div className={'Breadcrumbs__Separator'}><ChevronIcon color={'brand.normal'}/></div>}
