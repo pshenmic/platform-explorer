@@ -38,6 +38,8 @@ Reference:
 * [Transactions gas history](#transactions-gas-history)
 * [Votes for contested resource](#votes-for-contested-resource)
 * [Contested Resource Value](#contested-resource-value)
+* [Contested Resources](#contested-resources)
+* [Contested Resources Status](#contested-resources-status)
 * [Rate](#rate)
 * [Masternode Votes](#masternode-votes)
 * [Search](#search)
@@ -1566,6 +1568,92 @@ Response codes:
 ```
 200: OK
 400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
+### Contested Resources
+Return set of contested resources
+
+* `page` cannot be less than 1
+* `limit` cannot be more than 100
+
+```
+GET /contestedResources?page=1&limit=10&order=asc
+
+{
+    "resultSet": [
+        {
+            "contenders": null,
+            "indexName": "parentNameAndLabel",
+            "resourceValue": [
+                "dash",
+                "test111"
+            ],
+            "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+            "prefundedVotingBalance": null,
+            "documentTypeName": "domain",
+            "timestamp": "2024-08-26T22:14:06.680Z",
+            "totalGasUsed": null,
+            "totalDocumentsGasUsed": null,
+            "totalVotesGasUsed": null,
+            "totalCountVotes": null,
+            "totalCountLock": 0,
+            "totalCountAbstain": 0,
+            "totalCountTowardsIdentity": 1,
+            "status": null,
+            "endTimestamp": "2024-09-02T22:14:06.680Z"
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 195
+    }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Contested Resources Status
+Return info about status about resource values
+
+```
+GET /contestedResources/status
+
+{
+    "totalContestedResources": 235,
+    "totalPendingContestedResources": 3,
+    "totalVotesCount": 426,
+    "endingResourceValue": {
+        "contenders": null,
+        "indexName": null,
+        "resourceValue": [
+            "dash",
+            "t0st010"
+        ],
+        "dataContractIdentifier": null,
+        "prefundedVotingBalance": null,
+        "documentTypeName": null,
+        "timestamp": "2025-02-12T14:08:55.321Z",
+        "totalGasUsed": null,
+        "totalDocumentsGasUsed": null,
+        "totalVotesGasUsed": null,
+        "totalCountVotes": null,
+        "totalCountLock": 0,
+        "totalCountAbstain": 0,
+        "totalCountTowardsIdentity": 0,
+        "status": null,
+        "endTimestamp": "2025-02-19T14:08:55.321Z"
+    }
+}
+```
+Response codes:
+```
+200: OK
 500: Internal Server Error
 ```
 ___
