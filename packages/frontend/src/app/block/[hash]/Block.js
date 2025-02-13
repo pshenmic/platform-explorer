@@ -59,6 +59,13 @@ function Block ({ hash }) {
                 </span>
               : ''}
             </Tab>
+            <Tab>Quorum Members {block?.data?.quorum?.members?.length !== undefined
+              ? <span
+                className={`Tabs__TabItemsCount ${block?.data?.quorum?.members?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {block?.data?.quorum?.members?.length}
+                </span>
+              : ''}
+            </Tab>
           </TabList>
           <TabPanels>
             <TabPanel position={'relative'}>
@@ -74,6 +81,9 @@ function Block ({ hash }) {
                 />
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
+            </TabPanel>
+            <TabPanel position={'relative'}>
+              quorum members
             </TabPanel>
           </TabPanels>
         </Tabs>
