@@ -425,4 +425,84 @@ describe('Contested documents routes', () => {
       assert.deepEqual(body.resultSet, expectedResources)
     })
   })
+
+  describe('get contested resources status', async () => {
+    it('should return status of contested resources', async () => {
+      const { body } = await client.get('/contestedResources/status')
+
+      const expectedBody = {
+        totalContestedResources: 40,
+        totalPendingContestedResources: 0,
+        totalVotesCount: 40,
+        endingResourceValue: null
+      }
+
+      assert.deepEqual(body, expectedBody)
+    })
+
+    it('should return status of contested resources with pending value', async () => {
+      const block = await fixtures.block(knex, {
+        timestamp: new Date(),
+        height: 99
+      })
+      const contender = await fixtures.identity(knex, {
+        block_hash: block.hash
+      })
+      const documentTransaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        type: 0,
+        owner: contender.identifier,
+        gas_used: 11
+      })
+      await fixtures.document(knex, {
+        owner: contender.identifier,
+        data_contract_id: dataContract.id,
+        data: {
+          label: 'xyy',
+          records: {
+            identity: '36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm'
+          },
+          preorderSalt: 'r9uAaZjEz+lsPrpqt+rqGQ+qIxZS40Ci7wkV8cGI7k4=',
+          subdomainRules: {
+            allowSubdomains: false
+          },
+          normalizedLabel: 'xyy',
+          parentDomainName: 'dash',
+          normalizedParentDomainName: 'dash'
+        },
+        prefunded_voting_balance: {
+          parentNameAndLabel: 20000000
+        },
+        state_transition_hash: documentTransaction.hash
+      })
+
+      const { body } = await client.get('/contestedResources/status')
+
+      const expectedBody = {
+        totalContestedResources: 41,
+        totalPendingContestedResources: 1,
+        totalVotesCount: 40,
+        endingResourceValue: {
+          contenders: null,
+          indexName: null,
+          resourceValue: ['dash', 'xyy'],
+          dataContractIdentifier: null,
+          prefundedVotingBalance: null,
+          documentTypeName: null,
+          timestamp: block.timestamp.toISOString(),
+          totalGasUsed: null,
+          totalVotesGasUsed: null,
+          totalCountVotes: null,
+          totalCountLock: 0,
+          totalCountAbstain: 0,
+          totalCountTowardsIdentity: 0,
+          totalDocumentsGasUsed: null,
+          status: null,
+          endTimestamp: new Date(block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString()
+        }
+      }
+
+      assert.deepEqual(body, expectedBody)
+    })
+  })
 })
