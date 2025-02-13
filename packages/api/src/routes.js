@@ -213,7 +213,7 @@ module.exports = ({
             resourceValue: { type: 'string' }
           }
         }
-      },
+      }
     },
     {
       path: '/contestedResources',
@@ -226,7 +226,7 @@ module.exports = ({
     {
       path: '/contestedResources/status',
       method: 'GET',
-      handler: contestedResourcesController.getContestedResourcesStatus,
+      handler: contestedResourcesController.getContestedResourcesStatus
     },
     {
       path: '/identities',

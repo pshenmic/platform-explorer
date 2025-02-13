@@ -57,7 +57,7 @@ module.exports = class ContestedResource {
     return new ContestedResource(contenders, index_name, resource_value, data_contract_identifier?.trim(), prefunded_voting_balance, document_type_name, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountTowardsIdentity, status ? 'finished' : 'pending', endTimestamp)
   }
 
-  static fromObject({contenders, indexName, resourceValue, dataContractIdentifier, prefundedVotingBalance, documentTypeName, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountTowardsIdentity, status, endTimestamp}) {
+  static fromObject ({ contenders, indexName, resourceValue, dataContractIdentifier, prefundedVotingBalance, documentTypeName, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountTowardsIdentity, status, endTimestamp }) {
     return new ContestedResource(contenders, indexName, resourceValue, dataContractIdentifier?.trim(), prefundedVotingBalance, documentTypeName, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountTowardsIdentity, status, endTimestamp)
   }
 }

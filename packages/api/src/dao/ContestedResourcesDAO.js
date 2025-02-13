@@ -4,8 +4,8 @@ const { buildIndexBuffer, getAliasInfo, getAliasStateByVote } = require('../util
 const { base58 } = require('@scure/base')
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const {CONTESTED_RESOURCE_VOTE_DEADLINE} = require("../constants");
-const ContestedResourceStatus = require("../models/ContestedResourcesStatus");
+const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../constants')
+const ContestedResourceStatus = require('../models/ContestedResourcesStatus')
 
 module.exports = class ContestedDAO {
   constructor (knex, dapi) {
@@ -176,7 +176,7 @@ module.exports = class ContestedDAO {
       totalCountLock,
       totalCountVotes,
       status,
-      endTimestamp: firstTx.timestamp ? new Date(new Date(firstTx.timestamp).getTime()+CONTESTED_RESOURCE_VOTE_DEADLINE) : null,
+      endTimestamp: firstTx.timestamp ? new Date(new Date(firstTx.timestamp).getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE) : null
     })
   }
 
@@ -245,12 +245,11 @@ module.exports = class ContestedDAO {
       .orderBy('document_id', order)
       .joinRaw('left join masternode_votes ON resource_value <@ index_values')
 
-
-    if(rows.length===0){
+    if (rows.length === 0) {
       return new PaginatedResultSet([], page, limit, -1)
     }
 
-    const [{total_count:totalCount}] = rows
+    const [{ total_count: totalCount }] = rows
 
     const uniqueResources = rows
       .filter((item, pos, self) => self
@@ -260,16 +259,16 @@ module.exports = class ContestedDAO {
     const resourcesWithVotes = uniqueResources.map(row => ContestedResource.fromObject({
       resourceValue: row.resource_value ?? null,
       timestamp: row.timestamp ?? null,
-      endTimestamp: row.timestamp ? new Date(new Date(row.timestamp).getTime()+CONTESTED_RESOURCE_VOTE_DEADLINE):null,
+      endTimestamp: row.timestamp ? new Date(new Date(row.timestamp).getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE) : null,
       dataContractIdentifier: row.data_contract_identifier ?? null,
       documentTypeName: row.document_type_name ?? null,
-      indexName: Object.keys(row.prefunded_voting_balance)[0]??null,
-      totalCountTowardsIdentity: rows.filter((resource)=>resource.document_id === row.document_id && resource.choice === ChoiceEnum.TowardsIdentity).length,
-      totalCountAbstain: rows.filter((resource)=>resource.document_id === row.document_id && resource.choice === ChoiceEnum.ABSTAIN).length,
-      totalCountLock: rows.filter((resource)=>resource.document_id === row.document_id && resource.choice === ChoiceEnum.LOCK).length
+      indexName: Object.keys(row.prefunded_voting_balance)[0] ?? null,
+      totalCountTowardsIdentity: rows.filter((resource) => resource.document_id === row.document_id && resource.choice === ChoiceEnum.TowardsIdentity).length,
+      totalCountAbstain: rows.filter((resource) => resource.document_id === row.document_id && resource.choice === ChoiceEnum.ABSTAIN).length,
+      totalCountLock: rows.filter((resource) => resource.document_id === row.document_id && resource.choice === ChoiceEnum.LOCK).length
     }))
 
-    return new PaginatedResultSet(resourcesWithVotes, page, limit, Number(totalCount??0))
+    return new PaginatedResultSet(resourcesWithVotes, page, limit, Number(totalCount ?? 0))
   }
 
   getVotesForContestedResource = async (choice, resourceValue, page, limit, order) => {
@@ -366,7 +365,7 @@ module.exports = class ContestedDAO {
 
     const rankSubquery = this.knex(resourceValuesSubquery)
       .select('document_id', 'resource_value')
-      .select(this.knex.raw(`row_number() over (PARTITION BY resource_value order by document_id desc) as value_rank`))
+      .select(this.knex.raw('row_number() over (PARTITION BY resource_value order by document_id desc) as value_rank'))
       .as('ranked_documents')
 
     const paginationRankSubquery = this.knex(rankSubquery)
@@ -377,7 +376,7 @@ module.exports = class ContestedDAO {
     const timestampResourceSubquery = this.knex(paginationRankSubquery)
       .select('resource_value', 'timestamp')
       .where('timestamp', '<', new Date().toISOString())
-      .andWhere('timestamp', '>', new Date(new Date().getTime()-CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString())
+      .andWhere('timestamp', '>', new Date(new Date().getTime() - CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString())
       .leftJoin('documents', 'id', 'document_id')
       .leftJoin('state_transitions', 'state_transition_hash', 'hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
@@ -406,18 +405,18 @@ module.exports = class ContestedDAO {
 
     const rows = await this.knex.union(statusSubquery, lastContestedResourceValue)
 
-    const [status] = rows.filter(row=>row.total_contested_documents_count!==null)
+    const [status] = rows.filter(row => row.total_contested_documents_count !== null)
 
-    if(rows.length < 2) {
+    if (rows.length < 2) {
       return ContestedResourceStatus.fromRow(status)
     }
 
-    const [{resource_value: resourceValue, timestamp}] = rows.filter(row=>row.resource_value!==null)
+    const [{ resource_value: resourceValue, timestamp }] = rows.filter(row => row.resource_value !== null)
 
     const endingResourceValue = rows
-      .filter(row=>row.resourceValue!==null)
-      .reduce((accumulator, currentValue)=>{
-        switch (Number(currentValue.choice??-1)) {
+      .filter(row => row.resourceValue !== null)
+      .reduce((accumulator, currentValue) => {
+        switch (Number(currentValue.choice ?? -1)) {
           case ChoiceEnum.TowardsIdentity:
             accumulator.totalCountTowardsIdentity += 1
             break
@@ -433,14 +432,14 @@ module.exports = class ContestedDAO {
         totalCountTowardsIdentity: 0,
         totalCountLock: 0,
         totalCountAbstain: 0,
-        resourceValue: resourceValue,
-        timestamp: timestamp,
-        endTimestamp: new Date(new Date(timestamp).getTime()+CONTESTED_RESOURCE_VOTE_DEADLINE)
+        resourceValue,
+        timestamp,
+        endTimestamp: new Date(new Date(timestamp).getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE)
       }))
 
     return ContestedResourceStatus.fromObject({
       ...ContestedResourceStatus.fromRow(status),
-      endingResourceValue: endingResourceValue
+      endingResourceValue
     })
   }
 }
