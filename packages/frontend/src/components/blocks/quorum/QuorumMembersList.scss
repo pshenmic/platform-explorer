@@ -1,0 +1,44 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.QuorumList {
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    grid-template-columns: 70px 135px calc(100% - 375px) 170px;
+  }
+
+  &__ColumnTitle {
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &--Hash {
+      white-space: nowrap;
+    }
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  @media screen and (max-width: 620px) {
+    &__ColumnTitles {
+      grid-template-columns: 70px 90px calc(100% - 160px);
+    }
+
+    &__ColumnTitle {
+      &--Hash {
+        display: none;
+      }
+
+      &--Txs {
+        order: 0;
+        text-align: left !important;
+      }
+
+      &--Time {
+        order: 2;
+      }
+    }
+  }
+}
