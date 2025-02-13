@@ -15,7 +15,7 @@ import {
   // Heading, Tabs, TabList, Tab, TabPanels, TabPanel
   Tabs, TabList, Tab, TabPanels, TabPanel
 } from '@chakra-ui/react'
-import { BlockDigestCard, BlockTotalCard } from '../../../components/blocks'
+import { BlockDigestCard, BlockTotalCard, QuorumMembersList } from '../../../components/blocks'
 // import {CodeBlock} from "../../../components/data";
 import './Block.scss'
 
@@ -83,6 +83,7 @@ function Block ({ hash }) {
               }
             </TabPanel>
             <TabPanel position={'relative'}>
+              <QuorumMembersList members={block?.data?.quorum?.members}/>
               quorum members
             </TabPanel>
           </TabPanels>
