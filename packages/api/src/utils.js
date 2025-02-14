@@ -1,3 +1,6 @@
+/**
+ * @module Utils
+ */
 const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const PoolingEnum = require('./enums/PoolingEnum')
@@ -14,6 +17,12 @@ const KeyPurposeEnum = require('./enums/KeyPurposeEnum')
 const KeyTypeEnum = require('./enums/KeyTypeEnum')
 const Alias = require('./models/Alias')
 
+/**
+ * Returns instance of **Knex**
+ * @memberOf module:Utils
+ * @function getKnex
+ * @returns {*|Knex<any, unknown[]>}
+ */
 const getKnex = () => {
   return require('knex')({
     client: 'pg',
@@ -28,10 +37,25 @@ const getKnex = () => {
   })
 }
 
+/**
+ * Generate sha1 hash from data
+ * @memberOf module:Utils
+ * @function hash
+ * @param data
+ * @returns {string}
+ */
 const hash = (data) => {
   return crypto.createHash('sha1').update(data).digest('hex')
 }
 
+/**
+ * decoding state transitions from raw base64
+ * @memberOf module:Utils
+ * @function decodeStateTransition
+ * @param {Dash.Client} client - Dash client
+ * @param {string} base64 - base64 with raw tx
+ * @returns {Promise<object>}
+ */
 const decodeStateTransition = async (client, base64) => {
   const stateTransition = await client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(base64, 'base64'))
 
@@ -315,6 +339,14 @@ const decodeStateTransition = async (client, base64) => {
   return decoded
 }
 
+/**
+ * Allows to check tcp connection to validators
+ * @memberOf module:Utils
+ * @func checkTcpConnect
+ * @param {number} port
+ * @param {string} host
+ * @returns {Promise<Error|'OK'|'ERR_CONNECTION_REFUSED'>}
+ */
 const checkTcpConnect = (port, host) => {
   return new Promise((resolve, reject) => {
     let connection
@@ -346,9 +378,14 @@ const checkTcpConnect = (port, host) => {
   })
 }
 
-// Calculating period and calculate the period
-// and find the interval with less than 2 periods
-// and take the previous interval
+/**
+ * calculating interval in RFC 3339
+ * @memberOf module:Utils
+ * @func calculateInterval
+ * @param {Date} start
+ * @param {Date} end
+ * @returns {string}
+ */
 const calculateInterval = (start, end) => {
   const intervalsInRFC = Object.keys(Intervals)
 
@@ -374,7 +411,14 @@ const calculateInterval = (start, end) => {
   })
 }
 
-// https://github.com/wking/milliseconds-to-iso-8601-duration
+/**
+ * calculating duration in ISO 8601
+ * https://github.com/wking/milliseconds-to-iso-8601-duration
+ * @memberOf module:Utils
+ * @func iso8601duration
+ * @param {number} milliseconds
+ * @returns {string}
+ */
 const iso8601duration = function (milliseconds) {
   if (milliseconds === 0) {
     return 'P0D'
@@ -431,6 +475,13 @@ const iso8601duration = function (milliseconds) {
   return parts.join('')
 }
 
+/**
+ * Build index buffer for resource value
+ * @memberOf module:Utils
+ * @func buildIndexBuffer
+ * @param {string} name
+ * @returns {Buffer}
+ */
 const buildIndexBuffer = (name) => {
   const lengthBuffer = Buffer.alloc(1)
   lengthBuffer.writeUInt8(name.length, 0)
@@ -444,6 +495,15 @@ const buildIndexBuffer = (name) => {
   )
 }
 
+/**
+ * Returns info about alias from his, his info and owner identifier
+ * @memberOf module:Utils
+ * @func getAliasStateByVote
+ * @param {Object} aliasInfo
+ * @param {string} alias
+ * @param {string} identifier - must be base58 identifier
+ * @returns {Object}
+ */
 const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   let status = null
 
@@ -476,6 +536,14 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   })
 }
 
+/**
+ * Returns info about alias
+ * @memberOf module:Utils
+ * @func getAliasStateByVote
+ * @param {string} aliasText - alias with domain, like dash.dash
+ * @param {dapi-client} dapi
+ * @returns {Promise<Object>}
+ */
 const getAliasInfo = async (aliasText, dapi) => {
   const [label, domain] = aliasText.split('.')
 

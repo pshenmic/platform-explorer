@@ -2,6 +2,12 @@ const { Identifier } = require('dash').PlatformProtocol
 
 const { IdentityPublicKey } = require('@dashevo/wasm-dpp/dist/wasm/wasm_dpp')
 
+/**
+ * @class DAPI
+ * @constructor
+ * @param {dapi-client} dapi - instance of dapi
+ * @param {wasm-dpp} dpp - instance of wasm dpp
+ */
 class DAPI {
   dapi
   dpp
@@ -11,16 +17,35 @@ class DAPI {
     this.dpp = dpp
   }
 
+  /**
+   * Get balance for identity
+   * @method DAPI#getIdentityBalance
+   * @param {string} Identifier - Identifier must be in base58
+   * @returns {Promise<number>}
+   */
   async getIdentityBalance (identifier) {
     const { balance } = await this.dapi.platform.getIdentityBalance(Identifier.from(identifier))
     return balance
   }
 
+  /**
+   * Get total credits from platform
+   * @func
+   * @returns {Promise<number>}
+   */
   async getTotalCredits () {
     const { totalCreditsInPlatform } = await this.dapi.platform.getTotalCreditsInPlatform()
     return totalCreditsInPlatform
   }
 
+  /**
+   * Fetch epoch info from dapi
+   * @func
+   * @param {number} count - count of epochs to get
+   * @param {number} [start] - start index
+   * @param {boolean} [ascending] - order
+   * @returns {Promise<EpochInfo>}
+   */
   async getEpochsInfo (count, start, ascending) {
     const { epochsInfo } = await this.dapi.platform.getEpochsInfo(start, count, { ascending })
     return epochsInfo
@@ -29,13 +54,14 @@ class DAPI {
   /**
    * Fetch documents from DAPI
    * Allows **only one field** `identifier`**|**`owner`
-   * @typedef {getDocuments}
-   * @param {string} type
-   * @param {object} dataContractObject
-   * @param {string} identifier
-   * @param {string} owner
-   * @param {number} limit
-  */
+   * @func
+   * @param {string} type - document type name
+   * @param {object} dataContractObject - object with data contract info
+   * @param {string} [identifier] - identifier in base58
+   * @param {string} [owner] - identifier in base58
+   * @param {number} [limit]
+   * @returns {Promise<Array<ExtendedDocument>>}
+   */
   async getDocuments (type, dataContractObject, identifier, owner, limit) {
     const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
 
@@ -55,12 +81,12 @@ class DAPI {
 
   /**
    * Fetch the version upgrade votes status
-   * @typedef {getContestedState}
+   * @func
    * @param {string} contractId - base64 contractId
-   * @param {string} documentTypeName
-   * @param {string} indexName
-   * @param {number} resultType
-   * @param {Array<Buffer>} indexValuesList
+   * @param {string} documentTypeName - document type name
+   * @param {string} indexName - index name like `parentNameAndLabel
+   * @param {number} resultType - enum from 0 to 2
+   * @param {Array<Buffer>} indexValuesList - Buffer array of contested values
    * @param {StartAtIdentifierInfo} [startAtIdentifierInfo]
    * @param {number} [count]
    * @returns {Promise<contestedResourceContenders>}
@@ -87,6 +113,14 @@ class DAPI {
     return contestedResourceContenders
   }
 
+  /**
+   * Fetch identity keys
+   * @func
+   * @param {string} identifier - Identifier must be in base58
+   * @param {number[]} keysIds - list of keys ids to get
+   * @param {number} [limit]
+   * @returns {Promise<Array<IdentityPublicKey>>}
+   */
   async getIdentityKeys (identifier, keysIds, limit) {
     const { identityKeys } = await this.dapi.platform.getIdentityKeys(Identifier.from(identifier), keysIds, limit)
 
@@ -115,6 +149,11 @@ class DAPI {
     })
   }
 
+  /**
+   * Fetch platform status
+   * @function
+   * @returns {Promise<status>}
+   */
   async getStatus () {
     return this.dapi.platform.getStatus()
   }

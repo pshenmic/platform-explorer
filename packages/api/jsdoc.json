@@ -1,0 +1,37 @@
+{
+  "recurseDepth": 10,
+  "source": {
+    "include": ["src", "package.json", "README.md"],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "sourceType": "module",
+  "opts": {
+    "encoding": "utf8",
+    "readme": "./README.md",
+    "destination": "../docs/",
+    "recurse": true,
+    "template": "../../node_modules/clean-jsdoc-theme",
+    "theme_opts": {
+      "default_theme": "light",
+      "homepageTitle": "Platform Explorer API",
+      "title": "Platform Explorer API"
+    }
+  },
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": [
+      "jsdoc",
+      "closure"
+    ]
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
+  },
+  "plugins": ["plugins/markdown"]
+}
