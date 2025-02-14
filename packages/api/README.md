@@ -791,8 +791,9 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
     {
       "type": 0,
       "action": null,
-      "owner": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-      "aliases": [
+      "owner": {
+        "identifier": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
+        "aliases": [
         {
           "alias": "Tutorial-Test-000000.dash",
           "status": "ok",
@@ -806,6 +807,7 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
           "timestamp": null
         }
       ],
+      }
       "timestamp": "2024-08-26T13:30:22.211Z",
       "gasUsed": 32230560,
       "error": null,

@@ -187,23 +187,21 @@ module.exports = class DataContractsDAO {
       .as('sub')
 
     const additionalDataSubquery = this.knex(unionSubquery)
-      .select('timestamp', 'sub.state_transition_hash as state_transition_hash', 'owner', 'gas_used', 'data', 'error', 'aliases')
-      .select(this.knex.raw('rank() over (order by state_transitions.id asc) as rank'))
+      .select(
+        'timestamp', 'sub.state_transition_hash as state_transition_hash',
+        'owner', 'gas_used', 'data', 'error', 'aliases', 'state_transitions.id as id'
+      )
+      .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) as rank`))
       .leftJoin('state_transitions', 'sub.state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .leftJoin(aliasesSubquery, 'owner', 'aliases.identity_identifier')
       .as('additional_subquery')
 
     const rows = await this.knex(additionalDataSubquery)
-      .select('timestamp', 'state_transition_hash', 'owner', 'gas_used', 'data', 'error', 'aliases', 'rank')
+      .select('timestamp', 'state_transition_hash', 'owner', 'gas_used', 'data', 'error', 'aliases')
       .select(this.knex(additionalDataSubquery).count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
-      .orderBy('rank', order)
-      .groupBy('timestamp', 'state_transition_hash', 'owner', 'gas_used', 'data', 'error', 'aliases', 'rank')
-
-    if (rows.length === 0) {
-      return null
-    }
+      .orderBy('id', order)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       let decodedTx
@@ -224,8 +222,10 @@ module.exports = class DataContractsDAO {
           action: transition.action,
           id: transition.id
         })) ?? null,
-        owner: row.owner?.trim() ?? null,
-        aliases: aliases ?? [],
+        owner: {
+          identifier: row.owner?.trim() ?? null,
+          aliases: aliases ?? []
+        },
         timestamp: row.timestamp,
         gasUsed: Number(row.gas_used ?? 0),
         error: row.error,
