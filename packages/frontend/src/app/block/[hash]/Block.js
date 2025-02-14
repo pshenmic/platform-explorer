@@ -50,7 +50,7 @@ function Block ({ hash }) {
       </div>
 
       <InfoContainer styles={['tabs']}>
-        <Tabs>
+        <Tabs index={1}>
           <TabList>
             <Tab>Transactions {block.data?.txs?.length !== undefined
               ? <span
@@ -84,7 +84,6 @@ function Block ({ hash }) {
             </TabPanel>
             <TabPanel position={'relative'}>
               <QuorumMembersList members={block?.data?.quorum?.members}/>
-              quorum members
             </TabPanel>
           </TabPanels>
         </Tabs>

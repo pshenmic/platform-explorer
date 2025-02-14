@@ -3,7 +3,7 @@ import { EmptyListMessage } from '../../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './QuorumMembersList.scss'
 
-function QuorumMembersList ({ members = [], columnsCount = 1, size = 'l', headerStyles = 'default' }) {
+function QuorumMembersList ({ members = [], headerStyles = 'default' }) {
   const headerExtraClass = {
     default: '',
     light: 'QuorumMembersList__ColumnTitles--Light'
@@ -14,7 +14,7 @@ function QuorumMembersList ({ members = [], columnsCount = 1, size = 'l', header
   return (
     <div className={'QuorumMembersList'}>
       <Grid className={`QuorumMembersList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'QuorumMembersList__ColumnTitle QuorumMembersList__ProtxHash'}>
+        <GridItem className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--ProtxHash'}>
           Protx hash
         </GridItem>
         <GridItem className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--Service'}>
@@ -29,11 +29,7 @@ function QuorumMembersList ({ members = [], columnsCount = 1, size = 'l', header
       </Grid>
 
       {members.map((member, i) =>
-        <QuorumMembersListItem
-          key={i}
-          member={member}
-          size={size}
-        />
+        <QuorumMembersListItem member={member} key={i}/>
       )}
 
       {members.length === 0 &&

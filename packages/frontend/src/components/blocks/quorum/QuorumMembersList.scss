@@ -1,13 +1,20 @@
 @use '../../../styles/mixins.scss';
+@use './variables' as qm;
 @import '../../../styles/variables.scss';
 
-.QuorumList {
+.QuorumMembersList {
+  @include mixins.List;
+  container-type: inline-size;
+
   &__ColumnTitles {
     @include mixins.defListTitles;
-    grid-template-columns: 70px 135px calc(100% - 375px) 170px;
+    @include qm.Columns();
   }
 
   &__ColumnTitle {
+    @include qm.Column();
+    width: 100%;
+    display: block;
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;
@@ -21,24 +28,24 @@
     }
   }
 
-  @media screen and (max-width: 620px) {
-    &__ColumnTitles {
-      grid-template-columns: 70px 90px calc(100% - 160px);
-    }
+  //@container (max-width: 660px) {
+  //  &__ColumnTitle {
+  //    &--Owner {
+  //      white-space: nowrap;
+  //      width: 20px;
+  //    }
+  //
+  //    &--Type {
+  //      width: 145px;
+  //    }
+  //  }
+  //}
 
-    &__ColumnTitle {
-      &--Hash {
-        display: none;
-      }
-
-      &--Txs {
-        order: 0;
-        text-align: left !important;
-      }
-
-      &--Time {
-        order: 2;
-      }
-    }
-  }
+  //@container (max-width: 350px) {
+  //  &__ColumnTitle {
+  //    &--Type {
+  //      width: max-content;
+  //    }
+  //  }
+  //}
 }
