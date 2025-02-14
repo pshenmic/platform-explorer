@@ -300,7 +300,10 @@ describe('DataContracts routes', () => {
       const expectedDataContract = {
         identifier: dataContract.dataContract.identifier,
         name: dataContract.dataContract.name,
-        owner: identity.identifier,
+        owner: {
+          identifier: identity.identifier.trim(),
+          aliases: []
+        },
         schema: '{}',
         version: 0,
         txHash: null,
@@ -309,7 +312,10 @@ describe('DataContracts routes', () => {
         documentsCount: 0,
         averageGasUsed: 0,
         identitiesInteracted: 0,
-        topIdentity: null,
+        topIdentity: {
+          identifier: null,
+          aliases: []
+        },
         totalGasUsed: 0
       }
 
@@ -326,7 +332,10 @@ describe('DataContracts routes', () => {
       const expectedDataContract = {
         identifier: dataContract.dataContract.identifier,
         name: dataContract.dataContract.name,
-        owner: identity.identifier,
+        owner: {
+          identifier: identity.identifier.trim(),
+          aliases: []
+        },
         schema: '{}',
         version: dataContract.dataContract.version,
         txHash: dataContract.transaction.hash,
@@ -335,7 +344,10 @@ describe('DataContracts routes', () => {
         documentsCount: dataContract.dataContract.documents.length,
         averageGasUsed: 0,
         identitiesInteracted: 1,
-        topIdentity: dataContract.dataContract.owner,
+        topIdentity: {
+          identifier: dataContract.dataContract.owner.trim(),
+          aliases: []
+        },
         totalGasUsed: 0
       }
 

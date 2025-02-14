@@ -1,0 +1,26 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as rev;
+@import '../../../styles/variables.scss';
+
+.DocumentsRevisionsList {
+  @include mixins.List;
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include rev.Columns();
+  }
+
+  &__ColumnTitle {
+    @include rev.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+}
