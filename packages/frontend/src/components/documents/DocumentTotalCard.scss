@@ -1,0 +1,96 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.DocumentTotalCard {
+  @include mixins.EntityCard();
+
+  &__Header {
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__Avatar {
+    margin: 0;
+    position: static !important;
+    order: -1;
+  }
+
+  &__InfoLine {
+    &--Timestamp {
+      align-items: baseline;
+
+      .DateBlock__InfoContainer {
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  &__Identifier, &__Entropy  {
+    .InfoLine__Value {
+      width: 100%;
+      text-align: right;
+
+      .Identifier {
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__Avatar {
+      order: 0;
+    }
+
+      &__Header {
+      .InfoLine {
+        gap: 5px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        flex-direction: column;
+        align-items: flex-start;
+
+        &:not(.DocumentTotalCard__InfoLine--Revision) & {
+          &__Title {
+            width: 100%;
+          }
+
+          &__Value {
+            justify-content: flex-start;
+            text-align: left;
+          }
+        }
+      }
+    }
+
+    &__InfoLine {
+      &--Revision {
+        flex-direction: row !important;
+      }
+    }
+
+    &__Identifier {
+      .Identifier {
+        justify-content: flex-start !important;
+      }
+    }
+
+    &__Avatar {
+      position: absolute;
+      right: 16px;
+      top: 20px;
+      margin-right: 0;
+    }
+  }
+
+  @media screen and (max-width: 31em) {
+    &__InfoLine {
+      &--Revision {
+        width: 100%;
+      }
+    }
+
+    &__HeaderLines {
+      padding-right: 0
+    }
+  }
+}
