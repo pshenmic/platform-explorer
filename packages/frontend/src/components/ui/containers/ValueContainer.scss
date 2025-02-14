@@ -6,7 +6,7 @@
   align-items: center;
   flex-wrap: nowrap;
   border-radius: $border-radius-def;
-  background-color: var(--chakra-colors-gray-650);
+  background-color: rgba(var(--chakra-colors-gray-800-rgb), 0.5);
   padding: 12px;
   transition: all .1s;
 

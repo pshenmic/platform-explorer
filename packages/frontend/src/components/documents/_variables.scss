@@ -30,6 +30,7 @@
 
   &--Owner {
     overflow: hidden;
+    justify-content: flex-end;
   }
 
   @container (max-width: 22rem) {
