@@ -177,16 +177,13 @@ module.exports = class DataContractsDAO {
     const dataContractsSubquery = this.knex('data_contracts')
       .select('state_transition_hash')
       .where('data_contracts.identifier', '=', identifier)
-      .andWhereRaw('data_contracts.state_transition_hash is not null')
 
     const documentsSubquery = this.knex('documents')
       .select('documents.state_transition_hash as state_transition_hash')
       .where('data_contracts.identifier', '=', identifier)
-      .andWhereRaw('documents.state_transition_hash is not null')
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
 
-    const unionSubquery = this.knex
-      .unionAll([dataContractsSubquery, documentsSubquery])
+    const unionSubquery = this.knex.unionAll([dataContractsSubquery, documentsSubquery])
       .as('sub')
 
     const additionalDataSubquery = this.knex(unionSubquery)
