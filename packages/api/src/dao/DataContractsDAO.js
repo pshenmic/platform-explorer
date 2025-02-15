@@ -183,7 +183,9 @@ module.exports = class DataContractsDAO {
       .where('data_contracts.identifier', '=', identifier)
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
 
-    const unionSubquery = this.knex.unionAll([dataContractsSubquery, documentsSubquery])
+    const unionSubquery = this.knex
+      .unionAll([dataContractsSubquery, documentsSubquery])
+      .whereRaw('state_transition_hash is not null')
       .as('sub')
 
     const additionalDataSubquery = this.knex(unionSubquery)
