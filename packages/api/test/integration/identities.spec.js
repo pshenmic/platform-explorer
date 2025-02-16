@@ -990,7 +990,8 @@ describe('Identities routes', () => {
         system: false,
         transitionType: 0,
         nonce: null,
-        gasUsed: null
+        gasUsed: null,
+        totalGasUsed: null
       }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1052,7 +1053,8 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null
+          nonce: null,
+          totalGasUsed: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1116,7 +1118,8 @@ describe('Identities routes', () => {
           prefundedVotingBalance: null,
           entropy: null,
           gasUsed: null,
-          nonce: null
+          nonce: null,
+          totalGasUsed: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1178,7 +1181,8 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null
+          nonce: null,
+          totalGasUsed: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1240,7 +1244,8 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null
+          nonce: null,
+          totalGasUsed: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
