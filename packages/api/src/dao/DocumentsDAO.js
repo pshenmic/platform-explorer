@@ -99,8 +99,7 @@ module.exports = class DocumentsDAO {
         entropy: transitionWithEntropy?.entropy,
         prefundedVotingBalance: transitionWithEntropy?.prefundedVotingBalance,
         nonce: transitionWithEntropy?.nonce
-      }),
-      totalGasUsed: Number(row.total_gas_used ?? 0)
+      })
     }
   }
 

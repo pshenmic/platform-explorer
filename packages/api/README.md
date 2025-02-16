@@ -57,6 +57,7 @@ Reference:
 * [Data Contracts](#data-contracts)
 * [Data Contract Transactions](#data-contract-transactions)
 * [Document by Identifier](#document-by-identifier)
+* [Document Revisions](#document-revisions)
 * [Documents by Data Contract](#documents-by-data-contract)
 * [Identity by Identifier](#identity-by-identifier)
 * [Identity by DPNS](#identity-by-dpns)
@@ -64,7 +65,6 @@ Reference:
 * [Identities](#identities)
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
-* [Document Revisions](#document-revisions)
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
@@ -896,6 +896,7 @@ GET /document/y5DhJmM4unLTEaKAkMTbQHMoM8hh47ddowKYusgtHwL/revisions
       "transitionType": 0,
       "nonce": null,
       "gasUsed": 78317180,
+      "totalGasUsed": null,
       "owner": {
         "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
         "aliases": [
@@ -945,6 +946,8 @@ GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?documen
       "entropy": null,
       "prefundedVotingBalance": null,
       "typeName": "domain",
+      "gasUsed": null,
+      "totalGasUsed": null,
       "owner": {
         "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
         "aliases": [
