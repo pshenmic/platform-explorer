@@ -11,10 +11,6 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
   const activeAlias = findActiveAlias(revision.owner?.aliases)
   const router = useRouter()
 
-  console.log('revision', revision)
-
-  revision.revision = null
-
   return (
     <Link href={`/transaction/${revision?.txHash}`} className={'DocumentsRevisionsListItem'}>
       <Grid className={'DocumentsRevisionsListItem__Content'}>
