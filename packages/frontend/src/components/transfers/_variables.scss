@@ -7,7 +7,7 @@
   grid-template-columns:
     70px
     minmax(0, 400px)
-    minmax(0, 300px)
+    minmax(0, 400px)
     minmax(185px, 185px)
     minmax(100px, 100px)
     128px;
@@ -24,7 +24,7 @@
   @container (max-width: 44em) {
     grid-template-columns:
     70px
-    minmax(0px, 200px)
+    minmax(0px, 300px)
     minmax(185px, 185px)
     128px;
   }
