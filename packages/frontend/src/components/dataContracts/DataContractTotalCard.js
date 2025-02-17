@@ -86,7 +86,6 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
         <InfoLine
           title={'Total Gas Used'}
           value={<CreditsBlock credits={dataContract.data?.totalGasUsed} rate={rate}/>}
-
           loading={dataContract.loading}
           error={dataContract.error}
         />
