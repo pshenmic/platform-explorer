@@ -300,13 +300,37 @@ describe('Other routes', () => {
       const expectedDataContract = {
         identifier: dataContract.identifier,
         name: dataContract.name,
-        owner: identity.identifier.trim(),
+        owner: {
+          identifier: identity.identifier.trim(),
+          aliases: [
+            {
+              alias: 'dpns.dash',
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }
+          ]
+        },
         schema: JSON.stringify(dataContract.schema),
         version: 0,
         txHash: dataContractTransaction.hash,
         timestamp: block.timestamp.toISOString(),
         isSystem: false,
-        documentsCount: 1
+        documentsCount: 1,
+        averageGasUsed: 0,
+        identitiesInteracted: 1,
+        totalGasUsed: 0,
+        topIdentity: {
+          identifier: identity.identifier.trim(),
+          aliases: [
+            {
+              alias: 'dpns.dash',
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }
+          ]
+        }
       }
 
       assert.deepEqual({ dataContract: expectedDataContract }, body)
@@ -326,7 +350,11 @@ describe('Other routes', () => {
         txHash: dataContractTransaction.hash,
         timestamp: block.timestamp.toISOString(),
         isSystem: false,
-        documentsCount: 1
+        documentsCount: 1,
+        averageGasUsed: null,
+        identitiesInteracted: null,
+        totalGasUsed: null,
+        topIdentity: null
       }
 
       assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
@@ -350,7 +378,19 @@ describe('Other routes', () => {
         prefundedVotingBalance: null,
         documentTypeName: document.document_type_name,
         transitionType: 0,
-        owner: document.owner,
+        owner: {
+          identifier: document.owner,
+          aliases: [
+            {
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }
+          ]
+        },
+        gasUsed: null,
+        totalGasUsed: 0,
         nonce: 2
       }
 

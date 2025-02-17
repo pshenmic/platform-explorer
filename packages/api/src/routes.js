@@ -23,7 +23,8 @@ module.exports = ({
   identitiesController,
   validatorsController,
   rateController,
-  masternodeVotesController
+  masternodeVotesController,
+  contestedResourcesController
 }) => {
   const routes = [
     {
@@ -127,6 +128,20 @@ module.exports = ({
       }
     },
     {
+      path: '/dataContract/:identifier/transactions',
+      method: 'GET',
+      handler: dataContractsController.getDataContractTransactions,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/dataContract/:identifier/documents',
       method: 'GET',
       handler: documentsController.getDocumentsByDataContract,
@@ -170,6 +185,33 @@ module.exports = ({
           properties: {
             identifier: { $ref: 'identifier#' }
           }
+        }
+      }
+    },
+    {
+      path: '/contestedResource/:resourceValue',
+      method: 'GET',
+      handler: contestedResourcesController.getContestedResource,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            resourceValue: { type: 'string' }
+          }
+        }
+      }
+    },
+    {
+      path: '/contestedResource/:resourceValue/votes',
+      method: 'GET',
+      handler: contestedResourcesController.getContestedResourceVotes,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      },
+      params: {
+        type: 'object',
+        properties: {
+          resourceValue: { type: 'string' }
         }
       }
     },

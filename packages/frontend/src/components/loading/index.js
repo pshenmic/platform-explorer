@@ -11,9 +11,9 @@ function LoadingLine ({ children, loading, w = '100%', h = '20px', className = '
   return <>{children}</>
 }
 
-function LoadingBlock ({ children, loading, w = '100%', h = '100%', className = '' }) {
+function LoadingBlock ({ children, loading, w = '100%', h = '100%', className = '', ...props }) {
   if (children === undefined || loading) {
-    return <Container w={w} h={h} maxW={'none'} className={`LoadingBlock ${className}`}></Container>
+    return <Container w={w} h={h} maxW={'none'} className={`LoadingBlock ${className}`} {...props}></Container>
   }
 
   return <>{children}</>

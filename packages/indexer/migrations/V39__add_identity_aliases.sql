@@ -5,3 +5,4 @@ CREATE TABLE identity_aliases (
 );
 
 CREATE UNIQUE INDEX identity_aliases_alias ON identity_aliases(alias);
+CREATE INDEX identity_aliases_identifier ON identity_aliases(identity_identifier);

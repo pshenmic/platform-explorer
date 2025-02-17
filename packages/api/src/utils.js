@@ -433,7 +433,7 @@ const iso8601duration = function (milliseconds) {
 
 const buildIndexBuffer = (name) => {
   const lengthBuffer = Buffer.alloc(1)
-  lengthBuffer.writeUInt8(name.length.toString(16), 0)
+  lengthBuffer.writeUInt8(name.length, 0)
 
   return Buffer.concat(
     [
@@ -511,5 +511,6 @@ module.exports = {
   calculateInterval,
   iso8601duration,
   getAliasInfo,
-  getAliasStateByVote
+  getAliasStateByVote,
+  buildIndexBuffer
 }
