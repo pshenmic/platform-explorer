@@ -358,6 +358,11 @@ module.exports = class IdentitiesDAO {
       queryBindings.push(typeName)
     }
 
+    const aliasesSubquery = this.knex('identity_aliases')
+      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .groupBy('identity_identifier')
+      .as('aliases')
+
     const subquery = this.knex('documents')
       .select('documents.id', 'documents.identifier as identifier', 'documents.owner as document_owner', 'documents.data_contract_id as data_contract_id',
         'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
@@ -377,7 +382,8 @@ module.exports = class IdentitiesDAO {
     const rows = await this.knex(filteredDocuments)
       .select('document_id', 'documents.identifier as identifier', 'document_owner', 'data_contracts.identifier as data_contract_identifier',
         'revision', 'deleted', 'tx_hash', 'total_count', 'row_number', 'document_type_name', 'transition_type',
-        'data_contract_id', 'blocks.timestamp as timestamp', 'document_is_system')
+        'data_contract_id', 'blocks.timestamp as timestamp', 'document_is_system', 'aliases')
+      .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'document_owner')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
@@ -386,9 +392,24 @@ module.exports = class IdentitiesDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    return new PaginatedResultSet(rows.map(row => Document.fromRow({
-      ...row, is_system: row.document_is_system, owner: row.document_owner?.trim()
-    })), page, limit, totalCount)
+    const resultSet = await Promise.all(rows.map(async (row) => {
+      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+        const aliasInfo = await getAliasInfo(alias, this.dapi)
+
+        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+      }))
+
+      return Document.fromRow({
+        ...row,
+        is_system: row.document_is_system,
+        owner: {
+          identifier: row.document_owner?.trim() ?? null,
+          aliases: aliases ?? []
+        }
+      })
+    }))
+
+    return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }
 
   getTransactionsByIdentity = async (identifier, page, limit, order) => {

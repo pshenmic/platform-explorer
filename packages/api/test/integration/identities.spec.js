@@ -977,7 +977,10 @@ describe('Identities routes', () => {
 
       const expectedDocuments = documents.slice(0, 10).map((_document) => ({
         identifier: _document.document.identifier,
-        owner: identity.identifier,
+        owner: {
+          identifier: identity.identifier,
+          aliases: []
+        },
         dataContractIdentifier: _document.dataContract.identifier,
         revision: 1,
         txHash: _document.transaction.hash,
@@ -990,7 +993,8 @@ describe('Identities routes', () => {
         system: false,
         transitionType: 0,
         nonce: null,
-        gasUsed: null
+        gasUsed: null,
+        totalGasUsed: null
       }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1039,7 +1043,10 @@ describe('Identities routes', () => {
         .slice(0, 10)
         .map((_document) => ({
           identifier: _document.document.identifier,
-          owner: identity.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: []
+          },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
           txHash: _document.transaction.hash,
@@ -1052,7 +1059,8 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null
+          nonce: null,
+          totalGasUsed: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1103,7 +1111,10 @@ describe('Identities routes', () => {
         .slice(0, 10)
         .map((_document) => ({
           identifier: _document.document.identifier,
-          owner: identity.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: []
+          },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
           txHash: _document.transaction.hash,
@@ -1116,7 +1127,8 @@ describe('Identities routes', () => {
           prefundedVotingBalance: null,
           entropy: null,
           gasUsed: null,
-          nonce: null
+          nonce: null,
+          totalGasUsed: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1165,7 +1177,10 @@ describe('Identities routes', () => {
         .slice(3, 6)
         .map((_document) => ({
           identifier: _document.document.identifier,
-          owner: identity.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: []
+          },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
           txHash: _document.transaction.hash,
@@ -1178,7 +1193,8 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null
+          nonce: null,
+          totalGasUsed: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -1227,7 +1243,10 @@ describe('Identities routes', () => {
         .slice(3, 6)
         .map((_document) => ({
           identifier: _document.document.identifier,
-          owner: identity.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: []
+          },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
           txHash: _document.transaction.hash,
@@ -1240,7 +1259,8 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null
+          nonce: null,
+          totalGasUsed: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
