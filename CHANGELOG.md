@@ -1,5 +1,17 @@
 # CHANGELOG
 
+### v1.0.15
+
+## Changes
+
+## API
+
+- Interval count fix for graphs @owl352 (#450)
+
+## Frontend
+
+- Improve charts render @AlexeyTripleA (#452)
+
 ### v1.0.14
 
 ## Changes
