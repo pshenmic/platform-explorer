@@ -1199,7 +1199,10 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&li
       "entropy": null,
       "prefundedVotingBalance": null,
       "typeName": "domain",
-      "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
+      "owner": {
+        "identifier": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6",
+        "aliases": []
+      }
     }, ...
   ],
   "pagination": {
