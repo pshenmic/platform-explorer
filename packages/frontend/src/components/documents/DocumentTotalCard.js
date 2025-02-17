@@ -148,7 +148,7 @@ function DocumentTotalCard ({ document, rate, className }) {
         <InfoLine
           className={'DocumentTotalCard__InfoLine'}
           title={'Deleted'}
-          value={<Badge colorScheme={'gray'}>{document.data?.deleted ? 'true' : 'false'}</Badge>}
+          value={<Badge colorScheme={document.data?.deleted ? 'red' : 'gray'}>{document.data?.deleted ? 'True' : 'False'}</Badge>}
           loading={document.loading}
           error={document.error || document.data?.deleted === undefined}
         />
