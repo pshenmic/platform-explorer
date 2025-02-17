@@ -46,7 +46,7 @@ function Block ({ hash }) {
     >
       <div className={'Block__InfoBlocks'}>
         <BlockTotalCard className={'Block__InfoBlock'} block={block}/>
-        <BlockDigestCard className={'Block__InfoBlock'} block={block}/>
+        <BlockDigestCard className={'Block__InfoBlock'} block={block} rate={rate}/>
       </div>
 
       <InfoContainer styles={['tabs']}>
