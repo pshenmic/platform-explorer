@@ -1,11 +1,11 @@
 import ImageGenerator from '../imageGenerator'
-import { Alias, DateBlock, Identifier, InfoLine } from '../data'
+import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { findActiveAlias } from '../../util'
 import './DataContractTotalCard.scss'
 
-function DataContractTotalCard ({ dataContract, className }) {
+function DataContractTotalCard ({ dataContract, rate, className }) {
   const activeAlias = findActiveAlias(dataContract?.data?.owner?.aliases)
 
   return (
@@ -79,6 +79,13 @@ function DataContractTotalCard ({ dataContract, className }) {
         <InfoLine
           title={'Version'}
           value={dataContract.data?.version}
+          loading={dataContract.loading}
+          error={dataContract.error}
+        />
+
+        <InfoLine
+          title={'Total Gas Used'}
+          value={<CreditsBlock credits={dataContract.data?.totalGasUsed} rate={rate}/>}
           loading={dataContract.loading}
           error={dataContract.error}
         />
