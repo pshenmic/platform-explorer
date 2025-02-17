@@ -45,8 +45,6 @@ function Document ({ identifier }) {
     ])
   }, [setBreadcrumbs, identifier, document])
 
-  console.log('document', document)
-
   const fetchData = () => {
     setDocument(state => ({ ...state, loading: true }))
 
