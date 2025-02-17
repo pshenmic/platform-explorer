@@ -11,11 +11,18 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
   const activeAlias = findActiveAlias(revision.owner?.aliases)
   const router = useRouter()
 
+  console.log('revision', revision)
+
+  revision.revision = null
+
   return (
     <Link href={`/transaction/${revision?.txHash}`} className={'DocumentsRevisionsListItem'}>
       <Grid className={'DocumentsRevisionsListItem__Content'}>
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Timestamp'}>
-          <TimeDelta endDate={revision?.timestamp}/>
+          {revision?.timestamp
+            ? <TimeDelta endDate={revision?.timestamp}/>
+            : <NotActive/>
+          }
         </GridItem>
 
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--TxHash'}>
@@ -54,7 +61,10 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
         </GridItem>
 
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Revision DocumentsRevisionsListItem__Column--Number'}>
-          {revision?.revision}
+          {revision?.revision
+            ? revision.revision
+            : <NotActive/>
+          }
         </GridItem>
       </Grid>
     </Link>
