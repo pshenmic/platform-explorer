@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { RateTooltip } from '../../ui/Tooltips'
 import Link from 'next/link'
 import { findActiveAlias } from '../../../util'
+import DocumentActionBadge from '../../transactions/DocumentActionBadge'
 import './DocumentsRevisionsListItem.scss'
 
 function DocumentsRevisionsListItem ({ revision, rate }) {
@@ -52,6 +53,13 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
             ? <RateTooltip credits={revision?.gasUsed} rate={rate}>
               <span><BigNumber>{revision?.gasUsed}</BigNumber></span>
             </RateTooltip>
+            : <NotActive>-</NotActive>
+          }
+        </GridItem>
+
+        <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--TransitionType'}>
+          {typeof revision?.transitionType === 'number'
+            ? <DocumentActionBadge typeId={revision?.transitionType}/>
             : <NotActive>-</NotActive>
           }
         </GridItem>
