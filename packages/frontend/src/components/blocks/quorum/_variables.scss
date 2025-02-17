@@ -1,0 +1,52 @@
+@import '../../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+
+  grid-template-columns:
+    minmax(0, 600px)
+    minmax(140px, 140px)
+    minmax(0, 600px)
+    45px;
+
+  //@container (max-width: 810px) {
+  //  grid-template-columns:
+  //    minmax(120px, 120px)
+  //    minmax(0, 240px)
+  //    minmax(0, 1fr)
+  //    auto;
+  //}
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &--ProtxHash {
+    max-width: 600px;
+  }
+
+  &--Service {
+    max-width: 140px;
+    width: 100%;
+  }
+
+  &--OperatorPubKey {
+    max-width: 600px;
+    overflow: hidden;
+
+  }
+
+  &--Valid {
+    //width: 150px;
+    justify-content: flex-end;
+    white-space: nowrap;
+  }
+
+  //@container (max-width: 810px) {
+  //  &--GasUsed {
+  //    display: none;
+  //  }
+  //}
+}

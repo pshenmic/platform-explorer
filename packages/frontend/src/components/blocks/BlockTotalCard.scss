@@ -1,0 +1,13 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.BlockTotalCard {
+  @include mixins.EntityCard();
+
+  &__Avatar {
+    svg {
+      width: 54px;
+      height: 54px;
+    }
+  }
+}
