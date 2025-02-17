@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { RateTooltip } from '../../ui/Tooltips'
 import Link from 'next/link'
 import { findActiveAlias } from '../../../util'
-import DocumentActionBadge from '../../transactions/DocumentActionBadge'
+import DocumentActionBadge from '../DocumentActionBadge'
 import './DocumentsRevisionsListItem.scss'
 
 function DocumentsRevisionsListItem ({ revision, rate }) {
