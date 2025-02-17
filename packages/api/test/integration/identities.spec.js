@@ -977,7 +977,10 @@ describe('Identities routes', () => {
 
       const expectedDocuments = documents.slice(0, 10).map((_document) => ({
         identifier: _document.document.identifier,
-        owner: identity.identifier,
+        owner: {
+          identifier: identity.identifier,
+          aliases: []
+        },
         dataContractIdentifier: _document.dataContract.identifier,
         revision: 1,
         txHash: _document.transaction.hash,
@@ -1039,7 +1042,10 @@ describe('Identities routes', () => {
         .slice(0, 10)
         .map((_document) => ({
           identifier: _document.document.identifier,
-          owner: identity.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: []
+          },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
           txHash: _document.transaction.hash,
@@ -1103,7 +1109,10 @@ describe('Identities routes', () => {
         .slice(0, 10)
         .map((_document) => ({
           identifier: _document.document.identifier,
-          owner: identity.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: []
+          },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
           txHash: _document.transaction.hash,
@@ -1165,7 +1174,10 @@ describe('Identities routes', () => {
         .slice(3, 6)
         .map((_document) => ({
           identifier: _document.document.identifier,
-          owner: identity.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: []
+          },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
           txHash: _document.transaction.hash,
@@ -1227,7 +1239,10 @@ describe('Identities routes', () => {
         .slice(3, 6)
         .map((_document) => ({
           identifier: _document.document.identifier,
-          owner: identity.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: []
+          },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
           txHash: _document.transaction.hash,

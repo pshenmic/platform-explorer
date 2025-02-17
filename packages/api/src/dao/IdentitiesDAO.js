@@ -400,7 +400,9 @@ module.exports = class IdentitiesDAO {
       }))
 
       return Document.fromRow({
-        ...row, is_system: row.document_is_system, owner: {
+        ...row,
+        is_system: row.document_is_system,
+        owner: {
           identifier: row.document_owner?.trim() ?? null,
           aliases: aliases ?? []
         }
