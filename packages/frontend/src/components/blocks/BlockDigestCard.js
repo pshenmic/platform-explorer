@@ -23,7 +23,7 @@ function BlockDigestCard ({ block, rate }) {
 
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
-            className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--DocumentsCount'}
+            className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--Epoch'}
             title={(<span><DocumentIcon/>Epoch</span>)}
             value={'123'}
             loading={block.loading}
@@ -35,7 +35,7 @@ function BlockDigestCard ({ block, rate }) {
       <div className={'BlockDigestCard__RowContainer'}>
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
-            className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--TotalTransactions'}
+            className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--QuorumIndex'}
             title={(<span><QueuePositionIcon/>Quorum Index</span>)}
             value={block?.data?.quorum?.quorumIndex}
             loading={block.loading}
@@ -45,7 +45,7 @@ function BlockDigestCard ({ block, rate }) {
 
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
-            className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--DocumentsCount'}
+            className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--QuorumMembers'}
             title={(<span><MembersIcon/>Quorum Members</span>)}
             value={block?.data?.quorum?.members?.length}
             loading={block.loading}
@@ -55,7 +55,7 @@ function BlockDigestCard ({ block, rate }) {
       </div>
 
       <InfoLine
-        className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--TopIdentity'}
+        className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--Validator'}
         title={'Validator'}
         value={(
           <ValueCard link={`/validator/${block.data?.header?.validator}`}>
@@ -76,9 +76,9 @@ function BlockDigestCard ({ block, rate }) {
       <InfoLine
         className={'BlockDigestCard__InfoLine'}
         title={'Total Fees'}
-        value={<CreditsBlock credits={123} rate={rate}/>}
+        value={<CreditsBlock credits={block.data?.header?.totalGasUsed} rate={rate}/>}
         loading={block.loading}
-        error={block.error || !block.data?.totalGasUsed}
+        error={block.error || !block.data?.header?.totalGasUsed}
       />
     </div>
   )

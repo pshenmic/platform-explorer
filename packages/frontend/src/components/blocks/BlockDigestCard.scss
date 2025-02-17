@@ -3,4 +3,51 @@
 
 .BlockDigestCard {
   @include mixins.DigestCard();
+  border-radius: $border-radius-medium;
+  container-type: inline-size;
+
+  &__InfoLine {
+
+  }
+
+
+  &__InfoLine {
+    &--Validator {
+      .InfoLine__Value {
+        max-width: 100%;
+        overflow: hidden;
+      }
+    }
+
+    &--TotalTransactions, &--QuorumIndex, &--Epoch, &--QuorumMembers {
+      width: 100%;
+
+      .InfoLine__Title {
+        &, span {
+          align-items: center;
+          display: flex;
+        }
+
+        span {
+          gap: 0.75rem;
+        }
+      }
+
+      .InfoLine__Value {
+        font-size: 0.813rem;
+      }
+    }
+  }
+
+  @container (max-width: 35rem) {
+    &__RowContainer {
+      flex-wrap: wrap;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__InfoLine {
+      flex-wrap: wrap;
+    }
+  }
 }
