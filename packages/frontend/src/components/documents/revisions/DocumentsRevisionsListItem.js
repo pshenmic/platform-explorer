@@ -57,7 +57,7 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
         </GridItem>
 
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Revision DocumentsRevisionsListItem__Column--Number'}>
-          {revision?.revision
+          {typeof revision?.revision === 'number'
             ? revision.revision
             : <NotActive/>
           }
