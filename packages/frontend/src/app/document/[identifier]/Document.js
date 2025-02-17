@@ -78,7 +78,12 @@ function Document ({ identifier }) {
             ? <LoadingBlock h={'100%'} minH={'200px'} loading={document.loading}>
                 {document.data?.data
                   ? <CodeBlock className={'DataContract__DataBlock'} code={document.data?.data}/>
-                  : <Container h={20}><ErrorMessageBlock/></Container>}
+                  : <Container h={20}>
+                      {document.data?.deleted
+                        ? <ErrorMessageBlock warningIcon={false} text={'Document is deleted'}/>
+                        : <ErrorMessageBlock/>
+                      }
+                    </Container>}
               </LoadingBlock>
             : <Container h={20}><ErrorMessageBlock/></Container>
           }
