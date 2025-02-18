@@ -33,6 +33,9 @@ export default function DocumentsRevisionsList ({
         <GridItem className={'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--GasUsed'}>
           Gas Used
         </GridItem>
+        <GridItem className={'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--TransitionType'}>
+          Transition
+        </GridItem>
         <GridItem className={'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Revision'}>
           Revision
         </GridItem>

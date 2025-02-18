@@ -25,6 +25,7 @@ function Document ({ identifier }) {
   const { setBreadcrumbs } = useBreadcrumbs()
   const [document, setDocument] = useState({ data: {}, loading: true, error: false })
   const [revisions, setRevisions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const searchParams = useSearchParams()
   const DocumentId = searchParams.get('contract-id') || null
   const typeName = searchParams.get('document-type-name') || null
@@ -45,14 +46,16 @@ function Document ({ identifier }) {
     ])
   }, [setBreadcrumbs, identifier, document])
 
-  console.log('document', document)
-
   const fetchData = () => {
     setDocument(state => ({ ...state, loading: true }))
 
     Api.getDocumentByIdentifier(identifier, DocumentId, typeName)
       .then(document => fetchHandlerSuccess(setDocument, document))
       .catch(err => fetchHandlerError(setDocument, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
 
   useEffect(fetchData, [identifier])
@@ -72,7 +75,7 @@ function Document ({ identifier }) {
       title={'Document info'}
     >
       <div className={'Document__InfoBlocks'}>
-        <DocumentTotalCard className={'Document__InfoBlock'} document={document}/>
+        <DocumentTotalCard className={'Document__InfoBlock'} document={document} rate={rate}/>
 
         <div className={'Document__InfoBlock Document__Data'}>
           <div className={'Document__DataTitle'}>Data</div>
@@ -80,7 +83,12 @@ function Document ({ identifier }) {
             ? <LoadingBlock h={'100%'} minH={'200px'} loading={document.loading}>
                 {document.data?.data
                   ? <CodeBlock className={'DataContract__DataBlock'} code={document.data?.data}/>
-                  : <Container h={20}><ErrorMessageBlock/></Container>}
+                  : <Container h={20}>
+                      {document.data?.deleted
+                        ? <ErrorMessageBlock warningIcon={false} text={'Document is deleted'}/>
+                        : <ErrorMessageBlock/>
+                      }
+                    </Container>}
               </LoadingBlock>
             : <Container h={20}><ErrorMessageBlock/></Container>
           }

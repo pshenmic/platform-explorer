@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { RateTooltip } from '../../ui/Tooltips'
 import Link from 'next/link'
 import { findActiveAlias } from '../../../util'
+import DocumentActionBadge from '../DocumentActionBadge'
 import './DocumentsRevisionsListItem.scss'
 
 function DocumentsRevisionsListItem ({ revision, rate }) {
@@ -15,7 +16,10 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
     <Link href={`/transaction/${revision?.txHash}`} className={'DocumentsRevisionsListItem'}>
       <Grid className={'DocumentsRevisionsListItem__Content'}>
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Timestamp'}>
-          <TimeDelta endDate={revision?.timestamp}/>
+          {revision?.timestamp
+            ? <TimeDelta endDate={revision?.timestamp}/>
+            : <NotActive/>
+          }
         </GridItem>
 
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--TxHash'}>
@@ -53,8 +57,18 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
           }
         </GridItem>
 
+        <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--TransitionType'}>
+          {typeof revision?.transitionType === 'number'
+            ? <DocumentActionBadge typeId={revision?.transitionType}/>
+            : <NotActive>-</NotActive>
+          }
+        </GridItem>
+
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Revision DocumentsRevisionsListItem__Column--Number'}>
-          {revision?.revision}
+          {typeof revision?.revision === 'number'
+            ? revision.revision
+            : <NotActive>-</NotActive>
+          }
         </GridItem>
       </Grid>
     </Link>

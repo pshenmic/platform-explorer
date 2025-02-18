@@ -112,8 +112,8 @@ function DataContract ({ identifier }) {
       title={'Data Contract info'}
     >
       <div className={'DataContract__InfoBlocks'}>
-        <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract}/>
-        <DataContractDigestCard dataContract={dataContract} rate={rate} loading={dataContract.loading}/>
+        <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate}/>
+        <DataContractDigestCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate}/>
       </div>
 
       <InfoContainer styles={['tabs']}>

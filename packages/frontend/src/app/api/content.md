@@ -24,6 +24,7 @@ Reference:
 * [Data Contracts](#data-contracts)
 * [Data Contract Transactions](#data-contract-transactions)
 * [Document by Identifier](#document-by-identifier)
+* [Document Revisions](#document-revisions)
 * [Documents by Data Contract](#documents-by-data-contract)
 * [Identity by Identifier](#identity-by-identifier)
 * [Identity by DPNS](#identity-by-dpns)
@@ -31,7 +32,6 @@ Reference:
 * [Identities](#identities)
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
-* [Document Revisions](#document-revisions)
 * [Transactions By Identity](#transactions-by-identity)
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
@@ -758,8 +758,9 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
     {
       "type": 0,
       "action": null,
-      "owner": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-      "aliases": [
+      "owner": {
+        "identifier": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
+        "aliases": [
         {
           "alias": "Tutorial-Test-000000.dash",
           "status": "ok",
@@ -773,6 +774,7 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
           "timestamp": null
         }
       ],
+      }
       "timestamp": "2024-08-26T13:30:22.211Z",
       "gasUsed": 32230560,
       "error": null,
@@ -814,6 +816,8 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
     "parentNameAndLabel": 20000000000
   },
   "typeName": "preorder",
+  "gasUsed": null,
+  "totalGasUsed": 15999780,
   "owner": {
     "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
     "aliases": [
@@ -861,6 +865,7 @@ GET /document/y5DhJmM4unLTEaKAkMTbQHMoM8hh47ddowKYusgtHwL/revisions
       "transitionType": 0,
       "nonce": null,
       "gasUsed": 78317180,
+      "totalGasUsed": null,
       "owner": {
         "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
         "aliases": [
@@ -910,6 +915,8 @@ GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?documen
       "entropy": null,
       "prefundedVotingBalance": null,
       "typeName": "domain",
+      "gasUsed": null,
+      "totalGasUsed": null,
       "owner": {
         "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
         "aliases": [
@@ -1192,7 +1199,10 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&li
       "entropy": null,
       "prefundedVotingBalance": null,
       "typeName": "domain",
-      "owner": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6"
+      "owner": {
+        "identifier": "8J8k9aQ5Hotx8oLdnYAhYpyBJJGg4wZALptKLuDE9Df6",
+        "aliases": []
+      }
     }, ...
   ],
   "pagination": {
