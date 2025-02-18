@@ -6,17 +6,38 @@
 
   grid-template-columns:
     minmax(0, 600px)
-    minmax(140px, 140px)
-    minmax(0, 600px)
+    minmax(140px, 200px)
+    minmax(26rem, 26rem)
     45px;
 
-  //@container (max-width: 810px) {
-  //  grid-template-columns:
-  //    minmax(120px, 120px)
-  //    minmax(0, 240px)
-  //    minmax(0, 1fr)
-  //    auto;
-  //}
+  @container (max-width: 77rem) {
+    grid-template-columns:
+      auto
+      minmax(9.375rem, 9.375rem)
+      minmax(24.5rem, 24.5rem)
+      45px;
+  }
+
+  @container (max-width: 62.5rem) {
+    grid-template-columns:
+      auto
+      minmax(9.375rem, 9.375rem)
+      minmax(24.5rem, 24.5rem)
+      45px;
+  }
+
+  @container (max-width: 49rem) {
+    grid-template-columns:
+      auto
+      minmax(9.375rem, 9.375rem)
+      45px;
+  }
+
+  @container (max-width: 27.5rem) {
+    grid-template-columns:
+      auto
+      45px;
+  }
 }
 
 @mixin Column () {
@@ -33,20 +54,24 @@
   }
 
   &--OperatorPubKey {
-    max-width: 600px;
+    max-width: 37.5rem;
     overflow: hidden;
-
   }
 
   &--Valid {
-    //width: 150px;
     justify-content: flex-end;
     white-space: nowrap;
   }
 
-  //@container (max-width: 810px) {
-  //  &--GasUsed {
-  //    display: none;
-  //  }
-  //}
+  @container (max-width: 49rem) {
+    &--OperatorPubKey {
+      display: none;
+    }
+  }
+
+  @container (max-width: 27.5rem) {
+    &--Service {
+      display: none;
+    }
+  }
 }

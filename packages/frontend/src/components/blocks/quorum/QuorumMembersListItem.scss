@@ -13,6 +13,7 @@
 
   &__Column {
     @include qm.Column();
+    line-height: 0.75rem;
   }
 
   @media screen and (max-width: 620px) {
