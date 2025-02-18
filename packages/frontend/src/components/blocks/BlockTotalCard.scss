@@ -10,4 +10,12 @@
       height: 54px;
     }
   }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__Header {
+      .InfoLine {
+        flex-wrap: wrap;
+      }
+    }
+  }
 }
