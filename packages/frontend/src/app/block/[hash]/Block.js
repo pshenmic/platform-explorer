@@ -83,7 +83,10 @@ function Block ({ hash }) {
               }
             </TabPanel>
             <TabPanel position={'relative'}>
-              <QuorumMembersList members={block?.data?.quorum?.members}/>
+              <QuorumMembersList
+                members={block?.data?.quorum?.members}
+                loading={block.loading}
+              />
             </TabPanel>
           </TabPanels>
         </Tabs>
