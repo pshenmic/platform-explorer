@@ -1,8 +1,8 @@
 import { DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueContainer } from '../ui/containers'
-import './BlockTotalCard.scss'
 import { BlockIcon } from '../ui/icons'
+import './BlockTotalCard.scss'
 
 function BlockTotalCard ({ block, className }) {
   const blockData = block?.data?.header
