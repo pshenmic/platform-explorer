@@ -65,6 +65,7 @@ function Block ({ hash }) {
                 ? <TransactionsList
                     transactions={block.data?.txs}
                     rate={rate.data}
+                    loading={block.loading}
                   />
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
