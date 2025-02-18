@@ -7,8 +7,6 @@ import { BlockIcon } from '../ui/icons'
 function BlockTotalCard ({ block, className }) {
   const blockData = block?.data?.header
 
-  console.log('block?.data?.header', block?.data?.header)
-
   return (
     <div className={`InfoBlock InfoBlock--Gradient BlockTotalCard ${block?.loading ? 'BlockTotalCard--Loading' : ''} ${className || ''}`}>
       {block.data?.name &&
