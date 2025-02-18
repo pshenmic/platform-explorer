@@ -2,7 +2,7 @@
 
 @mixin Columns () {
   display: grid;
-  gap: 16px;
+  gap: 1rem;
 
   grid-template-columns:
     minmax(0, 600px)
