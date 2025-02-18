@@ -18,6 +18,10 @@
 
   &__InfoBlock {
     width: 50%;
+
+    .InfoLine--Loading {
+      flex-wrap: nowrap;
+    }
   }
 
   @media screen and (max-width: $breakpoint-lg) {
