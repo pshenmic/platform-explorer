@@ -6,16 +6,23 @@ import TransactionsList from '../../../components/transactions/TransactionsList'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import {
-  Container,
-  Tabs, TabList, Tab, TabPanels, TabPanel
-} from '@chakra-ui/react'
+import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
 import { BlockDigestCard, BlockTotalCard, QuorumMembersList } from '../../../components/blocks'
+import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import './Block.scss'
 
 function Block ({ hash }) {
+  const { setBreadcrumbs } = useBreadcrumbs()
   const [block, setBlock] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Home', path: '/' },
+      { label: 'Blocks', path: '/blocks' },
+      { label: hash, icon: 'block' }
+    ])
+  }, [setBreadcrumbs, hash])
 
   const fetchData = () => {
     setBlock(state => ({ ...state, loading: true }))
