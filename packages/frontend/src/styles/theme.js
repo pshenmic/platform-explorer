@@ -5,6 +5,7 @@ import Badge from './components/Badge'
 import { global } from './global'
 import Button from './components/Button'
 import Progress from './components/Progress'
+import Popover from './components/Popover'
 import {
   Montserrat,
   Open_Sans as OpenSans,
@@ -84,7 +85,8 @@ export const theme = extendTheme({
     },
     Button,
     Badge,
-    Progress
+    Progress,
+    Popover
   }
 })
 
