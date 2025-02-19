@@ -257,6 +257,19 @@ const BlockIcon = (props) => {
   )
 }
 
+const InfoIcon = ({ bg, color, ...props }) => (
+  <Icon viewBox='0 0 16 16' width='16' height='16' {...props}>
+    <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8Z'
+        fill='#008DE4'/>
+      <path fillRule='evenodd' clipRule='evenodd'
+            d='M7.99953 12.0011C8.49045 12.0011 8.88842 11.6032 8.88842 11.1122V7.3336C8.88842 6.84268 8.49045 6.44471 7.99953 6.44471C7.50861 6.44471 7.11064 6.84268 7.11064 7.3336V11.1122C7.11064 11.6032 7.50861 12.0011 7.99953 12.0011ZM7.99953 4.93447C8.49045 4.93447 8.88842 4.5365 8.88842 4.04558V4.00027C8.88842 3.50935 8.49045 3.11138 7.99953 3.11138C7.50861 3.11138 7.11064 3.50935 7.11064 4.00027V4.04558C7.11064 4.5365 7.50861 4.93447 7.99953 4.93447Z'
+            fill='#181F22'/>
+    </svg>
+  </Icon>
+)
+
 export {
   CalendarIcon,
   CalendarIcon2,
@@ -278,5 +291,6 @@ export {
   DocumentIcon,
   QueuePositionIcon,
   MembersIcon,
-  BlockIcon
+  BlockIcon,
+  InfoIcon
 }
