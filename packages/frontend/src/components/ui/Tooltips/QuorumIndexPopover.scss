@@ -1,7 +1,9 @@
 .QuorumIndexPopover {
-  //max-width: 100%;
-  //width: 330px;
-  //padding: 1rem 1.25rem !important;
+  .Popover__Body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 
   .InfoLine {
     align-items: baseline;
