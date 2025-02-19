@@ -300,7 +300,17 @@ describe('Other routes', () => {
       const expectedDataContract = {
         identifier: dataContract.identifier,
         name: dataContract.name,
-        owner: identity.identifier.trim(),
+        owner: {
+          identifier: identity.identifier.trim(),
+          aliases: [
+            {
+              alias: 'dpns.dash',
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }
+          ]
+        },
         schema: JSON.stringify(dataContract.schema),
         version: 0,
         txHash: dataContractTransaction.hash,
@@ -310,7 +320,17 @@ describe('Other routes', () => {
         averageGasUsed: 0,
         identitiesInteracted: 1,
         totalGasUsed: 0,
-        topIdentity: dataContract.owner
+        topIdentity: {
+          identifier: identity.identifier.trim(),
+          aliases: [
+            {
+              alias: 'dpns.dash',
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }
+          ]
+        }
       }
 
       assert.deepEqual({ dataContract: expectedDataContract }, body)
@@ -370,6 +390,7 @@ describe('Other routes', () => {
           ]
         },
         gasUsed: null,
+        totalGasUsed: 0,
         nonce: 2
       }
 

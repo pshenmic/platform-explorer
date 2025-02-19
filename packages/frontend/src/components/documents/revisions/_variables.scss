@@ -1,0 +1,56 @@
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+
+  grid-template-columns:
+    70px
+    minmax(0, 600px)
+    minmax(0, 400px)
+    minmax(0, 150px)
+    minmax(120px, 150px)
+    65px;
+
+  @container (max-width: 38rem) {
+    grid-template-columns:
+      70px
+      minmax(0, 600px)
+      minmax(0, 400px)
+      65px;
+  }
+
+  @container (max-width: 24rem) {
+    grid-template-columns:
+      70px
+      minmax(0, 600px)
+      65px;
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &--Timestamp {
+    max-width: 70px;
+  }
+
+  &--Owner {
+    overflow: hidden;
+  }
+
+  @container (max-width: 38rem) {
+    &--GasUsed {
+      display: none;
+    }
+
+    &--TransitionType {
+      display: none;
+    }
+  }
+
+  @container (max-width: 24rem) {
+    &--Owner {
+      display: none;
+    }
+  }
+}

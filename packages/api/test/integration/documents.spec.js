@@ -173,6 +173,7 @@ describe('Documents routes', () => {
         system: document.document.is_system,
         nonce: 2,
         gasUsed: null,
+        totalGasUsed: 0,
         transitionType: 0
       }
 
@@ -204,6 +205,7 @@ describe('Documents routes', () => {
         txHash: document.transaction.hash,
         nonce: 2,
         gasUsed: null,
+        totalGasUsed: 0,
         transitionType: 0
       }
 
@@ -244,6 +246,7 @@ describe('Documents routes', () => {
         nonce: null,
         prefundedVotingBalance: null,
         gasUsed: 0,
+        totalGasUsed: null,
         system: null
       }
 
@@ -282,6 +285,7 @@ describe('Documents routes', () => {
           transitionType: document.transition_type,
           prefundedVotingBalance: null,
           gasUsed: null,
+          totalGasUsed: null,
           nonce: null
         }))
 
@@ -331,6 +335,7 @@ describe('Documents routes', () => {
           },
           system: document.is_system,
           gasUsed: null,
+          totalGasUsed: null,
           nonce: null
         }))
 
@@ -367,6 +372,7 @@ describe('Documents routes', () => {
           entropy: null,
           prefundedVotingBalance: null,
           gasUsed: null,
+          totalGasUsed: null,
           nonce: null
         }))
 
@@ -415,6 +421,7 @@ describe('Documents routes', () => {
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
+          totalGasUsed: null,
           gasUsed: null,
           nonce: null
         }))
@@ -459,6 +466,7 @@ describe('Documents routes', () => {
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
+          totalGasUsed: null,
           gasUsed: null,
           nonce: null
         }))
@@ -503,6 +511,7 @@ describe('Documents routes', () => {
           system: document.is_system,
           entropy: null,
           prefundedVotingBalance: null,
+          totalGasUsed: null,
           gasUsed: null,
           nonce: null
         }))

@@ -86,7 +86,7 @@ $borderRadius: 20px;
       margin-bottom: 12px;
 
       &::before {
-        border-radius: 20px;
+        border-radius: $border-radius-medium;
       }
     }
   }

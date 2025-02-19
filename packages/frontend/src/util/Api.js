@@ -63,6 +63,10 @@ const getDataContractByIdentifier = (identifier) => {
   return call(`dataContract/${identifier}`, 'GET')
 }
 
+const getDataContractTransactions = (identifier, page = 1, limit = 30, order = 'asc') => {
+  return call(`dataContract/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+}
+
 const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy) => {
   return call(`dataContracts?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
@@ -74,6 +78,10 @@ const getDocumentByIdentifier = (identifier, dataContractId, typeName) => {
   const queryParams = params.join('&')
 
   return call(`document/${identifier}?${queryParams ? `?${queryParams}` : ''}`, 'GET')
+}
+
+const getDocumentRevisions = (identifier, page = 1, limit = 30, order = 'asc') => {
+  return call(`document/${identifier}/revisions?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc') => {
@@ -155,12 +163,14 @@ export {
   decodeTx,
   getDocumentsByDataContract,
   getDocumentByIdentifier,
+  getDocumentRevisions,
   getDataContractByIdentifier,
   getDataContracts,
   getIdentities,
   getIdentity,
   getTransactionsByIdentity,
   getDataContractsByIdentity,
+  getDataContractTransactions,
   getDocumentsByIdentity,
   getTransfersByIdentity,
   getWithdrawalsByIdentity,

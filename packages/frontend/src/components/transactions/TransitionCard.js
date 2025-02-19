@@ -1,7 +1,7 @@
 import { ValueCard } from '../cards'
 import { CreditsBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
 import { DocumentActionEnum } from '../../enums/documentAction'
-import DocumentActionBadge from './DocumentActionBadge'
+import { DocumentActionBadge } from '../documents'
 import { ValueContainer } from '../ui/containers'
 import { Code } from '@chakra-ui/react'
 import './TransitionCard.scss'

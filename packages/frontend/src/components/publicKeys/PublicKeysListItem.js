@@ -4,6 +4,7 @@ import PublicKeyBoundCard from './PublicKeyBoundCard'
 import { ValueContainer } from '../ui/containers'
 import { CopyButton } from '../ui/Buttons'
 import * as pkEnums from '../../enums/publicKey'
+import { NotActive } from '../data'
 import './PublicKeysListItem.scss'
 import './PublicKeyBoundCard.scss'
 
@@ -15,15 +16,15 @@ function PublicKeysListItem ({ publicKey, className }) {
     <div className={`PublicKeysListItem ${className || ''}`}>
       <Grid className={'PublicKeysListItem__Content'}>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Id'}>
-          {publicKey?.keyId !== undefined ? publicKey?.keyId : '-'}
+          {publicKey?.keyId !== undefined ? publicKey?.keyId : <NotActive>-</NotActive>}
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column--PublicKeyHash'}>
           {publicKey?.hash !== undefined
             ? <ValueCard className={'PublicKeysListItem__PublicKeyHash'} size={'sm'} colorScheme={'transparent'}>
                 {publicKey?.hash}
                 <CopyButton text={publicKey?.hash}/>
-            </ValueCard>
-            : <span className={'PublicKeysListItem__NotActiveText'}>n/a</span>
+              </ValueCard>
+            : <NotActive/>
           }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Type'}>
@@ -31,15 +32,15 @@ function PublicKeysListItem ({ publicKey, className }) {
             ? <ValueContainer colorScheme={'gray'} size={'sm'}>
                 {pkEnums.KeyTypeEnum?.[publicKey?.type] || '-'}
               </ValueContainer>
-            : <span className={'PublicKeysListItem__NotActiveText'}>n/a</span>
+            : <NotActive/>
           }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Purpose'}>
           {purpose?.title !== undefined
             ? <ValueContainer colorScheme={purpose?.colorScheme} size={'sm'}>
-              {purpose?.title}
-            </ValueContainer>
-            : <span className={'PublicKeysListItem__NotActiveText'}>n/a</span>
+                {purpose?.title}
+              </ValueContainer>
+            : <NotActive/>
           }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--SecurityLevel'}>
@@ -47,7 +48,7 @@ function PublicKeysListItem ({ publicKey, className }) {
             ? <ValueContainer colorScheme={securityLevel?.colorScheme} size={'sm'}>
                 {securityLevel?.title}
               </ValueContainer>
-            : <span className={'PublicKeysListItem__NotActiveText'}>n/a</span>
+            : <NotActive/>
           }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
@@ -55,7 +56,7 @@ function PublicKeysListItem ({ publicKey, className }) {
             ? <ValueContainer colorScheme={publicKey?.readOnly ? 'red' : 'green'} size={'sm'}>
                 {publicKey?.readOnly ? 'True' : 'False'}
               </ValueContainer>
-            : <span className={'PublicKeysListItem__NotActiveText'}>n/a</span>
+            : <NotActive/>
           }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Data'}>
@@ -64,7 +65,7 @@ function PublicKeysListItem ({ publicKey, className }) {
                 {publicKey?.data}
                 <CopyButton text={publicKey?.data}/>
               </ValueCard>
-            : <span className={'PublicKeysListItem__NotActiveText'}>n/a</span>
+            : <NotActive/>
           }
           {publicKey?.contractBounds &&
             <PublicKeyBoundCard
