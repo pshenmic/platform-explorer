@@ -1,7 +1,7 @@
-import Tooltip from './Tooltip'
-import { EpochTooltip, Popover } from './index'
-import { DocumentIcon, InfoIcon } from '../icons'
+import { Popover } from './index'
 import { Identifier, InfoLine } from '../../data'
+import { ValueContainer } from '../containers'
+import { Badge } from '@chakra-ui/react'
 import './QuorumIndexPopover.scss'
 
 export default function QuorumIndexPopover ({ quorum, header, loading, children }) {
@@ -25,28 +25,32 @@ export default function QuorumIndexPopover ({ quorum, header, loading, children 
 
       <InfoLine
         title={'LLMQ Type'}
-        value={quorum?.type}
+        value={<Badge colorScheme={'gray'}>{quorum?.type}</Badge>}
         loading={loading}
         error={!quorum?.type}
       />
 
-      {/*<InfoLine*/}
-      {/*  title={'Quorum Block Height'}*/}
-      {/*  value={''}*/}
-      {/*  loading={loading}*/}
-      {/*  error={false}*/}
-      {/*/>*/}
+      {/* <InfoLine */}
+      {/*   title={'Quorum Block Height'} */}
+      {/*   value={''} */}
+      {/*   loading={loading} */}
+      {/*   error={false} */}
+      {/* /> */}
 
       <InfoLine
         title={'Quorum Creation Height'}
-        value={quorum?.creationHeight}
+        value={
+          <ValueContainer external={true} link={`/identity/${quorum?.creationHeight}`}>
+            {quorum?.creationHeight}
+          </ValueContainer>
+        }
         loading={loading}
         error={typeof quorum?.creationHeight !== 'number'}
       />
 
       <InfoLine
-        title={'Quorum Mined Block Hash'}
-        value={quorum?.minedBlockHash}
+        title={<>Quorum Mined <br/> Block Hash</>}
+        value={<Identifier styles={['highlight-both']} ellipsis={false}>{quorum?.minedBlockHash}</Identifier>}
         loading={loading}
         error={!quorum?.minedBlockHash}
       />
@@ -68,7 +72,18 @@ export default function QuorumIndexPopover ({ quorum, header, loading, children 
 
       <InfoLine
         title={'Health Ratio'}
-        value={quorum?.healthRatio}
+        value={
+          <Badge
+            colorScheme={(() => {
+              if (quorum?.healthRatio > 0.75) return 'green'
+              if (quorum?.healthRatio > 0.5) return 'yellow'
+              if (quorum?.healthRatio > 0.25) return 'orange'
+              return 'red'
+            })()}
+          >
+            {quorum?.healthRatio}
+          </Badge>
+        }
         loading={loading}
         error={quorum?.healthRatio === undefined || quorum?.healthRatio === null}
       />
