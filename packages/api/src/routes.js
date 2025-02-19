@@ -224,7 +224,7 @@ module.exports = ({
       }
     },
     {
-      path: '/contestedResources/status',
+      path: '/contestedResources/stats',
       method: 'GET',
       handler: contestedResourcesController.getContestedResourcesStatus
     },

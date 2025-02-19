@@ -413,7 +413,7 @@ module.exports = class ContestedDAO {
 
     const [{ resource_value: resourceValue, timestamp }] = rows.filter(row => row.resource_value !== null)
 
-    const endingResourceValue = rows
+    const expiringContestedResource = rows
       .filter(row => row.resourceValue !== null)
       .reduce((accumulator, currentValue) => {
         switch (Number(currentValue.choice ?? -1)) {
@@ -439,7 +439,7 @@ module.exports = class ContestedDAO {
 
     return ContestedResourceStatus.fromObject({
       ...ContestedResourceStatus.fromRow(status),
-      endingResourceValue
+      expiringContestedResource
     })
   }
 }

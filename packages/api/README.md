@@ -72,7 +72,7 @@ Reference:
 * [Votes for contested resource](#votes-for-contested-resource)
 * [Contested Resource Value](#contested-resource-value)
 * [Contested Resources](#contested-resources)
-* [Contested Resources Status](#contested-resources-status)
+* [Contested Resources Stats](#contested-resources-stats)
 * [Rate](#rate)
 * [Masternode Votes](#masternode-votes)
 * [Search](#search)
@@ -1672,17 +1672,17 @@ Response codes:
 500: Internal Server Error
 ```
 ___
-### Contested Resources Status
-Return info about status about resource values
+### Contested Resources Stats
+Return info about stats about resource values
 
 ```
-GET /contestedResources/status
+GET /contestedResources/stats
 
 {
     "totalContestedResources": 235,
     "totalPendingContestedResources": 3,
     "totalVotesCount": 426,
-    "endingResourceValue": {
+    "expiringContestedResource": {
         "contenders": null,
         "indexName": null,
         "resourceValue": [

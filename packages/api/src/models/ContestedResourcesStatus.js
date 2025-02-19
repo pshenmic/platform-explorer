@@ -2,17 +2,17 @@ module.exports = class ContestedResourcesStatus {
   totalContestedResources
   totalPendingContestedResources
   totalVotesCount
-  endingResourceValue
+  expiringContestedResource
 
-  constructor (totalContestedResources, totalPendingContestedResources, totalVotesCount, endingResourceValue) {
+  constructor (totalContestedResources, totalPendingContestedResources, totalVotesCount, expiringContestedResource) {
     this.totalContestedResources = totalContestedResources ?? null
     this.totalPendingContestedResources = totalPendingContestedResources ?? null
     this.totalVotesCount = totalVotesCount ?? null
-    this.endingResourceValue = endingResourceValue ?? null
+    this.expiringContestedResource = expiringContestedResource ?? null
   }
 
-  static fromObject ({ totalContestedResources, totalPendingContestedResources, totalVotesCount, endingResourceValue }) {
-    return new ContestedResourcesStatus(totalContestedResources, totalPendingContestedResources, totalVotesCount, endingResourceValue)
+  static fromObject ({ totalContestedResources, totalPendingContestedResources, totalVotesCount, expiringContestedResource }) {
+    return new ContestedResourcesStatus(totalContestedResources, totalPendingContestedResources, totalVotesCount, expiringContestedResource)
   }
 
   /* eslint-disable camelcase */

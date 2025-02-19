@@ -427,14 +427,14 @@ describe('Contested documents routes', () => {
   })
 
   describe('get contested resources status', async () => {
-    it('should return status of contested resources', async () => {
-      const { body } = await client.get('/contestedResources/status')
+    it('should return stats of contested resources', async () => {
+      const { body } = await client.get('/contestedResources/stats')
 
       const expectedBody = {
         totalContestedResources: 40,
         totalPendingContestedResources: 0,
         totalVotesCount: 40,
-        endingResourceValue: null
+        expiringContestedResource: null
       }
 
       assert.deepEqual(body, expectedBody)
@@ -476,13 +476,13 @@ describe('Contested documents routes', () => {
         state_transition_hash: documentTransaction.hash
       })
 
-      const { body } = await client.get('/contestedResources/status')
+      const { body } = await client.get('/contestedResources/stats')
 
       const expectedBody = {
         totalContestedResources: 41,
         totalPendingContestedResources: 1,
         totalVotesCount: 40,
-        endingResourceValue: {
+        expiringContestedResource: {
           contenders: null,
           indexName: null,
           resourceValue: ['dash', 'xyy'],
