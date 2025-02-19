@@ -22,19 +22,21 @@
     &--TotalTransactions, &--QuorumIndex, &--Epoch, &--QuorumMembers {
       width: 100%;
 
-      .InfoLine__Title {
-        &, span {
-          align-items: center;
-          display: flex;
+      > .InfoLine {
+        .InfoLine__Title {
+          &, span {
+            align-items: center;
+            display: flex;
+          }
+
+          span {
+            gap: 0.75rem;
+          }
         }
 
-        span {
-          gap: 0.75rem;
+        .InfoLine__Value {
+          font-size: 0.813rem;
         }
-      }
-
-      .InfoLine__Value {
-        font-size: 0.813rem;
       }
     }
   }
