@@ -6,10 +6,17 @@
   border-radius: $border-radius-medium;
   container-type: inline-size;
 
-  &__InfoLine {
+  &__InfoLine {}
 
+  &__InfoContainer {
+    > .InfoLine {
+      .InfoLine__Title {
+        svg {
+          margin-right: 0.75rem;
+        }
+      }
+    }
   }
-
 
   &__InfoLine {
     &--Validator {
