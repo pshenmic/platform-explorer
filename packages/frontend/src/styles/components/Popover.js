@@ -21,7 +21,6 @@ const Popover = {
 
     return {
       header: {
-        // bg: 'green',
         p: 0,
         borderBottom: 0,
         textAlign: 'left',
@@ -31,9 +30,7 @@ const Popover = {
       },
       body: {
         fontFamily: 'mono',
-        // bg: 'green',
-        p: 0,
-        // fontSize: '0.688rem'
+        p: 0
       },
       content: {
         gap: '0.5rem',
