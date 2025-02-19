@@ -23,11 +23,18 @@ function Block ({ hash }) {
   const { setBreadcrumbs } = useBreadcrumbs()
   const [block, setBlock] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-
+  const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  useEffect(() => {
+    Api.getStatus()
+      .then(res => fetchHandlerSuccess(setStatus, res))
+      .catch(err => fetchHandlerError(setStatus, err))
+      // .finally(() => setTimeout(fetchData, 15000))
+  }, [])
 
   useEffect(() => {
     setBreadcrumbs([
@@ -81,8 +88,16 @@ function Block ({ hash }) {
       title={'Block info'}
     >
       <div className={'Block__InfoBlocks'}>
-        <BlockTotalCard className={'Block__InfoBlock'} block={block}/>
-        <BlockDigestCard className={'Block__InfoBlock'} block={block} rate={rate}/>
+        <BlockTotalCard
+          className={'Block__InfoBlock'}
+          block={block}
+        />
+        <BlockDigestCard
+          className={'Block__InfoBlock'}
+          block={block}
+          rate={rate}
+          status={status.data}
+        />
       </div>
 
       <InfoContainer styles={['tabs']}>
