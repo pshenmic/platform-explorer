@@ -1,15 +1,18 @@
-import { DocumentIcon, MembersIcon, QueuePositionIcon, TransactionsIcon } from '../ui/icons'
+'use client'
+
+import { DocumentIcon, MembersIcon, QueuePositionIcon, TransactionsIcon, InfoIcon } from '../ui/icons'
 import { CreditsBlock, Identifier, InfoLine } from '../data'
 import { ValueCard } from '../cards'
+import { EpochTooltip, Tooltip, QuorumIndexPopover } from '../ui/Tooltips'
+
 import './BlockDigestCard.scss'
 
-function BlockDigestCard ({ block, rate }) {
+function BlockDigestCard ({ block, rate, status }) {
   console.log(block)
+  console.log('status', status.epoch)
 
   return (
-    <div
-      className={`Block__InfoBlock Block__DigestCard BlockDigestCard ${block.loading ? 'BlockDigestCard--Loading' : ''}`}>
-
+    <div className={`Block__InfoBlock Block__DigestCard BlockDigestCard ${block.loading ? 'BlockDigestCard--Loading' : ''}`}>
       <div className={'BlockDigestCard__RowContainer'}>
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
@@ -25,7 +28,14 @@ function BlockDigestCard ({ block, rate }) {
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--Epoch'}
             title={(<span><DocumentIcon/>Epoch</span>)}
-            value={'123'}
+            value={
+              <EpochTooltip epoch={status?.epoch}>
+                <span>
+                  #{status?.epoch?.number}
+                  <InfoIcon color={'brand.light'} boxSize={4}/>
+                </span>
+              </EpochTooltip>
+            }
             loading={block.loading}
             error={block.error}
           />
@@ -37,7 +47,17 @@ function BlockDigestCard ({ block, rate }) {
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--QuorumIndex'}
             title={(<span><QueuePositionIcon/>Quorum Index</span>)}
-            value={block?.data?.quorum?.quorumIndex}
+            value={
+              <QuorumIndexPopover
+                header={'Quorum Index'}
+                quorum={block?.data?.quorum}
+              >
+                <span>
+                  {block?.data?.quorum?.quorumIndex}
+                  <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+                </span>
+              </QuorumIndexPopover>
+            }
             loading={block.loading}
             error={block.error || block?.data?.quorum?.quorumIndex === undefined}
           />
@@ -47,7 +67,17 @@ function BlockDigestCard ({ block, rate }) {
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--QuorumMembers'}
             title={(<span><MembersIcon/>Quorum Members</span>)}
-            value={block?.data?.quorum?.members?.length}
+            value={
+              <Tooltip
+                title={'Quorum Members'}
+                content={`Tooltip text describing the info of wtf is Quorum Members and what the number ${block?.data?.quorum?.members?.length} is`}
+              >
+                <span>
+                  {block?.data?.quorum?.members?.length}
+                  <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+                </span>
+              </Tooltip>
+            }
             loading={block.loading}
             error={block.error || block?.data?.quorum?.members?.length === undefined}
           />
