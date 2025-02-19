@@ -9,12 +9,25 @@ import { InfoContainer, PageDataContainer } from '../../../components/ui/contain
 import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
 import { BlockDigestCard, BlockTotalCard, QuorumMembersList } from '../../../components/blocks'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import './Block.scss'
+
+const tabs = [
+  'transactions',
+  'quorum'
+]
+
+const defaultTabName = 'transactions'
 
 function Block ({ hash }) {
   const { setBreadcrumbs } = useBreadcrumbs()
   const [block, setBlock] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
+
+  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     setBreadcrumbs([
@@ -23,6 +36,30 @@ function Block ({ hash }) {
       { label: hash, icon: 'block' }
     ])
   }, [setBreadcrumbs, hash])
+
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+
+    if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
+      setActiveTab(tabs.indexOf(tab.toLowerCase()))
+      return
+    }
+
+    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  }, [searchParams])
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+
+    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase()) ||
+      (tabs.indexOf(defaultTabName.toLowerCase()) === -1 && activeTab === 0)) {
+      urlParameters.delete('tab')
+    } else {
+      urlParameters.set('tab', tabs[activeTab])
+    }
+
+    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  }, [activeTab])
 
   const fetchData = () => {
     setBlock(state => ({ ...state, loading: true }))
@@ -49,7 +86,7 @@ function Block ({ hash }) {
       </div>
 
       <InfoContainer styles={['tabs']}>
-        <Tabs>
+        <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
           <TabList>
             <Tab>Transactions {block.data?.txs?.length !== undefined
               ? <span
