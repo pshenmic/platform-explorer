@@ -206,14 +206,27 @@ module.exports = ({
       method: 'GET',
       handler: contestedResourcesController.getContestedResourceVotes,
       schema: {
-        querystring: { $ref: 'paginationOptions#' }
-      },
-      params: {
-        type: 'object',
-        properties: {
-          resourceValue: { type: 'string' }
+        querystring: { $ref: 'paginationOptions#' },
+        params: {
+          type: 'object',
+          properties: {
+            resourceValue: { type: 'string' }
+          }
         }
       }
+    },
+    {
+      path: '/contestedResources',
+      method: 'GET',
+      handler: contestedResourcesController.getContestedResources,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/contestedResources/stats',
+      method: 'GET',
+      handler: contestedResourcesController.getContestedResourcesStatus
     },
     {
       path: '/identities',
