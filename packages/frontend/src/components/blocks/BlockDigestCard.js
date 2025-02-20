@@ -8,7 +8,7 @@ import { useState } from 'react'
 import './BlockDigestCard.scss'
 
 function BlockDigestCard ({ block, rate, status }) {
-  const [QuorumPopover,] = useState()
+  const [quorumPopoverIsOpen, setQuorumPopoverIsOpen] = useState()
 
   console.log(block)
   console.log('status', status.epoch)
@@ -34,7 +34,7 @@ function BlockDigestCard ({ block, rate, status }) {
               <EpochTooltip epoch={status?.epoch}>
                 <span>
                   #{status?.epoch?.number}
-                  <InfoIcon color={'brand.light'} boxSize={4}/>
+                  <InfoIcon className={'BlockDigestCard__InfoIcon'}/>
                 </span>
               </EpochTooltip>
             }
@@ -53,11 +53,15 @@ function BlockDigestCard ({ block, rate, status }) {
               <QuorumPopover
                 header={'Quorum Index'}
                 quorum={block?.data?.quorum}
-                stateCallback={}
+                stateCallback={setQuorumPopoverIsOpen}
               >
                 <span>
                   {block?.data?.quorum?.quorumIndex}
-                  <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+                  <InfoIcon
+                    className={'BlockDigestCard__InfoIcon'}
+                    color={quorumPopoverIsOpen ? 'white' : 'brand.normal'}
+                    _hover={{ color: 'brand.light' }}
+                  />
                 </span>
               </QuorumPopover>
             }
@@ -77,7 +81,7 @@ function BlockDigestCard ({ block, rate, status }) {
               >
                 <span>
                   {block?.data?.quorum?.members?.length}
-                  <InfoIcon className={'BlockDigestCard__InfoIcon'} color={'brand.light'} boxSize={4}/>
+                  <InfoIcon className={'BlockDigestCard__InfoIcon'}/>
                 </span>
               </Tooltip>
             }
