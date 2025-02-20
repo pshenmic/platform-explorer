@@ -2,13 +2,13 @@ import { Popover } from './index'
 import { Identifier, InfoLine } from '../../data'
 import { ValueContainer } from '../containers'
 import { Badge } from '@chakra-ui/react'
-import './QuorumIndexPopover.scss'
+import './QuorumPopover.scss'
 
-export default function QuorumIndexPopover ({ quorum, header, loading, children }) {
+export default function QuorumPopover ({ quorum, header, loading, stateCallback, children }) {
   console.log('quorum', quorum)
 
   return (
-    <Popover className={'QuorumIndexPopover'} trigger={children} header={header}>
+    <Popover stateCallback={stateCallback} className={'QuorumPopover'} trigger={children} header={header}>
       <InfoLine
         title={'Quorum Hash'}
         value={<Identifier styles={['highlight-both']} ellipsis={false}>{quorum?.quorumHash}</Identifier>}
