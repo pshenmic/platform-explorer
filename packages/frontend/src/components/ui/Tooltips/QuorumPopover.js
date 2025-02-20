@@ -4,7 +4,7 @@ import { ValueContainer } from '../containers'
 import { Badge } from '@chakra-ui/react'
 import './QuorumPopover.scss'
 
-export default function QuorumPopover ({ quorum, header, loading, stateCallback, children }) {
+export default function QuorumPopover ({ quorum, header, loading, stateCallback, l1explorerBaseUrl, children }) {
   console.log('quorum', quorum)
 
   return (
@@ -40,7 +40,7 @@ export default function QuorumPopover ({ quorum, header, loading, stateCallback,
       <InfoLine
         title={'Quorum Creation Height'}
         value={
-          <ValueContainer external={true} link={`/identity/${quorum?.creationHeight}`}>
+          <ValueContainer external={true} link={`${l1explorerBaseUrl}/block/${quorum?.creationHeight}`}>
             {quorum?.creationHeight}
           </ValueContainer>
         }

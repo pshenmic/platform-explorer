@@ -7,7 +7,7 @@ import { EpochTooltip, Tooltip, QuorumPopover } from '../ui/Tooltips'
 import { useState } from 'react'
 import './BlockDigestCard.scss'
 
-function BlockDigestCard ({ block, rate, status }) {
+function BlockDigestCard ({ block, rate, l1explorerBaseUrl, status }) {
   const [quorumPopoverIsOpen, setQuorumPopoverIsOpen] = useState()
 
   console.log(block)
@@ -53,6 +53,7 @@ function BlockDigestCard ({ block, rate, status }) {
               <QuorumPopover
                 header={'Quorum Index'}
                 quorum={block?.data?.quorum}
+                l1explorerBaseUrl={l1explorerBaseUrl}
                 stateCallback={setQuorumPopoverIsOpen}
               >
                 <span>

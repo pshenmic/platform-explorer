@@ -10,6 +10,7 @@ import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/r
 import { BlockDigestCard, BlockTotalCard, QuorumMembersList } from '../../../components/blocks'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { networks } from '../../../constants/networks'
 import './Block.scss'
 
 const tabs = [
@@ -25,6 +26,9 @@ function Block ({ hash }) {
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
+  const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -90,12 +94,14 @@ function Block ({ hash }) {
       <div className={'Block__InfoBlocks'}>
         <BlockTotalCard
           className={'Block__InfoBlock'}
+          l1explorerBaseUrl={l1explorerBaseUrl}
           block={block}
         />
         <BlockDigestCard
           className={'Block__InfoBlock'}
           block={block}
           rate={rate}
+          l1explorerBaseUrl={l1explorerBaseUrl}
           status={status.data}
         />
       </div>

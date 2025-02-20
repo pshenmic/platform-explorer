@@ -4,7 +4,7 @@ import { ValueContainer } from '../ui/containers'
 import { BlockIcon } from '../ui/icons'
 import './BlockTotalCard.scss'
 
-function BlockTotalCard ({ block, className }) {
+function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
   const blockData = block?.data?.header
 
   return (
@@ -43,7 +43,7 @@ function BlockTotalCard ({ block, className }) {
             loading={block.loading}
             error={block.error}
             value={
-              <ValueContainer external={true} link={`/identity/${block.data?.header?.l1LockedHeight}`}>
+              <ValueContainer external={true} link={`${l1explorerBaseUrl}/block/${block.data?.header?.l1LockedHeight}`}>
                 {block.data?.header?.l1LockedHeight}
               </ValueContainer>
             }
