@@ -102,7 +102,7 @@ function Block ({ hash }) {
           block={block}
           rate={rate}
           l1explorerBaseUrl={l1explorerBaseUrl}
-          status={status.data}
+          status={status}
         />
       </div>
 

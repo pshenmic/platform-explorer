@@ -31,15 +31,15 @@ function BlockDigestCard ({ block, rate, l1explorerBaseUrl, status }) {
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--Epoch'}
             title={(<span><DocumentIcon/>Epoch</span>)}
             value={
-              <EpochTooltip epoch={status?.epoch}>
+              <EpochTooltip epoch={status?.data?.epoch}>
                 <span className={'BlockDigestCard__InfoLineValueContent'}>
-                  #{status?.epoch?.number}
+                  #{status?.data?.epoch?.number}
                   <InfoIcon className={'BlockDigestCard__InfoIcon'}/>
                 </span>
               </EpochTooltip>
             }
-            loading={block.loading}
-            error={block.error}
+            loading={status.loading}
+            error={status.error}
           />
         </div>
       </div>
