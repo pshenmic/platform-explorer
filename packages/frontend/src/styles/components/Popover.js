@@ -3,12 +3,8 @@ import { flyoutStyles } from './flyoutStyles'
 const Popover = {
   baseStyle: {
     header: {
-      p: 0,
-      borderBottom: 0,
-      textAlign: 'left',
-      fontFamily: 'heading',
-      fontWeight: 700,
-      fontSize: '0.75rem'
+      ...flyoutStyles.header,
+      ...flyoutStyles.title
     },
     body: {
       fontFamily: 'mono',

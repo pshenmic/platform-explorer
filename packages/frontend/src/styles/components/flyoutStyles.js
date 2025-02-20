@@ -1,11 +1,13 @@
-// flyoutStyles.js
-
 export const flyoutStyles = {
   header: {
-
+    p: 0,
+    borderBottom: 0
   },
   title: {
-
+    textAlign: 'left',
+    fontFamily: 'heading',
+    fontWeight: 700,
+    fontSize: '0.75rem'
   },
   content: {
     fontFamily: 'heading',
