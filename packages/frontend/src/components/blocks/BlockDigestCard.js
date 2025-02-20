@@ -48,7 +48,7 @@ function BlockDigestCard ({ block, rate, l1explorerBaseUrl, status }) {
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--QuorumIndex'}
-            title={(<span><QueuePositionIcon/>Quorum Index</span>)}
+            title={<span><QueuePositionIcon/>Quorum Index</span>}
             value={
               <QuorumPopover
                 header={'Quorum Index'}
