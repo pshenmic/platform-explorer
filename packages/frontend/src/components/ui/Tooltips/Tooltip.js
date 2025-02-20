@@ -11,12 +11,12 @@ export default function Tooltip ({ title = '', content = '', children, className
   const ref = useRef()
 
   useOutsideClick({
-    ref: ref,
+    ref,
     handler: () => setIsOpen(false)
   })
 
   const element = cloneElement(children, {
-    ref: ref,
+    ref,
     onMouseEnter: () => setIsHovered(true),
     onMouseLeave: () => setIsHovered(false),
     onClick: () => setIsOpen(prev => !prev)
