@@ -32,7 +32,7 @@ function BlockDigestCard ({ block, rate, l1explorerBaseUrl, status }) {
             title={(<span><DocumentIcon/>Epoch</span>)}
             value={
               <EpochTooltip epoch={status?.epoch}>
-                <span>
+                <span className={'BlockDigestCard__InfoLineValueContent'}>
                   #{status?.epoch?.number}
                   <InfoIcon className={'BlockDigestCard__InfoIcon'}/>
                 </span>
@@ -56,7 +56,7 @@ function BlockDigestCard ({ block, rate, l1explorerBaseUrl, status }) {
                 l1explorerBaseUrl={l1explorerBaseUrl}
                 stateCallback={setQuorumPopoverIsOpen}
               >
-                <span>
+                <span className={'BlockDigestCard__InfoLineValueContent'}>
                   {block?.data?.quorum?.quorumIndex}
                   <InfoIcon
                     className={'BlockDigestCard__InfoIcon'}
@@ -80,7 +80,7 @@ function BlockDigestCard ({ block, rate, l1explorerBaseUrl, status }) {
                 title={'Quorum Members'}
                 content={`Tooltip text describing the info of wtf is Quorum Members and what the number ${block?.data?.quorum?.members?.length} is`}
               >
-                <span>
+                <span className={'BlockDigestCard__InfoLineValueContent'}>
                   {block?.data?.quorum?.members?.length}
                   <InfoIcon className={'BlockDigestCard__InfoIcon'}/>
                 </span>

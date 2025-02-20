@@ -10,22 +10,22 @@
 
   &__InfoContainer {
     > .InfoLine {
-      .InfoLine__Title {
+      > .InfoLine__Title {
         svg {
           margin-right: 0.75rem;
         }
       }
 
-      .InfoLine__Value {
+      > .InfoLine__Value {
         font-size: 0.813rem;
-
-        span {
-          gap: 0.25rem;
-          display: flex;
-          align-items: center;
-        }
       }
     }
+  }
+
+  .BlockDigestCard__InfoLineValueContent {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
   }
 
   &__InfoIcon {
