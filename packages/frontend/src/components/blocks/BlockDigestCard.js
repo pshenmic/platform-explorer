@@ -116,7 +116,7 @@ function BlockDigestCard ({ block, rate, l1explorerBaseUrl, status }) {
         title={'Total Fees'}
         value={<CreditsBlock credits={block.data?.header?.totalGasUsed} rate={rate}/>}
         loading={block.loading}
-        error={block.error || !block.data?.header?.totalGasUsed}
+        error={block.error || typeof block.data?.header?.totalGasUsed !== 'number'}
       />
     </div>
   )
