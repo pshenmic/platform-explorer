@@ -30,12 +30,16 @@ export default function QuorumPopover ({ quorum, header, loading, stateCallback,
         error={!quorum?.type}
       />
 
-      {/* <InfoLine */}
-      {/*   title={'Quorum Block Height'} */}
-      {/*   value={''} */}
-      {/*   loading={loading} */}
-      {/*   error={false} */}
-      {/* /> */}
+       <InfoLine
+         title={'Quorum Block Height'}
+         value={
+           <ValueContainer external={true} link={`${l1explorerBaseUrl}/block/${quorum?.blockHeight}`}>
+             {quorum?.blockHeight}
+           </ValueContainer>
+         }
+         loading={loading}
+         error={typeof quorum?.blockHeight !== 'number'}
+       />
 
       <InfoLine
         title={'Quorum Creation Height'}
