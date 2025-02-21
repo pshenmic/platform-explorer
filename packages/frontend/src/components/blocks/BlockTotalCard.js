@@ -22,14 +22,14 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
 
         <div className={'BlockTotalCard__HeaderLines'}>
           <InfoLine
-            className={'BlockTotalCard__Identifier'}
+            className={'BlockTotalCard__InfoLine--Hash'}
             title={'Block Hash'}
             loading={block.loading}
             error={block.error || !block?.data?.header?.hash}
             value={
               <Identifier
                 copyButton={true}
-                styles={['highlight-both']}
+                styles={['highlight-both', `size-${blockData?.appHash?.length}`]}
                 ellipsis={false}
               >
                 {block?.data?.header?.hash}
@@ -62,10 +62,11 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
         />
 
         <InfoLine
+          className={'BlockTotalCard__InfoLine BlockTotalCard__InfoLine--AppHash'}
           title={'App Hash'}
           value={
             <Identifier
-              styles={['highlight-both']}
+              styles={['highlight-both', `size-${blockData?.appHash?.length}`]}
               ellipsis={false}
             >
               {blockData?.appHash}
@@ -76,10 +77,11 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
         />
 
         <InfoLine
+          className={'BlockTotalCard__InfoLine BlockTotalCard__InfoLine--QuorumHash'}
           title={'Quorum Hash'}
           value={
             <Identifier
-              styles={['highlight-both']}
+              styles={['highlight-both', `size-${block?.data?.quorum?.quorumHash?.length}`]}
               ellipsis={false}
             >
               {block?.data?.quorum?.quorumHash}

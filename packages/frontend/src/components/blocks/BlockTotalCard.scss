@@ -11,10 +11,30 @@
     }
   }
 
+  &__InfoLine {
+    &--QuorumHash, &--AppHash, &--Hash {
+      .InfoLine__Value {
+        width: 100%;
+      }
+      .Identifier {
+        justify-content: flex-end;
+      }
+    }
+  }
+
   @media screen and (max-width: $breakpoint-sm) {
     &__Header {
       .InfoLine {
         flex-wrap: wrap;
+      }
+    }
+
+    &__InfoLine {
+      &--Hash {
+        .Identifier {
+          justify-content: flex-start;
+          text-align: left;
+        }
       }
     }
   }
