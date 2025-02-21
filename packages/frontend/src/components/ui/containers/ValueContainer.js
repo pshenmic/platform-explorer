@@ -16,7 +16,15 @@ function ValueContainer ({
 }) {
   const Wrapper = (props) => {
     return typeof link === 'string'
-      ? <Link href={link} className={props.className}>{props.children}</Link>
+      ? <Link
+          href={link}
+          {...(external &&
+            { target: '_blank', rel: 'noreferrer' }
+          )}
+          className={props.className}
+        >
+          {props.children}
+        </Link>
       : <div className={props.className}>{props.children}</div>
   }
 

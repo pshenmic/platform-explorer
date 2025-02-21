@@ -14,8 +14,15 @@ function splitIpAndPort (address) {
   return { host: address, port: null }
 }
 
-function IpAddress ({ children, host, port, className }) {
+function IpAddress ({ children, host, port, variant, clickable = true, className }) {
   if (!children && !host) return
+
+  const extraClass = (() => {
+    let res = ''
+    if (clickable) res += 'IpAddress--Clickable'
+    if (variant === 'dim') res += ' ' + 'IpAddress--Dim'
+    return res
+  })()
 
   if (!host && !port) {
     const addressData = splitIpAndPort(children)
@@ -24,7 +31,7 @@ function IpAddress ({ children, host, port, className }) {
   }
 
   return (
-    <div className={`IpAddress ${className}`}>
+    <div className={`IpAddress ${extraClass} ${className || ''}`}>
       <span className={'IpAddress__Host'}>{host}</span>
       {port && <>:<span className={'IpAddress__Port'}>{port}</span></>}
     </div>

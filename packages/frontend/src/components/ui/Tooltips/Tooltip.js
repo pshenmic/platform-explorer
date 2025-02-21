@@ -11,12 +11,12 @@ export default function Tooltip ({ title = '', content = '', children, className
   const ref = useRef()
 
   useOutsideClick({
-    ref: ref,
+    ref,
     handler: () => setIsOpen(false)
   })
 
   const element = cloneElement(children, {
-    ref: ref,
+    ref,
     onMouseEnter: () => setIsHovered(true),
     onMouseLeave: () => setIsHovered(false),
     onClick: () => setIsOpen(prev => !prev)
@@ -31,13 +31,6 @@ export default function Tooltip ({ title = '', content = '', children, className
           <div className={'Tooltip__Content'}>{content}</div>
         </div>
       }
-      borderRadius={'10px'}
-      border={'4px solid'}
-      borderColor={'gray.750'}
-      background={'gray.675'}
-      borderLeft={'none'}
-      borderRight={'none'}
-      padding={'18px 24px'}
       isOpen={isOpen || isHovered}
       onClose={() => setIsOpen(false)}
       {...props}

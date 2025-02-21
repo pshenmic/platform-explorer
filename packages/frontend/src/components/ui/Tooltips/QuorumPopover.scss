@@ -1,0 +1,19 @@
+.QuorumPopover {
+  .Popover__Body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .InfoLine {
+    align-items: baseline;
+  }
+
+  .InfoLine__Title {
+    text-align: left;
+  }
+
+  .InfoLine__Value {
+    overflow: hidden;
+  }
+}
