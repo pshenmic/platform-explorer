@@ -48,7 +48,8 @@ impl Indexer {
             tenderdash_rpc: TenderdashRpcApi::new(tenderdash_url),
             processor,
             decoder,
-            last_block_height: Cell::new(0),
+//             change to 0
+            last_block_height: Cell::new(31530),
             txs_to_skip: txs_to_skip.split(",")
                 .map(|s| { String::from(s) }).collect::<Vec<String>>(),
         };

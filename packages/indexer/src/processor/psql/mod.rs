@@ -13,12 +13,14 @@ use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::serialization::PlatformSerializable;
-use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
-use dpp::state_transition::documents_batch_transition::{DocumentsBatchTransition};
+use dpp::state_transition::batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
+use dpp::state_transition::batch_transition::{BatchTransition, BatchTransitionV1};
+use dpp::state_transition::batch_transition::BatchTransitionV0;
 use sha256::digest;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
-use dpp::state_transition::documents_batch_transition::document_transition::{DocumentTransition, DocumentTransitionV0Methods};
-use dpp::state_transition::documents_batch_transition::document_transition::action_type::DocumentTransitionActionType;
+use dpp::state_transition::batch_transition::batched_transition::{token_transition, BatchedTransition};
+use dpp::state_transition::batch_transition::batched_transition::BatchedTransitionRef::Token;
+use dpp::state_transition::state_transitions::batch_transition::batched_transition::document_transition_action_type::DocumentTransitionActionType;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
@@ -34,6 +36,16 @@ use crate::entities::masternode_vote::MasternodeVote;
 use crate::entities::transfer::Transfer;
 use crate::entities::validator::Validator;
 use crate::models::{TransactionResult, TransactionStatus};
+use dpp::state_transition::batch_transition::batched_transition::document_transition::{DocumentTransition, DocumentTransitionV0Methods};
+use dpp::state_transition::batch_transition::batched_transition::token_transition::TokenTransition;
+use dpp::state_transition::batch_transition::token_burn_transition::v0::v0_methods::TokenBurnTransitionV0Methods;
+use dpp::state_transition::batch_transition::token_config_update_transition::v0::v0_methods::TokenConfigUpdateTransitionV0Methods;
+use dpp::state_transition::batch_transition::token_destroy_frozen_funds_transition::v0::v0_methods::TokenDestroyFrozenFundsTransitionV0Methods;
+use dpp::state_transition::batch_transition::token_emergency_action_transition::v0::v0_methods::TokenEmergencyActionTransitionV0Methods;
+use dpp::state_transition::batch_transition::token_freeze_transition::v0::v0_methods::TokenFreezeTransitionV0Methods;
+use dpp::state_transition::batch_transition::token_mint_transition::v0::v0_methods::TokenMintTransitionV0Methods;
+use dpp::state_transition::batch_transition::token_transfer_transition::v0::v0_methods::TokenTransferTransitionV0Methods;
+use dpp::state_transition::batch_transition::token_unfreeze_transition::v0::v0_methods::TokenUnfreezeTransitionV0Methods;
 
 #[derive(Debug)]
 pub enum ProcessorError {
@@ -90,94 +102,193 @@ impl PSQLProcessor {
         self.dao.create_data_contract(data_contract, Some(st_hash)).await;
     }
 
-    pub async fn handle_documents_batch(&self, state_transition: DocumentsBatchTransition, st_hash: String) -> () {
-        let transitions = state_transition.transitions().clone();
+    pub async fn handle_document_transition(&self, document_transition: DocumentTransition, owner_id: Identifier, st_hash: String) -> () {
+        let document = Document::from(document_transition.clone());
+        let document_identifier = document.identifier.clone();
+
+        match document_transition {
+            DocumentTransition::Transfer(_) => {
+                self.dao.assign_document(document, owner_id).await.unwrap();
+            }
+            DocumentTransition::UpdatePrice(_) => {
+                self.dao.update_document_price(document).await.unwrap();
+            }
+            DocumentTransition::Purchase(_) => {
+                let current_document = self.dao.get_document_by_identifier(document.identifier).await.unwrap()
+                  .expect(&format!("Could not get Document with identifier {} from the database", document.identifier));
+
+                self.dao.assign_document(document.clone(), owner_id).await.unwrap();
+
+                let transfer = Transfer {
+                    id: None,
+                    sender: document.owner,
+                    recipient: current_document.owner,
+                    amount: document.price.unwrap(),
+                };
+                self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
+            }
+            _ => {
+                self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
+            }
+        }
+
+        let document_type = document_transition.document_type_name();
+
+        if document_type == "domain" && document_transition.data_contract_id() == SystemDataContract::DPNS.id() {
+            let label = document_transition
+              .data()
+              .unwrap()
+              .get_str_at_path("label")
+              .unwrap();
+
+            let normalized_parent_domain_name = document_transition
+              .data()
+              .unwrap()
+              .get_str_at_path("parentDomainName")
+              .unwrap();
+
+            let identity_identifier = document_transition
+              .data()
+              .unwrap()
+              .get_optional_at_path("records.identity")
+              .unwrap()
+              .expect("Could not find DPNS domain document identity identifier");
+
+            let identity_identifier = Identifier::from_bytes(&identity_identifier.clone().into_identifier_bytes().unwrap()).unwrap().to_string(Base58);
+            let identity = self.dao.get_identity_by_identifier(identity_identifier.clone()).await.unwrap().expect(&format!("Could not find identity with identifier {}", identity_identifier));
+            let alias = format!("{}.{}", label, normalized_parent_domain_name);
+
+            self.dao.create_identity_alias(identity, alias, st_hash.clone()).await.unwrap();
+        }
+
+        if document_type == "dataContracts" && document_transition.data_contract_id() == self.platform_explorer_identifier {
+            let data_contract_identifier_str = document_transition
+              .data()
+              .unwrap()
+              .get_str_at_path("identifier")
+              .unwrap();
+
+            let data_contract_identifier = Identifier::from_string(data_contract_identifier_str, Base58).unwrap();
+
+            let data_contract_name = document_transition
+              .data()
+              .unwrap()
+              .get_str_at_path("name")
+              .unwrap();
+
+            let data_contract = self.dao.get_data_contract_by_identifier(data_contract_identifier).await
+              .expect(&format!("Could not get DataContract with identifier {} from the database",
+                               data_contract_identifier_str))
+              .expect(&format!("Could not find DataContract with identifier {} in the database",
+                               data_contract_identifier_str));
+
+
+            if data_contract.owner == owner_id {
+                self.dao.set_data_contract_name(data_contract, String::from(data_contract_name)).await.unwrap();
+            } else {
+                println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document_identifier.to_string(Base58));
+            }
+        }
+    }
+    pub async fn handle_batch_v0(&self, state_transition: BatchTransitionV0, st_hash: String) -> () {
+        let transitions = state_transition.transitions.clone();
 
         for (_, document_transition) in transitions.iter().enumerate() {
-            let document = Document::from(document_transition.clone());
-            let document_identifier = document.identifier.clone();
+            self.handle_document_transition(document_transition.clone(), state_transition.owner_id(), st_hash.clone()).await
+        }
+    }
 
-            match document_transition {
-                DocumentTransition::Transfer(_) => {
-                    self.dao.assign_document(document, state_transition.owner_id()).await.unwrap();
+    pub async fn handle_batch_v1(&self, transitions: Vec<BatchedTransition>, owner_id: Identifier, st_hash: String) -> () {
+
+        for (_, token_transition) in transitions.iter().enumerate() {
+
+            match token_transition {
+                BatchedTransition::Token(transition) => {
+                    match transition {
+                        TokenTransition::Mint(mint) =>{
+                            self.dao.token_transition(
+                                transition.clone(),
+                                Some(mint.amount()),
+                                Some(mint.public_note().unwrap().clone()),
+                                owner_id,
+                                mint.issued_to_identity_id(),
+                                st_hash.clone()
+                            ).await.unwrap()
+                        }
+                        TokenTransition::Burn(burn) => {
+                            self.dao.token_transition(
+                                transition.clone(),
+                                Some(burn.burn_amount()),
+                                Some(burn.public_note().unwrap().clone()),
+                                owner_id,
+                                None,
+                                st_hash.clone()
+                            ).await.unwrap()
+                        }
+                        TokenTransition::Transfer(transfer) => {
+                            self.dao.token_transition(
+                                transition.clone(),
+                                Some(transfer.amount()),
+                                Some(transfer.public_note().unwrap().clone()),
+                                owner_id,
+                                Some(transfer.recipient_id()),
+                                st_hash.clone()
+                            ).await.unwrap()
+                        }
+                        TokenTransition::Freeze(freeze) => {
+                            self.dao.token_transition(
+                                transition.clone(),
+                                None,
+                                Some(freeze.public_note().unwrap().clone()),
+                                owner_id,
+                                Some(freeze.frozen_identity_id()),
+                                st_hash.clone()
+                            ).await.unwrap()
+                        }
+                        TokenTransition::Unfreeze(unfreeze) => {
+                            self.dao.token_transition(
+                                transition.clone(),
+                                None,
+                                Some(unfreeze.public_note().unwrap().clone()),
+                                owner_id,
+                                Some(unfreeze.frozen_identity_id()),
+                                st_hash.clone()
+                            ).await.unwrap()
+                        }
+                        TokenTransition::DestroyFrozenFunds(destroy_frozen_funds) => {
+                            self.dao.token_transition(
+                                transition.clone(),
+                                None,
+                                Some(destroy_frozen_funds.public_note().unwrap().clone()),
+                                owner_id,
+                                Some(destroy_frozen_funds.frozen_identity_id()),
+                                st_hash.clone()
+                            ).await.unwrap()
+                        }
+                        TokenTransition::EmergencyAction(emergency_action) => {
+                            self.dao.token_transition(
+                                transition.clone(),
+                                None,
+                                Some(emergency_action.public_note().unwrap().clone()),
+                                owner_id,
+                                None,
+                                st_hash.clone()
+                            ).await.unwrap()
+                        }
+                        TokenTransition::ConfigUpdate(config_update) => {
+                            self.dao.token_transition(
+                                transition.clone(),
+                                None,
+                                Some(config_update.public_note().unwrap().clone()),
+                                owner_id,
+                                None,
+                                st_hash.clone()
+                            ).await.unwrap()
+                        }
+                    }
                 }
-                DocumentTransition::UpdatePrice(_) => {
-                    self.dao.update_document_price(document).await.unwrap();
-                }
-                DocumentTransition::Purchase(_) => {
-                    let current_document = self.dao.get_document_by_identifier(document.identifier).await.unwrap()
-                        .expect(&format!("Could not get Document with identifier {} from the database", document.identifier));
-
-                    self.dao.assign_document(document.clone(), state_transition.owner_id()).await.unwrap();
-
-                    let transfer = Transfer {
-                        id: None,
-                        sender: document.owner,
-                        recipient: current_document.owner,
-                        amount: document.price.unwrap(),
-                    };
-                    self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
-                }
-                _ => {
-                    self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
-                }
-            }
-
-            let document_type = document_transition.document_type_name();
-
-            if document_type == "domain" && document_transition.data_contract_id() == SystemDataContract::DPNS.id() {
-                let label = document_transition
-                    .data()
-                    .unwrap()
-                    .get_str_at_path("label")
-                    .unwrap();
-
-                let normalized_parent_domain_name = document_transition
-                    .data()
-                    .unwrap()
-                    .get_str_at_path("parentDomainName")
-                    .unwrap();
-
-                let identity_identifier = document_transition
-                    .data()
-                    .unwrap()
-                    .get_optional_at_path("records.identity")
-                    .unwrap()
-                    .expect("Could not find DPNS domain document identity identifier");
-
-                let identity_identifier = Identifier::from_bytes(&identity_identifier.clone().into_identifier_bytes().unwrap()).unwrap().to_string(Base58);
-                let identity = self.dao.get_identity_by_identifier(identity_identifier.clone()).await.unwrap().expect(&format!("Could not find identity with identifier {}", identity_identifier));
-                let alias = format!("{}.{}", label, normalized_parent_domain_name);
-
-                self.dao.create_identity_alias(identity, alias, st_hash.clone()).await.unwrap();
-            }
-
-            if document_type == "dataContracts" && document_transition.data_contract_id() == self.platform_explorer_identifier {
-                let data_contract_identifier_str = document_transition
-                    .data()
-                    .unwrap()
-                    .get_str_at_path("identifier")
-                    .unwrap();
-
-                let data_contract_identifier = Identifier::from_string(data_contract_identifier_str, Base58).unwrap();
-
-                let data_contract_name = document_transition
-                    .data()
-                    .unwrap()
-                    .get_str_at_path("name")
-                    .unwrap();
-
-                let data_contract = self.dao.get_data_contract_by_identifier(data_contract_identifier).await
-                    .expect(&format!("Could not get DataContract with identifier {} from the database",
-                                     data_contract_identifier_str))
-                    .expect(&format!("Could not find DataContract with identifier {} in the database",
-                                     data_contract_identifier_str));
-
-
-                if data_contract.owner == state_transition.owner_id() {
-                    self.dao.set_data_contract_name(data_contract, String::from(data_contract_name)).await.unwrap();
-                } else {
-                    println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document_identifier.to_string(Base58));
+                BatchedTransition::Document(document_transition) => {
+                    self.handle_document_transition(document_transition.clone(), owner_id, st_hash.clone()).await
                 }
             }
         }
@@ -226,7 +337,7 @@ impl PSQLProcessor {
         let st_type = match state_transition.clone() {
             StateTransition::DataContractCreate(st) => st.state_transition_type() as u32,
             StateTransition::DataContractUpdate(st) => st.state_transition_type() as u32,
-            StateTransition::DocumentsBatch(st) => st.state_transition_type() as u32,
+            StateTransition::Batch(st) => st.state_transition_type() as u32,
             StateTransition::IdentityCreate(st) => st.state_transition_type() as u32,
             StateTransition::IdentityTopUp(st) => st.state_transition_type() as u32,
             StateTransition::IdentityCreditWithdrawal(st) => st.state_transition_type() as u32,
@@ -244,8 +355,8 @@ impl PSQLProcessor {
                 PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractUpdate(
                     st.clone()
                 )).unwrap(),
-            StateTransition::DocumentsBatch(st) =>
-                PlatformSerializable::serialize_to_bytes(&StateTransition::DocumentsBatch(
+            StateTransition::Batch(st) =>
+                PlatformSerializable::serialize_to_bytes(&StateTransition::Batch(
                     st.clone()
                 )).unwrap(),
             StateTransition::IdentityCreate(st) =>
@@ -299,8 +410,15 @@ impl PSQLProcessor {
 
                 println!("Processed DataContractUpdate at block hash {}", block_hash);
             }
-            StateTransition::DocumentsBatch(_st) => {
-                self.handle_documents_batch(_st, st_hash).await;
+            StateTransition::Batch(_st) => {
+                match _st {
+                    BatchTransition::V0(st) => {
+                        self.handle_batch_v0(st.clone(), st_hash).await;
+                    }
+                    BatchTransition::V1(st) => {
+                        self.handle_batch_v1(st.transitions.clone(), st.owner_id().clone(), st_hash).await
+                    }
+                }
 
                 println!("Processed DocumentsBatch at block hash {}", block_hash);
             }
@@ -451,6 +569,7 @@ impl PSQLProcessor {
             }
             SystemDataContract::Dashpay => {}
             SystemDataContract::WalletUtils => {}
+            SystemDataContract::TokenHistory => {}
         }
     }
 
