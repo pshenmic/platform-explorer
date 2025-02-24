@@ -39,7 +39,6 @@ function Block ({ hash }) {
     Api.getStatus()
       .then(res => fetchHandlerSuccess(setStatus, res))
       .catch(err => fetchHandlerError(setStatus, err))
-      // .finally(() => setTimeout(fetchData, 15000))
   }, [])
 
   useEffect(() => {
