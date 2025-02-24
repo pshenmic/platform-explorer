@@ -1,5 +1,6 @@
 mod dao;
 
+use std::any::Any;
 use std::env;
 use std::num::ParseIntError;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
@@ -8,6 +9,8 @@ use dpp::state_transition::data_contract_create_transition::DataContractCreateTr
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
 use data_contracts::SystemDataContract;
+use dpp::data_contract::associated_token::token_configuration::accessors::v0::TokenConfigurationV0Getters;
+use dpp::data_contract::{TokenConfiguration, TokenContractPosition};
 use dpp::identifier::Identifier;
 use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
@@ -35,6 +38,7 @@ use crate::entities::identity::Identity;
 use crate::entities::masternode_vote::MasternodeVote;
 use crate::entities::transfer::Transfer;
 use crate::entities::validator::Validator;
+use crate::entities::token_config::TokenConfig;
 use crate::models::{TransactionResult, TransactionStatus};
 use dpp::state_transition::batch_transition::batched_transition::document_transition::{DocumentTransition, DocumentTransitionV0Methods};
 use dpp::state_transition::batch_transition::batched_transition::token_transition::TokenTransition;
@@ -46,6 +50,7 @@ use dpp::state_transition::batch_transition::token_freeze_transition::v0::v0_met
 use dpp::state_transition::batch_transition::token_mint_transition::v0::v0_methods::TokenMintTransitionV0Methods;
 use dpp::state_transition::batch_transition::token_transfer_transition::v0::v0_methods::TokenTransferTransitionV0Methods;
 use dpp::state_transition::batch_transition::token_unfreeze_transition::v0::v0_methods::TokenUnfreezeTransitionV0Methods;
+use dpp::tokens::calculate_token_id;
 
 #[derive(Debug)]
 pub enum ProcessorError {
@@ -90,16 +95,51 @@ impl PSQLProcessor {
         return PSQLProcessor { decoder, dao, platform_explorer_identifier };
     }
 
+
+    pub async fn handle_token_configuration(&self, data_contract: DataContract) -> () {
+        if data_contract.tokens.is_some() {
+            let mut tokens = data_contract.tokens.clone().unwrap();
+
+
+            for (k, v) in tokens{
+                let token_id = calculate_token_id(data_contract.identifier.as_bytes(), k);
+
+                let token = TokenConfig {
+                    position: k,
+                    identifier: Identifier::new(token_id),
+                    data_contract_identifier: data_contract.identifier,
+                    maxSupply: v.max_supply(),
+                    baseSupply: v.base_supply(),
+                    keeps_history: v.keeps_history(),
+                    distribution_rules: v.distribution_rules().clone(),
+                    manual_minting_rules: v.manual_minting_rules().clone(),
+                    manual_burning_rules: v.manual_burning_rules().clone(),
+                    freeze_rules: v.freeze_rules().clone(),
+                    unfreeze_rules: v.unfreeze_rules().clone(),
+                    destroy_frozen_funds_rules: v.destroy_frozen_funds_rules().clone(),
+                    emergency_action_rules: v.emergency_action_rules().clone(),
+                };
+
+                self.dao.create_token(token).await;
+            }
+
+        }
+    }
+
     pub async fn handle_data_contract_create(&self, state_transition: DataContractCreateTransition, st_hash: String) -> () {
         let data_contract = DataContract::from(state_transition);
 
-        self.dao.create_data_contract(data_contract, Some(st_hash)).await;
+        self.dao.create_data_contract(data_contract.clone(), Some(st_hash)).await;
+
+        self.handle_token_configuration(data_contract.clone()).await;
     }
 
     pub async fn handle_data_contract_update(&self, state_transition: DataContractUpdateTransition, st_hash: String) -> () {
         let data_contract = DataContract::from(state_transition);
 
-        self.dao.create_data_contract(data_contract, Some(st_hash)).await;
+        self.dao.create_data_contract(data_contract.clone(), Some(st_hash)).await;
+
+        self.handle_token_configuration(data_contract.clone()).await;
     }
 
     pub async fn handle_document_transition(&self, document_transition: DocumentTransition, owner_id: Identifier, st_hash: String) -> () {

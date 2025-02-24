@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use dpp::data_contract::serialized_version::DataContractInSerializationFormat;
 use data_contracts::SystemDataContract;
 use dpp::data_contract::{TokenConfiguration, TokenContractPosition};
@@ -18,7 +19,7 @@ pub struct DataContract {
     pub version: u32,
     pub state_transition_hash: Option<String>,
     pub is_system: bool,
-    pub tokens: Option<Value>
+    pub tokens: Option<BTreeMap<TokenContractPosition, TokenConfiguration>>
 }
 
 impl From<DataContractCreateTransition> for DataContract {
@@ -55,8 +56,7 @@ impl From<DataContractCreateTransition> for DataContract {
                         let owner = data_contract.owner_id;
                         let schema = data_contract.document_schemas;
                         let schema_decoded = serde_json::to_value(schema).unwrap();
-                        let token = data_contract.tokens;
-                        let token_decoded = serde_json::to_value(token).unwrap();
+                        let tokens = data_contract.tokens;
 
                         return DataContract {
                             id: None,
@@ -67,7 +67,7 @@ impl From<DataContractCreateTransition> for DataContract {
                             version,
                             state_transition_hash: None,
                             is_system: false,
-                            tokens: Some(token_decoded),
+                            tokens: Some(tokens),
                         };
                     }
                 }
@@ -111,7 +111,6 @@ impl From<DataContractUpdateTransition> for DataContract {
                         let schema = data_contract.document_schemas;
                         let schema_decoded = serde_json::to_value(schema).unwrap();
                         let tokens = data_contract.tokens;
-                        let tokens_decoded = serde_json::to_value(tokens).unwrap();
 
                         return DataContract {
                             id: None,
@@ -122,7 +121,7 @@ impl From<DataContractUpdateTransition> for DataContract {
                             version,
                             state_transition_hash: None,
                             is_system: false,
-                            tokens: Some(tokens_decoded)
+                            tokens: Some(tokens)
                         };
                     }
                 }
