@@ -4,8 +4,6 @@ import { Badge } from '@chakra-ui/react'
 import './QuorumInfo.scss'
 
 export default function QuorumInfo ({ quorum, loading, l1explorerBaseUrl }) {
-  console.log('quorum', quorum)
-
   return (
     <div className={'QuorumInfo'}>
       <div className={'QuorumInfo__LineContainer'}>
@@ -43,7 +41,11 @@ export default function QuorumInfo ({ quorum, loading, l1explorerBaseUrl }) {
           className={'QuorumInfo__InfoLine'}
           title={'Quorum Block Height'}
           value={
-            <ValueContainer external={true} link={`${l1explorerBaseUrl}/block/${quorum?.blockHeight}`}>
+            <ValueContainer
+              size={'md'}
+              external={true}
+              link={`${l1explorerBaseUrl}/block/${quorum?.blockHeight}`}
+            >
               {quorum?.blockHeight}
             </ValueContainer>
           }
@@ -57,7 +59,11 @@ export default function QuorumInfo ({ quorum, loading, l1explorerBaseUrl }) {
           className={'QuorumInfo__InfoLine'}
           title={'Quorum Creation Height'}
           value={
-            <ValueContainer external={true} link={`${l1explorerBaseUrl}/block/${quorum?.creationHeight}`}>
+            <ValueContainer
+              size={'md'}
+              external={true}
+              link={`${l1explorerBaseUrl}/block/${quorum?.creationHeight}`}
+            >
               {quorum?.creationHeight}
             </ValueContainer>
           }
@@ -71,7 +77,11 @@ export default function QuorumInfo ({ quorum, loading, l1explorerBaseUrl }) {
           className={'QuorumInfo__InfoLine'}
           title={'Quorum Mined Block Hash'}
           value={
-            <ValueContainer external={true} link={`${l1explorerBaseUrl}/block/${quorum?.minedBlockHash}`}>
+            <ValueContainer
+              size={'md'}
+              external={true}
+              link={`${l1explorerBaseUrl}/block/${quorum?.minedBlockHash}`}
+            >
               <Identifier styles={['highlight-both']} ellipsis={false}>{quorum?.minedBlockHash}</Identifier>
             </ValueContainer>
           }

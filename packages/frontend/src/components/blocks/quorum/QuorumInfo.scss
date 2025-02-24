@@ -13,12 +13,16 @@
     border-radius: mixins.$border-radius-def;
     background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
     gap: 0.5rem;
-    padding: 0.75rem 1.25rem;
+    padding: 0.5rem 1.25rem;
   }
 
   &__InfoLine {
     .InfoLine__Title {
       width: 12.5rem;
+    }
+
+    .InfoLine__Value {
+      line-height: 0.813rem;
     }
   }
 }
