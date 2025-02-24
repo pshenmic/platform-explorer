@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  
+
   &__LineContainer {
     display: flex;
     align-items: center;
@@ -26,6 +26,12 @@
 
     .InfoLine__Value {
       line-height: 0.813rem;
+    }
+  }
+
+  .InfoLine--Loading {
+    .InfoLine__Value {
+      width: 100% !important;
     }
   }
 
