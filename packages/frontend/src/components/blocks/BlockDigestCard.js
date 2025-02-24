@@ -55,7 +55,7 @@ function BlockDigestCard ({ block, rate, status }) {
               </Tooltip>
             }
             loading={block.loading}
-            error={block.error || block?.data?.quorum?.quorumIndex === undefined}
+            error={block.error || typeof block?.data?.quorum?.quorumIndex !== 'number'}
           />
         </div>
 
