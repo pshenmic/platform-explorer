@@ -153,7 +153,7 @@ function TransitionCard ({ transition, owner, rate, className }) {
       {fields.indexOf('SellerIdentifier') !== -1 && owner && // purchase
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
-          title={'Seller Identifier'}
+          title={'Buyer Identifier'}
           value={(
             <ValueCard link={`/identity/${owner}`}>
               <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
