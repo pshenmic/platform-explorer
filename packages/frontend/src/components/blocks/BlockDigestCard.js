@@ -1,18 +1,12 @@
 'use client'
 
-import {DocumentIcon, MembersIcon, QueuePositionIcon, TransactionsIcon, InfoIcon, ChevronIcon} from '../ui/icons'
+import { DocumentIcon, MembersIcon, QueuePositionIcon, TransactionsIcon, InfoIcon } from '../ui/icons'
 import { CreditsBlock, Identifier, InfoLine } from '../data'
 import { ValueCard } from '../cards'
 import { EpochTooltip, Tooltip } from '../ui/Tooltips'
-import { useState } from 'react'
 import './BlockDigestCard.scss'
 
-function BlockDigestCard ({ block, rate, l1explorerBaseUrl, status }) {
-  const [quorumPopoverIsOpen, setQuorumPopoverIsOpen] = useState()
-
-  console.log(block)
-  console.log('status', status.epoch)
-
+function BlockDigestCard ({ block, rate, status }) {
   return (
     <div className={`Block__InfoBlock Block__DigestCard BlockDigestCard ${block.loading ? 'BlockDigestCard--Loading' : ''}`}>
       <div className={'BlockDigestCard__RowContainer'}>
