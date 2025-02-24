@@ -13,7 +13,6 @@ import {
   useOutsideClick
 } from '@chakra-ui/react'
 import { useEffect, useRef } from 'react'
-import './Popover.scss'
 
 const CustomPopover = ({
   trigger,
