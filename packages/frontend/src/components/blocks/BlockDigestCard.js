@@ -1,9 +1,9 @@
 'use client'
 
-import { DocumentIcon, MembersIcon, QueuePositionIcon, TransactionsIcon, InfoIcon } from '../ui/icons'
+import {DocumentIcon, MembersIcon, QueuePositionIcon, TransactionsIcon, InfoIcon, ChevronIcon} from '../ui/icons'
 import { CreditsBlock, Identifier, InfoLine } from '../data'
 import { ValueCard } from '../cards'
-import { EpochTooltip, Tooltip, QuorumPopover } from '../ui/Tooltips'
+import { EpochTooltip, Tooltip } from '../ui/Tooltips'
 import { useState } from 'react'
 import './BlockDigestCard.scss'
 
@@ -50,21 +50,15 @@ function BlockDigestCard ({ block, rate, l1explorerBaseUrl, status }) {
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--QuorumIndex'}
             title={<span><QueuePositionIcon/>Quorum Index</span>}
             value={
-              <QuorumPopover
-                header={'Quorum Index'}
-                quorum={block?.data?.quorum}
-                l1explorerBaseUrl={l1explorerBaseUrl}
-                stateCallback={setQuorumPopoverIsOpen}
+              <Tooltip
+                title={'Quorum Index'}
+                content={'Position of the quorum among all active quorum groups'}
               >
                 <span className={'BlockDigestCard__InfoLineValueContent'}>
                   {block?.data?.quorum?.quorumIndex}
-                  <InfoIcon
-                    className={'BlockDigestCard__InfoIcon'}
-                    color={quorumPopoverIsOpen ? 'white' : 'brand.normal'}
-                    _hover={{ color: 'brand.light' }}
-                  />
+                  <InfoIcon className={'BlockDigestCard__InfoIcon'}/>
                 </span>
-              </QuorumPopover>
+              </Tooltip>
             }
             loading={block.loading}
             error={block.error || block?.data?.quorum?.quorumIndex === undefined}
@@ -78,7 +72,7 @@ function BlockDigestCard ({ block, rate, l1explorerBaseUrl, status }) {
             value={
               <Tooltip
                 title={'Quorum Members'}
-                content={`Tooltip text describing the info of wtf is Quorum Members and what the number ${block?.data?.quorum?.members?.length} is`}
+                content={'Amount of quorum\'s participants that have signed this platform block'}
               >
                 <span className={'BlockDigestCard__InfoLineValueContent'}>
                   {block?.data?.quorum?.members?.length}
