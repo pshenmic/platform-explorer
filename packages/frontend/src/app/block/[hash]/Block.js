@@ -152,6 +152,7 @@ function Block ({ hash }) {
                 quorum={block?.data?.quorum}
                 l1explorerBaseUrl={l1explorerBaseUrl}
                 loading={block?.loading}
+                showQuorumMembers={() => setActiveTab(tabs.indexOf('quorum-members'))}
               />
             </TabPanel>
           </TabPanels>

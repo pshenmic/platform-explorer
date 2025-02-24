@@ -3,7 +3,7 @@ import { ValueContainer } from '../../ui/containers'
 import { Badge } from '@chakra-ui/react'
 import './QuorumInfo.scss'
 
-export default function QuorumInfo ({ quorum, loading, l1explorerBaseUrl }) {
+export default function QuorumInfo ({ quorum, loading, l1explorerBaseUrl, showQuorumMembers }) {
   return (
     <div className={'QuorumInfo'}>
       <div className={'QuorumInfo__LineContainer'}>
@@ -94,19 +94,32 @@ export default function QuorumInfo ({ quorum, loading, l1explorerBaseUrl }) {
         <InfoLine
           className={'QuorumInfo__InfoLine'}
           title={'Total Valid Members'}
-          value={quorum?.numValidMembers}
+          value={typeof showQuorumMembers === 'function'
+            ? <ValueContainer
+                size={'md'}
+                clickable={true}
+                light={true}
+                onClick={showQuorumMembers}
+              >
+                {quorum?.numValidMembers}
+              </ValueContainer>
+            : quorum.numValidMembers
+          }
           loading={loading}
           error={typeof quorum?.numValidMembers !== 'number'}
         />
       </div>
 
-      {(quorum?.previousConsecutiveDKGFailures || loading) &&
+      {typeof quorum?.previousConsecutiveDKGFailures === 'number' &&
         <div className={'QuorumInfo__LineContainer'}>
-
           <InfoLine
             className={'QuorumInfo__InfoLine'}
             title={'Previous DKG Failures'}
-            value={quorum?.previousConsecutiveDKGFailures}
+            value={
+              <Badge colorScheme={quorum.previousConsecutiveDKGFailures > 0 ? 'red' : 'gray'}>
+                {quorum.previousConsecutiveDKGFailures}
+              </Badge>
+            }
             loading={loading}
           />
         </div>
