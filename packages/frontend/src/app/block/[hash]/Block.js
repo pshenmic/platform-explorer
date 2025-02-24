@@ -11,11 +11,13 @@ import { BlockDigestCard, BlockTotalCard, QuorumMembersList } from '../../../com
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { networks } from '../../../constants/networks'
+import { QuorumInfo } from '../../../components/blocks/quorum'
 import './Block.scss'
 
 const tabs = [
   'transactions',
-  'quorum'
+  'quorum-members',
+  'quorum-info'
 ]
 
 const defaultTabName = 'transactions'
@@ -123,9 +125,10 @@ function Block ({ hash }) {
                 </span>
               : ''}
             </Tab>
+            <Tab>Quorum Info</Tab>
           </TabList>
           <TabPanels>
-            <TabPanel position={'relative'}>
+            <TabPanel>
               {!block.error
                 ? <TransactionsList
                     transactions={block.data?.txs}
@@ -135,7 +138,7 @@ function Block ({ hash }) {
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
-            <TabPanel position={'relative'}>
+            <TabPanel>
               {!block.error
                 ? <QuorumMembersList
                     members={block?.data?.quorum?.members}
@@ -143,6 +146,13 @@ function Block ({ hash }) {
                   />
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
+            </TabPanel>
+            <TabPanel>
+              <QuorumInfo
+                quorum={block?.data?.quorum}
+                l1explorerBaseUrl={l1explorerBaseUrl}
+                loading={block?.loading}
+              />
             </TabPanel>
           </TabPanels>
         </Tabs>
