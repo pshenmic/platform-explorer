@@ -22,10 +22,11 @@ function ValueContainer ({
             { target: '_blank', rel: 'noreferrer' }
           )}
           className={props.className}
+          {...props}
         >
           {props.children}
         </Link>
-      : <div className={props.className}>{props.children}</div>
+      : <div className={props.className} {...props}>{props.children}</div>
   }
 
   const colorClasses = {
