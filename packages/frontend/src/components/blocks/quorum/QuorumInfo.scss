@@ -17,12 +17,43 @@
   }
 
   &__InfoLine {
+    width: 100%;
+    justify-content: flex-start;
+
     .InfoLine__Title {
       width: 12.5rem;
     }
 
     .InfoLine__Value {
       line-height: 0.813rem;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__LineContainer {
+      padding: 0.5rem 1rem;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__InfoLine {
+      justify-content: space-between;
+    }
+
+    &__InfoLine {
+      .InfoLine__Title {
+        width: 11rem;
+      }
+    }
+
+    &__LineContainer {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    .InfoLine__Title {
+      width: 8rem;
     }
   }
 }
