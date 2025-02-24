@@ -63,9 +63,6 @@ const CustomPopover = ({
         <Box
           ref={triggerRef}
           onClick={handleToggle}
-          // onClick={() => {
-          //   if (!isOpen) onOpen()
-          // }}
           display='inline-block'
         >
           {trigger}
