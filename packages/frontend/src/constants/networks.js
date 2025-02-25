@@ -11,6 +11,6 @@ export const networks = [
     subname: '',
     disabled: false,
     explorerBaseUrl: 'https://testnet.platform-explorer.com',
-    l1explorerBaseUrl: 'http://insight.testnet.networks.dash.org:3001/insight'
+    l1explorerBaseUrl: 'http://insight.testnet.networks.dash.org/insight'
   }
 ]

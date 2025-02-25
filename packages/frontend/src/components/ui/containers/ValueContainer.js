@@ -16,8 +16,17 @@ function ValueContainer ({
 }) {
   const Wrapper = (props) => {
     return typeof link === 'string'
-      ? <Link href={link} className={props.className}>{props.children}</Link>
-      : <div className={props.className}>{props.children}</div>
+      ? <Link
+          href={link}
+          {...(external &&
+            { target: '_blank', rel: 'noreferrer' }
+          )}
+          className={props.className}
+          {...props}
+        >
+          {props.children}
+        </Link>
+      : <div className={props.className} {...props}>{props.children}</div>
   }
 
   const colorClasses = {
@@ -34,6 +43,7 @@ function ValueContainer ({
 
   const sizeClasses = {
     default: '',
+    md: 'ValueContainer--SizeMd',
     sm: 'ValueContainer--SizeSm',
     xs: 'ValueContainer--SizeXs',
     xxs: 'ValueContainer--SizeXxs'

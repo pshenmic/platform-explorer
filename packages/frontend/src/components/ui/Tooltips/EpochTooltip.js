@@ -17,13 +17,20 @@ export default function EpochTooltip ({ epoch, children }) {
       label={(
         <div className={'EpochTooltip'}>
           <div className={'EpochTooltip__Line'}>
-            <div className={'EpochTooltip__Title'}>Epoch #{epoch?.number || ''} started</div>
-            <div className={'EpochTooltip__Value'}>{formatDate(epoch.startTime)}</div>
+            {epoch?.number &&
+              <div className={'EpochTooltip__Title'}>Epoch #{epoch?.number || ''} started</div>
+            }
+            {epoch?.startTime &&
+              <div className={'EpochTooltip__Value'}>{formatDate(epoch?.startTime)}</div>
+            }
           </div>
-          <div className={'EpochTooltip__Line'}>
-            <div className={'EpochTooltip__Title'}>Next epoch:</div>
-            <div className={'EpochTooltip__Value'}>{formatDate(epoch.endTime)}</div>
-          </div>
+
+          {epoch?.endTime &&
+            <div className={'EpochTooltip__Line'}>
+              <div className={'EpochTooltip__Title'}>Next epoch:</div>
+              <div className={'EpochTooltip__Value'}>{formatDate(epoch?.endTime)}</div>
+            </div>
+          }
         </div>
       )}
       placement={'top'}
