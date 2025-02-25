@@ -1,3 +1,7 @@
+use std::env;
+use dashcore_rpc::{Auth, Client, RpcApi};
+use dashcore_rpc::dashcore::{ProTxHash};
+use dpp::dashcore::Txid;
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Hex;
 use dpp::platform_value::Value;
@@ -11,6 +15,7 @@ use dpp::voting::votes::Vote;
 #[derive(Clone)]
 pub struct MasternodeVote {
     pub id: Option<u32>,
+    pub power: i16,
     pub identifier: Identifier,
     pub pro_tx_hash: String,
     pub voter_identity: Identifier,
@@ -37,6 +42,34 @@ impl From<MasternodeVoteTransition> for MasternodeVote {
         let identifier = transition.vote().vote_poll_unique_id().unwrap();
         let pro_tx_hash = transition.pro_tx_hash().to_string(Hex);
         let voter_identity = transition.voter_identity_id();
+
+        let core_rpc_host: String = env::var("CORE_RPC_HOST").expect("You've not set the CORE_RPC_HOST").parse().expect("Failed to parse CORE_RPC_HOST env");
+        let core_rpc_port: String = env::var("CORE_RPC_PORT").expect("You've not set the CORE_RPC_PORT").parse().expect("Failed to parse CORE_RPC_PORT env");
+        let core_rpc_user: String = env::var("CORE_RPC_USER").expect("You've not set the CORE_RPC_USER").parse().expect("Failed to parse CORE_RPC_USER env");
+        let core_rpc_password: String = env::var("CORE_RPC_PASSWORD").expect("You've not set the CORE_RPC_PASSWORD").parse().expect("Failed to parse CORE_RPC_PASSWORD env");
+
+        let rpc = Client::new(&format!("{}:{}", core_rpc_host, &core_rpc_port),
+                              Auth::UserPass(core_rpc_user, core_rpc_password)).unwrap();
+
+        let raw_tx = rpc.get_raw_transaction_info(
+            &Txid::from_hex(&pro_tx_hash.to_string()).unwrap(),
+            None
+        ).unwrap();
+
+        let block_hash = raw_tx.blockhash.unwrap();
+
+        let protx_info = rpc.get_protx_info(
+            &ProTxHash::from_hex(&pro_tx_hash.to_string()).unwrap(),
+            Some(&block_hash)
+        ).unwrap();
+
+        let mut power = {
+            if protx_info.mn_type.unwrap() == "Regular" {
+                1i16
+            } else {
+                4i16
+            }
+        };
 
         let vote = transition.vote();
 
@@ -68,6 +101,7 @@ impl From<MasternodeVoteTransition> for MasternodeVote {
 
         return MasternodeVote {
             id: None,
+            power,
             identifier,
             pro_tx_hash,
             voter_identity,
