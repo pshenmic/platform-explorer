@@ -7,6 +7,7 @@ use deadpool_postgres::{PoolError};
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
+use dashcore_rpc::Client;
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::platform_value::{platform_value, BinaryData};
@@ -67,15 +68,16 @@ pub struct PSQLProcessor {
     decoder: StateTransitionDecoder,
     dao: PostgresDAO,
     platform_explorer_identifier: Identifier,
+    dashcore_rpc: Client
 }
 
 impl PSQLProcessor {
-    pub fn new() -> PSQLProcessor {
+    pub fn new(dashcore_rpc: Client) -> PSQLProcessor {
         let dao = PostgresDAO::new();
         let decoder = StateTransitionDecoder::new();
         let platform_explorer_identifier_string: String = env::var("PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").expect("You've not set the PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").parse().expect("Failed to parse PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER env");
         let platform_explorer_identifier = Identifier::from_string(&platform_explorer_identifier_string, Base58).unwrap();
-        return PSQLProcessor { decoder, dao, platform_explorer_identifier };
+        return PSQLProcessor { decoder, dao, platform_explorer_identifier, dashcore_rpc };
     }
 
     pub async fn handle_data_contract_create(&self, state_transition: DataContractCreateTransition, st_hash: String) -> () {
@@ -184,7 +186,7 @@ impl PSQLProcessor {
     }
 
     pub async fn handle_identity_create(&self, state_transition: IdentityCreateTransition, st_hash: String) -> () {
-        let identity = Identity::from(state_transition);
+        let identity = Identity::from_create(state_transition, &self.dashcore_rpc);
         let transfer = Transfer {
             id: None,
             sender: None,
@@ -338,7 +340,7 @@ impl PSQLProcessor {
     }
 
     pub async fn handle_masternode_vote(&self, state_transition: MasternodeVoteTransition, st_hash: String) -> Result<(), ProcessorError> {
-        let masternode_vote = MasternodeVote::from(state_transition);
+        let masternode_vote = MasternodeVote::from(state_transition, &self.dashcore_rpc);
 
         self.dao.create_masternode_vote(masternode_vote, st_hash.clone()).await.unwrap();
 
