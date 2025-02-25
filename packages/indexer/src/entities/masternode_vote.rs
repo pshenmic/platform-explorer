@@ -63,7 +63,7 @@ impl From<MasternodeVoteTransition> for MasternodeVote {
             Some(&block_hash)
         ).unwrap();
 
-        let mut power = {
+        let power = {
             if protx_info.mn_type.unwrap() == "Regular" {
                 1i16
             } else {

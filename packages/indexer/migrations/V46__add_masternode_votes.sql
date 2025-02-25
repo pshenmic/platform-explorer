@@ -1,6 +1,6 @@
 CREATE TABLE masternode_votes (
     id SERIAL PRIMARY KEY,
-    power SMALLINT not null,
+    power SMALLINT NOT NULL,
     pro_tx_hash char(64) NOT NULL,
     state_transition_hash char(64) NOT NULL references state_transitions(hash),
     voter_identity_id varchar(64) NOT NULL,
