@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .DocumentTotalCard {
-  @include mixins.EntityCard();
+  @include mixins.TotalCard();
 
   &__Header {
     gap: 1.5rem;

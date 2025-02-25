@@ -3,7 +3,7 @@
 
 .IdentityTotalCard {
   $gap: 14px;
-  @include mixins.EntityCard();
+  @include mixins.TotalCard();
   @include mixins.InfoContainerPadding(padding, 0px, true);
   display: flex;
   flex-direction: column;

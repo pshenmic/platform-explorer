@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .ValidatorCard {
-  @include mixins.EntityCard();
+  @include mixins.TotalCard();
 
   &__Header {
     display: flex;

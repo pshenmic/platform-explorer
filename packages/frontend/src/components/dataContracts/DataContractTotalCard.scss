@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .DataContractTotalCard {
-  @include mixins.EntityCard();
+  @include mixins.TotalCard();
 
   &__Title {
     font-weight: 700;
