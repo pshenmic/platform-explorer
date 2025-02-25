@@ -219,7 +219,8 @@ const fixtures = {
     data_contract_id,
     document_type_name,
     index_name,
-    index_values
+    index_values,
+    power
   } = {}) => {
     if (!state_transition_hash) {
       throw new Error('state_transition_hash must be provided for masternodeVote fixture')
@@ -242,7 +243,8 @@ const fixtures = {
       data_contract_id,
       document_type_name: document_type_name ?? 'type_name',
       index_name: index_name ?? 'default_index',
-      index_values: index_values ?? '[]'
+      index_values: index_values ?? '[]',
+      power: power ?? 1
     }
 
     const [result] = await knex('masternode_votes').insert(row).returning('id')

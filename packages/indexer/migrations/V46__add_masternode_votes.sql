@@ -1,5 +1,6 @@
 CREATE TABLE masternode_votes (
     id SERIAL PRIMARY KEY,
+    power SMALLINT NOT NULL,
     pro_tx_hash char(64) NOT NULL,
     state_transition_hash char(64) NOT NULL references state_transitions(hash),
     voter_identity_id varchar(64) NOT NULL,
@@ -15,3 +16,4 @@ CREATE INDEX masternode_votes_towards_identity_identifier ON masternode_votes(to
 CREATE INDEX masternode_votes_index_values ON masternode_votes USING GIN (index_values jsonb_path_ops);
 CREATE INDEX masternode_towards_choice ON masternode_votes (towards_identity_identifier, choice);
 CREATE INDEX masternode_choice ON masternode_votes (choice);
+CREATE INDEX masternode_power ON masternode_votes (power);
