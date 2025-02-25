@@ -12,7 +12,6 @@
   &__Avatar {
     margin: 0;
     position: static !important;
-    order: -1;
   }
 
   &__InfoLine {
@@ -37,11 +36,7 @@
   }
 
   @media screen and (max-width: $breakpoint-md) {
-    &__Avatar {
-      order: 0;
-    }
-
-      &__Header {
+    &__Header {
       .InfoLine {
         gap: 5px;
         flex-wrap: wrap;
