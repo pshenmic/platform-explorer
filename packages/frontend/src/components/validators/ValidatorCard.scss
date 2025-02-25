@@ -58,7 +58,6 @@
 
   &--Loading & {
     &__Avatar {
-      position: absolute !important;
       @include mixins.LoadingContainer;
     }
   }
