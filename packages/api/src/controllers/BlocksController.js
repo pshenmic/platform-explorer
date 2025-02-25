@@ -1,5 +1,5 @@
 const BlocksDAO = require('../dao/BlocksDAO')
-const { EPOCH_CHANGE_TIME } = require('../constants')
+const { EPOCH_CHANGE_TIME, NETWORK } = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
 const TenderdashRPC = require('../tenderdashRpc')
 const Quorum = require('../models/Quorum')
@@ -29,24 +29,18 @@ class BlocksController {
     if (lastCommit?.quorum_hash !== '' && lastCommit?.quorum_hash !== undefined) {
       const quorumsList = await DashCoreRPC.getQuorumsListExtended(block.header.l1LockedHeight)
 
-      const quorumsTypes = Object.keys(quorumsList)
+      const quorumType = NETWORK === 'testnet'
+        ? QuorumTypeEnum.llmq_25_67
+        : QuorumTypeEnum.llmq_100_67
 
-      const [quorumType] = quorumsTypes.filter(type =>
-        quorumsList[type]
-          .some(quorum =>
-            Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()
-            )
-          )
-      )
+      const quorumTypeName = QuorumTypeEnum[quorumType]
 
-      if (quorumType) {
-        const quorumInfo = quorumsList[quorumType]
-          .find(quorum => Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()))
+      const quorumInfo = quorumsList[quorumTypeName]
+        .find(quorum => Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()))
 
-        const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(lastCommit.quorum_hash, QuorumTypeEnum[quorumType])
+      const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(lastCommit.quorum_hash, quorumType)
 
-        quorum = Quorum.fromObject({ ...quorumDetailedInfo, ...quorumInfo[lastCommit.quorum_hash.toLowerCase()] })
-      }
+      quorum = Quorum.fromObject({ ...quorumDetailedInfo, ...quorumInfo[lastCommit.quorum_hash.toLowerCase()] })
     }
 
     response.send(
