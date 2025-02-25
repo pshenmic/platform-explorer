@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .ValidatorCard {
-  @include mixins.EntityCard();
+  @include mixins.TotalCard();
 
   &__Header {
     display: flex;
@@ -58,7 +58,6 @@
 
   &--Loading & {
     &__Avatar {
-      position: absolute !important;
       @include mixins.LoadingContainer;
     }
   }

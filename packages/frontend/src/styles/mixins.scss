@@ -428,7 +428,7 @@
   }
 }
 
-@mixin EntityCard () {
+@mixin TotalCard () {
   &--Loading {
     .InfoLine__Value {
       height: 1.5rem;
@@ -452,7 +452,7 @@
     height: 88px;
     border: 1px solid rgba(137, 126, 126, 0.1);
     flex-shrink: 0;
-    margin-right: 24px;
+    margin-left: 24px;
   }
 
   &__HeaderLines {

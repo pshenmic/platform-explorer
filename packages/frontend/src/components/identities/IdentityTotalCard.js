@@ -38,17 +38,6 @@ function IdentityTotalCard ({ identity, rate }) {
       <div className={'IdentityTotalCard__ContentContainer'}>
         <div className={'IdentityTotalCard__Column'}>
           <div className={'IdentityTotalCard__Header'}>
-            <div className={'IdentityTotalCard__Avatar'}>
-              {!identity.error
-                ? <ImageGenerator
-                  username={identity.data?.identifier}
-                  lightness={50}
-                  saturation={50}
-                  width={88}
-                  height={88}/>
-                : 'n/a'
-              }
-            </div>
             <div className={'IdentityTotalCard__HeaderLines'}>
               <InfoLine
                 className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Identifier'}
@@ -72,6 +61,17 @@ function IdentityTotalCard ({ identity, rate }) {
                 loading={identity.loading}
                 error={identity.error || !identity.data?.balance}
               />
+            </div>
+            <div className={'IdentityTotalCard__Avatar'}>
+              {!identity.error
+                ? <ImageGenerator
+                  username={identity.data?.identifier}
+                  lightness={50}
+                  saturation={50}
+                  width={88}
+                  height={88}/>
+                : 'n/a'
+              }
             </div>
           </div>
 
