@@ -5,6 +5,12 @@
   font-weight: $font-mono;
   font-size: 0.75rem;
 
+  &--Dim & {
+    &__Port {
+      color: var(--chakra-colors-gray-250);
+    }
+  }
+
   &__Host, &__Port {
     transition: all .1s;
   }
@@ -14,9 +20,9 @@
     font-weight: 600;
   }
 
-  a:hover & {
-    &, &__Host, 
-    &, &__Port {
+  a:hover &--Clickable & {
+    &__Host,
+    &__Port {
       color: $color-brand-light;
     }
   }

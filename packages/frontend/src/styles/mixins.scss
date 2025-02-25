@@ -525,9 +525,11 @@
     border-radius: $border-radius-def;
     width: 100%;
 
-    svg {
-      width: 1.75rem;
-      height: 1.75rem;
+    .InfoLine__Title {
+      svg {
+        width: 1.75rem;
+        height: 1.75rem;
+      }
     }
   }
 
