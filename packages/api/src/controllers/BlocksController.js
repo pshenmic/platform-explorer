@@ -39,7 +39,7 @@ class BlocksController {
         .find(quorum => Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()))
 
       const quorumIndex = quorumsList[quorumTypeName]
-        .find(quorum => Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()))
+        .findIndex(quorum => Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()))
 
       const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(lastCommit.quorum_hash, quorumType)
 
