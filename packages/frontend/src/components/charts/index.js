@@ -106,6 +106,7 @@ const LineGraph = ({
   const marginRight = 40
   const marginBottom = xAxis.title ? 45 : 20
   const marginLeft = 40
+  const chartInnerOffset = 15
   const xAxisFormatCode = typeof xAxis.type === 'string' ? xAxis.type : xAxis.type.axis
   const [chartWidth, setChartWidth] = useState(0)
   const svgRef = useRef(null)
@@ -215,15 +216,6 @@ const LineGraph = ({
         .tickFormat(valuesFormat)
         .tickPadding(10)
       )
-
-    const yAxisTicksWidth = d3.select(gy.current)
-      .select('.Axis__TickContainer')
-      .node()
-      .getBBox()
-      .width
-
-    d3.select('.Axis__Line')
-      .attr('x1', marginLeft + yAxisTicksWidth - 60)
   }, [gy, y])
 
   useEffect(() => {
@@ -294,7 +286,7 @@ const LineGraph = ({
   }
 
   function pointermoved (event) {
-    const i = bisect(data, x.invert(d3.pointer(event)[0]))
+    const i = bisect(data, x.invert(d3.pointer(event)[0] - chartInnerOffset))
 
     d3.select(focusPoint.current)
       .style('display', 'block')
@@ -392,10 +384,10 @@ const LineGraph = ({
                 <feDropShadow dx='0.2' dy='0.4' stdDeviation='.15'/>
             </filter>
 
-            <svg x='15' y='-15' overflow={'visible'}>
-              <g className={'Axis Axis--X'} ref={gx} transform={`translate(0,${height - marginBottom + 15})`}>
+            <svg x={chartInnerOffset} y={-chartInnerOffset} overflow={'visible'}>
+              <g className={'Axis Axis--X'} ref={gx} transform={`translate(0,${height - marginBottom + chartInnerOffset})`}>
                 <line
-                  x1={marginLeft - 20}
+                  x1={marginLeft - chartInnerOffset - 20}
                   x2={width - marginRight + 50}
                   y1={0}
                   y2={0}
@@ -406,13 +398,13 @@ const LineGraph = ({
               </g>
             </svg>
 
-            <svg x='0' y='-15' overflow={'visible'}>
+            <svg x='0' y={-chartInnerOffset} overflow={'visible'}>
               <g className={'Axis Axis--Y'} ref={gy} >
                 <line
                   x1={0}
                   x2={0}
                   y1={marginTop - 5}
-                  y2={height - marginBottom + 20}
+                  y2={height - marginBottom + chartInnerOffset + 5}
                   className={'Axis__Line'}
                 />
                 <g><text className={'Axis__Label'} fill='white'>{yAxis.title}</text></g>
@@ -420,7 +412,7 @@ const LineGraph = ({
               </g>
             </svg>
 
-            <g transform={'translate(15,-15)'}>
+            <g transform={`translate(${chartInnerOffset},${-chartInnerOffset})`}>
                 <defs>
                     <linearGradient id={`AreaFill-${uniqueComponentId}`} x1='0%' y1='100%' x2='0%' y2='0%'>
                         <stop stopColor='#0F4D74' stopOpacity='0.02' offset='0%' />
@@ -439,7 +431,7 @@ const LineGraph = ({
                 <path d={area(data)} fill={`url(#AreaFill-${uniqueComponentId})`} clipPath={`url(#clipPath-${uniqueComponentId})`}/>
 
                 <g filter={`url(#shadow-${uniqueComponentId})`}>
-                    <path ref={graphicLine} d={line(data)} stroke={'#008DE4'} strokeWidth={3} fill={'none'} strokeLinejoin={'round'}/>
+                    <path ref={graphicLine} d={line(data)} stroke={'#008DE4'} strokeWidth={2} fill={'none'} strokeLinejoin={'round'}/>
 
                     <g fill='#008DE4'>
                         {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r={4} className={'Chart__Point'}/>))}
