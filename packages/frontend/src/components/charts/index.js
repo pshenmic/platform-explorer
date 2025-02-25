@@ -439,7 +439,7 @@ const LineGraph = ({
                 <path d={area(data)} fill={`url(#AreaFill-${uniqueComponentId})`} clipPath={`url(#clipPath-${uniqueComponentId})`}/>
 
                 <g filter={`url(#shadow-${uniqueComponentId})`}>
-                    <path ref={graphicLine} d={line(data)} stroke={'#008DE4'} strokeWidth={3} fill={'none'} strokeLinejoin={'round'}/>
+                    <path ref={graphicLine} d={line(data)} stroke={'#008DE4'} strokeWidth={2} fill={'none'} strokeLinejoin={'round'}/>
 
                     <g fill='#008DE4'>
                         {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r={4} className={'Chart__Point'}/>))}
