@@ -19,7 +19,8 @@ pub struct DataContract {
     pub version: u32,
     pub state_transition_hash: Option<String>,
     pub is_system: bool,
-    pub tokens: Option<BTreeMap<TokenContractPosition, TokenConfiguration>>
+    pub tokens: Option<BTreeMap<TokenContractPosition, TokenConfiguration>>,
+    pub format_version: Option<u32>
 }
 
 impl From<DataContractCreateTransition> for DataContract {
@@ -46,7 +47,8 @@ impl From<DataContractCreateTransition> for DataContract {
                             version,
                             state_transition_hash: None,
                             is_system: false,
-                            tokens: None
+                            tokens: None,
+                            format_version: Some(0u32)
                         };
                     }
 
@@ -68,6 +70,7 @@ impl From<DataContractCreateTransition> for DataContract {
                             state_transition_hash: None,
                             is_system: false,
                             tokens: Some(tokens),
+                            format_version: Some(1u32)
                         };
                     }
                 }
@@ -100,7 +103,8 @@ impl From<DataContractUpdateTransition> for DataContract {
                             version,
                             state_transition_hash: None,
                             is_system: false,
-                            tokens: None
+                            tokens: None,
+                            format_version: Some(0u32)
                         };
                     }
 
@@ -121,7 +125,8 @@ impl From<DataContractUpdateTransition> for DataContract {
                             version,
                             state_transition_hash: None,
                             is_system: false,
-                            tokens: Some(tokens)
+                            tokens: Some(tokens),
+                            format_version: Some(1u32)
                         };
                     }
                 }
@@ -159,6 +164,7 @@ impl From<SystemDataContract> for DataContract {
             state_transition_hash: None,
             is_system: true,
             tokens: None,
+            format_version: None
         }
     }
 }
@@ -182,7 +188,8 @@ impl From<Row> for DataContract {
             version: version as u32,
             state_transition_hash: None,
             is_system,
-            tokens: None
+            tokens: None,
+            format_version: None,
         }
     }
 }

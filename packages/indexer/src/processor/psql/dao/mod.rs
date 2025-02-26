@@ -93,8 +93,13 @@ impl PostgresDAO {
         let version = data_contract.version as i32;
         let is_system = data_contract.is_system;
 
+        let format_version = match data_contract.format_version {
+            None => None,
+            Some(version) => Some(version as i32)
+        };
+
         let query = "INSERT INTO data_contracts(identifier, name, owner, schema, version, \
-        state_transition_hash, is_system) VALUES ($1, $2, $3, $4, $5, $6, $7);";
+        state_transition_hash, is_system, format_version) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
@@ -107,6 +112,7 @@ impl PostgresDAO {
             &version,
             &st_hash,
             &is_system,
+            &format_version
         ]).await.unwrap();
 
         println!("Created DataContract {} [{} version]", id.to_string(Base58), version);
