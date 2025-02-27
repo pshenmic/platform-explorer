@@ -14,7 +14,7 @@ import {
 import Breadcrumbs from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
 import './NavLink.scss'
@@ -53,6 +53,8 @@ function Navbar () {
   ]
   const displayBreadcrumbs = breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1)
 
+  const [searchFocused, setSearchFocused] = useState(false)
+
   useEffect(onClose, [pathname, onClose])
 
   return (
@@ -85,11 +87,20 @@ function Navbar () {
 
         <div className={'Navbar__WrapperNetworkSelect'}>
           <NetworkSelect/>
-          <Box ml={2}>
+          <Box
+            ml={2}
+            width={searchFocused ? '10000px' : '100px'}
+            position={searchFocused ? 'absolute' : 'relative'}
+            right={0}
+            zIndex={20}
+            maxW={'100%'}
+            onClick={() => setSearchFocused(state => !state)}
+          >
             <GlobalSearchInput />
           </Box>
         </div>
       </Flex>
+
       <Box className={`NavbarMobileMenu ${isOpen ? 'NavbarMobileMenu--Open' : ''}`} display={{ lg: 'none' }}>
         <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
           {links.map((link) => (
