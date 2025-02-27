@@ -31,7 +31,7 @@ function IdentityTotalCard ({ identity, rate }) {
     <div className={`InfoBlock InfoBlock--Gradient IdentityPage__CommonInfo IdentityTotalCard ${identity.loading ? 'IdentityTotalCard--Loading' : ''} `}>
       {activeAlias &&
         <div className={'IdentityTotalCard__Title'}>
-          <Alias>{activeAlias.alias}</Alias>
+          <Alias ellipsis={false}>{activeAlias.alias}</Alias>
         </div>
       }
 
