@@ -55,7 +55,7 @@
 
   &__ContentContainer {
     display: flex;
-    gap: 40px;
+    gap: 2.5rem;
   }
 
   &__CommonLines {
@@ -146,12 +146,7 @@
           margin-left: auto;
         }
       }
-    }
-  }
 
-
-  @media screen and (max-width: $breakpoint-lg) {
-    &__InfoLine {
       &--Identifier, &--Balance  {
         flex-direction: column;
         align-items: flex-start;
@@ -166,6 +161,10 @@
       }
     }
 
+    &__ContentContainer {
+      gap: 1.5rem;
+    }
+
     &__Avatar {
       position: absolute;
       right: 0;
@@ -176,7 +175,7 @@
   @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
   screen and (max-width: $breakpoint-md) {
     &__InfoLine {
-      gap: 4px;
+      gap: 0.25rem;
 
       &--Identifier {
         .Identifier__SymbolsContainer {
@@ -187,7 +186,7 @@
   }
 
   @media screen and (max-width: $breakpoint-md) {
-    $gap: 12px;
+    $gap: 0.75rem;
 
     &__Separator {
       @include mixins.InfoContainerPadding(margin-top, 0px, true);
