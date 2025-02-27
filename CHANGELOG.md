@@ -1,5 +1,30 @@
 # CHANGELOG
 
+### v1.0.16
+
+## Changes
+
+## API
+
+- Documents owner structure in Documents by identity @owl352 (#473)
+- Total gas used @owl352 (#460)
+- Fix empty transactions for data contract @owl352 (#469)
+- Order fix for data contract transactions @owl352 (#459)
+- Data Contracts document count fix and identities aliases @owl352 (#465)
+- Fix for Resource Value convertation @owl352 (#463)
+- Documents owner aliases @owl352 (#458)
+- Contested Resource API @owl352 (#451)
+- Data contract transactions and some additional fields @owl352 (#453)
+- Gas used field for document revisions @owl352 (#456)
+
+## Frontend
+
+- Add total gas used field on pages @AlexeyTripleA (#472)
+- Improve document page @AlexeyTripleA (#449)
+- Improve Datacontract page @AlexeyTripleA (#447)
+- Fix alias render in document info @AlexeyTripleA (#464)
+- Update Owner field render @AlexeyTripleA (#461)
+
 ### v1.0.15
 
 ## Changes
