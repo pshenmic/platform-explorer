@@ -18,7 +18,8 @@
     .InfoLine__Value {
       width: 100%;
       text-align: right;
-
+      overflow: hidden;
+      
       .Identifier {
         justify-content: flex-end;
       }
