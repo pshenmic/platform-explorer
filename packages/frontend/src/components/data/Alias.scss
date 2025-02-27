@@ -4,18 +4,25 @@
 .Alias {
   width: max-content;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   font-family: $font-mono;
   font-size: 0.75rem;
   color: #fff;
   max-width: 100%;
+  overflow: hidden;
 
-  &--Ellipsis {
+  &--Ellipsis, &--Ellipsis &__SymbolsContainer {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     flex-wrap: nowrap;
+  }
+
+  &__SymbolsContainer {
+    display: inline-block;
+    white-space: break-spaces;
+    word-break: break-all;
+    width: 100%;
   }
 
   &--Pending {
