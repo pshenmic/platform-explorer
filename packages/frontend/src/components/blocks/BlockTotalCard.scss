@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .BlockTotalCard {
-  @include mixins.EntityCard();
+  @include mixins.TotalCard();
 
   &__Avatar {
     svg {
