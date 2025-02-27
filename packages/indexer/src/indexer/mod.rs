@@ -6,6 +6,7 @@ use crate::entities::block::Block;
 use crate::entities::block_header::BlockHeader;
 use crate::processor::psql::{ProcessorError, PSQLProcessor};
 use base64::{Engine as _, engine::{general_purpose}};
+use dashcore_rpc::{Auth, Client};
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::utils::TenderdashRpcApi;
@@ -39,7 +40,16 @@ pub struct Indexer {
 
 impl Indexer {
     pub fn new() -> Indexer {
-        let processor = PSQLProcessor::new();
+        let core_rpc_host: String = env::var("CORE_RPC_HOST").expect("You've not set the CORE_RPC_HOST").parse().expect("Failed to parse CORE_RPC_HOST env");
+        let core_rpc_port: String = env::var("CORE_RPC_PORT").expect("You've not set the CORE_RPC_PORT").parse().expect("Failed to parse CORE_RPC_PORT env");
+        let core_rpc_user: String = env::var("CORE_RPC_USER").expect("You've not set the CORE_RPC_USER").parse().expect("Failed to parse CORE_RPC_USER env");
+        let core_rpc_password: String = env::var("CORE_RPC_PASSWORD").expect("You've not set the CORE_RPC_PASSWORD").parse().expect("Failed to parse CORE_RPC_PASSWORD env");
+
+        let dashcore_rpc = Client::new(&format!("{}:{}", core_rpc_host, &core_rpc_port),
+                                       Auth::UserPass(core_rpc_user, core_rpc_password)).unwrap();
+
+
+        let processor = PSQLProcessor::new(dashcore_rpc);
         let tenderdash_url = env::var("TENDERDASH_URL").expect("You've not set the TENDERDASH_URL");
         let txs_to_skip = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
         let decoder = StateTransitionDecoder::new();

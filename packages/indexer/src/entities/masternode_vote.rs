@@ -1,3 +1,7 @@
+use std::env;
+use dashcore_rpc::{Client, RpcApi};
+use dashcore_rpc::dashcore::{ProTxHash};
+use dpp::dashcore::Txid;
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Hex;
 use dpp::platform_value::Value;
@@ -11,6 +15,7 @@ use dpp::voting::votes::Vote;
 #[derive(Clone)]
 pub struct MasternodeVote {
     pub id: Option<u32>,
+    pub power: i16,
     pub identifier: Identifier,
     pub pro_tx_hash: String,
     pub voter_identity: Identifier,
@@ -32,11 +37,31 @@ struct VoteInfo {
 }
 
 
-impl From<MasternodeVoteTransition> for MasternodeVote {
-    fn from(transition: MasternodeVoteTransition) -> Self {
+impl MasternodeVote {
+    pub fn from(transition: MasternodeVoteTransition, rpc: &Client) -> Self {
         let identifier = transition.vote().vote_poll_unique_id().unwrap();
         let pro_tx_hash = transition.pro_tx_hash().to_string(Hex);
         let voter_identity = transition.voter_identity_id();
+
+        let raw_tx = rpc.get_raw_transaction_info(
+            &Txid::from_hex(&pro_tx_hash.to_string()).unwrap(),
+            None
+        ).unwrap();
+
+        let block_hash = raw_tx.blockhash.unwrap();
+
+        let protx_info = rpc.get_protx_info(
+            &ProTxHash::from_hex(&pro_tx_hash.to_string()).unwrap(),
+            Some(&block_hash)
+        ).unwrap();
+
+        let power = {
+            if protx_info.mn_type.unwrap() == "Regular" {
+                1i16
+            } else {
+                4i16
+            }
+        };
 
         let vote = transition.vote();
 
@@ -68,6 +93,7 @@ impl From<MasternodeVoteTransition> for MasternodeVote {
 
         return MasternodeVote {
             id: None,
+            power,
             identifier,
             pro_tx_hash,
             voter_identity,
