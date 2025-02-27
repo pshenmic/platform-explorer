@@ -4,6 +4,10 @@
 .BlockTotalCard {
   @include mixins.TotalCard();
 
+  &__Header {
+    align-items: flex-start;
+  }
+
   &__Avatar {
     svg {
       width: 54px;
@@ -23,6 +27,14 @@
   }
 
   @media screen and (max-width: $breakpoint-sm) {
+    @include mixins.TotalCard(true);
+
+    &__InfoLine {
+      &--Hash {
+        padding-right: 100px;
+      }
+    }
+
     &__Header {
       .InfoLine {
         flex-wrap: wrap;

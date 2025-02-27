@@ -77,6 +77,8 @@
   }
 
   @media screen and (max-width: $breakpoint-lg) {
+    @include mixins.TotalCard(true);
+
     &__Header {
       .InfoLine {
         flex-wrap: wrap;
@@ -93,13 +95,6 @@
           text-align: left;
         }
       }
-    }
-
-    &__Avatar {
-      position: absolute;
-      right: 16px;
-      top: 20px;
-      margin-right: 0;
     }
 
     &__ProTxHash {

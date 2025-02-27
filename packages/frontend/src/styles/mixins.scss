@@ -428,7 +428,7 @@
   }
 }
 
-@mixin TotalCard () {
+@mixin TotalCard ($avatarAbsolute: false) {
   &--Loading {
     .InfoLine__Value {
       height: 1.5rem;
@@ -453,6 +453,13 @@
     border: 1px solid rgba(137, 126, 126, 0.1);
     flex-shrink: 0;
     margin-left: 24px;
+
+    @if $avatarAbsolute {
+      position: absolute;
+      right: 16px;
+      top: 20px;
+      margin: 0;
+    }
   }
 
   &__HeaderLines {

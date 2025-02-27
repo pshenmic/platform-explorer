@@ -155,20 +155,10 @@
           text-align: left;
         }
       }
-
-      &--Identifier {
-        padding-right: 90px;
-      }
     }
 
     &__ContentContainer {
       gap: 1.5rem;
-    }
-
-    &__Avatar {
-      position: absolute;
-      right: 0;
-      top: 0;
     }
   }
 
@@ -186,7 +176,13 @@
   }
 
   @media screen and (max-width: $breakpoint-md) {
+    @include mixins.TotalCard(true);
     $gap: 0.75rem;
+
+    &__Avatar {
+      right: 4px;
+      top: 0;
+    }
 
     &__Separator {
       @include mixins.InfoContainerPadding(margin-top, 0px, true);
@@ -228,6 +224,10 @@
     }
 
     &__InfoLine {
+      &--Identifier {
+        padding-right: 100px;
+      }
+
       &--Identifier, &--Balance  {
         padding-right: 100px;
       }

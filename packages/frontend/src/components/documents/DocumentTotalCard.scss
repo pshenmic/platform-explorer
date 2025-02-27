@@ -36,6 +36,8 @@
   }
 
   @media screen and (max-width: $breakpoint-md) {
+    @include mixins.TotalCard(true);
+
     &__Header {
       .InfoLine {
         gap: 5px;
@@ -67,13 +69,6 @@
       .Identifier {
         justify-content: flex-start !important;
       }
-    }
-
-    &__Avatar {
-      position: absolute;
-      right: 16px;
-      top: 20px;
-      margin-right: 0;
     }
   }
 
