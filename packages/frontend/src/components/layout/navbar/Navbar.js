@@ -65,7 +65,7 @@ function Navbar () {
         maxW={'container.maxPageW'}
         ml={'auto'}
         mr={'auto'}
-        h={16}
+        h={searchFocused ? 100 : 16}
         gap={'8px'}
         alignItems={'center'}
         justifyContent={'space-between'}
@@ -86,15 +86,30 @@ function Navbar () {
         </HStack>
 
         <div className={'Navbar__WrapperNetworkSelect'}>
-          <NetworkSelect/>
+          <div
+            style={{
+              visibility: searchFocused ? 'hidden' : 'visible',
+              opacity: searchFocused ? 0 : 1,
+              transition: '.5s'
+            }}
+          >
+            <NetworkSelect/>
+          </div>
+
           <Box
             ml={2}
-            width={searchFocused ? '10000px' : '100px'}
-            position={searchFocused ? 'absolute' : 'relative'}
-            right={0}
             zIndex={20}
-            maxW={'100%'}
             onClick={() => setSearchFocused(state => !state)}
+
+            style={{
+              position: searchFocused ? 'absolute' : 'relative',
+              height: searchFocused ? '10px' : '20px',
+              width: searchFocused ? '1000px' : '250px',
+              maxWidth: '100%',
+              zIndex: 20,
+              right: 0,
+              transition: '.5s'
+            }}
           >
             <GlobalSearchInput />
           </Box>
