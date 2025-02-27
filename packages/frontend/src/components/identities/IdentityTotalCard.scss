@@ -44,6 +44,7 @@
     display: flex;
     align-items: flex-start;
     width: 100%;
+    position: relative;
   }
 
   &__ZeroListBadge {
@@ -225,11 +226,6 @@
 
     &__InfoLine {
       flex-wrap: wrap;
-    }
-
-    &__Avatar {
-      right: 16px;
-      top: 20px;
     }
 
     &__InfoLine {
