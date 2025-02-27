@@ -9,6 +9,7 @@
   font-size: 0.75rem !important;
   color: var(--chakra-colors-gray-250) !important;
   text-transform: lowercase !important;
+  font-weight: 400 !important;
 }
 
 @mixin List() {
@@ -524,9 +525,11 @@
     border-radius: $border-radius-def;
     width: 100%;
 
-    svg {
-      width: 1.75rem;
-      height: 1.75rem;
+    .InfoLine__Title {
+      svg {
+        width: 1.75rem;
+        height: 1.75rem;
+      }
     }
   }
 

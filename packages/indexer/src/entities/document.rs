@@ -153,9 +153,11 @@ impl From<DocumentTransition> for Document {
             DocumentTransition::Purchase(transition) => {
                 let base = transition.base().clone();
                 let price = transition.price();
+                let revision = transition.revision();
                 let identifier = base.id();
                 let data_contract_identifier = base.data_contract_id();
                 let document_type_name = base.document_type_name().clone();
+
 
                 return Document {
                     id: None,
@@ -166,7 +168,7 @@ impl From<DocumentTransition> for Document {
                     price: Some(price),
                     data: None,
                     data_contract_identifier,
-                    revision: Revision::from(0 as u64),
+                    revision,
                     deleted: true,
                     is_system: false,
                     prefunded_voting_balance: None,

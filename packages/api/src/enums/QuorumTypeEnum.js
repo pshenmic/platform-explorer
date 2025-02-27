@@ -12,7 +12,21 @@ const QuorumTypeEnum = {
   llmq_test_instantsend: 104,
   llmq_devnet_dip0024: 105,
   llmq_test_platform: 106,
-  llmq_devnet_platform: 107
+  llmq_devnet_platform: 107,
+  1: 'llmq_50_60',
+  2: 'llmq_400_60',
+  3: 'llmq_400_85',
+  4: 'llmq_100_67',
+  5: 'llmq_60_75',
+  6: 'llmq_25_67',
+  100: 'llmq_test',
+  101: 'llmq_devnet',
+  102: 'llmq_test_v17',
+  103: 'llmq_test_dip0024',
+  104: 'llmq_test_instantsend',
+  105: 'llmq_devnet_dip0024',
+  106: 'llmq_test_platform',
+  107: 'llmq_devnet_platform'
 }
 
 module.exports = QuorumTypeEnum

@@ -48,6 +48,9 @@ const Tabs = {
           width: `calc(100% - ${tabPaddingSize.base * 2}px)`
         }
       },
+      _focusVisible: {
+        boxShadow: 'none'
+      },
       _hover: {
         color: 'white',
 

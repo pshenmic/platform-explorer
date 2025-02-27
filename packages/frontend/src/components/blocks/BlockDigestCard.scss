@@ -1,0 +1,82 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.BlockDigestCard {
+  @include mixins.DigestCard();
+  border-radius: $border-radius-medium;
+  container-type: inline-size;
+
+  &__InfoContainer {
+    > .InfoLine {
+      > .InfoLine__Title {
+        svg {
+          margin-right: 0.75rem;
+        }
+      }
+
+      > .InfoLine__Value {
+        font-size: 0.813rem;
+      }
+    }
+  }
+
+  .BlockDigestCard__InfoLineValueContent {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+  }
+
+  &__InfoIcon {
+    cursor: pointer;
+    transition: mixins.$transition-time-def;
+    width: 1rem !important;
+    height: 1rem !important;
+    
+    &:hover {
+      cursor: pointer;
+      color: #FFF;
+    }
+  }
+
+  &__InfoLine {
+    &--Validator {
+      .InfoLine__Value {
+        max-width: 100%;
+        overflow: hidden;
+      }
+    }
+
+    &--TotalTransactions, &--QuorumIndex, &--Epoch, &--QuorumMembers {
+      width: 100%;
+
+      > .InfoLine {
+        .InfoLine__Title {
+          &, span {
+            align-items: center;
+            display: flex;
+          }
+
+          span {
+            gap: 0.75rem;
+          }
+        }
+
+        .InfoLine__Value {
+          font-size: 0.813rem;
+        }
+      }
+    }
+  }
+
+  @container (max-width: 35rem) {
+    &__RowContainer {
+      flex-wrap: wrap;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__InfoLine {
+      flex-wrap: wrap;
+    }
+  }
+}

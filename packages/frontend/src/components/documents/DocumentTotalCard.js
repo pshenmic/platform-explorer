@@ -115,6 +115,14 @@ function DocumentTotalCard ({ document, rate, className }) {
 
         <InfoLine
           className={'DocumentTotalCard__InfoLine'}
+          title={'Document Type Name'}
+          value={document.data?.documentTypeName || <NotActive>-</NotActive>}
+          loading={document.loading}
+          error={document.error || document.data?.documentTypeName === undefined}
+        />
+
+        <InfoLine
+          className={'DocumentTotalCard__InfoLine'}
           title={'System'}
           value={<Badge colorScheme={'gray'}>{document.data?.system ? 'Yes' : 'No'}</Badge>}
           loading={document.loading}
@@ -147,7 +155,7 @@ function DocumentTotalCard ({ document, rate, className }) {
         <InfoLine
           className={'DocumentTotalCard__InfoLine'}
           title={'Deleted'}
-          value={<Badge colorScheme={'gray'}>{document.data?.deleted ? 'true' : 'false'}</Badge>}
+          value={<Badge colorScheme={document.data?.deleted ? 'red' : 'green'}>{document.data?.deleted ? 'True' : 'False'}</Badge>}
           loading={document.loading}
           error={document.error || document.data?.deleted === undefined}
         />

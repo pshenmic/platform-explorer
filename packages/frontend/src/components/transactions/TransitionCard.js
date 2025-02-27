@@ -1,7 +1,7 @@
 import { ValueCard } from '../cards'
 import { CreditsBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
 import { DocumentActionEnum } from '../../enums/documentAction'
-import DocumentActionBadge from './DocumentActionBadge'
+import { DocumentActionBadge } from '../documents'
 import { ValueContainer } from '../ui/containers'
 import { Code } from '@chakra-ui/react'
 import './TransitionCard.scss'
@@ -91,7 +91,7 @@ function TransitionCard ({ transition, owner, rate, className }) {
 
       {fields.indexOf('DataContractIdentifier') !== -1 &&
         <InfoLine
-          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--IdContainer'}
           title={'Data Contract Identifier'}
           value={(
             <ValueCard link={`/dataContract/${transition.dataContractId}`}>
@@ -106,7 +106,7 @@ function TransitionCard ({ transition, owner, rate, className }) {
 
       {fields.indexOf('DocumentIdentifier') !== -1 &&
         <InfoLine
-          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--IdContainer'}
           title={'Document Identifier'}
           value={(
             <ValueCard link={`/document/${transition.id}`}>
@@ -124,7 +124,7 @@ function TransitionCard ({ transition, owner, rate, className }) {
           <>
             {owner &&
               <InfoLine
-                className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+                className={'TransitionCard__InfoLine TransitionCard__InfoLine--IdContainer'}
                 title={'Sender Identifier:'}
                 value={(
                   <ValueCard link={`/identity/${owner}`}>
@@ -137,7 +137,7 @@ function TransitionCard ({ transition, owner, rate, className }) {
             }
 
             <InfoLine
-              className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+              className={'TransitionCard__InfoLine TransitionCard__InfoLine--IdContainer'}
               title={'Receiver Identifier'}
               value={(
                 <ValueCard link={`/identity/${transition?.receiverId}`}>
@@ -152,8 +152,8 @@ function TransitionCard ({ transition, owner, rate, className }) {
 
       {fields.indexOf('SellerIdentifier') !== -1 && owner && // purchase
         <InfoLine
-          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
-          title={'Seller Identifier'}
+          className={'TransitionCard__InfoLine TransitionCard__InfoLine--IdContainer'}
+          title={'Buyer Identifier'}
           value={(
             <ValueCard link={`/identity/${owner}`}>
               <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
@@ -166,7 +166,7 @@ function TransitionCard ({ transition, owner, rate, className }) {
 
       {fields.indexOf('Price') !== -1 &&
         <InfoLine
-          className={'TransitionCard__InfoLine TransitionCard__InfoLine--DataContract'}
+          className={'TransitionCard__InfoLine'}
           title={'Price'}
           value={<CreditsBlock credits={transition?.price} rate={rate}/>}
           error={!transition?.price}
