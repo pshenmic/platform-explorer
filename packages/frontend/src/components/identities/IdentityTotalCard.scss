@@ -41,10 +41,10 @@
   }
 
   &__Header {
+    position: relative;
     display: flex;
     align-items: flex-start;
     width: 100%;
-    position: relative;
   }
 
   &__ZeroListBadge {
