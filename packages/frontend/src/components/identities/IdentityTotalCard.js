@@ -10,6 +10,7 @@ import { IdentityDigestCard } from './index'
 import { PublicKeysList } from '../publicKeys'
 import { findActiveAlias } from '../../util'
 import { useState } from 'react'
+import { ValueCard } from '../cards'
 import './IdentityTotalCard.scss'
 
 const PublicKeys = ({ className, show, publicKeys = [] }) => (
@@ -88,7 +89,12 @@ function IdentityTotalCard ({ identity, rate }) {
             <InfoLine
               className={'IdentityTotalCard__InfoLine'}
               title={'Creation date'}
-              value={<DateBlock timestamp={identity.data?.timestamp}/>}
+              value={identity?.data?.txHash
+                ? <ValueCard link={`/transaction/${identity.data.txHash}`}>
+                    <DateBlock timestamp={identity.data?.timestamp}/>
+                  </ValueCard>
+                : <DateBlock timestamp={identity.data?.timestamp}/>
+              }
               loading={identity.loading}
               error={identity.error || (!identity.loading && !identity.data?.timestamp)}
             />
