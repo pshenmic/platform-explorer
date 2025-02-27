@@ -54,8 +54,12 @@ function Navbar () {
   const displayBreadcrumbs = breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1)
 
   const [searchFocused, setSearchFocused] = useState(false)
+  // const searchFocused = true
+  const [searchResults, setSearchResults] = useState({})
 
   useEffect(onClose, [pathname, onClose])
+
+  console.log('searchResults', searchResults)
 
   return (
     <Box position={'relative'}>
@@ -65,10 +69,14 @@ function Navbar () {
         maxW={'container.maxPageW'}
         ml={'auto'}
         mr={'auto'}
-        h={searchFocused ? 100 : 16}
-        gap={'8px'}
+        h={searchFocused ? 'auto' : 16}
+        minH={16}
+        gap={searchFocused ? 0 : '0.5rem'}
         alignItems={'center'}
         justifyContent={'space-between'}
+        style={{
+          // gap: searchFocused ? 0 : '0.5rem'
+        }}
       >
         <IconButton
           className={'Navbar__Burger'}
@@ -79,41 +87,82 @@ function Navbar () {
           onClick={isOpen ? onClose : onOpen}
         />
 
-        <HStack className={'Navbar__Menu'} as={'nav'} spacing={3} display={{ base: 'none', lg: 'flex' }}>
+        <HStack
+          className={'Navbar__Menu'}
+          as={'nav'}
+          spacing={3}
+          display={{
+            base: 'none',
+            lg: 'flex'
+          }}
+          style={{
+            visibility: searchFocused ? 'hidden' : 'visible',
+            opacity: searchFocused ? 0 : 1,
+            transition: '1s',
+            width: searchFocused ? 0 : '1000px',
+            transitionDelay: searchFocused ? '0s' : '1s'
+          }}
+        >
           {links.map((link) => (
             <NavLink to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
           ))}
         </HStack>
 
-        <div className={'Navbar__WrapperNetworkSelect'}>
+        <div
+          className={'Navbar__WrapperNetworkSelect'}
+          style={{
+            margin: 0,
+            width: searchFocused ? '100%' : '300px',
+            // gap: searchFocused ? 0 : '16px',
+            gap: 0,
+            transition: '1s'
+          }}
+        >
           <div
             style={{
               visibility: searchFocused ? 'hidden' : 'visible',
               opacity: searchFocused ? 0 : 1,
-              transition: '.5s'
+              // width: searchFocused ? 0 : '200px',
+              width: 0,
+              transition: '.2s',
+              transitionDelay: searchFocused ? '0s' : '1s'
             }}
           >
             <NetworkSelect/>
           </div>
 
           <Box
-            ml={2}
+            // ml={2}
             zIndex={20}
-            onClick={() => setSearchFocused(state => !state)}
 
             style={{
               position: searchFocused ? 'absolute' : 'relative',
-              height: searchFocused ? '10px' : '20px',
-              width: searchFocused ? '1000px' : '250px',
+              // height: searchFocused ? '40px' : '40px',
+              // width: searchFocused ? '1440px' : '250px',
+              width: '1440px',
               maxWidth: '100%',
               zIndex: 20,
               right: 0,
-              transition: '.5s'
+              transition: '1s'
             }}
           >
-            <GlobalSearchInput />
+            <GlobalSearchInput onResultChange={setSearchResults} onFocusChange={setSearchFocused}/>
           </Box>
         </div>
+
+        {/* <div */}
+        {/*   style={{ */}
+        {/*     position: searchFocused ? 'relative' : 'absolute', */}
+        {/*     marginTop: '100px', */}
+        {/*     visibility: searchFocused ? 'visible' : 'hidden', */}
+        {/*     opacity: searchFocused ? 1 : 0, */}
+        {/*     transition: '.5s' */}
+        {/*   }} */}
+        {/* > */}
+        {/*   <span>aaaaa</span> */}
+        {/*   {searchResults?.identities?.length} */}
+        {/*   {searchResults?.identities?.length} */}
+        {/* </div> */}
       </Flex>
 
       <Box className={`NavbarMobileMenu ${isOpen ? 'NavbarMobileMenu--Open' : ''}`} display={{ lg: 'none' }}>
