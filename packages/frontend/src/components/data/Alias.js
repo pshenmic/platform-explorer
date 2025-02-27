@@ -38,19 +38,19 @@ export default function Alias ({ alias, status, children, ellipsis = true, avata
         {avatarSource && (
           <ImageGenerator className={'Alias__Avatar'} username={avatarSource} lightness={50} saturation={50} width={24} height={24} />
         )}
-
-        <span className={'Alias__Name'}>
-          {dashIndex !== -1
-            ? alias?.slice(0, dashIndex)
-            : alias
+        <span className={'Alias__SymbolsContainer'}>
+          <span className={'Alias__Name'}>
+            {dashIndex !== -1
+              ? alias?.slice(0, dashIndex)
+              : alias
+            }
+          </span>
+          {dashIndex !== -1 &&
+            <span className={'Alias__Domain'}>
+              {alias?.slice(dashIndex)}
+            </span>
           }
         </span>
-
-        {dashIndex !== -1 &&
-          <span className={'Alias__Domain'}>
-            {alias?.slice(dashIndex)}
-          </span>
-        }
 
         <StatusIcon className={'Alias__LockedIcon'}/>
       </div>

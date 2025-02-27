@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .DataContractTotalCard {
-  @include mixins.EntityCard();
+  @include mixins.TotalCard();
 
   &__Title {
     font-weight: 700;
@@ -18,7 +18,8 @@
     .InfoLine__Value {
       width: 100%;
       text-align: right;
-
+      overflow: hidden;
+      
       .Identifier {
         justify-content: flex-end;
       }
@@ -33,6 +34,8 @@
   }
 
   @media screen and (max-width: $breakpoint-md) {
+    @include mixins.TotalCard(true);
+
     &__Header {
       .InfoLine {
         flex-wrap: wrap;
@@ -57,8 +60,8 @@
       }
     }
 
-    &__HeaderLines {
-      padding-right: 90px;
+    &__Identifier {
+      padding-right: 100px;
     }
 
     &__Owner {
@@ -67,13 +70,6 @@
         max-width: 100%;
         margin-left: 0;
       }
-    }
-
-    &__Avatar {
-      position: absolute;
-      right: 16px;
-      top: 20px;
-      margin-right: 0;
     }
   }
 }

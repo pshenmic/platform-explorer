@@ -2,12 +2,12 @@
 @import '../../styles/variables.scss';
 
 .ValidatorCard {
-  @include mixins.EntityCard();
+  @include mixins.TotalCard();
 
   &__Header {
     display: flex;
     width: 100%;
-    align-items: center;
+    align-items: flex-start;
   }
 
   &__CommonInfo {
@@ -58,7 +58,6 @@
 
   &--Loading & {
     &__Avatar {
-      position: absolute !important;
       @include mixins.LoadingContainer;
     }
   }
@@ -78,6 +77,8 @@
   }
 
   @media screen and (max-width: $breakpoint-lg) {
+    @include mixins.TotalCard(true);
+
     &__Header {
       .InfoLine {
         flex-wrap: wrap;
@@ -94,13 +95,6 @@
           text-align: left;
         }
       }
-    }
-
-    &__Avatar {
-      position: absolute;
-      right: 16px;
-      top: 20px;
-      margin-right: 0;
     }
 
     &__ProTxHash {

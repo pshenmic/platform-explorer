@@ -8,19 +8,6 @@ export default function ValidatorCard ({ validator, rate, className }) {
   return (
     <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${validator.loading ? 'ValidatorCard--Loading' : ''} ${className || ''}`}>
       <div className={'ValidatorCard__Header'}>
-        <div className={'ValidatorCard__Avatar'}>
-          {!validator.error
-            ? <ImageGenerator
-                username={validator.data.proTxHash}
-                lightness={50}
-                saturation={50}
-                width={88}
-                height={88}
-              />
-            : 'n/a'
-          }
-        </div>
-
         <div className={'ValidatorCard__HeaderLines'}>
           <InfoLine
             className={'ValidatorCard__ProTxHash'}
@@ -48,6 +35,18 @@ export default function ValidatorCard ({ validator, rate, className }) {
             loading={validator.loading}
             error={validator.error}
           />
+        </div>
+        <div className={'ValidatorCard__Avatar'}>
+          {!validator.error
+            ? <ImageGenerator
+              username={validator.data.proTxHash}
+              lightness={50}
+              saturation={50}
+              width={88}
+              height={88}
+            />
+            : 'n/a'
+          }
         </div>
       </div>
 
