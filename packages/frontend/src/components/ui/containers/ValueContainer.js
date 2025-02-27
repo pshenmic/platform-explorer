@@ -2,6 +2,21 @@ import { ArrowCornerIcon } from '../icons'
 import Link from 'next/link'
 import './ValueContainer.scss'
 
+const Wrapper = (props) => {
+  return typeof props?.link === 'string'
+    ? <Link
+        href={props?.link}
+        {...(props?.external &&
+          { target: '_blank', rel: 'noreferrer' }
+        )}
+        className={props?.className}
+        {...props}
+      >
+        {props?.children}
+      </Link>
+    : <div className={props?.className} {...props}>{props?.children}</div>
+}
+
 function ValueContainer ({
   children,
   clickable,
@@ -14,21 +29,6 @@ function ValueContainer ({
   className,
   ...props
 }) {
-  const Wrapper = (props) => {
-    return typeof link === 'string'
-      ? <Link
-          href={link}
-          {...(external &&
-            { target: '_blank', rel: 'noreferrer' }
-          )}
-          className={props.className}
-          {...props}
-        >
-          {props.children}
-        </Link>
-      : <div className={props.className} {...props}>{props.children}</div>
-  }
-
   const colorClasses = {
     default: '',
     red: 'ValueContainer--Red',
@@ -60,7 +60,7 @@ function ValueContainer ({
   extraClass += ' ' + sizeClasses?.[size] || sizeClasses.default
 
   return (
-    <Wrapper className={`ValueContainer ${extraClass} ${className || ''}`} {...props}>
+    <Wrapper link={link} external={external} className={`ValueContainer ${extraClass} ${className || ''}`} {...props}>
       {external && (
         <div className={'ValueContainer__ExternalIcon'}>
           <ArrowCornerIcon color={'brand.normal'} w={'10px'} h={'10px'} mr={'12px'}/>
