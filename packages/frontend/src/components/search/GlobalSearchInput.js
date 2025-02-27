@@ -3,7 +3,7 @@ import ModalWindow from '../modalWindow'
 import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
 import { SearchIcon } from '@chakra-ui/icons'
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 import {
   ResponseErrorNotFound,
   ResponseErrorTimeout,
@@ -11,10 +11,10 @@ import {
 } from '../../util/Errors'
 import './GlobalSearchInput.scss'
 
-function GlobalSearchInput () {
+function GlobalSearchInput ({ onResultChange, onFocusChange }) {
   const [showModal, setShowModal] = useState(false)
   const [modalText, setModalText] = useState('false')
-  const router = useRouter()
+  // const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
@@ -40,34 +40,35 @@ function GlobalSearchInput () {
     }
   }
 
-  const searchRedirect = (url) => {
-    setSearchQuery('')
-    router.push(url)
-  }
+  // const searchRedirect = (url) => {
+  //   setSearchQuery('')
+  //   router.push(url)
+  // }
 
   const search = async () => {
     try {
       const searchResult = await Api.search(searchQuery)
+      onResultChange(searchResult)
 
-      const searchTypeMap = {
-        block: `/block/${searchResult?.block?.header?.hash}`,
-        transaction: `/transaction/${searchResult?.transaction?.hash}`,
-        dataContract: `/dataContract/${searchResult?.dataContract?.identifier}`,
-        dataContracts: `/dataContract/${searchResult?.dataContracts?.[0].identifier}`,
-        document: `/document/${searchResult?.document?.identifier}`,
-        identity: `/identity/${searchResult?.identity?.identifier}`,
-        identities: `/identity/${searchResult?.identities?.[0].identifier}`,
-        validator: `/validator/${searchResult?.validator?.proTxHash}`
-      }
+      // const searchTypeMap = {
+      //   block: `/block/${searchResult?.block?.header?.hash}`,
+      //   transaction: `/transaction/${searchResult?.transaction?.hash}`,
+      //   dataContract: `/dataContract/${searchResult?.dataContract?.identifier}`,
+      //   dataContracts: `/dataContract/${searchResult?.dataContracts?.[0].identifier}`,
+      //   document: `/document/${searchResult?.document?.identifier}`,
+      //   identity: `/identity/${searchResult?.identity?.identifier}`,
+      //   identities: `/identity/${searchResult?.identities?.[0].identifier}`,
+      //   validator: `/validator/${searchResult?.validator?.proTxHash}`
+      // }
 
-      for (const key in searchTypeMap) {
-        if (searchResult[key]) {
-          searchRedirect(searchTypeMap[key])
-          return
-        }
-      }
+      // for (const key in searchTypeMap) {
+      //   if (searchResult[key]) {
+      //     searchRedirect(searchTypeMap[key])
+      //     return
+      //   }
+      // }
 
-      showModalWindow('Not found', 6000)
+      // showModalWindow('Not found', 6000)
     } catch (e) {
       console.error(e)
 
@@ -107,6 +108,8 @@ function GlobalSearchInput () {
             color={'gray.250'}
             fontSize={'12px'}
             className={'GlobalSearchInput__Field'}
+            onFocus={() => typeof onFocusChange === 'function' && onFocusChange(true)}
+            onBlur={() => typeof onFocusChange === 'function' && onFocusChange(false)}
           />
           <InputRightElement>
             <Button
