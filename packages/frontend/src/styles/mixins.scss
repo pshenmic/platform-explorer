@@ -429,6 +429,11 @@
 }
 
 @mixin TotalCard ($avatarAbsolute: false) {
+  &__Title {
+    white-space: break-spaces;
+    word-break: break-all;
+  }
+
   &--Loading {
     .InfoLine__Value {
       height: 1.5rem;
@@ -436,6 +441,7 @@
   }
 
   &__Header {
+    position: relative;
     display: flex;
     width: 100%;
     align-items: center;
@@ -456,8 +462,8 @@
 
     @if $avatarAbsolute {
       position: absolute;
-      right: 16px;
-      top: 20px;
+      right: 0;
+      top: 0;
       margin: 0;
     }
   }
