@@ -46,7 +46,7 @@ class BlocksController {
       quorum = Quorum.fromObject({
         ...quorumDetailedInfo,
         ...quorumInfo[lastCommit.quorum_hash.toLowerCase()],
-        quorumIndex: quorumIndex
+        quorumIndex
       })
     }
 
