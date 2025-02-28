@@ -91,7 +91,12 @@ class IdentitiesController {
     const { identifier } = request.params
     const { limit = 100 } = request.query
 
-    const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, [['$ownerId', '=', Identifier.from(identifier)]], limit)
+    const documents = await this.dapi.getDocuments(
+      WITHDRAWAL_CONTRACT_TYPE,
+      WithdrawalsContract,
+      [['$ownerId', '=', Identifier.from(identifier)]],
+      limit
+    )
 
     if (documents.length === 0) {
       return response.send(new PaginatedResultSet([], null, null, null))

@@ -39,12 +39,12 @@ class DocumentsController {
       documentTypeName,
       {
         $format_version: '0',
-        ownerId: dataContract.owner,
+        ownerId: dataContract.owner.identifier,
         id: dataContract.identifier,
         version: dataContract.version,
         documentSchemas: JSON.parse(dataContract.schema)
       },
-      [['$id', '=', Identifier.from(identifier)]],
+      [['$id', '=', Buffer.from(Identifier.from(identifier))]],
       1
     )
 
