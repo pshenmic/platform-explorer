@@ -316,9 +316,9 @@ describe('Identities routes', () => {
       })))
     })
 
-    it('should return 404 whe identity not exist', async () => {
+    it('should return 404 when identity not exist', async () => {
       mock.method(DAPI.prototype, 'getDocuments', async () => [])
-      const { body } = await client.get('/identity/1234123123PFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6/withdrawals')
+      const { body } = await client.get('/identity/D1111QnZXVpMW9yg4X6MjuWzSZ5Nui8TmCLUDY18FBtq/withdrawals')
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.deepEqual(body.resultSet, [])
