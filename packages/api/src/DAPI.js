@@ -50,7 +50,7 @@ class DAPI {
       startAfter
     })
 
-    return documents.map(
+    return (documents ?? []).map(
       (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument()
     )
   }
