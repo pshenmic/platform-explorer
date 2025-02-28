@@ -1,6 +1,7 @@
 const DocumentsDAO = require('../dao/DocumentsDAO')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const Document = require('../models/Document')
+const {Identifier} = require("@dashevo/wasm-dpp");
 
 class DocumentsController {
   constructor (client, knex, dapi) {
@@ -43,8 +44,7 @@ class DocumentsController {
         version: dataContract.version,
         documentSchemas: JSON.parse(dataContract.schema)
       },
-      identifier,
-      undefined,
+      [['$id', '=', Identifier.from(identifier)]],
       1
     )
 

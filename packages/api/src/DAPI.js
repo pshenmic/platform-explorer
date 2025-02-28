@@ -32,20 +32,22 @@ class DAPI {
    * @typedef {getDocuments}
    * @param {string} type
    * @param {object} dataContractObject
-   * @param {string} identifier
-   * @param {string} owner
+   * @param {Array<Array>} query
    * @param {number} limit
-  */
-  async getDocuments (type, dataContractObject, identifier, owner, limit) {
+   * @param {Array<Array>} orderBy
+   * @param {Object} skip - {startAfter?: {Buffer}, startAt?: {Buffer}}
+   */
+  async getDocuments (type, dataContractObject, query, limit, orderBy, skip) {
     const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
+
+    const {startAt, startAfter} = skip ?? {}
 
     const { documents } = await this.dapi.platform.getDocuments(Identifier.from(dataContractObject.id), type, {
       limit,
-      where: [
-        identifier
-          ? ['$id', '=', Identifier.from(identifier)]
-          : ['$ownerId', '=', Identifier.from(owner)]
-      ]
+      where: query,
+      orderBy,
+      startAt,
+      startAfter,
     })
 
     return documents.map(
