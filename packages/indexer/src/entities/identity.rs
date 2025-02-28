@@ -35,10 +35,6 @@ impl Identity {
             AssetLockProof::Chain(chain_lock) => {
                 let tx_hash = chain_lock.out_point.txid.to_string();
 
-                let block_height = chain_lock.core_chain_locked_height;
-
-
-
                 let transaction_info = rpc.get_raw_transaction_info(&Txid::from_hex(&tx_hash).unwrap(), None).unwrap();
 
                 if transaction_info.height.is_some() && transaction_info.height.unwrap() as u32 > chain_lock.core_chain_locked_height {

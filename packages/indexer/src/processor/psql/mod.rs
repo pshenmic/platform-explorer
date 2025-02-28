@@ -7,12 +7,13 @@ use deadpool_postgres::{PoolError};
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
-use dashcore_rpc::Client;
+use dashcore_rpc::{Client, RpcApi};
+use dashcore_rpc::dashcore::{ProTxHash, Txid};
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
-use dpp::platform_value::string_encoding::Encoding::Base58;
+use dpp::platform_value::string_encoding::Encoding::{Base58, Hex};
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
 use dpp::state_transition::documents_batch_transition::{DocumentsBatchTransition};
@@ -25,6 +26,7 @@ use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTr
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
 use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
+use dpp::state_transition::masternode_vote_transition::accessors::MasternodeVoteTransitionAccessorsV0;
 use dpp::state_transition::masternode_vote_transition::MasternodeVoteTransition;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
@@ -340,7 +342,21 @@ impl PSQLProcessor {
     }
 
     pub async fn handle_masternode_vote(&self, state_transition: MasternodeVoteTransition, st_hash: String) -> Result<(), ProcessorError> {
-        let masternode_vote = MasternodeVote::from(state_transition, &self.dashcore_rpc);
+        let pro_tx_hash = state_transition.pro_tx_hash().to_string(Hex);
+
+        let raw_tx = self.dashcore_rpc.get_raw_transaction_info(
+            &Txid::from_hex(&pro_tx_hash.to_string()).unwrap(),
+            None
+        ).unwrap();
+
+        let block_hash = raw_tx.blockhash.unwrap();
+
+        let pro_tx_info = self.dashcore_rpc.get_protx_info(
+            &ProTxHash::from_hex(&pro_tx_hash.to_string()).unwrap(),
+            Some(&block_hash)
+        ).unwrap();
+
+        let masternode_vote = MasternodeVote::from(state_transition, pro_tx_info);
 
         self.dao.create_masternode_vote(masternode_vote, st_hash.clone()).await.unwrap();
 
