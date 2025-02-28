@@ -3,7 +3,7 @@ const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { decodeStateTransition } = require('../utils')
-const {Identifier} = require("@dashevo/wasm-dpp");
+const { Identifier } = require('@dashevo/wasm-dpp')
 
 class IdentitiesController {
   constructor (client, knex, dapi) {

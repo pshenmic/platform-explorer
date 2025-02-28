@@ -40,14 +40,14 @@ class DAPI {
   async getDocuments (type, dataContractObject, query, limit, orderBy, skip) {
     const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
 
-    const {startAt, startAfter} = skip ?? {}
+    const { startAt, startAfter } = skip ?? {}
 
     const { documents } = await this.dapi.platform.getDocuments(Identifier.from(dataContractObject.id), type, {
       limit,
       where: query,
       orderBy,
       startAt,
-      startAfter,
+      startAfter
     })
 
     return documents.map(
