@@ -11,9 +11,11 @@ use dashcore_rpc::{Client, RpcApi};
 use dashcore_rpc::dashcore::{ProTxHash, Txid};
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
+use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Hex};
+use dpp::prelude::AssetLockProof;
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
 use dpp::state_transition::documents_batch_transition::{DocumentsBatchTransition};
@@ -188,7 +190,26 @@ impl PSQLProcessor {
     }
 
     pub async fn handle_identity_create(&self, state_transition: IdentityCreateTransition, st_hash: String) -> () {
-        let identity = Identity::from_create(state_transition, &self.dashcore_rpc);
+        let asset_lock = state_transition.asset_lock_proof().clone();
+
+        let transaction = match asset_lock {
+            AssetLockProof::Instant(instant_lock) => instant_lock.transaction,
+            AssetLockProof::Chain(chain_lock) => {
+                let tx_hash = chain_lock.out_point.txid.to_string();
+
+                let transaction_info = self.dashcore_rpc.get_raw_transaction_info(&Txid::from_hex(&tx_hash).unwrap(), None).unwrap();
+
+                if transaction_info.height.is_some() && transaction_info.height.unwrap() as u32 > chain_lock.core_chain_locked_height {
+                    panic!("Transaction {} was mined after chain lock", &tx_hash)
+                }
+
+                let transaction = self.dashcore_rpc.get_raw_transaction(&Txid::from_hex(&tx_hash).unwrap(), None).unwrap();
+
+                transaction
+            }
+        };
+
+        let identity = Identity::from_create(state_transition, transaction);
         let transfer = Transfer {
             id: None,
             sender: None,

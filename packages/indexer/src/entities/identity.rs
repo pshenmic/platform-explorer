@@ -1,9 +1,8 @@
 use std::env;
 use base64::Engine;
 use base64::engine::general_purpose;
-use dashcore_rpc::{Client, RpcApi};
-use dashcore_rpc::dashcore::Txid;
 use data_contracts::SystemDataContract;
+use dpp::dashcore::Transaction;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
@@ -26,26 +25,9 @@ pub struct Identity {
 }
 
 impl Identity {
-    pub fn from_create(state_transition: IdentityCreateTransition, rpc: &Client) -> Self {
+    pub fn from_create(state_transition: IdentityCreateTransition, transaction: Transaction) -> Self {
         let asset_lock = state_transition.asset_lock_proof().clone();
         let asset_lock_output_index = asset_lock.output_index();
-
-        let transaction = match asset_lock {
-            AssetLockProof::Instant(instant_lock) => instant_lock.transaction,
-            AssetLockProof::Chain(chain_lock) => {
-                let tx_hash = chain_lock.out_point.txid.to_string();
-
-                let transaction_info = rpc.get_raw_transaction_info(&Txid::from_hex(&tx_hash).unwrap(), None).unwrap();
-
-                if transaction_info.height.is_some() && transaction_info.height.unwrap() as u32 > chain_lock.core_chain_locked_height {
-                    panic!("Transaction {} was mined after chain lock", &tx_hash)
-                }
-
-                let transaction = rpc.get_raw_transaction(&Txid::from_hex(&tx_hash).unwrap(), None).unwrap();
-
-                transaction
-            }
-        };
 
         let outpoint = transaction.output.iter().nth(asset_lock_output_index as usize).expect("Could not find outpoint by index").clone();
 
