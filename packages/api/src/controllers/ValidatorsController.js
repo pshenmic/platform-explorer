@@ -35,8 +35,8 @@ class ValidatorsController {
 
     const isActive = validators.some(validator => validator.pro_tx_hash === hash)
 
-    const [host] = proTxInfo?.state.service ? proTxInfo?.state.service.match(/^\d+\.\d+\.\d+\.\d+/) : [null]
-    const [servicePort] = proTxInfo?.state.service ? proTxInfo?.state.service.match(/\d+$/) : [null]
+    const [host] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
+    const [servicePort] = proTxInfo?.state?.service?.match(/\d+$/) ?? [null]
 
     const [coreStatus, platformStatus, grpcStatus] = (await Promise.allSettled([
       checkTcpConnect(servicePort, host),
