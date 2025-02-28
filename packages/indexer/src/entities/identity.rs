@@ -1,9 +1,8 @@
 use std::env;
 use base64::Engine;
 use base64::engine::general_purpose;
-use dashcore_rpc::{Auth, Client, RpcApi};
-use dashcore_rpc::dashcore::Txid;
 use data_contracts::SystemDataContract;
+use dpp::dashcore::Transaction;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
@@ -25,37 +24,10 @@ pub struct Identity {
     pub is_system: bool,
 }
 
-impl From<IdentityCreateTransition> for Identity {
-    fn from(state_transition: IdentityCreateTransition) -> Self {
+impl Identity {
+    pub fn from_create(state_transition: IdentityCreateTransition, transaction: Transaction) -> Self {
         let asset_lock = state_transition.asset_lock_proof().clone();
         let asset_lock_output_index = asset_lock.output_index();
-
-        let transaction = match asset_lock {
-            AssetLockProof::Instant(instant_lock) => instant_lock.transaction,
-            AssetLockProof::Chain(chain_lock) => {
-                let tx_hash = chain_lock.out_point.txid.to_string();
-
-                let block_height = chain_lock.core_chain_locked_height;
-
-                let core_rpc_host: String = env::var("CORE_RPC_HOST").expect("You've not set the CORE_RPC_HOST").parse().expect("Failed to parse CORE_RPC_HOST env");
-                let core_rpc_port: String = env::var("CORE_RPC_PORT").expect("You've not set the CORE_RPC_PORT").parse().expect("Failed to parse CORE_RPC_PORT env");
-                let core_rpc_user: String = env::var("CORE_RPC_USER").expect("You've not set the CORE_RPC_USER").parse().expect("Failed to parse CORE_RPC_USER env");
-                let core_rpc_password: String = env::var("CORE_RPC_PASSWORD").expect("You've not set the CORE_RPC_PASSWORD").parse().expect("Failed to parse CORE_RPC_PASSWORD env");
-
-                let rpc = Client::new(&format!("{}:{}", core_rpc_host, &core_rpc_port),
-                                      Auth::UserPass(core_rpc_user, core_rpc_password)).unwrap();
-
-                let transaction_info = rpc.get_raw_transaction_info(&Txid::from_hex(&tx_hash).unwrap(), None).unwrap();
-
-                if transaction_info.height.is_some() && transaction_info.height.unwrap() as u32 > chain_lock.core_chain_locked_height {
-                    panic!("Transaction {} was mined after chain lock", &tx_hash)
-                }
-
-                let transaction = rpc.get_raw_transaction(&Txid::from_hex(&tx_hash).unwrap(), None).unwrap();
-
-                transaction
-            }
-        };
 
         let outpoint = transaction.output.iter().nth(asset_lock_output_index as usize).expect("Could not find outpoint by index").clone();
 

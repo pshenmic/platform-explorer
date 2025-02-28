@@ -7,11 +7,15 @@ use deadpool_postgres::{PoolError};
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use crate::processor::psql::dao::PostgresDAO;
 use base64::{Engine as _, engine::{general_purpose}};
+use dashcore_rpc::{Client, RpcApi};
+use dashcore_rpc::dashcore::{ProTxHash, Txid};
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
+use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
-use dpp::platform_value::string_encoding::Encoding::Base58;
+use dpp::platform_value::string_encoding::Encoding::{Base58, Hex};
+use dpp::prelude::AssetLockProof;
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::documents_batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
 use dpp::state_transition::documents_batch_transition::{DocumentsBatchTransition};
@@ -24,6 +28,7 @@ use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTr
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
 use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
+use dpp::state_transition::masternode_vote_transition::accessors::MasternodeVoteTransitionAccessorsV0;
 use dpp::state_transition::masternode_vote_transition::MasternodeVoteTransition;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::block::Block;
@@ -67,15 +72,16 @@ pub struct PSQLProcessor {
     decoder: StateTransitionDecoder,
     dao: PostgresDAO,
     platform_explorer_identifier: Identifier,
+    dashcore_rpc: Client
 }
 
 impl PSQLProcessor {
-    pub fn new() -> PSQLProcessor {
+    pub fn new(dashcore_rpc: Client) -> PSQLProcessor {
         let dao = PostgresDAO::new();
         let decoder = StateTransitionDecoder::new();
         let platform_explorer_identifier_string: String = env::var("PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").expect("You've not set the PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").parse().expect("Failed to parse PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER env");
         let platform_explorer_identifier = Identifier::from_string(&platform_explorer_identifier_string, Base58).unwrap();
-        return PSQLProcessor { decoder, dao, platform_explorer_identifier };
+        return PSQLProcessor { decoder, dao, platform_explorer_identifier, dashcore_rpc };
     }
 
     pub async fn handle_data_contract_create(&self, state_transition: DataContractCreateTransition, st_hash: String) -> () {
@@ -184,7 +190,26 @@ impl PSQLProcessor {
     }
 
     pub async fn handle_identity_create(&self, state_transition: IdentityCreateTransition, st_hash: String) -> () {
-        let identity = Identity::from(state_transition);
+        let asset_lock = state_transition.asset_lock_proof().clone();
+
+        let transaction = match asset_lock {
+            AssetLockProof::Instant(instant_lock) => instant_lock.transaction,
+            AssetLockProof::Chain(chain_lock) => {
+                let tx_hash = chain_lock.out_point.txid.to_string();
+
+                let transaction_info = self.dashcore_rpc.get_raw_transaction_info(&Txid::from_hex(&tx_hash).unwrap(), None).unwrap();
+
+                if transaction_info.height.is_some() && transaction_info.height.unwrap() as u32 > chain_lock.core_chain_locked_height {
+                    panic!("Transaction {} was mined after chain lock", &tx_hash)
+                }
+
+                let transaction = self.dashcore_rpc.get_raw_transaction(&Txid::from_hex(&tx_hash).unwrap(), None).unwrap();
+
+                transaction
+            }
+        };
+
+        let identity = Identity::from_create(state_transition, transaction);
         let transfer = Transfer {
             id: None,
             sender: None,
@@ -338,7 +363,21 @@ impl PSQLProcessor {
     }
 
     pub async fn handle_masternode_vote(&self, state_transition: MasternodeVoteTransition, st_hash: String) -> Result<(), ProcessorError> {
-        let masternode_vote = MasternodeVote::from(state_transition);
+        let pro_tx_hash = state_transition.pro_tx_hash().to_string(Hex);
+
+        let raw_tx = self.dashcore_rpc.get_raw_transaction_info(
+            &Txid::from_hex(&pro_tx_hash.to_string()).unwrap(),
+            None
+        ).unwrap();
+
+        let block_hash = raw_tx.blockhash.unwrap();
+
+        let pro_tx_info = self.dashcore_rpc.get_protx_info(
+            &ProTxHash::from_hex(&pro_tx_hash.to_string()).unwrap(),
+            Some(&block_hash)
+        ).unwrap();
+
+        let masternode_vote = MasternodeVote::from(state_transition, pro_tx_info);
 
         self.dao.create_masternode_vote(masternode_vote, st_hash.clone()).await.unwrap();
 
