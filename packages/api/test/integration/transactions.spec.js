@@ -770,7 +770,7 @@ describe('Transaction routes', () => {
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            gas: txs[0]?.block?.height ? gas : null,
+            gas: txs[0]?.block?.height ? gas : 0,
             blockHeight: txs[0]?.block?.height ?? null,
             blockHash: txs[0]?.block?.hash ?? null
           }
@@ -806,7 +806,7 @@ describe('Transaction routes', () => {
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            gas: txs[0]?.block?.height ? gas : null,
+            gas: txs[0]?.block?.height ? gas : 0,
             blockHeight: txs[0]?.block?.height ?? null,
             blockHash: txs[0]?.block?.hash ?? null
           }
@@ -842,7 +842,7 @@ describe('Transaction routes', () => {
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            gas: txs[0]?.block?.height ? gas : null,
+            gas: txs[0]?.block?.height ? gas : 0,
             blockHeight: txs[0]?.block?.height ?? null,
             blockHash: txs[0]?.block?.hash ?? null
           }
@@ -878,7 +878,7 @@ describe('Transaction routes', () => {
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            gas: txs[0]?.block?.height ? gas : null,
+            gas: txs[0]?.block?.height ? gas : 0,
             blockHeight: txs[0]?.block?.height ?? null,
             blockHash: txs[0]?.block?.hash ?? null
           }
@@ -916,7 +916,7 @@ describe('Transaction routes', () => {
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            gas: txs[0]?.block?.height ? gas : null,
+            gas: txs[0]?.block?.height ? gas : 0,
             blockHeight: txs[0]?.block?.height ?? null,
             blockHash: txs[0]?.block?.hash ?? null
           }
