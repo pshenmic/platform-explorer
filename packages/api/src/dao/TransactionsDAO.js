@@ -148,20 +148,25 @@ module.exports = class TransactionsDAO {
       .select('blocks.timestamp', 'state_transitions.gas_used', 'blocks.hash', 'blocks.height')
       .whereRaw('blocks.timestamp > (SELECT MIN(date_from) FROM ranges) AND blocks.timestamp <= (SELECT MAX(date_to) FROM ranges)')
 
-    const rows = await this.knex.with('ranges', ranges)
+    const heightSubquery = this.knex.with('ranges', ranges)
       .with(
         'filtered_data',
         dataSubquery
       )
       .select('date_from')
-      .select(this.knex.raw('count(*) as tx_count'))
-      .select(this.knex.raw('min(hash) as block_hash'))
+      .select(this.knex.raw('count(gas_used) as tx_count'))
       .select(this.knex.raw('min(height) as block_height'))
       .leftJoin('filtered_data', function () {
         this.on('timestamp', '>', 'date_from').andOn('timestamp', '<=', 'date_to')
       })
       .from('ranges')
+      .orderBy('date_from', 'asc')
       .groupBy('date_from')
+      .as('sub')
+
+    const rows = await this.knex(heightSubquery)
+      .select('tx_count', 'block_height', 'hash as block_hash', 'date_from')
+      .leftJoin('blocks', 'blocks.height', 'block_height')
 
     return rows
       .map(row => ({
@@ -185,24 +190,29 @@ module.exports = class TransactionsDAO {
       .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
     const dataSubquery = this.knex('state_transitions')
-      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
       .select('blocks.timestamp', 'state_transitions.gas_used', 'blocks.hash', 'blocks.height')
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
       .whereRaw('blocks.timestamp > (SELECT MIN(date_from) FROM ranges) AND blocks.timestamp <= (SELECT MAX(date_to) FROM ranges)')
 
-    const rows = await this.knex.with('ranges', ranges)
+    const heightSubquery = this.knex.with('ranges', ranges)
       .with(
         'filtered_data',
         dataSubquery
       )
       .select('date_from')
       .select(this.knex.raw('sum(gas_used) as gas'))
-      .select(this.knex.raw('min(hash) as block_hash'))
       .select(this.knex.raw('min(height) as block_height'))
       .leftJoin('filtered_data', function () {
         this.on('timestamp', '>', 'date_from').andOn('timestamp', '<=', 'date_to')
       })
       .from('ranges')
+      .orderBy('date_from', 'asc')
       .groupBy('date_from')
+      .as('sub')
+
+    const rows = await this.knex(heightSubquery)
+      .select('gas', 'block_height', 'hash as block_hash', 'date_from')
+      .leftJoin('blocks', 'blocks.height', 'block_height')
 
     return rows
       .map(row => ({
