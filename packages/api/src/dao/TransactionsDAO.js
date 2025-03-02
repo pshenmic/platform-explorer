@@ -143,10 +143,13 @@ module.exports = class TransactionsDAO {
         this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) OVER (ORDER BY date_to) AS date_from`)
       )
 
-    const dataSubquery = this.knex('state_transitions')
-      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
-      .select('blocks.timestamp', 'state_transitions.gas_used', 'blocks.hash', 'blocks.height')
+    const blocksSubquery = this.knex('blocks')
       .whereRaw('blocks.timestamp > (SELECT MIN(date_from) FROM ranges) AND blocks.timestamp <= (SELECT MAX(date_to) FROM ranges)')
+      .as('blocks_sub')
+
+    const dataSubquery = this.knex(blocksSubquery)
+      .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks_sub.hash')
+      .select('blocks_sub.timestamp', 'state_transitions.gas_used', 'blocks_sub.hash', 'blocks_sub.height')
 
     const heightSubquery = this.knex.with('ranges', ranges)
       .with(
@@ -172,7 +175,7 @@ module.exports = class TransactionsDAO {
       .map(row => ({
         timestamp: row.date_from,
         data: {
-          txs: parseInt(row.tx_count),
+          txs: parseInt(row.tx_count ?? 0),
           blockHeight: row.block_height,
           blockHash: row.block_hash
         }
@@ -189,10 +192,13 @@ module.exports = class TransactionsDAO {
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
       .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
-    const dataSubquery = this.knex('state_transitions')
-      .select('blocks.timestamp', 'state_transitions.gas_used', 'blocks.hash', 'blocks.height')
-      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+    const blocksSubquery = this.knex('blocks')
       .whereRaw('blocks.timestamp > (SELECT MIN(date_from) FROM ranges) AND blocks.timestamp <= (SELECT MAX(date_to) FROM ranges)')
+      .as('blocks_sub')
+
+    const dataSubquery = this.knex(blocksSubquery)
+      .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks_sub.hash')
+      .select('blocks_sub.timestamp', 'state_transitions.gas_used', 'blocks_sub.hash', 'blocks_sub.height')
 
     const heightSubquery = this.knex.with('ranges', ranges)
       .with(
@@ -218,7 +224,7 @@ module.exports = class TransactionsDAO {
       .map(row => ({
         timestamp: row.date_from,
         data: {
-          gas: parseInt(row.gas),
+          gas: parseInt(row.gas ?? 0),
           blockHeight: row.block_height,
           blockHash: row.block_hash
         }
