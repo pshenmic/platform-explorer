@@ -13,7 +13,7 @@ use dpp::voting::votes::Vote;
 #[derive(Clone)]
 pub struct MasternodeVote {
     pub id: Option<u32>,
-    pub power: i16,
+    pub power: Option<i16>,
     pub identifier: Identifier,
     pub pro_tx_hash: String,
     pub voter_identity: Identifier,
@@ -35,16 +35,11 @@ struct VoteInfo {
 }
 
 
-impl MasternodeVote {
-    pub fn from(transition: MasternodeVoteTransition, pro_tx_info: ProTxInfo) -> Self {
+impl From<MasternodeVoteTransition> for MasternodeVote {
+    fn from(transition: MasternodeVoteTransition) -> Self {
         let identifier = transition.vote().vote_poll_unique_id().unwrap();
         let pro_tx_hash = transition.pro_tx_hash().to_string(Hex);
         let voter_identity = transition.voter_identity_id();
-
-        let power = match pro_tx_info.mn_type.unwrap().as_str() {
-            "Evo" => 4i16,
-            _ => 1i16
-        };
 
         let vote = transition.vote();
 
@@ -74,9 +69,9 @@ impl MasternodeVote {
             ResourceVoteChoice::Lock => None
         };
 
-        return MasternodeVote {
+        MasternodeVote {
             id: None,
-            power,
+            power: None,
             identifier,
             pro_tx_hash,
             voter_identity,
@@ -87,5 +82,20 @@ impl MasternodeVote {
             index_name: vote_info.index_name,
             index_values: vote_info.index_values,
         }
+    }
+}
+
+impl MasternodeVote {
+
+    pub fn set_power(&mut self, power: i16) {
+        self.power = Some(power);
+    }
+    pub fn set_power_from_pro_tx_info(&mut self, pro_tx_info: ProTxInfo) {
+        let power = match pro_tx_info.mn_type.unwrap().as_str() {
+            "Evo" => 4i16,
+            _ => 1i16
+        };
+
+        self.set_power(power);
     }
 }

@@ -22,24 +22,46 @@ pub struct Identity {
     pub revision: Revision,
     pub balance: Option<u64>,
     pub is_system: bool,
+    asset_lock_output_index: Option<u32>
 }
 
 impl Identity {
-    pub fn from_create(state_transition: IdentityCreateTransition, transaction: Transaction) -> Self {
-        let asset_lock = state_transition.asset_lock_proof().clone();
-        let asset_lock_output_index = asset_lock.output_index();
+    pub fn set_asset_lock_output_index(&mut self, asset_lock_output_index: u32){
+        self.asset_lock_output_index = Some(asset_lock_output_index);
+    }
 
-        let outpoint = transaction.output.iter().nth(asset_lock_output_index as usize).expect("Could not find outpoint by index").clone();
+    pub fn set_balance(&mut self, balance: u64){
+        self.balance = Some(balance);
+    }
+
+    pub fn set_balance_from_transaction(&mut self, transaction: Transaction) {
+        let asset_lock_output_index = self.asset_lock_output_index.unwrap();
+
+        let outpoint = transaction.output
+          .iter()
+          .nth(asset_lock_output_index as usize)
+          .expect("Could not find outpoint by index. Try to set asset lock output index")
+          .clone();
 
         let credits = outpoint.value * 1000;
+
+        self.set_balance(credits);
+    }
+}
+
+impl From<IdentityCreateTransition> for Identity {
+    fn from(state_transition: IdentityCreateTransition) -> Self {
+        let asset_lock = state_transition.asset_lock_proof().clone();
+        let asset_lock_output_index = asset_lock.output_index();
 
         Identity {
             id: None,
             identifier: state_transition.identity_id(),
             owner: state_transition.owner_id(),
-            balance: Some(credits),
+            balance: None,
             revision: Revision::from(0 as u64),
             is_system: false,
+            asset_lock_output_index: Some(asset_lock_output_index)
         }
     }
 }
@@ -57,6 +79,7 @@ impl From<IdentityUpdateTransition> for Identity {
             balance: None,
             revision,
             is_system: false,
+            asset_lock_output_index: None
         }
     }
 }
@@ -75,6 +98,7 @@ impl From<SystemDataContract> for Identity {
             revision: 0,
             balance: None,
             is_system: true,
+            asset_lock_output_index: None
         }
     }
 }
@@ -94,6 +118,7 @@ impl From<Row> for Identity {
             identifier: Identifier::from_string(&identifier.trim(), Base58).unwrap(),
             is_system,
             balance: None,
+            asset_lock_output_index: None
         }
     }
 }
@@ -112,6 +137,7 @@ impl From<Validator> for Identity {
             identifier,
             is_system,
             balance: None,
+            asset_lock_output_index: None
         }
     }
 }
