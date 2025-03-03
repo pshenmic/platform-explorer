@@ -58,14 +58,14 @@ impl Indexer {
         let txs_to_skip = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
         let decoder = StateTransitionDecoder::new();
 
-        return Indexer {
+        Indexer {
             tenderdash_rpc: TenderdashRpcApi::new(tenderdash_url),
             processor,
             decoder,
             last_block_height: Cell::new(0),
             txs_to_skip: txs_to_skip.split(",")
                 .map(|s| { String::from(s) }).collect::<Vec<String>>(),
-        };
+        }
     }
 }
 
