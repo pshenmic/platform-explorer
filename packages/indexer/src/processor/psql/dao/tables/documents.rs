@@ -1,4 +1,4 @@
-use deadpool_postgres::PoolError;
+use deadpool_postgres::{PoolError, Transaction};
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use serde_json::{Map, Number, Value};
@@ -7,7 +7,7 @@ use crate::entities::document::Document;
 use crate::processor::psql::PostgresDAO;
 
 impl PostgresDAO {
-  pub async fn create_document(&self, document: Document, st_hash: Option<String>) -> Result<(), PoolError> {
+  pub async fn create_document(&self, document: Document, st_hash: Option<String>, sql_transaction: &Transaction<'_>) -> Result<(), PoolError> {
     let id = document.identifier;
     let revision = document.revision;
     let revision_i32 = revision as i32;
@@ -28,7 +28,7 @@ impl PostgresDAO {
     let owner: Identifier = match document.owner {
       None => {
         let state_transition_hash = st_hash.clone().expect("State transition hash is not defined");
-        let owner_identifier = self.get_owner_by_state_transition_hash(state_transition_hash.clone())
+        let owner_identifier = self.get_owner_by_state_transition_hash(state_transition_hash.clone(), sql_transaction)
           .await.unwrap().expect(&format!("Could not find owner for state transition {}",
                                           state_transition_hash));
 
@@ -37,10 +37,8 @@ impl PostgresDAO {
       Some(_owner) => _owner
     };
 
-    let client = self.connection_pool.get().await.unwrap();
-
     let data_contract = self
-      .get_data_contract_by_identifier(document.data_contract_identifier)
+      .get_data_contract_by_identifier(document.data_contract_identifier, sql_transaction)
       .await.unwrap().expect(&format!("Could not find DataContract with identifier {}",
                                       document.data_contract_identifier.to_string(Base58)));
     let data_contract_id = data_contract.id.unwrap() as i32;
@@ -48,9 +46,9 @@ impl PostgresDAO {
     let query = "INSERT INTO documents(identifier,document_type_name,transition_type,owner,revision,data,deleted,\
         state_transition_hash,data_contract_id,is_system,prefunded_voting_balance) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
 
-    let stmt = client.prepare_cached(query).await.unwrap();
+    let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
-    client.query(&stmt, &[
+    sql_transaction.execute(&stmt, &[
       &id.to_string(Base58),
       &document.document_type_name,
       &transition_type,
@@ -95,15 +93,13 @@ impl PostgresDAO {
     Ok(documents.first().cloned())
   }
 
-  pub async fn update_document_price(&self, document: Document) -> Result<(), PoolError> {
-    let client = self.connection_pool.get().await.unwrap();
-
-    let stmt = client.prepare_cached("UPDATE documents set \
+  pub async fn update_document_price(&self, document: Document, sql_transaction: &Transaction<'_>) -> Result<(), PoolError> {
+    let stmt = sql_transaction.prepare_cached("UPDATE documents set \
         price = $1, \
         revision = $2 \
         WHERE identifier = $3;").await.unwrap();
 
-    client.query(&stmt, &[
+    sql_transaction.execute(&stmt, &[
       &(document.price.unwrap() as i64),
       &(document.revision as i32),
       &document.identifier.to_string(Base58),
@@ -114,15 +110,13 @@ impl PostgresDAO {
     Ok(())
   }
 
-  pub async fn assign_document(&self, document: Document, owner: Identifier) -> Result<(), PoolError> {
-    let client = self.connection_pool.get().await.unwrap();
-
-    let stmt = client.prepare_cached("UPDATE documents set \
+  pub async fn assign_document(&self, document: Document, owner: Identifier, sql_transaction: &Transaction<'_>) -> Result<(), PoolError> {
+    let stmt = sql_transaction.prepare_cached("UPDATE documents set \
         owner = $1, \
         revision = $2 \
         WHERE identifier = $3;").await.unwrap();
 
-    client.query(&stmt, &[
+    sql_transaction.execute(&stmt, &[
       &owner.to_string(Base58),
       &(document.revision as i32),
       &document.identifier.to_string(Base58),

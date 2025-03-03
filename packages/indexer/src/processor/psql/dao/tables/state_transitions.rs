@@ -1,6 +1,6 @@
 use base64::Engine;
 use base64::engine::general_purpose;
-use deadpool_postgres::PoolError;
+use deadpool_postgres::{PoolError, Transaction};
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use sha256::digest;
@@ -8,7 +8,7 @@ use crate::models::TransactionStatus;
 use crate::processor::psql::PostgresDAO;
 
 impl PostgresDAO {
-  pub async fn create_state_transition(&self, block_hash: String, owner: Identifier, st_type: u32, index: u32, bytes: Vec<u8>, gas_used: u64, status: TransactionStatus, error: Option<String>) {
+  pub async fn create_state_transition(&self, block_hash: String, owner: Identifier, st_type: u32, index: u32, bytes: Vec<u8>, gas_used: u64, status: TransactionStatus, error: Option<String>, sql_transaction: &Transaction<'_>) {
     let data = general_purpose::STANDARD.encode(&bytes);
     let hash = digest(bytes.clone()).to_uppercase();
     let st_type = st_type as i32;
@@ -22,10 +22,9 @@ impl PostgresDAO {
     let query = "INSERT INTO state_transitions(hash, owner, data, type, \
         index, block_hash, gas_used, status, error) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);";
 
-    let client = self.connection_pool.get().await.unwrap();
-    let stmt = client.prepare_cached(query).await.unwrap();
+    let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
-    client.query(&stmt, &[
+    sql_transaction.execute(&stmt, &[
       &hash,
       &owner.to_string(Base58),
       &data,
@@ -40,13 +39,11 @@ impl PostgresDAO {
     println!("Created ST with hash {} from block with hash {}, owner = {}", &hash, &block_hash, &owner.to_string(Base58));
   }
 
-  pub async fn get_owner_by_state_transition_hash(&self, hash: String) -> Result<Option<String>, PoolError> {
-    let client = self.connection_pool.get().await?;
-
-    let stmt = client.prepare_cached("SELECT owner FROM state_transitions \
+  pub async fn get_owner_by_state_transition_hash(&self, hash: String, sql_transaction: &Transaction<'_>) -> Result<Option<String>, PoolError> {
+    let stmt = sql_transaction.prepare_cached("SELECT owner FROM state_transitions \
         where hash = $1 LIMIT 1;").await.unwrap();
 
-    let row = client.query_one(&stmt, &[
+    let row = sql_transaction.query_one(&stmt, &[
       &hash
     ]).await.unwrap();
 

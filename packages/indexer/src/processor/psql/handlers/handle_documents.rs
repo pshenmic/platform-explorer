@@ -1,4 +1,5 @@
 use data_contracts::SystemDataContract;
+use deadpool_postgres::Transaction;
 use dpp::identifier::Identifier;
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::Base58;
@@ -11,7 +12,7 @@ use crate::entities::transfer::Transfer;
 use crate::processor::psql::PSQLProcessor;
 
 impl PSQLProcessor {
-  pub async fn handle_documents_batch(&self, state_transition: DocumentsBatchTransition, st_hash: String) -> () {
+  pub async fn handle_documents_batch(&self, state_transition: DocumentsBatchTransition, st_hash: String, sql_transaction: &Transaction<'_>) -> () {
     let transitions = state_transition.transitions().clone();
 
     for (_, document_transition) in transitions.iter().enumerate() {
@@ -20,16 +21,16 @@ impl PSQLProcessor {
 
       match document_transition {
         DocumentTransition::Transfer(_) => {
-          self.dao.assign_document(document, state_transition.owner_id()).await.unwrap();
+          self.dao.assign_document(document, state_transition.owner_id(), sql_transaction).await.unwrap();
         }
         DocumentTransition::UpdatePrice(_) => {
-          self.dao.update_document_price(document).await.unwrap();
+          self.dao.update_document_price(document, sql_transaction).await.unwrap();
         }
         DocumentTransition::Purchase(_) => {
           let current_document = self.dao.get_document_by_identifier(document.identifier).await.unwrap()
             .expect(&format!("Could not get Document with identifier {} from the database", document.identifier));
 
-          self.dao.assign_document(document.clone(), state_transition.owner_id()).await.unwrap();
+          self.dao.assign_document(document.clone(), state_transition.owner_id(), sql_transaction).await.unwrap();
 
           let transfer = Transfer {
             id: None,
@@ -37,10 +38,10 @@ impl PSQLProcessor {
             recipient: current_document.owner,
             amount: document.price.unwrap(),
           };
-          self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
+          self.dao.create_transfer(transfer, st_hash.clone(), sql_transaction).await.unwrap();
         }
         _ => {
-          self.dao.create_document(document, Some(st_hash.clone())).await.unwrap();
+          self.dao.create_document(document, Some(st_hash.clone()), sql_transaction).await.unwrap();
         }
       }
 
@@ -70,7 +71,7 @@ impl PSQLProcessor {
         let identity = self.dao.get_identity_by_identifier(identity_identifier.clone()).await.unwrap().expect(&format!("Could not find identity with identifier {}", identity_identifier));
         let alias = format!("{}.{}", label, normalized_parent_domain_name);
 
-        self.dao.create_identity_alias(identity, alias, st_hash.clone()).await.unwrap();
+        self.dao.create_identity_alias(identity, alias, st_hash.clone(), sql_transaction).await.unwrap();
       }
 
       if document_type == "dataContracts" && document_transition.data_contract_id() == self.platform_explorer_identifier {
@@ -88,7 +89,7 @@ impl PSQLProcessor {
           .get_str_at_path("name")
           .unwrap();
 
-        let data_contract = self.dao.get_data_contract_by_identifier(data_contract_identifier).await
+        let data_contract = self.dao.get_data_contract_by_identifier(data_contract_identifier, sql_transaction).await
           .expect(&format!("Could not get DataContract with identifier {} from the database",
                            data_contract_identifier_str))
           .expect(&format!("Could not find DataContract with identifier {} in the database",
@@ -96,7 +97,7 @@ impl PSQLProcessor {
 
 
         if data_contract.owner == state_transition.owner_id() {
-          self.dao.set_data_contract_name(data_contract, String::from(data_contract_name)).await.unwrap();
+          self.dao.set_data_contract_name(data_contract, String::from(data_contract_name), sql_transaction).await.unwrap();
         } else {
           println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document_identifier.to_string(Base58));
         }

@@ -1,18 +1,16 @@
 use std::time::SystemTime;
-use deadpool_postgres::PoolError;
+use deadpool_postgres::{PoolError, Transaction};
 use tokio_postgres::Row;
 use crate::entities::block_header::BlockHeader;
 use crate::processor::psql::PostgresDAO;
 
 impl PostgresDAO {
-  pub async fn create_block(&self, block_header: BlockHeader) -> String {
-    let client = self.connection_pool.get().await.unwrap();
-
-    let stmt = client.prepare_cached("INSERT INTO blocks(hash, height, \
+  pub async fn create_block(&self, block_header: BlockHeader, sql_transaction: &Transaction<'_>) -> String {
+    let stmt = sql_transaction.prepare_cached("INSERT INTO blocks(hash, height, \
         timestamp, block_version, app_version, l1_locked_height, validator, app_hash) \
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING hash;").await.unwrap();
 
-    let rows = client.query(&stmt, &[
+    let rows = sql_transaction.execute(&stmt, &[
       &block_header.hash,
       &block_header.height,
       &SystemTime::from(block_header.timestamp),
@@ -23,7 +21,7 @@ impl PostgresDAO {
       &block_header.app_hash
     ]).await.unwrap();
 
-    let block_hash: String = rows[0].get(0);
+    let block_hash: String = block_header.hash;
 
     block_hash
   }
@@ -46,6 +44,6 @@ impl PostgresDAO {
 
     let block = blocks.first();
 
-    return Ok(block.cloned());
+    Ok(block.cloned())
   }
 }

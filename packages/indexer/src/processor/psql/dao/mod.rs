@@ -5,7 +5,7 @@ use deadpool_postgres::tokio_postgres::{NoTls};
 pub mod tables;
 
 pub struct PostgresDAO {
-    connection_pool: Pool,
+    pub(crate) connection_pool: Pool,
 }
 
 impl PostgresDAO {

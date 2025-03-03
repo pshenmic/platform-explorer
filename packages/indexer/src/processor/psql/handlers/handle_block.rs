@@ -1,5 +1,6 @@
 use base64::Engine;
 use base64::engine::general_purpose;
+use deadpool_postgres::GenericClient;
 use crate::entities::block::Block;
 use crate::entities::validator::Validator;
 use crate::processor::psql::{PSQLProcessor, ProcessorError};
@@ -13,15 +14,24 @@ impl PSQLProcessor {
         // TODO IMPLEMENT PSQL TRANSACTION
         let block_height = block.header.height.clone();
 
+        let mut client = self.dao.connection_pool.get().await.unwrap();
+        let sql_transaction = client.transaction().await.unwrap();
+
         if block.header.height == 1 {
-          self.handle_init_chain().await;
+          let mut init_client = self.dao.connection_pool.get().await.unwrap();
+
+          let init_sql_transaction = init_client.transaction().await.unwrap();
+
+          self.handle_init_chain(&init_sql_transaction).await;
+
+          init_sql_transaction.commit().await;
         }
 
         for (_, validator) in validators.iter().enumerate() {
-          self.handle_validator(validator.clone()).await?;
+          self.handle_validator(validator.clone(), &sql_transaction).await?;
         }
 
-        let block_hash = self.dao.create_block(block.header).await;
+        let block_hash = self.dao.create_block(block.header, &sql_transaction).await;
 
         if block.txs.len() as i32 == 0 {
           println!("No platform transactions at block height {}", block_height.clone());
@@ -34,8 +44,10 @@ impl PSQLProcessor {
 
           let state_transition = st_result.unwrap();
 
-          self.handle_st(block_hash.clone(), i as u32, state_transition, tx.clone()).await;
+          self.handle_st(block_hash.clone(), i as u32, state_transition, tx.clone(), &sql_transaction).await;
         }
+
+        sql_transaction.commit().await.expect("SQL Transaction Error");
 
         Ok(())
       }

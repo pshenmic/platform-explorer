@@ -2,7 +2,7 @@ mod dao;
 
 use std::env;
 use std::num::ParseIntError;
-use deadpool_postgres::{PoolError};
+use deadpool_postgres::{PoolError, Transaction};
 use crate::processor::psql::dao::PostgresDAO;
 use dashcore_rpc::{Client, RpcApi};
 use data_contracts::SystemDataContract;
@@ -64,11 +64,11 @@ impl PSQLProcessor {
         return PSQLProcessor { decoder, dao, platform_explorer_identifier, dashcore_rpc };
     }
 
-    pub async fn process_system_data_contract(&self, system_data_contract: SystemDataContract) -> () {
+    pub async fn process_system_data_contract(&self, system_data_contract: SystemDataContract, sql_transaction: &Transaction<'_>) -> () {
         let data_contract = DataContract::from(system_data_contract);
         let data_contract_identifier = data_contract.identifier.clone();
         let data_contract_owner = data_contract.owner.clone();
-        self.dao.create_data_contract(data_contract, None).await;
+        self.dao.create_data_contract(data_contract, None, sql_transaction).await;
 
         match system_data_contract {
             SystemDataContract::Withdrawals => {}
@@ -111,7 +111,7 @@ impl PSQLProcessor {
                     prefunded_voting_balance: None,
                 };
 
-                self.dao.create_document(dash_tld_document, None).await.unwrap();
+                self.dao.create_document(dash_tld_document, None, sql_transaction).await.unwrap();
             }
             SystemDataContract::Dashpay => {}
             SystemDataContract::WalletUtils => {}

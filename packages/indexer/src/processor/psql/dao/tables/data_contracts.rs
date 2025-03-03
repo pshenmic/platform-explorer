@@ -1,4 +1,4 @@
-use deadpool_postgres::PoolError;
+use deadpool_postgres::{PoolError, Transaction};
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use tokio_postgres::Row;
@@ -6,7 +6,7 @@ use crate::entities::data_contract::DataContract;
 use crate::processor::psql::PostgresDAO;
 
 impl PostgresDAO {
-  pub async fn create_data_contract(&self, data_contract: DataContract, st_hash: Option<String>) {
+  pub async fn create_data_contract(&self, data_contract: DataContract, st_hash: Option<String>, sql_transaction: &Transaction<'_>) {
     let id = data_contract.identifier;
     let name = data_contract.name;
     let owner = data_contract.owner;
@@ -20,10 +20,9 @@ impl PostgresDAO {
     let query = "INSERT INTO data_contracts(identifier, name, owner, schema, version, \
         state_transition_hash, is_system) VALUES ($1, $2, $3, $4, $5, $6, $7);";
 
-    let client = self.connection_pool.get().await.unwrap();
-    let stmt = client.prepare_cached(query).await.unwrap();
+    let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
-    client.query(&stmt, &[
+    sql_transaction.query(&stmt, &[
       &id.to_string(Base58),
       &name,
       &owner.to_string(Base58),
@@ -36,13 +35,11 @@ impl PostgresDAO {
     println!("Created DataContract {} [{} version]", id.to_string(Base58), version);
   }
 
-  pub async fn set_data_contract_name(&self, data_contract: DataContract, name: String) -> Result<(), PoolError> {
-    let client = self.connection_pool.get().await.unwrap();
-
-    let stmt = client.prepare_cached("UPDATE data_contracts set name = $1 \
+  pub async fn set_data_contract_name(&self, data_contract: DataContract, name: String, sql_transaction: &Transaction<'_>) -> Result<(), PoolError> {
+    let stmt = sql_transaction.prepare_cached("UPDATE data_contracts set name = $1 \
         WHERE identifier = $2;").await.unwrap();
 
-    client.query(&stmt, &[
+    sql_transaction.execute(&stmt, &[
       &name,
       &data_contract.identifier.to_string(Base58),
     ]).await.unwrap();
@@ -52,14 +49,12 @@ impl PostgresDAO {
     Ok(())
   }
 
-  pub async fn get_data_contract_by_identifier(&self, identifier: Identifier) -> Result<Option<DataContract>, PoolError> {
-    let client = self.connection_pool.get().await?;
-
-    let stmt = client.prepare_cached("SELECT id,name,owner,identifier,version,is_system \
+  pub async fn get_data_contract_by_identifier(&self, identifier: Identifier, sql_transaction: &Transaction<'_>) -> Result<Option<DataContract>, PoolError> {
+    let stmt = sql_transaction.prepare_cached("SELECT id,name,owner,identifier,version,is_system \
         FROM data_contracts where identifier = $1 ORDER by version DESC LIMIT 1;")
       .await.unwrap();
 
-    let rows: Vec<Row> = client.query(&stmt, &[
+    let rows: Vec<Row> = sql_transaction.query(&stmt, &[
       &identifier.to_string(Base58)
     ]).await.unwrap();
 

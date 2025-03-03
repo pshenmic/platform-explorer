@@ -1,5 +1,6 @@
 use dashcore_rpc::dashcore::Txid;
 use dashcore_rpc::RpcApi;
+use deadpool_postgres::Transaction;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::prelude::AssetLockProof;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
@@ -12,7 +13,7 @@ use crate::entities::transfer::Transfer;
 use crate::processor::psql::PSQLProcessor;
 
 impl PSQLProcessor {
-  pub async fn handle_identity_create(&self, state_transition: IdentityCreateTransition, st_hash: String) -> () {
+  pub async fn handle_identity_create(&self, state_transition: IdentityCreateTransition, st_hash: String, sql_transaction: &Transaction<'_>) -> () {
     let asset_lock = state_transition.asset_lock_proof().clone();
 
     let transaction = match asset_lock {
@@ -43,31 +44,31 @@ impl PSQLProcessor {
       amount: identity.balance.expect("Balance missing from identity"),
     };
 
-    self.dao.create_identity(identity, Some(st_hash.clone())).await.unwrap();
-    self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
+    self.dao.create_identity(identity, Some(st_hash.clone()), sql_transaction).await.unwrap();
+    self.dao.create_transfer(transfer, st_hash.clone(), sql_transaction).await.unwrap();
   }
 
-  pub async fn handle_identity_update(&self, state_transition: IdentityUpdateTransition, st_hash: String) -> () {
+  pub async fn handle_identity_update(&self, state_transition: IdentityUpdateTransition, st_hash: String, sql_transaction: &Transaction<'_>) -> () {
     let identity = Identity::from(state_transition);
 
-    self.dao.create_identity(identity, Some(st_hash.clone())).await.unwrap();
+    self.dao.create_identity(identity, Some(st_hash.clone()), sql_transaction).await.unwrap();
   }
 
-  pub async fn handle_identity_top_up(&self, state_transition: IdentityTopUpTransition, st_hash: String) -> () {
+  pub async fn handle_identity_top_up(&self, state_transition: IdentityTopUpTransition, st_hash: String, sql_transaction: &Transaction<'_>) -> () {
     let transfer = Transfer::from(state_transition);
 
-    self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
+    self.dao.create_transfer(transfer, st_hash.clone(), sql_transaction).await.unwrap();
   }
 
-  pub async fn handle_identity_credit_withdrawal(&self, state_transition: IdentityCreditWithdrawalTransition, st_hash: String) -> () {
+  pub async fn handle_identity_credit_withdrawal(&self, state_transition: IdentityCreditWithdrawalTransition, st_hash: String, sql_transaction: &Transaction<'_>) -> () {
     let transfer = Transfer::from(state_transition);
 
-    self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
+    self.dao.create_transfer(transfer, st_hash.clone(), sql_transaction).await.unwrap();
   }
 
-  pub async fn handle_identity_credit_transfer(&self, state_transition: IdentityCreditTransferTransition, st_hash: String) -> () {
+  pub async fn handle_identity_credit_transfer(&self, state_transition: IdentityCreditTransferTransition, st_hash: String, sql_transaction: &Transaction<'_>) -> () {
     let transfer = Transfer::from(state_transition);
 
-    self.dao.create_transfer(transfer, st_hash.clone()).await.unwrap();
+    self.dao.create_transfer(transfer, st_hash.clone(), sql_transaction).await.unwrap();
   }
 }

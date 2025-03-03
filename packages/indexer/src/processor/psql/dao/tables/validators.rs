@@ -1,4 +1,4 @@
-use deadpool_postgres::PoolError;
+use deadpool_postgres::{PoolError, Transaction};
 use tokio_postgres::Row;
 use crate::entities::validator::Validator;
 use crate::processor::psql::PostgresDAO;
@@ -24,13 +24,11 @@ impl PostgresDAO {
     Ok(validators.first().cloned())
   }
 
-  pub async fn create_validator(&self, validator: Validator) -> Result<(), PoolError> {
-    let client = self.connection_pool.get().await.unwrap();
-
-    let stmt = client.prepare_cached("INSERT INTO validators(pro_tx_hash) \
+  pub async fn create_validator(&self, validator: Validator, sql_transaction: &Transaction<'_>) -> Result<(), PoolError> {
+    let stmt = sql_transaction.prepare_cached("INSERT INTO validators(pro_tx_hash) \
         VALUES ($1);").await.unwrap();
 
-    client.query(&stmt, &[
+    sql_transaction.execute(&stmt, &[
       &validator.pro_tx_hash,
     ]).await.unwrap();
 
