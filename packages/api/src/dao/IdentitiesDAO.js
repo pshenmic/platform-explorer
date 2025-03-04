@@ -181,8 +181,10 @@ module.exports = class IdentitiesDAO {
 
   getIdentitiesByDPNSName = async (dpns) => {
     const rows = await this.knex('identity_aliases')
-      .select('identity_identifier', 'alias')
+      .select('identity_identifier', 'alias', 'timestamp')
       .whereILike('alias', `${dpns}%`)
+      .leftJoin('state_transitions', 'state_transition_hash', 'hash')
+      .leftJoin('blocks', 'blocks.hash', 'block_hash')
 
     if (rows.length === 0) {
       return null
@@ -194,7 +196,7 @@ module.exports = class IdentitiesDAO {
       return {
         identifier: row.identity_identifier,
         alias: row.alias,
-        status: getAliasStateByVote(aliasInfo, { alias: row.alias }, row.identity_identifier)
+        status: getAliasStateByVote(aliasInfo, { ...row }, row.identity_identifier)
       }
     }))
   }
