@@ -19,6 +19,7 @@ import { SearchResultsList } from '../../search'
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
 import './NavLink.scss'
+import mockSearchResults from './mockSearchResults'
 
 const links = [
   { title: 'Home', href: '/' },
@@ -57,37 +58,7 @@ function Navbar () {
   const [searchFocused, setSearchFocused] = useState(false)
   // const [searchFocusedd, setSearchFocused] = useState(false)
   // const searchFocused = true
-  const [searchResults, setSearchResults] = useState({
-    identities: [
-      {
-        identifier: '36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm',
-        alias: 'xyz.dash',
-        status: {
-          alias: 'xyz.dash',
-          status: 'ok',
-          contested: true
-        }
-      },
-      {
-        identifier: '5bUPV8KGgL42ZBS9fsmmKU3wweQbVeHHsiVrG3YMHyG5',
-        alias: 'xyz.dash',
-        status: {
-          alias: 'xyz.dash',
-          status: 'locked',
-          contested: true
-        }
-      }
-    ],
-    identity: {
-      identifier: '36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm',
-      alias: 'xyz.dash',
-      status: {
-        alias: 'xyz.dash',
-        status: 'ok',
-        contested: true
-      }
-    }
-  })
+  const [searchResults, setSearchResults] = useState(mockSearchResults)
 
   useEffect(onClose, [pathname, onClose])
 
@@ -177,20 +148,26 @@ function Navbar () {
               maxWidth: '100%',
               zIndex: 20,
               right: 0,
-              top: 0,
+              top: '0.75rem',
               transition: '1s'
             }}
           >
-            <GlobalSearchInput onResultChange={setSearchResults} onFocusChange={setSearchFocused}/>
+            {/*<GlobalSearchInput onResultChange={setSearchResults} onFocusChange={setSearchFocused}/>*/}
+            <GlobalSearchInput
+              onResultChange={setSearchResults}
+              // onFocusChange={setSearchFocused}
+            />
           </Box>
 
           <div
             style={{
               // position: searchFocused ? 'relative' : 'absolute',
-              marginTop: '50px',
+              marginTop: '4rem',
+              width: '100%',
               visibility: searchFocused ? 'visible' : 'hidden',
               opacity: searchFocused ? 1 : 0,
-              transition: '.5s'
+              transition: '.5s',
+              paddingBottom: '18px'
             }}
           >
             <SearchResultsList results={searchResults}/>
@@ -209,6 +186,10 @@ function Navbar () {
         {/* > */}
         {/*   <SearchResultsList results={searchResults}/> */}
          {/* </div> */}
+
+        <div onClick={() => setSearchFocused(state => !state)}>
+          open
+        </div>
       </Flex>
 
       <Box className={`NavbarMobileMenu ${isOpen ? 'NavbarMobileMenu--Open' : ''}`} display={{ lg: 'none' }}>
