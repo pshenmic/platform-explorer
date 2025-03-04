@@ -1,6 +1,5 @@
-import './SearchResultsList.scss'
-import './SearchResultsListItem.scss'
 import SearchResultsListItem from './SearchResultsListItem'
+import './SearchResultsList.scss'
 
 function ListCategory ({ type, data }) {
   const singularCategoryMap = {
@@ -32,13 +31,17 @@ function ListCategory ({ type, data }) {
 
 function SearchResultsList ({ results }) {
   console.log('result', results)
-  // console.log(JSON.stringify(results))
 
   return (
     <div className={'SearchResultsList'}>
-      {Object.entries(results).map(([category, items]) => (
-        <ListCategory key={category} type={category} data={items}/>
-      ))}
+      {results.loading && 'loading'}
+      {results.error && 'error'}
+
+      {results.data && Object?.entries(results.data)?.length > 0 &&
+        Object.entries(results.data).map(([category, items]) => (
+          <ListCategory key={category} type={category} data={items}/>
+        ))
+      }
     </div>
   )
 }

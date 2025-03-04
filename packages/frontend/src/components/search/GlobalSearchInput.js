@@ -10,6 +10,9 @@ import {
   ResponseErrorInternalServer
 } from '../../util/Errors'
 import './GlobalSearchInput.scss'
+import mockSearchResults from '../layout/navbar/mockSearchResults'
+
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 
 function GlobalSearchInput ({ onResultChange, onFocusChange }) {
   const [showModal, setShowModal] = useState(false)
@@ -47,8 +50,15 @@ function GlobalSearchInput ({ onResultChange, onFocusChange }) {
 
   const search = async () => {
     try {
-      const searchResult = await Api.search(searchQuery)
-      onResultChange(searchResult)
+      onResultChange({ data: {}, loading: true, error: false })
+
+      Api.search(searchQuery)
+        .then(res => fetchHandlerSuccess(onResultChange, mockSearchResults))
+        .catch(err => fetchHandlerError(onResultChange, err))
+
+      // const searchResult = await Api.search(searchQuery)
+
+      // fetchHandlerSuccess(onResultChange, mockSearchResults)
 
       // const searchTypeMap = {
       //   block: `/block/${searchResult?.block?.header?.hash}`,

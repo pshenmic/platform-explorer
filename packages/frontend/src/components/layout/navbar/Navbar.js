@@ -16,10 +16,10 @@ import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { SearchResultsList } from '../../search'
+import mockSearchResults from './mockSearchResults'
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
 import './NavLink.scss'
-import mockSearchResults from './mockSearchResults'
 
 const links = [
   { title: 'Home', href: '/' },
@@ -58,9 +58,17 @@ function Navbar () {
   const [searchFocused, setSearchFocused] = useState(false)
   // const [searchFocusedd, setSearchFocused] = useState(false)
   // const searchFocused = true
-  const [searchResults, setSearchResults] = useState(mockSearchResults)
+  const [searchResults, setSearchResults] = useState({ data: mockSearchResults, loading: false, error: false })
 
   useEffect(onClose, [pathname, onClose])
+
+  useEffect(onClose, [pathname])
+
+  useEffect(() => {
+    if (!searchFocused) {
+      setSearchResults({ data: {}, loading: false, error: false })
+    }
+  }, [searchFocused])
 
   console.log('searchResults', searchResults)
 
@@ -146,14 +154,12 @@ function Navbar () {
 
             style={{
               position: searchFocused ? 'absolute' : 'relative',
-              // height: searchFocused ? '40px' : '40px',
-              // width: searchFocused ? '1440px' : '250px',
               width: '1440px',
               maxWidth: '100%',
               zIndex: 20,
               right: 0,
-              top: '0.75rem',
-              transition: '1s'
+              top: searchFocused ? '0.75rem' : 0,
+              transition: 'width 1s'
             }}
           >
             {/* <GlobalSearchInput onResultChange={setSearchResults} onFocusChange={setSearchFocused}/> */}
@@ -167,11 +173,11 @@ function Navbar () {
             style={{
               // position: searchFocused ? 'relative' : 'absolute',
               marginTop: '4rem',
-              width: '100%',
+              width: searchFocused ? '100%' : 0,
               visibility: searchFocused ? 'visible' : 'hidden',
               height: searchFocused ? 'auto' : 0,
               opacity: searchFocused ? 1 : 0,
-              transition: '.5s',
+              // transition: !searchFocused ? 0 : '.5s',
               paddingBottom: '18px',
               maxHeight: 'calc(100vh - 10rem)',
               position: 'relative',
