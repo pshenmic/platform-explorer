@@ -1,8 +1,8 @@
 @import './variables.scss';
 
-@mixin AvatarSize() {
-  height: 24px;
-  width: 24px;
+@mixin AvatarSize($important: false) {
+  height: 24px#{if($important, ' !important', '')};
+  width: 24px#{if($important, ' !important', '')};
 }
 
 @mixin NotActiveText() {
