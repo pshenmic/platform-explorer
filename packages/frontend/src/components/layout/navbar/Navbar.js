@@ -152,7 +152,7 @@ function Navbar () {
               transition: '1s'
             }}
           >
-            {/*<GlobalSearchInput onResultChange={setSearchResults} onFocusChange={setSearchFocused}/>*/}
+            {/* <GlobalSearchInput onResultChange={setSearchResults} onFocusChange={setSearchFocused}/> */}
             <GlobalSearchInput
               onResultChange={setSearchResults}
               // onFocusChange={setSearchFocused}
