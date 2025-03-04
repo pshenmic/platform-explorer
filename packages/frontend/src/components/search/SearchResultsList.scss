@@ -1,0 +1,16 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.SearchResultsList {
+  &__Title {
+    font-family: $font-heading;
+    font-size: 0.75rem;
+    letter-spacing: .4px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  &__Item {
+    display: flex;
+  }
+}
