@@ -70,6 +70,7 @@ function Navbar () {
       <Flex
         className={'Navbar'}
         maxW={'container.maxPageW'}
+        maxH={'100%'}
         ml={'auto'}
         mr={'auto'}
         h={searchFocused ? 'auto' : 16}
@@ -86,6 +87,9 @@ function Navbar () {
           className={'Navbar__Burger'}
           size={'md'}
           icon={isOpen ? <CloseIcon/> : <HamburgerIcon/>}
+          visibility={searchFocused ? 'hidden' : 'visible'}
+          w={searchFocused ? '0' : '40px'}
+          minW={0}
           aria-label={'Open Menu'}
           display={{ lg: 'none' }}
           onClick={isOpen ? onClose : onOpen}
@@ -155,7 +159,7 @@ function Navbar () {
             {/* <GlobalSearchInput onResultChange={setSearchResults} onFocusChange={setSearchFocused}/> */}
             <GlobalSearchInput
               onResultChange={setSearchResults}
-              // onFocusChange={setSearchFocused}
+              onFocusChange={setSearchFocused}
             />
           </Box>
 
@@ -165,9 +169,13 @@ function Navbar () {
               marginTop: '4rem',
               width: '100%',
               visibility: searchFocused ? 'visible' : 'hidden',
+              height: searchFocused ? 'auto' : 0,
               opacity: searchFocused ? 1 : 0,
               transition: '.5s',
-              paddingBottom: '18px'
+              paddingBottom: '18px',
+              maxHeight: 'calc(100vh - 10rem)',
+              position: 'relative',
+              overflowY: 'auto'
             }}
           >
             <SearchResultsList results={searchResults}/>
@@ -186,13 +194,9 @@ function Navbar () {
         {/* > */}
         {/*   <SearchResultsList results={searchResults}/> */}
          {/* </div> */}
-
-        <div onClick={() => setSearchFocused(state => !state)}>
-          open
-        </div>
       </Flex>
 
-      <Box className={`NavbarMobileMenu ${isOpen ? 'NavbarMobileMenu--Open' : ''}`} display={{ lg: 'none' }}>
+      <Box className={`NavbarMobileMenu ${isOpen && !searchFocused ? 'NavbarMobileMenu--Open' : ''}`} display={{ lg: 'none' }}>
         <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
           {links.map((link) => (
             <NavLink className={'NavbarMobileMenu__Item'} to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
