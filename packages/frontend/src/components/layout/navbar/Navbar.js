@@ -15,6 +15,7 @@ import Breadcrumbs from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { SearchResultsList } from '../../search'
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
 import './NavLink.scss'
@@ -54,8 +55,39 @@ function Navbar () {
   const displayBreadcrumbs = breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1)
 
   const [searchFocused, setSearchFocused] = useState(false)
+  // const [searchFocusedd, setSearchFocused] = useState(false)
   // const searchFocused = true
-  const [searchResults, setSearchResults] = useState({})
+  const [searchResults, setSearchResults] = useState({
+    identities: [
+      {
+        identifier: '36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm',
+        alias: 'xyz.dash',
+        status: {
+          alias: 'xyz.dash',
+          status: 'ok',
+          contested: true
+        }
+      },
+      {
+        identifier: '5bUPV8KGgL42ZBS9fsmmKU3wweQbVeHHsiVrG3YMHyG5',
+        alias: 'xyz.dash',
+        status: {
+          alias: 'xyz.dash',
+          status: 'locked',
+          contested: true
+        }
+      }
+    ],
+    identity: {
+      identifier: '36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm',
+      alias: 'xyz.dash',
+      status: {
+        alias: 'xyz.dash',
+        status: 'ok',
+        contested: true
+      }
+    }
+  })
 
   useEffect(onClose, [pathname, onClose])
 
@@ -75,7 +107,8 @@ function Navbar () {
         alignItems={'center'}
         justifyContent={'space-between'}
         style={{
-          // gap: searchFocused ? 0 : '0.5rem'
+          transition: '.2s',
+          gap: searchFocused ? 0 : '0.5rem'
         }}
       >
         <IconButton
@@ -111,6 +144,7 @@ function Navbar () {
         <div
           className={'Navbar__WrapperNetworkSelect'}
           style={{
+            position: 'relative',
             margin: 0,
             width: searchFocused ? '100%' : '300px',
             // gap: searchFocused ? 0 : '16px',
@@ -143,11 +177,25 @@ function Navbar () {
               maxWidth: '100%',
               zIndex: 20,
               right: 0,
+              top: 0,
               transition: '1s'
             }}
           >
             <GlobalSearchInput onResultChange={setSearchResults} onFocusChange={setSearchFocused}/>
           </Box>
+
+          <div
+            style={{
+              // position: searchFocused ? 'relative' : 'absolute',
+              marginTop: '50px',
+              visibility: searchFocused ? 'visible' : 'hidden',
+              opacity: searchFocused ? 1 : 0,
+              transition: '.5s'
+            }}
+          >
+            <SearchResultsList results={searchResults}/>
+          </div>
+
         </div>
 
         {/* <div */}
@@ -159,10 +207,8 @@ function Navbar () {
         {/*     transition: '.5s' */}
         {/*   }} */}
         {/* > */}
-        {/*   <span>aaaaa</span> */}
-        {/*   {searchResults?.identities?.length} */}
-        {/*   {searchResults?.identities?.length} */}
-        {/* </div> */}
+        {/*   <SearchResultsList results={searchResults}/> */}
+         {/* </div> */}
       </Flex>
 
       <Box className={`NavbarMobileMenu ${isOpen ? 'NavbarMobileMenu--Open' : ''}`} display={{ lg: 'none' }}>
