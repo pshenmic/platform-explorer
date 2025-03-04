@@ -24,7 +24,7 @@ impl PSQLProcessor {
 
           self.handle_init_chain(&init_sql_transaction).await;
 
-          init_sql_transaction.commit().await;
+          init_sql_transaction.commit().await.expect("Cannot create initial data");
         }
 
         for (_, validator) in validators.iter().enumerate() {

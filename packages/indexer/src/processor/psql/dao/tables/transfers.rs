@@ -1,6 +1,5 @@
 use deadpool_postgres::{PoolError, Transaction};
 use dpp::platform_value::string_encoding::Encoding::Base58;
-use tokio_postgres::types::ToSql;
 use crate::entities::transfer::Transfer;
 use crate::processor::psql::PostgresDAO;
 

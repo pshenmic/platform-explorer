@@ -6,5 +6,3 @@ pub mod blocks;
 pub mod state_transitions;
 pub mod transfers;
 pub mod masternode_votes;
-
-pub struct PostgresDAO {}

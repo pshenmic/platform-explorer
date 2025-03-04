@@ -68,10 +68,8 @@ impl PostgresDAO {
     Ok(())
   }
 
-  pub async fn get_document_by_identifier(&self, identifier: Identifier) -> Result<Option<Document>, PoolError> {
-    let client = self.connection_pool.get().await?;
-
-    let stmt = client.prepare_cached("SELECT documents.id, documents.identifier,\
+  pub async fn get_document_by_identifier(&self, identifier: Identifier, sql_transaction: &Transaction<'_>) -> Result<Option<Document>, PoolError> {
+    let stmt = sql_transaction.prepare_cached("SELECT documents.id, documents.identifier,\
         documents.document_type_name,documents.transition_type,data_contracts.identifier,documents.owner,documents.price,\
         documents.deleted,documents.revision,documents.is_system,documents.prefunded_voting_balance \
         FROM documents \
@@ -80,7 +78,7 @@ impl PostgresDAO {
         ORDER by revision DESC \
         LIMIT 1;").await.unwrap();
 
-    let rows: Vec<Row> = client.query(&stmt, &[
+    let rows: Vec<Row> = sql_transaction.query(&stmt, &[
       &identifier.to_string(Base58)
     ]).await.unwrap();
 

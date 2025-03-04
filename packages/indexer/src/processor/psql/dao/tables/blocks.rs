@@ -10,7 +10,7 @@ impl PostgresDAO {
         timestamp, block_version, app_version, l1_locked_height, validator, app_hash) \
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING hash;").await.unwrap();
 
-    let rows = sql_transaction.execute(&stmt, &[
+    sql_transaction.execute(&stmt, &[
       &block_header.hash,
       &block_header.height,
       &SystemTime::from(block_header.timestamp),

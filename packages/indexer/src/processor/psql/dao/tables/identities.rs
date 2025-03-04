@@ -46,14 +46,12 @@ impl PostgresDAO {
     Ok(())
   }
 
-  pub async fn get_identity_by_identifier(&self, identifier: String) -> Result<Option<Identity>, PoolError> {
-    let client = self.connection_pool.get().await?;
-
-    let stmt = client.prepare_cached("SELECT id, owner, identifier, revision, \
+  pub async fn get_identity_by_identifier(&self, identifier: String, sql_transaction: &Transaction<'_>) -> Result<Option<Identity>, PoolError> {
+    let stmt = sql_transaction.prepare_cached("SELECT id, owner, identifier, revision, \
         is_system FROM identities where identifier = $1 LIMIT 1;")
       .await.unwrap();
 
-    let rows: Vec<Row> = client.query(&stmt, &[
+    let rows: Vec<Row> = sql_transaction.query(&stmt, &[
       &identifier
     ]).await.unwrap();
 
@@ -65,6 +63,4 @@ impl PostgresDAO {
 
     Ok(identities.first().cloned())
   }
-
-
 }

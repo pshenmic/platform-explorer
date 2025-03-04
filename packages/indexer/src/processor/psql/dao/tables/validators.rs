@@ -4,14 +4,12 @@ use crate::entities::validator::Validator;
 use crate::processor::psql::PostgresDAO;
 
 impl PostgresDAO {
-  pub async fn get_validator_by_pro_tx_hash(&self, pro_tx_hash: String) -> Result<Option<Validator>, PoolError> {
-    let client = self.connection_pool.get().await?;
-
-    let stmt = client.prepare_cached("SELECT pro_tx_hash \
+  pub async fn get_validator_by_pro_tx_hash(&self, pro_tx_hash: String, sql_transaction: &Transaction<'_>) -> Result<Option<Validator>, PoolError> {
+    let stmt = sql_transaction.prepare_cached("SELECT pro_tx_hash \
         FROM validators where pro_tx_hash = $1 LIMIT 1;")
       .await.unwrap();
 
-    let rows: Vec<Row> = client.query(&stmt, &[
+    let rows: Vec<Row> = sql_transaction.query(&stmt, &[
       &pro_tx_hash
     ]).await.unwrap();
 

@@ -5,7 +5,7 @@ use crate::processor::psql::{PSQLProcessor, ProcessorError};
 
 impl PSQLProcessor {
   pub async fn handle_validator(&self, validator: Validator, sql_transaction: &Transaction<'_>) -> Result<(), ProcessorError> {
-    let existing = self.dao.get_validator_by_pro_tx_hash(validator.pro_tx_hash.clone()).await?;
+    let existing = self.dao.get_validator_by_pro_tx_hash(validator.pro_tx_hash.clone(), sql_transaction).await?;
 
     match existing {
       None => {

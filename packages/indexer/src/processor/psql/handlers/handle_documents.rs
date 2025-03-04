@@ -27,7 +27,7 @@ impl PSQLProcessor {
           self.dao.update_document_price(document, sql_transaction).await.unwrap();
         }
         DocumentTransition::Purchase(_) => {
-          let current_document = self.dao.get_document_by_identifier(document.identifier).await.unwrap()
+          let current_document = self.dao.get_document_by_identifier(document.identifier, sql_transaction).await.unwrap()
             .expect(&format!("Could not get Document with identifier {} from the database", document.identifier));
 
           self.dao.assign_document(document.clone(), state_transition.owner_id(), sql_transaction).await.unwrap();
@@ -68,7 +68,7 @@ impl PSQLProcessor {
           .expect("Could not find DPNS domain document identity identifier");
 
         let identity_identifier = Identifier::from_bytes(&identity_identifier.clone().into_identifier_bytes().unwrap()).unwrap().to_string(Base58);
-        let identity = self.dao.get_identity_by_identifier(identity_identifier.clone()).await.unwrap().expect(&format!("Could not find identity with identifier {}", identity_identifier));
+        let identity = self.dao.get_identity_by_identifier(identity_identifier.clone(), sql_transaction).await.unwrap().expect(&format!("Could not find identity with identifier {}", identity_identifier));
         let alias = format!("{}.{}", label, normalized_parent_domain_name);
 
         self.dao.create_identity_alias(identity, alias, st_hash.clone(), sql_transaction).await.unwrap();

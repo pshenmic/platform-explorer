@@ -4,20 +4,15 @@ use std::env;
 use std::num::ParseIntError;
 use deadpool_postgres::{PoolError, Transaction};
 use crate::processor::psql::dao::PostgresDAO;
-use dashcore_rpc::{Client, RpcApi};
+use dashcore_rpc::{Client};
 use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::platform_value::{platform_value, BinaryData};
-use dpp::platform_value::string_encoding::Encoding::{Base58, Hex};
+use dpp::platform_value::string_encoding::Encoding::{Base58};
 use dpp::state_transition::documents_batch_transition::document_transition::action_type::DocumentTransitionActionType;
 use crate::decoder::decoder::StateTransitionDecoder;
-use crate::entities::block::Block;
 use crate::entities::data_contract::DataContract;
 use crate::entities::document::Document;
-use crate::entities::identity::Identity;
-use crate::entities::masternode_vote::MasternodeVote;
-use crate::entities::transfer::Transfer;
-use crate::entities::validator::Validator;
 
 pub mod handlers;
 #[derive(Debug)]

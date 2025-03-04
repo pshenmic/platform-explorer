@@ -6,5 +6,3 @@ mod handle_block;
 mod handle_validator;
 mod handle_masternode_vote;
 mod handle_init_chain;
-
-pub struct PSQLProcessor {}

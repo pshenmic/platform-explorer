@@ -1,7 +1,6 @@
 use std::time::Duration;
 use tokio::{time};
 use crate::indexer::Indexer;
-use crate::processor::psql::ProcessorError;
 
 impl Indexer {
   pub async fn start(&self) {

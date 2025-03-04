@@ -45,7 +45,7 @@ impl From<DocumentTransition> for Document {
                 let document_type_name = base.document_type_name().clone();
                 let prefunded_voting_balance = transition.prefunded_voting_balance().clone();
 
-                return Document {
+                Document {
                     id: None,
                     identifier,
                     document_type_name,
@@ -58,7 +58,7 @@ impl From<DocumentTransition> for Document {
                     deleted: false,
                     is_system: false,
                     prefunded_voting_balance,
-                };
+                }
             }
             DocumentTransition::Replace(transition) => {
                 let base = transition.base().clone();
@@ -68,7 +68,7 @@ impl From<DocumentTransition> for Document {
                 let data_contract_identifier = base.data_contract_id();
                 let document_type_name = base.document_type_name().clone();
 
-                return Document {
+                Document {
                     id: None,
                     identifier,
                     document_type_name,
@@ -81,7 +81,7 @@ impl From<DocumentTransition> for Document {
                     deleted: false,
                     is_system: false,
                     prefunded_voting_balance: None,
-                };
+                }
             }
             DocumentTransition::Delete(transition) => {
                 let base = transition.base().clone();
@@ -89,7 +89,7 @@ impl From<DocumentTransition> for Document {
                 let data_contract_identifier = base.data_contract_id();
                 let document_type_name = base.document_type_name().clone();
 
-                return Document {
+                Document {
                     id: None,
                     identifier,
                     document_type_name,
@@ -102,7 +102,7 @@ impl From<DocumentTransition> for Document {
                     deleted: true,
                     is_system: false,
                     prefunded_voting_balance: None,
-                };
+                }
             }
             DocumentTransition::Transfer(transition) => {
                 let base = transition.base().clone();
@@ -112,7 +112,7 @@ impl From<DocumentTransition> for Document {
                 let revision = transition.revision();
                 let document_type_name = base.document_type_name().clone();
 
-                return Document {
+                Document {
                     id: None,
                     identifier,
                     document_type_name,
@@ -125,7 +125,7 @@ impl From<DocumentTransition> for Document {
                     deleted: true,
                     is_system: false,
                     prefunded_voting_balance: None,
-                };
+                }
             }
             DocumentTransition::UpdatePrice(transition) => {
                 let base = transition.base().clone();
@@ -135,7 +135,7 @@ impl From<DocumentTransition> for Document {
                 let revision = transition.revision();
                 let document_type_name = base.document_type_name().clone();
 
-                return Document {
+                Document {
                     id: None,
                     identifier,
                     document_type_name,
@@ -148,7 +148,7 @@ impl From<DocumentTransition> for Document {
                     deleted: true,
                     is_system: false,
                     prefunded_voting_balance: None,
-                };
+                }
             }
             DocumentTransition::Purchase(transition) => {
                 let base = transition.base().clone();
@@ -159,7 +159,7 @@ impl From<DocumentTransition> for Document {
                 let document_type_name = base.document_type_name().clone();
 
 
-                return Document {
+                Document {
                     id: None,
                     identifier,
                     document_type_name,
@@ -172,7 +172,7 @@ impl From<DocumentTransition> for Document {
                     deleted: true,
                     is_system: false,
                     prefunded_voting_balance: None,
-                };
+                }
             }
         }
     }
@@ -203,7 +203,7 @@ impl From<Row> for Document {
             _ => panic!("Unknown document transition type")
         };
 
-        return Document {
+        Document {
             id: Some(id as u32),
             owner: owner.map(|e| Identifier::from_string(e.as_str(), Base58).unwrap()),
             price: price.map(|e| Credits::from(e as u64)),
