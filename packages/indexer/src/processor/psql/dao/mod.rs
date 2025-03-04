@@ -470,8 +470,8 @@ impl PostgresDAO {
 
         let stmt = client.prepare_cached("INSERT INTO masternode_votes(pro_tx_hash, \
         state_transition_hash, voter_identity_id, choice, towards_identity_identifier, \
-        data_contract_id, document_type_name, index_name, index_values) \
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9);")
+        data_contract_id, document_type_name, index_name, index_values, power) \
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);")
             .await.unwrap();
 
         client.query(&stmt, &[
@@ -484,6 +484,7 @@ impl PostgresDAO {
             &masternode_vote.document_type_name,
             &masternode_vote.index_name,
             &index_values_value,
+            &masternode_vote.power
         ]).await.unwrap();
 
          println!("Created Masternode Vote st hash {}", &st_hash);

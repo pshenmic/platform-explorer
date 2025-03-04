@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import Calendar from 'react-calendar'
 import { ChevronIcon } from '../ui/icons'
