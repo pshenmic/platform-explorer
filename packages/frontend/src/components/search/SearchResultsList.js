@@ -1,9 +1,34 @@
-// import { Alias, Identifier } from '../data'
-// import { Badge, Button } from '@chakra-ui/react'
-// import { ChevronIcon } from '../ui/icons'
 import './SearchResultsList.scss'
 import './SearchResultsListItem.scss'
 import SearchResultsListItem from './SearchResultsListItem'
+
+function ListCategory ({ type, data }) {
+  const singularCategoryMap = {
+    transactions: 'transaction',
+    dataContracts: 'dataContract',
+    documents: 'document',
+    identities: 'identity',
+    blocks: 'block',
+    validators: 'validator'
+  }
+
+  return (
+    <div className={'SearchResultsList__Category'}>
+      <div className={'SearchResultsList__Title'}>
+        {data?.length} {data?.length > 1 ? type : singularCategoryMap[type]} found
+      </div>
+      <div>
+        {data?.map((entity, i) => (
+          <SearchResultsListItem
+            entity={entity}
+            entityType={singularCategoryMap[type]}
+            key={i}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function SearchResultsList ({ results }) {
   console.log('result', results)
@@ -11,73 +36,9 @@ function SearchResultsList ({ results }) {
 
   return (
     <div className={'SearchResultsList'}>
-      {results?.transactions?.length &&
-        <div className={'SearchResultsList__Category'}>
-          <div className={'SearchResultsList__Title'}>
-            {results?.transactions?.length} {results?.transactions?.length > 1 ? 'transactions' : 'transaction'} found
-          </div>
-          <div>
-            {results?.transactions.map((transaction, i) => (
-              <SearchResultsListItem
-                entity={transaction}
-                entityType={'transaction'}
-                key={i}
-              />
-            ))}
-          </div>
-        </div>
-      }
-
-      {results?.validators?.length &&
-        <div className={'SearchResultsList__Category'}>
-          <div className={'SearchResultsList__Title'}>
-            {results?.validators?.length} {results?.validators?.length > 1 ? 'validators' : 'validator'} found
-          </div>
-          <div>
-            {results?.validators.map((validator, i) => (
-              <SearchResultsListItem
-                entity={validator}
-                entityType={'validator'}
-                key={i}
-              />
-            ))}
-          </div>
-        </div>
-      }
-
-      {results?.identities?.length &&
-        <div className={'SearchResultsList__Category'}>
-          <div className={'SearchResultsList__Title'}>
-            {results?.identities?.length} {results?.identities?.length > 1 ? 'identities' : 'identity'} found
-          </div>
-          <div>
-            {results?.identities.map((identity, i) => (
-              <SearchResultsListItem
-                entity={identity}
-                entityType={'identity'}
-                key={i}
-              />
-            ))}
-          </div>
-        </div>
-      }
-
-      {results?.dataContracts?.length &&
-        <div className={'SearchResultsList__Category'}>
-          <div className={'SearchResultsList__Title'}>
-            {results?.dataContracts?.length} {results?.dataContracts?.length > 1 ? 'data contracts' : 'data contract'} found
-          </div>
-          <div>
-            {results?.dataContracts.map((dataContract, i) => (
-              <SearchResultsListItem
-                entity={dataContract}
-                entityType={'datacontract'}
-                key={i}
-              />
-            ))}
-          </div>
-        </div>
-      }
+      {Object.entries(results).map(([category, items]) => (
+        <ListCategory key={category} type={category} data={items}/>
+      ))}
     </div>
   )
 }
