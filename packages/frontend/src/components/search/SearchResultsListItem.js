@@ -1,11 +1,12 @@
 import { Alias, Identifier } from '../data'
 import { Badge, Button } from '@chakra-ui/react'
-import { ChevronIcon, TransactionsIcon } from '../ui/icons'
+import { BlockIcon, ChevronIcon, TransactionsIcon } from '../ui/icons'
+import Link from 'next/link'
 import './SearchResultsListItem.scss'
 
 function IdentitySearchItem ({ identity, className }) {
   return (
-    <div className={`SearchResultsListItem ${className || ''}`}>
+    <Link href={`/identity/${identity?.identifier}`} className={`SearchResultsListItem ${className || ''}`}>
       {identity?.alias
         ? <Alias avatarSource={identity?.identifier} ellipsis={true}>{identity?.alias}</Alias>
         : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{identity?.identifier}</Identifier>
@@ -26,25 +27,25 @@ function IdentitySearchItem ({ identity, className }) {
       <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
         <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
       </Button>
-    </div>
+    </Link>
   )
 }
 
 function ValidatorSearchItem ({ validator, className }) {
   return (
-    <div className={`SearchResultsListItem ${className || ''}`}>
+    <Link href={`/validator/${validator?.proTxHash}`} className={`SearchResultsListItem ${className || ''}`}>
       <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{validator?.proTxHash}</Identifier>
 
       <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
         <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
       </Button>
-    </div>
+    </Link>
   )
 }
 
 function TransactionSearchItem ({ transaction, className }) {
   return (
-    <div className={`SearchResultsListItem ${className || ''}`}>
+    <Link href={`/transaction/${transaction?.hash}`} className={`SearchResultsListItem ${className || ''}`}>
       <TransactionsIcon className={'SearchResultsListItem__Icon'}/>
 
       <Identifier ellipsis={true} styles={['highlight-both']}>{transaction?.hash}</Identifier>
@@ -52,13 +53,58 @@ function TransactionSearchItem ({ transaction, className }) {
       <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
         <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
       </Button>
-    </div>
+    </Link>
+  )
+}
+
+function DataContractSearchItem ({ dataContract, className }) {
+  return (
+    <Link href={`/dataContract/${dataContract?.identifier}`} className={`SearchResultsListItem ${className || ''}`}>
+      {dataContract?.name
+        ? <Alias avatarSource={dataContract?.identifier} ellipsis={true}>{dataContract?.name}</Alias>
+        : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{dataContract?.identifier}</Identifier>
+      }
+
+      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
+        <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+      </Button>
+    </Link>
+  )
+}
+
+function BlockSearchItem ({ block, className }) {
+  return (
+    <Link href={`/dataContract/${block?.header?.hash}`} className={`SearchResultsListItem ${className || ''}`}>
+      <BlockIcon className={'SearchResultsListItem__Icon'}/>
+
+      <Identifier ellipsis={true} styles={['highlight-both']}>{block?.header?.hash}</Identifier>
+
+      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
+        <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+      </Button>
+    </Link>
+  )
+}
+
+function DocumentSearchItem ({ document, className }) {
+  return (
+    <Link href={`/dataContract/${document?.identifier}`} className={`SearchResultsListItem ${className || ''}`}>
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{document?.identifier}</Identifier>
+
+      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
+        <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+      </Button>
+    </Link>
   )
 }
 
 function SearchResultsListItem ({ entity, entityType, className }) {
   if (entityType === 'transaction') {
     return <TransactionSearchItem transaction={entity} className={className}/>
+  }
+
+  if (entityType === 'block') {
+    return <BlockSearchItem block={entity} className={className}/>
   }
 
   if (entityType === 'identity') {
@@ -69,19 +115,12 @@ function SearchResultsListItem ({ entity, entityType, className }) {
     return <ValidatorSearchItem validator={entity} className={className}/>
   }
 
-  if (entityType === 'datacontract') {
-    return (
-      <div className={`SearchResultsListItem ${className || ''}`}>
-        {entity?.name
-          ? <Alias avatarSource={entity?.identifier} ellipsis={true}>{entity?.name}</Alias>
-          : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{entity?.identifier}</Identifier>
-        }
+  if (entityType === 'dataContract') {
+    return <DataContractSearchItem dataContract={entity} className={className}/>
+  }
 
-        <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
-          <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
-        </Button>
-      </div>
-    )
+  if (entityType === 'document') {
+    return <DocumentSearchItem document={entity} className={className}/>
   }
 
   return null
