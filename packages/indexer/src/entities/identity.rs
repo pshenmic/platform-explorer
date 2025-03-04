@@ -15,7 +15,6 @@ use crate::entities::validator::Validator;
 
 #[derive(Clone)]
 pub struct Identity {
-    pub id: Option<u32>,
     pub identifier: Identifier,
     pub owner: Identifier,
     pub revision: Revision,
@@ -50,7 +49,6 @@ impl From<IdentityCreateTransition> for Identity {
         let asset_lock_output_index = asset_lock.output_index();
 
         Identity {
-            id: None,
             identifier: state_transition.identity_id(),
             owner: state_transition.owner_id(),
             balance: None,
@@ -68,7 +66,6 @@ impl From<IdentityUpdateTransition> for Identity {
         let revision = state_transition.revision();
 
         Identity {
-            id: None,
             identifier,
             owner,
             balance: None,
@@ -87,7 +84,6 @@ impl From<SystemDataContract> for Identity {
         let owner = Identifier::from(source.owner_id_bytes);
 
         Identity {
-            id: None,
             identifier,
             owner,
             revision: 0,
@@ -100,14 +96,12 @@ impl From<SystemDataContract> for Identity {
 
 impl From<Row> for Identity {
     fn from(row: Row) -> Self {
-        let id: i32 = row.get(0);
         let owner: String = row.get(1);
         let identifier: String = row.get(2);
         let revision: i32 = row.get(3);
         let is_system: bool = row.get(4);
 
         Identity {
-            id: Some(id as u32),
             owner: Identifier::from_string(&owner.trim(), Base58).unwrap(),
             revision: Revision::from(revision as u64),
             identifier: Identifier::from_string(&identifier.trim(), Base58).unwrap(),
@@ -126,7 +120,6 @@ impl From<Validator> for Identity {
         let is_system: bool = false;
 
         Identity {
-            id: None,
             owner: identifier,
             revision,
             identifier,

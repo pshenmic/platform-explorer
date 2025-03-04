@@ -33,7 +33,6 @@ impl PSQLProcessor {
           self.dao.assign_document(document.clone(), state_transition.owner_id(), sql_transaction).await.unwrap();
 
           let transfer = Transfer {
-            id: None,
             sender: document.owner,
             recipient: current_document.owner,
             amount: document.price.unwrap(),

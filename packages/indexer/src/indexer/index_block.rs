@@ -31,7 +31,6 @@ impl Indexer{
             data: tx_string.clone(),
             gas_used: tx_result.gas_used.clone(),
             status: TransactionStatus::SUCCESS,
-            code: None,
             error: None,
           }
         }
@@ -40,7 +39,6 @@ impl Indexer{
             data: tx_string.clone(),
             gas_used: tx_result.gas_used.clone(),
             status: TransactionStatus::FAIL,
-            code: tx_result.code.clone(),
             error: tx_result.info.clone(),
           }
         }
@@ -70,7 +68,6 @@ impl Indexer{
       header: BlockHeader {
         hash: block_hash,
         height: block_height.clone(),
-        tx_count: txs.len() as i32,
         timestamp,
         block_version,
         app_version,

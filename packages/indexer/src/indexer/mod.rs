@@ -2,7 +2,6 @@ use std::cell::Cell;
 use std::env;
 use crate::processor::psql::{ProcessorError, PSQLProcessor};
 use dashcore_rpc::{Auth, Client};
-use crate::decoder::decoder::StateTransitionDecoder;
 use crate::utils::TenderdashRpcApi;
 
 pub mod process_block;
@@ -31,7 +30,6 @@ impl From<ProcessorError> for IndexerError {
 pub struct Indexer {
     tenderdash_rpc: TenderdashRpcApi,
     processor: PSQLProcessor,
-    decoder: StateTransitionDecoder,
     last_block_height: Cell<i32>,
     txs_to_skip: Vec<String>,
 }
@@ -50,12 +48,10 @@ impl Indexer {
         let processor = PSQLProcessor::new(dashcore_rpc);
         let tenderdash_url = env::var("TENDERDASH_URL").expect("You've not set the TENDERDASH_URL");
         let txs_to_skip = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
-        let decoder = StateTransitionDecoder::new();
 
         Indexer {
             tenderdash_rpc: TenderdashRpcApi::new(tenderdash_url),
             processor,
-            decoder,
             last_block_height: Cell::new(0),
             txs_to_skip: txs_to_skip.split(",")
                 .map(|s| { String::from(s) }).collect::<Vec<String>>(),

@@ -16,7 +16,6 @@ use tokio_postgres::Row;
 
 #[derive(Clone)]
 pub struct Document {
-    pub id: Option<u32>,
     pub identifier: Identifier,
     pub document_type_name: String,
     pub transition_type: DocumentTransitionActionType,
@@ -46,7 +45,6 @@ impl From<DocumentTransition> for Document {
                 let prefunded_voting_balance = transition.prefunded_voting_balance().clone();
 
                 Document {
-                    id: None,
                     identifier,
                     document_type_name,
                     transition_type,
@@ -69,7 +67,6 @@ impl From<DocumentTransition> for Document {
                 let document_type_name = base.document_type_name().clone();
 
                 Document {
-                    id: None,
                     identifier,
                     document_type_name,
                     transition_type,
@@ -90,7 +87,6 @@ impl From<DocumentTransition> for Document {
                 let document_type_name = base.document_type_name().clone();
 
                 Document {
-                    id: None,
                     identifier,
                     document_type_name,
                     transition_type,
@@ -113,7 +109,6 @@ impl From<DocumentTransition> for Document {
                 let document_type_name = base.document_type_name().clone();
 
                 Document {
-                    id: None,
                     identifier,
                     document_type_name,
                     transition_type,
@@ -136,7 +131,6 @@ impl From<DocumentTransition> for Document {
                 let document_type_name = base.document_type_name().clone();
 
                 Document {
-                    id: None,
                     identifier,
                     document_type_name,
                     transition_type,
@@ -160,7 +154,6 @@ impl From<DocumentTransition> for Document {
 
 
                 Document {
-                    id: None,
                     identifier,
                     document_type_name,
                     transition_type,
@@ -181,7 +174,6 @@ impl From<DocumentTransition> for Document {
 
 impl From<Row> for Document {
     fn from(row: Row) -> Self {
-        let id: i32 = row.get(0);
         let identifier: String = row.get(1);
         let document_type_name: String = row.get(2);
         let transition_type_i64: i64 = row.get(3);
@@ -204,7 +196,6 @@ impl From<Row> for Document {
         };
 
         Document {
-            id: Some(id as u32),
             owner: owner.map(|e| Identifier::from_string(e.as_str(), Base58).unwrap()),
             price: price.map(|e| Credits::from(e as u64)),
             data_contract_identifier: Identifier::from_string(&data_contract_identifier, Base58).unwrap(),

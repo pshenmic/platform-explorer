@@ -89,7 +89,6 @@ impl PSQLProcessor {
                 });
 
                 let dash_tld_document = Document {
-                    id: None,
                     owner: Some(data_contract_owner),
                     identifier: Identifier::from_bytes(&[
                         215, 242, 197, 63, 70, 169, 23, 171, 110, 91, 57, 162, 215, 188, 38, 11, 100, 146, 137, 69, 55,

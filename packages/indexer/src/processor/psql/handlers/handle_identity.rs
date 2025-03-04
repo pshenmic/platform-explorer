@@ -38,7 +38,6 @@ impl PSQLProcessor {
     identity.set_balance_from_transaction(transaction);
 
     let transfer = Transfer {
-      id: None,
       sender: None,
       recipient: Some(identity.identifier),
       amount: identity.balance.expect("Balance missing from identity"),

@@ -11,9 +11,7 @@ use dpp::voting::votes::Vote;
 
 #[derive(Clone)]
 pub struct MasternodeVote {
-    pub id: Option<u32>,
     pub power: Option<i16>,
-    pub identifier: Identifier,
     pub pro_tx_hash: String,
     pub voter_identity: Identifier,
     pub choice: ResourceVoteChoice,
@@ -36,7 +34,6 @@ struct VoteInfo {
 
 impl From<MasternodeVoteTransition> for MasternodeVote {
     fn from(transition: MasternodeVoteTransition) -> Self {
-        let identifier = transition.vote().vote_poll_unique_id().unwrap();
         let pro_tx_hash = transition.pro_tx_hash().to_string(Hex);
         let voter_identity = transition.voter_identity_id();
 
@@ -69,9 +66,7 @@ impl From<MasternodeVoteTransition> for MasternodeVote {
         };
 
         MasternodeVote {
-            id: None,
             power: None,
-            identifier,
             pro_tx_hash,
             voter_identity,
             choice: vote_info.choice,
