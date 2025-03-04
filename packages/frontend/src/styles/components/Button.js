@@ -9,6 +9,11 @@ const Button = {
     fontWeight: '700'
   },
   sizes: {
+    xxs: {
+      width: '1rem',
+      height: '1rem',
+      borderRadius: '0.25rem'
+    },
     sm: {
       fontSize: '12px'
     },
