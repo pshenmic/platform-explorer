@@ -10,7 +10,12 @@
     text-transform: uppercase;
   }
 
-  &__Item {
+  &__Category {
     display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__ArrowButton {
   }
 }

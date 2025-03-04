@@ -1,0 +1,17 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.SearchResultsListItem {
+  @include mixins.DefListItem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  .Alias__Avatar, .Identifier__Avatar {
+    margin-right: 4px;
+  }
+
+  &__ArrowButton {
+    margin-left: auto;
+  }
+}
