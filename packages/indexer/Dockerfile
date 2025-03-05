@@ -9,6 +9,6 @@ COPY Cargo.toml /app
 COPY src /app/src
 RUN cargo build
 
-FROM alpine:3.19 as indexer
+FROM alpine:3.20 as indexer
 WORKDIR /app
 COPY --from=build /app/target/debug/indexer /app
