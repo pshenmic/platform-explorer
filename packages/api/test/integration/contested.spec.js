@@ -282,7 +282,7 @@ describe('Contested documents routes', () => {
           indexName: masternodeVote.index_name,
           indexValues: JSON.parse(masternodeVote.index_values),
           identityAliases: [],
-          powerMultiplier: null
+          powerMultiplier: masternodeVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -315,7 +315,7 @@ describe('Contested documents routes', () => {
           indexName: masternodeVote.index_name,
           indexValues: JSON.parse(masternodeVote.index_values),
           identityAliases: [],
-          powerMultiplier: null
+          powerMultiplier: masternodeVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)

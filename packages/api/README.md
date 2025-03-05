@@ -1532,7 +1532,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&page=1&limit=10&order
         "dash",
         "xyz"
       ],
-      "powerMultiplier": null
+      "powerMultiplier": 1
     }
   ],
   "pagination": {
