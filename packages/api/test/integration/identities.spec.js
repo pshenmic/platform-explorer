@@ -342,7 +342,7 @@ describe('Identities routes', () => {
           alias,
           contested: false,
           status: 'ok',
-          timestamp: null
+          timestamp: block.timestamp.toISOString(),
         }
       }
 
@@ -365,7 +365,7 @@ describe('Identities routes', () => {
           alias,
           contested: false,
           status: 'ok',
-          timestamp: null
+          timestamp: block.timestamp.toISOString(),
         }
       }
 
