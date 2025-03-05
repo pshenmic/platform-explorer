@@ -98,6 +98,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dcfed56ad506cb2c684a14971b8861fdc3baaaae314b9e5f9bb532cbe3ba7a4f"
 
 [[package]]
+name = "arrayref"
+version = "0.3.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb"
+
+[[package]]
 name = "arrayvec"
 version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -154,6 +160,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
 
 [[package]]
+name = "base64-compat"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a8d4d2746f89841e49230dd26917df1876050f95abafafbe34f47cb534b88d7"
+dependencies = [
+ "byteorder",
+]
+
+[[package]]
 name = "bech32"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -205,6 +220,19 @@ name = "bitflags"
 version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c8214115b7bf84099f1309324e63141d4c5d7cc26862f97a0a857dbefe165bd"
+
+[[package]]
+name = "blake3"
+version = "1.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "675f87afced0413c9bb02843499dbbd3882a237645883f71a2b59644a6d2f753"
+dependencies = [
+ "arrayref",
+ "arrayvec",
+ "cc",
+ "cfg-if",
+ "constant_time_eq",
+]
 
 [[package]]
 name = "block-buffer"
@@ -280,6 +308,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b63caa9aa9397e2d9480a9b13673856c78d8ac123288526c37d7839f2a86990"
 
 [[package]]
+name = "constant_time_eq"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c74b8349d32d297c9134b8c88677813a227df8f779daa29bfc29c183fe3dca6"
+
+[[package]]
 name = "core-foundation"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -351,12 +385,14 @@ dependencies = [
 
 [[package]]
 name = "dashcore"
-version = "0.35.0"
-source = "git+https://github.com/dashpay/rust-dashcore.git?tag=v0.35.0#521a76bfd7eaa90d2d89dc576808ec5772544f07"
+version = "0.37.0"
+source = "git+https://github.com/dashpay/rust-dashcore?tag=v0.37.0#9cb1184f7a4e84b42c800006398520af1d559cf1"
 dependencies = [
  "anyhow",
+ "base64-compat",
  "bech32",
  "bitflags 2.9.0",
+ "blake3",
  "dashcore-private",
  "dashcore_hashes",
  "hex",
@@ -367,17 +403,18 @@ dependencies = [
  "serde",
  "serde_repr",
  "strum",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
 name = "dashcore-private"
-version = "0.1.0"
-source = "git+https://github.com/dashpay/rust-dashcore.git?tag=v0.35.0#521a76bfd7eaa90d2d89dc576808ec5772544f07"
+version = "0.37.0"
+source = "git+https://github.com/dashpay/rust-dashcore?tag=v0.37.0#9cb1184f7a4e84b42c800006398520af1d559cf1"
 
 [[package]]
 name = "dashcore-rpc"
-version = "0.16.0"
-source = "git+https://github.com/owl352/rust-dashcore-rpc?tag=v0.16.1#54f690c7e846375142490f8ea344a35774c70640"
+version = "0.37.0"
+source = "git+https://github.com/dashpay/rust-dashcore?tag=v0.37.0#9cb1184f7a4e84b42c800006398520af1d559cf1"
 dependencies = [
  "dashcore-rpc-json",
  "hex",
@@ -389,8 +426,8 @@ dependencies = [
 
 [[package]]
 name = "dashcore-rpc-json"
-version = "0.16.0"
-source = "git+https://github.com/owl352/rust-dashcore-rpc?tag=v0.16.1#54f690c7e846375142490f8ea344a35774c70640"
+version = "0.37.0"
+source = "git+https://github.com/dashpay/rust-dashcore?tag=v0.37.0#9cb1184f7a4e84b42c800006398520af1d559cf1"
 dependencies = [
  "bincode",
  "dashcore",
@@ -403,8 +440,8 @@ dependencies = [
 
 [[package]]
 name = "dashcore_hashes"
-version = "0.14.0"
-source = "git+https://github.com/dashpay/rust-dashcore.git?tag=v0.35.0#521a76bfd7eaa90d2d89dc576808ec5772544f07"
+version = "0.37.0"
+source = "git+https://github.com/dashpay/rust-dashcore?tag=v0.37.0#9cb1184f7a4e84b42c800006398520af1d559cf1"
 dependencies = [
  "dashcore-private",
  "secp256k1",

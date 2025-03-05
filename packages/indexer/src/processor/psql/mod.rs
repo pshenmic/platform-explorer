@@ -104,7 +104,7 @@ impl PSQLProcessor {
 
     pub async fn handle_token_configuration(&self, data_contract: DataContract) -> () {
         if data_contract.tokens.is_some() {
-            let mut tokens = data_contract.tokens.clone().unwrap();
+            let tokens = data_contract.tokens.clone().unwrap();
 
 
             for (k, v) in tokens{
