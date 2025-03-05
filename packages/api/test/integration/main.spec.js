@@ -411,7 +411,7 @@ describe('Other routes', () => {
           alias: identityAlias.alias,
           contested: false,
           status: 'ok',
-          timestamp: block.timestamp.toISOString(),
+          timestamp: block.timestamp.toISOString()
         }
       }]
 
