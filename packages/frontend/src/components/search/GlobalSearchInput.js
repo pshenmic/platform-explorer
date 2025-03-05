@@ -14,7 +14,7 @@ import mockSearchResults from '../layout/navbar/mockSearchResults'
 
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 
-function GlobalSearchInput ({ onResultChange, onFocusChange }) {
+function GlobalSearchInput ({ onResultChange }) {
   const [showModal, setShowModal] = useState(false)
   const [modalText, setModalText] = useState('false')
   // const router = useRouter()
@@ -118,8 +118,6 @@ function GlobalSearchInput ({ onResultChange, onFocusChange }) {
             color={'gray.250'}
             fontSize={'12px'}
             className={'GlobalSearchInput__Field'}
-            onFocus={() => typeof onFocusChange === 'function' && onFocusChange(true)}
-            onBlur={() => typeof onFocusChange === 'function' && onFocusChange(false)}
           />
           <InputRightElement>
             <Button
