@@ -9,12 +9,13 @@ import {
   HStack,
   IconButton,
   useDisclosure,
-  Stack
+  Stack,
+  useOutsideClick
 } from '@chakra-ui/react'
 import Breadcrumbs from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { SearchResultsList } from '../../search'
 import mockSearchResults from './mockSearchResults'
 import './Navbar.scss'
@@ -56,9 +57,14 @@ function Navbar () {
   const displayBreadcrumbs = breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1)
 
   const [searchFocused, setSearchFocused] = useState(false)
-  // const [searchFocusedd, setSearchFocused] = useState(false)
-  // const searchFocused = true
   const [searchResults, setSearchResults] = useState({ data: mockSearchResults, loading: false, error: false })
+
+  const ref = useRef(null)
+
+  useOutsideClick({
+    ref,
+    handler: () => setSearchFocused(false)
+  })
 
   useEffect(onClose, [pathname, onClose])
 
@@ -83,20 +89,11 @@ function Navbar () {
         ml={'auto'}
         mr={'auto'}
         minH={0}
-        gap={searchFocused ? 0 : '0.5rem'}
         alignItems={'center'}
         justifyContent={'space-between'}
-        style={{
-          gap: 0
-        }}
-        onClick={() => setSearchFocused(state => !state)}
+        // onClick={() => setSearchFocused(state => !state)}
       >
-        <div
-          className={'Navbar__Left'}
-          style={{
-            width: 0
-          }}
-        >
+        <div className={'Navbar__Left'}>
           <IconButton
             className={'Navbar__Burger'}
             size={'md'}
@@ -162,6 +159,8 @@ function Navbar () {
 
         <div
           className={'Navbar__SearchContainer'}
+          ref={ref}
+          onClick={() => setSearchFocused(true)}
           style={{
             position: 'relative',
             margin: 0,
@@ -193,11 +192,7 @@ function Navbar () {
               transition: 'width 1s'
             }}
           >
-            {/* <GlobalSearchInput onResultChange={setSearchResults} onFocusChange={setSearchFocused}/> */}
-            <GlobalSearchInput
-              onResultChange={setSearchResults}
-              // onFocusChange={setSearchFocused}
-            />
+            <GlobalSearchInput onResultChange={setSearchResults}/>
           </div>
 
           <div
