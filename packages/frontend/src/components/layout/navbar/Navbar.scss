@@ -4,6 +4,8 @@
 .Navbar {
   @include mixins.navContainerPadding(padding-left);
   @include mixins.navContainerPadding(padding-right);
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
   position: fixed;
   z-index: 100;
   top: 0;
@@ -31,16 +33,9 @@
     z-index: 20;
   }
 
-  &__WrapperNetworkSelect {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-left: 16px;
-  }
-
   &__Menu {
     gap: 40px !important;
+    padding: 0 0.75rem;
   }
 
   @media screen and (max-width: $breakpoint-xl) {

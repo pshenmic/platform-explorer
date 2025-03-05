@@ -12,7 +12,7 @@ import {
   Stack
 } from '@chakra-ui/react'
 import Breadcrumbs from '../../breadcrumbs/Breadcrumbs'
-import NetworkSelect from './NetworkSelect'
+// import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { SearchResultsList } from '../../search'
@@ -75,78 +75,118 @@ function Navbar () {
   return (
     <Box position={'relative'}>
       <div className={'NavbarStub'}></div>
+
       <Flex
         className={'Navbar'}
         maxW={'container.maxPageW'}
         maxH={'100%'}
         ml={'auto'}
         mr={'auto'}
-        h={searchFocused ? 'auto' : 16}
-        minH={16}
+        // h={searchFocused ? 'auto' : 16}
+        minH={0}
         gap={searchFocused ? 0 : '0.5rem'}
         alignItems={'center'}
         justifyContent={'space-between'}
         style={{
-          transition: '.2s',
-          gap: searchFocused ? 0 : '0.5rem'
+          gap: 0
         }}
+        onClick={() => setSearchFocused(state => !state)}
       >
-        <IconButton
-          className={'Navbar__Burger'}
-          size={'md'}
-          icon={isOpen ? <CloseIcon/> : <HamburgerIcon/>}
-          visibility={searchFocused ? 'hidden' : 'visible'}
-          w={searchFocused ? '0' : '40px'}
-          minW={0}
-          aria-label={'Open Menu'}
-          display={{ lg: 'none' }}
-          onClick={isOpen ? onClose : onOpen}
-        />
-
-        <HStack
-          className={'Navbar__Menu'}
-          as={'nav'}
-          spacing={3}
-          display={{
-            base: 'none',
-            lg: 'flex'
-          }}
+        <div
+          className={'Navbar__Left'}
           style={{
-            visibility: searchFocused ? 'hidden' : 'visible',
-            opacity: searchFocused ? 0 : 1,
-            transition: '1s',
-            width: searchFocused ? 0 : '1000px',
-            transitionDelay: searchFocused ? '0s' : '1s'
+            width: 0
           }}
         >
-          {links.map((link) => (
-            <NavLink to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
-          ))}
-        </HStack>
+          <IconButton
+            className={'Navbar__Burger'}
+            size={'md'}
+            icon={isOpen ? <CloseIcon/> : <HamburgerIcon/>}
+            visibility={searchFocused ? 'hidden' : 'visible'}
+            w={searchFocused ? '0' : '40px'}
+            minW={0}
+            aria-label={'Open Menu'}
+            display={{ lg: 'none' }}
+            onClick={isOpen ? onClose : onOpen}
+          />
+
+          <HStack
+            className={'Navbar__Menu'}
+            as={'nav'}
+            spacing={3}
+            display={{
+              base: 'none',
+              lg: 'flex'
+            }}
+            style={{
+              visibility: searchFocused ? 'hidden' : 'visible',
+              opacity: searchFocused ? 0 : 1,
+              transition: '.5s',
+              width: searchFocused ? '0' : '100%',
+              transitionDelay: searchFocused ? '0s' : '0.5s'
+            }}
+          >
+            {links.map((link) => (
+              <NavLink to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
+            ))}
+          </HStack>
+        </div>
 
         <div
-          className={'Navbar__WrapperNetworkSelect'}
+          className={'Navbar__Right'}
+          style={{
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            width: '100%',
+            gap: '0.5rem',
+            zIndex: -1
+            // gap: searchFocused ? 0 : '0.5rem',
+            // transition: '.2s'
+          }}
+        >
+
+        {/* <div */}
+        {/*  style={{ */}
+        {/*    visibility: searchFocused ? 'hidden' : 'visible', */}
+        {/*    opacity: searchFocused ? 0 : 1, */}
+        {/*    // width: searchFocused ? 0 : '200px', */}
+        {/*    // width: searchFocused ? 0 : '150px', */}
+        {/*    width: 0, */}
+        {/*    marginLeft: 'auto', */}
+        {/*    // paddingRight: '1rem', */}
+        {/*    // marginRight: searchFocused ? '1rem' : 0, */}
+        {/*    transition: '.2s', */}
+        {/*    transitionDelay: searchFocused ? '0s' : '1s', */}
+        {/*    alignItems: searchFocused ? 'baseline' : 'center' */}
+        {/*  }} */}
+        {/* > */}
+        {/*  <NetworkSelect/> */}
+        {/* </div> */}
+
+        <div
           style={{
             position: 'relative',
             margin: 0,
             width: searchFocused ? '100%' : '300px',
             // gap: searchFocused ? 0 : '16px',
             gap: 0,
-            transition: '1s'
+            transition: '1s',
+            display: 'flex',
+            alignItems: 'center',
+            // flexDirection: searchFocused ? 'column' : 'row'
+            flexWrap: searchFocused ? 'wrap' : 'nowrap'
           }}
         >
+
           <div
+            className={'Navbar__SearchStub'}
             style={{
-              visibility: searchFocused ? 'hidden' : 'visible',
-              opacity: searchFocused ? 0 : 1,
-              // width: searchFocused ? 0 : '200px',
-              width: 0,
-              transition: '.2s',
-              transitionDelay: searchFocused ? '0s' : '1s'
+              height: '40px',
+              width: searchFocused ? '100%' : 'auto'
             }}
-          >
-            <NetworkSelect/>
-          </div>
+          />
 
           <Box
             // ml={2}
@@ -158,54 +198,46 @@ function Navbar () {
               maxWidth: '100%',
               zIndex: 20,
               right: 0,
-              top: searchFocused ? '0.75rem' : 0,
+              // top: searchFocused ? '0.75rem' : 0,
+              top: 0,
               transition: 'width 1s'
             }}
           >
             {/* <GlobalSearchInput onResultChange={setSearchResults} onFocusChange={setSearchFocused}/> */}
             <GlobalSearchInput
               onResultChange={setSearchResults}
-              onFocusChange={setSearchFocused}
+              // onFocusChange={setSearchFocused}
             />
           </Box>
 
           <div
             style={{
               // position: searchFocused ? 'relative' : 'absolute',
-              marginTop: '4rem',
+              // marginTop: '4rem',
               width: searchFocused ? '100%' : 0,
               visibility: searchFocused ? 'visible' : 'hidden',
               height: searchFocused ? 'auto' : 0,
               opacity: searchFocused ? 1 : 0,
               // transition: !searchFocused ? 0 : '.5s',
-              paddingBottom: '18px',
+              // paddingBottom: '18px',
               maxHeight: 'calc(100vh - 10rem)',
               position: 'relative',
-              overflowY: 'auto'
+              overflowY: 'auto',
+              marginTop: Object.entries(searchResults.data)?.length ? '1rem' : 0
             }}
           >
             <SearchResultsList results={searchResults}/>
           </div>
-
         </div>
-
-        {/* <div */}
-        {/*   style={{ */}
-        {/*     position: searchFocused ? 'relative' : 'absolute', */}
-        {/*     marginTop: '100px', */}
-        {/*     visibility: searchFocused ? 'visible' : 'hidden', */}
-        {/*     opacity: searchFocused ? 1 : 0, */}
-        {/*     transition: '.5s' */}
-        {/*   }} */}
-        {/* > */}
-        {/*   <SearchResultsList results={searchResults}/> */}
-         {/* </div> */}
+        </div>
       </Flex>
 
-      <Box className={`NavbarMobileMenu ${isOpen && !searchFocused ? 'NavbarMobileMenu--Open' : ''}`} display={{ lg: 'none' }}>
+      <Box className={`NavbarMobileMenu ${isOpen && !searchFocused ? 'NavbarMobileMenu--Open' : ''}`}
+           display={{ lg: 'none' }}>
         <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
           {links.map((link) => (
-            <NavLink className={'NavbarMobileMenu__Item'} to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
+            <NavLink className={'NavbarMobileMenu__Item'} to={link.href} key={link.title}
+                     isActive={pathname === link.href}>{link.title}</NavLink>
           ))}
         </Stack>
       </Box>
