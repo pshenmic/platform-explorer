@@ -117,8 +117,7 @@ const schemaTypes = [
       },
       power: {
         type: ['number', 'null'],
-        minimum: 0,
-        maximum: 1
+        enum: [1, 4]
       }
     }
   },

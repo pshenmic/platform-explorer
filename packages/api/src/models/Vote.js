@@ -28,7 +28,7 @@ module.exports = class Vote {
   }
 
   /* eslint-disable camelcase */
-  static fromRow ({ pro_tx_hash, state_transition_hash, voter_identity_id, choice, timestamp, towards_identity_identifier, data_contract_identifier, document_type_name, index_name, index_values, aliases }) {
-    return new Vote(pro_tx_hash, state_transition_hash, voter_identity_id?.trim(), choice, timestamp, towards_identity_identifier?.trim(), aliases, data_contract_identifier, document_type_name?.trim(), index_name?.trim(), index_values)
+  static fromRow ({ pro_tx_hash, state_transition_hash, voter_identity_id, choice, timestamp, towards_identity_identifier, data_contract_identifier, document_type_name, index_name, index_values, aliases, power }) {
+    return new Vote(pro_tx_hash, state_transition_hash, voter_identity_id?.trim(), choice, timestamp, towards_identity_identifier?.trim(), aliases, data_contract_identifier, document_type_name?.trim(), index_name?.trim(), index_values, power)
   }
 }
