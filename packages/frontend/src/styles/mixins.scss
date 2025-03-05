@@ -365,17 +365,17 @@
 @mixin navContainerPadding ($property) {
   #{$property}: var(--chakra-space-3);
 
-  @media screen and (min-width: $breakpoint-md) {
-    #{$property}: var(--chakra-space-4);
-  }
-
-  @media screen and (min-width: $breakpoint-lg) {
-    #{$property}: var(--chakra-space-5);
-  }
-
-  @media screen and (min-width: $breakpoint-xl) {
-    #{$property}: var(--chakra-space-6);
-  }
+  //@media screen and (min-width: $breakpoint-md) {
+  //  #{$property}: var(--chakra-space-4);
+  //}
+  //
+  //@media screen and (min-width: $breakpoint-lg) {
+  //  #{$property}: var(--chakra-space-5);
+  //}
+  //
+  //@media screen and (min-width: $breakpoint-xl) {
+  //  #{$property}: var(--chakra-space-6);
+  //}
 }
 
 @mixin pageDataPadding($property, $important: false, $invert: false) {
