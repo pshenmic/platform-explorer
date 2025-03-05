@@ -32,6 +32,32 @@ const hash = (data) => {
   return crypto.createHash('sha1').update(data).digest('hex')
 }
 
+const createDocumentBatchTransition = async (client, dataContractObject, owner, documentTypeName, data, batchType) => {
+  const dpp = client.platform.dpp
+
+  const dataContract = dpp.dataContract.create(Identifier.from(dataContractObject.owner.identifier), BigInt(0), JSON.parse(dataContractObject.schema))
+
+  dataContract.setId(Identifier.from(dataContractObject.identifier))
+
+  const document = dpp.document.create(dataContract, Identifier.from(owner), documentTypeName, data)
+
+  let batch = {
+    create: [],
+    replace: [],
+    delete: []
+  }
+
+  batch = { ...batch, [batchType]: [document] }
+
+  const tx = dpp.document.createStateTransition(batch, {
+    [owner]: {
+      [dataContract.getId().toString()]: 0
+    }
+  })
+
+  return tx.toBuffer().toString('base64')
+}
+
 const decodeStateTransition = async (client, base64) => {
   const stateTransition = await client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(base64, 'base64'))
 
@@ -512,5 +538,6 @@ module.exports = {
   iso8601duration,
   getAliasInfo,
   getAliasStateByVote,
-  buildIndexBuffer
+  buildIndexBuffer,
+  createDocumentBatchTransition
 }

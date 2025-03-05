@@ -444,6 +444,33 @@ module.exports = ({
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       }
+    },
+    {
+      path: '/transaction/create',
+      method: 'POST',
+      handler: transactionsController.createDocumentBatchTransition,
+      schema: {
+        body: {
+          type: 'object',
+          properties: {
+            dataContractId: { $ref: 'identifier#' },
+            owner: { $ref: 'identifier#' },
+            documentTypeName: {
+              type: 'string',
+              minLength: 1,
+              maxLength: 100
+            },
+            data: {
+              type: 'object'
+            },
+            batchType: {
+              type: 'string',
+              // at this moment available only create
+              enum: ['create', 'replace', 'delete']
+            }
+          }
+        }
+      }
     }
   ]
 
