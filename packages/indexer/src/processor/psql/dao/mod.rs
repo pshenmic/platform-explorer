@@ -10,7 +10,6 @@ use dpp::platform_value::string_encoding::Encoding::{Base58};
 use dpp::state_transition::batch_transition::batched_transition::token_transition::{TokenTransition, TokenTransitionV0Methods};
 use dpp::state_transition::batch_transition::batched_transition::token_transition_action_type::TokenTransitionActionTypeGetter;
 use dpp::state_transition::batch_transition::token_base_transition::v0::v0_methods::TokenBaseTransitionV0Methods;
-use dpp::state_transition::batch_transition::TokenMintTransition;
 use dpp::voting::vote_choices::resource_vote_choice::ResourceVoteChoice;
 use serde_json::{Map, Number, Value};
 use crate::entities::block_header::BlockHeader;
@@ -118,7 +117,7 @@ impl PostgresDAO {
 
     pub async fn create_token(&self, token: TokenConfig) {
 
-        let max_supply = match token.maxSupply {
+        let max_supply = match token.max_supply {
             None => None,
             Some(supply) => Some(supply as i64),
         };
@@ -137,7 +136,7 @@ impl PostgresDAO {
                                           token.data_contract_identifier.to_string(Base58)));
         let data_contract_id = data_contract.id.unwrap() as i32;
 
-        let query = "INSERT INTO tokens(position, identifier, data_contract_id, maxSupply, baseSupply, keeps_history, \
+        let query = "INSERT INTO tokens(position, identifier, data_contract_id, max_supply, base_supply, keeps_history, \
         distribution_rules, manual_minting_rules, manual_burning_rules, freeze_rules, unfreeze_rules, destroy_frozen_funds_rules, \
         emergency_action_rules) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);";
 
@@ -149,7 +148,7 @@ impl PostgresDAO {
             &(token.identifier.to_string(Base58)),
             &data_contract_id,
             &(max_supply),
-            &(token.baseSupply as i64),
+            &(token.base_supply as i64),
             &token.keeps_history,
             &distribution_rules,
             &manual_minting_rules,

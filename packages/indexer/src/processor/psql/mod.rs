@@ -1,6 +1,5 @@
 mod dao;
 
-use std::any::Any;
 use std::env;
 use std::num::ParseIntError;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
@@ -12,7 +11,6 @@ use dashcore_rpc::{Client, RpcApi};
 use dashcore_rpc::dashcore::{ProTxHash, Txid};
 use data_contracts::SystemDataContract;
 use dpp::data_contract::associated_token::token_configuration::accessors::v0::TokenConfigurationV0Getters;
-use dpp::data_contract::{TokenConfiguration, TokenContractPosition};
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::{platform_value, BinaryData};
@@ -20,13 +18,11 @@ use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Hex};
 use dpp::prelude::AssetLockProof;
 use dpp::serialization::PlatformSerializable;
-use dpp::state_transition::batch_transition::accessors::DocumentsBatchTransitionAccessorsV0;
-use dpp::state_transition::batch_transition::{BatchTransition, BatchTransitionV1};
+use dpp::state_transition::batch_transition::{BatchTransition};
 use dpp::state_transition::batch_transition::BatchTransitionV0;
 use sha256::digest;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
-use dpp::state_transition::batch_transition::batched_transition::{token_transition, BatchedTransition};
-use dpp::state_transition::batch_transition::batched_transition::BatchedTransitionRef::Token;
+use dpp::state_transition::batch_transition::batched_transition::{BatchedTransition};
 use dpp::state_transition::state_transitions::batch_transition::batched_transition::document_transition_action_type::DocumentTransitionActionType;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
@@ -114,8 +110,8 @@ impl PSQLProcessor {
                     position: k,
                     identifier: Identifier::new(token_id),
                     data_contract_identifier: data_contract.identifier,
-                    maxSupply: v.max_supply(),
-                    baseSupply: v.base_supply(),
+                    max_supply: v.max_supply(),
+                    base_supply: v.base_supply(),
                     keeps_history: v.keeps_history(),
                     distribution_rules: v.distribution_rules().clone(),
                     manual_minting_rules: v.manual_minting_rules().clone(),

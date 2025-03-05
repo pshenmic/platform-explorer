@@ -1,15 +1,14 @@
 use dpp::data_contract::associated_token::token_distribution_rules::TokenDistributionRules;
 use dpp::data_contract::change_control_rules::ChangeControlRules;
 use dpp::identifier::Identifier;
-use serde_json::Value;
 
 #[derive(Clone)]
 pub struct TokenConfig {
   pub position: u16,
   pub identifier: Identifier,
   pub data_contract_identifier: Identifier,
-  pub maxSupply: Option<u64>,
-  pub baseSupply: u64,
+  pub max_supply: Option<u64>,
+  pub base_supply: u64,
   pub keeps_history: bool,
   pub distribution_rules: TokenDistributionRules,
   pub manual_minting_rules: ChangeControlRules,
