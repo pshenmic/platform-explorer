@@ -12,7 +12,7 @@ import {
   Stack
 } from '@chakra-ui/react'
 import Breadcrumbs from '../../breadcrumbs/Breadcrumbs'
-// import NetworkSelect from './NetworkSelect'
+import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { SearchResultsList } from '../../search'
@@ -82,7 +82,6 @@ function Navbar () {
         maxH={'100%'}
         ml={'auto'}
         mr={'auto'}
-        // h={searchFocused ? 'auto' : 16}
         minH={0}
         gap={searchFocused ? 0 : '0.5rem'}
         alignItems={'center'}
@@ -142,40 +141,35 @@ function Navbar () {
             width: '100%',
             gap: '0.5rem',
             zIndex: -1
-            // gap: searchFocused ? 0 : '0.5rem',
-            // transition: '.2s'
           }}
         >
 
-        {/* <div */}
-        {/*  style={{ */}
-        {/*    visibility: searchFocused ? 'hidden' : 'visible', */}
-        {/*    opacity: searchFocused ? 0 : 1, */}
-        {/*    // width: searchFocused ? 0 : '200px', */}
-        {/*    // width: searchFocused ? 0 : '150px', */}
-        {/*    width: 0, */}
-        {/*    marginLeft: 'auto', */}
-        {/*    // paddingRight: '1rem', */}
-        {/*    // marginRight: searchFocused ? '1rem' : 0, */}
-        {/*    transition: '.2s', */}
-        {/*    transitionDelay: searchFocused ? '0s' : '1s', */}
-        {/*    alignItems: searchFocused ? 'baseline' : 'center' */}
-        {/*  }} */}
-        {/* > */}
-        {/*  <NetworkSelect/> */}
-        {/* </div> */}
+         <div
+            className={'Navbar__NetworkSelectContainer'}
+            style={{
+              visibility: searchFocused ? 'hidden' : 'visible',
+              opacity: searchFocused ? 0 : 1,
+              ...(searchFocused && { width: 0 }),
+              flexShrink: 0,
+              marginLeft: 'auto',
+              transition: '.2s',
+              transitionDelay: searchFocused ? '0s' : '1s',
+              alignItems: searchFocused ? 'baseline' : 'center'
+            }}
+         >
+          <NetworkSelect/>
+         </div>
 
         <div
+          className={'Navbar__SearchContainer'}
           style={{
             position: 'relative',
             margin: 0,
-            width: searchFocused ? '100%' : '300px',
-            // gap: searchFocused ? 0 : '16px',
+            ...(searchFocused && { width: '100%' }),
             gap: 0,
             transition: '1s',
             display: 'flex',
             alignItems: 'center',
-            // flexDirection: searchFocused ? 'column' : 'row'
             flexWrap: searchFocused ? 'wrap' : 'nowrap'
           }}
         >
@@ -188,17 +182,13 @@ function Navbar () {
             }}
           />
 
-          <Box
-            // ml={2}
-            zIndex={20}
-
+          <div
             style={{
               position: searchFocused ? 'absolute' : 'relative',
               width: '1440px',
               maxWidth: '100%',
               zIndex: 20,
               right: 0,
-              // top: searchFocused ? '0.75rem' : 0,
               top: 0,
               transition: 'width 1s'
             }}
@@ -208,7 +198,7 @@ function Navbar () {
               onResultChange={setSearchResults}
               // onFocusChange={setSearchFocused}
             />
-          </Box>
+          </div>
 
           <div
             style={{

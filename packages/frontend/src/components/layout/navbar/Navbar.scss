@@ -13,6 +13,16 @@
   left: 50%;
   transform: translateX(-50%);
 
+  &__NetworkSelectContainer {
+    display: flex;
+    justify-content: flex-end;
+    width: 10rem;
+  }
+
+  &__SearchContainer {
+    width: 15rem;
+  }
+
   &::before {
     content: '';
     position: absolute;
@@ -38,9 +48,29 @@
     padding: 0 0.75rem;
   }
 
+  @media screen and (max-width: 72.5rem) {
+    &__NetworkSelectContainer {
+      width: 5rem;
+
+      .NetworkSelect__Title {
+        display: none;
+      }
+    }
+  }
+
   @media screen and (max-width: $breakpoint-xl) {
     &__Menu {
       gap: 24px !important;
+    }
+
+    &__SearchContainer {
+      width: 10rem;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__SearchContainer {
+      width: 15rem
     }
   }
 
@@ -54,6 +84,10 @@
     &__WrapperNetworkSelect {
       gap: 8px;
       margin-left: 8px;
+    }
+
+    &__SearchContainer {
+      width: 10rem
     }
   }
 }
