@@ -20,6 +20,12 @@
   }
 
   &--Loading {
+    background-color: rgba(var(--chakra-colors-gray-800-rgb), .5) !important;
+
+    &:hover {
+      cursor: default;
+    }
+
     .LoadingLine {
       height: 1rem;
       width: 50%;
