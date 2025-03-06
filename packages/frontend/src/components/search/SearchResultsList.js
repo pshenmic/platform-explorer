@@ -34,7 +34,10 @@ function SearchResultsList ({ results }) {
 
   return (
     <div className={'SearchResultsList'}>
-      {results.loading && 'loading'}
+      {results.loading &&
+        <SearchResultsListItem entityType={'loading'}/>
+      }
+
       {results.error && 'error'}
 
       {results.data && Object?.entries(results.data)?.length > 0 &&
