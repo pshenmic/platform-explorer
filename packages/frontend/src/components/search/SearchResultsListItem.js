@@ -81,7 +81,7 @@ function BlockSearchItem ({ block, className }) {
       <Identifier ellipsis={true} styles={['highlight-both']}>{block?.header?.hash}</Identifier>
 
       {block?.header?.height &&
-        <Badge size={'xs'} colorScheme={'gray'}>
+        <Badge size={'xs'} colorScheme={'dimGray'}>
           #{block?.header?.height}
         </Badge>
       }
