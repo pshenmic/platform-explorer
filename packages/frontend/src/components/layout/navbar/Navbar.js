@@ -58,7 +58,8 @@ function Navbar () {
   const [searchFocused, setSearchFocused] = useState(false)
   const [searchResults, setSearchResults] = useState({ data: mockSearchResults, loading: false, error: false })
   const [searchValue, setSearchValue] = useState('')
-  const searchResultIsDisplay = Object.entries(searchResults.data || {})?.length || searchResults.loading || searchResults.error
+  const searchResultIsDisplay = searchFocused &&
+    (Object.entries(searchResults.data || {})?.length || searchResults.loading || searchResults.error)
 
   const ref = useRef(null)
 
@@ -181,7 +182,8 @@ function Navbar () {
                 opacity: searchFocused ? 1 : 0,
                 marginTop: searchResultIsDisplay ? '1rem' : 0,
                 marginBottom: searchResultIsDisplay ? '0.25rem' : 0,
-                padding: searchResultIsDisplay ? '0 0.75rem' : 0
+                padding: searchResultIsDisplay ? '0 0.75rem' : 0,
+                // display: 'none'
               }}
             >
               <SearchResultsList results={searchResults}/>
