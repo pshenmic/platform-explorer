@@ -10,15 +10,15 @@ const Button = {
   },
   sizes: {
     xxs: {
-      width: '1rem',
-      height: '1rem',
-      borderRadius: '0.25rem'
+      borderRadius: '0.25rem',
+      fontSize: '0.75rem',
+      padding: '0.438rem'
     },
     sm: {
-      fontSize: '12px'
+      fontSize: '0.75rem'
     },
     md: {
-      fontSize: '12px'
+      fontSize: '0.75rem'
     }
   },
   variants: {
