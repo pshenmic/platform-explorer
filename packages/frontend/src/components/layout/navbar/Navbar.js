@@ -79,6 +79,8 @@ function Navbar () {
     }
   }, [searchFocused])
 
+  console.log('searchResults', searchResults)
+
   return (
     <Box position={'relative'}>
       <div className={'NavbarStub'}></div>
@@ -110,10 +112,7 @@ function Navbar () {
             className={'Navbar__Menu'}
             as={'nav'}
             spacing={3}
-            display={{
-              base: 'none',
-              lg: 'flex'
-            }}
+            display={{ base: 'none', lg: 'flex' }}
             style={{
               visibility: searchFocused ? 'hidden' : 'visible',
               opacity: searchFocused ? 0 : 1,
@@ -131,14 +130,8 @@ function Navbar () {
         <div
           className={'Navbar__Right'}
           style={{
-            position: 'relative',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            width: '100%',
             gap: searchFocused ? 0 : '0.5rem',
-            transition: 'gap .2s',
-            zIndex: -1
+            transition: 'gap .2s'
           }}
         >
 
@@ -147,8 +140,6 @@ function Navbar () {
             style={{
               visibility: searchFocused ? 'hidden' : 'visible',
               opacity: searchFocused ? 0 : 1,
-              flexShrink: 0,
-              marginLeft: 'auto',
               transition: '.2s',
               transitionDelay: searchFocused ? '0s' : '1s',
               alignItems: searchFocused ? 'baseline' : 'center',
@@ -163,33 +154,14 @@ function Navbar () {
           ref={ref}
           onClick={() => setSearchFocused(true)}
           style={{
-            position: 'relative',
-            margin: 0,
             ...(searchFocused && { width: '100%' }),
-            gap: 0,
             transition: '1s',
-            display: 'flex',
-            alignItems: 'center',
             flexWrap: searchFocused ? 'wrap' : 'nowrap'
           }}
         >
-
           <div
-            className={'Navbar__SearchStub'}
+            className={'Navbar__SearchInputContainer'}
             style={{
-              height: '40px',
-              width: searchFocused ? '100%' : 'auto'
-            }}
-          />
-
-          <div
-            style={{
-              position: searchFocused ? 'absolute' : 'relative',
-              width: '1440px',
-              maxWidth: '100%',
-              zIndex: 20,
-              right: 0,
-              top: 0,
               transition: 'width 1s'
             }}
           >
@@ -201,19 +173,13 @@ function Navbar () {
           </div>
 
           <div
+            className={'Navbar__SearchResults'}
             style={{
-              // position: searchFocused ? 'relative' : 'absolute',
-              // marginTop: '4rem',
               width: searchFocused ? '100%' : 0,
               visibility: searchFocused ? 'visible' : 'hidden',
               height: searchFocused ? 'auto' : 0,
               opacity: searchFocused ? 1 : 0,
-              // transition: !searchFocused ? 0 : '.5s',
-              // paddingBottom: '18px',
-              maxHeight: 'calc(100vh - 10rem)',
-              position: 'relative',
-              overflowY: 'auto',
-              marginTop: Object.entries(searchResults.data)?.length || searchResults.loading ? '1rem' : 0
+              marginTop: Object.entries(searchResults.data || {})?.length || searchResults.loading || searchResults.error ? '1rem' : 0
             }}
           >
             <SearchResultsList results={searchResults}/>

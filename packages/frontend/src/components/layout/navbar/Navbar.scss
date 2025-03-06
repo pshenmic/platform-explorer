@@ -17,14 +17,43 @@
     display: flex;
     justify-content: flex-end;
     width: 10rem;
+    flex-shrink: 0;
+    margin-left: auto;
   }
 
   &__Left {
     width: 0;
   }
 
+  &__Right {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    z-index: -1;
+  }
+
   &__SearchContainer {
+    position: relative;
     width: 15rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  &__SearchInputContainer {
+    position: relative;
+    width: 100%;
+    z-index: 20;
+    right: 0;
+    top: 0;
+  }
+
+  &__SearchResults {
+    position: relative;
+    overflow-y: auto;
+    max-height: calc(100vh - 10rem);
   }
 
   &::before {
