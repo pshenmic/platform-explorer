@@ -3,7 +3,6 @@ import ModalWindow from '../modalWindow'
 import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
 import { SearchIcon } from '@chakra-ui/icons'
-// import { useRouter } from 'next/navigation'
 import {
   ResponseErrorNotFound,
   ResponseErrorTimeout,
@@ -14,10 +13,9 @@ import mockSearchResults from '../layout/navbar/mockSearchResults'
 
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 
-function GlobalSearchInput ({ onResultChange }) {
+function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
   const [showModal, setShowModal] = useState(false)
   const [modalText, setModalText] = useState('false')
-  // const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
@@ -31,6 +29,10 @@ function GlobalSearchInput ({ onResultChange }) {
     return () => clearTimeout(timer)
   }, [showModal])
 
+  useEffect(() => {
+    setSearchQuery(forceValue)
+  }, [forceValue])
+
   const showModalWindow = (text, timeout) => {
     setShowModal(true)
     setModalText(text)
@@ -42,11 +44,6 @@ function GlobalSearchInput ({ onResultChange }) {
       }, timeout)
     }
   }
-
-  // const searchRedirect = (url) => {
-  //   setSearchQuery('')
-  //   router.push(url)
-  // }
 
   const search = async () => {
     try {
@@ -103,6 +100,7 @@ function GlobalSearchInput ({ onResultChange }) {
 
   const handleSearchInput = (event) => {
     setSearchQuery(event.target.value)
+    if (typeof onChange === 'function') onChange(event.target.value)
   }
 
   return (
