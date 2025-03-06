@@ -133,7 +133,7 @@ class TransactionsController {
   }
 
   createDocumentBatchTransition = async (request, response) => {
-    const { dataContractId, documentTypeName, data, owner, batchType } = request.body
+    const { dataContractId, documentTypeName, data, owner, batchType, nonce } = request.body
 
     if (!batchType) {
       return response.status(400).send({ message: 'batchType cannot be empty' })
@@ -145,7 +145,7 @@ class TransactionsController {
       return response.status(404).send({ message: 'data contract not found' })
     }
 
-    const transaction = await utils.createDocumentBatchTransition(this.client, dataContract, owner, documentTypeName, data, batchType)
+    const transaction = await utils.createDocumentBatchTransition(this.client, dataContract, owner, documentTypeName, data, batchType, nonce)
 
     response.send({ documentBatchTransition: transaction })
   }

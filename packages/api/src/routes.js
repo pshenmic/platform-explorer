@@ -451,6 +451,7 @@ module.exports = ({
       handler: transactionsController.createDocumentBatchTransition,
       schema: {
         body: {
+          required: ['dataContractId', 'owner', 'documentTypeName', 'data', 'batchType', 'nonce'],
           type: 'object',
           properties: {
             dataContractId: { $ref: 'identifier#' },
@@ -467,6 +468,9 @@ module.exports = ({
               type: 'string',
               // at this moment available only create
               enum: ['create', 'replace', 'delete']
+            },
+            nonce: {
+              type: 'number'
             }
           }
         }

@@ -32,7 +32,7 @@ const hash = (data) => {
   return crypto.createHash('sha1').update(data).digest('hex')
 }
 
-const createDocumentBatchTransition = async (client, dataContractObject, owner, documentTypeName, data, batchType) => {
+const createDocumentBatchTransition = async (client, dataContractObject, owner, documentTypeName, data, batchType, nonce) => {
   const dpp = client.platform.dpp
 
   const dataContract = dpp.dataContract.create(Identifier.from(dataContractObject.owner.identifier), BigInt(0), JSON.parse(dataContractObject.schema))
@@ -51,7 +51,7 @@ const createDocumentBatchTransition = async (client, dataContractObject, owner, 
 
   const tx = dpp.document.createStateTransition(batch, {
     [owner]: {
-      [dataContract.getId().toString()]: 0
+      [dataContract.getId().toString()]: nonce
     }
   })
 
