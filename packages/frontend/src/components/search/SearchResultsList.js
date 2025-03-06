@@ -30,15 +30,15 @@ function ListCategory ({ type, data }) {
 }
 
 function SearchResultsList ({ results }) {
-  console.log('result', results)
-
   return (
     <div className={'SearchResultsList'}>
       {results.loading &&
         <SearchResultsListItem entityType={'loading'}/>
       }
 
-      {results.error && 'error'}
+      {results.error &&
+        <div className={'SearchResultsList__Title SearchResultsList__Title--NotFound'}>Nothing found</div>
+      }
 
       {results.data && Object?.entries(results.data)?.length > 0 &&
         Object.entries(results.data).map(([category, items]) => (
