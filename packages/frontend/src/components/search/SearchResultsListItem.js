@@ -80,6 +80,12 @@ function BlockSearchItem ({ block, className }) {
 
       <Identifier ellipsis={true} styles={['highlight-both']}>{block?.header?.hash}</Identifier>
 
+      {block?.header?.height &&
+        <Badge size={'xs'} colorScheme={'gray'}>
+          #{block?.header?.height}
+        </Badge>
+      }
+
       <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
         <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
       </Button>
