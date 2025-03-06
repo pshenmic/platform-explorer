@@ -81,8 +81,6 @@ function Navbar () {
     }
   }, [searchFocused])
 
-  console.log('searchResults', searchResults)
-
   return (
     <Box position={'relative'}>
       <div className={'NavbarStub'}></div>
