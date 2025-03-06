@@ -55,28 +55,29 @@ function Navbar () {
     '/block/'
   ]
   const displayBreadcrumbs = breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1)
-
   const [searchFocused, setSearchFocused] = useState(false)
   const [searchResults, setSearchResults] = useState({ data: mockSearchResults, loading: false, error: false })
+  const [searchValue, setSearchValue] = useState('')
 
   const ref = useRef(null)
 
-  useOutsideClick({
-    ref,
-    handler: () => setSearchFocused(false)
-  })
+  const hideSearch = () => {
+    setSearchResults({ data: {}, loading: false, error: false })
+    setSearchFocused(false)
+    setSearchValue('')
+  }
+
+  useOutsideClick({ ref, handler: hideSearch })
 
   useEffect(onClose, [pathname, onClose])
 
-  useEffect(onClose, [pathname])
+  useEffect(hideSearch, [pathname])
 
   useEffect(() => {
     if (!searchFocused) {
       setSearchResults({ data: {}, loading: false, error: false })
     }
   }, [searchFocused])
-
-  console.log('searchResults', searchResults)
 
   return (
     <Box position={'relative'}>
@@ -91,7 +92,6 @@ function Navbar () {
         minH={0}
         alignItems={'center'}
         justifyContent={'space-between'}
-        // onClick={() => setSearchFocused(state => !state)}
       >
         <div className={'Navbar__Left'}>
           <IconButton
@@ -136,7 +136,8 @@ function Navbar () {
             justifyContent: 'flex-end',
             alignItems: 'center',
             width: '100%',
-            gap: '0.5rem',
+            gap: searchFocused ? 0 : '0.5rem',
+            transition: 'gap .2s',
             zIndex: -1
           }}
         >
@@ -146,12 +147,12 @@ function Navbar () {
             style={{
               visibility: searchFocused ? 'hidden' : 'visible',
               opacity: searchFocused ? 0 : 1,
-              ...(searchFocused && { width: 0 }),
               flexShrink: 0,
               marginLeft: 'auto',
               transition: '.2s',
               transitionDelay: searchFocused ? '0s' : '1s',
-              alignItems: searchFocused ? 'baseline' : 'center'
+              alignItems: searchFocused ? 'baseline' : 'center',
+              ...(searchFocused && { width: 0 })
             }}
          >
           <NetworkSelect/>
@@ -192,7 +193,11 @@ function Navbar () {
               transition: 'width 1s'
             }}
           >
-            <GlobalSearchInput onResultChange={setSearchResults}/>
+            <GlobalSearchInput
+              forceValue={searchValue}
+              onResultChange={setSearchResults}
+              onChange={setSearchValue}
+            />
           </div>
 
           <div
@@ -208,7 +213,7 @@ function Navbar () {
               maxHeight: 'calc(100vh - 10rem)',
               position: 'relative',
               overflowY: 'auto',
-              marginTop: Object.entries(searchResults.data)?.length ? '1rem' : 0
+              marginTop: Object.entries(searchResults.data)?.length || searchResults.loading ? '1rem' : 0
             }}
           >
             <SearchResultsList results={searchResults}/>
