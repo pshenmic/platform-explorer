@@ -181,7 +181,6 @@ function Navbar () {
                 marginTop: searchResultIsDisplay ? '1rem' : 0,
                 marginBottom: searchResultIsDisplay ? '0.25rem' : 0,
                 padding: searchResultIsDisplay ? '0 0.75rem' : 0,
-                // display: 'none'
               }}
             >
               <SearchResultsList results={searchResults}/>
