@@ -18,4 +18,18 @@
   &__Icon {
     @include mixins.AvatarSize(true);
   }
+
+  &--Loading {
+    .LoadingLine {
+      height: 1rem;
+      width: 50%;
+      margin: 0;
+    }
+  }
+
+  &--Loading & {
+    &__ArrowButton {
+      background-color: rgba(255, 255, 255, .1) !important;
+    }
+  }
 }
