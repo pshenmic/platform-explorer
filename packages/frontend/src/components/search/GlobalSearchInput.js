@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
-import { SearchIcon } from '@chakra-ui/icons'
+import { SearchIcon } from '../ui/icons'
 import './GlobalSearchInput.scss'
 import mockSearchResults from '../layout/navbar/mockSearchResults'
 import { useDebounce } from '../../hooks'
@@ -64,11 +64,11 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
               h={'28px'}
               w={'28px !important'}
               minW={'none'}
-              size={'sm'}
-              onClick={search}
+              size={'xxs'}
+              onClick={() => search(searchQuery)}
               className={'GlobalSearchInput__Button'}
             >
-              <SearchIcon color={'whiteAlpha.900'}/>
+              <SearchIcon w={'14px'} color={'whiteAlpha.900'}/>
             </Button>
           </InputRightElement>
       </InputGroup>
