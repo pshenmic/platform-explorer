@@ -135,8 +135,7 @@ function Navbar () {
             transition: 'gap .2s'
           }}
         >
-
-         <div
+          <div
             className={'Navbar__NetworkSelectContainer'}
             style={{
               visibility: searchFocused ? 'hidden' : 'visible',
@@ -146,48 +145,48 @@ function Navbar () {
               alignItems: searchFocused ? 'baseline' : 'center',
               ...(searchFocused && { width: 0 })
             }}
-         >
-          <NetworkSelect/>
-         </div>
-
-        <div
-          className={'Navbar__SearchContainer'}
-          ref={ref}
-          onClick={() => setSearchFocused(true)}
-          style={{
-            ...(searchFocused && { width: '100%' }),
-            transition: '1s',
-            flexWrap: searchFocused ? 'wrap' : 'nowrap'
-          }}
-        >
-          <div
-            className={'Navbar__SearchInputContainer'}
-            style={{
-              transition: 'width 1s'
-            }}
           >
-            <GlobalSearchInput
-              forceValue={searchValue}
-              onResultChange={setSearchResults}
-              onChange={setSearchValue}
-            />
+            <NetworkSelect/>
           </div>
 
           <div
-            className={'Navbar__SearchResults'}
+            className={'Navbar__SearchContainer'}
+            ref={ref}
+            onClick={() => setSearchFocused(true)}
             style={{
-              width: searchFocused ? '100%' : 0,
-              visibility: searchFocused ? 'visible' : 'hidden',
-              height: searchFocused ? 'auto' : 0,
-              opacity: searchFocused ? 1 : 0,
-              marginTop: searchResultIsDisplay ? '1rem' : 0,
-              marginBottom: searchResultIsDisplay ? '0.25rem' : 0,
-              padding: searchResultIsDisplay ? '0 0.75rem' : 0
+              ...(searchFocused && { width: '100%' }),
+              transition: '1s',
+              flexWrap: searchFocused ? 'wrap' : 'nowrap'
             }}
           >
-            <SearchResultsList results={searchResults}/>
+            <div
+              className={'Navbar__SearchInputContainer'}
+              style={{
+                transition: 'width 1s'
+              }}
+            >
+              <GlobalSearchInput
+                forceValue={searchValue}
+                onResultChange={setSearchResults}
+                onChange={setSearchValue}
+              />
+            </div>
+
+            <div
+              className={'Navbar__SearchResults'}
+              style={{
+                width: searchFocused ? '100%' : 0,
+                visibility: searchFocused ? 'visible' : 'hidden',
+                height: searchFocused ? 'auto' : 0,
+                opacity: searchFocused ? 1 : 0,
+                marginTop: searchResultIsDisplay ? '1rem' : 0,
+                marginBottom: searchResultIsDisplay ? '0.25rem' : 0,
+                padding: searchResultIsDisplay ? '0 0.75rem' : 0
+              }}
+            >
+              <SearchResultsList results={searchResults}/>
+            </div>
           </div>
-        </div>
         </div>
       </Flex>
 
