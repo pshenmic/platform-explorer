@@ -270,6 +270,18 @@ const InfoIcon = ({ bg, ...props }) => (
   </Icon>
 )
 
+const SearchIcon = (props) => (
+  <Icon viewBox='0 0 14 14' width='14' height='14' color={'#008DE4'} {...props}>
+    <svg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path fillRule='evenodd' clipRule='evenodd'
+            d='M6.18748 10.4711C8.55327 10.4711 10.4711 8.55327 10.4711 6.18748C10.4711 3.82169 8.55327 1.90384 6.18748 1.90384C3.82169 1.90384 1.90384 3.82169 1.90384 6.18748C1.90384 8.55327 3.82169 10.4711 6.18748 10.4711ZM6.18748 12.375C9.60474 12.375 12.375 9.60474 12.375 6.18748C12.375 2.77023 9.60474 0 6.18748 0C2.77023 0 0 2.77023 0 6.18748C0 9.60474 2.77023 12.375 6.18748 12.375Z'
+            fill='currentColor'/>
+      <path fillRule='evenodd' clipRule='evenodd'
+            d='M12.6538 14L9.79802 11.1442L11.1442 9.79802L14 12.6538L12.6538 14Z' fill='currentColor'/>
+    </svg>
+  </Icon>
+)
+
 export {
   CalendarIcon,
   CalendarIcon2,
@@ -292,5 +304,6 @@ export {
   QueuePositionIcon,
   MembersIcon,
   BlockIcon,
-  InfoIcon
+  InfoIcon,
+  SearchIcon
 }
