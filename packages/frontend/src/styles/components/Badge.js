@@ -23,7 +23,7 @@ const Badge = {
     xs: {
       lineHeight: '18px'
     }
-  },
+  }
 }
 
 export default Badge
