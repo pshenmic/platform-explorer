@@ -149,6 +149,14 @@ class TransactionsController {
 
     response.send({ documentBatchTransition: transaction })
   }
+
+  broadcastTransaction = async (request, response) => {
+    const {base64} = request.body
+
+    await this.dapi.broadcastTransition(base64)
+
+    response.send('broadcasted')
+  }
 }
 
 module.exports = TransactionsController

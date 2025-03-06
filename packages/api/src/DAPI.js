@@ -120,6 +120,10 @@ class DAPI {
   async getStatus () {
     return this.dapi.platform.getStatus()
   }
+
+  async broadcastTransition (base64) {
+    return this.dapi.platform.broadcastStateTransition(base64)
+  }
 }
 
 module.exports = DAPI

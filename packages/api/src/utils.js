@@ -51,7 +51,7 @@ const createDocumentBatchTransition = async (client, dataContractObject, owner, 
 
   const tx = dpp.document.createStateTransition(batch, {
     [owner]: {
-      [dataContract.getId().toString()]: nonce
+      [dataContract.getId().toString()]: BigInt(nonce).toString()
     }
   })
 

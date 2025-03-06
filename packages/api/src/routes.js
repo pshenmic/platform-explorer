@@ -470,8 +470,23 @@ module.exports = ({
               enum: ['create', 'replace', 'delete']
             },
             nonce: {
-              type: 'number'
+              type: 'string',
+              pattern: "[0-9]"
             }
+          }
+        }
+      },
+    },
+    {
+      path: '/transaction/broadcast',
+      method: 'POST',
+      handler: transactionsController.broadcastTransaction,
+      schema: {
+        body: {
+          type: 'object',
+          required: ['base64'],
+          properties: {
+            base64: { type: 'string' }
           }
         }
       }
