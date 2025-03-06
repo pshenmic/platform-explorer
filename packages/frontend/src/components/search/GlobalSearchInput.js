@@ -25,7 +25,7 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
           fetchHandlerSuccess(onResultChange, mockSearchResults)
         }
 
-        fetchHandlerSuccess({}, mockSearchResults)
+        fetchHandlerSuccess(onResultChange, {})
       })
       .catch(err => fetchHandlerError(onResultChange, err))
   }
