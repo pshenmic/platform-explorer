@@ -2,6 +2,7 @@ import { Alias, Identifier } from '../data'
 import { Badge, Button } from '@chakra-ui/react'
 import { BlockIcon, ChevronIcon, TransactionsIcon } from '../ui/icons'
 import Link from 'next/link'
+import { LoadingLine } from '../loading'
 import './SearchResultsListItem.scss'
 
 function IdentitySearchItem ({ identity, className }) {
@@ -98,6 +99,16 @@ function DocumentSearchItem ({ document, className }) {
   )
 }
 
+function LoadingSearchItem ({ className }) {
+  return (
+    <div className={`SearchResultsListItem SearchResultsListItem--Loading ${className || ''}`}>
+      <LoadingLine colorScheme={'gray'}/>
+
+      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'gray'}/>
+    </div>
+  )
+}
+
 function SearchResultsListItem ({ entity, entityType, className }) {
   if (entityType === 'transaction') {
     return <TransactionSearchItem transaction={entity} className={className}/>
@@ -121,6 +132,10 @@ function SearchResultsListItem ({ entity, entityType, className }) {
 
   if (entityType === 'document') {
     return <DocumentSearchItem document={entity} className={className}/>
+  }
+
+  if (entityType === 'loading') {
+    return <LoadingSearchItem className={className}/>
   }
 
   return null
