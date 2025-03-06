@@ -3,4 +3,8 @@
 
 .LoadingLine {
     @include mixins.LoadingLine;
+
+    &--Gray {
+        @include mixins.LoadingLine(0, 'gray');
+    }
 }
