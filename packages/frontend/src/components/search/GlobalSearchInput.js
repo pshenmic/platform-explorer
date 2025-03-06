@@ -11,30 +11,32 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedQuery = useDebounce(searchQuery, 200)
 
-  const search = () => {
-    onResultChange({ data: {}, loading: true, error: false })
-
-    Api.search(searchQuery)
-      .then(res => fetchHandlerSuccess(onResultChange, mockSearchResults))
-      .catch(err => fetchHandlerError(onResultChange, err))
-  }
-
-  useEffect(() => {
-    if (!debouncedQuery.length) {
-      onResultChange({})
+  const search = (query) => {
+    if (query?.length === 0) {
+      onResultChange({ data: {}, loading: false, error: false })
       return
     }
 
-    search()
-  }, [debouncedQuery])
+    onResultChange({ data: {}, loading: true, error: false })
 
-  useEffect(() => {
-    setSearchQuery(forceValue)
-  }, [forceValue])
+    Api.search(query)
+      .then(res => {
+        if (searchQuery?.length > 0) {
+          fetchHandlerSuccess(onResultChange, mockSearchResults)
+        }
+
+        fetchHandlerSuccess({}, mockSearchResults)
+      })
+      .catch(err => fetchHandlerError(onResultChange, err))
+  }
+
+  useEffect(() => search(debouncedQuery), [debouncedQuery])
+
+  useEffect(() => setSearchQuery(forceValue), [forceValue])
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      search()
+      search(searchQuery)
     }
   }
 
