@@ -446,38 +446,6 @@ module.exports = ({
       }
     },
     {
-      path: '/transaction/create',
-      method: 'POST',
-      handler: transactionsController.createDocumentBatchTransition,
-      schema: {
-        body: {
-          required: ['dataContractId', 'owner', 'documentTypeName', 'data', 'batchType', 'nonce'],
-          type: 'object',
-          properties: {
-            dataContractId: { $ref: 'identifier#' },
-            owner: { $ref: 'identifier#' },
-            documentTypeName: {
-              type: 'string',
-              minLength: 1,
-              maxLength: 100
-            },
-            data: {
-              type: 'object'
-            },
-            batchType: {
-              type: 'string',
-              // at this moment available only create
-              enum: ['create', 'replace', 'delete']
-            },
-            nonce: {
-              type: 'string',
-              pattern: '[0-9]'
-            }
-          }
-        }
-      }
-    },
-    {
       path: '/transaction/broadcast',
       method: 'POST',
       handler: transactionsController.broadcastTransaction,

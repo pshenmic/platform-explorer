@@ -132,24 +132,6 @@ class TransactionsController {
     reply.send(decoded)
   }
 
-  createDocumentBatchTransition = async (request, response) => {
-    const { dataContractId, documentTypeName, data, owner, batchType, nonce } = request.body
-
-    if (!batchType) {
-      return response.status(400).send({ message: 'batchType cannot be empty' })
-    }
-
-    const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(dataContractId)
-
-    if (!dataContract) {
-      return response.status(404).send({ message: 'data contract not found' })
-    }
-
-    const transaction = await utils.createDocumentBatchTransition(this.client, dataContract, owner, documentTypeName, data, batchType, nonce)
-
-    response.send({ documentBatchTransition: transaction })
-  }
-
   broadcastTransaction = async (request, response) => {
     const { base64 } = request.body
 
