@@ -333,7 +333,7 @@ describe('Other routes', () => {
         }
       }
 
-      assert.deepEqual({ dataContract: expectedDataContract }, body)
+      assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
     })
 
     it('should search by data contract name', async () => {
@@ -411,7 +411,7 @@ describe('Other routes', () => {
           alias: identityAlias.alias,
           contested: false,
           status: 'ok',
-          timestamp: null
+          timestamp: block.timestamp.toISOString()
         }
       }]
 
@@ -453,7 +453,7 @@ describe('Other routes', () => {
         totalWithdrawals: 0
       }
 
-      assert.deepEqual({ identity: expectedIdentity }, body)
+      assert.deepEqual({ identities: [expectedIdentity] }, body)
     })
   })
 

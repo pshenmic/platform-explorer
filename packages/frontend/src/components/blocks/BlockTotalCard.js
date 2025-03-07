@@ -16,10 +16,6 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
       }
 
       <div className={'BlockTotalCard__Header'}>
-        <div className={'BlockTotalCard__Avatar'}>
-          <BlockIcon/>
-        </div>
-
         <div className={'BlockTotalCard__HeaderLines'}>
           <InfoLine
             className={'BlockTotalCard__InfoLine--Hash'}
@@ -48,6 +44,9 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
               </ValueContainer>
             }
           />
+        </div>
+        <div className={'BlockTotalCard__Avatar'}>
+          <BlockIcon/>
         </div>
       </div>
 
