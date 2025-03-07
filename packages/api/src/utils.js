@@ -82,7 +82,7 @@ const decodeStateTransition = async (client, base64) => {
 
       decoded.version = stateTransition.getDataContract().getVersion()
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
-      decoded.identityNonce = Number(stateTransition.getIdentityNonce())
+      decoded.identityNonce = String(stateTransition.getIdentityNonce())
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
       decoded.ownerId = stateTransition.getOwnerId().toString()
       decoded.schema = stateTransition.getDataContract().getDocumentSchemas()
@@ -97,10 +97,10 @@ const decodeStateTransition = async (client, base64) => {
         const out = {
           id: documentTransition.getId().toString(),
           dataContractId: documentTransition.getDataContractId().toString(),
-          revision: documentTransition.getRevision(),
+          revision: String(documentTransition.getRevision()),
           type: documentTransition.getType(),
           action: documentTransition.getAction(),
-          nonce: Number(documentTransition.getIdentityContractNonce())
+          nonce: String(documentTransition.getIdentityContractNonce())
         }
 
         switch (documentTransition.getAction()) {
@@ -242,7 +242,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
       decoded.ownerId = stateTransition.getDataContract().getOwnerId().toString()
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
-      decoded.dataContractNonce = Number(stateTransition.getDataContract().getIdentityNonce())
+      decoded.dataContractNonce = String(stateTransition.getDataContract().getIdentityNonce())
       decoded.schema = stateTransition.getDataContract().getDocumentSchemas()
       decoded.version = stateTransition.getDataContract().getVersion()
       decoded.dataContractOwner = stateTransition.getDataContract().getOwnerId().toString()
@@ -251,7 +251,7 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_UPDATE: {
-      decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
+      decoded.identityContractNonce = String(stateTransition.getIdentityContractNonce())
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getOwnerId().toString()
       decoded.revision = stateTransition.getRevision()
@@ -286,7 +286,7 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_CREDIT_TRANSFER: {
-      decoded.nonce = Number(stateTransition.getNonce())
+      decoded.nonce = String(stateTransition.getNonce())
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.recipientId = stateTransition.getRecipientId().toString()
@@ -314,7 +314,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.pooling = PoolingEnum[stateTransition.getPooling()]
       decoded.raw = stateTransition.toBuffer().toString('hex')
-      decoded.nonce = Number(stateTransition.getNonce())
+      decoded.nonce = String(stateTransition.getNonce())
 
       break
     }
@@ -330,7 +330,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.raw = stateTransition.toBuffer().toString('hex')
       decoded.proTxHash = stateTransition.getProTxHash().toString('hex')
-      decoded.nonce = Number(stateTransition.getIdentityContractNonce())
+      decoded.nonce = String(stateTransition.getIdentityContractNonce())
 
       break
     }

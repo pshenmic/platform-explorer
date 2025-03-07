@@ -471,11 +471,11 @@ module.exports = ({
             },
             nonce: {
               type: 'string',
-              pattern: "[0-9]"
+              pattern: '[0-9]'
             }
           }
         }
-      },
+      }
     },
     {
       path: '/transaction/broadcast',

@@ -151,7 +151,7 @@ class TransactionsController {
   }
 
   broadcastTransaction = async (request, response) => {
-    const {base64} = request.body
+    const { base64 } = request.body
 
     await this.dapi.broadcastTransition(base64)
 
