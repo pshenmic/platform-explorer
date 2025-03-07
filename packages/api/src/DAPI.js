@@ -123,6 +123,11 @@ class DAPI {
     return identityNonce
   }
 
+  async getIdentityContractNonce (identifier, dataContractId) {
+    const { identityContractNonce } = await this.dapi.platform.getIdentityContractNonce(Identifier.from(identifier), Identifier.from(dataContractId))
+    return identityContractNonce
+  }
+
   async getStatus () {
     return this.dapi.platform.getStatus()
   }

@@ -503,6 +503,20 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/identity/:identifier/contract/:data_contract_id/nonce',
+      method: 'GET',
+      handler: identitiesController.getIdentityContractNonce,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' },
+            data_contract_id: { $ref: 'identifier#' }
+          }
+        }
+      }
     }
   ]
 
