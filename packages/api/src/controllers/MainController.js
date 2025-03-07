@@ -62,7 +62,7 @@ class MainController {
         }
       },
       tenderdash: {
-        version: status?.version?.tenderdash ?? null,
+        version: status?.version?.tenderdashVersion ?? null,
         block: {
           height: tdStatus?.highestBlock?.height ?? null,
           hash: tdStatus?.highestBlock?.hash ?? null,
