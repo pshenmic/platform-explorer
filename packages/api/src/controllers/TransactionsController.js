@@ -135,7 +135,11 @@ class TransactionsController {
   broadcastTransaction = async (request, response) => {
     const { base64 } = request.body
 
-    await this.dapi.broadcastTransition(base64)
+    try {
+      await this.dapi.broadcastTransition(base64)
+    } catch (e) {
+      return response.status(400).send({ error: e.toString() })
+    }
 
     response.send('broadcasted')
   }
