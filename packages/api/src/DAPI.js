@@ -100,6 +100,7 @@ class DAPI {
       return {
         keyId: serialized.getId(),
         type: serialized.getType(),
+        raw: Buffer.from(key).toString('hex'),
         data: Buffer.from(serialized.getData()).toString('hex'),
         purpose: serialized.getPurpose(),
         securityLevel: serialized.getSecurityLevel(),
@@ -117,8 +118,22 @@ class DAPI {
     })
   }
 
+  async getIdentityNonce (identifier) {
+    const { identityNonce } = await this.dapi.platform.getIdentityNonce(Identifier.from(identifier))
+    return identityNonce
+  }
+
+  async getIdentityContractNonce (identifier, dataContractId) {
+    const { identityContractNonce } = await this.dapi.platform.getIdentityContractNonce(Identifier.from(identifier), Identifier.from(dataContractId))
+    return identityContractNonce
+  }
+
   async getStatus () {
     return this.dapi.platform.getStatus()
+  }
+
+  async broadcastTransition (base64) {
+    return this.dapi.platform.broadcastStateTransition(base64)
   }
 }
 

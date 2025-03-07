@@ -130,6 +130,22 @@ class IdentitiesController {
 
     response.send(new PaginatedResultSet(resultSet, null, null, null))
   }
+
+  getIdentityNonce = async (request, response) => {
+    const { identifier } = request.params
+
+    const nonce = await this.dapi.getIdentityNonce(identifier)
+
+    response.send({ identityNonce: String(nonce) })
+  }
+
+  getIdentityContractNonce = async (request, response) => {
+    const { identifier, data_contract_id: dataContractId } = request.params
+
+    const nonce = await this.dapi.getIdentityContractNonce(identifier, dataContractId)
+
+    response.send({ identityContractNonce: String(nonce) })
+  }
 }
 
 module.exports = IdentitiesController

@@ -444,6 +444,47 @@ module.exports = ({
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       }
+    },
+    {
+      path: '/transaction/broadcast',
+      method: 'POST',
+      handler: transactionsController.broadcastTransaction,
+      schema: {
+        body: {
+          type: 'object',
+          required: ['base64'],
+          properties: {
+            base64: { type: 'string' }
+          }
+        }
+      }
+    },
+    {
+      path: '/identity/:identifier/nonce',
+      method: 'GET',
+      handler: identitiesController.getIdentityNonce,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/identity/:identifier/contract/:data_contract_id/nonce',
+      method: 'GET',
+      handler: identitiesController.getIdentityContractNonce,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' },
+            data_contract_id: { $ref: 'identifier#' }
+          }
+        }
+      }
     }
   ]
 

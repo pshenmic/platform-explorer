@@ -12,14 +12,14 @@
     "lint": "standard ."
   },
   "dependencies": {
-    "@dashevo/wasm-dpp": "github:owl352/wasm-dpp",
-    "@dashevo/dapi-client": "github:owl352/dapi-client",
+    "@dashevo/wasm-dpp": "github:owl352/wasm-dpp#test",
+    "@dashevo/dapi-client": "github:owl352/dapi-client#experimental",
     "@dashevo/dashd-rpc": "github:owl352/dashd-rpc",
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
     "bs58": "^6.0.0",
     "cbor": "^9.0.2",
-    "dash": "4.8.0",
+    "dash": "github:owl352/js-dash-sdk",
     "dotenv": "^16.3.1",
     "fastify": "^4.21.0",
     "fastify-metrics": "^11.0.0",

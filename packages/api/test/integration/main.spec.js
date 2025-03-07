@@ -391,7 +391,7 @@ describe('Other routes', () => {
         },
         gasUsed: null,
         totalGasUsed: 0,
-        nonce: 2
+        nonce: '2'
       }
 
       assert.deepEqual({ document: expectedDataContract }, body)
