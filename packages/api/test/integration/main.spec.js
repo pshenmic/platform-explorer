@@ -426,7 +426,7 @@ describe('Other routes', () => {
       const expectedIdentity = {
         identifier: identity.identifier,
         revision: 0,
-        balance: 0,
+        balance: '0',
         timestamp: block.timestamp.toISOString(),
         txHash: identityTransaction.hash,
         totalTxs: 51,
@@ -469,21 +469,13 @@ describe('Other routes', () => {
       }
       const mockDapiStatus = {
         version: {
-          software: {
-            dapi: '1.5.1',
-            drive: '1.6.2',
-            tenderdash: '1.4.0'
-          },
-          protocol: {
-            tenderdash: {
-              p2p: 10,
-              block: 14
-            },
-            drive: {
-              latest: 6,
-              current: 6
-            }
-          }
+          dapiVersion: '1.5.1',
+          driveVersion: '1.6.2',
+          tenderdashVersion: '1.4.0',
+          tenderdashP2pProtocol: 10,
+          tenderdashBlockProtocol: 14,
+          driveLatestProtocol: 6,
+          driveCurrentProtocol: 6
         }
       }
 
@@ -492,7 +484,7 @@ describe('Other routes', () => {
       mock.method(DAPI.prototype, 'getStatus', async () => mockDapiStatus)
       mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
         number: 0,
-        firstBlockHeight: 0,
+        firstBlockHeight: '0',
         firstCoreBlockHeight: 0,
         startTime: 0,
         feeMultiplier: 0,
@@ -514,7 +506,7 @@ describe('Other routes', () => {
       const expectedStats = {
         epoch: {
           number: 0,
-          firstBlockHeight: 0,
+          firstBlockHeight: '0',
           firstCoreBlockHeight: 0,
           startTime: 0,
           feeMultiplier: 0,
@@ -522,7 +514,7 @@ describe('Other routes', () => {
         },
         identitiesCount: 1,
         transactionsCount: 51,
-        totalCredits: 0,
+        totalCredits: '0',
         totalCollectedFeesDay: 240000,
         transfersCount: 0,
         dataContractsCount: 1,
@@ -541,7 +533,7 @@ describe('Other routes', () => {
           }
         },
         tenderdash: {
-          version: mockDapiStatus.version.software.tenderdash ?? null,
+          version: mockDapiStatus.version.tenderdashVersion ?? null,
           block: {
             height: mockTDStatus?.highestBlock?.height,
             hash: mockTDStatus?.highestBlock?.hash,
@@ -550,18 +542,18 @@ describe('Other routes', () => {
         },
         versions: {
           software: {
-            dapi: mockDapiStatus.version.software.dapi ?? null,
-            drive: mockDapiStatus.version.software.drive ?? null,
-            tenderdash: mockDapiStatus.version.software.tenderdash ?? null
+            dapi: mockDapiStatus.version.dapiVersion ?? null,
+            drive: mockDapiStatus.version.driveVersion ?? null,
+            tenderdash: mockDapiStatus.version.tenderdashVersion ?? null
           },
           protocol: {
             tenderdash: {
-              p2p: mockDapiStatus.version.protocol.tenderdash.p2p ?? null,
-              block: mockDapiStatus.version.protocol.tenderdash.block ?? null
+              p2p: mockDapiStatus.version.tenderdashP2pProtocol ?? null,
+              block: mockDapiStatus.version.tenderdashBlockProtocol ?? null
             },
             drive: {
-              latest: mockDapiStatus.version.protocol.drive.latest ?? null,
-              current: mockDapiStatus.version.protocol.drive.current ?? null
+              latest: mockDapiStatus.version.driveLatestProtocol ?? null,
+              current: mockDapiStatus.version.driveCurrentProtocol ?? null
             }
           }
         }
