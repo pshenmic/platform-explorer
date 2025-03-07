@@ -100,6 +100,7 @@ class DAPI {
       return {
         keyId: serialized.getId(),
         type: serialized.getType(),
+        raw: Buffer.from(key).toString('hex'),
         data: Buffer.from(serialized.getData()).toString('hex'),
         purpose: serialized.getPurpose(),
         securityLevel: serialized.getSecurityLevel(),
