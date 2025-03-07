@@ -136,7 +136,7 @@ class IdentitiesController {
 
     const nonce = await this.dapi.getIdentityNonce(identifier)
 
-    response.send({ nonce })
+    response.send({ nonce: String(nonce) })
   }
 }
 
