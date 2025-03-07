@@ -1420,7 +1420,7 @@ GET /search?query=xyz
 GET /search?query=36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm
 
 {
-  "identity": {
+  "identities": [{
     "identifier": "36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm",
     "alias": "xyz.dash",
     "status": {
@@ -1428,7 +1428,7 @@ GET /search?query=36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm
       "status": "ok",
       "contested": true
     }
-  }
+  }]
 }
 ```
 Response codes:

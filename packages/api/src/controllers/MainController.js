@@ -141,7 +141,7 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
-        result = { ...result, identity }
+        result = { ...result, identities: [identity] }
       }
 
       // search validator by MasterNode identity
@@ -157,7 +157,7 @@ class MainController {
       const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(query)
 
       if (dataContract) {
-        result = { ...result, dataContract }
+        result = { ...result, dataContracts: [dataContract] }
       }
 
       // search documents
@@ -172,14 +172,22 @@ class MainController {
     const identities = await this.identitiesDAO.getIdentitiesByDPNSName(query)
 
     if (identities) {
-      result = { ...result, identities }
+      if (result.identities) {
+        result.identities.push(identities)
+      } else {
+        result = { ...result, identities }
+      }
     }
 
     // by data-contract name
     const dataContracts = await this.dataContractsDAO.getDataContractByName(query)
 
     if (dataContracts) {
-      result = { ...result, dataContracts }
+      if (result.dataContracts) {
+        result.dataContracts.push(dataContracts)
+      } else {
+        result = { ...result, dataContracts }
+      }
     }
 
     if (Object.keys(result).length === 0) {
