@@ -164,7 +164,9 @@ const decodeStateTransition = async (client, base64) => {
         coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
         instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.getInstantLock().toString('base64') : null,
-        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis ?? null,
+        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis
+          ?String(decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis)
+          : null,
         fundingCoreTx: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
         vout: assetLockProof.getOutPoint().readInt8(32)
       }
@@ -210,13 +212,15 @@ const decodeStateTransition = async (client, base64) => {
       decoded.assetLockProof = {
         coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
-        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis ?? null,
+        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis
+          ? String(decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis)
+          :null,
         fundingCoreTx: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
         vout: assetLockProof.getOutPoint().readInt8(32)
       }
 
       decoded.identityId = stateTransition.getIdentityId().toString()
-      decoded.amount = output.satoshis * 1000
+      decoded.amount = String(output.satoshis * 1000)
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
       decoded.raw = stateTransition.toBuffer().toString('hex')
 
@@ -254,7 +258,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.identityContractNonce = String(stateTransition.getIdentityContractNonce())
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getOwnerId().toString()
-      decoded.revision = stateTransition.getRevision()
+      decoded.revision = String(stateTransition.getRevision())
 
       decoded.publicKeysToAdd = stateTransition.getPublicKeysToAdd()
         .map(key => {
@@ -290,7 +294,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.recipientId = stateTransition.getRecipientId().toString()
-      decoded.amount = stateTransition.getAmount()
+      decoded.amount = String(stateTransition.getAmount())
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
       decoded.raw = stateTransition.toBuffer().toString('hex')
@@ -307,7 +311,7 @@ const decodeStateTransition = async (client, base64) => {
 
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.senderId = stateTransition.getIdentityId().toString()
-      decoded.amount = parseInt(stateTransition.getAmount())
+      decoded.amount = String(stateTransition.getAmount())
       decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null
       decoded.coreFeePerByte = stateTransition.getCoreFeePerByte()
       decoded.signature = stateTransition.getSignature()?.toString('hex')
