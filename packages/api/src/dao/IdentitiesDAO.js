@@ -161,10 +161,12 @@ module.exports = class IdentitiesDAO {
       fundingCoreTx = assetLockProof?.fundingCoreTx
     }
 
+    const balance = await this.dapi.getIdentityBalance(identity.identifier)
+
     return Identity.fromObject({
       ...identity,
       aliases,
-      balance: await this.dapi.getIdentityBalance(identity.identifier),
+      balance: String(balance),
       publicKeys: publicKeys?.map(key => ({
         keyId: key.keyId,
         type: key.type,
