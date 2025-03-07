@@ -492,7 +492,7 @@ describe('Other routes', () => {
       mock.method(DAPI.prototype, 'getStatus', async () => mockDapiStatus)
       mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
         number: 0,
-        firstBlockHeight: 0,
+        firstBlockHeight: '0',
         firstCoreBlockHeight: 0,
         startTime: 0,
         feeMultiplier: 0,
@@ -514,7 +514,7 @@ describe('Other routes', () => {
       const expectedStats = {
         epoch: {
           number: 0,
-          firstBlockHeight: 0,
+          firstBlockHeight: '0',
           firstCoreBlockHeight: 0,
           startTime: 0,
           feeMultiplier: 0,
@@ -522,7 +522,7 @@ describe('Other routes', () => {
         },
         identitiesCount: 1,
         transactionsCount: 51,
-        totalCredits: 0,
+        totalCredits: '0',
         totalCollectedFeesDay: 240000,
         transfersCount: 0,
         dataContractsCount: 1,

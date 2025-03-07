@@ -46,7 +46,7 @@ class MainController {
     response.send({
       epoch,
       transactionsCount: stats?.transactionsCount,
-      totalCredits,
+      totalCredits: String(totalCredits),
       totalCollectedFeesDay,
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
@@ -62,7 +62,7 @@ class MainController {
         }
       },
       tenderdash: {
-        version: status?.version?.software.tenderdash ?? null,
+        version: status?.version?.tenderdash ?? null,
         block: {
           height: tdStatus?.highestBlock?.height ?? null,
           hash: tdStatus?.highestBlock?.hash ?? null,
@@ -75,18 +75,18 @@ class MainController {
       },
       versions: {
         software: {
-          dapi: status?.version?.software.dapi ?? null,
-          drive: status?.version?.software.drive ?? null,
-          tenderdash: status?.version?.software.tenderdash ?? null
+          dapi: status?.version?.dapiVersion ?? null,
+          drive: status?.version?.driveVersion ?? null,
+          tenderdash: status?.version?.tenderdashVersion ?? null
         },
         protocol: {
           tenderdash: {
-            p2p: status?.version?.protocol.tenderdash?.p2p ?? null,
-            block: status?.version?.protocol.tenderdash?.block ?? null
+            p2p: status?.version?.tenderdashP2pProtocol ?? null,
+            block: status?.version?.tenderdashBlockProtocol ?? null
           },
           drive: {
-            latest: status?.version?.protocol.drive?.latest ?? null,
-            current: status?.version?.protocol.drive?.current ?? null
+            latest: status?.version?.driveLatestProtocol ?? null,
+            current: status?.version?.driveCurrentProtocol ?? null
           }
         }
       }
