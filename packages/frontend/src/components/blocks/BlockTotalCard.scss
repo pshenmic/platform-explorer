@@ -2,7 +2,11 @@
 @import '../../styles/variables.scss';
 
 .BlockTotalCard {
-  @include mixins.EntityCard();
+  @include mixins.TotalCard();
+
+  &__Header {
+    align-items: flex-start;
+  }
 
   &__Avatar {
     svg {
@@ -23,6 +27,14 @@
   }
 
   @media screen and (max-width: $breakpoint-sm) {
+    @include mixins.TotalCard(true);
+
+    &__InfoLine {
+      &--Hash {
+        padding-right: 100px;
+      }
+    }
+
     &__Header {
       .InfoLine {
         flex-wrap: wrap;
