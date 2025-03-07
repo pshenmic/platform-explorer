@@ -130,6 +130,14 @@ class IdentitiesController {
 
     response.send(new PaginatedResultSet(resultSet, null, null, null))
   }
+
+  getIdentityNonce = async (request, response) => {
+    const { identifier } = request.params
+
+    const nonce = await this.dapi.getIdentityNonce(identifier)
+
+    response.send({nonce})
+  }
 }
 
 module.exports = IdentitiesController

@@ -117,6 +117,11 @@ class DAPI {
     })
   }
 
+  async getIdentityNonce (identifier){
+    const {identityNonce} = await this.dapi.platform.getIdentityNonce(Identifier.from(identifier))
+    return identityNonce
+  }
+
   async getStatus () {
     return this.dapi.platform.getStatus()
   }

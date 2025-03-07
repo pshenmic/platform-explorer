@@ -490,6 +490,19 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/identity/:identifier/nonce',
+      method: 'GET',
+      handler: identitiesController.getIdentityNonce,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
     }
   ]
 
