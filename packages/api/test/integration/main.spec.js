@@ -426,7 +426,7 @@ describe('Other routes', () => {
       const expectedIdentity = {
         identifier: identity.identifier,
         revision: 0,
-        balance: 0,
+        balance: '0',
         timestamp: block.timestamp.toISOString(),
         txHash: identityTransaction.hash,
         totalTxs: 51,
