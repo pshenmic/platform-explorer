@@ -91,7 +91,12 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
 
         <InfoLine
           title={'Creation Date'}
-          value={<DateBlock timestamp={dataContract.data?.timestamp}/>}
+          value={dataContract?.data?.txHash
+            ? <ValueCard link={`/transaction/${dataContract.data?.txHash}`}>
+                <DateBlock timestamp={dataContract.data?.timestamp}/>
+              </ValueCard>
+            : <DateBlock timestamp={dataContract.data?.timestamp}/>
+          }
           loading={dataContract.loading}
           error={dataContract.error}
         />
