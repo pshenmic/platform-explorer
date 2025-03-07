@@ -165,7 +165,7 @@ const decodeStateTransition = async (client, base64) => {
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
         instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.getInstantLock().toString('base64') : null,
         fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis
-          ?String(decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis)
+          ? String(decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis)
           : null,
         fundingCoreTx: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
         vout: assetLockProof.getOutPoint().readInt8(32)
@@ -214,7 +214,7 @@ const decodeStateTransition = async (client, base64) => {
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
         fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis
           ? String(decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis)
-          :null,
+          : null,
         fundingCoreTx: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
         vout: assetLockProof.getOutPoint().readInt8(32)
       }
