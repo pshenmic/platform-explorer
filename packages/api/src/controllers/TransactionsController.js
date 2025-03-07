@@ -141,7 +141,7 @@ class TransactionsController {
       return response.status(400).send({ error: e.toString() })
     }
 
-    response.send({message: 'broadcasted'})
+    response.send({ message: 'broadcasted' })
   }
 }
 
