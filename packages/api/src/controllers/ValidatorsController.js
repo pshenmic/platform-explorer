@@ -73,7 +73,7 @@ class ValidatorsController {
           isActive,
           proTxInfo: ProTxInfo.fromObject(proTxInfo),
           identifier,
-          identityBalance,
+          identityBalance: String(identityBalance),
           epochInfo,
           endpoints
         }
@@ -123,7 +123,7 @@ class ValidatorsController {
                 activeValidator.pro_tx_hash === validator.proTxHash),
               proTxInfo: ProTxInfo.fromObject(validator.proTxInfo),
               identifier,
-              identityBalance,
+              identityBalance: String(identityBalance),
               epochInfo
             }
           )
