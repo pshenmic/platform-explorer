@@ -4,9 +4,11 @@ import { NotActive } from './index'
 import './CreditsBlock.scss'
 
 export default function CreditsBlock ({ credits, rate }) {
+  credits = Number(credits)
+
   return (
     <span className={'CreditsBlock'}>
-      {typeof credits === 'number'
+      {!isNaN(credits)
         ? <>
           <span className={'CreditsBlock__Credits'}><BigNumber>{credits}</BigNumber> CREDITS</span>
             <span className={'CreditsBlock__Dash'}>({removeTrailingZeros(creditsToDash(Number(credits)).toFixed(8))} DASH)</span>
