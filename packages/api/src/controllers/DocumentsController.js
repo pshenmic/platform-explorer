@@ -67,6 +67,43 @@ class DocumentsController {
     }))
   }
 
+  getRawDocumentByIdentifierFromDapi = async (request, response) => {
+    const { identifier } = request.params
+    const { document_type_name: documentTypeName, contract_id: contractId } = request.query
+
+    let dataContract
+
+    if (contractId) {
+      dataContract = await this.datacContractsDAO.getDataContractByIdentifier(contractId)
+    }
+
+    if (!dataContract) {
+      return response.status(400).send({ message: 'data contract not found' })
+    }
+
+    const [extendedDocument] = await this.dapi.getDocuments(
+      documentTypeName,
+      {
+        $format_version: '0',
+        ownerId: dataContract.owner.identifier,
+        id: dataContract.identifier,
+        version: dataContract.version,
+        documentSchemas: JSON.parse(dataContract.schema)
+      },
+      [['$id', '=', Buffer.from(Identifier.from(identifier))]],
+      1,
+      undefined,
+      undefined,
+      true
+    )
+
+    if (!extendedDocument) {
+      return response.status(400).send({ message: 'document not found' })
+    }
+
+    response.send({ document: extendedDocument.toBuffer().toString('base64') })
+  }
+
   getDocumentsByDataContract = async (request, response) => {
     const { identifier } = request.params
     const { page = 1, limit = 10, order = 'asc', document_type_name: documentTypeName } = request.query

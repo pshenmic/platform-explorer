@@ -35,9 +35,10 @@ class DAPI {
    * @param {Array<Array>} query
    * @param {number} limit
    * @param {Array<Array>} orderBy
+   * @param {?boolean} raw returns raw data if `true`
    * @param {Object} skip - {startAfter?: {Buffer}, startAt?: {Buffer}}
    */
-  async getDocuments (type, dataContractObject, query, limit, orderBy, skip) {
+  async getDocuments (type, dataContractObject, query, limit, orderBy, skip, raw) {
     const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
 
     const { startAt, startAfter } = skip ?? {}
@@ -50,9 +51,10 @@ class DAPI {
       startAfter
     })
 
-    return (documents ?? []).map(
-      (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument()
-    )
+    const extendedDocuments = (documents ?? []).map(
+      (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract))
+
+    return raw ? extendedDocuments : extendedDocuments.map(doc => doc.getDocument())
   }
 
   /**
