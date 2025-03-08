@@ -47,7 +47,7 @@ class DataContractsController {
       documentSchemas: JSON.parse(dataContract.schema)
     })).toBuffer()
 
-    response.send({"base64": dataContractBuff.toString('base64')})
+    response.send({ base64: dataContractBuff.toString('base64') })
   }
 
   getDataContractTransactions = async (request, response) => {
