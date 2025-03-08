@@ -176,9 +176,9 @@ module.exports = ({
       }
     },
     {
-      path: '/document/:identifier/dapi',
+      path: '/document/:identifier/raw',
       method: 'GET',
-      handler: documentsController.getRawDocumentByIdentifierFromDapi,
+      handler: documentsController.getRawDocumentByIdentifier,
       schema: {
         params: {
           type: 'object',

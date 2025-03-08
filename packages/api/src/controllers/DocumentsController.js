@@ -67,7 +67,7 @@ class DocumentsController {
     }))
   }
 
-  getRawDocumentByIdentifierFromDapi = async (request, response) => {
+  getRawDocumentByIdentifier = async (request, response) => {
     const { identifier } = request.params
     const { document_type_name: documentTypeName, contract_id: contractId } = request.query
 
@@ -101,7 +101,7 @@ class DocumentsController {
       return response.status(404).send({ message: 'document not found' })
     }
 
-    response.send({ document: extendedDocument.toBuffer().toString('base64') })
+    response.send({ base64: extendedDocument.toBuffer().toString('base64') })
   }
 
   getDocumentsByDataContract = async (request, response) => {
