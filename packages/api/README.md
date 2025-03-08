@@ -1390,7 +1390,7 @@ GET /masternodes/votes?timestamp_start=2024-09-18T01:10:57.833Z&timestamp_end=20
         "dash",
         "test001"
       ],
-      "powerMultiplier": null
+      "power": 1
     }
   ],
   "pagination": {
@@ -1573,7 +1573,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&page=1&limit=10&order
         "dash",
         "xyz"
       ],
-      "powerMultiplier": null
+      "power": 1
     }
   ],
   "pagination": {

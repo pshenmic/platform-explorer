@@ -79,6 +79,7 @@ module.exports = class ContestedDAO {
         'prefunded_voting_balance', 'gas_used as vote_gas_used', 'document_timestamp',
         'masternode_votes.choice as choice', 'document_state_transition_hash',
         'masternode_votes.state_transition_hash as masternode_vote_tx',
+        'masternode_votes.power as masternode_power',
         'masternode_votes.towards_identity_identifier as towards_identity', 'contested_documents_sub.index_name as index_name',
         'contested_documents_sub.owner as owner', 'document_identifier', 'document_timestamp as timestamp',
         'contested_documents_sub.document_type_name as document_type_name'
@@ -291,7 +292,7 @@ module.exports = class ContestedDAO {
     const subquery = this.knex('masternode_votes')
       .select('masternode_votes.id as id', 'pro_tx_hash', 'masternode_votes.state_transition_hash as state_transition_hash', 'voter_identity_id', 'choice',
         'towards_identity_identifier', 'data_contract_id', 'document_type_name', 'index_name', 'index_values',
-        'data_contracts.identifier as data_contract_identifier', 'blocks.timestamp as timestamp', 'aliases')
+        'data_contracts.identifier as data_contract_identifier', 'blocks.timestamp as timestamp', 'aliases', 'power')
       .select(this.knex.raw(`rank() over (order by masternode_votes.id ${order}) rank`))
       .whereRaw(query, bindings)
       .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
@@ -302,7 +303,7 @@ module.exports = class ContestedDAO {
 
     const rows = await this.knex(subquery)
       .select('pro_tx_hash', 'subquery.state_transition_hash as state_transition_hash', 'choice',
-        'subquery.timestamp as timestamp', 'towards_identity_identifier', 'voter_identity_id',
+        'subquery.timestamp as timestamp', 'towards_identity_identifier', 'voter_identity_id', 'power',
         'data_contract_identifier', 'document_type_name', 'index_name', 'index_values', 'aliases')
       .select(this.knex(subquery).count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
