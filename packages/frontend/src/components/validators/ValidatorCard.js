@@ -41,10 +41,7 @@ export default function ValidatorCard ({ validator, rate, className }) {
           />
           <InfoLine
             title={'Balance'}
-            value={typeof validator.data?.identityBalance === 'number'
-              ? <CreditsBlock credits={validator.data.identityBalance} rate={rate}/>
-              : 'n/a'
-            }
+            value={<CreditsBlock credits={validator.data?.identityBalance} rate={rate}/>}
             loading={validator.loading}
             error={validator.error}
           />
