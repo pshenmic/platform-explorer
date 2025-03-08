@@ -176,6 +176,27 @@ module.exports = ({
       }
     },
     {
+      path: '/document/:identifier/raw',
+      method: 'GET',
+      handler: documentsController.getRawDocumentByIdentifier,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: {
+          type: 'object',
+          required: ['document_type_name', 'contract_id'],
+          properties: {
+            document_type_name: { type: ['string', 'null'] },
+            contract_id: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
       path: '/document/:identifier/revisions',
       method: 'GET',
       handler: documentsController.getDocumentRevisions,
