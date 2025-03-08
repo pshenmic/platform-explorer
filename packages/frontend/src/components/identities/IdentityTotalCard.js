@@ -70,7 +70,7 @@ function IdentityTotalCard ({ identity, rate }) {
                 title={'Balance'}
                 value={<CreditsBlock credits={identity.data?.balance} rate={rate}/>}
                 loading={identity.loading}
-                error={identity.error || !identity.data?.balance}
+                error={identity.error}
               />
             </div>
           </div>
