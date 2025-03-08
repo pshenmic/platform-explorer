@@ -78,7 +78,7 @@ class DocumentsController {
     }
 
     if (!dataContract) {
-      return response.status(400).send({ message: 'data contract not found' })
+      return response.status(404).send({ message: 'data contract not found' })
     }
 
     const [extendedDocument] = await this.dapi.getDocuments(
@@ -98,7 +98,7 @@ class DocumentsController {
     )
 
     if (!extendedDocument) {
-      return response.status(400).send({ message: 'document not found' })
+      return response.status(404).send({ message: 'document not found' })
     }
 
     response.send({ document: extendedDocument.toBuffer().toString('base64') })
