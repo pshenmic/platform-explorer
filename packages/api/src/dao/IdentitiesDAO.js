@@ -296,7 +296,7 @@ module.exports = class IdentitiesDAO {
         total_data_contracts: parseInt(row.total_data_contracts),
         total_documents: parseInt(row.total_documents),
         total_txs: parseInt(row.total_txs),
-        balance,
+        balance: String(balance),
         aliases
       })
     }))
