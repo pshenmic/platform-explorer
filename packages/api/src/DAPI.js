@@ -51,10 +51,10 @@ class DAPI {
       startAfter
     })
 
-    const extendedDocuments = (documents ?? []).map(
-      (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract))
-
-    return raw ? extendedDocuments : extendedDocuments.map(doc => doc.getDocument())
+    return raw
+      ? documents
+      : (documents ?? []).map(
+          (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument())
   }
 
   /**

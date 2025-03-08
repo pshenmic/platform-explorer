@@ -101,7 +101,7 @@ class DocumentsController {
       return response.status(404).send({ message: 'document not found' })
     }
 
-    response.send({ base64: extendedDocument.toBuffer().toString('base64') })
+    response.send({ base64: extendedDocument.toString('base64') })
   }
 
   getDocumentsByDataContract = async (request, response) => {
