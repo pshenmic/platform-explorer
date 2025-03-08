@@ -26,7 +26,7 @@ class DataContractsController {
     response.send(dataContracts)
   }
 
-  getDataContractRaw = async (request, response) => {
+  getRawDataContract = async (request, response) => {
     const { identifier } = request.params
 
     let dataContract
@@ -39,7 +39,7 @@ class DataContractsController {
       return response.status(404).send({ message: 'data contract not found' })
     }
 
-    const dataContractBuff = (await this.dapi.dpp.dataContract.createFromObject({
+    const buffer = (await this.dapi.dpp.dataContract.createFromObject({
       $format_version: '0',
       ownerId: dataContract.owner.identifier,
       id: dataContract.identifier,
@@ -47,7 +47,7 @@ class DataContractsController {
       documentSchemas: JSON.parse(dataContract.schema)
     })).toBuffer()
 
-    response.send({ base64: dataContractBuff.toString('base64') })
+    response.send({ base64: buffer.toString('base64') })
   }
 
   getDataContractTransactions = async (request, response) => {
