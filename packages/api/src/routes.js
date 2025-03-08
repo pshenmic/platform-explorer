@@ -156,6 +156,19 @@ module.exports = ({
       }
     },
     {
+      path: '/dataContract/:identifier/raw',
+      method: 'GET',
+      handler: dataContractsController.getDataContractRaw,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
       path: '/document/:identifier',
       method: 'GET',
       handler: documentsController.getDocumentByIdentifier,

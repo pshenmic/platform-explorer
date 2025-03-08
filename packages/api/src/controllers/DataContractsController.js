@@ -3,6 +3,7 @@ const DataContractsDAO = require('../dao/DataContractsDAO')
 class DataContractsController {
   constructor (knex, client, dapi) {
     this.dataContractsDAO = new DataContractsDAO(knex, client, dapi)
+    this.dapi = dapi
   }
 
   getDataContractByIdentifier = async (request, response) => {
@@ -23,6 +24,30 @@ class DataContractsController {
     const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
 
     response.send(dataContracts)
+  }
+
+  getDataContractRaw = async (request, response) => {
+    const { identifier } = request.params
+
+    let dataContract
+
+    if (identifier) {
+      dataContract = await this.dataContractsDAO.getDataContractByIdentifier(identifier)
+    }
+
+    if (!dataContract) {
+      return response.status(404).send({ message: 'data contract not found' })
+    }
+
+    const dataContractBuff = (await this.dapi.dpp.dataContract.createFromObject({
+      $format_version: '0',
+      ownerId: dataContract.owner.identifier,
+      id: dataContract.identifier,
+      version: dataContract.version,
+      documentSchemas: JSON.parse(dataContract.schema)
+    })).toBuffer()
+
+    response.send({"base64": dataContractBuff.toString('base64')})
   }
 
   getDataContractTransactions = async (request, response) => {

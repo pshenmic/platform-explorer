@@ -21,6 +21,7 @@ Reference:
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
 * [Data Contract By Identifier](#data-contract-by-identifier)
+* [RAW Data Contract By Identifier](#raw-data-contract-by-identifier)
 * [Data Contracts](#data-contracts)
 * [Data Contract Transactions](#data-contract-transactions)
 * [Document by Identifier](#document-by-identifier)
@@ -702,6 +703,23 @@ GET /dataContract/H4wBXB2RCu58EP7H7gGyehVmD7ij5MLZkAXW9SVUGPYb
   "identitiesInteracted": 1,
   "totalGasUsed": 51529650,
   "averageGasUsed": 10305930
+}
+```
+Response codes:
+```
+200: OK
+404: Not found
+500: Internal Server Error
+```
+---
+### RAW Data Contract by Identifier
+Return raw base64 data contract from dpp
+
+```
+GET /dataContract/6hVQW16jyvZyGSQk2YVty4ND6bgFXozizYWnPt753uW5/raw
+
+{
+    "base64": "AFSpyOpeUrxGdPgqZwWB5c2Lwlk5O8Mn0bV/hUjj3HT2AAAAAAABAQAAAvSPZWjyiqAx4cW2gLlcoXK8zI3nJech+VU74QHIqJk3AAEHdG9ycmVudBYEEgR0eXBlEgZvYmplY3QSCHJlcXVpcmVkFQISCiRjcmVhdGVkQXQSCiR1cGRhdGVkQXQSCnByb3BlcnRpZXMWAxIEbmFtZRYFEgR0eXBlEgZzdHJpbmcSCHBvc2l0aW9uAgESCW1heExlbmd0aAKgEgltaW5MZW5ndGgCBhILZGVzY3JpcHRpb24SH05hbWUgb2YgdGhlIGRpc3RyaWJ1dGVkIHRvcnJlbnQSBm1hZ25ldBYFEgR0eXBlEgZzdHJpbmcSCHBvc2l0aW9uAgASCW1heExlbmd0aAL7A+gSCW1pbkxlbmd0aAIQEgtkZXNjcmlwdGlvbhIoTWFnbmV0IGxpbmtzIHVzZWQgaW4gQml0VG9ycmVudCBwcm90b2NvbBILZGVzY3JpcHRpb24WBRIEdHlwZRIGc3RyaW5nEghwb3NpdGlvbgICEgltYXhMZW5ndGgCoBIJbWluTGVuZ3RoAhASC2Rlc2NyaXB0aW9uEiREZXNjcmlwdGlvbiBmb3IgYSBnaXZlbiB0b3JyZW50IGZpbGUSFGFkZGl0aW9uYWxQcm9wZXJ0aWVzEwA="
 }
 ```
 Response codes:
