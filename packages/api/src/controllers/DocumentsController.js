@@ -6,7 +6,7 @@ const { Identifier } = require('@dashevo/wasm-dpp')
 class DocumentsController {
   constructor (client, knex, dapi) {
     this.documentsDAO = new DocumentsDAO(knex, dapi, client)
-    this.datacContractsDAO = new DataContractsDAO(knex)
+    this.dataContractsDAO = new DataContractsDAO(knex)
     this.client = client
     this.dapi = dapi
   }
@@ -28,7 +28,7 @@ class DocumentsController {
     let dataContract
 
     if (contractId) {
-      dataContract = await this.datacContractsDAO.getDataContractByIdentifier(contractId)
+      dataContract = await this.dataContractsDAO.getDataContractByIdentifier(contractId)
     }
 
     if (!dataContract) {
@@ -74,7 +74,7 @@ class DocumentsController {
     let dataContract
 
     if (contractId) {
-      dataContract = await this.datacContractsDAO.getDataContractByIdentifier(contractId)
+      dataContract = await this.dataContractsDAO.getDataContractByIdentifier(contractId)
     }
 
     if (!dataContract) {
