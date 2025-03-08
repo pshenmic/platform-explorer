@@ -170,6 +170,7 @@ module.exports = class IdentitiesDAO {
       publicKeys: publicKeys?.map(key => ({
         keyId: key.keyId,
         type: key.type,
+        raw: key.raw,
         data: key.data,
         purpose: key.purpose,
         securityLevel: key.securityLevel,
