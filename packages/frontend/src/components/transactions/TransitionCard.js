@@ -169,7 +169,7 @@ function TransitionCard ({ transition, owner, rate, className }) {
           className={'TransitionCard__InfoLine'}
           title={'Price'}
           value={<CreditsBlock credits={transition?.price} rate={rate}/>}
-          error={!transition?.price}
+          error={transition?.price === undefined}
         />
       }
 
