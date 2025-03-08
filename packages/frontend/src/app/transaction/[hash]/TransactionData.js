@@ -112,7 +112,7 @@ function TransactionData ({ data, type, loading, rate }) {
         title={'Identity Nonce'}
         value={data?.nonce}
         loading={loading}
-        error={!data?.nonce}
+        error={data?.nonce === undefined}
       />
 
       <InfoLine
@@ -570,7 +570,7 @@ function TransactionData ({ data, type, loading, rate }) {
         title={'Identity Nonce'}
         value={data?.nonce}
         loading={loading}
-        error={!data?.nonce}
+        error={data?.nonce === undefined}
       />
 
       <InfoLine
