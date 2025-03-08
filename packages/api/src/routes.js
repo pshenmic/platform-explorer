@@ -158,7 +158,7 @@ module.exports = ({
     {
       path: '/dataContract/:identifier/raw',
       method: 'GET',
-      handler: dataContractsController.getDataContractRaw,
+      handler: dataContractsController.getRawDataContract,
       schema: {
         params: {
           type: 'object',
