@@ -1,28 +1,28 @@
-const { Identifier } = require('dash').PlatformProtocol
+const {Identifier} = require('dash').PlatformProtocol
 
-const { IdentityPublicKey } = require('@dashevo/wasm-dpp/dist/wasm/wasm_dpp')
+const {IdentityPublicKey} = require('@dashevo/wasm-dpp/dist/wasm/wasm_dpp')
 
 class DAPI {
   dapi
   dpp
 
-  constructor (dapi, dpp) {
+  constructor(dapi, dpp) {
     this.dapi = dapi
     this.dpp = dpp
   }
 
-  async getIdentityBalance (identifier) {
-    const { balance } = await this.dapi.platform.getIdentityBalance(Identifier.from(identifier))
+  async getIdentityBalance(identifier) {
+    const {balance} = await this.dapi.platform.getIdentityBalance(Identifier.from(identifier))
     return balance
   }
 
-  async getTotalCredits () {
-    const { totalCreditsInPlatform } = await this.dapi.platform.getTotalCreditsInPlatform()
+  async getTotalCredits() {
+    const {totalCreditsInPlatform} = await this.dapi.platform.getTotalCreditsInPlatform()
     return totalCreditsInPlatform
   }
 
-  async getEpochsInfo (count, start, ascending) {
-    const { epochsInfo } = await this.dapi.platform.getEpochsInfo(start, count, { ascending })
+  async getEpochsInfo(count, start, ascending) {
+    const {epochsInfo} = await this.dapi.platform.getEpochsInfo(start, count, {ascending})
     return epochsInfo
   }
 
@@ -38,12 +38,12 @@ class DAPI {
    * @param {?boolean} raw returns raw data if `true`
    * @param {Object} skip - {startAfter?: {Buffer}, startAt?: {Buffer}}
    */
-  async getDocuments (type, dataContractObject, query, limit, orderBy, skip, raw) {
+  async getDocuments(type, dataContractObject, query, limit, orderBy, skip, raw) {
     const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
 
-    const { startAt, startAfter } = skip ?? {}
+    const {startAt, startAfter} = skip ?? {}
 
-    const { documents } = await this.dapi.platform.getDocuments(Identifier.from(dataContractObject.id), type, {
+    const {documents} = await this.dapi.platform.getDocuments(Identifier.from(dataContractObject.id), type, {
       limit,
       where: query,
       orderBy,
@@ -51,10 +51,9 @@ class DAPI {
       startAfter
     })
 
-    const extendedDocuments = (documents ?? []).map(
-      (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract))
+    return raw ? documents : (documents ?? []).map(
+      (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument())
 
-    return raw ? extendedDocuments : extendedDocuments.map(doc => doc.getDocument())
   }
 
   /**
@@ -69,16 +68,16 @@ class DAPI {
    * @param {number} [count]
    * @returns {Promise<contestedResourceContenders>}
    */
-  async getContestedState (contractId,
-    documentTypeName,
-    indexName,
-    resultType,
-    indexValuesList,
-    startAtIdentifierInfo,
-    allowIncludeLockedAndAbstainingVoteTally,
-    count
+  async getContestedState(contractId,
+                          documentTypeName,
+                          indexName,
+                          resultType,
+                          indexValuesList,
+                          startAtIdentifierInfo,
+                          allowIncludeLockedAndAbstainingVoteTally,
+                          count
   ) {
-    const { contestedResourceContenders } = await this.dapi.platform.getContestedResourceVoteState(
+    const {contestedResourceContenders} = await this.dapi.platform.getContestedResourceVoteState(
       Buffer.from(contractId, 'base64'),
       documentTypeName,
       indexName,
@@ -91,13 +90,13 @@ class DAPI {
     return contestedResourceContenders
   }
 
-  async getIdentityKeys (identifier, keysIds, limit) {
-    const { identityKeys } = await this.dapi.platform.getIdentityKeys(Identifier.from(identifier), keysIds, limit)
+  async getIdentityKeys(identifier, keysIds, limit) {
+    const {identityKeys} = await this.dapi.platform.getIdentityKeys(Identifier.from(identifier), keysIds, limit)
 
     return identityKeys.map(key => {
       const serialized = IdentityPublicKey.fromBuffer(Buffer.from(key))
 
-      const { contractBounds } = IdentityPublicKey.fromBuffer(Buffer.from(key)).toObject()
+      const {contractBounds} = IdentityPublicKey.fromBuffer(Buffer.from(key)).toObject()
 
       return {
         keyId: serialized.getId(),
@@ -111,30 +110,30 @@ class DAPI {
         hash: Buffer.from(serialized.hash()).toString('hex'),
         contractBounds: contractBounds
           ? {
-              type: contractBounds.type,
-              id: Identifier.from(Buffer.from(contractBounds.id)),
-              typeName: contractBounds.document_type_name
-            }
+            type: contractBounds.type,
+            id: Identifier.from(Buffer.from(contractBounds.id)),
+            typeName: contractBounds.document_type_name
+          }
           : null
       }
     })
   }
 
-  async getIdentityNonce (identifier) {
-    const { identityNonce } = await this.dapi.platform.getIdentityNonce(Identifier.from(identifier))
+  async getIdentityNonce(identifier) {
+    const {identityNonce} = await this.dapi.platform.getIdentityNonce(Identifier.from(identifier))
     return identityNonce
   }
 
-  async getIdentityContractNonce (identifier, dataContractId) {
-    const { identityContractNonce } = await this.dapi.platform.getIdentityContractNonce(Identifier.from(identifier), Identifier.from(dataContractId))
+  async getIdentityContractNonce(identifier, dataContractId) {
+    const {identityContractNonce} = await this.dapi.platform.getIdentityContractNonce(Identifier.from(identifier), Identifier.from(dataContractId))
     return identityContractNonce
   }
 
-  async getStatus () {
+  async getStatus() {
     return this.dapi.platform.getStatus()
   }
 
-  async broadcastTransition (base64) {
+  async broadcastTransition(base64) {
     return this.dapi.platform.broadcastStateTransition(base64)
   }
 }
