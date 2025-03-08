@@ -110,7 +110,7 @@ describe('Masternode routes', () => {
           indexName: mnVote.index_name,
           indexValues: JSON.parse(mnVote.index_values),
           identityAliases: [],
-          powerMultiplier: mnVote.power
+          power: mnVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -141,7 +141,7 @@ describe('Masternode routes', () => {
           indexName: mnVote.index_name,
           indexValues: JSON.parse(mnVote.index_values),
           identityAliases: [],
-          powerMultiplier: mnVote.power
+          power: mnVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -172,7 +172,7 @@ describe('Masternode routes', () => {
           indexName: mnVote.index_name,
           indexValues: JSON.parse(mnVote.index_values),
           identityAliases: [],
-          powerMultiplier: mnVote.power
+          power: mnVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -203,7 +203,7 @@ describe('Masternode routes', () => {
           indexName: mnVote.index_name,
           indexValues: JSON.parse(mnVote.index_values),
           identityAliases: [],
-          powerMultiplier: mnVote.power
+          power: mnVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -234,7 +234,7 @@ describe('Masternode routes', () => {
           indexName: mnVote.index_name,
           indexValues: JSON.parse(mnVote.index_values),
           identityAliases: [],
-          powerMultiplier: mnVote.power
+          power: mnVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -266,7 +266,7 @@ describe('Masternode routes', () => {
           indexName: mnVote.index_name,
           indexValues: JSON.parse(mnVote.index_values),
           identityAliases: [],
-          powerMultiplier: mnVote.power
+          power: mnVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -299,7 +299,7 @@ describe('Masternode routes', () => {
           indexName: mnVote.index_name,
           indexValues: JSON.parse(mnVote.index_values),
           identityAliases: [],
-          powerMultiplier: mnVote.power
+          power: mnVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -331,7 +331,7 @@ describe('Masternode routes', () => {
           indexName: mnVote.index_name,
           indexValues: JSON.parse(mnVote.index_values),
           identityAliases: [],
-          powerMultiplier: mnVote.power
+          power: mnVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -363,7 +363,7 @@ describe('Masternode routes', () => {
           indexName: mnVote.index_name,
           indexValues: JSON.parse(mnVote.index_values),
           identityAliases: [],
-          powerMultiplier: mnVote.power
+          power: mnVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)

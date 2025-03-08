@@ -10,9 +10,9 @@ module.exports = class Vote {
   documentTypeName
   indexName
   indexValues
-  powerMultiplier
+  power
 
-  constructor (proTxHash, txHash, voterIdentifier, choice, timestamp, towardsIdentity, identityAliases, dataContractIdentifier, documentTypeName, indexName, indexValues, powerMultiplier) {
+  constructor (proTxHash, txHash, voterIdentifier, choice, timestamp, towardsIdentity, identityAliases, dataContractIdentifier, documentTypeName, indexName, indexValues, power) {
     this.proTxHash = proTxHash ?? null
     this.txHash = txHash ?? null
     this.voterIdentifier = voterIdentifier ?? null
@@ -24,7 +24,7 @@ module.exports = class Vote {
     this.documentTypeName = documentTypeName ?? null
     this.indexName = indexName ?? null
     this.indexValues = indexValues ?? null
-    this.powerMultiplier = powerMultiplier ?? null
+    this.power = power ?? null
   }
 
   /* eslint-disable camelcase */
