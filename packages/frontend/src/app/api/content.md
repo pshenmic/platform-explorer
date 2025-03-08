@@ -16,8 +16,8 @@ Reference:
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
 * [Validator by Masternode Identifier](#validator-by-masternode-identifier)
-* [Validator Blocks Statistic](#validator-stats-by-protxhash)
 * [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
+* [Validator Blocks Statistic](#validator-stats-by-protxhash)
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
 * [Data Contract By Identifier](#data-contract-by-identifier)
@@ -530,12 +530,12 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 ### Validator rewards stats by ProTxHash
 Return a series data for the reward from proposed blocks by validator chart with
 
-* `start` lower interval threshold in ISO string ( _optional_ )
-* `end` upper interval threshold in ISO string ( _optional_ )
-
+* `start` lower interval threshold in ISO string
+* `end` upper interval threshold in ISO string
+* `intervalsCount` intervals count in response ( _optional_ )
 
 ```
-GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/reward/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/rewards/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
 [
     {
         timestamp: "2024-06-23T13:51:44.154Z",
@@ -549,8 +549,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
 ### Validator stats by ProTxHash
 Return a series data for the amount of proposed blocks by validator chart with
 
-* `start` lower interval threshold in ISO string ( _optional_ )
-* `end` upper interval threshold in ISO string ( _optional_ )
+* `start` lower interval threshold in ISO string
+* `end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
 
 ```
@@ -1448,8 +1448,8 @@ ___
 ### Transactions history
 Return a series data for the amount of transactions chart
 
-* `start` lower interval threshold in ISO string ( _optional_ )
-* `end` upper interval threshold in ISO string ( _optional_ )
+* `start` lower interval threshold in ISO string
+* `end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
 
 ```
@@ -1483,8 +1483,8 @@ ___
 ### Transactions Gas history
 Return a series data for the used gas of transactions chart
 
-* `start` lower interval threshold in ISO string ( _optional_ )
-* `end` upper interval threshold in ISO string ( _optional_ )
+* `start` lower interval threshold in ISO string
+* `end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
 
 ```
