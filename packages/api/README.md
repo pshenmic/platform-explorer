@@ -878,7 +878,7 @@ Response codes:
 ```
 ---
 ### RAW Document by Identifier
-Return raw document from dapi
+Return raw document from dapi in base64
 
 * `document_type_name` required
 * `contract_id` required
