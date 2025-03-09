@@ -225,7 +225,7 @@ describe('Identities routes', () => {
         identifier: identity.identifier,
         owner: identity.identifier,
         revision: identity.revision,
-        balance: 0,
+        balance: '0',
         timestamp: block.timestamp.toISOString(),
         txHash: identity.txHash,
         totalTxs: 0,
@@ -342,7 +342,7 @@ describe('Identities routes', () => {
           alias,
           contested: false,
           status: 'ok',
-          timestamp: null
+          timestamp: block.timestamp.toISOString()
         }
       }
 
@@ -365,7 +365,7 @@ describe('Identities routes', () => {
           alias,
           contested: false,
           status: 'ok',
-          timestamp: null
+          timestamp: block.timestamp.toISOString()
         }
       }
 

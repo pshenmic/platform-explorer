@@ -235,17 +235,17 @@ module.exports = class ValidatorsDAO {
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
   }
 
-  getValidatorRewardStatsByProTxHash = async (proTxHash, start, end, interval) => {
-    const startSql = `'${start.toISOString()}'::timestamptz`
+  getValidatorRewardStatsByProTxHash = async (proTxHash, start, end, interval, intervalInMs) => {
+    const startSql = `'${new Date(start.getTime()).toISOString()}'::timestamptz`
 
     const endSql = `'${end.toISOString()}'::timestamptz`
 
     const ranges = this.knex
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
-      .select('date_to', this.knex.raw('LAG(date_to, 1) over (order by date_to asc) date_from'))
+      .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
     const rows = await this.knex.with('ranges', ranges)
-      .select(this.knex.raw(`COALESCE(date_from, date_to - interval '${interval}'::interval) date_from`), 'date_to')
+      .select('date_from')
       .select(
         this.knex('blocks')
           .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')

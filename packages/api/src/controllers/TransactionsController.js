@@ -2,11 +2,13 @@ const TransactionsDAO = require('../dao/TransactionsDAO')
 const utils = require('../utils')
 const { calculateInterval, iso8601duration } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
+const DataContractsDAO = require('../dao/DataContractsDAO')
 
 class TransactionsController {
   constructor (client, knex, dapi) {
     this.client = client
     this.transactionsDAO = new TransactionsDAO(knex, dapi)
+    this.dataContractsDAO = new DataContractsDAO(knex, client, dapi)
     this.dapi = dapi
   }
 
@@ -128,6 +130,18 @@ class TransactionsController {
     const decoded = await utils.decodeStateTransition(this.client, base64)
 
     reply.send(decoded)
+  }
+
+  broadcastTransaction = async (request, response) => {
+    const { base64 } = request.body
+
+    try {
+      await this.dapi.broadcastTransition(base64)
+    } catch (e) {
+      return response.status(400).send({ error: e.toString() })
+    }
+
+    response.send({ message: 'broadcasted' })
   }
 }
 
