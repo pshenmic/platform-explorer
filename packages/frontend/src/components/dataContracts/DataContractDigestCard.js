@@ -61,7 +61,7 @@ function DataContractDigestCard ({ dataContract, rate }) {
         title={'Total Gas Spent'}
         value={<CreditsBlock credits={dataContract.data?.totalGasUsed} rate={rate}/>}
         loading={dataContract.loading}
-        error={dataContract.error || !dataContract.data?.totalGasUsed}
+        error={dataContract.error}
       />
 
       <InfoLine
@@ -69,7 +69,7 @@ function DataContractDigestCard ({ dataContract, rate }) {
         title={'Average Gas Spent'}
         value={<CreditsBlock credits={dataContract.data?.averageGasUsed} rate={rate}/>}
         loading={dataContract.loading}
-        error={dataContract.error || !dataContract.data?.averageGasUsed}
+        error={dataContract.error}
       />
     </div>
   )
