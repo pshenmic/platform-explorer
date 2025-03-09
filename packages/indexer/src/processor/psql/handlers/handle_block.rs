@@ -11,7 +11,6 @@ impl PSQLProcessor {
 
     match processed {
       None => {
-        // TODO IMPLEMENT PSQL TRANSACTION
         let block_height = block.header.height.clone();
 
         let mut client = self.dao.connection_pool.get().await.unwrap();
