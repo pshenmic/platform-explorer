@@ -135,7 +135,7 @@ class TransactionsController {
   broadcastTransaction = async (request, response) => {
     const { base64, hex } = request.body
 
-    if(!base64 && !hex){
+    if (!base64 && !hex) {
       return response.status(400).send('hex or base64 must be setted')
     }
 
