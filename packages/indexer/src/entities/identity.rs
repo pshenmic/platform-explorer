@@ -23,9 +23,10 @@ pub struct Identity {
     asset_lock_output_index: Option<u32>
 }
 
-impl Identity {
-    pub fn set_balance_from_transaction(&mut self, transaction: Transaction) {
-        let asset_lock_output_index = self.asset_lock_output_index.unwrap();
+impl From<(IdentityCreateTransition, Transaction)> for Identity {
+    fn from((state_transition, transaction): (IdentityCreateTransition, Transaction)) -> Self {
+        let asset_lock = state_transition.asset_lock_proof().clone();
+        let asset_lock_output_index = asset_lock.output_index();
 
         let outpoint = transaction.output
           .iter()
@@ -35,19 +36,10 @@ impl Identity {
 
         let credits = outpoint.value * 1000;
 
-        self.balance = Some(credits);
-    }
-}
-
-impl From<IdentityCreateTransition> for Identity {
-    fn from(state_transition: IdentityCreateTransition) -> Self {
-        let asset_lock = state_transition.asset_lock_proof().clone();
-        let asset_lock_output_index = asset_lock.output_index();
-
         Identity {
             identifier: state_transition.identity_id(),
             owner: state_transition.owner_id(),
-            balance: None,
+            balance: Some(credits),
             revision: Revision::from(0 as u64),
             is_system: false,
             asset_lock_output_index: Some(asset_lock_output_index)
