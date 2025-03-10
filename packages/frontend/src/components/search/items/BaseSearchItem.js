@@ -22,7 +22,7 @@ export function BaseSearchItemContent ({ mainContent, additionalContent, timesta
     <>
       <GridItem>{mainContent}</GridItem>
       <GridItem>{additionalContent}</GridItem>
-      <GridItem>{timestamp}</GridItem>
+      <GridItem className={'SearchResultsListItem__Timestamp'}>{timestamp}</GridItem>
     </>
   )
 }

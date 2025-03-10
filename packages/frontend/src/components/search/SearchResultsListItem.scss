@@ -32,7 +32,7 @@
     @include mixins.AvatarSize(true);
   }
 
-  .TimeDelta {
+  &__Timestamp {
     font-size: 0.75rem;
     color: #fff;
   }
