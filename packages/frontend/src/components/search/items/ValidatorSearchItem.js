@@ -1,5 +1,4 @@
-import { Badge } from '@chakra-ui/react'
-import { Identifier } from '../../data'
+import { BigNumber, Identifier, NotActive } from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 
 export function ValidatorSearchItem ({ validator, className }) {
@@ -13,10 +12,14 @@ export function ValidatorSearchItem ({ validator, className }) {
           <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{validator?.proTxHash}</Identifier>
         }
         additionalContent={
-          <Identifier avatar={true} ellipsis={true}>{validator?.identity || 'Unknown'}</Identifier>
+          <Identifier avatar={!!validator?.identity} ellipsis={true}>{validator?.identity || '-'}</Identifier>
         }
         timestamp={
-          <Badge size={'xs'} colorScheme={'blue'}>{validator?.balance || '1000'} DASH</Badge>
+          validator?.identityBalance !== undefined && validator?.identityBalance !== null
+            ? <>
+              <BigNumber>{validator?.identityBalance || '1000'}</BigNumber> DASH
+            </>
+            : <NotActive/>
         }
       />
     </BaseSearchItem>

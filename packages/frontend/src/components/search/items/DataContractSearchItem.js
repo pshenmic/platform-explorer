@@ -14,7 +14,7 @@ export function DataContractSearchItem ({ dataContract, className }) {
             : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{dataContract?.identifier}</Identifier>
         }
         additionalContent={
-          <Identifier avatar={true} ellipsis={true}>{dataContract?.ownerId || 'Unknown'}</Identifier>
+          <Identifier avatar={!!dataContract?.owner?.identifier} ellipsis={true}>{dataContract?.owner?.identifier || '-'}</Identifier>
         }
         timestamp={<TimeDelta endDate={dataContract?.timestamp || new Date()}/>}
       />

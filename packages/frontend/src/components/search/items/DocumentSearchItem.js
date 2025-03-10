@@ -12,7 +12,7 @@ export function DocumentSearchItem ({ document, className }) {
           <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{document?.identifier}</Identifier>
         }
         additionalContent={
-          <Identifier avatar={true} ellipsis={true}>{document?.ownerId || 'Unknown'}</Identifier>
+          <Identifier avatar={!!document?.owner?.identifier} ellipsis={true}>{document?.owner?.identifier || '-'}</Identifier>
         }
         timestamp={<TimeDelta endDate={document?.timestamp || new Date()}/>}
       />
