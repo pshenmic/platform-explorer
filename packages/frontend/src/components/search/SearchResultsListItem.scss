@@ -1,11 +1,15 @@
 @use '../../styles/mixins.scss';
+@use './_variables.scss' as search;
 @import '../../styles/variables.scss';
 
 .SearchResultsListItem {
   @include mixins.DefListItem;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
+  padding: 8px 16px;
+  display: block;
+
+  &__Content {
+    @include search.Columns();
+  }
 
   .Alias__Avatar, .Identifier__Avatar, &__Icon {
     margin-right: 4px;
@@ -21,6 +25,19 @@
     @include mixins.AvatarSize(true);
   }
 
+  .TimeDelta {
+    font-size: 0.75rem;
+    color: #fff;
+  }
+
+  .Badge {
+    font-size: 0.75rem;
+  }
+
+  .Identifier {
+    font-size: 0.75rem;
+  }
+
   &--Loading {
     background-color: rgba(var(--chakra-colors-gray-800-rgb), .5) !important;
 
@@ -30,7 +47,7 @@
 
     .LoadingLine {
       height: 1rem;
-      width: 50%;
+      width: 100%;
       margin: 0;
     }
   }
@@ -39,5 +56,9 @@
     &__ArrowButton {
       background-color: rgba(255, 255, 255, .1) !important;
     }
+  }
+
+  @container (max-width: 768px) {
+    padding: 8px 12px;
   }
 }

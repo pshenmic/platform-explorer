@@ -1,0 +1,65 @@
+@import '../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+
+  // Base grid template for all types
+  grid-template-columns: 
+    minmax(0, 1fr)     // Entity name/hash
+    minmax(120px, auto) // Additional field (Identity/Status/Epoch)
+    120px             // Timestamp
+    40px;             // Arrow button
+
+  // Validator-specific layout
+  .SearchResultsListItem--validator & {
+    grid-template-columns: 
+      minmax(0, 1fr)     // Hash
+      minmax(120px, auto) // Identity
+      120px             // Balance
+      40px;             // Arrow
+  }
+
+  @container (max-width: 768px) {
+    gap: 12px;
+    grid-template-columns: 
+      minmax(0, 1fr)
+      120px
+      40px;
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+  font-family: $font-mono;
+  font-size: 0.75rem;
+  color: var(--chakra-colors-gray-250);
+  
+  &--EntityName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &--Additional {
+    justify-content: flex-start;
+    white-space: nowrap;
+  }
+
+  &--Timestamp {
+    justify-content: flex-end;
+    white-space: nowrap;
+    color: #fff;
+  }
+
+  &--Arrow {
+    justify-content: flex-end;
+  }
+
+  @container (max-width: 768px) {
+    &--Additional {
+      display: none;
+    }
+  }
+}

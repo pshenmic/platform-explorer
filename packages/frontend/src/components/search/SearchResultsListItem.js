@@ -1,5 +1,5 @@
-import { Alias, Identifier } from '../data'
-import { Badge, Button } from '@chakra-ui/react'
+import { Alias, Identifier, TimeDelta } from '../data'
+import { Badge, Button, Grid, GridItem } from '@chakra-ui/react'
 import { BlockIcon, ChevronIcon, TransactionsIcon } from '../ui/icons'
 import Link from 'next/link'
 import { LoadingLine } from '../loading'
@@ -7,39 +7,64 @@ import './SearchResultsListItem.scss'
 
 function IdentitySearchItem ({ identity, className }) {
   return (
-    <Link href={`/identity/${identity?.identifier}`} className={`SearchResultsListItem ${className || ''}`}>
-      {identity?.alias
-        ? <Alias avatarSource={identity?.identifier} ellipsis={true}>{identity?.alias}</Alias>
-        : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{identity?.identifier}</Identifier>
-      }
+    <Link href={`/identity/${identity?.identifier}`}
+          className={`SearchResultsListItem ${className || ''}`}>
+      <Grid className={'SearchResultsListItem__Content'}>
+        <GridItem>
+          {identity?.alias
+            ? <Alias avatarSource={identity?.identifier} ellipsis={true}>{identity?.alias}</Alias>
+            : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{identity?.identifier}</Identifier>
+          }
+        </GridItem>
 
-      {identity?.status?.status &&
-        <Badge size={'xs'} colorScheme={
-          ({
-            ok: 'green',
-            pending: 'orange',
-            locked: 'red'
-          })?.[identity?.status?.status] || 'gray'
-        }>
-          {identity?.status?.status}
-        </Badge>
-      }
+        <GridItem>
+          <Badge size={'xs'} colorScheme={
+            ({
+              ok: 'green',
+              pending: 'orange',
+              locked: 'red'
+            })?.[identity?.status?.status] || 'gray'
+          }>
+            {identity?.status?.status}
+          </Badge>
+        </GridItem>
 
-      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
-        <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
-      </Button>
+        <GridItem>
+          <TimeDelta endDate={new Date(identity.timestamp)}/>
+        </GridItem>
+
+        <GridItem>
+          <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
+            <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+          </Button>
+        </GridItem>
+      </Grid>
     </Link>
   )
 }
 
 function ValidatorSearchItem ({ validator, className }) {
   return (
-    <Link href={`/validator/${validator?.proTxHash}`} className={`SearchResultsListItem ${className || ''}`}>
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{validator?.proTxHash}</Identifier>
+    <Link href={`/validator/${validator?.proTxHash}`} className={`SearchResultsListItem SearchResultsListItem--validator ${className || ''}`}>
+      <Grid className={'SearchResultsListItem__Content'}>
+        <GridItem>
+          <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{validator?.proTxHash}</Identifier>
+        </GridItem>
 
-      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
-        <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
-      </Button>
+        <GridItem>
+          <Identifier avatar={true} ellipsis={true}>{validator?.identity || 'Unknown'}</Identifier>
+        </GridItem>
+
+        <GridItem>
+          <Badge size={'xs'} colorScheme={'blue'}>{validator?.balance || '1000'} DASH</Badge>
+        </GridItem>
+
+        <GridItem>
+          <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
+            <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+          </Button>
+        </GridItem>
+      </Grid>
     </Link>
   )
 }
@@ -47,13 +72,26 @@ function ValidatorSearchItem ({ validator, className }) {
 function TransactionSearchItem ({ transaction, className }) {
   return (
     <Link href={`/transaction/${transaction?.hash}`} className={`SearchResultsListItem ${className || ''}`}>
-      <TransactionsIcon className={'SearchResultsListItem__Icon'}/>
+      <Grid className={'SearchResultsListItem__Content'}>
+        <GridItem>
+          <TransactionsIcon className={'SearchResultsListItem__Icon'}/>
+          <Identifier ellipsis={true} styles={['highlight-both']}>{transaction?.hash}</Identifier>
+        </GridItem>
 
-      <Identifier ellipsis={true} styles={['highlight-both']}>{transaction?.hash}</Identifier>
+        <GridItem>
+          <Badge size={'xs'} colorScheme={'gray'}>Pending</Badge>
+        </GridItem>
 
-      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
-        <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
-      </Button>
+        <GridItem>
+          <TimeDelta endDate={transaction?.timestamp || new Date()}/>
+        </GridItem>
+
+        <GridItem>
+          <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
+            <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+          </Button>
+        </GridItem>
+      </Grid>
     </Link>
   )
 }
@@ -61,46 +99,83 @@ function TransactionSearchItem ({ transaction, className }) {
 function DataContractSearchItem ({ dataContract, className }) {
   return (
     <Link href={`/dataContract/${dataContract?.identifier}`} className={`SearchResultsListItem ${className || ''}`}>
-      {dataContract?.name
-        ? <Alias avatarSource={dataContract?.identifier} ellipsis={true}>{dataContract?.name}</Alias>
-        : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{dataContract?.identifier}</Identifier>
-      }
+      <Grid className={'SearchResultsListItem__Content'}>
+        <GridItem>
+          {dataContract?.name
+            ? <Alias avatarSource={dataContract?.identifier} ellipsis={true}>{dataContract?.name}</Alias>
+            : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{dataContract?.identifier}</Identifier>
+          }
+        </GridItem>
 
-      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
-        <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
-      </Button>
+        <GridItem>
+          <Identifier avatar={true} ellipsis={true}>{dataContract?.ownerId || 'Unknown'}</Identifier>
+        </GridItem>
+
+        <GridItem>
+          <TimeDelta endDate={dataContract?.timestamp || new Date()}/>
+        </GridItem>
+
+        <GridItem>
+          <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
+            <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+          </Button>
+        </GridItem>
+      </Grid>
     </Link>
   )
 }
 
 function BlockSearchItem ({ block, className }) {
   return (
-    <Link href={`/dataContract/${block?.header?.hash}`} className={`SearchResultsListItem ${className || ''}`}>
-      <BlockIcon className={'SearchResultsListItem__Icon'}/>
+    <Link href={`/block/${block?.header?.hash}`} className={`SearchResultsListItem ${className || ''}`}>
+      <Grid className={'SearchResultsListItem__Content'}>
+        <GridItem>
+          <BlockIcon className={'SearchResultsListItem__Icon'}/>
+          <Identifier ellipsis={true} styles={['highlight-both']}>{block?.header?.hash}</Identifier>
+        </GridItem>
 
-      <Identifier ellipsis={true} styles={['highlight-both']}>{block?.header?.hash}</Identifier>
+        <GridItem>
+          <Badge size={'xs'} colorScheme={'gray'}>
+            #{block?.header?.height || '0'}
+          </Badge>
+        </GridItem>
 
-      {block?.header?.height &&
-        <Badge size={'xs'} colorScheme={'dimGray'}>
-          #{block?.header?.height}
-        </Badge>
-      }
+        <GridItem>
+          <TimeDelta endDate={block?.timestamp || new Date()}/>
+        </GridItem>
 
-      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
-        <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
-      </Button>
+        <GridItem>
+          <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
+            <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+          </Button>
+        </GridItem>
+      </Grid>
     </Link>
   )
 }
 
 function DocumentSearchItem ({ document, className }) {
   return (
-    <Link href={`/dataContract/${document?.identifier}`} className={`SearchResultsListItem ${className || ''}`}>
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{document?.identifier}</Identifier>
+    <Link href={`/document/${document?.identifier}`} className={`SearchResultsListItem ${className || ''}`}>
+      <Grid className={'SearchResultsListItem__Content'}>
+        <GridItem>
+          <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{document?.identifier}</Identifier>
+        </GridItem>
 
-      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
-        <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
-      </Button>
+        <GridItem>
+          <Identifier avatar={true} ellipsis={true}>{document?.ownerId || 'Unknown'}</Identifier>
+        </GridItem>
+
+        <GridItem>
+          <TimeDelta endDate={document?.timestamp || new Date()}/>
+        </GridItem>
+
+        <GridItem>
+          <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
+            <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+          </Button>
+        </GridItem>
+      </Grid>
     </Link>
   )
 }
@@ -108,9 +183,23 @@ function DocumentSearchItem ({ document, className }) {
 function LoadingSearchItem ({ className }) {
   return (
     <div className={`SearchResultsListItem SearchResultsListItem--Loading ${className || ''}`}>
-      <LoadingLine colorScheme={'gray'}/>
+      <Grid className={'SearchResultsListItem__Content'}>
+        <GridItem>
+          <LoadingLine colorScheme={'gray'}/>
+        </GridItem>
 
-      <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'gray'}/>
+        <GridItem>
+          <LoadingLine colorScheme={'gray'}/>
+        </GridItem>
+
+        <GridItem>
+          <LoadingLine colorScheme={'gray'}/>
+        </GridItem>
+
+        <GridItem>
+          <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'gray'}/>
+        </GridItem>
+      </Grid>
     </div>
   )
 }
