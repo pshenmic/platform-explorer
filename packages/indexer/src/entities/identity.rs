@@ -24,10 +24,6 @@ pub struct Identity {
 }
 
 impl Identity {
-    pub fn set_balance(&mut self, balance: u64){
-        self.balance = Some(balance);
-    }
-
     pub fn set_balance_from_transaction(&mut self, transaction: Transaction) {
         let asset_lock_output_index = self.asset_lock_output_index.unwrap();
 
@@ -39,7 +35,7 @@ impl Identity {
 
         let credits = outpoint.value * 1000;
 
-        self.set_balance(credits);
+        self.balance = Some(credits);
     }
 }
 
