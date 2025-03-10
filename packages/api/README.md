@@ -2286,6 +2286,11 @@ Response codes:
 ___
 ### Broadcast Transaction
 Send Transaction for Broadcast
+
+* `base64` optional field. State transition buffer in base64
+* `hex` optional field. State transition buffer in hex
+* You must pass `hex` or `base64`
+
 ```
 POST /transaction/broadcast
 BODY:
