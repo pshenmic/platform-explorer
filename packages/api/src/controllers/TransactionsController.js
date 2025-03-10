@@ -136,7 +136,7 @@ class TransactionsController {
     const { base64 } = request.body
 
     try {
-      await this.dapi.broadcastTransition(Buffer.from(base64, 'hex').toString('base64'))
+      await this.dapi.broadcastTransition(base64)
     } catch (e) {
       return response.status(400).send({ error: e.toString() })
     }
