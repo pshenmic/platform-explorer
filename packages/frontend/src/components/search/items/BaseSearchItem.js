@@ -7,7 +7,7 @@ export function BaseSearchItem ({ href, children, className }) {
     <Link href={href} className={`SearchResultsListItem ${className || ''}`}>
       <Grid className={'SearchResultsListItem__Content'}>
         {children}
-        <GridItem>
+        <GridItem className='SearchResultsListItem__ArrowButtonContainer'>
           <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
             <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
           </Button>

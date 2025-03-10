@@ -10,7 +10,7 @@
     minmax(0, 1fr)     // Entity name/hash
     minmax(120px, auto) // Additional field (Identity/Status/Epoch)
     120px             // Timestamp
-    40px;             // Arrow button
+    1rem;             // Arrow button
 
   // Validator-specific layout
   .SearchResultsListItem--validator & {
@@ -18,7 +18,7 @@
       minmax(0, 1fr)     // Hash
       minmax(120px, auto) // Identity
       120px             // Balance
-      40px;             // Arrow
+      1rem;             // Arrow
   }
 
   @container (max-width: 768px) {
@@ -26,7 +26,7 @@
     grid-template-columns: 
       minmax(0, 1fr)
       120px
-      40px;
+      1rem;
   }
 }
 

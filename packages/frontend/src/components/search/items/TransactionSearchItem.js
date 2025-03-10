@@ -1,4 +1,4 @@
-import { Badge } from '@chakra-ui/react'
+import { Badge, Flex } from '@chakra-ui/react'
 import { Identifier, TimeDelta } from '../../data'
 import { TransactionsIcon } from '../../ui/icons'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
@@ -11,10 +11,10 @@ export function TransactionSearchItem ({ transaction, className }) {
     >
       <BaseSearchItemContent
         mainContent={
-          <>
+          <Flex alignItems={'center'}>
             <TransactionsIcon className={'SearchResultsListItem__Icon'}/>
             <Identifier ellipsis={true} styles={['highlight-both']}>{transaction?.hash}</Identifier>
-          </>
+          </Flex>
         }
         additionalContent={
           <Badge size={'xs'} colorScheme={'gray'}>Pending</Badge>
