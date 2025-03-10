@@ -23,9 +23,10 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
       .then(res => {
         if (searchQuery?.length > 0) {
           fetchHandlerSuccess(onResultChange, mockSearchResults)
+          // fetchHandlerSuccess(onResultChange, res)
+        } else {
+          fetchHandlerSuccess(onResultChange, {})
         }
-
-        fetchHandlerSuccess(onResultChange, {})
       })
       .catch(err => fetchHandlerError(onResultChange, err))
   }

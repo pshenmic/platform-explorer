@@ -1,44 +1,36 @@
 import SearchResultsListItem from './SearchResultsListItem'
 import './SearchResultsList.scss'
-import { Grid, GridItem, Button } from '@chakra-ui/react'
-import { ChevronIcon } from '../ui/icons'
-import Link from 'next/link'
+import { Grid, GridItem } from '@chakra-ui/react'
+import { CATEGORY_MAP } from './constants'
+
+const COLUMN_TITLES = {
+  [CATEGORY_MAP.validators]: ['Validator', 'Identity', 'Balance'],
+  [CATEGORY_MAP.identities]: ['Identity', 'Status', 'Time'],
+  [CATEGORY_MAP.dataContracts]: ['Data Contract', 'Identity', 'Time'],
+  [CATEGORY_MAP.blocks]: ['Block', 'Epoch', 'Time'],
+  [CATEGORY_MAP.documents]: ['Document', 'Identity', 'Time'],
+  [CATEGORY_MAP.transactions]: ['Transaction', 'Status', 'Time']
+}
 
 function ListCategory ({ type, data }) {
-  if (type === 'block') return
-
-  const singularCategoryMap = {
-    transactions: 'transaction',
-    dataContracts: 'dataContract',
-    documents: 'document',
-    identities: 'identity',
-    blocks: 'block',
-    validators: 'validator'
-  }
+  const titles = COLUMN_TITLES[CATEGORY_MAP[type]]
+  if (!titles) return null
 
   return (
     <div className={'SearchResultsList__Category'}>
       <Grid className={'SearchResultsList__ColumnTitles'}>
-        <GridItem className={'SearchResultsList__ColumnTitle'}>
-          {singularCategoryMap[type]}
-        </GridItem>
-        <GridItem className={'SearchResultsList__ColumnTitle'}>
-          {type === 'validators' && 'Identity'}
-          {type === 'identities' && 'Status'}
-          {type === 'dataContracts' && 'Identity'}
-          {type === 'blocks' && 'Epoch'}
-          {type === 'documents' && 'Identity'}
-        </GridItem>
-        <GridItem className={'SearchResultsList__ColumnTitle'}>
-          {type === 'validators' ? 'Balance' : 'Time'}
-        </GridItem>
+        {titles.map((title, i) => (
+          <GridItem key={i} className={'SearchResultsList__ColumnTitle'}>
+            {title}
+          </GridItem>
+        ))}
         <GridItem/>
       </Grid>
       <div>
         {data?.map((entity, i) => (
           <SearchResultsListItem
             entity={entity}
-            entityType={singularCategoryMap[type]}
+            entityType={CATEGORY_MAP[type]}
             key={i}
           />
         ))}
@@ -47,37 +39,24 @@ function ListCategory ({ type, data }) {
   )
 }
 
-const SearchItemLayout = ({ href, className, mainContent, additionalContent, timestamp, children }) => (
-  <Link href={href} className={`SearchResultsListItem ${className || ''}`}>
-    <Grid className={'SearchResultsListItem__Content'}>
-      <GridItem>{mainContent}</GridItem>
-      <GridItem>{additionalContent}</GridItem>
-      <GridItem>{timestamp}</GridItem>
-      <GridItem>
-        <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
-          <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
-        </Button>
-      </GridItem>
-    </Grid>
-  </Link>
-)
-
 function SearchResultsList ({ results }) {
   return (
     <div className={'SearchResultsList'}>
-      {results.loading &&
+      {results.loading && (
         <SearchResultsListItem entityType={'loading'}/>
-      }
+      )}
 
-      {results.error &&
-        <div className={'SearchResultsList__Title SearchResultsList__Title--NotFound'}>Nothing found</div>
-      }
+      {results.error && (
+        <div className={'SearchResultsList__Title SearchResultsList__Title--NotFound'}>
+          Nothing found
+        </div>
+      )}
 
-      {results.data && Object?.entries(results.data)?.length > 0 &&
+      {results.data && Object.entries(results.data)?.length > 0 && (
         Object.entries(results.data).map(([category, items]) => (
           <ListCategory key={category} type={category} data={items}/>
         ))
-      }
+      )}
     </div>
   )
 }

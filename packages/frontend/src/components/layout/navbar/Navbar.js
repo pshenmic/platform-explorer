@@ -57,6 +57,7 @@ function Navbar () {
   const displayBreadcrumbs = breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1)
   const [searchFocused, setSearchFocused] = useState(false)
   const [searchResults, setSearchResults] = useState({ data: mockSearchResults, loading: false, error: false })
+  // const [searchResults, setSearchResults] = useState({ data: {}, loading: false, error: false })
   const [searchValue, setSearchValue] = useState('')
   const searchResultIsDisplay = searchFocused &&
     (Object.entries(searchResults.data || {})?.length || searchResults.loading || searchResults.error)
