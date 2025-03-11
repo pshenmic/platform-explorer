@@ -5,7 +5,7 @@ export function DataContractSearchItem ({ dataContract, className }) {
   return (
     <BaseSearchItem
       href={`/dataContract/${dataContract?.identifier}`}
-      className={className}
+      className={`SearchResultsListItem--DataContract ${className || ''}`}
     >
       <BaseSearchItemContent
         mainContent={
@@ -16,7 +16,7 @@ export function DataContractSearchItem ({ dataContract, className }) {
         additionalContent={
           <Identifier avatar={!!dataContract?.owner?.identifier} ellipsis={true}>{dataContract?.owner?.identifier || '-'}</Identifier>
         }
-        timestamp={<TimeDelta endDate={dataContract?.timestamp || new Date()}/>}
+        timestamp={<TimeDelta endDate={dataContract?.timestamp}/>}
       />
     </BaseSearchItem>
   )
