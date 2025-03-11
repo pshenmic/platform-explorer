@@ -14,7 +14,7 @@ export function LoadingSearchItem ({ className }) {
         <GridItem>
           <LoadingLine colorScheme={'gray'}/>
         </GridItem>
-        <GridItem>
+        <GridItem className={'SearchResultsListItem__ArrowButtonContainer'}>
           <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'gray'}/>
         </GridItem>
       </Grid>
