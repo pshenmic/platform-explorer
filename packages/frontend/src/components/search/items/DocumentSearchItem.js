@@ -5,7 +5,7 @@ export function DocumentSearchItem ({ document, className }) {
   return (
     <BaseSearchItem
       href={`/document/${document?.identifier}`}
-      className={className}
+      className={`SearchResultsListItem--Document ${className || ''}`}
     >
       <BaseSearchItemContent
         mainContent={
