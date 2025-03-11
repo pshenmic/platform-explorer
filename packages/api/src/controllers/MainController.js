@@ -108,7 +108,7 @@ class MainController {
       const block = await this.blocksDAO.getBlockByHeight(query)
 
       if (block) {
-        result = { ...result, block }
+        result = { ...result, blocks: [block] }
       }
     }
 
@@ -117,7 +117,7 @@ class MainController {
       const block = await this.blocksDAO.getBlockByHash(query)
 
       if (block) {
-        result = { ...result, block }
+        result = { ...result, blocks: [block] }
       }
 
       // search transactions

@@ -236,7 +236,7 @@ describe('Other routes', () => {
         ]
       }
 
-      assert.deepEqual({ block: expectedBlock }, body)
+      assert.deepEqual({ blocks: [expectedBlock] }, body)
     })
 
     it('should search transaction by hash', async () => {
@@ -289,7 +289,7 @@ describe('Other routes', () => {
         txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
 
-      assert.deepEqual({ block: expectedBlock }, body)
+      assert.deepEqual({ blocks: [expectedBlock] }, body)
     })
 
     it('should search by data contract', async () => {
