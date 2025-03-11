@@ -12,6 +12,16 @@
     @include search.Columns();
   }
 
+  &__Column {
+    @include search.Column();
+
+    &--Timestamp {
+      font-size: 0.75rem;
+      color: var(--chakra-colors-gray-250);
+      text-align: right;
+    }
+  }
+
   .Alias__Avatar, .Identifier__Avatar, &__Icon {
     margin-right: 4px;
   }
@@ -30,11 +40,6 @@
 
   &__Icon {
     @include mixins.AvatarSize(true);
-  }
-
-  &__Timestamp {
-    font-size: 0.75rem;
-    color: #fff;
   }
 
   .Badge {
