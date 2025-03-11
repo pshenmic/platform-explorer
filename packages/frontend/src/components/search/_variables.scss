@@ -5,28 +5,31 @@
   gap: 16px;
   width: 100%;
 
-  // Base grid template for all types
   grid-template-columns: 
-    minmax(0, 1fr)     // Entity name/hash
-    minmax(120px, auto) // Additional field (Identity/Status/Epoch)
-    120px             // Timestamp
-    1rem;             // Arrow button
+    minmax(0, 600px)
+    minmax(0, 600px)
+    5rem
+    1rem;
 
-  // Validator-specific layout
-  .SearchResultsListItem--validator & {
+  &--Validator,
+  .SearchResultsListItem--Validator & {
     grid-template-columns: 
-      minmax(0, 1fr)     // Hash
-      minmax(120px, auto) // Identity
-      120px             // Balance
-      1rem;             // Arrow
+      minmax(0, 600px)
+      minmax(0, 600px)
+      5rem
+      1rem;
   }
 
   @container (max-width: 768px) {
-    gap: 12px;
-    grid-template-columns: 
-      minmax(0, 1fr)
-      120px
-      1rem;
+    &--Document,
+    .SearchResultsListItem--Document &,
+    &--DataContract,
+    .SearchResultsListItem--DataContract & {
+      grid-template-columns: 
+        minmax(0, 600px)
+        4.5rem
+        1rem;
+    }
   }
 }
 
@@ -36,6 +39,7 @@
   font-family: $font-mono;
   font-size: 0.75rem;
   color: var(--chakra-colors-gray-250);
+  width: 100%;
   
   &--EntityName {
     overflow: hidden;
@@ -57,9 +61,20 @@
     justify-content: flex-end;
   }
 
+  &:last-child, &:nth-last-child(2), &:nth-last-child(3) {
+    text-align: right;
+    margin-left: auto;
+    justify-content: flex-end;
+  }
+
   @container (max-width: 768px) {
-    &--Additional {
-      display: none;
+    .SearchResultsList__ColumnTitles--Document &,
+    .SearchResultsListItem--Document &,
+    .SearchResultsList__ColumnTitles--DataContract &,
+    .SearchResultsListItem--DataContract & {
+      &:nth-child(2) {
+        display: none;
+      }
     }
   }
 }
