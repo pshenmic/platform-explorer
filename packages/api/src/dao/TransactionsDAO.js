@@ -180,7 +180,7 @@ module.exports = class TransactionsDAO {
         }
       }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
-      .sort((a,b)=> new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 
   getGasHistorySeries = async (start, end, interval, intervalInMs) => {
