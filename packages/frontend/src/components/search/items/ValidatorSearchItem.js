@@ -5,7 +5,7 @@ export function ValidatorSearchItem ({ validator, className }) {
   return (
     <BaseSearchItem
       href={`/validator/${validator?.proTxHash}`}
-      className={'SearchResultsListItem--validator ' + (className || '')}
+      className={'SearchResultsListItem--Validator ' + (className || '')}
     >
       <BaseSearchItemContent
         mainContent={
@@ -17,7 +17,7 @@ export function ValidatorSearchItem ({ validator, className }) {
         timestamp={
           validator?.identityBalance !== undefined && validator?.identityBalance !== null
             ? <>
-              <BigNumber>{validator?.identityBalance || '1000'}</BigNumber> DASH
+              <BigNumber>{validator?.identityBalance}</BigNumber> DASH
             </>
             : <NotActive/>
         }
