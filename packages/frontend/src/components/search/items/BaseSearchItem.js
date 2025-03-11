@@ -7,7 +7,7 @@ export function BaseSearchItem ({ href, children, className }) {
     <Link href={href} className={`SearchResultsListItem ${className || ''}`}>
       <Grid className={'SearchResultsListItem__Content'}>
         {children}
-        <GridItem className='SearchResultsListItem__ArrowButtonContainer'>
+        <GridItem className={'SearchResultsListItem__ArrowButtonContainer'}>
           <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
             <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
           </Button>
@@ -20,9 +20,9 @@ export function BaseSearchItem ({ href, children, className }) {
 export function BaseSearchItemContent ({ mainContent, additionalContent, timestamp }) {
   return (
     <>
-      <GridItem>{mainContent}</GridItem>
-      <GridItem>{additionalContent}</GridItem>
-      <GridItem className={'SearchResultsListItem__Timestamp'}>{timestamp}</GridItem>
+      <GridItem className={'SearchResultsListItem__Column'}>{mainContent}</GridItem>
+      <GridItem className={'SearchResultsListItem__Column SearchResultsListItem__Column--Additional'}>{additionalContent}</GridItem>
+      <GridItem className={'SearchResultsListItem__Column SearchResultsListItem__Column--Timestamp'}>{timestamp}</GridItem>
     </>
   )
 }
