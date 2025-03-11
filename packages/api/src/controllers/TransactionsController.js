@@ -136,7 +136,7 @@ class TransactionsController {
     const { base64, hex } = request.body
 
     if (!base64 && !hex) {
-      return response.status(400).send('hex or base64 must be setted')
+      return response.status(400).send('hex or base64 must be set')
     }
 
     const transactionBuffer = hex
@@ -146,7 +146,7 @@ class TransactionsController {
     try {
       await this.dapi.broadcastTransition(transactionBuffer.toString('base64'))
     } catch (e) {
-      return response.status(500).send({ error: e.toString() })
+      return response.status(400).send({ error: e.toString() })
     }
 
     response.send({ message: 'broadcasted' })
