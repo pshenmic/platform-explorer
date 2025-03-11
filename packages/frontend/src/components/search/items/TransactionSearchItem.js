@@ -7,11 +7,11 @@ export function TransactionSearchItem ({ transaction, className }) {
   return (
     <BaseSearchItem
       href={`/transaction/${transaction?.hash}`}
-      className={className}
+      className={`SearchResultsListItem--Transaction ${className || ''}`}
     >
       <BaseSearchItemContent
         mainContent={
-          <Flex alignItems={'center'}>
+          <Flex alignItems={'center'} w={'100%'}>
             <TransactionsIcon className={'SearchResultsListItem__Icon'}/>
             <Identifier ellipsis={true} styles={['highlight-both']}>{transaction?.hash}</Identifier>
           </Flex>
