@@ -163,12 +163,12 @@ module.exports = class TransactionsDAO {
         this.on('timestamp', '>', 'date_from').andOn('timestamp', '<=', 'date_to')
       })
       .from('ranges')
-      .orderBy('date_from', 'asc')
       .groupBy('date_from')
       .as('sub')
 
     const rows = await this.knex(heightSubquery)
       .select('tx_count', 'block_height', 'hash as block_hash', 'date_from')
+      .orderBy('date_from', 'asc')
       .leftJoin('blocks', 'blocks.height', 'block_height')
 
     return rows
