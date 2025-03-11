@@ -1380,7 +1380,7 @@ This endpoint allows search any types of data
 * Response may contain array for Identity and Data Contract when searching by part of field
 
 #### Can be found:
-* Block
+* Blocks
   * Full `height`
   * Full `hash`
 * Transaction
