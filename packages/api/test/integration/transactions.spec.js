@@ -505,7 +505,7 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 13)
+      assert.equal(body.length, 12)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -535,7 +535,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 2H', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}`)
+      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -547,8 +547,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 1800000 * i
-        const prevPeriod = firstTimestamp - 1800000 * (i - 1)
+        const nextPeriod = firstTimestamp - 1440000 * i
+        const prevPeriod = firstTimestamp - 1440000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -569,7 +569,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 24h', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}`)
+      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -581,8 +581,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 21600000 * i
-        const prevPeriod = firstTimestamp - 21600000 * (i - 1)
+        const nextPeriod = firstTimestamp - 17280000 * i
+        const prevPeriod = firstTimestamp - 17280000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -603,11 +603,11 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 3d', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}`)
+      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 6)
+      assert.equal(body.length, 5)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -615,8 +615,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 50400000 * i
-        const prevPeriod = firstTimestamp - 50400000 * (i - 1)
+        const nextPeriod = firstTimestamp - 51840000 * i
+        const prevPeriod = firstTimestamp - 51840000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -637,11 +637,11 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 1w', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}`)
+      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 8)
+      assert.equal(body.length, 5)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -649,8 +649,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 86400000 * i
-        const prevPeriod = firstTimestamp - 86400000 * (i - 1)
+        const nextPeriod = firstTimestamp - 120960000 * i
+        const prevPeriod = firstTimestamp - 120960000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -673,11 +673,11 @@ describe('Transaction routes', () => {
       const start = new Date(new Date().getTime())
       const end = new Date(start.getTime() + 10800000)
 
-      const { body } = await client.get(`/transactions/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=3`)
+      const { body } = await client.get(`/transactions/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=6`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 4)
+      assert.equal(body.length, 6)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -685,7 +685,7 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 3) * 1000 * i
+        const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 6) * 1000 * i
         const prevPeriod = firstTimestamp - 3600000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
@@ -745,11 +745,11 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 2H', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}`)
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 4)
+      assert.equal(body.length, 5)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -757,8 +757,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 1800000 * i
-        const prevPeriod = firstTimestamp - 1800000 * (i - 1)
+        const nextPeriod = firstTimestamp - 1440000 * i
+        const prevPeriod = firstTimestamp - 1440000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -781,11 +781,11 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 24h', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}`)
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 4)
+      assert.equal(body.length, 5)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -793,8 +793,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 21600000 * i
-        const prevPeriod = firstTimestamp - 21600000 * (i - 1)
+        const nextPeriod = firstTimestamp - 17280000 * i
+        const prevPeriod = firstTimestamp - 17280000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -817,7 +817,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 3d', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}`)
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -829,8 +829,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 50400000 * i
-        const prevPeriod = firstTimestamp - 50400000 * (i - 1)
+        const nextPeriod = firstTimestamp - 51840000 * i
+        const prevPeriod = firstTimestamp - 51840000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -853,11 +853,11 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 1w', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}`)
+      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 7)
+      assert.equal(body.length, 5)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -865,8 +865,8 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - 86400000 * i
-        const prevPeriod = firstTimestamp - 86400000 * (i - 1)
+        const nextPeriod = firstTimestamp - 120960000 * i
+        const prevPeriod = firstTimestamp - 120960000 * (i - 1)
 
         const txs = transactions.filter(transaction =>
           new Date(transaction.block.timestamp).getTime() <= prevPeriod &&
@@ -891,11 +891,11 @@ describe('Transaction routes', () => {
       const start = new Date(new Date().getTime())
       const end = new Date(start.getTime() + 10800000)
 
-      const { body } = await client.get(`/transactions/gas/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=3`)
+      const { body } = await client.get(`/transactions/gas/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=6`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.length, 3)
+      assert.equal(body.length, 6)
 
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
@@ -903,7 +903,7 @@ describe('Transaction routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 3) * 1000 * i
+        const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 6) * 1000 * i
         const prevPeriod = firstTimestamp - 3600000 * (i - 1)
 
         const txs = transactions.filter(transaction =>

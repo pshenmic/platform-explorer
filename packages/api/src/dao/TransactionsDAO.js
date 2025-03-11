@@ -134,7 +134,7 @@ module.exports = class TransactionsDAO {
   getHistorySeries = async (start, end, interval, intervalInMs) => {
     const startSql = `'${new Date(start.getTime() + intervalInMs).toISOString()}'::timestamptz`
 
-    const endSql = `'${new Date(end.getTime() + intervalInMs).toISOString()}'::timestamptz`
+    const endSql = `'${new Date(end.getTime()).toISOString()}'::timestamptz`
 
     const ranges = this.knex
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
@@ -181,6 +181,7 @@ module.exports = class TransactionsDAO {
         }
       }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 
   getGasHistorySeries = async (start, end, interval, intervalInMs) => {
@@ -230,6 +231,7 @@ module.exports = class TransactionsDAO {
         }
       }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 
   getCollectedFees = async (timespan) => {
