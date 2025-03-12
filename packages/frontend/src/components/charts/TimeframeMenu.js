@@ -1,6 +1,7 @@
 import { useState, forwardRef, useEffect } from 'react'
 import { Button } from '@chakra-ui/react'
 import { DateRangePicker } from '../calendar'
+import { defaultIntervalsCount } from './config'
 import './TimeframeMenu.scss'
 
 const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, forceTimespan, changeCallback, className }, ref) {
@@ -48,7 +49,7 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, forceTimespan
         start: selectedRange.start.toISOString(),
         end: selectedRange.end.toISOString()
       },
-      intervalsCount: 100
+      intervalsCount: defaultIntervalsCount
     })
   }
 
