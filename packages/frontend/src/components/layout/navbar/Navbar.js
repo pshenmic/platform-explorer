@@ -15,7 +15,7 @@ import {
 import Breadcrumbs from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { SearchResultsList } from '../../search'
 import mockSearchResults from './mockSearchResults'
 import './Navbar.scss'
@@ -30,6 +30,15 @@ const links = [
   { title: 'Identities', href: '/identities' },
   { title: 'Validators', href: '/validators' },
   { title: 'API', href: '/api' }
+]
+
+const breadcrumbsActiveRoutes = [
+  '/validator/',
+  '/transaction/',
+  '/identity/',
+  '/dataContract/',
+  '/document/',
+  '/block/'
 ]
 
 const NavLink = ({ children, to, isActive, className }) => {
@@ -50,15 +59,10 @@ function Navbar () {
     onOpen: openMobileMenu,
     onClose: closeMobileMenu
   } = useDisclosure()
-  const breadcrumbsActiveRoutes = [
-    '/validator/',
-    '/transaction/',
-    '/identity/',
-    '/dataContract/',
-    '/document/',
-    '/block/'
-  ]
-  const displayBreadcrumbs = breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1)
+  const displayBreadcrumbs = useMemo(
+    () => breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1),
+    [pathname]
+  )
   const [searchFocused, setSearchFocused] = useState(false)
   const [searchResults, setSearchResults] = useState({ data: mockSearchResults, loading: false, error: false })
   // const [searchResults, setSearchResults] = useState({ data: {}, loading: false, error: false })
