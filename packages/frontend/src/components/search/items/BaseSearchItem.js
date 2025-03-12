@@ -2,10 +2,10 @@ import { Button, Grid, GridItem } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import Link from 'next/link'
 
-export function BaseSearchItem ({ href, children, className }) {
+export function BaseSearchItem ({ href, children, className, gridClassModifier }) {
   return (
     <Link href={href} className={`SearchResultsListItem ${className || ''}`}>
-      <Grid className={'SearchResultsListItem__Content'}>
+      <Grid className={`SearchResultsListItem__Content ${gridClassModifier ? `SearchResultsListItem__Content--${gridClassModifier}` : ''}`}>
         {children}
         <GridItem className={'SearchResultsListItem__ArrowButtonContainer'}>
           <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>

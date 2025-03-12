@@ -12,7 +12,8 @@ export function IdentitySearchItem ({ identity, className }) {
   return (
     <BaseSearchItem
       href={`/identity/${identity?.identifier}`}
-      className={`SearchResultsListItem--Identity ${className || ''}`}
+      className={`${className || ''}`}
+      gridClassModifier={'Identity'}
     >
       <BaseSearchItemContent
         mainContent={
@@ -21,10 +22,10 @@ export function IdentitySearchItem ({ identity, className }) {
             : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{identity?.identifier}</Identifier>
         }
         additionalContent={
-          identity?.status?.status ?
-            <Badge size={'xs'} colorScheme={STATUS_COLORS[identity?.status?.status] || 'gray'}>
-              {identity?.status?.status}
-            </Badge>
+          identity?.status?.status
+            ? <Badge size={'xs'} colorScheme={STATUS_COLORS[identity?.status?.status] || 'gray'}>
+                {identity?.status?.status}
+              </Badge>
             : <NotActive>-</NotActive>
         }
         timestamp={<TimeDelta endDate={identity?.status?.timestamp ? new Date(identity?.status?.timestamp) : new Date(identity?.timestamp)}/>}

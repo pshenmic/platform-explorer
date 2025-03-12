@@ -1,13 +1,14 @@
 import { Badge, Flex } from '@chakra-ui/react'
 import { BlockIcon } from '../../ui/icons'
-import {Identifier, NotActive, TimeDelta} from '../../data'
+import { Identifier, NotActive, TimeDelta } from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 
 export function BlockSearchItem ({ block, className }) {
   return (
     <BaseSearchItem
       href={`/block/${block?.header?.hash}`}
-      className={`SearchResultsListItem--Block ${className || ''}`}
+      className={`${className || ''}`}
+      gridClassModifier={'Block'}
     >
       <BaseSearchItemContent
         mainContent={

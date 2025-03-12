@@ -5,7 +5,8 @@ export function ValidatorSearchItem ({ validator, className }) {
   return (
     <BaseSearchItem
       href={`/validator/${validator?.proTxHash}`}
-      className={'SearchResultsListItem--Validator ' + (className || '')}
+      className={`${className || ''}`}
+      gridClassModifier={'Validator'}
     >
       <BaseSearchItemContent
         mainContent={

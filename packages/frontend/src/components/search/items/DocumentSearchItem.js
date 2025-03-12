@@ -5,7 +5,8 @@ export function DocumentSearchItem ({ document, className }) {
   return (
     <BaseSearchItem
       href={`/document/${document?.identifier}`}
-      className={`SearchResultsListItem--Document ${className || ''}`}
+      className={`${className || ''}`}
+      gridClassModifier={'Document'}
     >
       <BaseSearchItemContent
         mainContent={

@@ -7,7 +7,8 @@ export function TransactionSearchItem ({ transaction, className }) {
   return (
     <BaseSearchItem
       href={`/transaction/${transaction?.hash}`}
-      className={`SearchResultsListItem--Transaction ${className || ''}`}
+      className={`${className || ''}`}
+      gridClassModifier={'Transaction'}
     >
       <BaseSearchItemContent
         mainContent={

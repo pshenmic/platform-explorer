@@ -5,7 +5,8 @@ export function DataContractSearchItem ({ dataContract, className }) {
   return (
     <BaseSearchItem
       href={`/dataContract/${dataContract?.identifier}`}
-      className={`SearchResultsListItem--DataContract ${className || ''}`}
+      className={`${className || ''}`}
+      gridClassModifier={'DataContract'}
     >
       <BaseSearchItemContent
         mainContent={

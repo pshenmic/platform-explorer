@@ -22,11 +22,8 @@
 
   @container (max-width: 48rem) {
     &--Document,
-    .SearchResultsListItem--Document &,
     &--DataContract,
-    .SearchResultsListItem--DataContract &,
-    &--Validator,
-    .SearchResultsListItem--Validator & {
+    &--Validator {
       grid-template-columns: 
         minmax(0, 600px)
         4.5rem
@@ -36,11 +33,8 @@
 
   @container (max-width: 24rem) {
     &--Block,
-    .SearchResultsListItem--Block &,
     &--Identity,
-    .SearchResultsListItem--Identity &,
-    &--Transaction,
-    .SearchResultsListItem--Transaction & {
+    &--Transaction {
       grid-template-columns: 
         minmax(0, 600px)
         4.5rem
@@ -84,12 +78,9 @@
   }
 
   @container (max-width: 48rem) {
-    .SearchResultsList__ColumnTitles--Document &,
-    .SearchResultsListItem--Document &,
-    .SearchResultsList__ColumnTitles--DataContract &,
-    .SearchResultsListItem--DataContract &,
-    .SearchResultsList__ColumnTitles--Validator &,
-    .SearchResultsListItem--Validator & {
+    [class*="--Document"] &,
+    [class*="--DataContract"] &,
+    [class*="--Validator"] & {
       &:nth-child(2) {
         display: none;
       }
@@ -97,12 +88,9 @@
   }
 
   @container (max-width: 24rem) {
-    .SearchResultsList__ColumnTitles--Block &,
-    .SearchResultsListItem--Block &,
-    .SearchResultsList__ColumnTitles--Identity &,
-    .SearchResultsListItem--Identity &,
-    .SearchResultsList__ColumnTitles--Transaction &,
-    .SearchResultsListItem--Transaction & {
+    [class*="--Block"] &,
+    [class*="--Identity"] &,
+    [class*="--Transaction"] & {
       &:nth-child(2) {
         display: none;
       }
