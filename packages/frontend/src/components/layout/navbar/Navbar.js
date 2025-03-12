@@ -62,7 +62,8 @@ function Navbar () {
   const searchResultIsDisplay = searchFocused &&
     (Object.entries(searchResults.data || {})?.length || searchResults.loading || searchResults.error)
 
-  const ref = useRef(null)
+  const searchContainerRef = useRef(null)
+  const mobileMenuRef = useRef(null)
 
   const hideSearch = () => {
     setSearchResults({ data: {}, loading: false, error: false })
@@ -70,7 +71,8 @@ function Navbar () {
     setSearchValue('')
   }
 
-  useOutsideClick({ ref, handler: hideSearch })
+  useOutsideClick({ ref: searchContainerRef, handler: hideSearch })
+  useOutsideClick({ ref: mobileMenuRef, handler: onClose })
 
   useEffect(onClose, [pathname, onClose])
 
@@ -151,7 +153,7 @@ function Navbar () {
 
           <div
             className={'Navbar__SearchContainer'}
-            ref={ref}
+            ref={searchContainerRef}
             onClick={() => setSearchFocused(true)}
             style={{
               ...(searchFocused && { width: '100%' }),
@@ -190,8 +192,11 @@ function Navbar () {
         </div>
       </Flex>
 
-      <Box className={`NavbarMobileMenu ${isOpen && !searchFocused ? 'NavbarMobileMenu--Open' : ''}`}
-           display={{ lg: 'none' }}>
+      <Box
+        ref={mobileMenuRef}
+        className={`NavbarMobileMenu ${isOpen && !searchFocused ? 'NavbarMobileMenu--Open' : ''}`}
+        display={{ lg: 'none' }}
+      >
         <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
           {links.map((link) => (
             <NavLink className={'NavbarMobileMenu__Item'} to={link.href} key={link.title}
