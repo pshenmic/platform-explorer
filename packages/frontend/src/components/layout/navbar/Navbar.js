@@ -45,7 +45,11 @@ const NavLink = ({ children, to, isActive, className }) => {
 
 function Navbar () {
   const pathname = usePathname()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isMobileMenuOpen,
+    onOpen: openMobileMenu,
+    onClose: closeMobileMenu
+  } = useDisclosure()
   const breadcrumbsActiveRoutes = [
     '/validator/',
     '/transaction/',
@@ -72,11 +76,12 @@ function Navbar () {
   }
 
   useOutsideClick({ ref: searchContainerRef, handler: hideSearch })
-  useOutsideClick({ ref: mobileMenuRef, handler: onClose })
+  useOutsideClick({ ref: mobileMenuRef, handler: closeMobileMenu })
 
-  useEffect(onClose, [pathname, onClose])
-
-  useEffect(hideSearch, [pathname])
+  useEffect(() => {
+    closeMobileMenu()
+    hideSearch()
+  }, [pathname, closeMobileMenu])
 
   useEffect(() => {
     if (!searchFocused) {
@@ -102,13 +107,13 @@ function Navbar () {
           <IconButton
             className={'Navbar__Burger'}
             size={'md'}
-            icon={isOpen ? <CloseIcon/> : <HamburgerIcon/>}
+            icon={isMobileMenuOpen ? <CloseIcon/> : <HamburgerIcon/>}
             visibility={searchFocused ? 'hidden' : 'visible'}
             w={searchFocused ? '0' : '40px'}
             minW={0}
             aria-label={'Open Menu'}
             display={{ lg: 'none' }}
-            onClick={isOpen ? onClose : onOpen}
+            onClick={isMobileMenuOpen ? closeMobileMenu : openMobileMenu}
           />
 
           <HStack
@@ -194,7 +199,7 @@ function Navbar () {
 
       <Box
         ref={mobileMenuRef}
-        className={`NavbarMobileMenu ${isOpen && !searchFocused ? 'NavbarMobileMenu--Open' : ''}`}
+        className={`NavbarMobileMenu ${isMobileMenuOpen && !searchFocused ? 'NavbarMobileMenu--Open' : ''}`}
         display={{ lg: 'none' }}
       >
         <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
