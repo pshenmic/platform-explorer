@@ -89,6 +89,15 @@ function Navbar () {
     }
   }, [searchFocused])
 
+  const handleMobileMenuToggle = () => {
+    if (isMobileMenuOpen) {
+      closeMobileMenu()
+      return
+    }
+    openMobileMenu()
+    if (searchFocused) hideSearch()
+  }
+
   return (
     <Box position={'relative'}>
       <div className={'NavbarStub'}></div>
@@ -113,7 +122,7 @@ function Navbar () {
             minW={0}
             aria-label={'Open Menu'}
             display={{ lg: 'none' }}
-            onClick={isMobileMenuOpen ? closeMobileMenu : openMobileMenu}
+            onClick={handleMobileMenuToggle}
           />
 
           <HStack
