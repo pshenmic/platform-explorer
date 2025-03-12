@@ -1,0 +1,73 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.TransactionsFilter {
+  &__Drawer {
+    .chakra-modal__content {
+      background-color: var(--chakra-colors-gray-800);
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+    }
+
+    .chakra-modal__header {
+      text-align: center;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      border-bottom-color: var(--chakra-colors-gray-700);
+    }
+
+    .chakra-modal__body {
+      padding: 20px;
+    }
+  }
+
+  &__DragHandle {
+    width: 40px;
+    height: 4px;
+    background-color: var(--chakra-colors-gray-600);
+    border-radius: 2px;
+    margin: 0 auto 12px;
+  }
+
+  &__Section {
+    margin-bottom: 24px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &Title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--chakra-colors-gray-200);
+    }
+  }
+
+  &__ButtonGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  &__Button {
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+
+    &--Active {
+      background-color: var(--chakra-colors-blue-500);
+      color: white;
+    }
+
+    &:not(&--Active) {
+      background-color: var(--chakra-colors-gray-700);
+      color: var(--chakra-colors-gray-200);
+
+      &:hover {
+        background-color: var(--chakra-colors-gray-600);
+      }
+    }
+  }
+}

@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsList from '../../components/transactions/TransactionsList'
+import TransactionsFilter from '../../components/transactions/TransactionsFilter'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Container, Heading, Box } from '@chakra-ui/react'
+import { Container, Heading, Box, useBreakpointValue } from '@chakra-ui/react'
 
 const paginateConfig = {
   pageSize: {
@@ -20,35 +20,80 @@ const paginateConfig = {
 }
 
 function Transactions ({ defaultPage = 1, defaultPageSize }) {
-  const [transactions, setTransactions] = useState({ data: {}, loading: true, error: false })
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const [total, setTotal] = useState(1)
-  const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
-  const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
+  const [currentPage, setCurrentPage] = useState(defaultPage ? parseInt(defaultPage) - 1 : 0)
+  const [pageSize, setPageSize] = useState(10)
+  const [total, setTotal] = useState(0)
+  const [transactions, setTransactions] = useState({ data: [], loading: true, error: null })
+  const [filters, setFilters] = useState({
+    status: 'ALL',
+    type: 'all',
+    timeRange: 'all'
+  })
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const isMobile = useBreakpointValue({ base: true, md: false })
 
-  const fetchData = (page, count) => {
-    setTransactions(state => ({ ...state, loading: true }))
+  const fetchData = async () => {
+    try {
+      const filterParams = new URLSearchParams()
 
-    Api.getTransactions(page, count, 'desc')
-      .then((res) => {
-        if (res.pagination.total === -1) {
-          setCurrentPage(0)
-        }
-        fetchHandlerSuccess(setTransactions, res)
-        setTotal(res.pagination.total)
+      if (filters.status && filters.status !== 'ALL') {
+        filterParams.append('status', filters.status)
+      }
+
+      if (filters.type && filters.type !== 'all') {
+        filterParams.append('transaction_type', filters.type)
+      }
+
+      const response = await Api.getTransactions({
+        page: Math.max(1, currentPage + 1),
+        count: Math.max(1, pageSize),
+        ...Object.fromEntries(filterParams)
       })
-      .catch(err => fetchHandlerError(setTransactions, err))
 
-    Api.getRate()
-      .then(res => fetchHandlerSuccess(setRate, res))
-      .catch(err => fetchHandlerError(setRate, err))
+      setTotal(response.pagination.total)
+      setTransactions(response.resultSet)
+    } catch (error) {
+      console.error('Error fetching transactions:', error)
+      setTotal(0)
+      setTransactions([])
+    }
   }
 
-  useEffect(() => fetchData(currentPage + 1, pageSize), [pageSize, currentPage])
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        setTransactions(prev => ({ ...prev, loading: true, error: null }))
+        const filterParams = new URLSearchParams()
+
+        if (filters.status && filters.status !== 'ALL') {
+          filterParams.append('status', filters.status)
+        }
+
+        if (filters.type && filters.type !== 'all') {
+          filterParams.append('transaction_type', filters.type)
+        }
+
+        const response = await Api.getTransactions(
+          Math.max(1, currentPage + 1),
+          Math.max(1, pageSize),
+          'desc',
+          filterParams.toString()
+        )
+
+        setTotal(response.pagination.total)
+        setTransactions({ data: response.resultSet, loading: false, error: null })
+      } catch (error) {
+        console.error('Error fetching transactions:', error)
+        setTotal(0)
+        setTransactions({ data: [], loading: false, error: error.message })
+      }
+    }
+
+    fetchTransactions()
+  }, [currentPage, pageSize, filters])
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
@@ -70,6 +115,21 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize])
 
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters)
+    setCurrentPage(0) // Reset to first page when filters change
+  }
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(Math.max(0, newPage))
+  }
+
+  const handlePageSizeChange = (newSize) => {
+    const size = typeof newSize === 'object' ? newSize.value : parseInt(newSize)
+    setPageSize(Math.max(1, size))
+    setCurrentPage(0)
+  }
+
   return (
     <Container
       maxW={'container.xl'}
@@ -77,27 +137,31 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
       className={'Transactions'}
     >
         <Container maxW={'container.xl'} className={'InfoBlock'}>
-          <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+            <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
+          </Box>
+
+          <TransactionsFilter onFilterChange={handleFilterChange} isMobile={isMobile} />
 
           {!transactions.error
             ? !transactions.loading
-                ? <TransactionsList transactions={transactions.data.resultSet} rate={rate.data}/>
+                ? <TransactionsList transactions={transactions.data} />
                 : <LoadingList itemsCount={pageSize}/>
             : <Container h={20}><ErrorMessageBlock/></Container>
           }
 
-          {transactions.data?.resultSet?.length > 0 &&
+          {transactions.data?.length > 0 &&
             <div className={'ListNavigation'}>
               <Box display={['none', 'none', 'block']} width={'155px'}/>
               <Pagination
-                onPageChange={({ selected }) => setCurrentPage(selected)}
+                onPageChange={handlePageChange}
                 pageCount={pageCount}
                 forcePage={currentPage}
               />
               <PageSizeSelector
-                PageSizeSelectHandler={e => setPageSize(e.value)}
+                PageSizeSelectHandler={handlePageSizeChange}
                 value={pageSize}
-                items={paginateConfig.pageSize.values}
+                items={[10, 20, 50, 100]}
               />
             </div>
           }
