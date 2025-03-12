@@ -3,7 +3,6 @@ import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
 import { SearchIcon } from '../ui/icons'
 import './GlobalSearchInput.scss'
-import mockSearchResults from '../layout/navbar/mockSearchResults'
 import { useDebounce } from '../../hooks'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 
@@ -23,8 +22,7 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
       .then(res => {
         if (searchQuery?.length > 0) {
           console.log('search results', res)
-          fetchHandlerSuccess(onResultChange, mockSearchResults)
-          // fetchHandlerSuccess(onResultChange, res)
+          fetchHandlerSuccess(onResultChange, res)
         } else {
           fetchHandlerSuccess(onResultChange, {})
         }

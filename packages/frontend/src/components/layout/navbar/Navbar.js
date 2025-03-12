@@ -9,7 +9,6 @@ import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { SearchResultsList } from '../../search'
-import mockSearchResults from './mockSearchResults'
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
 import './NavLink.scss'
@@ -49,8 +48,7 @@ function Navbar () {
   )
 
   const [searchFocused, setSearchFocused] = useState(false)
-  const [searchResults, setSearchResults] = useState({ data: mockSearchResults, loading: false, error: false })
-  // const [searchResults, setSearchResults] = useState({ data: {}, loading: false, error: false })
+  const [searchResults, setSearchResults] = useState({ data: {}, loading: false, error: false })
   const [searchValue, setSearchValue] = useState('')
   const searchResultIsDisplay = searchFocused &&
     (Object.entries(searchResults.data || {})?.length || searchResults.loading || searchResults.error)
