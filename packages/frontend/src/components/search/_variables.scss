@@ -20,11 +20,27 @@
       1rem;
   }
 
-  @container (max-width: 768px) {
+  @container (max-width: 48rem) {
     &--Document,
     .SearchResultsListItem--Document &,
     &--DataContract,
-    .SearchResultsListItem--DataContract & {
+    .SearchResultsListItem--DataContract &,
+    &--Validator,
+    .SearchResultsListItem--Validator & {
+      grid-template-columns: 
+        minmax(0, 600px)
+        4.5rem
+        1rem;
+    }
+  }
+
+  @container (max-width: 24rem) {
+    &--Block,
+    .SearchResultsListItem--Block &,
+    &--Identity,
+    .SearchResultsListItem--Identity &,
+    &--Transaction,
+    .SearchResultsListItem--Transaction & {
       grid-template-columns: 
         minmax(0, 600px)
         4.5rem
@@ -67,11 +83,26 @@
     justify-content: flex-end;
   }
 
-  @container (max-width: 768px) {
+  @container (max-width: 48rem) {
     .SearchResultsList__ColumnTitles--Document &,
     .SearchResultsListItem--Document &,
     .SearchResultsList__ColumnTitles--DataContract &,
-    .SearchResultsListItem--DataContract & {
+    .SearchResultsListItem--DataContract &,
+    .SearchResultsList__ColumnTitles--Validator &,
+    .SearchResultsListItem--Validator & {
+      &:nth-child(2) {
+        display: none;
+      }
+    }
+  }
+
+  @container (max-width: 24rem) {
+    .SearchResultsList__ColumnTitles--Block &,
+    .SearchResultsListItem--Block &,
+    .SearchResultsList__ColumnTitles--Identity &,
+    .SearchResultsListItem--Identity &,
+    .SearchResultsList__ColumnTitles--Transaction &,
+    .SearchResultsListItem--Transaction & {
       &:nth-child(2) {
         display: none;
       }
