@@ -17,7 +17,7 @@ class MainController {
     this.documentsDAO = new DocumentsDAO(knex, dapi, client)
     this.transactionsDAO = new TransactionsDAO(knex, dapi)
     this.identitiesDAO = new IdentitiesDAO(knex, dapi, client)
-    this.validatorsDAO = new ValidatorsDAO(knex)
+    this.validatorsDAO = new ValidatorsDAO(knex, dapi)
     this.dapi = dapi
   }
 
@@ -124,14 +124,14 @@ class MainController {
       const transaction = await this.transactionsDAO.getTransactionByHash(query)
 
       if (transaction) {
-        result = { ...result, transaction }
+        result = { ...result, transactions: [transaction] }
       }
 
       // search validators by hash
-      const validator = await this.validatorsDAO.getValidatorByProTxHash(query, null, epoch)
+      const validator = await this.validatorsDAO.getValidatorByProTxHash(query, epoch)
 
       if (validator) {
-        result = { ...result, validator }
+        result = { ...result, validators: [validator] }
       }
     }
 
@@ -147,10 +147,10 @@ class MainController {
       // search validator by MasterNode identity
       const proTxHash = Buffer.from(base58.decode(query)).toString('hex')
 
-      const validator = await this.validatorsDAO.getValidatorByProTxHash(proTxHash, null, epoch)
+      const validator = await this.validatorsDAO.getValidatorByProTxHash(proTxHash, epoch)
 
       if (validator) {
-        result = { ...result, validator }
+        result = { ...result, validators: [validator] }
       }
 
       // search data contract by id
@@ -164,7 +164,7 @@ class MainController {
       const document = await this.documentsDAO.getDocumentByIdentifier(query)
 
       if (document) {
-        result = { ...result, document }
+        result = { ...result, documents: [document] }
       }
     }
 

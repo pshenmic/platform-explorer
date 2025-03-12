@@ -28,7 +28,7 @@ module.exports = class Validator {
     withdrawalsCount,
     lastWithdrawal,
     lastWithdrawalTime,
-    identifier,
+    identity,
     identityBalance,
     epochInfo,
     endpoints
@@ -38,7 +38,7 @@ module.exports = class Validator {
     this.proposedBlocksAmount = proposedBlocksAmount ?? null
     this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
     this.proTxInfo = proTxInfo ?? null
-    this.identity = identifier ?? null
+    this.identity = identity ?? null
     this.identityBalance = identityBalance ?? null
     this.epochInfo = epochInfo ?? null
     this.totalReward = totalReward ?? null
@@ -102,7 +102,7 @@ module.exports = class Validator {
     withdrawalsCount,
     lastWithdrawal,
     lastWithdrawalTime,
-    identifier,
+    identity,
     identityBalance,
     epochInfo,
     endpoints
@@ -118,7 +118,7 @@ module.exports = class Validator {
       withdrawalsCount,
       lastWithdrawal,
       lastWithdrawalTime,
-      identifier,
+      identity,
       identityBalance,
       epochInfo,
       endpoints

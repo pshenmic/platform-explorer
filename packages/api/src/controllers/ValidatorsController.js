@@ -10,7 +10,7 @@ const Intervals = require('../enums/IntervalsEnum')
 
 class ValidatorsController {
   constructor (knex, dapi) {
-    this.validatorsDAO = new ValidatorsDAO(knex)
+    this.validatorsDAO = new ValidatorsDAO(knex, dapi)
     this.dapi = dapi
   }
 
@@ -20,10 +20,7 @@ class ValidatorsController {
     const [currentEpoch] = await this.dapi.getEpochsInfo(1)
     const epochInfo = Epoch.fromObject(currentEpoch)
 
-    const identifier = base58.encode(Buffer.from(hash, 'hex'))
-    const identityBalance = await this.dapi.getIdentityBalance(identifier)
-
-    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash, identifier, epochInfo)
+    const validator = await this.validatorsDAO.getValidatorByProTxHash(hash, epochInfo)
 
     if (!validator) {
       return response.status(404).send({ message: 'not found' })
@@ -72,8 +69,6 @@ class ValidatorsController {
           ...validator,
           isActive,
           proTxInfo: ProTxInfo.fromObject(proTxInfo),
-          identifier,
-          identityBalance: String(identityBalance),
           epochInfo,
           endpoints
         }
@@ -122,7 +117,7 @@ class ValidatorsController {
               isActive: activeValidators.some(activeValidator =>
                 activeValidator.pro_tx_hash === validator.proTxHash),
               proTxInfo: ProTxInfo.fromObject(validator.proTxInfo),
-              identifier,
+              identity: identifier,
               identityBalance: String(identityBalance),
               epochInfo
             }
