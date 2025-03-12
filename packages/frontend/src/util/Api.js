@@ -43,8 +43,22 @@ const getTransactionsHistory = (start, end, intervalsCount) => {
   return call(`transactions/history?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
-const getTransactions = (page = 1, limit = 30, order = 'asc') => {
-  return call(`transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getTransactions = (page = 1, limit = 10, order = 'asc', filterParams = '') => {
+  const params = new URLSearchParams()
+  params.append('page', Math.max(1, parseInt(page)))
+  params.append('limit', Math.max(1, parseInt(limit)))
+  params.append('order', order)
+
+  if (filterParams) {
+    const additionalParams = new URLSearchParams(filterParams)
+    additionalParams.forEach((value, key) => {
+      if (value !== 'all' && value !== '') {
+        params.append(key, value)
+      }
+    })
+  }
+
+  return call(`transactions?${params.toString()}`, 'GET')
 }
 
 const getTransaction = (txHash) => {
