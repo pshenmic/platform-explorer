@@ -22,6 +22,7 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
     Api.search(query)
       .then(res => {
         if (searchQuery?.length > 0) {
+          console.log('search results', res)
           fetchHandlerSuccess(onResultChange, mockSearchResults)
           // fetchHandlerSuccess(onResultChange, res)
         } else {
