@@ -3,16 +3,8 @@
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
 import Link from 'next/link'
-import {
-  Box,
-  Flex,
-  HStack,
-  IconButton,
-  useDisclosure,
-  Stack,
-  useOutsideClick
-} from '@chakra-ui/react'
-import Breadcrumbs from '../../breadcrumbs/Breadcrumbs'
+import { Box, Flex, HStack, IconButton, useDisclosure, Stack, useOutsideClick } from '@chakra-ui/react'
+import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, useRef, useMemo } from 'react'
@@ -30,15 +22,6 @@ const links = [
   { title: 'Identities', href: '/identities' },
   { title: 'Validators', href: '/validators' },
   { title: 'API', href: '/api' }
-]
-
-const breadcrumbsActiveRoutes = [
-  '/validator/',
-  '/transaction/',
-  '/identity/',
-  '/dataContract/',
-  '/document/',
-  '/block/'
 ]
 
 const NavLink = ({ children, to, isActive, className }) => {
@@ -59,10 +42,12 @@ function Navbar () {
     onOpen: openMobileMenu,
     onClose: closeMobileMenu
   } = useDisclosure()
+
   const displayBreadcrumbs = useMemo(
     () => breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1),
     [pathname]
   )
+
   const [searchFocused, setSearchFocused] = useState(false)
   const [searchResults, setSearchResults] = useState({ data: mockSearchResults, loading: false, error: false })
   // const [searchResults, setSearchResults] = useState({ data: {}, loading: false, error: false })
@@ -81,6 +66,8 @@ function Navbar () {
 
   useOutsideClick({ ref: searchContainerRef, handler: hideSearch })
   useOutsideClick({ ref: mobileMenuRef, handler: closeMobileMenu })
+
+  const searchTransitionTime = 1
 
   useEffect(() => {
     closeMobileMenu()
@@ -137,9 +124,9 @@ function Navbar () {
             style={{
               visibility: searchFocused ? 'hidden' : 'visible',
               opacity: searchFocused ? 0 : 1,
-              transition: '.5s',
+              transition: `${searchTransitionTime / 2}s`,
               width: searchFocused ? '0' : '100%',
-              transitionDelay: searchFocused ? '0s' : '0.5s'
+              transitionDelay: searchFocused ? '0s' : `${searchTransitionTime / 2}s`
             }}
           >
             {links.map((link) => (
@@ -152,7 +139,7 @@ function Navbar () {
           className={'Navbar__Right'}
           style={{
             gap: searchFocused ? 0 : '0.5rem',
-            transition: 'gap .2s'
+            transition: `gap ${searchTransitionTime / 4}s`
           }}
         >
           <div
@@ -160,8 +147,8 @@ function Navbar () {
             style={{
               visibility: searchFocused ? 'hidden' : 'visible',
               opacity: searchFocused ? 0 : 1,
-              transition: '.2s',
-              transitionDelay: searchFocused ? '0s' : '1s',
+              transition: `${searchTransitionTime / 4}s`,
+              transitionDelay: searchFocused ? '0s' : `${searchTransitionTime}s`,
               alignItems: searchFocused ? 'baseline' : 'center',
               ...(searchFocused && { width: 0 })
             }}
@@ -175,15 +162,13 @@ function Navbar () {
             onClick={() => setSearchFocused(true)}
             style={{
               ...(searchFocused && { width: '100%' }),
-              transition: '1s',
+              transition: `${searchTransitionTime}s`,
               flexWrap: searchFocused ? 'wrap' : 'nowrap'
             }}
           >
             <div
               className={'Navbar__SearchInputContainer'}
-              style={{
-                transition: 'width 1s'
-              }}
+              style={{ transition: `width ${searchTransitionTime}s` }}
             >
               <GlobalSearchInput
                 forceValue={searchValue}
@@ -217,8 +202,14 @@ function Navbar () {
       >
         <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
           {links.map((link) => (
-            <NavLink className={'NavbarMobileMenu__Item'} to={link.href} key={link.title}
-                     isActive={pathname === link.href}>{link.title}</NavLink>
+            <NavLink
+              className={'NavbarMobileMenu__Item'}
+              to={link.href}
+              isActive={pathname === link.href}
+              key={link.title}
+            >
+              {link.title}
+            </NavLink>
           ))}
         </Stack>
       </Box>
