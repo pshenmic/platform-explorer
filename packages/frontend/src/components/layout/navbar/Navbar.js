@@ -47,10 +47,13 @@ function Navbar () {
     [pathname]
   )
 
-  const [searchFocused, setSearchFocused] = useState(false)
+  const [searchState, setSearchState] = useState({
+    focused: false,
+    value: ''
+  })
+
   const [searchResults, setSearchResults] = useState({ data: {}, loading: false, error: false })
-  const [searchValue, setSearchValue] = useState('')
-  const searchResultIsDisplay = searchFocused &&
+  const searchResultIsDisplay = searchState.focused &&
     (Object.entries(searchResults.data || {})?.length || searchResults.loading || searchResults.error)
 
   const searchContainerRef = useRef(null)
@@ -58,8 +61,12 @@ function Navbar () {
 
   const hideSearch = () => {
     setSearchResults({ data: {}, loading: false, error: false })
-    setSearchFocused(false)
-    setSearchValue('')
+
+    setSearchState(prevState => ({
+      ...prevState,
+      focused: false,
+      value: ''
+    }))
   }
 
   useOutsideClick({ ref: searchContainerRef, handler: hideSearch })
@@ -73,10 +80,10 @@ function Navbar () {
   }, [pathname, closeMobileMenu])
 
   useEffect(() => {
-    if (!searchFocused) {
+    if (!searchState.focused) {
       setSearchResults({ data: {}, loading: false, error: false })
     }
-  }, [searchFocused])
+  }, [searchState.focused])
 
   const handleMobileMenuToggle = () => {
     if (isMobileMenuOpen) {
@@ -84,7 +91,7 @@ function Navbar () {
       return
     }
     openMobileMenu()
-    if (searchFocused) hideSearch()
+    if (searchState.focused) hideSearch()
   }
 
   return (
@@ -106,8 +113,8 @@ function Navbar () {
             className={'Navbar__Burger'}
             size={'md'}
             icon={isMobileMenuOpen ? <CloseIcon/> : <HamburgerIcon/>}
-            visibility={searchFocused ? 'hidden' : 'visible'}
-            w={searchFocused ? '0' : '40px'}
+            visibility={searchState.focused ? 'hidden' : 'visible'}
+            w={searchState.focused ? '0' : '40px'}
             minW={0}
             aria-label={'Open Menu'}
             display={{ lg: 'none' }}
@@ -120,11 +127,11 @@ function Navbar () {
             spacing={3}
             display={{ base: 'none', lg: 'flex' }}
             style={{
-              visibility: searchFocused ? 'hidden' : 'visible',
-              opacity: searchFocused ? 0 : 1,
+              visibility: searchState.focused ? 'hidden' : 'visible',
+              opacity: searchState.focused ? 0 : 1,
               transition: `${searchTransitionTime / 2}s`,
-              width: searchFocused ? '0' : '100%',
-              transitionDelay: searchFocused ? '0s' : `${searchTransitionTime / 2}s`
+              width: searchState.focused ? '0' : '100%',
+              transitionDelay: searchState.focused ? '0s' : `${searchTransitionTime / 2}s`
             }}
           >
             {links.map((link) => (
@@ -136,19 +143,19 @@ function Navbar () {
         <div
           className={'Navbar__Right'}
           style={{
-            gap: searchFocused ? 0 : '0.5rem',
+            gap: searchState.focused ? 0 : '0.5rem',
             transition: `gap ${searchTransitionTime / 4}s`
           }}
         >
           <div
             className={'Navbar__NetworkSelectContainer'}
             style={{
-              visibility: searchFocused ? 'hidden' : 'visible',
-              opacity: searchFocused ? 0 : 1,
+              visibility: searchState.focused ? 'hidden' : 'visible',
+              opacity: searchState.focused ? 0 : 1,
               transition: `${searchTransitionTime / 4}s`,
-              transitionDelay: searchFocused ? '0s' : `${searchTransitionTime}s`,
-              alignItems: searchFocused ? 'baseline' : 'center',
-              ...(searchFocused && { width: 0 })
+              transitionDelay: searchState.focused ? '0s' : `${searchTransitionTime}s`,
+              alignItems: searchState.focused ? 'baseline' : 'center',
+              ...(searchState.focused && { width: 0 })
             }}
           >
             <NetworkSelect/>
@@ -157,11 +164,11 @@ function Navbar () {
           <div
             className={'Navbar__SearchContainer'}
             ref={searchContainerRef}
-            onClick={() => setSearchFocused(true)}
+            onClick={() => setSearchState(prevState => ({ ...prevState, focused: true }))}
             style={{
-              ...(searchFocused && { width: '100%' }),
+              ...(searchState.focused && { width: '100%' }),
               transition: `${searchTransitionTime}s`,
-              flexWrap: searchFocused ? 'wrap' : 'nowrap'
+              flexWrap: searchState.focused ? 'wrap' : 'nowrap'
             }}
           >
             <div
@@ -169,19 +176,20 @@ function Navbar () {
               style={{ transition: `width ${searchTransitionTime}s` }}
             >
               <GlobalSearchInput
-                forceValue={searchValue}
+                forceValue={searchState.value}
                 onResultChange={setSearchResults}
-                onChange={setSearchValue}
+                // onChange={setsearchState.value}
+                onChange={value => setSearchState(prevState => ({ ...prevState, value }))}
               />
             </div>
 
             <div
               className={'Navbar__SearchResults'}
               style={{
-                width: searchFocused ? '100%' : 0,
-                visibility: searchFocused ? 'visible' : 'hidden',
-                height: searchFocused ? 'auto' : 0,
-                opacity: searchFocused ? 1 : 0,
+                width: searchState.focused ? '100%' : 0,
+                visibility: searchState.focused ? 'visible' : 'hidden',
+                height: searchState.focused ? 'auto' : 0,
+                opacity: searchState.focused ? 1 : 0,
                 marginTop: searchResultIsDisplay ? '1rem' : 0,
                 marginBottom: searchResultIsDisplay ? '0.25rem' : 0,
                 padding: searchResultIsDisplay ? '0 0.75rem' : 0
@@ -195,7 +203,7 @@ function Navbar () {
 
       <Box
         ref={mobileMenuRef}
-        className={`NavbarMobileMenu ${isMobileMenuOpen && !searchFocused ? 'NavbarMobileMenu--Open' : ''}`}
+        className={`NavbarMobileMenu ${isMobileMenuOpen && !searchState.focused ? 'NavbarMobileMenu--Open' : ''}`}
         display={{ lg: 'none' }}
       >
         <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
