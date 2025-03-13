@@ -992,7 +992,7 @@ describe('Identities routes', () => {
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
         transitionType: 0,
-        nonce: null,
+        identityContractNonce: null,
         gasUsed: null,
         totalGasUsed: null
       }))
@@ -1059,7 +1059,7 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 
@@ -1127,7 +1127,7 @@ describe('Identities routes', () => {
           prefundedVotingBalance: null,
           entropy: null,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 
@@ -1193,7 +1193,7 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 
@@ -1259,7 +1259,7 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 
