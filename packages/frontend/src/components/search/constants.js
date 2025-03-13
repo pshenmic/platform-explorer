@@ -1,32 +1,32 @@
-export const ENTITY_TYPES = {
-  TRANSACTION: 'transaction',
-  BLOCK: 'block',
-  IDENTITY: 'identity',
-  VALIDATOR: 'validator',
-  DATA_CONTRACT: 'dataContract',
-  DOCUMENT: 'document',
-  LOADING: 'loading'
+export const entityTypes = {
+  transaction: 'transaction',
+  block: 'block',
+  identity: 'identity',
+  validator: 'validator',
+  dataContract: 'dataContract',
+  document: 'document',
+  loading: 'loading'
 }
 
-export const CATEGORY_MAP = {
-  transactions: ENTITY_TYPES.TRANSACTION,
-  dataContracts: ENTITY_TYPES.DATA_CONTRACT,
-  documents: ENTITY_TYPES.DOCUMENT,
-  identities: ENTITY_TYPES.IDENTITY,
-  blocks: ENTITY_TYPES.BLOCK,
-  validators: ENTITY_TYPES.VALIDATOR
+export const categoryMap = {
+  transactions: entityTypes.transaction,
+  dataContracts: entityTypes.dataContract,
+  documents: entityTypes.document,
+  identities: entityTypes.identity,
+  blocks: entityTypes.block,
+  validators: entityTypes.validator
 }
 
-export const SINGULAR_CATEGORY_NAMES = {
-  [ENTITY_TYPES.TRANSACTION]: 'Transaction',
-  [ENTITY_TYPES.DATA_CONTRACT]: 'Data Contract',
-  [ENTITY_TYPES.DOCUMENT]: 'Document',
-  [ENTITY_TYPES.IDENTITY]: 'Identity',
-  [ENTITY_TYPES.BLOCK]: 'Block',
-  [ENTITY_TYPES.VALIDATOR]: 'Validator'
+export const singularCategoryNames = {
+  [entityTypes.transaction]: 'Transaction',
+  [entityTypes.dataContract]: 'Data Contract',
+  [entityTypes.document]: 'Document',
+  [entityTypes.identity]: 'Identity',
+  [entityTypes.block]: 'Block',
+  [entityTypes.validator]: 'Validator'
 }
 
-export const PLURAL_CATEGORY_NAMES = {
+export const pluralCategoryNames = {
   transactions: 'Transactions',
   dataContracts: 'Data Contracts',
   documents: 'Documents',
@@ -35,11 +35,11 @@ export const PLURAL_CATEGORY_NAMES = {
   validators: 'Validators'
 }
 
-export const MODIFIER_MAP = {
-  [ENTITY_TYPES.TRANSACTION]: 'Transaction',
-  [ENTITY_TYPES.DATA_CONTRACT]: 'DataContract',
-  [ENTITY_TYPES.DOCUMENT]: 'Document',
-  [ENTITY_TYPES.IDENTITY]: 'Identity',
-  [ENTITY_TYPES.BLOCK]: 'Block',
-  [ENTITY_TYPES.VALIDATOR]: 'Validator'
+export const modifierMap = {
+  [entityTypes.transaction]: 'transaction',
+  [entityTypes.dataContract]: 'dataContract',
+  [entityTypes.document]: 'document',
+  [entityTypes.identity]: 'identity',
+  [entityTypes.block]: 'block',
+  [entityTypes.validator]: 'validator'
 }

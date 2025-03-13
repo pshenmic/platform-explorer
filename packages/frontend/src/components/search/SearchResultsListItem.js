@@ -7,24 +7,24 @@ import {
   TransactionSearchItem,
   ValidatorSearchItem
 } from './items'
-import { ENTITY_TYPES } from './constants'
+import { entityTypes } from './constants'
 import './SearchResultsListItem.scss'
 
 function SearchResultsListItem ({ entity, entityType, className }) {
   switch (entityType) {
-    case ENTITY_TYPES.BLOCK:
+    case entityTypes.block:
       return <BlockSearchItem block={entity} className={className}/>
-    case ENTITY_TYPES.LOADING:
+    case entityTypes.loading:
       return <LoadingSearchItem className={className}/>
-    case ENTITY_TYPES.TRANSACTION:
+    case entityTypes.transaction:
       return <TransactionSearchItem transaction={entity} className={className}/>
-    case ENTITY_TYPES.IDENTITY:
+    case entityTypes.identity:
       return <IdentitySearchItem identity={entity} className={className}/>
-    case ENTITY_TYPES.VALIDATOR:
+    case entityTypes.validator:
       return <ValidatorSearchItem validator={entity} className={className}/>
-    case ENTITY_TYPES.DATA_CONTRACT:
+    case entityTypes.dataContract:
       return <DataContractSearchItem dataContract={entity} className={className}/>
-    case ENTITY_TYPES.DOCUMENT:
+    case entityTypes.document:
       return <DocumentSearchItem document={entity} className={className}/>
     default:
       return null
