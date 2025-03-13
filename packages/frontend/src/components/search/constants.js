@@ -36,10 +36,10 @@ export const pluralCategoryNames = {
 }
 
 export const modifierMap = {
-  [entityTypes.transaction]: 'transaction',
-  [entityTypes.dataContract]: 'dataContract',
-  [entityTypes.document]: 'document',
-  [entityTypes.identity]: 'identity',
-  [entityTypes.block]: 'block',
-  [entityTypes.validator]: 'validator'
+  [entityTypes.transaction]: 'Transaction',
+  [entityTypes.dataContract]: 'DataContract',
+  [entityTypes.document]: 'Document',
+  [entityTypes.identity]: 'Identity',
+  [entityTypes.block]: 'Block',
+  [entityTypes.validator]: 'Validator'
 }
