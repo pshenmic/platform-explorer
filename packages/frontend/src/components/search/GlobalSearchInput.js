@@ -54,7 +54,7 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
           <InputRightElement>
             <Button
               h={'28px'}
-              w={'28px !important'}
+              w={'28px'}
               minW={'none'}
               size={'xxs'}
               onClick={() => search(searchQuery)}
