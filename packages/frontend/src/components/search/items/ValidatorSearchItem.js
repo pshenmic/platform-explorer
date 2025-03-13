@@ -17,7 +17,7 @@ export function ValidatorSearchItem ({ validator, className }) {
           <Identifier avatar={!!validator?.identity} ellipsis={true}>{validator?.identity || '-'}</Identifier>
         }
         timestamp={
-          validator?.identityBalance !== undefined && validator?.identityBalance !== null
+          validator?.identityBalance ?? null
             ? `${currencyRound(validator?.identityBalance)} Dash`
             : <NotActive/>
         }
