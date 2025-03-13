@@ -81,7 +81,8 @@ function Navbar () {
     }
   }, [searchState.focused])
 
-  const handleMobileMenuToggle = () => {
+  const handleMobileMenuToggle = (e) => {
+    e.stopPropagation()
     if (isMobileMenuOpen) {
       closeMobileMenu()
       return
