@@ -391,7 +391,7 @@ describe('Other routes', () => {
         },
         gasUsed: null,
         totalGasUsed: 0,
-        nonce: '2'
+        identityContractNonce: '2'
       }
 
       assert.deepEqual({ documents: [expectedDataContract] }, body)

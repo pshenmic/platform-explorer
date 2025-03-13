@@ -875,6 +875,7 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
   "typeName": "preorder",
   "gasUsed": null,
   "totalGasUsed": 15999780,
+  "identityContractNonce": 1,
   "owner": {
     "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
     "aliases": [
@@ -939,7 +940,7 @@ GET /document/y5DhJmM4unLTEaKAkMTbQHMoM8hh47ddowKYusgtHwL/revisions
       "prefundedVotingBalance": null,
       "documentTypeName": null,
       "transitionType": 0,
-      "nonce": null,
+      "identityContractNonce": null,
       "gasUsed": 78317180,
       "totalGasUsed": null,
       "owner": {
@@ -1454,22 +1455,6 @@ GET /search?query=xyz
       }
     }
   ]
-}
-```
-
-```
-GET /search?query=36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm
-
-{
-  "identities": [{
-    "identifier": "36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm",
-    "alias": "xyz.dash",
-    "status": {
-      "alias": "xyz.dash",
-      "status": "ok",
-      "contested": true
-    }
-  }]
 }
 ```
 Response codes:
