@@ -48,7 +48,7 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
           onChange={handleSearchInput}
           onKeyPress={handleKeyPress}
           color={'gray.250'}
-          fontSize={'12px'}
+          fontSize={'0.75rem'}
           className={'GlobalSearchInput__Field'}
         />
           <InputRightElement>
