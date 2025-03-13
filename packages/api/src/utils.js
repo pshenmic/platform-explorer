@@ -100,7 +100,7 @@ const decodeStateTransition = async (client, base64) => {
           revision: String(documentTransition.getRevision()),
           type: documentTransition.getType(),
           action: documentTransition.getAction(),
-          nonce: String(documentTransition.getIdentityContractNonce())
+          identityNonce: String(documentTransition.getIdentityContractNonce())
         }
 
         switch (documentTransition.getAction()) {
@@ -290,7 +290,7 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_CREDIT_TRANSFER: {
-      decoded.nonce = String(stateTransition.getNonce())
+      decoded.identityNonce = String(stateTransition.getNonce())
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.recipientId = stateTransition.getRecipientId().toString()
@@ -318,7 +318,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.pooling = PoolingEnum[stateTransition.getPooling()]
       decoded.raw = stateTransition.toBuffer().toString('hex')
-      decoded.nonce = String(stateTransition.getNonce())
+      decoded.identityNonce = String(stateTransition.getNonce())
 
       break
     }
@@ -334,7 +334,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.raw = stateTransition.toBuffer().toString('hex')
       decoded.proTxHash = stateTransition.getProTxHash().toString('hex')
-      decoded.nonce = String(stateTransition.getIdentityContractNonce())
+      decoded.identityNonce = String(stateTransition.getIdentityContractNonce())
 
       break
     }

@@ -2169,7 +2169,6 @@ IDENTITY_CREATE with instantLock
     "type": 6,
     "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
     "userFeeIncrease": 0,
-    "identityContractNonce": 6,
     "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
     "amount": 200000,
     "identityNonce": 6,
@@ -2184,7 +2183,7 @@ IDENTITY_CREATE with instantLock
 ```
 {
     "type": 7,
-    "identityContractNonce": 1,
+    "identityNonce": 1,
     "userFeeIncrease": 0,
     "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
     "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
