@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
 import { SearchIcon } from '../ui/icons'
-import './GlobalSearchInput.scss'
 import { useDebounce } from '../../hooks'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import './GlobalSearchInput.scss'
 
 function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
   const [searchQuery, setSearchQuery] = useState('')
@@ -19,15 +18,8 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
     onResultChange({ data: {}, loading: true, error: false })
 
     Api.search(query)
-      .then(res => {
-        if (searchQuery?.length > 0) {
-          console.log('search results', res)
-          fetchHandlerSuccess(onResultChange, res)
-        } else {
-          fetchHandlerSuccess(onResultChange, {})
-        }
-      })
-      .catch(err => fetchHandlerError(onResultChange, err))
+      .then(res => onResultChange({ data: res, loading: false, error: false }))
+      .catch(err => onResultChange({ data: err, loading: false, error: true }))
   }
 
   useEffect(() => search(debouncedQuery), [debouncedQuery])

@@ -34,45 +34,38 @@ const NavLink = ({ children, to, isActive, className }) => {
   )
 }
 
+const defaultSearchState = {
+  results: { data: {}, loading: false, error: false },
+  focused: false,
+  value: ''
+}
+
 function Navbar () {
   const pathname = usePathname()
+  const displayBreadcrumbs = useMemo(
+    () => breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1),
+    [pathname]
+  )
+
   const {
     isOpen: isMobileMenuOpen,
     onOpen: openMobileMenu,
     onClose: closeMobileMenu
   } = useDisclosure()
 
-  const displayBreadcrumbs = useMemo(
-    () => breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1),
-    [pathname]
-  )
+  const [searchState, setSearchState] = useState(defaultSearchState)
 
-  const [searchState, setSearchState] = useState({
-    focused: false,
-    value: ''
-  })
-
-  const [searchResults, setSearchResults] = useState({ data: {}, loading: false, error: false })
   const searchResultIsDisplay = searchState.focused &&
-    (Object.entries(searchResults.data || {})?.length || searchResults.loading || searchResults.error)
+    (Object.entries(searchState.results.data || {})?.length || searchState.results.loading || searchState.results.error)
 
   const searchContainerRef = useRef(null)
   const mobileMenuRef = useRef(null)
+  const searchTransitionTime = 1
 
-  const hideSearch = () => {
-    setSearchResults({ data: {}, loading: false, error: false })
-
-    setSearchState(prevState => ({
-      ...prevState,
-      focused: false,
-      value: ''
-    }))
-  }
+  const hideSearch = () => setSearchState(defaultSearchState)
 
   useOutsideClick({ ref: searchContainerRef, handler: hideSearch })
   useOutsideClick({ ref: mobileMenuRef, handler: closeMobileMenu })
-
-  const searchTransitionTime = 1
 
   useEffect(() => {
     closeMobileMenu()
@@ -81,7 +74,10 @@ function Navbar () {
 
   useEffect(() => {
     if (!searchState.focused) {
-      setSearchResults({ data: {}, loading: false, error: false })
+      setSearchState(prevState => ({
+        ...prevState,
+        results: { data: {}, loading: false, error: false }
+      }))
     }
   }, [searchState.focused])
 
@@ -177,8 +173,7 @@ function Navbar () {
             >
               <GlobalSearchInput
                 forceValue={searchState.value}
-                onResultChange={setSearchResults}
-                // onChange={setsearchState.value}
+                onResultChange={results => setSearchState(prevState => ({ ...prevState, results }))}
                 onChange={value => setSearchState(prevState => ({ ...prevState, value }))}
               />
             </div>
@@ -195,7 +190,7 @@ function Navbar () {
                 padding: searchResultIsDisplay ? '0 0.75rem' : 0
               }}
             >
-              <SearchResultsList results={searchResults}/>
+              <SearchResultsList results={searchState.results}/>
             </div>
           </div>
         </div>
