@@ -5,7 +5,7 @@ Platform Explorer HTTP API allow you to query and see platform blockchain data p
 API is still under ongoing development, so refer to this page or repo documentation for the most up-to-date latest specification.
 
 Production (mainnet) live URL is [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
-
+ 
 Testnet live URL is [https://testnet.platform-explorer.pshenmic.dev](https://testnet.platform-explorer.pshenmic.dev)
 
 Reference:
