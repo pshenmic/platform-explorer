@@ -1,5 +1,6 @@
-import { BigNumber, Identifier, NotActive } from '../../data'
+import { Identifier, NotActive } from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
+import { currencyRound } from '../../../util'
 
 export function ValidatorSearchItem ({ validator, className }) {
   return (
@@ -17,9 +18,7 @@ export function ValidatorSearchItem ({ validator, className }) {
         }
         timestamp={
           validator?.identityBalance !== undefined && validator?.identityBalance !== null
-            ? <>
-              <BigNumber>{validator?.identityBalance}</BigNumber> DASH
-            </>
+            ? `${currencyRound(validator?.identityBalance)} Dash`
             : <NotActive/>
         }
       />

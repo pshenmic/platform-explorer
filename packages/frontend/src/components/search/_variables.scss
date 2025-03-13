@@ -11,22 +11,27 @@
     5rem
     1rem;
 
-  &--Validator,
-  .SearchResultsListItem--Validator & {
+  &--Validator {
     grid-template-columns: 
       minmax(0, 600px)
       minmax(0, 600px)
-      5rem
+      6rem
       1rem;
   }
 
   @container (max-width: 48rem) {
     &--Document,
-    &--DataContract,
-    &--Validator {
+    &--DataContract {
       grid-template-columns: 
         minmax(0, 600px)
         4.5rem
+        1rem;
+    }
+
+    &--Validator {
+      grid-template-columns: 
+        minmax(0, 600px)
+        6rem
         1rem;
     }
   }
