@@ -12,6 +12,11 @@
   width: 100%;
   left: 50%;
   transform: translateX(-50%);
+  max-height: 100%;
+  margin: 0 auto;
+  min-height: 0;
+  align-items: center;
+  justify-content: space-between;
 
   &__NetworkSelectContainer {
     display: flex;

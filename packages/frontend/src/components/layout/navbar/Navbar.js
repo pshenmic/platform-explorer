@@ -97,12 +97,6 @@ function Navbar () {
       <Flex
         className={'Navbar'}
         maxW={'container.maxPageW'}
-        maxH={'100%'}
-        ml={'auto'}
-        mr={'auto'}
-        minH={0}
-        alignItems={'center'}
-        justifyContent={'space-between'}
       >
         <div className={'Navbar__Left'}>
           <IconButton
