@@ -98,7 +98,7 @@ module.exports = class DocumentsDAO {
         ...document,
         entropy: transitionWithEntropy?.entropy,
         prefundedVotingBalance: transitionWithEntropy?.prefundedVotingBalance,
-        nonce: transitionWithEntropy?.identityNonce
+        nonce: transitionWithEntropy?.identityContractNonce
       })
     }
   }

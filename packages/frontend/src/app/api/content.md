@@ -1926,35 +1926,24 @@ POST /transaction/decode
     "type": 1,
     "transitions": [
         {
-            "id": "Fwvkm4ktZVJEHN34RWm4s3fbNXoC3vNj9MB49LwLdavM",
-            "dataContractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-            "revision": 1,
-            "type": "domain",
+            "id": "7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL",
+            "dataContractId": "FhKAsUnPbqe7K4TZxgRdtPUrfSvNCtYV8iPsvjX7ZG58",
+            "revision": "1",
+            "type": "note",
             "action": 0,
+            "identityContractNonce": "2",
+            "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
             "data": {
-                "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
-                "label": "Microsoft",
-                "normalizedLabel": "m1cr0s0ft",
-                "normalizedParentDomainName": "dash",
-                "parentDomainName": "dash",
-                "preorderSalt": "+nE4I9leD/ua1WdxrrZ4gWQWglNUPwRRjgULjvqGOCs=",
-                "records": {
-                    "identity": "HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT"
-                },
-                "subdomainRules": {
-                    "allowSubdomains": false
-                }
+                "message": "Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT"
             },
-            "prefundedVotingBalance": {
-                "parentNameAndLabel": 20000000000
-            }
+            "prefundedVotingBalance": null
         }
     ],
     "userFeeIncrease": 0,
-    "signature": "2056f7e8fafc7328ed3026466f90cc0d50ad04714c30d3bc4dc7228440adc2b7974091f27b51dc23de470b5e235741c2a852f74c8ab73d7e83469fe24dcffbe425",
-    "signaturePublicKeyId": 2,
-    "ownerId": "HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT",
-    "raw": "0200f5132a1cc9642bdab3d06533a91a4f8813129c9a27a73ed53e577e747c9a4eac01000000de15c2d39a27cbe01395094153e58ded53c7cf9fabfe6723810b56e6ee35f50a0706646f6d61696ee668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c53155a1a2c90b886fe21aa4d646b03e0d2775df9a16f06157130247dd435334fc051f07056c6162656c12094d6963726f736f66740f6e6f726d616c697a65644c6162656c12096d31637230733066741a6e6f726d616c697a6564506172656e74446f6d61696e4e616d6512046461736810706172656e74446f6d61696e4e616d651204646173680c7072656f7264657253616c740cfa713823d95e0ffb9ad56771aeb6788164168253543f04518e050b8efa86382b077265636f726473160112086964656e7469747910f5132a1cc9642bdab3d06533a91a4f8813129c9a27a73ed53e577e747c9a4eac0e737562646f6d61696e52756c65731601120f616c6c6f77537562646f6d61696e7313000112706172656e744e616d65416e644c6162656cfd00000004a817c8000002412056f7e8fafc7328ed3026466f90cc0d50ad04714c30d3bc4dc7228440adc2b7974091f27b51dc23de470b5e235741c2a852f74c8ab73d7e83469fe24dcffbe425"
+    "signature": "1f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261",
+    "signaturePublicKeyId": 1,
+    "ownerId": "woTQprzGS4bLqqbAhY2heG8QfD58Doo2UhDbiVVrLKG",
+    "raw": "02000e09e4140f8b7777810be56c47f0ab5cbd9bed1e773abd9f9fdf2fe67a669ff7010000006008b85d9826e770ad21b6d585f010f1dfb3b3f2adc6492329bbef8fdec1b1d702046e6f7465da5764f89025e9a5f680633909db58f6f7f6d3582c445393f15aad58821c9f2bf09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b01076d65737361676512305475746f7269616c20434920546573742040205468752c2030382041756720323032342032303a32353a303320474d54000001411f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261"
 }
 ```
 ```

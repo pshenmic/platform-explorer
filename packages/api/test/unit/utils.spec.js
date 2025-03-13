@@ -87,7 +87,7 @@ describe('Utils', () => {
             type: 'note',
             entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
             action: 0,
-            identityNonce: '2',
+            identityContractNonce: '2',
             data: {
               message: 'Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT'
             }
