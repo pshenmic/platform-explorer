@@ -33,7 +33,7 @@ impl PSQLProcessor {
       }
     };
 
-    let mut identity = Identity::from((state_transition, transaction));
+    let identity = Identity::from((state_transition, transaction));
 
     let transfer = Transfer {
       sender: None,

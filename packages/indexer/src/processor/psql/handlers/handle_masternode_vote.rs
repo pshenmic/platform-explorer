@@ -23,9 +23,7 @@ impl PSQLProcessor {
       Some(&block_hash)
     ).unwrap();
 
-    let mut masternode_vote = MasternodeVote::from(state_transition);
-
-    masternode_vote.set_power_from_pro_tx_info(pro_tx_info);
+    let masternode_vote = MasternodeVote::from((state_transition, pro_tx_info));
 
     self.dao.create_masternode_vote(masternode_vote, st_hash.clone(), sql_transaction).await.unwrap();
 
