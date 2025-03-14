@@ -9,7 +9,6 @@ use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 
 #[derive(Clone)]
 pub struct Transfer {
-    pub id: Option<u32>,
     pub sender: Option<Identifier>,
     pub recipient: Option<Identifier>,
     pub amount: u64
@@ -34,7 +33,6 @@ impl From<IdentityTopUpTransition> for Transfer {
         };
 
         return Transfer {
-            id: None,
             sender: None,
             recipient: Some(identifier),
             amount
@@ -48,7 +46,6 @@ impl From<IdentityCreditWithdrawalTransition> for Transfer {
         let amount = state_transition.amount();
 
         return Transfer {
-            id: None,
             sender: Some(identifier),
             recipient: None,
             amount
@@ -63,7 +60,6 @@ impl From<IdentityCreditTransferTransition> for Transfer {
         let amount = state_transition.amount();
 
         return Transfer {
-            id: None,
             sender: Some(sender),
             recipient: Some(recipient),
             amount

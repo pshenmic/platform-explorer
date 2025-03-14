@@ -42,9 +42,7 @@ pub struct TDBlockHeaderVersion {
 
 #[derive(Deserialize)]
 pub struct TDBlockHeader {
-    pub height: String,
     pub version: TDBlockHeaderVersion ,
-    pub chain_id: String,
     pub core_chain_locked_height: i32,
     #[serde(rename = "time")]
     #[serde(with = "from_iso8601")]
@@ -76,12 +74,6 @@ pub struct TenderdashRPCBlockResultsResponse {
     pub txs_results: Option<Vec<TDTxResult>>,
 }
 
-#[derive(Deserialize)]
-pub struct TenderdashRPCTransactionResponse {
-    pub hash: String,
-    pub tx_result: TDTxResult,
-}
-
 #[derive(Clone)]
 pub enum TransactionStatus {
     FAIL,
@@ -93,7 +85,6 @@ pub struct TransactionResult {
     pub data: String,
     pub gas_used: u64,
     pub status: TransactionStatus,
-    pub code: Option<u32>,
     pub error: Option<String>
 }
 

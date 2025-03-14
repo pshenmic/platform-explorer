@@ -168,6 +168,7 @@ module.exports = class TransactionsDAO {
 
     const rows = await this.knex(heightSubquery)
       .select('tx_count', 'block_height', 'hash as block_hash', 'date_from')
+      .orderBy('date_from', 'asc')
       .leftJoin('blocks', 'blocks.height', 'block_height')
 
     return rows
@@ -217,6 +218,7 @@ module.exports = class TransactionsDAO {
 
     const rows = await this.knex(heightSubquery)
       .select('gas', 'block_height', 'hash as block_hash', 'date_from')
+      .orderBy('date_from', 'asc')
       .leftJoin('blocks', 'blocks.height', 'block_height')
 
     return rows
