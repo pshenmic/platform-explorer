@@ -133,10 +133,18 @@ class TransactionsController {
   }
 
   broadcastTransaction = async (request, response) => {
-    const { base64 } = request.body
+    const { base64, hex } = request.body
+
+    if (!base64 && !hex) {
+      return response.status(400).send('hex or base64 must be set')
+    }
+
+    const transactionBuffer = hex
+      ? Buffer.from(hex, 'hex')
+      : Buffer.from(base64, 'base64')
 
     try {
-      await this.dapi.broadcastTransition(base64)
+      await this.dapi.broadcastTransition(transactionBuffer.toString('base64'))
     } catch (e) {
       return response.status(400).send({ error: e.toString() })
     }
