@@ -1,0 +1,104 @@
+@import '../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+
+  grid-template-columns: 
+    minmax(0, 600px)
+    minmax(0, 600px)
+    5rem
+    1rem;
+
+  &--Validator {
+    grid-template-columns: 
+      minmax(0, 600px)
+      minmax(0, 600px)
+      6rem
+      1rem;
+  }
+
+  @container (max-width: 48rem) {
+    &--Document,
+    &--DataContract {
+      grid-template-columns: 
+        minmax(0, 600px)
+        4.5rem
+        1rem;
+    }
+
+    &--Validator {
+      grid-template-columns: 
+        minmax(0, 600px)
+        6rem
+        1rem;
+    }
+  }
+
+  @container (max-width: 24rem) {
+    &--Block,
+    &--Identity,
+    &--Transaction {
+      grid-template-columns: 
+        minmax(0, 600px)
+        4.5rem
+        1rem;
+    }
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+  font-family: $font-mono;
+  font-size: 0.75rem;
+  color: var(--chakra-colors-gray-250);
+  width: 100%;
+  
+  &--EntityName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &--Additional {
+    justify-content: flex-start;
+    white-space: nowrap;
+  }
+
+  &--Timestamp {
+    justify-content: flex-end;
+    white-space: nowrap;
+    color: #fff;
+  }
+
+  &--Arrow {
+    justify-content: flex-end;
+  }
+
+  &:last-child, &:nth-last-child(2), &:nth-last-child(3) {
+    text-align: right;
+    margin-left: auto;
+    justify-content: flex-end;
+  }
+
+  @container (max-width: 48rem) {
+    [class*="--Document"] &,
+    [class*="--DataContract"] &,
+    [class*="--Validator"] & {
+      &:nth-child(2) {
+        display: none;
+      }
+    }
+  }
+
+  @container (max-width: 24rem) {
+    [class*="--Block"] &,
+    [class*="--Identity"] &,
+    [class*="--Transaction"] & {
+      &:nth-child(2) {
+        display: none;
+      }
+    }
+  }
+}

@@ -12,7 +12,7 @@ function NetworkSelect () {
 
   return (
     <div className={'NetworkSelect'} onMouseLeave={() => setShowDropdown(false)}>
-      <p>Network:</p>
+      <span className={'NetworkSelect__Title'}>Network:</span>
       <button
         className={'NetworkSelect__Button'}
         onMouseEnter={() => setShowDropdown(true)}
