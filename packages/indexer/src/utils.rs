@@ -60,20 +60,6 @@ impl TenderdashRpcApi {
 
         Ok(resp)
     }
-    pub async fn get_transaction_by_hash(&self, hash: String) -> Result<TenderdashRPCTransactionResponse, Error> {
-        let url = format!("{}/tx?hash={}", self.tenderdash_url, hash);
-
-        let res = self.client
-            .get(url)
-            .send()
-            .await?;
-
-        let resp = res
-            .json::<TenderdashRPCTransactionResponse>()
-            .await?;
-
-        Ok(resp)
-    }
 
     pub async fn get_validators_by_block_height(&self, block_height: i32) -> Result<Vec<Validator>, Error> {
         let url = format!("{}/validators?height={}&per_page=150", self.tenderdash_url, block_height);

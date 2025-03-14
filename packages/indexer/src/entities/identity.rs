@@ -1,4 +1,3 @@
-use std::env;
 use base64::Engine;
 use base64::engine::general_purpose;
 use data_contracts::SystemDataContract;
@@ -6,7 +5,7 @@ use dpp::dashcore::Transaction;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
-use dpp::prelude::{AssetLockProof, Revision};
+use dpp::prelude::{Revision};
 use dpp::state_transition::identity_create_transition::accessors::IdentityCreateTransitionAccessorsV0;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_update_transition::accessors::IdentityUpdateTransitionAccessorsV0;

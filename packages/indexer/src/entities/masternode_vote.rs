@@ -1,4 +1,3 @@
-use std::env;
 use dashcore_rpc::json::ProTxInfo;
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Hex;

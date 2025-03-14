@@ -7,12 +7,16 @@ use crate::entities::document::Document;
 use base64::{Engine as _, engine::{general_purpose}};
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::{Base58};
+use dpp::state_transition::batch_transition::batched_transition::token_transition::{TokenTransition, TokenTransitionV0Methods};
+use dpp::state_transition::batch_transition::batched_transition::token_transition_action_type::TokenTransitionActionTypeGetter;
+use dpp::state_transition::batch_transition::token_base_transition::v0::v0_methods::TokenBaseTransitionV0Methods;
 use dpp::voting::vote_choices::resource_vote_choice::ResourceVoteChoice;
 use serde_json::{Map, Number, Value};
 use crate::entities::block_header::BlockHeader;
 use crate::entities::data_contract::DataContract;
 use crate::entities::identity::Identity;
 use crate::entities::masternode_vote::MasternodeVote;
+use crate::entities::token_config::TokenConfig;
 use crate::entities::transfer::Transfer;
 use crate::entities::validator::Validator;
 use crate::models::TransactionStatus;
@@ -86,8 +90,13 @@ impl PostgresDAO {
         let version = data_contract.version as i32;
         let is_system = data_contract.is_system;
 
+        let format_version = match data_contract.format_version {
+            None => None,
+            Some(version) => Some(version as i32)
+        };
+
         let query = "INSERT INTO data_contracts(identifier, name, owner, schema, version, \
-        state_transition_hash, is_system) VALUES ($1, $2, $3, $4, $5, $6, $7);";
+        state_transition_hash, is_system, format_version) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
 
         let client = self.connection_pool.get().await.unwrap();
         let stmt = client.prepare_cached(query).await.unwrap();
@@ -99,10 +108,58 @@ impl PostgresDAO {
             &schema_decoded,
             &version,
             &st_hash,
-            &is_system
+            &is_system,
+            &format_version
         ]).await.unwrap();
 
         println!("Created DataContract {} [{} version]", id.to_string(Base58), version);
+    }
+
+    pub async fn create_token(&self, token: TokenConfig) {
+
+        let max_supply = match token.max_supply {
+            None => None,
+            Some(supply) => Some(supply as i64),
+        };
+
+        let distribution_rules = serde_json::to_value(token.distribution_rules).unwrap();
+        let manual_minting_rules = serde_json::to_value(token.manual_minting_rules).unwrap();
+        let manual_burning_rules = serde_json::to_value(token.manual_burning_rules).unwrap();
+        let freeze_rules = serde_json::to_value(token.freeze_rules).unwrap();
+        let unfreeze_rules = serde_json::to_value(token.unfreeze_rules).unwrap();
+        let destroy_frozen_funds_rules = serde_json::to_value(token.destroy_frozen_funds_rules).unwrap();
+        let emergency_action_rules = serde_json::to_value(token.emergency_action_rules).unwrap();
+
+        let data_contract = self
+          .get_data_contract_by_identifier(token.data_contract_identifier)
+          .await.unwrap().expect(&format!("Could not find DataContract with identifier {}",
+                                          token.data_contract_identifier.to_string(Base58)));
+        let data_contract_id = data_contract.id.unwrap() as i32;
+
+        let query = "INSERT INTO tokens(position, identifier, data_contract_id, max_supply, base_supply, keeps_history, \
+        distribution_rules, manual_minting_rules, manual_burning_rules, freeze_rules, unfreeze_rules, destroy_frozen_funds_rules, \
+        emergency_action_rules) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);";
+
+        let client = self.connection_pool.get().await.unwrap();
+        let stmt = client.prepare_cached(query).await.unwrap();
+
+        client.query(&stmt, &[
+            &(token.position as i16),
+            &(token.identifier.to_string(Base58)),
+            &data_contract_id,
+            &(max_supply),
+            &(token.base_supply as i64),
+            &token.keeps_history,
+            &distribution_rules,
+            &manual_minting_rules,
+            &manual_burning_rules,
+            &freeze_rules,
+            &unfreeze_rules,
+            &destroy_frozen_funds_rules,
+            &emergency_action_rules
+        ]).await.unwrap();
+
+        println!("Created Token from contract {} wit position {}", token.data_contract_identifier.to_string(Base58), token.position);
     }
 
     pub async fn create_document(&self, document: Document, st_hash: Option<String>) -> Result<(), PoolError> {
@@ -482,6 +539,42 @@ impl PostgresDAO {
         ]).await.unwrap();
 
         println!("Reassigned document {} to the {}", &document.identifier.to_string(Base58), &owner.to_string(Base58));
+
+        Ok(())
+    }
+
+    pub async fn token_transition(&self, token_transition: TokenTransition, amount: Option<u64>, public_note: Option<String>, owner: Identifier, recipient: Option<Identifier>, st_hash: String) -> Result<(), PoolError> {
+        let client = self.connection_pool.get().await.unwrap();
+
+        let stmt = client.prepare_cached("INSERT INTO tokens_transitions \
+          (owner, token_identifier, action, amount, public_note, token_contract_position, state_transition_hash, data_contract_id, recipient) \
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)").await.unwrap();
+
+        let data_contract = self
+          .get_data_contract_by_identifier(token_transition.base().data_contract_id())
+          .await.unwrap().expect(&format!("Could not find DataContract with identifier {}",
+                                          token_transition.base().data_contract_id().to_string(Base58)));
+        let data_contract_id = data_contract.id.unwrap() as i32;
+
+        let token_position = token_transition.base().token_contract_position();
+
+        let action = token_transition.action_type();
+
+        let token_identifier = token_transition.token_id();
+
+        client.query(&stmt, &[
+            &owner.to_string(Base58),
+            &token_identifier.to_string(Base58),
+            &(action as i16),
+            &(amount.unwrap() as i64),
+            &public_note,
+            &(token_position as i16),
+            &st_hash,
+            &data_contract_id,
+            &recipient.unwrap().to_string(Base58)
+        ]).await.unwrap();
+
+        println!("Token transition from {}", &owner.to_string(Base58));
 
         Ok(())
     }
