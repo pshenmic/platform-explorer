@@ -5,15 +5,28 @@ import { CopyButton } from '../ui/Buttons'
 import { useRef, useState, useEffect, useCallback } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
 import NotActive from './NotActive'
+import { useDebounce } from '../../hooks'
 import './Identifier.scss'
 
-export default function Identifier ({ children, ellipsis = true, avatar, styles = [], copyButton, className }) {
+export default function Identifier ({
+  children,
+  ellipsis = true,
+  avatar,
+  styles = [],
+  copyButton,
+  linesAdjustment = true,
+  className
+}) {
   const symbolsContainerRef = useRef(null)
   const [containerWidth, setContainerWidth] = useState(0)
   const [charWidth, setCharWidth] = useState(0)
   const [symbolsWidth, setSymbolsWidth] = useState('none')
   const [widthIsCounted, setWidthIsCounted] = useState(false)
   const prevWidthRef = useRef(null)
+  const [windowWidth, setWindowWidth] = useState(0)
+  const debouncedWindowWidth = useDebounce(windowWidth, 500)
+
+  if (ellipsis) linesAdjustment = false
 
   useResizeObserver(symbolsContainerRef, (entry) => {
     setContainerWidth(entry.contentRect.width)
@@ -46,19 +59,16 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
   }
 
   useEffect(() => {
-    if (ellipsis) return
+    if (!linesAdjustment) return
 
-    const currentWidth = window.innerWidth
-
-    if (currentWidth !== prevWidthRef.current || !widthIsCounted || prevWidthRef.current === null) {
-      console.log(`>> update size ${children}`)
-      setTimeout(() => updateSize(), 500)
+    if (debouncedWindowWidth !== prevWidthRef.current || !widthIsCounted || prevWidthRef.current === null) {
+      updateSize()
     }
-    prevWidthRef.current = currentWidth
-  }, [charWidth, containerWidth, widthIsCounted])
+    prevWidthRef.current = debouncedWindowWidth
+  }, [charWidth, containerWidth, debouncedWindowWidth])
 
   useEffect(() => {
-    if (ellipsis) return
+    if (!linesAdjustment) return
 
     let prevWidth = window.innerWidth
 
@@ -66,16 +76,18 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
       const currentWidth = window.innerWidth
 
       if (currentWidth !== prevWidth) {
+        setWindowWidth(currentWidth)
         setWidthIsCounted(false)
         prevWidth = currentWidth
       }
     }
+
     window.addEventListener('resize', resizeHandler)
     return () => window.removeEventListener('resize', resizeHandler)
   }, [])
 
   const measureCharWidth = useCallback(() => {
-    if (!symbolsContainerRef.current || ellipsis) return 0
+    if (!symbolsContainerRef.current || !linesAdjustment) return 0
 
     const tempElement = document.createElement('span')
     const parentStyles = window.getComputedStyle(symbolsContainerRef.current)
@@ -92,10 +104,10 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
     document.body.removeChild(tempElement)
 
     return width
-  }, [ellipsis])
+  }, [linesAdjustment])
 
   useEffect(() => {
-    if (!symbolsContainerRef.current || ellipsis) return
+    if (!symbolsContainerRef.current || !linesAdjustment) return
 
     setCharWidth(measureCharWidth() || 'auto')
   }, [])
