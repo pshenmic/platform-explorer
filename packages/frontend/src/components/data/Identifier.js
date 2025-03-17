@@ -2,7 +2,7 @@
 
 import ImageGenerator from '../imageGenerator'
 import { CopyButton } from '../ui/Buttons'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
 import NotActive from './NotActive'
 import './Identifier.scss'
@@ -22,11 +22,6 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
   const updateSize = () => {
     if (widthIsCounted) return
 
-    // if (ellipsis) {
-    //   setSymbolsWidth('none')
-    //   return
-    // }
-
     const charCount = children?.length
 
     if (!charWidth || !containerWidth || !charCount) {
@@ -34,7 +29,9 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
       return
     }
 
-    const charsPerLine = Math.floor((containerWidth / charWidth) + 0.1625)
+    const lineWidthAdjustment = 0.7
+    const charSpacingFactor = 0.1625
+    const charsPerLine = Math.floor((containerWidth / charWidth) + charSpacingFactor)
 
     if (charsPerLine <= charCount / 8 || charsPerLine > charCount) {
       setSymbolsWidth('none')
@@ -42,7 +39,7 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
     }
 
     const linesCount = Math.max(Math.ceil(charCount / charsPerLine), 1)
-    const lineWidth = charWidth * (charCount / linesCount + 0.6)
+    const lineWidth = charWidth * (charCount / linesCount + lineWidthAdjustment)
 
     setSymbolsWidth(`${lineWidth}px`)
     setWidthIsCounted(true)
@@ -77,20 +74,30 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
     return () => window.removeEventListener('resize', resizeHandler)
   }, [])
 
-  // count char size
+  const measureCharWidth = useCallback(() => {
+    if (!symbolsContainerRef.current || ellipsis) return 0
+
+    const tempElement = document.createElement('span')
+    const parentStyles = window.getComputedStyle(symbolsContainerRef.current)
+
+    tempElement.style.position = 'absolute'
+    tempElement.style.visibility = 'hidden'
+    tempElement.style.fontFamily = parentStyles?.fontFamily || 'monospace'
+    tempElement.style.fontSize = parentStyles?.fontSize || '0.75rem'
+    tempElement.style.fontWeight = parentStyles?.fontWeight || 'normal'
+    tempElement.innerText = 'A'
+
+    document.body.appendChild(tempElement)
+    const width = tempElement?.getBoundingClientRect()?.width || 0
+    document.body.removeChild(tempElement)
+
+    return width
+  }, [ellipsis])
+
   useEffect(() => {
     if (!symbolsContainerRef.current || ellipsis) return
 
-    const tempElement = document.createElement('span')
-    tempElement.style.position = 'absolute'
-    tempElement.style.visibility = 'hidden'
-    tempElement.style.fontSize = '0.75rem'
-    tempElement.style.whiteSpace = 'nowrap'
-    tempElement.style.fontFamily = 'monospace'
-    tempElement.innerText = 'A'
-    document.body.appendChild(tempElement)
-    const width = tempElement?.getBoundingClientRect()?.width
-    setCharWidth(width || 'auto')
+    setCharWidth(measureCharWidth() || 'auto')
   }, [])
 
   const highlightMode = (() => {
