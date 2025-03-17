@@ -20,7 +20,7 @@ export default function Identifier ({
   const symbolsContainerRef = useRef(null)
   const [containerWidth, setContainerWidth] = useState(0)
   const [charWidth, setCharWidth] = useState(0)
-  const [symbolsWidth, setSymbolsWidth] = useState('none')
+  const [linesMaxWidth, setLinesMaxWidth] = useState('none')
   const [widthIsCounted, setWidthIsCounted] = useState(false)
   const prevWidthRef = useRef(null)
   const [windowWidth, setWindowWidth] = useState(0)
@@ -38,7 +38,7 @@ export default function Identifier ({
     const charCount = children?.length
 
     if (!charWidth || !containerWidth || !charCount) {
-      setSymbolsWidth('none')
+      setLinesMaxWidth('none')
       return
     }
 
@@ -47,14 +47,14 @@ export default function Identifier ({
     const charsPerLine = Math.floor((containerWidth / charWidth) + charSpacingFactor)
 
     if (charsPerLine <= charCount / 8 || charsPerLine > charCount) {
-      setSymbolsWidth('none')
+      setLinesMaxWidth('none')
       return
     }
 
     const linesCount = Math.max(Math.ceil(charCount / charsPerLine), 1)
     const lineWidth = charWidth * (charCount / linesCount + lineWidthAdjustment)
 
-    setSymbolsWidth(`${lineWidth}px`)
+    setLinesMaxWidth(`${lineWidth}px`)
     setWidthIsCounted(true)
   }
 
@@ -144,9 +144,7 @@ export default function Identifier ({
       )}
       <div
         className={'Identifier__SymbolsContainer'}
-        style={{
-          maxWidth: widthIsCounted ? symbolsWidth : 'none'
-        }}
+        style={{ maxWidth: widthIsCounted ? linesMaxWidth : 'none' }}
         ref={symbolsContainerRef}
       >
         {children && highlightMode
