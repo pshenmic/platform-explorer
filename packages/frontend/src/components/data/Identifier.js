@@ -120,15 +120,6 @@ export default function Identifier ({
     return null
   })()
 
-  const sizeClass = (() => {
-    if (styles.includes('size-32')) return 'Identifier--Size32'
-    if (styles.includes('size-43')) return 'Identifier--Size44'
-    if (styles.includes('size-44')) return 'Identifier--Size44'
-    if (styles.includes('size-64')) return 'Identifier--Size64'
-    if (styles.includes('size-96')) return 'Identifier--Size96'
-    return ''
-  })()
-
   const HighlightedID = ({ children, mode }) => {
     if (!children || typeof children !== 'string') return <NotActive/>
 
@@ -147,10 +138,7 @@ export default function Identifier ({
   }
 
   return (
-    <div
-      className={`Identifier ${sizeClass} ${ellipsis ? 'Identifier--Ellipsis' : ''} ${className || ''}`}
-      // style={{ width: '100%', maxWidth: '100%' }}
-    >
+    <div className={`Identifier ${ellipsis ? 'Identifier--Ellipsis' : ''} ${className || ''}`}>
       {avatar && children && (
         <ImageGenerator className={'Identifier__Avatar'} username={children} lightness={50} saturation={50} width={24} height={24} />
       )}
