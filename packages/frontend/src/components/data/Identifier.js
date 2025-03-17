@@ -15,14 +15,12 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
   const [widthIsCounted, setWidthIsCounted] = useState(false)
   const prevWidthRef = useRef(null)
 
-  console.log(`rerender ${children}`)
-
   useResizeObserver(symbolsContainerRef, (entry) => {
     setContainerWidth(entry.contentRect.width)
   })
 
   const updateSize = () => {
-    if (widthIsCounted) return // ????
+    if (widthIsCounted) return
 
     // if (ellipsis) {
     //   setSymbolsWidth('none')
@@ -44,9 +42,9 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
     }
 
     const linesCount = Math.max(Math.ceil(charCount / charsPerLine), 1)
-    const lineWidth = charCount * charWidth / linesCount
+    const lineWidth = charWidth * (charCount / linesCount + 0.6)
 
-    setSymbolsWidth(`${lineWidth + charWidth / 2}px`)
+    setSymbolsWidth(`${lineWidth}px`)
     setWidthIsCounted(true)
   }
 
@@ -54,14 +52,6 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
     if (ellipsis) return
 
     const currentWidth = window.innerWidth
-
-    console.log('---------------')
-    console.log('children', children)
-    console.log(`prevWidthRef = ${prevWidthRef.current} currentWidth= ${currentWidth}`)
-    console.log('currentWidth !== prevWidthRef.current', currentWidth !== prevWidthRef.current)
-    console.log('!widthIsCounted', !widthIsCounted)
-    console.log('prevWidthRef.current === null', prevWidthRef.current === null)
-    console.log('---------------')
 
     if (currentWidth !== prevWidthRef.current || !widthIsCounted || prevWidthRef.current === null) {
       console.log(`>> update size ${children}`)
@@ -73,14 +63,10 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
   useEffect(() => {
     if (ellipsis) return
 
-    // const resizeHandler = () => setWidthIsCounted(false)
-
     let prevWidth = window.innerWidth
 
     const resizeHandler = () => {
       const currentWidth = window.innerWidth
-
-      console.log(`resize handler prevWidth =  ${prevWidth} currentWidth = ${currentWidth}`)
 
       if (currentWidth !== prevWidth) {
         setWidthIsCounted(false)
