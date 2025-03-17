@@ -112,13 +112,26 @@ export default function Identifier ({
     setCharWidth(measureCharWidth() || 'auto')
   }, [])
 
-  const highlightMode = (() => {
-    if (styles.includes('dim')) return 'dim'
-    if (styles.includes('highlight-first')) return 'first'
-    if (styles.includes('highlight-last')) return 'last'
-    if (styles.includes('highlight-both')) return 'both'
-    return null
-  })()
+  const highlightModes = {
+    dim: { first: false, middle: false, last: false },
+    highlight: { first: true, middle: true, last: true },
+    first: { first: true, middle: false, last: false },
+    last: { first: false, middle: false, last: true },
+    both: { first: true, middle: false, last: true },
+    default: { first: true, middle: false, last: true }
+  }
+
+  const styleToMode = {
+    dim: 'dim',
+    highlight: 'highlight',
+    'highlight-first': 'first',
+    'highlight-last': 'last',
+    'highlight-both': 'both'
+  }
+
+  const highlightMode = styles.find(style => style in styleToMode)
+    ? styleToMode[styles.find(style => style in styleToMode)]
+    : null
 
   const HighlightedID = ({ children, mode }) => {
     if (!children || typeof children !== 'string') return <NotActive/>
@@ -127,12 +140,13 @@ export default function Identifier ({
     const firstPart = children.slice(0, highlightedCount)
     const middlePart = children.slice(highlightedCount, children.length - highlightedCount)
     const lastPart = children.slice(children.length - highlightedCount)
+    const dimConfig = highlightModes?.[mode] || highlightModes?.default
 
     return (
       <>
-        <span className={`Identifier__Symbols ${mode === 'last' || mode === 'dim' ? 'Identifier__Symbols--Dim' : ''}`}>{firstPart}</span>
-        <span className={'Identifier__Symbols Identifier__Symbols--Dim'}>{middlePart}</span>
-        <span className={`Identifier__Symbols ${mode === 'first' || mode === 'dim' ? 'Identifier__Symbols--Dim' : ''}`}>{lastPart}</span>
+        <span className={`Identifier__Symbols ${!dimConfig?.first ? 'Identifier__Symbols--Dim' : ''}`}>{firstPart}</span>
+        <span className={`Identifier__Symbols ${!dimConfig?.middle ? 'Identifier__Symbols--Dim' : ''}`}>{middlePart}</span>
+        <span className={`Identifier__Symbols ${!dimConfig?.last ? 'Identifier__Symbols--Dim' : ''}`}>{lastPart}</span>
       </>
     )
   }
