@@ -14,5 +14,9 @@
   &__Column {
     @include qm.Column();
     line-height: 0.75rem;
+
+    &--ProtxHash {
+      overflow: hidden;
+    }
   }
 }
