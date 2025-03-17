@@ -1,0 +1,76 @@
+@use '../../styles/mixins.scss';
+@use './_variables.scss' as search;
+@import '../../styles/variables.scss';
+
+.SearchResultsListItem {
+  @include mixins.DefListItem;
+  align-items: center;
+  padding: 8px 16px;
+  display: block;
+
+  &__Content {
+    @include search.Columns();
+  }
+
+  &__Column {
+    @include search.Column();
+
+    &--Timestamp {
+      font-size: 0.75rem;
+      color: var(--chakra-colors-gray-250);
+      text-align: right;
+    }
+  }
+
+  .Alias__Avatar, .Identifier__Avatar, &__Icon {
+    margin-right: 4px;
+  }
+
+  &__ArrowButtonContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  &__ArrowButton {
+    margin-left: auto;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  &__Icon {
+    @include mixins.AvatarSize(true);
+  }
+
+  .Badge {
+    font-size: 0.75rem;
+  }
+
+  .Identifier {
+    font-size: 0.75rem;
+  }
+
+  &--Loading {
+    background-color: rgba(var(--chakra-colors-gray-800-rgb), .5) !important;
+
+    &:hover {
+      cursor: default;
+    }
+
+    .LoadingLine {
+      height: 1rem;
+      width: 100%;
+      margin: 0;
+    }
+  }
+
+  &--Loading & {
+    &__ArrowButton {
+      background-color: rgba(255, 255, 255, .1) !important;
+    }
+  }
+
+  @container (max-width: 768px) {
+    padding: 8px 12px;
+  }
+}

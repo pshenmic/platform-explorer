@@ -1,0 +1,18 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as qm;
+@import '../../../styles/variables.scss';
+
+.QuorumListItem {
+  @include mixins.DefListItem;
+  display: block;
+  font-size: 0.75rem;
+
+  &__Content {
+    @include qm.Columns();
+  }
+
+  &__Column {
+    @include qm.Column();
+    line-height: 0.75rem;
+  }
+}

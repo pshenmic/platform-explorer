@@ -3,6 +3,7 @@ const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { decodeStateTransition } = require('../utils')
+const { Identifier } = require('@dashevo/wasm-dpp')
 
 class IdentitiesController {
   constructor (client, knex, dapi) {
@@ -90,7 +91,12 @@ class IdentitiesController {
     const { identifier } = request.params
     const { limit = 100 } = request.query
 
-    const documents = await this.dapi.getDocuments(WITHDRAWAL_CONTRACT_TYPE, WithdrawalsContract, undefined, identifier, limit)
+    const documents = await this.dapi.getDocuments(
+      WITHDRAWAL_CONTRACT_TYPE,
+      WithdrawalsContract,
+      [['$ownerId', '=', Identifier.from(identifier)]],
+      limit
+    )
 
     if (documents.length === 0) {
       return response.send(new PaginatedResultSet([], null, null, null))
@@ -123,6 +129,22 @@ class IdentitiesController {
     }))
 
     response.send(new PaginatedResultSet(resultSet, null, null, null))
+  }
+
+  getIdentityNonce = async (request, response) => {
+    const { identifier } = request.params
+
+    const nonce = await this.dapi.getIdentityNonce(identifier)
+
+    response.send({ identityNonce: String(nonce) })
+  }
+
+  getIdentityContractNonce = async (request, response) => {
+    const { identifier, data_contract_id: dataContractId } = request.params
+
+    const nonce = await this.dapi.getIdentityContractNonce(identifier, dataContractId)
+
+    response.send({ identityContractNonce: String(nonce) })
   }
 }
 

@@ -3,7 +3,7 @@
 
 .IdentityTotalCard {
   $gap: 14px;
-  @include mixins.EntityCard();
+  @include mixins.TotalCard();
   @include mixins.InfoContainerPadding(padding, 0px, true);
   display: flex;
   flex-direction: column;
@@ -41,8 +41,9 @@
   }
 
   &__Header {
+    position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
   }
 
@@ -54,7 +55,7 @@
 
   &__ContentContainer {
     display: flex;
-    gap: 40px;
+    gap: 2.5rem;
   }
 
   &__CommonLines {
@@ -145,12 +146,7 @@
           margin-left: auto;
         }
       }
-    }
-  }
 
-
-  @media screen and (max-width: $breakpoint-lg) {
-    &__InfoLine {
       &--Identifier, &--Balance  {
         flex-direction: column;
         align-items: flex-start;
@@ -160,12 +156,16 @@
         }
       }
     }
+
+    &__ContentContainer {
+      gap: 1.5rem;
+    }
   }
 
   @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
   screen and (max-width: $breakpoint-md) {
     &__InfoLine {
-      gap: 4px;
+      gap: 0.25rem;
 
       &--Identifier {
         .Identifier__SymbolsContainer {
@@ -176,7 +176,13 @@
   }
 
   @media screen and (max-width: $breakpoint-md) {
-    $gap: 12px;
+    @include mixins.TotalCard(true);
+    $gap: 0.75rem;
+
+    &__Avatar {
+      right: 4px;
+      top: 0;
+    }
 
     &__Separator {
       @include mixins.InfoContainerPadding(margin-top, 0px, true);
@@ -217,6 +223,16 @@
       flex-wrap: wrap;
     }
 
+    &__InfoLine {
+      &--Identifier {
+        padding-right: 100px;
+      }
+
+      &--Identifier, &--Balance  {
+        padding-right: 100px;
+      }
+    }
+
     &--Loading {
       .InfoLine__Value {
         width: 100% !important;
@@ -229,6 +245,13 @@
       @include mixins.InfoContainerPadding(margin-left, 0px, true, true);
       @include mixins.InfoContainerPadding(margin-right, 0px, true, true);
       @include mixins.InfoContainerPadding(margin-bottom, 0px, true, true);
+    }
+
+    &__InfoLine {
+      &--Balance  {
+        margin-top: 8px;
+        padding-right: 0;
+      }
     }
   }
 }

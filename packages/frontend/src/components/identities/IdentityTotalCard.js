@@ -10,6 +10,7 @@ import { IdentityDigestCard } from './index'
 import { PublicKeysList } from '../publicKeys'
 import { findActiveAlias } from '../../util'
 import { useState } from 'react'
+import { ValueCard } from '../cards'
 import './IdentityTotalCard.scss'
 
 const PublicKeys = ({ className, show, publicKeys = [] }) => (
@@ -31,24 +32,13 @@ function IdentityTotalCard ({ identity, rate }) {
     <div className={`InfoBlock InfoBlock--Gradient IdentityPage__CommonInfo IdentityTotalCard ${identity.loading ? 'IdentityTotalCard--Loading' : ''} `}>
       {activeAlias &&
         <div className={'IdentityTotalCard__Title'}>
-          <Alias>{activeAlias.alias}</Alias>
+          <Alias ellipsis={false}>{activeAlias.alias}</Alias>
         </div>
       }
 
       <div className={'IdentityTotalCard__ContentContainer'}>
         <div className={'IdentityTotalCard__Column'}>
           <div className={'IdentityTotalCard__Header'}>
-            <div className={'IdentityTotalCard__Avatar'}>
-              {!identity.error
-                ? <ImageGenerator
-                  username={identity.data?.identifier}
-                  lightness={50}
-                  saturation={50}
-                  width={88}
-                  height={88}/>
-                : 'n/a'
-              }
-            </div>
             <div className={'IdentityTotalCard__HeaderLines'}>
               <InfoLine
                 className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Identifier'}
@@ -70,8 +60,19 @@ function IdentityTotalCard ({ identity, rate }) {
                 title={'Balance'}
                 value={<CreditsBlock credits={identity.data?.balance} rate={rate}/>}
                 loading={identity.loading}
-                error={identity.error || !identity.data?.balance}
+                error={identity.error}
               />
+            </div>
+            <div className={'IdentityTotalCard__Avatar'}>
+              {!identity.error
+                ? <ImageGenerator
+                  username={identity.data?.identifier}
+                  lightness={50}
+                  saturation={50}
+                  width={88}
+                  height={88}/>
+                : 'n/a'
+              }
             </div>
           </div>
 
@@ -88,7 +89,12 @@ function IdentityTotalCard ({ identity, rate }) {
             <InfoLine
               className={'IdentityTotalCard__InfoLine'}
               title={'Creation date'}
-              value={<DateBlock timestamp={identity.data?.timestamp}/>}
+              value={identity?.data?.txHash
+                ? <ValueCard link={`/transaction/${identity.data.txHash}`}>
+                    <DateBlock timestamp={identity.data?.timestamp}/>
+                  </ValueCard>
+                : <DateBlock timestamp={identity.data?.timestamp}/>
+              }
               loading={identity.loading}
               error={identity.error || (!identity.loading && !identity.data?.timestamp)}
             />

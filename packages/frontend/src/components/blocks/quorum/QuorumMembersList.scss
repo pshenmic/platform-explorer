@@ -1,0 +1,30 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as qm;
+@import '../../../styles/variables.scss';
+
+.QuorumMembersList {
+  @include mixins.List;
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include qm.Columns();
+  }
+
+  &__ColumnTitle {
+    @include qm.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &--Hash {
+      white-space: nowrap;
+    }
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+}

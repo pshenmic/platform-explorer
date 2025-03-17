@@ -1,0 +1,53 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.BlockTotalCard {
+  @include mixins.TotalCard();
+
+  &__Header {
+    align-items: flex-start;
+  }
+
+  &__Avatar {
+    svg {
+      width: 54px;
+      height: 54px;
+    }
+  }
+
+  &__InfoLine {
+    &--QuorumHash, &--AppHash, &--Hash {
+      .InfoLine__Value {
+        width: 100%;
+      }
+      .Identifier {
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    @include mixins.TotalCard(true);
+
+    &__InfoLine {
+      &--Hash {
+        padding-right: 100px;
+      }
+    }
+
+    &__Header {
+      .InfoLine {
+        flex-wrap: wrap;
+      }
+    }
+
+    &__InfoLine {
+      &--Hash {
+        .Identifier {
+          justify-content: flex-start;
+          text-align: left;
+        }
+      }
+    }
+  }
+}

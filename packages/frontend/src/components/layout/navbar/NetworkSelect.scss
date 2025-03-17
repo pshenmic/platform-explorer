@@ -4,14 +4,10 @@
   align-items: center;
   gap: 8px;
   
-  > p {
+  &__Title {
     font-weight: 400;
     font-size: 0.75rem;
     color: var(--chakra-colors-gray-250);
-
-    @media screen and (max-width: 72.5rem) {
-      display: none;
-    }
   }
 
   &__Button {

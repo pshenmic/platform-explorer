@@ -120,6 +120,7 @@ export default function Identifier ({ children, ellipsis = true, avatar, styles 
     if (styles.includes('size-43')) return 'Identifier--Size44'
     if (styles.includes('size-44')) return 'Identifier--Size44'
     if (styles.includes('size-64')) return 'Identifier--Size64'
+    if (styles.includes('size-96')) return 'Identifier--Size96'
     return ''
   })()
 

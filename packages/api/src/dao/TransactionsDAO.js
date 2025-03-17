@@ -134,56 +134,54 @@ module.exports = class TransactionsDAO {
   getHistorySeries = async (start, end, interval, intervalInMs) => {
     const startSql = `'${new Date(start.getTime() + intervalInMs).toISOString()}'::timestamptz`
 
-    const endSql = `'${new Date(end.getTime() + intervalInMs).toISOString()}'::timestamptz`
+    const endSql = `'${new Date(end.getTime()).toISOString()}'::timestamptz`
 
     const ranges = this.knex
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
-      .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
+      .select(
+        'date_to',
+        this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) OVER (ORDER BY date_to) AS date_from`)
+      )
 
-    const rows = await this.knex.with('ranges', ranges)
+    const blocksSubquery = this.knex('blocks')
+      .whereRaw('blocks.timestamp > (SELECT MIN(date_from) FROM ranges) AND blocks.timestamp <= (SELECT MAX(date_to) FROM ranges)')
+      .as('blocks_sub')
+
+    const dataSubquery = this.knex(blocksSubquery)
+      .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks_sub.hash')
+      .select('blocks_sub.timestamp', 'state_transitions.gas_used', 'blocks_sub.hash', 'blocks_sub.height')
+
+    const heightSubquery = this.knex.with('ranges', ranges)
+      .with(
+        'filtered_data',
+        dataSubquery
+      )
       .select('date_from')
-      .select(
-        this.knex('state_transitions')
-          .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .count('*')
-          .as('tx_count')
-      )
-      .select(
-        this.knex('state_transitions')
-          .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .sum('gas_used')
-          .as('gas_used')
-      )
-      .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .select('hash')
-          .orderBy('blocks.height')
-          .limit(1)
-          .as('block_hash')
-      )
-      .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .select('height')
-          .orderBy('height')
-          .limit(1)
-          .as('block_height')
-      )
+      .select(this.knex.raw('count(gas_used) as tx_count'))
+      .select(this.knex.raw('min(height) as block_height'))
+      .leftJoin('filtered_data', function () {
+        this.on('timestamp', '>', 'date_from').andOn('timestamp', '<=', 'date_to')
+      })
       .from('ranges')
+      .groupBy('date_from')
+      .as('sub')
+
+    const rows = await this.knex(heightSubquery)
+      .select('tx_count', 'block_height', 'hash as block_hash', 'date_from')
+      .orderBy('date_from', 'asc')
+      .leftJoin('blocks', 'blocks.height', 'block_height')
 
     return rows
       .map(row => ({
         timestamp: row.date_from,
         data: {
-          txs: parseInt(row.tx_count),
+          txs: parseInt(row.tx_count ?? 0),
           blockHeight: row.block_height,
           blockHash: row.block_hash
         }
       }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 
   getGasHistorySeries = async (start, end, interval, intervalInMs) => {
@@ -195,43 +193,45 @@ module.exports = class TransactionsDAO {
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
       .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
-    const rows = await this.knex.with('ranges', ranges)
+    const blocksSubquery = this.knex('blocks')
+      .whereRaw('blocks.timestamp > (SELECT MIN(date_from) FROM ranges) AND blocks.timestamp <= (SELECT MAX(date_to) FROM ranges)')
+      .as('blocks_sub')
+
+    const dataSubquery = this.knex(blocksSubquery)
+      .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks_sub.hash')
+      .select('blocks_sub.timestamp', 'state_transitions.gas_used', 'blocks_sub.hash', 'blocks_sub.height')
+
+    const heightSubquery = this.knex.with('ranges', ranges)
+      .with(
+        'filtered_data',
+        dataSubquery
+      )
       .select('date_from')
-      .select(
-        this.knex('state_transitions')
-          .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .sum('gas_used')
-          .as('gas')
-      )
-      .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .select('hash')
-          .orderBy('blocks.height')
-          .limit(1)
-          .as('block_hash')
-      )
-      .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .select('height')
-          .orderBy('height')
-          .limit(1)
-          .as('block_height')
-      )
+      .select(this.knex.raw('sum(gas_used) as gas'))
+      .select(this.knex.raw('min(height) as block_height'))
+      .leftJoin('filtered_data', function () {
+        this.on('timestamp', '>', 'date_from').andOn('timestamp', '<=', 'date_to')
+      })
       .from('ranges')
+      .groupBy('date_from')
+      .as('sub')
+
+    const rows = await this.knex(heightSubquery)
+      .select('gas', 'block_height', 'hash as block_hash', 'date_from')
+      .orderBy('date_from', 'asc')
+      .leftJoin('blocks', 'blocks.height', 'block_height')
 
     return rows
       .map(row => ({
         timestamp: row.date_from,
         data: {
-          gas: parseInt(row.gas),
+          gas: parseInt(row.gas ?? 0),
           blockHeight: row.block_height,
           blockHash: row.block_hash
         }
       }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 
   getCollectedFees = async (timespan) => {

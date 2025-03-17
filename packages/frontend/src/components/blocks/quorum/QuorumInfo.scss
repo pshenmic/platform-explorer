@@ -1,0 +1,65 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.QuorumInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__LineContainer {
+    display: flex;
+    align-items: center;
+    min-height: 3rem;
+    border-radius: mixins.$border-radius-def;
+    background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+  }
+
+  &__InfoLine {
+    width: 100%;
+    justify-content: flex-start;
+
+    .InfoLine__Title {
+      width: 12.5rem;
+    }
+
+    .InfoLine__Value {
+      line-height: 0.813rem;
+    }
+  }
+
+  .InfoLine--Loading {
+    .InfoLine__Value {
+      width: 100% !important;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__LineContainer {
+      padding: 0.5rem 1rem;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__InfoLine {
+      justify-content: space-between;
+    }
+
+    &__InfoLine {
+      .InfoLine__Title {
+        width: 11rem;
+      }
+    }
+
+    &__LineContainer {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    .InfoLine__Title {
+      width: 8rem;
+    }
+  }
+}

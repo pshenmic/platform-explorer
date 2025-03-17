@@ -4,12 +4,62 @@
 .Navbar {
   @include mixins.navContainerPadding(padding-left);
   @include mixins.navContainerPadding(padding-right);
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
   position: fixed;
   z-index: 100;
   top: 0;
   width: 100%;
   left: 50%;
   transform: translateX(-50%);
+  max-height: 100%;
+  margin: 0 auto;
+  min-height: 0;
+  align-items: center;
+  justify-content: space-between;
+
+  &__NetworkSelectContainer {
+    display: flex;
+    justify-content: flex-end;
+    width: 10rem;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  &__Left {
+    width: 0;
+  }
+
+  &__Right {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    z-index: -1;
+  }
+
+  &__SearchContainer {
+    position: relative;
+    width: 15rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  &__SearchInputContainer {
+    position: relative;
+    width: 100%;
+    z-index: 20;
+    right: 0;
+    top: 0;
+  }
+
+  &__SearchResults {
+    position: relative;
+    overflow-y: auto;
+    max-height: calc(100vh - 10rem);
+  }
 
   &::before {
     content: '';
@@ -31,20 +81,34 @@
     z-index: 20;
   }
 
-  &__WrapperNetworkSelect {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-left: 16px;
-  }
-
   &__Menu {
     gap: 40px !important;
+    padding: 0 0.75rem;
+  }
+
+  @media screen and (max-width: 72.5rem) {
+    &__NetworkSelectContainer {
+      width: 5rem;
+
+      .NetworkSelect__Title {
+        display: none;
+      }
+    }
   }
 
   @media screen and (max-width: $breakpoint-xl) {
     &__Menu {
       gap: 24px !important;
+    }
+
+    &__SearchContainer {
+      width: 10rem;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__SearchContainer {
+      width: 15rem
     }
   }
 
@@ -58,6 +122,10 @@
     &__WrapperNetworkSelect {
       gap: 8px;
       margin-left: 8px;
+    }
+
+    &__SearchContainer {
+      width: 10rem
     }
   }
 }

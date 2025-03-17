@@ -1,5 +1,7 @@
 import { getDynamicRange } from '../../util'
 
+export const defaultIntervalsCount = 100
+
 export const defaultChartConfig = {
   timespan: {
     defaultIndex: 3,
@@ -7,22 +9,22 @@ export const defaultChartConfig = {
       {
         label: '24 hours',
         range: getDynamicRange(24 * 60 * 60 * 1000),
-        intervalsCount: 24
+        intervalsCount: defaultIntervalsCount
       },
       {
         label: '3 days',
         range: getDynamicRange(3 * 24 * 60 * 60 * 1000),
-        intervalsCount: 36
+        intervalsCount: defaultIntervalsCount
       },
       {
         label: '1 week',
         range: getDynamicRange(7 * 24 * 60 * 60 * 1000),
-        intervalsCount: 28
+        intervalsCount: defaultIntervalsCount
       },
       {
         label: '1 Month',
         range: getDynamicRange(30 * 24 * 60 * 60 * 1000),
-        intervalsCount: 31
+        intervalsCount: defaultIntervalsCount
       }
     ]
   }
