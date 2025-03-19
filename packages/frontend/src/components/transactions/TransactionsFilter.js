@@ -71,20 +71,17 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
   const handleFilterChange = (filterName, value) => {
     const newFilters = baseHandleFilterChange(filterName, value)
     setFilters(newFilters)
-    onFilterChange(newFilters)
   }
 
   const handleMultipleValuesChange = (fieldName, value) => {
     const newFilters = baseHandleMultipleValuesChange(fieldName, value)
     setFilters(newFilters)
-    onFilterChange(newFilters)
   }
 
   const handleClearTypes = () => {
     const allTypes = TRANSACTION_TYPES.map(t => t.value)
     const newFilters = handleSelectAll('transaction_type', allTypes)
     setFilters(newFilters)
-    onFilterChange(newFilters)
   }
 
   const FilterButton = ({ children, isActive, onClick }) => (
@@ -211,6 +208,15 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
           </option>
         ))}
       </Select>
+
+      <Button
+        mt={4}
+        colorScheme="blue"
+        width="100%"
+        onClick={() => onFilterChange(filters)}
+      >
+        Apply Filters
+      </Button>
     </>
   )
 
