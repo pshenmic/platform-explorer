@@ -50,7 +50,13 @@ const getTransactions = (page = 1, limit = 10, order = 'asc', filters = {}) => {
   params.append('order', order)
 
   Object.entries(filters).forEach(([key, value]) => {
-    if (value !== 'all' && value !== '' && value !== 'ALL') {
+    if (Array.isArray(value)) {
+      if (value.length > 0) {
+        value.forEach(item => {
+          params.append(key, item)
+        })
+      }
+    } else if (value !== 'all' && value !== '' && value !== 'ALL') {
       params.append(key, value)
     }
   })
