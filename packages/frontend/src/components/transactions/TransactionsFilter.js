@@ -9,15 +9,15 @@ const DRAWER_HEIGHT = '50vh'
 // const DRAG_THRESHOLD = 50
 
 const TRANSACTION_TYPES = [
-  { label: 'DATA_CONTRACT_CREATE', value: StateTransitionEnum.DATA_CONTRACT_CREATE },
-  { label: 'DOCUMENTS_BATCH', value: StateTransitionEnum.DOCUMENTS_BATCH },
-  { label: 'IDENTITY_CREATE', value: StateTransitionEnum.IDENTITY_CREATE },
-  { label: 'IDENTITY_TOP_UP', value: StateTransitionEnum.IDENTITY_TOP_UP },
-  { label: 'DATA_CONTRACT_UPDATE', value: StateTransitionEnum.DATA_CONTRACT_UPDATE },
-  { label: 'IDENTITY_UPDATE', value: StateTransitionEnum.IDENTITY_UPDATE },
-  { label: 'IDENTITY_CREDIT_WITHDRAWAL', value: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL },
-  { label: 'IDENTITY_CREDIT_TRANSFER', value: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER },
-  { label: 'MASTERNODE_VOTE', value: StateTransitionEnum.MASTERNODE_VOTE }
+  { label: 'DATA CONTRACT CREATE', value: StateTransitionEnum.DATA_CONTRACT_CREATE },
+  { label: 'DOCUMENTS BATCH', value: StateTransitionEnum.DOCUMENTS_BATCH },
+  { label: 'IDENTITY CREATE', value: StateTransitionEnum.IDENTITY_CREATE },
+  { label: 'IDENTITY TOP UP', value: StateTransitionEnum.IDENTITY_TOP_UP },
+  { label: 'DATA CONTRACT UPDATE', value: StateTransitionEnum.DATA_CONTRACT_UPDATE },
+  { label: 'IDENTITY UPDATE', value: StateTransitionEnum.IDENTITY_UPDATE },
+  { label: 'IDENTITY CREDIT WITHDRAWAL', value: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL },
+  { label: 'IDENTITY CREDIT TRANSFER', value: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER },
+  { label: 'MASTERNODE VOTE', value: StateTransitionEnum.MASTERNODE_VOTE }
 ]
 
 const STATUS_TYPES = [
@@ -39,7 +39,7 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
   const [filters, setFilters] = useState({
     status: defaultFilters.status || 'ALL',
-    selectedTypes: defaultFilters.type
+    transaction_type: defaultFilters.type
       ? [parseInt(defaultFilters.type)].filter(t => !isNaN(t))
       : TRANSACTION_TYPES.map(t => t.value),
     owner: defaultFilters.owner || '',
@@ -71,42 +71,33 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
   }
 
   const handleTypesChange = (typeValue) => {
-    const newTypes = filters.selectedTypes.includes(typeValue)
-      ? filters.selectedTypes.filter(t => t !== typeValue)
-      : [...filters.selectedTypes, typeValue]
+    const newTypes = filters.transaction_type.includes(typeValue)
+      ? filters.transaction_type.filter(t => t !== typeValue)
+      : [...filters.transaction_type, typeValue]
 
     setFilters(prev => ({
       ...prev,
-      selectedTypes: newTypes
+      transaction_type: newTypes
     }))
 
-    const filterParams = prepareFilters({
+    onFilterChange({
       ...filters,
-      selectedTypes: newTypes
+      transaction_type: newTypes
     })
-    onFilterChange(filterParams)
   }
 
   const handleClearTypes = () => {
     const allTypes = TRANSACTION_TYPES.map(t => t.value)
     const newFilters = {
       ...filters,
-      selectedTypes: allTypes
+      transaction_type: allTypes
     }
     setFilters(newFilters)
-    const filterParams = prepareFilters(newFilters)
-    onFilterChange(filterParams)
+    onFilterChange(newFilters)
   }
 
-  // Функция подготовки фильтров
   const prepareFilters = (filters) => {
-    const filterParams = {
-      status: filters.status !== 'ALL' ? filters.status : '',
-      owner: filters.owner,
-      gas_min: filters.gas_min || '',
-      gas_max: filters.gas_max || '',
-      transaction_type: filters.selectedTypes
-    }
+    const filterParams = { ...filters }
 
     // Удаляем пустые значения
     Object.keys(filterParams).forEach(key => {
@@ -162,8 +153,8 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
           <Button
             key={value}
             size="sm"
-            variant={filters.selectedTypes.includes(value) ? 'solid' : 'outline'}
-            colorScheme={filters.selectedTypes.includes(value) ? 'blue' : 'gray'}
+            variant={filters.transaction_type.includes(value) ? 'solid' : 'outline'}
+            colorScheme={filters.transaction_type.includes(value) ? 'blue' : 'gray'}
             onClick={() => handleTypesChange(value)}
           >
             {label}
