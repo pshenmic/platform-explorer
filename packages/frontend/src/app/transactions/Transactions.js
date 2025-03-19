@@ -21,13 +21,16 @@ const paginateConfig = {
 
 function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? parseInt(defaultPage) - 1 : 0)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
   const [total, setTotal] = useState(0)
   const [transactions, setTransactions] = useState({ data: [], loading: true, error: null })
   const [filters, setFilters] = useState({
     status: 'ALL',
     type: 'all',
-    timeRange: 'all'
+    timeRange: 'all',
+    owner: '',
+    gas_min: '',
+    gas_max: ''
   })
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
@@ -35,52 +38,25 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const searchParams = useSearchParams()
   const isMobile = useBreakpointValue({ base: true, md: false })
 
-  const fetchData = async () => {
-    try {
-      const filterParams = new URLSearchParams()
-
-      if (filters.status && filters.status !== 'ALL') {
-        filterParams.append('status', filters.status)
-      }
-
-      if (filters.type && filters.type !== 'all') {
-        filterParams.append('transaction_type', filters.type)
-      }
-
-      const response = await Api.getTransactions({
-        page: Math.max(1, currentPage + 1),
-        count: Math.max(1, pageSize),
-        ...Object.fromEntries(filterParams)
-      })
-
-      setTotal(response.pagination.total)
-      setTransactions(response.resultSet)
-    } catch (error) {
-      console.error('Error fetching transactions:', error)
-      setTotal(0)
-      setTransactions([])
-    }
-  }
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
         setTransactions(prev => ({ ...prev, loading: true, error: null }))
-        const filterParams = new URLSearchParams()
-
-        if (filters.status && filters.status !== 'ALL') {
-          filterParams.append('status', filters.status)
-        }
-
-        if (filters.type && filters.type !== 'all') {
-          filterParams.append('transaction_type', filters.type)
+        
+        const filterParams = {
+          status: filters.status !== 'ALL' ? filters.status : '',
+          transaction_type: filters.type !== 'all' ? filters.type : '',
+          owner: filters.owner,
+          gas_min: filters.gas_min,
+          gas_max: filters.gas_max
         }
 
         const response = await Api.getTransactions(
           Math.max(1, currentPage + 1),
           Math.max(1, pageSize),
           'desc',
-          filterParams.toString()
+          filterParams
         )
 
         setTotal(response.pagination.total)
@@ -141,7 +117,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
             <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
           </Box>
 
-          <TransactionsFilter onFilterChange={handleFilterChange} isMobile={isMobile} />
+          <TransactionsFilter defaultFilters={filters} onFilterChange={handleFilterChange} isMobile={isMobile} />
 
           {!transactions.error
             ? !transactions.loading
