@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Box, Button, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, useDisclosure, Select, Text, HStack } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
 import './TransactionsFilter.scss'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
+import { useFilters } from '../../hooks/useFilters'
 
 const DRAWER_HEIGHT = '50vh'
 // const DRAG_THRESHOLD = 50
@@ -37,7 +38,14 @@ const TIME_RANGES = [
 export default function TransactionsFilter ({ defaultFilters, onFilterChange, isMobile }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
-  const [filters, setFilters] = useState({
+
+  const {
+    filters,
+    setFilters,
+    handleFilterChange: baseHandleFilterChange,
+    handleMultipleValuesChange: baseHandleMultipleValuesChange,
+    handleSelectAll
+  } = useFilters({
     status: defaultFilters.status || 'ALL',
     transaction_type: defaultFilters.type
       ? [parseInt(defaultFilters.type)].filter(t => !isNaN(t))
@@ -61,53 +69,22 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
   }, [api])
 
   const handleFilterChange = (filterName, value) => {
-    const newFilters = {
-      ...filters,
-      [filterName]: value
-    }
-    setFilters(newFilters)
-    const filterParams = prepareFilters(newFilters)
-    onFilterChange(filterParams)
-  }
-
-  const handleMultipleValuesChange = (fieldName, value) => {
-    const currentValues = filters[fieldName]
-    const newValues = currentValues.includes(value)
-      ? currentValues.filter(v => v !== value)
-      : [...currentValues, value]
-
-    setFilters(prev => ({
-      ...prev,
-      [fieldName]: newValues
-    }))
-
-    onFilterChange({
-      ...filters,
-      [fieldName]: newValues
-    })
-  }
-
-  const handleClearTypes = () => {
-    const allTypes = TRANSACTION_TYPES.map(t => t.value)
-    const newFilters = {
-      ...filters,
-      transaction_type: allTypes
-    }
+    const newFilters = baseHandleFilterChange(filterName, value)
     setFilters(newFilters)
     onFilterChange(newFilters)
   }
 
-  const prepareFilters = (filters) => {
-    const filterParams = { ...filters }
+  const handleMultipleValuesChange = (fieldName, value) => {
+    const newFilters = baseHandleMultipleValuesChange(fieldName, value)
+    setFilters(newFilters)
+    onFilterChange(newFilters)
+  }
 
-    // Удаляем пустые значения
-    Object.keys(filterParams).forEach(key => {
-      if (filterParams[key] === '') {
-        delete filterParams[key]
-      }
-    })
-
-    return filterParams
+  const handleClearTypes = () => {
+    const allTypes = TRANSACTION_TYPES.map(t => t.value)
+    const newFilters = handleSelectAll('transaction_type', allTypes)
+    setFilters(newFilters)
+    onFilterChange(newFilters)
   }
 
   const FilterButton = ({ children, isActive, onClick }) => (
