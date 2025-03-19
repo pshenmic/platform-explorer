@@ -70,19 +70,20 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
     onFilterChange(filterParams)
   }
 
-  const handleTypesChange = (typeValue) => {
-    const newTypes = filters.transaction_type.includes(typeValue)
-      ? filters.transaction_type.filter(t => t !== typeValue)
-      : [...filters.transaction_type, typeValue]
+  const handleMultipleValuesChange = (fieldName, value) => {
+    const currentValues = filters[fieldName]
+    const newValues = currentValues.includes(value)
+      ? currentValues.filter(v => v !== value)
+      : [...currentValues, value]
 
     setFilters(prev => ({
       ...prev,
-      transaction_type: newTypes
+      [fieldName]: newValues
     }))
 
     onFilterChange({
       ...filters,
-      transaction_type: newTypes
+      [fieldName]: newValues
     })
   }
 
@@ -155,7 +156,7 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
             size="sm"
             variant={filters.transaction_type.includes(value) ? 'solid' : 'outline'}
             colorScheme={filters.transaction_type.includes(value) ? 'blue' : 'gray'}
-            onClick={() => handleTypesChange(value)}
+            onClick={() => handleMultipleValuesChange('transaction_type', value)}
           >
             {label}
           </Button>
