@@ -21,24 +21,21 @@ const paginateConfig = {
 
 function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? parseInt(defaultPage) - 1 : 0)
-  const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
+  const [pageSize, setPageSize] = useState(defaultPageSize ?? null ? defaultPageSize : paginateConfig.pageSize.default)
   const [total, setTotal] = useState(0)
   const [transactions, setTransactions] = useState({ data: [], loading: true, error: null })
   const [filters, setFilters] = useState({
     status: 'ALL',
-    type: 'all',
-    timeRange: 'all',
     owner: '',
     gas_min: '',
     gas_max: '',
-    selectedTypes: []
+    selected_types: []
   })
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isMobile = useBreakpointValue({ base: true, md: false })
-
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -49,8 +46,10 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
           Math.max(1, currentPage + 1),
           Math.max(1, pageSize),
           'desc',
-          filters // теперь фильтры уже готовы к использованию
+          filters
         )
+
+        // console.log('response.pagination', response.pagination)
 
         setTotal(response.pagination.total)
         setTransactions({ data: response.resultSet, loading: false, error: null })
@@ -90,7 +89,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
   }
 
   const handlePageChange = (newPage) => {
-    setCurrentPage(Math.max(0, newPage))
+    setCurrentPage(Math.max(0, newPage?.selected))
   }
 
   const handlePageSizeChange = (newSize) => {

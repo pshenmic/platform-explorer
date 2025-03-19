@@ -38,7 +38,6 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
   const [filters, setFilters] = useState({
-    timeRange: defaultFilters.timeRange || 'all',
     status: defaultFilters.status || 'ALL',
     selectedTypes: defaultFilters.type
       ? [parseInt(defaultFilters.type)].filter(t => !isNaN(t))
