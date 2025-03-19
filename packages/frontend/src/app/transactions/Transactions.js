@@ -30,7 +30,8 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
     timeRange: 'all',
     owner: '',
     gas_min: '',
-    gas_max: ''
+    gas_max: '',
+    selectedTypes: []
   })
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
@@ -43,20 +44,12 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
     const fetchTransactions = async () => {
       try {
         setTransactions(prev => ({ ...prev, loading: true, error: null }))
-        
-        const filterParams = {
-          status: filters.status !== 'ALL' ? filters.status : '',
-          transaction_type: filters.type !== 'all' ? filters.type : '',
-          owner: filters.owner,
-          gas_min: filters.gas_min,
-          gas_max: filters.gas_max
-        }
 
         const response = await Api.getTransactions(
           Math.max(1, currentPage + 1),
           Math.max(1, pageSize),
           'desc',
-          filterParams
+          filters // теперь фильтры уже готовы к использованию
         )
 
         setTotal(response.pagination.total)
