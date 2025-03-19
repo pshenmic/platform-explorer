@@ -144,14 +144,6 @@ function DocumentTotalCard ({ document, rate, className }) {
 
         <InfoLine
           className={'DocumentTotalCard__InfoLine'}
-          title={'Identity Contract Nonce'}
-          value={document.data?.nonce}
-          loading={document.loading}
-          error={document.error || document.data?.nonce === undefined}
-        />
-
-        <InfoLine
-          className={'DocumentTotalCard__InfoLine'}
           title={'Deleted'}
           value={<Badge colorScheme={document.data?.deleted ? 'red' : 'green'}>{document.data?.deleted ? 'True' : 'False'}</Badge>}
           loading={document.loading}
