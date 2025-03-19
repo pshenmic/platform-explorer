@@ -71,3 +71,21 @@
     }
   }
 }
+
+.TransactionsFilter__Input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--chakra-colors-gray-200);
+  border-radius: var(--chakra-radii-md);
+  font-size: var(--chakra-fontSizes-md);
+
+  &:focus {
+    outline: none;
+    border-color: var(--chakra-colors-blue-500);
+    box-shadow: 0 0 0 1px var(--chakra-colors-blue-500);
+  }
+
+  &[type="number"] {
+    width: 120px;
+  }
+}

@@ -5,7 +5,7 @@ import { useDrag } from '@use-gesture/react'
 import './TransactionsFilter.scss'
 
 const DRAWER_HEIGHT = '50vh'
-const DRAG_THRESHOLD = 50
+// const DRAG_THRESHOLD = 50
 
 const TRANSACTION_TYPES = [
   'all',
@@ -34,13 +34,16 @@ const TIME_RANGES = [
   'year'
 ]
 
-export default function TransactionsFilter({ onFilterChange, isMobile }) {
+export default function TransactionsFilter ({ defaultFilters, onFilterChange, isMobile }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
   const [filters, setFilters] = useState({
-    timeRange: 'all',
-    status: 'ALL',
-    type: 'all'
+    timeRange: defaultFilters.timeRange || 'all',
+    status: defaultFilters.status || 'ALL',
+    type: defaultFilters.type || 'all',
+    owner: defaultFilters.owner || '',
+    gas_min: defaultFilters.gas_min || '',
+    gas_max: defaultFilters.gas_max || ''
   })
 
   const bind = useDrag(({ movement: [unused1, moveY], direction: [unused2, dirY], velocity: [unused3, velY] }) => {
@@ -116,6 +119,45 @@ export default function TransactionsFilter({ onFilterChange, isMobile }) {
         value={filters.timeRange}
         onChange={(value) => handleFilterChange('timeRange', value)}
       />
+
+      <Box mb={4}>
+        <Text mb={2} fontWeight="bold">Identity Identifier</Text>
+        <input
+          type="text"
+          value={filters.owner}
+          onChange={(e) => handleFilterChange('owner', e.target.value)}
+          placeholder="Enter identity identifier"
+          className="TransactionsFilter__Input"
+        />
+      </Box>
+
+      <Box mb={4}>
+        <Text mb={2} fontWeight="bold">Gas Range</Text>
+        <HStack spacing={4}>
+          <Box>
+            <Text fontSize="sm">Min</Text>
+            <input
+              type="number"
+              value={filters.gas_min}
+              onChange={(e) => handleFilterChange('gas_min', e.target.value)}
+              placeholder="Min gas"
+              className="TransactionsFilter__Input"
+              min="0"
+            />
+          </Box>
+          <Box>
+            <Text fontSize="sm">Max</Text>
+            <input
+              type="number"
+              value={filters.gas_max}
+              onChange={(e) => handleFilterChange('gas_max', e.target.value)}
+              placeholder="Max gas"
+              className="TransactionsFilter__Input"
+              min="0"
+            />
+          </Box>
+        </HStack>
+      </Box>
 
       <Select
         value={filters.status}
