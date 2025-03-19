@@ -1,4 +1,3 @@
-use std::env;
 use base64::Engine;
 use base64::engine::general_purpose;
 use data_contracts::SystemDataContract;
@@ -6,7 +5,7 @@ use dpp::dashcore::Transaction;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
-use dpp::prelude::{AssetLockProof, Revision};
+use dpp::prelude::{Revision};
 use dpp::state_transition::identity_create_transition::accessors::IdentityCreateTransitionAccessorsV0;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_update_transition::accessors::IdentityUpdateTransitionAccessorsV0;
@@ -16,7 +15,6 @@ use crate::entities::validator::Validator;
 
 #[derive(Clone)]
 pub struct Identity {
-    pub id: Option<u32>,
     pub identifier: Identifier,
     pub owner: Identifier,
     pub revision: Revision,
@@ -24,17 +22,20 @@ pub struct Identity {
     pub is_system: bool,
 }
 
-impl Identity {
-    pub fn from_create(state_transition: IdentityCreateTransition, transaction: Transaction) -> Self {
+impl From<(IdentityCreateTransition, Transaction)> for Identity {
+    fn from((state_transition, transaction): (IdentityCreateTransition, Transaction)) -> Self {
         let asset_lock = state_transition.asset_lock_proof().clone();
         let asset_lock_output_index = asset_lock.output_index();
 
-        let outpoint = transaction.output.iter().nth(asset_lock_output_index as usize).expect("Could not find outpoint by index").clone();
+        let outpoint = transaction.output
+          .iter()
+          .nth(asset_lock_output_index as usize)
+          .expect("Could not find outpoint by index. Try to set asset lock output index")
+          .clone();
 
         let credits = outpoint.value * 1000;
 
         Identity {
-            id: None,
             identifier: state_transition.identity_id(),
             owner: state_transition.owner_id(),
             balance: Some(credits),
@@ -51,7 +52,6 @@ impl From<IdentityUpdateTransition> for Identity {
         let revision = state_transition.revision();
 
         Identity {
-            id: None,
             identifier,
             owner,
             balance: None,
@@ -69,7 +69,6 @@ impl From<SystemDataContract> for Identity {
         let owner = Identifier::from(source.owner_id_bytes);
 
         Identity {
-            id: None,
             identifier,
             owner,
             revision: 0,
@@ -81,14 +80,12 @@ impl From<SystemDataContract> for Identity {
 
 impl From<Row> for Identity {
     fn from(row: Row) -> Self {
-        let id: i32 = row.get(0);
         let owner: String = row.get(1);
         let identifier: String = row.get(2);
         let revision: i32 = row.get(3);
         let is_system: bool = row.get(4);
 
         Identity {
-            id: Some(id as u32),
             owner: Identifier::from_string(&owner.trim(), Base58).unwrap(),
             revision: Revision::from(revision as u64),
             identifier: Identifier::from_string(&identifier.trim(), Base58).unwrap(),
@@ -106,7 +103,6 @@ impl From<Validator> for Identity {
         let is_system: bool = false;
 
         Identity {
-            id: None,
             owner: identifier,
             revision,
             identifier,

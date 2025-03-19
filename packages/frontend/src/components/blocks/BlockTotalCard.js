@@ -25,7 +25,7 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
             value={
               <Identifier
                 copyButton={true}
-                styles={['highlight-both', `size-${blockData?.appHash?.length}`]}
+                styles={['highlight-both']}
                 ellipsis={false}
               >
                 {block?.data?.header?.hash}
@@ -64,10 +64,7 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
           className={'BlockTotalCard__InfoLine BlockTotalCard__InfoLine--AppHash'}
           title={'App Hash'}
           value={
-            <Identifier
-              styles={['highlight-both', `size-${blockData?.appHash?.length}`]}
-              ellipsis={false}
-            >
+            <Identifier styles={['highlight-both']} ellipsis={false}>
               {blockData?.appHash}
             </Identifier>
           }
@@ -79,10 +76,7 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
           className={'BlockTotalCard__InfoLine BlockTotalCard__InfoLine--QuorumHash'}
           title={'Quorum Hash'}
           value={
-            <Identifier
-              styles={['highlight-both', `size-${block?.data?.quorum?.quorumHash?.length}`]}
-              ellipsis={false}
-            >
+            <Identifier styles={['highlight-both']} ellipsis={false}>
               {block?.data?.quorum?.quorumHash}
             </Identifier>
           }

@@ -4,7 +4,9 @@ Platform Explorer HTTP API allow you to query and see platform blockchain data p
 
 API is still under ongoing development, so refer to this page or repo documentation for the most up-to-date latest specification.
 
-Production (testnet) live URL is [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
+Production (mainnet) live URL is [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
+
+Testnet live URL is [https://testnet.platform-explorer.pshenmic.dev](https://testnet.platform-explorer.pshenmic.dev)
 
 Reference:
 
@@ -2253,6 +2255,11 @@ Response codes:
 ___
 ### Broadcast Transaction
 Send Transaction for Broadcast
+
+* `base64` optional field. State transition buffer in base64
+* `hex` optional field. State transition buffer in hex
+* You must pass `hex` or `base64`
+
 ```
 POST /transaction/broadcast
 BODY:

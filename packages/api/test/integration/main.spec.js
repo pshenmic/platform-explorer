@@ -266,7 +266,7 @@ describe('Other routes', () => {
         }
       }
 
-      assert.deepEqual({ transaction: expectedTransaction }, body)
+      assert.deepEqual({ transactions: [expectedTransaction] }, body)
     })
 
     it('should search block by height', async () => {
@@ -394,7 +394,7 @@ describe('Other routes', () => {
         nonce: '2'
       }
 
-      assert.deepEqual({ document: expectedDataContract }, body)
+      assert.deepEqual({ documents: [expectedDataContract] }, body)
     })
 
     it('should search by identity DPNS', async () => {

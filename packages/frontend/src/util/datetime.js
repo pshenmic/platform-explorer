@@ -15,7 +15,7 @@ const getDynamicRange = (duration) => {
 }
 
 function getTimeDelta (startDate, endDate, format) {
-  if (!startDate || !endDate) return 'n/a'
+  if (!startDate || !endDate || isNaN(new Date(startDate)) || isNaN(new Date(endDate))) return 'n/a'
 
   const diff = new Date(endDate) - new Date(startDate)
   const isFuture = diff > 0

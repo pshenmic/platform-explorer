@@ -1,6 +1,5 @@
-const { Identifier } = require('dash').PlatformProtocol
-
 const { IdentityPublicKey } = require('@dashevo/wasm-dpp/dist/wasm/wasm_dpp')
+const { Identifier } = require('@dashevo/wasm-dpp')
 
 class DAPI {
   dapi

@@ -1,132 +1,69 @@
 import { useState, useEffect } from 'react'
-import ModalWindow from '../modalWindow'
 import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
-import { SearchIcon } from '@chakra-ui/icons'
-import { useRouter } from 'next/navigation'
-import {
-  ResponseErrorNotFound,
-  ResponseErrorTimeout,
-  ResponseErrorInternalServer
-} from '../../util/Errors'
+import { SearchIcon } from '../ui/icons'
+import { useDebounce } from '../../hooks'
 import './GlobalSearchInput.scss'
 
-function GlobalSearchInput () {
-  const [showModal, setShowModal] = useState(false)
-  const [modalText, setModalText] = useState('false')
-  const router = useRouter()
+function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
   const [searchQuery, setSearchQuery] = useState('')
+  const debouncedQuery = useDebounce(searchQuery, 200)
 
-  useEffect(() => {
-    let timer
-    if (showModal) {
-      timer = setTimeout(() => {
-        setShowModal(false)
-        setModalText('')
-      }, 6000)
+  const search = (query) => {
+    if (query?.length === 0) {
+      onResultChange({ data: {}, loading: false, error: false })
+      return
     }
-    return () => clearTimeout(timer)
-  }, [showModal])
 
-  const showModalWindow = (text, timeout) => {
-    setShowModal(true)
-    setModalText(text)
+    onResultChange({ data: {}, loading: true, error: false })
 
-    if (timeout) {
-      setTimeout(() => {
-        setShowModal(false)
-        setModalText('')
-      }, timeout)
-    }
+    Api.search(query)
+      .then(res => onResultChange({ data: res, loading: false, error: false }))
+      .catch(err => onResultChange({ data: err, loading: false, error: true }))
   }
 
-  const searchRedirect = (url) => {
-    setSearchQuery('')
-    router.push(url)
-  }
+  useEffect(() => search(debouncedQuery), [debouncedQuery])
 
-  const search = async () => {
-    try {
-      const searchResult = await Api.search(searchQuery)
-
-      const searchTypeMap = {
-        block: `/block/${searchResult?.block?.header?.hash}`,
-        transaction: `/transaction/${searchResult?.transaction?.hash}`,
-        dataContract: `/dataContract/${searchResult?.dataContract?.identifier}`,
-        dataContracts: `/dataContract/${searchResult?.dataContracts?.[0].identifier}`,
-        document: `/document/${searchResult?.document?.identifier}`,
-        identity: `/identity/${searchResult?.identity?.identifier}`,
-        identities: `/identity/${searchResult?.identities?.[0].identifier}`,
-        validator: `/validator/${searchResult?.validator?.proTxHash}`
-      }
-
-      for (const key in searchTypeMap) {
-        if (searchResult[key]) {
-          searchRedirect(searchTypeMap[key])
-          return
-        }
-      }
-
-      showModalWindow('Not found', 6000)
-    } catch (e) {
-      console.error(e)
-
-      const errorMessage = (() => {
-        if (e instanceof ResponseErrorNotFound ||
-            e instanceof ResponseErrorTimeout ||
-            e instanceof ResponseErrorInternalServer) {
-          return e.message
-        }
-        return 'Request error'
-      })()
-
-      showModalWindow(errorMessage)
-    }
-  }
+  useEffect(() => setSearchQuery(forceValue), [forceValue])
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      search()
+      search(searchQuery)
     }
   }
 
   const handleSearchInput = (event) => {
     setSearchQuery(event.target.value)
+    if (typeof onChange === 'function') onChange(event.target.value)
   }
 
   return (
     <div>
       <InputGroup size={'md'} className={'GlobalSearchInput'}>
-          <Input
-            pr={'4.5rem'}
-            value={searchQuery}
-            type={'text'}
-            placeholder={'Search...'}
-            onChange={handleSearchInput}
-            onKeyPress={handleKeyPress}
-            color={'gray.250'}
-            fontSize={'12px'}
-            className={'GlobalSearchInput__Field'}
-          />
+        <Input
+          pr={'4.5rem'}
+          value={searchQuery}
+          type={'text'}
+          placeholder={'Search...'}
+          onChange={handleSearchInput}
+          onKeyPress={handleKeyPress}
+          color={'gray.250'}
+          fontSize={'0.75rem'}
+          className={'GlobalSearchInput__Field'}
+        />
           <InputRightElement>
             <Button
               h={'28px'}
-              w={'28px !important'}
+              w={'28px'}
               minW={'none'}
-              size={'sm'}
-              onClick={search}
+              size={'xxs'}
+              onClick={() => search(searchQuery)}
               className={'GlobalSearchInput__Button'}
             >
-              <SearchIcon color={'whiteAlpha.900'}/>
+              <SearchIcon w={'14px'} color={'whiteAlpha.900'}/>
             </Button>
-        </InputRightElement>
+          </InputRightElement>
       </InputGroup>
-
-      <ModalWindow
-        open={showModal}
-        text={modalText}
-        setShowModal={setShowModal}
-      />
     </div>
   )
 }

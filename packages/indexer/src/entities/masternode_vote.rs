@@ -1,4 +1,3 @@
-use std::env;
 use dashcore_rpc::json::ProTxInfo;
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Hex;
@@ -12,9 +11,7 @@ use dpp::voting::votes::Vote;
 
 #[derive(Clone)]
 pub struct MasternodeVote {
-    pub id: Option<u32>,
     pub power: i16,
-    pub identifier: Identifier,
     pub pro_tx_hash: String,
     pub voter_identity: Identifier,
     pub choice: ResourceVoteChoice,
@@ -35,18 +32,17 @@ struct VoteInfo {
 }
 
 
-impl MasternodeVote {
-    pub fn from(transition: MasternodeVoteTransition, pro_tx_info: ProTxInfo) -> Self {
-        let identifier = transition.vote().vote_poll_unique_id().unwrap();
+impl From<(MasternodeVoteTransition, ProTxInfo)> for MasternodeVote {
+    fn from((transition, pro_tx_info): (MasternodeVoteTransition, ProTxInfo)) -> Self {
         let pro_tx_hash = transition.pro_tx_hash().to_string(Hex);
         let voter_identity = transition.voter_identity_id();
+
+        let vote = transition.vote();
 
         let power = match pro_tx_info.mn_type.unwrap().as_str() {
             "Evo" => 4i16,
             _ => 1i16
         };
-
-        let vote = transition.vote();
 
         let vote_info: VoteInfo = match vote {
             Vote::ResourceVote(resource_vote) => {
@@ -74,10 +70,8 @@ impl MasternodeVote {
             ResourceVoteChoice::Lock => None
         };
 
-        return MasternodeVote {
-            id: None,
+        MasternodeVote {
             power,
-            identifier,
             pro_tx_hash,
             voter_identity,
             choice: vote_info.choice,
