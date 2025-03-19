@@ -109,7 +109,11 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
             <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
           </Box>
 
-          <TransactionsFilter defaultFilters={filters} onFilterChange={handleFilterChange} isMobile={isMobile} />
+          <TransactionsFilter
+            defaultFilters={filters}
+            onFilterChange={handleFilterChange}
+            isMobile={isMobile}
+          />
 
           {!transactions.error
             ? !transactions.loading
