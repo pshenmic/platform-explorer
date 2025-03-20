@@ -143,21 +143,18 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
 
         <Drawer
           isOpen={isOpen}
-          placement={'bottom'}
+          placement="bottom"
           onClose={onClose}
           size="full"
           className="TransactionsFilter__Drawer"
+          motionPreset="slideInBottom"
         >
           <DrawerOverlay />
           <DrawerContent
+            className='TransactionsFilter__DrawerContent'
             borderTopRadius="20px"
             maxHeight={DRAWER_HEIGHT}
             {...bind()}
-            as={animated.div}
-            style={{
-              y,
-              touchAction: 'none'
-            }}
           >
             <DrawerHeader
               borderBottomWidth="1px"
