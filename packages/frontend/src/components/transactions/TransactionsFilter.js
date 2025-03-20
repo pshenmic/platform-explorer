@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react'
-import { Box, Button, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, useDisclosure, Select, Text, HStack } from '@chakra-ui/react'
+import { Box, Button, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, useDisclosure, Text, HStack } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
@@ -35,15 +35,15 @@ const defaultFilters = {
   gas_max: ''
 }
 
-const FilterButton = ({ children, isActive, onClick }) => (
-  <Button
-    variant={isActive ? 'solid' : 'outline'}
-    colorScheme={isActive ? 'blue' : 'gray'}
-    onClick={onClick}
-  >
-    {children}
-  </Button>
-)
+// const FilterButton = ({ children, isActive, onClick }) => (
+//   <Button
+//     variant={isActive ? 'solid' : 'outline'}
+//     colorScheme={isActive ? 'blue' : 'gray'}
+//     onClick={onClick}
+//   >
+//     {children}
+//   </Button>
+// )
 
 // const FilterSection = ({ title, options, value, onChange }) => (
 //   <Box mb={4}>
@@ -68,7 +68,7 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
     onFilterChange(filters)
   }}>
 
-    <MultiSelectFilter 
+    <MultiSelectFilter
       title="Transaction Types"
       items={TRANSACTION_TYPES}
       selectedValues={filters.transaction_type}
@@ -76,7 +76,7 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
       onSelectAll={handleClearTypes}
     />
 
-    <MultiSelectFilter 
+    <MultiSelectFilter
       title="Status"
       items={STATUS_TYPES}
       selectedValues={filters.status}
@@ -229,7 +229,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
       className="TransactionsFilter"
       maxW={'100%'}
     >
-      <FilterContent 
+      <FilterContent
         filters={filters}
         handleFilterChange={handleFilterChange}
         handleMultipleValuesChange={handleMultipleValuesChange}
