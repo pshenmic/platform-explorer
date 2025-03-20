@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { Box, Button, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, useDisclosure, Text } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
@@ -8,7 +8,8 @@ import { MultiSelectFilter, InputFilter, RangeFilter } from '../filters'
 import './TransactionsFilter.scss'
 
 const DRAWER_HEIGHT = '50vh'
-// const DRAG_THRESHOLD = 50
+const FULL_HEIGHT = '90vh'
+const DRAG_THRESHOLD = 100
 
 const TRANSACTION_TYPES = [
   { label: 'DATA CONTRACT CREATE', value: StateTransitionEnum.DATA_CONTRACT_CREATE },
@@ -104,51 +105,56 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
   /** Mobile state */
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
+  const [isExpanded, setIsExpanded] = useState(false)
 
-  // Сбрасываем позицию при закрытии
   const handleClose = useCallback(() => {
-    api.start({ y: window.innerHeight }) // анимируем вниз
-    setTimeout(onClose, 200) // закрываем после анимации
+    api.start({ y: window.innerHeight })
+    setIsExpanded(false)
+    setTimeout(onClose, 200)
   }, [api, onClose])
 
-  // Сбрасываем позицию при открытии
   const handleOpen = useCallback(() => {
     api.start({ y: 0 })
+    setIsExpanded(false)
     onOpen()
   }, [api, onOpen])
 
   const bind = useDrag(
-    ({ down, movement: [_, my], velocity: [, vy] }) => {
-      // Закрываем если быстро свайпнули вниз или оттянули достаточно далеко
-      if (!down && (my > 100 || vy > 0.5)) {
+    ({ down, movement: [_, my], velocity: [, vy], direction: [, dy] }) => {
+      if (!down && dy < 0 && (Math.abs(my) > DRAG_THRESHOLD || vy > 0.5)) {
+        setIsExpanded(true)
+        api.start({ y: -window.innerHeight * 0.4 })
+        return
+      }
+
+      if (!down && dy > 0 && (my > DRAG_THRESHOLD || vy > 0.5)) {
         handleClose()
         return
       }
 
-      // Следуем за пальцем только при активном касании
       if (down) {
+        const newY = Math.max(-window.innerHeight * 0.4, my)
         api.start({
-          y: my,
+          y: newY,
           immediate: true
         })
       } else {
-        // Возвращаем на место если отпустили
-        api.start({ y: 0 })
+        api.start({
+          y: isExpanded ? -window.innerHeight * 0.4 : 0,
+          immediate: false
+        })
       }
     },
     {
       axis: 'y',
-      bounds: { top: 0 },
+      bounds: {
+        top: -window.innerHeight * 0.4,
+        bottom: window.innerHeight
+      },
       rubberband: true,
       enabled: isOpen
     }
   )
-
-  useEffect(() => {
-    return () => {
-      // Здесь можно добавить остановку анимации или других ресурсов, если они используются
-    }
-  }, [])
 
   const handleFilterChange = useCallback((filterName, value) => {
     const newFilters = baseHandleFilterChange(filterName, value)
@@ -190,8 +196,9 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
               zIndex: 1400,
               background: 'white',
               borderTopRadius: '20px',
-              maxHeight: DRAWER_HEIGHT,
-              transform: y.to(value => `translateY(${value}px)`)
+              maxHeight: isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT,
+              transform: y.to(value => `translateY(${value}px)`),
+              transition: 'max-height 0.2s ease-out'
             }}
           >
             <Box
