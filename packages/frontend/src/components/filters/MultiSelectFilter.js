@@ -10,8 +10,6 @@ export const MultiSelectFilter = ({
   itemValueKey = 'value',
   showSelectAll = true
 }) => {
-  console.log('selectedValues', selectedValues)
-
   return (
     <Box mb={6}>
         <Box
