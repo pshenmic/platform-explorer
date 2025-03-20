@@ -7,7 +7,7 @@ export const useFilters = (defaultFilters = {}) => {
   const handleFilterChange = (filterName, value) => {
     const newFilters = {
       ...filters,
-      [filterName]: value
+      [filterName]: value ?? ''
     }
     return prepareFilters(newFilters)
   }
