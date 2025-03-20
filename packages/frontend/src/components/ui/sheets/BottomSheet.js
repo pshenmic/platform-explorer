@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Box, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, Text, useOutsideClick } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
+import './BottomSheet.scss'
 
 const DRAWER_HEIGHT = '50vh'
 const FULL_HEIGHT = '90vh'
@@ -84,21 +85,20 @@ export const BottomSheet = ({
   return (
     <Drawer
       isOpen={isOpen}
-      placement="bottom"
+      placement={'bottom'}
       onClose={handleClose}
-      size="full"
-      className="TransactionsFilter__Drawer"
+      size={'full'}
     >
       <DrawerOverlay />
       <animated.div
         ref={drawerRef}
+        className={'BottomSheet'}
         style={{
           position: 'fixed',
           bottom: 0,
           left: 0,
           right: 0,
           zIndex: 1400,
-          background: 'gray',
           borderTopRadius: '20px',
           maxHeight: isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT,
           transform: y.to(value => `translateY(${value}px)`),
@@ -114,11 +114,14 @@ export const BottomSheet = ({
             display="flex"
             alignItems="center"
             justifyContent="space-between"
-            cursor="grab"
+            cursor={'grab'}
+            className={'BottomSheet__DragHandle'}
           >
-            <div className="TransactionsFilter__DragHandle" />
-            <Text fontWeight="semibold">{title}</Text>
+            <div className={'BottomSheet__DragHandleLine'}/>
           </DrawerHeader>
+
+          <Text className={'BottomSheet__Title'}>{title}</Text>
+
           <DrawerBody>
             {children}
           </DrawerBody>

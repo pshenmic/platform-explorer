@@ -1,0 +1,46 @@
+@use '../../../styles/mixins';
+@import '../../../styles/variables';
+
+.BottomSheet {
+  background-color: var(--chakra-colors-gray-650);
+  border-radius: 1.25rem;
+
+  &__DragHandle {
+    border-bottom: none;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover & {
+        &Line {
+          background-color: var(--chakra-colors-gray-750);
+        }
+      }
+    }
+
+    &:active & {
+      &Line {
+        width: 5.8rem;
+        background-color: var(--chakra-colors-gray-800);
+      }
+    }
+  }
+
+  &__DragHandleLine {
+    max-width: 100%;
+    max-height: 20px;
+    width: 6rem;
+    height: 0.25rem;
+    background-color: var(--chakra-colors-gray-800);
+    border-radius: 0.125rem;
+    margin: 0 auto;
+    transition: .1s;
+  }
+
+  &__Title {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 100%;
+    text-align: center;
+    //letter-spacing: 0%;
+  }
+}
