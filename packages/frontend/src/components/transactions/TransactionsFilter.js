@@ -49,8 +49,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     filters,
     setFilters,
     handleFilterChange: baseHandleFilterChange,
-    handleMultipleValuesChange: baseHandleMultipleValuesChange,
-    handleSelectAll
+    handleMultipleValuesChange: baseHandleMultipleValuesChange
   } = useFilters({
     status: initialFilters.status || defaultFilters.status,
     transaction_type: initialFilters.transaction_type || defaultFilters.transaction_type,
@@ -88,7 +87,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
 
   const handleClearTypes = () => {
     const allTypes = TRANSACTION_TYPES.map(t => t.value)
-    const newFilters = handleSelectAll('transaction_type', allTypes)
+    const newFilters = baseHandleFilterChange('transaction_type', allTypes)
     setFilters(newFilters)
   }
 
