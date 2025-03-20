@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react'
-import { Box, Button, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, useDisclosure, Text } from '@chakra-ui/react'
+import { useCallback, useState, useRef } from 'react'
+import { Box, Button, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, useDisclosure, Text, useOutsideClick } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
@@ -106,6 +106,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
   const [isExpanded, setIsExpanded] = useState(false)
+  const drawerRef = useRef(null)
 
   const handleClose = useCallback(() => {
     api.start({ y: window.innerHeight })
@@ -118,6 +119,11 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     setIsExpanded(false)
     onOpen()
   }, [api, onOpen])
+
+  useOutsideClick({
+    ref: drawerRef,
+    handler: () => isOpen && handleClose()
+  })
 
   const bind = useDrag(
     ({ down, movement: [_, my], velocity: [, vy], direction: [, dy] }) => {
@@ -188,6 +194,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
         >
           <DrawerOverlay />
           <animated.div
+            ref={drawerRef}
             style={{
               position: 'fixed',
               bottom: 0,
