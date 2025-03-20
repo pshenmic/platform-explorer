@@ -424,13 +424,16 @@ describe('Transaction routes', () => {
     it('should return default set of transactions with timestamp', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transaction_type=0&gas_min=246&gas_max=1107&timestamp_start=2025-03-20T01:12:41.323Z&timestamp_end=2025-03-20T01:35:41.323Z`)
+      const endTimestamp = transactions[0].block.timestamp.toISOString()
+      const startTimestamp = transactions[100].block.timestamp.toISOString()
+
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transaction_type=0&gas_min=246&gas_max=1107&timestamp_start=${startTimestamp}&timestamp_end=${endTimestamp}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const txsWithType = transactions
         .filter(transaction => transaction.transaction.type === 0)
-        .filter(transaction => transaction.block.timestamp.getTime() >= new Date('2025-03-20T01:12:41.323Z').getTime() && transaction.block.timestamp.getTime() <= new Date('2025-03-20T01:35:41.323Z').getTime())
+        .filter(transaction => transaction.block.timestamp.getTime() >= new Date(startTimestamp).getTime() && transaction.block.timestamp.getTime() <= new Date(endTimestamp).getTime())
         .filter(transaction => transaction.transaction.gas_used <= 1107 && transaction.transaction.gas_used >= 246)
 
       assert.equal(body.resultSet.length, 10)
