@@ -66,7 +66,7 @@ describe('Transaction routes', () => {
       const transaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
         data: '{}',
-        type: StateTransitionEnum.DATA_CONTRACT_CREATE,
+        type: StateTransitionEnum.DATA_CONTRACT_UPDATE,
         owner: identity.identifier,
         gas_used: i * 123
       })
@@ -85,7 +85,8 @@ describe('Transaction routes', () => {
           data: '{}',
           type: StateTransitionEnum.DATA_CONTRACT_CREATE,
           owner: identity.identifier,
-          index: j
+          index: j,
+          gas_used: j * 123
         })
 
         transactions.push({ transaction, block })
@@ -300,12 +301,14 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      const txsWithType = transactions.filter(transaction => transaction.transaction.type === 0 || transaction.transaction.type === 8)
+
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.total, txsWithType.length)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
-      const expectedTransactions = transactions
+      const expectedTransactions = txsWithType
         .filter(transaction => transaction.transaction.owner === owner)
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
@@ -341,12 +344,14 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      const txsWithType = transactions.filter(transaction => transaction.transaction.type === 1)
+
       assert.equal(body.resultSet.length, 1)
-      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.total, txsWithType.length)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
-      const expectedTransactions = transactions
+      const expectedTransactions = txsWithType
         .filter(transaction => transaction.transaction.status === 'FAIL')
         .map(transaction => ({
           blockHash: transaction.block.hash,
@@ -380,13 +385,61 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.resultSet.length, 8)
-      assert.equal(body.pagination.total, transactions.length)
+      const txsWithType = transactions
+        .filter(transaction => transaction.transaction.type === 0)
+        .filter(transaction => transaction.transaction.gas_used <= 1107 && transaction.transaction.gas_used >= 246)
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, txsWithType.length)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
-      const expectedTransactions = transactions
+      const expectedTransactions = txsWithType
+        .slice(0, 10)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return default set of transactions with timestamp', async () => {
+      const owner = transactions[0].transaction.owner
+
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transaction_type=0&gas_min=246&gas_max=1107&timestamp_start=2025-03-20T01:12:41.323Z&timestamp_end=2025-03-20T01:35:41.323Z`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const txsWithType = transactions
+        .filter(transaction => transaction.transaction.type === 0)
+        .filter(transaction => transaction.block.timestamp.getTime() >= new Date('2025-03-20T01:12:41.323Z').getTime() && transaction.block.timestamp.getTime() <= new Date('2025-03-20T01:35:41.323Z').getTime())
         .filter(transaction => transaction.transaction.gas_used <= 1107 && transaction.transaction.gas_used >= 246)
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, txsWithType.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedTransactions = txsWithType
+        .slice(0, 10)
         .map(transaction => ({
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,

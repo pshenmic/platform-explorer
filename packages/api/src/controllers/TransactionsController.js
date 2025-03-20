@@ -29,28 +29,35 @@ class TransactionsController {
       page = 1, limit = 10,
       order = 'asc', owner,
       status = 'ALL',
-      // eslint-disable-next-line camelcase
-      gas_min, gas_max, transaction_type
+      gas_min: gasMin, gas_max: gasMax,
+      transaction_type: transactionType,
+      timestamp_start: timestampStart,
+      timestamp_end: timestampEnd
     } = request.query
 
     if (order !== 'asc' && order !== 'desc') {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
     }
 
-    // eslint-disable-next-line camelcase
-    if (transaction_type?.length === 0 && transaction_type) {
+    if (transactionType?.length === 0 && transactionType) {
       return response.status(400).send({ message: 'invalid filters values' })
+    }
+
+    if (!timestampStart !== !timestampEnd) {
+      return response.status(400).send({ message: 'you must use timestamp_start and timestamp_end' })
     }
 
     const transactions = await this.transactionsDAO.getTransactions(
       Number(page ?? 1),
       Number(limit ?? 10),
       order,
-      transaction_type,
+      transactionType,
       owner,
       status,
-      gas_min,
-      gas_max
+      gasMin,
+      gasMax,
+      timestampStart,
+      timestampEnd
     )
 
     response.send(transactions)

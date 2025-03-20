@@ -617,7 +617,8 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `transaction_type` number of tx type. Can be set multiple times
 * `gas_min` number of min `gas_used`
 * `gas_max` number of max `gas_used`
-
+* `timestamp_start` must be used with `timestamp_end`
+* `timestamp_end` must be used with `timestamp_start`
 ```
 GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
 
