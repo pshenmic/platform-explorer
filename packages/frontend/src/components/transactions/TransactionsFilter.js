@@ -159,24 +159,24 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
               touchAction: 'none'
             }}
           >
-            <DrawerHeader 
-              borderBottomWidth="1px" 
-              display="flex" 
+            <DrawerHeader
+              borderBottomWidth="1px"
+              display="flex"
               alignItems="center"
               justifyContent="space-between"
             >
               <div className="TransactionsFilter__DragHandle" />
               <Text fontWeight="semibold">Filters</Text>
               <Button
-                variant="ghost" 
-                size="sm" 
+                variant="ghost"
+                size="sm"
                 onClick={onClose}
               >
                 Done
               </Button>
             </DrawerHeader>
             <DrawerBody>
-              <FilterContent 
+              <FilterContent
                 filters={filters}
                 handleFilterChange={handleFilterChange}
                 handleMultipleValuesChange={handleMultipleValuesChange}
