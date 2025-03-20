@@ -7,6 +7,7 @@
       background-color: var(--chakra-colors-gray-800);
       border-top-left-radius: 20px;
       border-top-right-radius: 20px;
+      margin-top: auto;
     }
 
     .chakra-modal__header {
@@ -22,11 +23,11 @@
   }
 
   &__DragHandle {
-    width: 40px;
+    width: 36px;
     height: 4px;
-    background-color: var(--chakra-colors-gray-600);
+    background-color: var(--chakra-colors-gray-200);
     border-radius: 2px;
-    margin: 0 auto 12px;
+    margin: 0 auto;
   }
 
   &__Section {

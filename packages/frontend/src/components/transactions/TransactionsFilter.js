@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react'
-import { Box, Button, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, useDisclosure, Text } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
@@ -143,7 +143,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
 
         <Drawer
           isOpen={isOpen}
-          placement="bottom"
+          placement={'bottom'}
           onClose={onClose}
           size="full"
           className="TransactionsFilter__Drawer"
@@ -159,12 +159,33 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
               touchAction: 'none'
             }}
           >
-            <DrawerHeader borderBottomWidth="1px">
+            <DrawerHeader 
+              borderBottomWidth="1px" 
+              display="flex" 
+              alignItems="center"
+              justifyContent="space-between"
+            >
               <div className="TransactionsFilter__DragHandle" />
-              Filters
+              <Text fontWeight="semibold">Filters</Text>
+              <Button
+                variant="ghost" 
+                size="sm" 
+                onClick={onClose}
+              >
+                Done
+              </Button>
             </DrawerHeader>
             <DrawerBody>
-              <FilterContent />
+              <FilterContent 
+                filters={filters}
+                handleFilterChange={handleFilterChange}
+                handleMultipleValuesChange={handleMultipleValuesChange}
+                handleClearTypes={handleClearTypes}
+                onFilterChange={(newFilters) => {
+                  onFilterChange(newFilters)
+                  onClose() // закрываем drawer после применения фильтров
+                }}
+              />
             </DrawerBody>
           </DrawerContent>
         </Drawer>
