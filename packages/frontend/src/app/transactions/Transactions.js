@@ -29,7 +29,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
     owner: '',
     gas_min: '',
     gas_max: '',
-    selected_types: []
+    transaction_type: []
   })
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
@@ -110,7 +110,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
           </Box>
 
           <TransactionsFilter
-            defaultFilters={filters}
+            initialFilters={filters}
             onFilterChange={handleFilterChange}
             isMobile={isMobile}
           />

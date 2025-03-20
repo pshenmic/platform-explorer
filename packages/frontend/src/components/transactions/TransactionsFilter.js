@@ -35,10 +35,16 @@ const TIME_RANGES = [
   'year'
 ]
 
-export default function TransactionsFilter ({ defaultFilters, onFilterChange, isMobile }) {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [{ y }, api] = useSpring(() => ({ y: 0 }))
+const defaultFilters = {
+  status: '',
+  transaction_type: [],
+  owner: '',
+  gas_min: '',
+  gas_max: ''
+}
 
+export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile }) {
+  /** Filter state */
   const {
     filters,
     setFilters,
@@ -46,14 +52,16 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
     handleMultipleValuesChange: baseHandleMultipleValuesChange,
     handleSelectAll
   } = useFilters({
-    status: defaultFilters.status || 'ALL',
-    transaction_type: defaultFilters.type
-      ? [parseInt(defaultFilters.type)].filter(t => !isNaN(t))
-      : TRANSACTION_TYPES.map(t => t.value),
-    owner: defaultFilters.owner || '',
-    gas_min: defaultFilters.gas_min || '',
-    gas_max: defaultFilters.gas_max || ''
+    status: initialFilters.status || defaultFilters.status,
+    transaction_type: initialFilters.transaction_type || defaultFilters.transaction_type,
+    owner: initialFilters.owner || defaultFilters.owner,
+    gas_min: initialFilters.gas_min || defaultFilters.gas_min,
+    gas_max: initialFilters.gas_max || defaultFilters.gas_max
   })
+
+  /** Mobile state */
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [{ y }, api] = useSpring(() => ({ y: 0 }))
 
   const bind = useDrag(({ movement: [unused1, moveY], direction: [unused2, dirY], velocity: [unused3, velY] }) => {
     const open = moveY > 0
@@ -112,7 +120,7 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
   )
 
   const TypesFilterSection = () => (
-    <Box mb={4}>
+    <div>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Text fontWeight="bold">Transaction Types</Text>
         <Button
@@ -123,6 +131,7 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
           Select All
         </Button>
       </Box>
+
       <Box display="flex" flexWrap="wrap" gap={2}>
         {TRANSACTION_TYPES.map(({ label, value }) => (
           <Button
@@ -136,7 +145,7 @@ export default function TransactionsFilter ({ defaultFilters, onFilterChange, is
           </Button>
         ))}
       </Box>
-    </Box>
+    </div>
   )
 
   const FilterContent = () => (
