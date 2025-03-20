@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Box, Button, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, useDisclosure, Text } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
