@@ -1,15 +1,18 @@
-import { useCallback, useState, useRef } from 'react'
-import { Box, Button, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, useDisclosure, Text, useOutsideClick } from '@chakra-ui/react'
-import { useSpring, animated } from 'react-spring'
-import { useDrag } from '@use-gesture/react'
+// import { useCallback, useState, useRef } from 'react'
+import { useCallback } from 'react'
+// import { Box, Button, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, useDisclosure, Text, useOutsideClick } from '@chakra-ui/react'
+import { Box, Button, useDisclosure } from '@chakra-ui/react'
+// import { useSpring, animated } from 'react-spring'
+// import { useDrag } from '@use-gesture/react'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
 import { useFilters } from '../../hooks/useFilters'
 import { MultiSelectFilter, InputFilter, RangeFilter } from '../filters'
+import { BottomSheet } from '../ui/sheets'
 import './TransactionsFilter.scss'
 
-const DRAWER_HEIGHT = '50vh'
-const FULL_HEIGHT = '90vh'
-const DRAG_THRESHOLD = 100
+// const DRAWER_HEIGHT = '50vh'
+// const FULL_HEIGHT = '90vh'
+// const DRAG_THRESHOLD = 100
 
 const TRANSACTION_TYPES = [
   { label: 'DATA CONTRACT CREATE', value: StateTransitionEnum.DATA_CONTRACT_CREATE },
@@ -104,63 +107,65 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
 
   /** Mobile state */
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [{ y }, api] = useSpring(() => ({ y: 0 }))
-  const [isExpanded, setIsExpanded] = useState(false)
-  const drawerRef = useRef(null)
+  // const [{ y }, api] = useSpring(() => ({ y: 0 }))
+  // const [isExpanded, setIsExpanded] = useState(false)
+  // const drawerRef = useRef(null)
 
   const handleClose = useCallback(() => {
-    api.start({ y: window.innerHeight })
-    setIsExpanded(false)
+    // api.start({ y: window.innerHeight })
+    // setIsExpanded(false)
     setTimeout(onClose, 200)
-  }, [api, onClose])
+  // }, [api, onClose])
+  }, [onClose])
 
   const handleOpen = useCallback(() => {
-    api.start({ y: 0 })
-    setIsExpanded(false)
+    // api.start({ y: 0 })
+    // setIsExpanded(false)
     onOpen()
-  }, [api, onOpen])
+  // }, [api, onOpen])
+  }, [onOpen])
 
-  useOutsideClick({
-    ref: drawerRef,
-    handler: () => isOpen && handleClose()
-  })
+  // useOutsideClick({
+  //   ref: drawerRef,
+  //   handler: () => isOpen && handleClose()
+  // })
 
-  const bind = useDrag(
-    ({ down, movement: [_, my], velocity: [, vy], direction: [, dy] }) => {
-      if (!down && dy < 0 && (Math.abs(my) > DRAG_THRESHOLD || vy > 0.5)) {
-        setIsExpanded(true)
-        api.start({ y: 0 })
-        return
-      }
-
-      if (!down && dy > 0 && (my > DRAG_THRESHOLD || vy > 0.5)) {
-        handleClose()
-        return
-      }
-
-      if (down) {
-        const newY = Math.max(-window.innerHeight * 0.4, my)
-        api.start({
-          y: newY,
-          immediate: true
-        })
-      } else {
-        api.start({
-          y: 0,
-          immediate: false
-        })
-      }
-    },
-    {
-      axis: 'y',
-      bounds: {
-        top: -window.innerHeight * 0.4,
-        bottom: window.innerHeight
-      },
-      rubberband: true,
-      enabled: isOpen
-    }
-  )
+  // const bind = useDrag(
+  //   ({ down, movement: [_, my], velocity: [, vy], direction: [, dy] }) => {
+  //     if (!down && dy < 0 && (Math.abs(my) > DRAG_THRESHOLD || vy > 0.5)) {
+  //       setIsExpanded(true)
+  //       api.start({ y: 0 })
+  //       return
+  //     }
+  //
+  //     if (!down && dy > 0 && (my > DRAG_THRESHOLD || vy > 0.5)) {
+  //       handleClose()
+  //       return
+  //     }
+  //
+  //     if (down) {
+  //       const newY = Math.max(-window.innerHeight * 0.4, my)
+  //       api.start({
+  //         y: newY,
+  //         immediate: true
+  //       })
+  //     } else {
+  //       api.start({
+  //         y: 0,
+  //         immediate: false
+  //       })
+  //     }
+  //   },
+  //   {
+  //     axis: 'y',
+  //     bounds: {
+  //       top: -window.innerHeight * 0.4,
+  //       bottom: window.innerHeight
+  //     },
+  //     rubberband: true,
+  //     enabled: isOpen
+  //   }
+  // )
 
   const handleFilterChange = useCallback((filterName, value) => {
     const newFilters = baseHandleFilterChange(filterName, value)
@@ -185,65 +190,84 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
           Filter
         </Button>
 
-        <Drawer
+        <BottomSheet
           isOpen={isOpen}
-          placement="bottom"
-          onClose={handleClose}
-          size="full"
-          className="TransactionsFilter__Drawer"
+          onClose={onClose}
+          onOpen={onOpen}
+          title={'Filters'}
         >
-          <DrawerOverlay />
-          <animated.div
-            ref={drawerRef}
-            style={{
-              position: 'fixed',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              zIndex: 1400,
-              background: 'gray',
-              borderTopRadius: '20px',
-              maxHeight: isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT,
-              transform: y.to(value => `translateY(${value}px)`),
-              transition: 'max-height 0.2s ease-out'
+          <FilterContent
+            filters={filters}
+            handleFilterChange={handleFilterChange}
+            handleMultipleValuesChange={handleMultipleValuesChange}
+            handleClearTypes={handleClearTypes}
+            onFilterChange={(newFilters) => {
+              onFilterChange(newFilters)
+              handleClose()
             }}
-          >
-            <Box
-              {...bind()}
-              style={{ touchAction: 'none' }}
-            >
-              <DrawerHeader
-                borderBottomWidth="1px"
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-                cursor="grab"
-              >
-                <div className="TransactionsFilter__DragHandle" />
-                <Text fontWeight="semibold">Filters</Text>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleClose}
-                >
-                  Done
-                </Button>
-              </DrawerHeader>
-              <DrawerBody>
-                <FilterContent
-                  filters={filters}
-                  handleFilterChange={handleFilterChange}
-                  handleMultipleValuesChange={handleMultipleValuesChange}
-                  handleClearTypes={handleClearTypes}
-                  onFilterChange={(newFilters) => {
-                    onFilterChange(newFilters)
-                    handleClose()
-                  }}
-                />
-              </DrawerBody>
-            </Box>
-          </animated.div>
-        </Drawer>
+          />
+        </BottomSheet>
+
+        {/* <Drawer */}
+        {/*  isOpen={isOpen} */}
+        {/*  placement="bottom" */}
+        {/*  onClose={handleClose} */}
+        {/*  size="full" */}
+        {/*  className="TransactionsFilter__Drawer" */}
+        {/* > */}
+        {/*  <DrawerOverlay /> */}
+        {/*  <animated.div */}
+        {/*    ref={drawerRef} */}
+        {/*    style={{ */}
+        {/*      position: 'fixed', */}
+        {/*      bottom: 0, */}
+        {/*      left: 0, */}
+        {/*      right: 0, */}
+        {/*      zIndex: 1400, */}
+        {/*      background: 'gray', */}
+        {/*      borderTopRadius: '20px', */}
+        {/*      maxHeight: isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT, */}
+        {/*      transform: y.to(value => `translateY(${value}px)`), */}
+        {/*      transition: 'max-height 0.2s ease-out' */}
+        {/*    }} */}
+        {/*  > */}
+        {/*    <Box */}
+        {/*      {...bind()} */}
+        {/*      style={{ touchAction: 'none' }} */}
+        {/*    > */}
+        {/*      <DrawerHeader */}
+        {/*        borderBottomWidth="1px" */}
+        {/*        display="flex" */}
+        {/*        alignItems="center" */}
+        {/*        justifyContent="space-between" */}
+        {/*        cursor="grab" */}
+        {/*      > */}
+        {/*        <div className="TransactionsFilter__DragHandle" /> */}
+        {/*        <Text fontWeight="semibold">Filters</Text> */}
+        {/*        <Button */}
+        {/*          variant="ghost" */}
+        {/*          size="sm" */}
+        {/*          onClick={handleClose} */}
+        {/*        > */}
+        {/*          Done */}
+        {/*        </Button> */}
+        {/*      </DrawerHeader> */}
+        {/*      <DrawerBody> */}
+        {/*        <FilterContent */}
+        {/*          filters={filters} */}
+        {/*          handleFilterChange={handleFilterChange} */}
+        {/*          handleMultipleValuesChange={handleMultipleValuesChange} */}
+        {/*          handleClearTypes={handleClearTypes} */}
+        {/*          onFilterChange={(newFilters) => { */}
+        {/*            onFilterChange(newFilters) */}
+        {/*            handleClose() */}
+        {/*          }} */}
+        {/*        /> */}
+        {/*      </DrawerBody> */}
+        {/*    </Box> */}
+        {/*  </animated.div> */}
+        {/* </Drawer> */}
+
       </>
     )
   }
