@@ -183,6 +183,44 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     setFilters(newFilters)
   }, [baseHandleFilterChange, setFilters])
 
+  if (isMobile) {
+    return (
+      <>
+        <Button onClick={onOpen} variant="outline" size="sm">
+          Filter
+        </Button>
+
+        <Drawer
+          isOpen={isOpen}
+          placement="bottom"
+          onClose={onClose}
+          size="full"
+          className="TransactionsFilter__Drawer"
+        >
+          <DrawerOverlay />
+          <DrawerContent
+            borderTopRadius="20px"
+            maxHeight={DRAWER_HEIGHT}
+            {...bind()}
+            as={animated.div}
+            style={{
+              y,
+              touchAction: 'none'
+            }}
+          >
+            <DrawerHeader borderBottomWidth="1px">
+              <div className="TransactionsFilter__DragHandle" />
+              Filters
+            </DrawerHeader>
+            <DrawerBody>
+              <FilterContent />
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      </>
+    )
+  }
+
   return (
     <Box
       p={4}
