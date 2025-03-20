@@ -1,10 +1,10 @@
 import { useEffect, useCallback } from 'react'
-import { Box, Button, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, useDisclosure, Text, HStack } from '@chakra-ui/react'
+import { Box, Button, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, useDisclosure } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
 import { useFilters } from '../../hooks/useFilters'
-import { MultiSelectFilter } from '../filters'
+import { MultiSelectFilter, InputFilter, RangeFilter } from '../filters'
 import './TransactionsFilter.scss'
 
 const DRAWER_HEIGHT = '50vh'
@@ -35,39 +35,11 @@ const defaultFilters = {
   gas_max: ''
 }
 
-// const FilterButton = ({ children, isActive, onClick }) => (
-//   <Button
-//     variant={isActive ? 'solid' : 'outline'}
-//     colorScheme={isActive ? 'blue' : 'gray'}
-//     onClick={onClick}
-//   >
-//     {children}
-//   </Button>
-// )
-
-// const FilterSection = ({ title, options, value, onChange }) => (
-//   <Box mb={4}>
-//     <Text mb={2} fontWeight="bold">{title}</Text>
-//     <HStack flexWrap={'wrap'} spacing={2}>
-//       {options.map(option => (
-//         <FilterButton
-//           key={option}
-//           isActive={value === option}
-//           onClick={() => onChange(option)}
-//         >
-//           {option === 'all' ? 'All' : option}
-//         </FilterButton>
-//       ))}
-//     </HStack>
-//   </Box>
-// )
-
 const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange, handleClearTypes, onFilterChange }) => (
   <form onSubmit={(e) => {
     e.preventDefault()
     onFilterChange(filters)
   }}>
-
     <MultiSelectFilter
       title="Transaction Types"
       items={TRANSACTION_TYPES}
@@ -82,47 +54,26 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
       selectedValues={filters.status}
       onItemClick={(value) => handleMultipleValuesChange('status', value)}
       onSelectAll={() => handleFilterChange('status', STATUS_TYPES.map(s => s.value))}
-      // showSelectAll={true}
+      showSelectAll={true}
     />
 
-    <Box mb={4}>
-      <Text mb={2} fontWeight="bold">Owner id</Text>
-      <input
-        type="text"
-        value={filters.owner || ''}
-        onChange={(e) => handleFilterChange('owner', e.target.value)}
-        placeholder="Enter identity identifier"
-        className="TransactionsFilter__Input"
-      />
-    </Box>
+    <InputFilter
+      title="Identity Identifier"
+      value={filters.owner}
+      onChange={(value) => handleFilterChange('owner', value)}
+      placeholder="Enter identity identifier"
+    />
 
-    <Box mb={4}>
-      <Text mb={2} fontWeight="bold">Gas Range</Text>
-      <HStack spacing={4}>
-        <Box>
-          <Text fontSize="sm">Min</Text>
-          <input
-            type="number"
-            value={filters.gas_min || ''}
-            onChange={(e) => handleFilterChange('gas_min', e.target.value)}
-            placeholder="Min gas"
-            className="TransactionsFilter__Input"
-            min="0"
-          />
-        </Box>
-        <Box>
-          <Text fontSize="sm">Max</Text>
-          <input
-            type="number"
-            value={filters.gas_max || ''}
-            onChange={(e) => handleFilterChange('gas_max', e.target.value)}
-            placeholder="Max gas"
-            className="TransactionsFilter__Input"
-            min="0"
-          />
-        </Box>
-      </HStack>
-    </Box>
+    <RangeFilter
+      title="Gas Range"
+      minValue={filters.gas_min}
+      maxValue={filters.gas_max}
+      onMinChange={(value) => handleFilterChange('gas_min', value)}
+      onMaxChange={(value) => handleFilterChange('gas_max', value)}
+      type="number"
+      minPlaceholder="Min gas"
+      maxPlaceholder="Max gas"
+    />
 
     <Button
       mt={4}
