@@ -23,13 +23,12 @@ const TRANSACTION_TYPES = [
 ]
 
 const STATUS_TYPES = [
-  'ALL',
-  'SUCCESS',
-  'FAIL'
+  { label: 'Success', value: 'SUCCESS' },
+  { label: 'Failed', value: 'FAIL' }
 ]
 
 const defaultFilters = {
-  status: 'ALL',
+  status: [],
   transaction_type: [],
   owner: '',
   gas_min: '',
@@ -46,22 +45,22 @@ const FilterButton = ({ children, isActive, onClick }) => (
   </Button>
 )
 
-const FilterSection = ({ title, options, value, onChange }) => (
-  <Box mb={4}>
-    <Text mb={2} fontWeight="bold">{title}</Text>
-    <HStack flexWrap={'wrap'} spacing={2}>
-      {options.map(option => (
-        <FilterButton
-          key={option}
-          isActive={value === option}
-          onClick={() => onChange(option)}
-        >
-          {option === 'all' ? 'All' : option}
-        </FilterButton>
-      ))}
-    </HStack>
-  </Box>
-)
+// const FilterSection = ({ title, options, value, onChange }) => (
+//   <Box mb={4}>
+//     <Text mb={2} fontWeight="bold">{title}</Text>
+//     <HStack flexWrap={'wrap'} spacing={2}>
+//       {options.map(option => (
+//         <FilterButton
+//           key={option}
+//           isActive={value === option}
+//           onClick={() => onChange(option)}
+//         >
+//           {option === 'all' ? 'All' : option}
+//         </FilterButton>
+//       ))}
+//     </HStack>
+//   </Box>
+// )
 
 const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange, handleClearTypes, onFilterChange }) => (
   <form onSubmit={(e) => {
@@ -77,11 +76,13 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
       onSelectAll={handleClearTypes}
     />
 
-    <FilterSection
+    <MultiSelectFilter 
       title="Status"
-      options={STATUS_TYPES}
-      value={filters.status}
-      onChange={(value) => handleFilterChange('status', value)}
+      items={STATUS_TYPES}
+      selectedValues={filters.status}
+      onItemClick={(value) => handleMultipleValuesChange('status', value)}
+      onSelectAll={() => handleFilterChange('status', STATUS_TYPES.map(s => s.value))}
+      // showSelectAll={true}
     />
 
     <Box mb={4}>
@@ -122,19 +123,6 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
         </Box>
       </HStack>
     </Box>
-
-    <Select
-      value={filters.status}
-      onChange={(e) => handleFilterChange('status', e.target.value)}
-      placeholder="Select status"
-      className="TransactionsFilter__Select"
-    >
-      {STATUS_TYPES.map(status => (
-        <option key={status} value={status}>
-          {status === 'ALL' ? 'All' : status}
-        </option>
-      ))}
-    </Select>
 
     <Button
       mt={4}
@@ -195,44 +183,6 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     setFilters(newFilters)
   }, [baseHandleFilterChange, setFilters])
 
-  if (isMobile) {
-    return (
-      <>
-        <Button onClick={onOpen} variant="outline" size="sm">
-          Filter
-        </Button>
-
-        <Drawer
-          isOpen={isOpen}
-          placement="bottom"
-          onClose={onClose}
-          size="full"
-          className="TransactionsFilter__Drawer"
-        >
-          <DrawerOverlay />
-          <DrawerContent
-            borderTopRadius="20px"
-            maxHeight={DRAWER_HEIGHT}
-            {...bind()}
-            as={animated.div}
-            style={{
-              y,
-              touchAction: 'none'
-            }}
-          >
-            <DrawerHeader borderBottomWidth="1px">
-              <div className="TransactionsFilter__DragHandle" />
-              Filters
-            </DrawerHeader>
-            <DrawerBody>
-              <FilterContent />
-            </DrawerBody>
-          </DrawerContent>
-        </Drawer>
-      </>
-    )
-  }
-
   return (
     <Box
       p={4}
@@ -241,7 +191,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
       className="TransactionsFilter"
       maxW={'100%'}
     >
-      <FilterContent
+      <FilterContent 
         filters={filters}
         handleFilterChange={handleFilterChange}
         handleMultipleValuesChange={handleMultipleValuesChange}

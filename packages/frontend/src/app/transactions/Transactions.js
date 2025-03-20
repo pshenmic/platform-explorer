@@ -25,7 +25,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const [total, setTotal] = useState(0)
   const [transactions, setTransactions] = useState({ data: [], loading: true, error: null })
   const [filters, setFilters] = useState({
-    status: 'ALL',
+    status: [],
     owner: '',
     gas_min: '',
     gas_max: '',
