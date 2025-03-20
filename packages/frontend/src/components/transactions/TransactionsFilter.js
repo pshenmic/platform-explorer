@@ -123,7 +123,8 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     ({ down, movement: [_, my], velocity: [, vy], direction: [, dy] }) => {
       if (!down && dy < 0 && (Math.abs(my) > DRAG_THRESHOLD || vy > 0.5)) {
         setIsExpanded(true)
-        api.start({ y: -window.innerHeight * 0.4 })
+        // api.start({ y: -window.innerHeight * 0.4 })
+        api.start({ y: 0 })
         return
       }
 
@@ -194,7 +195,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
               left: 0,
               right: 0,
               zIndex: 1400,
-              background: 'white',
+              background: 'gray',
               borderTopRadius: '20px',
               maxHeight: isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT,
               transform: y.to(value => `translateY(${value}px)`),
