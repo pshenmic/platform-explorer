@@ -3,6 +3,7 @@ import { useState } from 'react'
 export const useFilters = (defaultFilters = {}) => {
   const [filters, setFilters] = useState(defaultFilters)
 
+  /** Delete single fields */
   const handleFilterChange = (filterName, value) => {
     const newFilters = {
       ...filters,
@@ -11,6 +12,7 @@ export const useFilters = (defaultFilters = {}) => {
     return prepareFilters(newFilters)
   }
 
+  /** Edit array type filters */
   const handleMultipleValuesChange = (fieldName, value) => {
     const currentValues = filters[fieldName]
     const newValues = currentValues.includes(value)
@@ -23,24 +25,17 @@ export const useFilters = (defaultFilters = {}) => {
     })
   }
 
-  const handleSelectAll = (fieldName, allValues) => {
-    return prepareFilters({
-      ...filters,
-      [fieldName]: allValues
-    })
-  }
-
+  /** Delete empty fields */
   const prepareFilters = (filters) => {
-    const filterParams = { ...filters }
+    const preparedFilters = { ...filters }
 
-    // Удаляем пустые значения
-    Object.keys(filterParams).forEach(key => {
-      if (filterParams[key] === '') {
-        delete filterParams[key]
+    Object.keys(preparedFilters).forEach(key => {
+      if (preparedFilters[key] === '' || preparedFilters[key] === undefined) {
+        delete preparedFilters[key]
       }
     })
 
-    return filterParams
+    return preparedFilters
   }
 
   return {
@@ -48,7 +43,6 @@ export const useFilters = (defaultFilters = {}) => {
     setFilters,
     handleFilterChange,
     handleMultipleValuesChange,
-    handleSelectAll,
     prepareFilters
   }
 }
