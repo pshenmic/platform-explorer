@@ -43,7 +43,7 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
     onClose()
   }}>
     <MultiSelectFilter
-      title="Transaction Types"
+      title='Transaction Types'
       items={TRANSACTION_TYPES}
       selectedValues={filters.transaction_type}
       onItemClick={(value) => handleMultipleValuesChange('transaction_type', value)}
@@ -51,7 +51,7 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
     />
 
     <MultiSelectFilter
-      title="Status"
+      title='Status'
       items={STATUS_TYPES}
       selectedValues={filters.status}
       onItemClick={(value) => handleMultipleValuesChange('status', value)}
@@ -60,28 +60,28 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
     />
 
     <InputFilter
-      title="Identity Identifier"
+      title='Identity Identifier'
       value={filters.owner}
       onChange={(value) => handleFilterChange('owner', value)}
-      placeholder="Enter identity identifier"
+      placeholder='Enter identity identifier'
     />
 
     <RangeFilter
-      title="Gas Range"
+      title='Gas Range'
       minValue={filters.gas_min}
       maxValue={filters.gas_max}
       onMinChange={(value) => handleFilterChange('gas_min', value)}
       onMaxChange={(value) => handleFilterChange('gas_max', value)}
-      type="number"
-      minPlaceholder="Min gas"
-      maxPlaceholder="Max gas"
+      type='number'
+      minPlaceholder='Min gas'
+      maxPlaceholder='Max gas'
     />
 
     <Button
       mt={4}
-      colorScheme="blue"
-      width="100%"
-      type="submit"
+      colorScheme='blue'
+      width='100%'
+      type='submit'
     >
       Apply Filters
     </Button>
@@ -270,9 +270,9 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
       : isOpen &&
           <Box
             p={4}
-            borderWidth="1px"
-            borderRadius="lg"
-            className="TransactionsFilter"
+            borderWidth='1px'
+            borderRadius='lg'
+            className='TransactionsFilter'
             maxW={'100%'}
           >
             <FilterContent
