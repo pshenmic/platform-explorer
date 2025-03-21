@@ -7,13 +7,15 @@ export const RangeFilter = ({
   onMaxChange,
   type = 'number',
   minPlaceholder = 'Min',
-  maxPlaceholder = 'Max'
+  minTitle = 'From',
+  maxPlaceholder = 'Max',
+  maxTitle = 'To'
 }) => (
   <Box mb={6}>
     <SimpleGrid columns={2} spacing={4}>
       <Box>
         <Text fontSize="xs" color="gray.600" mb={1}>
-          From
+          {minTitle}
         </Text>
         <Input
           type={type}
@@ -24,7 +26,7 @@ export const RangeFilter = ({
       </Box>
       <Box>
         <Text fontSize="xs" color="gray.600" mb={1}>
-          To
+          {maxTitle}
         </Text>
         <Input
           type={type}

@@ -76,9 +76,11 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
         maxValue={filters.gas_max}
         onMinChange={(value) => handleFilterChange('gas_min', value)}
         onMaxChange={(value) => handleFilterChange('gas_max', value)}
-      type='number'
-        minPlaceholder='Min gas'
-        maxPlaceholder='Max gas'
+        type={'number'}
+        minTitle={'Minimum amount'}
+        minPlaceholder={'ex. 0...'}
+        maxTitle={'Maximum amount'}
+        maxPlaceholder={'ex. 10000000...'}
       />
     </FilterGroup>
 
