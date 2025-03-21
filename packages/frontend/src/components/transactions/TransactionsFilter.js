@@ -4,6 +4,7 @@ import { StateTransitionEnum } from '../../enums/state.transition.type'
 import { useFilters } from '../../hooks/useFilters'
 import { MultiSelectFilter, InputFilter, RangeFilter } from '../filters'
 import { BottomSheet } from '../ui/sheets'
+import { ChevronIcon } from '../ui/icons'
 import './TransactionsFilter.scss'
 
 const TRANSACTION_TYPES = [
@@ -127,8 +128,12 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
   if (isMobile) {
     return (
       <>
-        <Button onClick={handleOpen} variant={'brand'} size={'sm'}>
-          Add Filter
+        <Button className={'TransactionsFilter__OpenButton'} onClick={handleOpen} variant={'brand'} size={'sm'}>
+          <span>Add Filter</span>
+          <ChevronIcon css={{
+            transition: '.1s',
+            transform: isOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
+          }}/>
         </Button>
 
         <BottomSheet
