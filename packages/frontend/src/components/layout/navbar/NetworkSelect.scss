@@ -1,9 +1,12 @@
+@import '../../../styles/variables.scss';
+
 .NetworkSelect {
   position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
-  
+  font-family: $font-heading;
+
   &__Title {
     font-weight: 400;
     font-size: 0.75rem;
@@ -13,16 +16,21 @@
   &__Button {
     position: relative;
     padding: 6px 12px;
-    background-color: var(--chakra-colors-brand-deep);
+    background-color: var(--chakra-colors-brand-normal);
     border-radius: 10px;
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 0.75rem;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.025rem;
     display: flex;
     align-items: center;
     gap: 10px;
     z-index: 11;
+    transition: $transition-time-def;
+
+    &:hover {
+      background-color: var(--chakra-colors-brand-light);
+    }
 
     &--Arrow {
       color: var(--chakra-colors-white-50);
