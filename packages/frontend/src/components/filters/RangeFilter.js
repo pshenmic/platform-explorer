@@ -20,12 +20,6 @@ export const RangeFilter = ({
           value={minValue || ''}
           onChange={(e) => onMinChange(e.target.value)}
           placeholder={minPlaceholder}
-          size="sm"
-          borderRadius="md"
-          _focus={{
-            borderColor: 'blue.500',
-            boxShadow: '0 0 0 1px var(--chakra-colors-blue-500)'
-          }}
         />
       </Box>
       <Box>
@@ -37,12 +31,6 @@ export const RangeFilter = ({
           value={maxValue || ''}
           onChange={(e) => onMaxChange(e.target.value)}
           placeholder={maxPlaceholder}
-          size="sm"
-          borderRadius="md"
-          _focus={{
-            borderColor: 'blue.500',
-            boxShadow: '0 0 0 1px var(--chakra-colors-blue-500)'
-          }}
         />
       </Box>
     </SimpleGrid>
