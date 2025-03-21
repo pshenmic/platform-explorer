@@ -10,6 +10,7 @@ import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Container, Heading, Box, useBreakpointValue } from '@chakra-ui/react'
+import './Transactions.scss'
 
 const paginateConfig = {
   pageSize: {
@@ -113,6 +114,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
             initialFilters={filters}
             onFilterChange={handleFilterChange}
             isMobile={isMobile}
+            className={'Transactions__Filters'}
           />
 
           {!transactions.error
