@@ -1,7 +1,6 @@
 import { Box, Text, SimpleGrid, Input } from '@chakra-ui/react'
 
 export const RangeFilter = ({
-  title,
   minValue,
   maxValue,
   onMinChange,
@@ -11,17 +10,6 @@ export const RangeFilter = ({
   maxPlaceholder = 'Max'
 }) => (
   <Box mb={6}>
-    <Box
-      borderBottom='1px solid'
-      borderColor='gray.200'
-      pb={2}
-      mb={3}
-    >
-      <Text fontWeight='semibold' fontSize='sm' color='gray.600'>
-        {title}
-      </Text>
-    </Box>
-
     <SimpleGrid columns={2} spacing={4}>
       <Box>
         <Text fontSize="xs" color="gray.600" mb={1}>
