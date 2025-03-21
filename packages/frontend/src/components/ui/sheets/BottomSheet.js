@@ -4,7 +4,7 @@ import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
 import './BottomSheet.scss'
 
-const DRAWER_HEIGHT = '50vh'
+const DRAWER_HEIGHT = '70vh'
 const FULL_HEIGHT = '90vh'
 const DRAG_THRESHOLD = 100
 
@@ -108,6 +108,7 @@ export const BottomSheet = ({
         <Box
           {...bind()}
           style={{ touchAction: 'none' }}
+          className={'BottomSheet__ContentContainer'}
         >
           <DrawerHeader
             borderBottomWidth="1px"
@@ -122,7 +123,7 @@ export const BottomSheet = ({
 
           <Text className={'BottomSheet__Title'}>{title}</Text>
 
-          <DrawerBody>
+          <DrawerBody className={'BottomSheet__Body'}>
             {children}
           </DrawerBody>
         </Box>
