@@ -5,25 +5,26 @@ import { useFilters } from '../../hooks/useFilters'
 import { MultiSelectFilter, InputFilter, RangeFilter } from '../filters'
 import { BottomSheet } from '../ui/sheets'
 import { ChevronIcon, CloseIcon } from '../ui/icons'
+import { TransactionStatusBadge, TypeBadge } from './index'
 import './TransactionsFilter.scss'
 
 /** Transaction types list */
 const TRANSACTION_TYPES = [
-  { label: 'DATA CONTRACT CREATE', value: StateTransitionEnum.DATA_CONTRACT_CREATE },
-  { label: 'DOCUMENTS BATCH', value: StateTransitionEnum.DOCUMENTS_BATCH },
-  { label: 'IDENTITY CREATE', value: StateTransitionEnum.IDENTITY_CREATE },
-  { label: 'IDENTITY TOP UP', value: StateTransitionEnum.IDENTITY_TOP_UP },
-  { label: 'DATA CONTRACT UPDATE', value: StateTransitionEnum.DATA_CONTRACT_UPDATE },
-  { label: 'IDENTITY UPDATE', value: StateTransitionEnum.IDENTITY_UPDATE },
-  { label: 'IDENTITY CREDIT WITHDRAWAL', value: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL },
-  { label: 'IDENTITY CREDIT TRANSFER', value: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER },
-  { label: 'MASTERNODE VOTE', value: StateTransitionEnum.MASTERNODE_VOTE }
+  { label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_CREATE} />, value: StateTransitionEnum.DATA_CONTRACT_CREATE },
+  { label: <TypeBadge typeId={StateTransitionEnum.DOCUMENTS_BATCH} />, value: StateTransitionEnum.DOCUMENTS_BATCH },
+  { label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREATE} />, value: StateTransitionEnum.IDENTITY_CREATE },
+  { label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_TOP_UP} />, value: StateTransitionEnum.IDENTITY_TOP_UP },
+  { label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_UPDATE} />, value: StateTransitionEnum.DATA_CONTRACT_UPDATE },
+  { label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_UPDATE} />, value: StateTransitionEnum.IDENTITY_UPDATE },
+  { label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL} />, value: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL },
+  { label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREDIT_TRANSFER} />, value: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER },
+  { label: <TypeBadge typeId={StateTransitionEnum.MASTERNODE_VOTE} />, value: StateTransitionEnum.MASTERNODE_VOTE }
 ]
 
 /** Status types list */
 const STATUS_TYPES = [
-  { label: 'Success', value: 'SUCCESS' },
-  { label: 'Failed', value: 'FAIL' }
+  { label: <TransactionStatusBadge status={'SUCCESS'}/>, value: 'SUCCESS' },
+  { label: <TransactionStatusBadge status={'FAIL'}/>, value: 'FAIL' }
 ]
 
 /** Default filter values */
@@ -35,7 +36,7 @@ const defaultFilters = {
   gas_max: ''
 }
 
-/** Filter form content component */
+/** Filter forms content component */
 const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange, handleClearTypes, onFilterChange, onClose }) => (
   <form onSubmit={(e) => {
     e.preventDefault()
@@ -267,23 +268,23 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
             onClose={onClose}
           />
         </BottomSheet>
-      : isOpen &&
-          <Box
-            p={4}
-            borderWidth='1px'
-            borderRadius='lg'
-            className='TransactionsFilter'
-            maxW={'100%'}
-          >
-            <FilterContent
-              filters={filters}
-              handleFilterChange={handleFilterChange}
-              handleMultipleValuesChange={handleMultipleValuesChange}
-              handleClearTypes={handleClearTypes}
-              onFilterChange={onFilterChange}
-              onClose={onClose}
-            />
-          </Box>
+      : !isOpen &&
+        <Box
+          p={4}
+          borderWidth='1px'
+          borderRadius='lg'
+          className='TransactionsFilter'
+          maxW={'100%'}
+        >
+          <FilterContent
+            filters={filters}
+            handleFilterChange={handleFilterChange}
+            handleMultipleValuesChange={handleMultipleValuesChange}
+            handleClearTypes={handleClearTypes}
+            onFilterChange={onFilterChange}
+            onClose={onClose}
+          />
+        </Box>
     }
   </>)
 }
