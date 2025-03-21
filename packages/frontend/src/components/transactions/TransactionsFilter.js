@@ -7,6 +7,7 @@ import { BottomSheet } from '../ui/sheets'
 import { ChevronIcon, CloseIcon } from '../ui/icons'
 import './TransactionsFilter.scss'
 
+/** Transaction types list */
 const TRANSACTION_TYPES = [
   { label: 'DATA CONTRACT CREATE', value: StateTransitionEnum.DATA_CONTRACT_CREATE },
   { label: 'DOCUMENTS BATCH', value: StateTransitionEnum.DOCUMENTS_BATCH },
@@ -19,11 +20,13 @@ const TRANSACTION_TYPES = [
   { label: 'MASTERNODE VOTE', value: StateTransitionEnum.MASTERNODE_VOTE }
 ]
 
+/** Status types list */
 const STATUS_TYPES = [
   { label: 'Success', value: 'SUCCESS' },
   { label: 'Failed', value: 'FAIL' }
 ]
 
+/** Default filter values */
 const defaultFilters = {
   status: STATUS_TYPES.map(s => s.value),
   transaction_type: TRANSACTION_TYPES.map(t => t.value),
@@ -32,6 +35,7 @@ const defaultFilters = {
   gas_max: ''
 }
 
+/** Filter form content component */
 const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange, handleClearTypes, onFilterChange, onClose }) => (
   <form onSubmit={(e) => {
     e.preventDefault()
@@ -84,7 +88,7 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
   </form>
 )
 
-// Добавим функцию для форматирования названий фильтров
+/** Get human readable filter label */
 const getFilterLabel = (filterName) => {
   switch (filterName) {
     case 'transaction_type':
@@ -101,9 +105,9 @@ const getFilterLabel = (filterName) => {
   }
 }
 
-// Компонент для отображения активных фильтров
+/** Active filters display component */
 const ActiveFilters = ({ filters, onClearFilter }) => {
-  // Проверяем, все ли значения выбраны
+  /** Check if all values are selected for a filter */
   const isAllSelected = (key, value) => {
     if (key === 'transaction_type') {
       return value.length === TRANSACTION_TYPES.length
@@ -114,18 +118,17 @@ const ActiveFilters = ({ filters, onClearFilter }) => {
     return false
   }
 
-  // Фильтруем активные фильтры
+  /** Filter out inactive and fully selected filters */
   const activeFilters = Object.entries(filters).filter(([key, value]) => {
     if (Array.isArray(value)) {
-      // Пропускаем если массив пустой или выбраны все значения
       return value.length > 0 && !isAllSelected(key, value)
     }
     return value !== '' && value !== undefined
   })
 
-  // Не показываем компонент, если нет активных фильтров
   if (activeFilters.length === 0) return null
 
+  /** Format filter value for display */
   const formatValue = (key, value) => {
     if (Array.isArray(value)) {
       if (value.length > 1) {
@@ -172,8 +175,9 @@ const ActiveFilters = ({ filters, onClearFilter }) => {
   )
 }
 
+/** Main transactions filter component */
 export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
-  /** Filter state */
+  /** Filter state initialization */
   const {
     filters,
     setFilters,
@@ -187,33 +191,34 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     gas_max: initialFilters?.gas_max ?? defaultFilters.gas_max
   })
 
-  /** Mobile state */
+  /** Mobile state management */
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  /** Handle mobile sheet close with delay */
   const handleClose = useCallback(() => {
     setTimeout(onClose, 200)
   }, [onClose])
 
-  // const handleOpen = useCallback(() => {
-  //   onOpen()
-  // }, [onOpen])
-
+  /** Handle single filter change */
   const handleFilterChange = useCallback((filterName, value) => {
     const newFilters = baseHandleFilterChange(filterName, value)
     setFilters(newFilters)
   }, [baseHandleFilterChange, setFilters])
 
+  /** Handle multiple values filter change */
   const handleMultipleValuesChange = useCallback((fieldName, value) => {
     const newFilters = baseHandleMultipleValuesChange(fieldName, value)
     setFilters(newFilters)
   }, [baseHandleMultipleValuesChange, setFilters])
 
+  /** Handle select all transaction types */
   const handleClearTypes = useCallback(() => {
     const allTypes = TRANSACTION_TYPES.map(t => t.value)
     const newFilters = baseHandleFilterChange('transaction_type', allTypes)
     setFilters(newFilters)
   }, [baseHandleFilterChange, setFilters])
 
+  /** Handle filter clear */
   const handleClearFilter = useCallback((filterName) => {
     const newFilters = baseHandleFilterChange(filterName,
       Array.isArray(filters[filterName]) ? [] : ''
@@ -281,54 +286,4 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
           </Box>
     }
   </>)
-
-  // if (isMobile) {
-  //   return (
-  //     <>
-  //       <Button className={'TransactionsFilter__OpenButton'} onClick={handleOpen} variant={'brand'} size={'sm'}>
-  //         <span>Add Filter</span>
-  //         <ChevronIcon css={{
-  //           transition: '.1s',
-  //           transform: isOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
-  //         }}/>
-  //       </Button>
-  //
-  //       <BottomSheet
-  //         isOpen={isOpen}
-  //         onClose={onClose}
-  //         onOpen={onOpen}
-  //         title={'Filters'}
-  //       >
-  //         <FilterContent
-  //           filters={filters}
-  //           handleFilterChange={handleFilterChange}
-  //           handleMultipleValuesChange={handleMultipleValuesChange}
-  //           handleClearTypes={handleClearTypes}
-  //           onFilterChange={(newFilters) => {
-  //             onFilterChange(newFilters)
-  //             handleClose()
-  //           }}
-  //         />
-  //       </BottomSheet>
-  //     </>
-  //   )
-  // }
-  //
-  // return (
-  //   <Box
-  //     p={4}
-  //     borderWidth="1px"
-  //     borderRadius="lg"
-  //     className="TransactionsFilter"
-  //     maxW={'100%'}
-  //   >
-  //     <FilterContent
-  //       filters={filters}
-  //       handleFilterChange={handleFilterChange}
-  //       handleMultipleValuesChange={handleMultipleValuesChange}
-  //       handleClearTypes={handleClearTypes}
-  //       onFilterChange={onFilterChange}
-  //     />
-  //   </Box>
-  // )
 }
