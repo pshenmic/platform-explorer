@@ -32,6 +32,11 @@
     }
   }
 
+  &__ButtonsContainer {
+    display: flex;
+    gap: 0.5rem;
+  }
+
   &__Section {
     margin-bottom: 24px;
 

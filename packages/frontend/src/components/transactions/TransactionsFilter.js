@@ -83,7 +83,7 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
   </form>
 )
 
-export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile }) {
+export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
   /** Filter state */
   const {
     filters,
@@ -125,18 +125,24 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     setFilters(newFilters)
   }, [baseHandleFilterChange, setFilters])
 
-  if (isMobile) {
-    return (
-      <>
-        <Button className={'TransactionsFilter__OpenButton'} onClick={handleOpen} variant={'brand'} size={'sm'}>
-          <span>Add Filter</span>
-          <ChevronIcon css={{
-            transition: '.1s',
-            transform: isOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
-          }}/>
-        </Button>
+  return (<>
+    <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
+      <Button
+        className={'TransactionsFilter__OpenButton'}
+        onClick={() => isOpen ? onClose() : onOpen()}
+        variant={'brand'}
+        size={'sm'}
+      >
+        <span>Add Filter</span>
+        <ChevronIcon css={{
+          transition: '.1s',
+          transform: isOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
+        }}/>
+      </Button>
+    </div>
 
-        <BottomSheet
+    {isMobile
+      ? <BottomSheet
           isOpen={isOpen}
           onClose={onClose}
           onOpen={onOpen}
@@ -153,25 +159,72 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
             }}
           />
         </BottomSheet>
-      </>
-    )
-  }
+      : isOpen &&
+          <Box
+            p={4}
+            borderWidth="1px"
+            borderRadius="lg"
+            className="TransactionsFilter"
+            maxW={'100%'}
+          >
+            <FilterContent
+              filters={filters}
+              handleFilterChange={handleFilterChange}
+              handleMultipleValuesChange={handleMultipleValuesChange}
+              handleClearTypes={handleClearTypes}
+              onFilterChange={onFilterChange}
+            />
+          </Box>
+    }
+  </>)
 
-  return (
-    <Box
-      p={4}
-      borderWidth="1px"
-      borderRadius="lg"
-      className="TransactionsFilter"
-      maxW={'100%'}
-    >
-      <FilterContent
-        filters={filters}
-        handleFilterChange={handleFilterChange}
-        handleMultipleValuesChange={handleMultipleValuesChange}
-        handleClearTypes={handleClearTypes}
-        onFilterChange={onFilterChange}
-      />
-    </Box>
-  )
+  // if (isMobile) {
+  //   return (
+  //     <>
+  //       <Button className={'TransactionsFilter__OpenButton'} onClick={handleOpen} variant={'brand'} size={'sm'}>
+  //         <span>Add Filter</span>
+  //         <ChevronIcon css={{
+  //           transition: '.1s',
+  //           transform: isOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
+  //         }}/>
+  //       </Button>
+  //
+  //       <BottomSheet
+  //         isOpen={isOpen}
+  //         onClose={onClose}
+  //         onOpen={onOpen}
+  //         title={'Filters'}
+  //       >
+  //         <FilterContent
+  //           filters={filters}
+  //           handleFilterChange={handleFilterChange}
+  //           handleMultipleValuesChange={handleMultipleValuesChange}
+  //           handleClearTypes={handleClearTypes}
+  //           onFilterChange={(newFilters) => {
+  //             onFilterChange(newFilters)
+  //             handleClose()
+  //           }}
+  //         />
+  //       </BottomSheet>
+  //     </>
+  //   )
+  // }
+  //
+  // return (
+  //   <Box
+  //     p={4}
+  //     borderWidth="1px"
+  //     borderRadius="lg"
+  //     className="TransactionsFilter"
+  //     maxW={'100%'}
+  //   >
+  //     <FilterContent
+  //       filters={filters}
+  //       handleFilterChange={handleFilterChange}
+  //       handleMultipleValuesChange={handleMultipleValuesChange}
+  //       handleClearTypes={handleClearTypes}
+  //       onFilterChange={onFilterChange}
+  //     />
+  //   </Box>
+  // )
 }
