@@ -111,18 +111,19 @@ const ActiveFilters = ({ filters, onClearFilter }) => {
 
   const formatValue = (key, value) => {
     if (Array.isArray(value)) {
+      if (value.length > 1) {
+        return `${value.length} values`
+      }
+
       if (key === 'transaction_type') {
-        return value.map(v =>
-          TRANSACTION_TYPES.find(t => t.value === v)?.label || v
-        ).join(', ')
+        return TRANSACTION_TYPES.find(t => t.value === value[0])?.label || value[0]
       }
       if (key === 'status') {
-        return value.map(v =>
-          STATUS_TYPES.find(t => t.value === v)?.label || v
-        ).join(', ')
+        return STATUS_TYPES.find(t => t.value === value[0])?.label || value[0]
       }
-      return value.join(', ')
+      return value[0]
     }
+
     if (key === 'gas_min' || key === 'gas_max') {
       return `${key === 'gas_min' ? 'from' : 'to'} ${value}`
     }
