@@ -1,0 +1,10 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.FilterGroup {
+  &__Title {
+    font-family: $font-heading;
+    font-weight: 700;
+    color: #fff;
+  }
+}
