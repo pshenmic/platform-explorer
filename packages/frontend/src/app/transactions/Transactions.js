@@ -26,11 +26,11 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const [total, setTotal] = useState(0)
   const [transactions, setTransactions] = useState({ data: [], loading: true, error: null })
   const [filters, setFilters] = useState({
-    status: [],
-    owner: '',
-    gas_min: '',
-    gas_max: '',
-    transaction_type: []
+    // status: [],
+    // owner: '',
+    // gas_min: '',
+    // gas_max: '',
+    // transaction_type: []
   })
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()

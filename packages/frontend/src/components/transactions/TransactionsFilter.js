@@ -25,17 +25,18 @@ const STATUS_TYPES = [
 ]
 
 const defaultFilters = {
-  status: [],
-  transaction_type: [],
+  status: STATUS_TYPES.map(s => s.value),
+  transaction_type: TRANSACTION_TYPES.map(t => t.value),
   owner: '',
   gas_min: '',
   gas_max: ''
 }
 
-const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange, handleClearTypes, onFilterChange }) => (
+const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange, handleClearTypes, onFilterChange, onClose }) => (
   <form onSubmit={(e) => {
     e.preventDefault()
     onFilterChange(filters)
+    onClose()
   }}>
     <MultiSelectFilter
       title="Transaction Types"
@@ -102,11 +103,27 @@ const getFilterLabel = (filterName) => {
 
 // Компонент для отображения активных фильтров
 const ActiveFilters = ({ filters, onClearFilter }) => {
-  const activeFilters = Object.entries(filters).filter(([_, value]) => {
-    if (Array.isArray(value)) return value.length > 0
+  // Проверяем, все ли значения выбраны
+  const isAllSelected = (key, value) => {
+    if (key === 'transaction_type') {
+      return value.length === TRANSACTION_TYPES.length
+    }
+    if (key === 'status') {
+      return value.length === STATUS_TYPES.length
+    }
+    return false
+  }
+
+  // Фильтруем активные фильтры
+  const activeFilters = Object.entries(filters).filter(([key, value]) => {
+    if (Array.isArray(value)) {
+      // Пропускаем если массив пустой или выбраны все значения
+      return value.length > 0 && !isAllSelected(key, value)
+    }
     return value !== '' && value !== undefined
   })
 
+  // Не показываем компонент, если нет активных фильтров
   if (activeFilters.length === 0) return null
 
   const formatValue = (key, value) => {
@@ -131,17 +148,16 @@ const ActiveFilters = ({ filters, onClearFilter }) => {
   }
 
   return (
-    <Box display="flex" flexWrap="wrap" gap={2} mb={4}>
+    <Box display={'flex'} flexWrap={'wrap'} gap={2} mb={4}>
       {activeFilters.map(([key, value]) => (
         <Button
           key={key}
-          size="sm"
-          variant="outline"
-          colorScheme="blue"
+          size={'sm'}
+          variant={'gray'}
           rightIcon={
             <CloseIcon
               boxSize={2}
-              cursor="pointer"
+              cursor={'pointer'}
               onClick={(e) => {
                 e.stopPropagation()
                 onClearFilter(key)
@@ -243,6 +259,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
               onFilterChange(newFilters)
               handleClose()
             }}
+            onClose={onClose}
           />
         </BottomSheet>
       : isOpen &&
@@ -259,6 +276,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
               handleMultipleValuesChange={handleMultipleValuesChange}
               handleClearTypes={handleClearTypes}
               onFilterChange={onFilterChange}
+              onClose={onClose}
             />
           </Box>
     }
