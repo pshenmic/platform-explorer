@@ -4,7 +4,7 @@ import { StateTransitionEnum } from '../../enums/state.transition.type'
 import { useFilters } from '../../hooks/useFilters'
 import { MultiSelectFilter, InputFilter, RangeFilter } from '../filters'
 import { BottomSheet } from '../ui/sheets'
-import { ChevronIcon } from '../ui/icons'
+import { ChevronIcon, CloseIcon } from '../ui/icons'
 import './TransactionsFilter.scss'
 
 const TRANSACTION_TYPES = [
@@ -105,9 +105,9 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     setTimeout(onClose, 200)
   }, [onClose])
 
-  const handleOpen = useCallback(() => {
-    onOpen()
-  }, [onOpen])
+  // const handleOpen = useCallback(() => {
+  //   onOpen()
+  // }, [onOpen])
 
   const handleFilterChange = useCallback((filterName, value) => {
     const newFilters = baseHandleFilterChange(filterName, value)
@@ -128,7 +128,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
   return (<>
     <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
       <Button
-        className={'TransactionsFilter__OpenButton'}
+        className={'TransactionsFilter__Button'}
         onClick={() => isOpen ? onClose() : onOpen()}
         variant={'brand'}
         size={'sm'}
@@ -138,6 +138,20 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
           transition: '.1s',
           transform: isOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
         }}/>
+      </Button>
+
+      <Button
+        className={'TransactionsFilter__Button'}
+        variant={'gray'}
+        size={'sm'}
+      >
+        <span>Selected filters</span>
+        <CloseIcon
+          css={{
+            transition: '.1s',
+            transform: isOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
+          }}
+        />
       </Button>
     </div>
 

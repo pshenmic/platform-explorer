@@ -22,7 +22,7 @@
   //  }
   //}
 
-  &__OpenButton {
+  &__Button {
     display: flex;
     gap: 0.5rem;
 
@@ -56,27 +56,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-  }
-
-  &__Button {
-    font-size: 13px;
-    padding: 6px 12px;
-    border-radius: 6px;
-    transition: all 0.2s;
-
-    &--Active {
-      background-color: var(--chakra-colors-blue-500);
-      color: white;
-    }
-
-    &:not(&--Active) {
-      background-color: var(--chakra-colors-gray-700);
-      color: var(--chakra-colors-gray-200);
-
-      &:hover {
-        background-color: var(--chakra-colors-gray-600);
-      }
-    }
   }
 }
 
