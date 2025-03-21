@@ -83,6 +83,78 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
   </form>
 )
 
+// Добавим функцию для форматирования названий фильтров
+const getFilterLabel = (filterName) => {
+  switch (filterName) {
+    case 'transaction_type':
+      return 'Type'
+    case 'status':
+      return 'Status'
+    case 'owner':
+      return 'Identity'
+    case 'gas_min':
+    case 'gas_max':
+      return 'Gas'
+    default:
+      return filterName
+  }
+}
+
+// Компонент для отображения активных фильтров
+const ActiveFilters = ({ filters, onClearFilter }) => {
+  const activeFilters = Object.entries(filters).filter(([_, value]) => {
+    if (Array.isArray(value)) return value.length > 0
+    return value !== '' && value !== undefined
+  })
+
+  if (activeFilters.length === 0) return null
+
+  const formatValue = (key, value) => {
+    if (Array.isArray(value)) {
+      if (key === 'transaction_type') {
+        return value.map(v =>
+          TRANSACTION_TYPES.find(t => t.value === v)?.label || v
+        ).join(', ')
+      }
+      if (key === 'status') {
+        return value.map(v =>
+          STATUS_TYPES.find(t => t.value === v)?.label || v
+        ).join(', ')
+      }
+      return value.join(', ')
+    }
+    if (key === 'gas_min' || key === 'gas_max') {
+      return `${key === 'gas_min' ? 'from' : 'to'} ${value}`
+    }
+    return value
+  }
+
+  return (
+    <Box display="flex" flexWrap="wrap" gap={2} mb={4}>
+      {activeFilters.map(([key, value]) => (
+        <Button
+          key={key}
+          size="sm"
+          variant="outline"
+          colorScheme="blue"
+          rightIcon={
+            <CloseIcon
+              boxSize={2}
+              cursor="pointer"
+              onClick={(e) => {
+                e.stopPropagation()
+                onClearFilter(key)
+              }}
+            />
+          }
+        >
+          {getFilterLabel(key)}: {formatValue(key, value)}
+        </Button>
+      ))}
+    </Box>
+  )
+}
+
 export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
   /** Filter state */
   const {
@@ -125,6 +197,14 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     setFilters(newFilters)
   }, [baseHandleFilterChange, setFilters])
 
+  const handleClearFilter = useCallback((filterName) => {
+    const newFilters = baseHandleFilterChange(filterName,
+      Array.isArray(filters[filterName]) ? [] : ''
+    )
+    setFilters(newFilters)
+    onFilterChange(newFilters)
+  }, [baseHandleFilterChange, filters, setFilters, onFilterChange])
+
   return (<>
     <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
       <Button
@@ -140,19 +220,10 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
         }}/>
       </Button>
 
-      <Button
-        className={'TransactionsFilter__Button'}
-        variant={'gray'}
-        size={'sm'}
-      >
-        <span>Selected filters</span>
-        <CloseIcon
-          css={{
-            transition: '.1s',
-            transform: isOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
-          }}
-        />
-      </Button>
+      <ActiveFilters
+        filters={filters}
+        onClearFilter={handleClearFilter}
+      />
     </div>
 
     {isMobile
