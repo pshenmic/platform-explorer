@@ -127,7 +127,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
   if (isMobile) {
     return (
       <>
-        <Button onClick={handleOpen} variant={'outline'} size={'sm'}>
+        <Button onClick={handleOpen} variant={'brand'} size={'sm'}>
           Add Filter
         </Button>
 
