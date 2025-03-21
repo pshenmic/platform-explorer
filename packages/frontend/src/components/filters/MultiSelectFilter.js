@@ -1,4 +1,4 @@
-import { Box, Button, Text, Wrap, WrapItem } from '@chakra-ui/react'
+import { Box, Button, Flex, Text, WrapItem } from '@chakra-ui/react'
 
 export const MultiSelectFilter = ({
   title,
@@ -13,18 +13,17 @@ export const MultiSelectFilter = ({
   return (
     <Box mb={6}>
         <Box
-        display='flex'
-        justifyContent='space-between'
-        alignItems='center'
-        mb={3}
-        borderBottom='1px solid'
-        borderColor='gray.200'
-        pb={2}
+          display='flex'
+          justifyContent='space-between'
+          alignItems='center'
+          mb={3}
+          pb={2}
         >
-        <Text fontWeight='semibold' fontSize='sm' color='gray.600'>
+          <Text fontWeight='semibold' fontSize='sm' color='gray.600'>
             {title}
-        </Text>
-        {showSelectAll && (
+          </Text>
+
+          {showSelectAll && (
             <Button
             size='xs'
             variant='ghost'
@@ -34,12 +33,12 @@ export const MultiSelectFilter = ({
             >
             Select All
             </Button>
-        )}
+          )}
         </Box>
 
-        <Wrap spacing={2}>
+        <Flex flexWrap={'wrap'} gap={'0.5rem'} m={0}>
           {items.map((item) => (
-            <WrapItem key={item[itemValueKey]}>
+            <WrapItem m={0} key={item[itemValueKey]}>
               <Button
                 size='sm'
                 variant={selectedValues.includes(item[itemValueKey]) ? 'solid' : 'outline'}
@@ -52,7 +51,7 @@ export const MultiSelectFilter = ({
               </Button>
             </WrapItem>
           ))}
-        </Wrap>
+        </Flex>
     </Box>
   )
 }
