@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { Box, Button, useDisclosure } from '@chakra-ui/react'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
 import { useFilters } from '../../hooks/useFilters'
-import { MultiSelectFilter, InputFilter, RangeFilter } from '../filters'
+import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup } from '../filters'
 import { BottomSheet } from '../ui/sheets'
 import { ChevronIcon, CloseIcon } from '../ui/icons'
 import { TransactionStatusBadge, TypeBadge } from './index'
@@ -43,40 +43,44 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
     onFilterChange(filters)
     onClose()
   }}>
-    <MultiSelectFilter
-      title='Transaction Types'
-      items={TRANSACTION_TYPES}
-      selectedValues={filters.transaction_type}
-      onItemClick={(value) => handleMultipleValuesChange('transaction_type', value)}
-      onSelectAll={handleClearTypes}
-    />
+    <FilterGroup title={'Transaction Types'}>
+      <MultiSelectFilter
+        items={TRANSACTION_TYPES}
+        selectedValues={filters.transaction_type}
+        onItemClick={(value) => handleMultipleValuesChange('transaction_type', value)}
+        onSelectAll={handleClearTypes}
+      />
+    </FilterGroup>
 
-    <MultiSelectFilter
-      title='Status'
-      items={STATUS_TYPES}
-      selectedValues={filters.status}
-      onItemClick={(value) => handleMultipleValuesChange('status', value)}
-      onSelectAll={() => handleFilterChange('status', STATUS_TYPES.map(s => s.value))}
-      showSelectAll={true}
-    />
+    <FilterGroup title={'Status'}>
+      <MultiSelectFilter
+        items={STATUS_TYPES}
+        selectedValues={filters.status}
+        onItemClick={(value) => handleMultipleValuesChange('status', value)}
+        onSelectAll={() => handleFilterChange('status', STATUS_TYPES.map(s => s.value))}
+        showSelectAll={true}
+      />
+    </FilterGroup>
 
-    <InputFilter
-      title='Identity Identifier'
-      value={filters.owner}
-      onChange={(value) => handleFilterChange('owner', value)}
-      placeholder='Enter identity identifier'
-    />
+    <FilterGroup title={'Identity Identifier'}>
+      <InputFilter
+        value={filters.owner}
+        onChange={(value) => handleFilterChange('owner', value)}
+        placeholder='Enter identity identifier'
+      />
+    </FilterGroup>
 
-    <RangeFilter
-      title='Gas Range'
-      minValue={filters.gas_min}
-      maxValue={filters.gas_max}
-      onMinChange={(value) => handleFilterChange('gas_min', value)}
-      onMaxChange={(value) => handleFilterChange('gas_max', value)}
+    <FilterGroup title={'Gas Range'}>
+      <RangeFilter
+        minValue={filters.gas_min}
+        maxValue={filters.gas_max}
+        onMinChange={(value) => handleFilterChange('gas_min', value)}
+        onMaxChange={(value) => handleFilterChange('gas_max', value)}
       type='number'
-      minPlaceholder='Min gas'
-      maxPlaceholder='Max gas'
-    />
+        minPlaceholder='Min gas'
+        maxPlaceholder='Max gas'
+      />
+    </FilterGroup>
 
     <Button
       mt={4}
