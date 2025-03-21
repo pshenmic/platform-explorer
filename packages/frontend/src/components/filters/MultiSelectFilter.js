@@ -1,6 +1,6 @@
-import { Box, Button, Flex, Text, WrapItem } from '@chakra-ui/react'
-
+import { Box, Button, Flex, WrapItem } from '@chakra-ui/react'
 import Checkbox from '../ui/forms/Checkbox'
+import './MultiSelectFilter.scss'
 
 export const MultiSelectFilter = ({
   items,
@@ -10,7 +10,7 @@ export const MultiSelectFilter = ({
   showSelectAll = true
 }) => {
   return (
-    <Box mb={6}>
+    <div className={'MultiSelectFilter'}>
       <Box
         display='flex'
         justifyContent='space-between'
@@ -42,19 +42,17 @@ export const MultiSelectFilter = ({
 
           return (
             <WrapItem m={0} key={item?.value}>
-              <Flex
-                alignItems={'center'}
-                gap={'0.75rem'}
+              <div
+                className={'MultiSelectFilter__Item'}
                 onClick={() => onItemClick(item?.value)}
-                fontSize='sm'
               >
                 <Checkbox forceChecked={selected}/>
                 {item?.label}
-              </Flex>
+              </div>
             </WrapItem>
           )
         })}
       </Flex>
-    </Box>
+    </div>
   )
 }

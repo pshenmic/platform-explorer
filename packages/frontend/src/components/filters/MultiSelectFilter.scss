@@ -1,0 +1,11 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.MultiSelectFilter {
+  &__Item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+}
