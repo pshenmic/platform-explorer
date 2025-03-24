@@ -7,8 +7,11 @@
   
   &__Item {
     position: relative;
-    font-family: $font-mono;
+    font-family: $font-heading;
+    font-weight: 700;
+    text-transform: uppercase;
     font-size: 0.75rem;
+    letter-spacing: 0.4px;
     border-radius: $border-radius-def;
     transition: background-color $transition-time-def;
     color: var(--chakra-colors-gray-100);
