@@ -19,7 +19,7 @@ const Popover = {
     menu: {
       content: {
         bg: 'gray.650',
-        borderColor: 'transpatent',
+        borderColor: 'transparent',
         border: 'none',
         boxShadow: '0px 1.25rem 2rem rgba(0, 0, 0, 0.25)',
         borderRadius: '1.25rem',
