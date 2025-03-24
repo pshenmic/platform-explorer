@@ -30,7 +30,7 @@ const Popover = {
       },
       body: {
         p: 0,
-        borderRadius: '1.25rem',
+        borderRadius: '0',
         overflow: 'hidden'
       },
       arrow: {

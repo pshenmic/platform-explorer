@@ -5,27 +5,15 @@
   width: 100%;
   @include mixins.BrandScroll();
   
-  .menu-item {
+  &__Item {
     position: relative;
     font-family: $font-mono;
     font-size: 0.75rem;
     border-radius: $border-radius-def;
     transition: background-color $transition-time-def;
     color: var(--chakra-colors-gray-100);
-    
-    &:not(:last-child) {
-      margin-bottom: 4px;
-    }
-    
-    &:hover {
-      background-color: rgba(var(--chakra-colors-gray-750-rgb), 0.7) !important;
-    }
-    
-    &:active {
-      background-color: $color-brand-pressed !important;
-    }
-    
-    &.with-submenu {
+
+    &--Submenu {
       &:after {
         content: '';
         position: absolute;
@@ -38,10 +26,22 @@
         background-color: transparent;
         transition: background-color $transition-time-def;
       }
-      
+
       &:hover:after {
         background-color: rgba(var(--chakra-colors-whiteAlpha-300-rgb), 0.3);
       }
+    }
+    
+    &:not(:last-child) {
+      margin-bottom: 4px;
+    }
+    
+    &:hover {
+      background-color: rgba(var(--chakra-colors-gray-750-rgb), 0.7) !important;
+    }
+    
+    &:active {
+      background-color: $color-brand-pressed !important;
     }
   }
 }

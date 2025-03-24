@@ -50,7 +50,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               onClick={() => onMenuItemClick && onMenuItemClick()}
             >
               <Box
-                className="menu-item"
+                className={'MenuLevel__Item'}
                 px={3}
                 py={2}
                 cursor="pointer"
@@ -72,12 +72,14 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               placement={placement}
               closeOnBlur={false}
               autoFocus={false}
-              strategy="fixed"
+              strategy={'fixed'}
               variant="menu"
+              offset={[0, 40]}
+              // positioning={{ offset: { crossAxis: '50px', mainAxis: '100px' } }}
             >
               <PopoverTrigger>
                 <Flex
-                  className="menu-item with-submenu"
+                  className={'MenuLevel__Item MenuLevel__Item--Submenu with-submenu'}
                   px={3}
                   py={2}
                   justifyContent="space-between"
@@ -90,7 +92,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                   <Icon as={ChevronRightIcon} ml={2} boxSize="14px" color="gray.400" />
                 </Flex>
               </PopoverTrigger>
-              <PopoverContent borderRadius="md" shadow="lg" width="auto" minWidth="180px">
+              <PopoverContent width={'auto'} minWidth={'180px'}>
                 <PopoverBody p={0}>
                   <MenuLevel
                     items={item.subMenu}
@@ -104,11 +106,10 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
           )
         }
 
-        // Обычный пункт меню
         return (
           <Box
             key={index}
-            className="menu-item"
+            className={'MenuLevel__Item'}
             px={3}
             py={2}
             cursor="pointer"
