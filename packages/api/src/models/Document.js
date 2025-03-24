@@ -11,11 +11,11 @@ module.exports = class Document {
   prefundedVotingBalance
   documentTypeName
   transitionType
-  identityContractNonce
+  identityNonce
   gasUsed
   totalGasUsed
 
-  constructor (identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, isSystem, documentTypeName, transitionType, prefundedVotingBalance, gasUsed, totalGasUsed, entropy, identityContractNonce) {
+  constructor (identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, isSystem, documentTypeName, transitionType, prefundedVotingBalance, gasUsed, totalGasUsed, entropy, identityNonce) {
     this.identifier = identifier ? identifier.trim() : null
     this.owner = owner ?? null
     this.dataContractIdentifier = dataContractIdentifier ? dataContractIdentifier.trim() : null
@@ -31,7 +31,7 @@ module.exports = class Document {
     this.transitionType = transitionType ?? null
     this.entropy = entropy ?? null
     this.prefundedVotingBalance = prefundedVotingBalance ?? null
-    this.identityContractNonce = identityContractNonce ?? null
+    this.identityNonce = identityNonce ?? null
     this.gasUsed = gasUsed ?? null
     this.totalGasUsed = totalGasUsed ?? null
   }
@@ -41,7 +41,7 @@ module.exports = class Document {
     return new Document(identifier, owner, data_contract_identifier, deleted ? null : revision, tx_hash, deleted, data ? JSON.stringify(data) : null, timestamp, is_system, document_type_name, Number(transition_type), prefunded_voting_balance, Number(gas_used), Number(total_gas_used))
   }
 
-  static fromObject ({ identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, system, documentTypeName, transitionType, entropy, prefundedVotingBalance, identityContractNonce, gasUsed, totalGasUsed }) {
-    return new Document(identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, system, documentTypeName, transitionType, prefundedVotingBalance, gasUsed, totalGasUsed, entropy, identityContractNonce)
+  static fromObject ({ identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, system, documentTypeName, transitionType, entropy, prefundedVotingBalance, identityNonce, gasUsed, totalGasUsed }) {
+    return new Document(identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, system, documentTypeName, transitionType, prefundedVotingBalance, gasUsed, totalGasUsed, entropy, identityNonce)
   }
 }

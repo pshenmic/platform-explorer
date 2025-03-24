@@ -100,7 +100,7 @@ const decodeStateTransition = async (client, base64) => {
           revision: String(documentTransition.getRevision()),
           type: documentTransition.getType(),
           action: documentTransition.getAction(),
-          identityContractNonce: String(documentTransition.getIdentityContractNonce())
+          identityNonce: String(documentTransition.getIdentityContractNonce())
         }
 
         switch (documentTransition.getAction()) {
