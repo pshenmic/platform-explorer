@@ -1,0 +1,9 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.MenuLevel {
+  width: 100%;
+  .menu-item {
+    transition: background-color 0.2s;
+  }
+}
