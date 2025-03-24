@@ -842,7 +842,7 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
   "typeName": "preorder",
   "gasUsed": null,
   "totalGasUsed": 15999780,
-  "identityContractNonce": 1,
+  "identityNonce": null,
   "owner": {
     "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
     "aliases": [
@@ -890,38 +890,31 @@ Return revisions for selected document
 * `page` cannot be less then 1
 
 ```
-GET /document/y5DhJmM4unLTEaKAkMTbQHMoM8hh47ddowKYusgtHwL/revisions
+GET /document/5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd/revisions
 
 {
   "resultSet": [
     {
-      "identifier": "y5DhJmM4unLTEaKAkMTbQHMoM8hh47ddowKYusgtHwL",
+      "identifier": "5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd",
       "dataContractIdentifier": null,
       "revision": 1,
-      "txHash": "8851ACE1E6EE41C3B7B812DD98867BD472135C54E6438111586E2510EC6E43E3",
+      "txHash": "16912FC4819DD2F8BA77ADFBC44D44908C5EBC572F735796C61CF18181888437",
       "deleted": null,
-      "data": "{\"hash\":\"00000000001f60ce3577bb4ae48df85617143d082872231b01ef3f0f5300\",\"timeToLock\":0,\"receiveTime\":1732222851,\"isChainLocked\":false}",
-      "timestamp": "2024-11-21T16:01:22.905Z",
+      "data": "{\"name\":\"djblackog - beat99\",\"magnet\":\"magnet:?xt=urn:btih:83d167c53b937663500f2568122efa9b6588d2c3&dn=beat99.mp3\",\"description\":\"hip hop beat using quincy jones tell me a bedtime story sample 85bpm\"}",
+      "timestamp": "2025-03-05T12:59:36.264Z",
       "system": null,
-      "entropy": null,
+      "entropy": "3627d6398617e9bd6e7a14a10f7a5dd8b1ed458d9f0df38eb69cb67a30075aa3",
       "prefundedVotingBalance": null,
       "documentTypeName": null,
       "transitionType": 0,
-      "identityContractNonce": null,
-      "gasUsed": 78317180,
+      "identityNonce": "2",
+      "gasUsed": 15048420,
       "totalGasUsed": null,
       "owner": {
-        "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
-        "aliases": [
-          {
-            "alias": "User-777.dash",
-            "status": "ok",
-            "contested": false,
-            "timestamp": null
-          }
-        ]
+        "identifier": "HTfJKDuW8omFfFrSQuNTkgW39WpncdwFUrL91VJyJXUS",
+        "aliases": []
       }
-    }
+    },
   ],
   "pagination": {
     "page": 1,
@@ -1916,7 +1909,7 @@ POST /transaction/decode
             "revision": "1",
             "type": "note",
             "action": 0,
-            "identityContractNonce": "2",
+            "identityNonce": "2",
             "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
             "data": {
                 "message": "Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT"
