@@ -75,11 +75,10 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               strategy={'fixed'}
               variant="menu"
               offset={[0, 40]}
-              // positioning={{ offset: { crossAxis: '50px', mainAxis: '100px' } }}
             >
               <PopoverTrigger>
                 <Flex
-                  className={'MenuLevel__Item MenuLevel__Item--Submenu with-submenu'}
+                  className={'MenuLevel__Item MenuLevel__Item--Submenu'}
                   px={3}
                   py={2}
                   justifyContent="space-between"
