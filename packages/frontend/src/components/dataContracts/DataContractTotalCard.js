@@ -25,9 +25,8 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
             error={dataContract.error || !dataContract.data?.identifier}
             value={
               <Identifier
-                className={''}
                 copyButton={true}
-                styles={['highlight-both', `size-${dataContract.data?.identifier?.length}`]}
+                styles={['highlight-both']}
                 ellipsis={false}
               >
                 {dataContract.data?.identifier}

@@ -486,9 +486,9 @@ module.exports = ({
       schema: {
         body: {
           type: 'object',
-          required: ['base64'],
           properties: {
-            base64: { type: 'string' }
+            base64: { type: 'string' },
+            hex: { type: 'string' }
           }
         }
       }

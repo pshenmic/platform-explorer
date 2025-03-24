@@ -9,7 +9,7 @@ function QuorumMembersListItem ({ member }) {
       <Grid className={'QuorumListItem__Content'}>
         <GridItem className={'QuorumListItem__Column QuorumListItem__Column--ProtxHash'}>
           <Identifier
-            styles={['highlight-both', 'size-64']}
+            styles={['highlight-both']}
             ellipsis={true}
             avatar={true}
           >
@@ -21,7 +21,7 @@ function QuorumMembersListItem ({ member }) {
         </GridItem>
         <GridItem className={'QuorumListItem__Column QuorumListItem__Column--OperatorPubKey'}>
           <Identifier
-            styles={['highlight-both', 'size-96']}
+            styles={['highlight-both']}
             ellipsis={false}
             copyButton={true}
           >

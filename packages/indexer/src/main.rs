@@ -8,6 +8,7 @@ mod entities;
 mod utils;
 
 extern crate chrono;
+extern crate core;
 
 #[tokio::main]
 async fn main() {
