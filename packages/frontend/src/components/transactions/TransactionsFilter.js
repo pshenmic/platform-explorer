@@ -1,11 +1,13 @@
 import { useCallback } from 'react'
-import { Box, Button, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, useDisclosure, Flex } from '@chakra-ui/react'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
 import { useFilters } from '../../hooks/useFilters'
 import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup } from '../filters'
 import { BottomSheet } from '../ui/sheets'
 import { ChevronIcon, CloseIcon } from '../ui/icons'
 import { TransactionStatusBadge, TypeBadge } from './index'
+import { MultiLevelMenu } from '../ui/menus'
+
 import './TransactionsFilter.scss'
 
 /** Transaction types list */
@@ -182,6 +184,49 @@ const ActiveFilters = ({ filters, onClearFilter }) => {
   )
 }
 
+const menuData = [
+  {
+    label: 'Task Status',
+    subMenu: [
+      { label: 'Completed', onClick: () => alert('Status changed to "Completed"') },
+      { label: 'In Progress', onClick: () => alert('Status changed to "In Progress"') },
+      { label: 'Not Started', onClick: () => alert('Status changed to "Not Started"') },
+      { label: 'Needs Attention', onClick: () => alert('Status changed to "Needs Attention"') }
+    ]
+  },
+  {
+    label: 'Assignee',
+    subMenu: [
+      { label: 'John Smith', onClick: () => console.log('Assignee: John Smith') },
+      {
+        label: 'Development Team',
+        subMenu: [
+          { label: 'Frontend Team', onClick: () => console.log('Assignee: Frontend Team') },
+          { label: 'Backend Team', onClick: () => console.log('Assignee: Backend Team') },
+          { label: 'QA Team', onClick: () => console.log('Assignee: QA Team') }
+        ]
+      },
+      { label: 'Alice Johnson', onClick: () => console.log('Assignee: Alice Johnson') }
+    ]
+  },
+  {
+    label: 'Documentation',
+    subMenu: [
+      { label: 'Technical Specification', link: '/docs/tech-spec' },
+      { label: 'User Guide', link: '/docs/user-guide' },
+      { label: 'External Documentation', link: 'https://example.com/docs' }
+    ]
+  },
+  {
+    label: 'Div form',
+    content: <div>div with form</div>
+  },
+  {
+    label: 'Project Alert',
+    onClick: () => alert('click')
+  }
+]
+
 /** Main transactions filter component */
 export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
   /** Filter state initialization */
@@ -236,6 +281,26 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
 
   return (<>
     <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
+      <Flex direction="column" alignItems="center" p={5} gap={5}>
+        {/* Basic usage */}
+        <Box mb={3}>
+          <MultiLevelMenu
+            menuData={menuData}
+            trigger={<Button colorScheme="blue">Open Menu</Button>}
+            placement="bottom-start"
+          />
+        </Box>
+
+        {/* Example with different placement */}
+        <Box>
+          <MultiLevelMenu
+            menuData={menuData}
+            trigger={<Button variant="outline">Menu Right</Button>}
+            placement="right"
+          />
+        </Box>
+      </Flex>
+
       <Button
         className={'TransactionsFilter__Button'}
         onClick={() => isOpen ? onClose() : onOpen()}
