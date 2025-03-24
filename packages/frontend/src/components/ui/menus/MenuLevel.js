@@ -11,7 +11,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
   }, [])
 
   const handleItemClick = (item, index) => {
-    if (item.subMenu?.length) {
+    if (item?.subMenu?.length || item?.content) {
       if (openSubMenuId === index) {
         setOpenSubMenuId(null)
       } else {
@@ -20,8 +20,8 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
       return
     }
 
-    if (item.onClick) {
-      item.onClick()
+    if (item?.onClick) {
+      item?.onClick()
       onMenuItemClick && onMenuItemClick()
     }
   }
@@ -31,7 +31,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
   }
 
   return (
-    <Box className="MenuLevel">
+    <Box className={'MenuLevel'}>
       {items.map((item, index) => {
         if (item.link) {
           return (
@@ -50,13 +50,13 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                 cursor="pointer"
                 _hover={{ bg: 'transparent' }}
               >
-                {item.content || <Text>{item.label}</Text>}
+                {<Text>{item.label}</Text>}
               </Box>
             </Link>
           )
         }
 
-        if (item.subMenu?.length) {
+        if (item.subMenu?.length || item.content) {
           return (
             <Popover
               key={index}
@@ -66,7 +66,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               closeOnBlur={false}
               autoFocus={false}
               strategy={'fixed'}
-              variant="menu"
+              variant={'menu'}
               offset={[0, 30]}
             >
               <PopoverTrigger>
@@ -80,18 +80,21 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                   _hover={{ bg: 'transparent' }}
                   onClick={() => handleItemClick(item, index)}
                 >
-                  {item.content || <Text>{item.label}</Text>}
-                  <Icon as={ChevronRightIcon} ml={2} boxSize="14px" color="gray.400" />
+                  {<Text>{item.label}</Text>}
+                  <Icon as={ChevronRightIcon} ml={2} boxSize={'14px'} color={'gray.400'} />
                 </Flex>
               </PopoverTrigger>
               <PopoverContent width={'auto'} minWidth={'180px'}>
                 <PopoverBody p={0}>
-                  <MenuLevel
-                    items={item.subMenu}
-                    onMenuItemClick={onMenuItemClick}
-                    placement={placement}
-                    onLevelClose={handleSubMenuClose}
-                  />
+                  {item.subMenu
+                    ? <MenuLevel
+                        items={item.subMenu}
+                        onMenuItemClick={onMenuItemClick}
+                        placement={placement}
+                        onLevelClose={handleSubMenuClose}
+                      />
+                    : item.content
+                  }
                 </PopoverBody>
               </PopoverContent>
             </Popover>
@@ -108,7 +111,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
             _hover={{ bg: 'transparent' }}
             onClick={() => handleItemClick(item, index)}
           >
-            {item.content || <Text>{item.label}</Text>}
+            {<Text>{item.label}</Text>}
           </Box>
         )
       })}
