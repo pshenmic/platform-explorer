@@ -54,7 +54,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                 px={3}
                 py={2}
                 cursor="pointer"
-                _hover={{ bg: 'gray.100' }}
+                _hover={{ bg: 'transparent' }}
               >
                 {item.content || <Text>{item.label}</Text>}
               </Box>
@@ -73,6 +73,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               closeOnBlur={false}
               autoFocus={false}
               strategy="fixed"
+              variant="menu"
             >
               <PopoverTrigger>
                 <Flex
@@ -82,14 +83,14 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                   justifyContent="space-between"
                   alignItems="center"
                   cursor="pointer"
-                  _hover={{ bg: 'gray.100' }}
+                  _hover={{ bg: 'transparent' }}
                   onClick={() => handleItemClick(item, index)}
                 >
                   {item.content || <Text>{item.label}</Text>}
-                  <Icon as={ChevronRightIcon} ml={2} />
+                  <Icon as={ChevronRightIcon} ml={2} boxSize="14px" color="gray.400" />
                 </Flex>
               </PopoverTrigger>
-              <PopoverContent borderRadius="md" shadow="md" width="auto" minWidth="150px">
+              <PopoverContent borderRadius="md" shadow="lg" width="auto" minWidth="180px">
                 <PopoverBody p={0}>
                   <MenuLevel
                     items={item.subMenu}
@@ -111,7 +112,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
             px={3}
             py={2}
             cursor="pointer"
-            _hover={{ bg: 'gray.100' }}
+            _hover={{ bg: 'transparent' }}
             onClick={() => handleItemClick(item, index)}
           >
             {item.content || <Text>{item.label}</Text>}

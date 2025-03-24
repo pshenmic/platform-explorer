@@ -3,7 +3,45 @@
 
 .MenuLevel {
   width: 100%;
+  @include mixins.BrandScroll();
+  
   .menu-item {
-    transition: background-color 0.2s;
+    position: relative;
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    border-radius: $border-radius-def;
+    transition: background-color $transition-time-def;
+    color: var(--chakra-colors-gray-100);
+    
+    &:not(:last-child) {
+      margin-bottom: 4px;
+    }
+    
+    &:hover {
+      background-color: rgba(var(--chakra-colors-gray-750-rgb), 0.7) !important;
+    }
+    
+    &:active {
+      background-color: $color-brand-pressed !important;
+    }
+    
+    &.with-submenu {
+      &:after {
+        content: '';
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: transparent;
+        transition: background-color $transition-time-def;
+      }
+      
+      &:hover:after {
+        background-color: rgba(var(--chakra-colors-whiteAlpha-300-rgb), 0.3);
+      }
+    }
   }
 }

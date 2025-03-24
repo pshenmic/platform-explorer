@@ -19,6 +19,7 @@ function MultiLevelMenu ({ menuData = [], trigger, placement = 'right-start', ..
       // onClose={onClose}
       closeOnBlur={true}
       placement={placement}
+      variant={'menu'}
       {...props}
     >
       <PopoverTrigger>
@@ -30,8 +31,8 @@ function MultiLevelMenu ({ menuData = [], trigger, placement = 'right-start', ..
           </Button>
         }
       </PopoverTrigger>
-      <PopoverContent borderRadius="md" shadow="md" width="auto" minWidth="180px">
-        <PopoverBody p={0}>
+      <PopoverContent width={'auto'} minWidth={'180px'}>
+        <PopoverBody>
           <MenuLevel
             items={menuData}
             // onMenuItemClick={handleCloseMenu}
