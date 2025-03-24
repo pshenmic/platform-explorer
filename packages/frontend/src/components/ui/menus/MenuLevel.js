@@ -6,13 +6,11 @@ import './MenuLevel.scss'
 function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose }) {
   const [openSubMenuId, setOpenSubMenuId] = useState(null)
 
-  // Закрываем подменю при закрытии родительского уровня
   useEffect(() => {
     return () => setOpenSubMenuId(null)
   }, [])
 
   const handleItemClick = (item, index) => {
-    // Если есть subMenu, переключаем его состояние
     if (item.subMenu?.length) {
       if (openSubMenuId === index) {
         setOpenSubMenuId(null)
@@ -22,15 +20,12 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
       return
     }
 
-    // Если есть onClick, вызываем его
     if (item.onClick) {
       item.onClick()
-      // Закрываем всё меню
       onMenuItemClick && onMenuItemClick()
     }
   }
 
-  // Обработчик закрытия подменю
   const handleSubMenuClose = () => {
     setOpenSubMenuId(null)
   }
@@ -38,7 +33,6 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
   return (
     <Box className="MenuLevel">
       {items.map((item, index) => {
-        // Если у пункта есть link, рендерим его как ссылку
         if (item.link) {
           return (
             <Link
@@ -62,7 +56,6 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
           )
         }
 
-        // Для пунктов с подменю используем Popover
         if (item.subMenu?.length) {
           return (
             <Popover
