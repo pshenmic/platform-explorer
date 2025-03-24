@@ -281,13 +281,13 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
 
   return (<>
     <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
-      <Flex direction="column" alignItems="center" p={5} gap={5}>
+      <Flex direction={'column'} alignItems={'center'} p={5} gap={5}>
         {/* Basic usage */}
         <Box mb={3}>
           <MultiLevelMenu
             menuData={menuData}
-            trigger={<Button colorScheme="blue">Open Menu</Button>}
-            placement="bottom-start"
+            trigger={<Button colorScheme={'blue'}>Open Menu</Button>}
+            placement={'bottom-start'}
           />
         </Box>
 
@@ -295,8 +295,8 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
         <Box>
           <MultiLevelMenu
             menuData={menuData}
-            trigger={<Button variant="outline">Menu Right</Button>}
-            placement="right"
+            trigger={<Button variant={'outline'}>Menu Right</Button>}
+            placement={'right'}
           />
         </Box>
       </Flex>
