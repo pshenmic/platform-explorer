@@ -67,7 +67,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               autoFocus={false}
               strategy={'fixed'}
               variant="menu"
-              offset={[0, 40]}
+              offset={[0, 30]}
             >
               <PopoverTrigger>
                 <Flex
