@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export const useFilters = (defaultFilters = {}) => {
+const useFilters = (defaultFilters = {}) => {
   const [filters, setFilters] = useState(defaultFilters)
 
   /** Delete single fields */
@@ -46,3 +46,5 @@ export const useFilters = (defaultFilters = {}) => {
     prepareFilters
   }
 }
+
+export default useFilters
