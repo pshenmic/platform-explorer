@@ -29,6 +29,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
   const handleSubMenuClose = () => {
     onActiveItemChange(null)
     setOpenSubMenuId(null)
+    if (typeof onLevelClose === 'function') onLevelClose()
   }
 
   return (
