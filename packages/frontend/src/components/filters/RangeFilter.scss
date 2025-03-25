@@ -1,0 +1,25 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.RangeFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__InputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__InputTitle {
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, .5);
+  }
+
+  &__Input {
+
+  }
+}
