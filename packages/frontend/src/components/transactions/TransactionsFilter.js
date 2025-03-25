@@ -3,8 +3,7 @@ import { Filters } from '../filters'
 import { TransactionStatusBadge, TypeBadge } from './index'
 import './TransactionsFilter.scss'
 
-// Transaction types configuration
-const TRANSACTION_TYPES = [
+const transactionOptions = [
   {
     label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_CREATE}/>,
     title: TransactionTypesInfo.DATA_CONTRACT_CREATE.title,
@@ -52,8 +51,7 @@ const TRANSACTION_TYPES = [
   }
 ]
 
-// Status types configuration
-const STATUS_TYPES = [
+const statusOptions = [
   {
     label: <TransactionStatusBadge status={'SUCCESS'}/>,
     title: 'Success',
@@ -66,41 +64,32 @@ const STATUS_TYPES = [
   }
 ]
 
-// Filters configuration object
-const FILTERS_CONFIG = {
+const filtersConfig = {
   transaction_type: {
     type: 'multiselect',
     label: 'Type',
     title: 'Transaction Types',
-    options: TRANSACTION_TYPES,
-    defaultValue: TRANSACTION_TYPES.map(t => t.value),
+    options: transactionOptions,
+    defaultValue: transactionOptions.map(t => t.value),
     formatValue: (values) => {
-      if (values.length === TRANSACTION_TYPES.length) return null
+      if (values.length === transactionOptions.length) return null
       if (values.length > 1) return `${values.length} categories`
-      return TRANSACTION_TYPES.find(t => t.value === values[0])?.title || values[0]
+      return transactionOptions.find(t => t.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values) => values.length === TRANSACTION_TYPES.length
+    isAllSelected: (values) => values.length === transactionOptions.length
   },
   status: {
     type: 'multiselect',
     label: 'Status',
     title: 'Status',
-    options: STATUS_TYPES,
-    defaultValue: STATUS_TYPES.map(s => s.value),
+    options: statusOptions,
+    defaultValue: statusOptions.map(s => s.value),
     formatValue: (values) => {
-      if (values.length === STATUS_TYPES.length) return null
+      if (values.length === statusOptions.length) return null
       if (values.length > 1) return `${values.length} values`
-      return STATUS_TYPES.find(s => s.value === values[0])?.title || values[0]
+      return statusOptions.find(s => s.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values) => values.length === STATUS_TYPES.length
-  },
-  owner: {
-    type: 'input',
-    label: 'Owner',
-    title: 'Identity Identifier',
-    placeholder: 'Enter identity identifier',
-    defaultValue: '',
-    formatValue: (value) => value || null
+    isAllSelected: (values) => values.length === statusOptions.length
   },
   gas: {
     type: 'range',
@@ -117,13 +106,21 @@ const FILTERS_CONFIG = {
       if (max) return `Max ${max} Credits`
       return null
     }
+  },
+  owner: {
+    type: 'input',
+    label: 'Owner',
+    title: 'Identity Identifier',
+    placeholder: 'Enter identity identifier',
+    defaultValue: '',
+    formatValue: (value) => value || null
   }
 }
 
 export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
   return (
     <Filters
-      filtersConfig={FILTERS_CONFIG}
+      filtersConfig={filtersConfig}
       initialFilters={initialFilters}
       onFilterChange={onFilterChange}
       isMobile={isMobile}
