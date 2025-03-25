@@ -2,10 +2,30 @@
 @import '../../styles/variables.scss';
 
 .MultiSelectFilter {
+  &__Items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
   &__Item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     cursor: pointer;
+    padding: 0.5rem;
+    border-radius: $border-radius-def;
+    transition: background-color $transition-time-def;
+
+    &:hover {
+      cursor: pointer;
+      color: #FFFFFF;
+      background: var(--chakra-colors-gray-800);
+    }
+
+    &:active {
+      background-color: var(--chakra-colors-gray-700) !important;
+    }
   }
 }

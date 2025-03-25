@@ -24,31 +24,31 @@
     color: var(--chakra-colors-gray-250);
 
     &:hover {
-      background: var(--chakra-colors-gray-800);
+      background-color: var(--chakra-colors-gray-800);
       cursor: pointer;
       color: #FFFFFF;
+    }
 
-      &:active {
-        background-color: var(--chakra-colors-gray-700) !important;
-      }
+    &:active {
+      background-color: var(--chakra-colors-gray-700) !important;
     }
 
     &--Active {
       color: #fff;
-      background: var(--chakra-colors-gray-800);
+      background-color: var(--chakra-colors-gray-800);
     }
 
     &--Active & {
       &Icon {
         color: #fff;
-        background: rgba(255, 255, 255, .25)
+        background-color: rgba(255, 255, 255, .25)
       }
     }
 
     &:hover & {
       &Icon {
         color: #fff;
-        background: rgba(255, 255, 255, .25);
+        background-color: rgba(255, 255, 255, .25);
       }
     }
 
