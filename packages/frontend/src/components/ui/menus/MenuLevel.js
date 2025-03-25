@@ -3,12 +3,12 @@ import { Box, Flex, Text, Popover, PopoverTrigger, PopoverContent, PopoverBody, 
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import './MenuLevel.scss'
 
-function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose }) {
+function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose, forceClose }) {
   const [openSubMenuId, setOpenSubMenuId] = useState(null)
 
   useEffect(() => {
-    return () => setOpenSubMenuId(null)
-  }, [])
+    if (forceClose) setOpenSubMenuId(null)
+  }, [forceClose])
 
   const handleItemClick = (item, index) => {
     if (item?.subMenu?.length || item?.content) {
@@ -31,7 +31,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
   }
 
   return (
-    <Box className={'MenuLevel'}>
+    <div className={'MenuLevel'}>
       {items.map((item, index) => {
         if (item.link) {
           return (
@@ -63,7 +63,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               isOpen={openSubMenuId === index}
               onClose={handleSubMenuClose}
               placement={placement}
-              closeOnBlur={false}
+              closeOnBlur={true}
               autoFocus={false}
               strategy={'fixed'}
               variant={'menu'}
@@ -115,7 +115,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
           </Box>
         )
       })}
-    </Box>
+    </div>
   )
 }
 
