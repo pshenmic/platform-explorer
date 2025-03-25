@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { Button, useDisclosure } from '@chakra-ui/react'
-import { StateTransitionEnum } from '../../enums/state.transition.type'
+import { StateTransitionEnum, TransactionTypesInfo } from '../../enums/state.transition.type'
 import { useFilters } from '../../hooks'
 import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters } from '../filters'
 import { BottomSheet } from '../ui/sheets'
@@ -9,84 +9,118 @@ import { TransactionStatusBadge, TypeBadge } from './index'
 import { MultiLevelMenu } from '../ui/menus'
 import './TransactionsFilter.scss'
 
-/** Transaction types list */
 const TRANSACTION_TYPES = [
-  { label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_CREATE} />, value: StateTransitionEnum.DATA_CONTRACT_CREATE },
-  { label: <TypeBadge typeId={StateTransitionEnum.DOCUMENTS_BATCH} />, value: StateTransitionEnum.DOCUMENTS_BATCH },
-  { label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREATE} />, value: StateTransitionEnum.IDENTITY_CREATE },
-  { label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_TOP_UP} />, value: StateTransitionEnum.IDENTITY_TOP_UP },
-  { label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_UPDATE} />, value: StateTransitionEnum.DATA_CONTRACT_UPDATE },
-  { label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_UPDATE} />, value: StateTransitionEnum.IDENTITY_UPDATE },
-  { label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL} />, value: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL },
-  { label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREDIT_TRANSFER} />, value: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER },
-  { label: <TypeBadge typeId={StateTransitionEnum.MASTERNODE_VOTE} />, value: StateTransitionEnum.MASTERNODE_VOTE }
+  {
+    label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_CREATE}/>,
+    title: TransactionTypesInfo.DATA_CONTRACT_CREATE.title,
+    value: StateTransitionEnum.DATA_CONTRACT_CREATE
+  },
+  {
+    label: <TypeBadge typeId={StateTransitionEnum.DOCUMENTS_BATCH}/>,
+    title: TransactionTypesInfo.DOCUMENTS_BATCH.title,
+    value: StateTransitionEnum.DOCUMENTS_BATCH
+  },
+  {
+    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREATE}/>,
+    title: TransactionTypesInfo.IDENTITY_CREATE.title,
+    value: StateTransitionEnum.IDENTITY_CREATE
+  },
+  {
+    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_TOP_UP}/>,
+    title: TransactionTypesInfo.IDENTITY_TOP_UP.title,
+    value: StateTransitionEnum.IDENTITY_TOP_UP
+  },
+  {
+    label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_UPDATE}/>,
+    title: TransactionTypesInfo.DATA_CONTRACT_UPDATE.title,
+    value: StateTransitionEnum.DATA_CONTRACT_UPDATE
+  },
+  {
+    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_UPDATE}/>,
+    title: TransactionTypesInfo.IDENTITY_UPDATE.title,
+    value: StateTransitionEnum.IDENTITY_UPDATE
+  },
+  {
+    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL}/>,
+    title: TransactionTypesInfo.IDENTITY_CREDIT_WITHDRAWAL.title,
+    value: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL
+  },
+  {
+    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREDIT_TRANSFER}/>,
+    title: TransactionTypesInfo.IDENTITY_CREDIT_TRANSFER.title,
+    value: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER
+  },
+  {
+    label: <TypeBadge typeId={StateTransitionEnum.MASTERNODE_VOTE}/>,
+    title: TransactionTypesInfo.MASTERNODE_VOTE.title,
+    value: StateTransitionEnum.MASTERNODE_VOTE
+  }
 ]
 
-/** Status types list */
 const STATUS_TYPES = [
-  { label: <TransactionStatusBadge status={'SUCCESS'}/>, value: 'SUCCESS' },
-  { label: <TransactionStatusBadge status={'FAIL'}/>, value: 'FAIL' }
+  {
+    label: <TransactionStatusBadge status={'SUCCESS'}/>,
+    title: 'Success',
+    value: 'SUCCESS'
+  },
+  {
+    label: <TransactionStatusBadge status={'FAIL'}/>,
+    title: 'Fail',
+    value: 'FAIL'
+  }
 ]
 
-/** Default filter values */
-const defaultFilters = {
-  status: STATUS_TYPES.map(s => s.value),
-  transaction_type: TRANSACTION_TYPES.map(t => t.value),
-  owner: '',
-  gas: { min: '', max: '' }
-}
-
-const getFilterLabel = (filterName) => {
-  switch (filterName) {
-    case 'transaction_type':
-      return 'Type'
-    case 'status':
-      return 'Status'
-    case 'owner':
-      return 'Owner'
-    case 'gas':
-      return 'Gas'
-    default:
-      return filterName
-  }
-}
-
-const allValuesSelected = (key, value) => {
-  if (key === 'transaction_type') {
-    return value.length === TRANSACTION_TYPES.length
-  }
-  if (key === 'status') {
-    return value.length === STATUS_TYPES.length
-  }
-  return false
-}
-
-const formatSpecialValues = (key, value) => {
-  if (key === 'gas') {
-    const { min, max } = value
-
-    if (min && max) return `${min} - ${max} Credits`
-    if (min) return `Min ${min} Credits`
-    if (max) return `Max ${max} Credits`
-
-    return null
-  }
-
-  if (Array.isArray(value)) {
-    if (value.length > 1) {
-      return `${value.length} values`
+const FILTERS_CONFIG = {
+  transaction_type: {
+    type: 'multiselect',
+    label: 'Type',
+    title: 'Transaction Types',
+    options: TRANSACTION_TYPES,
+    defaultValue: TRANSACTION_TYPES.map(t => t.value),
+    formatValue: (values) => {
+      if (values.length === TRANSACTION_TYPES.length) return null
+      if (values.length > 1) return `${values.length} categories`
+      return TRANSACTION_TYPES.find(t => t.value === values[0])?.title || values[0]
+    },
+    isAllSelected: (values) => values.length === TRANSACTION_TYPES.length
+  },
+  status: {
+    type: 'multiselect',
+    label: 'Status',
+    title: 'Status',
+    options: STATUS_TYPES,
+    defaultValue: STATUS_TYPES.map(s => s.value),
+    formatValue: (values) => {
+      if (values.length === STATUS_TYPES.length) return null
+      if (values.length > 1) return `${values.length} values`
+      return STATUS_TYPES.find(s => s.value === values[0])?.title || values[0]
+    },
+    isAllSelected: (values) => values.length === STATUS_TYPES.length
+  },
+  owner: {
+    type: 'input',
+    label: 'Owner',
+    title: 'Identity Identifier',
+    placeholder: 'Enter identity identifier',
+    defaultValue: '',
+    formatValue: (value) => value || null
+  },
+  gas: {
+    type: 'range',
+    label: 'Gas',
+    title: 'Gas Range',
+    defaultValue: { min: '', max: '' },
+    minTitle: 'Minimum amount',
+    minPlaceholder: 'ex. 0...',
+    maxTitle: 'Maximum amount',
+    maxPlaceholder: 'ex. 10000000...',
+    formatValue: ({ min, max }) => {
+      if (min && max) return `${min} - ${max} Credits`
+      if (min) return `Min ${min} Credits`
+      if (max) return `Max ${max} Credits`
+      return null
     }
-
-    if (key === 'transaction_type') {
-      return TRANSACTION_TYPES.find(t => t.value === value[0])?.label || value[0]
-    }
-    if (key === 'status') {
-      return STATUS_TYPES.find(t => t.value === value[0])?.label || value[0]
-    }
-    return value[0]
   }
-
-  return value
 }
 
 export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
@@ -95,12 +129,14 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     setFilters,
     handleFilterChange: baseHandleFilterChange,
     handleMultipleValuesChange: baseHandleMultipleValuesChange
-  } = useFilters({
-    status: initialFilters?.status ?? defaultFilters.status,
-    transaction_type: initialFilters?.transaction_type ?? defaultFilters.transaction_type,
-    owner: initialFilters?.owner ?? defaultFilters.owner,
-    gas: initialFilters?.gas ?? defaultFilters.gas
-  })
+  } = useFilters(
+    Object.fromEntries(
+      Object.keys(FILTERS_CONFIG).map(key => [
+        key,
+        initialFilters?.[key] ?? FILTERS_CONFIG[key].defaultValue
+      ])
+    )
+  )
 
   useEffect(() => onFilterChange(filters), [filters, onFilterChange])
 
@@ -119,84 +155,80 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     setFilters(newFilters)
   }, [baseHandleMultipleValuesChange, setFilters])
 
-  /** Handle select all transaction types */
-  const handleClearTypes = useCallback(() => {
-    const allTypes = TRANSACTION_TYPES.map(t => t.value)
-    const newFilters = baseHandleFilterChange('transaction_type', allTypes)
-    setFilters(newFilters)
+  /** Handle select all values for a filter */
+  const handleSelectAll = useCallback((filterName) => {
+    const config = FILTERS_CONFIG[filterName]
+    if (config.type === 'multiselect') {
+      const allValues = config.options.map(item => item.value)
+      const newFilters = baseHandleFilterChange(filterName, allValues)
+      setFilters(newFilters)
+    }
   }, [baseHandleFilterChange, setFilters])
 
-  /** Handle filter clear */
-  const handleClearFilter = useCallback((filterName) => {
+  const clearFilter = useCallback((filterName) => {
     const newFilters = {
       ...filters,
-      [filterName]: defaultFilters[filterName]
+      [filterName]: FILTERS_CONFIG[filterName].defaultValue
     }
     setFilters(newFilters)
   }, [filters, setFilters])
 
-  const menuData = [
-    {
-      label: 'Transaction type',
-      content: (
-        <FilterGroup title={'Transaction Types'}>
-          <MultiSelectFilter
-            items={TRANSACTION_TYPES}
-            selectedValues={filters.transaction_type}
-            onItemClick={(value) => handleMultipleValuesChange('transaction_type', value)}
-            onSelectAll={handleClearTypes}
-          />
-        </FilterGroup>
-      )
-    },
-    {
-      label: 'Gas limits',
-      content: (
-        <FilterGroup title={'Gas Range'}>
-          <RangeFilter
-            value={filters.gas}
-            onChange={(value) => handleFilterChange('gas', value)}
-            type={'number'}
-            minTitle={'Minimum amount'}
-            minPlaceholder={'ex. 0...'}
-            maxTitle={'Maximum amount'}
-            maxPlaceholder={'ex. 10000000...'}
-          />
-        </FilterGroup>
-      )
-    },
-    {
-      label: 'Status',
-      content: (
-        <FilterGroup title={'Status'}>
-          <MultiSelectFilter
-            items={STATUS_TYPES}
-            selectedValues={filters.status}
-            onItemClick={(value) => handleMultipleValuesChange('status', value)}
-            onSelectAll={() => handleFilterChange('status', STATUS_TYPES.map(s => s.value))}
-            showSelectAll={true}
-          />
-        </FilterGroup>
-      )
-    },
-    {
-      label: 'Owner',
-      content: (
-        <FilterGroup title={'Identity Identifier'}>
-          <InputFilter
-            value={filters.owner}
-            onChange={(value) => handleFilterChange('owner', value)}
-            placeholder='Enter identity identifier'
-          />
-        </FilterGroup>
-      )
+  const menuData = Object.entries(FILTERS_CONFIG).map(([key, config]) => {
+    let content
+
+    switch (config.type) {
+      case 'multiselect':
+        content = (
+          <FilterGroup title={config.title}>
+            <MultiSelectFilter
+              items={config.options}
+              selectedValues={filters[key]}
+              onItemClick={(value) => handleMultipleValuesChange(key, value)}
+              onSelectAll={() => handleSelectAll(key)}
+              showSelectAll={true}
+            />
+          </FilterGroup>
+        )
+        break
+      case 'range':
+        content = (
+          <FilterGroup title={config.title}>
+            <RangeFilter
+              value={filters[key]}
+              onChange={(value) => handleFilterChange(key, value)}
+              type={'number'}
+              minTitle={config.minTitle}
+              minPlaceholder={config.minPlaceholder}
+              maxTitle={config.maxTitle}
+              maxPlaceholder={config.maxPlaceholder}
+            />
+          </FilterGroup>
+        )
+        break
+      case 'input':
+        content = (
+          <FilterGroup title={config.title}>
+            <InputFilter
+              value={filters[key]}
+              onChange={(value) => handleFilterChange(key, value)}
+              placeholder={config.placeholder}
+            />
+          </FilterGroup>
+        )
+        break
+      default:
+        content = null
     }
-  ]
+
+    return {
+      label: config.label,
+      content
+    }
+  })
 
   return (<>
     <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
       <MultiLevelMenu
-        // onClose={() => {}}
         placement={'bottom-start'}
         trigger={
           <Button
@@ -217,10 +249,10 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
 
       <ActiveFilters
         filters={filters}
-        onClearFilter={handleClearFilter}
-        allValuesSelected={allValuesSelected}
-        formatValue={formatSpecialValues}
-        getFilterLabel={getFilterLabel}
+        onClearFilter={clearFilter}
+        allValuesSelected={(key, value) => FILTERS_CONFIG[key]?.isAllSelected?.(value) || false}
+        formatValue={(key, value) => FILTERS_CONFIG[key]?.formatValue(value)}
+        getFilterLabel={(key) => FILTERS_CONFIG[key]?.label || key}
       />
     </div>
 
