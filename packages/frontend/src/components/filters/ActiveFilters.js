@@ -1,5 +1,6 @@
 import { Box, Button } from '@chakra-ui/react'
 import { CloseIcon } from '../ui/icons'
+import './ActiveFilters.scss'
 
 export const ActiveFilters = ({
   filters,
@@ -23,26 +24,28 @@ export const ActiveFilters = ({
   if (activeFilters.length === 0) return null
 
   return (
-    <Box display={'flex'} flexWrap={'wrap'} gap={2} mb={4}>
+    <div className={'ActiveFilters__ItemsContainer'}>
       {activeFilters.map(([key, value]) => (
         <Button
+          className={'ActiveFilters__Item'}
           key={key}
           size={'sm'}
           variant={'gray'}
           rightIcon={
-            <CloseIcon
-              boxSize={2}
-              cursor={'pointer'}
+            <div
+              className={'ActiveFilters__IconContainer'}
               onClick={(e) => {
                 e.stopPropagation()
                 onClearFilter(key)
               }}
-            />
+            >
+              <CloseIcon/>
+            </div>
           }
         >
           {getFilterLabel(key)}: {formatValue ? formatValue(key, value) : value}
         </Button>
       ))}
-    </Box>
+    </div>
   )
 }
