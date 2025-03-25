@@ -226,8 +226,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
   return (<>
     <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
       <MultiLevelMenu
-        onClose={() => {
-        }}
+        // onClose={() => {}}
         placement={'bottom-start'}
         trigger={
           <Button
