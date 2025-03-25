@@ -125,7 +125,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
       onFilterChange={onFilterChange}
       isMobile={isMobile}
       className={`TransactionsFilter ${className || ''}`}
-      buttonText={'Add Filter'}
+      buttonText={'Add filter'}
     />
   )
 }
