@@ -55,7 +55,6 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
   </form>
 )
 
-/** Get human readable filter label */
 const getFilterLabel = (filterName) => {
   switch (filterName) {
     case 'transaction_type':
@@ -72,8 +71,7 @@ const getFilterLabel = (filterName) => {
   }
 }
 
-// Добавляем функцию для проверки "все выбрано"
-const isFilterSelected = (key, value) => {
+const allValuesSelected = (key, value) => {
   if (key === 'transaction_type') {
     return value.length === TRANSACTION_TYPES.length
   }
@@ -83,7 +81,6 @@ const isFilterSelected = (key, value) => {
   return false
 }
 
-// Функция для форматирования значений
 const formatFilterValue = (key, value) => {
   if (Array.isArray(value)) {
     if (value.length > 1) {
@@ -259,7 +256,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
       <ActiveFilters
         filters={filters}
         onClearFilter={handleClearFilter}
-        isFilterSelected={isFilterSelected}
+        allValuesSelected={allValuesSelected}
         formatValue={formatFilterValue}
         getFilterLabel={getFilterLabel}
       />

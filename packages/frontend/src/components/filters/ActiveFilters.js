@@ -5,12 +5,12 @@ export const ActiveFilters = ({
   filters,
   onClearFilter,
   formatValue,
-  isFilterSelected = () => false,
+  allValuesSelected = () => false,
   getFilterLabel = (key) => key
 }) => {
   const activeFilters = Object.entries(filters).filter(([key, value]) => {
     if (Array.isArray(value)) {
-      return value.length > 0 && !isFilterSelected(key, value)
+      return value.length > 0 && !allValuesSelected(key, value)
     }
     return value !== '' && value !== undefined && value !== null
   })
