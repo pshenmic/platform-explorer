@@ -1,10 +1,8 @@
 import { Box, Text, SimpleGrid, Input } from '@chakra-ui/react'
 
 export const RangeFilter = ({
-  minValue,
-  maxValue,
-  onMinChange,
-  onMaxChange,
+  value = { min: '', max: '' },
+  onChange,
   type = 'number',
   minPlaceholder = 'Min',
   minTitle = 'From',
@@ -19,8 +17,11 @@ export const RangeFilter = ({
         </Text>
         <Input
           type={type}
-          value={minValue || ''}
-          onChange={(e) => onMinChange(e.target.value)}
+          value={value.min || ''}
+          onChange={(e) => onChange({
+            ...value,
+            min: e.target.value
+          })}
           placeholder={minPlaceholder}
         />
       </Box>
@@ -30,8 +31,11 @@ export const RangeFilter = ({
         </Text>
         <Input
           type={type}
-          value={maxValue || ''}
-          onChange={(e) => onMaxChange(e.target.value)}
+          value={value.max || ''}
+          onChange={(e) => onChange({
+            ...value,
+            max: e.target.value
+          })}
           placeholder={maxPlaceholder}
         />
       </Box>

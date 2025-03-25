@@ -33,8 +33,7 @@ const defaultFilters = {
   status: STATUS_TYPES.map(s => s.value),
   transaction_type: TRANSACTION_TYPES.map(t => t.value),
   owner: '',
-  gas_min: '',
-  gas_max: ''
+  gas: { min: '', max: '' }
 }
 
 /** Filter forms content component */
@@ -63,8 +62,7 @@ const getFilterLabel = (filterName) => {
       return 'Status'
     case 'owner':
       return 'Owner'
-    case 'gas_min':
-    case 'gas_max':
+    case 'gas':
       return 'Gas'
     default:
       return filterName
@@ -96,10 +94,24 @@ const formatFilterValue = (key, value) => {
     return value[0]
   }
 
-  if (key === 'gas_min' || key === 'gas_max') {
-    return `${key === 'gas_min' ? 'from' : 'to'} ${value}`
+  if (key === 'gas') {
+    return null
   }
   return value
+}
+
+const formatSpecialValues = (key, value) => {
+  if (key === 'gas') {
+    const { min, max } = value
+
+    if (min && max) return `${min} - ${max} Credits`
+    if (min) return `Min ${min} Credits`
+    if (max) return `Max ${max} Credits`
+
+    return null
+  }
+
+  return formatFilterValue(key, value)
 }
 
 export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
@@ -112,8 +124,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     status: initialFilters?.status ?? defaultFilters.status,
     transaction_type: initialFilters?.transaction_type ?? defaultFilters.transaction_type,
     owner: initialFilters?.owner ?? defaultFilters.owner,
-    gas_min: initialFilters?.gas_min ?? defaultFilters.gas_min,
-    gas_max: initialFilters?.gas_max ?? defaultFilters.gas_max
+    gas: initialFilters?.gas ?? defaultFilters.gas
   })
 
   const previousFilters = usePrevious(filters)
@@ -147,12 +158,14 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
 
   /** Handle filter clear */
   const handleClearFilter = useCallback((filterName) => {
-    const newFilters = baseHandleFilterChange(filterName,
-      Array.isArray(filters[filterName]) ? [] : ''
-    )
+    const newFilters = {
+      ...filters,
+      [filterName]: defaultFilters[filterName]
+    }
+
     setFilters(newFilters)
     onFilterChange(newFilters)
-  }, [baseHandleFilterChange, filters, setFilters, onFilterChange])
+  }, [filters, setFilters, onFilterChange])
 
   const menuData = [
     {
@@ -169,14 +182,12 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
       )
     },
     {
-      label: 'Transaction limits',
+      label: 'Gas limits',
       content: (
         <FilterGroup title={'Gas Range'}>
           <RangeFilter
-            minValue={filters.gas_min}
-            maxValue={filters.gas_max}
-            onMinChange={(value) => handleFilterChange('gas_min', value)}
-            onMaxChange={(value) => handleFilterChange('gas_max', value)}
+            value={filters.gas}
+            onChange={(value) => handleFilterChange('gas', value)}
             type={'number'}
             minTitle={'Minimum amount'}
             minPlaceholder={'ex. 0...'}
@@ -257,7 +268,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
         filters={filters}
         onClearFilter={handleClearFilter}
         allValuesSelected={allValuesSelected}
-        formatValue={formatFilterValue}
+        formatValue={formatSpecialValues}
         getFilterLabel={getFilterLabel}
       />
     </div>

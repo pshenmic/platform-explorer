@@ -12,6 +12,11 @@ export const ActiveFilters = ({
     if (Array.isArray(value)) {
       return value.length > 0 && !allValuesSelected(key, value)
     }
+
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      return Object.values(value).some(v => v !== '' && v !== undefined && v !== null)
+    }
+
     return value !== '' && value !== undefined && value !== null
   })
 

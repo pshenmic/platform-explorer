@@ -28,8 +28,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const [filters, setFilters] = useState({
     // status: [],
     // owner: '',
-    // gas_min: '',
-    // gas_max: '',
+    // gas: {min: '', max: ''},
     // transaction_type: []
   })
   const pageCount = Math.ceil(total / pageSize)
