@@ -1,0 +1,16 @@
+.Filters {
+  &__ButtonsContainer {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  &__Button {
+    display: flex;
+    gap: 0.5rem;
+
+    svg {
+      width: 0.625rem;
+      height: 0.625rem;
+    }
+  }
+}

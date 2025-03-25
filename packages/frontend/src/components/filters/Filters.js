@@ -5,13 +5,14 @@ import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters
 import { BottomSheet } from '../ui/sheets'
 import { ChevronIcon } from '../ui/icons'
 import { MultiLevelMenu } from '../ui/menus'
+import './Filters.scss'
 
 export const Filters = ({
   filtersConfig,
   initialFilters = {},
   onFilterChange,
   isMobile = false,
-  buttonText = 'Add Filter',
+  buttonText = 'Add filter',
   className = ''
 }) => {
   const defaultFilters = Object.fromEntries(
@@ -188,8 +189,8 @@ export const Filters = ({
         >
           <div className="Filters__MobileContent">
             {menuData.map((item, index) => (
-              <div key={index} className="Filters__MobileItem">
-                <div className="Filters__MobileItemTitle">{item.label}</div>
+              <div key={index}>
+                <div>{item.label}</div>
                 {item.content}
               </div>
             ))}
