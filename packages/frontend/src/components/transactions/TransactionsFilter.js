@@ -1,14 +1,9 @@
-import { useCallback, useEffect } from 'react'
-import { Button, useDisclosure } from '@chakra-ui/react'
 import { StateTransitionEnum, TransactionTypesInfo } from '../../enums/state.transition.type'
-import { useFilters } from '../../hooks'
-import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters } from '../filters'
-import { BottomSheet } from '../ui/sheets'
-import { ChevronIcon } from '../ui/icons'
+import { Filters } from '../filters'
 import { TransactionStatusBadge, TypeBadge } from './index'
-import { MultiLevelMenu } from '../ui/menus'
 import './TransactionsFilter.scss'
 
+// Transaction types configuration
 const TRANSACTION_TYPES = [
   {
     label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_CREATE}/>,
@@ -57,6 +52,7 @@ const TRANSACTION_TYPES = [
   }
 ]
 
+// Status types configuration
 const STATUS_TYPES = [
   {
     label: <TransactionStatusBadge status={'SUCCESS'}/>,
@@ -70,6 +66,7 @@ const STATUS_TYPES = [
   }
 ]
 
+// Filters configuration object
 const FILTERS_CONFIG = {
   transaction_type: {
     type: 'multiselect',
@@ -124,147 +121,14 @@ const FILTERS_CONFIG = {
 }
 
 export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
-  const {
-    filters,
-    setFilters,
-    handleFilterChange: baseHandleFilterChange,
-    handleMultipleValuesChange: baseHandleMultipleValuesChange
-  } = useFilters(
-    Object.fromEntries(
-      Object.keys(FILTERS_CONFIG).map(key => [
-        key,
-        initialFilters?.[key] ?? FILTERS_CONFIG[key].defaultValue
-      ])
-    )
+  return (
+    <Filters
+      filtersConfig={FILTERS_CONFIG}
+      initialFilters={initialFilters}
+      onFilterChange={onFilterChange}
+      isMobile={isMobile}
+      className={`TransactionsFilter ${className || ''}`}
+      buttonText="Add Filter"
+    />
   )
-
-  useEffect(() => onFilterChange(filters), [filters, onFilterChange])
-
-  /** Mobile state management */
-  const { isOpen: mobileIsOpen, onOpen: mobileOnOpen, onClose: mobileOnClose } = useDisclosure()
-
-  /** Handle single filter change */
-  const handleFilterChange = useCallback((filterName, value) => {
-    const newFilters = baseHandleFilterChange(filterName, value)
-    setFilters(newFilters)
-  }, [baseHandleFilterChange, setFilters])
-
-  /** Handle multiple values filter change */
-  const handleMultipleValuesChange = useCallback((fieldName, value) => {
-    const newFilters = baseHandleMultipleValuesChange(fieldName, value)
-    setFilters(newFilters)
-  }, [baseHandleMultipleValuesChange, setFilters])
-
-  /** Handle select all values for a filter */
-  const handleSelectAll = useCallback((filterName) => {
-    const config = FILTERS_CONFIG[filterName]
-    if (config.type === 'multiselect') {
-      const allValues = config.options.map(item => item.value)
-      const newFilters = baseHandleFilterChange(filterName, allValues)
-      setFilters(newFilters)
-    }
-  }, [baseHandleFilterChange, setFilters])
-
-  const clearFilter = useCallback((filterName) => {
-    const newFilters = {
-      ...filters,
-      [filterName]: FILTERS_CONFIG[filterName].defaultValue
-    }
-    setFilters(newFilters)
-  }, [filters, setFilters])
-
-  const menuData = Object.entries(FILTERS_CONFIG).map(([key, config]) => {
-    let content
-
-    switch (config.type) {
-      case 'multiselect':
-        content = (
-          <FilterGroup title={config.title}>
-            <MultiSelectFilter
-              items={config.options}
-              selectedValues={filters[key]}
-              onItemClick={(value) => handleMultipleValuesChange(key, value)}
-              onSelectAll={() => handleSelectAll(key)}
-              showSelectAll={true}
-            />
-          </FilterGroup>
-        )
-        break
-      case 'range':
-        content = (
-          <FilterGroup title={config.title}>
-            <RangeFilter
-              value={filters[key]}
-              onChange={(value) => handleFilterChange(key, value)}
-              type={'number'}
-              minTitle={config.minTitle}
-              minPlaceholder={config.minPlaceholder}
-              maxTitle={config.maxTitle}
-              maxPlaceholder={config.maxPlaceholder}
-            />
-          </FilterGroup>
-        )
-        break
-      case 'input':
-        content = (
-          <FilterGroup title={config.title}>
-            <InputFilter
-              value={filters[key]}
-              onChange={(value) => handleFilterChange(key, value)}
-              placeholder={config.placeholder}
-            />
-          </FilterGroup>
-        )
-        break
-      default:
-        content = null
-    }
-
-    return {
-      label: config.label,
-      content
-    }
-  })
-
-  return (<>
-    <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
-      <MultiLevelMenu
-        placement={'bottom-start'}
-        trigger={
-          <Button
-            className={'TransactionsFilter__Button'}
-            onClick={() => mobileIsOpen ? mobileOnClose() : mobileOnOpen()}
-            variant={'brand'}
-            size={'sm'}
-          >
-            <span>Add Filter</span>
-            <ChevronIcon css={{
-              transition: '.1s',
-              transform: mobileIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
-            }}/>
-          </Button>
-        }
-        menuData={menuData}
-      />
-
-      <ActiveFilters
-        filters={filters}
-        onClearFilter={clearFilter}
-        allValuesSelected={(key, value) => FILTERS_CONFIG[key]?.isAllSelected?.(value) || false}
-        formatValue={(key, value) => FILTERS_CONFIG[key]?.formatValue(value)}
-        getFilterLabel={(key) => FILTERS_CONFIG[key]?.label || key}
-      />
-    </div>
-
-    {isMobile &&
-      <BottomSheet
-        isOpen={mobileIsOpen}
-        onClose={mobileOnClose}
-        onOpen={mobileOnOpen}
-        title={'Filters'}
-      >
-        Filters will be here
-      </BottomSheet>
-    }
-  </>)
 }
