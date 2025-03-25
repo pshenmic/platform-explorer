@@ -3,7 +3,7 @@ import { useState } from 'react'
 const useFilters = (defaultFilters = {}) => {
   const [filters, setFilters] = useState(defaultFilters)
 
-  /** Delete single fields */
+  /** Edit single fields */
   const handleFilterChange = (filterName, value) => {
     const newFilters = {
       ...filters,
