@@ -16,6 +16,10 @@
     transition: background-color $transition-time-def;
     color: var(--chakra-colors-gray-250);
 
+    &--Active {
+      background-color: $color-brand-normal !important;
+    }
+
     &--Submenu {
       &:after {
         content: '';

@@ -3,7 +3,7 @@ import { Box, Flex, Text, Popover, PopoverTrigger, PopoverContent, PopoverBody, 
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import './MenuLevel.scss'
 
-function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose, forceClose }) {
+function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose, forceClose, activeItemId, onActiveItemChange }) {
   const [openSubMenuId, setOpenSubMenuId] = useState(null)
 
   useEffect(() => {
@@ -33,21 +33,24 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
   return (
     <div className={'MenuLevel'}>
       {items.map((item, index) => {
+        const isActive = activeItemId === index
+
         if (item.link) {
           return (
             <Link
               key={index}
               href={item.link}
-              w="100%"
-              textDecoration="none"
+              w={'100%'}
+              textDecoration={'none'}
               _hover={{ textDecoration: 'none' }}
               onClick={() => onMenuItemClick && onMenuItemClick()}
+              className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
             >
               <Box
                 className={'MenuLevel__Item'}
                 px={3}
                 py={2}
-                cursor="pointer"
+                cursor={'pointer'}
                 _hover={{ bg: 'transparent' }}
               >
                 {<Text>{item.label}</Text>}
@@ -62,6 +65,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               key={index}
               isOpen={openSubMenuId === index}
               onClose={handleSubMenuClose}
+              onOpen={() => onActiveItemChange(index)}
               placement={placement}
               closeOnBlur={true}
               autoFocus={false}
@@ -71,7 +75,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
             >
               <PopoverTrigger>
                 <Flex
-                  className={'MenuLevel__Item MenuLevel__Item--Submenu'}
+                  className={`MenuLevel__Item MenuLevel__Item--Submenu ${isActive ? 'MenuLevel__Item--Active' : ''}`}
                   px={3}
                   py={2}
                   justifyContent="space-between"
@@ -92,6 +96,8 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                         onMenuItemClick={onMenuItemClick}
                         placement={placement}
                         onLevelClose={handleSubMenuClose}
+                        activeItemId={activeItemId}
+                        onActiveItemChange={onActiveItemChange}
                       />
                     : item.content
                   }
@@ -104,7 +110,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
         return (
           <Box
             key={index}
-            className={'MenuLevel__Item'}
+            className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
             px={3}
             py={2}
             cursor="pointer"

@@ -1,21 +1,24 @@
-import {
-  Button, Popover, PopoverTrigger, PopoverContent, PopoverBody
-  // useDisclosure
-} from '@chakra-ui/react'
+import { Button, Popover, PopoverTrigger, PopoverContent, PopoverBody } from '@chakra-ui/react'
 import MenuLevel from './MenuLevel'
 import { useState } from 'react'
 import './MultiLevelMenu.scss'
 
 function MultiLevelMenu ({ menuData = [], trigger, placement = 'right-start', onClose, ...props }) {
   const [forceClose, setForceClose] = useState(false)
+  const [activeItemId, setActiveItemId] = useState(null)
 
   const closeMenuHandler = () => {
     setForceClose(true)
+    setActiveItemId(null)
     if (typeof onClose === 'function') onClose()
   }
 
   const openMenuHandler = () => {
     setForceClose(false)
+  }
+
+  const handleActiveItemChange = (id) => {
+    setActiveItemId(id)
   }
 
   return (
@@ -39,8 +42,8 @@ function MultiLevelMenu ({ menuData = [], trigger, placement = 'right-start', on
           <MenuLevel
             items={menuData}
             forceClose={forceClose}
-            // onMenuItemClick={handleCloseMenu}
-            // placement={placement}
+            activeItemId={activeItemId}
+            onActiveItemChange={handleActiveItemChange}
           />
         </PopoverBody>
       </PopoverContent>
