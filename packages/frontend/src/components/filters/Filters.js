@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { Button, useDisclosure } from '@chakra-ui/react'
 import { useFilters } from '../../hooks'
 import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters } from './'
@@ -28,11 +28,39 @@ export const Filters = ({
     handleMultipleValuesChange: baseHandleMultipleValuesChange
   } = useFilters(defaultFilters)
 
+  const previousFilters = useRef(filters)
+
   useEffect(() => {
-    if (typeof onFilterChange === 'function') {
-      onFilterChange(filters)
+    if (typeof onFilterChange !== 'function') return
+
+    const processedFilters = (() => {
+      return Object.entries(filters).reduce((result, [key, value]) => {
+        const filterKeyConfig = filtersConfig[key]
+
+        if (filterKeyConfig.type === 'multiselect' && (filterKeyConfig.isAllSelected(value) || value?.length === 0)) {
+          return result
+        }
+
+        if (value === '') {
+          return result
+        }
+
+        if (filterKeyConfig.type === 'range' && (!value.min && !value.max)) {
+          return result
+        }
+
+        result[key] = value
+        return result
+      }, {})
+    })()
+
+    if (JSON.stringify(previousFilters.current) === JSON.stringify(processedFilters)) {
+      return
     }
-  }, [filters, onFilterChange])
+
+    previousFilters.current = processedFilters
+    onFilterChange(processedFilters)
+  }, [filters, onFilterChange, filtersConfig])
 
   const { isOpen: mobileIsOpen, onOpen: mobileOnOpen, onClose: mobileOnClose } = useDisclosure()
 

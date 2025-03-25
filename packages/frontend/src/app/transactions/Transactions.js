@@ -20,17 +20,14 @@ const paginateConfig = {
   defaultPage: 1
 }
 
+const initialFilters = {}
+
 function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? parseInt(defaultPage) - 1 : 0)
   const [pageSize, setPageSize] = useState(defaultPageSize ?? null ? defaultPageSize : paginateConfig.pageSize.default)
   const [total, setTotal] = useState(0)
   const [transactions, setTransactions] = useState({ data: [], loading: true, error: null })
-  const [filters, setFilters] = useState({
-    // status: [],
-    // owner: '',
-    // gas: {min: '', max: ''},
-    // transaction_type: []
-  })
+  const [filters, setFilters] = useState({})
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
@@ -48,8 +45,6 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
           'desc',
           filters
         )
-
-        // console.log('response.pagination', response.pagination)
 
         setTotal(response.pagination.total)
         setTransactions({ data: response.resultSet, loading: false, error: null })
@@ -85,7 +80,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
 
   const filtersChangeHandler = (newFilters) => {
     setFilters(newFilters)
-    setCurrentPage(0) // Reset to first page when filters change
+    setCurrentPage(0)
   }
 
   const handlePageChange = (newPage) => {
@@ -110,7 +105,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
           </Box>
 
           <TransactionsFilter
-            initialFilters={filters}
+            initialFilters={initialFilters}
             onFilterChange={filtersChangeHandler}
             isMobile={isMobile}
             className={'Transactions__Filters'}
