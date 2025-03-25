@@ -109,6 +109,7 @@ describe('Other routes', () => {
       index: 2
     })
     document = await fixtures.document(knex, {
+      identifier: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
       state_transition_hash: documentTransaction.hash,
       owner: identity.identifier,
       data_contract_id: dataContract.id
@@ -391,7 +392,7 @@ describe('Other routes', () => {
         },
         gasUsed: null,
         totalGasUsed: 0,
-        nonce: '2'
+        identityNonce: null
       }
 
       assert.deepEqual({ documents: [expectedDataContract] }, body)

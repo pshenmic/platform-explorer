@@ -877,6 +877,7 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
   "typeName": "preorder",
   "gasUsed": null,
   "totalGasUsed": 15999780,
+  "identityNonce": null,
   "owner": {
     "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
     "aliases": [
@@ -924,38 +925,31 @@ Return revisions for selected document
 * `page` cannot be less then 1
 
 ```
-GET /document/y5DhJmM4unLTEaKAkMTbQHMoM8hh47ddowKYusgtHwL/revisions
+GET /document/5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd/revisions
 
 {
   "resultSet": [
     {
-      "identifier": "y5DhJmM4unLTEaKAkMTbQHMoM8hh47ddowKYusgtHwL",
+      "identifier": "5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd",
       "dataContractIdentifier": null,
       "revision": 1,
-      "txHash": "8851ACE1E6EE41C3B7B812DD98867BD472135C54E6438111586E2510EC6E43E3",
+      "txHash": "16912FC4819DD2F8BA77ADFBC44D44908C5EBC572F735796C61CF18181888437",
       "deleted": null,
-      "data": "{\"hash\":\"00000000001f60ce3577bb4ae48df85617143d082872231b01ef3f0f5300\",\"timeToLock\":0,\"receiveTime\":1732222851,\"isChainLocked\":false}",
-      "timestamp": "2024-11-21T16:01:22.905Z",
+      "data": "{\"name\":\"djblackog - beat99\",\"magnet\":\"magnet:?xt=urn:btih:83d167c53b937663500f2568122efa9b6588d2c3&dn=beat99.mp3\",\"description\":\"hip hop beat using quincy jones tell me a bedtime story sample 85bpm\"}",
+      "timestamp": "2025-03-05T12:59:36.264Z",
       "system": null,
-      "entropy": null,
+      "entropy": "3627d6398617e9bd6e7a14a10f7a5dd8b1ed458d9f0df38eb69cb67a30075aa3",
       "prefundedVotingBalance": null,
       "documentTypeName": null,
       "transitionType": 0,
-      "nonce": null,
-      "gasUsed": 78317180,
+      "identityNonce": "2",
+      "gasUsed": 15048420,
       "totalGasUsed": null,
       "owner": {
-        "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
-        "aliases": [
-          {
-            "alias": "User-777.dash",
-            "status": "ok",
-            "contested": false,
-            "timestamp": null
-          }
-        ]
+        "identifier": "HTfJKDuW8omFfFrSQuNTkgW39WpncdwFUrL91VJyJXUS",
+        "aliases": []
       }
-    }
+    },
   ],
   "pagination": {
     "page": 1,
@@ -1458,22 +1452,6 @@ GET /search?query=xyz
   ]
 }
 ```
-
-```
-GET /search?query=36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm
-
-{
-  "identities": [{
-    "identifier": "36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm",
-    "alias": "xyz.dash",
-    "status": {
-      "alias": "xyz.dash",
-      "status": "ok",
-      "contested": true
-    }
-  }]
-}
-```
 Response codes:
 ```
 200: OK
@@ -1961,35 +1939,24 @@ POST /transaction/decode
     "type": 1,
     "transitions": [
         {
-            "id": "Fwvkm4ktZVJEHN34RWm4s3fbNXoC3vNj9MB49LwLdavM",
-            "dataContractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-            "revision": 1,
-            "type": "domain",
+            "id": "7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL",
+            "dataContractId": "FhKAsUnPbqe7K4TZxgRdtPUrfSvNCtYV8iPsvjX7ZG58",
+            "revision": "1",
+            "type": "note",
             "action": 0,
+            "identityNonce": "2",
+            "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
             "data": {
-                "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
-                "label": "Microsoft",
-                "normalizedLabel": "m1cr0s0ft",
-                "normalizedParentDomainName": "dash",
-                "parentDomainName": "dash",
-                "preorderSalt": "+nE4I9leD/ua1WdxrrZ4gWQWglNUPwRRjgULjvqGOCs=",
-                "records": {
-                    "identity": "HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT"
-                },
-                "subdomainRules": {
-                    "allowSubdomains": false
-                }
+                "message": "Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT"
             },
-            "prefundedVotingBalance": {
-                "parentNameAndLabel": 20000000000
-            }
+            "prefundedVotingBalance": null
         }
     ],
     "userFeeIncrease": 0,
-    "signature": "2056f7e8fafc7328ed3026466f90cc0d50ad04714c30d3bc4dc7228440adc2b7974091f27b51dc23de470b5e235741c2a852f74c8ab73d7e83469fe24dcffbe425",
-    "signaturePublicKeyId": 2,
-    "ownerId": "HVfqSPfdmiHsrajx7EmErGnV597uYdH3JGhvwpVDcdAT",
-    "raw": "0200f5132a1cc9642bdab3d06533a91a4f8813129c9a27a73ed53e577e747c9a4eac01000000de15c2d39a27cbe01395094153e58ded53c7cf9fabfe6723810b56e6ee35f50a0706646f6d61696ee668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c53155a1a2c90b886fe21aa4d646b03e0d2775df9a16f06157130247dd435334fc051f07056c6162656c12094d6963726f736f66740f6e6f726d616c697a65644c6162656c12096d31637230733066741a6e6f726d616c697a6564506172656e74446f6d61696e4e616d6512046461736810706172656e74446f6d61696e4e616d651204646173680c7072656f7264657253616c740cfa713823d95e0ffb9ad56771aeb6788164168253543f04518e050b8efa86382b077265636f726473160112086964656e7469747910f5132a1cc9642bdab3d06533a91a4f8813129c9a27a73ed53e577e747c9a4eac0e737562646f6d61696e52756c65731601120f616c6c6f77537562646f6d61696e7313000112706172656e744e616d65416e644c6162656cfd00000004a817c8000002412056f7e8fafc7328ed3026466f90cc0d50ad04714c30d3bc4dc7228440adc2b7974091f27b51dc23de470b5e235741c2a852f74c8ab73d7e83469fe24dcffbe425"
+    "signature": "1f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261",
+    "signaturePublicKeyId": 1,
+    "ownerId": "woTQprzGS4bLqqbAhY2heG8QfD58Doo2UhDbiVVrLKG",
+    "raw": "02000e09e4140f8b7777810be56c47f0ab5cbd9bed1e773abd9f9fdf2fe67a669ff7010000006008b85d9826e770ad21b6d585f010f1dfb3b3f2adc6492329bbef8fdec1b1d702046e6f7465da5764f89025e9a5f680633909db58f6f7f6d3582c445393f15aad58821c9f2bf09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b01076d65737361676512305475746f7269616c20434920546573742040205468752c2030382041756720323032342032303a32353a303320474d54000001411f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261"
 }
 ```
 ```
@@ -2204,7 +2171,6 @@ IDENTITY_CREATE with instantLock
     "type": 6,
     "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
     "userFeeIncrease": 0,
-    "identityContractNonce": 6,
     "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
     "amount": 200000,
     "identityNonce": 6,
@@ -2219,7 +2185,7 @@ IDENTITY_CREATE with instantLock
 ```
 {
     "type": 7,
-    "identityContractNonce": 1,
+    "identityNonce": 1,
     "userFeeIncrease": 0,
     "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
     "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",

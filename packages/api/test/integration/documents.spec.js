@@ -171,7 +171,7 @@ describe('Documents routes', () => {
           aliases: []
         },
         system: document.document.is_system,
-        nonce: '2',
+        identityNonce: null,
         gasUsed: null,
         totalGasUsed: 0,
         transitionType: 0
@@ -203,7 +203,7 @@ describe('Documents routes', () => {
           aliases: []
         },
         txHash: document.transaction.hash,
-        nonce: '2',
+        identityNonce: null,
         gasUsed: null,
         totalGasUsed: 0,
         transitionType: 0
@@ -243,7 +243,7 @@ describe('Documents routes', () => {
         documentTypeName: null,
         entropy: null,
         identifier: document.document.identifier,
-        nonce: null,
+        identityNonce: null,
         prefundedVotingBalance: null,
         gasUsed: 0,
         totalGasUsed: null,
@@ -286,7 +286,7 @@ describe('Documents routes', () => {
           prefundedVotingBalance: null,
           gasUsed: null,
           totalGasUsed: null,
-          nonce: null
+          identityNonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -336,7 +336,7 @@ describe('Documents routes', () => {
           system: document.is_system,
           gasUsed: null,
           totalGasUsed: null,
-          nonce: null
+          identityNonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -373,7 +373,7 @@ describe('Documents routes', () => {
           prefundedVotingBalance: null,
           gasUsed: null,
           totalGasUsed: null,
-          nonce: null
+          identityNonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -423,7 +423,7 @@ describe('Documents routes', () => {
           prefundedVotingBalance: null,
           totalGasUsed: null,
           gasUsed: null,
-          nonce: null
+          identityNonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -468,7 +468,7 @@ describe('Documents routes', () => {
           prefundedVotingBalance: null,
           totalGasUsed: null,
           gasUsed: null,
-          nonce: null
+          identityNonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
@@ -513,7 +513,7 @@ describe('Documents routes', () => {
           prefundedVotingBalance: null,
           totalGasUsed: null,
           gasUsed: null,
-          nonce: null
+          identityNonce: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
