@@ -36,24 +36,6 @@ const defaultFilters = {
   gas: { min: '', max: '' }
 }
 
-/** Filter forms content component */
-const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange, handleClearTypes, onFilterChange, onClose }) => (
-  <form onSubmit={(e) => {
-    e.preventDefault()
-    onFilterChange(filters)
-    onClose()
-  }}>
-    <Button
-      mt={4}
-      colorScheme='blue'
-      width='100%'
-      type='submit'
-    >
-      Apply Filters
-    </Button>
-  </form>
-)
-
 const getFilterLabel = (filterName) => {
   switch (filterName) {
     case 'transaction_type':
@@ -79,7 +61,17 @@ const allValuesSelected = (key, value) => {
   return false
 }
 
-const formatFilterValue = (key, value) => {
+const formatSpecialValues = (key, value) => {
+  if (key === 'gas') {
+    const { min, max } = value
+
+    if (min && max) return `${min} - ${max} Credits`
+    if (min) return `Min ${min} Credits`
+    if (max) return `Max ${max} Credits`
+
+    return null
+  }
+
   if (Array.isArray(value)) {
     if (value.length > 1) {
       return `${value.length} values`
@@ -94,24 +86,7 @@ const formatFilterValue = (key, value) => {
     return value[0]
   }
 
-  if (key === 'gas') {
-    return null
-  }
   return value
-}
-
-const formatSpecialValues = (key, value) => {
-  if (key === 'gas') {
-    const { min, max } = value
-
-    if (min && max) return `${min} - ${max} Credits`
-    if (min) return `Min ${min} Credits`
-    if (max) return `Max ${max} Credits`
-
-    return null
-  }
-
-  return formatFilterValue(key, value)
 }
 
 export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
@@ -131,11 +106,6 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
 
   /** Mobile state management */
   const { isOpen: mobileIsOpen, onOpen: mobileOnOpen, onClose: mobileOnClose } = useDisclosure()
-
-  /** Handle mobile sheet close with delay */
-  const handleClose = useCallback(() => {
-    setTimeout(mobileOnClose, 200)
-  }, [mobileOnClose])
 
   /** Handle single filter change */
   const handleFilterChange = useCallback((filterName, value) => {
@@ -274,37 +244,8 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
         onOpen={mobileOnOpen}
         title={'Filters'}
       >
-        <FilterContent
-          filters={filters}
-          handleFilterChange={handleFilterChange}
-          handleMultipleValuesChange={handleMultipleValuesChange}
-          handleClearTypes={handleClearTypes}
-          onFilterChange={(newFilters) => {
-            setFilters(newFilters)
-            handleClose()
-          }}
-          onClose={mobileOnClose}
-        />
+        Filters will be here
       </BottomSheet>
-    }
-    {
-      // : !mobileIsOpen &&
-      //   <Box
-      //     p={4}
-      //     borderWidth='1px'
-      //     borderRadius='lg'
-      //     className='TransactionsFilter'
-      //     maxW={'100%'}
-      //   >
-      //     <FilterContent
-      //       filters={filters}
-      //       handleFilterChange={handleFilterChange}
-      //       handleMultipleValuesChange={handleMultipleValuesChange}
-      //       handleClearTypes={handleClearTypes}
-      //       onFilterChange={onFilterChange}
-      //       onClose={mobileOnClose}
-      //     />
-      //   </Box>
     }
   </>)
 }
