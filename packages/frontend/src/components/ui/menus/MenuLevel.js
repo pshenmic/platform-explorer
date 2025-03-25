@@ -49,7 +49,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
             >
               <Box className={'MenuLevel__Item'}>
-                {<Text>{item.label}</Text>}
+                {<span>{item.label}</span>}
               </Box>
             </Link>
           )
@@ -74,7 +74,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                   className={`MenuLevel__Item MenuLevel__Item--Submenu ${isActive ? 'MenuLevel__Item--Active' : ''}`}
                   onClick={() => handleItemClick(item, index)}
                 >
-                  {<Text>{item.label}</Text>}
+                  {<span>{item.label}</span>}
                   <div className={'MenuLevel__ItemIcon'}>
                     <ChevronIcon/>
                   </div>
@@ -105,7 +105,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
             onClick={() => handleItemClick(item, index)}
             key={index}
           >
-            {<Text>{item.label}</Text>}
+            {<span>{item.label}</span>}
           </div>
         )
       })}
