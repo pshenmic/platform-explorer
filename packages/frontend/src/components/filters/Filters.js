@@ -110,6 +110,13 @@ export const Filters = ({
               onSelectAll={() => handleSelectAll(key)}
               showSelectAll={true}
             />
+            <Button
+              size={'sm'}
+              variant={'customGreen'}
+              onClick={mobileOnClose}
+            >
+              OK
+            </Button>
           </FilterGroup>
         )
         break
