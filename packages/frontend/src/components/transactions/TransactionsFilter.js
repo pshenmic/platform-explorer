@@ -1,6 +1,6 @@
 import { StateTransitionEnum, TransactionTypesInfo } from '../../enums/state.transition.type'
-import { Filters } from '../filters'
 import { TransactionStatusBadge, TypeBadge } from './index'
+import { Filters } from '../filters'
 import './TransactionsFilter.scss'
 
 const transactionOptions = [
