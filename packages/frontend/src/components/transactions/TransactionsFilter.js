@@ -45,46 +45,46 @@ const FilterContent = ({ filters, handleFilterChange, handleMultipleValuesChange
     onFilterChange(filters)
     onClose()
   }}>
-    <FilterGroup title={'Transaction Types'}>
-      <MultiSelectFilter
-        items={TRANSACTION_TYPES}
-        selectedValues={filters.transaction_type}
-        onItemClick={(value) => handleMultipleValuesChange('transaction_type', value)}
-        onSelectAll={handleClearTypes}
-      />
-    </FilterGroup>
+    {/* <FilterGroup title={'Transaction Types'}> */}
+    {/*  <MultiSelectFilter */}
+    {/*    items={TRANSACTION_TYPES} */}
+    {/*    selectedValues={filters.transaction_type} */}
+    {/*    onItemClick={(value) => handleMultipleValuesChange('transaction_type', value)} */}
+    {/*    onSelectAll={handleClearTypes} */}
+    {/*  /> */}
+    {/* </FilterGroup> */}
 
-    <FilterGroup title={'Status'}>
-      <MultiSelectFilter
-        items={STATUS_TYPES}
-        selectedValues={filters.status}
-        onItemClick={(value) => handleMultipleValuesChange('status', value)}
-        onSelectAll={() => handleFilterChange('status', STATUS_TYPES.map(s => s.value))}
-        showSelectAll={true}
-      />
-    </FilterGroup>
+    {/* <FilterGroup title={'Status'}> */}
+    {/*  <MultiSelectFilter */}
+    {/*    items={STATUS_TYPES} */}
+    {/*    selectedValues={filters.status} */}
+    {/*    onItemClick={(value) => handleMultipleValuesChange('status', value)} */}
+    {/*    onSelectAll={() => handleFilterChange('status', STATUS_TYPES.map(s => s.value))} */}
+    {/*    showSelectAll={true} */}
+    {/*  /> */}
+    {/* </FilterGroup> */}
 
-    <FilterGroup title={'Identity Identifier'}>
-      <InputFilter
-        value={filters.owner}
-        onChange={(value) => handleFilterChange('owner', value)}
-        placeholder='Enter identity identifier'
-      />
-    </FilterGroup>
+    {/* <FilterGroup title={'Identity Identifier'}> */}
+    {/*  <InputFilter */}
+    {/*    value={filters.owner} */}
+    {/*    onChange={(value) => handleFilterChange('owner', value)} */}
+    {/*    placeholder='Enter identity identifier' */}
+    {/*  /> */}
+    {/* </FilterGroup> */}
 
-    <FilterGroup title={'Gas Range'}>
-      <RangeFilter
-        minValue={filters.gas_min}
-        maxValue={filters.gas_max}
-        onMinChange={(value) => handleFilterChange('gas_min', value)}
-        onMaxChange={(value) => handleFilterChange('gas_max', value)}
-        type={'number'}
-        minTitle={'Minimum amount'}
-        minPlaceholder={'ex. 0...'}
-        maxTitle={'Maximum amount'}
-        maxPlaceholder={'ex. 10000000...'}
-      />
-    </FilterGroup>
+    {/* <FilterGroup title={'Gas Range'}> */}
+    {/*  <RangeFilter */}
+    {/*    minValue={filters.gas_min} */}
+    {/*    maxValue={filters.gas_max} */}
+    {/*    onMinChange={(value) => handleFilterChange('gas_min', value)} */}
+    {/*    onMaxChange={(value) => handleFilterChange('gas_max', value)} */}
+    {/*    type={'number'} */}
+    {/*    minTitle={'Minimum amount'} */}
+    {/*    minPlaceholder={'ex. 0...'} */}
+    {/*    maxTitle={'Maximum amount'} */}
+    {/*    maxPlaceholder={'ex. 10000000...'} */}
+    {/*  /> */}
+    {/* </FilterGroup> */}
 
     <Button
       mt={4}
@@ -105,7 +105,7 @@ const getFilterLabel = (filterName) => {
     case 'status':
       return 'Status'
     case 'owner':
-      return 'Identity'
+      return 'Owner'
     case 'gas_min':
     case 'gas_max':
       return 'Gas'
@@ -184,48 +184,48 @@ const ActiveFilters = ({ filters, onClearFilter }) => {
   )
 }
 
-const menuData = [
-  {
-    label: 'Task Status',
-    subMenu: [
-      { label: 'Completed', onClick: () => alert('Status changed to "Completed"') },
-      { label: 'In Progress', onClick: () => alert('Status changed to "In Progress"') },
-      { label: 'Not Started', onClick: () => alert('Status changed to "Not Started"') },
-      { label: 'Needs Attention', onClick: () => alert('Status changed to "Needs Attention"') }
-    ]
-  },
-  {
-    label: 'Assignee',
-    subMenu: [
-      { label: 'John Smith', onClick: () => console.log('Assignee: John Smith') },
-      {
-        label: 'Development Team',
-        subMenu: [
-          { label: 'Frontend Team', onClick: () => console.log('Assignee: Frontend Team') },
-          { label: 'Backend Team', onClick: () => console.log('Assignee: Backend Team') },
-          { label: 'QA Team', onClick: () => console.log('Assignee: QA Team') }
-        ]
-      },
-      { label: 'Alice Johnson', onClick: () => console.log('Assignee: Alice Johnson') }
-    ]
-  },
-  {
-    label: 'Documentation',
-    subMenu: [
-      { label: 'Technical Specification', link: '/docs/tech-spec' },
-      { label: 'User Guide', link: '/docs/user-guide' },
-      { label: 'External Documentation', link: 'https://example.com/docs' }
-    ]
-  },
-  {
-    label: 'Div form',
-    content: <div>div with form</div>
-  },
-  {
-    label: 'Project Alert',
-    onClick: () => alert('click')
-  }
-]
+// const menuData = [
+//   {
+//     label: 'Task Status',
+//     subMenu: [
+//       { label: 'Completed', onClick: () => alert('Status changed to "Completed"') },
+//       { label: 'In Progress', onClick: () => alert('Status changed to "In Progress"') },
+//       { label: 'Not Started', onClick: () => alert('Status changed to "Not Started"') },
+//       { label: 'Needs Attention', onClick: () => alert('Status changed to "Needs Attention"') }
+//     ]
+//   },
+//   {
+//     label: 'Assignee',
+//     subMenu: [
+//       { label: 'John Smith', onClick: () => console.log('Assignee: John Smith') },
+//       {
+//         label: 'Development Team',
+//         subMenu: [
+//           { label: 'Frontend Team', onClick: () => console.log('Assignee: Frontend Team') },
+//           { label: 'Backend Team', onClick: () => console.log('Assignee: Backend Team') },
+//           { label: 'QA Team', onClick: () => console.log('Assignee: QA Team') }
+//         ]
+//       },
+//       { label: 'Alice Johnson', onClick: () => console.log('Assignee: Alice Johnson') }
+//     ]
+//   },
+//   {
+//     label: 'Documentation',
+//     subMenu: [
+//       { label: 'Technical Specification', link: '/docs/tech-spec' },
+//       { label: 'User Guide', link: '/docs/user-guide' },
+//       { label: 'External Documentation', link: 'https://example.com/docs' }
+//     ]
+//   },
+//   {
+//     label: 'Div form',
+//     content: <div>div with form</div>
+//   },
+//   {
+//     label: 'Project Alert',
+//     onClick: () => alert('click')
+//   }
+// ]
 
 /** Main transactions filter component */
 export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
@@ -279,12 +279,75 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     onFilterChange(newFilters)
   }, [baseHandleFilterChange, filters, setFilters, onFilterChange])
 
+  const menuData = [
+    {
+      label: 'Transaction type',
+      content: (
+        <FilterGroup title={'Transaction Types'}>
+          <MultiSelectFilter
+            items={TRANSACTION_TYPES}
+            selectedValues={filters.transaction_type}
+            onItemClick={(value) => handleMultipleValuesChange('transaction_type', value)}
+            onSelectAll={handleClearTypes}
+          />
+        </FilterGroup>
+      )
+    },
+    {
+      label: 'Transaction limits',
+      content: (
+        <FilterGroup title={'Gas Range'}>
+          <RangeFilter
+            minValue={filters.gas_min}
+            maxValue={filters.gas_max}
+            onMinChange={(value) => handleFilterChange('gas_min', value)}
+            onMaxChange={(value) => handleFilterChange('gas_max', value)}
+            type={'number'}
+            minTitle={'Minimum amount'}
+            minPlaceholder={'ex. 0...'}
+            maxTitle={'Maximum amount'}
+            maxPlaceholder={'ex. 10000000...'}
+          />
+        </FilterGroup>
+      )
+    },
+    {
+      label: 'Status',
+      content: (
+        <FilterGroup title={'Status'}>
+          <MultiSelectFilter
+            items={STATUS_TYPES}
+            selectedValues={filters.status}
+            onItemClick={(value) => handleMultipleValuesChange('status', value)}
+            onSelectAll={() => handleFilterChange('status', STATUS_TYPES.map(s => s.value))}
+            showSelectAll={true}
+          />
+        </FilterGroup>
+      )
+    },
+    {
+      label: 'Owner',
+      content: (
+        <FilterGroup title={'Identity Identifier'}>
+          <InputFilter
+            value={filters.owner}
+            onChange={(value) => handleFilterChange('owner', value)}
+            placeholder='Enter identity identifier'
+          />
+        </FilterGroup>
+      )
+    }
+  ]
+
   return (<>
     <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
       <Flex direction={'column'} alignItems={'center'} p={5} gap={5}>
-        {/* Basic usage */}
         <Box mb={3}>
           <MultiLevelMenu
+            onClose={() => {
+              onFilterChange(filters)
+              onClose()
+            }}
             menuData={menuData}
             trigger={<Button colorScheme={'blue'}>Open Menu</Button>}
             placement={'bottom-start'}
@@ -292,13 +355,13 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
         </Box>
 
         {/* Example with different placement */}
-        <Box>
-          <MultiLevelMenu
-            menuData={menuData}
-            trigger={<Button variant={'outline'}>Menu Right</Button>}
-            placement={'right'}
-          />
-        </Box>
+        {/* <Box> */}
+        {/*  <MultiLevelMenu */}
+        {/*    menuData={menuData} */}
+        {/*    trigger={<Button variant={'outline'}>Menu Right</Button>} */}
+        {/*    placement={'right'} */}
+        {/*  /> */}
+        {/* </Box> */}
       </Flex>
 
       <Button

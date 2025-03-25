@@ -5,18 +5,18 @@ import {
 import MenuLevel from './MenuLevel'
 import './MultiLevelMenu.scss'
 
-function MultiLevelMenu ({ menuData = [], trigger, placement = 'right-start', ...props }) {
+function MultiLevelMenu ({ menuData = [], trigger, placement = 'right-start', onClose, ...props }) {
   // const { isOpen, onOpen, onClose } = useDisclosure()
 
-  // const handleCloseMenu = () => {
-  //   onClose()
-  // }
+  const handleCloseMenu = () => {
+    if (typeof onClose === 'function') onClose()
+  }
 
   return (
     <Popover
       // isOpen={isOpen}
       // isOpen={true}
-      // onClose={onClose}
+      onClose={handleCloseMenu}
       closeOnBlur={true}
       placement={placement}
       variant={'menu'}
