@@ -20,10 +20,10 @@ export const MultiSelectFilter = ({
       >
         {showSelectAll && (
           <Button
-            size='xs'
-            variant='ghost'
+            size={'xs'}
+            variant={'ghost'}
             onClick={onSelectAll}
-            color='blue.500'
+            color={'blue.500'}
             _hover={{ bg: 'blue.50' }}
           >
             Select All
