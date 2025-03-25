@@ -83,7 +83,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize])
 
-  const handleFilterChange = (newFilters) => {
+  const filtersChangeHandler = (newFilters) => {
     setFilters(newFilters)
     setCurrentPage(0) // Reset to first page when filters change
   }
@@ -111,7 +111,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
 
           <TransactionsFilter
             initialFilters={filters}
-            onFilterChange={handleFilterChange}
+            onFilterChange={filtersChangeHandler}
             isMobile={isMobile}
             className={'Transactions__Filters'}
           />

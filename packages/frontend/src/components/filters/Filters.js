@@ -14,7 +14,6 @@ export const Filters = ({
   buttonText = 'Add Filter',
   className = ''
 }) => {
-  // Generate default filter values from config
   const defaultFilters = Object.fromEntries(
     Object.keys(filtersConfig).map(key => [
       key,
