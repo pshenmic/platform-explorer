@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
-import { Box, Button, useDisclosure, Flex } from '@chakra-ui/react'
+import { Button, useDisclosure } from '@chakra-ui/react'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
 import { useFilters, usePrevious } from '../../hooks'
-import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup } from '../filters'
+import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters } from '../filters'
 import { BottomSheet } from '../ui/sheets'
-import { ChevronIcon, CloseIcon } from '../ui/icons'
+import { ChevronIcon } from '../ui/icons'
 import { TransactionStatusBadge, TypeBadge } from './index'
 import { MultiLevelMenu } from '../ui/menus'
 import './TransactionsFilter.scss'
@@ -72,79 +72,40 @@ const getFilterLabel = (filterName) => {
   }
 }
 
-/** Active filters display component */
-const ActiveFilters = ({ filters, onClearFilter }) => {
-  /** Check if all values are selected for a filter */
-  const isAllSelected = (key, value) => {
-    if (key === 'transaction_type') {
-      return value.length === TRANSACTION_TYPES.length
-    }
-    if (key === 'status') {
-      return value.length === STATUS_TYPES.length
-    }
-    return false
+// Добавляем функцию для проверки "все выбрано"
+const isFilterSelected = (key, value) => {
+  if (key === 'transaction_type') {
+    return value.length === TRANSACTION_TYPES.length
   }
-
-  /** Filter out inactive and fully selected filters */
-  const activeFilters = Object.entries(filters).filter(([key, value]) => {
-    if (Array.isArray(value)) {
-      return value.length > 0 && !isAllSelected(key, value)
-    }
-    return value !== '' && value !== undefined
-  })
-
-  if (activeFilters.length === 0) return null
-
-  /** Format filter value for display */
-  const formatValue = (key, value) => {
-    if (Array.isArray(value)) {
-      if (value.length > 1) {
-        return `${value.length} values`
-      }
-
-      if (key === 'transaction_type') {
-        return TRANSACTION_TYPES.find(t => t.value === value[0])?.label || value[0]
-      }
-      if (key === 'status') {
-        return STATUS_TYPES.find(t => t.value === value[0])?.label || value[0]
-      }
-      return value[0]
-    }
-
-    if (key === 'gas_min' || key === 'gas_max') {
-      return `${key === 'gas_min' ? 'from' : 'to'} ${value}`
-    }
-    return value
+  if (key === 'status') {
+    return value.length === STATUS_TYPES.length
   }
-
-  return (
-    <Box display={'flex'} flexWrap={'wrap'} gap={2} mb={4}>
-      {activeFilters.map(([key, value]) => (
-        <Button
-          key={key}
-          size={'sm'}
-          variant={'gray'}
-          rightIcon={
-            <CloseIcon
-              boxSize={2}
-              cursor={'pointer'}
-              onClick={(e) => {
-                e.stopPropagation()
-                onClearFilter(key)
-              }}
-            />
-          }
-        >
-          {getFilterLabel(key)}: {formatValue(key, value)}
-        </Button>
-      ))}
-    </Box>
-  )
+  return false
 }
 
-/** Main transactions filter component */
+// Функция для форматирования значений
+const formatFilterValue = (key, value) => {
+  if (Array.isArray(value)) {
+    if (value.length > 1) {
+      return `${value.length} values`
+    }
+
+    if (key === 'transaction_type') {
+      return TRANSACTION_TYPES.find(t => t.value === value[0])?.label || value[0]
+    }
+    if (key === 'status') {
+      return STATUS_TYPES.find(t => t.value === value[0])?.label || value[0]
+    }
+    return value[0]
+  }
+
+  if (key === 'gas_min' || key === 'gas_max') {
+    return `${key === 'gas_min' ? 'from' : 'to'} ${value}`
+  }
+  return value
+}
+
 export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
-  /** Filter state initialization */
   const {
     filters,
     setFilters,
@@ -196,89 +157,91 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     onFilterChange(newFilters)
   }, [baseHandleFilterChange, filters, setFilters, onFilterChange])
 
+  const menuData = [
+    {
+      label: 'Transaction type',
+      content: (
+        <FilterGroup title={'Transaction Types'}>
+          <MultiSelectFilter
+            items={TRANSACTION_TYPES}
+            selectedValues={filters.transaction_type}
+            onItemClick={(value) => handleMultipleValuesChange('transaction_type', value)}
+            onSelectAll={handleClearTypes}
+          />
+        </FilterGroup>
+      )
+    },
+    {
+      label: 'Transaction limits',
+      content: (
+        <FilterGroup title={'Gas Range'}>
+          <RangeFilter
+            minValue={filters.gas_min}
+            maxValue={filters.gas_max}
+            onMinChange={(value) => handleFilterChange('gas_min', value)}
+            onMaxChange={(value) => handleFilterChange('gas_max', value)}
+            type={'number'}
+            minTitle={'Minimum amount'}
+            minPlaceholder={'ex. 0...'}
+            maxTitle={'Maximum amount'}
+            maxPlaceholder={'ex. 10000000...'}
+          />
+        </FilterGroup>
+      )
+    },
+    {
+      label: 'Status',
+      content: (
+        <FilterGroup title={'Status'}>
+          <MultiSelectFilter
+            items={STATUS_TYPES}
+            selectedValues={filters.status}
+            onItemClick={(value) => handleMultipleValuesChange('status', value)}
+            onSelectAll={() => handleFilterChange('status', STATUS_TYPES.map(s => s.value))}
+            showSelectAll={true}
+          />
+        </FilterGroup>
+      )
+    },
+    {
+      label: 'Owner',
+      content: (
+        <FilterGroup title={'Identity Identifier'}>
+          <InputFilter
+            value={filters.owner}
+            onChange={(value) => handleFilterChange('owner', value)}
+            placeholder='Enter identity identifier'
+          />
+        </FilterGroup>
+      )
+    }
+  ]
+
   return (<>
     <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
-      <Flex direction={'column'} alignItems={'center'} p={5} gap={5}>
-        <Box mb={3}>
-          <MultiLevelMenu
-            onClose={() => {
-              if (JSON.stringify(previousFilters) !== JSON.stringify(filters)) {
-                onFilterChange(filters)
-              }
-            }}
-            placement={'bottom-start'}
-            trigger={<Button colorScheme={'blue'}>Open Menu</Button>}
-            menuData={[
-              {
-                label: 'Transaction type',
-                content: (
-                  <FilterGroup title={'Transaction Types'}>
-                    <MultiSelectFilter
-                      items={TRANSACTION_TYPES}
-                      selectedValues={filters.transaction_type}
-                      onItemClick={(value) => handleMultipleValuesChange('transaction_type', value)}
-                      onSelectAll={handleClearTypes}
-                    />
-                  </FilterGroup>
-                )
-              },
-              {
-                label: 'Transaction limits',
-                content: (
-                  <FilterGroup title={'Gas Range'}>
-                    <RangeFilter
-                      minValue={filters.gas_min}
-                      maxValue={filters.gas_max}
-                      onMinChange={(value) => handleFilterChange('gas_min', value)}
-                      onMaxChange={(value) => handleFilterChange('gas_max', value)}
-                      type={'number'}
-                      minTitle={'Minimum amount'}
-                      minPlaceholder={'ex. 0...'}
-                      maxTitle={'Maximum amount'}
-                      maxPlaceholder={'ex. 10000000...'}
-                    />
-                  </FilterGroup>
-                )
-              },
-              {
-                label: 'Status',
-                content: (
-                  <FilterGroup title={'Status'}>
-                    <MultiSelectFilter
-                      items={STATUS_TYPES}
-                      selectedValues={filters.status}
-                      onItemClick={(value) => handleMultipleValuesChange('status', value)}
-                      onSelectAll={() => handleFilterChange('status', STATUS_TYPES.map(s => s.value))}
-                      showSelectAll={true}
-                    />
-                  </FilterGroup>
-                )
-              },
-              {
-                label: 'Owner',
-                content: (
-                  <FilterGroup title={'Identity Identifier'}>
-                    <InputFilter
-                      value={filters.owner}
-                      onChange={(value) => handleFilterChange('owner', value)}
-                      placeholder='Enter identity identifier'
-                    />
-                  </FilterGroup>
-                )
-              }
-            ]}
-          />
-        </Box>
-
-        {/* Example with different placement */}
-        {/* <Box> */}
-        {/*  <MultiLevelMenu */}
-        {/*    menuData={menuData} */}
-        {/*    trigger={<Button variant={'outline'}>Menu Right</Button>} */}
-        {/*    placement={'right'} */}
-        {/*  /> */}
-        {/* </Box> */}
-      </Flex>
+      <MultiLevelMenu
+        onClose={() => {
+          if (JSON.stringify(previousFilters) !== JSON.stringify(filters)) {
+            onFilterChange(filters)
+          }
+        }}
+        placement={'bottom-start'}
+        trigger={
+          <Button
+            className={'TransactionsFilter__Button'}
+            onClick={() => mobileIsOpen ? mobileOnClose() : mobileOnOpen()}
+            variant={'brand'}
+            size={'sm'}
+          >
+            <span>Add Filter</span>
+            <ChevronIcon css={{
+              transition: '.1s',
+              transform: mobileIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
+            }}/>
+          </Button>
+        }
+        menuData={menuData}
+      />
 
       <Button
         className={'TransactionsFilter__Button'}
@@ -296,45 +259,50 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
       <ActiveFilters
         filters={filters}
         onClearFilter={handleClearFilter}
+        isFilterSelected={isFilterSelected}
+        formatValue={formatFilterValue}
+        getFilterLabel={getFilterLabel}
       />
     </div>
 
-    {isMobile
-      ? <BottomSheet
-          isOpen={mobileIsOpen}
+    {isMobile &&
+      <BottomSheet
+        isOpen={mobileIsOpen}
+        onClose={mobileOnClose}
+        onOpen={mobileOnOpen}
+        title={'Filters'}
+      >
+        <FilterContent
+          filters={filters}
+          handleFilterChange={handleFilterChange}
+          handleMultipleValuesChange={handleMultipleValuesChange}
+          handleClearTypes={handleClearTypes}
+          onFilterChange={(newFilters) => {
+            onFilterChange(newFilters)
+            handleClose()
+          }}
           onClose={mobileOnClose}
-          onOpen={mobileOnOpen}
-          title={'Filters'}
-        >
-          <FilterContent
-            filters={filters}
-            handleFilterChange={handleFilterChange}
-            handleMultipleValuesChange={handleMultipleValuesChange}
-            handleClearTypes={handleClearTypes}
-            onFilterChange={(newFilters) => {
-              onFilterChange(newFilters)
-              handleClose()
-            }}
-            onClose={mobileOnClose}
-          />
-        </BottomSheet>
-      : !mobileIsOpen &&
-        <Box
-          p={4}
-          borderWidth='1px'
-          borderRadius='lg'
-          className='TransactionsFilter'
-          maxW={'100%'}
-        >
-          <FilterContent
-            filters={filters}
-            handleFilterChange={handleFilterChange}
-            handleMultipleValuesChange={handleMultipleValuesChange}
-            handleClearTypes={handleClearTypes}
-            onFilterChange={onFilterChange}
-            onClose={mobileOnClose}
-          />
-        </Box>
+        />
+      </BottomSheet>
+    }
+    {
+      // : !mobileIsOpen &&
+      //   <Box
+      //     p={4}
+      //     borderWidth='1px'
+      //     borderRadius='lg'
+      //     className='TransactionsFilter'
+      //     maxW={'100%'}
+      //   >
+      //     <FilterContent
+      //       filters={filters}
+      //       handleFilterChange={handleFilterChange}
+      //       handleMultipleValuesChange={handleMultipleValuesChange}
+      //       handleClearTypes={handleClearTypes}
+      //       onFilterChange={onFilterChange}
+      //       onClose={mobileOnClose}
+      //     />
+      //   </Box>
     }
   </>)
 }
