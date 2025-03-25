@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Box, Flex, Text, Popover, PopoverTrigger, PopoverContent, PopoverBody, Icon, Link } from '@chakra-ui/react'
-import { ChevronRightIcon } from '@chakra-ui/icons'
+import { Box, Text, Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@chakra-ui/react'
+import { ChevronIcon } from '../icons'
 import './MenuLevel.scss'
 
 function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose, forceClose, activeItemId, onActiveItemChange }) {
@@ -74,19 +74,15 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               offset={[0, 30]}
             >
               <PopoverTrigger>
-                <Flex
+                <div
                   className={`MenuLevel__Item MenuLevel__Item--Submenu ${isActive ? 'MenuLevel__Item--Active' : ''}`}
-                  px={3}
-                  py={2}
-                  justifyContent="space-between"
-                  alignItems="center"
-                  cursor="pointer"
-                  _hover={{ bg: 'transparent' }}
                   onClick={() => handleItemClick(item, index)}
                 >
                   {<Text>{item.label}</Text>}
-                  <Icon as={ChevronRightIcon} ml={2} boxSize={'14px'} color={'gray.400'} />
-                </Flex>
+                  <div className={'MenuLevel__ItemIcon'}>
+                    <ChevronIcon/>
+                  </div>
+                </div>
               </PopoverTrigger>
               <PopoverContent width={'auto'} minWidth={'180px'}>
                 <PopoverBody p={0}>
