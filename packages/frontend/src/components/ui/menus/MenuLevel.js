@@ -27,6 +27,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
   }
 
   const handleSubMenuClose = () => {
+    onActiveItemChange(null)
     setOpenSubMenuId(null)
   }
 
@@ -46,13 +47,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               onClick={() => onMenuItemClick && onMenuItemClick()}
               className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
             >
-              <Box
-                className={'MenuLevel__Item'}
-                px={3}
-                py={2}
-                cursor={'pointer'}
-                _hover={{ bg: 'transparent' }}
-              >
+              <Box className={'MenuLevel__Item'}>
                 {<Text>{item.label}</Text>}
               </Box>
             </Link>
@@ -104,17 +99,13 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
         }
 
         return (
-          <Box
-            key={index}
+          <div
             className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
-            px={3}
-            py={2}
-            cursor="pointer"
-            _hover={{ bg: 'transparent' }}
             onClick={() => handleItemClick(item, index)}
+            key={index}
           >
             {<Text>{item.label}</Text>}
-          </Box>
+          </div>
         )
       })}
     </div>
