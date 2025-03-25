@@ -215,19 +215,6 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
         menuData={menuData}
       />
 
-      <Button
-        className={'TransactionsFilter__Button'}
-        onClick={() => mobileIsOpen ? mobileOnClose() : mobileOnOpen()}
-        variant={'brand'}
-        size={'sm'}
-      >
-        <span>Add Filter</span>
-        <ChevronIcon css={{
-          transition: '.1s',
-          transform: mobileIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
-        }}/>
-      </Button>
-
       <ActiveFilters
         filters={filters}
         onClearFilter={handleClearFilter}
