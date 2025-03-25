@@ -1,7 +1,7 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { Button, useDisclosure } from '@chakra-ui/react'
 import { StateTransitionEnum } from '../../enums/state.transition.type'
-import { useFilters, usePrevious } from '../../hooks'
+import { useFilters } from '../../hooks'
 import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters } from '../filters'
 import { BottomSheet } from '../ui/sheets'
 import { ChevronIcon } from '../ui/icons'
@@ -127,7 +127,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     gas: initialFilters?.gas ?? defaultFilters.gas
   })
 
-  const previousFilters = usePrevious(filters)
+  useEffect(() => onFilterChange(filters), [filters, onFilterChange])
 
   /** Mobile state management */
   const { isOpen: mobileIsOpen, onOpen: mobileOnOpen, onClose: mobileOnClose } = useDisclosure()
@@ -162,10 +162,8 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
       ...filters,
       [filterName]: defaultFilters[filterName]
     }
-
     setFilters(newFilters)
-    onFilterChange(newFilters)
-  }, [filters, setFilters, onFilterChange])
+  }, [filters, setFilters])
 
   const menuData = [
     {
@@ -229,9 +227,6 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
     <div className={`TransactionsFilter__ButtonsContainer ${className || ''}`}>
       <MultiLevelMenu
         onClose={() => {
-          if (JSON.stringify(previousFilters) !== JSON.stringify(filters)) {
-            onFilterChange(filters)
-          }
         }}
         placement={'bottom-start'}
         trigger={
@@ -286,7 +281,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
           handleMultipleValuesChange={handleMultipleValuesChange}
           handleClearTypes={handleClearTypes}
           onFilterChange={(newFilters) => {
-            onFilterChange(newFilters)
+            setFilters(newFilters)
             handleClose()
           }}
           onClose={mobileOnClose}
