@@ -122,13 +122,13 @@ export const Filters = ({
   })
 
   return (
-    <div className={`FiltersManager ${className || ''}`}>
-      <div className={'FiltersManager__ButtonsContainer'}>
+    <div className={`Filters ${className || ''}`}>
+      <div className={'Filters__ButtonsContainer'}>
         <MultiLevelMenu
           placement={'bottom-start'}
           trigger={
             <Button
-              className={'FiltersManager__Button'}
+              className={'Filters__Button'}
               onClick={() => mobileIsOpen ? mobileOnClose() : mobileOnOpen()}
               variant={'brand'}
               size={'sm'}
@@ -159,10 +159,10 @@ export const Filters = ({
           onOpen={mobileOnOpen}
           title={'Filters'}
         >
-          <div className="FiltersManager__MobileContent">
+          <div className="Filters__MobileContent">
             {menuData.map((item, index) => (
-              <div key={index} className="FiltersManager__MobileItem">
-                <div className="FiltersManager__MobileItemTitle">{item.label}</div>
+              <div key={index} className="Filters__MobileItem">
+                <div className="Filters__MobileItemTitle">{item.label}</div>
                 {item.content}
               </div>
             ))}
