@@ -422,10 +422,10 @@ function TransactionData ({ data, type, loading, rate }) {
       {data?.identityContractNonce !== undefined &&
         <InfoLine
           className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
-          title={'Identity Contract Nonce'}
-          value={data?.identityContractNonce}
+          title={'Identity Nonce'}
+          value={data?.identityNonce}
           loading={loading}
-          error={data?.identityContractNonce === null}
+          error={data?.identityNonce === null}
         />
       }
 
