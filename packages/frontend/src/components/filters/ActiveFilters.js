@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
 import { CloseIcon } from '../ui/icons'
 import './ActiveFilters.scss'
 
