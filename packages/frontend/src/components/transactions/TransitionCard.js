@@ -198,7 +198,7 @@ function TransitionCard ({ transition, owner, rate, className }) {
       {fields.indexOf('IdentityContractNonce') !== -1 &&
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--Nonce'}
-          title={'Identity Contract Nonce'}
+          title={'Identity Nonce'}
           value={transition?.identityNonce}
           error={transition?.identityNonce === undefined}
         />
