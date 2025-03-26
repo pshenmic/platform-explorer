@@ -137,7 +137,7 @@ describe('Transaction routes', () => {
 
     it('should return error transaction', async () => {
       const [, transaction] = transactions
-      const [identity_tx] = transactions
+      const [identityTx] = transactions
       const { body } = await client.get(`/transaction/${transaction.transaction.hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -160,9 +160,9 @@ describe('Transaction routes', () => {
             contested: false,
             status: 'ok',
             timestamp: (
-              identity_tx.block.timestamp.toISOString().slice(-2, -1) === '0'
-                ? `${identity_tx.block.timestamp.toISOString().slice(0, -2)}Z`
-                : identity_tx.block.timestamp.toISOString()
+              identityTx.block.timestamp.toISOString().slice(-2, -1) === '0'
+                ? `${identityTx.block.timestamp.toISOString().slice(0, -2)}Z`
+                : identityTx.block.timestamp.toISOString()
             ).replace('Z', '+00:00')
           }]
         }
