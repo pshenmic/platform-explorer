@@ -3,7 +3,6 @@
 
 .BottomSheet {
   background-color: var(--chakra-colors-gray-650);
-  border-radius: 1.25rem;
   display: flex;
   flex-direction: column;
 
@@ -19,18 +18,19 @@
   }
 
   &__ContentContainer {
-    max-height: 100%;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
+    height: 100%;
   }
 
   &__Body {
-    max-height: 100%;
+    flex: 1;
     overflow-y: auto;
+    min-height: 0;
   }
 
   &__DragHandle {
+    flex-shrink: 0;
     border-bottom: none;
 
     @media (hover: hover) and (pointer: fine) {
@@ -66,6 +66,7 @@
     font-size: 20px;
     line-height: 100%;
     text-align: center;
-    //letter-spacing: 0%;
+    padding: 0 1.5rem 1rem;
+    flex-shrink: 0;
   }
 }

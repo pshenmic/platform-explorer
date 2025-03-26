@@ -13,8 +13,7 @@ export const BottomSheet = ({
   onClose,
   onOpen,
   title,
-  children,
-  showDoneButton = true
+  children
 }) => {
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
   const [isExpanded, setIsExpanded] = useState(false)
@@ -43,7 +42,7 @@ export const BottomSheet = ({
     } else {
       handleClose()
     }
-  }, [isOpen, handleOpen])
+  }, [isOpen, handleOpen, handleClose])
 
   const bind = useDrag(
     ({ down, movement: [_, my], velocity: [, vy], direction: [, dy] }) => {
@@ -99,15 +98,21 @@ export const BottomSheet = ({
           left: 0,
           right: 0,
           zIndex: 1400,
-          borderTopRadius: '20px',
-          maxHeight: isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT,
+          borderTopLeftRadius: '20px',
+          borderTopRightRadius: '20px',
+          height: isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT,
           transform: y.to(value => `translateY(${value}px)`),
-          transition: 'max-height 0.2s ease-out'
+          transition: 'height 0.2s ease-out'
         }}
       >
         <Box
           {...bind()}
-          style={{ touchAction: 'none' }}
+          style={{
+            touchAction: 'none',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
           className={'BottomSheet__ContentContainer'}
         >
           <DrawerHeader
@@ -117,14 +122,23 @@ export const BottomSheet = ({
             justifyContent="space-between"
             cursor={'grab'}
             className={'BottomSheet__DragHandle'}
+            padding="0.5rem 1.5rem"
           >
             <div className={'BottomSheet__DragHandleLine'}/>
           </DrawerHeader>
 
           <Text className={'BottomSheet__Title'}>{title}</Text>
 
-          <DrawerBody className={'BottomSheet__Body'}>
-            {children}
+          <DrawerBody
+            className={'BottomSheet__Body'}
+            flex="1"
+            overflowY="auto"
+            display="flex"
+            flexDirection="column"
+          >
+            <Box flex="1" minHeight="0">
+              {children}
+            </Box>
           </DrawerBody>
         </Box>
       </animated.div>
