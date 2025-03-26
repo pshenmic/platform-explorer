@@ -205,7 +205,7 @@ export const Filters = ({
               isOpen={menuIsOpen}
               onOpen={menuOnOpen}
             />
-          }
+        }
 
         <ActiveFilters
           filters={filters}
@@ -224,7 +224,7 @@ export const Filters = ({
           title={'Filters'}
         >
           <MobileFilterMenu
-            menuItems={menuData}
+            menuData={menuData}
             onSubmit={submitHandler}
             onReset={resetAllFilters}
           />

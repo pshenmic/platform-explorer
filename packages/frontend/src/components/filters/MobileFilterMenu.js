@@ -1,32 +1,33 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Box, Button, Flex, Icon, Text, Fade } from '@chakra-ui/react'
 import { ChevronLeftIcon } from '@chakra-ui/icons'
 import './MobileFilterMenu.scss'
 
 export const MobileFilterMenu = ({
-  menuItems,
+  menuData = [],
   onSubmit,
   onReset
 }) => {
   const [activeItem, setActiveItem] = useState(null)
-  const [shouldRenderDetails, setShouldRenderDetails] = useState(false)
-  const [shouldRenderList, setShouldRenderList] = useState(true)
+  const [renderDetails, setRenderDetails] = useState(false)
+  const [renderList, setRenderList] = useState(true)
 
   useEffect(() => {
     if (activeItem) {
-      setShouldRenderDetails(true)
-      const timer = setTimeout(() => {
-        setShouldRenderList(false)
-      }, 300)
-      return () => clearTimeout(timer)
+      setRenderDetails(true)
+      setRenderList(false)
     } else {
-      setShouldRenderList(true)
-      const timer = setTimeout(() => {
-        setShouldRenderDetails(false)
-      }, 300)
-      return () => clearTimeout(timer)
+      setRenderList(true)
+      setRenderDetails(false)
     }
   }, [activeItem])
+
+  const getUpdatedMenuItem = useCallback((item) => {
+    if (!item) return null
+
+    const currentItem = menuData.find(menuItem => menuItem.label === item.label)
+    return currentItem || item
+  }, [menuData])
 
   const goToMainMenu = () => {
     setActiveItem(null)
@@ -36,16 +37,20 @@ export const MobileFilterMenu = ({
     setActiveItem(item)
   }
 
-  const hasActiveFilters = menuItems.some(item => item.activeFilterValue)
+  // Проверка наличия активных фильтров
+  const hasActiveFilters = menuData.some(item => item.activeFilterValue)
+
+  // Получаем актуальную версию активного элемента, если он существует
+  const currentActiveItem = activeItem ? getUpdatedMenuItem(activeItem) : null
 
   return (
     <Box className="MobileFilterMenu" position="relative">
-      {shouldRenderList && (
+      {renderList && (
         <Fade in={!activeItem} unmountOnExit>
           <Box className="MobileFilterMenu__List">
-            {menuItems.map((item, index) => (
+            {menuData.map((item, index) => (
               <Flex
-                key={index}
+                key={`menu-item-${index}-${item.label}`}
                 className="MobileFilterMenu__Item"
                 onClick={() => selectMenuItem(item)}
                 justifyContent="space-between"
@@ -60,10 +65,10 @@ export const MobileFilterMenu = ({
                 <Flex alignItems="center">
                   {item.activeFilterValue && (
                     <Text
-                      color="blue.500"
+                      color={'blue.500'}
                       mr={2}
-                      fontSize="sm"
-                      fontWeight="medium"
+                      fontSize={'sm'}
+                      fontWeight={'medium'}
                     >
                       {item.activeFilterValue}
                     </Text>
@@ -106,8 +111,8 @@ export const MobileFilterMenu = ({
       )}
 
       {/* Детали конкретного фильтра */}
-      {shouldRenderDetails && (
-        <Fade in={!!activeItem} unmountOnExit>
+      {renderDetails && currentActiveItem && (
+        <Fade in={!!currentActiveItem} unmountOnExit>
           <Box className="MobileFilterMenu__DetailView">
             <Flex
               className="MobileFilterMenu__BackButton"
@@ -124,12 +129,10 @@ export const MobileFilterMenu = ({
               <Text fontWeight="medium">Back to filters</Text>
             </Flex>
 
-            {activeItem && (
-              <Box className="MobileFilterMenu__Content">
-                <Text fontWeight="bold" mb={4} fontSize="lg">{activeItem.label}</Text>
-                {activeItem.content}
-              </Box>
-            )}
+            <Box className="MobileFilterMenu__Content">
+              <Text fontWeight="bold" mb={4} fontSize="lg">{currentActiveItem.label}</Text>
+              {currentActiveItem.content}
+            </Box>
           </Box>
         </Fade>
       )}
