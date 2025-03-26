@@ -31,7 +31,7 @@ export const Filters = ({
 
   const previousFilters = useRef(filters)
 
-  useEffect(() => {
+  const applyFilters = useCallback(() => {
     if (typeof onFilterChange !== 'function') return
 
     const processedFilters = (() => {
@@ -63,7 +63,14 @@ export const Filters = ({
     onFilterChange(processedFilters)
   }, [filters, onFilterChange, filtersConfig])
 
-  const { isOpen: mobileIsOpen, onOpen: mobileOnOpen, onClose: mobileOnClose } = useDisclosure()
+  useEffect(applyFilters, [applyFilters])
+
+  const { isOpen: menuIsOpen, onOpen: menuOnOpen, onClose: menuOnClose } = useDisclosure()
+
+  const submitHandler = () => {
+    applyFilters()
+    menuOnClose()
+  }
 
   // Handle single filter change
   const handleFilterChange = useCallback((filterName, value) => {
@@ -96,6 +103,16 @@ export const Filters = ({
     setFilters(newFilters)
   }, [filters, filtersConfig, setFilters])
 
+  const SubmitButton = ({ text }) => (
+    <Button
+      size={'sm'}
+      variant={'customGreen'}
+      onClick={submitHandler}
+    >
+      {text || 'OK'}
+    </Button>
+  )
+
   const menuData = Object.entries(filtersConfig).map(([key, config]) => {
     let content
 
@@ -110,13 +127,7 @@ export const Filters = ({
               onSelectAll={() => handleSelectAll(key)}
               showSelectAll={true}
             />
-            <Button
-              size={'sm'}
-              variant={'customGreen'}
-              onClick={mobileOnClose}
-            >
-              OK
-            </Button>
+            <SubmitButton/>
           </FilterGroup>
         )
         break
@@ -132,6 +143,7 @@ export const Filters = ({
               maxTitle={config.maxTitle}
               maxPlaceholder={config.maxPlaceholder}
             />
+            <SubmitButton/>
           </FilterGroup>
         )
         break
@@ -143,6 +155,7 @@ export const Filters = ({
               onChange={(value) => handleFilterChange(key, value)}
               placeholder={config.placeholder}
             />
+            <SubmitButton/>
           </FilterGroup>
         )
         break
@@ -164,18 +177,21 @@ export const Filters = ({
           trigger={
             <Button
               className={'Filters__Button'}
-              onClick={() => mobileIsOpen ? mobileOnClose() : mobileOnOpen()}
+              onClick={() => menuIsOpen ? menuOnClose() : menuOnOpen()}
               variant={'brand'}
               size={'sm'}
             >
               <span>{buttonText}</span>
               <ChevronIcon css={{
                 transition: '.1s',
-                transform: mobileIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
+                transform: menuIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
               }}/>
             </Button>
           }
           menuData={menuData}
+          onClose={menuOnClose}
+          isOpen={menuIsOpen}
+          onOpen={menuOnOpen}
         />
 
         <ActiveFilters
@@ -189,9 +205,9 @@ export const Filters = ({
 
       {isMobile && (
         <BottomSheet
-          isOpen={mobileIsOpen}
-          onClose={mobileOnClose}
-          onOpen={mobileOnOpen}
+          isOpen={menuIsOpen}
+          onClose={menuOnClose}
+          onOpen={menuOnOpen}
           title={'Filters'}
         >
           <div className="Filters__MobileContent">
