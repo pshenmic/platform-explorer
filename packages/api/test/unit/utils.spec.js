@@ -196,7 +196,7 @@ describe('Utils', () => {
         userFeeIncrease: 0,
         ownerId: '7dwjL5frrkM69pv3BsKSQb4ELrMYmDeE11KNoDSefG6c',
         dataContractId: '8BzeH7dmyLHNzcCtG6DGowAkWyRgWEq15y88Zz2zBxVg',
-        dataContractNonce: '0',
+        dataContractIdentityNonce: '0',
         schema: {
           labler: {
             type: 'object',

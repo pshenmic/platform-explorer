@@ -246,7 +246,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
       decoded.ownerId = stateTransition.getDataContract().getOwnerId().toString()
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
-      decoded.dataContractNonce = String(stateTransition.getDataContract().getIdentityNonce())
+      decoded.dataContractIdentityNonce = String(stateTransition.getDataContract().getIdentityNonce())
       decoded.schema = stateTransition.getDataContract().getDocumentSchemas()
       decoded.version = stateTransition.getDataContract().getVersion()
       decoded.dataContractOwner = stateTransition.getDataContract().getOwnerId().toString()
