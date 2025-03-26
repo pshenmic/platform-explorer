@@ -1,5 +1,6 @@
 import { Input } from '@chakra-ui/react'
-import { SubmitButton } from './SubmitButton'
+import { SubmitButton } from '../ui/forms'
+import FilterActions from './FilterActions'
 
 export const InputFilter = ({
   value,
@@ -18,9 +19,9 @@ export const InputFilter = ({
     />
 
     {showSubmitButton && (
-      <div className={'InputFilter__Actions'}>
+      <FilterActions>
         <SubmitButton onSubmit={onSubmit} />
-      </div>
+      </FilterActions>
     )}
   </div>
 )

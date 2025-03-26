@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react'
-import Checkbox from '../ui/forms/Checkbox'
-import { SubmitButton } from './SubmitButton'
+import { Checkbox, SubmitButton } from '../ui/forms'
+import FilterActions from './FilterActions'
 import './MultiSelectFilter.scss'
 
 export const MultiSelectFilter = ({
@@ -45,7 +45,7 @@ export const MultiSelectFilter = ({
       ))}
 
       {(showToggleAll || showSubmitButton) && (
-        <div className={'MultiSelectFilter__Actions'}>
+        <FilterActions>
           {showSubmitButton && (
             <SubmitButton onSubmit={onSubmit}/>
           )}
@@ -59,7 +59,7 @@ export const MultiSelectFilter = ({
               {isAllSelected ? 'Unselect all' : 'Select all'}
             </Button>
           )}
-        </div>
+        </FilterActions>
       )}
     </div>
   )
