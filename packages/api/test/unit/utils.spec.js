@@ -232,7 +232,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 5,
-        identityContractNonce: '2',
+        identityNonce: '2',
         userFeeIncrease: 0,
         identityId: 'AGQc1dwAc46Js6fvSBSqV2Zi7fCq2YvoAwEb1SmYtXuM',
         revision: '1',

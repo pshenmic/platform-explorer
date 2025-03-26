@@ -255,7 +255,7 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_UPDATE: {
-      decoded.identityContractNonce = String(stateTransition.getIdentityContractNonce())
+      decoded.identityNonce = String(stateTransition.getIdentityContractNonce())
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getOwnerId().toString()
       decoded.revision = String(stateTransition.getRevision())
