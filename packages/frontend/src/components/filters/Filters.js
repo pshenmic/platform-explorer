@@ -173,7 +173,12 @@ export const Filters = ({
     return {
       label: config.label,
       content,
-      activeFilterValue
+      activeFilterValue,
+      type: config.type,
+      filterKey: key,
+      rawValue: filters[key],
+      options: config.options || null,
+      mobileRenderer: config.mobileRenderer || null
     }
   })
 

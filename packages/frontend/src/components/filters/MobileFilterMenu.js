@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Box, Button, Flex, Icon, Text, Fade } from '@chakra-ui/react'
 import { ChevronLeftIcon } from '@chakra-ui/icons'
+import { FilterValueTag } from './FilterValueTag'
 import './MobileFilterMenu.scss'
 
 export const MobileFilterMenu = ({
@@ -37,10 +38,8 @@ export const MobileFilterMenu = ({
     setActiveItem(item)
   }
 
-  // Проверка наличия активных фильтров
   const hasActiveFilters = menuData.some(item => item.activeFilterValue)
 
-  // Получаем актуальную версию активного элемента, если он существует
   const currentActiveItem = activeItem ? getUpdatedMenuItem(activeItem) : null
 
   return (
@@ -64,14 +63,15 @@ export const MobileFilterMenu = ({
 
                 <Flex alignItems="center">
                   {item.activeFilterValue && (
-                    <Text
-                      color={'blue.500'}
-                      mr={2}
-                      fontSize={'sm'}
-                      fontWeight={'medium'}
-                    >
-                      {item.activeFilterValue}
-                    </Text>
+                    <Box mr={2}>
+                      <FilterValueTag
+                        value={item.activeFilterValue}
+                        type={item.type}
+                        rawValue={item.rawValue}
+                        options={item.options}
+                        customRenderer={item.customRenderer}
+                      />
+                    </Box>
                   )}
                   <Icon
                     viewBox="0 0 24 24"
@@ -110,7 +110,6 @@ export const MobileFilterMenu = ({
         </Fade>
       )}
 
-      {/* Детали конкретного фильтра */}
       {renderDetails && currentActiveItem && (
         <Fade in={!!currentActiveItem} unmountOnExit>
           <Box className="MobileFilterMenu__DetailView">

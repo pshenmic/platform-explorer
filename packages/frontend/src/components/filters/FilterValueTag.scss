@@ -1,0 +1,20 @@
+.FilterValueTag {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  line-height: 1.2;
+  
+  &--range {}
+  
+  &--input {
+    font-style: italic;
+  }
+  
+  &--multiselect {}
+  
+  &__MultipleContainer {
+    display: flex;
+    gap: 4px;
+  }
+} 
