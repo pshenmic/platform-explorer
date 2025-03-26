@@ -5,6 +5,7 @@ import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters
 import { BottomSheet } from '../ui/sheets'
 import { ChevronIcon } from '../ui/icons'
 import { MultiLevelMenu } from '../ui/menus'
+import { MobileFilterMenu } from './MobileFilterMenu'
 import './Filters.scss'
 
 export const Filters = ({
@@ -98,6 +99,21 @@ export const Filters = ({
     setFilters(newFilters)
   }, [filters, filtersConfig, setFilters])
 
+  // Добавим функцию для сброса всех фильтров
+  const resetAllFilters = useCallback(() => {
+    const defaultFilters = Object.fromEntries(
+      Object.keys(filtersConfig).map(key => [
+        key,
+        filtersConfig[key].defaultValue
+      ])
+    )
+    setFilters(defaultFilters)
+    // Можно вызвать onFilterChange если нужно уведомить родительский компонент
+    if (typeof onFilterChange === 'function') {
+      onFilterChange({})
+    }
+  }, [filtersConfig, setFilters, onFilterChange])
+
   const menuData = Object.entries(filtersConfig).map(([key, config]) => {
     let content
 
@@ -184,7 +200,7 @@ export const Filters = ({
           ? <TriggerButton/>
           : <MultiLevelMenu
               placement={'bottom-start'}
-              trigger={<TriggerButton/>}
+              trigger={TriggerButton()}
               menuData={menuData}
               onClose={menuOnClose}
               isOpen={menuIsOpen}
@@ -208,21 +224,10 @@ export const Filters = ({
           onOpen={menuOnOpen}
           title={'Filters'}
         >
-          <div className="Filters__MobileContent">
-            {menuData.map((item, index) => (
-              <div key={index} className="Filters__MobileItem">
-                <div className="Filters__MobileItemHeader">
-                  <span className="Filters__MobileItemLabel">{item.label}</span>
-                  {item.activeFilterValue && (
-                    <span className="Filters__MobileItemActiveFilter">
-                      {item.activeFilterValue}
-                    </span>
-                  )}
-                </div>
-                {item.content}
-              </div>
-            ))}
-          </div>
+          <MobileFilterMenu
+            menuItems={menuData}
+            onSubmit={submitHandler}
+          />
         </BottomSheet>
       )}
     </div>
