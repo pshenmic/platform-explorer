@@ -3,7 +3,15 @@ import MenuLevel from './MenuLevel'
 import { useState } from 'react'
 import './MultiLevelMenu.scss'
 
-function MultiLevelMenu ({ menuData = [], trigger, placement = 'right-start', onClose, ...props }) {
+function MultiLevelMenu ({
+  menuData = [],
+  trigger,
+  placement = 'right-start',
+  onClose,
+  onOpen,
+  isOpen: forceIsOpen,
+  ...props
+}) {
   const [forceClose, setForceClose] = useState(false)
   const [activeItemId, setActiveItemId] = useState(null)
 
@@ -15,6 +23,7 @@ function MultiLevelMenu ({ menuData = [], trigger, placement = 'right-start', on
 
   const openMenuHandler = () => {
     setForceClose(false)
+    if (typeof onOpen === 'function') onOpen()
   }
 
   const handleActiveItemChange = (id) => {
@@ -28,6 +37,7 @@ function MultiLevelMenu ({ menuData = [], trigger, placement = 'right-start', on
       closeOnBlur={true}
       placement={placement}
       variant={'menu'}
+      isOpen={forceIsOpen}
       {...props}
     >
       <PopoverTrigger>
