@@ -151,36 +151,46 @@ export const Filters = ({
         content = null
     }
 
+    const activeFilterValue = !filtersConfig[key].isAllSelected?.(filters[key]) && filters[key]
+      ? filtersConfig[key].formatValue?.(filters[key])
+      : null
+
     return {
       label: config.label,
-      content
+      content,
+      activeFilterValue
     }
   })
+
+  const TriggerButton = () => (
+    <Button
+      className={'Filters__Button'}
+      onClick={() => menuIsOpen ? menuOnClose() : menuOnOpen()}
+      variant={'brand'}
+      size={'sm'}
+    >
+      <span>{buttonText}</span>
+      <ChevronIcon css={{
+        transition: '.1s',
+        transform: menuIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
+      }}/>
+    </Button>
+  )
 
   return (
     <div className={`Filters ${className || ''}`}>
       <div className={'Filters__ButtonsContainer'}>
-        <MultiLevelMenu
-          placement={'bottom-start'}
-          trigger={
-            <Button
-              className={'Filters__Button'}
-              onClick={() => menuIsOpen ? menuOnClose() : menuOnOpen()}
-              variant={'brand'}
-              size={'sm'}
-            >
-              <span>{buttonText}</span>
-              <ChevronIcon css={{
-                transition: '.1s',
-                transform: menuIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
-              }}/>
-            </Button>
+        {isMobile
+          ? <TriggerButton/>
+          : <MultiLevelMenu
+              placement={'bottom-start'}
+              trigger={<TriggerButton/>}
+              menuData={menuData}
+              onClose={menuOnClose}
+              isOpen={menuIsOpen}
+              onOpen={menuOnOpen}
+            />
           }
-          menuData={menuData}
-          onClose={menuOnClose}
-          isOpen={menuIsOpen}
-          onOpen={menuOnOpen}
-        />
 
         <ActiveFilters
           filters={filters}
@@ -200,8 +210,15 @@ export const Filters = ({
         >
           <div className="Filters__MobileContent">
             {menuData.map((item, index) => (
-              <div key={index}>
-                <div>{item.label}</div>
+              <div key={index} className="Filters__MobileItem">
+                <div className="Filters__MobileItemHeader">
+                  <span className="Filters__MobileItemLabel">{item.label}</span>
+                  {item.activeFilterValue && (
+                    <span className="Filters__MobileItemActiveFilter">
+                      {item.activeFilterValue}
+                    </span>
+                  )}
+                </div>
                 {item.content}
               </div>
             ))}
