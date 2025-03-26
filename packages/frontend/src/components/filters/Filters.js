@@ -108,7 +108,6 @@ export const Filters = ({
       ])
     )
     setFilters(defaultFilters)
-    // Можно вызвать onFilterChange если нужно уведомить родительский компонент
     if (typeof onFilterChange === 'function') {
       onFilterChange({})
     }
@@ -227,6 +226,7 @@ export const Filters = ({
           <MobileFilterMenu
             menuItems={menuData}
             onSubmit={submitHandler}
+            onReset={resetAllFilters}
           />
         </BottomSheet>
       )}
