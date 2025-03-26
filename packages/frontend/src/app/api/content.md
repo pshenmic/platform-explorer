@@ -4,9 +4,7 @@ Platform Explorer HTTP API allow you to query and see platform blockchain data p
 
 API is still under ongoing development, so refer to this page or repo documentation for the most up-to-date latest specification.
 
-Production (mainnet) live URL is [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
-
-Testnet live URL is [https://testnet.platform-explorer.pshenmic.dev](https://testnet.platform-explorer.pshenmic.dev)
+Production (testnet) live URL is [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
 
 Reference:
 
@@ -621,6 +619,7 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `gas_max` number of max `gas_used`
 * `timestamp_start` must be used with `timestamp_end`
 * `timestamp_end` must be used with `timestamp_start`
+
 ```
 GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
 
@@ -845,7 +844,7 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
   "typeName": "preorder",
   "gasUsed": null,
   "totalGasUsed": 15999780,
-  "identityNonce": null,
+  "identityContractNonce": null,
   "owner": {
     "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
     "aliases": [
@@ -910,7 +909,7 @@ GET /document/5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd/revisions
       "prefundedVotingBalance": null,
       "documentTypeName": null,
       "transitionType": 0,
-      "identityNonce": "2",
+      "identityContractNonce": "2",
       "gasUsed": 15048420,
       "totalGasUsed": null,
       "owner": {
