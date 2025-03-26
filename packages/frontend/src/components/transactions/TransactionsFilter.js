@@ -110,8 +110,8 @@ const filtersConfig = {
   owner: {
     type: 'input',
     label: 'Owner',
-    title: 'Identity Identifier',
-    placeholder: 'Enter identity identifier',
+    title: 'Filter by owner',
+    placeholder: 'OWNER ID OR IDENTITY',
     defaultValue: '',
     formatValue: (value) => value || null
   }
