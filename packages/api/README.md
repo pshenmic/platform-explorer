@@ -877,7 +877,7 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
   "typeName": "preorder",
   "gasUsed": null,
   "totalGasUsed": 15999780,
-  "identityNonce": null,
+  "identityContractNonce": null,
   "owner": {
     "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
     "aliases": [
@@ -942,7 +942,7 @@ GET /document/5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd/revisions
       "prefundedVotingBalance": null,
       "documentTypeName": null,
       "transitionType": 0,
-      "identityNonce": "2",
+      "identityContractNonce": "2",
       "gasUsed": 15048420,
       "totalGasUsed": null,
       "owner": {
