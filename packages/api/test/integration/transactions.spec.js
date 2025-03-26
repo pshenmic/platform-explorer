@@ -58,7 +58,7 @@ describe('Transaction routes', () => {
     transactions.push({ transaction: errorTx, block })
 
     for (let i = 2; i < 30; i++) {
-      const block = await fixtures.block(knex, {
+      block = await fixtures.block(knex, {
         height: i + 1,
         timestamp: new Date(startDate.getTime() + i * 1000 * 60)
       })
@@ -75,7 +75,7 @@ describe('Transaction routes', () => {
     }
 
     for (let i = 30; i < 60; i++) {
-      const block = await fixtures.block(knex, {
+      block = await fixtures.block(knex, {
         height: i + 1, timestamp: new Date(startDate.getTime() + i * 1000 * 60)
       })
 
@@ -137,6 +137,7 @@ describe('Transaction routes', () => {
 
     it('should return error transaction', async () => {
       const [, transaction] = transactions
+      const [identity_tx] = transactions
       const { body } = await client.get(`/transaction/${transaction.transaction.hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -159,9 +160,9 @@ describe('Transaction routes', () => {
             contested: false,
             status: 'ok',
             timestamp: (
-              transaction.block.timestamp.toISOString().slice(-2, -1) === '0'
-                ? `${transaction.block.timestamp.toISOString().slice(0, -2)}Z`
-                : transaction.block.timestamp.toISOString()
+              identity_tx.block.timestamp.toISOString().slice(-2, -1) === '0'
+                ? `${identity_tx.block.timestamp.toISOString().slice(0, -2)}Z`
+                : identity_tx.block.timestamp.toISOString()
             ).replace('Z', '+00:00')
           }]
         }
@@ -490,6 +491,158 @@ describe('Transaction routes', () => {
 
       const expectedTransactions = transactions
         .sort((a, b) => b.transaction.id - a.transaction.id)
+        .slice(6, 9)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return be able to walk through pages desc with ordering by id', async () => {
+      const { body } = await client.get('/transactions?page=3&limit=3&order=desc&orderBy=id')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 3)
+
+      const expectedTransactions = transactions
+        .sort((a, b) => b.transaction.id - a.transaction.id)
+        .slice(6, 9)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return be able to walk through pages desc with ordering by gas_used', async () => {
+      const { body } = await client.get('/transactions?page=3&limit=3&order=desc&orderBy=gas_used')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 3)
+
+      const expectedTransactions = transactions
+        .sort((a, b) => b.transaction.gas_used - a.transaction.gas_used)
+        .slice(6, 9)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return be able to walk through pages asc with ordering by timestamp', async () => {
+      const { body } = await client.get('/transactions?page=3&limit=3&order=asc&orderBy=timestamp')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 3)
+
+      const expectedTransactions = transactions
+        .sort((a, b) => new Date(a.block.timestamp).getTime() - new Date(b.block.timestamp).getTime())
+        .slice(6, 9)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return be able to walk through pages desc with ordering by owner', async () => {
+      const { body } = await client.get('/transactions?page=3&limit=3&order=desc&orderBy=owner')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 3)
+
+      const expectedTransactions = transactions
+        .sort((a, b) => b.transaction.owner - a.transaction.owner)
         .slice(6, 9)
         .map(transaction => ({
           blockHash: transaction.block.hash,
