@@ -246,7 +246,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
       decoded.ownerId = stateTransition.getDataContract().getOwnerId().toString()
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
-      decoded.dataContractNonce = String(stateTransition.getDataContract().getIdentityNonce())
+      decoded.dataContractIdentityNonce = String(stateTransition.getDataContract().getIdentityNonce())
       decoded.schema = stateTransition.getDataContract().getDocumentSchemas()
       decoded.version = stateTransition.getDataContract().getVersion()
       decoded.dataContractOwner = stateTransition.getDataContract().getOwnerId().toString()
@@ -255,7 +255,7 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_UPDATE: {
-      decoded.identityContractNonce = String(stateTransition.getIdentityContractNonce())
+      decoded.identityNonce = String(stateTransition.getIdentityContractNonce())
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getOwnerId().toString()
       decoded.revision = String(stateTransition.getRevision())

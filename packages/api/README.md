@@ -1944,7 +1944,7 @@ POST /transaction/decode
             "revision": "1",
             "type": "note",
             "action": 0,
-            "identityNonce": "2",
+            "identityContractNonce": "2",
             "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
             "data": {
                 "message": "Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT"
@@ -2107,7 +2107,7 @@ IDENTITY_CREATE with instantLock
     "userFeeIncrease": 0,
     "ownerId": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
     "dataContractId": "AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18",
-    "dataContractNonce": 0,
+    "dataContractIdentityNonce": "0",
     "schema": {
         "note": {
             "type": "object",
@@ -2132,7 +2132,7 @@ IDENTITY_CREATE with instantLock
 ```
 {
   type: 5,
-  identityContractNonce: 3,
+  identityNonce: 3,
   userFeeIncrease: 0,
   identityId: '4NGALjtX2t3AXE3ZCqJiSmYuiWEY3ZPQNUBxNWWRrRSp',
   revision: 2,
