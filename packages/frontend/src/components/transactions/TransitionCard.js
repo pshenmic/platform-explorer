@@ -80,6 +80,8 @@ const fieldsOfTypes = {
 function TransitionCard ({ transition, owner, rate, className }) {
   const fields = fieldsOfTypes?.[DocumentActionEnum?.[transition?.action]]
 
+  console.log('transition', transition)
+
   return (
     <div className={`InfoBlock InfoBlock--Gradient TransitionCard ${className || ''}`}>
       <InfoLine
@@ -198,9 +200,9 @@ function TransitionCard ({ transition, owner, rate, className }) {
       {fields.indexOf('IdentityContractNonce') !== -1 &&
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--Nonce'}
-          title={'Identity Nonce'}
-          value={transition?.identityNonce}
-          error={transition?.identityNonce === undefined}
+          title={'Identity Contract Nonce'}
+          value={transition?.identityContractNonce}
+          error={transition?.identityContractNonce === undefined}
         />
       }
 
