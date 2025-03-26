@@ -84,15 +84,10 @@ export const Filters = ({
     setFilters(newFilters)
   }, [baseHandleMultipleValuesChange, setFilters])
 
-  // Handle select all values for a filter
-  const handleSelectAll = useCallback((filterName) => {
-    const config = filtersConfig[filterName]
-    if (config.type === 'multiselect') {
-      const allValues = config.options.map(item => item.value)
-      const newFilters = baseHandleFilterChange(filterName, allValues)
-      setFilters(newFilters)
-    }
-  }, [baseHandleFilterChange, filtersConfig, setFilters])
+  const handleToggleAll = useCallback((filterName, values) => {
+    const newFilters = baseHandleFilterChange(filterName, values)
+    setFilters(newFilters)
+  }, [baseHandleFilterChange, setFilters])
 
   // Clear a specific filter
   const clearFilter = useCallback((filterName) => {
@@ -124,8 +119,8 @@ export const Filters = ({
               items={config.options}
               selectedValues={filters[key]}
               onItemClick={(value) => handleMultipleValuesChange(key, value)}
-              onSelectAll={() => handleSelectAll(key)}
-              showSelectAll={true}
+              onSelectAll={(values) => handleToggleAll(key, values)}
+              showToggleAll={true}
             />
             <SubmitButton/>
           </FilterGroup>

@@ -1,52 +1,44 @@
-import { Box, Button } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
 import Checkbox from '../ui/forms/Checkbox'
 import './MultiSelectFilter.scss'
 
 export const MultiSelectFilter = ({
-  items,
-  selectedValues,
+  items = [],
+  selectedValues = [],
   onItemClick,
   onSelectAll,
-  showSelectAll = true
+  showToggleAll = false
 }) => {
+  const isAllSelected = items.length === selectedValues.length
+
+  const handleToggleAll = () => {
+    if (isAllSelected) {
+      onSelectAll([])
+    } else {
+      onSelectAll(items.map(item => item.value))
+    }
+  }
+
   return (
-    <div className={'MultiSelectFilter'}>
-      <Box
-        display='flex'
-        justifyContent='space-between'
-        alignItems='center'
-        mb={3}
-        pb={2}
-      >
-        {showSelectAll && (
-          <Button
-            size={'xs'}
-            variant={'ghost'}
-            onClick={onSelectAll}
-            color={'blue.500'}
-            _hover={{ bg: 'blue.50' }}
-          >
-            Select All
-          </Button>
-        )}
-      </Box>
-
-      <div className={'MultiSelectFilter__Items'}>
-        {items.map((item) => {
-          const selected = selectedValues.includes(item?.value)
-
-          return (
-            <div
-              className={'MultiSelectFilter__Item'}
-              onClick={() => onItemClick(item?.value)}
-              key={item?.value}
-            >
-              <Checkbox forceChecked={selected}/>
-              {item?.label}
-            </div>
-          )
-        })}
-      </div>
+    <div className="MultiSelectFilter">
+      {items.map((item) => (
+        <div
+          key={item.value}
+          className={`MultiSelectFilter__Item ${selectedValues.includes(item.value) ? 'selected' : ''}`}
+          onClick={() => onItemClick(item.value)}
+        >
+          <Checkbox forceChecked={selectedValues.includes(item.value)}/>
+          {item.label}
+        </div>
+      ))}
+      {showToggleAll && (
+        <Button
+          size={'sm'}
+          onClick={handleToggleAll}
+        >
+          {isAllSelected ? 'Unselect all' : 'Select all'}
+        </Button>
+      )}
     </div>
   )
 }
