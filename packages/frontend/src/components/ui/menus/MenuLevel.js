@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Box, Text, Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@chakra-ui/react'
+import { Box, Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@chakra-ui/react'
 import { ChevronIcon } from '../icons'
 import './MenuLevel.scss'
 
@@ -67,7 +67,8 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               autoFocus={false}
               strategy={'fixed'}
               variant={'menu'}
-              offset={[0, 30]}
+              offset={[0, 25]}
+              overflow={'visible'}
             >
               <PopoverTrigger>
                 <div
@@ -81,7 +82,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                 </div>
               </PopoverTrigger>
               <PopoverContent width={'auto'} minWidth={'180px'}>
-                <PopoverBody p={0}>
+                <PopoverBody overflow={'visible'} p={0}>
                   {item.subMenu
                     ? <MenuLevel
                         items={item.subMenu}

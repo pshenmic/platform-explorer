@@ -48,7 +48,7 @@ function MultiLevelMenu ({
         }
       </PopoverTrigger>
       <PopoverContent width={'auto'} minWidth={'180px'}>
-        <PopoverBody>
+        <PopoverBody overflow={'visible'}>
           <MenuLevel
             items={menuData}
             forceClose={forceClose}

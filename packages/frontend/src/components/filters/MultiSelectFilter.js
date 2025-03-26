@@ -23,16 +23,7 @@ export const MultiSelectFilter = ({
   }
 
   return (
-    <div className="MultiSelectFilter">
-      {showToggleAll && (
-        <div
-          className={'MultiSelectFilter__Item'}
-          onClick={handleToggleAll}
-        >
-          {isAllSelected ? 'Unselect all' : 'Select all'}
-        </div>
-      )}
-
+    <div className={'MultiSelectFilter'}>
       {items.map((item) => (
         <div
           key={item.value}

@@ -2,11 +2,13 @@
 @import '../../../styles/variables.scss';
 
 .MenuLevel {
-  width: 100%;
+  width: calc(100% + 0.5rem);
   @include mixins.BrandScroll();
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+
+  margin: -0.25rem;
   
   &__Item {
     display: flex;
