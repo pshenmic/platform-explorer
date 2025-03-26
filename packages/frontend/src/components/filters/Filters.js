@@ -98,16 +98,6 @@ export const Filters = ({
     setFilters(newFilters)
   }, [filters, filtersConfig, setFilters])
 
-  const SubmitButton = ({ text }) => (
-    <Button
-      size={'sm'}
-      variant={'customGreen'}
-      onClick={submitHandler}
-    >
-      {text || 'OK'}
-    </Button>
-  )
-
   const menuData = Object.entries(filtersConfig).map(([key, config]) => {
     let content
 
@@ -121,8 +111,9 @@ export const Filters = ({
               onItemClick={(value) => handleMultipleValuesChange(key, value)}
               onSelectAll={(values) => handleToggleAll(key, values)}
               showToggleAll={true}
+              showSubmitButton={true}
+              onSubmit={submitHandler}
             />
-            <SubmitButton/>
           </FilterGroup>
         )
         break
@@ -137,8 +128,9 @@ export const Filters = ({
               minPlaceholder={config.minPlaceholder}
               maxTitle={config.maxTitle}
               maxPlaceholder={config.maxPlaceholder}
+              showSubmitButton={true}
+              onSubmit={submitHandler}
             />
-            <SubmitButton/>
           </FilterGroup>
         )
         break
@@ -149,8 +141,9 @@ export const Filters = ({
               value={filters[key]}
               onChange={(value) => handleFilterChange(key, value)}
               placeholder={config.placeholder}
+              showSubmitButton={true}
+              onSubmit={submitHandler}
             />
-            <SubmitButton/>
           </FilterGroup>
         )
         break

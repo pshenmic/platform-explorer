@@ -1,4 +1,5 @@
 import { Input } from '@chakra-ui/react'
+import { SubmitButton } from './SubmitButton'
 import './RangeFilter.scss'
 
 export const RangeFilter = ({
@@ -8,7 +9,9 @@ export const RangeFilter = ({
   minPlaceholder = 'Min',
   minTitle = 'From',
   maxPlaceholder = 'Max',
-  maxTitle = 'To'
+  maxTitle = 'To',
+  showSubmitButton = false,
+  onSubmit
 }) => (
   <div className={'RangeFilter'}>
     <div className={'RangeFilter__InputContainer'}>
@@ -41,5 +44,11 @@ export const RangeFilter = ({
         placeholder={maxPlaceholder}
       />
     </div>
+
+    {showSubmitButton && (
+      <div className="RangeFilter__Actions">
+        <SubmitButton onSubmit={onSubmit} />
+      </div>
+    )}
   </div>
 )

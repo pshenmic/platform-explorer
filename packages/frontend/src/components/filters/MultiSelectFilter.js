@@ -1,5 +1,6 @@
 import { Button } from '@chakra-ui/react'
 import Checkbox from '../ui/forms/Checkbox'
+import { SubmitButton } from './SubmitButton'
 import './MultiSelectFilter.scss'
 
 export const MultiSelectFilter = ({
@@ -7,7 +8,9 @@ export const MultiSelectFilter = ({
   selectedValues = [],
   onItemClick,
   onSelectAll,
-  showToggleAll = false
+  showToggleAll = false,
+  showSubmitButton = false,
+  onSubmit
 }) => {
   const isAllSelected = items.length === selectedValues.length
 
@@ -21,6 +24,15 @@ export const MultiSelectFilter = ({
 
   return (
     <div className="MultiSelectFilter">
+      {showToggleAll && (
+        <div
+          className={'MultiSelectFilter__Item'}
+          onClick={handleToggleAll}
+        >
+          {isAllSelected ? 'Unselect all' : 'Select all'}
+        </div>
+      )}
+
       {items.map((item) => (
         <div
           key={item.value}
@@ -31,13 +43,23 @@ export const MultiSelectFilter = ({
           {item.label}
         </div>
       ))}
-      {showToggleAll && (
-        <Button
-          size={'sm'}
-          onClick={handleToggleAll}
-        >
-          {isAllSelected ? 'Unselect all' : 'Select all'}
-        </Button>
+
+      {(showToggleAll || showSubmitButton) && (
+        <div className={'MultiSelectFilter__Actions'}>
+          {showSubmitButton && (
+            <SubmitButton onSubmit={onSubmit}/>
+          )}
+
+          {showToggleAll && (
+            <Button
+              size={'sm'}
+              variant={'outline'}
+              onClick={handleToggleAll}
+            >
+              {isAllSelected ? 'Unselect all' : 'Select all'}
+            </Button>
+          )}
+        </div>
       )}
     </div>
   )
