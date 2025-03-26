@@ -425,7 +425,7 @@ function TransactionData ({ data, type, loading, rate }) {
           title={'Identity Nonce'}
           value={data?.identityNonce}
           loading={loading}
-          error={data?.identityNonce === null}
+          error={data?.identityNonce === undefined}
         />
       }
 
