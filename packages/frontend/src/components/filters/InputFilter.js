@@ -1,4 +1,4 @@
-import { Box, Input } from '@chakra-ui/react'
+import { Input } from '@chakra-ui/react'
 
 export const InputFilter = ({
   value,
@@ -6,12 +6,12 @@ export const InputFilter = ({
   placeholder,
   type = 'text'
 }) => (
-  <Box mb={6}>
+  <div>
     <Input
       type={type}
       value={value || ''}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
     />
-  </Box>
+  </div>
 )
