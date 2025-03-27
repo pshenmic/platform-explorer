@@ -69,7 +69,9 @@ export const MobileFilterMenu = ({
                 <Flex justifyContent={'space-between'} alignItems={'center'}>
                   <span className={'MobileFilterMenu__ItemTitle'}>{item.label}</span>
 
-                  <ChevronIcon/>
+                  <div className={'MobileFilterMenu__ItemIcon'}>
+                    <ChevronIcon/>
+                  </div>
                 </Flex>
 
                 {item.activeFilterValue && (
