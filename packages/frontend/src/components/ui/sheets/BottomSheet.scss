@@ -25,9 +25,13 @@
   }
 
   &__Body {
+    @include mixins.navContainerPadding(padding-left, true);
+    @include mixins.navContainerPadding(padding-right, true);
     flex: 1;
     overflow-y: auto;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   &__DragHandle {

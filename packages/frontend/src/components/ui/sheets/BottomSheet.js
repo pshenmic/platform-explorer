@@ -98,8 +98,6 @@ export const BottomSheet = ({
           left: 0,
           right: 0,
           zIndex: 1400,
-          borderTopLeftRadius: '20px',
-          borderTopRightRadius: '20px',
           height: isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT,
           transform: y.to(value => `translateY(${value}px)`),
           transition: 'height 0.2s ease-out'
@@ -129,13 +127,7 @@ export const BottomSheet = ({
 
           {title && <Text className={'BottomSheet__Title'}>{title}</Text>}
 
-          <DrawerBody
-            className={'BottomSheet__Body'}
-            flex="1"
-            overflowY="auto"
-            display="flex"
-            flexDirection="column"
-          >
+          <DrawerBody className={'BottomSheet__Body'}>
             <Box flex="1" minHeight="0">
               {children}
             </Box>
