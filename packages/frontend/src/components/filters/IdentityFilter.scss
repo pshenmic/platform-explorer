@@ -1,0 +1,46 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.IdentityFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__InputTitle {
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, .5);
+  }
+
+  &__ResultsContainer {
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  &__SelectedIdentityContainer {
+
+  }
+
+  &__SearchContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .MobileFilterMenu & {
+    width: 100%;
+
+    &__Title {
+      font-family: $font-heading;
+      font-weight: 700;
+      font-size: 0.875rem;
+    }
+
+    &__Input {
+      min-height: 3rem;
+      padding: 0.75rem 1rem;
+    }
+  }
+}
