@@ -80,8 +80,6 @@ const fieldsOfTypes = {
 function TransitionCard ({ transition, owner, rate, className }) {
   const fields = fieldsOfTypes?.[DocumentActionEnum?.[transition?.action]]
 
-  console.log('transition', transition)
-
   return (
     <div className={`InfoBlock InfoBlock--Gradient TransitionCard ${className || ''}`}>
       <InfoLine
