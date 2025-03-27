@@ -5,7 +5,16 @@ import { SearchIcon } from '../ui/icons'
 import { useDebounce } from '../../hooks'
 import './GlobalSearchInput.scss'
 
-function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
+function filterResultByCategories (obj = {}, categories) {
+  return categories.reduce((filtered, key) => {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      filtered[key] = obj[key]
+    }
+    return filtered
+  }, {})
+}
+
+function GlobalSearchInput ({ onResultChange, forceValue, onChange, categoryFilters = [], placeholder }) {
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedQuery = useDebounce(searchQuery, 200)
 
@@ -18,7 +27,15 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
     onResultChange({ data: {}, loading: true, error: false })
 
     Api.search(query)
-      .then(res => onResultChange({ data: res, loading: false, error: false }))
+      .then(res => {
+        if (categoryFilters?.length > 0) {
+          const filteredRes = filterResultByCategories(res, categoryFilters)
+          onResultChange({ data: filteredRes, loading: false, error: false })
+          return
+        }
+
+        onResultChange({ data: res, loading: false, error: false })
+      })
       .catch(err => onResultChange({ data: err, loading: false, error: true }))
   }
 
@@ -44,7 +61,7 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
           pr={'4.5rem'}
           value={searchQuery}
           type={'text'}
-          placeholder={'Search...'}
+          placeholder={placeholder || 'Search...'}
           onChange={handleSearchInput}
           onKeyPress={handleKeyPress}
           color={'gray.250'}
