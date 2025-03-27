@@ -31,13 +31,8 @@ export const MobileFilterMenu = ({
     return currentItem || item
   }, [menuData])
 
-  const goToMainMenu = () => {
-    setActiveItem(null)
-  }
-
-  const selectMenuItem = (item) => {
-    setActiveItem(item)
-  }
+  const goToMainMenu = () => setActiveItem(null)
+  const selectMenuItem = (item) => setActiveItem(item)
 
   const hasActiveFilters = menuData.some(item => item.activeFilterValue)
 
