@@ -109,7 +109,7 @@ const filtersConfig = {
     }
   },
   owner: {
-    type: 'input',
+    type: 'identity',
     label: 'Owner',
     title: 'Filter by owner',
     placeholder: 'OWNER ID OR IDENTITY',
