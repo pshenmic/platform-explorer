@@ -83,6 +83,18 @@
       background-color: var(--chakra-colors-gray-700);
     }
   }
+
+  &__SubmitButton {
+    padding: 1rem 2rem !important;;
+    height: auto !important;
+    margin: 0 auto;
+  }
+
+  &__Content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
   
   &__DetailView {
     width: 100%;

@@ -46,7 +46,7 @@ export const MobileFilterMenu = ({
   return (
     <div className={'MobileFilterMenu'}>
       {renderList && (
-        <Fade in={!activeItem} unmountOnExit>
+        <Fade className={'MobileFilterMenu__Content'} in={!activeItem} unmountOnExit>
           <div className={'MobileFilterMenu__Title'}>Add Filters</div>
 
           {hasActiveFilters && (
@@ -87,19 +87,17 @@ export const MobileFilterMenu = ({
             ))}
           </div>
 
-          <Flex mt={6} width={'100%'} justifyContent={'space-between'}>
-            <SubmitButton
-              onClick={onSubmit}
-              width={'100%'}
-            >
-              Close
-            </SubmitButton>
-          </Flex>
+          <SubmitButton
+            className={'MobileFilterMenu__SubmitButton'}
+            onClick={onSubmit}
+          >
+            Close
+          </SubmitButton>
         </Fade>
       )}
 
       {renderDetails && currentActiveItem && (
-        <Fade in={!!currentActiveItem} unmountOnExit>
+        <Fade className={'MobileFilterMenu__Content'} in={!!currentActiveItem} unmountOnExit>
           <div className={'MobileFilterMenu__Header'}>
             <Flex
               className={'MobileFilterMenu__BackButton'}
