@@ -9,10 +9,16 @@ export const InputFilter = ({
   placeholder,
   type = 'text',
   showSubmitButton = false,
-  onSubmit
+  onSubmit,
+  title
 }) => (
   <div className={'InputFilter'}>
+    {title &&
+      <div className={'InputFilter__Title'}>{title}</div>
+    }
+
     <Input
+      className={'InputFilter__Input'}
       type={type}
       value={value || ''}
       onChange={(e) => onChange(e.target.value)}
