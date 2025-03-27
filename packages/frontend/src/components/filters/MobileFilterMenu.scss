@@ -1,4 +1,8 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
 .MobileFilterMenu {
+  position: relative;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -9,25 +13,44 @@
     align-items: center;
     padding: 12px 0;
     margin-bottom: 16px;
-    cursor: pointer;
-    color: #3182CE;
-    
+  }
+
+  &__BackButton {
+    color: var(--chakra-colors-gray-250);
+
     svg {
-      margin-right: 8px;
+
     }
   }
-  
+
+
   &__List {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
     width: 100%;
   }
   
   &__Item {
-    transition: background-color 0.2s;
-    
-    &:hover, &:active {
-      background-color: rgba(0, 0, 0, 0.05);
+    transition: 0.1s;
+    background-color: var(--chakra-colors-gray-800);
+    padding: 1rem;
+    border-radius: $border-radius-def;
+    color: var(--chakra-colors-gray-250);
+    text-transform: uppercase;
+    font-weight: 700;
+    font-family: $font-heading;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        cursor: pointer;
+        background-color: var(--chakra-colors-gray-600);
+      }
+    }
+  
+    &:active {
+      transform: translateY(1px);
+      background-color: var(--chakra-colors-gray-700);
     }
   }
   
