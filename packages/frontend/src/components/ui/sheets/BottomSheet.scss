@@ -5,18 +5,17 @@
   background-color: var(--chakra-colors-gray-650);
   display: flex;
   flex-direction: column;
-  border-radius: 20px;
-  overflow: hidden;
+  border-radius: 20px 20px 0 0;
 
   &:after {
     content: '';
     background-color: var(--chakra-colors-gray-650);
     position: absolute;
     z-index: -1;
-    top: 0;
+    top: 40px;
     left: 0;
     width: 100%;
-    height: 1000px;
+    height: 150vh;
   }
 
   &__ContentContainer {
