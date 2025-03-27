@@ -6,6 +6,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    max-width: 100%;
   }
 
   &__Item {
@@ -16,8 +17,11 @@
     background-color: var(--chakra-colors-gray-800) !important;
     cursor: default;
     max-width: 100%;
-    white-space: break-spaces;
+    white-space: break-spaces !important;
+    word-break: break-all;
     text-align: left;
+    height: auto !important;
+    padding: 0.375rem 0.75rem;
   }
 
   &__IconContainer {
