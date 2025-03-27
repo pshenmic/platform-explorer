@@ -99,6 +99,9 @@
   }
   
   &__Item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     color: var(--chakra-colors-gray-250);
     text-transform: uppercase;
     font-weight: 700;

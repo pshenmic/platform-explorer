@@ -1,20 +1,28 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
 .FilterValueTag {
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 150px;
-  line-height: 1.2;
-  
-  &--range {}
-  
-  &--input {
-    font-style: italic;
+  max-width: 100%;
+  font-family: mixins.$font-mono;
+  font-size: 0.75rem;
+  color: #fff;
+  font-weight: 400;
+  text-transform: capitalize;
+
+  &--Input {
   }
-  
-  &--multiselect {}
+
+  &--Multiselect {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  &--Range {}
   
   &__MultipleContainer {
     display: flex;
     gap: 4px;
   }
-} 
+}

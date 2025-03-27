@@ -1,22 +1,31 @@
 import React from 'react'
 import './FilterValueTag.scss'
 
-export const FilterValueTag = ({ value, type, rawValue, options, mobileRenderer }) => {
+export const FilterValueTag = ({ value, type, rawValue, options, mobileRenderer, className }) => {
   console.log('FilterValueTag props', { value, type, rawValue, options, mobileRenderer })
 
   if (mobileRenderer) {
     return mobileRenderer(rawValue)
   }
 
+  const Container = ({ children, modifierClass, ...props }) => (
+    <div
+      className={`FilterValueTag ${className || ''} ${modifierClass || ''}`}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+
   switch (type) {
     case 'multiselect':
       return (
-        <div>
+        <Container modifierClass={'FilterValueTag--Multiselect'}>
            {rawValue.map((selectedValue) => {
              const option = options?.find((option) => option?.value === selectedValue)
              return option?.label || option?.title || option?.value
            })}
-        </div>
+        </Container>
       )
 
     case 'range':
@@ -24,22 +33,22 @@ export const FilterValueTag = ({ value, type, rawValue, options, mobileRenderer 
         const { min, max } = rawValue
 
         if (min && max) {
-          return <div>{`From ${min} to ${max}`}</div>
+          return <Container modifierClass={'FilterValueTag--Range'}>{`From ${min} to ${max}`}</Container>
         }
         if (min) {
-          return <div>{`Min ${min}`}</div>
+          return <Container modifierClass={'FilterValueTag--Range'}>{`Min ${min}`}</Container>
         }
         if (max) {
-          return <div>{`Max ${max}`}</div>
+          return <Container modifierClass={'FilterValueTag--Range'}>{`Max ${max}`}</Container>
         }
       }
 
-      return <div>{value}</div>
+      return <Container modifierClass={'FilterValueTag--Range'}>{value}</Container>
 
     case 'input':
-      return <div>{value}</div>
+      return <Container modifierClass={'FilterValueTag--Input'}>{value}</Container>
 
     default:
-      return <div>{value}</div>
+      return <Container>{value}</Container>
   }
 }
