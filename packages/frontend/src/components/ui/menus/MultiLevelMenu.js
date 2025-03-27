@@ -1,6 +1,6 @@
-import { Button, Popover, PopoverTrigger, PopoverContent, PopoverBody } from '@chakra-ui/react'
+import { Button, Popover, PopoverTrigger, PopoverContent, PopoverBody, useOutsideClick } from '@chakra-ui/react'
 import MenuLevel from './MenuLevel'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import './MultiLevelMenu.scss'
 
 function MultiLevelMenu ({
@@ -14,6 +14,7 @@ function MultiLevelMenu ({
 }) {
   const [forceClose, setForceClose] = useState(false)
   const [activeItemId, setActiveItemId] = useState(null)
+  const menuRef = useRef(null)
 
   const closeMenuHandler = () => {
     setForceClose(true)
@@ -29,6 +30,11 @@ function MultiLevelMenu ({
   const handleActiveItemChange = (id) => {
     setActiveItemId(id)
   }
+
+  useOutsideClick({
+    ref: menuRef,
+    handler: closeMenuHandler
+  })
 
   return (
     <Popover
@@ -47,7 +53,7 @@ function MultiLevelMenu ({
           </Button>
         }
       </PopoverTrigger>
-      <PopoverContent width={'auto'} minWidth={'180px'}>
+      <PopoverContent width={'auto'} minWidth={'180px'} ref={menuRef}>
         <PopoverBody overflow={'visible'}>
           <MenuLevel
             items={menuData}
