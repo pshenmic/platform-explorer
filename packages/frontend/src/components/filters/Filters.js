@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { Button, useDisclosure } from '@chakra-ui/react'
 import { useFilters } from '../../hooks'
-import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters } from './'
+import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters, IdentityFilter } from './'
 import { BottomSheet } from '../ui/sheets'
 import { ChevronIcon } from '../ui/icons'
 import { MultiLevelMenu } from '../ui/menus'
@@ -153,6 +153,19 @@ export const Filters = ({
         content = (
           <FilterGroup title={config.title}>
             <InputFilter
+              value={filters[key]}
+              onChange={(value) => handleFilterChange(key, value)}
+              placeholder={config.placeholder}
+              showSubmitButton={true}
+              onSubmit={submitHandler}
+            />
+          </FilterGroup>
+        )
+        break
+      case 'identity':
+        content = (
+          <FilterGroup title={config.title}>
+            <IdentityFilter
               value={filters[key]}
               onChange={(value) => handleFilterChange(key, value)}
               placeholder={config.placeholder}
