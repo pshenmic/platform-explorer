@@ -106,10 +106,16 @@
   }
   
   &__BackButton {
-    transition: background-color 0.2s;
-    
+    transition: $transition-time-def;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    color: rgba(var(--chakra-colors-brand-normal-rgb), .8);
+
     &:hover {
+      cursor: pointer;
       background-color: rgba(49, 130, 206, 0.1);
+      color: rgba(var(--chakra-colors-brand-normal-rgb), 1);
     }
   }
   

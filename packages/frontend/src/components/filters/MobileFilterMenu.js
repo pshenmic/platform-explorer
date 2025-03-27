@@ -102,12 +102,6 @@ export const MobileFilterMenu = ({
             <Flex
               className={'MobileFilterMenu__BackButton'}
               onClick={goToMainMenu}
-              alignItems="center"
-              p={2}
-              borderRadius="md"
-              color="blue.500"
-              cursor="pointer"
-              width="fit-content"
             >
               <ChevronIcon transform={'rotate(180deg)'}/>
             </Flex>
