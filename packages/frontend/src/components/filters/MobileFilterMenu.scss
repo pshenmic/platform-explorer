@@ -66,6 +66,16 @@
       }
     }
 
+    &:not(&--Active):not(&--Selected) {
+      &:hover {
+        .Checkbox {
+          path {
+            fill: var(--chakra-colors-gray-600);
+          }
+        }
+      }
+    }
+
     &:active {
       transform: translateY(1px);
       background-color: var(--chakra-colors-gray-700);
@@ -118,9 +128,15 @@
     }
   }
 
-  &__SubmitButton, .MultiSelectFilter__ActionButton {
-    padding: 1rem 2rem !important;;
+  &__SubmitButton, .FilterActions Button {
+    padding: 1rem 2rem !important;
     height: auto !important;
+  }
+
+  .InputFilter {
+    .FilterActions {
+      margin: 0.5rem auto 0;
+    }
   }
 
   .FilterActions {
