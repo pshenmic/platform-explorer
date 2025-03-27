@@ -73,13 +73,13 @@ export const Filters = ({
     menuOnClose()
   }
 
-  // Handle single filter change
+  /** Handle single filter change */
   const handleFilterChange = useCallback((filterName, value) => {
     const newFilters = baseHandleFilterChange(filterName, value)
     setFilters(newFilters)
   }, [baseHandleFilterChange, setFilters])
 
-  // Handle multiple values filter change
+  /** Handle multiple values filter change */
   const handleMultipleValuesChange = useCallback((fieldName, value) => {
     const newFilters = baseHandleMultipleValuesChange(fieldName, value)
     setFilters(newFilters)
@@ -90,7 +90,7 @@ export const Filters = ({
     setFilters(newFilters)
   }, [baseHandleFilterChange, setFilters])
 
-  // Clear a specific filter
+  /** Clear a specific filter */
   const clearFilter = useCallback((filterName) => {
     const newFilters = {
       ...filters,
@@ -99,7 +99,7 @@ export const Filters = ({
     setFilters(newFilters)
   }, [filters, filtersConfig, setFilters])
 
-  // Добавим функцию для сброса всех фильтров
+  /** Добавим функцию для сброса всех фильтров */
   const resetAllFilters = useCallback(() => {
     const defaultFilters = Object.fromEntries(
       Object.keys(filtersConfig).map(key => [
