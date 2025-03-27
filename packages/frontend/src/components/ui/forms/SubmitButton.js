@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react'
 
-export default function SubmitButton ({ onSubmit }) {
+export default function SubmitButton ({ onSubmit, text, children, ...props }) {
   return (
     <Button
       size={'sm'}
@@ -8,8 +8,9 @@ export default function SubmitButton ({ onSubmit }) {
       onClick={() => {
         if (typeof onSubmit === 'function') onSubmit()
       }}
+      {...props}
     >
-      OK
+      {children || text || 'OK'}
     </Button>
   )
 }
