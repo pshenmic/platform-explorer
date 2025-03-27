@@ -22,4 +22,20 @@
   &__Input {
 
   }
+
+  .MobileFilterMenu & {
+    width: 100%;
+    gap: 1rem;
+
+    &__InputTitle {
+      font-family: $font-heading;
+      font-weight: 700;
+      font-size: 0.875rem;
+    }
+
+    &__Input {
+      min-height: 3rem;
+      padding: 0.75rem 1rem;
+    }
+  }
 }
