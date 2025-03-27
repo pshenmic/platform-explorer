@@ -21,8 +21,6 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-const initialFilters = {}
-
 function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? parseInt(defaultPage) - 1 : 0)
   const [pageSize, setPageSize] = useState(defaultPageSize ?? null ? defaultPageSize : paginateConfig.pageSize.default)
@@ -107,7 +105,6 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
           </Box>
 
           <TransactionsFilter
-            initialFilters={initialFilters}
             onFilterChange={filtersChangeHandler}
             isMobile={isMobile}
             className={'Transactions__Filters'}
