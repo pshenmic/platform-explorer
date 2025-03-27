@@ -11,15 +11,10 @@
   font-weight: 400;
   text-transform: capitalize;
 
-  &--Input {
-  }
-
   &--Multiselect {
     display: flex;
     gap: 0.5rem;
   }
-
-  &--Range {}
   
   &__MultipleContainer {
     display: flex;
