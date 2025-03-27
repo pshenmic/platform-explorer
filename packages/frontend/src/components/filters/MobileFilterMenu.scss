@@ -11,8 +11,6 @@
   &__Header {
     display: flex;
     align-items: center;
-    padding: 12px 0;
-    margin-bottom: 16px;
   }
 
   &__Title {
@@ -26,11 +24,8 @@
   &__BackButton {
     color: var(--chakra-colors-gray-250);
 
-    svg {
-
-    }
+    svg {}
   }
-
 
   &__List {
     display: flex;
@@ -38,20 +33,57 @@
     gap: 0.5rem;
     width: 100%;
   }
+
+  .MultiSelectFilter {
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .FilterGroup__Title {
+    display: none;
+  }
+
+  &__Item, .MultiSelectFilter__Item {
+    background-color: var(--chakra-colors-gray-800);
+    border-radius: $border-radius-def;
+    padding: 1rem;
+    transition: 0.1s;
+    margin: 0;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        cursor: pointer;
+        background-color: var(--chakra-colors-gray-700);
+      }
+    }
+
+    &:active {
+      transform: translateY(1px);
+      background-color: var(--chakra-colors-gray-700);
+    }
+
+    &--Active, &--Selected {
+      background-color: rgba(var(--chakra-colors-brand-normal-rgb), .1);
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          cursor: pointer;
+          background-color: rgba(var(--chakra-colors-brand-light-rgb), .2);
+        }
+      }
+
+      &:active {
+        transform: translateY(1px);
+        background-color: rgba(var(--chakra-colors-brand-normal-rgb), .8);
+      }
+    }
+  }
   
   &__Item {
-    transition: 0.1s;
-    background-color: var(--chakra-colors-gray-800);
-    padding: 1rem;
-    border-radius: $border-radius-def;
     color: var(--chakra-colors-gray-250);
     text-transform: uppercase;
     font-weight: 700;
     font-family: $font-heading;
-
-    &--Active & {
-      background-color: rgba(var(--chakra-colors-brand-normal-rgb), .1);
-    }
 
     &:hover & {
       &Icon {
@@ -75,23 +107,24 @@
         height: 0.5rem;
       }
     }
+  }
 
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        cursor: pointer;
-        background-color: var(--chakra-colors-gray-600);
-      }
-    }
-  
-    &:active {
-      transform: translateY(1px);
-      background-color: var(--chakra-colors-gray-700);
+  &__SubmitButton, .MultiSelectFilter__ActionButton {
+    padding: 1rem 2rem !important;;
+    height: auto !important;
+  }
+
+  .FilterActions {
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+
+    .MultiSelectFilter__ActionButton {
+      width: 50%;
     }
   }
 
   &__SubmitButton {
-    padding: 1rem 2rem !important;;
-    height: auto !important;
     margin: 0 auto;
   }
 

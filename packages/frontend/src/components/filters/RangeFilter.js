@@ -47,7 +47,7 @@ export const RangeFilter = ({
     </div>
 
     {showSubmitButton && (
-      <FilterActions className="RangeFilter__Actions">
+      <FilterActions className={'RangeFilter__Actions'}>
         <SubmitButton onSubmit={onSubmit} />
       </FilterActions>
     )}
