@@ -100,9 +100,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
       className={'Transactions'}
     >
         <Container maxW={'container.xl'} className={'InfoBlock'}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-            <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
-          </Box>
+          <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
 
           <TransactionsFilter
             onFilterChange={filtersChangeHandler}
