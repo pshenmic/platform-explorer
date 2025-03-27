@@ -1,6 +1,7 @@
 import { StateTransitionEnum, TransactionTypesInfo } from '../../enums/state.transition.type'
 import { TransactionStatusBadge, TypeBadge } from './index'
 import { Filters } from '../filters'
+import { Identifier } from '../data'
 import './TransactionsFilter.scss'
 
 const transactionOptions = [
@@ -113,7 +114,10 @@ const filtersConfig = {
     title: 'Filter by owner',
     placeholder: 'OWNER ID OR IDENTITY',
     defaultValue: '',
-    formatValue: (value) => value || null
+    formatValue: (value) => value || null,
+    mobileTagRenderer: (value) => (
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+    )
   }
 }
 

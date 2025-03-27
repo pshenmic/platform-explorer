@@ -1,11 +1,9 @@
 import React from 'react'
 import './FilterValueTag.scss'
 
-export const FilterValueTag = ({ value, type, rawValue, options, mobileRenderer, className }) => {
-  console.log('FilterValueTag props', { value, type, rawValue, options, mobileRenderer })
-
-  if (mobileRenderer) {
-    return mobileRenderer(rawValue)
+export const FilterValueTag = ({ value, type, rawValue, options, customRender, className }) => {
+  if (customRender) {
+    return customRender(rawValue)
   }
 
   const Container = ({ children, modifierClass, ...props }) => (

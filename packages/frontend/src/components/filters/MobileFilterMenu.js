@@ -83,7 +83,7 @@ export const MobileFilterMenu = ({
                     type={item.type}
                     rawValue={item.rawValue}
                     options={item.options}
-                    customRenderer={item.customRenderer}
+                    customRender={item.mobileTagRenderer}
                   />
                 )}
               </div>

@@ -179,7 +179,7 @@ export const Filters = ({
       filterKey: key,
       rawValue: filters[key],
       options: config.options || null,
-      mobileRenderer: config.mobileRenderer || null
+      mobileTagRenderer: config.mobileTagRenderer || null
     }
   })
 
