@@ -23,8 +23,6 @@
     border-radius: $border-radius-def;
     transition: background-color $transition-time-def;
 
-    &--Selected {}
-
     &:hover {
       cursor: pointer;
       color: #FFFFFF;
@@ -35,8 +33,6 @@
       background-color: var(--chakra-colors-gray-700) !important;
     }
   }
-
-  &__ItemTitle {}
 
   .MobileFilterMenu & {
     &__Item {

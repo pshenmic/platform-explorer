@@ -15,13 +15,8 @@ export const MobileFilterMenu = ({
   const [renderList, setRenderList] = useState(true)
 
   useEffect(() => {
-    if (activeItem) {
-      setRenderDetails(true)
-      setRenderList(false)
-    } else {
-      setRenderList(true)
-      setRenderDetails(false)
-    }
+    setRenderList(!activeItem)
+    setRenderDetails(!!activeItem)
   }, [activeItem])
 
   const getUpdatedMenuItem = useCallback((item) => {

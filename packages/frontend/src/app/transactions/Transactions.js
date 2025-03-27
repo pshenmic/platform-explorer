@@ -110,7 +110,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
 
           {!transactions.error
             ? !transactions.loading
-                ? <TransactionsList transactions={transactions.data} />
+                ? <TransactionsList transactions={transactions.data}/>
                 : <LoadingList itemsCount={pageSize}/>
             : <Container h={20}><ErrorMessageBlock/></Container>
           }

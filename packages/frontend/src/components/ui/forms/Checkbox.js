@@ -25,8 +25,9 @@ export default function Checkbox ({ initialChecked, forceChecked, onChange, clas
         />
         {checked &&
           <path
-            fillRule='evenodd' clipRule='evenodd'
             d='M14.0303 5.46967C14.3232 5.76256 14.3232 6.23744 14.0303 6.53033L8 12.5607L4.46967 9.03033C4.17678 8.73744 4.17678 8.26256 4.46967 7.96967C4.76256 7.67678 5.23744 7.67678 5.53033 7.96967L8 10.4393L12.9697 5.46967C13.2626 5.17678 13.7374 5.17678 14.0303 5.46967Z'
+            fillRule='evenodd'
+            clipRule='evenodd'
             fill='white'
           />
         }

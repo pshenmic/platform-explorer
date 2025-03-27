@@ -12,11 +12,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
 
   const handleItemClick = (item, index) => {
     if (item?.subMenu?.length || item?.content) {
-      if (openSubMenuId === index) {
-        setOpenSubMenuId(null)
-      } else {
-        setOpenSubMenuId(index)
-      }
+      setOpenSubMenuId(prev => prev === index ? null : index)
       return
     }
 

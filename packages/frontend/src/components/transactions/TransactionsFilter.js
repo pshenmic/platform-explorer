@@ -2,7 +2,6 @@ import { StateTransitionEnum, TransactionTypesInfo } from '../../enums/state.tra
 import { TransactionStatusBadge, TypeBadge } from './index'
 import { Filters } from '../filters'
 import { Identifier } from '../data'
-import './TransactionsFilter.scss'
 
 const transactionOptions = [
   {

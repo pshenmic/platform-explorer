@@ -37,11 +37,7 @@ export const BottomSheet = ({
   })
 
   useEffect(() => {
-    if (isOpen) {
-      handleOpen()
-    } else {
-      handleClose()
-    }
+    isOpen ? handleOpen() : handleClose()
   }, [isOpen, handleOpen, handleClose])
 
   const bind = useDrag(
