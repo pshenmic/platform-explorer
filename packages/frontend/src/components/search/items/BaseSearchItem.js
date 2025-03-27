@@ -2,9 +2,13 @@ import { Button, Grid, GridItem } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import Link from 'next/link'
 
-export function BaseSearchItem ({ href, children, className, gridClassModifier }) {
+export function BaseSearchItem ({ href, children, className, gridClassModifier, onClick }) {
+  const Container = ({ children, ...props }) => typeof onClick === 'function'
+    ? <div onClick={onClick} {...props}>{children}</div>
+    : <Link href={props?.href} {...props}>{children}</Link>
+
   return (
-    <Link href={href} className={`SearchResultsListItem ${className || ''}`}>
+    <Container href={href} className={`SearchResultsListItem ${className || ''}`}>
       <Grid className={`SearchResultsListItem__Content ${gridClassModifier ? `SearchResultsListItem__Content--${gridClassModifier}` : ''}`}>
         {children}
         <GridItem className={'SearchResultsListItem__ArrowButtonContainer'}>
@@ -13,7 +17,7 @@ export function BaseSearchItem ({ href, children, className, gridClassModifier }
           </Button>
         </GridItem>
       </Grid>
-    </Link>
+    </Container>
   )
 }
 

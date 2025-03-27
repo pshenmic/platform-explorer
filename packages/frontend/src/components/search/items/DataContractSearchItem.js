@@ -1,12 +1,13 @@
 import { Alias, Identifier, TimeDelta } from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 
-export function DataContractSearchItem ({ dataContract, className }) {
+export function DataContractSearchItem ({ dataContract, className, onClick }) {
   return (
     <BaseSearchItem
       href={`/dataContract/${dataContract?.identifier}`}
       className={`${className || ''}`}
       gridClassModifier={'DataContract'}
+      onClick={typeof onClick === 'function' ? () => onClick(dataContract) : null}
     >
       <BaseSearchItemContent
         mainContent={
