@@ -226,7 +226,6 @@ export const Filters = ({
           isOpen={menuIsOpen}
           onClose={menuOnClose}
           onOpen={menuOnOpen}
-          title={'Filters'}
         >
           <MobileFilterMenu
             menuData={menuData}

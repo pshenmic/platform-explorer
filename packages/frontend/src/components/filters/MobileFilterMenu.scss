@@ -15,6 +15,14 @@
     margin-bottom: 16px;
   }
 
+  &__Title {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 100%;
+    text-align: center;
+  }
+
   &__BackButton {
     color: var(--chakra-colors-gray-250);
 
@@ -42,10 +50,7 @@
     font-family: $font-heading;
 
     &--Active & {
-      &Icon {
-        color: #fff;
-        background-color: rgba(255, 255, 255, .25)
-      }
+      background-color: rgba(var(--chakra-colors-brand-normal-rgb), .1);
     }
 
     &:hover & {
