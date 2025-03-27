@@ -127,7 +127,7 @@ export const BottomSheet = ({
             <div className={'BottomSheet__DragHandleLine'}/>
           </DrawerHeader>
 
-          <Text className={'BottomSheet__Title'}>{title}</Text>
+          {title && <Text className={'BottomSheet__Title'}>{title}</Text>}
 
           <DrawerBody
             className={'BottomSheet__Body'}
