@@ -47,17 +47,20 @@ export const MobileFilterMenu = ({
     <div className={'MobileFilterMenu'}>
       {renderList && (
         <Fade className={'MobileFilterMenu__Content'} in={!activeItem} unmountOnExit>
-          <div className={'MobileFilterMenu__Title'}>Add Filters</div>
+          <div className={'MobileFilterMenu__Header'}>
+            <div className={'MobileFilterMenu__Title'}>Add Filters</div>
 
-          {hasActiveFilters && (
-            <Button
-              variant={'outline'}
-              width={'48%'}
-              onClick={onReset}
-            >
-              Reset Filters
-            </Button>
-          )}
+            {hasActiveFilters && (
+              <Button
+                className={'MobileFilterMenu__ClearButton'}
+                variant={'gray'}
+                size={'sm'}
+                onClick={onReset}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
 
           <div className={'MobileFilterMenu__List'}>
             {menuData.map((item, index) => (

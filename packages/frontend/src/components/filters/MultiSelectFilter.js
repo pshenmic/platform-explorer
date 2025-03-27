@@ -50,7 +50,7 @@ export const MultiSelectFilter = ({
             <Button
               className={'MultiSelectFilter__ActionButton MultiSelectFilter__ActionButton--ToggleAll'}
               size={'sm'}
-              variant={'outline'}
+              variant={'gray'}
               onClick={handleToggleAll}
             >
               {isAllSelected ? 'Unselect all' : 'Select all'}

@@ -11,6 +11,13 @@
   &__Header {
     display: flex;
     align-items: center;
+    position: relative;
+    justify-content: center;
+  }
+
+  &__ClearButton {
+    position: absolute !important;
+    right: 0;
   }
 
   &__Title {
@@ -22,6 +29,8 @@
   }
 
   &__BackButton {
+    position: absolute;
+    left: 0;
     color: var(--chakra-colors-gray-250);
 
     svg {}
