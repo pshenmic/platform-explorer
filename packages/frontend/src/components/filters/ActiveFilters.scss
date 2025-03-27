@@ -15,6 +15,9 @@
     text-transform: none !important;;
     background-color: var(--chakra-colors-gray-800) !important;
     cursor: default;
+    max-width: 100%;
+    white-space: break-spaces;
+    text-align: left;
   }
 
   &__IconContainer {

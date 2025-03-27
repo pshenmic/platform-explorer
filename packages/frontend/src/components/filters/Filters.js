@@ -185,7 +185,7 @@ export const Filters = ({
 
   const TriggerButton = () => (
     <Button
-      className={'Filters__Button'}
+      className={'Filters__Button Filters__Button--ToggleFilters '}
       onClick={() => menuIsOpen ? menuOnClose() : menuOnOpen()}
       variant={'brand'}
       size={'sm'}
@@ -198,20 +198,35 @@ export const Filters = ({
     </Button>
   )
 
+  const activeFiltersCount = menuData.filter(item => item.activeFilterValue).length
+
   return (
-    <div className={`Filters ${className || ''}`}>
+    <div className={`Filters ${isMobile && 'Filters--Mobile'} ${className || ''}`}>
       <div className={'Filters__ButtonsContainer'}>
-        {isMobile
-          ? <TriggerButton/>
-          : <MultiLevelMenu
-              placement={'bottom-start'}
-              trigger={TriggerButton()}
-              menuData={menuData}
-              onClose={menuOnClose}
-              isOpen={menuIsOpen}
-              onOpen={menuOnOpen}
-            />
-        }
+        <div className={'Filters__ControlButtons'}>
+          {isMobile
+            ? <TriggerButton/>
+            : <MultiLevelMenu
+                placement={'bottom-start'}
+                trigger={TriggerButton()}
+                menuData={menuData}
+                onClose={menuOnClose}
+                isOpen={menuIsOpen}
+                onOpen={menuOnOpen}
+              />
+          }
+
+          {activeFiltersCount > 0 &&
+            <Button
+              className={'Filters__Button'}
+              variant={'gray'}
+              size={'sm'}
+              onClick={resetAllFilters}
+            >
+              Clear ({activeFiltersCount})
+            </Button>
+          }
+        </div>
 
         <ActiveFilters
           filters={filters}

@@ -1,16 +1,31 @@
 .Filters {
-  &__ButtonsContainer {
+  &__ButtonsContainer, &__ControlButtons {
     display: flex;
     gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  &__Button {
+    display: flex !important;
+    gap: 0.5rem;
+    font-weight: 400!important;
+    text-transform: capitalize !important;
+
+    &--ToggleFilters {
+      svg {
+        width: 0.625rem;
+        height: 0.625rem;
+      }
+    }
   }
 
-  &__Button {
-    display: flex;
-    gap: 0.5rem;
+  &--Mobile & {
+    &__ButtonsContainer {
+      flex-direction: column;
+    }
 
-    svg {
-      width: 0.625rem;
-      height: 0.625rem;
+    &__ControlButtons {
+      width: 100%;
+      justify-content: space-between;
     }
   }
 }
