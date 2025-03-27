@@ -99,7 +99,6 @@ export const Filters = ({
     setFilters(newFilters)
   }, [filters, filtersConfig, setFilters])
 
-  /** Добавим функцию для сброса всех фильтров */
   const resetAllFilters = useCallback(() => {
     const defaultFilters = Object.fromEntries(
       Object.keys(filtersConfig).map(key => [
