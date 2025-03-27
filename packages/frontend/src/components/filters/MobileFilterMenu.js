@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Box, Button, Flex, Text, Fade } from '@chakra-ui/react'
+import { Box, Button, Flex, Fade } from '@chakra-ui/react'
 import { ChevronIcon } from '../ui/icons'
 import { FilterValueTag } from './FilterValueTag'
 import { SubmitButton } from '../ui/forms'
@@ -106,12 +106,11 @@ export const MobileFilterMenu = ({
               <ChevronIcon transform={'rotate(180deg)'}/>
             </Flex>
 
-            <div className={'MobileFilterMenu__Title'}>Add Filters</div>
+            <div className={'MobileFilterMenu__Title'}>{currentActiveItem.title}</div>
           </div>
 
-          <Box className="MobileFilterMenu__DetailView">
-            <Box className="MobileFilterMenu__Content">
-              <Text fontWeight="bold" mb={4} fontSize="lg">{currentActiveItem.label}</Text>
+          <Box className={'MobileFilterMenu__DetailView'}>
+            <Box className={'MobileFilterMenu__Content'}>
               {currentActiveItem.content}
             </Box>
           </Box>

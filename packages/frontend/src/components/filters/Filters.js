@@ -172,6 +172,7 @@ export const Filters = ({
 
     return {
       label: config.label,
+      title: config.title,
       content,
       activeFilterValue,
       type: config.type,
