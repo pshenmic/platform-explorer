@@ -1,5 +1,33 @@
 # CHANGELOG
 
+### v1.0.17
+
+## Changes
+
+## API
+
+- API 500 on bad validator host @owl352 (#487)
+- Invalid filter in #493 @owl352 (#494)
+- Incorrect quorum index calculation @owl352 (#493)
+- Documents revisions fix @owl352 (#474)
+- Use specific quorum type in block query @owl352 (#488)
+- Quorum block height field @owl352 (#478)
+- Contested Documents List API @owl352 (#462)
+
+## Frontend
+
+- Fix date range picker active range @AlexeyTripleA (#455)
+- Improve Block page @AlexeyTripleA (#468)
+- Update field title in TransitionCard @AlexeyTripleA (#486)
+- Fix tab style @AlexeyTripleA (#477)
+- Fix transfers list columns size @AlexeyTripleA (#476)
+- Update documents data render @AlexeyTripleA (#475)
+
+## Indexer
+
+- Document revision increment after purchase @owl352 (#495)
+
+
 ### v1.0.16
 
 ## Changes
