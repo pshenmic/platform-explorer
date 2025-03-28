@@ -28,6 +28,7 @@
 
   .MobileFilterMenu & {
     width: 100%;
+    min-width: 0;
 
     &__Title {
       font-family: $font-heading;
