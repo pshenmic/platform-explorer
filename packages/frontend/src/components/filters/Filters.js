@@ -47,7 +47,11 @@ export const Filters = ({
           return result
         }
 
-        if (filterKeyConfig.type === 'range' && (!value.min && !value.max)) {
+        if (filterKeyConfig.type === 'range') {
+          if (!value.min && !value.max) return result
+
+          if (value.min) result[`${key}_min`] = value.min
+          if (value.max) result[`${key}_max`] = value.max
           return result
         }
 
