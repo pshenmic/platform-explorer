@@ -104,9 +104,7 @@ export const BottomSheet = ({
         }}
       >
         <Box
-          {...bind()}
           style={{
-            touchAction: 'none',
             height: '100%',
             display: 'flex',
             flexDirection: 'column'
@@ -114,13 +112,8 @@ export const BottomSheet = ({
           className={'BottomSheet__ContentContainer'}
         >
           <DrawerHeader
-            borderBottomWidth="1px"
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            cursor={'grab'}
+            {...bind()}
             className={'BottomSheet__DragHandle'}
-            padding="0.5rem 1.5rem"
           >
             <div className={'BottomSheet__DragHandleLine'}/>
           </DrawerHeader>

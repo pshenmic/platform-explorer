@@ -35,8 +35,14 @@
   }
 
   &__DragHandle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: grab;
     flex-shrink: 0;
     border-bottom: none;
+    padding: 0.5rem 1.5rem;
+    touch-action: none;
 
     @media (hover: hover) and (pointer: fine) {
       &:hover & {
