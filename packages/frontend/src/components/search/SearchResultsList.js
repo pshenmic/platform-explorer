@@ -12,7 +12,7 @@ const COLUMN_TITLES = {
   [categoryMap.transactions]: ['Status', 'Time']
 }
 
-function ListCategory ({ type, data }) {
+function ListCategory ({ type, data, onItemClick }) {
   const titles = COLUMN_TITLES[categoryMap[type]]
 
   if (!titles) return null
@@ -35,6 +35,7 @@ function ListCategory ({ type, data }) {
           <SearchResultsListItem
             entity={entity}
             entityType={categoryMap[type]}
+            onClick={onItemClick}
             key={i}
           />
         ))}
@@ -43,7 +44,7 @@ function ListCategory ({ type, data }) {
   )
 }
 
-function SearchResultsList ({ results }) {
+function SearchResultsList ({ results, onItemClick }) {
   return (
     <div className={'SearchResultsList'}>
       {results.loading && (
@@ -58,7 +59,7 @@ function SearchResultsList ({ results }) {
 
       {results.data && Object.entries(results.data)?.length > 0 && (
         Object.entries(results.data).map(([category, items]) => (
-          <ListCategory key={category} type={category} data={items}/>
+          <ListCategory key={category} type={category} data={items} onItemClick={onItemClick}/>
         ))
       )}
     </div>

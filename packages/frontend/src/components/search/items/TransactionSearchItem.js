@@ -3,12 +3,13 @@ import { Identifier, TimeDelta } from '../../data'
 import { TransactionsIcon } from '../../ui/icons'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 
-export function TransactionSearchItem ({ transaction, className }) {
+export function TransactionSearchItem ({ transaction, className, onClick }) {
   return (
     <BaseSearchItem
       href={`/transaction/${transaction?.hash}`}
       className={`${className || ''}`}
       gridClassModifier={'Transaction'}
+      onClick={typeof onClick === 'function' ? () => onClick(transaction) : null}
     >
       <BaseSearchItemContent
         mainContent={
