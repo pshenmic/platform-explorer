@@ -32,6 +32,32 @@ const hash = (data) => {
   return crypto.createHash('sha1').update(data).digest('hex')
 }
 
+const createDocumentBatchTransition = async (client, dataContractObject, owner, documentTypeName, data, batchType, nonce) => {
+  const dpp = client.platform.dpp
+
+  const dataContract = dpp.dataContract.create(Identifier.from(dataContractObject.owner.identifier), BigInt(0), JSON.parse(dataContractObject.schema))
+
+  dataContract.setId(Identifier.from(dataContractObject.identifier))
+
+  const document = dpp.document.create(dataContract, Identifier.from(owner), documentTypeName, data)
+
+  let batch = {
+    create: [],
+    replace: [],
+    delete: []
+  }
+
+  batch = { ...batch, [batchType]: [document] }
+
+  const tx = dpp.document.createStateTransition(batch, {
+    [owner]: {
+      [dataContract.getId().toString()]: BigInt(nonce).toString()
+    }
+  })
+
+  return tx.toBuffer().toString('base64')
+}
+
 const decodeStateTransition = async (client, base64) => {
   const stateTransition = await client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(base64, 'base64'))
 
@@ -56,7 +82,7 @@ const decodeStateTransition = async (client, base64) => {
 
       decoded.version = stateTransition.getDataContract().getVersion()
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
-      decoded.identityNonce = Number(stateTransition.getIdentityNonce())
+      decoded.identityNonce = String(stateTransition.getIdentityNonce())
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
       decoded.ownerId = stateTransition.getOwnerId().toString()
       decoded.schema = stateTransition.getDataContract().getDocumentSchemas()
@@ -71,10 +97,10 @@ const decodeStateTransition = async (client, base64) => {
         const out = {
           id: documentTransition.getId().toString(),
           dataContractId: documentTransition.getDataContractId().toString(),
-          revision: documentTransition.getRevision(),
+          revision: String(documentTransition.getRevision()),
           type: documentTransition.getType(),
           action: documentTransition.getAction(),
-          nonce: Number(documentTransition.getIdentityContractNonce())
+          identityContractNonce: String(documentTransition.getIdentityContractNonce())
         }
 
         switch (documentTransition.getAction()) {
@@ -138,7 +164,9 @@ const decodeStateTransition = async (client, base64) => {
         coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
         instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.getInstantLock().toString('base64') : null,
-        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis ?? null,
+        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis
+          ? String(decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis)
+          : null,
         fundingCoreTx: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
         vout: assetLockProof.getOutPoint().readInt8(32)
       }
@@ -184,13 +212,15 @@ const decodeStateTransition = async (client, base64) => {
       decoded.assetLockProof = {
         coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
         type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
-        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis ?? null,
+        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis
+          ? String(decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis)
+          : null,
         fundingCoreTx: Buffer.from(assetLockProof.getOutPoint().slice(0, 32).toReversed()).toString('hex'),
         vout: assetLockProof.getOutPoint().readInt8(32)
       }
 
       decoded.identityId = stateTransition.getIdentityId().toString()
-      decoded.amount = output.satoshis * 1000
+      decoded.amount = String(output.satoshis * 1000)
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
       decoded.raw = stateTransition.toBuffer().toString('hex')
 
@@ -216,7 +246,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.toObject().userFeeIncrease
       decoded.ownerId = stateTransition.getDataContract().getOwnerId().toString()
       decoded.dataContractId = stateTransition.getDataContract().getId().toString()
-      decoded.dataContractNonce = Number(stateTransition.getDataContract().getIdentityNonce())
+      decoded.dataContractIdentityNonce = String(stateTransition.getDataContract().getIdentityNonce())
       decoded.schema = stateTransition.getDataContract().getDocumentSchemas()
       decoded.version = stateTransition.getDataContract().getVersion()
       decoded.dataContractOwner = stateTransition.getDataContract().getOwnerId().toString()
@@ -225,10 +255,10 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_UPDATE: {
-      decoded.identityContractNonce = Number(stateTransition.getIdentityContractNonce())
+      decoded.identityNonce = String(stateTransition.getIdentityContractNonce())
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.identityId = stateTransition.getOwnerId().toString()
-      decoded.revision = stateTransition.getRevision()
+      decoded.revision = String(stateTransition.getRevision())
 
       decoded.publicKeysToAdd = stateTransition.getPublicKeysToAdd()
         .map(key => {
@@ -260,11 +290,11 @@ const decodeStateTransition = async (client, base64) => {
       break
     }
     case StateTransitionEnum.IDENTITY_CREDIT_TRANSFER: {
-      decoded.nonce = Number(stateTransition.getNonce())
+      decoded.identityNonce = String(stateTransition.getNonce())
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.senderId = stateTransition.getIdentityId().toString()
       decoded.recipientId = stateTransition.getRecipientId().toString()
-      decoded.amount = stateTransition.getAmount()
+      decoded.amount = String(stateTransition.getAmount())
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.signature = stateTransition.getSignature()?.toString('hex') ?? null
       decoded.raw = stateTransition.toBuffer().toString('hex')
@@ -281,14 +311,14 @@ const decodeStateTransition = async (client, base64) => {
 
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.senderId = stateTransition.getIdentityId().toString()
-      decoded.amount = parseInt(stateTransition.getAmount())
+      decoded.amount = String(stateTransition.getAmount())
       decoded.outputScript = stateTransition.getOutputScript()?.toString('hex') ?? null
       decoded.coreFeePerByte = stateTransition.getCoreFeePerByte()
       decoded.signature = stateTransition.getSignature()?.toString('hex')
       decoded.signaturePublicKeyId = stateTransition.toObject().signaturePublicKeyId
       decoded.pooling = PoolingEnum[stateTransition.getPooling()]
       decoded.raw = stateTransition.toBuffer().toString('hex')
-      decoded.nonce = Number(stateTransition.getNonce())
+      decoded.identityNonce = String(stateTransition.getNonce())
 
       break
     }
@@ -304,7 +334,7 @@ const decodeStateTransition = async (client, base64) => {
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
       decoded.raw = stateTransition.toBuffer().toString('hex')
       decoded.proTxHash = stateTransition.getProTxHash().toString('hex')
-      decoded.nonce = Number(stateTransition.getIdentityContractNonce())
+      decoded.identityNonce = String(stateTransition.getIdentityContractNonce())
 
       break
     }
@@ -512,5 +542,6 @@ module.exports = {
   iso8601duration,
   getAliasInfo,
   getAliasStateByVote,
-  buildIndexBuffer
+  buildIndexBuffer,
+  createDocumentBatchTransition
 }

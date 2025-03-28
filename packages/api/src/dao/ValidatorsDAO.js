@@ -2,13 +2,17 @@ const Validator = require('../models/Validator')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
 const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
+const { base58 } = require('@scure/base')
 
 module.exports = class ValidatorsDAO {
-  constructor (knex) {
+  constructor (knex, dapi) {
     this.knex = knex
+    this.dapi = dapi
   }
 
-  getValidatorByProTxHash = async (proTxHash, identifier, currentEpoch) => {
+  getValidatorByProTxHash = async (proTxHash, currentEpoch) => {
+    const identifier = base58.encode(Buffer.from(proTxHash, 'hex'))
+
     const withdrawalsSubquery = this.knex('state_transitions')
       .select(
         'state_transitions.id as state_transition_id',
@@ -104,7 +108,15 @@ module.exports = class ValidatorsDAO {
       return null
     }
 
-    return Validator.fromRow(row)
+    const validator = Validator.fromRow(row)
+
+    const identityBalance = await this.dapi.getIdentityBalance(identifier)
+
+    return Validator.fromObject({
+      ...validator,
+      identityBalance: String(identityBalance),
+      identity: identifier
+    })
   }
 
   getValidators = async (page, limit, order, isActive, validators, currentEpoch) => {
@@ -235,17 +247,17 @@ module.exports = class ValidatorsDAO {
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
   }
 
-  getValidatorRewardStatsByProTxHash = async (proTxHash, start, end, interval) => {
-    const startSql = `'${start.toISOString()}'::timestamptz`
+  getValidatorRewardStatsByProTxHash = async (proTxHash, start, end, interval, intervalInMs) => {
+    const startSql = `'${new Date(start.getTime()).toISOString()}'::timestamptz`
 
     const endSql = `'${end.toISOString()}'::timestamptz`
 
     const ranges = this.knex
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
-      .select('date_to', this.knex.raw('LAG(date_to, 1) over (order by date_to asc) date_from'))
+      .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
     const rows = await this.knex.with('ranges', ranges)
-      .select(this.knex.raw(`COALESCE(date_from, date_to - interval '${interval}'::interval) date_from`), 'date_to')
+      .select('date_from')
       .select(
         this.knex('blocks')
           .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')

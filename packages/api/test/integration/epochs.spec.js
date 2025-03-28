@@ -122,7 +122,7 @@ describe('Epoch routes', () => {
       const expectedBlock = {
         epoch: {
           number: 0,
-          firstBlockHeight: 0,
+          firstBlockHeight: '0',
           firstCoreBlockHeight: 1,
           startTime: 0,
           feeMultiplier: 1,

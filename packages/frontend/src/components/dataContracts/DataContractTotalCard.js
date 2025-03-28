@@ -17,19 +17,6 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
       }
 
       <div className={'DataContractTotalCard__Header'}>
-        <div className={'DataContractTotalCard__Avatar'}>
-          {!dataContract.error
-            ? <ImageGenerator
-              username={dataContract.data?.identifier}
-              lightness={50}
-              saturation={50}
-              width={88}
-              height={88}
-            />
-            : 'n/a'
-          }
-        </div>
-
         <div className={'DataContractTotalCard__HeaderLines'}>
           <InfoLine
             className={'DataContractTotalCard__Identifier'}
@@ -38,9 +25,8 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
             error={dataContract.error || !dataContract.data?.identifier}
             value={
               <Identifier
-                className={''}
                 copyButton={true}
-                styles={['highlight-both', `size-${dataContract.data?.identifier?.length}`]}
+                styles={['highlight-both']}
                 ellipsis={false}
               >
                 {dataContract.data?.identifier}
@@ -58,18 +44,30 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
                 {activeAlias
                   ? <Alias avatarSource={dataContract.data?.owner?.identifier}>{activeAlias.alias}</Alias>
                   : <Identifier
-                      avatar={true}
-                      className={''}
-                      copyButton={true}
-                      styles={['highlight-both']}
-                      ellipsis={false}
-                    >
-                      {dataContract.data?.owner?.identifier}
-                    </Identifier>
+                    avatar={true}
+                    className={''}
+                    copyButton={true}
+                    styles={['highlight-both']}
+                    ellipsis={false}
+                  >
+                    {dataContract.data?.owner?.identifier}
+                  </Identifier>
                 }
               </ValueCard>
             }
           />
+        </div>
+        <div className={'DataContractTotalCard__Avatar'}>
+          {!dataContract.error
+            ? <ImageGenerator
+              username={dataContract.data?.identifier}
+              lightness={50}
+              saturation={50}
+              width={88}
+              height={88}
+            />
+            : 'n/a'
+          }
         </div>
       </div>
 
@@ -92,7 +90,12 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
 
         <InfoLine
           title={'Creation Date'}
-          value={<DateBlock timestamp={dataContract.data?.timestamp}/>}
+          value={dataContract?.data?.txHash
+            ? <ValueCard link={`/transaction/${dataContract.data?.txHash}`}>
+                <DateBlock timestamp={dataContract.data?.timestamp}/>
+              </ValueCard>
+            : <DateBlock timestamp={dataContract.data?.timestamp}/>
+          }
           loading={dataContract.loading}
           error={dataContract.error}
         />

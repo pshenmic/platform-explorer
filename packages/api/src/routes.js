@@ -156,6 +156,19 @@ module.exports = ({
       }
     },
     {
+      path: '/dataContract/:identifier/raw',
+      method: 'GET',
+      handler: dataContractsController.getRawDataContract,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
       path: '/document/:identifier',
       method: 'GET',
       handler: documentsController.getDocumentByIdentifier,
@@ -168,6 +181,27 @@ module.exports = ({
         },
         querystring: {
           type: 'object',
+          properties: {
+            document_type_name: { type: ['string', 'null'] },
+            contract_id: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/document/:identifier/raw',
+      method: 'GET',
+      handler: documentsController.getRawDocumentByIdentifier,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: {
+          type: 'object',
+          required: ['document_type_name', 'contract_id'],
           properties: {
             document_type_name: { type: ['string', 'null'] },
             contract_id: { $ref: 'identifier#' }
@@ -443,6 +477,47 @@ module.exports = ({
       handler: masternodeVotesController.getMasternodeVotes,
       schema: {
         querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/transaction/broadcast',
+      method: 'POST',
+      handler: transactionsController.broadcastTransaction,
+      schema: {
+        body: {
+          type: 'object',
+          properties: {
+            base64: { type: 'string' },
+            hex: { type: 'string' }
+          }
+        }
+      }
+    },
+    {
+      path: '/identity/:identifier/nonce',
+      method: 'GET',
+      handler: identitiesController.getIdentityNonce,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/identity/:identifier/contract/:data_contract_id/nonce',
+      method: 'GET',
+      handler: identitiesController.getIdentityContractNonce,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' },
+            data_contract_id: { $ref: 'identifier#' }
+          }
+        }
       }
     }
   ]

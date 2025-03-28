@@ -1,8 +1,8 @@
 @import './variables.scss';
 
-@mixin AvatarSize() {
-  height: 24px;
-  width: 24px;
+@mixin AvatarSize($important: false) {
+  height: 24px#{if($important, ' !important', '')};
+  width: 24px#{if($important, ' !important', '')};
 }
 
 @mixin NotActiveText() {
@@ -111,9 +111,20 @@
   }
 }
 
-@mixin LoadingLine($delay: 0) {
+@mixin LoadingLine($delay: 0, $colorScheme: 'default') {
   overflow: hidden;
   position: relative;
+
+  $colorSchemes: (
+    'default': (
+      'before': var(--chakra-colors-gray-900),
+      'after': linear-gradient(90deg, rgb(14 117 181) 0%, rgb(22 82 120) 100%)
+    ),
+    'gray': (
+      'before': rgba(var(--chakra-colors-gray-800-rgb), 5),
+      'after': rgba(255, 255, 255, .3)
+    )
+  );
 
   @keyframes LoadingLine {
     0% {
@@ -137,7 +148,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--chakra-colors-gray-900);
+    background-color: map-get(map-get($colorSchemes, $colorScheme), 'before');
     border-radius: 5px;
     opacity: 1;
   }
@@ -150,7 +161,7 @@
     left: -50%;
     width: 40%;
     height: 100%;
-    background: linear-gradient(90deg, rgb(14 117 181) 0%, rgb(22 82 120) 100%);
+    background: map-get(map-get($colorSchemes, $colorScheme), 'after');
     border-radius: 100px;
     opacity: .1;
     animation: LoadingLine linear 3s infinite;
@@ -364,18 +375,6 @@
 
 @mixin navContainerPadding ($property) {
   #{$property}: var(--chakra-space-3);
-
-  @media screen and (min-width: $breakpoint-md) {
-    #{$property}: var(--chakra-space-4);
-  }
-
-  @media screen and (min-width: $breakpoint-lg) {
-    #{$property}: var(--chakra-space-5);
-  }
-
-  @media screen and (min-width: $breakpoint-xl) {
-    #{$property}: var(--chakra-space-6);
-  }
 }
 
 @mixin pageDataPadding($property, $important: false, $invert: false) {
@@ -428,7 +427,12 @@
   }
 }
 
-@mixin EntityCard () {
+@mixin TotalCard ($avatarAbsolute: false) {
+  &__Title {
+    white-space: break-spaces;
+    word-break: break-all;
+  }
+
   &--Loading {
     .InfoLine__Value {
       height: 1.5rem;
@@ -436,6 +440,7 @@
   }
 
   &__Header {
+    position: relative;
     display: flex;
     width: 100%;
     align-items: center;
@@ -452,7 +457,14 @@
     height: 88px;
     border: 1px solid rgba(137, 126, 126, 0.1);
     flex-shrink: 0;
-    margin-right: 24px;
+    margin-left: 24px;
+
+    @if $avatarAbsolute {
+      position: absolute;
+      right: 0;
+      top: 0;
+      margin: 0;
+    }
   }
 
   &__HeaderLines {

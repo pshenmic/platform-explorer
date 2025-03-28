@@ -225,7 +225,7 @@ describe('Identities routes', () => {
         identifier: identity.identifier,
         owner: identity.identifier,
         revision: identity.revision,
-        balance: 0,
+        balance: '0',
         timestamp: block.timestamp.toISOString(),
         txHash: identity.txHash,
         totalTxs: 0,
@@ -316,9 +316,9 @@ describe('Identities routes', () => {
       })))
     })
 
-    it('should return 404 whe identity not exist', async () => {
+    it('should return 404 when identity not exist', async () => {
       mock.method(DAPI.prototype, 'getDocuments', async () => [])
-      const { body } = await client.get('/identity/1234123123PFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6/withdrawals')
+      const { body } = await client.get('/identity/D1111QnZXVpMW9yg4X6MjuWzSZ5Nui8TmCLUDY18FBtq/withdrawals')
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.deepEqual(body.resultSet, [])
@@ -342,7 +342,7 @@ describe('Identities routes', () => {
           alias,
           contested: false,
           status: 'ok',
-          timestamp: null
+          timestamp: block.timestamp.toISOString()
         }
       }
 
@@ -365,7 +365,7 @@ describe('Identities routes', () => {
           alias,
           contested: false,
           status: 'ok',
-          timestamp: null
+          timestamp: block.timestamp.toISOString()
         }
       }
 
@@ -992,7 +992,7 @@ describe('Identities routes', () => {
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
         transitionType: 0,
-        nonce: null,
+        identityContractNonce: null,
         gasUsed: null,
         totalGasUsed: null
       }))
@@ -1059,7 +1059,7 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 
@@ -1127,7 +1127,7 @@ describe('Identities routes', () => {
           prefundedVotingBalance: null,
           entropy: null,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 
@@ -1193,7 +1193,7 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 
@@ -1259,7 +1259,7 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 

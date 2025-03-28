@@ -26,9 +26,8 @@ function DocumentTotalCard ({ document, rate, className }) {
             error={document.error || !document.data?.identifier}
             value={
               <Identifier
-                className={''}
                 copyButton={true}
-                styles={['highlight-both', `size-${document.data?.identifier?.length}`]}
+                styles={['highlight-both']}
                 ellipsis={false}
               >
                 {document.data?.identifier}
@@ -103,9 +102,8 @@ function DocumentTotalCard ({ document, rate, className }) {
           error={document.error || !document.data?.entropy}
           value={
             <Identifier
-              className={''}
               copyButton={true}
-              styles={['highlight-both', `size-${document.data?.entropy?.length}`]}
+              styles={['highlight-both']}
               ellipsis={false}
             >
               {document.data?.entropy}
@@ -142,14 +140,6 @@ function DocumentTotalCard ({ document, rate, className }) {
           value={document.data?.revision}
           loading={document.loading}
           error={document.error || document.data?.revision === undefined}
-        />
-
-        <InfoLine
-          className={'DocumentTotalCard__InfoLine'}
-          title={'Identity Contract Nonce'}
-          value={document.data?.nonce}
-          loading={document.loading}
-          error={document.error || document.data?.nonce === undefined}
         />
 
         <InfoLine

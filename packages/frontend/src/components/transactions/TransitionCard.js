@@ -169,7 +169,7 @@ function TransitionCard ({ transition, owner, rate, className }) {
           className={'TransitionCard__InfoLine'}
           title={'Price'}
           value={<CreditsBlock credits={transition?.price} rate={rate}/>}
-          error={!transition?.price}
+          error={transition?.price === undefined}
         />
       }
 
@@ -199,8 +199,8 @@ function TransitionCard ({ transition, owner, rate, className }) {
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--Nonce'}
           title={'Identity Contract Nonce'}
-          value={transition?.nonce}
-          error={transition?.nonce === undefined}
+          value={transition?.identityContractNonce}
+          error={transition?.identityContractNonce === undefined}
         />
       }
 

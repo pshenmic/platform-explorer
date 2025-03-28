@@ -15,7 +15,6 @@ pub struct DataContract {
     pub identifier: Identifier,
     pub schema: Option<Value>,
     pub version: u32,
-    pub state_transition_hash: Option<String>,
     pub is_system: bool
 }
 
@@ -41,7 +40,6 @@ impl From<DataContractCreateTransition> for DataContract {
                             identifier,
                             schema: Some(schema_decoded),
                             version,
-                            state_transition_hash: None,
                             is_system: false,
                         };
                     }
@@ -73,7 +71,6 @@ impl From<DataContractUpdateTransition> for DataContract {
                             identifier,
                             schema: Some(schema_decoded),
                             version,
-                            state_transition_hash: None,
                             is_system: false,
                         };
                     }
@@ -108,7 +105,6 @@ impl From<SystemDataContract> for DataContract {
             identifier,
             schema: Some(schema_decoded),
             version: 0,
-            state_transition_hash: None,
             is_system: true,
         }
     }
@@ -131,7 +127,6 @@ impl From<Row> for DataContract {
             identifier: Identifier::from_string(identifier.trim(), Base58).unwrap(),
             schema: None,
             version: version as u32,
-            state_transition_hash: None,
             is_system,
         }
     }
