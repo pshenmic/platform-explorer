@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Box, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, Text, useOutsideClick } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
+import { useWindowSize } from '../../../hooks'
 import './BottomSheet.scss'
 
 const DRAWER_HEIGHT = '70vh'
@@ -13,23 +14,25 @@ export const BottomSheet = ({
   onClose,
   onOpen,
   title,
-  children
+  children,
+  fullHeightOnly = false
 }) => {
+  const { height: windowHeight } = useWindowSize()
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(fullHeightOnly)
   const drawerRef = useRef(null)
 
   const handleOpen = useCallback(() => {
     api.start({ y: 0 })
-    setIsExpanded(false)
+    setIsExpanded(fullHeightOnly)
     onOpen()
-  }, [api, onOpen])
+  }, [api, onOpen, fullHeightOnly])
 
   const handleClose = useCallback(() => {
-    api.start({ y: window.innerHeight })
+    api.start({ y: windowHeight })
     setIsExpanded(false)
     setTimeout(onClose, 200)
-  }, [api, onClose])
+  }, [api, onClose, windowHeight])
 
   useOutsideClick({
     ref: drawerRef,
@@ -42,35 +45,36 @@ export const BottomSheet = ({
 
   const bind = useDrag(
     ({ down, movement: [_, my], velocity: [, vy], direction: [, dy] }) => {
-      if (!down && dy < 0 && (Math.abs(my) > DRAG_THRESHOLD || vy > 0.5)) {
+      const maxDrag = -windowHeight * 0.4
+      const shouldClose = !down && dy > 0 && (my > DRAG_THRESHOLD || vy > 0.5)
+      const shouldExpand = !down && dy < 0 && (Math.abs(my) > DRAG_THRESHOLD || vy > 0.5)
+
+      if (shouldClose) return handleClose()
+
+      if (fullHeightOnly) {
+        api.start({
+          y: down ? Math.max(0, my) : 0,
+          immediate: down
+        })
+        return
+      }
+
+      if (shouldExpand) {
         setIsExpanded(true)
         api.start({ y: 0 })
         return
       }
 
-      if (!down && dy > 0 && (my > DRAG_THRESHOLD || vy > 0.5)) {
-        handleClose()
-        return
-      }
-
-      if (down) {
-        const newY = Math.max(-window.innerHeight * 0.4, my)
-        api.start({
-          y: newY,
-          immediate: true
-        })
-      } else {
-        api.start({
-          y: 0,
-          immediate: false
-        })
-      }
+      api.start({
+        y: down ? Math.max(maxDrag, my) : 0,
+        immediate: down
+      })
     },
     {
       axis: 'y',
       bounds: {
-        top: -window.innerHeight * 0.4,
-        bottom: window.innerHeight
+        top: fullHeightOnly ? 0 : -windowHeight * 0.4,
+        bottom: windowHeight
       },
       rubberband: true,
       enabled: isOpen
@@ -94,7 +98,7 @@ export const BottomSheet = ({
           left: 0,
           right: 0,
           zIndex: 1400,
-          height: isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT,
+          height: fullHeightOnly ? FULL_HEIGHT : (isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT),
           transform: y.to(value => `translateY(${value}px)`),
           transition: 'height 0.2s ease-out'
         }}

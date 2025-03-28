@@ -258,6 +258,7 @@ export const Filters = ({
           isOpen={menuIsOpen}
           onClose={menuOnClose}
           onOpen={menuOnOpen}
+          fullHeightOnly={true}
         >
           <MobileFilterMenu
             menuData={menuData}
