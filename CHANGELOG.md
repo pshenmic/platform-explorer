@@ -1,5 +1,51 @@
 # CHANGELOG
 
+### v1.0.18
+
+## Changes
+
+## API
+
+- Rename identity contract nonce in Identity Updated transition @owl352 (#530)
+- Rename `identityNonce` in document to `contractNonce`  @owl352 (#529)
+- Fix documentation for decode and some naming fixes @owl352 (#518)
+- Fix API Test @owl352 (#526)
+- Transactions `totalCount` fix and filter by timestamp @owl352 (#525)
+- Broadcast transaction in hex @owl352 (#514)
+- Fixes for search response and new fields for search response @owl352 (#516)
+- Search Block field renamed to Blocks in response @owl352 (#515)
+- Statistics for graphs query optimization @owl352 (#500)
+- Api power for masternode votes @owl352 (#503)
+- Fix documents raw buffer @owl352 (#513)
+- Raw data contract by identifier from DAPI @owl352 (#511)
+- Raw documents by identifier from DAPI @owl352 (#510)
+- Add raw public key to identity @owl352 (#508)
+- Fix BigInt for identity balance @owl352 (#507)
+- Implement BigInt conversions after #505 PR @owl352 (#506)
+- Broadcast transaction and identity nonce queries @owl352 (#505)
+- Search route improvements and tests fix @owl352 (#502)
+- SDK Version bump @owl352 (#504)
+- Dapi get documents method architecture fix @owl352 (#498)
+
+## Frontend
+
+- Rename nonce fields @AlexeyTripleA (#528)
+- Remove identity contract nonce from document page @AlexeyTripleA (#524)
+- Vertical alignment of PublicKeysListItem @AlexeyTripleA (#523)
+- Improve identifier component @AlexeyTripleA (#466)
+- Disable Christmas event in BlocksTotal @AlexeyTripleA (#520)
+- Update api urls in docs @AlexeyTripleA (#519)
+- Improve global search @AlexeyTripleA (#497)
+- Update data points count in charts @AlexeyTripleA (#490)
+- Update render of new format fields @AlexeyTripleA (#512)
+- Make creation date clickable @AlexeyTripleA (#496)
+- Update total cards styles @AlexeyTripleA (#491)
+
+## Indexer
+
+- Indexer SQL transactions @owl352 (#501)
+- Power Column for Indexer @owl352 (#489)
+
 ### v1.0.17
 
 ## Changes
