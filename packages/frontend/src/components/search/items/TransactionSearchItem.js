@@ -1,7 +1,8 @@
-import { Badge, Flex } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 import { Identifier, TimeDelta } from '../../data'
 import { TransactionsIcon } from '../../ui/icons'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
+import { TransactionStatusBadge } from '../../transactions'
 
 export function TransactionSearchItem ({ transaction, className }) {
   return (
@@ -18,7 +19,7 @@ export function TransactionSearchItem ({ transaction, className }) {
           </Flex>
         }
         additionalContent={
-          <Badge size={'xs'} colorScheme={'gray'}>Pending</Badge>
+          <TransactionStatusBadge status={transaction?.status}/>
         }
         timestamp={<TimeDelta endDate={transaction?.timestamp || new Date()}/>}
       />
