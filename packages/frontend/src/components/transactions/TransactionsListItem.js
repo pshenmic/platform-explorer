@@ -15,18 +15,6 @@ function TransactionsListItem ({ transaction, rate }) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
   const router = useRouter()
 
-  const StatusIconWrapper = ({ children }) => (
-    transaction.status !== 'SUCCESS'
-      ? <Tooltip
-          title={transaction.status}
-          content={transaction?.error}
-          placement={'top'}
-        >
-          <span>{children}</span>
-        </Tooltip>
-      : children
-  )
-
   return (
     <Link href={`/transaction/${transaction?.hash}`} className={'TransactionsListItem'}>
       <Grid className={'TransactionsListItem__Content'}>
@@ -34,9 +22,21 @@ function TransactionsListItem ({ transaction, rate }) {
           {transaction?.timestamp
             ? <>
                 {transaction?.status &&
-                  <StatusIconWrapper>
-                    <StatusIcon className={'TransactionsListItem__StatusIcon'} status={transaction.status} w={'18px'} h={'18px'} mr={'8px'}/>
-                  </StatusIconWrapper>
+                  <Tooltip
+                    title={transaction.status}
+                    content={transaction?.error || ''}
+                    placement={'top'}
+                  >
+                    <span>
+                      <StatusIcon
+                        className={'TransactionsListItem__StatusIcon'}
+                        status={transaction.status}
+                        w={'1.125rem'}
+                        h={'1.125rem'}
+                        mr={'0.5rem'}
+                      />
+                    </span>
+                  </Tooltip>
                 }
                 <TimeDelta endDate={new Date(transaction.timestamp)}/>
               </>
