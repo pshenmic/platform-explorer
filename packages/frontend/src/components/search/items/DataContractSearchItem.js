@@ -7,7 +7,8 @@ export function DataContractSearchItem ({ dataContract, className, onClick }) {
       href={`/dataContract/${dataContract?.identifier}`}
       className={`${className || ''}`}
       gridClassModifier={'DataContract'}
-      onClick={typeof onClick === 'function' ? () => onClick(dataContract) : null}
+      onClick={onClick}
+      data={dataContract}
     >
       <BaseSearchItemContent
         mainContent={

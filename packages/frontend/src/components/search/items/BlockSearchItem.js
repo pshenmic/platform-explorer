@@ -9,7 +9,8 @@ export function BlockSearchItem ({ block, className, onClick }) {
       href={`/block/${block?.header?.hash}`}
       className={`${className || ''}`}
       gridClassModifier={'Block'}
-      onClick={typeof onClick === 'function' ? () => onClick(block) : null}
+      onClick={onClick}
+      data={block}
     >
       <BaseSearchItemContent
         mainContent={

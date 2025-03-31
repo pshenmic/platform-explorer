@@ -9,7 +9,8 @@ export function TransactionSearchItem ({ transaction, className, onClick }) {
       href={`/transaction/${transaction?.hash}`}
       className={`${className || ''}`}
       gridClassModifier={'Transaction'}
-      onClick={typeof onClick === 'function' ? () => onClick(transaction) : null}
+      onClick={onClick}
+      data={transaction}
     >
       <BaseSearchItemContent
         mainContent={

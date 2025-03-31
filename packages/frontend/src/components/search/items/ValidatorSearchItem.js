@@ -8,7 +8,8 @@ export function ValidatorSearchItem ({ validator, className, onClick }) {
       href={`/validator/${validator?.proTxHash}`}
       className={`${className || ''}`}
       gridClassModifier={'Validator'}
-      onClick={typeof onClick === 'function' ? () => onClick(validator) : null}
+      onClick={onClick}
+      data={validator}
     >
       <BaseSearchItemContent
         mainContent={

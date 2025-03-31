@@ -14,7 +14,8 @@ export function IdentitySearchItem ({ identity, className, onClick }) {
       href={`/identity/${identity?.identifier}`}
       className={`${className || ''}`}
       gridClassModifier={'Identity'}
-      onClick={typeof onClick === 'function' ? () => onClick(identity) : null}
+      onClick={onClick}
+      data={identity}
     >
       <BaseSearchItemContent
         mainContent={

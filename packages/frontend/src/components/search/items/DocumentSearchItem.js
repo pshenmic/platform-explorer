@@ -7,7 +7,8 @@ export function DocumentSearchItem ({ document, className, onClick }) {
       href={`/document/${document?.identifier}`}
       className={`${className || ''}`}
       gridClassModifier={'Document'}
-      onClick={typeof onClick === 'function' ? () => onClick(document) : null}
+      onClick={onClick}
+      data={document}
     >
       <BaseSearchItemContent
         mainContent={
