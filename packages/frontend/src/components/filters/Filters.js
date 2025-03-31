@@ -50,13 +50,17 @@ export const Filters = ({
         if (filterKeyConfig.type === 'range') {
           if (!value.min && !value.max) return result
 
-          if (value.min) result[`${key}_min`] = value.min
-          if (value.max) result[`${key}_max`] = value.max
-          return result
+          return {
+            ...result,
+            ...(value.min && { [`${key}_min`]: value.min }),
+            ...(value.max && { [`${key}_max`]: value.max })
+          }
         }
 
-        result[key] = value
-        return result
+        return {
+          ...result,
+          [key]: value
+        }
       }, {})
     })()
 
