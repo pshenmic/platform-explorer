@@ -5,7 +5,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
 import { Identifier, BigNumber, Alias, TimeDelta, NotActive } from '../data'
 import StatusIcon from './StatusIcon'
-import { RateTooltip } from '../ui/Tooltips'
+import { RateTooltip, Tooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
 import { useRouter } from 'next/navigation'
 import { LinkContainer } from '../ui/containers'
@@ -15,6 +15,18 @@ function TransactionsListItem ({ transaction, rate }) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
   const router = useRouter()
 
+  const StatusIconWrapper = ({ children }) => (
+    transaction.status !== 'SUCCESS'
+      ? <Tooltip
+          title={transaction.status}
+          content={transaction?.error}
+          placement={'top'}
+        >
+          <span>{children}</span>
+        </Tooltip>
+      : children
+  )
+
   return (
     <Link href={`/transaction/${transaction?.hash}`} className={'TransactionsListItem'}>
       <Grid className={'TransactionsListItem__Content'}>
@@ -22,7 +34,9 @@ function TransactionsListItem ({ transaction, rate }) {
           {transaction?.timestamp
             ? <>
                 {transaction?.status &&
-                  <StatusIcon className={'TransactionsListItem__StatusIcon'} status={transaction.status} w={'18px'} h={'18px'} mr={'8px'}/>
+                  <StatusIconWrapper>
+                    <StatusIcon className={'TransactionsListItem__StatusIcon'} status={transaction.status} w={'18px'} h={'18px'} mr={'8px'}/>
+                  </StatusIconWrapper>
                 }
                 <TimeDelta endDate={new Date(transaction.timestamp)}/>
               </>
