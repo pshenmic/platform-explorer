@@ -170,6 +170,8 @@ function Navbar () {
                 forceValue={searchState.value}
                 onResultChange={results => setSearchState(prevState => ({ ...prevState, results }))}
                 onChange={value => setSearchState(prevState => ({ ...prevState, value }))}
+                navigateToFirstResult={true}
+                onFocusChange={isFocused => setSearchState(prevState => ({ ...prevState, focused: !!isFocused }))}
               />
             </div>
 
