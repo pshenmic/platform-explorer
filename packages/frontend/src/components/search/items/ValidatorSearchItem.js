@@ -2,12 +2,14 @@ import { Identifier, NotActive } from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 import { currencyRound } from '../../../util'
 
-export function ValidatorSearchItem ({ validator, className }) {
+export function ValidatorSearchItem ({ validator, className, onClick }) {
   return (
     <BaseSearchItem
       href={`/validator/${validator?.proTxHash}`}
       className={`${className || ''}`}
       gridClassModifier={'Validator'}
+      onClick={onClick}
+      data={validator}
     >
       <BaseSearchItemContent
         mainContent={

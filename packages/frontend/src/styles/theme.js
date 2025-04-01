@@ -7,6 +7,7 @@ import Button from './components/Button'
 import Progress from './components/Progress'
 import Popover from './components/Popover'
 import Tooltip from './components/Tooltip'
+import Input from './components/Input'
 import {
   Montserrat,
   Open_Sans as OpenSans,
@@ -88,7 +89,8 @@ export const theme = extendTheme({
     Badge,
     Progress,
     Popover,
-    Tooltip
+    Tooltip,
+    Input
   }
 })
 
