@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Box, Flex, HStack, IconButton, useDisclosure, Stack, useOutsideClick } from '@chakra-ui/react'
 import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { SearchResultsList } from '../../search'
 import './Navbar.scss'
@@ -42,7 +42,6 @@ const defaultSearchState = {
 
 function Navbar () {
   const pathname = usePathname()
-  const router = useRouter()
   const displayBreadcrumbs = useMemo(
     () => breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1),
     [pathname]
@@ -90,48 +89,6 @@ function Navbar () {
     }
     openMobileMenu()
     if (searchState.focused) hideSearch()
-  }
-
-  const handleSearchEnter = () => {
-    const data = searchState.results.data
-
-    // If no data or empty results, do nothing
-    if (!data || Object.keys(data).length === 0) return
-
-    // Get the first category with items
-    const firstCategory = Object.keys(data).find(category => data[category]?.length > 0)
-
-    if (firstCategory && data[firstCategory]?.length > 0) {
-      const firstItem = data[firstCategory][0]
-      let url
-
-      // Determine URL based on item type
-      switch (firstCategory) {
-        case 'identities':
-          url = `/identity/${firstItem.identifier}`
-          break
-        case 'blocks':
-          url = `/block/${firstItem.header.hash}`
-          break
-        case 'transactions':
-          url = `/transaction/${firstItem.hash}`
-          break
-        case 'dataContracts':
-          url = `/dataContract/${firstItem.identifier}`
-          break
-        case 'documents':
-          url = `/document/${firstItem.identifier}`
-          break
-        case 'validators':
-          url = `/validator/${firstItem.proTxHash}`
-          break
-      }
-
-      if (url) {
-        router.push(url)
-        hideSearch() // Close search after navigation
-      }
-    }
   }
 
   return (
@@ -213,7 +170,8 @@ function Navbar () {
                 forceValue={searchState.value}
                 onResultChange={results => setSearchState(prevState => ({ ...prevState, results }))}
                 onChange={value => setSearchState(prevState => ({ ...prevState, value }))}
-                onEnter={handleSearchEnter}
+                navigateToFirstResult={true}
+                onFocusChange={isFocused => setSearchState(prevState => ({ ...prevState, focused: !!isFocused }))}
               />
             </div>
 
