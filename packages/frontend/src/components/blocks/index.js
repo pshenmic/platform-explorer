@@ -4,6 +4,7 @@ import BlocksTotal from './BlocksTotal'
 import BlockDigestCard from './BlockDigestCard'
 import BlockTotalCard from './BlockTotalCard'
 import QuorumMembersList from './quorum/QuorumMembersList'
+export { default as BlocksFilter } from './BlocksFilter'
 
 export {
   BlocksList,
