@@ -10,12 +10,9 @@ import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { Container, Heading } from '@chakra-ui/react'
+import { BlocksFilter } from '../../components/blocks'
 import './Blocks.scss'
-
-import {
-  Container,
-  Heading
-} from '@chakra-ui/react'
 
 const paginateConfig = {
   pageSize: {
@@ -92,6 +89,12 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
               className={'InfoBlock'}
           >
               <Heading className={'InfoBlock__Title'} as={'h1'}>Blocks</Heading>
+
+              <BlocksFilter
+                // onFilterChange={filtersChangeHandler}
+                // isMobile={isMobile}
+                // className={'Transactions__Filters'}
+              />
 
               {!blocks.error
                 ? <>
