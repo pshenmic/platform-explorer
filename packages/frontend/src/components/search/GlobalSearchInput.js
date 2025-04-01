@@ -5,7 +5,7 @@ import { SearchIcon } from '../ui/icons'
 import { useDebounce } from '../../hooks'
 import './GlobalSearchInput.scss'
 
-function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
+function GlobalSearchInput ({ onResultChange, forceValue, onChange, onEnter }) {
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedQuery = useDebounce(searchQuery, 200)
 
@@ -29,6 +29,9 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange }) {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       search(searchQuery)
+      if (typeof onEnter === 'function') {
+        onEnter(searchQuery)
+      }
     }
   }
 
