@@ -85,7 +85,8 @@ const filtersConfig = {
     }
   },
   validator: {
-    type: 'identity',
+    type: 'search',
+    filterType: 'validators',
     label: 'Validator',
     title: 'Filter by validator',
     placeholder: 'Validator ID',
