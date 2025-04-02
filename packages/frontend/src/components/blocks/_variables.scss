@@ -1,0 +1,30 @@
+@import '../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 16px;
+
+  grid-template-columns: 
+    minmax(120px, 120px) // time
+    minmax(0, 600px) // epoch
+    minmax(0, 150px) // height
+    minmax(0, 400px) // hash
+    minmax(0, 400px) // proposed by
+    minmax(0, 400px) // fees
+    150px; // tx count
+
+  @container (max-width: 810px) {
+    grid-template-columns:
+    minmax(120px, 120px) // time
+    minmax(0, 600px) // epoch
+    minmax(0, 150px) // height
+    minmax(0, 400px) // hash
+    minmax(0, 400px) // proposed by
+    minmax(0, 400px) // fees
+    150px; // tx count
+  }
+}
+
+@mixin Column () {
+
+}
