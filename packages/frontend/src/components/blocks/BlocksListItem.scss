@@ -1,4 +1,5 @@
 @use '../../styles/mixins.scss';
+@use './variables' as blocks;
 @import '../../styles/variables.scss';
 
 .BlocksListItem {
