@@ -1,95 +1,72 @@
-import { StateTransitionEnum, TransactionTypesInfo } from '../../enums/state.transition.type'
-import { TransactionStatusBadge, TypeBadge } from './index'
+// import { StateTransitionEnum, TransactionTypesInfo } from '../../enums/state.transition.type'
+// import { TransactionStatusBadge } from './index'
 import { Filters } from '../filters'
 import { Identifier } from '../data'
 
-const transactionOptions = [
-  {
-    label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_CREATE}/>,
-    title: TransactionTypesInfo.DATA_CONTRACT_CREATE.title,
-    value: StateTransitionEnum.DATA_CONTRACT_CREATE
-  },
-  {
-    label: <TypeBadge typeId={StateTransitionEnum.DOCUMENTS_BATCH}/>,
-    title: TransactionTypesInfo.DOCUMENTS_BATCH.title,
-    value: StateTransitionEnum.DOCUMENTS_BATCH
-  },
-  {
-    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREATE}/>,
-    title: TransactionTypesInfo.IDENTITY_CREATE.title,
-    value: StateTransitionEnum.IDENTITY_CREATE
-  },
-  {
-    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_TOP_UP}/>,
-    title: TransactionTypesInfo.IDENTITY_TOP_UP.title,
-    value: StateTransitionEnum.IDENTITY_TOP_UP
-  },
-  {
-    label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_UPDATE}/>,
-    title: TransactionTypesInfo.DATA_CONTRACT_UPDATE.title,
-    value: StateTransitionEnum.DATA_CONTRACT_UPDATE
-  },
-  {
-    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_UPDATE}/>,
-    title: TransactionTypesInfo.IDENTITY_UPDATE.title,
-    value: StateTransitionEnum.IDENTITY_UPDATE
-  },
-  {
-    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL}/>,
-    title: TransactionTypesInfo.IDENTITY_CREDIT_WITHDRAWAL.title,
-    value: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL
-  },
-  {
-    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREDIT_TRANSFER}/>,
-    title: TransactionTypesInfo.IDENTITY_CREDIT_TRANSFER.title,
-    value: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER
-  },
-  {
-    label: <TypeBadge typeId={StateTransitionEnum.MASTERNODE_VOTE}/>,
-    title: TransactionTypesInfo.MASTERNODE_VOTE.title,
-    value: StateTransitionEnum.MASTERNODE_VOTE
-  }
-]
+// epoch_index_min=1000
+// epoch_index_max=1200
 
-const statusOptions = [
-  {
-    label: <TransactionStatusBadge status={'SUCCESS'}/>,
-    title: 'Success',
-    value: 'SUCCESS'
-  },
-  {
-    label: <TransactionStatusBadge status={'FAIL'}/>,
-    title: 'Fail',
-    value: 'FAIL'
-  }
-]
+// height_min=2000
+// height_max=4000
+// gas_min=1
+// gas_max=99999999999
+
+// timestamp_start=2024-08-29T23:24:11.516z
+// timestamp_end=2025-08-29T23:24:11.516z
+
+// tx_count_min=2
+// tx_count_max=11
+
+// validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8
 
 const filtersConfig = {
-  transaction_type: {
-    type: 'multiselect',
-    label: 'Type',
-    title: 'Transaction Types',
-    options: transactionOptions,
-    defaultValue: transactionOptions.map(t => t.value),
-    formatValue: (values) => {
-      if (values.length === transactionOptions.length) return null
-      if (values.length > 1) return `${values.length} categories`
-      return transactionOptions.find(t => t.value === values[0])?.title || values[0]
-    },
-    isAllSelected: (values) => values.length === transactionOptions.length
+  height: {
+    type: 'range',
+    label: 'Height',
+    title: 'Height Range',
+    defaultValue: { min: '', max: '' },
+    minTitle: 'Minimum amount',
+    minPlaceholder: 'ex. 0...',
+    maxTitle: 'Maximum amount',
+    maxPlaceholder: 'ex. 10000000...',
+    formatValue: ({ min, max }) => {
+      if (min && max) return `${min} - ${max} Credits`
+      if (min) return `Min ${min} Credits`
+      if (max) return `Max ${max} Credits`
+      return null
+    }
   },
-  status: {
-    type: 'multiselect',
-    label: 'Status',
-    title: 'Status',
-    options: statusOptions,
-    defaultValue: statusOptions.map(s => s.value),
-    formatValue: (values) => {
-      if (values.length === statusOptions.length) return null
-      if (values.length > 1) return `${values.length} values`
-      return statusOptions.find(s => s.value === values[0])?.title || values[0]
-    },
-    isAllSelected: (values) => values.length === statusOptions.length
+  epoch_index: {
+    type: 'range',
+    label: 'Epoch',
+    title: 'Epoch Range',
+    defaultValue: { min: '', max: '' },
+    minTitle: 'Minimum amount',
+    minPlaceholder: 'ex. 0...',
+    maxTitle: 'Maximum amount',
+    maxPlaceholder: 'ex. 10000000...',
+    formatValue: ({ min, max }) => {
+      if (min && max) return `${min} - ${max}`
+      if (min) return `Min ${min}`
+      if (max) return `Max ${max}`
+      return null
+    }
+  },
+  tx_count: {
+    type: 'range',
+    label: 'TX count',
+    title: 'Transactions count range',
+    defaultValue: { min: '', max: '' },
+    minTitle: 'Minimum amount',
+    minPlaceholder: 'ex. 0...',
+    maxTitle: 'Maximum amount',
+    maxPlaceholder: 'ex. 10000000...',
+    formatValue: ({ min, max }) => {
+      if (min && max) return `${min} - ${max} txs`
+      if (min) return `Min ${min} txs`
+      if (max) return `Max ${max} txs`
+      return null
+    }
   },
   gas: {
     type: 'range',
@@ -107,11 +84,11 @@ const filtersConfig = {
       return null
     }
   },
-  owner: {
+  validator: {
     type: 'identity',
-    label: 'Owner',
-    title: 'Filter by owner',
-    placeholder: 'OWNER ID OR IDENTITY',
+    label: 'Validator',
+    title: 'Filter by validator',
+    placeholder: 'Validator ID',
     defaultValue: '',
     formatValue: (value) => value || null,
     mobileTagRenderer: (value) => (
@@ -120,14 +97,14 @@ const filtersConfig = {
   }
 }
 
-export default function TransactionsFilter ({ initialFilters, onFilterChange, isMobile, className }) {
+export default function BlocksFilter ({ initialFilters, onFilterChange, isMobile, className }) {
   return (
     <Filters
       filtersConfig={filtersConfig}
       initialFilters={initialFilters}
       onFilterChange={onFilterChange}
       isMobile={isMobile}
-      className={`TransactionsFilter ${className || ''}`}
+      className={`BlocksFilter ${className || ''}`}
       buttonText={'Add filter'}
     />
   )
