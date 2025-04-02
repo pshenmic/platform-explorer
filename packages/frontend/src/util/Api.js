@@ -82,8 +82,19 @@ const getTransaction = (txHash) => {
   return call(`transaction/${txHash}`, 'GET')
 }
 
-const getBlocks = (page = 1, limit = 30, order = 'asc') => {
-  return call(`blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getBlocks = (page = 1, limit = 30, order = 'asc', filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    ...filters
+  })
+
+  console.log(`blocks?${params.toString()}`)
+
+  return call(`blocks?${params.toString()}`, 'GET')
+
+  // return call(`blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getBlocksByValidator = (proTxHash, page = 1, limit = 30, order = 'asc') => {
