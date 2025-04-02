@@ -1,3 +1,5 @@
+@import '../../../styles/variables.scss';
+
 .NavigationButton {
   position: relative;
   display: flex;
@@ -9,11 +11,12 @@
   background-color: transparent;
   border-radius: 10px;
   white-space: nowrap;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 0.75rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.025rem;
   transition: background-color ease 0.5s;
-  
+  font-family: $font-heading;
+
   &:hover {
     background-color: var(--chakra-colors-gray-550);
 
@@ -37,7 +40,7 @@
 }
 
 .NavigationButton__Active {
-  background-color: var(--chakra-colors-brand-deep) !important;
+  background-color: var(--chakra-colors-brand-normal) !important;
 
   &:hover {
     cursor: default;

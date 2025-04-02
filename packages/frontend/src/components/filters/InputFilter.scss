@@ -1,0 +1,30 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.InputFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__InputTitle {
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, .5);
+  }
+
+  .MobileFilterMenu & {
+    width: 100%;
+
+    &__Title {
+      font-family: $font-heading;
+      font-weight: 700;
+      font-size: 0.875rem;
+    }
+
+    &__Input {
+      min-height: 3rem;
+      padding: 0.75rem 1rem;
+    }
+  }
+}

@@ -43,8 +43,39 @@ const getTransactionsHistory = (start, end, intervalsCount) => {
   return call(`transactions/history?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
-const getTransactions = (page = 1, limit = 30, order = 'asc') => {
-  return call(`transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const prepareQueryParams = (params = {}) => {
+  const queryParams = new URLSearchParams()
+
+  const parameterIsValid = (value) => {
+    return value !== undefined && value !== ''
+  }
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      if (value.length > 0) {
+        value.forEach(item => {
+          if (parameterIsValid(item)) {
+            queryParams.append(key, item)
+          }
+        })
+      }
+    } else if (parameterIsValid(value)) {
+      queryParams.append(key, value)
+    }
+  })
+
+  return queryParams
+}
+
+const getTransactions = (page = 1, limit = 10, order = 'asc', filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    ...filters
+  })
+
+  return call(`transactions?${params.toString()}`, 'GET')
 }
 
 const getTransaction = (txHash) => {
@@ -67,8 +98,16 @@ const getDataContractTransactions = (identifier, page = 1, limit = 30, order = '
   return call(`dataContract/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
-const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy) => {
-  return call(`dataContracts?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
+const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy, filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    order_by: orderBy,
+    ...filters
+  })
+
+  return call(`dataContracts?${params.toString()}`, 'GET')
 }
 
 const getDocumentByIdentifier = (identifier, dataContractId, typeName) => {
