@@ -10,8 +10,9 @@ import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Container, Heading } from '@chakra-ui/react'
+import { Container, Heading, useBreakpointValue } from '@chakra-ui/react'
 import { BlocksFilter } from '../../components/blocks'
+import { useDebounce } from '../../hooks'
 import './Blocks.scss'
 
 const paginateConfig = {
@@ -29,25 +30,33 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const [blockHeightToSearch, setBlockHeightToSearch] = useState(0)
   const pageCount = Math.ceil(total / pageSize) ? Math.ceil(total / pageSize) : 1
+  const [filters, setFilters] = useState({})
+  const debouncedFilters = useDebounce(filters, 250)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const isMobile = useBreakpointValue({ base: true, md: false })
 
-  const fetchData = (page, count) => {
-    setBlocks(state => ({ ...state, loading: true }))
+  useEffect(() => {
+    setBlocks(prev => ({ ...prev, loading: true, error: null }))
 
-    Api.getBlocks(page, count, 'desc')
-      .then(res => {
-        if (res.pagination.total === -1) {
-          setCurrentPage(0)
-        }
-        fetchHandlerSuccess(setBlocks, res)
+    const fetchData = async () => {
+      Api.getBlocks(
+        Math.max(1, currentPage + 1),
+        Math.max(1, pageSize),
+        'desc',
+        debouncedFilters
+      ).then(res => {
         setTotal(res.pagination.total)
+        fetchHandlerSuccess(setBlocks, res)
+      }).catch(err => {
+        setTotal(0)
+        fetchHandlerError(setBlocks, err)
       })
-      .catch(err => fetchHandlerError(setBlocks, err))
-  }
+    }
 
-  useEffect(() => fetchData(currentPage + 1, pageSize), [pageSize, currentPage])
+    fetchData()
+  }, [currentPage, pageSize, debouncedFilters])
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
@@ -69,6 +78,11 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize])
 
+  const filtersChangeHandler = (newFilters) => {
+    setFilters(newFilters)
+    setCurrentPage(0)
+  }
+
   const goToHeight = e => {
     e.preventDefault()
     const page = Math.ceil((total - blockHeightToSearch + 1) / pageSize) - 1
@@ -76,63 +90,63 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
   }
 
   return (
+    <Container
+      maxW={'container.xl'}
+      color={'white'}
+      mt={8}
+      mb={8}
+      className={'Blocks'}
+    >
       <Container
-          maxW={'container.xl'}
-          color={'white'}
-          mt={8}
-          mb={8}
-          className={'Blocks'}
+        maxW={'container.xl'}
+        _dark={{ color: 'white' }}
+        className={'InfoBlock'}
       >
-          <Container
-              maxW={'container.xl'}
-              _dark={{ color: 'white' }}
-              className={'InfoBlock'}
-          >
-              <Heading className={'InfoBlock__Title'} as={'h1'}>Blocks</Heading>
+        <Heading className={'InfoBlock__Title'} as={'h1'}>Blocks</Heading>
 
-              <BlocksFilter
-                // onFilterChange={filtersChangeHandler}
-                // isMobile={isMobile}
-                // className={'Transactions__Filters'}
-              />
+        <BlocksFilter
+          onFilterChange={filtersChangeHandler}
+          isMobile={isMobile}
+          className={'Blocks__Filters'}
+        />
 
-              {!blocks.error
-                ? <>
-                    {!blocks.loading
-                      ? <BlocksList blocks={blocks.data.resultSet}/>
-                      : <LoadingList itemsCount={pageSize}/>
-                    }
-                  </>
-                : <Container h={20}><ErrorMessageBlock/></Container>}
-
-              {blocks.data?.resultSet?.length > 0 &&
-                <div className={'ListNavigation'}>
-                    <GoToHeightForm
-                      goToHeightHandler={goToHeight}
-                      goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
-                      isValid={() => {
-                        return (
-                          blockHeightToSearch.length > 0 &&
-                          Number(blockHeightToSearch) <= total &&
-                          Number(blockHeightToSearch) > 0
-                        )
-                      }}
-                        disabled={blocks.error}
-                    />
-                    <Pagination
-                      onPageChange={({ selected }) => setCurrentPage(selected)}
-                      pageCount={pageCount}
-                      forcePage={currentPage}
-                    />
-                    <PageSizeSelector
-                      PageSizeSelectHandler={e => setPageSize(e.value)}
-                      value={pageSize}
-                      items={paginateConfig.pageSize.values}
-                    />
-                </div>
+        {!blocks.error
+          ? <>
+              {!blocks.loading
+                ? <BlocksList blocks={blocks.data.resultSet}/>
+                : <LoadingList itemsCount={pageSize}/>
               }
-          </Container>
+            </>
+          : <Container h={20}><ErrorMessageBlock/></Container>}
+
+        {blocks.data?.resultSet?.length > 0 &&
+          <div className={'ListNavigation'}>
+            <GoToHeightForm
+              goToHeightHandler={goToHeight}
+              goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
+              isValid={() => {
+                return (
+                  blockHeightToSearch.length > 0 &&
+                  Number(blockHeightToSearch) <= total &&
+                  Number(blockHeightToSearch) > 0
+                )
+              }}
+                disabled={blocks.error}
+            />
+            <Pagination
+              onPageChange={({ selected }) => setCurrentPage(selected)}
+              pageCount={pageCount}
+              forcePage={currentPage}
+            />
+            <PageSizeSelector
+              PageSizeSelectHandler={e => setPageSize(e.value)}
+              value={pageSize}
+              items={paginateConfig.pageSize.values}
+            />
+          </div>
+        }
       </Container>
+    </Container>
   )
 }
 
