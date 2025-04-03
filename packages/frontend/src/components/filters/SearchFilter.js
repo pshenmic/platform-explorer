@@ -38,8 +38,6 @@ export const SearchFilter = ({
     onChange(identity?.identifier || '')
   }
 
-  console.log('search filters')
-
   const clearSearch = () => {
     setSelectedIdentity(null)
     setSearchState(defaultSearchState)
