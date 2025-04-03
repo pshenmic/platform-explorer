@@ -1,5 +1,3 @@
-// import { StateTransitionEnum, TransactionTypesInfo } from '../../enums/state.transition.type'
-// import { TransactionStatusBadge } from './index'
 import { Filters } from '../filters'
 import { Identifier } from '../data'
 
@@ -21,25 +19,25 @@ import { Identifier } from '../data'
 
 const filtersConfig = {
   height: {
-    type: 'range',
     label: 'Height',
     title: 'Height Range',
+    type: 'range',
     defaultValue: { min: '', max: '' },
     minTitle: 'Minimum amount',
     minPlaceholder: 'ex. 0...',
     maxTitle: 'Maximum amount',
     maxPlaceholder: 'ex. 10000000...',
     formatValue: ({ min, max }) => {
-      if (min && max) return `${min} - ${max} Credits`
-      if (min) return `Min ${min} Credits`
-      if (max) return `Max ${max} Credits`
+      if (min && max) return `${min} - ${max}`
+      if (min) return `Min ${min}`
+      if (max) return `Max ${max}`
       return null
     }
   },
   epoch_index: {
-    type: 'range',
     label: 'Epoch',
     title: 'Epoch Range',
+    type: 'range',
     defaultValue: { min: '', max: '' },
     minTitle: 'Minimum amount',
     minPlaceholder: 'ex. 0...',
@@ -53,9 +51,9 @@ const filtersConfig = {
     }
   },
   tx_count: {
-    type: 'range',
     label: 'TX count',
     title: 'Transactions count range',
+    type: 'range',
     defaultValue: { min: '', max: '' },
     minTitle: 'Minimum amount',
     minPlaceholder: 'ex. 0...',
@@ -69,9 +67,9 @@ const filtersConfig = {
     }
   },
   gas: {
-    type: 'range',
     label: 'Gas',
     title: 'Gas Range',
+    type: 'range',
     defaultValue: { min: '', max: '' },
     minTitle: 'Minimum amount',
     minPlaceholder: 'ex. 0...',
@@ -85,10 +83,10 @@ const filtersConfig = {
     }
   },
   validator: {
-    type: 'search',
-    entityType: 'validators',
     label: 'Validator',
     title: 'Filter by validator',
+    type: 'search',
+    entityType: 'validators',
     placeholder: 'Validator Pro TX Hash',
     defaultValue: '',
     formatValue: (value) => value || null,
