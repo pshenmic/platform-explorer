@@ -1,0 +1,89 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.DashboardCards {
+  @include mixins.DashboardCards();
+  
+  // Additional styles for card styling similar to DashboardCard mixin
+  &__Card {
+    @include mixins.DashboardCard();
+  }
+  
+  // Custom control for slider visibility based on props
+  &--NoSlider {
+    .DashboardCards__Grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+  }
+  
+  &--AlwaysSlider {
+    // Remove special handling for larger screens
+    @media screen and (min-width: 600px) {
+      .SliderNavigation {
+        display: block; // Override the 'none' in the mixin
+      }
+    }
+  }
+  
+  // Any additional styles not covered by the mixins
+  &__Title {
+    margin-bottom: 12px;
+    color: var(--chakra-colors-brand-normal);
+    font-family: var(--chakra-fonts-heading);
+    font-style: italic;
+    font-size: 0.875rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  &__CardContentWrapper {
+    &--Icon {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  
+  &__Value {
+    font-family: var(--chakra-fonts-heading);
+    font-weight: 800;
+    font-size: 1.25rem;
+  }
+  
+  &__SecondaryContainer {
+    display: flex;
+    font-family: var(--chakra-fonts-mono);
+    font-size: 0.75rem;
+    font-weight: normal;
+  }
+  
+  &__SecondaryLabel {
+    color: var(--chakra-colors-gray-500);
+    margin-right: 8px;
+  }
+  
+  &__SecondaryValue {
+    color: var(--chakra-colors-gray-300);
+  }
+  
+  &__TooltipValue {
+    @include mixins.TooltipElement();
+    display: flex;
+    align-items: center;
+    width: max-content;
+  }
+  
+  &__EpochProgress {
+    margin-top: 24px;
+    
+    @media screen and (max-width: $breakpoint-md) {
+      margin-top: 8px;
+    }
+  }
+}
