@@ -55,8 +55,6 @@ export const SearchFilter = ({
     searchState.results?.loading ||
     searchState.results?.error
 
-  console.log('searchState', searchState)
-
   const selectEntity = (entity) => {
     switch (entityType) {
       case 'validators':
