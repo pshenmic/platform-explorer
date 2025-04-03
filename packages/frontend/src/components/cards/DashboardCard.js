@@ -2,9 +2,9 @@
 
 import { InfoCard } from './'
 import './InfoCard.scss'
-import './DashboardCards.scss'
+import './DashboardCard.scss'
 
-const DashboardCard = ({ card }) => {
+const DashboardCard = ({ card, className: extraClass }) => {
   const {
     title,
     value,
@@ -19,15 +19,15 @@ const DashboardCard = ({ card }) => {
 
   return (
     <InfoCard
-      className={`DashboardCards__Card ${className || ''}`}
+      className={`DashboardCard ${className || ''} ${extraClass || ''}`}
       loading={loading}
       link={link}
     >
-      <div className={`DashboardCards__CardContentWrapper ${(icon && IconComponent) ? 'DashboardCards__CardContentWrapper--Icon' : ''}`}>
-        <div className={'DashboardCards__CardContent'}>
-          <div className={'DashboardCards__Title'}>{title}</div>
+      <div className={`DashboardCard__ContentWrapper ${(icon && IconComponent) ? 'DashboardCard__ContentWrapper--Icon' : ''}`}>
+        <div className={'DashboardCard__Content'}>
+          <div className={'DashboardCard__Title'}>{title}</div>
 
-          <div className={'DashboardCards__Value'}>
+          <div className={'DashboardCard__Value'}>
             {!error ? value : 'N/A'}
           </div>
         </div>

@@ -48,7 +48,7 @@ export default function DashboardCards ({
       columns.push(
         <SliderElement className={'DashboardCards__CardsColumn'} key={i}>
           {cardsInColumn.map((card, idx) => (
-            <DashboardCard card={card} key={idx}/>
+            <DashboardCard className={'DashboardCards__Card'} card={card} key={idx}/>
           ))}
         </SliderElement>
       )
@@ -61,7 +61,7 @@ export default function DashboardCards ({
     ? <div className={`DashboardCards DashboardCards--NoSlider ${className}`}>
         <div className='DashboardCards__Grid'>
           {cards.map((card, index) => (
-            <DashboardCard card={card} key={index}/>
+            <DashboardCard className={'DashboardCards__Card'} card={card} key={index}/>
           ))}
         </div>
       </div>
