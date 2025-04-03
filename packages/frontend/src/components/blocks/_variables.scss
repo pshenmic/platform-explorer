@@ -5,26 +5,97 @@
   gap: 16px;
 
   grid-template-columns: 
-    minmax(120px, 120px) // time
-    minmax(0, 600px) // epoch
-    minmax(0, 150px) // height
+    6rem // time
+    5.3rem // height
     minmax(0, 400px) // hash
-    17rem // proposed by
-    minmax(0, 400px) // fees
-    150px; // tx count
+    16.5rem // proposed by
+    5rem // fees
+    4.75rem; // tx count
 
-  @container (max-width: 810px) {
+  @media screen and (max-width: 62em) {
     grid-template-columns:
-    minmax(120px, 120px) // time
-    minmax(0, 600px) // epoch
-    minmax(0, 150px) // height
+    6rem // time
+    5.3rem // height
     minmax(0, 400px) // hash
-    minmax(0, 400px) // proposed by
-    minmax(0, 400px) // fees
-    150px; // tx count
+    6.25rem // proposed by
+    5rem // fees
+    4.75rem; // tx count
+  }
+
+  @container (max-width: 43em) {
+    grid-template-columns:
+      6rem // time
+      5.3rem // height
+      minmax(0, 400px) // hash
+      6.25rem // proposed by
+      4.75rem; // tx count
+  }
+
+  @container (max-width: 37.5em) {
+    grid-template-columns:
+      6rem // time
+      5.3rem // height
+      minmax(0, 400px) // hash
+      4.75rem; // tx count
+  }
+
+  @container (max-width: 30em) {
+    grid-template-columns:
+      6rem // time
+      5.3rem // height
+      minmax(0, 400px); // hash
+  }
+
+  @container (max-width: 24.5em) {
+    grid-template-columns:
+      6rem // time
+      minmax(0, 400px) // hash
+      4.75rem; // tx count
+  }
+
+  @container (max-width: 23em) {
+    grid-template-columns:
+      6rem // time
+      minmax(0, 400px); // hash
   }
 }
 
 @mixin Column () {
+  &:last-child {
+    text-align: right;
+  }
 
+  @container (max-width: 43em) {
+    &--Fees {
+      display: none;
+    }
+  }
+
+  @container (max-width: 37.5em) {
+    &--Validator {
+      display: none;
+    }
+  }
+
+  @container (max-width: 30em) {
+    &--Txs {
+      display: none;
+    }
+  }
+
+  @container (max-width: 24.5em) {
+    &--Txs {
+      display: flex;
+    }
+
+    &--Height {
+      display: none;
+    }
+  }
+
+  @container (max-width: 23em) {
+    &--Txs {
+      display: none;
+    }
+  }
 }
