@@ -7,38 +7,6 @@ import './DashboardCards.scss'
 import './InfoCard.scss'
 
 /**
- * Helper function to arrange cards into columns for the slider
- *
- * @param {Array} cards - Array of card objects to arrange
- * @param {Array<number>} columnLayout - Layout configuration for columns
- * @returns {Array<React.ReactElement>} Array of SliderElement components
- * @private
- */
-const renderColumns = (cards, columnLayout) => {
-  const columns = []
-  let cardIndex = 0
-
-  for (let i = 0; i < columnLayout.length; i++) {
-    const cardsInColumn = []
-
-    for (let j = 0; j < columnLayout[i] && cardIndex < cards.length; j++) {
-      cardsInColumn.push(cards[cardIndex])
-      cardIndex++
-    }
-
-    columns.push(
-      <SliderElement className={'DashboardCards__CardsColumn'} key={i}>
-        {cardsInColumn.map((card, idx) => (
-          <DashboardCard card={card} key={idx}/>
-        ))}
-      </SliderElement>
-    )
-  }
-
-  return columns
-}
-
-/**
  * DashboardCards component displays cards in a slider or grid layout
  *
  * @param {Object} props
@@ -55,7 +23,7 @@ const renderColumns = (cards, columnLayout) => {
 export default function DashboardCards ({
   cards = [],
   columnLayout = [2, 2],
-  sliderMode = 'responsive', /** 'responsive', 'always', 'never' */
+  sliderMode = 'responsive',
   breakpoint = 600,
   perView = {
     mobile: 1.1,
@@ -63,6 +31,32 @@ export default function DashboardCards ({
   },
   className = ''
 }) {
+  const renderColumns = (cards, columnLayout) => {
+    if (!cards || !columnLayout?.length) return null
+
+    const columns = []
+    let cardIndex = 0
+
+    for (let i = 0; i < columnLayout.length; i++) {
+      const cardsInColumn = []
+
+      for (let j = 0; j < columnLayout[i] && cardIndex < cards.length; j++) {
+        cardsInColumn.push(cards[cardIndex])
+        cardIndex++
+      }
+
+      columns.push(
+        <SliderElement className={'DashboardCards__CardsColumn'} key={i}>
+          {cardsInColumn.map((card, idx) => (
+            <DashboardCard card={card} key={idx}/>
+          ))}
+        </SliderElement>
+      )
+    }
+
+    return columns
+  }
+
   return sliderMode === 'never'
     ? <div className={`DashboardCards DashboardCards--NoSlider ${className}`}>
         <div className='DashboardCards__Grid'>
