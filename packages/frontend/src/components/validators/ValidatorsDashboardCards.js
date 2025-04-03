@@ -1,11 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
+import { useState, useEffect } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { DashboardCards } from '../cards'
-import './ValidatorsTotal.scss'
-import { BestValidatorCardContent, EpochCardContent, FeesCollectedCardContent, TotalValidatorsCardContent } from '../cards/dashboard'
+import {
+  BestValidatorCardContent,
+  EpochCardContent,
+  FeesCollectedCardContent,
+  TotalValidatorsCardContent
+} from '../cards/dashboard'
 
 export default function ValidatorsDashboardCards () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
