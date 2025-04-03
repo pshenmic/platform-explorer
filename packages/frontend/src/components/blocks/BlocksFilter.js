@@ -86,15 +86,15 @@ const filtersConfig = {
   },
   validator: {
     type: 'search',
-    filterType: 'validators',
     label: 'Validator',
     title: 'Filter by validator',
-    placeholder: 'Validator ID',
+    placeholder: 'Validator Pro TX Hash',
     defaultValue: '',
     formatValue: (value) => value || null,
-    mobileTagRenderer: (value) => (
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
-    )
+    mobileTagRenderer: (value) => {
+      console.log(value)
+      return <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+    }
   }
 }
 
