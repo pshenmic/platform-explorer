@@ -193,7 +193,7 @@ export const Filters = ({
               placeholder={config?.placeholder}
               showSubmitButton={true}
               onSubmit={submitHandler}
-              type={config?.filterType}
+              entityType={config?.entityType}
             />
           </FilterGroup>
         )
