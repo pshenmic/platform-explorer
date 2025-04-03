@@ -15,6 +15,31 @@ const defaultSearchState = {
   value: ''
 }
 
+const SelectedEntityElement = ({ entity, type }) => {
+  console.log('entity', entity)
+
+  switch (type) {
+    case 'validators':
+      return (
+        <ValueCard clickable={true}>
+          <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+            {entity?.proTxHash}
+          </Identifier>
+        </ValueCard>
+      )
+    case 'identities':
+      return (
+        <ValueCard clickable={true}>
+          <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+            {entity?.identifier}
+          </Identifier>
+        </ValueCard>
+      )
+    default:
+      return null
+  }
+}
+
 export const SearchFilter = ({
   value,
   onChange,
@@ -22,70 +47,90 @@ export const SearchFilter = ({
   showSubmitButton = false,
   onSubmit,
   title,
-  type
+  entityType
 }) => {
   const [searchState, setSearchState] = useState(defaultSearchState)
-  const [selectedIdentity, setSelectedIdentity] = useState(value || null)
+  const [selectedEntity, setSelectedEntity] = useState(value || null)
   const [searchFocused, setSearchFocused] = useState(false)
   const displayResults =
     Object.keys(searchState.results?.data).length ||
     searchState.results?.loading ||
     searchState.results?.error
 
-  const selectIdentity = (identity) => {
-    setSelectedIdentity(identity)
+  const selectEntity = (entity) => {
+    switch (entityType) {
+      case 'validators':
+        setSelectedEntity(entity || null)
+        onChange(entity?.proTxHash ?? null)
+        break
+      case 'identities':
+        setSelectedEntity(entity)
+        onChange(entity?.identifier || '')
+        break
+      default:
+        setSelectedEntity(null)
+        onChange(null)
+    }
+
     setSearchFocused(false)
-    onChange(identity?.identifier || '')
   }
 
   const clearSearch = () => {
-    setSelectedIdentity(null)
+    setSelectedEntity(null)
     setSearchState(defaultSearchState)
     setSearchFocused(true)
-    onChange('')
+    onChange(null)
   }
 
   useEffect(() => {
-    setSelectedIdentity(value ? { identifier: value } : null)
+    switch (entityType) {
+      case 'validators':
+        setSelectedEntity(value ? { proTxHash: value } : null)
+        break
+      case 'identities':
+        setSelectedEntity(value ? { identifier: value } : null)
+        break
+      default:
+        setSelectedEntity(value)
+    }
   }, [value])
 
   return (
-    <div className={'IdentityFilter'}>
+    <div className={'SearchFilter'}>
       {title &&
-        <div className={'IdentityFilter__Title'}>{title}</div>
+        <div className={'SearchFilter__Title'}>{title}</div>
       }
 
-      {selectedIdentity && !searchFocused
-        ? <div className={'IdentityFilter__SelectedIdentityContainer'} onClick={() => setSearchFocused(true)}>
-            <ValueCard clickable={true}>
-              <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
-                {selectedIdentity.identifier}
-              </Identifier>
-            </ValueCard>
+      {selectedEntity && !searchFocused
+        ? <div
+            className={'SearchFilter__selectedEntityContainer'}
+            onClick={() => setSearchFocused(true)}
+          >
+            <SelectedEntityElement entity={selectedEntity} type={entityType}/>
           </div>
-        : <div className={'IdentityFilter__SearchContainer'}>
+        : <div className={'SearchFilter__SearchContainer'}>
             <GlobalSearchInput
               forceValue={searchState.value}
               onResultChange={results => setSearchState(prevState => ({ ...prevState, results }))}
               onChange={value => setSearchState(prevState => ({ ...prevState, value }))}
-              categoryFilters={[type]}
+              categoryFilters={[entityType]}
               placeholder={placeholder}
             />
-          {displayResults &&
-            <div className={'IdentityFilter__ResultsContainer'}>
-              <SearchResultsList
-                results={searchState.results}
-                onItemClick={selectIdentity}
-              />
-            </div>
-          }
+            {displayResults &&
+              <div className={'SearchFilter__ResultsContainer'}>
+                <SearchResultsList
+                  results={searchState.results}
+                  onItemClick={selectEntity}
+                />
+              </div>
+            }
           </div>
       }
 
       {showSubmitButton && (
         <FilterActions>
           <SubmitButton text={'Close'} onSubmit={onSubmit} />
-          {selectedIdentity &&
+          {selectedEntity &&
             <Button
               variant={'gray'}
               size={'sm'}
