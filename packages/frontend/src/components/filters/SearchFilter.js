@@ -16,8 +16,6 @@ const defaultSearchState = {
 }
 
 const SelectedEntityElement = ({ entity, type }) => {
-  console.log('entity', entity)
-
   switch (type) {
     case 'validators':
       return (
@@ -56,6 +54,8 @@ export const SearchFilter = ({
     Object.keys(searchState.results?.data).length ||
     searchState.results?.loading ||
     searchState.results?.error
+
+  console.log('searchState', searchState)
 
   const selectEntity = (entity) => {
     switch (entityType) {
