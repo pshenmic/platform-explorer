@@ -4,12 +4,10 @@
 .DashboardCards {
   @include mixins.DashboardCards();
   
-  // Additional styles for card styling similar to DashboardCard mixin
   &__Card {
     @include mixins.DashboardCard();
   }
   
-  // Custom control for slider visibility based on props
   &--NoSlider {
     .DashboardCards__Grid {
       display: grid;
@@ -52,36 +50,5 @@
     font-family: $font-heading;
     font-weight: 800;
     font-size: 1.25rem;
-  }
-  
-  &__SecondaryContainer {
-    display: flex;
-    font-family: $font-mono;
-    font-size: 0.75rem;
-    font-weight: normal;
-  }
-  
-  &__SecondaryLabel {
-    color: var(--chakra-colors-gray-500);
-    margin-right: 8px;
-  }
-  
-  &__SecondaryValue {
-    color: var(--chakra-colors-gray-300);
-  }
-  
-  &__TooltipValue {
-    @include mixins.TooltipElement();
-    display: flex;
-    align-items: center;
-    width: max-content;
-  }
-  
-  &__EpochProgress {
-    margin-top: 24px;
-    
-    @media screen and (max-width: $breakpoint-md) {
-      margin-top: 8px;
-    }
   }
 }
