@@ -1,10 +1,50 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, memo } from 'react'
 import { Progress } from '@chakra-ui/react'
 import { useKeenSlider } from 'keen-slider/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import 'keen-slider/keen-slider.min.css'
 import './Slider.scss'
 import './SliderNavigation.scss'
+
+const SliderProgressBar = memo(function SliderProgressBar ({ isActive, autoPlaySpeed, onComplete }) {
+  const [progress, setProgress] = useState(0)
+  const transitionInterval = 1000
+
+  useEffect(() => {
+    if (!isActive) {
+      setProgress(0)
+      return
+    }
+
+    const updateProgress = () => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          onComplete()
+          return 0
+        }
+        return prev + (100 / (autoPlaySpeed / transitionInterval))
+      })
+    }
+
+    updateProgress()
+    const interval = setInterval(updateProgress, transitionInterval)
+    return () => clearInterval(interval)
+  }, [isActive, autoPlaySpeed, onComplete])
+
+  return (
+    <Progress
+      className={'SliderNavigation__ProgressBar'}
+      value={progress}
+      height={'2px'}
+      colorScheme={'gray'}
+      sx={{
+        '& > div': {
+          transition: `width ${progress !== 0 ? transitionInterval : 0}ms linear`
+        }
+      }}
+    />
+  )
+})
 
 function Slider ({
   children,
@@ -18,38 +58,30 @@ function Slider ({
 }) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const totalSlides = React.Children.count(children)
-  const [progress, setProgress] = useState(0)
+
   const [sliderRef, slider] = useKeenSlider({
     ...settings,
     slideChanged (s) {
       setCurrentSlide(s.track.details.rel)
-      resetProgress()
     },
     created () {
       if (typeof createdCallback === 'function') createdCallback(true)
     }
   }, plugins)
-  const resetProgress = () => setProgress(0)
 
-  const updateProgress = () => {
-    setProgress((prev) => {
-      if (prev >= 100) {
-        if (currentSlide !== totalSlides - 1) {
-          slider.current?.next()
-        } else {
-          slider.current?.moveToIdx(0)
-        }
+  const handleNextSlide = useCallback(() => {
+    if (currentSlide !== totalSlides - 1) {
+      slider.current?.next()
+    } else {
+      slider.current?.moveToIdx(0)
+    }
+  }, [currentSlide, totalSlides, slider])
 
-        return 0
-      }
-      return prev + (100 / (autoPlaySpeed / 10))
-    })
-  }
-
-  useEffect(() => {
-    const interval = setInterval(updateProgress, 10)
-    return () => clearInterval(interval)
-  }, [currentSlide, updateProgress])
+  const handlePrevSlide = useCallback(() => {
+    if (currentSlide !== 0) {
+      slider.current?.prev()
+    }
+  }, [currentSlide, slider])
 
   return (
     <div className={'Slider'}>
@@ -59,12 +91,11 @@ function Slider ({
         {showProgressBar && (
           <div className={'SliderNavigation__ProgressBars'}>
             {[...Array(totalSlides)].map((_, index) => (
-              <Progress
-                className={'SliderNavigation__ProgressBar'}
-                value={currentSlide === index ? progress : 0}
-                height={'2px'}
+              <SliderProgressBar
                 key={index}
-                colorScheme={'gray'}
+                isActive={currentSlide === index}
+                autoPlaySpeed={autoPlaySpeed}
+                onComplete={handleNextSlide}
               />
             ))}
           </div>
@@ -73,32 +104,18 @@ function Slider ({
         {showNavButtons && (
           <div className={'SliderNavigation__Buttons'}>
             <button
-              className={'SliderNavigation__Button SliderNavigation__Button--Prev ' +
-                `${currentSlide === 0
-                  ? 'SliderNavigation__Button--Disabled'
-                  : ''}`
-              }
-              onClick={() => {
-                if (currentSlide !== 0) {
-                  slider.current?.prev()
-                  resetProgress()
-                }
-              }}
+              className={`SliderNavigation__Button SliderNavigation__Button--Prev ${
+                currentSlide === 0 ? 'SliderNavigation__Button--Disabled' : ''
+              }`}
+              onClick={handlePrevSlide}
             >
               <ChevronLeftIcon color={'#ddd'}/>
             </button>
             <button
-              className={'SliderNavigation__Button SliderNavigation__Button--Next ' +
-                `${currentSlide === totalSlides - 1
-                  ? 'SliderNavigation__Button--Disabled'
-                  : ''}`
-              }
-              onClick={() => {
-                if (currentSlide !== totalSlides - 1) {
-                  slider.current?.next()
-                  resetProgress()
-                }
-              }}
+              className={`SliderNavigation__Button SliderNavigation__Button--Next ${
+                currentSlide === totalSlides - 1 ? 'SliderNavigation__Button--Disabled' : ''
+              }`}
+              onClick={handleNextSlide}
             >
               <ChevronRightIcon color={'#ddd'}/>
             </button>
