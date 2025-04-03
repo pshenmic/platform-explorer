@@ -4,11 +4,8 @@ import * as Api from '../../util/Api'
 import { useState, useEffect } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import { DashboardCards } from '../cards'
-import { EpochTooltip } from '../ui/Tooltips'
-import { InfoIcon } from '@chakra-ui/icons'
-import EpochProgress from '../networkStatus/EpochProgress'
-import { NotActive } from '../data'
 import { BlockIcon, HourglassIcon, TransactionsIcon } from '../ui/icons'
+import { EpochCard } from '../cards/dashboard'
 
 export default function BlocksDashboardCards () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
@@ -36,22 +33,7 @@ export default function BlocksDashboardCards () {
       cards={[
         {
           title: 'Epoch',
-          value: (
-            <div>
-              {typeof status?.data?.epoch?.number === 'number'
-                ? <EpochTooltip epoch={status.data.epoch}>
-                  <div className={'BlocksDashboardCard__EpochNumber'}>
-                    #{status.data.epoch.number}
-                    <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
-                  </div>
-                </EpochTooltip>
-                : <NotActive/>
-              }
-              {status?.data?.epoch &&
-                <EpochProgress epoch={status.data.epoch} className={'BlocksDashboardCard__EpochProgress'}/>
-              }
-            </div>
-          ),
+          value: <EpochCard status={status?.data}/>,
           error: typeof status?.data?.epoch?.number !== 'number' && typeof status?.data?.epoch?.number !== 'string',
           loading: status.loading
         },
