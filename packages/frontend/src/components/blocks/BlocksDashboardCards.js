@@ -45,41 +45,35 @@ export default function BlocksDashboardCards () {
                     <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
                   </div>
                 </EpochTooltip>
-                : <NotActive/>}
-
+                : <NotActive/>
+              }
               {status?.data?.epoch &&
-              <EpochProgress epoch={status.data.epoch} className={'BlocksDashboardCard__EpochProgress'}/>}
+                <EpochProgress epoch={status.data.epoch} className={'BlocksDashboardCard__EpochProgress'}/>
+              }
             </div>
           ),
-          loading: status.loading,
-          tooltip: status?.data?.epoch
-            ? { data: status.data.epoch }
-            : null
+          error: typeof status?.data?.epoch?.number !== 'number' && typeof status?.data?.epoch?.number !== 'string',
+          loading: status.loading
         },
         {
           title: 'Avg. TPS',
-          value: typeof epoch?.data?.tps === 'number'
-            ? epoch.data.tps.toFixed(4)
-            : <NotActive/>,
+          value: epoch.data?.tps?.toFixed(4),
+          error: typeof epoch?.data?.tps !== 'number' && typeof epoch?.data?.tps !== 'string',
           loading: status.loading,
           icon: HourglassIcon
         },
         {
           title: 'Blocks',
-          value: typeof status?.data?.api?.block?.height === 'number'
-            ? currencyRound(status.data.api.block.height)
-            : <NotActive/>,
+          value: currencyRound(status.data?.api?.block?.height),
+          error: typeof status?.data?.api?.block?.height !== 'number' && typeof status?.data?.api?.block?.height !== 'string',
           loading: status.loading,
           icon: BlockIcon
         },
         {
           title: 'Transactions',
-          value: (
-            typeof status.data?.transactionsCount === 'number' || typeof status.data?.transactionsCount === 'string'
-              ? currencyRound(status.data?.transactionsCount)
-              : <NotActive/>
-          ),
-          loading: false,
+          value: currencyRound(status.data?.transactionsCount),
+          error: typeof status.data?.transactionsCount !== 'number' && typeof status.data?.transactionsCount !== 'string',
+          loading: status.loading,
           icon: TransactionsIcon
         }
       ]}
