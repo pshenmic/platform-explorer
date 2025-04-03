@@ -9,6 +9,8 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l', headerStyles =
     light: 'BlocksList__ColumnTitles--Light'
   }
 
+  console.log('blocks', blocks)
+
   return (
     <div
       className={'BlocksList'}
@@ -17,15 +19,30 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l', headerStyles =
       }}
     >
       <Grid className={`BlocksList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'BlocksList__ColumnTitle'}>
-          Height
-        </GridItem>
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Time'}>
           Time
         </GridItem>
+
+        <GridItem className={'BlocksList__ColumnTitle'}>
+          Epoch
+        </GridItem>
+
+        <GridItem className={'BlocksList__ColumnTitle'}>
+          Height
+        </GridItem>
+
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Hash'}>
           Block Hash
         </GridItem>
+
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Validator'}>
+          Proposed By
+        </GridItem>
+
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Fees'}>
+          Fees
+        </GridItem>
+
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Txs'}>
           TXs count
         </GridItem>

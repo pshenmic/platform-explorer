@@ -5,10 +5,12 @@
 .BlocksList {
   &__ColumnTitles {
     @include mixins.defListTitles;
-    grid-template-columns: 70px 135px calc(100% - 375px) 170px;
+    @include blocks.Columns();
   }
 
   &__ColumnTitle {
+    @include blocks.Column();
+
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;
@@ -22,24 +24,24 @@
     }
   }
 
-  @media screen and (max-width: 620px) {
-    &__ColumnTitles {
-      grid-template-columns: 70px 90px calc(100% - 160px);
-    }
-
-    &__ColumnTitle {
-      &--Hash {
-        display: none;
-      }
-
-      &--Txs {
-        order: 0;
-        text-align: left !important;
-      }
-
-      &--Time {
-        order: 2;
-      }
-    }
-  }
+  //@media screen and (max-width: 620px) {
+  //  &__ColumnTitles {
+  //    grid-template-columns: 70px 90px calc(100% - 160px);
+  //  }
+  //
+  //  &__ColumnTitle {
+  //    &--Hash {
+  //      display: none;
+  //    }
+  //
+  //    &--Txs {
+  //      order: 0;
+  //      text-align: left !important;
+  //    }
+  //
+  //    &--Time {
+  //      order: 2;
+  //    }
+  //  }
+  //}
 }
