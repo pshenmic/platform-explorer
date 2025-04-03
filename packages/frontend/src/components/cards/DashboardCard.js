@@ -9,7 +9,8 @@ const DashboardCard = ({ card }) => {
     title,
     value,
     icon,
-    loading = false,
+    error,
+    loading,
     className,
     link
   } = card
@@ -27,7 +28,7 @@ const DashboardCard = ({ card }) => {
           <div className={'DashboardCards__Title'}>{title}</div>
 
           <div className={'DashboardCards__Value'}>
-            {value}
+            {!error ? value : 'N/A'}
           </div>
         </div>
 
