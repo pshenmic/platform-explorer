@@ -23,11 +23,7 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l', headerStyles =
           Time
         </GridItem>
 
-        <GridItem className={'BlocksList__ColumnTitle'}>
-          Epoch
-        </GridItem>
-
-        <GridItem className={'BlocksList__ColumnTitle'}>
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Height'}>
           Height
         </GridItem>
 

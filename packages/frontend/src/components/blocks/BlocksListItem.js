@@ -1,18 +1,15 @@
 import Link from 'next/link'
-import { Identifier, NotActive, TimeDelta } from '../data'
-import { Grid, GridItem } from '@chakra-ui/react'
+import { Identifier, NotActive, TimeDelta, BigNumber } from '../data'
+import { Badge, Grid, GridItem, useBreakpointValue } from '@chakra-ui/react'
+import { BlockIcon } from '../ui/icons'
+import { LinkContainer } from '../ui/containers'
+import { useRouter } from 'next/navigation'
 import './BlocksListItem.scss'
 
-// minmax(120px, 120px) // time
-// minmax(0, 600px) // epoch
-// minmax(0, 150px) // height
-// minmax(0, 400px) // hash
-// minmax(0, 400px) // proposed by
-// minmax(0, 400px) // fees
-// 150px; // tx count
-
 function BlocksListItem ({ block }) {
+  const router = useRouter()
   const { header, txs } = block
+  const isMobile = useBreakpointValue({ base: true, lg: false })
 
   return (
     <Link href={`/block/${header?.hash}`} className={'BlocksListItem'}>
@@ -24,11 +21,8 @@ function BlocksListItem ({ block }) {
           }
         </GridItem>
 
-        <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Epoch'}>
-          {header?.epoch ?? null ?? <NotActive>-</NotActive>}
-        </GridItem>
-
         <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Height'}>
+          <BlockIcon w={'1.125rem'} h={'1.125rem'} mr={'0.5rem'}/>
           {header?.height ?? <NotActive>-</NotActive>}
         </GridItem>
 
@@ -41,22 +35,36 @@ function BlocksListItem ({ block }) {
         </GridItem>
 
         <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Validator'}>
-          <Identifier
-            styles={['highlight-both']}
-            ellipsis={false}
-            avatar={true}
+          <LinkContainer
+            className={'TransactionsListItem__OwnerLink'}
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/validator/${header?.validator}`)
+            }}
           >
-            {header?.validator}
-          </Identifier>
+            <Identifier
+              styles={['highlight-both']}
+              ellipsis={isMobile}
+              avatar={true}
+            >
+              {header?.validator}
+            </Identifier>
+          </LinkContainer>
         </GridItem>
 
-        <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Fees'}>
-          {header?.totalGasUsed ?? <NotActive>-</NotActive>}
+        <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Number BlocksListItem__Column--Fees'}>
+          {typeof header?.totalGasUsed === 'number' || typeof header?.totalGasUsed === 'string'
+            ? <BigNumber>{header?.totalGasUsed}</BigNumber>
+            : <NotActive>-</NotActive>
+          }
         </GridItem>
 
         <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Txs'}>
           {(typeof txs.length === 'number') &&
-            <span className={'BlocksListItem__Txs'}>({txs.length} txs)</span>
+            <Badge>
+              {txs.length}
+            </Badge>
           }
         </GridItem>
       </Grid>

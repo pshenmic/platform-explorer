@@ -6,7 +6,6 @@
   @include mixins.DefListItem;
   font-size: 0.75rem;
 
-
   &__Content {
     @include blocks.Columns();
     align-items: center;
@@ -14,32 +13,22 @@
 
   &__Column {
     @include blocks.Column();
+    display: flex;
+    align-items: center;
+
+    &:last-child {
+      text-align: right;
+      justify-content: flex-end;
+    }
+
+    &--Fees {
+      overflow: visible;
+    }
 
     &--Validator {
-      line-height: 1rem;
+      .Identifier__SymbolsContainer {
+        line-height: 0.8rem;
+      }
     }
   }
-
-  //&__Hash {
-  //  flex-grow: 1;
-  //  text-overflow: ellipsis;
-  //  overflow: hidden;
-  //  white-space: nowrap;
-  //}
-  //
-  //&__Height {
-  //  font-weight: bold;
-  //  margin-right: 8px;
-  //  word-break: keep-all;
-  //}
-  //
-  //&__Timestamp {
-  //  margin-right: 16px;
-  //  white-space: nowrap;
-  //}
-  //
-  //&__Txs {
-  //  margin-left: 12px;
-  //  white-space: nowrap;
-  //}
 }
