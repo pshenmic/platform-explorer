@@ -86,6 +86,7 @@ const filtersConfig = {
   },
   validator: {
     type: 'search',
+    entityType: 'validators',
     label: 'Validator',
     title: 'Filter by validator',
     placeholder: 'Validator Pro TX Hash',
