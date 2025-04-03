@@ -1,0 +1,9 @@
+.TotalValidatorsCardContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &__Count {
+    flex-grow: 1;
+  }
+}

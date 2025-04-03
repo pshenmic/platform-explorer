@@ -24,7 +24,7 @@ const DashboardCard = ({ card }) => {
       link={link}
     >
       <div className={`DashboardCards__CardContentWrapper ${(icon && IconComponent) ? 'DashboardCards__CardContentWrapper--Icon' : ''}`}>
-        <div className={'DashboardCards__CardContentWrapper'}>
+        <div className={'DashboardCards__CardContent'}>
           <div className={'DashboardCards__Title'}>{title}</div>
 
           <div className={'DashboardCards__Value'}>

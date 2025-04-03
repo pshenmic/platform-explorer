@@ -2,10 +2,11 @@ import { EpochTooltip } from '../../ui/Tooltips'
 import { InfoIcon } from '@chakra-ui/icons'
 import { NotActive } from '../../data'
 import EpochProgress from '../../networkStatus/EpochProgress'
+import './EpochCardContent.scss'
 
-export function EpochCard ({ status }) {
+export function EpochCardContent ({ status }) {
   return (
-    <div className={'EpochCard'}>
+    <div className={'EpochCardContent'}>
       {typeof status?.epoch?.number === 'number'
         ? <EpochTooltip epoch={status.epoch}>
           <div className={'ValidatorsTotalCard__EpochNumber'}>
@@ -15,7 +16,7 @@ export function EpochCard ({ status }) {
         </EpochTooltip>
         : <NotActive />}
       {status?.epoch &&
-        <EpochProgress epoch={status.epoch} className={'ValidatorsTotalCard__EpochProgress'}/>}
+        <EpochProgress epoch={status.epoch} className={'EpochCardContent__EpochProgress'}/>}
     </div>
   )
 }

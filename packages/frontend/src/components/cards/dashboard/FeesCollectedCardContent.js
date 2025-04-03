@@ -2,11 +2,12 @@ import { Flex, Text } from '@chakra-ui/react'
 import { RateTooltip } from '../../ui/Tooltips'
 import { currencyRound } from '../../../util'
 import { InfoIcon } from '@chakra-ui/icons'
+import './FeesCollectedCardContent.scss'
 
-export function FeesCollectedCard ({ epoch, status, rate }) {
+export function FeesCollectedCardContent ({ epoch, status, rate }) {
   return (
-    <div className={'TotalValidatorsCard'}>
-      <div className={'ValidatorsTotalCard__TotalCollectedFees'}>
+    <div className={'FeesCollectedCardContent'}>
+      <div className={'FeesCollectedCardContent__TotalCollectedFees'}>
         {typeof epoch?.totalCollectedFees === 'number'
           ? <RateTooltip
             credits={epoch.totalCollectedFees}

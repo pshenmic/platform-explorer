@@ -5,17 +5,13 @@ import * as Api from '../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { DashboardCards } from '../cards'
 import './ValidatorsTotal.scss'
-import { BestValidatorCard, EpochCard, FeesCollectedCard, TotalValidatorsCard } from '../cards/dashboard'
+import { BestValidatorCardContent, EpochCardContent, FeesCollectedCardContent, TotalValidatorsCardContent } from '../cards/dashboard'
 
 export default function ValidatorsDashboardCards () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
   const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-
-  console.log('epoch', epoch)
-  console.log('rate', rate)
-  console.log('status', status)
 
   const fetchData = () => {
     Api.getStatus()
@@ -45,26 +41,26 @@ export default function ValidatorsDashboardCards () {
       cards={[
         {
           title: 'Epoch',
-          value: <EpochCard status={status.data}/>,
+          value: <EpochCardContent status={status.data}/>,
           error: typeof status?.data?.epoch?.number !== 'number' && typeof status?.data?.epoch?.number !== 'string',
           loading: status.loading,
           className: 'ValidatorsTotalCard'
         },
         {
           title: 'Fees collected',
-          value: <FeesCollectedCard epoch={epoch.data} status={status.data} rate={rate.data} />,
+          value: <FeesCollectedCardContent epoch={epoch.data} status={status.data} rate={rate.data} />,
           error: typeof epoch?.data?.totalCollectedFees !== 'number' && typeof epoch?.data?.totalCollectedFees !== 'string',
           loading: status.loading
         },
         {
           title: 'Best Validator',
-          value: <BestValidatorCard epoch={epoch.data}/>,
+          value: <BestValidatorCardContent epoch={epoch.data}/>,
           loading: status.loading,
           error: !epoch?.data?.bestValidator
         },
         {
           title: 'Total Validators',
-          value: <TotalValidatorsCard validators={validators}/>,
+          value: <TotalValidatorsCardContent validators={validators}/>,
           className: 'ValidatorsTotalCard ValidatorsTotalCard--TotalValidators',
           loading: validators.loading,
           error: validators.data?.pagination?.total === undefined || validators.data?.pagination?.total === null

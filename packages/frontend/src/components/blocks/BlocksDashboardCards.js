@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import { DashboardCards } from '../cards'
 import { BlockIcon, HourglassIcon, TransactionsIcon } from '../ui/icons'
-import { EpochCard } from '../cards/dashboard'
+import { EpochCardContent } from '../cards/dashboard'
 
 export default function BlocksDashboardCards () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
@@ -33,7 +33,7 @@ export default function BlocksDashboardCards () {
       cards={[
         {
           title: 'Epoch',
-          value: <EpochCard status={status?.data}/>,
+          value: <EpochCardContent status={status?.data}/>,
           error: typeof status?.data?.epoch?.number !== 'number' && typeof status?.data?.epoch?.number !== 'string',
           loading: status.loading
         },

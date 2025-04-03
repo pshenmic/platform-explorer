@@ -1,15 +1,16 @@
 import { Box, Flex } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
+import './TotalValidatorsCardContent.scss'
 
-export function TotalValidatorsCard ({ validators }) {
+export function TotalValidatorsCardContent ({ validators }) {
   return (
-    <div className={'TotalValidatorsCard'}>
-      <div>
+    <div className={'TotalValidatorsCardContent'}>
+      <div className={'TotalValidatorsCardContent__Count'}>
         {typeof validators?.data?.pagination?.total === 'number'
           ? validators.data.pagination.total
           : 'n/a'}
       </div>
-      <Flex>
+      <Flex className={'TotalValidatorsCardContent__Avatars'}>
         {validators.data?.resultSet?.map((validator, i) => (
           <Box opacity={ 1 - 0.1 * i } key={i}>
             <ImageGenerator
