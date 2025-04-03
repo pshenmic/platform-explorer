@@ -1,0 +1,11 @@
+@import '../../styles/variables.scss';
+
+.BlocksIntro {
+  @media screen and (max-width: $breakpoint-md) {
+    overflow: hidden;
+
+    .Intro__Block {
+      overflow: visible;
+    }
+  }
+}

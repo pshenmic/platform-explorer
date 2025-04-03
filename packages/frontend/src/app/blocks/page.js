@@ -4,6 +4,7 @@ import introContent from './intro.md'
 import { Container } from '@chakra-ui/react'
 import Blocks from './Blocks'
 import { BlocksDashboardCards } from '../../components/blocks'
+import './BlocksIntro.scss'
 
 export const metadata = {
   title: 'Blocks — Dash Platform Explorer',
@@ -24,6 +25,7 @@ async function BlocksRoute ({ searchParams }) {
       mb={0}
     >
       <Intro
+        className={'BlocksIntro'}
         title={'Blocks'}
         description={<Markdown>{introContent}</Markdown>}
         block={<BlocksDashboardCards/>}
