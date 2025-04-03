@@ -20,19 +20,17 @@
   }
   
   &--AlwaysSlider {
-    // Remove special handling for larger screens
     @media screen and (min-width: 600px) {
       .SliderNavigation {
-        display: block; // Override the 'none' in the mixin
+        display: block;
       }
     }
   }
   
-  // Any additional styles not covered by the mixins
   &__Title {
     margin-bottom: 12px;
     color: var(--chakra-colors-brand-normal);
-    font-family: var(--chakra-fonts-heading);
+    font-family: $font-heading;
     font-style: italic;
     font-size: 0.875rem;
     font-weight: 800;
@@ -51,14 +49,14 @@
   }
   
   &__Value {
-    font-family: var(--chakra-fonts-heading);
+    font-family: $font-heading;
     font-weight: 800;
     font-size: 1.25rem;
   }
   
   &__SecondaryContainer {
     display: flex;
-    font-family: var(--chakra-fonts-mono);
+    font-family: $font-mono;
     font-size: 0.75rem;
     font-weight: normal;
   }
