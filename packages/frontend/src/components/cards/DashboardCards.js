@@ -1,12 +1,20 @@
 'use client'
 
-import './InfoCard.scss'
 import { Slider, SliderElement } from '../ui/Slider'
 import { WheelControls } from '../ui/Slider/plugins'
 import DashboardCard from './DashboardCard'
 import './DashboardCards.scss'
+import './InfoCard.scss'
 
-const Columns = ({ cards, columnLayout }) => {
+/**
+ * Helper function to arrange cards into columns for the slider
+ *
+ * @param {Array} cards - Array of card objects to arrange
+ * @param {Array<number>} columnLayout - Layout configuration for columns
+ * @returns {Array<React.ReactElement>} Array of SliderElement components
+ * @private
+ */
+const renderColumns = (cards, columnLayout) => {
   const columns = []
   let cardIndex = 0
 
@@ -30,50 +38,58 @@ const Columns = ({ cards, columnLayout }) => {
   return columns
 }
 
+/**
+ * DashboardCards component displays cards in a slider or grid layout
+ *
+ * @param {Object} props
+ * @param {Array<Object>} props.cards - Array of card objects to display
+ * @param {Array<number>} [props.columnLayout=[2,2]] - How many cards per column in slider mode
+ * @param {'responsive'|'always'|'never'} [props.sliderMode='responsive'] - Slider behavior mode
+ * @param {number} [props.breakpoint=600] - Screen width breakpoint for responsive mode
+ * @param {Object} [props.perView] - Slides visible in viewport configuration
+ * @param {number} [props.perView.mobile=1.1] - Slides visible on mobile
+ * @param {number} [props.perView.desktop=2] - Slides visible on desktop
+ * @param {string} [props.className=''] - Additional CSS class names
+ * @returns {JSX.Element}
+ */
 export default function DashboardCards ({
   cards = [],
   columnLayout = [2, 2],
-  sliderMode = 'responsive', // 'responsive', 'always', 'never'
-  breakpoint = 600, // pixel width where slider becomes active in responsive mode
+  sliderMode = 'responsive', /** 'responsive', 'always', 'never' */
+  breakpoint = 600,
   perView = {
     mobile: 1.1,
     desktop: 2
   },
   className = ''
 }) {
-  if (sliderMode === 'never') {
-    return (
-      <div className={`DashboardCards DashboardCards--NoSlider ${className}`}>
+  return sliderMode === 'never'
+    ? <div className={`DashboardCards DashboardCards--NoSlider ${className}`}>
         <div className='DashboardCards__Grid'>
           {cards.map((card, index) => (
             <DashboardCard card={card} key={index}/>
           ))}
         </div>
       </div>
-    )
-  }
-
-  return (
-    <div className={`DashboardCards ${sliderMode === 'always' ? 'DashboardCards--AlwaysSlider' : ''} ${className}`}>
-      <Slider
-        className={'DashboardCards__Slider'}
-        settings={{
-          rubberband: false,
-          renderMode: 'performance',
-          breakpoints: {
-            [`(min-width: ${breakpoint}px)`]: {
-              slides: { perView: perView.desktop }
+    : <div className={`DashboardCards slider-container ${sliderMode === 'always' ? 'DashboardCards--AlwaysSlider' : ''} ${className}`}>
+        <Slider
+          className={'DashboardCards__Slider'}
+          settings={{
+            rubberband: false,
+            renderMode: 'performance',
+            breakpoints: {
+              [`(min-width: ${breakpoint}px)`]: {
+                slides: { perView: perView.desktop }
+              }
+            },
+            slides: {
+              origin: 'center',
+              perView: perView.mobile
             }
-          },
-          slides: {
-            origin: 'center',
-            perView: perView.mobile
-          }
-        }}
-        plugins={[WheelControls]}
-      >
-        <Columns cards={cards} columnLayout={columnLayout}/>
-      </Slider>
-    </div>
-  )
+          }}
+          plugins={[WheelControls]}
+        >
+          {renderColumns(cards, columnLayout)}
+        </Slider>
+      </div>
 }
