@@ -171,32 +171,32 @@ class ValidatorsController {
   getValidatorRewardStatsByProTxHash = async (request, response) => {
     const { hash } = request.params
     const {
-      timestamp_start: start = new Date().getTime() - 3600000,
-      timestamp_end: end = new Date().getTime(),
+      timestamp_start: timestampStart = new Date().getTime() - 3600000,
+      timestamp_end: timestampEnd = new Date().getTime(),
       intervalsCount = null
     } = request.query
 
-    if (!start || !end) {
+    if (!timestampStart || !timestampEnd) {
       return response.status(400).send({ message: 'start and end must be set' })
     }
 
-    if (start > end) {
+    if (timestampStart > timestampEnd) {
       return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
     }
 
     const intervalInMs =
       Math.ceil(
-        (new Date(end).getTime() - new Date(start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+        (new Date(timestampEnd).getTime() - new Date(timestampStart).getTime()) / Number(intervalsCount ?? NaN) / 1000
       ) * 1000
 
     const interval = intervalsCount
       ? iso8601duration(intervalInMs)
-      : calculateInterval(new Date(start), new Date(end))
+      : calculateInterval(new Date(timestampStart), new Date(timestampEnd))
 
     const stats = await this.validatorsDAO.getValidatorRewardStatsByProTxHash(
       hash,
-      new Date(start),
-      new Date(end),
+      new Date(timestampStart),
+      new Date(timestampEnd),
       interval,
       isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
     )
