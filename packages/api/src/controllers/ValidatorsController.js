@@ -135,8 +135,8 @@ class ValidatorsController {
   getValidatorStatsByProTxHash = async (request, response) => {
     const { hash } = request.params
     const {
-      start = new Date().getTime() - 3600000,
-      end = new Date().getTime(),
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
       intervalsCount = null
     } = request.query
 
@@ -171,8 +171,8 @@ class ValidatorsController {
   getValidatorRewardStatsByProTxHash = async (request, response) => {
     const { hash } = request.params
     const {
-      start = new Date().getTime() - 3600000,
-      end = new Date().getTime(),
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
       intervalsCount = null
     } = request.query
 

@@ -65,8 +65,8 @@ class TransactionsController {
 
   getTransactionHistory = async (request, response) => {
     const {
-      start = new Date().getTime() - 3600000,
-      end = new Date().getTime(),
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
       intervalsCount = null
     } = request.query
 
@@ -99,8 +99,8 @@ class TransactionsController {
 
   getGasHistory = async (request, response) => {
     const {
-      start = new Date().getTime() - 3600000,
-      end = new Date().getTime(),
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
       intervalsCount = null
     } = request.query
 
