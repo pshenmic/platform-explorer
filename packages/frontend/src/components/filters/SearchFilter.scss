@@ -1,0 +1,50 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.SearchFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 25rem;
+
+  &__InputTitle {
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, .5);
+  }
+
+  &__ResultsContainer {
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  &__SearchContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .MobileFilterMenu & {
+    width: 100%;
+    min-width: 0;
+
+    &__Title {
+      font-family: $font-heading;
+      font-weight: 700;
+      font-size: 0.875rem;
+    }
+
+    input {
+      min-height: 3rem;
+      padding: 0.75rem 1rem;
+    }
+
+    .chakra-input__right-element {
+      top: 50%;
+      transform: translateY(-50%);
+      right: 4px;
+    }
+  }
+}

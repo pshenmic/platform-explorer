@@ -3,12 +3,14 @@ import { BlockIcon } from '../../ui/icons'
 import { Identifier, NotActive, TimeDelta } from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 
-export function BlockSearchItem ({ block, className }) {
+export function BlockSearchItem ({ block, className, onClick }) {
   return (
     <BaseSearchItem
       href={`/block/${block?.header?.hash}`}
       className={`${className || ''}`}
       gridClassModifier={'Block'}
+      onClick={onClick}
+      data={block}
     >
       <BaseSearchItemContent
         mainContent={

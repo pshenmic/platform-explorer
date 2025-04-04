@@ -1,0 +1,24 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.FilterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__Title {
+    font-family: $font-heading;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.4px;
+  }
+
+  &__Content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+}

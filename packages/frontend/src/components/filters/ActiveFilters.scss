@@ -1,0 +1,46 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.ActiveFilters {
+  &__ItemsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    max-width: 100%;
+  }
+
+  &__Item {
+    display: flex;
+    align-items: center;
+    font-weight: 500 !important;
+    text-transform: none !important;;
+    background-color: var(--chakra-colors-gray-800) !important;
+    cursor: default;
+    max-width: 100%;
+    white-space: break-spaces !important;
+    word-break: break-all;
+    text-align: left;
+    height: auto !important;
+    padding: 0.375rem 0.75rem;
+  }
+
+  &__IconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    background-color: var(--chakra-colors-gray-700);
+    border-radius: 0.25rem;
+
+    &:hover {
+      cursor: pointer;
+      background-color: var(--chakra-colors-gray-600);
+    }
+
+    svg {
+      width: 0.4rem;
+      height: 0.4rem;
+    }
+  }
+}

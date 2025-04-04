@@ -7,7 +7,7 @@ const Wrapper = (props) => {
     : <div onMouseMove={props.onMouseMove} className={props.className}>{props.children}</div>
 }
 
-export default function ValueCard ({ link, loading, colorScheme = 'default', size = 'default', children, className }) {
+export default function ValueCard ({ link, clickable, loading, colorScheme = 'default', size = 'default', children, className }) {
   const colorClasses = {
     default: '',
     transparent: 'ValueCard--BgTransparent',
@@ -20,7 +20,7 @@ export default function ValueCard ({ link, loading, colorScheme = 'default', siz
   }
 
   let extraClass = ''
-  if (link) extraClass += 'ValueCard--Clickable'
+  if (link || clickable) extraClass += 'ValueCard--Clickable'
   extraClass += ' ' + colorClasses?.[colorScheme] || colorClasses.default
   extraClass += ' ' + sizeClasses?.[size] || sizeClasses.default
 

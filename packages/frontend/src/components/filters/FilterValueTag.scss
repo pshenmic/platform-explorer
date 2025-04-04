@@ -1,0 +1,23 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.FilterValueTag {
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  font-family: mixins.$font-mono;
+  font-size: 0.75rem;
+  color: #fff;
+  font-weight: 400;
+  text-transform: capitalize;
+
+  &--Multiselect {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  &__MultipleContainer {
+    display: flex;
+    gap: 4px;
+  }
+}

@@ -373,8 +373,8 @@
   }
 }
 
-@mixin navContainerPadding ($property) {
-  #{$property}: var(--chakra-space-3);
+@mixin navContainerPadding ($property, $important: false) {
+  #{$property}: var(--chakra-space-3)#{if($important, ' !important', '')};
 }
 
 @mixin pageDataPadding($property, $important: false, $invert: false) {

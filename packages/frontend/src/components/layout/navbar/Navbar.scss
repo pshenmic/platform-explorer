@@ -79,6 +79,7 @@
   &__Burger {
     position: relative;
     z-index: 20;
+    transition: background-color .1s !important;
   }
 
   &__Menu {

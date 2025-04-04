@@ -1,5 +1,5 @@
 import Validators from './Validators'
-import { ValidatorsTotal } from '../../components/validators'
+import { ValidatorsDashboardCards } from '../../components/validators'
 import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
@@ -29,7 +29,7 @@ function ValidatorsRoute ({ searchParams }) {
         className={'ValidatorsIntro'}
         title={'Validators'}
         description={<Markdown>{introContent}</Markdown>}
-        block={<ValidatorsTotal/>}
+        block={<ValidatorsDashboardCards/>}
       />
     </Container>
     <Validators defaultPage={page} defaultPageSize={pageSize} defaultIsActive={activeState}/>
