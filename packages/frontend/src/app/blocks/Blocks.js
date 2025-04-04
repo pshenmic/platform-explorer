@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
+import { useState, useEffect, useRef } from 'react'
 import Pagination from '../../components/pagination'
 import GoToHeightForm from '../../components/goToHeightForm/GoToHeightForm'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
@@ -10,9 +10,19 @@ import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Container, Heading, useBreakpointValue } from '@chakra-ui/react'
+import {
+  Container,
+  Heading,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  useBreakpointValue,
+  useOutsideClick
+} from '@chakra-ui/react'
 import { BlocksFilter } from '../../components/blocks'
 import { useDebounce } from '../../hooks'
+import { SearchResultsList, GlobalSearchInput } from '../../components/search'
 import './Blocks.scss'
 
 const paginateConfig = {
@@ -21,6 +31,11 @@ const paginateConfig = {
     values: [10, 25, 50, 75, 100]
   },
   defaultPage: 1
+}
+
+const defaultSearchState = {
+  results: { data: {}, loading: false, error: false },
+  value: ''
 }
 
 function Blocks ({ defaultPage = 1, defaultPageSize }) {
@@ -36,6 +51,31 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isMobile = useBreakpointValue({ base: true, md: false })
+  const menuRef = useRef(null)
+  const searchContentRef = useRef(null)
+  const [searchState, setSearchState] = useState(defaultSearchState)
+  const [searchFocused, setSearchFocused] = useState(false)
+  const displayResults =
+    Object.keys(searchState.results?.data).length ||
+    searchState.results?.loading ||
+    searchState.results?.error
+
+  const filtersChangeHandler = (newFilters) => {
+    setFilters(newFilters)
+    setCurrentPage(0)
+  }
+
+  const goToHeight = e => {
+    e.preventDefault()
+    const page = Math.ceil((total - blockHeightToSearch + 1) / pageSize) - 1
+    setCurrentPage(page)
+  }
+
+  const closeSearchHandler = (e) => {
+    if (searchContentRef.current && !searchContentRef.current.contains(e?.target)) {
+      setSearchFocused(false)
+    }
+  }
 
   useEffect(() => {
     setBlocks(prev => ({ ...prev, loading: true, error: null }))
@@ -78,16 +118,10 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize])
 
-  const filtersChangeHandler = (newFilters) => {
-    setFilters(newFilters)
-    setCurrentPage(0)
-  }
-
-  const goToHeight = e => {
-    e.preventDefault()
-    const page = Math.ceil((total - blockHeightToSearch + 1) / pageSize) - 1
-    setCurrentPage(page)
-  }
+  useOutsideClick({
+    ref: menuRef,
+    handler: closeSearchHandler
+  })
 
   return (
     <Container
@@ -104,11 +138,51 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
       >
         <Heading className={'InfoBlock__Title'} as={'h1'}>Blocks</Heading>
 
-        <BlocksFilter
-          onFilterChange={filtersChangeHandler}
-          isMobile={isMobile}
-          className={'Blocks__Filters'}
-        />
+        <div className={'Blocks__Controls'}>
+          <BlocksFilter
+            onFilterChange={filtersChangeHandler}
+            isMobile={isMobile}
+            className={'Blocks__Filters'}
+          />
+
+          <div className={'Blocks__SearchWrapper'}>
+            <div
+              onClick={() => setSearchFocused(true)}
+              ref={menuRef}
+            >
+              <GlobalSearchInput
+                forceValue={searchState.value}
+                onResultChange={results => setSearchState(prevState => ({ ...prevState, results }))}
+                onChange={value => setSearchState(prevState => ({ ...prevState, value }))}
+                categoryFilters={['blocks']}
+                placeholder={'SEARCH BY BLOCK HASH…'}
+              />
+            </div>
+
+            <Popover
+              onClose={closeSearchHandler}
+              closeOnBlur={true}
+              placement={'bottom'}
+              variant={'menu'}
+              isOpen={displayResults && searchFocused}
+            >
+              <PopoverTrigger>
+                <div></div>
+              </PopoverTrigger>
+              <PopoverContent
+                width={'auto'}
+                minWidth={'220px'}
+                ref={searchContentRef}
+              >
+                <PopoverBody overflow={'visible'} minW={'300px'}>
+                  <div className={'SearchFilter__ResultsContainer'}>
+                    <SearchResultsList results={searchState.results}/>
+                  </div>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
 
         {!blocks.error
           ? <>
