@@ -58,7 +58,7 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange, categoryFilt
     <div>
       <InputGroup size={'md'} className={'GlobalSearchInput'}>
         <Input
-          pr={'4.5rem'}
+          pr={'2.5rem'}
           value={searchQuery}
           type={'text'}
           placeholder={placeholder || 'Search...'}
