@@ -90,11 +90,7 @@ const getBlocks = (page = 1, limit = 30, order = 'asc', filters = {}) => {
     ...filters
   })
 
-  console.log(`blocks?${params.toString()}`)
-
   return call(`blocks?${params.toString()}`, 'GET')
-
-  // return call(`blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getBlocksByValidator = (proTxHash, page = 1, limit = 30, order = 'asc') => {
