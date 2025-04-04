@@ -90,10 +90,9 @@ const filtersConfig = {
     placeholder: 'Validator Pro TX Hash',
     defaultValue: '',
     formatValue: (value) => value || null,
-    mobileTagRenderer: (value) => {
-      console.log(value)
-      return <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
-    }
+    mobileTagRenderer: (value) => (
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+    )
   }
 }
 
