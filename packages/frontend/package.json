@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
