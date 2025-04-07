@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Progress } from '@chakra-ui/react'
 import { getTimeDelta } from '../../util'
 import './EpochProgress.scss'
 
 function EpochProgress ({ epoch, className }) {
-  const startDate = new Date(epoch.startTime)
-  const endDate = new Date(epoch.endTime)
+  const startDate = useMemo(() => new Date(epoch.startTime), [epoch.startTime])
+  const endDate = useMemo(() => new Date(epoch.endTime), [epoch.endTime])
   const [progress, setProgress] = useState(0)
   const [timeLeft, setTimeLeft] = useState(getTimeDelta(new Date(), endDate))
 
