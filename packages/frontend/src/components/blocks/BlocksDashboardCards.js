@@ -41,7 +41,7 @@ export default function BlocksDashboardCards () {
           title: 'Avg. TPS',
           value: epoch.data?.tps?.toFixed(4),
           error: typeof epoch?.data?.tps !== 'number' && typeof epoch?.data?.tps !== 'string',
-          loading: status.loading,
+          loading: epoch.loading,
           icon: HourglassIcon
         },
         {
