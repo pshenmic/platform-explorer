@@ -3,7 +3,7 @@
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
 import Link from 'next/link'
-import { Box, Flex, HStack, IconButton, useDisclosure, Stack, useOutsideClick } from '@chakra-ui/react'
+import { Box, Flex, HStack, IconButton, useDisclosure, Stack, useOutsideClick, useBreakpointValue } from '@chakra-ui/react'
 import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
@@ -60,7 +60,7 @@ function Navbar () {
 
   const searchContainerRef = useRef(null)
   const mobileMenuRef = useRef(null)
-  const searchTransitionTime = 1
+  const searchTransitionTime = useBreakpointValue({ base: 0.2, md: 0.1 })
 
   const hideSearch = () => setSearchState(defaultSearchState)
 
