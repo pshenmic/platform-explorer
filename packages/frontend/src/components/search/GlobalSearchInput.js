@@ -29,7 +29,7 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange, onEnter, nav
   useEffect(() => onResultChange(searchResults), [searchResults])
   useEffect(() => setSearchQuery(forceValue), [forceValue])
 
-  const getFirstResulUrl = () => {
+  const getFirstResultUrl = () => {
     const data = searchResults.data
 
     if (!data || Object.keys(data).length === 0) return null
@@ -75,7 +75,7 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange, onEnter, nav
       }
 
       if (navigateToFirstResult) {
-        const url = getFirstResulUrl()
+        const url = getFirstResultUrl()
 
         if (url) {
           router.push(url)
