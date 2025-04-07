@@ -62,6 +62,14 @@
     border-radius: 4px;
   }
 
+  &__StatusIcon {
+    transition: $transition-time-def;
+
+    &:hover, &:active {
+      transform: scale(1.07);
+    }
+  }
+
   @container (max-width: 660px) {
     &__Column {
       &--Owner {
