@@ -153,7 +153,6 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
             </div>
 
             <Popover
-              onClose={closeSearchHandler}
               closeOnBlur={true}
               placement={'bottom'}
               variant={'menu'}
