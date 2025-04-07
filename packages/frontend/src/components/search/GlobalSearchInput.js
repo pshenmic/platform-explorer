@@ -6,7 +6,16 @@ import { useDebounce } from '../../hooks'
 import { useRouter } from 'next/navigation'
 import './GlobalSearchInput.scss'
 
-function GlobalSearchInput ({ onResultChange, forceValue, onChange, onEnter, navigateToFirstResult, onFocusChange }) {
+function filterResultByCategories (obj = {}, categories) {
+  return categories.reduce((filtered, key) => {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      filtered[key] = obj[key]
+    }
+    return filtered
+  }, {})
+}
+
+function GlobalSearchInput ({ onResultChange, forceValue, onChange, categoryFilters = [], placeholder, onEnter, navigateToFirstResult, onFocusChange }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState({ data: {}, loading: false, error: false })
   const debouncedQuery = useDebounce(searchQuery, 200)
@@ -21,7 +30,15 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange, onEnter, nav
     setSearchResults({ data: {}, loading: true, error: false })
 
     Api.search(query)
-      .then(res => setSearchResults({ data: res, loading: false, error: false }))
+      .then(res => {
+        if (categoryFilters?.length > 0) {
+          const filteredRes = filterResultByCategories(res, categoryFilters)
+          setSearchResults({ data: filteredRes, loading: false, error: false })
+          return
+        }
+
+        setSearchResults({ data: res, loading: false, error: false })
+      })
       .catch(err => setSearchResults({ data: err, loading: false, error: true }))
   }
 
@@ -95,7 +112,7 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange, onEnter, nav
           pr={'4.5rem'}
           value={searchQuery}
           type={'text'}
-          placeholder={'Search...'}
+          placeholder={placeholder || 'Search...'}
           onChange={handleSearchInput}
           onKeyPress={handleKeyPress}
           color={'gray.250'}
