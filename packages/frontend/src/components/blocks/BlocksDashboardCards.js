@@ -11,9 +11,6 @@ export default function BlocksDashboardCards () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
 
-  console.log('epoch', epoch)
-  console.log('status', status)
-
   const fetchData = () => {
     Api.getStatus()
       .then(res => {
