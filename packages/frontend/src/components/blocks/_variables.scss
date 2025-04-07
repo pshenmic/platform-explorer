@@ -3,11 +3,12 @@
 @mixin Columns () {
   display: grid;
   gap: 16px;
+  width: 100%;
 
   grid-template-columns: 
     6rem // time
     5.3rem // height
-    minmax(0, 400px) // hash
+    minmax(0, 30rem) // hash
     16.5rem // proposed by
     5rem // fees
     4.75rem; // tx count
@@ -16,7 +17,7 @@
     grid-template-columns:
     6rem // time
     5.3rem // height
-    minmax(0, 400px) // hash
+    minmax(0, 30rem) // hash
     6.25rem // proposed by
     5rem // fees
     4.75rem; // tx count
@@ -26,7 +27,7 @@
     grid-template-columns:
       6rem // time
       5.3rem // height
-      minmax(0, 400px) // hash
+      minmax(0, 30rem) // hash
       6.25rem // proposed by
       4.75rem; // tx count
   }
@@ -35,7 +36,7 @@
     grid-template-columns:
       6rem // time
       5.3rem // height
-      minmax(0, 400px) // hash
+      minmax(0, 30rem) // hash
       4.75rem; // tx count
   }
 
@@ -43,7 +44,7 @@
     grid-template-columns:
       6rem // time
       5.3rem // height
-      minmax(0, 400px); // hash
+      minmax(0, 30rem); // hash
   }
 
   @container (max-width: 24.5em) {
@@ -63,6 +64,10 @@
 @mixin Column () {
   &:last-child {
     text-align: right;
+  }
+
+  &--Fees {
+    width: 5rem;
   }
 
   @container (max-width: 43em) {
