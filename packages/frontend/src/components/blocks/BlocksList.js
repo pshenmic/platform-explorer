@@ -9,8 +9,6 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l', headerStyles =
     light: 'BlocksList__ColumnTitles--Light'
   }
 
-  console.log('blocks', blocks)
-
   return (
     <div
       className={'BlocksList'}
