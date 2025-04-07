@@ -3,7 +3,6 @@
 import * as Api from '../../util/Api'
 import { useState, useEffect, useRef } from 'react'
 import Pagination from '../../components/pagination'
-import GoToHeightForm from '../../components/goToHeightForm/GoToHeightForm'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import BlocksList from '../../components/blocks/BlocksList'
 import { LoadingList } from '../../components/loading'
@@ -11,6 +10,7 @@ import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
+  Box,
   Container,
   Heading,
   Popover,
@@ -43,7 +43,6 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
-  const [blockHeightToSearch, setBlockHeightToSearch] = useState(0)
   const pageCount = Math.ceil(total / pageSize) ? Math.ceil(total / pageSize) : 1
   const [filters, setFilters] = useState({})
   const debouncedFilters = useDebounce(filters, 250)
@@ -63,12 +62,6 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
   const filtersChangeHandler = (newFilters) => {
     setFilters(newFilters)
     setCurrentPage(0)
-  }
-
-  const goToHeight = e => {
-    e.preventDefault()
-    const page = Math.ceil((total - blockHeightToSearch + 1) / pageSize) - 1
-    setCurrentPage(page)
   }
 
   const closeSearchHandler = (e) => {
@@ -195,18 +188,7 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
 
         {blocks.data?.resultSet?.length > 0 &&
           <div className={'ListNavigation'}>
-            <GoToHeightForm
-              goToHeightHandler={goToHeight}
-              goToHeightChangeHandle={(e) => setBlockHeightToSearch(e.target.value)}
-              isValid={() => {
-                return (
-                  blockHeightToSearch.length > 0 &&
-                  Number(blockHeightToSearch) <= total &&
-                  Number(blockHeightToSearch) > 0
-                )
-              }}
-                disabled={blocks.error}
-            />
+            <Box display={['none', 'none', 'block']} width={'210px'}/>
             <Pagination
               onPageChange={({ selected }) => setCurrentPage(selected)}
               pageCount={pageCount}
