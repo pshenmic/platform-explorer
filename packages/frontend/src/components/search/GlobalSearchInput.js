@@ -65,13 +65,11 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange, onEnter, nav
 
     if (event.key === 'Enter') {
       if (Object.keys(searchResults.data).length === 0) {
-        search(searchQuery)
-        return
+        return search(searchQuery)
       }
 
       if (typeof onEnter === 'function') {
-        onEnter(searchResults.data)
-        return
+        return onEnter(searchResults.data)
       }
 
       if (navigateToFirstResult) {
