@@ -1,3 +1,25 @@
-.ContestedResourcesList {
+@use '../../styles/mixins.scss';
+@use './variables' as cr;
+@import '../../styles/variables.scss';
 
+.ContestedResourcesList {
+  @include mixins.List;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include cr.Columns();
+  }
+
+  &__ColumnTitle {
+    @include cr.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &:last-child {
+      text-align: right;
+    }
+  }
 }

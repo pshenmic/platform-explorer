@@ -21,24 +21,20 @@ export function ContestedResourcesList ({ contestedResources = [], headerStyles,
           Time
         </GridItem>
         <GridItem className={'ContestedResourcesList__ColumnTitle'}>
-          RESOURCE VALUE
+          Resource Value
         </GridItem>
         <GridItem className={'ContestedResourcesList__ColumnTitle'}>
-          DATA CONTRACT
+          Data Contract
         </GridItem>
-
         <GridItem className={'ContestedResourcesList__ColumnTitle'}>
-          INDEX NAME
+          Index name
         </GridItem>
-
         <GridItem className={'ContestedResourcesList__ColumnTitle'}>
-          INDEX NAME
+          Document type
         </GridItem>
-
         <GridItem className={'ContestedResourcesList__ColumnTitle'}>
-          INDEX NAME
+          Votes
         </GridItem>
-
         <GridItem className={'ContestedResourcesList__ColumnTitle'}>
           Ends in
         </GridItem>

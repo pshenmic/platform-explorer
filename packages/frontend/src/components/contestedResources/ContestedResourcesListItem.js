@@ -9,6 +9,8 @@ import './ContestedResourcesListItem.scss'
 export function ContestedResourcesListItem ({ contestedResource }) {
   console.log('contestedResources', contestedResource)
 
+  contestedResource.contenders = 5
+
   const getResourceValue = () => (
     (contestedResource?.resourceValue?.[1] || '') +
     `${contestedResource?.resourceValue?.[0]
@@ -48,8 +50,13 @@ export function ContestedResourcesListItem ({ contestedResource }) {
           }
         </GridItem>
 
-        <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--DocumentsCount'}>
+        <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--ResourceValue'}>
           <Alias>{getResourceValue()}</Alias>
+          {contestedResource?.contenders &&
+            <Badge colorScheme={'blue'} size={'xs'} ml={'0.25rem'}>
+              {contestedResource.contenders}
+            </Badge>
+          }
         </GridItem>
 
         <GridItem className={'ContestedResourcesListItem__Column'}>
