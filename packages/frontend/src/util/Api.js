@@ -90,6 +90,18 @@ const getBlocksByValidator = (proTxHash, page = 1, limit = 30, order = 'asc') =>
   return call(`validator/${proTxHash}/blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
+const getContestedResources = (page = 1, limit = 30, order = 'asc', orderBy, filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    order_by: orderBy,
+    ...filters
+  })
+
+  return call(`contestedResources?${params.toString()}`, 'GET')
+}
+
 const getDataContractByIdentifier = (identifier) => {
   return call(`dataContract/${identifier}`, 'GET')
 }
@@ -194,6 +206,7 @@ const decodeTx = (base64) => {
 export {
   getStatus,
   getBlocks,
+  getContestedResources,
   getBlockByHash,
   getTransactionsHistory,
   getTransactions,
