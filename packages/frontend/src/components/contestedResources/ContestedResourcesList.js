@@ -4,6 +4,7 @@ import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './ContestedResourcesList.scss'
+import {ContestedResourcesListItem} from "./ContestedResourcesListItem";
 
 export function ContestedResourcesList ({ contestedResources = [], headerStyles, pagination, loading, itemsCount = 10 }) {
   const headerExtraClass = {
@@ -46,7 +47,7 @@ export function ContestedResourcesList ({ contestedResources = [], headerStyles,
       {!loading
         ? <div className={'ContestedResourcesList__Items'}>
           {contestedResources?.map((contestedResource, i) =>
-            <div key={i}>contested resource item</div>
+            <ContestedResourcesListItem contestedResource={contestedResource} key={i}/>
           )}
           {contestedResources?.length === 0 &&
             <EmptyListMessage>There are no data contracts created yet.</EmptyListMessage>

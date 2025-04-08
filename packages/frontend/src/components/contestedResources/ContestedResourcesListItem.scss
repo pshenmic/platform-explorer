@@ -1,0 +1,22 @@
+@use '../../styles/mixins.scss';
+@use './variables' as cr;
+@import '../../styles/variables.scss';
+
+.ContestedResourcesListItem {
+  @include mixins.DefListItem;
+
+  &__Content {
+    @include cr.Columns();
+  }
+
+  &__Column {
+    @include cr.Column();
+
+    &--Timestamp {
+      font-family: $font-mono;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      color: #fff;
+    }
+  }
+}

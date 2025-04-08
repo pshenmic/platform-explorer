@@ -5,10 +5,13 @@
   gap: 1rem;
 
   grid-template-columns:
-    minmax(0, 600px)
-    minmax(140px, 200px)
-    minmax(26rem, 26rem)
-    3.375rem;
+    3rem // timestamp
+    17.5rem // resource value
+    17.5rem // data contract
+    12rem // indexName
+    5rem // type name
+    7rem // votes
+    7rem; // ends in
 
   //@container (max-width: 77rem) {
   //  grid-template-columns:
@@ -24,8 +27,6 @@
   align-items: center;
 
   @container (max-width: 27.5rem) {
-    &--Service {
-      display: none;
-    }
+
   }
 }
