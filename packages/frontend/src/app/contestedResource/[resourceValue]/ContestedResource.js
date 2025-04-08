@@ -19,6 +19,7 @@ import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 const tabs = [
   'All votes',
   'Towards Identity',
+  'Abstain',
   'Locked'
 ]
 
