@@ -9,8 +9,8 @@ export async function generateMetadata ({ params }) {
   }
 }
 
-function DataContractRoute ({ params }) {
-  return <ContestedResource identifier={params.identifier}/>
+function ContestedResourceRoute ({ params }) {
+  return <ContestedResource resourceValue={params.resourceValue}/>
 }
 
-export default DataContractRoute
+export default ContestedResourceRoute
