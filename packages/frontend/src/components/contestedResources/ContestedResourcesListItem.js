@@ -1,5 +1,5 @@
 import { Grid, GridItem, Badge } from '@chakra-ui/react'
-import { Alias, BigNumber, Identifier, NotActive, TimeDelta } from '../data'
+import { Alias, Identifier, NotActive, TimeDelta } from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
 import Link from 'next/link'
 import { Tooltip } from '../ui/Tooltips'

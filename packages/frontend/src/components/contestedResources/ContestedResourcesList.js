@@ -4,7 +4,7 @@ import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './ContestedResourcesList.scss'
-import {ContestedResourcesListItem} from "./ContestedResourcesListItem";
+import { ContestedResourcesListItem } from './ContestedResourcesListItem'
 
 export function ContestedResourcesList ({ contestedResources = [], headerStyles, pagination, loading, itemsCount = 10 }) {
   const headerExtraClass = {
