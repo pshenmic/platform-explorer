@@ -1,0 +1,31 @@
+@import '../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns:
+    minmax(0, 600px)
+    minmax(140px, 200px)
+    minmax(26rem, 26rem)
+    3.375rem;
+
+  //@container (max-width: 77rem) {
+  //  grid-template-columns:
+  //    auto
+  //    minmax(9.375rem, 9.375rem)
+  //    minmax(24.5rem, 24.5rem)
+  //    3.375rem;
+  //}
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  @container (max-width: 27.5rem) {
+    &--Service {
+      display: none;
+    }
+  }
+}

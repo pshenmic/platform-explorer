@@ -11,6 +11,8 @@ export function ContestedResourcesList ({ contestedResources = [], headerStyles,
     light: 'ContestedResourcesList__ColumnTitles--Light'
   }
 
+  console.log('contestedResources', contestedResources)
+
   return (
     <div className={'ContestedResourcesList'}>
       <Grid className={`ContestedResourcesList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
@@ -39,7 +41,6 @@ export function ContestedResourcesList ({ contestedResources = [], headerStyles,
         <GridItem className={'ContestedResourcesList__ColumnTitle'}>
           Ends in
         </GridItem>
-
       </Grid>
 
       {!loading

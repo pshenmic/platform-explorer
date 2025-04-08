@@ -14,7 +14,7 @@ import {
   Container,
   Heading
 } from '@chakra-ui/react'
-import { ContestedResourcesList } from '../../components/сontestedResources'
+import { ContestedResourcesList } from '../../components/contestedResources'
 
 const paginateConfig = {
   pageSize: {
