@@ -23,9 +23,9 @@ const tabs = [
   'Locked'
 ]
 
-const defaultTabName = 'documents'
+const defaultTabName = 'All votes'
 
-function ContestedResource ({ identifier }) {
+function ContestedResource ({ resourceValue }) {
   const { setBreadcrumbs } = useBreadcrumbs()
   const [contestedResource] = useState({ data: {}, loading: true, error: false })
   // const [rate, setRate] = useState({ data: {}, loading: true, error: false })
@@ -38,15 +38,17 @@ function ContestedResource ({ identifier }) {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
       { label: 'Contested Resources', path: '/contestedResources' },
-      { label: contestedResource.data?.name || identifier, avatarSource: identifier }
+      { label: contestedResource.data?.name || resourceValue, avatarSource: resourceValue }
     ])
-  }, [setBreadcrumbs, identifier, contestedResource])
+  }, [setBreadcrumbs, resourceValue, contestedResource])
 
   return (
     <PageDataContainer
       className={'ContestedResource'}
       title={'Contested Resource info'}
     >
+      resourceValue = {resourceValue}
+
       <div className={'ContestedResource__InfoBlocks'}>
         Cards
       </div>
