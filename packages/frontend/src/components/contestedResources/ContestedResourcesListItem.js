@@ -4,19 +4,13 @@ import ValueContainer from '../ui/containers/ValueContainer'
 import Link from 'next/link'
 import { Tooltip } from '../ui/Tooltips'
 import StatusIcon from '../transactions/StatusIcon'
+import contestedResources from '../../util/contestedResources'
 import './ContestedResourcesListItem.scss'
 
 export function ContestedResourcesListItem ({ contestedResource }) {
   console.log('contestedResources', contestedResource)
 
   contestedResource.contenders = 5
-
-  const getResourceValue = () => (
-    (contestedResource?.resourceValue?.[1] || '') +
-    `${contestedResource?.resourceValue?.[0]
-      ? '.' + contestedResource?.resourceValue?.[0]
-      : ''}`
-  )
 
   return (
     <Link
@@ -51,7 +45,7 @@ export function ContestedResourcesListItem ({ contestedResource }) {
         </GridItem>
 
         <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--ResourceValue'}>
-          <Alias>{getResourceValue()}</Alias>
+          <Alias>{contestedResources.getResourceValue(contestedResource?.resourceValue)}</Alias>
           {contestedResource?.contenders &&
             <Badge colorScheme={'blue'} size={'xs'} ml={'0.25rem'}>
               {contestedResource.contenders}
