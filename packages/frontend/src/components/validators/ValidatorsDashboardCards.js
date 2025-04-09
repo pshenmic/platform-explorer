@@ -52,14 +52,14 @@ export default function ValidatorsDashboardCards () {
         },
         {
           title: 'Fees collected',
-          value: <FeesCollectedCardContent epoch={epoch.data} status={status.data} rate={rate.data} />,
-          error: typeof epoch?.data?.totalCollectedFees !== 'number' && typeof epoch?.data?.totalCollectedFees !== 'string',
-          loading: status.loading
+          value: <FeesCollectedCardContent epoch={epoch.data} status={status.data} rate={rate.data}/>,
+          error: !epoch?.data && !status.data,
+          loading: epoch.loading || status.loading
         },
         {
           title: 'Best Validator',
           value: <BestValidatorCardContent epoch={epoch.data}/>,
-          loading: status.loading,
+          loading: epoch.loading,
           error: !epoch?.data?.bestValidator
         },
         {
