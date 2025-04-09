@@ -19,7 +19,7 @@ const CalendarIcon2 = (props) => (
   </Icon>
 )
 
-const CalendarIconGradient = (props) => (
+const CalendarGradientIcon = (props) => (
   <Icon viewBox='0 0 48 48' fill='none' color={'#008DE4'} {...props}>
       <path
         d='M15 0.75V0H13.5V0.75V6H4.5H3V7.5V16.5V18V46.5V48H4.5H43.5H45V46.5V18V16.5V7.5V6H43.5H34.5V0.75V0H33V0.75V6H15V0.75ZM4.5 18H43.5V46.5H4.5V18ZM13.5 7.5V11.25V12H15V11.25V7.5H33V11.25V12H34.5V11.25V7.5H43.5V16.5H4.5V7.5H13.5ZM10.5 34.5V25.5H19.5V34.5H10.5ZM9 24V25.5V34.5V36H10.5H19.5H21V34.5V25.5V24H19.5H10.5H9Z'
@@ -353,7 +353,7 @@ const ListIcon = (props) => {
 export {
   CalendarIcon,
   CalendarIcon2,
-  CalendarIconGradient,
+  CalendarGradientIcon,
   CircleIcon,
   ArrowCornerIcon,
   SuccessIcon,
