@@ -194,6 +194,10 @@ const getRewardsStatsByValidator = (proTxHash, start, end, intervalsCount) => {
   return call(`validator/${proTxHash}/rewards/stats?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
+const getContestedResourcesStats = () => {
+  return call('contestedResources/stats', 'GET')
+}
+
 const getStatus = () => {
   return call('status', 'GET')
 }
@@ -239,5 +243,6 @@ export {
   getBlocksStatsByValidator,
   getRewardsStatsByValidator,
   getEpoch,
+  getContestedResourcesStats,
   getRate
 }
