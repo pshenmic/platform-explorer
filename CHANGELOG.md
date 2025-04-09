@@ -1,5 +1,13 @@
 # CHANGELOG
 
+### v1.0.19
+
+## Changes
+
+## Indexer
+
+- Bump dashcore-rpc @owl352 (#535)
+
 ### v1.0.18
 
 ## Changes
