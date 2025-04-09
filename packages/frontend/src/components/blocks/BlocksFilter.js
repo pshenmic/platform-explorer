@@ -1,22 +1,6 @@
 import { Filters } from '../filters'
 import { Identifier } from '../data'
 
-// epoch_index_min=1000
-// epoch_index_max=1200
-
-// height_min=2000
-// height_max=4000
-// gas_min=1
-// gas_max=99999999999
-
-// timestamp_start=2024-08-29T23:24:11.516z
-// timestamp_end=2025-08-29T23:24:11.516z
-
-// tx_count_min=2
-// tx_count_max=11
-
-// validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8
-
 const filtersConfig = {
   height: {
     label: 'Height',
