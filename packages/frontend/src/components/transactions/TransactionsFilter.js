@@ -108,9 +108,10 @@ const filtersConfig = {
     }
   },
   owner: {
-    type: 'identity',
     label: 'Owner',
     title: 'Filter by owner',
+    type: 'search',
+    entityType: 'identities',
     placeholder: 'OWNER ID OR IDENTITY',
     defaultValue: '',
     formatValue: (value) => value || null,

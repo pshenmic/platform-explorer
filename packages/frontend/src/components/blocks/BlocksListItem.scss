@@ -1,61 +1,34 @@
 @use '../../styles/mixins.scss';
+@use './variables' as blocks;
 @import '../../styles/variables.scss';
 
 .BlocksListItem {
   @include mixins.DefListItem;
   font-size: 0.75rem;
 
-  &__Hash {
-    flex-grow: 1;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+  &__Content {
+    @include blocks.Columns();
+    align-items: center;
   }
 
-  &__Height {
-    font-weight: bold;
-    margin-right: 8px;
-    word-break: keep-all;
-  }
-  
-  &__Timestamp {
-    margin-right: 16px;
-    white-space: nowrap;
-  }
+  &__Column {
+    @include blocks.Column();
+    display: flex;
+    align-items: center;
 
-  &__Txs {
-    margin-left: 12px;
-    white-space: nowrap;
-  } 
-
-  @media screen and (max-width: 620px) {
-    flex-wrap: wrap;
-
-    &__Height {
-      order: 1;
-      margin-right: 4px;
+    &:last-child {
+      text-align: right;
+      justify-content: flex-end;
     }
 
-    &__Txs {
-      order: 2;
-      margin-left: 0;
-      margin-right: 6px;
+    &--Fees {
+      overflow: visible;
     }
 
-    &__Timestamp {
-      order: 3;
-    }
-
-    &__Hash {
-      order: 4;
-      flex-grow: unset;
-      margin-top: 2px;
-    }
-  }
-
-  @media screen and (max-width: 400px) {
-    &__Timestamp {
-      white-space: wrap;
+    &--Validator {
+      .Identifier__SymbolsContainer {
+        line-height: 0.8rem;
+      }
     }
   }
 }
