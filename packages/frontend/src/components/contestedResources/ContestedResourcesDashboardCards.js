@@ -5,6 +5,7 @@
 // import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import { DashboardCards } from '../cards'
 import { SignatureIcon, ListIcon, CalendarGradientIcon } from '../ui/icons'
+import './ContestedResourcesDashboardCards.scss'
 
 function ContestedResourcesDashboardCards () {
   return (
@@ -12,7 +13,8 @@ function ContestedResourcesDashboardCards () {
       cards={[
         {
           title: 'Total Contested Resources',
-          value: 123,
+          value: <div className={'TotalContestedResourcesCard'}>123</div>,
+          className: 'ContestedResourcesDashboardCards__Card',
           error: false,
           loading: false,
           icon: SignatureIcon
@@ -20,6 +22,7 @@ function ContestedResourcesDashboardCards () {
         {
           title: 'Total Votes Casted',
           value: 123,
+          className: 'ContestedResourcesDashboardCards__Card',
           error: false,
           loading: false,
           icon: ListIcon
@@ -27,6 +30,7 @@ function ContestedResourcesDashboardCards () {
         {
           title: 'Pending Contested Resources',
           value: 123,
+          className: 'ContestedResourcesDashboardCards__Card',
           error: false,
           loading: false,
           icon: SignatureIcon
