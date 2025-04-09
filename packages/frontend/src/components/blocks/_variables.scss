@@ -15,12 +15,12 @@
 
   @media screen and (max-width: 62em) {
     grid-template-columns:
-    6rem // time
-    5.3rem // height
-    minmax(0, 30rem) // hash
-    6.25rem // proposed by
-    5rem // fees
-    4.75rem; // tx count
+      6rem // time
+      5.3rem // height
+      minmax(0, 30rem) // hash
+      6.25rem // proposed by
+      5rem // fees
+      4.75rem; // tx count
   }
 
   @container (max-width: 43em) {
