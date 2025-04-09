@@ -6,7 +6,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import './ContestedResourcesList.scss'
 import { ContestedResourcesListItem } from './ContestedResourcesListItem'
 
-export function ContestedResourcesList ({ contestedResources = [], headerStyles, pagination, loading, itemsCount = 10 }) {
+function ContestedResourcesList ({ contestedResources = [], headerStyles, pagination, loading, itemsCount = 10 }) {
   const headerExtraClass = {
     default: '',
     light: 'ContestedResourcesList__ColumnTitles--Light'
@@ -65,3 +65,5 @@ export function ContestedResourcesList ({ contestedResources = [], headerStyles,
     </div>
   )
 }
+
+export default ContestedResourcesList
