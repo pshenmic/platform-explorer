@@ -3,6 +3,7 @@ import { Container } from '@chakra-ui/react'
 import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
+import ContestedResourcesDashboardCards from '../../components/contestedResources/ContestedResourcesDashboardCards'
 // import Cards from '../dataContracts/Cards'
 
 export async function generateMetadata ({ params }) {
@@ -27,7 +28,7 @@ function ContestedResourcesRoute ({ params }) {
           className={'ContestedResourcesIntro'}
           title={'Contested Resources'}
           description={<Markdown>{introContent}</Markdown>}
-          block={<div>slider will be here</div>}
+          block={<ContestedResourcesDashboardCards/>}
         />
         <ContestedResources/>
       </Container>
