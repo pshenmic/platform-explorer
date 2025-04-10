@@ -2,9 +2,12 @@ import { RateTooltip } from '../ui/Tooltips'
 import { ValueCard } from '../cards'
 import { ValueContainer } from '../ui/containers'
 import { Flex } from '@chakra-ui/react'
+import NotActive from './NotActive'
 import './PrefundedBalance.scss'
 
 function PrefundedBalance ({ prefundedBalance, rate }) {
+  if (typeof prefundedBalance !== 'object') return <NotActive/>
+
   const elements = []
 
   for (const [title, value] of Object.entries(prefundedBalance)) {
