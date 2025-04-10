@@ -70,48 +70,41 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize])
 
-  console.log('contestedResourcesq', contestedResources)
+  console.log('contestedResources', contestedResources)
 
   return (
     <Container
+      className={'InfoBlock ContestedResources'}
       maxW={'container.xl'}
-      color={'white'}
-      mt={8}
-      mb={8}
-      className={'ContestedResources'}
+      _dark={{ color: 'white' }}
+      my={8}
     >
-      <Container
-        maxW={'container.xl'}
-        _dark={{ color: 'white' }}
-        className={'InfoBlock'}
-      >
-        <Heading className={'InfoBlock__Title'} as={'h1'}>Contested Resources</Heading>
+      <Heading className={'InfoBlock__Title'} as={'h1'}>Contested Resources</Heading>
 
-        {!contestedResources.error
-          ? <>
-            {!contestedResources.loading
-              ? <ContestedResourcesList contestedResources={contestedResources.data.resultSet}/>
-              : <LoadingList itemsCount={pageSize}/>
-            }
-          </>
-          : <Container h={20}><ErrorMessageBlock/></Container>}
+      {!contestedResources.error
+        ? <>
+          {!contestedResources.loading
+            ? <ContestedResourcesList contestedResources={contestedResources.data.resultSet}/>
+            : <LoadingList itemsCount={pageSize}/>
+          }
+        </>
+        : <Container h={20}><ErrorMessageBlock/></Container>}
 
-        {contestedResources.data?.resultSet?.length > 0 &&
-          <div className={'ListNavigation'}>
-            <Box w={'210px'}/>
-            <Pagination
-              onPageChange={({ selected }) => setCurrentPage(selected)}
-              pageCount={pageCount}
-              forcePage={currentPage}
-            />
-            <PageSizeSelector
-              PageSizeSelectHandler={e => setPageSize(e.value)}
-              value={pageSize}
-              items={paginateConfig.pageSize.values}
-            />
-          </div>
-        }
-      </Container>
+      {contestedResources.data?.resultSet?.length > 0 &&
+        <div className={'ListNavigation'}>
+          <Box w={'210px'}/>
+          <Pagination
+            onPageChange={({ selected }) => setCurrentPage(selected)}
+            pageCount={pageCount}
+            forcePage={currentPage}
+          />
+          <PageSizeSelector
+            PageSizeSelectHandler={e => setPageSize(e.value)}
+            value={pageSize}
+            items={paginateConfig.pageSize.values}
+          />
+        </div>
+      }
     </Container>
   )
 }

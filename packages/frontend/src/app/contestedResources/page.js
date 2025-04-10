@@ -4,7 +4,6 @@ import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import ContestedResourcesDashboardCards from '../../components/contestedResources/ContestedResourcesDashboardCards'
-// import Cards from '../dataContracts/Cards'
 
 export async function generateMetadata ({ params }) {
   return {
@@ -15,7 +14,10 @@ export async function generateMetadata ({ params }) {
   }
 }
 
-function ContestedResourcesRoute ({ params }) {
+function ContestedResourcesRoute ({ searchParams }) {
+  const page = Number(searchParams.page) || 1
+  const pageSize = Number(searchParams['page-size'])
+
   return (
     <div>
       <Container
@@ -30,7 +32,7 @@ function ContestedResourcesRoute ({ params }) {
           description={<Markdown>{introContent}</Markdown>}
           block={<ContestedResourcesDashboardCards/>}
         />
-        <ContestedResources/>
+        <ContestedResources defaultPage={page} defaultPageSize={pageSize}/>
       </Container>
     </div>
 
