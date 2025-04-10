@@ -46,6 +46,7 @@ function BlocksListItem ({ block }) {
             <Identifier
               styles={['highlight-both']}
               ellipsis={isMobile}
+              linesAdjustment={false}
               avatar={true}
             >
               {header?.validator}
