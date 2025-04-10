@@ -36,7 +36,7 @@ function BlocksListItem ({ block }) {
 
         <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Validator'}>
           <LinkContainer
-            className={'TransactionsListItem__OwnerLink'}
+            className={'BlocksListItem__LinkContainer'}
             onClick={e => {
               e.stopPropagation()
               e.preventDefault()
