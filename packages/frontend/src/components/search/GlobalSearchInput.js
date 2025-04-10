@@ -3,6 +3,7 @@ import * as Api from '../../util/Api'
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
 import { SearchIcon } from '../ui/icons'
 import { useDebounce } from '../../hooks'
+import { useRouter } from 'next/navigation'
 import './GlobalSearchInput.scss'
 
 function filterResultByCategories (obj = {}, categories) {
@@ -14,38 +15,88 @@ function filterResultByCategories (obj = {}, categories) {
   }, {})
 }
 
-function GlobalSearchInput ({ onResultChange, forceValue, onChange, categoryFilters = [], placeholder }) {
+function GlobalSearchInput ({ onResultChange, forceValue, onChange, categoryFilters = [], placeholder, onEnter, navigateToFirstResult, onFocusChange }) {
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState({ data: {}, loading: false, error: false })
   const debouncedQuery = useDebounce(searchQuery, 200)
+  const router = useRouter()
 
   const search = (query) => {
     if (query?.length === 0) {
-      onResultChange({ data: {}, loading: false, error: false })
+      setSearchResults({ data: {}, loading: false, error: false })
       return
     }
 
-    onResultChange({ data: {}, loading: true, error: false })
+    setSearchResults({ data: {}, loading: true, error: false })
 
     Api.search(query)
       .then(res => {
         if (categoryFilters?.length > 0) {
           const filteredRes = filterResultByCategories(res, categoryFilters)
-          onResultChange({ data: filteredRes, loading: false, error: false })
+          setSearchResults({ data: filteredRes, loading: false, error: false })
           return
         }
 
-        onResultChange({ data: res, loading: false, error: false })
+        setSearchResults({ data: res, loading: false, error: false })
       })
-      .catch(err => onResultChange({ data: err, loading: false, error: true }))
+      .catch(err => setSearchResults({ data: err, loading: false, error: true }))
   }
 
   useEffect(() => search(debouncedQuery), [debouncedQuery])
-
+  useEffect(() => onResultChange(searchResults), [searchResults])
   useEffect(() => setSearchQuery(forceValue), [forceValue])
 
+  const getFirstResultUrl = () => {
+    const data = searchResults.data
+
+    if (!data || Object.keys(data).length === 0) return null
+
+    const firstCategory = Object.keys(data).find(category => data[category]?.length > 0)
+
+    if (firstCategory && data[firstCategory]?.length > 0) {
+      const firstItem = data[firstCategory][0]
+
+      switch (firstCategory) {
+        case 'identities':
+          return `/identity/${firstItem.identifier}`
+        case 'blocks':
+          return `/block/${firstItem.header.hash}`
+        case 'transactions':
+          return `/transaction/${firstItem.hash}`
+        case 'dataContracts':
+          return `/dataContract/${firstItem.identifier}`
+        case 'documents':
+          return `/document/${firstItem.identifier}`
+        case 'validators':
+          return `/validator/${firstItem.proTxHash}`
+        default:
+          return null
+      }
+    }
+
+    return null
+  }
+
   const handleKeyPress = (event) => {
+    if (typeof onFocusChange === 'function') onFocusChange(true)
+
     if (event.key === 'Enter') {
-      search(searchQuery)
+      if (Object.keys(searchResults.data).length === 0) {
+        return search(searchQuery)
+      }
+
+      if (typeof onEnter === 'function') {
+        return onEnter(searchResults.data)
+      }
+
+      if (navigateToFirstResult) {
+        const url = getFirstResultUrl()
+
+        if (url) {
+          router.push(url)
+          if (typeof onFocusChange === 'function') onFocusChange(false)
+        }
+      }
     }
   }
 
