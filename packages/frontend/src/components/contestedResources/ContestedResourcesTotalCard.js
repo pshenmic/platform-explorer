@@ -1,4 +1,4 @@
-import { Alias, Identifier, InfoLine } from '../data'
+import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { SignatureIcon } from '../ui/icons'
 import contestedResources from '../../util/contestedResources'
@@ -6,7 +6,7 @@ import { ValueCard } from '../cards'
 import { Badge } from '@chakra-ui/react'
 import './ContestedResourcesTotalCard.scss'
 
-function ContestedResourcesTotalCard ({ contestedResource, className }) {
+function ContestedResourcesTotalCard ({ contestedResource, rate, className }) {
   // contestedResources.getResourceValue(contestedResource?.resourceValue)
   const { data, loading } = contestedResource
 
@@ -82,8 +82,22 @@ function ContestedResourcesTotalCard ({ contestedResource, className }) {
 
       <div className={'ContestedResourcesTotalCard__CommonInfo'}>
         <InfoLine
-          title={'Height'}
-          value={1111111}
+          title={'Creation Date'}
+          value={<DateBlock timestamp={data?.timestamp}/>}
+          loading={false}
+          error={false}
+        />
+
+        <InfoLine
+          title={'Prefunding Voting Balance'}
+          value={<PrefundedBalance prefundedBalance={data?.prefundedVotingBalance}/>}
+          loading={false}
+          error={false}
+        />
+
+        <InfoLine
+          title={'Gas Fees'}
+          value={<CreditsBlock credits={data?.totalGasUsed} rate={rate}/>}
           loading={false}
           error={false}
         />
