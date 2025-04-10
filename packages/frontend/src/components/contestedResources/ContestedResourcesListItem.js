@@ -14,10 +14,11 @@ import './ContestedResourcesListItem.scss'
 export function ContestedResourcesListItem ({ contestedResource }) {
   const isEnded = new Date() > new Date(contestedResource?.endTimestamp)
   const router = useRouter()
+  const resourceValueBase64 = btoa(JSON.stringify(contestedResource?.resourceValue))
 
   return (
     <Link
-      href={`/contestedResource/${contestedResource?.identifier}`}
+      href={`/contestedResource/${resourceValueBase64}`}
       className={'ContestedResourcesListItem'}
     >
       <Grid className={'ContestedResourcesListItem__Content'}>
