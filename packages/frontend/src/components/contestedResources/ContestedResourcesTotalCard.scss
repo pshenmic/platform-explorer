@@ -1,0 +1,23 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.ContestedResourcesTotalCard {
+  @include mixins.TotalCard();
+
+  &__Title {
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin-bottom: 0.875rem;
+  }
+
+  &__Avatar {
+    svg {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  &__HeaderLines {
+    width: 100%;
+  }
+}
