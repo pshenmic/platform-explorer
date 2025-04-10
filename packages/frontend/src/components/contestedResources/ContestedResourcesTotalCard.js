@@ -1,19 +1,19 @@
-import {Alias, Identifier, InfoLine} from '../data'
+import { Alias, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { SignatureIcon } from '../ui/icons'
-import './ContestedResourcesTotalCard.scss'
 import contestedResources from '../../util/contestedResources'
-import {ValueCard} from "../cards";
-import {Badge} from "@chakra-ui/react";
+import { ValueCard } from '../cards'
+import { Badge } from '@chakra-ui/react'
+import './ContestedResourcesTotalCard.scss'
 
 function ContestedResourcesTotalCard ({ contestedResource, className }) {
   // contestedResources.getResourceValue(contestedResource?.resourceValue)
-  const { data, loading, error } = contestedResource
+  const { data, loading } = contestedResource
 
   console.log('contestedResource > ', contestedResource)
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient ContestedResourcesTotalCard ${contestedResource?.loading ? 'ContestedResourcesTotalCard--Loading' : ''} ${className || ''}`}>
+    <div className={`InfoBlock InfoBlock--Gradient ContestedResourcesTotalCard ${loading ? 'ContestedResourcesTotalCard--Loading' : ''} ${className || ''}`}>
       <div className={'ContestedResourcesTotalCard__Title'}>
         <Alias>{contestedResources.getResourceValue(data?.resourceValue)}</Alias>
       </div>
@@ -72,7 +72,6 @@ function ContestedResourcesTotalCard ({ contestedResource, className }) {
             }
           />
         </div>
-
 
         <div className={'ContestedResourcesTotalCard__Avatar'}>
           <SignatureIcon/>
