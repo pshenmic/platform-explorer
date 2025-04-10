@@ -7,13 +7,13 @@ import StatusIcon from '../transactions/StatusIcon'
 import contestedResources from '../../util/contestedResources'
 import VoteBadges from './VoteBadges'
 import ContendersBadge from './ContendersBadge'
+import { LinkContainer } from '../ui/containers'
+import { useRouter } from 'next/navigation'
 import './ContestedResourcesListItem.scss'
 
 export function ContestedResourcesListItem ({ contestedResource }) {
-  console.log('contestedResources', contestedResource)
   const isEnded = new Date() > new Date(contestedResource?.endTimestamp)
-
-  contestedResource.contenders = 5
+  const router = useRouter()
 
   return (
     <Link
@@ -30,15 +30,15 @@ export function ContestedResourcesListItem ({ contestedResource }) {
                   content={contestedResource?.error || ''}
                   placement={'top'}
                 >
-                    <span>
-                      <StatusIcon
-                        className={'ContestedResourcesListItem__StatusIcon'}
-                        status={contestedResource.status}
-                        w={'1.125rem'}
-                        h={'1.125rem'}
-                        mr={'0.5rem'}
-                      />
-                    </span>
+                  <span>
+                    <StatusIcon
+                      className={'ContestedResourcesListItem__StatusIcon'}
+                      status={contestedResource.status}
+                      w={'1.125rem'}
+                      h={'1.125rem'}
+                      mr={'0.5rem'}
+                    />
+                  </span>
                 </Tooltip>
               }
               <TimeDelta endDate={new Date(contestedResource.timestamp)}/>
@@ -55,13 +55,22 @@ export function ContestedResourcesListItem ({ contestedResource }) {
         </GridItem>
 
         <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--DataContract'}>
-          <Identifier
-            avatar={true}
-            ellipsis={false}
-            styles={['highlight-both']}
+          <LinkContainer
+            className={'BlocksListItem__LinkContainer'}
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/dataContract/${contestedResource?.dataContractIdentifier}`)
+            }}
           >
-            {contestedResource?.dataContractIdentifier}
-          </Identifier>
+            <Identifier
+              avatar={true}
+              ellipsis={false}
+              styles={['highlight-both']}
+            >
+              {contestedResource?.dataContractIdentifier}
+            </Identifier>
+          </LinkContainer>
         </GridItem>
 
         <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--IndexName'}>
