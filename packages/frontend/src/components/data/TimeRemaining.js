@@ -1,3 +1,5 @@
+'use client'
+
 import { Progress } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { getTimeDelta } from '../../util'
