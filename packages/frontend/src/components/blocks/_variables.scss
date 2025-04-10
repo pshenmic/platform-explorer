@@ -10,7 +10,7 @@
     5.3rem // height
     minmax(0, 30rem) // hash
     16.5rem // proposed by
-    5rem // fees
+    minmax(5rem, 8rem) // fees
     4.75rem; // tx count
 
   @media screen and (max-width: 62em) {
@@ -19,7 +19,7 @@
       5.3rem // height
       minmax(0, 30rem) // hash
       6.25rem // proposed by
-      5rem // fees
+      minmax(5rem, 8rem) // fees
       4.75rem; // tx count
   }
 
