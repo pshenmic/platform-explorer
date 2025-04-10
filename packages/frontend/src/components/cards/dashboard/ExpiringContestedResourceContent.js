@@ -1,15 +1,44 @@
-import { Alias } from '../../data'
+import { Alias, TimeRemaining } from '../../data'
 import contestedResources from '../../../util/contestedResources'
+import { Badge } from '@chakra-ui/react'
+import VoteBadges from '../../contestedResources/VoteBadges'
+import './ExpiringContestedResourceContent.scss'
 
 export function ExpiringContestedResourceContent ({ contestedResource }) {
-  console.log('contestedResource', contestedResource)
-
-  console.log('contestedResource?.resourceValue', contestedResource?.resourceValue)
-  console.log('contestedResources.getResourceValue', contestedResources.getResourceValue(contestedResource?.resourceValue))
-
   return (
     <div className={'ExpiringContestedResourceContent'}>
-      <Alias>{contestedResources.getResourceValue(contestedResource?.resourceValue)}</Alias>
+      <div className={'ExpiringContestedResourceContent__ValueContainer'}>
+        <Alias
+          className={'ExpiringContestedResourceContent__Value'}
+          ellipsis={false}
+        >
+          {contestedResources.getResourceValue(contestedResource?.resourceValue)}
+        </Alias>
+        {contestedResource?.contenders &&
+          <Badge
+            className={'ExpiringContestedResourceContent__ContendersBadge'}
+            colorScheme={'blue'}
+            size={'xs'}
+            ml={'0.25rem'}
+          >
+            {contestedResource.contenders}
+          </Badge>
+        }
+      </div>
+
+      <VoteBadges
+        className={'ExpiringContestedResourceContent__VoteBadges'}
+        totalCountAbstain={contestedResource?.totalCountAbstain}
+        totalCountLock={contestedResource?.totalCountLock}
+        totalCountTowardsIdentity={contestedResource?.totalCountTowardsIdentity}
+      />
+
+      {(contestedResource?.timestamp && contestedResource?.endTimestamp) &&
+        <TimeRemaining
+          startTime={contestedResource?.timestamp}
+          endTime={contestedResource?.endTimestamp}
+        />
+      }
     </div>
   )
 }

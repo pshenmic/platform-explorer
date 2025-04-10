@@ -1,0 +1,26 @@
+.ExpiringContestedResourceContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: max-content;
+
+  &__ValueContainer {
+    display: inline-flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 0.25rem;
+
+    .Alias__SymbolsContainer {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__VoteBadges {
+    margin-bottom: 0.25rem;
+  }
+
+  &__ContendersBadge {
+    display: inline-block;
+  }
+}
