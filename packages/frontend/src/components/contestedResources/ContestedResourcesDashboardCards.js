@@ -2,16 +2,14 @@
 
 import * as Api from '../../util/Api'
 import { useState, useEffect } from 'react'
-import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { DashboardCards } from '../cards'
 import { SignatureIcon, ListIcon, CalendarGradientIcon } from '../ui/icons'
-import { ExpiringContestedResourceContent } from "../cards/dashboard";
+import { ExpiringContestedResourceContent } from '../cards/dashboard'
 import './ContestedResourcesDashboardCards.scss'
 
 function ContestedResourcesDashboardCards () {
   const [stats, setStats] = useState({ data: {}, loading: true, error: false })
-
-  console.log('stats', stats)
 
   const fetchData = () => {
     Api.getContestedResourcesStats()
@@ -28,31 +26,32 @@ function ContestedResourcesDashboardCards () {
           title: 'Total Contested Resources',
           value: stats.data?.totalContestedResources,
           className: 'ContestedResourcesDashboardCards__Card',
-          error: false,
-          loading: false,
+          error: stats.error,
+          loading: stats.loading,
           icon: SignatureIcon
         },
         {
           title: 'Total Votes Casted',
           value: stats.data?.totalVotesCount,
           className: 'ContestedResourcesDashboardCards__Card',
-          error: false,
-          loading: false,
+          error: stats.error,
+          loading: stats.loading,
           icon: ListIcon
         },
         {
           title: 'Pending Contested Resources',
           value: stats.data?.totalPendingContestedResources,
           className: 'ContestedResourcesDashboardCards__Card',
-          error: false,
-          loading: false,
+          error: stats.error,
+          loading: stats.loading,
           icon: SignatureIcon
         },
         {
           title: 'Ending soon',
           value: <ExpiringContestedResourceContent contestedResource={stats.data?.expiringContestedResource}/>,
-          error: false,
-          loading: false,
+          className: 'ContestedResourcesDashboardCards__Card',
+          error: stats.error,
+          loading: stats.loading,
           icon: CalendarGradientIcon
         }
       ]}
