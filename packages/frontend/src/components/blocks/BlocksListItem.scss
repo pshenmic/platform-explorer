@@ -11,6 +11,10 @@
     align-items: center;
   }
 
+  &__LinkContainer {
+    max-width: 100%;
+  }
+
   &__Column {
     @include blocks.Column();
     display: flex;
