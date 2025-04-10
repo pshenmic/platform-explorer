@@ -109,6 +109,10 @@ const getContestedResources = (page = 1, limit = 30, order = 'asc', orderBy, fil
   return call(`contestedResources?${params.toString()}`, 'GET')
 }
 
+const getContestedResourceByValue = (value) => {
+  return call(`contestedResource/${value}`, 'GET')
+}
+
 const getDataContractByIdentifier = (identifier) => {
   return call(`dataContract/${identifier}`, 'GET')
 }
@@ -218,6 +222,7 @@ export {
   getStatus,
   getBlocks,
   getContestedResources,
+  getContestedResourceByValue,
   getBlockByHash,
   getTransactionsHistory,
   getTransactions,
