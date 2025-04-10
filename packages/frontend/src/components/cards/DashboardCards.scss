@@ -1,0 +1,86 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.DashboardCards {
+  width: 100%;
+
+  &__CardsColumn {
+    width: 90%;
+    padding: 10px;
+  }
+
+  &__Card {
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  @media screen and (min-width: 600px) {
+    .SliderNavigation {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__CardsColumn {
+      padding: 10px 4px;
+    }
+
+    &__Card {
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    &__Slider {
+      width: calc(100% + 20px);
+    }
+
+    .Slider__Carousel {
+      width: 110%;
+      margin: 0 calc(-5% - 4px);
+      overflow: visible;
+    }
+  }
+
+  &--NoSlider {
+    .DashboardCards__Grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+  }
+  
+  &--AlwaysSlider {
+    @media screen and (min-width: $breakpoint-md) {
+      .SliderNavigation {
+        display: block;
+      }
+    }
+  }
+  
+  &__Title {
+    margin-bottom: 12px;
+    color: var(--chakra-colors-brand-normal);
+    font-family: $font-heading;
+    font-style: italic;
+    font-size: 0.875rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  &__Value {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-size: 1.25rem;
+    flex-grow: 1;
+  }
+}

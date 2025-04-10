@@ -109,7 +109,7 @@
   &__Avatar {
     @include mixins.AvatarSize;
     flex-shrink: 0;
-    margin-right: 10px;
+    margin-right: 0.5rem;
   }
 
   &__CopyButton {
