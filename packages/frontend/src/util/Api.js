@@ -113,6 +113,10 @@ const getContestedResourceByValue = (value) => {
   return call(`contestedResource/${value}`, 'GET')
 }
 
+const getContestedResourceVotes = (value, choice = 1, limit = 30, order = 'asc') => {
+  return call(`contestedResource/${value}/votes`, 'GET')
+}
+
 const getDataContractByIdentifier = (identifier) => {
   return call(`dataContract/${identifier}`, 'GET')
 }
@@ -223,6 +227,7 @@ export {
   getBlocks,
   getContestedResources,
   getContestedResourceByValue,
+  getContestedResourceVotes,
   getBlockByHash,
   getTransactionsHistory,
   getTransactions,
