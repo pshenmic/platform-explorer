@@ -4,6 +4,7 @@
 
 .ContestedResourcesList {
   @include mixins.List;
+  container-type: inline-size;
 
   &__ColumnTitles {
     @include mixins.defListTitles;

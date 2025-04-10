@@ -1,14 +1,17 @@
 import { Grid, GridItem, Badge } from '@chakra-ui/react'
-import { Alias, Identifier, NotActive, TimeDelta } from '../data'
+import { Alias, Identifier, NotActive, TimeDelta, TimeRemaining } from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
 import Link from 'next/link'
 import { Tooltip } from '../ui/Tooltips'
 import StatusIcon from '../transactions/StatusIcon'
 import contestedResources from '../../util/contestedResources'
+import VoteBadges from './VoteBadges'
+import ContendersBadge from './ContendersBadge'
 import './ContestedResourcesListItem.scss'
 
 export function ContestedResourcesListItem ({ contestedResource }) {
   console.log('contestedResources', contestedResource)
+  const isEnded = new Date() > new Date(contestedResource?.endTimestamp)
 
   contestedResource.contenders = 5
 
@@ -45,15 +48,13 @@ export function ContestedResourcesListItem ({ contestedResource }) {
         </GridItem>
 
         <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--ResourceValue'}>
-          <Alias>{contestedResources.getResourceValue(contestedResource?.resourceValue)}</Alias>
+          <Alias ellipsis={false}>{contestedResources.getResourceValue(contestedResource?.resourceValue)}</Alias>
           {contestedResource?.contenders &&
-            <Badge colorScheme={'blue'} size={'xs'} ml={'0.25rem'}>
-              {contestedResource.contenders}
-            </Badge>
+            <ContendersBadge contenders={contestedResource.contenders}/>
           }
         </GridItem>
 
-        <GridItem className={'ContestedResourcesListItem__Column'}>
+        <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--DataContract'}>
           <Identifier
             avatar={true}
             ellipsis={false}
@@ -63,28 +64,32 @@ export function ContestedResourcesListItem ({ contestedResource }) {
           </Identifier>
         </GridItem>
 
-        <GridItem className={'ContestedResourcesListItem__Column'}>
-          <ValueContainer colorScheme={'gray'} size={'xs'}>
+        <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--IndexName'}>
+          <ValueContainer colorScheme={'gray'} size={'xxs'}>
             {contestedResource?.indexName}
           </ValueContainer>
         </GridItem>
 
-        <GridItem className={'ContestedResourcesListItem__Column'}>
+        <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--DocumentType'}>
           <Badge colorScheme={'gray'} size={'xs'}>
             {contestedResource?.documentTypeName}
           </Badge>
         </GridItem>
 
-        <GridItem className={'ContestedResourcesListItem__Column'}> {/* votes */}
-          <Badge colorScheme={'green'} size={'xs'}>
-            {contestedResource?.totalCountAbstain}
-          </Badge>
-          <Badge colorScheme={'orange'} size={'xs'}>
-            {contestedResource?.totalCountLock}
-          </Badge>
-          <Badge colorScheme={'red'} size={'xs'}>
-            {contestedResource?.totalCountTowardsIdentity}
-          </Badge>
+        <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--Votes'}>
+          <VoteBadges
+            totalCountAbstain={contestedResource?.totalCountAbstain}
+            totalCountLock={contestedResource?.totalCountLock}
+            totalCountTowardsIdentity={contestedResource?.totalCountTowardsIdentity}
+          />
+        </GridItem>
+
+        <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--EndsIn'}>
+          <TimeRemaining
+            startTime={contestedResource?.timestamp}
+            endTime={contestedResource?.endTimestamp}
+            displayProgress={!isEnded}
+          />
         </GridItem>
       </Grid>
     </Link>
