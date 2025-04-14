@@ -17,7 +17,7 @@ export function DocumentSearchItem ({ document, className, onClick }) {
         additionalContent={
           <Identifier avatar={!!document?.owner?.identifier} ellipsis={true}>{document?.owner?.identifier || '-'}</Identifier>
         }
-        timestamp={<TimeDelta endDate={document?.timestamp || new Date()}/>}
+        timestamp={<TimeDelta endDate={document?.timestamp}/>}
       />
     </BaseSearchItem>
   )
