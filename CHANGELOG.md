@@ -1,5 +1,16 @@
 # CHANGELOG
 
+### v1.0.20
+
+## Changes
+
+## Frontend
+
+- Add tooltip to status icon in transactions list @AlexeyTripleA (#537)
+- Implement filters on transactions page @AlexeyTripleA (#517)
+- Fix transaction status in Search @AlexeyTripleA (#536)
+
+
 ### v1.0.19
 
 ## Changes
