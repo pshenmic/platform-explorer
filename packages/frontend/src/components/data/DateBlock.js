@@ -54,7 +54,7 @@ function DateBlock ({ timestamp, format = 'all', showTime = false }) {
         }
         {formats[format].delta &&
           <div className={'DateBlock__Delta'}>
-            <TimeDelta endDate={date}/>
+            <TimeDelta endDate={date} showTimestampTooltip={format !== 'all'}/>
           </div>
         }
       </div>
