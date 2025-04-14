@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Identifier, NotActive, TimeDelta, BigNumber } from '../data'
-import { Badge, Grid, GridItem, useBreakpointValue } from '@chakra-ui/react'
+import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import { BlockIcon } from '../ui/icons'
 import { LinkContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
@@ -9,7 +9,6 @@ import './BlocksListItem.scss'
 function BlocksListItem ({ block }) {
   const router = useRouter()
   const { header, txs } = block
-  const isMobile = useBreakpointValue({ base: true, lg: false })
 
   return (
     <Link href={`/block/${header?.hash}`} className={'BlocksListItem'}>
@@ -45,7 +44,6 @@ function BlocksListItem ({ block }) {
           >
             <Identifier
               styles={['highlight-both']}
-              ellipsis={isMobile}
               linesAdjustment={false}
               avatar={true}
             >

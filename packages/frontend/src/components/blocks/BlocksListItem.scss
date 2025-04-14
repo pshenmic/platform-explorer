@@ -31,7 +31,23 @@
 
     &--Validator {
       .Identifier__SymbolsContainer {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
         line-height: 0.8rem;
+        max-height: 1.6rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal !important;
+      }
+    }
+
+    @container (max-width: 56em) {
+      &--Validator {
+        .Identifier__SymbolsContainer {
+          -webkit-line-clamp: 1;
+          max-height: 0.8rem;
+        }
       }
     }
   }
