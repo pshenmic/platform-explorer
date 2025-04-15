@@ -4,16 +4,16 @@ import { SignatureIcon } from '../ui/icons'
 import contestedResources from '../../util/contestedResources'
 import { ValueCard } from '../cards'
 import { Badge } from '@chakra-ui/react'
-import './ContestedResourcesTotalCard.scss'
+import ContestedResourcesDigestCard from './ContestedResourceDigestCard'
+import './ContestedResourceTotalCard.scss'
 
-function ContestedResourcesTotalCard ({ contestedResource, rate, className }) {
-  // contestedResources.getResourceValue(contestedResource?.resourceValue)
+function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   const { data, loading } = contestedResource
 
   console.log('contestedResource > ', contestedResource)
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient ContestedResourcesTotalCard ${loading ? 'ContestedResourcesTotalCard--Loading' : ''} ${className || ''}`}>
+    <div className={`InfoBlock InfoBlock--Gradient ContestedResourcesTotalCard ${loading ? 'ContestedResourceTotalCard--Loading' : ''} ${className || ''}`}>
       <div className={'ContestedResourcesTotalCard__Title'}>
         <Alias>{contestedResources.getResourceValue(data?.resourceValue)}</Alias>
       </div>
@@ -107,11 +107,11 @@ function ContestedResourcesTotalCard ({ contestedResource, rate, className }) {
         </div>
 
         <div className={'ContestedResourcesTotalCard__Column'}>
-          Digest card
+          <ContestedResourcesDigestCard contestedResource={contestedResource}/>
         </div>
       </div>
     </div>
   )
 }
 
-export default ContestedResourcesTotalCard
+export default ContestedResourceTotalCard

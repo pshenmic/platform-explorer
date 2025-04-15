@@ -10,7 +10,7 @@ import {
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { Tabs, TabList, TabPanels, Tab, TabPanel, Code, Box } from '@chakra-ui/react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
-import { ContestedResourcesTotalCard } from '../../../components/contestedResources'
+import { ContestedResourceTotalCard } from '../../../components/contestedResources'
 
 // const pagintationConfig = {
 //   itemsOnPage: {
@@ -75,7 +75,7 @@ function ContestedResource ({ resourceValue }) {
       className={'ContestedResource'}
       title={'Contested Resource info'}
     >
-      <ContestedResourcesTotalCard contestedResource={contestedResource}/>
+      <ContestedResourceTotalCard contestedResource={contestedResource}/>
 
       <Box boxSize={'2rem'}/>
 

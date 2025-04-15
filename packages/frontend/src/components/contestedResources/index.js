@@ -1,9 +1,10 @@
-import ContestedResourcesList from './ContestedResourcesList'
-import ContestedResourcesDashboardCards from './ContestedResourcesDashboardCards'
-import ContestedResourcesTotalCard from './ContestedResourcesTotalCard'
+export { default as ContestedResourcesList } from './ContestedResourcesList'
+export { default as ContestedResourcesDashboardCards } from './ContestedResourcesDashboardCards'
+export { default as ContestedResourceTotalCard } from './ContestedResourceTotalCard'
+export { default as ContestedResourceDigestCard } from './ContestedResourceDigestCard'
 
-export {
-  ContestedResourcesDashboardCards,
-  ContestedResourcesList,
-  ContestedResourcesTotalCard
-}
+// export {
+//   ContestedResourcesDashboardCards,
+//   ContestedResourcesList,
+//   ContestedResourceTotalCard
+// }
