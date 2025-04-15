@@ -439,6 +439,16 @@
     }
   }
 
+  &__ContentContainer {
+    display: flex;
+    gap: 2.5rem;
+  }
+
+  &__Column {
+    position: relative;
+    width: 50%;
+  }
+
   &__Header {
     position: relative;
     display: flex;
@@ -488,6 +498,29 @@
 
     .HorisontalSeparator {
       margin: 0;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__ContentContainer {
+      gap: 1.5rem;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    $gap: 0.75rem;
+
+    &__ContentContainer {
+      flex-direction: column;
+    }
+
+    &__ContentContainer, &__CommonLines {
+      gap: $gap;
+    }
+
+    &__Column {
+      position: static;
+      width: 100%;
     }
   }
 }
