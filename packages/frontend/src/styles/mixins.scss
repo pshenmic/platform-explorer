@@ -606,3 +606,9 @@
     scrollbar-color: $scrollColor $scrollBackgroundColor;
   }
 }
+
+@mixin displayUserSelect {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
