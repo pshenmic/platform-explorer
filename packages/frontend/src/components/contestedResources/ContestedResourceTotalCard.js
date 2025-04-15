@@ -5,6 +5,7 @@ import contestedResources from '../../util/contestedResources'
 import { ValueCard } from '../cards'
 import { Badge } from '@chakra-ui/react'
 import ContestedResourcesDigestCard from './ContestedResourceDigestCard'
+import { ContendersList } from './contenders'
 import './ContestedResourceTotalCard.scss'
 
 function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
@@ -110,6 +111,8 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
           <ContestedResourcesDigestCard contestedResource={contestedResource}/>
         </div>
       </div>
+
+      <ContendersList contenders={contestedResource?.data?.contenders}/>
     </div>
   )
 }
