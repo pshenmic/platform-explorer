@@ -1,4 +1,5 @@
 import { Grid, GridItem } from '@chakra-ui/react'
+import { ProportionsLine } from '../../ui/infographics'
 import './ContendersListItem.scss'
 
 function ContendersListItem ({ contender, className }) {
@@ -8,19 +9,35 @@ function ContendersListItem ({ contender, className }) {
     <div className={`ContendersListItem ${className || ''}`}>
       <Grid className={'ContendersListItem__Content'}>
         <GridItem className={'ContendersListItem__Column--Date'}>
-          1 Date
+          {contender?.timestamp}
         </GridItem>
         <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Hash'}>
           2 Hash
         </GridItem>
         <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Identity'}>
-          3 Identity
+          {contender?.identifier}
         </GridItem>
         <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Document'}>
-          4 Document
+          {contender?.documentIdentifier}
         </GridItem>
         <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
-          5 Votes
+          <ProportionsLine items={[
+            {
+              count: contender?.totalCountTowardsIdentity,
+              color: '#8EE9B6',
+              tooltipContent: 'Towards Identity'
+            },
+            {
+              count: contender?.abstainVotes,
+              color: '#F4B270',
+              tooltipContent: 'Abstain'
+            },
+            {
+              count: contender?.lockVotes,
+              color: '#EF7373',
+              tooltipContent: 'Lock'
+            }
+          ]} />
         </GridItem>
       </Grid>
     </div>
