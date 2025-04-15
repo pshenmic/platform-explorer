@@ -1,24 +1,56 @@
 import { Grid, GridItem } from '@chakra-ui/react'
 import { ProportionsLine } from '../../ui/infographics'
+import { Identifier, TimeDelta } from '../../data'
+import { LinkContainer } from '../../ui/containers'
+import { useRouter } from 'next/navigation'
 import './ContendersListItem.scss'
 
 function ContendersListItem ({ contender, className }) {
+  const router = useRouter()
+
   console.log('contender', contender)
 
   return (
     <div className={`ContendersListItem ${className || ''}`}>
       <Grid className={'ContendersListItem__Content'}>
-        <GridItem className={'ContendersListItem__Column--Date'}>
-          {contender?.timestamp}
+        <GridItem className={'ContendersListItem__Column--Timestamp'}>
+          <TimeDelta endDate={new Date(contender?.timestamp)}/>
         </GridItem>
         <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Hash'}>
-          2 Hash
+          <Identifier
+            avatar={true}
+            ellipsis={false}
+            styles={['highlight-both']}
+          >
+            {contender?.documentStateTransition}
+          </Identifier>
         </GridItem>
         <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Identity'}>
-          {contender?.identifier}
+          <Identifier
+            avatar={true}
+            ellipsis={false}
+            styles={['highlight-both']}
+          >
+            {contender?.identifier}
+          </Identifier>
         </GridItem>
         <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Document'}>
-          {contender?.documentIdentifier}
+          <LinkContainer
+            className={'BlocksListItem__LinkContainer'}
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/document/${contender?.documentIdentifier}`)
+            }}
+          >
+            <Identifier
+              avatar={true}
+              ellipsis={false}
+              styles={['highlight-both']}
+            >
+              {contender?.documentIdentifier}
+            </Identifier>
+          </LinkContainer>
         </GridItem>
         <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
           <ProportionsLine items={[

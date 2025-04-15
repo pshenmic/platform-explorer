@@ -8,7 +8,7 @@ function ContendersList ({ contenders = [], className }) {
     <div className={`ContendersList ${className || ''}`}>
       <div className={'ContendersList__ScrollZone'}>
         <Grid className={'ContendersList__ColumnTitles'}>
-          <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Date'}>
+          <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Timestamp'}>
             Date
           </GridItem>
           <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Hash'}>
