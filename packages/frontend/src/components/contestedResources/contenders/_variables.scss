@@ -1,0 +1,23 @@
+@import '../../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns:
+    4rem // Date
+    minmax(0, 30rem) // Hash
+    17.5rem // Identity
+    9rem // Document
+    8rem; // Votes
+
+  @container (max-width: 35rem) {
+
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+}

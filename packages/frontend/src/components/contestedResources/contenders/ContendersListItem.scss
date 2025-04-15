@@ -1,3 +1,19 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as contenders;
+@import '../../../styles/variables.scss';
+
 .ContendersListItem {
+  @include mixins.DefListItem(false);
+  display: block;
+
+  &__Content {
+    @include contenders.Columns();
+    align-items: center;
+  }
+
+  &__Column {
+    @include contenders.Column();
+    font-size: 0.688rem;
+  }
 
 }
