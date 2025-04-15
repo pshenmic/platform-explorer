@@ -23,7 +23,7 @@ export function TransactionSearchItem ({ transaction, className, onClick }) {
         additionalContent={
           <TransactionStatusBadge status={transaction?.status}/>
         }
-        timestamp={<TimeDelta endDate={transaction?.timestamp || new Date()}/>}
+        timestamp={<TimeDelta endDate={transaction?.timestamp}/>}
       />
     </BaseSearchItem>
   )

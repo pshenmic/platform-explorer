@@ -1,5 +1,16 @@
 # CHANGELOG
 
+### v1.0.22
+
+## Changes
+
+## Frontend
+
+- Update validator field in block page @AlexeyTripleA (#541)
+- Add hover animation to status in transactions list @AlexeyTripleA (#542)
+- Improve search @AlexeyTripleA (#538)
+- Improve blocks page @AlexeyTripleA (#539)
+
 ### v1.0.20
 
 ## Changes
