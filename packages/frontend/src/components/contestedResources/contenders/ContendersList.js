@@ -5,29 +5,23 @@ import './ContendersList.scss'
 
 function ContendersList ({ contenders = [], className }) {
   return (
-    <div className={`PublicKeysList ${className || ''}`}>
-      <div className={'PublicKeysList__ScrollZone'}>
-        <Grid className={'PublicKeysList__ColumnTitles'}>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Id'}>
-            Key Id
+    <div className={`ContendersListItem ${className || ''}`}>
+      <div className={'ContendersListItem__ScrollZone'}>
+        <Grid className={'ContendersListItem__ColumnTitles'}>
+          <GridItem className={'ContendersListItem__ColumnTitle ContendersListItem__ColumnTitle--Date'}>
+            Date
           </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--PublicKeyHash'}>
-            Public Key Hash
+          <GridItem className={'ContendersListItem__ColumnTitle ContendersListItem__ColumnTitle--Hash'}>
+            Hash
           </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
-            Type
+          <GridItem className={'ContendersListItem__ColumnTitle ContendersListItem__ColumnTitle--Identity'}>
+            Identity
           </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Purpose'}>
-            Purpose
+          <GridItem className={'ContendersListItem__ColumnTitle ContendersListItem__ColumnTitle--Document'}>
+            Document
           </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--SecurityLevel'}>
-            Security Level
-          </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--ReadOnly'}>
-            Read Only
-          </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Data'}>
-            Data
+          <GridItem className={'ContendersListItem__ColumnTitle ContendersListItem__ColumnTitle--Votes'}>
+            Votes
           </GridItem>
         </Grid>
 
