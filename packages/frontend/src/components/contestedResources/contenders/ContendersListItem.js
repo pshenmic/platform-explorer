@@ -1,5 +1,5 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import './ContendersList.scss'
+import './ContendersListItem.scss'
 
 function ContendersListItem ({ contender, className }) {
   console.log('contender', contender)

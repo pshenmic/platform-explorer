@@ -5,22 +5,22 @@ import './ContendersList.scss'
 
 function ContendersList ({ contenders = [], className }) {
   return (
-    <div className={`ContendersListItem ${className || ''}`}>
-      <div className={'ContendersListItem__ScrollZone'}>
-        <Grid className={'ContendersListItem__ColumnTitles'}>
-          <GridItem className={'ContendersListItem__ColumnTitle ContendersListItem__ColumnTitle--Date'}>
+    <div className={`ContendersList ${className || ''}`}>
+      <div className={'ContendersList__ScrollZone'}>
+        <Grid className={'ContendersList__ColumnTitles'}>
+          <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Date'}>
             Date
           </GridItem>
-          <GridItem className={'ContendersListItem__ColumnTitle ContendersListItem__ColumnTitle--Hash'}>
+          <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Hash'}>
             Hash
           </GridItem>
-          <GridItem className={'ContendersListItem__ColumnTitle ContendersListItem__ColumnTitle--Identity'}>
+          <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Identity'}>
             Identity
           </GridItem>
-          <GridItem className={'ContendersListItem__ColumnTitle ContendersListItem__ColumnTitle--Document'}>
+          <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Document'}>
             Document
           </GridItem>
-          <GridItem className={'ContendersListItem__ColumnTitle ContendersListItem__ColumnTitle--Votes'}>
+          <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Votes'}>
             Votes
           </GridItem>
         </Grid>
