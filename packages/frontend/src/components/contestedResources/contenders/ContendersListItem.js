@@ -25,17 +25,17 @@ function ContendersListItem ({ contender, className }) {
             {
               count: contender?.totalCountTowardsIdentity,
               color: '#8EE9B6',
-              tooltipContent: 'Towards Identity'
+              tooltipTitle: 'Towards Identity'
             },
             {
               count: contender?.abstainVotes,
               color: '#F4B270',
-              tooltipContent: 'Abstain'
+              tooltipTitle: 'Abstain'
             },
             {
               count: contender?.lockVotes,
               color: '#EF7373',
-              tooltipContent: 'Lock'
+              tooltipTitle: 'Lock'
             }
           ]} />
         </GridItem>
