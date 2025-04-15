@@ -2,8 +2,8 @@ import ContestedResources from './ContestedResources'
 import { Container } from '@chakra-ui/react'
 import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
-import introContent from './intro.md'
 import ContestedResourcesDashboardCards from '../../components/contestedResources/ContestedResourcesDashboardCards'
+import introContent from './intro.md'
 
 export async function generateMetadata ({ params }) {
   return {

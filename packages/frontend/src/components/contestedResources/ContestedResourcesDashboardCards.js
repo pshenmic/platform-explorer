@@ -11,6 +11,8 @@ import './ContestedResourcesDashboardCards.scss'
 function ContestedResourcesDashboardCards () {
   const [stats, setStats] = useState({ data: {}, loading: true, error: false })
 
+  console.log('stats', stats)
+
   const fetchData = () => {
     Api.getContestedResourcesStats()
       .then(res => fetchHandlerSuccess(setStats, res))
