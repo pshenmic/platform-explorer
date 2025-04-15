@@ -53,20 +53,10 @@
     color: var(--chakra-colors-gray-250);
   }
 
-  &__ContentContainer {
-    display: flex;
-    gap: 2.5rem;
-  }
-
   &__CommonLines {
     display: flex;
     flex-direction: column;
     gap: 24px;
-  }
-
-  &__Column {
-    position: relative;
-    width: 50%;
   }
 
   &__InfoLine {
@@ -156,10 +146,6 @@
         }
       }
     }
-
-    &__ContentContainer {
-      gap: 1.5rem;
-    }
   }
 
   @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
@@ -189,14 +175,6 @@
       @include mixins.InfoContainerPadding(margin-bottom, 0px, true);
     }
 
-    &__ContentContainer {
-      flex-direction: column;
-    }
-
-    &__ContentContainer, &__CommonLines {
-      gap: $gap;
-    }
-
     &__PublicKeysListContainer {
       &--Hidden {
         margin-top: -$gap !important;
@@ -209,14 +187,6 @@
       &--Desktop {
         display: none !important;
       }
-    }
-
-    &__Column {
-      position: static;
-    }
-
-    &__Column {
-      width: 100%;
     }
 
     &__InfoLine {
