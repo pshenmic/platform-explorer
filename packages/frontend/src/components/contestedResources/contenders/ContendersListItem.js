@@ -5,21 +5,21 @@ function ContendersListItem ({ contender, className }) {
   console.log('contender', contender)
 
   return (
-    <div className={`PublicKeysListItem ${className || ''}`}>
-      <Grid className={'PublicKeysListItem__Content'}>
-        <GridItem className={'PublicKeysListItem__Column--Date'}>
+    <div className={`ContendersListItem ${className || ''}`}>
+      <Grid className={'ContendersListItem__Content'}>
+        <GridItem className={'ContendersListItem__Column--Date'}>
           1 Date
         </GridItem>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Hash'}>
+        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Hash'}>
           2 Hash
         </GridItem>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Identity'}>
+        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Identity'}>
           3 Identity
         </GridItem>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Document'}>
+        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Document'}>
           4 Document
         </GridItem>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Votes'}>
+        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
           5 Votes
         </GridItem>
       </Grid>
