@@ -11,6 +11,10 @@
     align-items: center;
   }
 
+  &--TimestampAbsolute &__Content {
+    @include blocks.Columns(true);
+  }
+
   &__LinkContainer {
     max-width: 100%;
   }

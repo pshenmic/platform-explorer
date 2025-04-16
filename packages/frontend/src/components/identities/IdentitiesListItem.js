@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import ImageGenerator from '../imageGenerator'
-import { Identifier, Alias } from '../data'
+import { Identifier, Alias, DateBlock } from '../data'
 import './IdentitiesListItem.scss'
 
 function IdentitiesListItem ({ identity }) {
@@ -23,7 +23,6 @@ function IdentitiesListItem ({ identity }) {
               />
             : <Identifier
                 className={'IdentitiesListItem__Identifier'}
-                copyButton={true}
                 styles={['highlight-both']}
               >
                 {identifier}
@@ -35,7 +34,12 @@ function IdentitiesListItem ({ identity }) {
 
       {(typeof timestamp === 'string') &&
         <div className={'IdentitiesListItem__Timestamp'}>
-          {new Date(timestamp).toLocaleString()}
+          <DateBlock
+            format={'dateOnly'}
+            showTime={true}
+            timestamp={timestamp}
+            showRelativeTooltip={true}
+          />
         </div>
       }
     </Link>

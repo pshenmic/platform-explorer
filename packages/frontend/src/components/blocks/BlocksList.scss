@@ -11,6 +11,10 @@
     @include blocks.Columns();
   }
 
+  &--TimestampAbsolute &__ColumnTitles {
+    @include blocks.Columns(true);
+  }
+
   &__ColumnTitle {
     @include blocks.Column();
 
