@@ -39,6 +39,7 @@ function ContestedResource ({ resourceValue }) {
   const [abstainVotes, setAbstainVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [lockedVotes, setLockedVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const pageSize = pagintationConfig.itemsOnPage.default
   const router = useRouter()
   const pathname = usePathname()
@@ -80,6 +81,10 @@ function ContestedResource ({ resourceValue }) {
     Api.getContestedResourceByValue(resourceValue)
       .then(res => fetchHandlerSuccess(setContestedResource, res))
       .catch(err => fetchHandlerError(setContestedResource, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }, [resourceValue])
 
   useEffect(() => {
@@ -134,7 +139,7 @@ function ContestedResource ({ resourceValue }) {
       className={'ContestedResource'}
       title={'Contested Resource info'}
     >
-      <ContestedResourceTotalCard contestedResource={contestedResource}/>
+      <ContestedResourceTotalCard contestedResource={contestedResource} rate={rate}/>
 
       <Box boxSize={'2rem'}/>
 
