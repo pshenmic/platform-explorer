@@ -1,5 +1,5 @@
-import { Grid, GridItem } from '@chakra-ui/react'
-import { Identifier, TimeDelta } from '../../data'
+import { Badge, Grid, GridItem } from '@chakra-ui/react'
+import { Identifier, NotActive, TimeDelta } from '../../data'
 import { LinkContainer } from '../../ui/containers'
 import { useRouter } from 'next/navigation'
 import ChoiceBadge from '../ChoiceBadge'
@@ -12,55 +12,73 @@ function VotesListItem ({ vote }) {
     <div className={'VotesListItem'}>
       <Grid className={'VotesListItem__Content'}>
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Timestamp'}>
-          <TimeDelta endDate={new Date(vote?.timestamp)}/>
+          {(vote?.timestamp ?? null)
+            ? <TimeDelta endDate={new Date(vote?.timestamp)}/>
+            : <NotActive>-</NotActive>
+          }
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--ProTxHash'}>
-          <LinkContainer
-            className={'BlocksListItem__LinkContainer'}
-            onClick={e => {
-              e.stopPropagation()
-              e.preventDefault()
-              router.push(`/validator/${vote?.proTxHash}`)
-            }}
-          >
-            <Identifier
-              avatar={true}
-              ellipsis={true}
-              styles={['highlight-both']}
+          {(vote?.proTxHash ?? null) &&
+              <LinkContainer
+              className={'BlocksListItem__LinkContainer'}
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push(`/validator/${vote?.proTxHash}`)
+              }}
             >
-              {vote?.proTxHash}
-            </Identifier>
-          </LinkContainer>
+              <Identifier
+                avatar={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
+                {vote?.proTxHash}
+              </Identifier>
+            </LinkContainer>
+          }
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--DataContract'}>
-          <LinkContainer
-            className={'BlocksListItem__LinkContainer'}
-            onClick={e => {
-              e.stopPropagation()
-              e.preventDefault()
-              router.push(`/dataContract/${vote?.dataContractIdentifier}`)
-            }}
-          >
-            <Identifier
-              avatar={true}
-              ellipsis={true}
-              styles={['highlight-both']}
+          {(vote?.dataContractIdentifier ?? null) &&
+            <LinkContainer
+              className={'BlocksListItem__LinkContainer'}
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push(`/dataContract/${vote?.dataContractIdentifier}`)
+              }}
             >
-              {vote?.dataContractIdentifier}
-            </Identifier>
-          </LinkContainer>
+              <Identifier
+                avatar={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
+                {vote?.dataContractIdentifier}
+              </Identifier>
+            </LinkContainer>
+          }
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Voter'}>
-          <Identifier
-            avatar={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
-            {vote?.voterIdentifier}
-          </Identifier>
+          {(vote?.voterIdentifier ?? null) &&
+            <LinkContainer
+              className={'BlocksListItem__LinkContainer'}
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push(`/identity/${vote?.voterIdentifier}`)
+              }}
+            >
+              <Identifier
+                avatar={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
+                {vote?.voterIdentifier}
+              </Identifier>
+            </LinkContainer>
+          }
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Document'}>
@@ -68,30 +86,42 @@ function VotesListItem ({ vote }) {
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--TowardsIdentity'}>
-          <LinkContainer
-            className={'BlocksListItem__LinkContainer'}
-            onClick={e => {
-              e.stopPropagation()
-              e.preventDefault()
-              router.push(`/identity/${vote?.towardsIdentity}`)
-            }}
-          >
-            <Identifier
-              avatar={true}
-              ellipsis={true}
-              styles={['highlight-both']}
+          {(vote?.towardsIdentity ?? null) &&
+            <LinkContainer
+              className={'BlocksListItem__LinkContainer'}
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push(`/identity/${vote?.towardsIdentity}`)
+              }}
             >
-              {vote?.towardsIdentity}
-            </Identifier>
-          </LinkContainer>
+              <Identifier
+                avatar={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
+                {vote?.towardsIdentity}
+              </Identifier>
+            </LinkContainer>
+          }
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Choice'}>
-          <ChoiceBadge choice={vote?.choice}/>
+          {(vote?.choice ?? null)
+            ? <ChoiceBadge choice={vote?.choice}/>
+            : <NotActive>-</NotActive>
+          }
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Power'}>
-          {vote?.power}
+          {(vote?.power ?? null)
+            ? <Badge
+                colorScheme={vote?.power > 1 ? 'green' : 'blue'}
+              >
+                x{vote?.power}
+              </Badge>
+            : <NotActive>-</NotActive>
+          }
         </GridItem>
       </Grid>
     </div>
