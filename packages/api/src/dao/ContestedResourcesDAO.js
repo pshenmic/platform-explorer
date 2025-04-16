@@ -135,7 +135,7 @@ module.exports = class ContestedDAO {
         documentIdentifier: row.document_identifier?.trim() ?? null,
         documentStateTransition: row.document_state_transition_hash ?? null,
         aliases: aliases ?? [],
-        totalCountTowardsIdentity: uniqueVotes
+        towardsIdentityVotes: uniqueVotes
           .filter((vote) => vote.towards_identity === row.owner)
           .reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.TowardsIdentity
             ? accumulator + 1

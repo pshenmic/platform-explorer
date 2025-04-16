@@ -230,7 +230,7 @@ describe('Contested documents routes', () => {
             documentIdentifier: resource.document.identifier,
             documentStateTransition: resource.document.state_transition_hash,
             aliases: [],
-            totalCountTowardsIdentity: contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length,
+            towardsIdentityVotes: contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length,
             abstainVotes: 3,
             lockVotes: 7 - contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length
           })),

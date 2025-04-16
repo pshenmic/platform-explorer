@@ -1605,7 +1605,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=
           "timestamp": null
         }
       ],
-      "totalCountTowardsIdentity": 2,
+      "towardsIdentityVotes": 2,
       "abstainVotes": 1,
       "lockVotes": 0
     },
@@ -1622,7 +1622,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=
           "timestamp": null
         }
       ],
-      "totalCountTowardsIdentity": 0,
+      "towardsIdentityVotes": 0,
       "abstainVotes": 1,
       "lockVotes": 2
     }
