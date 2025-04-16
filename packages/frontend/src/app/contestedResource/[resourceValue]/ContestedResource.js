@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, setLoadingProp } from '../../../util'
 import {
   // usePathname, useRouter,
   useSearchParams
@@ -13,13 +13,13 @@ import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { ContestedResourceTotalCard } from '../../../components/contestedResources'
 import { VotesList } from '../../../components/contestedResources/votes'
 
-// const pagintationConfig = {
-//   itemsOnPage: {
-//     default: 10,
-//     values: [10, 25, 50, 75, 100]
-//   },
-//   defaultPage: 1
-// }
+const pagintationConfig = {
+  itemsOnPage: {
+    default: 10,
+    values: [10, 25, 50, 75, 100]
+  },
+  defaultPage: 1
+}
 
 const tabs = [
   'All votes',
@@ -33,12 +33,13 @@ const defaultTabName = 'All votes'
 function ContestedResource ({ resourceValue }) {
   const { setBreadcrumbs } = useBreadcrumbs()
   const [contestedResource, setContestedResource] = useState({ data: {}, loading: true, error: false })
-  const [votes, setVotes] = useState({ data: {}, loading: true, error: false })
+  const [votes, setVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   // const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   // const router = useRouter()
   // const pathname = usePathname()
   const searchParams = useSearchParams()
+  const pageSize = pagintationConfig.itemsOnPage.default
 
   useEffect(() => {
     setBreadcrumbs([
@@ -52,16 +53,18 @@ function ContestedResource ({ resourceValue }) {
     Api.getContestedResourceByValue(resourceValue)
       .then(res => fetchHandlerSuccess(setContestedResource, res))
       .catch(err => fetchHandlerError(setContestedResource, err))
+  }, [resourceValue])
 
-    Api.getContestedResourceVotes(resourceValue)
+  useEffect(() => {
+    if (!resourceValue) return
+    setLoadingProp(setVotes)
+
+    // value, page = 1, limit = 30, order = 'asc', filters = {}
+
+    Api.getContestedResourceVotes(resourceValue, votes.props.currentPage + 1, pageSize, 'desc')
       .then(res => fetchHandlerSuccess(setVotes, res))
       .catch(err => fetchHandlerError(setVotes, err))
-
-    //
-    // Api.getRate()
-    //   .then(res => fetchHandlerSuccess(setRate, res))
-    //   .catch(err => fetchHandlerError(setRate, err))
-  }, [resourceValue])
+  }, [resourceValue, votes.props.currentPage])
 
   console.log('votes', votes)
 
@@ -75,9 +78,6 @@ function ContestedResource ({ resourceValue }) {
 
     setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   }, [searchParams])
-
-  // console.log('contestedResource', contestedResource)
-  // console.log('contestedResource', JSON.stringify(contestedResource))
 
   return (
     <PageDataContainer
@@ -120,6 +120,12 @@ function ContestedResource ({ resourceValue }) {
             <TabPanel position={'relative'}>
               <VotesList
                 votes={votes.data?.resultSet}
+                pagination={{
+                  onPageChange: pagination => paginationHandler(setVotes, pagination.selected),
+                  pageCount: Math.ceil(votes.data?.pagination?.total / pageSize) || 1,
+                  forcePage: votes.props.currentPage
+                }}
+                itemsCount={10}
                 loading={votes.loading}
                 error={votes.error}
               />
