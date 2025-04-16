@@ -270,7 +270,7 @@ describe('Contested documents routes', () => {
         .filter(vote => vote.masternodeVote.index_values === JSON.stringify((['dash', 'xyz'])))
         .sort((a, b) => a.masternodeVote.id - b.masternodeVote.id)
         .slice(0, 10)
-        .map(({ block, masternodeVote }) => ({
+        .map(({ block, masternodeVote, document }) => ({
           proTxHash: masternodeVote.pro_tx_hash,
           txHash: masternodeVote.state_transition_hash,
           voterIdentifier: masternodeVote.voter_identity_id,
@@ -279,6 +279,7 @@ describe('Contested documents routes', () => {
           towardsIdentity: masternodeVote.towards_identity_identifier,
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: masternodeVote.document_type_name,
+          documentIdentifier: masternodeVote.choice === 0 ? document.identifier : null,
           indexName: masternodeVote.index_name,
           indexValues: JSON.parse(masternodeVote.index_values),
           identityAliases: [],
@@ -303,7 +304,7 @@ describe('Contested documents routes', () => {
         .filter(vote => (vote.masternodeVote.choice === 2))
         .sort((a, b) => a.masternodeVote.id - b.masternodeVote.id)
         .slice(0, 10)
-        .map(({ block, masternodeVote }) => ({
+        .map(({ block, masternodeVote, document }) => ({
           proTxHash: masternodeVote.pro_tx_hash,
           txHash: masternodeVote.state_transition_hash,
           voterIdentifier: masternodeVote.voter_identity_id,
@@ -312,6 +313,7 @@ describe('Contested documents routes', () => {
           towardsIdentity: masternodeVote.towards_identity_identifier,
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: masternodeVote.document_type_name,
+          documentIdentifier: masternodeVote.choice === 0 ? document.identifier : null,
           indexName: masternodeVote.index_name,
           indexValues: JSON.parse(masternodeVote.index_values),
           identityAliases: [],
