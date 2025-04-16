@@ -1,0 +1,20 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as votes;
+@import '../../../styles/variables.scss';
+
+.VotesListItem {
+  @include mixins.DefListItem;
+
+  &__Content {
+    @include votes.Columns();
+  }
+
+  &__Column {
+    @include votes.Column();
+    overflow: hidden;
+
+    .LinkContainer {
+      width: 100%;
+    }
+  }
+}
