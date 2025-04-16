@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import * as Api from '../../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, setLoadingProp } from '../../../util'
 import {
-  // usePathname, useRouter,
+  usePathname,
+  useRouter,
   useSearchParams
 } from 'next/navigation'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
@@ -22,13 +23,13 @@ const pagintationConfig = {
 }
 
 const tabs = [
-  'All votes',
-  'Towards Identity',
-  'Abstain',
-  'Locked'
+  'all_votes',
+  'towards_identity',
+  'abstain',
+  'locked'
 ]
 
-const defaultTabName = 'All votes'
+const defaultTabName = 'all_votes'
 
 function ContestedResource ({ resourceValue }) {
   const { setBreadcrumbs } = useBreadcrumbs()
@@ -38,8 +39,10 @@ function ContestedResource ({ resourceValue }) {
   const [abstainVotes, setAbstainVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [lockedVotes, setLockedVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  const searchParams = useSearchParams()
   const pageSize = pagintationConfig.itemsOnPage.default
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     setBreadcrumbs([
@@ -48,6 +51,30 @@ function ContestedResource ({ resourceValue }) {
       { label: resourceValue }
     ])
   }, [setBreadcrumbs, resourceValue, contestedResource])
+
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+
+    if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
+      setActiveTab(tabs.indexOf(tab.toLowerCase()))
+      return
+    }
+
+    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  }, [searchParams])
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+
+    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase()) ||
+      (tabs.indexOf(defaultTabName.toLowerCase()) === -1 && activeTab === 0)) {
+      urlParameters.delete('tab')
+    } else {
+      urlParameters.set('tab', tabs[activeTab])
+    }
+
+    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  }, [activeTab])
 
   useEffect(() => {
     Api.getContestedResourceByValue(resourceValue)
