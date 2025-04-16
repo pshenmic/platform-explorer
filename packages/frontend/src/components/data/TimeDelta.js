@@ -6,24 +6,24 @@ import { NotActive } from './index'
 import { Tooltip } from '../ui/Tooltips'
 import './TimeDelta.scss'
 
+const Wrapper = ({ children, tooltipDate, showTimestampTooltip, format }) => (
+  showTimestampTooltip && format !== 'detailed' && !isNaN(tooltipDate)
+    ? <Tooltip
+      placement={'top'}
+      content={
+        <span className={'TimeDelta__TooltipContent'}>
+          {tooltipDate?.toLocaleDateString()} {tooltipDate?.toLocaleTimeString()}
+        </span>
+      }
+    >
+      <span className={'TimeDelta'}>{children}</span>
+    </Tooltip>
+    : <>{children}</>
+)
+
 function TimeDelta ({ startDate, endDate, showTimestampTooltip = true, tooltipDate, format = 'default' }) {
   const [timeDelta, setTimeDelta] = useState(null)
   tooltipDate = new Date(tooltipDate || endDate)
-
-  const Wrapper = ({ children }) => (
-    showTimestampTooltip && format !== 'detailed' && !isNaN(tooltipDate)
-      ? <Tooltip
-          placement={'top'}
-          content={
-            <span className={'TimeDelta__TooltipContent'}>
-              {tooltipDate?.toLocaleDateString()} {tooltipDate?.toLocaleTimeString()}
-            </span>
-          }
-        >
-          <span className={'TimeDelta'}>{children}</span>
-        </Tooltip>
-      : <>{children}</>
-  )
 
   useEffect(() => {
     if (!endDate) {
@@ -56,7 +56,13 @@ function TimeDelta ({ startDate, endDate, showTimestampTooltip = true, tooltipDa
   }, [startDate, endDate, format])
 
   return timeDelta
-    ? <Wrapper>{timeDelta}</Wrapper>
+    ? <Wrapper
+        tooltipDate={tooltipDate}
+        showTimestampTooltip={showTimestampTooltip}
+        format={format}
+      >
+        {timeDelta}
+      </Wrapper>
     : <NotActive/>
 }
 
