@@ -6,11 +6,11 @@
 
   grid-template-columns:
     4rem // timestamp
-    minmax(0, 30rem) // ProTxHash
-    minmax(0, 30rem) // Data Contract
-    minmax(0, 30rem) // voter
-    minmax(0, 30rem) // document
-    minmax(0, 30rem) // towards identity
+    minmax(7rem, 30rem) // ProTxHash
+    minmax(8.125rem, 30rem) // Data Contract
+    minmax(6rem, 30rem) // voter
+    minmax(6rem, 30rem) // document
+    minmax(8.125rem, 30rem) // towards identity
     7rem // choice
     4rem; // power
 
