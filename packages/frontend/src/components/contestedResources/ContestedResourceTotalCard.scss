@@ -3,6 +3,9 @@
 
 .ContestedResourcesTotalCard {
   @include mixins.TotalCard();
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 
   &__Title {
     font-weight: 700;

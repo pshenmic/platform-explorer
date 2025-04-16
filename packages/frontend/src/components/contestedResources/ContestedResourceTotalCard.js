@@ -1,4 +1,4 @@
-import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
+import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { SignatureIcon } from '../ui/icons'
 import contestedResources from '../../util/contestedResources'
@@ -65,9 +65,7 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
                 loading={false}
                 error={false}
                 value={
-                  <Badge
-                    size={'sm'}
-                  >
+                  <Badge size={'sm'}>
                     {data?.documentTypeName}
                   </Badge>
                 }
@@ -84,14 +82,19 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
           <div className={'ContestedResourcesTotalCard__CommonInfo'}>
             <InfoLine
               title={'Creation Date'}
-              value={<DateBlock timestamp={data?.timestamp}/>}
+              value={<DateBlock showTime={true} timestamp={data?.timestamp}/>}
               loading={false}
               error={false}
             />
 
             <InfoLine
               title={'Prefunding Voting Balance'}
-              value={<PrefundedBalance prefundedBalance={data?.prefundedVotingBalance}/>}
+              value={(
+                <CreditsBlock
+                  credits={data?.prefundedVotingBalance?.[data?.indexName]}
+                  rate={rate}
+                />
+              )}
               loading={false}
               error={false}
             />
