@@ -113,8 +113,15 @@ const getContestedResourceByValue = (value) => {
   return call(`contestedResource/${value}`, 'GET')
 }
 
-const getContestedResourceVotes = (value, choice = 1, limit = 30, order = 'asc') => {
-  return call(`contestedResource/${value}/votes`, 'GET')
+const getContestedResourceVotes = (value, page = 1, limit = 30, order = 'asc', filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    ...filters
+  })
+
+  return call(`contestedResource/${value}/votes?${params.toString()}`, 'GET')
 }
 
 const getDataContractByIdentifier = (identifier) => {
