@@ -11,8 +11,6 @@ import './ContestedResourceTotalCard.scss'
 function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   const { data, loading } = contestedResource
 
-  console.log('contestedResource > ', contestedResource)
-
   return (
     <div className={`InfoBlock InfoBlock--Gradient ContestedResourcesTotalCard ${loading ? 'ContestedResourceTotalCard--Loading' : ''} ${className || ''}`}>
       <div className={'ContestedResourcesTotalCard__Title'}>

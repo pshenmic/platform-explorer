@@ -9,8 +9,6 @@ import './ContendersListItem.scss'
 function ContendersListItem ({ contender, className }) {
   const router = useRouter()
 
-  console.log('contender', contender)
-
   return (
     <div className={`ContendersListItem ${className || ''}`}>
       <Grid className={'ContendersListItem__Content'}>
