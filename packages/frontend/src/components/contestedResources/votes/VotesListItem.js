@@ -107,14 +107,14 @@ function VotesListItem ({ vote }) {
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Choice'}>
-          {(vote?.choice ?? null)
+          {typeof vote?.choice === 'number'
             ? <ChoiceBadge choice={vote?.choice}/>
             : <NotActive>-</NotActive>
           }
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Power'}>
-          {(vote?.power ?? null)
+          {typeof vote?.power === 'number'
             ? <Badge
                 colorScheme={vote?.power > 1 ? 'green' : 'blue'}
               >
