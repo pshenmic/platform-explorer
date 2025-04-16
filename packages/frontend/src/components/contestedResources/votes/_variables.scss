@@ -1,0 +1,33 @@
+@import '../../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns:
+    4rem // timestamp
+    minmax(0, 30rem) // ProTxHash
+    minmax(0, 30rem) // Data Contract
+    minmax(0, 30rem) // voter
+    minmax(0, 30rem) // document
+    minmax(0, 30rem) // towards identity
+    7rem // choice
+    4rem; // power
+
+  @container (max-width: 68rem) {}
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+
+  @container (max-width: 60rem) {
+    &--IndexName, &--DocumentType {
+      display: none;
+    }
+  }
+}
