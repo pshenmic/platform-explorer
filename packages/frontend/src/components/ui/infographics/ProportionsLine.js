@@ -41,7 +41,10 @@ function ProportionsLine ({ items = [] }) {
               className={'ProportionsLine__ItemLine'}
               style={{ backgroundColor: item?.color || 'gray' }}
             ></div>
-            <span className={'ProportionsLine__ItemValue'}>
+            <span
+              className={'ProportionsLine__ItemValue'}
+              style={{ color: item?.color || '#ffffff' }}
+            >
               {item?.count}
             </span>
           </Wrapper>
