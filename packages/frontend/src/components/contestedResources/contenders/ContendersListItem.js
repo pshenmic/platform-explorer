@@ -3,6 +3,7 @@ import { ProportionsLine } from '../../ui/infographics'
 import { Identifier, TimeDelta } from '../../data'
 import { LinkContainer } from '../../ui/containers'
 import { useRouter } from 'next/navigation'
+import { colors } from '../../../styles/colors'
 import './ContendersListItem.scss'
 
 function ContendersListItem ({ contender, className }) {
@@ -18,7 +19,6 @@ function ContendersListItem ({ contender, className }) {
         </GridItem>
         <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Hash'}>
           <Identifier
-            avatar={true}
             ellipsis={false}
             styles={['highlight-both']}
           >
@@ -56,19 +56,19 @@ function ContendersListItem ({ contender, className }) {
           <ProportionsLine items={[
             {
               count: contender?.totalCountTowardsIdentity,
-              color: '#8EE9B6',
+              color: colors.green.emeralds,
               tooltipTitle: 'Towards Identity',
               tooltipContent: <span>{contender?.totalCountTowardsIdentity} Towards identity votes</span>
             },
             {
               count: contender?.abstainVotes,
-              color: '#F4B270',
+              color: colors.orange.default,
               tooltipTitle: 'Abstain',
               tooltipContent: <span>{contender?.abstainVotes} Abstain votes</span>
             },
             {
               count: contender?.lockVotes,
-              color: '#EF7373',
+              color: colors.red.default,
               tooltipTitle: 'Lock',
               tooltipContent: <span>{contender?.lockVotes} Lock votes</span>
             }
