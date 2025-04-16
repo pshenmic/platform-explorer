@@ -11,6 +11,7 @@ import { InfoContainer, PageDataContainer } from '../../../components/ui/contain
 import { Tabs, TabList, TabPanels, Tab, TabPanel, Code, Box } from '@chakra-ui/react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { ContestedResourceTotalCard } from '../../../components/contestedResources'
+import { VotesList } from '../../../components/contestedResources/votes'
 
 // const pagintationConfig = {
 //   itemsOnPage: {
@@ -32,6 +33,7 @@ const defaultTabName = 'All votes'
 function ContestedResource ({ resourceValue }) {
   const { setBreadcrumbs } = useBreadcrumbs()
   const [contestedResource, setContestedResource] = useState({ data: {}, loading: true, error: false })
+  const [votes, setVotes] = useState({ data: {}, loading: true, error: false })
   // const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   // const router = useRouter()
@@ -50,11 +52,18 @@ function ContestedResource ({ resourceValue }) {
     Api.getContestedResourceByValue(resourceValue)
       .then(res => fetchHandlerSuccess(setContestedResource, res))
       .catch(err => fetchHandlerError(setContestedResource, err))
+
+    Api.getContestedResourceVotes(resourceValue)
+      .then(res => fetchHandlerSuccess(setVotes, res))
+      .catch(err => fetchHandlerError(setVotes, err))
+
     //
     // Api.getRate()
     //   .then(res => fetchHandlerSuccess(setRate, res))
     //   .catch(err => fetchHandlerError(setRate, err))
   }, [resourceValue])
+
+  console.log('votes', votes)
 
   useEffect(() => {
     const tab = searchParams.get('tab')
@@ -67,8 +76,8 @@ function ContestedResource ({ resourceValue }) {
     setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   }, [searchParams])
 
-  console.log('contestedResource', contestedResource)
-  console.log('contestedResource', JSON.stringify(contestedResource))
+  // console.log('contestedResource', contestedResource)
+  // console.log('contestedResource', JSON.stringify(contestedResource))
 
   return (
     <PageDataContainer
@@ -109,7 +118,11 @@ function ContestedResource ({ resourceValue }) {
           </TabList>
           <TabPanels>
             <TabPanel position={'relative'}>
-              All votes
+              <VotesList
+                votes={votes.data?.resultSet}
+                loading={votes.loading}
+                error={votes.error}
+              />
             </TabPanel>
             <TabPanel position={'relative'}>
               Towards Identity
