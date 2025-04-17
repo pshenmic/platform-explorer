@@ -1,7 +1,11 @@
-import {DateBlock, InfoLine, TimeRemaining} from '../data'
+import { DateBlock, Identifier, InfoLine, TimeRemaining } from '../data'
 import { LoadingLine } from '../loading'
 import { VoteStatusValue } from './'
+import { ValueCard } from '../cards'
 import ChoiceBadge from './ChoiceBadge'
+import { ValueContainer } from '../ui/containers'
+import { LockIcon } from '../ui/icons'
+import { Flex } from '@chakra-ui/react'
 import './ContestedResourceDigestCard.scss'
 
 function ContestedResourceDigestCard ({ contestedResource, className }) {
@@ -60,21 +64,44 @@ function ContestedResourceDigestCard ({ contestedResource, className }) {
           loading={contestedResource.loading}
           error={contestedResource.error}
         />
-        <InfoLine
-          className={'ContestedResourcesDigestCard__InfoLine'}
-          title={'Ends In'}
-          value={
-            !isEnded
-              ? <TimeRemaining
-                  startTime={contestedResource?.timestamp}
-                  endTime={contestedResource?.data?.endTimestamp}
-                  displayProgress={!isEnded}
-                />
-              : <>Ended</>
-          }
-          loading={contestedResource.loading}
-          error={contestedResource.error}
-        />
+
+        {!isEnded
+          ? <InfoLine
+              className={'ContestedResourcesDigestCard__InfoLine'}
+              title={'Ends In'}
+              value={
+                !isEnded
+                  ? <TimeRemaining
+                    startTime={contestedResource?.timestamp}
+                    endTime={contestedResource?.data?.endTimestamp}
+                    displayProgress={!isEnded}
+                  />
+                  : <>Ended</>
+              }
+              loading={contestedResource.loading}
+              error={contestedResource.error}
+            />
+          : contestedResource?.towardsIdentity
+            ? <InfoLine
+              className={'ContestedResourcesDigestCard__InfoLine'}
+              title={'Winner'}
+              value={
+                <ValueCard link={`/identity/${contestedResource?.towardsIdentity}`} className={'TransactionPage__BlockHash'}>
+                  <Identifier avatar={true} styles={['highlight-both']}>
+                    {contestedResource?.towardsIdentity}
+                  </Identifier>
+                </ValueCard>
+              }
+              loading={contestedResource.loading}
+              error={contestedResource.error}
+            />
+            : <ValueContainer colorScheme={'red'}>
+                <Flex justifyContent={'space-between'} alignItems={'center'}>
+                  <span>Locked</span>
+                  <LockIcon/>
+                </Flex>
+              </ValueContainer>
+        }
       </div>
     </div>
   )
