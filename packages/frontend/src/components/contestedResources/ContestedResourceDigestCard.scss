@@ -62,8 +62,18 @@
     .DateBlock__InfoContainer {
       justify-content: flex-end;
     }
+
+    &--Status {
+      align-items: baseline;
+    }
   }
 
+  &__StatusContainer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
 
   @container (max-width: 44em) {
     &__Cards {

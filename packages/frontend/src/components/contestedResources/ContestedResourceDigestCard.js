@@ -1,10 +1,12 @@
-import { InfoLine } from '../data'
+import {DateBlock, InfoLine, TimeRemaining} from '../data'
 import { LoadingLine } from '../loading'
 import { VoteStatusValue } from './'
 import ChoiceBadge from './ChoiceBadge'
 import './ContestedResourceDigestCard.scss'
 
 function ContestedResourceDigestCard ({ contestedResource, className }) {
+  const isEnded = new Date() > new Date(contestedResource?.data?.endTimestamp)
+
   return (
     <div className={`ContestedResourcesDigestCard ${className || ''} ${contestedResource?.loading ? 'ContestedResourcesDigestCard--Loading' : ''}`}>
       <div className={'ContestedResourcesDigestCard__Cards'}>
@@ -46,16 +48,30 @@ function ContestedResourceDigestCard ({ contestedResource, className }) {
           error={contestedResource.error}
         />
         <InfoLine
-          className={'ContestedResourcesDigestCard__InfoLine ContestedResourcesDigestCard__InfoLine--LastWithdrawal'}
+          className={'ContestedResourcesDigestCard__InfoLine ContestedResourcesDigestCard__InfoLine--Status'}
           title={'Status'}
-          value={<VoteStatusValue status={contestedResource?.data?.status}/>}
+          value={<div className={'ContestedResourcesDigestCard__StatusContainer'}>
+            <VoteStatusValue status={contestedResource?.data?.status}/>
+
+            {isEnded &&
+              <DateBlock timestamp={contestedResource?.data?.endTimestamp} showTime={true}/>
+            }
+          </div>}
           loading={contestedResource.loading}
           error={contestedResource.error}
         />
         <InfoLine
           className={'ContestedResourcesDigestCard__InfoLine'}
           title={'Ends In'}
-          value={contestedResource?.data?.endTimestamp}
+          value={
+            !isEnded
+              ? <TimeRemaining
+                  startTime={contestedResource?.timestamp}
+                  endTime={contestedResource?.data?.endTimestamp}
+                  displayProgress={!isEnded}
+                />
+              : <>Ended</>
+          }
           loading={contestedResource.loading}
           error={contestedResource.error}
         />
