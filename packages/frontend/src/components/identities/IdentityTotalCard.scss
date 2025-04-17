@@ -9,19 +9,6 @@
   flex-direction: column;
   gap: $gap;
 
-  &__Title {
-    .Alias__Name, .Alias__Domain {
-      font-family: $font-heading;
-      font-size: 0.875rem;
-      font-weight: 700;
-    }
-
-    .Alias__Domain {
-      color: var(--chakra-colors-brand-light);
-      opacity: 1;
-    }
-  }
-
   &--Loading & {
     &__InfoLine {
       .InfoLine__Value {
