@@ -43,6 +43,10 @@
 
   &__CardValue {
     font-size: 0.813rem;
+
+    .LoadingLine {
+      min-width: 120px;
+    }
   }
 
   &__ValueContainer {
@@ -54,7 +58,6 @@
       margin-bottom: 4px;
     }
   }
-
   &__InfoLine {
     gap: 4px;
     column-gap: 8px;
@@ -102,6 +105,12 @@
     &--Loading {
       .InfoLine__Value {
         width: 100% !important;
+      }
+    }
+
+    &__CardValue {
+      .LoadingLine {
+        min-width: 50px;
       }
     }
   }
