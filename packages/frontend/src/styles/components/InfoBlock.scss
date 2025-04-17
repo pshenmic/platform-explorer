@@ -59,13 +59,13 @@ $border-radius: var(--chakra-radii-block);
 
   &--Gradient#{&}--Green {
     &::after {
-      background: radial-gradient($color-red-default, transparent 50%);
+      background: radial-gradient($color-green-default, transparent 50%);
     }
   }
 
   &--Gradient#{&}--Red {
     &::after {
-      background: radial-gradient($color-green-default, transparent 50%);
+      background: radial-gradient($color-red-default, transparent 50%);
     }
   }
 
