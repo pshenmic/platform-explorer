@@ -30,4 +30,20 @@
   &__ContendersList {
     margin-top: 1.5rem;
   }
+
+  &__CommonInfo {
+    .DateBlock__InfoContainer {
+      justify-content: flex-end;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__ContentContainer {
+      flex-direction: column;
+    }
+
+    &__Column {
+      width: 100%;
+    }
+  }
 }
