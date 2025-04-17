@@ -12,6 +12,10 @@
     margin-bottom: 0.875rem;
   }
 
+  &__Header {
+    align-items: flex-start;
+  }
+
   &__Avatar {
     svg {
       width: 48px;
