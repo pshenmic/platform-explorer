@@ -62,7 +62,7 @@ module.exports = class ContestedResource {
     let towardsIdentity
 
     if (totalCountTowardsIdentity > 0) {
-      [{ identifier: towardsIdentity }] = contenders?.sort((a, b) => b.towardsIdentityVotes - a.towardsIdentityVotes) ?? [{ identifier: undefined }]
+      [{ identifier: towardsIdentity }] = contenders?.toSorted().sort((a, b) => b.towardsIdentityVotes - a.towardsIdentityVotes) ?? [{ identifier: undefined }]
     }
 
     return new ContestedResource(contenders, index_name, resource_value, data_contract_identifier?.trim(), prefunded_voting_balance, document_type_name, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountTowardsIdentity, status ? 'finished' : 'pending', endTimestamp, isFinished, towardsIdentity)
@@ -73,7 +73,7 @@ module.exports = class ContestedResource {
     let towardsIdentity
 
     if (totalCountTowardsIdentity > 0) {
-      [{ identifier: towardsIdentity }] = contenders?.sort((a, b) => b.towardsIdentityVotes - a.towardsIdentityVotes) ?? [{ identifier: undefined }]
+      [{ identifier: towardsIdentity }] = contenders?.toSorted().sort((a, b) => b.towardsIdentityVotes - a.towardsIdentityVotes) ?? [{ identifier: undefined }]
     }
 
     return new ContestedResource(contenders, indexName, resourceValue, dataContractIdentifier?.trim(), prefundedVotingBalance, documentTypeName, timestamp, totalGasUsed, totalDocumentsGasUsed, totalVotesGasUsed, totalCountVotes, totalCountLock, totalCountAbstain, totalCountTowardsIdentity, status, endTimestamp, isFinished, towardsIdentity)
