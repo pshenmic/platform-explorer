@@ -7,20 +7,28 @@ import { Badge } from '@chakra-ui/react'
 import ContestedResourcesDigestCard from './ContestedResourceDigestCard'
 import { ContendersList } from './contenders'
 import { InfoBlock } from '../ui/containers'
+import { colors } from '../../styles/colors'
 import './ContestedResourceTotalCard.scss'
 
 function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   const { data, loading } = contestedResource
 
+  const colorScheme = data?.status === 'finished' && data?.totalCountLock !== data?.totalCountTowardsIdentity
+    ? data?.totalCountLock > data?.totalCountTowardsIdentity
+      ? 'red'
+      : 'green'
+    : 'blue'
+
+  const signIconColor = {
+    blue: colors.brand.normal,
+    red: colors.red.default,
+    green: colors.green.default
+  }
+
   return (
     <InfoBlock
       gradient={true}
-      colorScheme={data?.status === 'finished' && data?.totalCountLock !== data?.totalCountTowardsIdentity
-        ? data?.totalCountLock > data?.totalCountTowardsIdentity
-          ? 'red'
-          : 'green'
-        : 'blue'
-      }
+      colorScheme={colorScheme}
       className={`ContestedResourcesTotalCard ${loading ? 'ContestedResourceTotalCard--Loading' : ''} ${className || ''}`}
     >
       <div className={'ContestedResourcesTotalCard__Title'}>
@@ -83,7 +91,7 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
             </div>
 
             <div className={'ContestedResourcesTotalCard__Avatar'}>
-              <SignatureIcon/>
+              <SignatureIcon color={signIconColor[colorScheme]}/>
             </div>
           </div>
 
