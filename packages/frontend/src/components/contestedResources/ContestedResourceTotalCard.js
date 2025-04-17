@@ -50,7 +50,7 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
               />
 
               <InfoLine
-                className={'ContestedResourcesTotalCard__InfoLine'}
+                className={'ContestedResourcesTotalCard__InfoLine ContestedResourcesTotalCard__InfoLine--DataContract'}
                 title={'Data Contract'}
                 loading={loading}
                 error={error || !data?.dataContractIdentifier}
@@ -68,7 +68,7 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
               />
 
               <InfoLine
-                className={'ContestedResourcesTotalCard__InfoLine'}
+                className={'ContestedResourcesTotalCard__InfoLine ContestedResourcesTotalCard__InfoLine--IndexName'}
                 title={'Index Name'}
                 loading={loading}
                 error={error || !data?.indexName}
@@ -76,7 +76,7 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
               />
 
               <InfoLine
-                className={'ContestedResourcesTotalCard__InfoLine'}
+                className={'ContestedResourcesTotalCard__InfoLine ContestedResourcesTotalCard__InfoLine--DocumentType'}
                 title={'Document Type'}
                 loading={loading}
                 error={error || !data?.documentTypeName}
