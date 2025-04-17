@@ -2,7 +2,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import { ProportionsLine } from '../../ui/infographics'
 import { Identifier, TimeDelta } from '../../data'
 import { LinkContainer } from '../../ui/containers'
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 import { colors } from '../../../styles/colors'
 import './ContendersListItem.scss'
 
