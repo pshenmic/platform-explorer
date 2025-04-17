@@ -106,15 +106,15 @@ module.exports = class ContestedDAO {
     const [firstTx] = rows.sort((a, b) => new Date(a.timestamp ?? new Date()).getTime() - new Date(b.timestamp ?? new Date()).getTime())
 
     const totalCountTowardsIdentity = uniqueVotes
-      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.TowardsIdentity ? 1 : 0), 0)
+      .reduce((accumulator, currentValue) => accumulator + currentValue.masternode_power * (currentValue.choice === ChoiceEnum.TowardsIdentity ? 1 : 0), 0)
 
     const totalCountAbstain = uniqueVotes
-      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.ABSTAIN ? 1 : 0), 0)
+      .reduce((accumulator, currentValue) => accumulator + currentValue.masternode_power * (currentValue.choice === ChoiceEnum.ABSTAIN ? 1 : 0), 0)
 
     const totalCountLock = uniqueVotes
-      .reduce((accumulator, currentValue) => accumulator + (currentValue.choice === ChoiceEnum.LOCK ? 1 : 0), 0)
+      .reduce((accumulator, currentValue) => accumulator + currentValue.masternode_power * (currentValue.choice === ChoiceEnum.LOCK ? 1 : 0), 0)
 
-    const totalCountVotes = uniqueVotes.length
+    const totalCountVotes = (totalCountLock ?? 0) + (totalCountAbstain ?? 0) + (totalCountTowardsIdentity ?? 0)
 
     const totalVotesGasUsed = uniqueVotes
       .reduce((accumulator, currentValue) => accumulator + Number((currentValue.vote_gas_used ?? 0)), 0)
@@ -138,15 +138,15 @@ module.exports = class ContestedDAO {
         towardsIdentityVotes: uniqueVotes
           .filter((vote) => vote.towards_identity === row.owner)
           .reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.TowardsIdentity
-            ? accumulator + 1
+            ? accumulator + 1 * currentValue.masternode_power
             : accumulator
           , 0) ?? null,
         abstainVotes: uniqueVotes.reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.ABSTAIN
-          ? accumulator + 1
+          ? accumulator + 1 * currentValue.masternode_power
           : accumulator
         , 0) ?? null,
         lockVotes: uniqueVotes.reduce((accumulator, currentValue) => (currentValue.choice !== ChoiceEnum.ABSTAIN && currentValue.choice !== null) && currentValue.towards_identity !== row.owner
-          ? accumulator + 1
+          ? accumulator + 1 * currentValue.masternode_power
           : accumulator
         , 0) ?? null
       }
@@ -235,8 +235,10 @@ module.exports = class ContestedDAO {
     const rows = await this.knex
       .with('ranked_documents', paginationRankSubquery)
       .from('ranked_documents')
-      .select('documents.document_type_name as document_type_name', 'documents.id as document_id', 'resource_value', 'prefunded_voting_balance',
-        'data_contracts.identifier as data_contract_identifier', 'timestamp', 'choice')
+      .select(
+        'documents.document_type_name as document_type_name', 'documents.id as document_id',
+        'resource_value', 'prefunded_voting_balance', 'power', 'timestamp',
+        'data_contracts.identifier as data_contract_identifier', 'choice')
       .select(this.knex('ranked_documents').select(this.knex.raw('count(*)')).limit(1).as('total_count'))
       .leftJoin('documents', 'documents.id', 'document_id')
       .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
@@ -257,17 +259,34 @@ module.exports = class ContestedDAO {
         .findIndex((row) => row.document_id === item.document_id) === pos
       )
 
-    const resourcesWithVotes = uniqueResources.map(row => ContestedResource.fromObject({
-      resourceValue: row.resource_value ?? null,
-      timestamp: row.timestamp ?? null,
-      endTimestamp: row.timestamp ? new Date(new Date(row.timestamp).getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE) : null,
-      dataContractIdentifier: row.data_contract_identifier ?? null,
-      documentTypeName: row.document_type_name ?? null,
-      indexName: Object.keys(row.prefunded_voting_balance)[0] ?? null,
-      totalCountTowardsIdentity: rows.filter((resource) => resource.document_id === row.document_id && resource.choice === ChoiceEnum.TowardsIdentity).length,
-      totalCountAbstain: rows.filter((resource) => resource.document_id === row.document_id && resource.choice === ChoiceEnum.ABSTAIN).length,
-      totalCountLock: rows.filter((resource) => resource.document_id === row.document_id && resource.choice === ChoiceEnum.LOCK).length
-    }))
+    const resourcesWithVotes = uniqueResources.map(row => {
+      const filteredRows = rows
+        .filter((resource) => resource.document_id === row.document_id)
+
+      const totalCountTowardsIdentity = filteredRows
+        .reduce((accumulator, currentValue) => accumulator + currentValue.power * (currentValue.choice === ChoiceEnum.TowardsIdentity ? 1 : 0), 0)
+
+      const totalCountAbstain = filteredRows
+        .reduce((accumulator, currentValue) => accumulator + currentValue.power * (currentValue.choice === ChoiceEnum.ABSTAIN ? 1 : 0), 0)
+
+      const totalCountLock = filteredRows
+        .reduce((accumulator, currentValue) => accumulator + currentValue.power * (currentValue.choice === ChoiceEnum.LOCK ? 1 : 0), 0)
+
+      const totalCountVotes = totalCountLock + totalCountAbstain + totalCountTowardsIdentity
+
+      return ContestedResource.fromObject({
+        resourceValue: row.resource_value ?? null,
+        timestamp: row.timestamp ?? null,
+        endTimestamp: row.timestamp ? new Date(new Date(row.timestamp).getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE) : null,
+        dataContractIdentifier: row.data_contract_identifier ?? null,
+        documentTypeName: row.document_type_name ?? null,
+        indexName: Object.keys(row.prefunded_voting_balance)[0] ?? null,
+        totalCountTowardsIdentity,
+        totalCountAbstain,
+        totalCountLock,
+        totalCountVotes
+      })
+    })
 
     return new PaginatedResultSet(resourcesWithVotes, page, limit, Number(totalCount ?? 0))
   }
