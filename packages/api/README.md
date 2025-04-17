@@ -1548,6 +1548,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&page=1&limit=10&order
       "identityAliases": [],
       "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
       "documentTypeName": "domain",
+      "documentIdentifier": null,
       "indexName": "parentNameAndLabel",
       "indexValues": [
         "dash",
@@ -1605,7 +1606,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=
           "timestamp": null
         }
       ],
-      "totalCountTowardsIdentity": 2,
+      "towardsIdentityVotes": 2,
       "abstainVotes": 1,
       "lockVotes": 0
     },
@@ -1622,7 +1623,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=
           "timestamp": null
         }
       ],
-      "totalCountTowardsIdentity": 0,
+      "towardsIdentityVotes": 0,
       "abstainVotes": 1,
       "lockVotes": 2
     }
