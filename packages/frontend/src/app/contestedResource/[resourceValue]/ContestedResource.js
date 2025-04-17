@@ -9,7 +9,7 @@ import {
   useSearchParams
 } from 'next/navigation'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import { Tabs, TabList, TabPanels, Tab, TabPanel, Code, Box } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Tab, TabPanel, Box } from '@chakra-ui/react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { ContestedResourceTotalCard } from '../../../components/contestedResources'
 import { VotesList } from '../../../components/contestedResources/votes'
@@ -235,15 +235,6 @@ function ContestedResource ({ resourceValue }) {
           </TabPanels>
         </Tabs>
       </InfoContainer>
-
-      <Code
-        borderRadius={'lg'}
-        px={5}
-        py={4}
-        mt={10}
-      >
-        {JSON.stringify(contestedResource.data, null, 2)}
-      </Code>
     </PageDataContainer>
   )
 }
