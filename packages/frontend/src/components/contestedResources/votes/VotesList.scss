@@ -3,8 +3,16 @@
 @import '../../../styles/variables.scss';
 
 .VotesList {
+  @include mixins.BrandScroll();
   @include mixins.List;
   container-type: inline-size;
+
+  &__ListContainer {
+    overflow-x: auto;
+  }
+
+  &__ScrollZone {
+  }
 
   &__ColumnTitles {
     @include mixins.defListTitles;

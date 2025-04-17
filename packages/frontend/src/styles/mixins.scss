@@ -17,6 +17,11 @@
     margin-top: 2rem !important;
   }
 
+  &__ScrollZone {
+    width: fit-content;
+    min-width: 100%;
+  }
+
   @media screen and (max-width: $breakpoint-md) {
     &__Pagination {
       margin-top: 1.5rem !important;
