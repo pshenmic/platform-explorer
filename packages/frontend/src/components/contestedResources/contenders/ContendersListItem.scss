@@ -15,7 +15,17 @@
     @include contenders.Column();
     font-size: 0.688rem;
 
-    overflow: hidden; // ? temp
+    &--Hash {
+      .Identifier__SymbolsContainer {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-height: 1rem;
+        max-height: 2rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal !important;
+      }
+    }
   }
-
 }

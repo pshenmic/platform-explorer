@@ -3,6 +3,7 @@
 @import '../../../styles/variables.scss';
 
 .ContendersList {
+  @include mixins.List;
   @include mixins.BrandScroll();
   overflow-x: auto;
   container-type: inline-size;

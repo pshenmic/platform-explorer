@@ -30,7 +30,7 @@ function ContendersList ({ contenders = [], className }) {
         }
 
         {contenders?.length === 0 &&
-          <EmptyListMessage>There are no public keys</EmptyListMessage>
+          <EmptyListMessage>There are no contenders</EmptyListMessage>
         }
       </div>
     </div>
