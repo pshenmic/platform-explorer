@@ -3,11 +3,7 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, setLoadingProp } from '../../../util'
-import {
-  usePathname,
-  useRouter,
-  useSearchParams
-} from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { Tabs, TabList, TabPanels, Tab, TabPanel, Box } from '@chakra-ui/react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
