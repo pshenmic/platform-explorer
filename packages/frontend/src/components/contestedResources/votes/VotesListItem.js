@@ -25,7 +25,7 @@ function VotesListItem ({ vote }) {
               onClick={e => {
                 e.stopPropagation()
                 e.preventDefault()
-                router.push(`/validator/${vote?.proTxHash}`)
+                router.push(`/validator/${vote?.proTxHash?.toUpperCase()}`)
               }}
             >
               <Identifier
@@ -33,7 +33,7 @@ function VotesListItem ({ vote }) {
                 ellipsis={true}
                 styles={['highlight-both']}
               >
-                {vote?.proTxHash}
+                {vote?.proTxHash?.toUpperCase()}
               </Identifier>
             </LinkContainer>
           }
