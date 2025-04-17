@@ -7,7 +7,7 @@ import { colors } from '../../../styles/colors'
 import './ContendersListItem.scss'
 
 function ContendersListItem ({ contender, className }) {
-  const router = useRouter()
+  // const router = useRouter()
 
   return (
     <div className={`ContendersListItem ${className || ''}`}>
@@ -19,11 +19,12 @@ function ContendersListItem ({ contender, className }) {
           <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Hash'}>
             <LinkContainer
               className={'ContendersListItem__LinkContainer'}
-              onClick={e => {
-                e.stopPropagation()
-                e.preventDefault()
-                router.push(`/transaction/${contender?.documentStateTransition}`)
-              }}
+              href={`/transaction/${contender?.documentStateTransition}`}
+              // onClick={e => {
+              //   e.stopPropagation()
+              //   e.preventDefault()
+              //   router.push(`/transaction/${contender?.documentStateTransition}`)
+              // }}
             >
               <Identifier
                 ellipsis={false}
@@ -36,11 +37,12 @@ function ContendersListItem ({ contender, className }) {
           <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Identity'}>
             <LinkContainer
               className={'ContendersListItem__LinkContainer'}
-              onClick={e => {
-                e.stopPropagation()
-                e.preventDefault()
-                router.push(`/identity/${contender?.identifier}`)
-              }}
+              href={`/identity/${contender?.identifier}`}
+              // onClick={e => {
+              //   e.stopPropagation()
+              //   e.preventDefault()
+              //   router.push(`/identity/${contender?.identifier}`)
+              // }}
             >
               <Identifier
                 avatar={true}
@@ -54,11 +56,12 @@ function ContendersListItem ({ contender, className }) {
           <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Document'}>
             <LinkContainer
               className={'ContendersListItem__LinkContainer'}
-              onClick={e => {
-                e.stopPropagation()
-                e.preventDefault()
-                router.push(`/document/${contender?.documentIdentifier}`)
-              }}
+              href={`/document/${contender?.documentIdentifier}`}
+              // onClick={e => {
+              //   e.stopPropagation()
+              //   e.preventDefault()
+              //   router.push(`/document/${contender?.documentIdentifier}`)
+              // }}
             >
               <Identifier
                 avatar={true}
