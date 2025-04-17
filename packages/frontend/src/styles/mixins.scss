@@ -400,14 +400,14 @@
   }
 }
 
-@mixin Block ($blueBorder: false) {
+@mixin Block ($border: false, $borderColor: $color-brand-normal) {
   backdrop-filter: $blockBackgroundBlur;
   border-radius: var(--chakra-radii-block);
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(24, 31, 34, 0.2);
 
-  @if $blueBorder {
-    box-shadow: 2px 2px $color-brand-normal;
+  @if $border {
+    box-shadow: 2px 2px #{if($borderColor, $borderColor, $color-brand-normal)};
   }
 }
 
