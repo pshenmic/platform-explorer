@@ -1,12 +1,14 @@
 @import '../../styles/variables.scss';
 
-@mixin Columns () {
+@mixin Columns ($absoluteTimespan: false) {
+  $timeSpanWidth: #{if($absoluteTimespan, '9rem', '6rem')};
+
   display: grid;
   gap: 16px;
   width: 100%;
 
   grid-template-columns:
-    6rem // time
+    $timeSpanWidth // time
     5.3rem // height
     minmax(0, 30rem) // hash
     16.5rem // proposed by
@@ -15,7 +17,7 @@
 
   @container (max-width: 56em) {
     grid-template-columns:
-      6rem // time
+      $timeSpanWidth // time
       5.3rem // height
       minmax(0, 30rem) // hash
       6.25rem // proposed by
@@ -23,9 +25,9 @@
       4.75rem; // tx count
   }
 
-  @container (max-width: 43em) {
+  @container (max-width: 46.5em) {
     grid-template-columns:
-      6rem // time
+      $timeSpanWidth // time
       5.3rem // height
       minmax(0, 30rem) // hash
       6.25rem // proposed by
@@ -34,7 +36,7 @@
 
   @container (max-width: 37.5em) {
     grid-template-columns:
-      6rem // time
+      $timeSpanWidth // time
       5.3rem // height
       minmax(0, 30rem) // hash
       4.75rem; // tx count
@@ -42,21 +44,21 @@
 
   @container (max-width: 30em) {
     grid-template-columns:
-      6rem // time
+      $timeSpanWidth // time
       5.3rem // height
       minmax(0, 30rem); // hash
   }
 
   @container (max-width: 24.5em) {
     grid-template-columns:
-      6rem // time
+      $timeSpanWidth // time
       minmax(0, 400px) // hash
       4.75rem; // tx count
   }
 
   @container (max-width: 23em) {
     grid-template-columns:
-      6rem // time
+      $timeSpanWidth // time
       minmax(0, 400px); // hash
   }
 }
@@ -70,7 +72,7 @@
     width: 5rem;
   }
 
-  @container (max-width: 43em) {
+  @container (max-width: 46.5em) {
     &--Fees {
       display: none;
     }

@@ -1,21 +1,35 @@
 import Link from 'next/link'
-import { Identifier, NotActive, TimeDelta, BigNumber } from '../data'
+import { Identifier, NotActive, TimeDelta, BigNumber, DateBlock } from '../data'
 import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import { BlockIcon } from '../ui/icons'
 import { LinkContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
 import './BlocksListItem.scss'
 
-function BlocksListItem ({ block }) {
+function BlocksListItem ({ block, absoluteDate }) {
   const router = useRouter()
   const { header, txs } = block
 
   return (
-    <Link href={`/block/${header?.hash}`} className={'BlocksListItem'}>
+    <Link href={`/block/${header?.hash}`} className={`BlocksListItem ${
+        absoluteDate ? 'BlocksListItem--TimestampAbsolute' : ''
+      }`}
+    >
       <Grid className={'BlocksListItem__Content'}>
-        <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Timestamp'}>
+        <GridItem
+          className={`BlocksListItem__Column BlocksListItem__Column--Timestamp ${
+            absoluteDate ? 'BlocksListItem__Column--TimestampAbsolute' : ''
+          }`}
+        >
           {header?.timestamp
-            ? <TimeDelta endDate={new Date(header.timestamp)}/>
+            ? absoluteDate
+              ? <DateBlock
+                  format={'dateOnly'}
+                  showTime={true}
+                  timestamp={header.timestamp}
+                  showRelativeTooltip={true}
+                />
+              : <TimeDelta showTimestampTooltip={true} endDate={new Date(header.timestamp)}/>
             : <NotActive/>
           }
         </GridItem>
