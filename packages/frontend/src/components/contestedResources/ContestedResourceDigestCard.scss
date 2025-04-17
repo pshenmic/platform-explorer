@@ -3,50 +3,46 @@
 
 .ContestedResourcesDigestCard {
   @include mixins.DigestCard();
+  $cardsGap: 0.875rem;
 
-  &, &__Transfers, &__LinesContainer {
+  &__InfoLine {
+    .InfoLine__Value {
+      font-size: 0.75rem;
+    }
+  }
+
+  &, &__Cards, &__LinesContainer {
     display: flex;
     gap: 14px;
+    flex-wrap: wrap;
   }
 
   &--Loading & {
-    &__Transfers {
+    &__Cards {
       .LoadingLine {
         height: 24px;
       }
     }
   }
 
-  &__Transfer {
-    width: 50%;
+  &__Card {
+    width: calc(100% / 3 - $cardsGap * 2 / 3);
     display: flex;
     flex-direction: column;
     gap: 4px;
     padding: 24px;
     background: rgba(var(--chakra-colors-gray-800-rgb), .5);
     border-radius: $border-radius-def;
-
-    .CreditsBlock {
-      display: flex;
-      flex-direction: column;
-
-      .CreditsBlock__Usd {
-        margin-top: 0.25rem;
-        margin-left: auto;
-      }
-    }
-
-    &--Withdrawals {
-      .CreditsBlock__Usd {
-        background-color: rgba(var(--chakra-colors-red-default-rgb), .2);
-        color: var(--chakra-colors-red-default);
-      }
-    }
+    flex-shrink: 0;
   }
 
-  &__TransferTitle {
+  &__CardTitle {
     font-size: 0.75rem;
     color: var(--chakra-colors-gray-250);
+  }
+
+  &__CardValue {
+    font-size: 0.813rem;
   }
 
   &__ValueContainer {
@@ -66,28 +62,18 @@
     .DateBlock__InfoContainer {
       justify-content: flex-end;
     }
-
-    &--LastWithdrawal {
-      .Identifier__SymbolsContainer {
-        max-width: 14.75rem;
-      }
-    }
   }
 
-  @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
-  screen and (max-width: $breakpoint-sm) {
-    &--Loading {
-      .InfoLine__Value {
-        width: 100% !important;
-      }
-    }
 
-    &__Transfers {
+  @container (max-width: 44em) {
+    &__Cards {
       flex-direction: column;
     }
 
-    &__Transfer {
+    &__Card {
       width: 100%;
+      flex-direction: row;
+      justify-content: space-between;
 
       .CreditsBlock {
         flex-direction: row;
@@ -98,6 +84,14 @@
           margin-top: 0.25rem;
           margin-bottom: 0.25rem;
         }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
       }
     }
   }
@@ -119,21 +113,6 @@
 
         .DateBlock__InfoContainer {
           justify-content: flex-start;
-        }
-      }
-
-      .CreditsBlock {
-        display: flex;
-        flex-wrap: wrap;
-
-        &__Usd {
-          margin-left: auto;
-        }
-      }
-
-      &--LastWithdrawal {
-        .Identifier__SymbolsContainer {
-          max-width: none;
         }
       }
     }
