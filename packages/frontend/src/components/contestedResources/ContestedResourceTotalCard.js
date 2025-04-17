@@ -6,13 +6,23 @@ import { ValueCard } from '../cards'
 import { Badge } from '@chakra-ui/react'
 import ContestedResourcesDigestCard from './ContestedResourceDigestCard'
 import { ContendersList } from './contenders'
+import { InfoBlock } from '../ui/containers'
 import './ContestedResourceTotalCard.scss'
 
 function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   const { data, loading } = contestedResource
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient ContestedResourcesTotalCard ${loading ? 'ContestedResourceTotalCard--Loading' : ''} ${className || ''}`}>
+    <InfoBlock
+      gradient={true}
+      colorScheme={data?.status === 'finished' && data?.totalCountLock !== data?.totalCountTowardsIdentity
+        ? data?.totalCountLock > data?.totalCountTowardsIdentity
+          ? 'red'
+          : 'green'
+        : 'blue'
+      }
+      className={`ContestedResourcesTotalCard ${loading ? 'ContestedResourceTotalCard--Loading' : ''} ${className || ''}`}
+    >
       <div className={'ContestedResourcesTotalCard__Title'}>
         <Alias>{contestedResources.getResourceValue(data?.resourceValue)}</Alias>
       </div>
@@ -113,8 +123,11 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
         </div>
       </div>
 
-      <ContendersList contenders={contestedResource?.data?.contenders}/>
-    </div>
+      <ContendersList
+        className={'ContestedResourcesTotalCard__ContendersList'}
+        contenders={contestedResource?.data?.contenders}
+      />
+    </InfoBlock>
   )
 }
 
