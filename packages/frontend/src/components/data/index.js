@@ -12,6 +12,7 @@ import TimeDelta from './TimeDelta'
 import BigNumber from './BigNumber'
 import CodeBlock from './CodeBlock'
 import NotActive from './NotActive'
+import TimeRemaining from './TimeRemaining'
 
 export {
   Identifier,
@@ -27,5 +28,6 @@ export {
   TimeDelta,
   BigNumber,
   CodeBlock,
-  NotActive
+  NotActive,
+  TimeRemaining
 }

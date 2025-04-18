@@ -39,11 +39,33 @@ $border-radius: var(--chakra-radii-block);
       display: block;
       width: 500px;
       height: 500px;
+      min-width: 100%;
+      min-height: 100%;
       top: 0;
       left: 0;
       transform: translate(-50%, -50%);
       background: radial-gradient($color-brand-normal, transparent 50%);
       opacity: .2;
+    }
+  }
+
+  &--Green {
+    @include mixins.Block(true, var(--chakra-colors-green-default));
+  }
+
+  &--Red {
+    @include mixins.Block(true, var(--chakra-colors-red-default));
+  }
+
+  &--Gradient#{&}--Green {
+    &::after {
+      background: radial-gradient($color-green-default, transparent 50%);
+    }
+  }
+
+  &--Gradient#{&}--Red {
+    &::after {
+      background: radial-gradient($color-red-default, transparent 50%);
     }
   }
 

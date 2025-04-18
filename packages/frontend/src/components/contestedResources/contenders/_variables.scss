@@ -1,0 +1,50 @@
+@import '../../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns:
+    4rem // Date
+    minmax(5.875rem, 46rem) // Hash
+    16.5rem // Identity
+    16.5rem // Document
+    8rem; // Votes
+
+  @container (max-width: 66rem) {
+    grid-template-columns:
+    4rem // Date
+    minmax(5.875rem, 46rem) // Hash
+    14.5rem // Identity
+    14.5rem // Document
+    8rem; // Votes
+  }
+
+  @container (max-width: 62rem) {
+    grid-template-columns:
+    4rem // Date
+    minmax(5.875rem, 46rem) // Hash
+    12.5rem // Identity
+    12.5rem // Document
+    8rem; // Votes
+  }
+
+
+  @container (max-width: 50rem) {
+    grid-template-columns:
+    4rem // Date
+    minmax(5.875rem, 46rem) // Hash
+    12.5rem // Identity
+    12.5rem // Document
+    8rem; // Votes
+  }
+
+
+  // 5.875
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+}

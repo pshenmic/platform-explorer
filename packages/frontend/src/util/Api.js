@@ -97,6 +97,33 @@ const getBlocksByValidator = (proTxHash, page = 1, limit = 30, order = 'asc') =>
   return call(`validator/${proTxHash}/blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
+const getContestedResources = (page = 1, limit = 30, order = 'asc', orderBy, filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    order_by: orderBy,
+    ...filters
+  })
+
+  return call(`contestedResources?${params.toString()}`, 'GET')
+}
+
+const getContestedResourceByValue = (value) => {
+  return call(`contestedResource/${value}`, 'GET')
+}
+
+const getContestedResourceVotes = (value, page = 1, limit = 30, order = 'asc', filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    ...filters
+  })
+
+  return call(`contestedResource/${value}/votes?${params.toString()}`, 'GET')
+}
+
 const getDataContractByIdentifier = (identifier) => {
   return call(`dataContract/${identifier}`, 'GET')
 }
@@ -182,6 +209,10 @@ const getRewardsStatsByValidator = (proTxHash, start, end, intervalsCount) => {
   return call(`validator/${proTxHash}/rewards/stats?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
+const getContestedResourcesStats = () => {
+  return call('contestedResources/stats', 'GET')
+}
+
 const getStatus = () => {
   return call('status', 'GET')
 }
@@ -201,6 +232,9 @@ const decodeTx = (base64) => {
 export {
   getStatus,
   getBlocks,
+  getContestedResources,
+  getContestedResourceByValue,
+  getContestedResourceVotes,
   getBlockByHash,
   getTransactionsHistory,
   getTransactions,
@@ -226,5 +260,6 @@ export {
   getBlocksStatsByValidator,
   getRewardsStatsByValidator,
   getEpoch,
+  getContestedResourcesStats,
   getRate
 }

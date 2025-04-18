@@ -18,6 +18,7 @@ const links = [
   { title: 'Blocks', href: '/blocks' },
   { title: 'Transactions', href: '/transactions' },
   { title: 'Data Contracts', href: '/dataContracts' },
+  { title: 'Contested Resources', href: '/contestedResources' },
   { title: 'Identities', href: '/identities' },
   { title: 'Validators', href: '/validators' },
   { title: 'API', href: '/api' }
