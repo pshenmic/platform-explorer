@@ -75,10 +75,10 @@ function ContendersListItem ({ contender, className }) {
           <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
             <ProportionsLine items={[
               {
-                count: contender?.totalCountTowardsIdentity,
+                count: contender?.towardsIdentityVotes,
                 color: colors.green.emeralds,
                 tooltipTitle: 'Towards Identity',
-                tooltipContent: <span>{contender?.totalCountTowardsIdentity} Towards identity votes</span>
+                tooltipContent: <span>{contender?.towardsIdentityVotes} Towards identity votes</span>
               },
               {
                 count: contender?.abstainVotes,
