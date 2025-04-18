@@ -60,27 +60,6 @@ function VotesListItem ({ vote }) {
           }
         </GridItem>
 
-        <GridItem className={'VotesListItem__Column VotesListItem__Column--Voter'}>
-          {(vote?.voterIdentifier ?? null) &&
-            <LinkContainer
-              className={'BlocksListItem__LinkContainer'}
-              onClick={e => {
-                e.stopPropagation()
-                e.preventDefault()
-                router.push(`/identity/${vote?.voterIdentifier}`)
-              }}
-            >
-              <Identifier
-                avatar={true}
-                ellipsis={true}
-                styles={['highlight-both']}
-              >
-                {vote?.voterIdentifier}
-              </Identifier>
-            </LinkContainer>
-          }
-        </GridItem>
-
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Document'}>
           {(vote?.documentIdentifier ?? null) &&
             <LinkContainer

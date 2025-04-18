@@ -21,13 +21,10 @@ function VotesList ({ votes = [], headerStyles, pagination, loading, itemsCount 
               Time
             </GridItem>
             <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--ProTxHash'}>
-              PRO TX HASH
+              Voter Pro Tx Hash
             </GridItem>
             <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--DataContract'}>
               Data Contract
-            </GridItem>
-            <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Voter'}>
-              Voter
             </GridItem>
             <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Document'}>
               Document
