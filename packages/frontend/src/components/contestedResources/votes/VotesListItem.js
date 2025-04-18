@@ -82,7 +82,24 @@ function VotesListItem ({ vote }) {
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Document'}>
-          -
+          {(vote?.documentIdentifier ?? null) &&
+            <LinkContainer
+              className={'BlocksListItem__LinkContainer'}
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push(`/document/${vote?.documentIdentifier}`)
+              }}
+            >
+              <Identifier
+                avatar={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
+                {vote?.documentIdentifier}
+              </Identifier>
+            </LinkContainer>
+          }
         </GridItem>
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--TowardsIdentity'}>
