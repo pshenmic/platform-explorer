@@ -48,7 +48,15 @@ module.exports = class MasternodeVotesDAO {
       : ['true']
 
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier')
+      .select(this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'tx', state_transition_hash
+            )
+          ) as aliases
+        `))
       .groupBy('identity_identifier')
       .as('aliases')
 
@@ -78,9 +86,9 @@ module.exports = class MasternodeVotesDAO {
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+        return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
 
       return Vote.fromRow({ ...row, aliases })

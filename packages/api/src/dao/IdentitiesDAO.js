@@ -16,16 +16,16 @@ module.exports = class IdentitiesDAO {
 
   getIdentityByIdentifier = async (identifier) => {
     const aliasSubquery = this.knex('identity_aliases')
-      .select('identity_identifier',
-        this.knex.raw(`
+      .select('identity_identifier')
+      .select(this.knex.raw(`
           array_agg(
             json_build_object(
               'alias', alias,
-              'timestamp', timestamp::timestamptz
+              'timestamp', timestamp::timestamptz,
+              'tx', state_transition_hash
             )
           ) as aliases
-        `)
-      )
+        `))
       .where('identity_identifier', '=', identifier)
       .groupBy('identity_identifier')
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
@@ -229,7 +229,8 @@ module.exports = class IdentitiesDAO {
           array_agg(
             json_build_object(
               'alias', alias,
-              'timestamp', timestamp::timestamptz
+              'timestamp', timestamp::timestamptz,
+              'tx', state_transition_hash
             )
           ) as aliases
         `)
@@ -364,7 +365,15 @@ module.exports = class IdentitiesDAO {
     }
 
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier')
+      .select(this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'tx', state_transition_hash
+            )
+          ) as aliases
+        `))
       .groupBy('identity_identifier')
       .as('aliases')
 
@@ -399,9 +408,9 @@ module.exports = class IdentitiesDAO {
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+        return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
 
       return Document.fromRow({
