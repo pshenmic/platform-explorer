@@ -2,13 +2,10 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import { ProportionsLine } from '../../ui/infographics'
 import { Identifier, TimeDelta } from '../../data'
 import { LinkContainer } from '../../ui/containers'
-// import { useRouter } from 'next/navigation'
 import { colors } from '../../../styles/colors'
 import './ContendersListItem.scss'
 
 function ContendersListItem ({ contender, className }) {
-  // const router = useRouter()
-
   return (
     <div className={`ContendersListItem ${className || ''}`}>
       <div className={'ContendersListItem__ScrollZone'}>
@@ -20,11 +17,6 @@ function ContendersListItem ({ contender, className }) {
             <LinkContainer
               className={'ContendersListItem__LinkContainer'}
               href={`/transaction/${contender?.documentStateTransition}`}
-              // onClick={e => {
-              //   e.stopPropagation()
-              //   e.preventDefault()
-              //   router.push(`/transaction/${contender?.documentStateTransition}`)
-              // }}
             >
               <Identifier
                 ellipsis={false}
@@ -38,11 +30,6 @@ function ContendersListItem ({ contender, className }) {
             <LinkContainer
               className={'ContendersListItem__LinkContainer'}
               href={`/identity/${contender?.identifier}`}
-              // onClick={e => {
-              //   e.stopPropagation()
-              //   e.preventDefault()
-              //   router.push(`/identity/${contender?.identifier}`)
-              // }}
             >
               <Identifier
                 avatar={true}
@@ -57,11 +44,6 @@ function ContendersListItem ({ contender, className }) {
             <LinkContainer
               className={'ContendersListItem__LinkContainer'}
               href={`/document/${contender?.documentIdentifier}`}
-              // onClick={e => {
-              //   e.stopPropagation()
-              //   e.preventDefault()
-              //   router.push(`/document/${contender?.documentIdentifier}`)
-              // }}
             >
               <Identifier
                 avatar={true}
