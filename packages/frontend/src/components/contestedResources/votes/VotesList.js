@@ -46,7 +46,7 @@ function VotesList ({ votes = [], headerStyles, pagination, loading, itemsCount 
                 <VotesListItem vote={vote} key={i}/>
               )}
               {votes?.length === 0 &&
-                <EmptyListMessage>There are no data contracts created yet.</EmptyListMessage>
+                <EmptyListMessage>There are no votes yet.</EmptyListMessage>
               }
               {votes === undefined && <ErrorMessageBlock/>}
             </div>
