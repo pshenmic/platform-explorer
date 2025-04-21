@@ -12,7 +12,7 @@ function ContendersList ({ contenders = [], className }) {
             Date
           </GridItem>
           <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Hash'}>
-            Hash
+            Tx Hash
           </GridItem>
           <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Identity'}>
             Identity
