@@ -27,8 +27,15 @@
     width: 100%;
   }
 
-  &__ContendersList {
+  &__ContendersListContainer {
     margin-top: 1.5rem;
+  }
+
+  &__ContendersListTitle {
+    font-size: 0.875rem;
+    margin-bottom: 0.875rem;
+    font-weight: 700;
+    font-family: $font-heading;
   }
 
   &__CommonInfo {

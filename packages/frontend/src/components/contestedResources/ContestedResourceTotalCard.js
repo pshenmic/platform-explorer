@@ -132,10 +132,14 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
         </div>
       </div>
 
-      <ContendersList
-        className={'ContestedResourcesTotalCard__ContendersList'}
-        contenders={contestedResource?.data?.contenders}
-      />
+      <div className={'ContestedResourcesTotalCard__ContendersListContainer'}>
+        <div className={'ContestedResourcesTotalCard__ContendersListTitle'}>
+          Contenders {typeof contestedResource?.data?.contenders?.length === 'number' &&
+            <>({contestedResource?.data?.contenders?.length})</>
+          }
+        </div>
+        <ContendersList contenders={contestedResource?.data?.contenders}/>
+      </div>
     </InfoBlock>
   )
 }
