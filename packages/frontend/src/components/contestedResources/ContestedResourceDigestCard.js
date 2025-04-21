@@ -72,7 +72,7 @@ function ContestedResourceDigestCard ({ contestedResource, className }) {
               value={
                 !isEnded
                   ? <TimeRemaining
-                    startTime={contestedResource?.timestamp}
+                    startTime={contestedResource?.data?.timestamp}
                     endTime={contestedResource?.data?.endTimestamp}
                     displayProgress={!isEnded}
                   />
@@ -81,14 +81,14 @@ function ContestedResourceDigestCard ({ contestedResource, className }) {
               loading={contestedResource.loading}
               error={contestedResource.error}
             />
-          : contestedResource?.towardsIdentity
+          : contestedResource?.data?.towardsIdentity
             ? <InfoLine
               className={'ContestedResourcesDigestCard__InfoLine'}
               title={'Winner'}
               value={
-                <ValueCard link={`/identity/${contestedResource?.towardsIdentity}`} className={'TransactionPage__BlockHash'}>
+                <ValueCard link={`/identity/${contestedResource?.data?.towardsIdentity}`} className={'TransactionPage__BlockHash'}>
                   <Identifier avatar={true} styles={['highlight-both']}>
-                    {contestedResource?.towardsIdentity}
+                    {contestedResource?.data?.towardsIdentity}
                   </Identifier>
                 </ValueCard>
               }
