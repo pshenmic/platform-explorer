@@ -1,20 +1,72 @@
 @import '../../../styles/variables.scss';
 
-@mixin Columns () {
+@mixin Columns ($showDataContract: true) {
   display: grid;
   gap: 1rem;
 
-  grid-template-columns:
-    4rem // timestamp
-    minmax(7rem, 30rem) // ProTxHash
-    minmax(8.125rem, 30rem) // Data Contract
-    //minmax(6rem, 30rem) // voter
-    minmax(6rem, 30rem) // document
-    minmax(8.125rem, 30rem) // towards identity
-    7rem // choice
-    4rem; // power
+  $timestamp: 4rem;
+  $dataContract: minmax(8.125rem, 30rem);
+  $choice: 4.5rem;
+  $power: 3.5rem;
 
-  @container (max-width: 68rem) {}
+  @if $showDataContract {
+    grid-template-columns:
+      $timestamp
+      minmax(8.125rem, 30rem) // proTxHash
+      $dataContract
+      minmax(8.125rem, 30rem) // document
+      minmax(8.125rem, 30rem) // towardsIdentity
+      $choice
+      $power;
+  } @else {
+    grid-template-columns:
+      $timestamp
+      minmax(9rem, 30rem) // proTxHash
+      minmax(9rem, 30rem) // document
+      minmax(9rem, 30rem) // towardsIdentity
+      $choice
+      $power;
+  }
+
+  @if $showDataContract {
+    @container (max-width: 62rem) {
+      grid-template-columns:
+      $timestamp
+      minmax(8.125rem, 30rem)
+      $dataContract
+      minmax(8.125rem, 30rem)
+      $choice
+      $power;
+    }
+  }
+
+  @container (max-width: 55rem) {
+    grid-template-columns:
+      $timestamp
+      minmax(8.125rem, 30rem)
+      minmax(8.125rem, 30rem)
+      $choice
+      $power;
+  }
+
+  @container (max-width: 37rem) {
+    grid-template-columns:
+      $timestamp
+      minmax(0rem, 30rem)
+      $choice
+      $power;
+  }
+
+  @container (max-width: 27rem) {
+    gap: 0.5rem;
+  }
+
+  @container (max-width: 24rem) {
+    grid-template-columns:
+    $timestamp
+    minmax(0rem, 30rem)
+    $choice;
+  }
 }
 
 @mixin Column () {
@@ -25,9 +77,31 @@
     justify-content: flex-end;
   }
 
-  @container (max-width: 60rem) {
-    &--IndexName, &--DocumentType {
+  @container (max-width: 62rem) {
+    &--DataContract {
       display: none;
+    }
+  }
+
+  @container (max-width: 55rem) {
+    &--Document{
+      display: none;
+    }
+  }
+
+  @container (max-width: 37rem) {
+    &--TowardsIdentity {
+      display: none;
+    }
+  }
+
+  @container (max-width: 24rem) {
+    &--Power {
+      display: none;
+    }
+
+    &--Choice {
+      justify-content: flex-end;
     }
   }
 }

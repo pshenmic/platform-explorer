@@ -17,6 +17,10 @@
   &__ColumnTitles {
     @include mixins.defListTitles;
     @include votes.Columns();
+    
+    &--NoDataContract {
+      @include votes.Columns(false);
+    }
   }
 
   &__ColumnTitle {

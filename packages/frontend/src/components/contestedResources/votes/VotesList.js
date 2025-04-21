@@ -6,26 +6,29 @@ import Pagination from '../../pagination'
 import { VotesListItem } from './'
 import './VotesList.scss'
 
-function VotesList ({ votes = [], headerStyles, pagination, loading, itemsCount = 10 }) {
+function VotesList ({ votes = [], headerStyles, pagination, loading, itemsCount = 10, showDataContract = true }) {
   const headerExtraClass = {
     default: '',
-    light: 'VotesList__ColumnTitles--Light'
+    light: 'VotesList__ColumnTitles--Light',
+    noDataContract: 'VotesList__ColumnTitles--NoDataContract'
   }
 
   return (
     <div className={'VotesList'}>
       <div className={'VotesList__ListContainer'}>
         <div className={'VotesList__ScrollZone'}>
-          <Grid className={`VotesList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
+          <Grid className={`VotesList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''} ${!showDataContract ? headerExtraClass.noDataContract : ''}`}>
             <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Timestamp'}>
               Time
             </GridItem>
             <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--ProTxHash'}>
               Voter Pro Tx Hash
             </GridItem>
-            <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--DataContract'}>
-              Data Contract
-            </GridItem>
+            {showDataContract &&
+              <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--DataContract'}>
+                Data Contract
+              </GridItem>
+            }
             <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Document'}>
               Document
             </GridItem>
@@ -43,7 +46,7 @@ function VotesList ({ votes = [], headerStyles, pagination, loading, itemsCount 
           {!loading
             ? <div className={'VotesList__Items'}>
               {votes?.map((vote, i) =>
-                <VotesListItem vote={vote} key={i}/>
+                <VotesListItem vote={vote} showDataContract={showDataContract} key={i}/>
               )}
               {votes?.length === 0 &&
                 <EmptyListMessage>There are no votes yet.</EmptyListMessage>

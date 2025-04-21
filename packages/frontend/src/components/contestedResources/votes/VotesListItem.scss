@@ -7,6 +7,11 @@
 
   &__Content {
     @include votes.Columns();
+    align-items: center;
+    
+    &--NoDataContract {
+      @include votes.Columns(false);
+    }
   }
 
   &__Column {
@@ -15,6 +20,21 @@
 
     .LinkContainer {
       width: 100%;
+    }
+
+    &--Choice {
+      .VoteBadge {
+        display: flex;
+
+        span {
+          white-space: wrap;
+          width: min-content;
+          border-radius: 6px;
+          text-align: center;
+          padding: 0.188rem 0.625rem;
+          line-height: 0.8rem;
+        }
+      }
     }
   }
 }

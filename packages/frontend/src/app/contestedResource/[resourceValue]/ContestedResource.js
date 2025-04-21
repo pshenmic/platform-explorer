@@ -179,6 +179,7 @@ function ContestedResource ({ resourceValue }) {
             <TabPanel position={'relative'}>
               <VotesList
                 votes={votes.data?.resultSet}
+                showDataContract={false}
                 pagination={{
                   onPageChange: pagination => paginationHandler(setVotes, pagination.selected),
                   pageCount: Math.ceil(votes.data?.pagination?.total / pageSize) || 1,
@@ -192,6 +193,7 @@ function ContestedResource ({ resourceValue }) {
             <TabPanel position={'relative'}>
               <VotesList
                 votes={towardsIdentityVotes.data?.resultSet}
+                showDataContract={false}
                 pagination={{
                   onPageChange: pagination => paginationHandler(setTowardsIdentityVotes, pagination.selected),
                   pageCount: Math.ceil(towardsIdentityVotes.data?.pagination?.total / pageSize) || 1,
@@ -205,6 +207,7 @@ function ContestedResource ({ resourceValue }) {
             <TabPanel position={'relative'}>
               <VotesList
                 votes={abstainVotes.data?.resultSet}
+                showDataContract={false}
                 pagination={{
                   onPageChange: pagination => paginationHandler(setAbstainVotes, pagination.selected),
                   pageCount: Math.ceil(abstainVotes.data?.pagination?.total / pageSize) || 1,
@@ -218,6 +221,7 @@ function ContestedResource ({ resourceValue }) {
             <TabPanel position={'relative'}>
               <VotesList
                 votes={lockedVotes.data?.resultSet}
+                showDataContract={false}
                 pagination={{
                   onPageChange: pagination => paginationHandler(setLockedVotes, pagination.selected),
                   pageCount: Math.ceil(lockedVotes.data?.pagination?.total / pageSize) || 1,

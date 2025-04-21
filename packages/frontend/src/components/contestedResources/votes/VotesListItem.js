@@ -1,16 +1,17 @@
 import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import { Identifier, NotActive, TimeDelta } from '../../data'
+import Link from 'next/link'
 import { LinkContainer } from '../../ui/containers'
 import { useRouter } from 'next/navigation'
 import ChoiceBadge from '../ChoiceBadge'
 import './VotesListItem.scss'
 
-function VotesListItem ({ vote }) {
+function VotesListItem ({ vote, showDataContract = true }) {
   const router = useRouter()
 
   return (
-    <div className={'VotesListItem'}>
-      <Grid className={'VotesListItem__Content'}>
+    <Link href={`/transaction/${vote?.txHash}`} className={'VotesListItem'}>
+      <Grid className={`VotesListItem__Content ${!showDataContract ? 'VotesListItem__Content--NoDataContract' : ''}`}>
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Timestamp'}>
           {(vote?.timestamp ?? null)
             ? <TimeDelta endDate={new Date(vote?.timestamp)}/>
@@ -39,26 +40,28 @@ function VotesListItem ({ vote }) {
           }
         </GridItem>
 
-        <GridItem className={'VotesListItem__Column VotesListItem__Column--DataContract'}>
-          {(vote?.dataContractIdentifier ?? null) &&
-            <LinkContainer
-              className={'BlocksListItem__LinkContainer'}
-              onClick={e => {
-                e.stopPropagation()
-                e.preventDefault()
-                router.push(`/dataContract/${vote?.dataContractIdentifier}`)
-              }}
-            >
-              <Identifier
-                avatar={true}
-                ellipsis={true}
-                styles={['highlight-both']}
+        {showDataContract &&
+          <GridItem className={'VotesListItem__Column VotesListItem__Column--DataContract'}>
+            {(vote?.dataContractIdentifier ?? null) &&
+              <LinkContainer
+                className={'BlocksListItem__LinkContainer'}
+                onClick={e => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  router.push(`/dataContract/${vote?.dataContractIdentifier}`)
+                }}
               >
-                {vote?.dataContractIdentifier}
-              </Identifier>
-            </LinkContainer>
-          }
-        </GridItem>
+                <Identifier
+                  avatar={true}
+                  ellipsis={true}
+                  styles={['highlight-both']}
+                >
+                  {vote?.dataContractIdentifier}
+                </Identifier>
+              </LinkContainer>
+            }
+          </GridItem>
+        }
 
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Document'}>
           {(vote?.documentIdentifier ?? null) &&
@@ -120,7 +123,7 @@ function VotesListItem ({ vote }) {
           }
         </GridItem>
       </Grid>
-    </div>
+    </Link>
   )
 }
 
