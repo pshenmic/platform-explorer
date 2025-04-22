@@ -70,8 +70,6 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize])
 
-  console.log('contestedResources', contestedResources)
-
   return (
     <Container
       className={'InfoBlock ContestedResources'}
