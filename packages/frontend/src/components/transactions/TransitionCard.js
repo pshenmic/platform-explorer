@@ -221,11 +221,11 @@ function TransitionCard ({ transition, owner, rate, className }) {
         />
       }
 
-      {transition?.prefundedBalance &&
+      {transition?.prefundedVotingBalance &&
         <InfoLine
           className={'TransitionCard__InfoLine TransitionCard__InfoLine--PrefundedBalance'}
           title={'Prefunded Voting Balance'}
-          value={<PrefundedBalance prefundedBalance={transition?.prefundedBalance} rate={rate}/>}
+          value={<PrefundedBalance prefundedBalance={transition?.prefundedVotingBalance} rate={rate}/>}
         />
       }
     </div>
