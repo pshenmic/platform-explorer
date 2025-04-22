@@ -13,10 +13,13 @@ import './ContestedResourceTotalCard.scss'
 function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   const { data, loading, error } = contestedResource
 
-  const colorScheme = data?.status === 'finished' && data?.totalCountLock !== data?.totalCountTowardsIdentity
-    ? data?.totalCountLock > data?.totalCountTowardsIdentity
-      ? 'red'
-      : 'green'
+  // console.log('data', data?.towardsIdentity)
+  console.log('data', data)
+
+  const colorScheme = data?.status === 'finished'
+    ? data?.towardsIdentity
+      ? 'green'
+      : 'red'
     : 'blue'
 
   const signIconColor = {
