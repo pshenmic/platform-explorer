@@ -7,13 +7,13 @@
   grid-template-columns:
     auto // identifier
     10rem; // timestamp
-
-  //@container (max-width: 50rem) {
-  //
-  //}
 }
 
 @mixin Column () {
   display: flex;
   align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+  }
 }

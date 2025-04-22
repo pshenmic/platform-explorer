@@ -1,5 +1,34 @@
+@use '../../styles/mixins.scss';
+@use './variables' as identities;
+@import '../../styles/variables.scss';
+
 .IdentitiesList {
-    &__EmptyMessage {
-        text-align: center;
+  @include mixins.List;
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include identities.Columns();
+  }
+
+  &__ColumnTitle {
+    @include identities.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &--Hash {
+      white-space: nowrap;
     }
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  &__EmptyMessage {
+    text-align: center;
+  }
 }

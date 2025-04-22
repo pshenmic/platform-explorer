@@ -11,22 +11,22 @@ import './IdentitiesList.scss'
 function IdentitiesList ({ identities, headerStyles = 'default', pagination, loading, itemsCount = 10 }) {
   const headerExtraClass = {
     default: '',
-    light: 'TransactionsList__ColumnTitles--Light'
+    light: 'IdentitiesList__ColumnTitles--Light'
   }
 
   return (
     <div className={'IdentitiesList'}>
-      <Grid className={`TransactionsList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Identifier'}>
+      <Grid className={`IdentitiesList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
+        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Identifier'}>
           Identifier
         </GridItem>
-        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Timestamp'}>
+        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Timestamp'}>
           Timestamp
         </GridItem>
       </Grid>
 
       {!loading
-        ? <div className={'TransactionsList__Items'}>
+        ? <div className={'IdentitiesList__Items'}>
             {identities?.map((identity, key) =>
               <IdentitiesListItem
                 key={key}
@@ -34,7 +34,7 @@ function IdentitiesList ({ identities, headerStyles = 'default', pagination, loa
               />
             )}
             {!identities?.length &&
-              <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
+              <EmptyListMessage>There are no identities yet.</EmptyListMessage>
             }
             {identities === undefined && <ErrorMessageBlock/>}
           </div>
@@ -43,7 +43,7 @@ function IdentitiesList ({ identities, headerStyles = 'default', pagination, loa
 
       {pagination &&
         <Pagination
-          className={'TransactionsList__Pagination'}
+          className={'IdentitiesList__Pagination'}
           onPageChange={pagination.onPageChange}
           pageCount={pagination.pageCount}
           forcePage={pagination.forcePage}
