@@ -511,6 +511,7 @@ const getAliasInfo = async (aliasText, dapi) => {
 
   const normalizedLabel = convertToHomographSafeChars(label ?? '')
 
+
   if (/^[a-zA-Z01-]{3,19}$/.test(normalizedLabel)) {
     const domainBuffer = buildIndexBuffer(domain)
 
