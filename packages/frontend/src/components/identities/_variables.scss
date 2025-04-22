@@ -1,0 +1,19 @@
+@import '../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns:
+    auto // identifier
+    10rem; // timestamp
+
+  //@container (max-width: 50rem) {
+  //
+  //}
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+}
