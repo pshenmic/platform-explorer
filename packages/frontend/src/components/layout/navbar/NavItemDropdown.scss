@@ -1,0 +1,46 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.NavDropdown {
+  position: relative;
+}
+
+.NavLink--WithDropdown {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.NavDropdownArrow {
+  transition: transform $transition-time-def;
+  transform: rotate(90deg);
+
+  &--Open {
+    transform: rotate(-90deg);
+  }
+}
+
+// Override MultiLevelMenu styles for our navbar
+.NavDropdown {
+  .MenuLevel__Item {
+    font-family: $font-heading;
+    font-size: 0.75rem;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    
+    &--Disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+}
+
+@media screen and (max-width: $breakpoint-lg) {
+  .NavDropdown {
+    width: 100%;
+    
+    .MenuLevel {
+      width: 100%;
+    }
+  }
+} 

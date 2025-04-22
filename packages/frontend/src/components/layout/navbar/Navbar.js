@@ -2,7 +2,6 @@
 
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
-import Link from 'next/link'
 import { Box, Flex, HStack, IconButton, useDisclosure, Stack, useOutsideClick, useBreakpointValue } from '@chakra-ui/react'
 import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
@@ -12,27 +11,24 @@ import { SearchResultsList } from '../../search'
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
 import './NavLink.scss'
+import NavLink from './NavLink'
 
 const links = [
   { title: 'Home', href: '/' },
   { title: 'Blocks', href: '/blocks' },
   { title: 'Transactions', href: '/transactions' },
-  { title: 'Data Contracts', href: '/dataContracts' },
+  {
+    title: 'Data Contracts',
+    href: '/dataContracts',
+    submenuItems: [
+      { title: 'Data contracts list', href: '/dataContracts' },
+      { title: 'Contested Resources list', href: '/contestedResources', disabled: true }
+    ]
+  },
   { title: 'Identities', href: '/identities' },
   { title: 'Validators', href: '/validators' },
   { title: 'API', href: '/api' }
 ]
-
-const NavLink = ({ children, to, isActive, className }) => {
-  return (
-    <Link
-      href={to}
-      className={`NavLink ${isActive ? 'NavLink--Active' : ''} ${className || ''}`}
-    >
-      {children}
-    </Link>
-  )
-}
 
 const defaultSearchState = {
   results: { data: {}, loading: false, error: false },
@@ -126,7 +122,7 @@ function Navbar () {
             }}
           >
             {links.map((link) => (
-              <NavLink to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
+              <NavLink key={link.title} link={link} />
             ))}
           </HStack>
         </div>
@@ -201,13 +197,10 @@ function Navbar () {
         <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
           {links.map((link) => (
             <NavLink
-              className={'NavbarMobileMenu__Item'}
-              to={link.href}
-              isActive={pathname === link.href}
               key={link.title}
-            >
-              {link.title}
-            </NavLink>
+              link={link}
+              className={'NavbarMobileMenu__Item'}
+            />
           ))}
         </Stack>
       </Box>
