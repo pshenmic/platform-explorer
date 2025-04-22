@@ -8,7 +8,7 @@ import { LockIcon } from '../ui/icons'
 import { Flex } from '@chakra-ui/react'
 import './ContestedResourceDigestCard.scss'
 
-function ContestedResourceDigestCard ({ contestedResource, className }) {
+function ContestedResourceDigestCard ({ contestedResource, winner, className }) {
   const isEnded = new Date() > new Date(contestedResource?.data?.endTimestamp)
 
   return (
@@ -81,14 +81,14 @@ function ContestedResourceDigestCard ({ contestedResource, className }) {
               loading={contestedResource.loading}
               error={contestedResource.error}
             />
-          : contestedResource?.data?.towardsIdentity
+          : winner
             ? <InfoLine
-              className={'ContestedResourcesDigestCard__InfoLine'}
+              className={'ContestedResourcesDigestCard__InfoLine ContestedResourcesDigestCard__InfoLine--Winner'}
               title={'Winner'}
               value={
-                <ValueCard link={`/identity/${contestedResource?.data?.towardsIdentity}`} className={'TransactionPage__BlockHash'}>
-                  <Identifier avatar={true} styles={['highlight-both']}>
-                    {contestedResource?.data?.towardsIdentity}
+                <ValueCard link={`/identity/${winner}`}>
+                  <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+                    {winner}
                   </Identifier>
                 </ValueCard>
               }

@@ -13,8 +13,16 @@ import './ContestedResourceTotalCard.scss'
 function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   const { data, loading, error } = contestedResource
 
-  const colorScheme = data?.status === 'finished'
+  console.log('data', data)
+
+  const winner = data?.towardsIdentity
     ? data?.towardsIdentity
+    : data?.contenders?.length === 1 && data?.totalCountVotes === 0
+      ? data?.contenders[0]?.identifier
+      : null
+
+  const colorScheme = data?.status === 'finished'
+    ? winner
       ? 'green'
       : 'red'
     : 'blue'
@@ -128,7 +136,10 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
         </div>
 
         <div className={'ContestedResourcesTotalCard__Column'}>
-          <ContestedResourcesDigestCard contestedResource={contestedResource}/>
+          <ContestedResourcesDigestCard
+            contestedResource={contestedResource}
+            winner={winner}
+          />
         </div>
       </div>
 

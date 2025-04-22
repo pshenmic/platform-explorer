@@ -9,6 +9,20 @@
     .InfoLine__Value {
       font-size: 0.75rem;
     }
+
+    &--Winner {
+      max-width: 100%;
+      overflow: hidden;
+
+      .InfoLine__Value {
+        overflow: hidden;
+      }
+    }
+  }
+
+  &__LinesContainer {
+    overflow: hidden;
+    max-width: 100%;
   }
 
   &, &__Cards, &__LinesContainer {
