@@ -13,9 +13,6 @@ import './ContestedResourceTotalCard.scss'
 function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   const { data, loading, error } = contestedResource
 
-  // console.log('data', data?.towardsIdentity)
-  console.log('data', data)
-
   const colorScheme = data?.status === 'finished'
     ? data?.towardsIdentity
       ? 'green'
