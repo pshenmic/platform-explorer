@@ -5,7 +5,7 @@
   gap: 1rem;
 
   grid-template-columns:
-    4rem // timestamp
+    5rem // timestamp
     minmax(0, 30rem) // resource value
     17.5rem // data contract
     9rem // indexName
@@ -15,7 +15,7 @@
 
   @container (max-width: 68rem) {
     grid-template-columns:
-      3rem // timestamp
+      5rem // timestamp
       minmax(0, 30rem) // resource value
       12rem // data contract
       8rem // indexName
@@ -26,7 +26,7 @@
 
   @container (max-width: 60rem) {
     grid-template-columns:
-      3rem // timestamp
+      5rem // timestamp
       minmax(0, 30rem) // resource value
       12rem // data contract
       3rem // votes
@@ -35,7 +35,7 @@
 
   @container (max-width: 45rem) {
     grid-template-columns:
-      3rem // timestamp
+      5rem // timestamp
       minmax(0, 40rem) // resource value
       3rem // votes
       7rem; // ends in
@@ -43,14 +43,14 @@
 
   @container (max-width: 35rem) {
     grid-template-columns:
-      3rem // timestamp
+      5rem // timestamp
       minmax(0, 40rem) // resource value
       5rem; // ends in
   }
 
   @container (max-width: 20rem) {
     grid-template-columns:
-      3rem // timestamp
+      5rem // timestamp
       minmax(0, 40rem); // resource value
   }
 }
