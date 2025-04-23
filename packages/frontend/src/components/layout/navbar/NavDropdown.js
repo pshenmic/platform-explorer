@@ -18,7 +18,7 @@ const NavDropdown = ({ item }) => {
   const menuData = submenuItems.map(item => ({
     label: item.title,
     disabled: item?.disabled,
-    link: item?.href,
+    link: item?.href
     // onClick: item.disabled ? (e) => e.preventDefault() : undefined,
     // className: item.disabled ? 'NavDropdown__Item--Disabled' : ''
   }))
