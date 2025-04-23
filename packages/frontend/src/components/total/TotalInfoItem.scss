@@ -23,7 +23,7 @@
     transition: all .2s;
 
     @media (hover: hover) and (pointer: fine) {
-      &:not(.NavLink--Active):hover {
+      &:hover {
         background-color: rgba(255, 255, 255, .05);
       }
     }
