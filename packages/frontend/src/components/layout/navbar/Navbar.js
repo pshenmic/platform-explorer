@@ -77,6 +77,21 @@ function Navbar () {
     }
   }, [searchState.focused])
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        hideSearch()
+        closeMobileMenu()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [closeMobileMenu])
+
   const handleMobileMenuToggle = (e) => {
     e.stopPropagation()
     if (isMobileMenuOpen) {
