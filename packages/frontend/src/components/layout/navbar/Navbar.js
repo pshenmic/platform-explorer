@@ -2,7 +2,7 @@
 
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
-import { Box, Flex, HStack, IconButton, useDisclosure, Stack, useOutsideClick, useBreakpointValue } from '@chakra-ui/react'
+import { Box, Flex, HStack, IconButton, useDisclosure, useOutsideClick, useBreakpointValue } from '@chakra-ui/react'
 import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
@@ -12,6 +12,7 @@ import NavItem from './NavItem'
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
 import './NavItem.scss'
+import NavbarMobileMenu from './NavbarMobileMenu'
 
 const menuItems = [
   { title: 'Home', href: '/' },
@@ -61,7 +62,7 @@ function Navbar () {
   const hideSearch = () => setSearchState(defaultSearchState)
 
   useOutsideClick({ ref: searchContainerRef, handler: hideSearch })
-  useOutsideClick({ ref: mobileMenuRef, handler: closeMobileMenu })
+  // useOutsideClick({ ref: mobileMenuRef, handler: closeMobileMenu })
 
   useEffect(() => {
     closeMobileMenu()
@@ -189,21 +190,13 @@ function Navbar () {
         </div>
       </Flex>
 
-      <Box
+      <NavbarMobileMenu
+        items={menuItems}
+        isOpen={isMobileMenuOpen && !searchState.focused}
+        onClose={closeMobileMenu}
         ref={mobileMenuRef}
-        className={`NavbarMobileMenu ${isMobileMenuOpen && !searchState.focused ? 'NavbarMobileMenu--Open' : ''}`}
-        display={{ lg: 'none' }}
-      >
-        <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
-          {menuItems.map((menuItem) => (
-            <NavItem
-              key={menuItem.title}
-              item={menuItem}
-              className={'NavbarMobileMenu__Item'}
-            />
-          ))}
-        </Stack>
-      </Box>
+      />
+
       {displayBreadcrumbs && <Breadcrumbs/>}
     </Box>
   )
