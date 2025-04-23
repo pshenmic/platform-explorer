@@ -6,6 +6,7 @@ import { ChevronIcon } from '../../ui/icons'
 import { usePathname } from 'next/navigation'
 import { ArrowButton } from '../../ui/Buttons'
 import Link from 'next/link'
+import { SmoothSize } from '../../ui/containers'
 import './NavbarMobileMenu.scss'
 
 const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }) => {
@@ -53,6 +54,7 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }) => {
       display={{ lg: 'none' }}
       ref={mobileMenuRef}
     >
+      <SmoothSize duration={0.1}>
       {renderMain && (
         <Fade className={'NavbarMobileMenu__Content'} in={!activeSubmenu} unmountOnExit>
           <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
@@ -113,6 +115,7 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }) => {
           </Stack>
         </Fade>
       )}
+      </SmoothSize>
     </Box>
   )
 }
