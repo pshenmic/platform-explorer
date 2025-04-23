@@ -53,7 +53,7 @@ const NavDropdown = ({ title, href, submenuItems }) => {
   const trigger = (
     <Link
       href={href}
-      className={`NavLink ${isActive ? 'NavLink--Active' : ''} NavLink--WithDropdown`}
+      className={`NavItem ${isActive ? 'NavItem--Active' : ''} NavItem--WithDropdown`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}

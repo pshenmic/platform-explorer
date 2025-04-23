@@ -1,7 +1,7 @@
 @use '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
-.NavLink {
+.NavItem {
   position: relative;
   font-family: $font-heading;
   font-size: 0.75rem;
@@ -40,7 +40,7 @@
     }
 
     @media (hover: hover) and (pointer: fine) {
-      &:not(.NavLink--Active):hover {
+      &:not(.NavItem--Active):hover {
         background: rgba(255, 255, 255, .15);
       }
     }

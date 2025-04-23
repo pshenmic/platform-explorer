@@ -3,11 +3,13 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import NavDropdown from './NavDropdown'
-import './NavLink.scss'
+import './NavItem.scss'
 
-const NavLink = ({ link, className = '' }) => {
+const NavItem = ({ link, className = '' }) => {
   const pathname = usePathname()
   const isActive = pathname === link.href
+
+  console.log('link')
 
   return link.submenuItems?.length
     ? <NavDropdown
@@ -17,10 +19,10 @@ const NavLink = ({ link, className = '' }) => {
       />
     : <Link
         href={link.href}
-        className={`NavLink ${isActive ? 'NavLink--Active' : ''} ${className}`}
+        className={`NavItem ${isActive ? 'NavItem--Active' : ''} ${className}`}
       >
         {link.title}
       </Link>
 }
 
-export default NavLink
+export default NavItem

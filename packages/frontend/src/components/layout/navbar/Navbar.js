@@ -8,12 +8,12 @@ import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { SearchResultsList } from '../../search'
+import NavItem from './NavItem'
 import './Navbar.scss'
 import './NavbarMobileMenu.scss'
-import './NavLink.scss'
-import NavLink from './NavLink'
+import './NavItem.scss'
 
-const links = [
+const menuItems = [
   { title: 'Home', href: '/' },
   { title: 'Blocks', href: '/blocks' },
   { title: 'Transactions', href: '/transactions' },
@@ -121,8 +121,8 @@ function Navbar () {
               transitionDelay: searchState.focused ? '0s' : `${searchTransitionTime / 2}s`
             }}
           >
-            {links.map((link) => (
-              <NavLink key={link.title} link={link} />
+            {menuItems.map((menuItem) => (
+              <NavItem key={menuItem.title} link={menuItem}/>
             ))}
           </HStack>
         </div>
@@ -195,10 +195,10 @@ function Navbar () {
         display={{ lg: 'none' }}
       >
         <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
-          {links.map((link) => (
-            <NavLink
-              key={link.title}
-              link={link}
+          {menuItems.map((menuItem) => (
+            <NavItem
+              key={menuItem.title}
+              link={menuItem}
               className={'NavbarMobileMenu__Item'}
             />
           ))}
