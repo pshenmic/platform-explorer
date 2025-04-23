@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Box, Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@chakra-ui/react'
+import { Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@chakra-ui/react'
 import { ChevronIcon } from '../icons'
 import './MenuLevel.scss'
 
@@ -33,7 +33,19 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
       {items.map((item, index) => {
         const isActive = activeItemId === index
 
-        if (item.link) {
+        if (item?.disabled) {
+          return (
+            <div
+              key={index}
+              onClick={() => onMenuItemClick && onMenuItemClick()}
+              className={'MenuLevel__Item MenuLevel__Item--Disabled'}
+            >
+              <span>{item.label}</span>
+            </div>
+          )
+        }
+
+        if (item?.link) {
           return (
             <Link
               key={index}
@@ -44,12 +56,12 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               onClick={() => onMenuItemClick && onMenuItemClick()}
               className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
             >
-              {<span>{item.label}</span>}
+              <span>{item.label}</span>
             </Link>
           )
         }
 
-        if (item.subMenu?.length || item.content) {
+        if (item?.subMenu?.length || item?.content) {
           return (
             <Popover
               key={index}
