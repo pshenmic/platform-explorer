@@ -28,12 +28,6 @@
     text-align: center;
   }
 
-  &__BackButton {
-    position: absolute;
-    left: 0;
-    color: var(--chakra-colors-gray-250);
-  }
-
   &__List {
     display: flex;
     flex-direction: column;
@@ -165,6 +159,8 @@
   }
   
   &__BackButton {
+    position: absolute;
+    left: 0;
     transition: $transition-time-def;
     align-items: center;
     padding: 0.5rem;

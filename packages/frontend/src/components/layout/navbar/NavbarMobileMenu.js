@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Box, Stack, Flex, Fade, useOutsideClick } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import { usePathname } from 'next/navigation'
+import { ArrowButton } from '../../ui/Buttons'
 import Link from 'next/link'
 import './NavbarMobileMenu.scss'
 
@@ -68,7 +69,7 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }) => {
                 <span>{item.title}</span>
                 {item.submenuItems?.length && (
                   <div className={'NavbarMobileMenu__ItemIcon'}>
-                    <ChevronIcon/>
+                    <ArrowButton/>
                   </div>
                 )}
               </Flex>
@@ -84,9 +85,12 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }) => {
               className={'NavbarMobileMenu__BackButton'}
               onClick={goToMainMenu}
             >
-              <ChevronIcon transform={'rotate(180deg)'} />
-              <span className={'NavbarMobileMenu__BackButtonText'}>Back</span>
+              <ChevronIcon transform={'rotate(180deg)'}/>
             </Flex>
+
+            <div className={'NavbarMobileMenu__Title'}>
+              {activeSubmenu?.title}
+            </div>
           </div>
 
           <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>

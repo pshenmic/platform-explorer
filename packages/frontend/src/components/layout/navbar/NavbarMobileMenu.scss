@@ -7,15 +7,15 @@
   top: 0;
   left: 0;
   width: 100%;
-  padding-top: 64px;
+  padding-top: 4rem;
   overflow: hidden;
   opacity: 0;
-  box-shadow: 0 20px 32px 0 var(--chakra-colors-gray-900);
+  box-shadow: none;
   background-color: var(--chakra-colors-gray-650);
   border-radius: 0 0 20px 20px;
   max-height: 100%;
   min-height: 10rem;
-  transform: translateY(calc(20px - 100%));
+  transform: translateY(calc(-20px - 100%));
   transition: all .15s;
   @include mixins.navContainerPadding(padding-left);
   @include mixins.navContainerPadding(padding-right);
@@ -25,7 +25,7 @@
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 32px 0 var(--chakra-colors-gray-900);
     overflow-y: auto;
   }
 
@@ -35,35 +35,45 @@
   }
 
   &__Header {
+    position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   &__BackButton {
+    position: absolute;
+    left: 0;
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: var(--chakra-colors-gray-200);
+    color: rgba(var(--chakra-colors-brand-normal-rgb), .8);
     transition: color 0.2s;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
 
     &:hover {
-      color: white;
+      cursor: pointer;
+      background-color: rgba(49, 130, 206, 0.1);
+      color: rgba(var(--chakra-colors-brand-normal-rgb), 1);
     }
   }
 
-  &__BackButtonText {
-    margin-left: 8px;
+  &__Title {
     font-family: $font-heading;
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 800;
+    font-size: 1rem;
+    line-height: 100%;
+    text-align: center;
+    margin: 0 auto;
   }
 
   &__Items {
     width: 100%;
-    gap: 8px;
+    gap: 0.5rem;
   }
 
   &__Item {
