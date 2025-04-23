@@ -122,7 +122,7 @@ function Navbar () {
             }}
           >
             {menuItems.map((menuItem) => (
-              <NavItem key={menuItem.title} link={menuItem}/>
+              <NavItem key={menuItem.title} item={menuItem}/>
             ))}
           </HStack>
         </div>
@@ -198,7 +198,7 @@ function Navbar () {
           {menuItems.map((menuItem) => (
             <NavItem
               key={menuItem.title}
-              link={menuItem}
+              item={menuItem}
               className={'NavbarMobileMenu__Item'}
             />
           ))}

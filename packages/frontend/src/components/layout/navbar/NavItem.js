@@ -5,23 +5,19 @@ import { usePathname } from 'next/navigation'
 import NavDropdown from './NavDropdown'
 import './NavItem.scss'
 
-const NavItem = ({ link, className = '' }) => {
+const NavItem = ({ item, className = '' }) => {
   const pathname = usePathname()
-  const isActive = pathname === link.href
+  const isActive = pathname === item?.href
 
-  console.log('link')
+  console.log('item', item)
 
-  return link.submenuItems?.length
-    ? <NavDropdown
-        title={link.title}
-        href={link.href}
-        submenuItems={link.submenuItems}
-      />
+  return item?.submenuItems?.length
+    ? <NavDropdown item={item}/>
     : <Link
-        href={link.href}
+        href={item.href}
         className={`NavItem ${isActive ? 'NavItem--Active' : ''} ${className}`}
       >
-        {link.title}
+        {item.title}
       </Link>
 }
 

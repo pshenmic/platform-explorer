@@ -1,14 +1,14 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import Link from 'next/link'
 import { useMediaQuery } from '@chakra-ui/react'
 import { usePathname } from 'next/navigation'
 import MultiLevelMenu from '../../ui/menus/MultiLevelMenu'
 import { ArrowButton } from '../../ui/Buttons'
 import './NavItemDropdown.scss'
 
-const NavDropdown = ({ title, href, submenuItems }) => {
+const NavDropdown = ({ item }) => {
+  const { title, href, submenuItems } = item
   const pathname = usePathname()
   const isActive = pathname === href || pathname.startsWith(href)
   const [isHoverable] = useMediaQuery('(hover: hover) and (pointer: fine)')
@@ -17,12 +17,11 @@ const NavDropdown = ({ title, href, submenuItems }) => {
 
   const menuData = submenuItems.map(item => ({
     label: item.title,
-    link: item.disabled ? undefined : item.href,
+    link: !item?.disabled && item?.href ? item.href : null,
     onClick: item.disabled ? (e) => e.preventDefault() : undefined,
     className: item.disabled ? 'NavDropdown__Item--Disabled' : ''
   }))
 
-  // Hover behavior with delay
   const handleMouseEnter = () => {
     if (!isHoverable) return
 
@@ -51,18 +50,18 @@ const NavDropdown = ({ title, href, submenuItems }) => {
   }
 
   const trigger = (
-    <Link
-      href={href}
+    <div
+      // href={href}
       className={`NavItem ${isActive ? 'NavItem--Active' : ''} NavItem--WithDropdown`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
-      display={'flex'}
-      alignItems={'center'}
+      // display={'flex'}
+      // alignItems={'center'}
     >
       {title}
       <ArrowButton className={`NavDropdownArrow ${isOpen ? 'NavDropdownArrow--Open' : ''}`}/>
-    </Link>
+    </div>
   )
 
   return (

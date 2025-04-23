@@ -13,6 +13,12 @@
   white-space: nowrap;
   padding: 4px 0;
 
+  &--WithDropdown {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
   &--Active {
     color: $color-brand-normal;
   }

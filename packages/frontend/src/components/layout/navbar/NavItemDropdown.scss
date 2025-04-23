@@ -1,16 +1,6 @@
 @use '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
-.NavDropdown {
-  position: relative;
-}
-
-.NavItem--WithDropdown {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
 .NavDropdownArrow {
   transition: transform $transition-time-def;
   transform: rotate(90deg);
@@ -22,6 +12,8 @@
 
 // Override MultiLevelMenu styles for our navbar
 .NavDropdown {
+  position: relative;
+
   .MenuLevel__Item {
     font-family: $font-heading;
     font-size: 0.75rem;
