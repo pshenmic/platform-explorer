@@ -9,10 +9,8 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { SearchResultsList } from '../../search'
 import NavItem from './NavItem'
-import './Navbar.scss'
-import './NavbarMobileMenu.scss'
-import './NavItem.scss'
 import NavbarMobileMenu from './NavbarMobileMenu'
+import './Navbar.scss'
 
 const menuItems = [
   { title: 'Home', href: '/' },
