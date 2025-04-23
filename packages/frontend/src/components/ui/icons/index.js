@@ -1,4 +1,5 @@
 import { Icon, useId } from '@chakra-ui/react'
+import PlatformExplorerColorLogo from './PlatformExplorerColorLogo'
 
 const CalendarIcon = (props) => (
   <Icon viewBox='0 0 12 14' {...props}>
@@ -324,5 +325,6 @@ export {
   BlockIcon,
   InfoIcon,
   SearchIcon,
-  HourglassIcon
+  HourglassIcon,
+  PlatformExplorerColorLogo
 }
