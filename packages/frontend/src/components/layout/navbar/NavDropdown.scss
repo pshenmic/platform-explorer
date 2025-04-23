@@ -21,7 +21,13 @@
     
     &--Disabled {
       opacity: 0.5;
-      pointer-events: none;
+      color: var(--chakra-colors-gray-250) !important;
+
+      &:hover, &:active {
+        color: inherit;
+        background: transparent !important;
+        cursor: not-allowed;
+      }
     }
   }
 }

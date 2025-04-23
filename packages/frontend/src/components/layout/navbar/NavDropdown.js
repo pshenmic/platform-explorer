@@ -50,13 +50,10 @@ const NavDropdown = ({ item }) => {
 
   const trigger = (
     <div
-      // href={href}
       className={`NavItem ${isActive ? 'NavItem--Active' : ''} NavItem--WithDropdown`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
-      // display={'flex'}
-      // alignItems={'center'}
     >
       {title}
       <ArrowButton className={`NavDropdownArrow ${isOpen ? 'NavDropdownArrow--Open' : ''}`}/>
