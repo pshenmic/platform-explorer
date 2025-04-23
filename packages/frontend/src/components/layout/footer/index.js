@@ -7,7 +7,7 @@ import version from './version'
 import { BigClockIcon, PlatformExplorerLogoStroke, PshenmicLogoIcon } from '../../ui/icons'
 import LocalTime from './LocalTime'
 import Link from 'next/link'
-import './footer.scss'
+import './Footer.scss'
 
 const socialNetwork = [
   { img: '/images/icons/github.svg', href: 'https://github.com/pshenmic/platform-explorer/', alt: 'github', ariaLabel: 'Go to GitHub' },
