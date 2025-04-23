@@ -2,39 +2,21 @@
 @import '../../../styles/variables.scss';
 
 .NavbarMobileMenu {
-  //height: 0;
-  width: 100%;
-  overflow: hidden;
-  opacity: 0;
-  left: 0;
-  //height: 0;
-  //top: 0;
-  //width: 100%;
-  background-color: var(--chakra-colors-gray-650);
-  border-radius: 0 0 20px 20px;
-  //margin-top: 0;
-  box-shadow: 0 20px 32px 0 var(--chakra-colors-gray-900);
-  transition: all .15s;
-  max-height: 100%;
-  transform: translateY(calc(20px - 100%));
-  padding-top: 64px;
-  //@include mixins.navContainerPadding(padding-left);
-  //@include mixins.navContainerPadding(padding-right);
-
   position: fixed;
   z-index: 50;
   top: 0;
-  //left: 0;
-  //display: flex;
-  //width: 100%;
-  //background-color: var(--chakra-colors-gray-650);
-  //border-radius: 0 0 20px 20px;
-  //margin-top: 0;
-  //box-shadow: 0 20px 32px 0 var(--chakra-colors-gray-900);
-  //transition: all .3s;
-  //max-height: 100%;
-  //transform: translateY(calc(20px - 100%));
-  //padding-top: 88px;
+  left: 0;
+  width: 100%;
+  padding-top: 64px;
+  overflow: hidden;
+  opacity: 0;
+  box-shadow: 0 20px 32px 0 var(--chakra-colors-gray-900);
+  background-color: var(--chakra-colors-gray-650);
+  border-radius: 0 0 20px 20px;
+  max-height: 100%;
+  min-height: 10rem;
+  transform: translateY(calc(20px - 100%));
+  transition: all .15s;
   @include mixins.navContainerPadding(padding-left);
   @include mixins.navContainerPadding(padding-right);
 

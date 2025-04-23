@@ -18,7 +18,7 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }) => {
     ref: mobileMenuRef,
     handler: e => {
       if (burgerRef?.current && !burgerRef.current.contains(e.target)) {
-        onClose(e)
+        onClose()
       }
     }
   })
@@ -28,9 +28,10 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }) => {
     setRenderSubmenu(!!activeSubmenu)
   }, [activeSubmenu])
 
-  // Reset submenu state when menu closes or route changes
   useEffect(() => {
-    setActiveSubmenu(null)
+    if (isOpen) {
+      setActiveSubmenu(null)
+    }
   }, [isOpen, pathname])
 
   const handleItemClick = (item) => {
