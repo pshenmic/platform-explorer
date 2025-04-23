@@ -10,6 +10,8 @@ import { useEffect, useState, useRef, useMemo } from 'react'
 import { SearchResultsList } from '../../search'
 import NavItem from './NavItem'
 import NavbarMobileMenu from './NavbarMobileMenu'
+import { PlatformExplorerColorLogo } from '../../ui/icons'
+import Link from 'next/link'
 import './Navbar.scss'
 
 const menuItems = [
@@ -109,6 +111,19 @@ function Navbar () {
         maxW={'container.maxPageW'}
       >
         <div className={'Navbar__Left'}>
+          <Link
+            className={'Navbar__Logo'}
+            href={'/'}
+            style={{
+              visibility: searchState.focused ? 'hidden' : 'visible'
+            }}
+          >
+            <PlatformExplorerColorLogo
+              w={'2rem'}
+              h={'2rem'}
+            />
+          </Link>
+
           <IconButton
             className={'Navbar__Burger'}
             size={'md'}
