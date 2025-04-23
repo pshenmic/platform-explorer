@@ -19,8 +19,6 @@ const NavDropdown = ({ item }) => {
     label: item.title,
     disabled: item?.disabled,
     link: item?.href
-    // onClick: item.disabled ? (e) => e.preventDefault() : undefined,
-    // className: item.disabled ? 'NavDropdown__Item--Disabled' : ''
   }))
 
   const handleMouseEnter = () => {
