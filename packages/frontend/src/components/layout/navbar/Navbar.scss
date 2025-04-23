@@ -107,13 +107,11 @@
     }
   }
 
-  @media screen and (max-width: $breakpoint-lg) {
+  @media screen and (max-width: $breakpoint-md) {
     &__SearchContainer {
       width: 15rem
     }
-  }
 
-  @media screen and (max-width: $breakpoint-md) {
     &__Menu {
       gap: 16px !important;
     }
