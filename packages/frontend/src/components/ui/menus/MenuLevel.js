@@ -44,9 +44,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               onClick={() => onMenuItemClick && onMenuItemClick()}
               className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
             >
-              <Box className={'MenuLevel__Item'}>
-                {<span>{item.label}</span>}
-              </Box>
+              {<span>{item.label}</span>}
             </Link>
           )
         }
