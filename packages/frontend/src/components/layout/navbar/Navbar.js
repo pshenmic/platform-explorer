@@ -56,13 +56,12 @@ function Navbar () {
     (Object.entries(searchState.results.data || {})?.length || searchState.results.loading || searchState.results.error)
 
   const searchContainerRef = useRef(null)
-  const mobileMenuRef = useRef(null)
   const searchTransitionTime = useBreakpointValue({ base: 0.2, md: 0.1 })
+  const burgerRef = useRef(null)
 
   const hideSearch = () => setSearchState(defaultSearchState)
 
   useOutsideClick({ ref: searchContainerRef, handler: hideSearch })
-  // useOutsideClick({ ref: mobileMenuRef, handler: closeMobileMenu })
 
   useEffect(() => {
     closeMobileMenu()
@@ -107,6 +106,7 @@ function Navbar () {
             aria-label={'Open Menu'}
             display={{ lg: 'none' }}
             onClick={handleMobileMenuToggle}
+            ref={burgerRef}
           />
 
           <HStack
@@ -194,7 +194,7 @@ function Navbar () {
         items={menuItems}
         isOpen={isMobileMenuOpen && !searchState.focused}
         onClose={closeMobileMenu}
-        ref={mobileMenuRef}
+        burgerRef={burgerRef}
       />
 
       {displayBreadcrumbs && <Breadcrumbs/>}

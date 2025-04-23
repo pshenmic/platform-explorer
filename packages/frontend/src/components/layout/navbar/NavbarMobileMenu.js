@@ -1,17 +1,27 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Box, Stack, Flex, Fade } from '@chakra-ui/react'
+import { useState, useEffect, useRef } from 'react'
+import { Box, Stack, Flex, Fade, useOutsideClick } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import './NavbarMobileMenu.scss'
 
-const NavbarMobileMenu = ({ items, isOpen, onClose }) => {
+const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }) => {
   const pathname = usePathname()
   const [activeSubmenu, setActiveSubmenu] = useState(null)
   const [renderMain, setRenderMain] = useState(true)
   const [renderSubmenu, setRenderSubmenu] = useState(false)
+  const mobileMenuRef = useRef(null)
+
+  useOutsideClick({
+    ref: mobileMenuRef,
+    handler: e => {
+      if (burgerRef?.current && !burgerRef.current.contains(e.target)) {
+        onClose(e)
+      }
+    }
+  })
 
   useEffect(() => {
     setRenderMain(!activeSubmenu)
@@ -39,6 +49,7 @@ const NavbarMobileMenu = ({ items, isOpen, onClose }) => {
     <Box
       className={`NavbarMobileMenu ${isOpen ? 'NavbarMobileMenu--Open' : ''}`}
       display={{ lg: 'none' }}
+      ref={mobileMenuRef}
     >
       {renderMain && (
         <Fade className={'NavbarMobileMenu__Content'} in={!activeSubmenu} unmountOnExit>
