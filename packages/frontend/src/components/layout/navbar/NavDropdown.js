@@ -5,7 +5,7 @@ import { useMediaQuery } from '@chakra-ui/react'
 import { usePathname } from 'next/navigation'
 import MultiLevelMenu from '../../ui/menus/MultiLevelMenu'
 import { ArrowButton } from '../../ui/Buttons'
-import './NavItemDropdown.scss'
+import './NavDropdown.scss'
 
 const NavDropdown = ({ item }) => {
   const { title, href, submenuItems } = item
@@ -17,9 +17,10 @@ const NavDropdown = ({ item }) => {
 
   const menuData = submenuItems.map(item => ({
     label: item.title,
-    link: !item?.disabled && item?.href ? item.href : null,
-    onClick: item.disabled ? (e) => e.preventDefault() : undefined,
-    className: item.disabled ? 'NavDropdown__Item--Disabled' : ''
+    disabled: item?.disabled,
+    link: item?.href,
+    // onClick: item.disabled ? (e) => e.preventDefault() : undefined,
+    // className: item.disabled ? 'NavDropdown__Item--Disabled' : ''
   }))
 
   const handleMouseEnter = () => {
