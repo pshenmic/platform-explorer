@@ -24,6 +24,21 @@
     }
   }
 
+  &__DropdownIcon {
+    transition: transform $transition-time-def;
+
+    svg {
+      transition: transform $transition-time-def;
+      transform: rotate(90deg);
+    }
+
+    &--Open {
+      svg {
+        transform: rotate(-90deg);
+      }
+    }
+  }
+
   &--Active {
     color: $color-brand-normal;
   }

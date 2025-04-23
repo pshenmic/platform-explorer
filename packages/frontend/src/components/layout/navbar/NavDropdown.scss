@@ -1,15 +1,6 @@
 @use '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
-.NavDropdownArrow {
-  transition: transform $transition-time-def;
-  transform: rotate(90deg);
-
-  &--Open {
-    transform: rotate(-90deg);
-  }
-}
-
 .NavDropdown {
   position: relative;
 
@@ -18,6 +9,7 @@
     font-size: 0.75rem;
     letter-spacing: 0.4px;
     text-transform: uppercase;
+    color: var(--chakra-colors-gray-100);
     
     &--Disabled {
       opacity: 0.5;

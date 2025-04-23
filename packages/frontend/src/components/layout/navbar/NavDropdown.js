@@ -27,7 +27,7 @@ const NavDropdown = ({ item }) => {
     clearTimeout(timeoutRef.current)
     timeoutRef.current = setTimeout(() => {
       setIsOpen(true)
-    }, 200)
+    }, 100)
   }
 
   const handleMouseLeave = () => {
@@ -36,16 +36,14 @@ const NavDropdown = ({ item }) => {
     clearTimeout(timeoutRef.current)
     timeoutRef.current = setTimeout(() => {
       setIsOpen(false)
-    }, 200)
+    }, 100)
   }
 
-  // Click behavior
   const handleClick = (e) => {
     if (!isHoverable || !isOpen) {
       e.preventDefault()
       setIsOpen(!isOpen)
     }
-    // On desktop with open dropdown, allows navigation to href
   }
 
   const trigger = (
@@ -56,13 +54,13 @@ const NavDropdown = ({ item }) => {
       onClick={handleClick}
     >
       {title}
-      <ArrowButton className={`NavDropdownArrow ${isOpen ? 'NavDropdownArrow--Open' : ''}`}/>
+      <ArrowButton className={`NavItem__DropdownIcon ${isOpen ? 'NavItem__DropdownIcon--Open' : ''}`}/>
     </div>
   )
 
   return (
     <div
-      className='NavDropdown'
+      className={'NavDropdown'}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
