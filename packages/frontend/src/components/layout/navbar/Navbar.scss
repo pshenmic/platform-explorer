@@ -111,7 +111,7 @@
     }
   }
 
-  @media screen and (max-width: $breakpoint-lg) {
+  @media screen and (max-width: 64rem) {
     &__Logo {
       display: none;
     }
