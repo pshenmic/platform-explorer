@@ -1,6 +1,6 @@
 import { Icon, useId } from '@chakra-ui/react'
 
-const PlatformExplorerColorLogo = (props) => {
+const PlatformExplorerLogoColor = (props) => {
   const uniqueId = useId()
 
   return (
@@ -112,12 +112,12 @@ const PlatformExplorerColorLogo = (props) => {
       <defs>
         <linearGradient id={uniqueId} x1='144.296' y1='0.562012' x2='144.296' y2='288.562'
                         gradientUnits='userSpaceOnUse'>
-          <stop stopColor='#008DE4'/>
-          <stop offset='1' stopColor='#008DE4' stopOpacity='0.6'/>
+          <stop stopColor='currentColor'/>
+          <stop offset='1' stopColor='currentColor' stopOpacity='0.6'/>
         </linearGradient>
       </defs>
     </Icon>
   )
 }
 
-export default PlatformExplorerColorLogo
+export default PlatformExplorerLogoColor

@@ -4,8 +4,9 @@ import { Box, Flex } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import version from './version'
-import { BigClockIcon, PshenmicLogoIcon } from '../../ui/icons'
+import { BigClockIcon, PlatformExplorerLogoStroke, PshenmicLogoIcon } from '../../ui/icons'
 import LocalTime from './LocalTime'
+import Link from 'next/link'
 import './footer.scss'
 
 const socialNetwork = [
@@ -63,8 +64,22 @@ function Footer () {
                 </a>
             ))}
             </div>)
-          : null}
-        <p className={'Footer__Copyright'}>{currentYear} © Dash Platform Explorer v{version} MIT LICENCE</p>
+          : null
+        }
+
+        <div className={'Footer__CopyrightBlock'}>
+          <p className={'Footer__Copyright'}>{currentYear} © Dash Platform Explorer<br/>v{version} MIT LICENCE</p>
+          <Link
+            className={'Footer__Logo'}
+            href={'/'}
+          >
+            <PlatformExplorerLogoStroke
+              w={'2rem'}
+              h={'2rem'}
+              color={'#93AAB2'}
+            />
+          </Link>
+        </div>
       </Flex>
     </Box>
   )

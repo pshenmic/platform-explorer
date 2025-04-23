@@ -10,7 +10,7 @@ import { useEffect, useState, useRef, useMemo } from 'react'
 import { SearchResultsList } from '../../search'
 import NavItem from './NavItem'
 import NavbarMobileMenu from './NavbarMobileMenu'
-import { PlatformExplorerColorLogo } from '../../ui/icons'
+import { PlatformExplorerLogoColor } from '../../ui/icons'
 import Link from 'next/link'
 import './Navbar.scss'
 
@@ -118,7 +118,7 @@ function Navbar () {
               visibility: searchState.focused ? 'hidden' : 'visible'
             }}
           >
-            <PlatformExplorerColorLogo
+            <PlatformExplorerLogoColor
               w={'2rem'}
               h={'2rem'}
             />
