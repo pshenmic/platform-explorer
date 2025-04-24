@@ -1,6 +1,6 @@
 'use client'
 
-import { IdentitiesCards } from '../index'
+import { TopIdentitiesCards } from '../index'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { useState, useEffect } from 'react'
 import { Heading, Grid, GridItem } from '@chakra-ui/react'
@@ -40,7 +40,7 @@ export default function TopIdentities ({ className }) {
         </GridItem>
       </Grid>
 
-      <IdentitiesCards items={identities} rate={rate.data}/>
+      <TopIdentitiesCards items={identities} rate={rate.data}/>
     </InfoContainer>
   )
 }

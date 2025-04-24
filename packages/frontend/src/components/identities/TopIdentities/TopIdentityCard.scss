@@ -1,11 +1,11 @@
-@use '../../styles/mixins.scss';
-@import '../../styles/variables.scss';
+@use '../../../styles/mixins';
+@import '../../../styles/variables';
 
-.IdentityCard {
+.TopIdentityCard {
   padding: 0.75rem;
 
   &--Loading {
-    height: 58px;
+    height: 3.125rem;
   }
 
   &__Img {

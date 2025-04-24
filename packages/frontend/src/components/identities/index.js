@@ -1,13 +1,13 @@
 import IdentitiesList from './IdentitiesList'
-import { IdentitiesCards, IdentityCard } from './Cards'
+import { TopIdentitiesCards, TopIdentityCard } from './TopIdentities/TopIdentityCards'
 import TopIdentities from './TopIdentities/TopIdentities'
 import IdentityTotalCard from './IdentityTotalCard'
 import IdentityDigestCard from './IdentityDigestCard'
 
 export {
   IdentitiesList,
-  IdentitiesCards,
-  IdentityCard,
+  TopIdentitiesCards,
+  TopIdentityCard,
   TopIdentities,
   IdentityTotalCard,
   IdentityDigestCard
