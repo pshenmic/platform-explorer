@@ -9,8 +9,6 @@ const NavItem = ({ item, className = '' }) => {
   const pathname = usePathname()
   const isActive = pathname === item?.href
 
-  console.log('item', item)
-
   return item?.submenuItems?.length
     ? <NavDropdown item={item}/>
     : <Link
