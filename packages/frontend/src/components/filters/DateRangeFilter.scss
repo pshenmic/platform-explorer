@@ -40,12 +40,36 @@
   }
 
   @media screen and (max-width: 55em) {
-    &__CalendarTitle {
+    &__CalendarTitle, &__ValuesTitle {
       display: none;
     }
 
-    .MobileFilterMenu &__CalendarTitle {
-      display: block;
+    &__ValueButton {
+      &--Submit {
+        margin-left: auto;
+      }
+    }
+
+    &__Values {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .MobileFilterMenu & {
+      &__CalendarTitle, &__ValuesTitle {
+        display: block;
+      }
+
+      &__Values {
+        width: auto;
+        flex-wrap: nowrap;
+      }
+
+      &__ValueButton {
+        &--Submit {
+          margin-left: unset;
+        }
+      }
     }
   }
 
