@@ -9,6 +9,7 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel, Box } from '@chakra-ui/react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { ContestedResourceTotalCard } from '../../../components/contestedResources'
 import { VotesList } from '../../../components/contestedResources/votes'
+import contestedResources from '../../../util/contestedResources'
 
 const pagintationConfig = {
   itemsOnPage: {
@@ -40,12 +41,13 @@ function ContestedResource ({ resourceValue }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const decodedValue = contestedResources.decodeValue(decodeURIComponent(resourceValue))
 
   useEffect(() => {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
       { label: 'Contested Resources', path: '/contestedResources' },
-      { label: resourceValue }
+      { label: contestedResources.getResourceValue(decodedValue) || resourceValue }
     ])
   }, [setBreadcrumbs, resourceValue, contestedResource])
 
