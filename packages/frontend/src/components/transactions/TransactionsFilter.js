@@ -124,15 +124,9 @@ const filtersConfig = {
     title: 'Date range',
     type: 'daterange',
     defaultValue: null,
-    // type: 'input',
-    // defaultValue: '',
     formatValue: (value) => {
       return `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
     }
-    // formatValue: (value) => value || null
-    // mobileTagRenderer: (value) => (
-    //   <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
-    // )
   }
 }
 
