@@ -51,11 +51,14 @@ export const DateRangeFilter = ({
 
   return (
     <div className={'DateRangeFilter'}>
-      <div className={'TimeframeMenu__ValuesContainer'}>
-        <div className={'TimeframeMenu__Values'}>
+      <div className={'DateRangeFilter__ValuesContainer'}>
+        <div className={'DateRangeFilter__ValuesTitle'}>
+          Select a day, period or Timeframe:
+        </div>
+        <div className={'DateRangeFilter__Values'}>
           {config.timespan.values.map((iTimespan, i) => (
             <Button
-              className={`TimeframeMenu__ValueButton ${iTimespan.label === timespan?.label ? 'TimeframeMenu__ValueButton--Active' : ''}`}
+              className={`DateRangeFilter__ValueButton ${iTimespan.label === timespan?.label ? 'DateRangeFilter__ValueButton--Active' : ''}`}
               onClick={() => timeframeButtonHandler(iTimespan)}
               key={i}
               size={'xs'}
@@ -64,7 +67,7 @@ export const DateRangeFilter = ({
             </Button>
           ))}
           <Button
-            className={'TimeframeMenu__ValueButton'}
+            className={'DateRangeFilter__ValueButton DateRangeFilter__ValueButton--Submit'}
             onClick={onSubmit}
             size={'xs'}
             variant={'customGreen'}
@@ -72,6 +75,10 @@ export const DateRangeFilter = ({
             ok
           </Button>
         </div>
+      </div>
+
+      <div className={'DateRangeFilter__CalendarTitle'}>
+        Or select a specific date
       </div>
 
       <DateRangePicker
