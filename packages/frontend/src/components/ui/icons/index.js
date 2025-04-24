@@ -1,4 +1,7 @@
 import { Icon, useId } from '@chakra-ui/react'
+import FirstPlaceIcon from './FirstPlaceIcon'
+import SecondPlaceIcon from './SecondPlaceIcon'
+import ThirdPlaceIcon from './ThirdPlaceIcon'
 
 const CalendarIcon = (props) => (
   <Icon viewBox='0 0 12 14' {...props}>
@@ -324,5 +327,8 @@ export {
   BlockIcon,
   InfoIcon,
   SearchIcon,
-  HourglassIcon
+  HourglassIcon,
+  FirstPlaceIcon,
+  SecondPlaceIcon,
+  ThirdPlaceIcon
 }
