@@ -1,6 +1,4 @@
-// import { SubmitButton } from '../ui/forms'
 import { DateRangePicker } from '../calendar'
-// import FilterActions from './FilterActions'
 import { useEffect, useState } from 'react'
 import { Button } from '@chakra-ui/react'
 import { defaultChartConfig } from '../charts/config'
@@ -10,7 +8,6 @@ import './RangeFilter.scss'
 export const DateRangeFilter = ({
   value = { start: null, end: null },
   onChange,
-  // showSubmitButton = false,
   onSubmit,
   config = defaultChartConfig
 }) => {
@@ -20,7 +17,6 @@ export const DateRangeFilter = ({
 
   const timeframeButtonHandler = (value) => {
     setTimespan(value)
-
     setSelectedRange({
       start: value?.range?.start ? new Date(value.range.start) : null,
       end: value?.range?.end ? new Date(value.range.end) : null
