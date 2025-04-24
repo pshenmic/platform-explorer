@@ -4,6 +4,11 @@
 .DateRangeFilter {
   min-width: 650px;
 
+  .MobileFilterMenu & {
+    min-width: unset !important;
+    width: 100%;
+  }
+
   @media screen and (max-width: $breakpoint-lg) {
     min-width: 500px;
   }
