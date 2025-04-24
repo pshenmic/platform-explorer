@@ -118,6 +118,18 @@ const filtersConfig = {
     mobileTagRenderer: (value) => (
       <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
     )
+  },
+  timestamp: {
+    label: 'Date',
+    title: 'Date range',
+    type: 'daterange'
+    // type: 'input',
+    // entityType: 'identities',
+    // defaultValue: '',
+    // formatValue: (value) => value || null
+    // mobileTagRenderer: (value) => (
+    //   <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+    // )
   }
 }
 

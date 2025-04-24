@@ -8,6 +8,7 @@ import { BottomSheet } from '../ui/sheets'
 import { ChevronIcon } from '../ui/icons'
 import { MultiLevelMenu } from '../ui/menus'
 import { MobileFilterMenu } from './MobileFilterMenu'
+import { DateRangeFilter } from './DateRangeFilter'
 import './Filters.scss'
 
 export const Filters = ({
@@ -181,6 +182,18 @@ export const Filters = ({
               showSubmitButton={true}
               onSubmit={submitHandler}
               entityType={config?.entityType}
+            />
+          </FilterGroup>
+        )
+        break
+      case 'daterange':
+        content = (
+          <FilterGroup title={config?.title}>
+            <DateRangeFilter
+              value={filters[key]}
+              onChange={(value) => handleFilterChange(key, value)}
+              // showSubmitButton={true}
+              onSubmit={submitHandler}
             />
           </FilterGroup>
         )
