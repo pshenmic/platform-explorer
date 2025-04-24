@@ -19,7 +19,7 @@ function IdentitiesListItem ({ identity }) {
             {activeAlias
               ? <Alias
                   className={'IdentitiesListItem__Alias'}
-                  alias={activeAlias.alias}
+                  alias={activeAlias?.alias}
                   avatarSource={identifier}
                 />
               : <Identifier
