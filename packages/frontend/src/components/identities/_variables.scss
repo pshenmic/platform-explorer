@@ -3,10 +3,7 @@
 @mixin Columns () {
   display: grid;
   gap: 1rem;
-
-  grid-template-columns:
-    auto // identifier
-    10rem; // timestamp
+  grid-template-columns: auto 10rem;
 }
 
 @mixin Column () {
