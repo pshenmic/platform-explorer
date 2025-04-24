@@ -202,7 +202,6 @@ export const Filters = ({
             <DateRangeFilter
               value={filters[key]}
               onChange={(value) => handleFilterChange(key, value)}
-              // showSubmitButton={true}
               onSubmit={submitHandler}
             />
           </FilterGroup>
