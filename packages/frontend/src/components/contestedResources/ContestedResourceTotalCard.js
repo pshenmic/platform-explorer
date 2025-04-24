@@ -33,6 +33,8 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
     green: colors.green.default
   }
 
+  console.log('render')
+
   return (
     <InfoBlock
       gradient={true}

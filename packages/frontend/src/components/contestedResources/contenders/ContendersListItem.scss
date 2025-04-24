@@ -15,6 +15,12 @@
     @include contenders.Column();
     font-size: 0.688rem;
 
+    &--Identity, &--Document {
+      .Identifier {
+        max-width: 12rem;
+      }
+    }
+
     &--Hash {
       .Identifier__SymbolsContainer {
         display: -webkit-box;
