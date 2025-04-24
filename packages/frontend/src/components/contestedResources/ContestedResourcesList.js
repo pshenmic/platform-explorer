@@ -12,8 +12,6 @@ function ContestedResourcesList ({ contestedResources = [], headerStyles, pagina
     light: 'ContestedResourcesList__ColumnTitles--Light'
   }
 
-  console.log('contestedResources', contestedResources)
-
   return (
     <div className={'ContestedResourcesList'}>
       <Grid className={`ContestedResourcesList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
