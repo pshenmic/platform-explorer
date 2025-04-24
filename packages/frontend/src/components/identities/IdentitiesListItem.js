@@ -39,7 +39,7 @@ function IdentitiesListItem ({ identity }) {
         <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Timestamp'}>
           {isSystem && <div>SYSTEM</div>}
 
-          {(typeof timestamp === 'string') &&
+          {typeof timestamp === 'string' &&
             <div className={'IdentitiesListItem__Timestamp'}>
               <DateBlock
                 format={'dateOnly'}
