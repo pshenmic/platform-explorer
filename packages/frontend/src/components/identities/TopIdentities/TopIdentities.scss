@@ -7,10 +7,6 @@
   padding: 20px 32px;
   border-top-left-radius: 20px;
 
-  //.InfoBlock__Title {
-  //  left: -32px;
-  //}
-
   &__ColumnTitles {
     @include mixins.defListTitles;
     @include ti.Columns();
