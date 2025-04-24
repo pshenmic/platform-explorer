@@ -122,10 +122,13 @@ const filtersConfig = {
   timestamp: {
     label: 'Date',
     title: 'Date range',
-    type: 'daterange'
+    type: 'daterange',
+    defaultValue: { start: null, end: null },
     // type: 'input',
-    // entityType: 'identities',
     // defaultValue: '',
+    formatValue: (value) => {
+      return `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
+    }
     // formatValue: (value) => value || null
     // mobileTagRenderer: (value) => (
     //   <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
