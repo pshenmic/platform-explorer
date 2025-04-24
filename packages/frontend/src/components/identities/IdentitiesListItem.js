@@ -5,7 +5,7 @@ import './IdentitiesListItem.scss'
 
 function IdentitiesListItem ({ identity }) {
   const { aliases, identifier, timestamp, isSystem } = identity
-  const activeAlias = aliases?.find(alias => alias.status === 'ok')
+  const activeAlias = aliases?.find(alias => alias?.status === 'ok')
 
   return (
     <Link
