@@ -8,9 +8,7 @@ import { LockIcon } from '../ui/icons'
 import { Flex } from '@chakra-ui/react'
 import './ContestedResourceDigestCard.scss'
 
-function ContestedResourceDigestCard ({ contestedResource, winner, className }) {
-  const isEnded = new Date() > new Date(contestedResource?.data?.endTimestamp)
-
+function ContestedResourceDigestCard ({ contestedResource, winner, isEnded, className }) {
   return (
     <div className={`ContestedResourcesDigestCard ${className || ''} ${contestedResource?.loading ? 'ContestedResourcesDigestCard--Loading' : ''}`}>
       <div className={'ContestedResourcesDigestCard__Cards'}>

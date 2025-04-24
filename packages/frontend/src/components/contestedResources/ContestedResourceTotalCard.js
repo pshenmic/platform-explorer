@@ -14,6 +14,8 @@ import './ContestedResourceTotalCard.scss'
 function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   const { data, loading, error } = contestedResource
 
+  const isEnded = data?.status === 'finished' || data?.finished === true
+
   const winner = useMemo(() => {
     return data?.towardsIdentity
       ? data?.towardsIdentity
@@ -23,7 +25,7 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   }, [data?.towardsIdentity, data?.contenders, data?.totalCountVotes])
 
   const colorScheme = useMemo(() => {
-    return data?.status === 'finished'
+    return isEnded
       ? winner
         ? 'green'
         : 'red'
@@ -142,6 +144,7 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
           <ContestedResourcesDigestCard
             contestedResource={contestedResource}
             winner={winner}
+            isEnded={isEnded}
           />
         </div>
       </div>
