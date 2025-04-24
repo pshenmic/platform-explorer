@@ -108,7 +108,7 @@ function Navbar () {
 
       <Flex
         className={'Navbar'}
-        maxW={'container.maxPageW'}
+        maxW={'container.maxNavigationW'}
       >
         <div className={'Navbar__Left'}>
           <Link
