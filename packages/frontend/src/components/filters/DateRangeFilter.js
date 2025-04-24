@@ -3,7 +3,7 @@ import { DateRangePicker } from '../calendar'
 // import FilterActions from './FilterActions'
 import { useEffect, useState } from 'react'
 import { Button } from '@chakra-ui/react'
-import { defaultChartConfig, defaultIntervalsCount } from '../charts/config'
+import { defaultChartConfig } from '../charts/config'
 import './DateRangeFilter.scss'
 import './RangeFilter.scss'
 
@@ -14,59 +14,40 @@ export const DateRangeFilter = ({
   onSubmit,
   config = defaultChartConfig
 }) => {
-  const [timespan, setTimespan] = useState(config.timespan.values[config.timespan.defaultIndex])
+  const [timespan, setTimespan] = useState(null)
   const [selectedRange, setSelectedRange] = useState(null)
   const [calendarValue, setCalendarValue] = useState(null)
 
-  const changeHandler = (value) => {
+  const timeframeButtonHandler = (value) => {
     setTimespan(value)
-    if (typeof changeCallback === 'function') changeCallback(value)
+
+    setSelectedRange({
+      start: value?.range?.start ? new Date(value.range.start) : null,
+      end: value?.range?.end ? new Date(value.range.end) : null
+    })
   }
 
   const calendarHandler = (value) => {
     setCalendarValue(value)
+    setTimespan(null)
     const [start, end] = value
     setSelectedRange({ start, end })
   }
 
-  const clearCalendarRange = () => {
-    setSelectedRange(null)
-    setCalendarValue([null, null])
-  }
-
-  const submitHandler = () => {
-    if (!selectedRange?.start || !selectedRange?.end) {
-      if (typeof changeCallback === 'function') changeCallback(timespan)
-      return
-    }
-
-    function labelFormatDate (date) {
-      const day = String(date.getDate()).padStart(2, '0')
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const year = date.getFullYear()
-
-      return `${day}.${month}.${year}`
-    }
-
-    const label = `${labelFormatDate(selectedRange.start)} - ${labelFormatDate(selectedRange.end)}`
-
-    changeHandler({
-      label,
-      range: {
-        start: selectedRange.start.toISOString(),
-        end: selectedRange.end.toISOString()
-      },
-      intervalsCount: defaultIntervalsCount
-    })
-
-    onSubmit()
-  }
+  useEffect(() => {
+    onChange(selectedRange)
+  }, [selectedRange])
 
   useEffect(() => {
+    const formatedValue = [
+      value?.start || null,
+      value?.end || null
+    ]
 
-    onChange(selectedRange)
-    console.log('selectedRange', selectedRange)
-  }, [selectedRange])
+    if (JSON.stringify(formatedValue) !== JSON.stringify(calendarValue)) {
+      setCalendarValue(formatedValue)
+    }
+  }, [value])
 
   return (
     <div className={'DateRangeFilter'}>
@@ -75,10 +56,7 @@ export const DateRangeFilter = ({
           {config.timespan.values.map((iTimespan, i) => (
             <Button
               className={`TimeframeMenu__ValueButton ${iTimespan.label === timespan?.label ? 'TimeframeMenu__ValueButton--Active' : ''}`}
-              onClick={() => {
-                changeHandler(iTimespan)
-                clearCalendarRange()
-              }}
+              onClick={() => timeframeButtonHandler(iTimespan)}
               key={i}
               size={'xs'}
             >
@@ -87,7 +65,7 @@ export const DateRangeFilter = ({
           ))}
           <Button
             className={'TimeframeMenu__ValueButton'}
-            onClick={submitHandler}
+            onClick={onSubmit}
             size={'xs'}
             variant={'customGreen'}
           >
@@ -104,12 +82,6 @@ export const DateRangeFilter = ({
         changeHandler={calendarHandler}
         value={calendarValue}
       />
-
-      {/*{showSubmitButton && (*/}
-      {/*  <FilterActions className={'RangeFilter__Actions'}>*/}
-      {/*    <SubmitButton onSubmit={onSubmit}/>*/}
-      {/*  </FilterActions>*/}
-      {/*)}*/}
     </div>
   )
 }

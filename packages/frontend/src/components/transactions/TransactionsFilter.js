@@ -123,7 +123,7 @@ const filtersConfig = {
     label: 'Date',
     title: 'Date range',
     type: 'daterange',
-    defaultValue: { start: null, end: null },
+    defaultValue: null,
     // type: 'input',
     // defaultValue: '',
     formatValue: (value) => {
