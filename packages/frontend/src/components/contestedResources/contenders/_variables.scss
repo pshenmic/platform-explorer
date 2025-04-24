@@ -5,7 +5,7 @@
   gap: 1rem;
 
   grid-template-columns:
-    4rem // Date
+    5rem // Date
     minmax(5.875rem, 46rem) // Hash
     16.5rem // Identity
     16.5rem // Document
@@ -13,7 +13,7 @@
 
   @container (max-width: 66rem) {
     grid-template-columns:
-      4rem // Date
+      5rem // Date
       minmax(5.875rem, 46rem) // Hash
       14.5rem // Identity
       14.5rem // Document
@@ -22,7 +22,7 @@
 
   @container (max-width: 62rem) {
     grid-template-columns:
-      4rem // Date
+      5rem // Date
       minmax(5.875rem, 46rem) // Hash
       12.5rem // Identity
       12.5rem // Document
@@ -31,7 +31,7 @@
 
   @container (max-width: 50rem) {
     grid-template-columns:
-      4rem // Date
+      5rem // Date
       8rem // Votes
       12.5rem // Identity
       minmax(5.875rem, 46rem) // Hash
