@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react'
 import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { SignatureIcon } from '../ui/icons'
@@ -13,27 +14,27 @@ import './ContestedResourceTotalCard.scss'
 function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   const { data, loading, error } = contestedResource
 
-  console.log('data', data)
+  const winner = useMemo(() => {
+    return data?.towardsIdentity
+      ? data?.towardsIdentity
+      : data?.contenders?.length === 1 && data?.totalCountVotes === 0
+        ? data?.contenders[0]?.identifier
+        : null
+  }, [data?.towardsIdentity, data?.contenders, data?.totalCountVotes])
 
-  const winner = data?.towardsIdentity
-    ? data?.towardsIdentity
-    : data?.contenders?.length === 1 && data?.totalCountVotes === 0
-      ? data?.contenders[0]?.identifier
-      : null
+  const colorScheme = useMemo(() => {
+    return data?.status === 'finished'
+      ? winner
+        ? 'green'
+        : 'red'
+      : 'blue'
+  }, [data?.status, winner])
 
-  const colorScheme = data?.status === 'finished'
-    ? winner
-      ? 'green'
-      : 'red'
-    : 'blue'
-
-  const signIconColor = {
+  const signIconColor = useMemo(() => ({
     blue: colors.brand.normal,
     red: colors.red.default,
     green: colors.green.default
-  }
-
-  console.log('render')
+  }), [])
 
   return (
     <InfoBlock
@@ -157,4 +158,4 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   )
 }
 
-export default ContestedResourceTotalCard
+export default memo(ContestedResourceTotalCard)
