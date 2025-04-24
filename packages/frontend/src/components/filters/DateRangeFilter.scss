@@ -1,0 +1,10 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.DateRangeFilter {
+  min-width: 650px;
+
+  @media screen and (max-width: $breakpoint-lg) {
+    min-width: 500px;
+  }
+}
