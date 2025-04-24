@@ -6,8 +6,6 @@ import { LoadingList } from '../../loading'
 import './ContendersList.scss'
 
 function ContendersList ({ contenders = [], className, loading, itemsCount = 10 }) {
-  console.log('contenders', contenders)
-
   return (
     <div className={`ContendersList ${className || ''}`}>
       <div className={'ContendersList__ScrollZone'}>
