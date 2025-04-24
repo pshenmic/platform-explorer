@@ -20,9 +20,9 @@ function Footer () {
   useEffect(() => setCurrentYear(new Date().getFullYear()), [])
 
   return (
-    <Box
-      marginTop={'auto'}
-    >
+    <Box marginTop={'auto'}>
+      <div className={'FooterStub'}></div>
+
       <Flex
         className={'Footer'}
         maxW={'container.maxPageW'}
@@ -55,15 +55,15 @@ function Footer () {
               <a
                 key={i}
                 className={'Footer__Network'}
-                  href={item.href ? item.href : '#'}
-                  target={'_blank'}
-                  rel={'noopener noreferrer'}
-                  aria-label={item.ariaLabel}
-                >
-                  <Image src={item.img} width={20} height={20} alt={item.alt || ''} />
-                </a>
+                href={item.href ? item.href : '#'}
+                target={'_blank'}
+                rel={'noopener noreferrer'}
+                aria-label={item.ariaLabel}
+              >
+                <Image src={item.img} width={20} height={20} alt={item.alt || ''}/>
+              </a>
             ))}
-            </div>)
+          </div>)
           : null
         }
 
