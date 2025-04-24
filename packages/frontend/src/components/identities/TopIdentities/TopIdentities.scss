@@ -23,11 +23,6 @@
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;
-
-    &:last-child {
-      text-align: right;
-      justify-content: flex-end;
-    }
   }
 
   @media screen and (max-width: $breakpoint-lg) {

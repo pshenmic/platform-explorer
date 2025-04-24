@@ -3,10 +3,7 @@
 @mixin Columns () {
   display: grid;
   gap: 1rem;
-
-  grid-template-columns:
-    auto // identifier
-    10rem; // balance
+  grid-template-columns: auto auto;
 }
 
 @mixin Column () {
@@ -14,6 +11,7 @@
   align-items: center;
 
   &:last-child {
+    text-align: right;
     justify-content: flex-end;
   }
 }

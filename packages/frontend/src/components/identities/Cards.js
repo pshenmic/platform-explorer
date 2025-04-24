@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { InfoCard } from '../cards'
 import { currencyRound } from '../../util'
 import { ErrorMessageBlock } from '../Errors'
-import ImageGenerator from '../imageGenerator'
 import { RateTooltip } from '../ui/Tooltips'
 import { Identifier, Alias } from '../data'
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../ui/icons'
@@ -17,17 +16,13 @@ function IdentityCard ({ identity, rate, place, loading = false }) {
       {!loading
         ? <Link href={`/identity/${identity.identifier}`}>
             <InfoCard className={'IdentityCard'} clickable={true}>
-              <Flex alignItems={'center'} justifyContent={'space-between'}>
+              <Flex alignItems={'center'} gap={'1rem'} justifyContent={'space-between'}>
                 <div className={'IdentityCard__AliasContainer'}>
-                  <div className={'IdentityCard__Img'}>
-                    <ImageGenerator username={identity.identifier} lightness={50} saturation={50} width={42} height={42} />
-                  </div>
-
                   {(() => {
                     const activeAlias = identity?.aliases?.find(alias => alias.status === 'ok')
                     return activeAlias
-                      ? <Alias alias={activeAlias.alias}/>
-                      : <Identifier styles={['highlight-both']}>
+                      ? <Alias avatarSource={identity.identifier} alias={activeAlias.alias}/>
+                      : <Identifier avatar={true} styles={['highlight-both']}>
                           {identity.identifier}
                         </Identifier>
                   })()}

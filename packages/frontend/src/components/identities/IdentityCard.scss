@@ -2,13 +2,15 @@
 @import '../../styles/variables.scss';
 
 .IdentityCard {
+  padding: 0.75rem;
+
   &--Loading {
     height: 58px;
   }
 
   &__Img {
-    width: 42px;
-    height: 42px;
+    width: 1.5rem;
+    height: 1.5rem;
     margin: -10px 10px -10px 0;
     flex-shrink: 0;
   }
