@@ -76,7 +76,7 @@ function Footer () {
             <PlatformExplorerLogoStroke
               w={'2rem'}
               h={'2rem'}
-              color={'#93AAB2'}
+              color={'gray.250'}
             />
           </Link>
         </div>
