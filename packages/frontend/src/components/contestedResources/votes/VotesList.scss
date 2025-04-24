@@ -11,9 +11,6 @@
     overflow-x: auto;
   }
 
-  &__ScrollZone {
-  }
-
   &__ColumnTitles {
     @include mixins.defListTitles;
     @include votes.Columns();
