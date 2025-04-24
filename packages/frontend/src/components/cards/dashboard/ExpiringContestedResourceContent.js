@@ -42,7 +42,7 @@ export function ExpiringContestedResourceContent ({ contestedResource }) {
             />
           }
         </>
-        : <>All completed</>
+        : <div className={'ExpiringContestedResourceContent__AllCompleted'}>All completed</div>
       }
     </div>
   )
