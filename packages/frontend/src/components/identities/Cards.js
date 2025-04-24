@@ -12,7 +12,7 @@ import { Identifier, Alias } from '../data'
 
 function IdentityCard ({ identity, rate, loading = false }) {
   return (
-    <Container p={0} mx={0} my={3} maxW={'none'}>
+    <Container p={0} mx={0} maxW={'none'}>
       {!loading
         ? <Link href={`/identity/${identity.identifier}`}>
             <InfoCard className={'IdentityCard'} clickable={true}>
@@ -48,13 +48,16 @@ function IdentityCard ({ identity, rate, loading = false }) {
 
 function IdentitiesCards ({ items, rate }) {
   return (
-    !items.error
-      ? !items.loading
-          ? items?.data?.resultSet?.length
-            ? items.data.resultSet.map((identity, i) => <IdentityCard identity={identity} rate={rate} key={i}/>)
-            : <ErrorMessageBlock h={250} text={'Identities not found'}/>
-          : Array.from({ length: 3 }, (x, i) => <IdentityCard loading={true} key={i}/>)
-      : <ErrorMessageBlock h={250}/>
+    <Flex flexDirection={'column'} gap={'0.5rem'}>
+      {!items.error
+        ? !items.loading
+            ? items?.data?.resultSet?.length
+              ? items.data.resultSet.map((identity, i) => <IdentityCard identity={identity} rate={rate} key={i}/>)
+              : <ErrorMessageBlock h={250} text={'Identities not found'}/>
+            : Array.from({ length: 3 }, (x, i) => <IdentityCard loading={true} key={i}/>)
+        : <ErrorMessageBlock h={250}/>
+      }
+    </Flex>
   )
 }
 

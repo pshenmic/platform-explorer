@@ -1,13 +1,14 @@
 'use client'
 
-import { IdentitiesCards } from '../identities'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { IdentitiesCards } from '../index'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { useState, useEffect } from 'react'
-import * as Api from '../../util/Api'
-import { Flex, Box, Heading } from '@chakra-ui/react'
+import { Heading, Grid, GridItem } from '@chakra-ui/react'
+import InfoContainer from '../../ui/containers/InfoContainer'
+import * as Api from '../../../util/Api'
 import './TopIdentities.scss'
 
-export default function TopIdentities ({ className, blockBorders = false }) {
+export default function TopIdentities ({ className }) {
   const [identities, setIdentities] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
@@ -24,15 +25,22 @@ export default function TopIdentities ({ className, blockBorders = false }) {
   useEffect(fetchData, [])
 
   return (
-    <div className={`InfoBlock ${!blockBorders ? 'InfoBlock--NoBorder' : ''} TopIdentities ${className || ''}`}>
+    <InfoContainer
+      styles={['translucentBg']}
+      className={`TopIdentities ${className || ''}`}
+    >
       <Heading className={'InfoBlock__Title'} as={'h1'}>Top Identities</Heading>
 
-      <Flex justifyContent={'space-between'} px={6} mb={4}>
-        <div>Identifier</div>
-        <Box color={'gray.500'}>Balance</Box>
-      </Flex>
+      <Grid className={'TopIdentities__ColumnTitles '}>
+        <GridItem className={'TopIdentities__ColumnTitle'}>
+          Identifier
+        </GridItem>
+        <GridItem className={'TopIdentities__ColumnTitle'}>
+          Balance
+        </GridItem>
+      </Grid>
 
       <IdentitiesCards items={identities} rate={rate.data}/>
-    </div>
+    </InfoContainer>
   )
 }

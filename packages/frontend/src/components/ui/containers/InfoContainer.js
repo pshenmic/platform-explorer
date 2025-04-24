@@ -1,12 +1,18 @@
 import './InfoContainer.scss'
 
 function InfoContainer ({ children, styles = [], className }) {
-  let extraClass = ''
+  const styleClasses = {
+    tabs: 'InfoContainer--Tabs',
+    translucentBg: 'InfoContainer--TranslucentBg'
+  }
 
-  if (styles.includes('tabs')) extraClass += ' InfoContainer--Tabs'
+  const extraClasses = styles
+    .map(style => styleClasses[style])
+    .filter(Boolean)
+    .join(' ')
 
   return (
-    <div className={`InfoContainer ${extraClass} ${className || ''}`}>
+    <div className={`InfoContainer ${extraClasses} ${className || ''}`}>
       {children}
     </div>
   )

@@ -1,0 +1,19 @@
+@import '../../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns:
+    auto // identifier
+    10rem; // balance
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+}
