@@ -11,6 +11,8 @@ import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../ui/icons'
 import './IdentityCard.scss'
 
 function IdentityCard ({ identity, rate, place, loading = false }) {
+  const activeAlias = identity?.aliases?.find(alias => alias.status === 'ok')
+
   return (
     <Container p={0} mx={0} maxW={'none'}>
       {!loading
@@ -18,14 +20,12 @@ function IdentityCard ({ identity, rate, place, loading = false }) {
             <InfoCard className={'IdentityCard'} clickable={true}>
               <Flex alignItems={'center'} gap={'1rem'} justifyContent={'space-between'}>
                 <div className={'IdentityCard__AliasContainer'}>
-                  {(() => {
-                    const activeAlias = identity?.aliases?.find(alias => alias.status === 'ok')
-                    return activeAlias
-                      ? <Alias avatarSource={identity.identifier} alias={activeAlias.alias}/>
-                      : <Identifier avatar={true} styles={['highlight-both']}>
-                          {identity.identifier}
-                        </Identifier>
-                  })()}
+                  {activeAlias
+                    ? <Alias avatarSource={identity.identifier} alias={activeAlias.alias}/>
+                    : <Identifier avatar={true} styles={['highlight-both']}>
+                        {identity.identifier}
+                      </Identifier>
+                  }
                 </div>
 
                 <div className={'IdentityCard__Balance'}>
