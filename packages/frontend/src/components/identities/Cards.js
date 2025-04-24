@@ -54,7 +54,7 @@ function IdentitiesCards ({ items, rate }) {
             ? items?.data?.resultSet?.length
               ? items.data.resultSet.map((identity, i) => <IdentityCard identity={identity} place={i + 1} rate={rate} key={i}/>)
               : <ErrorMessageBlock h={250} text={'Identities not found'}/>
-            : Array.from({ length: 3 }, (x, i) => <IdentityCard loading={true} place={i + 1} key={i}/>)
+            : Array.from({ length: 3 }, (_, i) => <IdentityCard loading={true} place={i + 1} key={i}/>)
         : <ErrorMessageBlock h={250}/>
       }
     </Flex>
