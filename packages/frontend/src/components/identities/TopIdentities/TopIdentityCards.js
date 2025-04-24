@@ -52,9 +52,21 @@ function TopIdentitiesCards ({ items, rate }) {
       {!items.error
         ? !items.loading
             ? items?.data?.resultSet?.length
-              ? items.data.resultSet.map((identity, i) => <TopIdentityCard identity={identity} place={i + 1} rate={rate} key={i}/>)
+              ? items.data.resultSet.map((identity, i) =>
+                  <TopIdentityCard
+                    identity={identity}
+                    place={i + 1}
+                    rate={rate}
+                    key={i}
+                  />
+              )
               : <ErrorMessageBlock h={250} text={'Identities not found'}/>
-            : Array.from({ length: 3 }, (_, i) => <TopIdentityCard loading={true} place={i + 1} key={i}/>)
+            : Array.from({ length: 3 }, (_, i) =>
+              <TopIdentityCard
+                loading={true}
+                place={i + 1}
+                key={i}/>
+            )
         : <ErrorMessageBlock h={250}/>
       }
     </Flex>
