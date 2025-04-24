@@ -152,7 +152,11 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
             <>({contestedResource?.data?.contenders?.length})</>
           }
         </div>
-        <ContendersList contenders={contestedResource?.data?.contenders}/>
+        <ContendersList
+          contenders={contestedResource?.data?.contenders}
+          loading={loading}
+          itemsCount={2}
+        />
       </div>
     </InfoBlock>
   )
