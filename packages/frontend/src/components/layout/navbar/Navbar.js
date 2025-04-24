@@ -61,7 +61,12 @@ function Navbar () {
 
   const hideSearch = () => setSearchState(defaultSearchState)
 
-  useOutsideClick({ ref: searchContainerRef, handler: hideSearch })
+  useOutsideClick({
+    ref: searchContainerRef,
+    handler: () => {
+      if (searchState?.focused) hideSearch()
+    }
+  })
 
   useEffect(() => {
     closeMobileMenu()
