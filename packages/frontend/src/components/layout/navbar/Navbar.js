@@ -10,22 +10,18 @@ import { useEffect, useState, useRef, useMemo } from 'react'
 import { SearchResultsList } from '../../search'
 import NavItem from './NavItem'
 import NavbarMobileMenu from './NavbarMobileMenu'
-import { PlatformExplorerLogoColor } from '../../ui/icons'
-import Link from 'next/link'
 import './Navbar.scss'
 
 const menuItems = [
   { title: 'Home', href: '/' },
-  { title: 'Blocks', href: '/blocks' },
-  { title: 'Transactions', href: '/transactions' },
   {
-    title: 'Data Contracts',
-    href: '/dataContracts',
+    title: 'Blockchain',
     submenuItems: [
-      { title: 'Data contracts list', href: '/dataContracts' },
-      { title: 'Contested Resources list', href: '/contestedResources', disabled: true }
+      { title: 'Blocks', href: '/blocks' },
+      { title: 'Transactions', href: '/transactions', disabled: true }
     ]
   },
+  { title: 'Data Contracts', href: '/dataContracts' },
   { title: 'Identities', href: '/identities' },
   { title: 'Validators', href: '/validators' },
   { title: 'API', href: '/api' }
@@ -116,19 +112,6 @@ function Navbar () {
         maxW={'container.maxNavigationW'}
       >
         <div className={'Navbar__Left'}>
-          <Link
-            className={'Navbar__Logo'}
-            href={'/'}
-            style={{
-              visibility: searchState.focused ? 'hidden' : 'visible'
-            }}
-          >
-            <PlatformExplorerLogoColor
-              w={'2rem'}
-              h={'2rem'}
-            />
-          </Link>
-
           <IconButton
             className={'Navbar__Burger'}
             size={'md'}
