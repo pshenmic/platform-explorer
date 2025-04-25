@@ -482,7 +482,8 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
       alias: alias.alias,
       status: 'ok',
       contested: false,
-      timestamp: alias.timestamp
+      timestamp: alias.timestamp,
+      txHash: alias.tx
     })
   }
 
@@ -502,7 +503,8 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     alias: alias.alias ?? alias,
     status,
     contested: true,
-    timestamp: alias.timestamp
+    timestamp: alias.timestamp,
+    txHash: alias.tx
   })
 }
 
@@ -511,7 +513,7 @@ const getAliasInfo = async (aliasText, dapi) => {
 
   const normalizedLabel = convertToHomographSafeChars(label ?? '')
 
-  if (/^[a-zA-Z01]{3,19}$/.test(normalizedLabel)) {
+  if (/^[a-zA-Z01-]{3,19}$/.test(normalizedLabel)) {
     const domainBuffer = buildIndexBuffer(domain)
 
     const labelBuffer = buildIndexBuffer(normalizedLabel)

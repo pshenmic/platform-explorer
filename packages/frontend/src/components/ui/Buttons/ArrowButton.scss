@@ -1,0 +1,31 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.ArrowButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
+
+  svg {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  &:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, .25);
+  }
+
+  &:active {
+    background-color: var(--chakra-colors-gray-700) !important;
+  }
+
+  &--Active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, .25)
+  }
+}

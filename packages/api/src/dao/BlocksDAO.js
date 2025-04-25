@@ -43,7 +43,8 @@ module.exports = class BlockDAO {
           array_agg(
             json_build_object(
               'alias', alias,
-              'timestamp', timestamp::timestamptz
+              'timestamp', timestamp::timestamptz,
+              'tx', state_transition_hash
             )
           ) as aliases
         `)

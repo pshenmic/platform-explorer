@@ -45,7 +45,8 @@ export const theme = extendTheme({
   sizes: {
     container: {
       xl: '1310px',
-      maxPageW: '1440px'
+      maxPageW: '1440px',
+      maxNavigationW: '2000px'
     }
   },
   blockOffset: [3, 4, 5, 5, 10],

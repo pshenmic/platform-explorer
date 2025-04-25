@@ -188,7 +188,8 @@ describe('Other routes', () => {
                 alias: 'dpns.dash',
                 contested: false,
                 status: 'ok',
-                timestamp: '1970-01-01T00:00:00+00:00'
+                timestamp: '1970-01-01T00:00:00+00:00',
+                txHash: identityTransaction.hash
               }]
             }
           },
@@ -209,7 +210,8 @@ describe('Other routes', () => {
                 alias: 'dpns.dash',
                 status: 'ok',
                 contested: false,
-                timestamp: '1970-01-01T00:00:00+00:00'
+                timestamp: '1970-01-01T00:00:00+00:00',
+                txHash: identityTransaction.hash
               }]
             }
           },
@@ -230,7 +232,8 @@ describe('Other routes', () => {
                 alias: 'dpns.dash',
                 status: 'ok',
                 contested: false,
-                timestamp: '1970-01-01T00:00:00+00:00'
+                timestamp: '1970-01-01T00:00:00+00:00',
+                txHash: identityTransaction.hash
               }]
             }
           }
@@ -262,7 +265,8 @@ describe('Other routes', () => {
             alias: identityAlias.alias,
             contested: false,
             status: 'ok',
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00+00:00',
+            txHash: identityTransaction.hash
           }]
         }
       }
@@ -308,7 +312,8 @@ describe('Other routes', () => {
               alias: 'dpns.dash',
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityTransaction.hash
             }
           ]
         },
@@ -328,7 +333,8 @@ describe('Other routes', () => {
               alias: 'dpns.dash',
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityTransaction.hash
             }
           ]
         }
@@ -386,7 +392,8 @@ describe('Other routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityTransaction.hash
             }
           ]
         },
@@ -412,7 +419,8 @@ describe('Other routes', () => {
           alias: identityAlias.alias,
           contested: false,
           status: 'ok',
-          timestamp: block.timestamp.toISOString()
+          timestamp: block.timestamp.toISOString(),
+          txHash: identityTransaction.hash
         }
       }]
 
@@ -440,7 +448,8 @@ describe('Other routes', () => {
           alias: 'dpns.dash',
           contested: false,
           status: 'ok',
-          timestamp: '1970-01-01T00:00:00+00:00'
+          timestamp: '1970-01-01T00:00:00+00:00',
+          txHash: identityTransaction.hash
         }],
         totalGasSpent: 480000,
         averageGasSpent: 9412,

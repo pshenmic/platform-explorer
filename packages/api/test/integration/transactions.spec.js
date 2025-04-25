@@ -127,7 +127,8 @@ describe('Transaction routes', () => {
               transaction.block.timestamp.toISOString().slice(-2, -1) === '0'
                 ? `${transaction.block.timestamp.toISOString().slice(0, -2)}Z`
                 : transaction.block.timestamp.toISOString()
-            ).replace('Z', '+00:00')
+            ).replace('Z', '+00:00'),
+            txHash: identityAlias.state_transition_hash
           }]
         }
       }
@@ -162,7 +163,8 @@ describe('Transaction routes', () => {
               transaction.block.timestamp.toISOString().slice(-2, -1) === '0'
                 ? `${transaction.block.timestamp.toISOString().slice(0, -2)}Z`
                 : transaction.block.timestamp.toISOString()
-            ).replace('Z', '+00:00')
+            ).replace('Z', '+00:00'),
+            txHash: identityAlias.state_transition_hash
           }]
         }
       }
@@ -207,7 +209,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -245,7 +248,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -286,7 +290,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -329,7 +334,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -370,7 +376,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -413,7 +420,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -460,7 +468,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -508,7 +517,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -546,7 +556,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))

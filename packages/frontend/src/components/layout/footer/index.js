@@ -4,9 +4,10 @@ import { Box, Flex } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import version from './version'
-import { BigClockIcon, PshenmicLogoIcon } from '../../ui/icons'
+import { BigClockIcon, PlatformExplorerLogoStroke, PshenmicLogoIcon } from '../../ui/icons'
 import LocalTime from './LocalTime'
-import './footer.scss'
+import Link from 'next/link'
+import './Footer.scss'
 
 const socialNetwork = [
   { img: '/images/icons/github.svg', href: 'https://github.com/pshenmic/platform-explorer/', alt: 'github', ariaLabel: 'Go to GitHub' },
@@ -19,12 +20,12 @@ function Footer () {
   useEffect(() => setCurrentYear(new Date().getFullYear()), [])
 
   return (
-    <Box
-      marginTop={'auto'}
-    >
+    <Box marginTop={'auto'}>
+      <div className={'FooterStub'}></div>
+
       <Flex
         className={'Footer'}
-        maxW={'container.maxPageW'}
+        maxW={'container.maxNavigationW'}
         ml={'auto'}
         mr={'auto'}
         h={'auto'}
@@ -54,17 +55,31 @@ function Footer () {
               <a
                 key={i}
                 className={'Footer__Network'}
-                  href={item.href ? item.href : '#'}
-                  target={'_blank'}
-                  rel={'noopener noreferrer'}
-                  aria-label={item.ariaLabel}
-                >
-                  <Image src={item.img} width={20} height={20} alt={item.alt || ''} />
-                </a>
+                href={item.href ? item.href : '#'}
+                target={'_blank'}
+                rel={'noopener noreferrer'}
+                aria-label={item.ariaLabel}
+              >
+                <Image src={item.img} width={20} height={20} alt={item.alt || ''}/>
+              </a>
             ))}
-            </div>)
-          : null}
-        <p className={'Footer__Copyright'}>{currentYear} © Dash Platform Explorer v{version} MIT LICENCE</p>
+          </div>)
+          : null
+        }
+
+        <div className={'Footer__CopyrightBlock'}>
+          <p className={'Footer__Copyright'}>{currentYear} © Dash Platform Explorer<br/>v{version} MIT LICENCE</p>
+          <Link
+            className={'Footer__Logo'}
+            href={'/'}
+          >
+            <PlatformExplorerLogoStroke
+              w={'2rem'}
+              h={'2rem'}
+              color={'gray.250'}
+            />
+          </Link>
+        </div>
       </Flex>
     </Box>
   )
