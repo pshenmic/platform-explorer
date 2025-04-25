@@ -26,14 +26,6 @@
     margin-left: auto;
   }
 
-  &__CalendarTitle {
-    font-family: $font-heading;
-    font-size: 0.75rem;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    font-weight: 700;
-  }
-
   .MobileFilterMenu & {
     min-width: unset !important;
     width: 100%;

@@ -73,10 +73,6 @@ export const DateRangeFilter = ({
         </div>
       </div>
 
-      <div className={'DateRangeFilter__CalendarTitle'}>
-        Or select a specific date
-      </div>
-
       <DateRangePicker
         disableFutureDates={true}
         monthsToShow={7}
