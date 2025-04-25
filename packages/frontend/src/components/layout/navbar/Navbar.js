@@ -22,11 +22,29 @@ const menuItems = [
     ]
   },
   { title: 'Data Contracts', href: '/dataContracts' },
-  { title: 'Contested Resources', href: '/contestedResources' },
+  {
+    title: 'Contested Resources',
+    href: '/contestedResources',
+    breakpoints: { base: true, sm: true, md: true, lg: false, xl: true }
+  },
   { title: 'Identities', href: '/identities' },
   { title: 'Validators', href: '/validators' },
-  { title: 'API', href: '/api' }
+  {
+    title: 'API',
+    href: '/api',
+    breakpoints: { base: true, sm: true, md: true, lg: false, xl: true }
+  },
+  {
+    title: 'more',
+    breakpoints: { base: false, sm: false, md: false, lg: true, xl: false },
+    submenuItems: [
+      { title: 'Contested Resources', href: '/contestedResources' },
+      { title: 'API', href: '/api' }
+    ]
+  }
 ]
+
+const defaultBreakpoints = { base: true, sm: true, md: true, lg: true, xl: true }
 
 const defaultSearchState = {
   results: { data: {}, loading: false, error: false },
@@ -48,6 +66,30 @@ function Navbar () {
   } = useDisclosure()
 
   const [searchState, setSearchState] = useState(defaultSearchState)
+
+  const currentBreakpoint = useBreakpointValue({
+    base: 'base',
+    sm: 'sm',
+    md: 'md',
+    lg: 'lg',
+    xl: 'xl'
+  }) || 'base'
+
+  const visibleMenuItems = useMemo(() => {
+    return menuItems.filter(item => {
+      const breakpoints = item.breakpoints || defaultBreakpoints
+      return breakpoints[currentBreakpoint]
+    })
+  }, [currentBreakpoint])
+
+  const mobileMenuItems = useMemo(() => {
+    const isMobileBreakpoint = ['base', 'sm', 'md'].includes(currentBreakpoint)
+
+    return menuItems.filter(item => {
+      const breakpoints = item.breakpoints || defaultBreakpoints
+      return isMobileBreakpoint ? breakpoints[currentBreakpoint] : breakpoints.base
+    })
+  }, [currentBreakpoint])
 
   const searchResultIsDisplay = searchState.focused &&
     (Object.entries(searchState.results.data || {})?.length || searchState.results.loading || searchState.results.error)
@@ -139,7 +181,7 @@ function Navbar () {
               transitionDelay: searchState.focused ? '0s' : `${searchTransitionTime / 2}s`
             }}
           >
-            {menuItems.map((menuItem) => (
+            {visibleMenuItems.map((menuItem) => (
               <NavItem key={menuItem.title} item={menuItem}/>
             ))}
           </HStack>
@@ -208,7 +250,7 @@ function Navbar () {
       </Flex>
 
       <NavbarMobileMenu
-        items={menuItems}
+        items={mobileMenuItems}
         isOpen={isMobileMenuOpen && !searchState.focused}
         onClose={closeMobileMenu}
         burgerRef={burgerRef}
