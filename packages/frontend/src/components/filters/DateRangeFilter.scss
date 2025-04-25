@@ -69,17 +69,13 @@
     .MobileFilterMenu & {
       &__ValuesContainer {
         flex-wrap: wrap;
+        justify-content: center;
       }
 
       &__Values {
         width: 100%;
         flex-wrap: wrap;
-      }
-
-      &__ValueButton {
-        &--Submit {
-          margin-left: auto;
-        }
+        justify-content: center;
       }
     }
   }
