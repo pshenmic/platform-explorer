@@ -29,9 +29,9 @@
       position: fixed;
       top: 0;
       left: 0;
-      transform: translate(calc(-50% + 120px), -50%);
-      width: 1000px;
-      height: 1000px;
+      transform: translate(-50%, -50%);
+      width: 1500px;
+      height: 1500px;
       border-radius: 1500px;
       background: radial-gradient(circle, rgba(0, 141, 228, .9) 0%, rgba(0, 141, 228, 0) 60%);
       filter: blur(50px);
