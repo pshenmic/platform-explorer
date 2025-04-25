@@ -18,7 +18,7 @@ const menuItems = [
     title: 'Blockchain',
     submenuItems: [
       { title: 'Blocks', href: '/blocks' },
-      { title: 'Transactions', href: '/transactions', disabled: true }
+      { title: 'Transactions', href: '/transactions' }
     ]
   },
   { title: 'Data Contracts', href: '/dataContracts' },
