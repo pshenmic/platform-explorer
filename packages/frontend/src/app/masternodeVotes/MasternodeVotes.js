@@ -1,7 +1,7 @@
 'use client'
 
 import * as Api from '../../util/Api'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { ErrorMessageBlock } from '../../components/Errors'
@@ -11,8 +11,7 @@ import {
   Box,
   Container,
   Heading,
-  useBreakpointValue,
-  useOutsideClick
+  useBreakpointValue
 } from '@chakra-ui/react'
 import { BlocksFilter } from '../../components/blocks'
 import { useDebounce } from '../../hooks'
@@ -24,11 +23,6 @@ const paginateConfig = {
     values: [10, 25, 50, 75, 100]
   },
   defaultPage: 1
-}
-
-const defaultSearchState = {
-  results: { data: {}, loading: false, error: false },
-  value: ''
 }
 
 function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
@@ -43,24 +37,10 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isMobile = useBreakpointValue({ base: true, md: false })
-  const menuRef = useRef(null)
-  const searchContentRef = useRef(null)
-  const [searchState, setSearchState] = useState(defaultSearchState)
-  const [searchFocused, setSearchFocused] = useState(false)
-  const displayResults =
-    Object.keys(searchState.results?.data).length ||
-    searchState.results?.loading ||
-    searchState.results?.error
 
   const filtersChangeHandler = (newFilters) => {
     setFilters(newFilters)
     setCurrentPage(0)
-  }
-
-  const closeSearchHandler = (e) => {
-    if (searchContentRef.current && !searchContentRef.current.contains(e?.target)) {
-      setSearchFocused(false)
-    }
   }
 
   useEffect(() => {
@@ -103,11 +83,6 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize])
-
-  useOutsideClick({
-    ref: menuRef,
-    handler: closeSearchHandler
-  })
 
   console.log('maste', masternodeVotes)
 
