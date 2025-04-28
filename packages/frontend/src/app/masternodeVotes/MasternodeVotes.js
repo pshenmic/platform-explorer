@@ -4,8 +4,6 @@ import * as Api from '../../util/Api'
 import { useState, useEffect, useRef } from 'react'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
-import BlocksList from '../../components/blocks/BlocksList'
-import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -13,16 +11,12 @@ import {
   Box,
   Container,
   Heading,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
   useBreakpointValue,
   useOutsideClick
 } from '@chakra-ui/react'
 import { BlocksFilter } from '../../components/blocks'
 import { useDebounce } from '../../hooks'
-import { SearchResultsList, GlobalSearchInput } from '../../components/search'
+import { VotesList } from '../../components/contestedResources/votes'
 
 const paginateConfig = {
   pageSize: {
@@ -38,7 +32,7 @@ const defaultSearchState = {
 }
 
 function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
-  const [blocks, setBlocks] = useState({ data: {}, loading: true, error: false })
+  const [masternodeVotes, setMasternodeVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
@@ -70,20 +64,20 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
   }
 
   useEffect(() => {
-    setBlocks(prev => ({ ...prev, loading: true, error: null }))
+    setMasternodeVotes(prev => ({ ...prev, loading: true, error: null }))
 
     const fetchData = async () => {
-      Api.getBlocks(
+      Api.getMasternodeVotes(
         Math.max(1, currentPage + 1),
         Math.max(1, pageSize),
         'desc',
         debouncedFilters
       ).then(res => {
-        setTotal(res.pagination.total)
-        fetchHandlerSuccess(setBlocks, res)
+        setTotal(res?.pagination?.total)
+        fetchHandlerSuccess(setMasternodeVotes, res)
       }).catch(err => {
         setTotal(0)
-        fetchHandlerError(setBlocks, err)
+        fetchHandlerError(setMasternodeVotes, err)
       })
     }
 
@@ -115,13 +109,15 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
     handler: closeSearchHandler
   })
 
+  console.log('maste', masternodeVotes)
+
   return (
     <Container
       maxW={'container.xl'}
       color={'white'}
       mt={8}
       mb={8}
-      className={'Blocks'}
+      className={'MasternodeVotes'}
     >
       <Container
         maxW={'container.xl'}
@@ -130,61 +126,24 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
       >
         <Heading className={'InfoBlock__Title'} as={'h1'}>Masternode Votes</Heading>
 
-        <div className={'Blocks__Controls'}>
+        <div className={'MasternodeVotes__Controls'}>
           <BlocksFilter
             onFilterChange={filtersChangeHandler}
             isMobile={isMobile}
-            className={'Blocks__Filters'}
+            className={'MasternodeVotes__Filters'}
           />
-
-          <div className={'Blocks__SearchWrapper'}>
-            <div
-              onClick={() => setSearchFocused(true)}
-              ref={menuRef}
-            >
-              <GlobalSearchInput
-                forceValue={searchState.value}
-                onResultChange={results => setSearchState(prevState => ({ ...prevState, results }))}
-                onChange={value => setSearchState(prevState => ({ ...prevState, value }))}
-                categoryFilters={['blocks']}
-                placeholder={'SEARCH BY BLOCK HASH…'}
-              />
-            </div>
-
-            <Popover
-              closeOnBlur={true}
-              placement={'bottom'}
-              variant={'menu'}
-              isOpen={displayResults && searchFocused}
-            >
-              <PopoverTrigger>
-                <div></div>
-              </PopoverTrigger>
-              <PopoverContent
-                width={'auto'}
-                minWidth={'220px'}
-                ref={searchContentRef}
-              >
-                <PopoverBody overflow={'visible'} minW={'300px'}>
-                  <div className={'SearchFilter__ResultsContainer'}>
-                    <SearchResultsList results={searchState.results}/>
-                  </div>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-          </div>
         </div>
 
-        {!blocks.error
-          ? <>
-            {!blocks.loading
-              ? <BlocksList blocks={blocks.data.resultSet}/>
-              : <LoadingList itemsCount={pageSize}/>
-            }
-          </>
+        {!masternodeVotes.error
+          ? <VotesList
+              votes={masternodeVotes.data?.resultSet}
+              itemsCount={pageSize}
+              loading={masternodeVotes.loading}
+              error={masternodeVotes.error}
+            />
           : <Container h={20}><ErrorMessageBlock/></Container>}
 
-        {blocks.data?.resultSet?.length > 0 &&
+        {masternodeVotes.data?.resultSet?.length > 0 &&
           <div className={'ListNavigation'}>
             <Box display={['none', 'none', 'block']} width={'210px'}/>
             <Pagination

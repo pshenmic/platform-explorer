@@ -47,7 +47,6 @@ function MasternodeVotesRoute ({ searchParams }) {
         <MasternodeVotes defaultPage={page} defaultPageSize={pageSize}/>
       </Container>
     </div>
-
   )
 }
 
