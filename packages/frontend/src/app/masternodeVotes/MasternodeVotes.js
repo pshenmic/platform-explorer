@@ -7,15 +7,10 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import {
-  Box,
-  Container,
-  Heading,
-  useBreakpointValue
-} from '@chakra-ui/react'
-import { BlocksFilter } from '../../components/blocks'
+import { Box, Container, Heading, useBreakpointValue } from '@chakra-ui/react'
 import { useDebounce } from '../../hooks'
 import { VotesList } from '../../components/contestedResources/votes'
+import { MasternodeVotesFilters } from '../../components/contestedResources'
 
 const paginateConfig = {
   pageSize: {
@@ -102,7 +97,7 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
         <Heading className={'InfoBlock__Title'} as={'h1'}>Masternode Votes</Heading>
 
         <div className={'MasternodeVotes__Controls'}>
-          <BlocksFilter
+          <MasternodeVotesFilters
             onFilterChange={filtersChangeHandler}
             isMobile={isMobile}
             className={'MasternodeVotes__Filters'}
