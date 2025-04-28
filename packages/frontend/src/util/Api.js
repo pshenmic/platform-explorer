@@ -209,6 +209,17 @@ const getRewardsStatsByValidator = (proTxHash, start, end, intervalsCount) => {
   return call(`validator/${proTxHash}/rewards/stats?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
+const getMasternodeVotes = (page = 1, limit = 10, order = 'asc', filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    ...filters
+  })
+
+  return call(`masternodes/votes?${params.toString()}`, 'GET')
+}
+
 const getContestedResourcesStats = () => {
   return call('contestedResources/stats', 'GET')
 }
@@ -261,5 +272,6 @@ export {
   getRewardsStatsByValidator,
   getEpoch,
   getContestedResourcesStats,
+  getMasternodeVotes,
   getRate
 }
