@@ -40,7 +40,7 @@ function MasternodeVotesRoute ({ searchParams }) {
       >
         <Intro
           className={'MasternodeVotesIntro'}
-          title={'Masternode sVotes'}
+          title={'Masternode Votes'}
           description={<Markdown>{introContent}</Markdown>}
           block={<ContestedResourcesDashboardCards/>}
         />
