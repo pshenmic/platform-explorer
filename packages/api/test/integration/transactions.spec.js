@@ -138,7 +138,6 @@ describe('Transaction routes', () => {
 
     it('should return error transaction', async () => {
       const [, transaction] = transactions
-      const [identityTx] = transactions
       const { body } = await client.get(`/transaction/${transaction.transaction.hash}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -557,7 +556,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -595,7 +595,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -633,7 +634,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -671,7 +673,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
