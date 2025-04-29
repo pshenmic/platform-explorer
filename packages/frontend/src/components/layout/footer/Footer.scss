@@ -2,11 +2,16 @@
 @import '../../../styles/variables.scss';
 
 .Footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 22;
+  background-color: var(--chakra-colors-gray-650);
   padding: 10px 16px;
   @include mixins.navContainerPadding(padding-left);
   @include mixins.navContainerPadding(padding-right);
   border-radius: 10px 10px 0 0;
-  background-color: var(--chakra-colors-whiteAlpha-50);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -22,8 +27,18 @@
     font-weight: 400;
   }
 
+  &__CopyrightBlock {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
   &__Copyright {
+    font-size: 0.75rem;
     text-align: right;
+    color: var(--chakra-colors-gray-250);
+    margin: 0;
 
     @media screen and (max-width: $breakpoint-lg) {
       text-align: center;
@@ -82,6 +97,10 @@
     flex-direction: column;
     gap: 12px;
 
+    &__Logo {
+      display: none;
+    }
+
     &__WrapperNetwork {
       order: 1;
     }
@@ -95,6 +114,10 @@
     }
   }
 
+  @media screen and (max-width: $breakpoint-lg) {
+    position: static;
+  }
+
   @media screen and (max-width: $breakpoint-sm) {
     &__LocalTime {
       span {
@@ -105,5 +128,13 @@
         display: none !important;
       }
     }
+  }
+}
+
+.FooterStub {
+  height: 66px;
+
+  @media screen and (max-width: $breakpoint-lg) {
+    display: none;
   }
 }

@@ -2,37 +2,30 @@
 
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
-import Link from 'next/link'
-import { Box, Flex, HStack, IconButton, useDisclosure, Stack, useOutsideClick, useBreakpointValue } from '@chakra-ui/react'
+import { Box, Flex, HStack, IconButton, useDisclosure, useOutsideClick, useBreakpointValue } from '@chakra-ui/react'
 import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { SearchResultsList } from '../../search'
+import NavItem from './NavItem'
+import NavbarMobileMenu from './NavbarMobileMenu'
 import './Navbar.scss'
-import './NavbarMobileMenu.scss'
-import './NavLink.scss'
 
-const links = [
+const menuItems = [
   { title: 'Home', href: '/' },
-  { title: 'Blocks', href: '/blocks' },
-  { title: 'Transactions', href: '/transactions' },
+  {
+    title: 'Blockchain',
+    submenuItems: [
+      { title: 'Blocks', href: '/blocks' },
+      { title: 'Transactions', href: '/transactions' }
+    ]
+  },
   { title: 'Data Contracts', href: '/dataContracts' },
   { title: 'Identities', href: '/identities' },
   { title: 'Validators', href: '/validators' },
   { title: 'API', href: '/api' }
 ]
-
-const NavLink = ({ children, to, isActive, className }) => {
-  return (
-    <Link
-      href={to}
-      className={`NavLink ${isActive ? 'NavLink--Active' : ''} ${className || ''}`}
-    >
-      {children}
-    </Link>
-  )
-}
 
 const defaultSearchState = {
   results: { data: {}, loading: false, error: false },
@@ -59,13 +52,17 @@ function Navbar () {
     (Object.entries(searchState.results.data || {})?.length || searchState.results.loading || searchState.results.error)
 
   const searchContainerRef = useRef(null)
-  const mobileMenuRef = useRef(null)
   const searchTransitionTime = useBreakpointValue({ base: 0.2, md: 0.1 })
+  const burgerRef = useRef(null)
 
   const hideSearch = () => setSearchState(defaultSearchState)
 
-  useOutsideClick({ ref: searchContainerRef, handler: hideSearch })
-  useOutsideClick({ ref: mobileMenuRef, handler: closeMobileMenu })
+  useOutsideClick({
+    ref: searchContainerRef,
+    handler: () => {
+      if (searchState?.focused) hideSearch()
+    }
+  })
 
   useEffect(() => {
     closeMobileMenu()
@@ -80,6 +77,21 @@ function Navbar () {
       }))
     }
   }, [searchState.focused])
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        hideSearch()
+        closeMobileMenu()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [closeMobileMenu])
 
   const handleMobileMenuToggle = (e) => {
     e.stopPropagation()
@@ -97,7 +109,7 @@ function Navbar () {
 
       <Flex
         className={'Navbar'}
-        maxW={'container.maxPageW'}
+        maxW={'container.maxNavigationW'}
       >
         <div className={'Navbar__Left'}>
           <IconButton
@@ -110,6 +122,7 @@ function Navbar () {
             aria-label={'Open Menu'}
             display={{ lg: 'none' }}
             onClick={handleMobileMenuToggle}
+            ref={burgerRef}
           />
 
           <HStack
@@ -125,8 +138,8 @@ function Navbar () {
               transitionDelay: searchState.focused ? '0s' : `${searchTransitionTime / 2}s`
             }}
           >
-            {links.map((link) => (
-              <NavLink to={link.href} key={link.title} isActive={pathname === link.href}>{link.title}</NavLink>
+            {menuItems.map((menuItem) => (
+              <NavItem key={menuItem.title} item={menuItem}/>
             ))}
           </HStack>
         </div>
@@ -193,24 +206,13 @@ function Navbar () {
         </div>
       </Flex>
 
-      <Box
-        ref={mobileMenuRef}
-        className={`NavbarMobileMenu ${isMobileMenuOpen && !searchState.focused ? 'NavbarMobileMenu--Open' : ''}`}
-        display={{ lg: 'none' }}
-      >
-        <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
-          {links.map((link) => (
-            <NavLink
-              className={'NavbarMobileMenu__Item'}
-              to={link.href}
-              isActive={pathname === link.href}
-              key={link.title}
-            >
-              {link.title}
-            </NavLink>
-          ))}
-        </Stack>
-      </Box>
+      <NavbarMobileMenu
+        items={menuItems}
+        isOpen={isMobileMenuOpen && !searchState.focused}
+        onClose={closeMobileMenu}
+        burgerRef={burgerRef}
+      />
+
       {displayBreadcrumbs && <Breadcrumbs/>}
     </Box>
   )
