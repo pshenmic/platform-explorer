@@ -1,0 +1,35 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.NavDropdown {
+  position: relative;
+
+  .MenuLevel__Item {
+    font-family: $font-heading;
+    font-size: 0.75rem;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--chakra-colors-gray-100);
+    
+    &--Disabled {
+      opacity: 0.5;
+      color: var(--chakra-colors-gray-250) !important;
+
+      &:hover, &:active {
+        color: inherit;
+        background: transparent !important;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $breakpoint-lg - 1px) {
+  .NavDropdown {
+    width: 100%;
+    
+    .MenuLevel {
+      width: 100%;
+    }
+  }
+} 

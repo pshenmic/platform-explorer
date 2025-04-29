@@ -1,0 +1,36 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as votes;
+@import '../../../styles/variables.scss';
+
+.VotesList {
+  @include mixins.BrandScroll();
+  @include mixins.List;
+  container-type: inline-size;
+
+  &__ListContainer {
+    overflow-x: auto;
+  }
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include votes.Columns();
+    
+    &--NoDataContract {
+      @include votes.Columns(false);
+    }
+  }
+
+  &__ColumnTitle {
+    @include votes.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &:last-child {
+      text-align: right;
+      justify-content: flex-end;
+    }
+  }
+}

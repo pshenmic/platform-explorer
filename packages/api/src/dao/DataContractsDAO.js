@@ -67,7 +67,15 @@ module.exports = class DataContractsDAO {
 
   getDataContractByIdentifier = async (identifier) => {
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier')
+      .select(this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'tx', state_transition_hash
+            )
+          ) as aliases
+        `))
       .groupBy('identity_identifier')
 
     const identitiesSubquery = this.knex('documents')
@@ -135,9 +143,9 @@ module.exports = class DataContractsDAO {
     }
 
     const ownerAliases = await Promise.all((row.owner_aliases ?? []).map(async alias => {
-      const aliasInfo = await getAliasInfo(alias, this.dapi)
+      const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-      return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+      return getAliasStateByVote(aliasInfo, alias, row.owner)
     }))
 
     let topIdentityAliases = []
@@ -146,9 +154,9 @@ module.exports = class DataContractsDAO {
       topIdentityAliases = ownerAliases
     } else {
       topIdentityAliases = await Promise.all((row.top_identity_aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+        return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
     }
 
@@ -170,7 +178,15 @@ module.exports = class DataContractsDAO {
     const toRank = fromRank + limit - 1
 
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier')
+      .select(this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'tx', state_transition_hash
+            )
+          ) as aliases
+        `))
       .groupBy('identity_identifier')
       .as('aliases')
 
@@ -214,9 +230,9 @@ module.exports = class DataContractsDAO {
       }
 
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+        return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
 
       return {

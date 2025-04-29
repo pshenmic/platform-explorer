@@ -127,7 +127,8 @@ describe('Transaction routes', () => {
               transaction.block.timestamp.toISOString().slice(-2, -1) === '0'
                 ? `${transaction.block.timestamp.toISOString().slice(0, -2)}Z`
                 : transaction.block.timestamp.toISOString()
-            ).replace('Z', '+00:00')
+            ).replace('Z', '+00:00'),
+            txHash: identityAlias.state_transition_hash
           }]
         }
       }
@@ -160,10 +161,11 @@ describe('Transaction routes', () => {
             contested: false,
             status: 'ok',
             timestamp: (
-              identityTx.block.timestamp.toISOString().slice(-2, -1) === '0'
-                ? `${identityTx.block.timestamp.toISOString().slice(0, -2)}Z`
-                : identityTx.block.timestamp.toISOString()
-            ).replace('Z', '+00:00')
+              transaction.block.timestamp.toISOString().slice(-2, -1) === '0'
+                ? `${transaction.block.timestamp.toISOString().slice(0, -2)}Z`
+                : transaction.block.timestamp.toISOString()
+            ).replace('Z', '+00:00'),
+            txHash: identityAlias.state_transition_hash
           }]
         }
       }
@@ -208,7 +210,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -246,7 +249,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -287,7 +291,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -330,7 +335,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -371,7 +377,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -414,7 +421,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -461,7 +469,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -509,7 +518,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -699,7 +709,8 @@ describe('Transaction routes', () => {
               alias: identityAlias.alias,
               contested: false,
               status: 'ok',
-              timestamp: null
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
             }]
           }
         }))
@@ -744,7 +755,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 2H', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/history?timestamp_start=${new Date(new Date().getTime() - 3600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -778,7 +789,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 24h', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/history?timestamp_start=${new Date(new Date().getTime() - 43200000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -812,7 +823,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 3d', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/history?timestamp_start=${new Date(new Date().getTime() - 129600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -846,7 +857,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 1w', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/history?timestamp_start=${new Date(new Date().getTime() - 302400000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -882,7 +893,7 @@ describe('Transaction routes', () => {
       const start = new Date(new Date().getTime())
       const end = new Date(start.getTime() + 10800000)
 
-      const { body } = await client.get(`/transactions/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=6`)
+      const { body } = await client.get(`/transactions/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=6`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -954,7 +965,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 2H', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/gas/history?timestamp_start=${new Date(new Date().getTime() - 3600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -990,7 +1001,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 24h', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/gas/history?timestamp_start=${new Date(new Date().getTime() - 43200000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1026,7 +1037,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 3d', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/gas/history?timestamp_start=${new Date(new Date().getTime() - 129600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1062,7 +1073,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 1w', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/gas/history?timestamp_start=${new Date(new Date().getTime() - 302400000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1100,7 +1111,7 @@ describe('Transaction routes', () => {
       const start = new Date(new Date().getTime())
       const end = new Date(start.getTime() + 10800000)
 
-      const { body } = await client.get(`/transactions/gas/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=6`)
+      const { body } = await client.get(`/transactions/gas/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=6`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 

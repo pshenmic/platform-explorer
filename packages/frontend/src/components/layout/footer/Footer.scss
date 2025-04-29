@@ -1,0 +1,140 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.Footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 22;
+  background-color: var(--chakra-colors-gray-650);
+  padding: 10px 16px;
+  @include mixins.navContainerPadding(padding-left);
+  @include mixins.navContainerPadding(padding-right);
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  > * {
+    flex: 1;
+  }
+
+  > p, a {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+    font-weight: 400;
+  }
+
+  &__CopyrightBlock {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__Copyright {
+    font-size: 0.75rem;
+    text-align: right;
+    color: var(--chakra-colors-gray-250);
+    margin: 0;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      text-align: center;
+    }
+  }
+
+  &__WrapperNetwork {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  &__Network {
+    position: relative;
+    border-radius: 10px;
+    padding: 10px 20px;
+    background-color: var(--chakra-colors-gray-800);
+    transition: background-color ease 0.5s;
+
+    &:hover {
+      background-color: var(--chakra-colors-brand-deep);
+    }
+
+    > img {
+      position: relative;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__PshenmicLogo {
+    transition: color .1s;
+    width: max-content;
+
+    &:hover {
+      color: #fff;
+    }
+
+    &:active, a:active {
+      color: rgba(255, 255, 255, .8);
+    }
+  }
+
+  &__TimezoneContainer {
+    display: flex;
+    align-items: center;
+  }
+
+  &__ClockIcon {
+    margin-right: 0.75rem;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    gap: 12px;
+
+    &__Logo {
+      display: none;
+    }
+
+    &__WrapperNetwork {
+      order: 1;
+    }
+
+    &__TimezoneContainer {
+      order: 2;
+    }
+
+    &__Copyright {
+      order: 3;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    position: static;
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__LocalTime {
+      span {
+        display: block;
+      }
+
+      .LocalTime__Time:after {
+        display: none !important;
+      }
+    }
+  }
+}
+
+.FooterStub {
+  height: 66px;
+
+  @media screen and (max-width: $breakpoint-lg) {
+    display: none;
+  }
+}

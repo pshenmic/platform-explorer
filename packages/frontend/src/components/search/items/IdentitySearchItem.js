@@ -8,12 +8,14 @@ const STATUS_COLORS = {
   locked: 'red'
 }
 
-export function IdentitySearchItem ({ identity, className }) {
+export function IdentitySearchItem ({ identity, className, onClick }) {
   return (
     <BaseSearchItem
       href={`/identity/${identity?.identifier}`}
       className={`${className || ''}`}
       gridClassModifier={'Identity'}
+      onClick={onClick}
+      data={identity}
     >
       <BaseSearchItemContent
         mainContent={

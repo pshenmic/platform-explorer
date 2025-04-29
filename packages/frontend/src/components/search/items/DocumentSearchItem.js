@@ -1,12 +1,14 @@
 import { Identifier, TimeDelta } from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 
-export function DocumentSearchItem ({ document, className }) {
+export function DocumentSearchItem ({ document, className, onClick }) {
   return (
     <BaseSearchItem
       href={`/document/${document?.identifier}`}
       className={`${className || ''}`}
       gridClassModifier={'Document'}
+      onClick={onClick}
+      data={document}
     >
       <BaseSearchItemContent
         mainContent={
@@ -15,7 +17,7 @@ export function DocumentSearchItem ({ document, className }) {
         additionalContent={
           <Identifier avatar={!!document?.owner?.identifier} ellipsis={true}>{document?.owner?.identifier || '-'}</Identifier>
         }
-        timestamp={<TimeDelta endDate={document?.timestamp || new Date()}/>}
+        timestamp={<TimeDelta endDate={document?.timestamp}/>}
       />
     </BaseSearchItem>
   )

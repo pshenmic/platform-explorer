@@ -2,9 +2,21 @@
 
 import { CalendarIcon } from '../ui/icons'
 import { TimeDelta } from './index'
+import { Tooltip } from '../ui/Tooltips'
 import './DateBlock.scss'
 
-function DateBlock ({ timestamp, format = 'all', showTime = false }) {
+const Wrapper = ({ children, tooltipContent, props }) => (
+  tooltipContent
+    ? <Tooltip
+        placement={'top'}
+        content={tooltipContent}
+      >
+        <div {...props}>{children}</div>
+      </Tooltip>
+    : <div {...props}>{children}</div>
+)
+
+function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeTooltip }) {
   const date = new Date(timestamp)
 
   if (String(date) === 'Invalid Date') return null
@@ -37,7 +49,13 @@ function DateBlock ({ timestamp, format = 'all', showTime = false }) {
   const formattedDate = date.toLocaleDateString('en-GB', options)
 
   return (
-    <div className={'DateBlock'}>
+    <Wrapper
+      className={'DateBlock'}
+      tooltipContent={showRelativeTooltip
+        ? <TimeDelta endDate={timestamp} showTimestampTooltip={false}/>
+        : null
+      }
+    >
       <div className={'DateBlock__InfoContainer'}>
         {formats[format].calendarIcon &&
           <CalendarIcon
@@ -54,11 +72,11 @@ function DateBlock ({ timestamp, format = 'all', showTime = false }) {
         }
         {formats[format].delta &&
           <div className={'DateBlock__Delta'}>
-            <TimeDelta endDate={date}/>
+            <TimeDelta endDate={date} showTimestampTooltip={format !== 'all'}/>
           </div>
         }
       </div>
-    </div>
+    </Wrapper>
   )
 }
 

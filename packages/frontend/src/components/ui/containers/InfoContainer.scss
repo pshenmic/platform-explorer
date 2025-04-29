@@ -30,6 +30,15 @@
     z-index: -1;
   }
 
+  &--TranslucentBg {
+    &::before {
+      opacity: .2;
+    }
+    &::after {
+      opacity: .3;
+    }
+  }
+
   &--Tabs {
     @include mixins.InfoContainerPadding(padding-bottom);
     padding: 10px 0 24px 0;

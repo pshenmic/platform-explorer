@@ -1,5 +1,216 @@
 # CHANGELOG
 
+### v1.0.22
+
+## Changes
+
+## Frontend
+
+- Update validator field in block page @AlexeyTripleA (#541)
+- Add hover animation to status in transactions list @AlexeyTripleA (#542)
+- Improve search @AlexeyTripleA (#538)
+- Improve blocks page @AlexeyTripleA (#539)
+
+### v1.0.20
+
+## Changes
+
+## Frontend
+
+- Add tooltip to status icon in transactions list @AlexeyTripleA (#537)
+- Implement filters on transactions page @AlexeyTripleA (#517)
+- Fix transaction status in Search @AlexeyTripleA (#536)
+
+
+### v1.0.19
+
+## Changes
+
+## Indexer
+
+- Bump dashcore-rpc @owl352 (#535)
+
+### v1.0.18
+
+## Changes
+
+## API
+
+- Rename identity contract nonce in Identity Updated transition @owl352 (#530)
+- Rename `identityNonce` in document to `contractNonce`  @owl352 (#529)
+- Fix documentation for decode and some naming fixes @owl352 (#518)
+- Fix API Test @owl352 (#526)
+- Transactions `totalCount` fix and filter by timestamp @owl352 (#525)
+- Broadcast transaction in hex @owl352 (#514)
+- Fixes for search response and new fields for search response @owl352 (#516)
+- Search Block field renamed to Blocks in response @owl352 (#515)
+- Statistics for graphs query optimization @owl352 (#500)
+- Api power for masternode votes @owl352 (#503)
+- Fix documents raw buffer @owl352 (#513)
+- Raw data contract by identifier from DAPI @owl352 (#511)
+- Raw documents by identifier from DAPI @owl352 (#510)
+- Add raw public key to identity @owl352 (#508)
+- Fix BigInt for identity balance @owl352 (#507)
+- Implement BigInt conversions after #505 PR @owl352 (#506)
+- Broadcast transaction and identity nonce queries @owl352 (#505)
+- Search route improvements and tests fix @owl352 (#502)
+- SDK Version bump @owl352 (#504)
+- Dapi get documents method architecture fix @owl352 (#498)
+
+## Frontend
+
+- Rename nonce fields @AlexeyTripleA (#528)
+- Remove identity contract nonce from document page @AlexeyTripleA (#524)
+- Vertical alignment of PublicKeysListItem @AlexeyTripleA (#523)
+- Improve identifier component @AlexeyTripleA (#466)
+- Disable Christmas event in BlocksTotal @AlexeyTripleA (#520)
+- Update api urls in docs @AlexeyTripleA (#519)
+- Improve global search @AlexeyTripleA (#497)
+- Update data points count in charts @AlexeyTripleA (#490)
+- Update render of new format fields @AlexeyTripleA (#512)
+- Make creation date clickable @AlexeyTripleA (#496)
+- Update total cards styles @AlexeyTripleA (#491)
+
+## Indexer
+
+- Indexer SQL transactions @owl352 (#501)
+- Power Column for Indexer @owl352 (#489)
+
+### v1.0.17
+
+## Changes
+
+## API
+
+- API 500 on bad validator host @owl352 (#487)
+- Invalid filter in #493 @owl352 (#494)
+- Incorrect quorum index calculation @owl352 (#493)
+- Documents revisions fix @owl352 (#474)
+- Use specific quorum type in block query @owl352 (#488)
+- Quorum block height field @owl352 (#478)
+- Contested Documents List API @owl352 (#462)
+
+## Frontend
+
+- Fix date range picker active range @AlexeyTripleA (#455)
+- Improve Block page @AlexeyTripleA (#468)
+- Update field title in TransitionCard @AlexeyTripleA (#486)
+- Fix tab style @AlexeyTripleA (#477)
+- Fix transfers list columns size @AlexeyTripleA (#476)
+- Update documents data render @AlexeyTripleA (#475)
+
+## Indexer
+
+- Document revision increment after purchase @owl352 (#495)
+
+
+### v1.0.16
+
+## Changes
+
+## API
+
+- Documents owner structure in Documents by identity @owl352 (#473)
+- Total gas used @owl352 (#460)
+- Fix empty transactions for data contract @owl352 (#469)
+- Order fix for data contract transactions @owl352 (#459)
+- Data Contracts document count fix and identities aliases @owl352 (#465)
+- Fix for Resource Value convertation @owl352 (#463)
+- Documents owner aliases @owl352 (#458)
+- Contested Resource API @owl352 (#451)
+- Data contract transactions and some additional fields @owl352 (#453)
+- Gas used field for document revisions @owl352 (#456)
+
+## Frontend
+
+- Add total gas used field on pages @AlexeyTripleA (#472)
+- Improve document page @AlexeyTripleA (#449)
+- Improve Datacontract page @AlexeyTripleA (#447)
+- Fix alias render in document info @AlexeyTripleA (#464)
+- Update Owner field render @AlexeyTripleA (#461)
+
+### v1.0.15
+
+## Changes
+
+## API
+
+- Interval count fix for graphs @owl352 (#450)
+
+## Frontend
+
+- Improve charts render @AlexeyTripleA (#452)
+
+### v1.0.14
+
+## Changes
+
+## Frontend
+
+- Fix timespan title in chart on the Home page @AlexeyTripleA (#446)
+
+### v1.0.13
+
+## Changes
+
+## Frontend
+
+- Fix non-existent component bug @AlexeyTripleA (#444)
+
+### v1.0.12
+
+## Changes
+
+## API
+
+- Masternodes Votes API @owl352 (#425)
+- New fields for documents and list of documents by document type @owl352 (#406)
+- Naming fix for decoded MN vote TX @owl352 (#441)
+- Update price field price API  @owl352 (#440)
+- Receiver Id and Purchase price API @owl352 (#439)
+- Fix of documents from dapi search and documentation  @owl352 (#432)
+- Entropy error fix @owl352 (#426)
+- Document Batch Action Enum fix @owl352 (#411)
+- Quorums and DashcoreRPC code duplication fixes @owl352 (#410)
+- Blocks list filters and `totalGasUsed` field @owl352 (#365)
+- Aliases structure fix @owl352 (#409)
+- Decoded Document Batch Tx Nonce @owl352 (#408)
+- Indexer syncing progress for `/status` @owl352 (#403)
+- Entropy field for Documents batch  @owl352 (#394)
+- Aliases timestamps @owl352 (#384)
+- Nonce and version for decoded state transitions @owl352 (#377)
+- Documents from DAPI @owl352 (#322)
+- Quorum info for specific block route @owl352 (#364)
+- `setPublicKeyIdsToDisable` error fix @owl352 (#405)
+
+## Frontend
+
+- Improve Transaction page @AlexeyTripleA (#436)
+- Improve Data Contracts page @AlexeyTripleA (#438)
+- Update transactions chart format @AlexeyTripleA (#431)
+- Implement time update function @AlexeyTripleA (#424)
+- Update pagination styles @AlexeyTripleA (#420)
+- Improve charts on the Validator page @AlexeyTripleA (#430)
+- Refactoring code of theme.js @AlexeyTripleA (#428)
+- Fix transaction breadcrumbs @AlexeyTripleA (#427)
+- Update smooth size container @AlexeyTripleA (#421)
+- Remove trailing zeros @AlexeyTripleA (#423)
+- Update documents request to api @AlexeyTripleA (#433)
+- Fix pagination of lists on the Identity page @AlexeyTripleA (#435)
+- Disable Christmas elements @AlexeyTripleA (#422)
+- Set current year in footer dynamically @AlexeyTripleA (#417)
+- Fix scrollbar of public keys list @AlexeyTripleA (#416)
+- Fix document action enum @AlexeyTripleA (#415)
+- Fix pagination of documents on Identity page @AlexeyTripleA (#404)
+
+## Indexer
+
+- Fix indexer block header typo @pshenmic (#443)
+- Add app hash in the indexer @pshenmic (#437)
+- Index prefunded voting balance in the documents @pshenmic (#434)
+- Add WalletUtils contract  @pshenmic (#429)
+- Masternode votes in the indexer @pshenmic (#418)
+
 ### v1.0.11
 
 ## Changes

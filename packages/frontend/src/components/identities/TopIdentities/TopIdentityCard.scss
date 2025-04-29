@@ -1,0 +1,40 @@
+@use '../../../styles/mixins';
+@import '../../../styles/variables';
+
+.TopIdentityCard {
+  padding: 0.75rem;
+
+  &--Loading {
+    height: 3.125rem;
+  }
+
+  &__Img {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: -10px 10px -10px 0;
+    flex-shrink: 0;
+  }
+
+  &__AliasContainer {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    flex-grow: 1;
+  }
+
+  &__Alias {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100% - 65px);
+    overflow: hidden;
+  }
+
+  &__Balance {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    font-size: 0.75rem;
+    color: #fff;
+    font-family: $font-mono;
+  }
+}

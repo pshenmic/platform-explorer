@@ -5,7 +5,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
 import { Identifier, BigNumber, Alias, TimeDelta, NotActive } from '../data'
 import StatusIcon from './StatusIcon'
-import { RateTooltip } from '../ui/Tooltips'
+import { RateTooltip, Tooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
 import { useRouter } from 'next/navigation'
 import { LinkContainer } from '../ui/containers'
@@ -22,7 +22,21 @@ function TransactionsListItem ({ transaction, rate }) {
           {transaction?.timestamp
             ? <>
                 {transaction?.status &&
-                  <StatusIcon className={'TransactionsListItem__StatusIcon'} status={transaction.status} w={'18px'} h={'18px'} mr={'8px'}/>
+                  <Tooltip
+                    title={transaction.status}
+                    content={transaction?.error || ''}
+                    placement={'top'}
+                  >
+                    <span>
+                      <StatusIcon
+                        className={'TransactionsListItem__StatusIcon'}
+                        status={transaction.status}
+                        w={'1.125rem'}
+                        h={'1.125rem'}
+                        mr={'0.5rem'}
+                      />
+                    </span>
+                  </Tooltip>
                 }
                 <TimeDelta endDate={new Date(transaction.timestamp)}/>
               </>

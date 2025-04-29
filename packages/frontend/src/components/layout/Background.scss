@@ -28,14 +28,23 @@
       content: '';
       position: fixed;
       top: 0;
-      left: 50%;
-      transform: translate(calc(-50% - 720px), -50%);
-      width: 1000px;
-      height: 1000px;
+      left: 0;
+      transform: translate(-50%, -50%);
+      width: 1500px;
+      height: 1500px;
       border-radius: 1500px;
       background: radial-gradient(circle, rgba(0, 141, 228, .9) 0%, rgba(0, 141, 228, 0) 60%);
       filter: blur(50px);
       z-index: -2;
+    }
+  }
+
+  @media screen and (min-width: 2000px) {
+    &--Light {
+      &::before {
+        left: 50%;
+        transform: translate(calc(-50% - 960px), -50%);
+      }
     }
   }
 

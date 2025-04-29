@@ -79,8 +79,8 @@ class BlocksController {
       page = 1,
       limit = 10,
       order = 'asc',
-      start_epoch_index: startEpochIndex,
-      end_epoch_index: endEpochIndex,
+      epoch_index_min: epochIndexMin,
+      epoch_index_max: epochIndexMax,
       gas_min: gasMin,
       gas_max: gasMax,
       validator,
@@ -111,23 +111,23 @@ class BlocksController {
       return response.status(400).send('Request must have start and end timestamps')
     }
 
-    if (startEpochIndex) {
-      if (endEpochIndex <= startEpochIndex) {
+    if (epochIndexMin) {
+      if (epochIndexMax <= epochIndexMin) {
         return response.status(400).send('Bad epochs range')
       }
 
       const [startEpoch] = await this.dapi.getEpochsInfo(
         1,
-        Number(startEpochIndex),
+        Number(epochIndexMin),
         true
       )
 
       epochStartTimestamp = startEpoch?.startTime
 
-      if (endEpochIndex) {
+      if (epochIndexMax) {
         const [endEpoch] = await this.dapi.getEpochsInfo(
           1,
-          Number(endEpochIndex),
+          Number(epochIndexMax),
           true
         )
         epochEndTimestamp = endEpoch?.startTime + EPOCH_CHANGE_TIME

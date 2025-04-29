@@ -3,29 +3,35 @@ import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './BlocksList.scss'
 
-function BlocksList ({ blocks = [], columnsCount = 1, size = 'l', headerStyles = 'default' }) {
+function BlocksList ({ blocks = [], size = 'l', headerStyles = 'default', absoluteDate }) {
   const headerExtraClass = {
     default: '',
     light: 'BlocksList__ColumnTitles--Light'
   }
 
   return (
-    <div
-      className={'BlocksList'}
-      style={{
-        columnCount: blocks.length > 1 ? columnsCount : 1
-      }}
-    >
+    <div className={`BlocksList ${absoluteDate ? 'BlocksList--TimestampAbsolute' : ''}`}>
       <Grid className={`BlocksList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'BlocksList__ColumnTitle'}>
-          Height
-        </GridItem>
-        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Time'}>
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Timestamp'}>
           Time
         </GridItem>
+
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Height'}>
+          Height
+        </GridItem>
+
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Hash'}>
           Block Hash
         </GridItem>
+
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Validator'}>
+          Proposed By
+        </GridItem>
+
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Fees'}>
+          Fees
+        </GridItem>
+
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Txs'}>
           TXs count
         </GridItem>
@@ -36,6 +42,7 @@ function BlocksList ({ blocks = [], columnsCount = 1, size = 'l', headerStyles =
           key={i}
           block={block}
           size={size}
+          absoluteDate={absoluteDate}
         />
       )}
 

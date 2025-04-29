@@ -1,13 +1,23 @@
 @use '../../styles/mixins.scss';
+@use './variables' as blocks;
 @import '../../styles/variables.scss';
 
 .BlocksList {
+  @include mixins.List;
+  container-type: inline-size;
+
   &__ColumnTitles {
     @include mixins.defListTitles;
-    grid-template-columns: 70px 135px calc(100% - 375px) 170px;
+    @include blocks.Columns();
+  }
+
+  &--TimestampAbsolute &__ColumnTitles {
+    @include blocks.Columns(true);
   }
 
   &__ColumnTitle {
+    @include blocks.Column();
+
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;
@@ -18,27 +28,6 @@
 
     &:last-child {
       text-align: right;
-    }
-  }
-
-  @media screen and (max-width: 620px) {
-    &__ColumnTitles {
-      grid-template-columns: 70px 90px calc(100% - 160px);
-    }
-
-    &__ColumnTitle {
-      &--Hash {
-        display: none;
-      }
-
-      &--Txs {
-        order: 0;
-        text-align: left !important;
-      }
-
-      &--Time {
-        order: 2;
-      }
     }
   }
 }

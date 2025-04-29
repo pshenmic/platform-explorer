@@ -7,6 +7,7 @@ import Button from './components/Button'
 import Progress from './components/Progress'
 import Popover from './components/Popover'
 import Tooltip from './components/Tooltip'
+import Input from './components/Input'
 import {
   Montserrat,
   Open_Sans as OpenSans,
@@ -44,7 +45,8 @@ export const theme = extendTheme({
   sizes: {
     container: {
       xl: '1310px',
-      maxPageW: '1440px'
+      maxPageW: '1440px',
+      maxNavigationW: '2000px'
     }
   },
   blockOffset: [3, 4, 5, 5, 10],
@@ -88,7 +90,8 @@ export const theme = extendTheme({
     Badge,
     Progress,
     Popover,
-    Tooltip
+    Tooltip,
+    Input
   }
 })
 

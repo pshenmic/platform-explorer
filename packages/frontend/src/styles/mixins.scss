@@ -17,6 +17,11 @@
     margin-top: 2rem !important;
   }
 
+  &__ScrollZone {
+    width: fit-content;
+    min-width: 100%;
+  }
+
   @media screen and (max-width: $breakpoint-md) {
     &__Pagination {
       margin-top: 1.5rem !important;
@@ -85,9 +90,12 @@
 
   &--Timestamp, &__Column--Timestamp {
     font-family: $font-mono;
-    font-size: 0.75rem;
     white-space: nowrap;
     color: #fff;
+
+    &, .DateBlock__Date {
+      font-size: 0.75rem;
+    }
   }
 }
 
@@ -373,8 +381,8 @@
   }
 }
 
-@mixin navContainerPadding ($property) {
-  #{$property}: var(--chakra-space-3);
+@mixin navContainerPadding ($property, $important: false) {
+  #{$property}: var(--chakra-space-3)#{if($important, ' !important', '')};
 }
 
 @mixin pageDataPadding($property, $important: false, $invert: false) {
@@ -397,14 +405,14 @@
   }
 }
 
-@mixin Block ($blueBorder: false) {
+@mixin Block ($border: false, $borderColor: $color-brand-normal) {
   backdrop-filter: $blockBackgroundBlur;
   border-radius: var(--chakra-radii-block);
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(24, 31, 34, 0.2);
 
-  @if $blueBorder {
-    box-shadow: 2px 2px $color-brand-normal;
+  @if $border {
+    box-shadow: 2px 2px #{if($borderColor, $borderColor, $color-brand-normal)};
   }
 }
 
@@ -431,12 +439,33 @@
   &__Title {
     white-space: break-spaces;
     word-break: break-all;
+
+    .Alias__Name, .Alias__Domain {
+      font-family: $font-heading;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    .Alias__Domain {
+      color: var(--chakra-colors-brand-light);
+      opacity: 1;
+    }
   }
 
   &--Loading {
     .InfoLine__Value {
       height: 1.5rem;
     }
+  }
+
+  &__ContentContainer {
+    display: flex;
+    gap: 2.5rem;
+  }
+
+  &__Column {
+    position: relative;
+    width: 50%;
   }
 
   &__Header {
@@ -488,6 +517,29 @@
 
     .HorisontalSeparator {
       margin: 0;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__ContentContainer {
+      gap: 1.5rem;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    $gap: 0.75rem;
+
+    &__ContentContainer {
+      flex-direction: column;
+    }
+
+    &__ContentContainer, &__CommonLines {
+      gap: $gap;
+    }
+
+    &__Column {
+      position: static;
+      width: 100%;
     }
   }
 }
@@ -572,4 +624,10 @@
     scrollbar-width: thin;
     scrollbar-color: $scrollColor $scrollBackgroundColor;
   }
+}
+
+@mixin displayUserSelect {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

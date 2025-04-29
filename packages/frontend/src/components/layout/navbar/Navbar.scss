@@ -27,7 +27,10 @@
   }
 
   &__Left {
+    display: flex;
+    align-items: center;
     width: 0;
+    gap: 0.5rem;
   }
 
   &__Right {
@@ -79,11 +82,21 @@
   &__Burger {
     position: relative;
     z-index: 20;
+    transition: background-color .1s !important;
+    flex-shrink: 0;
   }
 
   &__Menu {
     gap: 40px !important;
     padding: 0 0.75rem;
+  }
+
+  @media screen and (min-width: 80rem) and (max-width: 82.5rem) {
+    &__NetworkSelectContainer {
+      .NetworkSelect__Title {
+        display: none;
+      }
+    }
   }
 
   @media screen and (max-width: 72.5rem) {
@@ -106,13 +119,17 @@
     }
   }
 
-  @media screen and (max-width: $breakpoint-lg) {
-    &__SearchContainer {
-      width: 15rem
+  @media screen and (max-width: 64rem) {
+    &__Logo {
+      display: none;
     }
   }
 
   @media screen and (max-width: $breakpoint-md) {
+    &__SearchContainer {
+      width: 15rem
+    }
+
     &__Menu {
       gap: 16px !important;
     }
