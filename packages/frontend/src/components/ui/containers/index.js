@@ -1,13 +1,6 @@
-import ValueContainer from './ValueContainer'
-import PageDataContainer from './PageDataContainer'
-import InfoContainer from './InfoContainer'
-import SmoothSize from './SmoothSize'
-import LinkContainer from './LinkContainer'
-
-export {
-  ValueContainer,
-  PageDataContainer,
-  InfoContainer,
-  SmoothSize,
-  LinkContainer
-}
+export { default as LinkContainer } from './LinkContainer'
+export { default as SmoothSize } from './SmoothSize'
+export { default as InfoContainer } from './InfoContainer'
+export { default as PageDataContainer } from './PageDataContainer'
+export { default as ValueContainer } from './ValueContainer'
+export { default as InfoBlock } from './InfoBlock'

@@ -91,6 +91,14 @@
     padding: 0 0.75rem;
   }
 
+  @media screen and (min-width: 80rem) and (max-width: 82.5rem) {
+    &__NetworkSelectContainer {
+      .NetworkSelect__Title {
+        display: none;
+      }
+    }
+  }
+
   @media screen and (max-width: 72.5rem) {
     &__NetworkSelectContainer {
       width: 5rem;
