@@ -1,36 +1,20 @@
 @use '../../styles/mixins.scss';
+@use './variables' as identities;
 @import '../../styles/variables.scss';
 
 .IdentitiesListItem {
   @include mixins.DefListItem;
+  display: block;
 
-  justify-content: space-between;
-
-  &__Identifier, &__Alias {
-    font-size: 0.75rem;
-    margin-right: 16px;
-  }
-  
-  &__Alias {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+  &__Content {
+    @include identities.Columns();
   }
 
-  &__Timestamp {
-    white-space: nowrap;
-  }
+  &__Column {
+    @include identities.Column();
 
-  @media screen and (max-width: $breakpoint-sm) {
-    flex-wrap: wrap;
-
-    &__Identifier {
-      width: 100%;
-      margin-right: 0;
-    }
-
-    &__Timestamp {
-      white-space: wrap;
+    &--Identifier {
+      overflow: hidden;
     }
   }
 }
