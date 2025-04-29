@@ -26,10 +26,14 @@ class TransactionsController {
 
   getTransactions = async (request, response) => {
     const {
-      page = 1, limit = 10,
-      order = 'asc', owner,
+      owner,
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      orderBy = 'id',
       status = 'ALL',
-      gas_min: gasMin, gas_max: gasMax,
+      gas_min: gasMin,
+      gas_max: gasMax,
       transaction_type: transactionType,
       timestamp_start: timestampStart,
       timestamp_end: timestampEnd
@@ -47,10 +51,15 @@ class TransactionsController {
       return response.status(400).send({ message: 'you must use timestamp_start and timestamp_end' })
     }
 
+    if (!['gas_used', 'timestamp', 'id', 'owner'].includes(orderBy)) {
+      return response.status(400).send({ message: 'invalid ordering field' })
+    }
+
     const transactions = await this.transactionsDAO.getTransactions(
       Number(page ?? 1),
       Number(limit ?? 10),
       order,
+      orderBy,
       transactionType,
       owner,
       status,

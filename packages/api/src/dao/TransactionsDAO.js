@@ -53,7 +53,7 @@ module.exports = class TransactionsDAO {
     return Transaction.fromRow({ ...row, aliases })
   }
 
-  getTransactions = async (page, limit, order, transactionsTypes, owner, status, min, max, timestampStart, timestampEnd) => {
+  getTransactions = async (page, limit, order, orderBy, transactionsTypes, owner, status, min, max, timestampStart, timestampEnd) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
@@ -127,6 +127,7 @@ module.exports = class TransactionsDAO {
       .whereRaw(timestampsQuery, timestampBindings)
       .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'filters_subquery.owner')
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
+      .orderBy(orderBy, order)
 
     const calculatingSubquery = this.knex
       .with('subquery', subquery)
@@ -137,7 +138,7 @@ module.exports = class TransactionsDAO {
         'identity_identifier',
         'block_height', 'timestamp'
       )
-      .select(this.knex.raw(`rank() over (order by subquery.id ${order}) rank`))
+      .select(this.knex.raw(`row_number() over (order by ${orderBy} ${order}) rank`))
       .select(this.knex('subquery').count('*').as('total_count'))
       .from('subquery')
       .as('calculated_subquery')
@@ -148,7 +149,6 @@ module.exports = class TransactionsDAO {
         'rank', 'block_hash', 'tx_hash', 'total_count',
         'gas_used', 'status', 'error', 'timestamp', 'block_height')
       .whereBetween('rank', [fromRank, toRank])
-      .orderBy('calculated_subquery.id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
