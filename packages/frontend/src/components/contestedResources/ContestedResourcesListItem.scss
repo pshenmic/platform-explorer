@@ -1,0 +1,34 @@
+@use '../../styles/mixins.scss';
+@use './variables' as cr;
+@import '../../styles/variables.scss';
+
+.ContestedResourcesListItem {
+  @include mixins.DefListItem;
+
+  &__Content {
+    @include cr.Columns();
+  }
+
+  &__Column {
+    @include cr.Column();
+
+    &--IndexName {
+      font-size: 0.688rem;
+    }
+
+    &--Timestamp {
+      font-family: $font-mono;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      color: #fff;
+    }
+
+    &--ResourceValue {
+      .Alias__SymbolsContainer {
+        display: flex;
+        flex-wrap: wrap;
+        line-height: 1rem;
+      }
+    }
+  }
+}

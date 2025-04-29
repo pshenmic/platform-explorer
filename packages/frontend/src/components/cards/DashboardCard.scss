@@ -24,6 +24,8 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    overflow: hidden;
   }
 
   &__ContentWrapper--Icon &__Content {
@@ -39,7 +41,6 @@
     font-size: 0.875rem;
     font-weight: 800;
     text-transform: uppercase;
-    white-space: nowrap;
   }
 
   &__Value {

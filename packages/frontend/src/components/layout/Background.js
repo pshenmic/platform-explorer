@@ -13,7 +13,8 @@ function Background ({ snow }) {
     '/dataContracts',
     '/identities',
     '/validators',
-    '/transactions'
+    '/transactions',
+    '/contestedResources'
   ]
   const showDecoration = showOnRoutes.includes(pathname)
 

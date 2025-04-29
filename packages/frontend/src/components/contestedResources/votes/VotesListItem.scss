@@ -1,0 +1,40 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as votes;
+@import '../../../styles/variables.scss';
+
+.VotesListItem {
+  @include mixins.DefListItem;
+
+  &__Content {
+    @include votes.Columns();
+    align-items: center;
+    
+    &--NoDataContract {
+      @include votes.Columns(false);
+    }
+  }
+
+  &__Column {
+    @include votes.Column();
+    overflow: hidden;
+
+    .LinkContainer {
+      width: 100%;
+    }
+
+    &--Choice {
+      .VoteBadge {
+        display: flex;
+
+        span {
+          white-space: wrap;
+          width: min-content;
+          border-radius: 6px;
+          text-align: center;
+          padding: 0.188rem 0.625rem;
+          line-height: 0.8rem;
+        }
+      }
+    }
+  }
+}

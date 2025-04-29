@@ -1,0 +1,37 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as contenders;
+@import '../../../styles/variables.scss';
+
+.ContendersListItem {
+  @include mixins.DefListItem(false);
+  display: block;
+
+  &__Content {
+    @include contenders.Columns();
+    align-items: center;
+  }
+
+  &__Column {
+    @include contenders.Column();
+    font-size: 0.688rem;
+
+    &--Identity, &--Document {
+      .Identifier {
+        max-width: 12rem;
+      }
+    }
+
+    &--Hash {
+      .Identifier__SymbolsContainer {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-height: 1rem;
+        max-height: 2rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal !important;
+      }
+    }
+  }
+}
