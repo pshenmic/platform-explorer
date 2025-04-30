@@ -79,8 +79,6 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize])
 
-  console.log('maste', masternodeVotes)
-
   return (
     <Container
       maxW={'container.xl'}
