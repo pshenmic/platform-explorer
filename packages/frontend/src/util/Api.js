@@ -162,7 +162,7 @@ const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30
 }
 
 const getEpoch = (identifier) => {
-  return call(`epoch/${identifier}`, 'GET')
+  return call(`epoch/${identifier || ''}`, 'GET')
 }
 
 const getTransactionsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
