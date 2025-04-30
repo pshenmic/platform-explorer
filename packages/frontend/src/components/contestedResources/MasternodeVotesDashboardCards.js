@@ -12,7 +12,7 @@ function MasternodeVotesDashboardCards () {
   const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
 
   const fetchData = () => {
-    Api.getEpoch(2005)
+    Api.getEpoch()
       .then(res => fetchHandlerSuccess(setEpoch, res))
       .catch(err => fetchHandlerError(setEpoch, err))
   }
