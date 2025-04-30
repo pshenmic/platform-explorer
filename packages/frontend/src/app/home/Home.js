@@ -61,7 +61,7 @@ function Home () {
 
   return (<>
     <Container
-      maxW={'container.xl'}
+      maxW={'container.maxPageW'}
       color={'white'}
       px={3}
       py={0}
@@ -74,7 +74,7 @@ function Home () {
       px={3}
       py={0}
       mt={blockOffset}
-      maxW={'container.xl'}
+      maxW={'container.maxPageW'}
     >
       <TotalInfo
         blocks={status?.data?.api?.block?.height}
@@ -87,14 +87,14 @@ function Home () {
     </Container>
 
     <Container
-      maxW={'container.xl'}
+      maxW={'container.maxPageW'}
       color={'white'}
       padding={3}
       mt={blockOffset}
       py={0}
       mb={0}
     >
-      <Container p={0} maxW={'container.xl'} mb={blockOffset}>
+      <Container p={0} maxW={'container.maxPageW'} mb={blockOffset}>
         <Flex
           w={'100%'}
           justifyContent={'space-between'}
