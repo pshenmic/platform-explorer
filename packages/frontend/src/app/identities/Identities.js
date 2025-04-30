@@ -72,12 +72,12 @@ function Identities ({ defaultPage = 1, defaultPageSize }) {
 
   return (
     <Container
-        maxW={'container.xl'}
+        maxW={'container.maxPageW'}
         mt={8}
         className={'IdentitiesPage'}
     >
       <Container
-        maxW={'container.xl'}
+        maxW={'container.maxPageW'}
         className={'InfoBlock'}
       >
         <Heading className={'InfoBlock__Title'} as={'h1'}>Identities</Heading>
