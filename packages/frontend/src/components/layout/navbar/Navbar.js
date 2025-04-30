@@ -25,7 +25,11 @@ const menuItems = [
   {
     title: 'Contested Resources',
     href: '/contestedResources',
-    breakpoints: { base: true, sm: true, md: true, lg: false, xl: true }
+    breakpoints: { base: true, sm: true, md: true, lg: false, xl: true },
+    submenuItems: [
+      { title: 'Contested Resources list', href: '/contestedResources' },
+      { title: 'Masternode votes', href: '/masternodeVotes' }
+    ]
   },
   { title: 'Identities', href: '/identities' },
   { title: 'Validators', href: '/validators' },
@@ -39,6 +43,7 @@ const menuItems = [
     breakpoints: { base: false, sm: false, md: false, lg: true, xl: false },
     submenuItems: [
       { title: 'Contested Resources', href: '/contestedResources' },
+      { title: 'Masternode votes', href: '/masternodeVotes' },
       { title: 'API', href: '/api' }
     ]
   }
