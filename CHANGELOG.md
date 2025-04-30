@@ -1,5 +1,13 @@
 # CHANGELOG
 
+### v1.0.23
+
+## Changes
+
+## Frontend
+
+- Add hover on timestamps @AlexeyTripleA (#544)
+
 ### v1.0.22
 
 ## Changes
