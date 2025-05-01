@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { DashboardCards } from '../cards'
 import { SignatureTopIcon, PercentHandIcon, ListIcon } from '../ui/icons'
-import { ExpiringContestedResourceContent, FeesCollectedCardContent } from '../cards/dashboard'
+import { ExpiringContestedResourceContent, FeesCollectedCardContent, VoterCardContent } from '../cards/dashboard'
 import './MasternodeVotesDashboardCards.scss'
 
 function MasternodeVotesDashboardCards () {
@@ -41,7 +41,7 @@ function MasternodeVotesDashboardCards () {
         },
         {
           title: 'Top Voter',
-          value: epoch.data?.bestVoter?.identifier,
+          value: <VoterCardContent voter={epoch.data?.bestVoter}/>,
           className: 'MasternodeVotesDashboardCards__Card',
           error: epoch.error,
           loading: epoch.loading
