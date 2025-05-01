@@ -7,6 +7,16 @@
   gap: 16px;
   width: 100%;
 
+  @container (min-width: 90em) {
+    grid-template-columns:
+    $timeSpanWidth // time
+    5.3rem // height
+    minmax(0, 500rem) // hash
+    35rem // proposed by
+    minmax(5rem, 15rem) // fees
+    4.75rem; // tx count
+  }
+
   grid-template-columns:
     $timeSpanWidth // time
     5.3rem // height
