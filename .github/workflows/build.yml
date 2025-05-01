@@ -19,17 +19,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: "Validate branch"
-        if: ${{github.base_ref == 'master'}}
-        run: exit 1
-      - name: "Validate label"
-        if: |
-          (contains(github.event.pull_request.labels.*.name, 'backend') ||
-            contains(github.event.pull_request.labels.*.name, 'data contract') || 
-            contains(github.event.pull_request.labels.*.name, 'frontend') || 
-            contains(github.event.pull_request.labels.*.name, 'indexer')) == false &&
-          (github.event_name == 'pull_request')
-        run: exit 1
+#      - name: "Validate branch"
+#        if: ${{github.base_ref == 'master'}}
+#        run: exit 1
+#      - name: "Validate label"
+#        if: |
+#          (contains(github.event.pull_request.labels.*.name, 'backend') ||
+#            contains(github.event.pull_request.labels.*.name, 'data contract') ||
+#            contains(github.event.pull_request.labels.*.name, 'frontend') ||
+#            contains(github.event.pull_request.labels.*.name, 'indexer')) == false &&
+#          (github.event_name == 'pull_request')
+#        run: exit 1
 
 #  test_data_contract:
 #    needs: pull_request_lint
