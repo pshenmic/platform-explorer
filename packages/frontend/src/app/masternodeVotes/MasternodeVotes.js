@@ -11,6 +11,7 @@ import { Box, Container, Heading, useBreakpointValue } from '@chakra-ui/react'
 import { useDebounce } from '../../hooks'
 import { VotesList } from '../../components/contestedResources/votes'
 import { MasternodeVotesFilters } from '../../components/contestedResources'
+import './MasternodeVotes.scss'
 
 const paginateConfig = {
   pageSize: {
