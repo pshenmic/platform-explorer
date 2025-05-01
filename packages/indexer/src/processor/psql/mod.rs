@@ -15,6 +15,8 @@ use crate::entities::data_contract::DataContract;
 use crate::entities::document::Document;
 
 pub mod handlers;
+mod utils;
+
 #[derive(Debug)]
 pub enum ProcessorError {
     DatabaseError,
@@ -57,6 +59,10 @@ impl PSQLProcessor {
         let platform_explorer_identifier_string: String = env::var("PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").expect("You've not set the PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER").parse().expect("Failed to parse PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER env");
         let platform_explorer_identifier = Identifier::from_string(&platform_explorer_identifier_string, Base58).unwrap();
         return PSQLProcessor { decoder, dao, platform_explorer_identifier, dashcore_rpc };
+    }
+
+    pub async fn get_latest_block_height(&self) -> i32 {
+        self.dao.get_latest_block_height().await.unwrap()
     }
 
     pub async fn process_system_data_contract(&self, system_data_contract: SystemDataContract, sql_transaction: &Transaction<'_>) -> () {

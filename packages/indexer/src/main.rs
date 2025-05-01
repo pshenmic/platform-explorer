@@ -14,7 +14,7 @@ extern crate core;
 async fn main() {
     dotenv().ok(); // This line loads the environment variables from the ".env" file
 
-    let indexer = indexer::Indexer::new();
+    let indexer = indexer::Indexer::new().await;
 
     indexer.start().await;
 }

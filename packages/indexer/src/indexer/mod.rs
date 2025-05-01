@@ -31,11 +31,11 @@ pub struct Indexer {
     tenderdash_rpc: TenderdashRpcApi,
     processor: PSQLProcessor,
     last_block_height: Cell<i32>,
-    txs_to_skip: Vec<String>,
+    txs_to_skip: Vec<String>
 }
 
 impl Indexer {
-    pub fn new() -> Indexer {
+    pub async fn new() -> Indexer {
         let core_rpc_host: String = env::var("CORE_RPC_HOST").expect("You've not set the CORE_RPC_HOST").parse().expect("Failed to parse CORE_RPC_HOST env");
         let core_rpc_port: String = env::var("CORE_RPC_PORT").expect("You've not set the CORE_RPC_PORT").parse().expect("Failed to parse CORE_RPC_PORT env");
         let core_rpc_user: String = env::var("CORE_RPC_USER").expect("You've not set the CORE_RPC_USER").parse().expect("Failed to parse CORE_RPC_USER env");
@@ -44,15 +44,16 @@ impl Indexer {
         let dashcore_rpc = Client::new(&format!("{}:{}", core_rpc_host, &core_rpc_port),
                                        Auth::UserPass(core_rpc_user, core_rpc_password)).unwrap();
 
-
         let processor = PSQLProcessor::new(dashcore_rpc);
         let tenderdash_url = env::var("TENDERDASH_URL").expect("You've not set the TENDERDASH_URL");
         let txs_to_skip = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
 
+        let start_height = processor.get_latest_block_height().await;
+
         Indexer {
             tenderdash_rpc: TenderdashRpcApi::new(tenderdash_url),
             processor,
-            last_block_height: Cell::new(0),
+            last_block_height: Cell::new(start_height),
             txs_to_skip: txs_to_skip.split(",")
                 .map(|s| { String::from(s) }).collect::<Vec<String>>(),
         }

@@ -46,4 +46,19 @@ impl PostgresDAO {
 
     Ok(block.cloned())
   }
+
+  pub async fn get_latest_block_height(&self) -> Result<i32, PoolError> {
+    let client = self.connection_pool.get().await?;
+
+    let stmt = client.prepare_cached("SELECT height FROM blocks order by height desc limit 1").await.unwrap();
+
+    let rows: Vec<Row> = client.query(&stmt, &[]).await.unwrap();
+
+    let height = rows.first();
+
+    match height {
+      Some(row) => Ok(row.get(0)),
+      None => Ok(0),
+    }
+  }
 }
