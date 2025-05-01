@@ -13,7 +13,7 @@ export function FeesCollectedCardContent ({ epoch, status, rate }) {
             credits={epoch.totalCollectedFees}
             rate={rate}
           >
-            <span>
+            <span className={'FeesCollectedCardContent__FeesContainer'}>
               {currencyRound(epoch.totalCollectedFees)}
               <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
             </span>
