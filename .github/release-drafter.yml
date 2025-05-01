@@ -5,10 +5,10 @@ categories:
     label: 'backend'
   - title: 'Frontend'
     label: 'frontend'
-#  - title: 'Indexer'
-#    label: 'indexer'
+  - title: 'Indexer'
+    label: 'indexer'
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
-#change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
+change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 version-resolver:
   major:
     labels:
