@@ -18,9 +18,9 @@ $borderRadius: 20px;
       height: 40px;
       width: 100%;
       left: 0;
-      background: #24282b;
       border-radius: $borderRadius $borderRadius 0 0;
-      opacity: .5;
+      background-color: var(--chakra-colors-gray-800);
+      opacity: 1;
       top: 0;
       z-index: 0;
     }
