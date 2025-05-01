@@ -20,14 +20,16 @@ export function FeesCollectedCardContent ({ epoch, status, rate }) {
           </RateTooltip>
           : 'n/a'}
       </div>
-      <Flex fontFamily={'mono'} fontSize={'0.75rem'} fontWeight={'normal'}>
-        <Text color={'gray.500'} mr={'8px'}>Last 24h: </Text>
-        <Text>
-          {typeof status?.totalCollectedFeesDay === 'number'
-            ? currencyRound(status?.totalCollectedFeesDay)
-            : 'n/a'}
-        </Text>
-      </Flex>
+      {status?.totalCollectedFeesDay &&
+        <Flex fontFamily={'mono'} fontSize={'0.75rem'} fontWeight={'normal'}>
+          <Text color={'gray.500'} mr={'8px'}>Last 24h: </Text>
+          <Text>
+            {typeof status?.totalCollectedFeesDay === 'number'
+              ? currencyRound(status?.totalCollectedFeesDay)
+              : 'n/a'}
+          </Text>
+        </Flex>
+      }
     </div>
   )
 }
