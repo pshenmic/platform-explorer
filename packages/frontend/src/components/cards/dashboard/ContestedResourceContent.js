@@ -2,23 +2,23 @@ import { Alias, TimeRemaining } from '../../data'
 import contestedResources from '../../../util/contestedResources'
 import { Badge } from '@chakra-ui/react'
 import VoteBadges from '../../contestedResources/VoteBadges'
-import './ExpiringContestedResourceContent.scss'
+import './ContestedResourceContent.scss'
 
-export function ExpiringContestedResourceContent ({ contestedResource }) {
+export function ContestedResourceContent ({ contestedResource }) {
   return (
-    <div className={'ExpiringContestedResourceContent'}>
+    <div className={'ContestedResourceContent'}>
       {contestedResource
         ? <>
-          <div className={'ExpiringContestedResourceContent__ValueContainer'}>
+          <div className={'ContestedResourceContent__ValueContainer'}>
             <Alias
-              className={'ExpiringContestedResourceContent__Value'}
+              className={'ContestedResourceContent__Value'}
               ellipsis={false}
             >
               {contestedResources.getResourceValue(contestedResource?.resourceValue)}
             </Alias>
             {contestedResource?.contenders &&
               <Badge
-                className={'ExpiringContestedResourceContent__ContendersBadge'}
+                className={'ContestedResourceContent__ContendersBadge'}
                 colorScheme={'blue'}
                 size={'xs'}
                 ml={'0.25rem'}
@@ -29,7 +29,7 @@ export function ExpiringContestedResourceContent ({ contestedResource }) {
           </div>
 
           <VoteBadges
-            className={'ExpiringContestedResourceContent__VoteBadges'}
+            className={'ContestedResourceContent__VoteBadges'}
             totalCountAbstain={contestedResource?.totalCountAbstain}
             totalCountLock={contestedResource?.totalCountLock}
             totalCountTowardsIdentity={contestedResource?.totalCountTowardsIdentity}
@@ -42,7 +42,7 @@ export function ExpiringContestedResourceContent ({ contestedResource }) {
             />
           }
         </>
-        : <div className={'ExpiringContestedResourceContent__AllCompleted'}>All completed</div>
+        : <div className={'ContestedResourceContent__AllCompleted'}>All completed</div>
       }
     </div>
   )

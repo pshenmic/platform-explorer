@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { DashboardCards } from '../cards'
 import { SignatureTopIcon, PercentHandIcon, ListIcon } from '../ui/icons'
-import { ExpiringContestedResourceContent, FeesCollectedCardContent, VoterCardContent } from '../cards/dashboard'
+import { ContestedResourceContent, FeesCollectedCardContent, VoterCardContent } from '../cards/dashboard'
 import './MasternodeVotesDashboardCards.scss'
 
 function MasternodeVotesDashboardCards () {
@@ -23,6 +23,7 @@ function MasternodeVotesDashboardCards () {
   }
 
   console.log('rate', rate)
+  console.log('epoch.data?.topVotedResource', epoch.data?.topVotedResource)
 
   console.log('epoch', epoch)
 
@@ -56,7 +57,15 @@ function MasternodeVotesDashboardCards () {
         },
         {
           title: 'Top voted resource',
-          value: <ExpiringContestedResourceContent contestedResource={epoch.data?.expiringContestedResource}/>,
+          value: <ContestedResourceContent
+            contestedResource={{
+              totalCountAbstain: epoch.data?.topVotedResource?.abstain,
+              totalCountLock: epoch.data?.topVotedResource?.lock,
+              totalCountTowardsIdentity: epoch.data?.topVotedResource?.yes,
+              resourceValue: epoch.data?.topVotedResource?.resource,
+              ...epoch.data?.topVotedResource
+            }}
+          />,
           className: 'MasternodeVotesDashboardCards__Card',
           error: epoch.error,
           loading: epoch.loading,
