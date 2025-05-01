@@ -444,5 +444,5 @@ export {
   ListIcon,
   LockIcon,
   PercentHandIcon,
-  SignatureTopIcon,
+  SignatureTopIcon
 }
