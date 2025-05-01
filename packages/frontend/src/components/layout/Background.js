@@ -16,7 +16,7 @@ function Background ({ snow }) {
     '/transactions',
     '/contestedResources'
   ]
-  const showDecoration = showOnRoutes.includes(pathname)
+  const showDecoration = showOnRoutes.includes(pathname) || true
 
   return (
     <>
