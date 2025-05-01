@@ -22,11 +22,6 @@ function MasternodeVotesDashboardCards () {
       .catch(err => fetchHandlerError(setRate, err))
   }
 
-  console.log('rate', rate)
-  console.log('epoch.data?.topVotedResource', epoch.data?.topVotedResource)
-
-  console.log('epoch', epoch)
-
   useEffect(fetchData, [])
 
   return (
