@@ -5,6 +5,13 @@
   display: flex;
   flex-direction: column;
 
+  &__Avatars {
+    .ImageGenerator {
+      max-width: 2.5rem;
+      max-height: 2.5rem;
+    }
+  }
+
   &__Count {
     flex-grow: 1;
   }
