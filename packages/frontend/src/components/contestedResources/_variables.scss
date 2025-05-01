@@ -4,9 +4,20 @@
   display: grid;
   gap: 1rem;
 
+  @container (min-width: 90em) {
+    grid-template-columns:
+    5rem // timestamp
+    minmax(0, 500rem) // resource value
+    30rem // data contract
+    9rem // indexName
+    8rem // type name
+    3rem // votes
+    7rem; // ends in
+  }
+
   grid-template-columns:
     5rem // timestamp
-    minmax(0, 30rem) // resource value
+    minmax(0, 500rem) // resource value
     17.5rem // data contract
     9rem // indexName
     8rem // type name
