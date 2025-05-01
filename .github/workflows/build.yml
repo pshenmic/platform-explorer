@@ -19,6 +19,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 #      - name: "Validate branch"
 #        if: ${{github.base_ref == 'master'}}
 #        run: exit 1
