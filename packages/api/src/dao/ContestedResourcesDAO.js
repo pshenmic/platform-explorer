@@ -67,7 +67,7 @@ module.exports = class ContestedDAO {
 
     const contestedDocumentsSubquery = this.knex(documentsResourceValues)
       .select('resource_value', 'document_id', 'data_contract_identifier', 'index_name')
-      .whereRaw('resource_value <@ ?', [JSON.stringify(resourceValue)])
+      .whereRaw('resource_value = ?', [JSON.stringify(resourceValue)])
       .as('contested_documents_sub')
 
     const documentGasSubquery = this.knex(contestedDocumentsSubquery)
@@ -92,7 +92,7 @@ module.exports = class ContestedDAO {
         'contested_documents_sub.owner as owner', 'document_identifier', 'document_timestamp as timestamp',
         'contested_documents_sub.document_type_name as document_type_name'
       )
-      .joinRaw('left join masternode_votes ON masternode_votes.index_values <@ contested_documents_sub.resource_value')// ('masternode_votes', 'masternode_votes.index_values', 'contested_documents_sub.resource_value')
+      .joinRaw('left join masternode_votes ON masternode_votes.index_values = contested_documents_sub.resource_value')// ('masternode_votes', 'masternode_votes.index_values', 'contested_documents_sub.resource_value')
       .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'contested_documents_sub.owner')
       .leftJoin('state_transitions', 'masternode_votes.state_transition_hash', 'hash')
 
@@ -254,7 +254,7 @@ module.exports = class ContestedDAO {
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('document_id', order)
-      .joinRaw('left join masternode_votes ON resource_value <@ index_values')
+      .joinRaw('left join masternode_votes ON resource_value = index_values')
 
     if (rows.length === 0) {
       return new PaginatedResultSet([], page, limit, -1)
@@ -365,7 +365,7 @@ module.exports = class ContestedDAO {
         'resource_value', 'document_id',
         'identifier as document_identifier', 'owner'
       )
-      .whereRaw('resource_value <@ ?', [JSON.stringify(resourceValue)])
+      .whereRaw('resource_value = ?', [JSON.stringify(resourceValue)])
       .leftJoin('documents', 'document_id', 'id')
       .as('contested_documents_sub')
 
@@ -473,7 +473,7 @@ module.exports = class ContestedDAO {
       .select(this.knex.raw('NULL::bigint as total_contested_documents_count'))
       .select(this.knex.raw('NULL::bigint as pending_contested_documents_count'))
       .select(this.knex.raw('NULL::bigint as total_votes_count'))
-      .joinRaw('LEFT JOIN masternode_votes ON resource_value <@ index_values')
+      .joinRaw('LEFT JOIN masternode_votes ON resource_value = index_values')
 
     const statusSubquery = this.knex('documents')
       .select(this.knex.raw('NULL::jsonb as resource_value'))
