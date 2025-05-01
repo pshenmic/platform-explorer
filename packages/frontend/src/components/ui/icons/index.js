@@ -372,6 +372,24 @@ const LockIcon = (props) => (
   </Icon>
 )
 
+const PercentHandIcon = (props) => {
+  const uniqueId = useId()
+
+  return (
+    <Icon width='48' height='48' viewBox='0 0 48 48' fill='none' color={'#008DE4'} {...props}>
+      <path
+        d='M2 33.6566L4.12048 35.7138M4.12048 35.7138L18 24H30V29M4.12048 35.7138L12.6024 43.9428M22 31H30V29M30 29L40 23L46 29L30 40H17L12.6024 43.9428M12.6024 43.9428L14.7229 46M33.8027 3.225L22.1975 14.775M35 13.8125C35 15.0206 34.0206 16 32.8125 16C31.6044 16 30.625 15.0206 30.625 13.8125C30.625 12.6044 31.6044 11.625 32.8125 11.625C34.0206 11.625 35 12.6044 35 13.8125ZM25.375 4.1875C25.375 5.39562 24.3956 6.375 23.1875 6.375C21.9794 6.375 21 5.39562 21 4.1875C21 2.97938 21.9794 2 23.1875 2C24.3956 2 25.375 2.97938 25.375 4.1875Z'
+        stroke={`url(#paint${uniqueId})`} strokeWidth='1.5'/>
+      <defs>
+        <linearGradient id={`paint${uniqueId}`} x1='8.28572' y1='2' x2='8.28572' y2='140.286' gradientUnits='userSpaceOnUse'>
+          <stop stopColor='currentColor'/>
+          <stop offset='1' stopColor='currentColor' stopOpacity='0.6'/>
+        </linearGradient>
+      </defs>
+    </Icon>
+  )
+}
+
 export {
   CalendarIcon,
   CalendarIcon2,
@@ -402,5 +420,6 @@ export {
   PlatformExplorerLogoStroke,
   SignatureIcon,
   ListIcon,
-  LockIcon
+  LockIcon,
+  PercentHandIcon
 }
