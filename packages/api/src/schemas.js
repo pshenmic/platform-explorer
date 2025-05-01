@@ -24,7 +24,7 @@ const schemaTypes = [
       },
       orderBy: {
         type: ['string', 'null'],
-        enum: ['block_height', 'documents_count', 'tx_count', 'balance']
+        enum: ['block_height', 'documents_count', 'tx_count', 'balance', 'gas_used', 'timestamp', 'id', 'owner']
       },
       isActive: { type: ['boolean', 'null'] },
       type: {
@@ -63,11 +63,11 @@ const schemaTypes = [
       document_type_name: {
         type: ['string', 'null']
       },
-      start_epoch_index: {
+      epoch_index_min: {
         type: ['number', 'null'],
         minimum: 0
       },
-      end_epoch_index: {
+      epoch_index_max: {
         type: ['number', 'null'],
         minimum: 1
       },
@@ -125,11 +125,11 @@ const schemaTypes = [
     $id: 'timeInterval',
     type: 'object',
     properties: {
-      start: {
+      timestamp_start: {
         type: ['string', 'null'],
         format: 'date-time'
       },
-      end: {
+      timestamp_end: {
         type: ['string', 'null'],
         format: 'date-time'
       },

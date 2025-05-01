@@ -58,7 +58,7 @@ describe('Transaction routes', () => {
     transactions.push({ transaction: errorTx, block })
 
     for (let i = 2; i < 30; i++) {
-      const block = await fixtures.block(knex, {
+      block = await fixtures.block(knex, {
         height: i + 1,
         timestamp: new Date(startDate.getTime() + i * 1000 * 60)
       })
@@ -75,7 +75,7 @@ describe('Transaction routes', () => {
     }
 
     for (let i = 30; i < 60; i++) {
-      const block = await fixtures.block(knex, {
+      block = await fixtures.block(knex, {
         height: i + 1, timestamp: new Date(startDate.getTime() + i * 1000 * 60)
       })
 
@@ -526,6 +526,162 @@ describe('Transaction routes', () => {
       assert.deepEqual(expectedTransactions, body.resultSet)
     })
 
+    it('should return be able to walk through pages desc with ordering by id', async () => {
+      const { body } = await client.get('/transactions?page=3&limit=3&order=desc&orderBy=id')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 3)
+
+      const expectedTransactions = transactions
+        .sort((a, b) => b.transaction.id - a.transaction.id)
+        .slice(6, 9)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return be able to walk through pages desc with ordering by gas_used', async () => {
+      const { body } = await client.get('/transactions?page=3&limit=3&order=desc&orderBy=gas_used')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 3)
+
+      const expectedTransactions = transactions
+        .sort((a, b) => b.transaction.gas_used - a.transaction.gas_used)
+        .slice(6, 9)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return be able to walk through pages asc with ordering by timestamp', async () => {
+      const { body } = await client.get('/transactions?page=3&limit=3&order=asc&orderBy=timestamp')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 3)
+
+      const expectedTransactions = transactions
+        .sort((a, b) => new Date(a.block.timestamp).getTime() - new Date(b.block.timestamp).getTime())
+        .slice(6, 9)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return be able to walk through pages desc with ordering by owner', async () => {
+      const { body } = await client.get('/transactions?page=3&limit=3&order=desc&orderBy=owner')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, transactions.length)
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 3)
+
+      const expectedTransactions = transactions
+        .sort((a, b) => b.transaction.owner - a.transaction.owner)
+        .slice(6, 9)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: transaction.transaction.type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [{
+              alias: identityAlias.alias,
+              contested: false,
+              status: 'ok',
+              timestamp: null,
+              txHash: identityAlias.state_transition_hash
+            }]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
     it('should return be able to walk through pages', async () => {
       const { body } = await client.get('/transactions?page=3&limit=3')
         .expect(200)
@@ -602,7 +758,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 2H', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/history?timestamp_start=${new Date(new Date().getTime() - 3600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -636,7 +792,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 24h', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/history?timestamp_start=${new Date(new Date().getTime() - 43200000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -670,7 +826,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 3d', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/history?timestamp_start=${new Date(new Date().getTime() - 129600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -704,7 +860,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 1w', async () => {
-      const { body } = await client.get(`/transactions/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/history?timestamp_start=${new Date(new Date().getTime() - 302400000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -740,7 +896,7 @@ describe('Transaction routes', () => {
       const start = new Date(new Date().getTime())
       const end = new Date(start.getTime() + 10800000)
 
-      const { body } = await client.get(`/transactions/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=6`)
+      const { body } = await client.get(`/transactions/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=6`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -812,7 +968,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 2H', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 3600000).toISOString()}&end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/gas/history?timestamp_start=${new Date(new Date().getTime() - 3600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -848,7 +1004,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 24h', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 43200000).toISOString()}&end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/gas/history?timestamp_start=${new Date(new Date().getTime() - 43200000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -884,7 +1040,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 3d', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 129600000).toISOString()}&end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/gas/history?timestamp_start=${new Date(new Date().getTime() - 129600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -920,7 +1076,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return default series set timespan 1w', async () => {
-      const { body } = await client.get(`/transactions/gas/history?start=${new Date(new Date().getTime() - 302400000).toISOString()}&end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
+      const { body } = await client.get(`/transactions/gas/history?timestamp_start=${new Date(new Date().getTime() - 302400000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -958,7 +1114,7 @@ describe('Transaction routes', () => {
       const start = new Date(new Date().getTime())
       const end = new Date(start.getTime() + 10800000)
 
-      const { body } = await client.get(`/transactions/gas/history?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=6`)
+      const { body } = await client.get(`/transactions/gas/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=6`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 

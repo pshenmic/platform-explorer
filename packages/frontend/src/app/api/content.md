@@ -243,7 +243,7 @@ Return all blocks with pagination info
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 ```
-GET /blocks?start_epoch_index=1000&end_epoch_index=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8
+GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8
 
 {
   "resultSet": [
@@ -531,12 +531,12 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 ### Validator rewards stats by ProTxHash
 Return a series data for the reward from proposed blocks by validator chart with
 
-* `start` lower interval threshold in ISO string
-* `end` upper interval threshold in ISO string
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
 
 ```
-GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/rewards/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/rewards/stats?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
 [
     {
         "timestamp": "2024-06-23T13:51:44.154Z",
@@ -550,12 +550,12 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
 ### Validator stats by ProTxHash
 Return a series data for the amount of proposed blocks by validator chart with
 
-* `start` lower interval threshold in ISO string
-* `end` upper interval threshold in ISO string
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
 
 ```
-GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
 [
     {
         "timestamp": "2024-06-23T13:51:44.154Z",
@@ -621,9 +621,10 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `gas_max` number of max `gas_used`
 * `timestamp_start` must be used with `timestamp_end`
 * `timestamp_end` must be used with `timestamp_start`
+* Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
 
 ```
-GET /transactions?=1&limit=10&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
+GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
 
 {
     "pagination": {
@@ -1444,12 +1445,12 @@ ___
 ### Transactions history
 Return a series data for the amount of transactions chart
 
-* `start` lower interval threshold in ISO string
-* `end` upper interval threshold in ISO string
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
 
 ```
-GET /transactions/history?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
+GET /transactions/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
 [
     {
         "timestamp": "2024-04-22T08:45:20.911Z",
@@ -1479,12 +1480,12 @@ ___
 ### Transactions Gas history
 Return a series data for the used gas of transactions chart
 
-* `start` lower interval threshold in ISO string
-* `end` upper interval threshold in ISO string
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
 
 ```
-GET /transactions/gas/history?start=2024-01-01T00:00:00&end=2025-01-01T00:00:00
+GET /transactions/gas/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
 [
     {
         "timestamp": "2024-04-22T08:45:20.911Z",

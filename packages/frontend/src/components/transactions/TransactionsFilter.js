@@ -118,6 +118,15 @@ const filtersConfig = {
     mobileTagRenderer: (value) => (
       <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
     )
+  },
+  timestamp: {
+    label: 'Date',
+    title: 'Date range',
+    type: 'daterange',
+    defaultValue: null,
+    formatValue: (value) => {
+      return `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
+    }
   }
 }
 

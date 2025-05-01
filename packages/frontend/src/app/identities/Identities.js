@@ -71,41 +71,41 @@ function Identities ({ defaultPage = 1, defaultPageSize }) {
   }, [currentPage, pageSize])
 
   return (
+    <Container
+        maxW={'container.xl'}
+        mt={8}
+        className={'IdentitiesPage'}
+    >
       <Container
-          maxW={'container.xl'}
-          mt={8}
-          className={'IdentitiesPage'}
+        maxW={'container.xl'}
+        className={'InfoBlock'}
       >
-          <Container
-              maxW={'container.xl'}
-              className={'InfoBlock'}
-          >
-              <Heading className={'InfoBlock__Title'} as={'h1'}>Identities</Heading>
+        <Heading className={'InfoBlock__Title'} as={'h1'}>Identities</Heading>
 
-              {!identities.error
-                ? !identities.loading
-                    ? <IdentitiesList identities={identities.data.resultSet}/>
-                    : <LoadingList itemsCount={pageSize}/>
-                : <ErrorMessageBlock h={20}/>
-              }
+        {!identities.error
+          ? !identities.loading
+              ? <IdentitiesList identities={identities.data.resultSet}/>
+              : <LoadingList itemsCount={pageSize}/>
+          : <ErrorMessageBlock h={20}/>
+        }
 
-              {identities.data?.resultSet?.length > 0 &&
-                <div className={'ListNavigation'}>
-                  <Box display={['none', 'none', 'block']} width={'155px'}/>
-                  <Pagination
-                    onPageChange={({ selected }) => setCurrentPage(selected)}
-                    pageCount={pageCount}
-                    forcePage={currentPage}
-                  />
-                  <PageSizeSelector
-                    PageSizeSelectHandler={e => setPageSize(e.value)}
-                    value={pageSize}
-                    items={paginateConfig.pageSize.values}
-                  />
-                </div>
-              }
-          </Container>
+        {identities.data?.resultSet?.length > 0 &&
+          <div className={'ListNavigation'}>
+            <Box display={['none', 'none', 'block']} width={'155px'}/>
+            <Pagination
+              onPageChange={({ selected }) => setCurrentPage(selected)}
+              pageCount={pageCount}
+              forcePage={currentPage}
+            />
+            <PageSizeSelector
+              PageSizeSelectHandler={e => setPageSize(e.value)}
+              value={pageSize}
+              items={paginateConfig.pageSize.values}
+            />
+          </div>
+        }
       </Container>
+    </Container>
   )
 }
 

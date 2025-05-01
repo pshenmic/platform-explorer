@@ -1,0 +1,86 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.DateRangeFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 650px;
+
+  &__ValuesContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__ValuesTitle {
+    font-size: 0.688rem;
+    font-family: $font-mono;
+    opacity: .5;
+  }
+
+  &__Values {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+
+  .MobileFilterMenu & {
+    min-width: unset !important;
+    width: 100%;
+  }
+
+  @media screen and (max-width: 55em) {
+    &__CalendarTitle, &__ValuesTitle {
+      display: none;
+    }
+
+    &__ValueButton {
+      &--Submit {
+        margin-left: auto;
+      }
+    }
+
+    &__Values {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .MobileFilterMenu & {
+      &__CalendarTitle, &__ValuesTitle {
+        display: block;
+      }
+
+      &__Values {
+        width: auto;
+        flex-wrap: nowrap;
+      }
+
+      &__ValueButton {
+        &--Submit {
+          margin-left: unset;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    .MobileFilterMenu & {
+      &__ValuesContainer {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      &__Values {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    min-width: 500px;
+  }
+}

@@ -1,4 +1,7 @@
 import { Icon, useId } from '@chakra-ui/react'
+import FirstPlaceIcon from './FirstPlaceIcon'
+import SecondPlaceIcon from './SecondPlaceIcon'
+import ThirdPlaceIcon from './ThirdPlaceIcon'
 import PlatformExplorerLogoColor from './PlatformExplorerLogoColor'
 import PlatformExplorerLogoStroke from './PlatformExplorerLogoStroke'
 
@@ -438,6 +441,9 @@ export {
   InfoIcon,
   SearchIcon,
   HourglassIcon,
+  FirstPlaceIcon,
+  SecondPlaceIcon,
+  ThirdPlaceIcon,
   PlatformExplorerLogoColor,
   PlatformExplorerLogoStroke,
   SignatureIcon,

@@ -26,10 +26,14 @@ class TransactionsController {
 
   getTransactions = async (request, response) => {
     const {
-      page = 1, limit = 10,
-      order = 'asc', owner,
+      owner,
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      orderBy = 'id',
       status = 'ALL',
-      gas_min: gasMin, gas_max: gasMax,
+      gas_min: gasMin,
+      gas_max: gasMax,
       transaction_type: transactionType,
       timestamp_start: timestampStart,
       timestamp_end: timestampEnd
@@ -47,10 +51,15 @@ class TransactionsController {
       return response.status(400).send({ message: 'you must use timestamp_start and timestamp_end' })
     }
 
+    if (!['gas_used', 'timestamp', 'id', 'owner'].includes(orderBy)) {
+      return response.status(400).send({ message: 'invalid ordering field' })
+    }
+
     const transactions = await this.transactionsDAO.getTransactions(
       Number(page ?? 1),
       Number(limit ?? 10),
       order,
+      orderBy,
       transactionType,
       owner,
       status,
@@ -65,31 +74,31 @@ class TransactionsController {
 
   getTransactionHistory = async (request, response) => {
     const {
-      start = new Date().getTime() - 3600000,
-      end = new Date().getTime(),
+      timestamp_start: timestampStart = new Date().getTime() - 3600000,
+      timestamp_end: timestampEnd = new Date().getTime(),
       intervalsCount = null
     } = request.query
 
-    if (!start || !end) {
+    if (!timestampStart || !timestampEnd) {
       return response.status(400).send({ message: 'start and end must be set' })
     }
 
-    if (start > end) {
+    if (timestampStart > timestampEnd) {
       return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
     }
 
     const intervalInMs =
       Math.ceil(
-        (new Date(end).getTime() - new Date(start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+        (new Date(timestampEnd).getTime() - new Date(timestampStart).getTime()) / Number(intervalsCount ?? NaN) / 1000
       ) * 1000
 
     const interval = intervalsCount
       ? iso8601duration(intervalInMs)
-      : calculateInterval(new Date(start), new Date(end))
+      : calculateInterval(new Date(timestampStart), new Date(timestampEnd))
 
     const timeSeries = await this.transactionsDAO.getHistorySeries(
-      new Date(start),
-      new Date(end),
+      new Date(timestampStart),
+      new Date(timestampEnd),
       interval,
       isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
     )
@@ -99,8 +108,8 @@ class TransactionsController {
 
   getGasHistory = async (request, response) => {
     const {
-      start = new Date().getTime() - 3600000,
-      end = new Date().getTime(),
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
       intervalsCount = null
     } = request.query
 

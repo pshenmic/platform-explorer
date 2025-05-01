@@ -40,7 +40,7 @@ const getBlockByHash = (hash) => {
 }
 
 const getTransactionsHistory = (start, end, intervalsCount) => {
-  return call(`transactions/history?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+  return call(`transactions/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
 const prepareQueryParams = (params = {}) => {

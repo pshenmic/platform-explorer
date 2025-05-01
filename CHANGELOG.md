@@ -1,5 +1,21 @@
 # CHANGELOG
 
+### v1.0.24
+
+## Changes
+
+## Frontend
+
+- Absolute timestamp in Block list @AlexeyTripleA (#546)
+
+### v1.0.23
+
+## Changes
+
+## Frontend
+
+- Add hover on timestamps @AlexeyTripleA (#544)
+
 ### v1.0.22
 
 ## Changes

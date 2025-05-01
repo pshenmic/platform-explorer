@@ -1,14 +1,16 @@
-@use '../../styles/mixins.scss';
-@import '../../styles/variables.scss';
+@use '../../../styles/mixins';
+@import '../../../styles/variables';
 
-.IdentityCard {
+.TopIdentityCard {
+  padding: 0.75rem;
+
   &--Loading {
-    height: 58px;
+    height: 3.125rem;
   }
 
   &__Img {
-    width: 42px;
-    height: 42px;
+    width: 1.5rem;
+    height: 1.5rem;
     margin: -10px 10px -10px 0;
     flex-shrink: 0;
   }
@@ -23,12 +25,16 @@
   &__Alias {
     text-overflow: ellipsis;
     white-space: nowrap;
-    text-overflow: ellipsis;
     max-width: calc(100% - 65px);
     overflow: hidden;
   }
 
   &__Balance {
-    color: var(--chakra-colors-gray-500);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    font-size: 0.75rem;
+    color: #fff;
+    font-family: $font-mono;
   }
 }

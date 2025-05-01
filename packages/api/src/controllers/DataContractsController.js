@@ -21,6 +21,10 @@ class DataContractsController {
   getDataContracts = async (request, response) => {
     const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
 
+    if (!['block_height', 'documents_count', 'tx_count', 'balance'].includes(orderBy)) {
+      return response.status(400).send({ message: 'invalid filters values' })
+    }
+
     const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
 
     response.send(dataContracts)
