@@ -16,6 +16,10 @@ class ContestedResourcesController {
 
     const resource = await this.contestedResourcesDAO.getContestedResource(decodedResourceValue)
 
+    if (!resource) {
+      response.status(404).send({ message: 'resourceValue not found' })
+    }
+
     response.send(resource)
   }
 
