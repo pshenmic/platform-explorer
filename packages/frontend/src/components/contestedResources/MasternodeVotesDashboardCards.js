@@ -10,12 +10,19 @@ import './MasternodeVotesDashboardCards.scss'
 
 function MasternodeVotesDashboardCards () {
   const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
   const fetchData = () => {
     Api.getEpoch()
       .then(res => fetchHandlerSuccess(setEpoch, res))
       .catch(err => fetchHandlerError(setEpoch, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
+
+  console.log('rate', rate)
 
   console.log('epoch', epoch)
 
@@ -41,7 +48,7 @@ function MasternodeVotesDashboardCards () {
         },
         {
           title: 'Fees Collected',
-          value: <FeesCollectedCardContent epoch={epoch.data}/>,
+          value: <FeesCollectedCardContent epoch={epoch.data} rate={rate?.data}/>,
           className: 'MasternodeVotesDashboardCards__Card',
           error: epoch.error,
           loading: epoch.loading,
