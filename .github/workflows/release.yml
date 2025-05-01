@@ -27,7 +27,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
-
+#
     - name: Create a GitHub release
       uses: release-drafter/release-drafter@v6
       with:
