@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { DashboardCards } from '../cards'
 import { SignatureTopIcon, PercentHandIcon, ListIcon } from '../ui/icons'
-import { ExpiringContestedResourceContent } from '../cards/dashboard'
+import { ExpiringContestedResourceContent, FeesCollectedCardContent } from '../cards/dashboard'
 import './MasternodeVotesDashboardCards.scss'
 
 function MasternodeVotesDashboardCards () {
@@ -27,7 +27,7 @@ function MasternodeVotesDashboardCards () {
         {
           title: `Total Votes Epoch ${epoch.data?.epoch?.number ? `#${epoch.data.epoch.number}` : ''}`,
           value: epoch.data?.totalVotesCount,
-          className: 'ContestedResourcesDashboardCards__Card',
+          className: 'MasternodeVotesDashboardCards__Card',
           error: epoch.error,
           loading: epoch.loading,
           icon: ListIcon
@@ -35,23 +35,22 @@ function MasternodeVotesDashboardCards () {
         {
           title: 'Top Voter',
           value: epoch.data?.bestVoter?.identifier,
-          className: 'ContestedResourcesDashboardCards__Card',
+          className: 'MasternodeVotesDashboardCards__Card',
           error: epoch.error,
           loading: epoch.loading
-          // icon: ListIcon
         },
         {
-          title: 'Pending Contested Resources',
-          value: epoch.data?.totalPendingContestedResources,
-          className: 'ContestedResourcesDashboardCards__Card',
+          title: 'Fees Collected',
+          value: <FeesCollectedCardContent epoch={epoch.data}/>,
+          className: 'MasternodeVotesDashboardCards__Card',
           error: epoch.error,
           loading: epoch.loading,
           icon: PercentHandIcon
         },
         {
-          title: 'Ending soon',
+          title: 'Top voted resource',
           value: <ExpiringContestedResourceContent contestedResource={epoch.data?.expiringContestedResource}/>,
-          className: 'ContestedResourcesDashboardCards__Card',
+          className: 'MasternodeVotesDashboardCards__Card',
           error: epoch.error,
           loading: epoch.loading,
           icon: SignatureTopIcon
