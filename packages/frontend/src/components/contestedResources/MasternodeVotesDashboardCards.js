@@ -39,7 +39,7 @@ function MasternodeVotesDashboardCards () {
           title: 'Top Voter',
           value: <VoterCardContent voter={epoch.data?.bestVoter}/>,
           className: 'MasternodeVotesDashboardCards__Card',
-          error: epoch.error,
+          error: epoch.error || !epoch.data?.bestVoter?.identifier,
           loading: epoch.loading
         },
         {

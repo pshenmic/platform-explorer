@@ -11,11 +11,14 @@ export function VoterCardContent ({ voter = {} }) {
       <Identifier copyButton={true} avatar={true} styles={['highlight-both']}>
         {identifier}
       </Identifier>
-      <VoteBadges
-        totalCountAbstain={abstain}
-        totalCountLock={lock}
-        totalCountTowardsIdentity={yes}
-      />
+
+      {identifier &&
+        <VoteBadges
+          totalCountAbstain={abstain}
+          totalCountLock={lock}
+          totalCountTowardsIdentity={yes}
+        />
+      }
     </Flex>
   )
 }
