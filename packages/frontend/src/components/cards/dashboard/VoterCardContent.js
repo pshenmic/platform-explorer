@@ -4,7 +4,12 @@ import VoteBadges from '../../contestedResources/VoteBadges'
 import './TotalValidatorsCardContent.scss'
 
 export function VoterCardContent ({ voter = {}, nullMessage = 'None' }) {
-  const { identifier, abstain, lock, yes } = voter || {}
+  const {
+    identifier,
+    totalCountAbstain,
+    totalCountLock,
+    totalCountTowardsIdentity
+  } = voter || {}
 
   return (
     <Flex gap={'0.25rem'} flexDirection={'column'}>
@@ -16,9 +21,9 @@ export function VoterCardContent ({ voter = {}, nullMessage = 'None' }) {
 
             {identifier &&
               <VoteBadges
-                totalCountAbstain={abstain}
-                totalCountLock={lock}
-                totalCountTowardsIdentity={yes}
+                totalCountAbstain={totalCountAbstain}
+                totalCountLock={totalCountLock}
+                totalCountTowardsIdentity={totalCountTowardsIdentity}
               />
             }
           </>
