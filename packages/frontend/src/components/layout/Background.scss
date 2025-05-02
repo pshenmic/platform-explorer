@@ -33,17 +33,36 @@
       border-radius: 10000px;
       padding-top: 50%;
       aspect-ratio: 1 / 1;
-      width: 130%;
+      width: 1000px;
+      height: 1000px;
       background: radial-gradient(circle, rgba(0, 141, 228, .9) 0%, rgba(0, 141, 228, 0) 60%);
       filter: blur(50px);
       z-index: -2;
     }
   }
 
-  @media screen and (max-width: 1440px) {
-    &::before {
-      left: 0;
-      transform: translate(-50%, -50%);
+  @media screen and (min-width: 3200px) {
+    &--Light {
+      &::before {
+        width: 50%;
+        max-width: none;
+      }
+    }
+  }
+
+  @media screen and (min-width: 4500px) {
+    &--Light {
+      &::before {
+        width: 80%;
+      }
+    }
+  }
+
+  @media screen and (min-width: 5500px) {
+    &--Light {
+      &::before {
+        width: 100%;
+      }
     }
   }
 }
