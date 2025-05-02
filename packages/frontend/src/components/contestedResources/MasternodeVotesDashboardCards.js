@@ -53,6 +53,7 @@ function MasternodeVotesDashboardCards () {
         {
           title: 'Top voted resource',
           value: <ContestedResourceContent
+            nullMessage={'None'}
             contestedResource={{
               totalCountAbstain: epoch.data?.topVotedResource?.abstain,
               totalCountLock: epoch.data?.topVotedResource?.lock,
