@@ -1,5 +1,5 @@
-use dpp::data_contract::serialized_version::DataContractInSerializationFormat;
 use data_contracts::SystemDataContract;
+use dpp::data_contract::serialized_version::DataContractInSerializationFormat;
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
@@ -15,12 +15,11 @@ pub struct DataContract {
     pub identifier: Identifier,
     pub schema: Option<Value>,
     pub version: u32,
-    pub is_system: bool
+    pub is_system: bool,
 }
 
 impl From<DataContractCreateTransition> for DataContract {
     fn from(state_transition: DataContractCreateTransition) -> Self {
-
         match state_transition {
             DataContractCreateTransition::V0(data_contract_create_transition) => {
                 let data_contract = data_contract_create_transition.data_contract;
@@ -51,7 +50,6 @@ impl From<DataContractCreateTransition> for DataContract {
 
 impl From<DataContractUpdateTransition> for DataContract {
     fn from(state_transition: DataContractUpdateTransition) -> Self {
-
         match state_transition {
             DataContractUpdateTransition::V0(data_contract_update_transition) => {
                 let data_contract = data_contract_update_transition.data_contract;
@@ -80,7 +78,6 @@ impl From<DataContractUpdateTransition> for DataContract {
     }
 }
 
-
 impl From<SystemDataContract> for DataContract {
     fn from(data_contract: SystemDataContract) -> Self {
         let platform_version = dpp::version::PLATFORM_VERSIONS.first().unwrap();
@@ -90,7 +87,7 @@ impl From<SystemDataContract> for DataContract {
             SystemDataContract::FeatureFlags => "FeatureFlags",
             SystemDataContract::DPNS => "DPNS",
             SystemDataContract::Dashpay => "Dashpay",
-            SystemDataContract::WalletUtils => "WalletUtils"
+            SystemDataContract::WalletUtils => "WalletUtils",
         };
         let identifier = data_contract.id();
         let source = data_contract.source(platform_version).unwrap();
@@ -106,10 +103,9 @@ impl From<SystemDataContract> for DataContract {
             schema: Some(schema_decoded),
             version: 0,
             is_system: true,
-        }
+        };
     }
 }
-
 
 impl From<Row> for DataContract {
     fn from(row: Row) -> Self {
@@ -128,8 +124,6 @@ impl From<Row> for DataContract {
             schema: None,
             version: version as u32,
             is_system,
-        }
+        };
     }
 }
-
-

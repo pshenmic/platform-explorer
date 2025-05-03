@@ -1,5 +1,5 @@
-use std::time::SystemTime;
 use chrono::{DateTime, Utc};
+use std::time::SystemTime;
 use tokio_postgres::Row;
 
 #[derive(Clone)]
@@ -12,14 +12,14 @@ pub struct BlockHeader {
     pub l1_locked_height: i32,
     pub app_hash: String,
     pub proposer_pro_tx_hash: String,
-    pub l2_reward: Option<i64>,
+    pub validators_reward: Option<i64>,
 }
 
 impl From<Row> for BlockHeader {
     fn from(row: Row) -> Self {
         let hash: String = row.get(0);
         let height: i32 = row.get(1);
-        let timestamp:SystemTime = row.get(2);
+        let timestamp: SystemTime = row.get(2);
         let block_version: i32 = row.get(3);
         let app_version: i32 = row.get(4);
         let l1_locked_height: i32 = row.get(5);
@@ -27,7 +27,16 @@ impl From<Row> for BlockHeader {
         let app_hash: String = row.get(7);
         let l2_reward: Option<i64> = row.get(8);
 
-        return BlockHeader { hash, height , timestamp: timestamp.into(), block_version, app_version, l1_locked_height, proposer_pro_tx_hash, app_hash, l2_reward };
+        return BlockHeader {
+            hash,
+            height,
+            timestamp: timestamp.into(),
+            block_version,
+            app_version,
+            l1_locked_height,
+            proposer_pro_tx_hash,
+            app_hash,
+            validators_reward: l2_reward,
+        };
     }
 }
-

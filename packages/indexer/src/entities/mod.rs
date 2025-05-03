@@ -1,8 +1,8 @@
-pub mod block_header;
 pub mod block;
+pub mod block_header;
 pub mod data_contract;
 pub mod document;
 pub mod identity;
+pub mod masternode_vote;
 pub mod transfer;
 pub mod validator;
-pub mod masternode_vote;
