@@ -143,19 +143,19 @@ HTTP /epoch/2492
   "totalCollectedFees": 1897008860,
   "bestValidator": "87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918",
   "topVotedResource": {
-    "resource": [
+    "resourceValue": [
       "dash",
       "asdthree0"
     ],
-    "yes": 7,
-    "abstain": 1,
-    "lock": 4
+    "totalCountTowardsIdentity": 7,
+    "totalCountAbstain": 1,
+    "totalCountLock": 4
   },
   "bestVoter": {
     "identifier": "4GfuwhaXL5YSerKKwJ19X2s5yXn8dC738tqfcvncqNgM",
-    "yes": 2,
-    "abstain": 1,
-    "lock": 2
+    "totalCountTowardsIdentity": 2,
+    "totalCountAbstain": 1,
+    "totalCountLock": 2
   },
   "totalVotesCount": 12,
   "totalVotesGasUsed": 120000000
