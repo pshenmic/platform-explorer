@@ -39,7 +39,7 @@ function MasternodeVotesDashboardCards () {
           title: 'Top Voter',
           value: <VoterCardContent voter={epoch.data?.bestVoter}/>,
           className: 'MasternodeVotesDashboardCards__Card',
-          error: epoch.error || !epoch.data?.bestVoter?.identifier,
+          error: epoch.error,
           loading: epoch.loading
         },
         {
@@ -54,13 +54,7 @@ function MasternodeVotesDashboardCards () {
           title: 'Top voted resource',
           value: <ContestedResourceContent
             nullMessage={'None'}
-            contestedResource={{
-              totalCountAbstain: epoch.data?.topVotedResource?.abstain,
-              totalCountLock: epoch.data?.topVotedResource?.lock,
-              totalCountTowardsIdentity: epoch.data?.topVotedResource?.yes,
-              resourceValue: epoch.data?.topVotedResource?.resource,
-              ...epoch.data?.topVotedResource
-            }}
+            contestedResource={epoch.data?.topVotedResource}
           />,
           className: 'MasternodeVotesDashboardCards__Card',
           error: epoch.error,
