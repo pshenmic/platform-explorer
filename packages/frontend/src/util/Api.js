@@ -162,7 +162,7 @@ const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30
 }
 
 const getEpoch = (identifier) => {
-  return call(`epoch/${identifier}`, 'GET')
+  return call(`epoch/${identifier || ''}`, 'GET')
 }
 
 const getTransactionsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
@@ -207,6 +207,17 @@ const getBlocksStatsByValidator = (proTxHash, start, end, intervalsCount) => {
 
 const getRewardsStatsByValidator = (proTxHash, start, end, intervalsCount) => {
   return call(`validator/${proTxHash}/rewards/stats?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+}
+
+const getMasternodeVotes = (page = 1, limit = 10, order = 'asc', filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    ...filters
+  })
+
+  return call(`masternodes/votes?${params.toString()}`, 'GET')
 }
 
 const getContestedResourcesStats = () => {
@@ -261,5 +272,6 @@ export {
   getRewardsStatsByValidator,
   getEpoch,
   getContestedResourcesStats,
+  getMasternodeVotes,
   getRate
 }
