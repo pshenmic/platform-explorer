@@ -118,14 +118,14 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
 
   return (
     <Container
-      maxW={'container.xl'}
+      maxW={'container.maxPageW'}
       color={'white'}
       mt={8}
       mb={8}
       className={'Blocks'}
     >
       <Container
-        maxW={'container.xl'}
+        maxW={'container.maxPageW'}
         _dark={{ color: 'white' }}
         className={'InfoBlock'}
       >

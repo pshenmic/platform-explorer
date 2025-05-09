@@ -73,7 +73,7 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
   return (
     <Container
       className={'InfoBlock ContestedResources'}
-      maxW={'container.xl'}
+      maxW={'container.maxPageW'}
       my={8}
     >
       <Heading className={'InfoBlock__Title'} as={'h1'}>Contested Resources</Heading>

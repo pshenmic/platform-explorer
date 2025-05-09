@@ -27,6 +27,12 @@
     overflow: hidden;
   }
 
+  @media screen and (min-width: $breakpoint-2xl) {
+    &__Info {
+      min-width: 40%;
+    }
+  }
+
   @media screen and (max-width: 75em) {
     flex-wrap: wrap;
     padding: 2.5rem;

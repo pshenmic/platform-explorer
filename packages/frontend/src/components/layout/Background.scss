@@ -30,28 +30,39 @@
       top: 0;
       left: 0;
       transform: translate(-50%, -50%);
-      width: 1500px;
-      height: 1500px;
-      border-radius: 1500px;
+      border-radius: 10000px;
+      padding-top: 50%;
+      aspect-ratio: 1 / 1;
+      width: 1000px;
+      height: 1000px;
       background: radial-gradient(circle, rgba(0, 141, 228, .9) 0%, rgba(0, 141, 228, 0) 60%);
       filter: blur(50px);
       z-index: -2;
     }
   }
 
-  @media screen and (min-width: 2000px) {
+  @media screen and (min-width: 3200px) {
     &--Light {
       &::before {
-        left: 50%;
-        transform: translate(calc(-50% - 960px), -50%);
+        width: 50%;
+        max-width: none;
       }
     }
   }
 
-  @media screen and (max-width: 1440px) {
-    &::before {
-      left: 0;
-      transform: translate(-50%, -50%);
+  @media screen and (min-width: 4500px) {
+    &--Light {
+      &::before {
+        width: 80%;
+      }
+    }
+  }
+
+  @media screen and (min-width: 5500px) {
+    &--Light {
+      &::before {
+        width: 100%;
+      }
     }
   }
 }
