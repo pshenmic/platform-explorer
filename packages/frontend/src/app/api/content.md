@@ -121,7 +121,7 @@ HTTP /status
 ### Epoch Info
 Returns info about epoch by specific index.
 
-If you want to get the last epoch, use `last` instead of the epoch index
+If you want to get the last epoch don't set epoch index
 
 * tps - Transactions per second
 * totalCollectedFees - total number or fees spent per epoch

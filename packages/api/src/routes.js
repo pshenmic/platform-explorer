@@ -51,7 +51,7 @@ module.exports = ({
       }
     },
     {
-      path: '/epoch/last',
+      path: '/epoch',
       method: 'GET',
       handler: epochController.getEpochByIndex
     },
