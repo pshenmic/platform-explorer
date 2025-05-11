@@ -58,6 +58,16 @@ const createDocumentBatchTransition = async (client, dataContractObject, owner, 
   return tx.toBuffer().toString('base64')
 }
 
+/**
+ * allows to get address from output script
+ * @param {Buffer} script
+ * @returns {String}
+ */
+
+const outputScriptToAddress = (script) => {
+  return dashcorelib.Script(script).toAddress(NETWORK).toString()
+}
+
 const decodeStateTransition = async (client, base64) => {
   const stateTransition = await client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(base64, 'base64'))
 
@@ -303,10 +313,7 @@ const decodeStateTransition = async (client, base64) => {
     }
     case StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL: {
       decoded.outputAddress = stateTransition.getOutputScript()
-        ? dashcorelib
-          .Script(stateTransition.getOutputScript())
-          .toAddress(NETWORK)
-          .toString()
+        ? outputScriptToAddress(stateTransition.getOutputScript())
         : null
 
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
@@ -545,5 +552,6 @@ module.exports = {
   getAliasInfo,
   getAliasStateByVote,
   buildIndexBuffer,
-  createDocumentBatchTransition
+  createDocumentBatchTransition,
+  outputScriptToAddress
 }

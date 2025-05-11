@@ -2,8 +2,9 @@ const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { decodeStateTransition } = require('../utils')
+const { outputScriptToAddress } = require('../utils')
 const { Identifier } = require('@dashevo/wasm-dpp')
+const { base58 } = require('@scure/base')
 
 class IdentitiesController {
   constructor (client, knex, dapi) {
@@ -89,13 +90,21 @@ class IdentitiesController {
 
   getWithdrawalsByIdentity = async (request, response) => {
     const { identifier } = request.params
-    const { limit = 100 } = request.query
+    const { limit = 100, timestamp_start: timestampStart, start_at: startAt } = request.query
+
+    const query = [['$ownerId', '=', Identifier.from(identifier)]]
+
+    if (timestampStart) {
+      query.push(['status', 'in', [0, 1, 2, 3, 4]], ['$createdAt', '>=', new Date(timestampStart).getTime()])
+    }
 
     const documents = await this.dapi.getDocuments(
       WITHDRAWAL_CONTRACT_TYPE,
       WithdrawalsContract,
-      [['$ownerId', '=', Identifier.from(identifier)]],
-      limit
+      query,
+      limit,
+      [['$ownerId', 'asc'], ['status', 'asc'], ['$createdAt', 'asc']],
+      { startAt: startAt ? Buffer.from(base58.decode(startAt)) : undefined }
     )
 
     if (documents.length === 0) {
@@ -106,22 +115,13 @@ class IdentitiesController {
 
     const withdrawals = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
 
-    const decodedTx = await Promise.all(withdrawals.map(async withdrawal => ({
-      ...await decodeStateTransition(this.client, withdrawal.data),
-      timestamp: withdrawal.timestamp
-    })))
-
     const resultSet = documents.map(document => ({
       document: document.getId(),
       sender: document.getOwnerId(),
       status: document.getData().status,
       timestamp: document.getCreatedAt(),
       amount: document.getData().amount,
-      withdrawalAddress:
-        decodedTx.find(
-          tx => tx.timestamp.getTime() === document.getCreatedAt().getTime()
-        )?.outputAddress,
-
+      withdrawalAddress: outputScriptToAddress(Buffer.from(document.getData().outputScript, 'base64')),
       hash: withdrawals.find(
         withdrawal =>
           withdrawal.timestamp.getTime() === document.getCreatedAt().getTime()
