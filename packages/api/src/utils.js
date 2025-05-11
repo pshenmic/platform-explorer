@@ -65,7 +65,8 @@ const createDocumentBatchTransition = async (client, dataContractObject, owner, 
  */
 
 const outputScriptToAddress = (script) => {
-  return dashcorelib.Script(script).toAddress(NETWORK).toString()
+  const address = dashcorelib.Script(script).toAddress(NETWORK)
+  return address ? address.toString() : null
 }
 
 const decodeStateTransition = async (client, base64) => {

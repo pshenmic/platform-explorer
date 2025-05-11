@@ -121,7 +121,7 @@ class IdentitiesController {
       status: document.getData().status,
       timestamp: document.getCreatedAt(),
       amount: document.getData().amount,
-      withdrawalAddress: outputScriptToAddress(Buffer.from(document.getData().outputScript, 'base64')),
+      withdrawalAddress: outputScriptToAddress(Buffer.from(document.getData().outputScript ?? [], 'base64')),
       hash: withdrawals.find(
         withdrawal =>
           withdrawal.timestamp.getTime() === document.getCreatedAt().getTime()
