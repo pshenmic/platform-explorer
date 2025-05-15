@@ -45,9 +45,7 @@ export const theme = extendTheme({
   sizes: {
     container: {
       xl: '1310px',
-      // maxPageW: '1440px',
-      maxPageW: '2800px',
-      // maxNavigationW: '2000px'
+      maxPageW: '1920px',
       maxNavigationW: 'none'
     }
   },
