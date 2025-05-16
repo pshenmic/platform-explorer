@@ -1,5 +1,15 @@
 # CHANGELOG
 
+### v1.0.25
+
+## Changes
+
+New page: Contested Resources
+
+## API
+
+- Contested resource fix @owl352 (#560)
+
 ### v1.0.24
 
 ## Changes
