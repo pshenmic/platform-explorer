@@ -1,17 +1,17 @@
-use base64::Engine;
+use crate::entities::validator::Validator;
 use base64::engine::general_purpose;
+use base64::Engine;
 use data_contracts::SystemDataContract;
 use dpp::dashcore::Transaction;
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
-use dpp::prelude::{Revision};
+use dpp::prelude::Revision;
 use dpp::state_transition::identity_create_transition::accessors::IdentityCreateTransitionAccessorsV0;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_update_transition::accessors::IdentityUpdateTransitionAccessorsV0;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
 use tokio_postgres::Row;
-use crate::entities::validator::Validator;
 
 #[derive(Clone)]
 pub struct Identity {
@@ -27,11 +27,12 @@ impl From<(IdentityCreateTransition, Transaction)> for Identity {
         let asset_lock = state_transition.asset_lock_proof().clone();
         let asset_lock_output_index = asset_lock.output_index();
 
-        let outpoint = transaction.output
-          .iter()
-          .nth(asset_lock_output_index as usize)
-          .expect("Could not find outpoint by index. Try to set asset lock output index")
-          .clone();
+        let outpoint = transaction
+            .output
+            .iter()
+            .nth(asset_lock_output_index as usize)
+            .expect("Could not find outpoint by index. Try to set asset lock output index")
+            .clone();
 
         let credits = outpoint.value * 1000;
 
@@ -111,4 +112,3 @@ impl From<Validator> for Identity {
         }
     }
 }
-

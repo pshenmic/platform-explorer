@@ -1,6 +1,6 @@
-use dpp::state_transition::{StateTransition};
-use dpp::{ProtocolError};
 use dpp::state_transition::state_transition_factory::StateTransitionFactory;
+use dpp::state_transition::StateTransition;
+use dpp::ProtocolError;
 
 pub struct StateTransitionDecoder {
     st_factory: StateTransitionFactory,
@@ -16,7 +16,7 @@ impl StateTransitionDecoder {
     }
 
     pub fn new() -> StateTransitionDecoder {
-        let st_factory = StateTransitionFactory{};
+        let st_factory = StateTransitionFactory {};
 
         return StateTransitionDecoder { st_factory };
     }
