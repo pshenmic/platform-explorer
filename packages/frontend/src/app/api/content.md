@@ -1160,11 +1160,12 @@ Return all withdrawals for identity
 _Note: this request does not contain any pagination data in the response_
 
 * `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `timestamp_start` ISO String
+* `start_at` base58 encoded withdrawal document identifier
 * returns 404 `not found` if identity don't have withdrawals
 * Pagination always `null`
 ```
-GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5
+GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
 
 {
   "pagination": {
@@ -1176,9 +1177,9 @@ GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5
     {
       "document": "95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs",
       "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-      "status": "COMPLETE",
+      "status": 3,
       "amount": 200000,
-      "timestamp": 1729096625509,
+      "timestamp": "2024-10-10T02:37:39.187Z",
       "withdrawalAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
       "hash": "113F86F4D1F48159B0D6690F3C5F8F33E39243086C041CF016454A66AD63F025"
     },
