@@ -1,5 +1,19 @@
 # CHANGELOG
 
+### v1.0.26
+
+## Changes
+
+## API
+
+- Fields naming fix in Epoch status  @owl352 (#564)
+
+## Frontend
+
+- Reduce maximum width of page content @AlexeyTripleA (#567)
+- Update global layout @AlexeyTripleA (#558)
+- Create Masternode Votes page @AlexeyTripleA (#556)
+
 ### v1.0.25
 
 ## Changes
