@@ -14,37 +14,37 @@ module.exports = class MasternodeVotesDAO {
 
     const timestampFilter = timestampStart && timestampEnd
       ? [
-        'blocks.timestamp BETWEEN ? AND ?',
-        [timestampStart, timestampEnd]
-      ]
+          'blocks.timestamp BETWEEN ? AND ?',
+          [timestampStart, timestampEnd]
+        ]
       : ['true']
 
     const voterIdentityFilter = voterIdentity
       ? [
-        'state_transitions.owner = ?',
-        [voterIdentity]
-      ]
+          'state_transitions.owner = ?',
+          [voterIdentity]
+        ]
       : ['true']
 
     const towardsIdentityFilter = towardsIdentity
       ? [
-        'towards_identity_identifier = ?',
-        [towardsIdentity]
-      ]
+          'towards_identity_identifier = ?',
+          [towardsIdentity]
+        ]
       : ['true']
 
     const choiceFilter = choice
       ? [
-        'choice = ?',
-        [choice]
-      ]
+          'choice = ?',
+          [choice]
+        ]
       : ['true']
 
     const powerFilter = power
       ? [
-        'power = ?',
-        [power]
-      ]
+          'power = ?',
+          [power]
+        ]
       : ['true']
 
     const aliasesSubquery = this.knex('identity_aliases')
