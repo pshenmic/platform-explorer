@@ -12,10 +12,10 @@ module.exports = class Quorum {
   members
 
   constructor (blockHeight, creationHeight, minedBlockHash, numValidMembers, healthRatio, type, quorumHash, quorumIndex, members, quorumPublicKey, previousConsecutiveDKGFailures) {
-    this.creationHeight = creationHeight
-    this.minedBlockHash = minedBlockHash
-    this.numValidMembers = numValidMembers
-    this.healthRatio = healthRatio
+    this.creationHeight = creationHeight ?? null
+    this.minedBlockHash = minedBlockHash ?? null
+    this.numValidMembers = numValidMembers ?? null
+    this.healthRatio = healthRatio ?? null
     this.type = type ?? null
     this.quorumHash = quorumHash ?? null
     this.quorumIndex = quorumIndex ?? null
