@@ -18,7 +18,7 @@ class EpochController {
     try {
       const [currentEpoch, nextEpoch] = await this.dapi.getEpochsInfo(2, index ?? undefined, index ? true : undefined)
 
-      const epoch = Epoch.fromObject({ ...currentEpoch, nextEpoch })
+      const epoch = Epoch.fromObject(typeof index === 'number' ? { ...currentEpoch, nextEpoch } : { ...nextEpoch })
 
       const epochInfo = await this.epochDAO.getEpochByObject(epoch)
 
