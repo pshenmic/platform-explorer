@@ -8,11 +8,21 @@
   font-family: $font-mono;
   font-size: 0.75rem;
   color: #fff;
+  max-width: 100%;
+  overflow: hidden;
 
-  &--Ellipsis {
+  &--Ellipsis, &--Ellipsis &__SymbolsContainer {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+
+  &__SymbolsContainer {
+    display: inline-block;
+    white-space: break-spaces;
+    word-break: break-all;
+    width: 100%;
   }
 
   &--Pending {
@@ -33,7 +43,7 @@
   &__Avatar {
     @include mixins.AvatarSize;
     flex-shrink: 0;
-    margin-right: 10px;
+    margin-right: 0.5rem;
   }
 
 

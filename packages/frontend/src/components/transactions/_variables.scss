@@ -5,11 +5,11 @@
   gap: 16px;
 
   grid-template-columns: 
-    minmax(120px, 120px)
-    minmax(0, 600px)
-    minmax(0, 150px)
-    minmax(0, 400px)
-    150px;
+    minmax(120px, 120px) // time
+    minmax(0, 600px) // hash
+    auto // gas used
+    minmax(0, 400px) // owner
+    150px; // type
 
   @container (max-width: 810px) {
     grid-template-columns: 

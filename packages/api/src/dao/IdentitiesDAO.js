@@ -16,16 +16,16 @@ module.exports = class IdentitiesDAO {
 
   getIdentityByIdentifier = async (identifier) => {
     const aliasSubquery = this.knex('identity_aliases')
-      .select('identity_identifier',
-        this.knex.raw(`
+      .select('identity_identifier')
+      .select(this.knex.raw(`
           array_agg(
             json_build_object(
               'alias', alias,
-              'timestamp', timestamp::timestamptz
+              'timestamp', timestamp::timestamptz,
+              'tx', state_transition_hash
             )
           ) as aliases
-        `)
-      )
+        `))
       .where('identity_identifier', '=', identifier)
       .groupBy('identity_identifier')
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
@@ -161,13 +161,16 @@ module.exports = class IdentitiesDAO {
       fundingCoreTx = assetLockProof?.fundingCoreTx
     }
 
+    const balance = await this.dapi.getIdentityBalance(identity.identifier)
+
     return Identity.fromObject({
       ...identity,
       aliases,
-      balance: await this.dapi.getIdentityBalance(identity.identifier),
+      balance: String(balance),
       publicKeys: publicKeys?.map(key => ({
         keyId: key.keyId,
         type: key.type,
+        raw: key.raw,
         data: key.data,
         purpose: key.purpose,
         securityLevel: key.securityLevel,
@@ -181,8 +184,10 @@ module.exports = class IdentitiesDAO {
 
   getIdentitiesByDPNSName = async (dpns) => {
     const rows = await this.knex('identity_aliases')
-      .select('identity_identifier', 'alias')
+      .select('identity_identifier', 'alias', 'timestamp', 'state_transition_hash as tx')
       .whereILike('alias', `${dpns}%`)
+      .leftJoin('state_transitions', 'state_transition_hash', 'hash')
+      .leftJoin('blocks', 'blocks.hash', 'block_hash')
 
     if (rows.length === 0) {
       return null
@@ -194,7 +199,7 @@ module.exports = class IdentitiesDAO {
       return {
         identifier: row.identity_identifier,
         alias: row.alias,
-        status: getAliasStateByVote(aliasInfo, { alias: row.alias }, row.identity_identifier)
+        status: getAliasStateByVote(aliasInfo, { ...row }, row.identity_identifier)
       }
     }))
   }
@@ -224,7 +229,8 @@ module.exports = class IdentitiesDAO {
           array_agg(
             json_build_object(
               'alias', alias,
-              'timestamp', timestamp::timestamptz
+              'timestamp', timestamp::timestamptz,
+              'tx', state_transition_hash
             )
           ) as aliases
         `)
@@ -292,7 +298,7 @@ module.exports = class IdentitiesDAO {
         total_data_contracts: parseInt(row.total_data_contracts),
         total_documents: parseInt(row.total_documents),
         total_txs: parseInt(row.total_txs),
-        balance,
+        balance: String(balance),
         aliases
       })
     }))
@@ -359,7 +365,15 @@ module.exports = class IdentitiesDAO {
     }
 
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier')
+      .select(this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'tx', state_transition_hash
+            )
+          ) as aliases
+        `))
       .groupBy('identity_identifier')
       .as('aliases')
 
@@ -394,9 +408,9 @@ module.exports = class IdentitiesDAO {
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+        return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
 
       return Document.fromRow({

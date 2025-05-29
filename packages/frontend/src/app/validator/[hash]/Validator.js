@@ -449,7 +449,7 @@ function Validator ({ hash }) {
                   {!proposedBlocks.error
                     ? <div className={'ValidatorPage__List'}>
                         {!proposedBlocks.loading
-                          ? <BlocksList blocks={proposedBlocks?.data?.resultSet} headerStyles={'light'}/>
+                          ? <BlocksList blocks={proposedBlocks?.data?.resultSet} headerStyles={'light'} absoluteDate={true}/>
                           : <LoadingList itemsCount={pageSize}/>
                         }
                       </div>

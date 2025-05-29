@@ -27,7 +27,6 @@ export default function TotalInfo ({
       <Flex
         className={'TotalInfo__ContentContainer'}
         justify={'space-between'}
-        maxW={'container.xl'}
         wrap={'wrap'}
       >
         <Link href={'/blocks/'} className={'InfoBlock InfoBlock--NoBorder TotalInfo__Item TotalInfoItem TotalInfoItem--Blocks TotalInfoItem--Clikable'}>

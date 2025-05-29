@@ -3,9 +3,27 @@
 import { useEffect, useState } from 'react'
 import { getTimeDelta } from '../../util'
 import { NotActive } from './index'
+import { Tooltip } from '../ui/Tooltips'
+import './TimeDelta.scss'
 
-function TimeDelta ({ startDate, endDate, format = 'default' }) {
+const Wrapper = ({ children, tooltipDate, showTimestampTooltip, format }) => (
+  showTimestampTooltip && format !== 'detailed' && !isNaN(tooltipDate)
+    ? <Tooltip
+      placement={'top'}
+      content={
+        <span className={'TimeDelta__TooltipContent'}>
+          {tooltipDate?.toLocaleDateString()} {tooltipDate?.toLocaleTimeString()}
+        </span>
+      }
+    >
+      <span className={'TimeDelta'}>{children}</span>
+    </Tooltip>
+    : <>{children}</>
+)
+
+function TimeDelta ({ startDate, endDate, showTimestampTooltip = true, tooltipDate, format = 'default' }) {
   const [timeDelta, setTimeDelta] = useState(null)
+  tooltipDate = new Date(tooltipDate || endDate)
 
   useEffect(() => {
     if (!endDate) {
@@ -37,7 +55,15 @@ function TimeDelta ({ startDate, endDate, format = 'default' }) {
     return () => clearTimeout(timeout)
   }, [startDate, endDate, format])
 
-  return <>{timeDelta || <NotActive/>}</>
+  return timeDelta
+    ? <Wrapper
+        tooltipDate={tooltipDate}
+        showTimestampTooltip={showTimestampTooltip}
+        format={format}
+      >
+        {timeDelta}
+      </Wrapper>
+    : <NotActive/>
 }
 
 export default TimeDelta

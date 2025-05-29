@@ -45,7 +45,6 @@ impl From<DataContractCreateTransition> for DataContract {
                             identifier,
                             schema: Some(schema_decoded),
                             version,
-                            state_transition_hash: None,
                             is_system: false,
                             tokens: None,
                             format_version: Some(0u32)
@@ -101,7 +100,6 @@ impl From<DataContractUpdateTransition> for DataContract {
                             identifier,
                             schema: Some(schema_decoded),
                             version,
-                            state_transition_hash: None,
                             is_system: false,
                             tokens: None,
                             format_version: Some(0u32)
@@ -161,7 +159,6 @@ impl From<SystemDataContract> for DataContract {
             identifier,
             schema: Some(schema_decoded),
             version: 0,
-            state_transition_hash: None,
             is_system: true,
             tokens: None,
             format_version: None
@@ -186,7 +183,6 @@ impl From<Row> for DataContract {
             identifier: Identifier::from_string(identifier.trim(), Base58).unwrap(),
             schema: None,
             version: version as u32,
-            state_transition_hash: None,
             is_system,
             tokens: None,
             format_version: None,

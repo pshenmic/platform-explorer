@@ -1,0 +1,80 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.NavItem {
+  position: relative;
+  font-family: $font-heading;
+  font-size: 0.75rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--chakra-colors-gray-250);
+  transition: $transition-time-def;
+  white-space: nowrap;
+  padding: 4px 0;
+
+  &--WithDropdown {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    cursor: default;
+
+    &:hover {
+      cursor: default;
+    }
+  }
+
+  &__DropdownIcon {
+    transition: transform $transition-time-def;
+
+    svg {
+      transition: transform $transition-time-def;
+      transform: rotate(90deg);
+    }
+
+    &--Open {
+      svg {
+        transform: rotate(-90deg);
+      }
+    }
+  }
+
+  &--Active {
+    color: $color-brand-normal;
+  }
+
+  @media (pointer: fine), screen and (min-width: $breakpoint-lg) {
+    &:hover {
+      color: #fff;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg - 1px) {
+    background: rgba(255, 255, 255, .08);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, .07);
+    top: 0;
+    transition: all .1s;
+
+    &--Active {
+      border: 1px solid $color-brand-normal;
+      color: $color-brand-normal !important;
+      background: rgba(255, 255, 255, .02);
+      cursor: default;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.NavItem--Active):hover {
+        background: rgba(255, 255, 255, .15);
+      }
+    }
+
+    &:active {
+      color: #fff;
+      transform: translateY(1px);
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+}

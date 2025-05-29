@@ -1,0 +1,77 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.ContestedResourcesTotalCard {
+  @include mixins.TotalCard();
+  display: flex;
+  flex-direction: column;
+
+  &__Title {
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin-bottom: 0.875rem;
+  }
+
+  &__Header {
+    align-items: flex-start;
+  }
+
+  &__Avatar {
+    svg {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  &__HeaderLines {
+    width: 100%;
+  }
+
+  &__ContendersListContainer {
+    margin-top: 1.5rem;
+  }
+
+  &__ContendersListTitle {
+    font-size: 0.875rem;
+    margin-bottom: 0.875rem;
+    font-weight: 700;
+    font-family: $font-heading;
+  }
+
+  &__CommonInfo {
+    .DateBlock__InfoContainer {
+      justify-content: flex-end;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    @include mixins.TotalCard(true);
+
+    &__Avatar {
+      right: 1rem;
+      top: 1rem;
+    }
+
+    &__Header, &__Column {
+      position: static;
+    }
+
+    &__Column {
+      width: 100%;
+    }
+
+    &__ContentContainer {
+      flex-direction: column;
+    }
+
+    &__InfoLine {
+      &--Hash, &--IndexName, &--DocumentType {
+        padding-right: 6.5rem;
+      }
+
+      &--DataContract {
+        order: 4;
+      }
+    }
+  }
+}

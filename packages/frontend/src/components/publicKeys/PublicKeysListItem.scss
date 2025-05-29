@@ -8,7 +8,7 @@
 
   &__Content {
     @include pk.Columns();
-    align-items: baseline;
+    align-items: center;
 
     &--Inline {
       display: inline !important;

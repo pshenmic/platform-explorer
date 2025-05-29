@@ -20,9 +20,20 @@ use crate::entities::token_config::TokenConfig;
 use crate::entities::transfer::Transfer;
 use crate::entities::validator::Validator;
 use crate::models::TransactionStatus;
+use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime};
+use deadpool_postgres::tokio_postgres::{NoTls};
+
+pub mod identities;
+pub mod documents;
+pub mod data_contracts;
+pub mod validators;
+pub mod blocks;
+pub mod state_transitions;
+pub mod transfers;
+pub mod masternode_votes;
 
 pub struct PostgresDAO {
-    connection_pool: Pool,
+    pub(crate) connection_pool: Pool,
 }
 
 impl PostgresDAO {
@@ -44,6 +55,7 @@ impl PostgresDAO {
 
         let connection_pool = cfg.create_pool(Some(Runtime::Tokio1), NoTls).unwrap();
 
+        PostgresDAO { connection_pool }
         return PostgresDAO { connection_pool };
     }
 

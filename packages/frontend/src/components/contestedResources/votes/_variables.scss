@@ -1,0 +1,107 @@
+@import '../../../styles/variables.scss';
+
+@mixin Columns ($showDataContract: true) {
+  display: grid;
+  gap: 1rem;
+
+  $timestamp: 4rem;
+  $dataContract: minmax(8.125rem, 30rem);
+  $choice: 4.5rem;
+  $power: 3.5rem;
+
+  @if $showDataContract {
+    grid-template-columns:
+      $timestamp
+      minmax(8.125rem, 30rem) // proTxHash
+      $dataContract
+      minmax(8.125rem, 30rem) // document
+      minmax(8.125rem, 500rem) // towardsIdentity
+      $choice
+      $power;
+  } @else {
+    grid-template-columns:
+      $timestamp
+      minmax(9rem, 30rem) // proTxHash
+      minmax(9rem, 30rem) // document
+      minmax(9rem, 500rem) // towardsIdentity
+      $choice
+      $power;
+  }
+
+  @if $showDataContract {
+    @container (max-width: 62rem) {
+      grid-template-columns:
+      $timestamp
+      minmax(8.125rem, 30rem)
+      $dataContract
+      minmax(8.125rem, 30rem)
+      $choice
+      $power;
+    }
+  }
+
+  @container (max-width: 55rem) {
+    grid-template-columns:
+      $timestamp
+      minmax(8.125rem, 30rem)
+      minmax(8.125rem, 30rem)
+      $choice
+      $power;
+  }
+
+  @container (max-width: 37rem) {
+    grid-template-columns:
+      $timestamp
+      minmax(0rem, 30rem)
+      $choice
+      $power;
+  }
+
+  @container (max-width: 27rem) {
+    gap: 0.5rem;
+  }
+
+  @container (max-width: 24rem) {
+    grid-template-columns:
+    $timestamp
+    minmax(0rem, 30rem)
+    $choice;
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+
+  @container (max-width: 62rem) {
+    &--DataContract {
+      display: none;
+    }
+  }
+
+  @container (max-width: 55rem) {
+    &--Document{
+      display: none;
+    }
+  }
+
+  @container (max-width: 37rem) {
+    &--TowardsIdentity {
+      display: none;
+    }
+  }
+
+  @container (max-width: 24rem) {
+    &--Power {
+      display: none;
+    }
+
+    &--Choice {
+      justify-content: flex-end;
+    }
+  }
+}

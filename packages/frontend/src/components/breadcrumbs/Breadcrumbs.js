@@ -4,7 +4,17 @@ import { BlockIcon, ChevronIcon } from '../ui/icons'
 import { useBreadcrumbs } from '../../contexts/BreadcrumbsContext'
 import ImageGenerator from '../imageGenerator'
 
-const Breadcrumbs = () => {
+export const breadcrumbsActiveRoutes = [
+  '/validator/',
+  '/transaction/',
+  '/identity/',
+  '/dataContract/',
+  '/document/',
+  '/block/',
+  '/contestedResource/'
+]
+
+export const Breadcrumbs = () => {
   const { breadcrumbs } = useBreadcrumbs()
 
   const icons = {
@@ -42,5 +52,3 @@ const Breadcrumbs = () => {
     </div>
   )
 }
-
-export default Breadcrumbs

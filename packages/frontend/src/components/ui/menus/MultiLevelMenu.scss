@@ -1,0 +1,22 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.MultiLevelMenu {
+  position: relative;
+  
+  .chakra-popover__content {
+    @include mixins.Block;
+    backdrop-filter: blur(5px);
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    @include mixins.BrandScroll();
+  }
+  
+  .chakra-popover__arrow {
+    background: rgba(24, 31, 34, 0.9) !important;
+    backdrop-filter: blur(5px);
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}

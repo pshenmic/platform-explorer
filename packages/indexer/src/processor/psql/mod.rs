@@ -2,18 +2,15 @@ mod dao;
 
 use std::env;
 use std::num::ParseIntError;
-use dpp::state_transition::{StateTransition, StateTransitionLike};
-use deadpool_postgres::{PoolError};
-use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
+use deadpool_postgres::{PoolError, Transaction};
 use crate::processor::psql::dao::PostgresDAO;
-use base64::{Engine as _, engine::{general_purpose}};
-use dashcore_rpc::{Client, RpcApi};
-use dashcore_rpc::dashcore::{ProTxHash, Txid};
+use dashcore_rpc::{Client};
 use data_contracts::SystemDataContract;
 use dpp::data_contract::associated_token::token_configuration::accessors::v0::TokenConfigurationV0Getters;
 use dpp::identifier::Identifier;
-use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::{platform_value, BinaryData};
+use dpp::platform_value::string_encoding::Encoding::{Base58};
+use dpp::state_transition::documents_batch_transition::document_transition::action_type::DocumentTransitionActionType;
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Hex};
 use dpp::prelude::AssetLockProof;
@@ -32,7 +29,6 @@ use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
 use dpp::state_transition::masternode_vote_transition::accessors::MasternodeVoteTransitionAccessorsV0;
 use dpp::state_transition::masternode_vote_transition::MasternodeVoteTransition;
 use crate::decoder::decoder::StateTransitionDecoder;
-use crate::entities::block::Block;
 use crate::entities::data_contract::DataContract;
 use crate::entities::document::Document;
 use crate::entities::identity::Identity;
@@ -53,6 +49,7 @@ use dpp::state_transition::batch_transition::token_transfer_transition::v0::v0_m
 use dpp::state_transition::batch_transition::token_unfreeze_transition::v0::v0_methods::TokenUnfreezeTransitionV0Methods;
 use dpp::tokens::calculate_token_id;
 
+pub mod handlers;
 #[derive(Debug)]
 pub enum ProcessorError {
     DatabaseError,
@@ -97,6 +94,7 @@ impl PSQLProcessor {
         return PSQLProcessor { decoder, dao, platform_explorer_identifier, dashcore_rpc };
     }
 
+    pub async fn process_system_data_contract(&self, system_data_contract: SystemDataContract, sql_transaction: &Transaction<'_>) -> () {
 
     pub async fn handle_token_configuration(&self, data_contract: DataContract) -> () {
         if data_contract.tokens.is_some() {
@@ -597,7 +595,7 @@ impl PSQLProcessor {
         let data_contract = DataContract::from(system_data_contract);
         let data_contract_identifier = data_contract.identifier.clone();
         let data_contract_owner = data_contract.owner.clone();
-        self.dao.create_data_contract(data_contract, None).await;
+        self.dao.create_data_contract(data_contract, None, sql_transaction).await;
 
         match system_data_contract {
             SystemDataContract::Withdrawals => {}
@@ -623,7 +621,6 @@ impl PSQLProcessor {
                 });
 
                 let dash_tld_document = Document {
-                    id: None,
                     owner: Some(data_contract_owner),
                     identifier: Identifier::from_bytes(&[
                         215, 242, 197, 63, 70, 169, 23, 171, 110, 91, 57, 162, 215, 188, 38, 11, 100, 146, 137, 69, 55,
@@ -640,36 +637,11 @@ impl PSQLProcessor {
                     prefunded_voting_balance: None,
                 };
 
-                self.dao.create_document(dash_tld_document, None).await.unwrap();
+                self.dao.create_document(dash_tld_document, None, sql_transaction).await.unwrap();
             }
             SystemDataContract::Dashpay => {}
             SystemDataContract::WalletUtils => {}
             SystemDataContract::TokenHistory => {}
         }
-    }
-
-
-    pub async fn handle_init_chain(&self) -> () {
-        println!("Processing initChain");
-
-        println!("Processing SystemDataContract::Withdrawals");
-        self.process_system_data_contract(SystemDataContract::Withdrawals).await;
-
-        println!("Processing SystemDataContract::MasternodeRewards");
-        self.process_system_data_contract(SystemDataContract::MasternodeRewards).await;
-
-        println!("Processing SystemDataContract::FeatureFlags");
-        self.process_system_data_contract(SystemDataContract::FeatureFlags).await;
-
-        println!("Processing SystemDataContract::DPNS");
-        self.process_system_data_contract(SystemDataContract::DPNS).await;
-
-        println!("Processing SystemDataContract::Dashpay");
-        self.process_system_data_contract(SystemDataContract::Dashpay).await;
-
-        println!("Processing SystemDataContract::WalletUtils");
-        self.process_system_data_contract(SystemDataContract::WalletUtils).await;
-
-        println!("Finished initChain processing");
     }
 }

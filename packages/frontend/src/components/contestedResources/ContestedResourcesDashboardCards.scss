@@ -1,0 +1,17 @@
+.ContestedResourcesDashboardCards {
+  &__Card {
+    .DashboardCard__Content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .DashboardCard__Title {
+      flex-grow: 1;
+    }
+
+    .DashboardCard__Value {
+      height: auto;
+    }
+  }
+}

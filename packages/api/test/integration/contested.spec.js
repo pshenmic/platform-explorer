@@ -230,7 +230,7 @@ describe('Contested documents routes', () => {
             documentIdentifier: resource.document.identifier,
             documentStateTransition: resource.document.state_transition_hash,
             aliases: [],
-            totalCountTowardsIdentity: contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length,
+            towardsIdentityVotes: contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length,
             abstainVotes: 3,
             lockVotes: 7 - contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length
           })),
@@ -250,7 +250,9 @@ describe('Contested documents routes', () => {
         totalCountAbstain: 3,
         totalCountTowardsIdentity: 4,
         status: 'finished',
-        endTimestamp: new Date(contestedResources[0].block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString()
+        endTimestamp: new Date(contestedResources[0].block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString(),
+        finished: true,
+        towardsIdentity: contestedResources.filter(resource => resource.document.data.label === 'xyz')[0].contender.identifier
       }
 
       assert.deepEqual(body, expectedResource)
@@ -270,7 +272,7 @@ describe('Contested documents routes', () => {
         .filter(vote => vote.masternodeVote.index_values === JSON.stringify((['dash', 'xyz'])))
         .sort((a, b) => a.masternodeVote.id - b.masternodeVote.id)
         .slice(0, 10)
-        .map(({ block, masternodeVote }) => ({
+        .map(({ block, masternodeVote, document }) => ({
           proTxHash: masternodeVote.pro_tx_hash,
           txHash: masternodeVote.state_transition_hash,
           voterIdentifier: masternodeVote.voter_identity_id,
@@ -279,10 +281,11 @@ describe('Contested documents routes', () => {
           towardsIdentity: masternodeVote.towards_identity_identifier,
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: masternodeVote.document_type_name,
+          documentIdentifier: masternodeVote.choice === 0 ? document.identifier : null,
           indexName: masternodeVote.index_name,
           indexValues: JSON.parse(masternodeVote.index_values),
           identityAliases: [],
-          powerMultiplier: null
+          power: masternodeVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -303,7 +306,7 @@ describe('Contested documents routes', () => {
         .filter(vote => (vote.masternodeVote.choice === 2))
         .sort((a, b) => a.masternodeVote.id - b.masternodeVote.id)
         .slice(0, 10)
-        .map(({ block, masternodeVote }) => ({
+        .map(({ block, masternodeVote, document }) => ({
           proTxHash: masternodeVote.pro_tx_hash,
           txHash: masternodeVote.state_transition_hash,
           voterIdentifier: masternodeVote.voter_identity_id,
@@ -312,10 +315,11 @@ describe('Contested documents routes', () => {
           towardsIdentity: masternodeVote.towards_identity_identifier,
           dataContractIdentifier: dataContract.identifier,
           documentTypeName: masternodeVote.document_type_name,
+          documentIdentifier: masternodeVote.choice === 0 ? document.identifier : null,
           indexName: masternodeVote.index_name,
           indexValues: JSON.parse(masternodeVote.index_values),
           identityAliases: [],
-          powerMultiplier: null
+          power: masternodeVote.power
         }))
 
       assert.deepStrictEqual(body.resultSet, expectedVotes)
@@ -335,24 +339,31 @@ describe('Contested documents routes', () => {
       const expectedResources = uniqueResources
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
-        .map((resource) => ({
-          contenders: null,
-          indexName: resource.masternodeVote.index_name,
-          resourceValue: JSON.parse(resource.masternodeVote.index_values),
-          dataContractIdentifier: dataContract.identifier,
-          prefundedVotingBalance: null,
-          documentTypeName: resource.document.document_type_name,
-          timestamp: resource.block.timestamp.toISOString(),
-          totalGasUsed: null,
-          totalVotesGasUsed: null,
-          totalCountVotes: null,
-          totalDocumentsGasUsed: null,
-          totalCountLock: contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.LOCK).length,
-          totalCountAbstain: contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.ABSTAIN).length,
-          totalCountTowardsIdentity: contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.TowardsIdentity).length,
-          status: null,
-          endTimestamp: new Date(resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString()
-        }))
+        .map((resource) => {
+          const lock = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.LOCK).length
+          const abstain = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.ABSTAIN).length
+          const towards = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.TowardsIdentity).length
+          return {
+            contenders: null,
+            indexName: resource.masternodeVote.index_name,
+            resourceValue: JSON.parse(resource.masternodeVote.index_values),
+            dataContractIdentifier: dataContract.identifier,
+            prefundedVotingBalance: null,
+            documentTypeName: resource.document.document_type_name,
+            timestamp: resource.block.timestamp.toISOString(),
+            totalGasUsed: null,
+            totalVotesGasUsed: null,
+            totalCountVotes: towards + abstain + lock,
+            totalDocumentsGasUsed: null,
+            totalCountLock: lock,
+            totalCountAbstain: abstain,
+            totalCountTowardsIdentity: towards,
+            status: null,
+            endTimestamp: new Date(resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString(),
+            finished: true,
+            towardsIdentity: null
+          }
+        })
 
       assert.deepEqual(body.resultSet, expectedResources)
     })
@@ -369,24 +380,31 @@ describe('Contested documents routes', () => {
       const expectedResources = uniqueResources
         .sort((a, b) => b.block.height - a.block.height)
         .slice(0, 10)
-        .map((resource) => ({
-          contenders: null,
-          indexName: resource.masternodeVote.index_name,
-          resourceValue: JSON.parse(resource.masternodeVote.index_values),
-          dataContractIdentifier: dataContract.identifier,
-          prefundedVotingBalance: null,
-          documentTypeName: resource.document.document_type_name,
-          timestamp: resource.block.timestamp.toISOString(),
-          totalGasUsed: null,
-          totalVotesGasUsed: null,
-          totalCountVotes: null,
-          totalDocumentsGasUsed: null,
-          totalCountLock: contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.LOCK).length,
-          totalCountAbstain: contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.ABSTAIN).length,
-          totalCountTowardsIdentity: contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.TowardsIdentity).length,
-          status: null,
-          endTimestamp: new Date(resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString()
-        }))
+        .map((resource) => {
+          const lock = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.LOCK).length
+          const abstain = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.ABSTAIN).length
+          const towards = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.TowardsIdentity).length
+          return {
+            contenders: null,
+            indexName: resource.masternodeVote.index_name,
+            resourceValue: JSON.parse(resource.masternodeVote.index_values),
+            dataContractIdentifier: dataContract.identifier,
+            prefundedVotingBalance: null,
+            documentTypeName: resource.document.document_type_name,
+            timestamp: resource.block.timestamp.toISOString(),
+            totalGasUsed: null,
+            totalVotesGasUsed: null,
+            totalCountVotes: towards + abstain + lock,
+            totalDocumentsGasUsed: null,
+            totalCountLock: lock,
+            totalCountAbstain: abstain,
+            totalCountTowardsIdentity: towards,
+            status: null,
+            endTimestamp: new Date(resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString(),
+            finished: true,
+            towardsIdentity: null
+          }
+        })
 
       assert.deepEqual(body.resultSet, expectedResources)
     })
@@ -403,24 +421,31 @@ describe('Contested documents routes', () => {
       const expectedResources = uniqueResources
         .sort((a, b) => b.block.height - a.block.height)
         .slice(5, 10)
-        .map((resource) => ({
-          contenders: null,
-          indexName: resource.masternodeVote.index_name,
-          resourceValue: JSON.parse(resource.masternodeVote.index_values),
-          dataContractIdentifier: dataContract.identifier,
-          prefundedVotingBalance: null,
-          documentTypeName: resource.document.document_type_name,
-          timestamp: resource.block.timestamp.toISOString(),
-          totalGasUsed: null,
-          totalVotesGasUsed: null,
-          totalCountVotes: null,
-          totalDocumentsGasUsed: null,
-          totalCountLock: contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.LOCK).length,
-          totalCountAbstain: contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.ABSTAIN).length,
-          totalCountTowardsIdentity: contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.TowardsIdentity).length,
-          status: null,
-          endTimestamp: new Date(resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString()
-        }))
+        .map((resource) => {
+          const lock = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.LOCK).length
+          const abstain = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.ABSTAIN).length
+          const towards = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.TowardsIdentity).length
+          return {
+            contenders: null,
+            indexName: resource.masternodeVote.index_name,
+            resourceValue: JSON.parse(resource.masternodeVote.index_values),
+            dataContractIdentifier: dataContract.identifier,
+            prefundedVotingBalance: null,
+            documentTypeName: resource.document.document_type_name,
+            timestamp: resource.block.timestamp.toISOString(),
+            totalGasUsed: null,
+            totalVotesGasUsed: null,
+            totalCountVotes: towards + abstain + lock,
+            totalDocumentsGasUsed: null,
+            totalCountLock: lock,
+            totalCountAbstain: abstain,
+            totalCountTowardsIdentity: towards,
+            status: null,
+            endTimestamp: new Date(resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString(),
+            finished: true,
+            towardsIdentity: null
+          }
+        })
 
       assert.deepEqual(body.resultSet, expectedResources)
     })
@@ -498,7 +523,9 @@ describe('Contested documents routes', () => {
           totalCountTowardsIdentity: 0,
           totalDocumentsGasUsed: null,
           status: null,
-          endTimestamp: new Date(block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString()
+          endTimestamp: new Date(block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString(),
+          finished: false,
+          towardsIdentity: null
         }
       }
 

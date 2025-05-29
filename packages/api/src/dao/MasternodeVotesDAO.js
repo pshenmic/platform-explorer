@@ -40,22 +40,36 @@ module.exports = class MasternodeVotesDAO {
         ]
       : ['true']
 
-    // TODO: Implement Power filter
+    const powerFilter = power
+      ? [
+          'power = ?',
+          [power]
+        ]
+      : ['true']
 
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier')
+      .select(this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'tx', state_transition_hash
+            )
+          ) as aliases
+        `))
       .groupBy('identity_identifier')
       .as('aliases')
 
     const subquery = this.knex('masternode_votes')
       .select('masternode_votes.id as id', 'pro_tx_hash', 'masternode_votes.state_transition_hash as state_transition_hash', 'voter_identity_id', 'choice',
         'towards_identity_identifier', 'data_contract_id', 'document_type_name', 'index_name', 'index_values',
-        'data_contracts.identifier as data_contract_identifier', 'blocks.timestamp as timestamp', 'aliases')
+        'data_contracts.identifier as data_contract_identifier', 'blocks.timestamp as timestamp', 'aliases', 'power')
       .select(this.knex.raw(`rank() over (order by masternode_votes.id ${order}) rank`))
       .whereRaw(...timestampFilter)
       .whereRaw(...voterIdentityFilter)
       .whereRaw(...towardsIdentityFilter)
       .whereRaw(...choiceFilter)
+      .whereRaw(...powerFilter)
       .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
       .leftJoin('state_transitions', 'masternode_votes.state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
@@ -65,16 +79,16 @@ module.exports = class MasternodeVotesDAO {
     const rows = await this.knex(subquery)
       .select('pro_tx_hash', 'subquery.state_transition_hash as state_transition_hash', 'choice',
         'subquery.timestamp as timestamp', 'towards_identity_identifier', 'voter_identity_id',
-        'data_contract_identifier', 'document_type_name', 'index_name', 'index_values', 'aliases')
+        'data_contract_identifier', 'document_type_name', 'index_name', 'index_values', 'aliases', 'power')
       .select(this.knex(subquery).count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('subquery.id', order)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+        return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
 
       return Vote.fromRow({ ...row, aliases })
@@ -89,7 +103,7 @@ module.exports = class MasternodeVotesDAO {
     const [row] = await this.knex('masternode_votes')
       .select('pro_tx_hash', 'masternode_votes.state_transition_hash as state_transition_hash', 'voter_identity_id', 'choice',
         'blocks.timestamp as timestamp', 'towards_identity_identifier', 'document_type_name',
-        'data_contracts.identifier as data_contract_identifier', 'index_name', 'index_values')
+        'data_contracts.identifier as data_contract_identifier', 'index_name', 'index_values', 'power')
       .where('masternode_votes.state_transition_hash', '=', hash)
       .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')

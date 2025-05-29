@@ -1,0 +1,153 @@
+@use '../../styles/mixins';
+@import '../../styles/variables';
+
+.ContestedResourcesDigestCard {
+  @include mixins.DigestCard();
+  $cardsGap: 0.875rem;
+
+  &__InfoLine {
+    .InfoLine__Value {
+      font-size: 0.75rem;
+    }
+
+    &--Winner {
+      max-width: 100%;
+      overflow: hidden;
+
+      .InfoLine__Value {
+        overflow: hidden;
+      }
+    }
+  }
+
+  &__LinesContainer {
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  &, &__Cards, &__LinesContainer {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  &--Loading & {
+    &__Cards {
+      .LoadingLine {
+        height: 24px;
+      }
+    }
+  }
+
+  &__Card {
+    width: calc(100% / 3 - $cardsGap * 2 / 3);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 24px;
+    background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+    border-radius: $border-radius-def;
+    flex-shrink: 0;
+  }
+
+  &__CardTitle {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__CardValue {
+    font-size: 0.813rem;
+
+    .LoadingLine {
+      min-width: 120px;
+    }
+  }
+
+  &__ValueContainer {
+    display: flex;
+    justify-content: flex-end;
+    overflow: hidden;
+
+    .DateBlock {
+      margin-bottom: 4px;
+    }
+  }
+  &__InfoLine {
+    gap: 4px;
+    column-gap: 8px;
+
+    .DateBlock__InfoContainer {
+      justify-content: flex-end;
+    }
+
+    &--Status {
+      align-items: baseline;
+    }
+  }
+
+  &__StatusContainer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  @container (max-width: 44em) {
+    &__Cards {
+      flex-direction: column;
+    }
+
+    &__Card {
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .CreditsBlock {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+
+        .CreditsBlock__Usd {
+          margin-top: 0.25rem;
+          margin-bottom: 0.25rem;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+
+    &__CardValue {
+      .LoadingLine {
+        min-width: 50px;
+      }
+    }
+  }
+
+  @container (max-width: 24em) {
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+
+    &__InfoLine {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .InfoLine__Value {
+        width: 100%;
+        text-align: left;
+
+        .DateBlock__InfoContainer {
+          justify-content: flex-start;
+        }
+      }
+    }
+  }
+}

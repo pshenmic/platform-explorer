@@ -209,7 +209,7 @@ describe('Identities routes', () => {
         block_hash: block.hash,
         state_transition_hash: transaction.hash
       })
-      const { alias } = await fixtures.identity_alias(knex,
+      const alias = await fixtures.identity_alias(knex,
         {
           alias: 'test.dash',
           identity,
@@ -225,7 +225,7 @@ describe('Identities routes', () => {
         identifier: identity.identifier,
         owner: identity.identifier,
         revision: identity.revision,
-        balance: 0,
+        balance: '0',
         timestamp: block.timestamp.toISOString(),
         txHash: identity.txHash,
         totalTxs: 0,
@@ -234,10 +234,11 @@ describe('Identities routes', () => {
         totalDataContracts: 0,
         isSystem: false,
         aliases: [{
-          alias,
+          alias: alias.alias,
           contested: false,
           status: 'ok',
-          timestamp: '1970-01-01T00:00:00+00:00'
+          timestamp: '1970-01-01T00:00:00+00:00',
+          txHash: alias.state_transition_hash
         }],
         totalGasSpent: 0,
         averageGasSpent: 0,
@@ -329,7 +330,11 @@ describe('Identities routes', () => {
     it('should return identity by dpns', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.1.dash', identity, state_transition_hash: identity.transaction.hash })
+      const alias = await fixtures.identity_alias(knex, {
+        alias: 'test-name.1.dash',
+        identity,
+        state_transition_hash: identity.transaction.hash
+      })
 
       const { body } = await client.get('/dpns/identity?dpns=test-name.1.dash')
         .expect(200)
@@ -337,12 +342,13 @@ describe('Identities routes', () => {
 
       const expectedIdentity = {
         identifier: identity.identifier,
-        alias,
+        alias: alias.alias,
         status: {
-          alias,
+          alias: alias.alias,
           contested: false,
           status: 'ok',
-          timestamp: null
+          timestamp: block.timestamp.toISOString(),
+          txHash: alias.state_transition_hash
         }
       }
 
@@ -352,7 +358,11 @@ describe('Identities routes', () => {
     it('should return identity by dpns with any case', async () => {
       const block = await fixtures.block(knex)
       const identity = await fixtures.identity(knex, { block_hash: block.hash })
-      const { alias } = await fixtures.identity_alias(knex, { alias: 'test-name.2.dash', identity, state_transition_hash: identity.transaction.hash })
+      const alias = await fixtures.identity_alias(knex, {
+        alias: 'test-name.2.dash',
+        identity,
+        state_transition_hash: identity.transaction.hash
+      })
 
       const { body } = await client.get('/dpns/identity?dpns=TeSt-NaME.2.DAsH')
         .expect(200)
@@ -360,12 +370,13 @@ describe('Identities routes', () => {
 
       const expectedIdentity = {
         identifier: identity.identifier,
-        alias,
+        alias: alias.alias,
         status: {
-          alias,
+          alias: alias.alias,
           contested: false,
           status: 'ok',
-          timestamp: null
+          timestamp: block.timestamp.toISOString(),
+          txHash: alias.state_transition_hash
         }
       }
 
@@ -387,7 +398,11 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test$${i}`, identity, state_transition_hash: identity.transaction.hash })
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -414,8 +429,14 @@ describe('Identities routes', () => {
         totalDataContracts: 0,
         isSystem: false,
         aliases: [
-          aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-        ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
+          aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
+        ].map(alias => ({
+          alias: alias.alias,
+          txHash: alias.state_transition_hash,
+          status: 'ok',
+          contested: false,
+          timestamp: '1970-01-01T00:00:00+00:00'
+        })),
         totalGasSpent: null,
         averageGasSpent: null,
         totalTopUpsAmount: null,
@@ -437,7 +458,11 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test1$${i}`, identity, state_transition_hash: identity.transaction.hash })
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test1$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -466,8 +491,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
+            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
+          ].map(alias => ({
+            alias: alias.alias,
+            txHash: alias.state_transition_hash,
+            status: 'ok',
+            contested: false,
+            timestamp: '1970-01-01T00:00:00+00:00'
+          })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -490,7 +521,11 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test2$${i}`, identity, state_transition_hash: identity.transaction.hash })
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test2$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -519,8 +554,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
+            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
+          ].map(alias => ({
+            alias: alias.alias,
+            txHash: alias.state_transition_hash,
+            status: 'ok',
+            contested: false,
+            timestamp: '1970-01-01T00:00:00+00:00'
+          })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -543,7 +584,11 @@ describe('Identities routes', () => {
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash })
-        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity, state_transition_hash: identity.transaction.hash })
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test3$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
         identities.push({ identity, block })
         aliases.push(alias)
       }
@@ -573,8 +618,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
+            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
+          ].map(alias => ({
+            alias: alias.alias,
+            txHash: alias.state_transition_hash,
+            status: 'ok',
+            contested: false,
+            timestamp: '1970-01-01T00:00:00+00:00'
+          })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -613,7 +664,11 @@ describe('Identities routes', () => {
         identity.transactions = transactions
 
         identities.push({ identity, block })
-        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity, state_transition_hash: identity.transaction.hash })
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test3$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
         aliases.push(alias)
       }
 
@@ -642,8 +697,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
+            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
+          ].map(alias => ({
+            alias: alias.alias,
+            txHash: alias.state_transition_hash,
+            status: 'ok',
+            contested: false,
+            timestamp: '1970-01-01T00:00:00+00:00'
+          })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -680,7 +741,11 @@ describe('Identities routes', () => {
         identity.balance = transfer.amount
 
         identities.push({ identity, block, transfer })
-        alias = await fixtures.identity_alias(knex, { alias: `#test3$${i}`, identity, state_transition_hash: identity.transaction.hash })
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test3$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
         aliases.push(alias)
       }
 
@@ -723,8 +788,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier).alias
-          ].map(alias => ({ alias, status: 'ok', contested: false, timestamp: '1970-01-01T00:00:00+00:00' })),
+            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
+          ].map(alias => ({
+            alias: alias.alias,
+            txHash: alias.state_transition_hash,
+            status: 'ok',
+            contested: false,
+            timestamp: '1970-01-01T00:00:00+00:00'
+          })),
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -992,7 +1063,7 @@ describe('Identities routes', () => {
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
         transitionType: 0,
-        nonce: null,
+        identityContractNonce: null,
         gasUsed: null,
         totalGasUsed: null
       }))
@@ -1059,7 +1130,7 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 
@@ -1127,7 +1198,7 @@ describe('Identities routes', () => {
           prefundedVotingBalance: null,
           entropy: null,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 
@@ -1193,7 +1264,7 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 
@@ -1259,7 +1330,7 @@ describe('Identities routes', () => {
           system: false,
           transitionType: 0,
           gasUsed: null,
-          nonce: null,
+          identityContractNonce: null,
           totalGasUsed: null
         }))
 

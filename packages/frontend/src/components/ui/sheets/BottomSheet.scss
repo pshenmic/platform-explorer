@@ -1,0 +1,83 @@
+@use '../../../styles/mixins';
+@import '../../../styles/variables';
+
+.BottomSheet {
+  background-color: var(--chakra-colors-gray-650);
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px 20px 0 0;
+
+  &:after {
+    content: '';
+    background-color: var(--chakra-colors-gray-650);
+    position: absolute;
+    z-index: -1;
+    top: 90%;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+  }
+
+  &__ContentContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &__Body {
+    @include mixins.navContainerPadding(padding-left, true);
+    @include mixins.navContainerPadding(padding-right, true);
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__DragHandle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: grab;
+    flex-shrink: 0;
+    border-bottom: none;
+    padding: 0.5rem 1.5rem;
+    touch-action: none;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover & {
+        &Line {
+          background-color: var(--chakra-colors-gray-750);
+        }
+      }
+    }
+
+    &:active & {
+      &Line {
+        width: 5.8rem;
+        background-color: var(--chakra-colors-gray-800);
+      }
+    }
+  }
+
+  &__DragHandleLine {
+    max-width: 100%;
+    max-height: 20px;
+    width: 6rem;
+    height: 0.25rem;
+    background-color: var(--chakra-colors-gray-800);
+    border-radius: 0.125rem;
+    margin: 0 auto;
+    transition: .1s;
+  }
+
+  &__Title {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 100%;
+    text-align: center;
+    padding: 0 1.5rem 1rem;
+    flex-shrink: 0;
+  }
+}

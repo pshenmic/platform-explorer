@@ -1,0 +1,27 @@
+@use '../../../styles/mixins';
+@use './variables' as ti;
+@import '../../../styles/variables';
+
+.TopIdentities {
+  width: 100%;
+  padding: 20px 32px;
+  border-top-left-radius: 20px;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include ti.Columns();
+  }
+
+  &__ColumnTitle {
+    @include ti.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    padding: 16px;
+  }
+}

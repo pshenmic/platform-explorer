@@ -1,4 +1,4 @@
-import { badgeColors } from '../colors'
+import { badgeColors, colors } from '../colors'
 
 const Button = {
   baseStyle: {
@@ -6,14 +6,20 @@ const Button = {
     textTransform: 'uppercase',
     borderRadius: '10px',
     letterSpacing: '0.4px',
-    fontWeight: '700'
+    fontWeight: '700',
+    transition: '.1s'
   },
   sizes: {
+    xxs: {
+      borderRadius: '0.25rem',
+      fontSize: '0.75rem',
+      padding: '0.438rem'
+    },
     sm: {
-      fontSize: '12px'
+      fontSize: '0.75rem'
     },
     md: {
-      fontSize: '12px'
+      fontSize: '0.75rem'
     }
   },
   variants: {
@@ -22,6 +28,16 @@ const Button = {
       color: '#fff',
       _hover: {
         bg: 'green.label'
+      }
+    },
+    brand: {
+      bg: colors.brand.normal,
+      color: '#fff',
+      fontWeight: 500,
+      letterSpacing: '.4px',
+      textTransform: 'none',
+      _hover: {
+        bg: colors.brand.light
       }
     },
     blue: {

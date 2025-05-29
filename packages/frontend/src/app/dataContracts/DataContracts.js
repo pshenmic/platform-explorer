@@ -71,13 +71,13 @@ function DataContractsLayout ({ defaultPage = 1, defaultPageSize }) {
 
   return (
     <Container
-        maxW={'container.xl'}
+        maxW={'container.maxPageW'}
         color={'white'}
         mt={8}
         mb={8}
     >
         <Container
-            maxW={'container.xl'}
+            maxW={'container.maxPageW'}
             className={'InfoBlock'}
         >
             <Heading className={'InfoBlock__Title'} as={'h1'}>Data contracts</Heading>

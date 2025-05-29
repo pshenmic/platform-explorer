@@ -6,7 +6,7 @@ const { Identifier } = require('@dashevo/wasm-dpp')
 class DocumentsController {
   constructor (client, knex, dapi) {
     this.documentsDAO = new DocumentsDAO(knex, dapi, client)
-    this.datacContractsDAO = new DataContractsDAO(knex)
+    this.dataContractsDAO = new DataContractsDAO(knex, client, dapi)
     this.client = client
     this.dapi = dapi
   }
@@ -28,7 +28,7 @@ class DocumentsController {
     let dataContract
 
     if (contractId) {
-      dataContract = await this.datacContractsDAO.getDataContractByIdentifier(contractId)
+      dataContract = await this.dataContractsDAO.getDataContractByIdentifier(contractId)
     }
 
     if (!dataContract) {
@@ -65,6 +65,43 @@ class DocumentsController {
       typeName: documentTypeName,
       transitionType: null
     }))
+  }
+
+  getRawDocumentByIdentifier = async (request, response) => {
+    const { identifier } = request.params
+    const { document_type_name: documentTypeName, contract_id: contractId } = request.query
+
+    let dataContract
+
+    if (contractId) {
+      dataContract = await this.dataContractsDAO.getDataContractByIdentifier(contractId)
+    }
+
+    if (!dataContract) {
+      return response.status(404).send({ message: 'data contract not found' })
+    }
+
+    const [extendedDocument] = await this.dapi.getDocuments(
+      documentTypeName,
+      {
+        $format_version: '0',
+        ownerId: dataContract.owner.identifier,
+        id: dataContract.identifier,
+        version: dataContract.version,
+        documentSchemas: JSON.parse(dataContract.schema)
+      },
+      [['$id', '=', Buffer.from(Identifier.from(identifier))]],
+      1,
+      undefined,
+      undefined,
+      true
+    )
+
+    if (!extendedDocument) {
+      return response.status(404).send({ message: 'document not found' })
+    }
+
+    response.send({ base64: extendedDocument.toString('base64') })
   }
 
   getDocumentsByDataContract = async (request, response) => {

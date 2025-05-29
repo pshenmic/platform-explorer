@@ -41,7 +41,7 @@
   &__InfoLine {
     &--Validator {
       .InfoLine__Value {
-        max-width: 100%;
+        max-width: 20rem;
         overflow: hidden;
       }
     }
@@ -77,6 +77,17 @@
   @media screen and (max-width: $breakpoint-sm) {
     &__InfoLine {
       flex-wrap: wrap;
+
+      &--Validator {
+        .InfoLine__Value {
+          width: 100%;
+
+          .Identifier {
+            width: 100%;
+            justify-content: space-between;
+          }
+        }
+      }
     }
   }
 }

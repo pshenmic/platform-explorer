@@ -42,16 +42,16 @@ module.exports = class EpochData {
       Number(total_collected_fees ?? 0),
       best_validator,
       {
-        resource: top_voted_resource ?? null,
-        yes: Number(resource_votes_yes ?? 0),
-        abstain: Number(resource_votes_abstain ?? 0),
-        lock: Number(resource_votes_lock ?? 0)
+        resourceValue: top_voted_resource ?? null,
+        totalCountTowardsIdentity: Number(resource_votes_yes ?? 0),
+        totalCountAbstain: Number(resource_votes_abstain ?? 0),
+        totalCountLock: Number(resource_votes_lock ?? 0)
       },
       {
         identifier: voter_identity_id ?? null,
-        yes: Number(voter_yes ?? 0),
-        abstain: Number(voter_abstain ?? 0),
-        lock: Number(voter_lock ?? 0)
+        totalCountTowardsIdentity: Number(voter_yes ?? 0),
+        totalCountAbstain: Number(voter_abstain ?? 0),
+        totalCountLock: Number(voter_lock ?? 0)
       },
       Number(total_votes ?? 0),
       Number(total_votes_gas_used ?? 0)

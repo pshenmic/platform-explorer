@@ -122,7 +122,7 @@ describe('Epoch routes', () => {
       const expectedBlock = {
         epoch: {
           number: 0,
-          firstBlockHeight: 0,
+          firstBlockHeight: '0',
           firstCoreBlockHeight: 1,
           startTime: 0,
           feeMultiplier: 1,
@@ -132,16 +132,16 @@ describe('Epoch routes', () => {
         totalCollectedFees: transactions.reduce((acc, tx) => acc + tx.gas_used, 0),
         bestValidator: validator.pro_tx_hash,
         bestVoter: {
-          abstain: 15,
-          yes: 15,
-          lock: 0,
+          totalCountAbstain: 15,
+          totalCountTowardsIdentity: 15,
+          totalCountLock: 0,
           identifier: masternodeVotes[masternodeVotes.length - 1][0].voter_identity_id
         },
         topVotedResource: {
-          abstain: 15,
-          yes: 15,
-          lock: 0,
-          resource: [30]
+          totalCountAbstain: 15,
+          totalCountTowardsIdentity: 15,
+          totalCountLock: 0,
+          resourceValue: [30]
         },
         totalVotesCount: 465,
         totalVotesGasUsed: masternodeVotesGas

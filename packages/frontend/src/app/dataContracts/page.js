@@ -19,7 +19,7 @@ function DataContractsRoute ({ searchParams }) {
 
   return <>
     <Container
-      maxW={'container.xl'}
+      maxW={'container.maxPageW'}
       color={'white'}
       mt={8}
       mb={0}

@@ -1,43 +1,54 @@
 import Link from 'next/link'
-import ImageGenerator from '../imageGenerator'
-import { Identifier, Alias } from '../data'
+import { Identifier, Alias, DateBlock } from '../data'
+import { Grid, GridItem } from '@chakra-ui/react'
 import './IdentitiesListItem.scss'
 
 function IdentitiesListItem ({ identity }) {
   const { aliases, identifier, timestamp, isSystem } = identity
+  const activeAlias = aliases?.find(alias => alias?.status === 'ok')
 
   return (
     <Link
       href={`/identity/${identifier}`}
       className={'IdentitiesListItem'}
     >
-      <div className={'IdentitiesListItem__IdentifierContainer'}>
-        <ImageGenerator className={'IdentitiesListItem__Avatar'} username={identifier} lightness={50} saturation={50} width={28} height={28}/>
+      <Grid className={'IdentitiesListItem__Content'}>
+        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Identifier'}>
 
-        {(() => {
-          const activeAlias = aliases?.find(alias => alias.status === 'ok')
-          return aliases?.find(alias => alias.status === 'ok')
-            ? <Alias
-                className={'IdentitiesListItem__Alias'}
-                alias={activeAlias.alias}
+          <div className={'IdentitiesListItem__IdentifierContainer'}>
+            {activeAlias
+              ? <Alias
+                  className={'IdentitiesListItem__Alias'}
+                  alias={activeAlias?.alias}
+                  avatarSource={identifier}
+                />
+              : <Identifier
+                  className={'IdentitiesListItem__Identifier'}
+                  ellipsis={true}
+                  styles={['highlight-both']}
+                  avatar={true}
+                >
+                  {identifier}
+                </Identifier>
+            }
+          </div>
+        </GridItem>
+
+        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Timestamp'}>
+          {isSystem && <div>SYSTEM</div>}
+
+          {typeof timestamp === 'string' &&
+            <div className={'IdentitiesListItem__Timestamp'}>
+              <DateBlock
+                format={'dateOnly'}
+                showTime={true}
+                timestamp={timestamp}
+                showRelativeTooltip={true}
               />
-            : <Identifier
-                className={'IdentitiesListItem__Identifier'}
-                copyButton={true}
-                styles={['highlight-both']}
-              >
-                {identifier}
-              </Identifier>
-        })()}
-      </div>
-
-      {isSystem && <div>SYSTEM</div>}
-
-      {(typeof timestamp === 'string') &&
-        <div className={'IdentitiesListItem__Timestamp'}>
-          {new Date(timestamp).toLocaleString()}
-        </div>
-      }
+            </div>
+          }
+        </GridItem>
+      </Grid>
     </Link>
   )
 }

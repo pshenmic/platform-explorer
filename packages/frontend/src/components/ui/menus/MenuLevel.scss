@@ -1,0 +1,91 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+.MenuLevel {
+  width: calc(100% + 0.5rem);
+  @include mixins.BrandScroll();
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: -0.25rem;
+  
+  &__Item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0.625rem;
+    position: relative;
+    font-family: $font-heading;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.4px;
+    border-radius: $border-radius-def;
+    transition: background-color $transition-time-def;
+    color: var(--chakra-colors-gray-250);
+
+    &:hover {
+      background-color: var(--chakra-colors-gray-800);
+      cursor: pointer;
+      color: #FFFFFF;
+    }
+
+    &:active {
+      background-color: var(--chakra-colors-gray-700) !important;
+    }
+
+    &--Active {
+      color: #fff;
+      background-color: var(--chakra-colors-gray-800);
+    }
+
+    &--Active & {
+      &Icon {
+        color: #fff;
+        background-color: rgba(255, 255, 255, .25)
+      }
+    }
+
+    &:hover & {
+      &Icon {
+        color: #fff;
+        background-color: rgba(255, 255, 255, .25);
+      }
+    }
+
+    &Icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1rem;
+      height: 1rem;
+      border-radius: 0.25rem;
+      background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
+
+      svg {
+        width: 0.5rem;
+        height: 0.5rem;
+      }
+    }
+
+    &--Submenu {
+      &:after {
+        content: '';
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: transparent;
+        transition: background-color $transition-time-def;
+      }
+
+      &:hover:after {
+        background-color: rgba(var(--chakra-colors-whiteAlpha-300-rgb), 0.3);
+      }
+    }
+  }
+}

@@ -1,6 +1,5 @@
-const { Identifier } = require('dash').PlatformProtocol
-
 const { IdentityPublicKey } = require('@dashevo/wasm-dpp/dist/wasm/wasm_dpp')
+const { Identifier } = require('@dashevo/wasm-dpp')
 
 class DAPI {
   dapi
@@ -35,9 +34,10 @@ class DAPI {
    * @param {Array<Array>} query
    * @param {number} limit
    * @param {Array<Array>} orderBy
+   * @param {?boolean} raw returns raw data if `true`
    * @param {Object} skip - {startAfter?: {Buffer}, startAt?: {Buffer}}
    */
-  async getDocuments (type, dataContractObject, query, limit, orderBy, skip) {
+  async getDocuments (type, dataContractObject, query, limit, orderBy, skip, raw) {
     const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
 
     const { startAt, startAfter } = skip ?? {}
@@ -50,9 +50,10 @@ class DAPI {
       startAfter
     })
 
-    return (documents ?? []).map(
-      (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument()
-    )
+    return raw
+      ? documents
+      : (documents ?? []).map(
+          (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument())
   }
 
   /**
@@ -100,6 +101,7 @@ class DAPI {
       return {
         keyId: serialized.getId(),
         type: serialized.getType(),
+        raw: Buffer.from(key).toString('hex'),
         data: Buffer.from(serialized.getData()).toString('hex'),
         purpose: serialized.getPurpose(),
         securityLevel: serialized.getSecurityLevel(),
@@ -117,8 +119,22 @@ class DAPI {
     })
   }
 
+  async getIdentityNonce (identifier) {
+    const { identityNonce } = await this.dapi.platform.getIdentityNonce(Identifier.from(identifier))
+    return identityNonce
+  }
+
+  async getIdentityContractNonce (identifier, dataContractId) {
+    const { identityContractNonce } = await this.dapi.platform.getIdentityContractNonce(Identifier.from(identifier), Identifier.from(dataContractId))
+    return identityContractNonce
+  }
+
   async getStatus () {
     return this.dapi.platform.getStatus()
+  }
+
+  async broadcastTransition (base64) {
+    return this.dapi.platform.broadcastStateTransition(base64)
   }
 }
 

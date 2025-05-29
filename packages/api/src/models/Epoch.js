@@ -21,11 +21,11 @@ module.exports = class Epoch {
     let endTime
 
     if (nextEpoch) {
-      endTime = nextEpoch.startTime
+      endTime = Number(nextEpoch.startTime)
     } else if (startTime) {
-      endTime = startTime + EPOCH_CHANGE_TIME
+      endTime = Number(startTime) + EPOCH_CHANGE_TIME
     }
 
-    return new Epoch(number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, endTime)
+    return new Epoch(number, String(firstBlockHeight), firstCoreBlockHeight, Number(startTime), feeMultiplier, endTime)
   }
 }

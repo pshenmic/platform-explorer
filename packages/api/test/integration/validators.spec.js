@@ -229,7 +229,7 @@ describe('Validators routes', () => {
         totalReward: 0,
         epochReward: 0,
         identity: identity.identifier,
-        identityBalance: 0,
+        identityBalance: '0',
         epochInfo: { ...fullEpochInfo },
         withdrawalsCount: 5,
         lastWithdrawal: transactions[transactions.length - 1].hash,
@@ -281,7 +281,7 @@ describe('Validators routes', () => {
         totalReward: 0,
         epochReward: 0,
         identity: identity.identifier,
-        identityBalance: 0,
+        identityBalance: '0',
         epochInfo: { ...fullEpochInfo },
         withdrawalsCount: 5,
         lastWithdrawal: transactions[transactions.length - 2].hash,
@@ -326,7 +326,7 @@ describe('Validators routes', () => {
         totalReward: 0,
         epochReward: 0,
         identity: identifier,
-        identityBalance: 0,
+        identityBalance: '0',
         epochInfo: { ...fullEpochInfo },
         withdrawalsCount: 5,
         lastWithdrawal: transactions[transactions.length - 1].hash,
@@ -377,7 +377,7 @@ describe('Validators routes', () => {
         totalReward: 0,
         epochReward: 0,
         identity: identifier,
-        identityBalance: 0,
+        identityBalance: '0',
         epochInfo: { ...fullEpochInfo },
         withdrawalsCount: 5,
         lastWithdrawal: transactions[transactions.length - 2].hash,
@@ -443,7 +443,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -499,7 +499,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -556,7 +556,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -614,7 +614,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -676,7 +676,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -734,7 +734,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -792,7 +792,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -848,7 +848,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -923,7 +923,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -979,7 +979,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1037,7 +1037,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1095,7 +1095,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1153,7 +1153,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1211,7 +1211,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1270,7 +1270,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1328,7 +1328,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1389,7 +1389,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1431,7 +1431,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1476,7 +1476,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1520,7 +1520,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1564,7 +1564,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1608,7 +1608,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1665,7 +1665,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1721,7 +1721,7 @@ describe('Validators routes', () => {
               totalReward: 0,
               epochReward: 0,
               identity: identity.identifier,
-              identityBalance: 0,
+              identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
               withdrawalsCount: null,
               lastWithdrawal: null,
@@ -1809,7 +1809,7 @@ describe('Validators routes', () => {
     it('should return stats by proTxHash with custom timespan', async () => {
       const [, validator] = validators
 
-      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats?start=${new Date().toISOString()}&end=${new Date(new Date().getTime() + 80600000).toISOString()}`)
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats?timestamp_start=${new Date().toISOString()}&timestamp_end=${new Date(new Date().getTime() + 80600000).toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1847,7 +1847,7 @@ describe('Validators routes', () => {
       const start = new Date()
       const end = new Date(start.getTime() + 80600000)
 
-      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats?start=${start.toISOString()}&end=${end.toISOString()}&intervalsCount=3`)
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/stats?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=3`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1880,7 +1880,7 @@ describe('Validators routes', () => {
     })
 
     it('should return error on wrong bounds', async () => {
-      await client.get(`/validator/${validators[0].pro_tx_hash}/stats?start=2025-01-02T00:00:00&end=2024-01-08T00:00:00`)
+      await client.get(`/validator/${validators[0].pro_tx_hash}/stats?timestamp_start=2025-01-02T00:00:00&timestamp_end=2024-01-08T00:00:00`)
         .expect(400)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })

@@ -1,7 +1,7 @@
 use std::time::Duration;
 use reqwest::{Client, Error};
 use crate::entities::validator::Validator;
-use crate::models::{TenderdashRPCBlockResponse, TenderdashRPCBlockResultsResponse, TenderdashRPCStatusResponse, TenderdashRPCTransactionResponse, TenderdashRPCValidatorsResponse};
+use crate::models::{TenderdashRPCBlockResponse, TenderdashRPCBlockResultsResponse, TenderdashRPCStatusResponse, TenderdashRPCValidatorsResponse};
 
 pub struct TenderdashRpcApi {
     client: Client,

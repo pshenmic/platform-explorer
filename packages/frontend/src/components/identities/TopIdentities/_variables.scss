@@ -1,0 +1,17 @@
+@import '../../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: auto auto;
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    text-align: right;
+    justify-content: flex-end;
+  }
+}

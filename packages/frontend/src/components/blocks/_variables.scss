@@ -1,0 +1,118 @@
+@import '../../styles/variables.scss';
+
+@mixin Columns ($absoluteTimespan: false) {
+  $timeSpanWidth: #{if($absoluteTimespan, '9rem', '6rem')};
+
+  display: grid;
+  gap: 16px;
+  width: 100%;
+
+  @container (min-width: 90em) {
+    grid-template-columns:
+    $timeSpanWidth // time
+    5.3rem // height
+    minmax(0, 500rem) // hash
+    35rem // proposed by
+    minmax(5rem, 15rem) // fees
+    4.75rem; // tx count
+  }
+
+  grid-template-columns:
+    $timeSpanWidth // time
+    5.3rem // height
+    minmax(0, 30rem) // hash
+    16.5rem // proposed by
+    minmax(5rem, 8rem) // fees
+    4.75rem; // tx count
+
+  @container (max-width: 56em) {
+    grid-template-columns:
+      $timeSpanWidth // time
+      5.3rem // height
+      minmax(0, 30rem) // hash
+      6.25rem // proposed by
+      minmax(5rem, 8rem) // fees
+      4.75rem; // tx count
+  }
+
+  @container (max-width: 46.5em) {
+    grid-template-columns:
+      $timeSpanWidth // time
+      5.3rem // height
+      minmax(0, 30rem) // hash
+      6.25rem // proposed by
+      4.75rem; // tx count
+  }
+
+  @container (max-width: 37.5em) {
+    grid-template-columns:
+      $timeSpanWidth // time
+      5.3rem // height
+      minmax(0, 30rem) // hash
+      4.75rem; // tx count
+  }
+
+  @container (max-width: 30em) {
+    grid-template-columns:
+      $timeSpanWidth // time
+      5.3rem // height
+      minmax(0, 30rem); // hash
+  }
+
+  @container (max-width: 24.5em) {
+    grid-template-columns:
+      $timeSpanWidth // time
+      minmax(0, 400px) // hash
+      4.75rem; // tx count
+  }
+
+  @container (max-width: 23em) {
+    grid-template-columns:
+      $timeSpanWidth // time
+      minmax(0, 400px); // hash
+  }
+}
+
+@mixin Column () {
+  &:last-child {
+    text-align: right;
+  }
+
+  &--Fees {
+    width: 5rem;
+  }
+
+  @container (max-width: 46.5em) {
+    &--Fees {
+      display: none;
+    }
+  }
+
+  @container (max-width: 37.5em) {
+    &--Validator {
+      display: none;
+    }
+  }
+
+  @container (max-width: 30em) {
+    &--Txs {
+      display: none;
+    }
+  }
+
+  @container (max-width: 24.5em) {
+    &--Txs {
+      display: flex;
+    }
+
+    &--Height {
+      display: none;
+    }
+  }
+
+  @container (max-width: 23em) {
+    &--Txs {
+      display: none;
+    }
+  }
+}

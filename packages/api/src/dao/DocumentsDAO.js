@@ -12,7 +12,15 @@ module.exports = class DocumentsDAO {
 
   getDocumentByIdentifier = async (identifier) => {
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier')
+      .select(this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'tx', state_transition_hash
+            )
+          ) as aliases
+        `))
       .groupBy('identity_identifier')
       .as('aliases')
 
@@ -70,9 +78,9 @@ module.exports = class DocumentsDAO {
     }
 
     const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-      const aliasInfo = await getAliasInfo(alias, this.dapi)
+      const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-      return getAliasStateByVote(aliasInfo, { alias }, row.document_owner)
+      return getAliasStateByVote(aliasInfo, alias, row.document_owner)
     }))
 
     let transitions = []
@@ -83,7 +91,7 @@ module.exports = class DocumentsDAO {
       transitions = decodedTransitions.transitions ?? []
     }
 
-    const [transitionWithEntropy] = transitions?.filter(transition => transition.entropy !== '')
+    const [transitionWithEntropy] = transitions?.filter(transition => transition.id === row.identifier)
 
     const document = Document.fromRow({
       ...row,
@@ -97,8 +105,7 @@ module.exports = class DocumentsDAO {
       ...Document.fromObject({
         ...document,
         entropy: transitionWithEntropy?.entropy,
-        prefundedVotingBalance: transitionWithEntropy?.prefundedVotingBalance,
-        nonce: transitionWithEntropy?.nonce
+        prefundedVotingBalance: transitionWithEntropy?.prefundedVotingBalance
       })
     }
   }
@@ -116,7 +123,15 @@ module.exports = class DocumentsDAO {
     }
 
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier')
+      .select(this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'tx', state_transition_hash
+            )
+          ) as aliases
+        `))
       .groupBy('identity_identifier')
       .as('aliases')
 
@@ -164,9 +179,9 @@ module.exports = class DocumentsDAO {
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+        return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
 
       return Document.fromRow({
@@ -187,14 +202,22 @@ module.exports = class DocumentsDAO {
     const toRank = fromRank + limit - 1
 
     const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier', this.knex.raw('array_agg(alias) as aliases'))
+      .select('identity_identifier')
+      .select(this.knex.raw(`
+          array_agg(
+            json_build_object(
+              'alias', alias,
+              'tx', state_transition_hash
+            )
+          ) as aliases
+        `))
       .groupBy('identity_identifier')
       .as('aliases')
 
     const subquery = this.knex('documents')
       .select(
         'documents.id as id', 'revision', 'transition_type', 'gas_used', 'timestamp', 'identifier',
-        'documents.owner as owner', 'state_transitions.hash as hash', 'documents.data as data')
+        'documents.owner as owner', 'state_transitions.hash as hash', 'documents.data as data', 'state_transitions.data as tx_data')
       .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
       .where('documents.identifier', '=', identifier)
       .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
@@ -202,7 +225,8 @@ module.exports = class DocumentsDAO {
       .as('subquery')
 
     const rows = await this.knex(subquery)
-      .select('revision', 'gas_used', 'subquery.owner', 'hash as tx_hash', 'timestamp', 'transition_type', 'data', 'identifier', 'aliases')
+      .select('revision', 'gas_used', 'subquery.owner', 'hash as tx_hash', 'timestamp',
+        'transition_type', 'data', 'identifier', 'aliases', 'tx_data')
       .select(this.knex(subquery).count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
       .leftJoin(aliasesSubquery, 'identity_identifier', 'owner')
@@ -214,17 +238,34 @@ module.exports = class DocumentsDAO {
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-        return getAliasStateByVote(aliasInfo, { alias }, row.owner)
+        return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
 
-      return Document.fromRow({
+      let transitions = []
+
+      if (row.tx_data) {
+        const decodedTransitions = await decodeStateTransition(this.client, row.tx_data)
+
+        transitions = decodedTransitions.transitions ?? []
+      }
+
+      const [transitionWithEntropy] = transitions?.filter(transition => transition.id === row.identifier && transition.revision === row.revision.toString())
+
+      const document = Document.fromRow({
         ...row,
         owner: {
           identifier: row.owner?.trim(),
           aliases: aliases ?? []
         }
+      })
+
+      return Document.fromObject({
+        ...document,
+        entropy: transitionWithEntropy?.entropy,
+        prefundedVotingBalance: transitionWithEntropy?.prefundedVotingBalance,
+        identityContractNonce: transitionWithEntropy?.identityContractNonce
       })
     }))
 

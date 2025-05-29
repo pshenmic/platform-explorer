@@ -1,61 +1,58 @@
 @use '../../styles/mixins.scss';
+@use './variables' as blocks;
 @import '../../styles/variables.scss';
 
 .BlocksListItem {
   @include mixins.DefListItem;
   font-size: 0.75rem;
 
-  &__Hash {
-    flex-grow: 1;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+  &__Content {
+    @include blocks.Columns();
+    align-items: center;
   }
 
-  &__Height {
-    font-weight: bold;
-    margin-right: 8px;
-    word-break: keep-all;
-  }
-  
-  &__Timestamp {
-    margin-right: 16px;
-    white-space: nowrap;
+  &--TimestampAbsolute &__Content {
+    @include blocks.Columns(true);
   }
 
-  &__Txs {
-    margin-left: 12px;
-    white-space: nowrap;
-  } 
-
-  @media screen and (max-width: 620px) {
-    flex-wrap: wrap;
-
-    &__Height {
-      order: 1;
-      margin-right: 4px;
-    }
-
-    &__Txs {
-      order: 2;
-      margin-left: 0;
-      margin-right: 6px;
-    }
-
-    &__Timestamp {
-      order: 3;
-    }
-
-    &__Hash {
-      order: 4;
-      flex-grow: unset;
-      margin-top: 2px;
-    }
+  &__LinkContainer {
+    max-width: 100%;
   }
 
-  @media screen and (max-width: 400px) {
-    &__Timestamp {
-      white-space: wrap;
+  &__Column {
+    @include blocks.Column();
+    display: flex;
+    align-items: center;
+
+    &:last-child {
+      text-align: right;
+      justify-content: flex-end;
+    }
+
+    &--Fees {
+      overflow: visible;
+    }
+
+    &--Validator {
+      .Identifier__SymbolsContainer {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-height: 0.8rem;
+        max-height: 1.6rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal !important;
+      }
+    }
+
+    @container (max-width: 56em) {
+      &--Validator {
+        .Identifier__SymbolsContainer {
+          -webkit-line-clamp: 1;
+          max-height: 0.8rem;
+        }
+      }
     }
   }
 }
