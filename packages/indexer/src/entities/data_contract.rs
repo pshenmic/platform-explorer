@@ -17,7 +17,6 @@ pub struct DataContract {
     pub identifier: Identifier,
     pub schema: Option<Value>,
     pub version: u32,
-    pub state_transition_hash: Option<String>,
     pub is_system: bool,
     pub tokens: Option<BTreeMap<TokenContractPosition, TokenConfiguration>>,
     pub format_version: Option<u32>
@@ -66,7 +65,6 @@ impl From<DataContractCreateTransition> for DataContract {
                             identifier,
                             schema: Some(schema_decoded),
                             version,
-                            state_transition_hash: None,
                             is_system: false,
                             tokens: Some(tokens),
                             format_version: Some(1u32)
@@ -121,7 +119,6 @@ impl From<DataContractUpdateTransition> for DataContract {
                             identifier,
                             schema: Some(schema_decoded),
                             version,
-                            state_transition_hash: None,
                             is_system: false,
                             tokens: Some(tokens),
                             format_version: Some(1u32)
@@ -144,7 +141,8 @@ impl From<SystemDataContract> for DataContract {
             SystemDataContract::DPNS => "DPNS",
             SystemDataContract::Dashpay => "Dashpay",
             SystemDataContract::WalletUtils => "WalletUtils",
-            SystemDataContract::TokenHistory => "TokenHistory"
+            SystemDataContract::TokenHistory => "TokenHistory",
+            SystemDataContract::KeywordSearch => "KeywordSearch"
         };
         let identifier = data_contract.id();
         let source = data_contract.source(platform_version).unwrap();
