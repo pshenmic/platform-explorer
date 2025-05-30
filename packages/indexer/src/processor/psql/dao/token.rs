@@ -61,7 +61,7 @@ impl PostgresDAO {
     println!("Created Token from contract {} wit position {}", token.data_contract_identifier.to_string(Base58), token.position);
   }
 
-  pub async fn token_transition(&self, token_transition: TokenTransition, amount: Option<u64>, public_note: Option<String>, owner: Identifier, recipient: Option<Identifier>, st_hash: String, sql_transaction: &Transaction<'_>) -> Result<(), PoolError> {
+  pub async fn token_transition(&self, token_transition: TokenTransition, amount: Option<u64>, public_note: Option<&String>, owner: Identifier, recipient: Option<Identifier>, st_hash: String, sql_transaction: &Transaction<'_>) -> Result<(), PoolError> {
     let data_contract = self
       .get_data_contract_by_identifier(token_transition.base().data_contract_id(), sql_transaction)
       .await.unwrap().expect(&format!("Could not find DataContract with identifier {}",
