@@ -9,7 +9,7 @@ use data_contracts::SystemDataContract;
 use dpp::identifier::Identifier;
 use dpp::platform_value::{platform_value, BinaryData};
 use dpp::platform_value::string_encoding::Encoding::{Base58};
-use dpp::state_transition::documents_batch_transition::document_transition::action_type::DocumentTransitionActionType;
+use dpp::state_transition::state_transitions::batch_transition::batched_transition::document_transition_action_type::DocumentTransitionActionType;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::data_contract::DataContract;
 use crate::entities::document::Document;
@@ -107,8 +107,11 @@ impl PSQLProcessor {
 
                 self.dao.create_document(dash_tld_document, None, sql_transaction).await.unwrap();
             }
+            // TODO: Implement contracts
             SystemDataContract::Dashpay => {}
             SystemDataContract::WalletUtils => {}
+            SystemDataContract::TokenHistory => {}
+            SystemDataContract::KeywordSearch => {}
         }
     }
 }

@@ -10,6 +10,7 @@ pub mod blocks;
 pub mod state_transitions;
 pub mod transfers;
 pub mod masternode_votes;
+mod token;
 
 pub struct PostgresDAO {
     pub(crate) connection_pool: Pool,

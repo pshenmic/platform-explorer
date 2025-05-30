@@ -6,3 +6,5 @@ mod handle_block;
 mod handle_validator;
 mod handle_masternode_vote;
 mod handle_init_chain;
+mod handle_token_configuration;
+mod handle_batch;

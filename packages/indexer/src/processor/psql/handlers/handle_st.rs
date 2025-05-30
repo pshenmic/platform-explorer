@@ -1,6 +1,7 @@
 use deadpool_postgres::Transaction;
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
+use dpp::state_transition::batch_transition::BatchTransition;
 use sha256::digest;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::processor::psql::PSQLProcessor;
@@ -12,7 +13,7 @@ impl PSQLProcessor {
     let st_type = match state_transition.clone() {
       StateTransition::DataContractCreate(st) => st.state_transition_type() as u32,
       StateTransition::DataContractUpdate(st) => st.state_transition_type() as u32,
-      StateTransition::DocumentsBatch(st) => st.state_transition_type() as u32,
+      StateTransition::Batch(st) => st.state_transition_type() as u32,
       StateTransition::IdentityCreate(st) => st.state_transition_type() as u32,
       StateTransition::IdentityTopUp(st) => st.state_transition_type() as u32,
       StateTransition::IdentityCreditWithdrawal(st) => st.state_transition_type() as u32,
@@ -30,8 +31,8 @@ impl PSQLProcessor {
         PlatformSerializable::serialize_to_bytes(&StateTransition::DataContractUpdate(
           st.clone()
         )).unwrap(),
-      StateTransition::DocumentsBatch(st) =>
-        PlatformSerializable::serialize_to_bytes(&StateTransition::DocumentsBatch(
+      StateTransition::Batch(st) =>
+        PlatformSerializable::serialize_to_bytes(&StateTransition::Batch(
           st.clone()
         )).unwrap(),
       StateTransition::IdentityCreate(st) =>
@@ -85,10 +86,17 @@ impl PSQLProcessor {
 
         println!("Processed DataContractUpdate at block hash {}", block_hash);
       }
-      StateTransition::DocumentsBatch(_st) => {
-        self.handle_documents_batch(_st, st_hash, sql_transaction).await;
+      StateTransition::Batch(_st) => {
+        match _st {
+          BatchTransition::V0(st) => {
+            self.handle_batch_v0(st.clone(), st_hash, sql_transaction).await;
+          }
+          BatchTransition::V1(st) => {
+            self.handle_batch_v1(st.transitions.clone(), st.owner_id().clone(), st_hash, sql_transaction).await
+          }
+        }
 
-        println!("Processed DocumentsBatch at block hash {}", block_hash);
+        println!("Processed Batch at block hash {}", block_hash);
       }
       StateTransition::IdentityCreate(_st) => {
         self.handle_identity_create(_st, st_hash, sql_transaction).await;

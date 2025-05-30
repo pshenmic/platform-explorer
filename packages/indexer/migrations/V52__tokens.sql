@@ -1,0 +1,21 @@
+CREATE TABLE tokens (
+    id SERIAL PRIMARY KEY,
+    position SMALLINT NOT NULL,
+    identifier varchar(64) NOT NULL,
+    data_contract_id int NOT NULL references data_contracts(id),
+    max_supply bigint DEFAULT NULL,
+    base_supply bigint not null,
+    keeps_transfer_history BOOLEAN not null,
+    keeps_freezing_history BOOLEAN not null,
+    keeps_minting_history BOOLEAN not null,
+    keeps_burning_history BOOLEAN not null,
+    keeps_direct_pricing_history BOOLEAN not null,
+    keeps_direct_purchase_history BOOLEAN not null,
+    distribution_rules jsonb DEFAULT NULL,
+    manual_minting_rules jsonb DEFAULT NULL,
+    manual_burning_rules jsonb DEFAULT NULL,
+    freeze_rules jsonb DEFAULT NULL,
+    unfreeze_rules jsonb DEFAULT NULL,
+    destroy_frozen_funds_rules jsonb DEFAULT NULL,
+    emergency_action_rules jsonb DEFAULT NULL
+);

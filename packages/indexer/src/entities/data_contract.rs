@@ -1,5 +1,7 @@
+use std::collections::BTreeMap;
 use dpp::data_contract::serialized_version::DataContractInSerializationFormat;
 use data_contracts::SystemDataContract;
+use dpp::data_contract::{TokenConfiguration, TokenContractPosition};
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
@@ -15,7 +17,9 @@ pub struct DataContract {
     pub identifier: Identifier,
     pub schema: Option<Value>,
     pub version: u32,
-    pub is_system: bool
+    pub is_system: bool,
+    pub tokens: Option<BTreeMap<TokenContractPosition, TokenConfiguration>>,
+    pub format_version: Option<u32>
 }
 
 impl From<DataContractCreateTransition> for DataContract {
@@ -41,6 +45,29 @@ impl From<DataContractCreateTransition> for DataContract {
                             schema: Some(schema_decoded),
                             version,
                             is_system: false,
+                            tokens: None,
+                            format_version: Some(0u32)
+                        };
+                    }
+
+                    DataContractInSerializationFormat::V1(data_contract) => {
+                        let identifier = data_contract.id;
+                        let version = data_contract.version;
+                        let owner = data_contract.owner_id;
+                        let schema = data_contract.document_schemas;
+                        let schema_decoded = serde_json::to_value(schema).unwrap();
+                        let tokens = data_contract.tokens;
+
+                        return DataContract {
+                            id: None,
+                            name: None,
+                            owner,
+                            identifier,
+                            schema: Some(schema_decoded),
+                            version,
+                            is_system: false,
+                            tokens: Some(tokens),
+                            format_version: Some(1u32)
                         };
                     }
                 }
@@ -72,6 +99,29 @@ impl From<DataContractUpdateTransition> for DataContract {
                             schema: Some(schema_decoded),
                             version,
                             is_system: false,
+                            tokens: None,
+                            format_version: Some(0u32)
+                        };
+                    }
+
+                    DataContractInSerializationFormat::V1(data_contract) => {
+                        let identifier = data_contract.id;
+                        let version = data_contract.version;
+                        let owner = data_contract.owner_id;
+                        let schema = data_contract.document_schemas;
+                        let schema_decoded = serde_json::to_value(schema).unwrap();
+                        let tokens = data_contract.tokens;
+
+                        return DataContract {
+                            id: None,
+                            name: None,
+                            owner,
+                            identifier,
+                            schema: Some(schema_decoded),
+                            version,
+                            is_system: false,
+                            tokens: Some(tokens),
+                            format_version: Some(1u32)
                         };
                     }
                 }
@@ -90,7 +140,9 @@ impl From<SystemDataContract> for DataContract {
             SystemDataContract::FeatureFlags => "FeatureFlags",
             SystemDataContract::DPNS => "DPNS",
             SystemDataContract::Dashpay => "Dashpay",
-            SystemDataContract::WalletUtils => "WalletUtils"
+            SystemDataContract::WalletUtils => "WalletUtils",
+            SystemDataContract::TokenHistory => "TokenHistory",
+            SystemDataContract::KeywordSearch => "KeywordSearch"
         };
         let identifier = data_contract.id();
         let source = data_contract.source(platform_version).unwrap();
@@ -106,6 +158,8 @@ impl From<SystemDataContract> for DataContract {
             schema: Some(schema_decoded),
             version: 0,
             is_system: true,
+            tokens: None,
+            format_version: None
         }
     }
 }
@@ -128,6 +182,8 @@ impl From<Row> for DataContract {
             schema: None,
             version: version as u32,
             is_system,
+            tokens: None,
+            format_version: None,
         }
     }
 }
