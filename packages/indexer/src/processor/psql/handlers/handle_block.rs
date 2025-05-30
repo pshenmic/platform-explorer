@@ -9,6 +9,7 @@ impl PSQLProcessor {
   pub async fn handle_block(&self, block: Block, validators: Vec<Validator>) -> Result<(), ProcessorError> {
     let processed = self.dao.get_block_header_by_height(block.header.height.clone()).await?;
 
+
     match processed {
       None => {
         let block_height = block.header.height.clone();
