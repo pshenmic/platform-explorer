@@ -74,7 +74,7 @@ impl PostgresDAO {
 
     let token_identifier = token_transition.token_id();
 
-    let query = "INSERT INTO tokens_transitions \
+    let query = "INSERT INTO token_transitions \
           (owner, token_identifier, action, amount, public_note, token_contract_position, state_transition_hash, data_contract_id, recipient) \
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
 

@@ -1,4 +1,4 @@
-CREATE TABLE tokens_transitions (
+CREATE TABLE token_transitions (
       id SERIAL PRIMARY KEY,
       token_identifier varchar(64) NOT NULL,
       owner varchar(64) NOT NULL,
