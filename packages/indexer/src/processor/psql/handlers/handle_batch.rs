@@ -36,7 +36,7 @@ impl PSQLProcessor {
               self.dao.token_transition(
                 transition.clone(),
                 Some(mint.amount()),
-                Some(mint.public_note().unwrap().clone()),
+                mint.public_note(),
                 owner_id,
                 mint.issued_to_identity_id(),
                 st_hash.clone(),
@@ -47,7 +47,7 @@ impl PSQLProcessor {
               self.dao.token_transition(
                 transition.clone(),
                 Some(burn.burn_amount()),
-                Some(burn.public_note().unwrap().clone()),
+                burn.public_note(),
                 owner_id,
                 None,
                 st_hash.clone(),
@@ -58,7 +58,7 @@ impl PSQLProcessor {
               self.dao.token_transition(
                 transition.clone(),
                 Some(transfer.amount()),
-                Some(transfer.public_note().unwrap().clone()),
+                transfer.public_note(),
                 owner_id,
                 Some(transfer.recipient_id()),
                 st_hash.clone(),
@@ -69,7 +69,7 @@ impl PSQLProcessor {
               self.dao.token_transition(
                 transition.clone(),
                 None,
-                Some(freeze.public_note().unwrap().clone()),
+                freeze.public_note(),
                 owner_id,
                 Some(freeze.frozen_identity_id()),
                 st_hash.clone(),
@@ -80,7 +80,7 @@ impl PSQLProcessor {
               self.dao.token_transition(
                 transition.clone(),
                 None,
-                Some(unfreeze.public_note().unwrap().clone()),
+                unfreeze.public_note(),
                 owner_id,
                 Some(unfreeze.frozen_identity_id()),
                 st_hash.clone(),
@@ -91,7 +91,7 @@ impl PSQLProcessor {
               self.dao.token_transition(
                 transition.clone(),
                 None,
-                Some(destroy_frozen_funds.public_note().unwrap().clone()),
+                destroy_frozen_funds.public_note(),
                 owner_id,
                 Some(destroy_frozen_funds.frozen_identity_id()),
                 st_hash.clone(),
@@ -102,7 +102,7 @@ impl PSQLProcessor {
               self.dao.token_transition(
                 transition.clone(),
                 None,
-                Some(emergency_action.public_note().unwrap().clone()),
+                emergency_action.public_note(),
                 owner_id,
                 None,
                 st_hash.clone(),
@@ -113,7 +113,7 @@ impl PSQLProcessor {
               self.dao.token_transition(
                 transition.clone(),
                 None,
-                Some(config_update.public_note().unwrap().clone()),
+                config_update.public_note(),
                 owner_id,
                 None,
                 st_hash.clone(),
@@ -124,7 +124,7 @@ impl PSQLProcessor {
               self.dao.token_transition(
                 transition.clone(),
                 None,
-                Some(config_update.public_note().unwrap().clone()),
+                config_update.public_note(),
                 owner_id,
                 None,
                 st_hash.clone(),
@@ -146,7 +146,7 @@ impl PSQLProcessor {
               self.dao.token_transition(
                 transition.clone(),
                 None,
-                Some(config_update.public_note().unwrap().clone()),
+                config_update.public_note(),
                 owner_id,
                 None,
                 st_hash.clone(),
