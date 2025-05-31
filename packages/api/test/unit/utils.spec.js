@@ -3,7 +3,8 @@ const assert = require('node:assert').strict
 const utils = require('../../src/utils')
 const createIdentityMock = require('./mocks/create_identity.json')
 const dataContractCreateMock = require('./mocks/data_contract_create.json')
-const documentsBatchMock = require('./mocks/documents_batch.json')
+const documentTransitionMock = require('./mocks/document_transition.json')
+const tokenTransitionMock = require('./mocks/token_transition.json')
 const identityTopUpMock = require('./mocks/identity_top_up.json')
 const dataContractUpdateMock = require('./mocks/data_contract_update.json')
 const identityUpdateMock = require('./mocks/identity_update.json')
@@ -73,13 +74,14 @@ describe('Utils', () => {
       })
     })
 
-    it('should decode DocumentsBatch', async () => {
-      const decoded = await utils.decodeStateTransition(client, documentsBatchMock.data)
+    it('should decode Document Transition', async () => {
+      const decoded = await utils.decodeStateTransition(client, documentTransitionMock.data)
 
       assert.deepEqual(decoded, {
         type: 1,
         transitions: [
           {
+            transitionType: 'documentTransition',
             id: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
             dataContractId: 'FhKAsUnPbqe7K4TZxgRdtPUrfSvNCtYV8iPsvjX7ZG58',
             revision: '1',
@@ -98,6 +100,32 @@ describe('Utils', () => {
         signaturePublicKeyId: 1,
         ownerId: 'woTQprzGS4bLqqbAhY2heG8QfD58Doo2UhDbiVVrLKG',
         raw: '02000e09e4140f8b7777810be56c47f0ab5cbd9bed1e773abd9f9fdf2fe67a669ff7010000006008b85d9826e770ad21b6d585f010f1dfb3b3f2adc6492329bbef8fdec1b1d702046e6f7465da5764f89025e9a5f680633909db58f6f7f6d3582c445393f15aad58821c9f2bf09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b01076d65737361676512305475746f7269616c20434920546573742040205468752c2030382041756720323032342032303a32353a303320474d54000001411f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261'
+      })
+    })
+
+    it('should decode Token Transition', async () => {
+      const decoded = await utils.decodeStateTransition(client, tokenTransitionMock.data)
+
+      assert.deepEqual(decoded, {
+        type: 1,
+        transitions: [
+          {
+            transitionType: 'tokenTransition',
+            tokeTransitionType: 2,
+            tokenId: '8AnZE2i955j9PC55m3y3e6rVQVZHbLWTk66iNp8eoNWn',
+            identityContractNonce: '16',
+            tokenContractPosition: 1,
+            dataContractId: '9g672HNThwyShq1c5MqQURENR2Ncxce8fLrafh6MmHLr',
+            historicalDocumentTypeName: 'transfer',
+            historicalDocumentId: 'EmF2uMAEWrZKwcN3WnZW5ajt9YwkTe5Zr5y4NYJMCHFx',
+            recipient: 'DkWXAH3qSpCL4BEULAjWdYF8n29WWBRS7TWE8GGN2kWY'
+          }
+        ],
+        userFeeIncrease: 0,
+        signature: '1f423b5dca10a8169795a8935b58007ffa0cc35faee58de23281bd5523ba5cf8b27cf475c3fa49495cfe7356c3a3219060bef1e2bbd72f6a9c5948ee13896e8843',
+        signaturePublicKeyId: 1,
+        ownerId: '8noJkyFbsawoVkMsLxNo1k3oEVaJppUG2B4UriFHFoi',
+        raw: '020101fed99d7fcf72ca41aa2dba4445ae349421aa86ae6714319e271d8bab0cb34d0101020000100180e0eafa62ead97989b2ee14006ecefb24e290c03c9c7321a5a777aa8a86b6ff6a838baf57e456b1408869e3b12d1a1db56a5b9c67ff764512f1885d99df21d3006fbd7198a587375bf219dea865ced2abbd8605e9adb03c8c5cffbd1ba83fa99ad50000000001411f423b5dca10a8169795a8935b58007ffa0cc35faee58de23281bd5523ba5cf8b27cf475c3fa49495cfe7356c3a3219060bef1e2bbd72f6a9c5948ee13896e8843'
       })
     })
 

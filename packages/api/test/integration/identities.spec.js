@@ -654,7 +654,7 @@ describe('Identities routes', () => {
         for (let j = 0; j < Math.floor(Math.random() * 50); j++) {
           const tx = await fixtures.transaction(knex, {
             block_hash: block.hash,
-            type: StateTransitionEnum.DOCUMENTS_BATCH,
+            type: StateTransitionEnum.BATCH,
             owner: identity.identifier
           })
 
@@ -1027,7 +1027,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1090,7 +1090,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1156,7 +1156,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1224,7 +1224,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1290,7 +1290,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1349,7 +1349,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         transactions.push({ transaction, block })
       }
@@ -1371,7 +1371,7 @@ describe('Identities routes', () => {
           index: 0,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
-          type: i === 0 ? StateTransitionEnum.IDENTITY_CREATE : StateTransitionEnum.DOCUMENTS_BATCH,
+          type: i === 0 ? StateTransitionEnum.IDENTITY_CREATE : StateTransitionEnum.BATCH,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
@@ -1396,7 +1396,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         transactions.push({ transaction, block })
       }
@@ -1418,7 +1418,7 @@ describe('Identities routes', () => {
           index: 0,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
-          type: StateTransitionEnum.DOCUMENTS_BATCH,
+          type: StateTransitionEnum.BATCH,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
@@ -1443,7 +1443,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         transactions.push({ transaction, block })
       }
@@ -1465,7 +1465,7 @@ describe('Identities routes', () => {
           index: 0,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
-          type: StateTransitionEnum.DOCUMENTS_BATCH,
+          type: StateTransitionEnum.BATCH,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
@@ -1490,7 +1490,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         transactions.push({ transaction, block })
       }
@@ -1512,7 +1512,7 @@ describe('Identities routes', () => {
           index: 0,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
-          type: StateTransitionEnum.DOCUMENTS_BATCH,
+          type: StateTransitionEnum.BATCH,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,

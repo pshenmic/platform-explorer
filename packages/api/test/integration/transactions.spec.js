@@ -50,7 +50,7 @@ describe('Transaction routes', () => {
     const errorTx = await fixtures.transaction(knex, {
       block_hash: block.hash,
       data: '{}',
-      type: StateTransitionEnum.DOCUMENTS_BATCH,
+      type: StateTransitionEnum.BATCH,
       owner: identity.identifier,
       error: 'Cannot deserialize',
       status: 'FAIL'

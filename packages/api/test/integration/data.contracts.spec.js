@@ -101,7 +101,7 @@ describe('DataContracts routes', () => {
 
       const documentTransaction = await fixtures.transaction(knex, {
         block_hash: block2.hash,
-        type: StateTransitionEnum.DOCUMENTS_BATCH,
+        type: StateTransitionEnum.BATCH,
         owner: identity.identifier,
         data: 'AgBxmfH2hATIbs9g2cuTrvMY+g8rCOWf/Rdr3vQxVP/eawEDAABF/LZHZLWdw2w3F4+EpbOlpl8RNK6icPPgAI9u0KsLgwMFQ2xhaW2q3m53l6rTxI+1VTW/2E/dRKsBVNmCJOId0FU9WzapBQRiKSUxGfUgcL2NTlWbhbJM3jqldTUNCUFqM2l63hfROQABQR8ouGytATEcwiRiyIQUYhv0HL3oiPWMtzS8SE668LoJ+Geo+PQq0fMsigWlNUNG4bz3UYQfwiubqFmrX8XflISM'
       })
