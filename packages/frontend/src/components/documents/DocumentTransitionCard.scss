@@ -1,0 +1,13 @@
+@use '../../styles/mixins.scss';
+
+.DocumentTransitionCard {
+  @include mixins.BaseTransitionCard();
+
+  &__InfoLine {
+    &--DocumentType {
+      .ValueContainer {
+        max-width: max-content;
+      }
+    }
+  }
+}
