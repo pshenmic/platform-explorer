@@ -14,8 +14,8 @@ const TokenTransitionBadge = ({ typeId, size = 'sm', ...props }) => {
   }
 
   return (
-    <Badge 
-      size={size} 
+    <Badge
+      size={size}
       colorScheme={transitionInfo.colorScheme}
       title={transitionInfo.description}
       {...props}
@@ -25,4 +25,4 @@ const TokenTransitionBadge = ({ typeId, size = 'sm', ...props }) => {
   )
 }
 
-export default TokenTransitionBadge 
+export default TokenTransitionBadge

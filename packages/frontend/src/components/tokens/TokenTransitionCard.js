@@ -1,9 +1,8 @@
 import { ValueCard } from '../cards'
-import {BigNumber, CreditsBlock, Identifier, InfoLine} from '../data'
+import { BigNumber, CreditsBlock, Identifier, InfoLine } from '../data'
 import { TokenTransitionEnum } from '../../enums/tokenTransition'
 import TokenTransitionBadge from './TokenTransitionBadge'
-import { ValueContainer } from '../ui/containers'
-import {Code, Box, Text, Badge} from '@chakra-ui/react'
+import { Code, Box, Text, Badge } from '@chakra-ui/react'
 import { colors } from '../../styles/colors'
 import './TokenTransitionCard.scss'
 
@@ -196,7 +195,6 @@ const TokenTransitionCard = ({ transition, owner, rate, className }) => {
           )}
         />
       )}
-
 
       {/* Identity Contract Nonce */}
       {fields.includes('IdentityContractNonce') && (
