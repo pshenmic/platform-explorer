@@ -1810,195 +1810,102 @@ POST /transaction/decode
 #### Responses:
 ```json
 {
-    "type": 0,
-    "internalConfig": {
-        "canBeDeleted": false,
-        "readonly": false,
-        "keepsHistory": false,
-        "documentsKeepHistoryContractDefault": false,
-        "documentsMutableContractDefault": true,
-        "documentsCanBeDeletedContractDefault": true,
-        "requiresIdentityDecryptionBoundedKey": null,
-        "requiresIdentityEncryptionBoundedKey": null
-    },
-    "userFeeIncrease": 0,
-    "identityNonce": 7,
-    "dataContractId": "4PenkX3rPnwvBNvCwRTXaduxym7XG4yJWQNfiruWwM2N",
-    "ownerId": "7Yowk46VwwHqmD5yZyyygggh937aP6h2UW7aQWBdWpM5",
-    "schema": {
-        "identityVerify": {
-            "documentsMutable": true,
-            "canBeDeleted": true,
-            "type": "object",
-            "properties": {
-                "normalizedLabel": {
-                    "position": 0,
-                    "type": "string",
-                    "pattern": "^[a-hj-km-np-z0-9][a-hj-km-np-z0-9-]{0,61}[a-hj-km-np-z0-9]$",
-                    "maxLength": 63,
-                    "description": "Domain label converted to lowercase for case-insensitive uniqueness validation. \"o\", \"i\" and \"l\" replaced with \"0\" and \"1\" to mitigate homograph attack. e.g. 'b0b'",
-                    "$comment": "Must match a domain document to provide further information. Must be equal to the label in lowercase. \"o\", \"i\" and \"l\" must be replaced with \"0\" and \"1\"."
-                },
-                "normalizedParentDomainName": {
-                    "type": "string",
-                    "pattern": "^$|^[a-hj-km-np-z0-9][a-hj-km-np-z0-9-\\.]{0,61}[a-hj-km-np-z0-9]$",
-                    "minLength": 0,
-                    "maxLength": 63,
-                    "position": 1,
-                    "description": "A parent domain name in lowercase for case-insensitive uniqueness validation. \"o\", \"i\" and \"l\" replaced with \"0\" and \"1\" to mitigate homograph attack. e.g. 'dash'",
-                    "$comment": "Must either be equal to an existing domain or empty to create a top level domain. \"o\", \"i\" and \"l\" must be replaced with \"0\" and \"1\". Only the data contract owner can create top level domains."
-                },
-                "url": {
-                    "position": 2,
-                    "type": "string",
-                    "description": "The identity verification URL to be stored.",
-                    "maxLength": 128,
-                    "pattern": "^https?://.*",
-                    "format": "uri"
-                }
-            },
-            "indices": [
-                {
-                    "name": "ownerId",
-                    "properties": [
-                        {
-                            "$ownerId": "asc"
-                        }
-                    ]
-                },
-                {
-                    "name": "ownerId_NormDomainName_NormLabel",
-                    "properties": [
-                        {
-                            "$ownerId": "asc"
-                        },
-                        {
-                            "normalizedParentDomainName": "asc"
-                        },
-                        {
-                            "normalizedLabel": "asc"
-                        }
-                    ]
-                },
-                {
-                    "name": "uniqueUsernameIndex",
-                    "properties": [
-                        {
-                            "normalizedLabel": "asc"
-                        }
-                    ]
-                }
-            ],
-            "required": [
-                "url",
-                "normalizedLabel",
-                "normalizedParentDomainName"
-            ],
-            "additionalProperties": false
+  "type": 0,
+  "typeString": "DATA_CONTRACT_CREATE",
+  "internalConfig": {
+    "canBeDeleted": false,
+    "readonly": false,
+    "keepsHistory": false,
+    "documentsKeepHistoryContractDefault": false,
+    "documentsMutableContractDefault": true,
+    "documentsCanBeDeletedContractDefault": true,
+    "requiresIdentityDecryptionBoundedKey": null,
+    "requiresIdentityEncryptionBoundedKey": null
+  },
+  "userFeeIncrease": 0,
+  "version": 1,
+  "identityNonce": "10",
+  "dataContractId": "GbGD5YbS9GVh7FSZjz3uUJpbrXo9ctbdKycfTqqg3Cmn",
+  "ownerId": "7dwjL5frrkM69pv3BsKSQb4ELrMYmDeE11KNoDSefG6c",
+  "schema": {
+    "labler": {
+      "type": "object",
+      "properties": {
+        "contractId": {
+          "type": "string",
+          "minLength": 43,
+          "maxLength": 44,
+          "position": 0
         },
-        "tx_metadata": {
-            "type": "object",
-            "indices": [
-                {
-                    "name": "ownerId",
-                    "properties": [
-                        {
-                            "$ownerId": "asc"
-                        }
-                    ]
-                },
-                {
-                    "name": "ownerIdAndCreatedAt",
-                    "properties": [
-                        {
-                            "$ownerId": "asc"
-                        },
-                        {
-                            "$createdAt": "asc"
-                        }
-                    ]
-                }
-            ],
-            "properties": {
-                "keyIndex": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "description": "The index of the owners identity public key used to derive the encryption key.",
-                    "position": 0
-                },
-                "encryptionKeyIndex": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "description": "The secondary index used to derive the encryption key that is used to encrypt and decrypt encryptedData.",
-                    "position": 1
-                },
-                "encryptedMetadata": {
-                    "type": "array",
-                    "byteArray": true,
-                    "minItems": 32,
-                    "maxItems": 4096,
-                    "description": "encrypted metadata using AES-CBC-256",
-                    "position": 2
-                }
-            },
-            "required": [
-                "keyIndex",
-                "encryptionKeyIndex",
-                "encryptedMetadata",
-                "$createdAt"
-            ],
-            "additionalProperties": false
+        "shortName": {
+          "type": "string",
+          "maxLength": 32,
+          "minLength": 3,
+          "position": 1
         }
-    },
-    "signature": "1ff784ded3a1177d0c6194fadfaf3a3722cb4ef41c1ae3fa7bdeca2f0bd5a19cdc7d95d2286990e4e8a9308043261c4ed7fdb5676d4d5629ef26d26a79a19a0f3a",
-    "signaturePublicKeyId": 1,
-    "raw": "00000032609106c20cd642005b3c1ed00dde5cb5fde5f40baaa4184aebbafc560b679f00000000000101000001614c34c98bc3f0a618951f0e61310598a0ad8ec225007f1f001fddf7e7b292f000020e6964656e7469747956657269667916071210646f63756d656e74734d757461626c651301120c63616e426544656c65746564130112047479706512066f626a656374120a70726f706572746965731603120f6e6f726d616c697a65644c6162656c16061208706f736974696f6e02001204747970651206737472696e6712077061747465726e123c5e5b612d686a2d6b6d2d6e702d7a302d395d5b612d686a2d6b6d2d6e702d7a302d392d5d7b302c36317d5b612d686a2d6b6d2d6e702d7a302d395d2412096d61784c656e677468023f120b6465736372697074696f6e12a3446f6d61696e206c6162656c20636f6e76657274656420746f206c6f7765726361736520666f7220636173652d696e73656e73697469766520756e697175656e6573732076616c69646174696f6e2e20226f222c2022692220616e6420226c22207265706c6163656420776974682022302220616e642022312220746f206d6974696761746520686f6d6f67726170682061747461636b2e20652e672e202762306227120824636f6d6d656e7412994d757374206d61746368206120646f6d61696e20646f63756d656e7420746f2070726f76696465206675727468657220696e666f726d6174696f6e2e204d75737420626520657175616c20746f20746865206c6162656c20696e206c6f776572636173652e20226f222c2022692220616e6420226c22206d757374206265207265706c6163656420776974682022302220616e64202231222e121a6e6f726d616c697a6564506172656e74446f6d61696e4e616d6516071204747970651206737472696e6712077061747465726e12415e247c5e5b612d686a2d6b6d2d6e702d7a302d395d5b612d686a2d6b6d2d6e702d7a302d392d5c2e5d7b302c36317d5b612d686a2d6b6d2d6e702d7a302d395d2412096d696e4c656e677468020012096d61784c656e677468023f1208706f736974696f6e0201120b6465736372697074696f6e12a24120706172656e7420646f6d61696e206e616d6520696e206c6f7765726361736520666f7220636173652d696e73656e73697469766520756e697175656e6573732076616c69646174696f6e2e20226f222c2022692220616e6420226c22207265706c6163656420776974682022302220616e642022312220746f206d6974696761746520686f6d6f67726170682061747461636b2e20652e672e20276461736827120824636f6d6d656e7412c04d7573742065697468657220626520657175616c20746f20616e206578697374696e6720646f6d61696e206f7220656d70747920746f20637265617465206120746f70206c6576656c20646f6d61696e2e20226f222c2022692220616e6420226c22206d757374206265207265706c6163656420776974682022302220616e64202231222e204f6e6c7920746865206461746120636f6e7472616374206f776e65722063616e2063726561746520746f70206c6576656c20646f6d61696e732e120375726c16061208706f736974696f6e02021204747970651206737472696e67120b6465736372697074696f6e122b546865206964656e7469747920766572696669636174696f6e2055524c20746f2062652073746f7265642e12096d61784c656e677468028012077061747465726e120c5e68747470733f3a2f2f2e2a1206666f726d617412037572691207696e64696365731503160212046e616d6512076f776e65724964120a70726f70657274696573150116011208246f776e657249641203617363160212046e616d6512206f776e657249645f4e6f726d446f6d61696e4e616d655f4e6f726d4c6162656c120a70726f70657274696573150316011208246f776e6572496412036173631601121a6e6f726d616c697a6564506172656e74446f6d61696e4e616d6512036173631601120f6e6f726d616c697a65644c6162656c1203617363160212046e616d651213756e69717565557365726e616d65496e646578120a70726f7065727469657315011601120f6e6f726d616c697a65644c6162656c1203617363120872657175697265641503120375726c120f6e6f726d616c697a65644c6162656c121a6e6f726d616c697a6564506172656e74446f6d61696e4e616d6512146164646974696f6e616c50726f7065727469657313000b74785f6d65746164617461160512047479706512066f626a6563741207696e64696365731502160212046e616d6512076f776e65724964120a70726f70657274696573150116011208246f776e657249641203617363160212046e616d6512136f776e65724964416e64437265617465644174120a70726f70657274696573150216011208246f776e6572496412036173631601120a246372656174656441741203617363120a70726f70657274696573160312086b6579496e64657816041204747970651207696e746567657212076d696e696d756d0200120b6465736372697074696f6e124e54686520696e646578206f6620746865206f776e657273206964656e74697479207075626c6963206b6579207573656420746f206465726976652074686520656e6372797074696f6e206b65792e1208706f736974696f6e02001212656e6372797074696f6e4b6579496e64657816041204747970651207696e746567657212076d696e696d756d0200120b6465736372697074696f6e1268546865207365636f6e6461727920696e646578207573656420746f206465726976652074686520656e6372797074696f6e206b65792074686174206973207573656420746f20656e637279707420616e64206465637279707420656e63727970746564446174612e1208706f736974696f6e02011211656e637279707465644d657461646174611606120474797065120561727261791209627974654172726179130112086d696e4974656d73022012086d61784974656d7302fb1000120b6465736372697074696f6e1224656e63727970746564206d65746164617461207573696e67204145532d4342432d3235361208706f736974696f6e020212087265717569726564150412086b6579496e6465781212656e6372797074696f6e4b6579496e6465781211656e637279707465644d65746164617461120a2463726561746564417412146164646974696f6e616c50726f706572746965731300070001411ff784ded3a1177d0c6194fadfaf3a3722cb4ef41c1ae3fa7bdeca2f0bd5a19cdc7d95d2286990e4e8a9308043261c4ed7fdb5676d4d5629ef26d26a79a19a0f3a"
+      },
+      "required": [
+        "shortName",
+        "contractId"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "signature": "1f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d",
+  "signaturePublicKeyId": 2,
+  "raw": "000000e7a63f573069e6f96b251f094423d20cb95a6639e0c32339d30f1d4009807b7100000000000101000001629ce9f3eb4e43c8fa936e16ec55e3aa8ef36663197326cc2032f0ed57cb4f410001066c61626c6572160412047479706512066f626a656374120a70726f706572746965731602120a636f6e7472616374496416041204747970651206737472696e6712096d696e4c656e677468035612096d61784c656e67746803581208706f736974696f6e0300120973686f72744e616d6516041204747970651206737472696e6712096d61784c656e677468034012096d696e4c656e67746803061208706f736974696f6e0302120872657175697265641502120973686f72744e616d65120a636f6e7472616374496412146164646974696f6e616c50726f7065727469657313000a0002411f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d"
 }
 ```
 ```json lines
 DOCUMENT TRANSITION
 
 {
-    "type": 1,
-    "transitions": [
-        {
-            "transitionType": "documentTransition",
-            "id": "7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL",
-            "dataContractId": "FhKAsUnPbqe7K4TZxgRdtPUrfSvNCtYV8iPsvjX7ZG58",
-            "revision": "1",
-            "type": "note",
-            "action": 0,
-            "identityContractNonce": "2",
-            "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
-            "data": {
-                "message": "Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT"
-            },
-            "prefundedVotingBalance": null
-        }
-    ],
-    "userFeeIncrease": 0,
-    "signature": "1f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261",
-    "signaturePublicKeyId": 1,
-    "ownerId": "woTQprzGS4bLqqbAhY2heG8QfD58Doo2UhDbiVVrLKG",
-    "raw": "02000e09e4140f8b7777810be56c47f0ab5cbd9bed1e773abd9f9fdf2fe67a669ff7010000006008b85d9826e770ad21b6d585f010f1dfb3b3f2adc6492329bbef8fdec1b1d702046e6f7465da5764f89025e9a5f680633909db58f6f7f6d3582c445393f15aad58821c9f2bf09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b01076d65737361676512305475746f7269616c20434920546573742040205468752c2030382041756720323032342032303a32353a303320474d54000001411f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261"
+  "type": 1,
+  "typeString": "BATCH",
+  "transitions": [
+    {
+      "transitionType": "documentTransition",
+      "id": "7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL",
+      "dataContractId": "FhKAsUnPbqe7K4TZxgRdtPUrfSvNCtYV8iPsvjX7ZG58",
+      "revision": "1",
+      "prefundedVotingBalance": null,
+      "type": "note",
+      "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
+      "action": 0,
+      "actionString": "Create",
+      "identityContractNonce": "2",
+      "data": {
+        "message": "Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT"
+      }
+    }
+  ],
+  "userFeeIncrease": 0,
+  "signature": "1f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261",
+  "signaturePublicKeyId": 1,
+  "ownerId": "woTQprzGS4bLqqbAhY2heG8QfD58Doo2UhDbiVVrLKG",
+  "raw": "02000e09e4140f8b7777810be56c47f0ab5cbd9bed1e773abd9f9fdf2fe67a669ff7010000006008b85d9826e770ad21b6d585f010f1dfb3b3f2adc6492329bbef8fdec1b1d702046e6f7465da5764f89025e9a5f680633909db58f6f7f6d3582c445393f15aad58821c9f2bf09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b01076d65737361676512305475746f7269616c20434920546573742040205468752c2030382041756720323032342032303a32353a303320474d54000001411f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261"
 }
 ```
 ```json lines
-TOKEN TRANSITION
+TOKEN TRANSITION 
 
 {
   "type": 1,
+  "typeString": "BATCH",
   "transitions": [
     {
       "transitionType": "tokenTransition",
       "tokenTransitionType": 2,
+      "tokenTransitionTypeString": "Transfer",
       "tokenId": "8AnZE2i955j9PC55m3y3e6rVQVZHbLWTk66iNp8eoNWn",
       "identityContractNonce": "16",
       "tokenContractPosition": 1,
       "dataContractId": "9g672HNThwyShq1c5MqQURENR2Ncxce8fLrafh6MmHLr",
       "historicalDocumentTypeName": "transfer",
       "historicalDocumentId": "EmF2uMAEWrZKwcN3WnZW5ajt9YwkTe5Zr5y4NYJMCHFx",
-      "recipient": "DkWXAH3qSpCL4BEULAjWdYF8n29WWBRS7TWE8GGN2kWY"
+      "recipient": "DkWXAH3qSpCL4BEULAjWdYF8n29WWBRS7TWE8GGN2kWY",
+      "publicNote": null,
+      "amount": "111"
     }
   ],
   "userFeeIncrease": 0,
@@ -2013,6 +1920,7 @@ IDENTITY_CREATE with chainLock
 
 {
     "type": 2,
+    "typeString": "IDENTITY_CREATE",
     "fundingAddress": null,
     "assetLockProof": {
       "coreChainLockedHeight": 1138871,
@@ -2069,6 +1977,7 @@ IDENTITY_CREATE with instantLock
 
 {
     "type": 2,
+    "typeString": "IDENTITY_CREATE",
     "fundingAddress": "yV1ZYoep5FFSBxKWM24JUwKfnAkFHnXXV7",
     "assetLockProof": {
         "coreChainLockedHeight": null,
@@ -2123,6 +2032,7 @@ IDENTITY_CREATE with instantLock
 ```json
 {
     "type": 3,
+    "typeString": "IDENTITY_TOP_UP",
     "assetLockProof": {
         "coreChainLockedHeight": null,
         "type": "instantSend",
@@ -2140,6 +2050,7 @@ IDENTITY_CREATE with instantLock
 ```json
 {
     "type": 4,
+    "typeString": "DATA_CONTRACT_UPDATE",
     "internalConfig": {
         "canBeDeleted": false,
         "readonly": false,
@@ -2181,6 +2092,7 @@ IDENTITY_CREATE with instantLock
 ```json
 {
   "type": 5,
+  "typeString": "IDENTITY_UPDATE",
   "identityNonce": 3,
   "userFeeIncrease": 0,
   "identityId": "4NGALjtX2t3AXE3ZCqJiSmYuiWEY3ZPQNUBxNWWRrRSp",
@@ -2218,6 +2130,7 @@ IDENTITY_CREATE with instantLock
 ```json
 {
     "type": 6,
+    "typeString": "IDENTITY_CREDIT_WITHDRAWAL",
     "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
     "userFeeIncrease": 0,
     "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
@@ -2234,6 +2147,7 @@ IDENTITY_CREATE with instantLock
 ```json
 {
     "type": 7,
+    "typeString": "IDENTITY_CREDIT_TRANSFER",
     "identityNonce": 1,
     "userFeeIncrease": 0,
     "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
@@ -2247,6 +2161,7 @@ IDENTITY_CREATE with instantLock
 ```json
 {
     "type": 8,
+    "typeString": "IDENTITY_CREDIT_TRANSFER",
     "indexValues": [
         "EgRkYXNo",
         "EgN5MDE="

@@ -30,6 +30,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 0,
+        typeString: 'DATA_CONTRACT_CREATE',
         internalConfig: {
           canBeDeleted: false,
           readonly: false,
@@ -80,6 +81,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 1,
+        typeString: 'BATCH',
         transitions: [
           {
             transitionType: 'documentTransition',
@@ -90,6 +92,7 @@ describe('Utils', () => {
             type: 'note',
             entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
             action: 0,
+            actionString: 'Create',
             identityContractNonce: '2',
             data: {
               message: 'Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT'
@@ -109,10 +112,12 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 1,
+        typeString: 'BATCH',
         transitions: [
           {
             transitionType: 'tokenTransition',
             tokenTransitionType: 2,
+            tokenTransitionTypeString: 'Transfer',
             tokenId: '8AnZE2i955j9PC55m3y3e6rVQVZHbLWTk66iNp8eoNWn',
             identityContractNonce: '16',
             tokenContractPosition: 1,
@@ -137,10 +142,12 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 1,
+        typeString: 'BATCH',
         transitions: [
           {
             transitionType: 'tokenTransition',
             tokenTransitionType: 1,
+            tokenTransitionTypeString: 'Mint',
             tokenId: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
             identityContractNonce: '3',
             tokenContractPosition: 0,
@@ -165,6 +172,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 2,
+        typeString: 'IDENTITY_CREATE',
         assetLockProof: {
           coreChainLockedHeight: null,
           type: 'instantSend',
@@ -220,6 +228,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 3,
+        typeString: 'IDENTITY_TOP_UP',
         assetLockProof: {
           coreChainLockedHeight: null,
           type: 'instantSend',
@@ -239,6 +248,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 4,
+        typeString: 'DATA_CONTRACT_UPDATE',
         internalConfig: {
           canBeDeleted: false,
           readonly: false,
@@ -291,6 +301,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 5,
+        typeString: 'IDENTITY_UPDATE',
         identityNonce: '2',
         userFeeIncrease: 0,
         identityId: 'AGQc1dwAc46Js6fvSBSqV2Zi7fCq2YvoAwEb1SmYtXuM',
@@ -339,6 +350,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 7,
+        typeString: 'IDENTITY_CREDIT_TRANSFER',
         identityNonce: '3',
         userFeeIncrease: 2,
         senderId: '4CpFVPyU95ZxNeDnRWfkpjUa9J72i3nZ4YPsTnpdUudu',
@@ -355,6 +367,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 6,
+        typeString: 'IDENTITY_CREDIT_WITHDRAWAL',
         outputAddress: 'yZF5JqEgS9xT1xSkhhUQACdLLDbqSixL8i',
         userFeeIncrease: 2,
         senderId: 'FvqzjDyub72Hk51pcmJvd1JUACuor7vA3aJawiVG7Z17',
@@ -374,6 +387,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 8,
+        typeString: 'IDENTITY_CREDIT_TRANSFER',
         indexValues: [
           'EgRkYXNo',
           'Egh0ZXN0MDEwMA=='
