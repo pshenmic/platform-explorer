@@ -4,6 +4,7 @@ import { DocumentActionEnum } from '../../enums/documentAction'
 import { DocumentActionBadge } from '../documents'
 import { ValueContainer } from '../ui/containers'
 import { Code } from '@chakra-ui/react'
+import TokenTransitionCard from '../tokens/TokenTransitionCard'
 import './TransitionCard.scss'
 
 const fieldsOfTypes = {
@@ -78,6 +79,17 @@ const fieldsOfTypes = {
 }
 
 function TransitionCard ({ transition, owner, rate, className }) {
+  if (transition?.transitionType === 'tokenTransition') {
+    return (
+      <TokenTransitionCard
+        transition={transition}
+        owner={owner}
+        rate={rate}
+        className={className}
+      />
+    )
+  }
+
   const fields = fieldsOfTypes?.[DocumentActionEnum?.[transition?.action]]
 
   return (
