@@ -121,7 +121,7 @@ describe('Utils', () => {
             historicalDocumentId: 'EmF2uMAEWrZKwcN3WnZW5ajt9YwkTe5Zr5y4NYJMCHFx',
             recipient: 'DkWXAH3qSpCL4BEULAjWdYF8n29WWBRS7TWE8GGN2kWY',
             publicNote: null,
-            amount: BigInt(111)
+            amount: '111'
           }
         ],
         userFeeIncrease: 0,
