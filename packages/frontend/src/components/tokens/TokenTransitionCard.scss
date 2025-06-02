@@ -1,7 +1,7 @@
+@use '../../styles/mixins.scss';
+
 .TokenTransitionCard {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  @include mixins.BaseTransitionCard();
 
   .ValueCard {
     width: max-content;
@@ -75,4 +75,4 @@
       }
     }
   }
-} 
+}
