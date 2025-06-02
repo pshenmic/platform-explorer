@@ -1991,7 +1991,7 @@ TOKEN TRANSITION
   "transitions": [
     {
       "transitionType": "tokenTransition",
-      "tokeTransitionType": 2,
+      "tokenTransitionType": 2,
       "tokenId": "8AnZE2i955j9PC55m3y3e6rVQVZHbLWTk66iNp8eoNWn",
       "identityContractNonce": "16",
       "tokenContractPosition": 1,

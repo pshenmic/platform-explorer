@@ -101,11 +101,11 @@ const decodeStateTransition = async (client, base64) => {
 
         switch (transitionType) {
           case 1: {
-            const tokeTransitionType = transition.getTransitionType()
+            const tokenTransitionType = transition.getTransitionType()
 
             out = {
               transitionType: 'tokenTransition',
-              tokeTransitionType,
+              tokenTransitionType,
               tokenId: transition.getTokenId().toString(),
               identityContractNonce: String(transition.getIdentityContractNonce()),
               tokenContractPosition: transition.getTokenContractPosition(),
@@ -116,7 +116,7 @@ const decodeStateTransition = async (client, base64) => {
 
             const tokenTransition = transition.toTransition()
 
-            switch (tokeTransitionType) {
+            switch (tokenTransitionType) {
               case TokenTransitionEnum.Burn: {
                 out.publicNote = tokenTransition.getPublicNote() ?? null
                 out.burnAmount = tokenTransition.getBurnAmount().toString()
