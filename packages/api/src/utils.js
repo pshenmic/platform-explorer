@@ -118,46 +118,70 @@ const decodeStateTransition = async (client, base64) => {
 
             switch (tokeTransitionType) {
               case TokenTransitionEnum.Burn: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.burnAmount = tokenTransition.getBurnAmount().toString()
+
                 break
               }
               case TokenTransitionEnum.Mint: {
-                out.recipient = tokenTransition.getRecipientId().toString()
+                out.issuedToIdentityId = tokenTransition.getIssuedToIdentityId().toString()
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.amount = tokenTransition.getAmount().toString()
 
                 break
               }
               case TokenTransitionEnum.Transfer: {
                 out.recipient = tokenTransition.getRecipientId().toString()
+                out.amount = tokenTransition.getAmount().toString()
+                out.publicNote = tokenTransition.getPublicNote() ?? null
 
                 break
               }
               case TokenTransitionEnum.Freeze: {
                 out.frozenIdentityId = tokenTransition.getFrozenIdentityId().toString()
+                out.publicNote = tokenTransition.getPublicNote() ?? null
 
                 break
               }
               case TokenTransitionEnum.Unfreeze: {
                 out.frozenIdentityId = tokenTransition.getFrozenIdentityId().toString()
+                out.publicNote = tokenTransition.getPublicNote() ?? null
 
                 break
               }
               case TokenTransitionEnum.DestroyFrozenFunds: {
                 out.frozenIdentityId = tokenTransition.getFrozenIdentityId().toString()
+                out.publicNote = tokenTransition.getPublicNote() ?? null
 
                 break
               }
               case TokenTransitionEnum.Claim: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.distributionType = tokenTransition.getDistributionType()
+
                 break
               }
               case TokenTransitionEnum.EmergencyAction: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.emergencyAction = tokenTransition.getEmergencyAction()
+
                 break
               }
               case TokenTransitionEnum.ConfigUpdate: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+
                 break
               }
               case TokenTransitionEnum.DirectPurchase: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.price = tokenTransition.getPrice().toString()
+
                 break
               }
               case TokenTransitionEnum.SetPriceForDirectPurchase: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.price = tokenTransition.getPrice()?.toString() ?? null
+
                 break
               }
             }
