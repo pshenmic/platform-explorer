@@ -4,7 +4,8 @@ const utils = require('../../src/utils')
 const createIdentityMock = require('./mocks/create_identity.json')
 const dataContractCreateMock = require('./mocks/data_contract_create.json')
 const documentTransitionMock = require('./mocks/document_transition.json')
-const tokenTransitionMock = require('./mocks/token_transition.json')
+const tokenTransferTransitionMock = require('./mocks/token_transfer_transition.json')
+const tokenMintTransitionMock = require('./mocks/token_mint_transition.json')
 const identityTopUpMock = require('./mocks/identity_top_up.json')
 const dataContractUpdateMock = require('./mocks/data_contract_update.json')
 const identityUpdateMock = require('./mocks/identity_update.json')
@@ -103,8 +104,8 @@ describe('Utils', () => {
       })
     })
 
-    it('should decode Token Transition', async () => {
-      const decoded = await utils.decodeStateTransition(client, tokenTransitionMock.data)
+    it('should decode Token Transfer Transition', async () => {
+      const decoded = await utils.decodeStateTransition(client, tokenTransferTransitionMock.data)
 
       assert.deepEqual(decoded, {
         type: 1,
@@ -118,7 +119,9 @@ describe('Utils', () => {
             dataContractId: '9g672HNThwyShq1c5MqQURENR2Ncxce8fLrafh6MmHLr',
             historicalDocumentTypeName: 'transfer',
             historicalDocumentId: 'EmF2uMAEWrZKwcN3WnZW5ajt9YwkTe5Zr5y4NYJMCHFx',
-            recipient: 'DkWXAH3qSpCL4BEULAjWdYF8n29WWBRS7TWE8GGN2kWY'
+            recipient: 'DkWXAH3qSpCL4BEULAjWdYF8n29WWBRS7TWE8GGN2kWY',
+            publicNote: null,
+            amount: '111'
           }
         ],
         userFeeIncrease: 0,
@@ -126,6 +129,34 @@ describe('Utils', () => {
         signaturePublicKeyId: 1,
         ownerId: '8noJkyFbsawoVkMsLxNo1k3oEVaJppUG2B4UriFHFoi',
         raw: '020101fed99d7fcf72ca41aa2dba4445ae349421aa86ae6714319e271d8bab0cb34d0101020000100180e0eafa62ead97989b2ee14006ecefb24e290c03c9c7321a5a777aa8a86b6ff6a838baf57e456b1408869e3b12d1a1db56a5b9c67ff764512f1885d99df21d3006fbd7198a587375bf219dea865ced2abbd8605e9adb03c8c5cffbd1ba83fa99ad50000000001411f423b5dca10a8169795a8935b58007ffa0cc35faee58de23281bd5523ba5cf8b27cf475c3fa49495cfe7356c3a3219060bef1e2bbd72f6a9c5948ee13896e8843'
+      })
+    })
+
+    it('should decode Token Mint Transition', async () => {
+      const decoded = await utils.decodeStateTransition(client, tokenMintTransitionMock.data)
+
+      assert.deepEqual(decoded, {
+        type: 1,
+        transitions: [
+          {
+            transitionType: 'tokenTransition',
+            tokeTransitionType: 1,
+            tokenId: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
+            identityContractNonce: '3',
+            tokenContractPosition: 0,
+            dataContractId: 'AXBhHJpZtSMHMgDrSVpb6aJzBTWYMk7cjCZAZt34XYJT',
+            historicalDocumentTypeName: 'mint',
+            historicalDocumentId: 'DeuEqvk4yWtPesJJZsjWqkHZk3CtZZzwqeAKKzuAruGD',
+            issuedToIdentityId: 'CcGoZt1etCP7NXitxe1Df18eBAEKuCfoM86yLMFNmcGi',
+            publicNote: null,
+            amount: '5'
+          }
+        ],
+        userFeeIncrease: 0,
+        signature: '201f6c4b7755a040db6ac00b6aa6810cb07cb9b3178673eb95fa3b2d2a73bdf502742bae71d509268364ba24485f16647f01a300695e72d1f4e2a872cd9c36e272',
+        signaturePublicKeyId: 2,
+        ownerId: '3G6e2uxNTAZ8eQnsFPvKH7BCHLKQC19A1ANxR56DEcsT',
+        raw: '0201219576224b11ffdf5f7c659e227b91abb4c5ae9e2bf1b90d32593696dda3b642010101000003008d74b2ec913a2379ae097ed38a56fa82ceb0edbc64bd0fb003ab8d8a251a82302cfe38c3c30f331ea18c42f57c16c2595a1e931533c8afdf7621d4464d6397b50001ac79c0bc9b7fcf3ef61d0a41ede605a2b239e165df15cd00ca08d42797af29eb0500000241201f6c4b7755a040db6ac00b6aa6810cb07cb9b3178673eb95fa3b2d2a73bdf502742bae71d509268364ba24485f16647f01a300695e72d1f4e2a872cd9c36e272'
       })
     })
 
