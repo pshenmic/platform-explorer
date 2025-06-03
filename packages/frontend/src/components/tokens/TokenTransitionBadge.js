@@ -7,7 +7,7 @@ const TokenTransitionBadge = ({ typeId, size = 'sm', ...props }) => {
 
   if (!transitionType || !transitionInfo) {
     return (
-      <Badge size={size} colorScheme="gray" {...props}>
+      <Badge size={size} colorScheme={'gray'} {...props}>
         Unknown
       </Badge>
     )
