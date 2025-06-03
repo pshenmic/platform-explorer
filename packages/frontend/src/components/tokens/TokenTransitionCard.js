@@ -6,7 +6,6 @@ import { Code, Badge } from '@chakra-ui/react'
 import { colors } from '../../styles/colors'
 import './TokenTransitionCard.scss'
 
-// Define which fields should be shown for each transition type
 const fieldsOfTypes = {
   MINT: [
     'Action',
