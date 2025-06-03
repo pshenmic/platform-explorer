@@ -1,0 +1,78 @@
+@use '../../styles/mixins.scss';
+
+.TokenTransitionCard {
+  @include mixins.BaseTransitionCard();
+
+  .ValueCard {
+    width: max-content;
+    max-width: 100%;
+  }
+
+  &__InfoLine {
+    &--Action {
+      .InfoLine__Title {
+        min-width: 80px;
+      }
+    }
+
+    &--Amount {
+      .InfoLine__Title {
+        min-width: 100px;
+      }
+    }
+
+    &--TokenId {
+      .InfoLine__Title {
+        min-width: 120px;
+      }
+    }
+
+    &--TokenContractPosition {
+      .InfoLine__Title {
+        min-width: 200px;
+      }
+    }
+
+    &--DataContractId {
+      .InfoLine__Title {
+        min-width: 160px;
+      }
+    }
+
+    &--Nonce {
+      .InfoLine__Title {
+        min-width: 200px;
+      }
+    }
+
+    &--Recipient {
+      .InfoLine__Title {
+        min-width: 120px;
+      }
+    }
+
+    &--IssuedToIdentity {
+      .InfoLine__Title {
+        min-width: 180px;
+      }
+    }
+
+    &--Price {
+      .InfoLine__Title {
+        min-width: 80px;
+      }
+    }
+
+    &--PublicNote {
+      .InfoLine__Title {
+        min-width: 120px;
+      }
+    }
+
+    &--Data {
+      .InfoLine__Title {
+        min-width: 80px;
+      }
+    }
+  }
+}

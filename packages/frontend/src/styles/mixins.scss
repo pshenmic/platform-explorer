@@ -1,4 +1,5 @@
 @import './variables.scss';
+@import './mixins/BaseTransitionCard.scss';
 
 @mixin AvatarSize($important: false) {
   height: 24px#{if($important, ' !important', '')};
