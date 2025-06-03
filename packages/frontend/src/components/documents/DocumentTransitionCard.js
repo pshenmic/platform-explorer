@@ -119,7 +119,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
         />
       }
 
-      {fields.indexOf('ReceiverIdentifier') !== -1 && // transfer
+      {fields.indexOf('ReceiverIdentifier') !== -1 &&
         transition?.receiverId &&
           <>
             {owner &&
@@ -150,7 +150,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
           </>
       }
 
-      {fields.indexOf('SellerIdentifier') !== -1 && owner && // purchase
+      {fields.indexOf('SellerIdentifier') !== -1 && owner &&
         <InfoLine
           className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
           title={'Buyer Identifier'}
