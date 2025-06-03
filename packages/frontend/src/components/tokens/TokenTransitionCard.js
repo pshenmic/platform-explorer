@@ -2,7 +2,7 @@ import { ValueCard } from '../cards'
 import { BigNumber, CreditsBlock, Identifier, InfoLine } from '../data'
 import { TokenTransitionEnum } from '../../enums/tokenTransition'
 import TokenTransitionBadge from './TokenTransitionBadge'
-import { Code, Box, Text, Badge } from '@chakra-ui/react'
+import { Code, Badge } from '@chakra-ui/react'
 import { colors } from '../../styles/colors'
 import './TokenTransitionCard.scss'
 
@@ -10,99 +10,99 @@ import './TokenTransitionCard.scss'
 const fieldsOfTypes = {
   MINT: [
     'Action',
+    'Amount',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce',
-    'Amount',
     'IssuedToIdentity',
-    'PublicNote',
-    'GroupInfo'
+    'PublicNote'
+    // 'GroupInfo'
   ],
   TRANSFER: [
     'Action',
+    'Amount',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce',
-    'Amount',
     'Recipient',
-    'PublicNote',
-    'SharedEncryptedNote',
-    'PrivateEncryptedNote',
-    'GroupInfo'
+    'PublicNote'
+    // 'SharedEncryptedNote',
+    // 'PrivateEncryptedNote',
+    // 'GroupInfo'
   ],
   BURN: [
     'Action',
+    'Amount',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
-    'IdentityContractNonce',
-    'Amount',
-    'BurnFromIdentity'
+    'IdentityContractNonce'
+    // 'BurnFromIdentity'
   ],
   FREEZE: [
     'Action',
+    'Amount',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce',
-    'Amount',
-    'FreezeForIdentity'
+    'FrozenIdentityId'
   ],
   UNFREEZE: [
     'Action',
+    'Amount',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce',
-    'Amount',
-    'UnfreezeForIdentity'
+    'FrozenIdentityId'
   ],
   DESTROY_FROZEN_FUNDS: [
     'Action',
+    'Amount',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce',
-    'Amount',
-    'DestroyFromIdentity'
+    'FrozenIdentityId'
   ],
   CLAIM: [
     'Action',
+    'Amount',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce',
-    'Amount',
-    'ClaimToIdentity'
+    'Recipient'
   ],
   EMERGENCY_ACTION: [
     'Action',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
-    'IdentityContractNonce',
-    'EmergencyDetails'
+    'IdentityContractNonce'
+    // 'EmergencyDetails'
   ],
   CONFIG_UPDATE: [
     'Action',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
-    'IdentityContractNonce',
-    'ConfigChanges'
+    'IdentityContractNonce'
+    // 'ConfigChanges'
   ],
   DIRECT_PURCHASE: [
     'Action',
+    'Amount',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce',
-    'Amount',
-    'Price',
-    'Buyer',
-    'Seller'
+    'Price'
+    // 'Buyer',
+    // 'Seller'
   ],
   SET_PRICE_FOR_DIRECT_PURCHASE: [
     'Action',
@@ -114,7 +114,7 @@ const fieldsOfTypes = {
   ]
 }
 
-const TokenTransitionCard = ({ transition, owner, rate, className }) => {
+const TokenTransitionCard = ({ transition, rate, className }) => {
   const transitionType = TokenTransitionEnum[transition?.tokenTransitionType]
   const fields = fieldsOfTypes[transitionType] || []
 
@@ -196,6 +196,22 @@ const TokenTransitionCard = ({ transition, owner, rate, className }) => {
         />
       )}
 
+      {/* Issued to Identity (for mints) */}
+      {fields.includes('IssuedToIdentity') && (
+        <InfoLine
+          className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--IssuedToIdentity'}
+          title={'Issued to Identity ID'}
+          value={(
+            <ValueCard link={`/identity/${transition?.issuedToIdentityId}`}>
+              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                {transition?.issuedToIdentityId}
+              </Identifier>
+            </ValueCard>
+          )}
+          error={!transition?.issuedToIdentityId}
+        />
+      )}
+
       {/* Identity Contract Nonce */}
       {fields.includes('IdentityContractNonce') && (
         <InfoLine
@@ -232,21 +248,6 @@ const TokenTransitionCard = ({ transition, owner, rate, className }) => {
         />
       )}
 
-      {/* Issued to Identity (for mints) */}
-      {fields.includes('IssuedToIdentity') && transition?.issuedToIdentity && (
-        <InfoLine
-          className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--IssuedToIdentity'}
-          title={'Issued to Identity ID'}
-          value={(
-            <ValueCard link={`/identity/${transition?.issuedToIdentity}`}>
-              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-                {transition?.issuedToIdentity}
-              </Identifier>
-            </ValueCard>
-          )}
-        />
-      )}
-
       {/* Price (for purchases) */}
       {fields.includes('Price') && (
         <InfoLine
@@ -265,211 +266,6 @@ const TokenTransitionCard = ({ transition, owner, rate, className }) => {
           value={transition?.publicNote}
           error={!transition?.publicNote}
         />
-      )}
-
-      {/* Group Info Section */}
-      {fields.includes('GroupInfo') && transition?.groupInfo && (
-        <Box>
-          <Text fontSize='12px' color='#93AAB2' fontFamily='Roboto Mono' mt={4} mb={2}>
-            Group Info:
-          </Text>
-          <Box bg='#2E393D' borderRadius='8px' p={3}>
-            <Box display='flex' flexDirection='column' gap={3}>
-              {/* Group Contract Position */}
-              {transition?.groupInfo?.contractPosition !== undefined && (
-                <InfoLine
-                  title={'Group Contract Position'}
-                  value={(
-                    <Box bg='rgba(255, 255, 255, 0.1)' px={2} py={1} borderRadius='8px'>
-                      <Text fontSize='12px' color='#FFFFFF' fontFamily='Roboto Mono'>
-                        {transition?.groupInfo?.contractPosition}
-                      </Text>
-                    </Box>
-                  )}
-                />
-              )}
-
-              {/* Action ID */}
-              {transition?.groupInfo?.actionId && (
-                <InfoLine
-                  title={'Action ID'}
-                  value={(
-                    <Box bg='rgba(255, 255, 255, 0.1)' px={2} py={1} borderRadius='8px'>
-                      <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
-                        {transition?.groupInfo?.actionId}
-                      </Identifier>
-                    </Box>
-                  )}
-                />
-              )}
-
-              {/* Action Is Proposer */}
-              {transition?.groupInfo?.isProposer !== undefined && (
-                <InfoLine
-                  title={'Action Is Proposer'}
-                  value={(
-                    <Box
-                      bg={transition?.groupInfo?.isProposer ? 'rgba(91, 244, 88, 0.2)' : 'rgba(244, 91, 91, 0.2)'}
-                      px={2}
-                      py={1}
-                      borderRadius='8px'
-                    >
-                      <Text
-                        fontSize='11px'
-                        color={transition?.groupInfo?.isProposer ? '#5BF458' : '#F45B5B'}
-                        fontFamily='Roboto Mono'
-                      >
-                        {transition?.groupInfo?.isProposer ? 'Yes' : 'No'}
-                      </Text>
-                    </Box>
-                  )}
-                />
-              )}
-            </Box>
-          </Box>
-        </Box>
-      )}
-
-      {/* Shared Encrypted Note Section */}
-      {fields.includes('SharedEncryptedNote') && transition?.sharedEncryptedNote && (
-        <Box>
-          <Text fontSize='12px' color='#93AAB2' fontFamily='Roboto Mono' mt={4} mb={2}>
-            Shared Encrypted Note:
-          </Text>
-          <Box bg='#2E393D' borderRadius='8px' p={3}>
-            <Box display='flex' flexDirection='column' gap={3}>
-              {/* Sender Key Index */}
-              {transition?.sharedEncryptedNote?.senderKeyIndex && (
-                <InfoLine
-                  title={'Sender Key Index'}
-                  value={(
-                    <Box bg='#3A454A' px={2} py={1} borderRadius='3px' display='flex' alignItems='center' gap={2}>
-                      <Text fontSize='10px' color='#93AAB2' fontFamily='Roboto Mono'>
-                        {transition?.sharedEncryptedNote?.senderKeyIndex}
-                      </Text>
-                      <Box cursor='pointer'>
-                        <Text fontSize='10px' color='#FFFFFF'>📋</Text>
-                      </Box>
-                    </Box>
-                  )}
-                />
-              )}
-
-              {/* Recipient Key Index */}
-              {transition?.sharedEncryptedNote?.recipientKeyIndex && (
-                <InfoLine
-                  title={'Recipient Key Index'}
-                  value={(
-                    <Box bg='#3A454A' px={2} py={1} borderRadius='3px' display='flex' alignItems='center' gap={2}>
-                      <Text fontSize='10px' color='#93AAB2' fontFamily='Roboto Mono'>
-                        {transition?.sharedEncryptedNote?.recipientKeyIndex}
-                      </Text>
-                      <Box cursor='pointer'>
-                        <Text fontSize='10px' color='#FFFFFF'>📋</Text>
-                      </Box>
-                    </Box>
-                  )}
-                />
-              )}
-
-              {/* Raw Data */}
-              {transition?.sharedEncryptedNote?.rawData && (
-                <InfoLine
-                  title={'Raw data'}
-                  value={(
-                    <Box bg='#3A454A' px={2} py={1} borderRadius='3px' display='flex' alignItems='center' gap={2}>
-                      <Text
-                        fontSize='10px'
-                        color='#93AAB2'
-                        fontFamily='Roboto Mono'
-                        maxWidth='240px'
-                        overflow='hidden'
-                        textOverflow='ellipsis'
-                        whiteSpace='nowrap'
-                      >
-                        {transition?.sharedEncryptedNote?.rawData}
-                      </Text>
-                      <Box cursor='pointer'>
-                        <Text fontSize='10px' color='#FFFFFF'>📋</Text>
-                      </Box>
-                    </Box>
-                  )}
-                />
-              )}
-            </Box>
-          </Box>
-        </Box>
-      )}
-
-      {/* Private Encrypted Note Section */}
-      {fields.includes('PrivateEncryptedNote') && transition?.privateEncryptedNote && (
-        <Box>
-          <Text fontSize='12px' color='#93AAB2' fontFamily='Roboto Mono' mt={4} mb={2}>
-            Private Encrypted Note:
-          </Text>
-          <Box bg='#2E393D' borderRadius='8px' p={3}>
-            <Box display='flex' flexDirection='column' gap={3}>
-              {/* Root Encryption Key Index */}
-              {transition?.privateEncryptedNote?.rootEncryptionKeyIndex && (
-                <InfoLine
-                  title={'Root Encryption Key Index'}
-                  value={(
-                    <Box bg='#3A454A' px={2} py={1} borderRadius='3px' display='flex' alignItems='center' gap={2}>
-                      <Text fontSize='10px' color='#93AAB2' fontFamily='Roboto Mono'>
-                        {transition?.privateEncryptedNote?.rootEncryptionKeyIndex}
-                      </Text>
-                      <Box cursor='pointer'>
-                        <Text fontSize='10px' color='#FFFFFF'>📋</Text>
-                      </Box>
-                    </Box>
-                  )}
-                />
-              )}
-
-              {/* Derivation Encryption Key */}
-              {transition?.privateEncryptedNote?.derivationEncryptionKey && (
-                <InfoLine
-                  title={'Derivation Encryption Key'}
-                  value={(
-                    <Box bg='#3A454A' px={2} py={1} borderRadius='3px' display='flex' alignItems='center' gap={2}>
-                      <Text fontSize='10px' color='#93AAB2' fontFamily='Roboto Mono'>
-                        {transition?.privateEncryptedNote?.derivationEncryptionKey}
-                      </Text>
-                      <Box cursor='pointer'>
-                        <Text fontSize='10px' color='#FFFFFF'>📋</Text>
-                      </Box>
-                    </Box>
-                  )}
-                />
-              )}
-
-              {/* Raw Data */}
-              {transition?.privateEncryptedNote?.rawData && (
-                <InfoLine
-                  title={'Raw data'}
-                  value={(
-                    <Box bg='#3A454A' px={2} py={1} borderRadius='3px' display='flex' alignItems='center' gap={2}>
-                      <Text
-                        fontSize='10px'
-                        color='#93AAB2'
-                        fontFamily='Roboto Mono'
-                        maxWidth='240px'
-                        overflow='hidden'
-                        textOverflow='ellipsis'
-                        whiteSpace='nowrap'
-                      >
-                        {transition?.privateEncryptedNote?.rawData}
-                      </Text>
-                      <Box cursor='pointer'>
-                        <Text fontSize='10px' color='#FFFFFF'>📋</Text>
-                      </Box>
-                    </Box>
-                  )}
-                />
-              )}
-            </Box>
-          </Box>
-        </Box>
       )}
 
       {/* Raw Data (for transitions that have direct data) */}
