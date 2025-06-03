@@ -115,7 +115,7 @@ const fieldsOfTypes = {
 }
 
 const TokenTransitionCard = ({ transition, owner, rate, className }) => {
-  const transitionType = TokenTransitionEnum[transition?.tokeTransitionType]
+  const transitionType = TokenTransitionEnum[transition?.tokenTransitionType]
   const fields = fieldsOfTypes[transitionType] || []
 
   console.log('TokenTransitionEnum', TokenTransitionEnum)
@@ -131,8 +131,8 @@ const TokenTransitionCard = ({ transition, owner, rate, className }) => {
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Action'}
           title={'Action'}
-          value={<TokenTransitionBadge typeId={transition?.tokeTransitionType}/>}
-          error={transition?.tokeTransitionType === undefined}
+          value={<TokenTransitionBadge typeId={transition?.tokenTransitionType}/>}
+          error={transition?.tokenTransitionType === undefined}
         />
        )}
 
