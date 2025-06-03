@@ -4,7 +4,8 @@ const utils = require('../../src/utils')
 const createIdentityMock = require('./mocks/create_identity.json')
 const dataContractCreateMock = require('./mocks/data_contract_create.json')
 const documentTransitionMock = require('./mocks/document_transition.json')
-const tokenTransitionMock = require('./mocks/token_transition.json')
+const tokenTransferTransitionMock = require('./mocks/token_transfer_transition.json')
+const tokenMintTransitionMock = require('./mocks/token_mint_transition.json')
 const identityTopUpMock = require('./mocks/identity_top_up.json')
 const dataContractUpdateMock = require('./mocks/data_contract_update.json')
 const identityUpdateMock = require('./mocks/identity_update.json')
@@ -29,6 +30,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 0,
+        typeString: 'DATA_CONTRACT_CREATE',
         internalConfig: {
           canBeDeleted: false,
           readonly: false,
@@ -79,6 +81,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 1,
+        typeString: 'BATCH',
         transitions: [
           {
             transitionType: 'documentTransition',
@@ -89,6 +92,7 @@ describe('Utils', () => {
             type: 'note',
             entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
             action: 0,
+            actionString: 'Create',
             identityContractNonce: '2',
             data: {
               message: 'Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT'
@@ -103,22 +107,26 @@ describe('Utils', () => {
       })
     })
 
-    it('should decode Token Transition', async () => {
-      const decoded = await utils.decodeStateTransition(client, tokenTransitionMock.data)
+    it('should decode Token Transfer Transition', async () => {
+      const decoded = await utils.decodeStateTransition(client, tokenTransferTransitionMock.data)
 
       assert.deepEqual(decoded, {
         type: 1,
+        typeString: 'BATCH',
         transitions: [
           {
             transitionType: 'tokenTransition',
-            tokeTransitionType: 2,
+            tokenTransitionType: 2,
+            tokenTransitionTypeString: 'Transfer',
             tokenId: '8AnZE2i955j9PC55m3y3e6rVQVZHbLWTk66iNp8eoNWn',
             identityContractNonce: '16',
             tokenContractPosition: 1,
             dataContractId: '9g672HNThwyShq1c5MqQURENR2Ncxce8fLrafh6MmHLr',
             historicalDocumentTypeName: 'transfer',
             historicalDocumentId: 'EmF2uMAEWrZKwcN3WnZW5ajt9YwkTe5Zr5y4NYJMCHFx',
-            recipient: 'DkWXAH3qSpCL4BEULAjWdYF8n29WWBRS7TWE8GGN2kWY'
+            recipient: 'DkWXAH3qSpCL4BEULAjWdYF8n29WWBRS7TWE8GGN2kWY',
+            publicNote: null,
+            amount: '111'
           }
         ],
         userFeeIncrease: 0,
@@ -129,11 +137,42 @@ describe('Utils', () => {
       })
     })
 
+    it('should decode Token Mint Transition', async () => {
+      const decoded = await utils.decodeStateTransition(client, tokenMintTransitionMock.data)
+
+      assert.deepEqual(decoded, {
+        type: 1,
+        typeString: 'BATCH',
+        transitions: [
+          {
+            transitionType: 'tokenTransition',
+            tokenTransitionType: 1,
+            tokenTransitionTypeString: 'Mint',
+            tokenId: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
+            identityContractNonce: '3',
+            tokenContractPosition: 0,
+            dataContractId: 'AXBhHJpZtSMHMgDrSVpb6aJzBTWYMk7cjCZAZt34XYJT',
+            historicalDocumentTypeName: 'mint',
+            historicalDocumentId: 'DeuEqvk4yWtPesJJZsjWqkHZk3CtZZzwqeAKKzuAruGD',
+            issuedToIdentityId: 'CcGoZt1etCP7NXitxe1Df18eBAEKuCfoM86yLMFNmcGi',
+            publicNote: null,
+            amount: '5'
+          }
+        ],
+        userFeeIncrease: 0,
+        signature: '201f6c4b7755a040db6ac00b6aa6810cb07cb9b3178673eb95fa3b2d2a73bdf502742bae71d509268364ba24485f16647f01a300695e72d1f4e2a872cd9c36e272',
+        signaturePublicKeyId: 2,
+        ownerId: '3G6e2uxNTAZ8eQnsFPvKH7BCHLKQC19A1ANxR56DEcsT',
+        raw: '0201219576224b11ffdf5f7c659e227b91abb4c5ae9e2bf1b90d32593696dda3b642010101000003008d74b2ec913a2379ae097ed38a56fa82ceb0edbc64bd0fb003ab8d8a251a82302cfe38c3c30f331ea18c42f57c16c2595a1e931533c8afdf7621d4464d6397b50001ac79c0bc9b7fcf3ef61d0a41ede605a2b239e165df15cd00ca08d42797af29eb0500000241201f6c4b7755a040db6ac00b6aa6810cb07cb9b3178673eb95fa3b2d2a73bdf502742bae71d509268364ba24485f16647f01a300695e72d1f4e2a872cd9c36e272'
+      })
+    })
+
     it('should decode CreateIdentity', async () => {
       const decoded = await utils.decodeStateTransition(client, createIdentityMock.data)
 
       assert.deepEqual(decoded, {
         type: 2,
+        typeString: 'IDENTITY_CREATE',
         assetLockProof: {
           coreChainLockedHeight: null,
           type: 'instantSend',
@@ -189,6 +228,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 3,
+        typeString: 'IDENTITY_TOP_UP',
         assetLockProof: {
           coreChainLockedHeight: null,
           type: 'instantSend',
@@ -208,6 +248,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 4,
+        typeString: 'DATA_CONTRACT_UPDATE',
         internalConfig: {
           canBeDeleted: false,
           readonly: false,
@@ -260,6 +301,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 5,
+        typeString: 'IDENTITY_UPDATE',
         identityNonce: '2',
         userFeeIncrease: 0,
         identityId: 'AGQc1dwAc46Js6fvSBSqV2Zi7fCq2YvoAwEb1SmYtXuM',
@@ -308,6 +350,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 7,
+        typeString: 'IDENTITY_CREDIT_TRANSFER',
         identityNonce: '3',
         userFeeIncrease: 2,
         senderId: '4CpFVPyU95ZxNeDnRWfkpjUa9J72i3nZ4YPsTnpdUudu',
@@ -324,6 +367,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 6,
+        typeString: 'IDENTITY_CREDIT_WITHDRAWAL',
         outputAddress: 'yZF5JqEgS9xT1xSkhhUQACdLLDbqSixL8i',
         userFeeIncrease: 2,
         senderId: 'FvqzjDyub72Hk51pcmJvd1JUACuor7vA3aJawiVG7Z17',
@@ -343,6 +387,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 8,
+        typeString: 'IDENTITY_CREDIT_TRANSFER',
         indexValues: [
           'EgRkYXNo',
           'Egh0ZXN0MDEwMA=='
