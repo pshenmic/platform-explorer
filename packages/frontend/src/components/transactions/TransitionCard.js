@@ -14,7 +14,6 @@ const TransitionCard = ({ transition, owner, rate, className }) => {
     )
   }
 
-  // Default to document transition
   return (
     <DocumentTransitionCard
       transition={transition}
