@@ -21,7 +21,7 @@ export const TokenTransitionInfo = {
   MINT: {
     title: 'Token Mint',
     description: 'Creates new tokens and issues them to a specified identity.',
-    colorScheme: 'green'
+    colorScheme: 'emerald'
   },
   TRANSFER: {
     title: 'Token Transfer',
@@ -31,22 +31,22 @@ export const TokenTransitionInfo = {
   FREEZE: {
     title: 'Token Freeze',
     description: 'Temporarily freezes tokens, preventing their transfer or use.',
-    colorScheme: 'orange'
+    colorScheme: 'blue'
   },
   UNFREEZE: {
     title: 'Token Unfreeze',
     description: 'Unfreezes previously frozen tokens, allowing their use again.',
-    colorScheme: 'cyan'
+    colorScheme: 'emerald'
   },
   DESTROY_FROZEN_FUNDS: {
     title: 'Destroy Frozen Funds',
     description: 'Permanently destroys frozen tokens.',
-    colorScheme: 'red'
+    colorScheme: 'orange'
   },
   CLAIM: {
     title: 'Token Claim',
     description: 'Claims tokens that have been allocated or made available.',
-    colorScheme: 'purple'
+    colorScheme: 'green'
   },
   EMERGENCY_ACTION: {
     title: 'Emergency Action',
