@@ -63,7 +63,8 @@ const decodeStateTransition = async (client, base64) => {
   const stateTransition = await client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(base64, 'base64'))
 
   const decoded = {
-    type: stateTransition.getType()
+    type: stateTransition.getType(),
+    typeString: StateTransitionEnum[stateTransition.getType()]
   }
 
   switch (decoded.type) {
@@ -101,11 +102,12 @@ const decodeStateTransition = async (client, base64) => {
 
         switch (transitionType) {
           case 1: {
-            const tokeTransitionType = transition.getTransitionType()
+            const tokenTransitionType = transition.getTransitionType()
 
             out = {
               transitionType: 'tokenTransition',
-              tokeTransitionType,
+              tokenTransitionType,
+              tokenTransitionTypeString: TokenTransitionEnum[tokenTransitionType],
               tokenId: transition.getTokenId().toString(),
               identityContractNonce: String(transition.getIdentityContractNonce()),
               tokenContractPosition: transition.getTokenContractPosition(),
@@ -116,7 +118,7 @@ const decodeStateTransition = async (client, base64) => {
 
             const tokenTransition = transition.toTransition()
 
-            switch (tokeTransitionType) {
+            switch (tokenTransitionType) {
               case TokenTransitionEnum.Burn: {
                 out.publicNote = tokenTransition.getPublicNote() ?? null
                 out.burnAmount = tokenTransition.getBurnAmount().toString()
@@ -195,6 +197,7 @@ const decodeStateTransition = async (client, base64) => {
               revision: String(transition.getRevision()),
               type: transition.getType(),
               action: transition.getAction(),
+              actionString: DocumentActionEnum[transition.getAction()],
               identityContractNonce: String(transition.getIdentityContractNonce())
             }
 
