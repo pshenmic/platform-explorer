@@ -1,0 +1,20 @@
+@use '../../styles/mixins.scss';
+@use './variables' as identities;
+@import '../../styles/variables.scss';
+
+.IdentitiesListItem {
+  @include mixins.DefListItem;
+  display: block;
+
+  &__Content {
+    @include identities.Columns();
+  }
+
+  &__Column {
+    @include identities.Column();
+
+    &--Identifier {
+      overflow: hidden;
+    }
+  }
+}
