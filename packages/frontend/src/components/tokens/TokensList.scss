@@ -1,5 +1,5 @@
 @use '../../styles/mixins.scss';
-@use './variables' as identities;
+@use './variables' as tokens;
 @import '../../styles/variables.scss';
 
 .TokensList {
@@ -8,19 +8,35 @@
 
   &__ColumnTitles {
     @include mixins.defListTitles;
-    @include identities.Columns();
+    @include tokens.Columns();
   }
 
   &__ColumnTitle {
-    @include identities.Column();
+    @include tokens.Column();
     width: 100%;
     display: block;
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;
 
-    &--Hash {
-      white-space: nowrap;
+    &--TokenName {
+      justify-content: flex-start;
+    }
+
+    &--Ticker {
+      justify-content: center;
+    }
+
+    &--Supply {
+      justify-content: center;
+    }
+
+    &--Contract {
+      justify-content: flex-start;
+    }
+
+    &--OwnerIdentity {
+      justify-content: flex-end;
     }
 
     &:last-child {

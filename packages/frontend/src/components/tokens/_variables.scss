@@ -3,7 +3,7 @@
 @mixin Columns () {
   display: grid;
   gap: 1rem;
-  grid-template-columns: auto 10rem;
+  grid-template-columns: 10rem 5rem 10rem auto 22rem;
 }
 
 @mixin Column () {

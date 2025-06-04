@@ -1,5 +1,5 @@
 @use '../../styles/mixins.scss';
-@use './variables' as identities;
+@use './variables' as tokens;
 @import '../../styles/variables.scss';
 
 .TokensListItem {
@@ -7,14 +7,63 @@
   display: block;
 
   &__Content {
-    @include identities.Columns();
+    @include tokens.Columns();
   }
 
   &__Column {
-    @include identities.Column();
+    @include tokens.Column();
 
-    &--Identifier {
+    &--TokenName {
       overflow: hidden;
+      justify-content: flex-start;
     }
+
+    &--Contract {
+      overflow: hidden;
+      justify-content: flex-start;
+    }
+
+    &--OwnerIdentity {
+      overflow: hidden;
+      justify-content: flex-end;
+    }
+  }
+
+  &__TokenNameContainer {
+    width: 100px;
+  }
+
+  &__TokenName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__TickerBadge {
+    background-color: #2E393D;
+    border-radius: 4px;
+    padding: 4px 8px;
+    text-align: center;
+  }
+
+  &__Contract {
+    max-width: 100%;
+  }
+
+  &__SupplyContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__OwnerContainer {
+    display: flex;
+    gap: 4px;
+    max-width: 100%;
+  }
+
+  &__OwnerIdentifier {
+    overflow: hidden;
   }
 }
