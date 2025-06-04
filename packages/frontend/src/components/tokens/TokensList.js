@@ -8,7 +8,7 @@ import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
 import './TokensList.scss'
 
-function TokensList ({ identities, headerStyles = 'default', pagination, loading, itemsCount = 10 }) {
+function TokensList ({ tokens, headerStyles = 'default', pagination, loading, itemsCount = 10 }) {
   const headerExtraClass = {
     default: '',
     light: 'TokensList__ColumnTitles--Light'
@@ -17,26 +17,32 @@ function TokensList ({ identities, headerStyles = 'default', pagination, loading
   return (
     <div className={'TokensList'}>
       <Grid className={`TokensList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Identifier'}>
-          Identifier
+        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--TokenName'}>
+          Token Name
         </GridItem>
-        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Timestamp'}>
-          Timestamp
+        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Ticker'}>
+          TICKER
+        </GridItem>
+        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Supply'}>
+          Supply
+        </GridItem>
+        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Contract'}>
+          Contract
+        </GridItem>
+        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--OwnerIdentity'}>
+          Owner Identity
         </GridItem>
       </Grid>
 
       {!loading
         ? <div className={'TokensList__Items'}>
-          {identities?.map((identity, key) =>
-            <TokensListItem
-              key={key}
-              identity={identity}
-            />
+          {tokens?.map((token, key) =>
+            <TokensListItem token={token} key={key}/>
           )}
-          {!identities?.length &&
-            <EmptyListMessage>There are no identities yet.</EmptyListMessage>
+          {!tokens?.length &&
+            <EmptyListMessage>There are no tokens yet.</EmptyListMessage>
           }
-          {identities === undefined && <ErrorMessageBlock/>}
+          {tokens === undefined && <ErrorMessageBlock/>}
         </div>
         : <LoadingList itemsCount={itemsCount}/>
       }
@@ -51,8 +57,8 @@ function TokensList ({ identities, headerStyles = 'default', pagination, loading
         />
       }
 
-      {identities.length === 0 &&
-        <EmptyListMessage>There are no identities created yet.</EmptyListMessage>
+      {tokens?.length === 0 &&
+        <EmptyListMessage>There are no tokens created yet.</EmptyListMessage>
       }
     </div>
   )
