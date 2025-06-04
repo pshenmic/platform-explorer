@@ -31,7 +31,7 @@ module.exports = class TransactionsDAO {
       .select(
         'state_transitions.hash as tx_hash', 'state_transitions.data as data',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
-        'state_transitions.error as error', 'state_transitions.type as type',
+        'state_transitions.error as error', 'state_transitions.type as type', 'state_transitions.batch_type as batch_type',
         'state_transitions.index as index', 'blocks.height as block_height',
         'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner',
         'aliases.aliases as aliases'
@@ -109,7 +109,7 @@ module.exports = class TransactionsDAO {
 
     const filtersSubquery = this.knex('state_transitions')
       .select('state_transitions.hash as tx_hash', 'state_transitions.data as data',
-        'state_transitions.type as type', 'state_transitions.index as index',
+        'state_transitions.type as type', 'state_transitions.index as index', 'state_transitions.batch_type as batch_type',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
         'state_transitions.block_hash as block_hash', 'state_transitions.id as id', 'state_transitions.owner as owner')
       .whereRaw(filtersQuery, filtersBindings)
@@ -117,7 +117,7 @@ module.exports = class TransactionsDAO {
 
     const subquery = this.knex(filtersSubquery)
       .select('tx_hash', 'aliases',
-        'data', 'type', 'index',
+        'data', 'type', 'index', 'batch_type',
         'gas_used', 'status', 'error',
         'block_hash', 'id', 'owner',
         'identity_identifier',
@@ -132,7 +132,7 @@ module.exports = class TransactionsDAO {
     const calculatingSubquery = this.knex
       .with('subquery', subquery)
       .select('tx_hash', 'aliases',
-        'data', 'type', 'index',
+        'data', 'type', 'index', 'batch_type',
         'gas_used', 'status', 'error',
         'block_hash', 'id', 'owner',
         'identity_identifier',
@@ -145,7 +145,7 @@ module.exports = class TransactionsDAO {
 
     const rows = await this.knex(calculatingSubquery)
       .select(
-        'data', 'type', 'index', 'owner', 'aliases',
+        'data', 'type', 'index', 'owner', 'aliases', 'batch_type',
         'rank', 'block_hash', 'tx_hash', 'total_count',
         'gas_used', 'status', 'error', 'timestamp', 'block_height')
       .whereBetween('rank', [fromRank, toRank])

@@ -1,8 +1,12 @@
 use deadpool_postgres::Transaction;
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
-use dpp::state_transition::batch_transition::BatchTransition;
+use dpp::state_transition::batch_transition::{BatchTransition};
+use dpp::state_transition::batch_transition::batched_transition::BatchedTransition;
+use dpp::state_transition::batch_transition::batched_transition::document_transition::DocumentTransition;
+use dpp::state_transition::batch_transition::batched_transition::token_transition::TokenTransition;
 use sha256::digest;
+use crate::enums::batch_type::BatchType;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::processor::psql::PSQLProcessor;
 
@@ -20,6 +24,51 @@ impl PSQLProcessor {
       StateTransition::IdentityUpdate(st) => st.state_transition_type() as u32,
       StateTransition::IdentityCreditTransfer(st) => st.state_transition_type() as u32,
       StateTransition::MasternodeVote(st) => st.state_transition_type() as u32
+    };
+
+    let batch_type: Option<BatchType> = match state_transition.clone() {
+      StateTransition::Batch(batch_transition) => {
+        match batch_transition {
+          BatchTransition::V0(v0) => {
+            match v0.transitions.first().unwrap() {
+              DocumentTransition::Create(_) => Some(BatchType::DocumentCreateTransition),
+              DocumentTransition::Replace(_) => Some(BatchType::DocumentReplaceTransition),
+              DocumentTransition::Delete(_) => Some(BatchType::DocumentDeleteTransition),
+              DocumentTransition::Transfer(_) => Some(BatchType::DocumentTransferTransition),
+              DocumentTransition::UpdatePrice(_) => Some(BatchType::DocumentUpdatePriceTransition),
+              DocumentTransition::Purchase(_) => Some(BatchType::DocumentPurchaseTransition),
+            }
+          },
+          BatchTransition::V1(v1) => {
+            match v1.transitions.first().unwrap() {
+              BatchedTransition::Document(document_transition) => match document_transition {
+                DocumentTransition::Create(_) => Some(BatchType::DocumentCreateTransition),
+                DocumentTransition::Replace(_) => Some(BatchType::DocumentReplaceTransition),
+                DocumentTransition::Delete(_) => Some(BatchType::DocumentDeleteTransition),
+                DocumentTransition::Transfer(_) => Some(BatchType::DocumentTransferTransition),
+                DocumentTransition::UpdatePrice(_) => Some(BatchType::DocumentUpdatePriceTransition),
+                DocumentTransition::Purchase(_) => Some(BatchType::DocumentPurchaseTransition),
+              },
+              BatchedTransition::Token(token_transition) => {
+                match token_transition {
+                  TokenTransition::Burn(_) => Some(BatchType::TokenBurnTransition),
+                  TokenTransition::Mint(_) => Some(BatchType::TokenMintTransition) ,
+                  TokenTransition::Transfer(_) => Some(BatchType::TokenTransferTransition),
+                  TokenTransition::Freeze(_) => Some(BatchType::TokenFreezeTransition),
+                  TokenTransition::Unfreeze(_) => Some(BatchType::TokenUnfreezeTransition),
+                  TokenTransition::DestroyFrozenFunds(_) => Some(BatchType::TokenDestroyFrozenFundsTransition),
+                  TokenTransition::Claim(_) => Some(BatchType::TokenClaimTransition),
+                  TokenTransition::EmergencyAction(_) => Some(BatchType::TokenEmergencyActionTransition),
+                  TokenTransition::ConfigUpdate(_) => Some(BatchType::TokenConfigUpdateTransition),
+                  TokenTransition::DirectPurchase(_) => Some(BatchType::TokenDirectPurchaseTransition),
+                  TokenTransition::SetPriceForDirectPurchase(_) => Some(BatchType::TokenSetPriceForDirectPurchaseTransition)
+                }
+              }
+            }
+          }
+        }
+      },
+      _ => None
     };
 
     let bytes = match state_transition.clone() {
@@ -66,7 +115,7 @@ impl PSQLProcessor {
 
     let tx_result_status = tx_result.status.clone();
 
-    self.dao.create_state_transition(block_hash.clone(), owner, st_type, index, bytes, tx_result.gas_used, tx_result.status, tx_result.error, sql_transaction).await;
+    self.dao.create_state_transition(block_hash.clone(), owner, st_type, index, bytes, tx_result.gas_used, tx_result.status, tx_result.error, batch_type, sql_transaction).await;
 
     match tx_result_status {
       TransactionStatus::FAIL => {
