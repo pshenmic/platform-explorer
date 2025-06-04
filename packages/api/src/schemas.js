@@ -118,6 +118,11 @@ const schemaTypes = [
       power: {
         type: ['number', 'null'],
         enum: [1, 4]
+      },
+      start_at: {
+        type: ['string', 'null'],
+        minLength: 43,
+        maxLength: 44
       }
     }
   },
