@@ -6,6 +6,7 @@ mod models;
 mod processor;
 mod entities;
 mod utils;
+mod enums;
 
 extern crate chrono;
 extern crate core;

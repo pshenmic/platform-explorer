@@ -1,8 +1,10 @@
 use deadpool_postgres::Transaction;
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
-use dpp::state_transition::batch_transition::BatchTransition;
+use dpp::state_transition::batch_transition::{BatchTransition};
+use dpp::state_transition::batch_transition::batched_transition::BatchedTransition;
 use sha256::digest;
+use crate::enums::batch_type::BatchType;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::processor::psql::PSQLProcessor;
 
@@ -20,6 +22,21 @@ impl PSQLProcessor {
       StateTransition::IdentityUpdate(st) => st.state_transition_type() as u32,
       StateTransition::IdentityCreditTransfer(st) => st.state_transition_type() as u32,
       StateTransition::MasternodeVote(st) => st.state_transition_type() as u32
+    };
+
+    let batch_type: Option<BatchType> = match state_transition.clone() {
+      StateTransition::Batch(batch_transition) => {
+        match batch_transition {
+          BatchTransition::V0(_) => Some(BatchType::Document),
+          BatchTransition::V1(v1) => {
+            match v1.transitions.first().unwrap() {
+              BatchedTransition::Document(_) => Some(BatchType::Document),
+              BatchedTransition::Token(_) => Some(BatchType::Token)
+            }
+          }
+        }
+      },
+      _ => None
     };
 
     let bytes = match state_transition.clone() {
@@ -66,7 +83,7 @@ impl PSQLProcessor {
 
     let tx_result_status = tx_result.status.clone();
 
-    self.dao.create_state_transition(block_hash.clone(), owner, st_type, index, bytes, tx_result.gas_used, tx_result.status, tx_result.error, sql_transaction).await;
+    self.dao.create_state_transition(block_hash.clone(), owner, st_type, index, bytes, tx_result.gas_used, tx_result.status, tx_result.error, batch_type, sql_transaction).await;
 
     match tx_result_status {
       TransactionStatus::FAIL => {
