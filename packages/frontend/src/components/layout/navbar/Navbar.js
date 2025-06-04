@@ -43,6 +43,7 @@ const menuItems = [
     breakpoints: { base: false, sm: false, md: false, lg: true, xl: false },
     submenuItems: [
       { title: 'Contested Resources', href: '/contestedResources' },
+      { title: 'Tokens', href: '/tokens' },
       { title: 'Masternode votes', href: '/masternodeVotes' },
       { title: 'API', href: '/api' }
     ]
