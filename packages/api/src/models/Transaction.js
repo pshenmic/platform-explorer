@@ -16,13 +16,13 @@ module.exports = class Transaction {
   error
   owner
 
-  constructor (hash, index, blockHash, blockHeight, type, batch_type, data, timestamp, gasUsed, status, error, owner) {
+  constructor (hash, index, blockHash, blockHeight, type, batchType, data, timestamp, gasUsed, status, error, owner) {
     this.hash = hash ?? null
     this.index = index ?? null
     this.blockHash = blockHash ?? null
     this.blockHeight = blockHeight ?? null
     this.type = type ?? null
-    this.batchType = batch_type ?? null
+    this.batchType = batchType ?? null
     this.data = data ?? null
     this.timestamp = timestamp ?? null
     this.gasUsed = gasUsed ?? null
