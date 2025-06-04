@@ -11,22 +11,22 @@ import './TokensList.scss'
 function TokensList ({ identities, headerStyles = 'default', pagination, loading, itemsCount = 10 }) {
   const headerExtraClass = {
     default: '',
-    light: 'IdentitiesList__ColumnTitles--Light'
+    light: 'TokensList__ColumnTitles--Light'
   }
 
   return (
-    <div className={'IdentitiesList'}>
-      <Grid className={`IdentitiesList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Identifier'}>
+    <div className={'TokensList'}>
+      <Grid className={`TokensList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
+        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Identifier'}>
           Identifier
         </GridItem>
-        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Timestamp'}>
+        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Timestamp'}>
           Timestamp
         </GridItem>
       </Grid>
 
       {!loading
-        ? <div className={'IdentitiesList__Items'}>
+        ? <div className={'TokensList__Items'}>
           {identities?.map((identity, key) =>
             <TokensListItem
               key={key}
@@ -43,7 +43,7 @@ function TokensList ({ identities, headerStyles = 'default', pagination, loading
 
       {pagination &&
         <Pagination
-          className={'IdentitiesList__Pagination'}
+          className={'TokensList__Pagination'}
           onPageChange={pagination.onPageChange}
           pageCount={pagination.pageCount}
           forcePage={pagination.forcePage}

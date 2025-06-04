@@ -2,7 +2,7 @@
 @use './variables' as identities;
 @import '../../styles/variables.scss';
 
-.IdentitiesListItem {
+.TokensListItem {
   @include mixins.DefListItem;
   display: block;
 

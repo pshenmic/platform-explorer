@@ -10,20 +10,20 @@ function TokensListItem ({ identity }) {
   return (
     <Link
       href={`/identity/${identifier}`}
-      className={'IdentitiesListItem'}
+      className={'TokensListItem'}
     >
-      <Grid className={'IdentitiesListItem__Content'}>
-        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Identifier'}>
+      <Grid className={'TokensListItem__Content'}>
+        <GridItem className={'TokensListItem__Column TokensListItem__Column--Identifier'}>
 
-          <div className={'IdentitiesListItem__IdentifierContainer'}>
+          <div className={'TokensListItem__IdentifierContainer'}>
             {activeAlias
               ? <Alias
-                className={'IdentitiesListItem__Alias'}
+                className={'TokensListItem__Alias'}
                 alias={activeAlias?.alias}
                 avatarSource={identifier}
               />
               : <Identifier
-                className={'IdentitiesListItem__Identifier'}
+                className={'TokensListItem__Identifier'}
                 ellipsis={true}
                 styles={['highlight-both']}
                 avatar={true}
@@ -34,11 +34,11 @@ function TokensListItem ({ identity }) {
           </div>
         </GridItem>
 
-        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Timestamp'}>
+        <GridItem className={'TokensListItem__Column TokensListItem__Column--Timestamp'}>
           {isSystem && <div>SYSTEM</div>}
 
           {typeof timestamp === 'string' &&
-            <div className={'IdentitiesListItem__Timestamp'}>
+            <div className={'TokensListItem__Timestamp'}>
               <DateBlock
                 format={'dateOnly'}
                 showTime={true}
