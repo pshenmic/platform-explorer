@@ -3,6 +3,8 @@ use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
 use dpp::state_transition::batch_transition::{BatchTransition};
 use dpp::state_transition::batch_transition::batched_transition::BatchedTransition;
+use dpp::state_transition::batch_transition::batched_transition::document_transition::DocumentTransition;
+use dpp::state_transition::batch_transition::batched_transition::token_transition::TokenTransition;
 use sha256::digest;
 use crate::enums::batch_type::BatchType;
 use crate::models::{TransactionResult, TransactionStatus};
@@ -27,11 +29,41 @@ impl PSQLProcessor {
     let batch_type: Option<BatchType> = match state_transition.clone() {
       StateTransition::Batch(batch_transition) => {
         match batch_transition {
-          BatchTransition::V0(_) => Some(BatchType::Document),
+          BatchTransition::V0(v0) => {
+            match v0.transitions.first().unwrap() {
+              DocumentTransition::Create(_) => Some(BatchType::DocumentCreateTransition),
+              DocumentTransition::Replace(_) => Some(BatchType::DocumentReplaceTransition),
+              DocumentTransition::Delete(_) => Some(BatchType::DocumentDeleteTransition),
+              DocumentTransition::Transfer(_) => Some(BatchType::DocumentTransferTransition),
+              DocumentTransition::UpdatePrice(_) => Some(BatchType::DocumentUpdatePriceTransition),
+              DocumentTransition::Purchase(_) => Some(BatchType::DocumentPurchaseTransition),
+            }
+          },
           BatchTransition::V1(v1) => {
             match v1.transitions.first().unwrap() {
-              BatchedTransition::Document(_) => Some(BatchType::Document),
-              BatchedTransition::Token(_) => Some(BatchType::Token)
+              BatchedTransition::Document(document_transition) => match document_transition {
+                DocumentTransition::Create(_) => Some(BatchType::DocumentCreateTransition),
+                DocumentTransition::Replace(_) => Some(BatchType::DocumentReplaceTransition),
+                DocumentTransition::Delete(_) => Some(BatchType::DocumentDeleteTransition),
+                DocumentTransition::Transfer(_) => Some(BatchType::DocumentTransferTransition),
+                DocumentTransition::UpdatePrice(_) => Some(BatchType::DocumentUpdatePriceTransition),
+                DocumentTransition::Purchase(_) => Some(BatchType::DocumentPurchaseTransition),
+              },
+              BatchedTransition::Token(token_transition) => {
+                match token_transition {
+                  TokenTransition::Burn(_) => Some(BatchType::TokenBurnTransition),
+                  TokenTransition::Mint(_) => Some(BatchType::TokenMintTransition) ,
+                  TokenTransition::Transfer(_) => Some(BatchType::TokenTransferTransition),
+                  TokenTransition::Freeze(_) => Some(BatchType::TokenFreezeTransition),
+                  TokenTransition::Unfreeze(_) => Some(BatchType::TokenUnfreezeTransition),
+                  TokenTransition::DestroyFrozenFunds(_) => Some(BatchType::TokenDestroyFrozenFundsTransition),
+                  TokenTransition::Claim(_) => Some(BatchType::TokenClaimTransition),
+                  TokenTransition::EmergencyAction(_) => Some(BatchType::TokenEmergencyActionTransition),
+                  TokenTransition::ConfigUpdate(_) => Some(BatchType::TokenConfigUpdateTransition),
+                  TokenTransition::DirectPurchase(_) => Some(BatchType::TokenDirectPurchaseTransition),
+                  TokenTransition::SetPriceForDirectPurchase(_) => Some(BatchType::TokenSetPriceForDirectPurchaseTransition)
+                }
+              }
             }
           }
         }

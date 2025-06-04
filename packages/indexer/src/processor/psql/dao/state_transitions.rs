@@ -21,7 +21,7 @@ impl PostgresDAO {
     };
 
     let query = "INSERT INTO state_transitions(hash, owner, data, type, \
-        index, block_hash, gas_used, status, error, batch_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);";
+        index, block_hash, gas_used, status, error, batch_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
 
     let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -35,7 +35,7 @@ impl PostgresDAO {
       &(gas_used as i64),
       &status_str,
       &error,
-      &batch_type,
+      &batch_type.map(|b|b.to_string()),
     ]).await.unwrap();
 
     println!("Created ST with hash {} from block with hash {}, owner = {}", &hash, &block_hash, &owner.to_string(Base58));
