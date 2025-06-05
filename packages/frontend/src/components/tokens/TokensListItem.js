@@ -22,7 +22,7 @@ function TokensListItem ({ token }) {
           <Supply currentSupply={currentSupply} maxSupply={maxSupply}/>
         </GridItem>
 
-        <GridItem className={'TokensListItem__Column TokensListItem__Column--Contract'}>
+        <GridItem className={'TokensListItem__Column TokensListItem__Column--DataContract'}>
           <Identifier
             className={'TokensListItem__Contract'}
             ellipsis={true}

@@ -18,7 +18,7 @@
       justify-content: flex-start;
     }
 
-    &--Contract {
+    &--DataContract {
       overflow: hidden;
       justify-content: flex-start;
     }
@@ -39,9 +39,9 @@
     text-overflow: ellipsis;
   }
 
-  &__Contract {
-    max-width: 100%;
-  }
+  //&__Contract {
+  //  max-width: 100%;
+  //}
 
   &__OwnerContainer {
     display: flex;
