@@ -231,8 +231,17 @@ describe('Contested documents routes', () => {
             documentStateTransition: resource.document.state_transition_hash,
             aliases: [],
             towardsIdentityVotes: contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length,
-            abstainVotes: 3,
-            lockVotes: 7 - contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length
+            abstainVotes: contestedResources
+              .filter(res =>
+                res.masternodeVote.index_values === JSON.stringify(['dash', 'xyz']) &&
+                res.masternodeVote.choice === ChoiceEnum.ABSTAIN)
+              .length,
+            lockVotes: contestedResources
+              .filter(res =>
+                res.masternodeVote.index_values === JSON.stringify(['dash', 'xyz']) &&
+                res.masternodeVote.choice !== ChoiceEnum.ABSTAIN &&
+                (res.masternodeVote.choice === ChoiceEnum.LOCK || res.masternodeVote.towards_identity_identifier !== resource.contender.identifier))
+              .length
           })),
         indexName: 'parentNameAndLabel',
         resourceValue: ['dash', 'xyz'],

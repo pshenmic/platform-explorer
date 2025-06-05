@@ -453,14 +453,14 @@ describe('Utils', () => {
 
       const info = utils.getAliasStateByVote(mockVote, {
         alias: mockVote.alias,
-        timestamp: ''
+        timestamp: null
       }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
       assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'ok',
         contested: true,
-        timestamp: ''
+        timestamp: null
       }))
     })
 
@@ -469,14 +469,14 @@ describe('Utils', () => {
 
       const info = utils.getAliasStateByVote(mockVote, {
         alias: 'alias343',
-        timestamp: ''
+        timestamp: null
       }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
       assert.deepEqual(info, Alias.fromObject({
         alias: 'alias343',
         status: 'ok',
         contested: false,
-        timestamp: ''
+        timestamp: null
       }))
     })
 
@@ -498,14 +498,14 @@ describe('Utils', () => {
 
       const info = utils.getAliasStateByVote(mockVote, {
         alias: mockVote.alias,
-        timestamp: ''
+        timestamp: null
       }, 'BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
       assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'pending',
         contested: true,
-        timestamp: ''
+        timestamp: null
       }))
     })
 
@@ -535,14 +535,14 @@ describe('Utils', () => {
 
       const info = utils.getAliasStateByVote(mockVote, {
         alias: mockVote.alias,
-        timestamp: ''
+        timestamp: null
       }, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
       assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'locked',
         contested: true,
-        timestamp: ''
+        timestamp: null
       }))
     })
 
@@ -572,14 +572,14 @@ describe('Utils', () => {
 
       const info = utils.getAliasStateByVote(mockVote, {
         alias: mockVote.alias,
-        timestamp: ''
+        timestamp: null
       }, 'AjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp')
 
       assert.deepEqual(info, Alias.fromObject({
         alias: mockVote.alias,
         status: 'locked',
         contested: true,
-        timestamp: ''
+        timestamp: null
       }))
     })
   })

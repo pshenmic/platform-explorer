@@ -144,7 +144,7 @@ module.exports = class ContestedDAO {
         documentStateTransition: row.document_state_transition_hash ?? null,
         aliases: aliases ?? [],
         towardsIdentityVotes: uniqueVotes
-          .filter((vote) => vote.towards_identity === row.owner)
+          .filter((vote) => vote.towards_identity?.trim() === row.owner.trim())
           .reduce((accumulator, currentValue) => currentValue.choice === ChoiceEnum.TowardsIdentity
             ? accumulator + 1 * currentValue.masternode_power
             : accumulator
@@ -153,7 +153,7 @@ module.exports = class ContestedDAO {
           ? accumulator + 1 * currentValue.masternode_power
           : accumulator
         , 0) ?? null,
-        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => (currentValue.choice !== ChoiceEnum.ABSTAIN && currentValue.choice !== null) && currentValue.towards_identity !== row.owner
+        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => (currentValue.choice !== ChoiceEnum.ABSTAIN && currentValue.choice !== null) && currentValue.towards_identity?.trim() !== row.owner.trim()
           ? accumulator + 1 * currentValue.masternode_power
           : accumulator
         , 0) ?? null

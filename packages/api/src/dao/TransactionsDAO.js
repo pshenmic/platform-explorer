@@ -50,7 +50,11 @@ module.exports = class TransactionsDAO {
       return getAliasStateByVote(aliasInfo, alias, row.owner)
     }))
 
-    return Transaction.fromRow({ ...row, aliases })
+    return Transaction.fromRow(
+      {
+        ...row,
+        aliases
+      })
   }
 
   getTransactions = async (page, limit, order, orderBy, transactionsTypes, owner, status, min, max, timestampStart, timestampEnd) => {
@@ -207,7 +211,7 @@ module.exports = class TransactionsDAO {
 
     return rows
       .map(row => ({
-        timestamp: row.date_from,
+        timestamp: new Date(row.date_from).toISOString(),
         data: {
           txs: parseInt(row.tx_count ?? 0),
           blockHeight: row.block_height,
@@ -257,7 +261,7 @@ module.exports = class TransactionsDAO {
 
     return rows
       .map(row => ({
-        timestamp: row.date_from,
+        timestamp: new Date(row.date_from).toISOString(),
         data: {
           gas: parseInt(row.gas ?? 0),
           blockHeight: row.block_height,
