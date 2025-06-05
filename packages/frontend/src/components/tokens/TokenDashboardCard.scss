@@ -1,0 +1,30 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.TokenDashboardCard {
+  padding: 24px 30px;
+
+  &__Img {
+    margin-right: 8px;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+  }
+
+  &__Name {
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: $font-heading;
+    font-style: italic;
+  }
+
+  @media screen and (min-width: 600px) {
+    .SliderNavigation {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    padding: 14px 16px;
+  }
+}
