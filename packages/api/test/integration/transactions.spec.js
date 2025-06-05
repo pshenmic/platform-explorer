@@ -124,11 +124,7 @@ describe('Transaction routes', () => {
             alias: identityAlias.alias,
             contested: false,
             status: 'ok',
-            timestamp: (
-              transaction.block.timestamp.toISOString().slice(-2, -1) === '0'
-                ? `${transaction.block.timestamp.toISOString().slice(0, -2)}Z`
-                : transaction.block.timestamp.toISOString()
-            ).replace('Z', '+00:00'),
+            timestamp: transaction.block.timestamp.toISOString(),
             txHash: identityAlias.state_transition_hash
           }]
         }
@@ -161,11 +157,7 @@ describe('Transaction routes', () => {
             alias: identityAlias.alias,
             contested: false,
             status: 'ok',
-            timestamp: (
-              transaction.block.timestamp.toISOString().slice(-2, -1) === '0'
-                ? `${transaction.block.timestamp.toISOString().slice(0, -2)}Z`
-                : transaction.block.timestamp.toISOString()
-            ).replace('Z', '+00:00'),
+            timestamp: transaction.block.timestamp.toISOString(),
             txHash: identityAlias.state_transition_hash
           }]
         }
