@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Identifier } from '../data'
+import { Alias, Identifier } from '../data'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { Supply, TickerBadge } from './index'
 import './TokensListItem.scss'
@@ -11,13 +11,11 @@ function TokensListItem ({ token }) {
     <Link href={`/token/${contract}`} className={'TokensListItem'}>
       <Grid className={'TokensListItem__Content'}>
         <GridItem className={'TokensListItem__Column TokensListItem__Column--TokenName'}>
-          {name}
+          <Alias>{name}</Alias>
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Ticker'}>
-          <TickerBadge>
-            {ticker}
-          </TickerBadge>
+          <TickerBadge>{ticker}</TickerBadge>
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Supply'}>
