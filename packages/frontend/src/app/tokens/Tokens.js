@@ -27,7 +27,8 @@ const mockTokens = [
   {
     name: 'DashGold',
     ticker: 'DGLD',
-    contract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+    tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+    dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
     currentSupply: '40 MLN',
     maxSupply: '50 MLN',
     ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
@@ -35,7 +36,8 @@ const mockTokens = [
   {
     name: 'CryptoSilver',
     ticker: 'CRSL',
-    contract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+    tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+    dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
     currentSupply: '40 MLN',
     maxSupply: '50 MLN',
     ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
@@ -43,7 +45,8 @@ const mockTokens = [
   {
     name: 'TokenAlpha',
     ticker: 'ALPH',
-    contract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+    tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+    dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
     currentSupply: '40 MLN',
     maxSupply: '50 MLN',
     ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
@@ -51,7 +54,8 @@ const mockTokens = [
   {
     name: 'BetaCoin',
     ticker: 'BTCN',
-    contract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+    tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+    dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
     currentSupply: '40 MLN',
     maxSupply: '50 MLN',
     ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
@@ -59,7 +63,8 @@ const mockTokens = [
   {
     name: 'GammaToken',
     ticker: 'GMMT',
-    contract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+    tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
+    dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
     currentSupply: '40 MLN',
     maxSupply: '50 MLN',
     ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
