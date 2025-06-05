@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Identifier } from '../data'
-import { Grid, GridItem, Box } from '@chakra-ui/react'
-import Supply from './Supply'
+import { Grid, GridItem } from '@chakra-ui/react'
+import { Supply, TickerBadge } from './index'
 import './TokensListItem.scss'
 
 function TokensListItem ({ token }) {
@@ -15,9 +15,9 @@ function TokensListItem ({ token }) {
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Ticker'}>
-          <Box className={'TokensListItem__TickerBadge'}>
+          <TickerBadge>
             {ticker}
-          </Box>
+          </TickerBadge>
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Supply'}>
