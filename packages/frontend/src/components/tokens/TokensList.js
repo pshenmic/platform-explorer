@@ -26,7 +26,7 @@ function TokensList ({ tokens, headerStyles = 'default', pagination, loading, it
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Supply'}>
           Supply
         </GridItem>
-        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Contract'}>
+        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--DataContract'}>
           Contract
         </GridItem>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--OwnerIdentity'}>
