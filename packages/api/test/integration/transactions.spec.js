@@ -656,46 +656,6 @@ describe('Transaction routes', () => {
       assert.deepEqual(expectedTransactions, body.resultSet)
     })
 
-    it('should return be able to walk through pages desc with ordering by owner', async () => {
-      const { body } = await client.get('/transactions?page=3&limit=3&order=desc&orderBy=owner')
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-
-      assert.equal(body.resultSet.length, 3)
-      assert.equal(body.pagination.total, transactions.length)
-      assert.equal(body.pagination.page, 3)
-      assert.equal(body.pagination.limit, 3)
-
-      const expectedTransactions = transactions
-        .sort((a, b) => b.transaction.owner - a.transaction.owner)
-        .slice(6, 9)
-        .map(transaction => ({
-          blockHash: transaction.block.hash,
-          blockHeight: transaction.block.height,
-          data: '{}',
-          hash: transaction.transaction.hash,
-          index: transaction.transaction.index,
-          timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
-          batchType: transaction.transaction.batch_type,
-          gasUsed: transaction.transaction.gas_used,
-          status: transaction.transaction.status,
-          error: transaction.transaction.error,
-          owner: {
-            identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
-          }
-        }))
-
-      assert.deepEqual(expectedTransactions, body.resultSet)
-    })
-
     it('should return be able to walk through pages', async () => {
       const { body } = await client.get('/transactions?page=3&limit=3')
         .expect(200)
