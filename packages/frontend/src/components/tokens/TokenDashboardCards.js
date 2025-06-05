@@ -20,7 +20,7 @@ function TokenDashboardCard ({ token, className, loading = false }) {
           <Flex mb={1} gap={'0.75rem'} alignItems={'center'}>
             <div className={'TokenDashboardCard__Name'}>{token?.name}</div>
             {token?.ticker &&
-              <TickerBadge>
+              <TickerBadge size={'lg'} className={'TokenDashboardCard__Ticker'}>
                 {token.ticker}
               </TickerBadge>
             }
