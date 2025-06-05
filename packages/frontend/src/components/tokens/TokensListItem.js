@@ -1,16 +1,14 @@
 import Link from 'next/link'
 import { Identifier } from '../data'
-import { Grid, GridItem, Progress, Box, Flex } from '@chakra-ui/react'
+import { Grid, GridItem, Box } from '@chakra-ui/react'
+import Supply from './Supply'
 import './TokensListItem.scss'
 
 function TokensListItem ({ token }) {
   const { name, ticker, contract, currentSupply, maxSupply, ownerIdentity } = token
 
   return (
-    <Link
-      href={`/token/${contract}`}
-      className={'TokensListItem'}
-    >
+    <Link href={`/token/${contract}`} className={'TokensListItem'}>
       <Grid className={'TokensListItem__Content'}>
         <GridItem className={'TokensListItem__Column TokensListItem__Column--TokenName'}>
           {name}
@@ -23,18 +21,7 @@ function TokensListItem ({ token }) {
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Supply'}>
-          <div className={'TokensListItem__SupplyContainer'}>
-            <Flex justifyContent={'space-between'} w={'100%'}>
-              <span>{currentSupply}</span>
-              <span>{maxSupply}</span>
-            </Flex>
-            <Progress
-              value={(parseInt(currentSupply.replace(/\D/g, '')) / parseInt(maxSupply.replace(/\D/g, ''))) * 100}
-              height={'1px'}
-              width={'9rem'}
-              colorScheme={'gray'}
-            />
-          </div>
+          <Supply currentSupply={currentSupply} maxSupply={maxSupply}/>
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Contract'}>
