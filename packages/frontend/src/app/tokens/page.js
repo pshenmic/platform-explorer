@@ -3,6 +3,7 @@ import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { Container } from '@chakra-ui/react'
+import Cards from './Cards'
 
 export const metadata = {
   title: 'Tokens — Dash Platform Explorer',
@@ -25,7 +26,7 @@ function IdentitiesRoute ({ searchParams }) {
       <Intro
         title={'Tokens'}
         description={<Markdown>{introContent}</Markdown>}
-        block={<>The best tokens will be here</>}
+        block={<Cards/>}
       />
     </Container>
     <Tokens defaultPage={page} defaultPageSize={pageSize}/>
