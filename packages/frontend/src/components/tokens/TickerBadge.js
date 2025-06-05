@@ -1,10 +1,11 @@
 import './TickerBadge.scss'
+import { ValueContainer } from '../ui/containers'
 
-function TickerBadge ({ children, className }) {
+function TickerBadge ({ children, className, size = 'sm', ...props }) {
   return (
-    <div className={`TickerBadge ${className || ''}`}>
+    <ValueContainer size={size} className={`TickerBadge ${className || ''}`} {...props}>
       {children}
-    </div>
+    </ValueContainer>
   )
 }
 
