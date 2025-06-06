@@ -1,0 +1,10 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.TickerBadge {
+  font-weight: 500;
+  font-family: $font-mono;
+  font-size: 0.75rem;
+  color: var(--chakra-colors-gray-250);
+  letter-spacing: 0.4px;
+}

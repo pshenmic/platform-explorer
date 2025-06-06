@@ -1,0 +1,41 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.Supply {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: -3px;
+
+  &--ProgressTop {
+    margin-bottom: unset;
+    margin-top: -3px;
+  }
+
+  &--ProgressTop & {
+    &__Titles {
+      order: 1;
+    }
+
+    &__Progress {
+      order: 0;
+    }
+  }
+
+  &__Titles {
+    display: flex;
+    justify-content: space-between;
+    font-family: $font-mono;
+    width: 100%;
+    font-size: 0.75rem;
+    line-height: 0.75rem;
+  }
+
+  &__CurrentSupply {
+    color: #fff;
+  }
+
+  &__MaxSupply {
+    color: var(--chakra-colors-gray-250);
+  }
+}
