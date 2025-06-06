@@ -7,12 +7,9 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-
-import {
-  Container,
-  Heading,
-  Box
-} from '@chakra-ui/react'
+import { Container, Heading, Box, useBreakpointValue } from '@chakra-ui/react'
+import { TokenFilters } from '../../components/tokens'
+import './Tokens.scss'
 
 const paginateConfig = {
   pageSize: {
@@ -72,14 +69,15 @@ const mockTokens = [
 ]
 
 function Tokens ({ defaultPage = 1, defaultPageSize }) {
-  const [tokens, setTokens] = useState({ data: mockTokens, loading: false, error: false })
-  const [total, setTotal] = useState(mockTokens.length)
+  const [tokens] = useState({ data: mockTokens, loading: false, error: false })
+  const [total] = useState(mockTokens.length)
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const isMobile = useBreakpointValue({ base: true, md: false })
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
@@ -115,6 +113,14 @@ function Tokens ({ defaultPage = 1, defaultPageSize }) {
         className={'InfoBlock'}
       >
         <Heading className={'InfoBlock__Title'} as={'h1'}>Tokens</Heading>
+
+        <div className={'Tokens__Controls'}>
+          <TokenFilters
+            // onFilterChange={filtersChangeHandler}
+            isMobile={isMobile}
+            className={'Tokens__Filters'}
+          />
+        </div>
 
         {!tokens.error
           ? !tokens.loading
