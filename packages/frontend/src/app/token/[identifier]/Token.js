@@ -8,6 +8,7 @@ import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import './Token.scss'
+import {TokenTotalCard} from "../../../components/tokens";
 
 const tabs = [
   'activity',
@@ -21,12 +22,8 @@ function Token ({ identifier }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
-  const [dataContracts, setDataContracts] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [documents, setDocuments] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [transfers, setTransfers] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const pageSize = 10
+  const [token, setToken] = useState({ data: {}, loading: true, error: false })
+  // const pageSize = 10
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1
     ? tabs.indexOf(defaultTabName.toLowerCase())
     : tabs.indexOf(defaultTabName)
@@ -41,50 +38,14 @@ function Token ({ identifier }) {
   }, [setBreadcrumbs, identifier])
 
   useEffect(() => {
-    Api.getIdentity(identifier)
-      .then(paginatedTransactions => fetchHandlerSuccess(setIdentity, paginatedTransactions))
-      .catch(err => fetchHandlerError(setIdentity, err))
+    // Api.getToken(identifier)
+    //   .then(paginatedTransactions => fetchHandlerSuccess(setTdentity, paginatedTransactions))
+    //   .catch(err => fetchHandlerError(setTdentity, err))
 
     // Api.getRate()
     //   .then(res => fetchHandlerSuccess(setRate, res))
     //   .catch(err => fetchHandlerError(setRate, err))
   }, [identifier])
-
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setTransactions)
-
-    Api.getTransactionsByIdentity(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
-      .then(paginatedDataContracts => fetchHandlerSuccess(setTransactions, paginatedDataContracts))
-      .catch(err => fetchHandlerError(setTransactions, err))
-  }, [identifier, transactions.props.currentPage])
-
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setDataContracts)
-
-    Api.getDataContractsByIdentity(identifier, dataContracts.props.currentPage + 1, pageSize, 'desc')
-      .then(paginatedDataContracts => fetchHandlerSuccess(setDataContracts, paginatedDataContracts))
-      .catch(err => fetchHandlerError(setDataContracts, err))
-  }, [identifier, dataContracts.props.currentPage])
-
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setTransfers)
-
-    Api.getTransfersByIdentity(identifier, transfers.props.currentPage + 1, pageSize, 'desc')
-      .then(paginatedDataContracts => fetchHandlerSuccess(setTransfers, paginatedDataContracts))
-      .catch(err => fetchHandlerError(setTransfers, err))
-  }, [identifier, transfers.props.currentPage])
-
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setDocuments)
-
-    Api.getDocumentsByIdentity(identifier, documents.props.currentPage + 1, pageSize, 'desc')
-      .then(paginatedDataContracts => fetchHandlerSuccess(setDocuments, paginatedDataContracts))
-      .catch(err => fetchHandlerError(setDocuments, err))
-  }, [identifier, documents.props.currentPage])
 
   useEffect(() => {
     const tab = searchParams.get('tab')
@@ -112,23 +73,23 @@ function Token ({ identifier }) {
 
   return (
     <PageDataContainer
-      className={'IdentityPage'}
+      className={'TokenPage'}
       title={'Token info'}
     >
-      {/* <IdentityTotalCard identity={identity} rate={rate}/> */}
+       <TokenTotalCard token={token}/>
 
-      <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
+      <InfoContainer styles={['tabs']} className={'tokenPage__ListContainer'}>
         <Tabs onChange={setActiveTab} index={activeTab}>
           <TabList>
-            <Tab>Activity {identity.data?.totalTxs !== undefined
-              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                  {identity.data?.totalTxs}
+            <Tab>Activity {token.data?.totalTxs !== undefined
+              ? <span className={`Tabs__TabItemsCount ${token.data?.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {token.data?.totalTxs}
                 </span>
               : ''}
             </Tab>
-            <Tab>Holders {identity.data?.totalDataContracts !== undefined
-              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                  {identity.data?.totalDataContracts}
+            <Tab>Holders {token.data?.totalDataContracts !== undefined
+              ? <span className={`Tabs__TabItemsCount ${token.data?.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {token.data?.totalDataContracts}
                 </span>
               : ''}
             </Tab>
