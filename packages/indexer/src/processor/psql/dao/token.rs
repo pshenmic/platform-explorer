@@ -89,7 +89,7 @@ impl PostgresDAO {
       &(token_position as i16),
       &st_hash,
       &data_contract_id,
-      &recipient.unwrap().to_string(Base58)
+      &recipient.map(|identifier| {identifier.to_string(Base58)})
     ]).await.unwrap();
 
     println!("Token transition from {}", &owner.to_string(Base58));
