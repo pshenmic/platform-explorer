@@ -84,7 +84,7 @@ impl PostgresDAO {
       &owner.to_string(Base58),
       &token_identifier.to_string(Base58),
       &(action as i16),
-      &(amount.unwrap() as i64),
+      &(amount.map(|token_amount| { token_amount as i64})),
       &public_note,
       &(token_position as i16),
       &st_hash,
