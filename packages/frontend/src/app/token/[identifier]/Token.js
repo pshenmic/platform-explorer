@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError, setLoadingProp } from '../../../util'
+// import * as Api from '../../../util/Api'
+// import { fetchHandlerSuccess, fetchHandlerError, setLoadingProp } from '../../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import './Token.scss'
-import {TokenTotalCard} from "../../../components/tokens";
+import { TokenTotalCard } from '../../../components/tokens'
 
 const tabs = [
   'activity',
@@ -22,7 +22,7 @@ function Token ({ identifier }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [token, setToken] = useState({ data: {}, loading: true, error: false })
+  const [token] = useState({ data: {}, loading: true, error: false })
   // const pageSize = 10
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1
     ? tabs.indexOf(defaultTabName.toLowerCase())
