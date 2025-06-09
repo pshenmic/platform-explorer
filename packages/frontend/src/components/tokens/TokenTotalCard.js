@@ -3,7 +3,7 @@
 import { Alias, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { findActiveAlias } from '../../util'
-// import TokenDigestCard from './TokenDigestCard'
+import TokenDigestCard from './TokenDigestCard'
 import './TokenTotalCard.scss'
 
 function TokenTotalCard ({ token, loading }) {
@@ -63,7 +63,10 @@ function TokenTotalCard ({ token, loading }) {
         </div>
 
         <div className={'TokenTotalCard__Column'}>
-          Token Digest Card will be here
+          <TokenDigestCard
+            token={{ loading: false, error: null }}
+            rate={{ data: { usd: 259.15 } }}
+          />
         </div>
       </div>
     </div>
