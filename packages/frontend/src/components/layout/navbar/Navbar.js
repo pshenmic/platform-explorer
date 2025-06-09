@@ -34,23 +34,54 @@ const menuItems = [
   { title: 'Identities', href: '/identities' },
   { title: 'Validators', href: '/validators' },
   {
+    title: 'Tokens',
+    href: '/tokens',
+    breakpoints: { base: true, sm: true, md: true, lg: false, xl: false }
+  },
+  {
     title: 'API',
     href: '/api',
-    breakpoints: { base: true, sm: true, md: true, lg: false, xl: true }
+    breakpoints: { base: true, sm: true, md: true, lg: false, xl: false }
   },
   {
     title: 'more',
-    breakpoints: { base: false, sm: false, md: false, lg: true, xl: false },
+    breakpoints: { base: false, sm: false, md: false, lg: true, xl: true },
     submenuItems: [
-      { title: 'Contested Resources', href: '/contestedResources' },
-      { title: 'Tokens', href: '/tokens' },
-      { title: 'Masternode votes', href: '/masternodeVotes' },
-      { title: 'API', href: '/api' }
+      {
+        title: 'Contested Resources',
+        href: '/contestedResources',
+        breakpoints: { base: true, sm: false, md: true, lg: true, xl: false }
+      },
+      {
+        title: 'Masternode votes',
+        href: '/masternodeVotes',
+        breakpoints: { base: true, sm: true, md: true, lg: true, xl: false }
+      },
+      {
+        title: 'Tokens',
+        href: '/tokens',
+        breakpoints: { base: true, sm: false, md: false, lg: true, xl: true }
+      },
+      {
+        title: 'API',
+        href: '/api',
+        breakpoints: { base: false, sm: false, md: false, lg: true, xl: true }
+      }
     ]
   }
 ]
 
 const defaultBreakpoints = { base: true, sm: true, md: true, lg: true, xl: true }
+
+// Filter submenuItems by breakpoints
+const filterSubmenuItems = (submenuItems, currentBreakpoint) => {
+  if (!submenuItems) return submenuItems
+
+  return submenuItems.filter(subItem => {
+    const breakpoints = subItem.breakpoints || defaultBreakpoints
+    return breakpoints[currentBreakpoint]
+  })
+}
 
 const defaultSearchState = {
   results: { data: {}, loading: false, error: false },
@@ -85,7 +116,10 @@ function Navbar () {
     return menuItems.filter(item => {
       const breakpoints = item.breakpoints || defaultBreakpoints
       return breakpoints[currentBreakpoint]
-    })
+    }).map(item => ({
+      ...item,
+      submenuItems: filterSubmenuItems(item.submenuItems, currentBreakpoint)
+    }))
   }, [currentBreakpoint])
 
   const mobileMenuItems = useMemo(() => {
@@ -94,7 +128,10 @@ function Navbar () {
     return menuItems.filter(item => {
       const breakpoints = item.breakpoints || defaultBreakpoints
       return isMobileBreakpoint ? breakpoints[currentBreakpoint] : breakpoints.base
-    })
+    }).map(item => ({
+      ...item,
+      submenuItems: filterSubmenuItems(item.submenuItems, isMobileBreakpoint ? currentBreakpoint : 'base')
+    }))
   }, [currentBreakpoint])
 
   const searchResultIsDisplay = searchState.focused &&
