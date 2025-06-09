@@ -1,6 +1,5 @@
 import { CreditsBlock, Identifier, InfoLine } from '../data'
 import { ValueContainer } from '../ui/containers'
-import { ValueCard } from '../cards'
 import { Supply } from './'
 import {
   TokenMintIcon,
@@ -30,27 +29,27 @@ function TokenDigestCard ({ token, className }) {
   return (
     <div className={`TokenDigestCard ${className || ''} ${token?.loading ? 'TokenDigestCard--Loading' : ''}`}>
       <div className={'TokenDigestCard__TopCards'}>
-        <div className={'TokenDigestCard__SupplyCard TokenDigestCard__SupplyCard--Minted'}>
-          <ValueCard colorScheme={'transparent'}>
-              <div className={'TokenDigestCard__CurrentSupplyTitle'}>
-                <TokenMintIcon />
-                <span className={'TokenDigestCard__SupplyCardTitle'}>Minted</span>
-              </div>
+        <ValueContainer className={'TokenDigestCard__SupplyCardContainer'}>
+          <div className={'TokenDigestCard__SupplyCard'}>
+            <div className={'TokenDigestCard__CurrentSupplyTitle'}>
+              <TokenMintIcon/>
+              <span className={'TokenDigestCard__SupplyCardTitle'}>Minted</span>
+            </div>
 
-              <div className={'TokenDigestCard__SupplyData'}>
-                <Supply
-                  currentSupply={mockData.minted}
-                  maxSupply={mockData.maxSupply}
-                  progressPosition="bottom"
-                />
-              </div>
+            <div className={'TokenDigestCard__SupplyData'}>
+              <Supply
+                currentSupply={mockData.minted}
+                maxSupply={mockData.maxSupply}
+                progressPosition="bottom"
+              />
+            </div>
 
-              <div className={'TokenDigestCard__TotalSupplyTitle'}>
-                <span className={'TokenDigestCard__SupplyFooterTitle'}>Total<br/>Supply</span>
-                <TokenTotalIcon />
-              </div>
-          </ValueCard>
-        </div>
+            <div className={'TokenDigestCard__TotalSupplyTitle'}>
+              <span className={'TokenDigestCard__SupplyFooterTitle'}>Total<br/>Supply</span>
+              <TokenTotalIcon/>
+            </div>
+          </div>
+        </ValueContainer>
       </div>
 
       {/* Middle Row - Stats Cards */}
