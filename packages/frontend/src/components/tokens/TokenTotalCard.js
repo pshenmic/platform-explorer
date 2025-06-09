@@ -1,9 +1,10 @@
 'use client'
 
-import { Alias, Identifier, InfoLine } from '../data'
+import { Alias, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { findActiveAlias } from '../../util'
 import TokenDigestCard from './TokenDigestCard'
+import { ValueCard } from '../cards'
 import './TokenTotalCard.scss'
 
 function TokenTotalCard ({ token, loading }) {
@@ -58,6 +59,47 @@ function TokenTotalCard ({ token, loading }) {
               value={'The first stablecoin on Dash. Tether is everywhere, even on Platform-explorer thanks to Pshenmic team and DCG'}
               loading={loading}
               error={token.error || (!loading && token.data?.revision === undefined)}
+            />
+            <InfoLine
+              className={'TokenTotalCard__InfoLine'}
+              title={'Decimals'}
+              value={2}
+              loading={loading}
+              error={token.error}
+            />
+            <InfoLine
+              className={'TokenTotalCard__InfoLine'}
+              title={'Token Contract Position'}
+              value={<ValueCard link={'/tokens'}>22</ValueCard>}
+              loading={loading}
+              error={token.error}
+            />
+            <InfoLine
+              className={'TokenTotalCard__InfoLine'}
+              title={'Data Contract'}
+              value={
+                <ValueCard link={`/dataContract/${'Cgjuqav7uD7FnWNqNyHEWet382Yzx7NYNRUNqfJ3d2je'}`}>
+                  <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                    Cgjuqav7uD7FnWNqNyHEWet382Yzx7NYNRUNqfJ3d2je
+                  </Identifier>
+                </ValueCard>
+              }
+              loading={loading}
+              error={token.error}
+            />
+            <InfoLine
+              className={'TokenTotalCard__InfoLine'}
+              title={'Creation date'}
+              value={<DateBlock timestamp={new Date().toISOString()} showTime={true}/>}
+              loading={loading}
+              error={token.error}
+            />
+            <InfoLine
+              className={'TokenTotalCard__InfoLine'}
+              title={'Localisation'}
+              value={<>Localisation button</>}
+              loading={loading}
+              error={token.error}
             />
           </div>
         </div>
