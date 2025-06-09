@@ -12,7 +12,7 @@ import {
 } from '../ui/icons'
 import './TokenDigestCard.scss'
 
-function TokenDigestCard ({ token, rate, className }) {
+function TokenDigestCard ({ token, className }) {
   const mockData = {
     minted: 342342941941,
     maxSupply: 100000000000000,
