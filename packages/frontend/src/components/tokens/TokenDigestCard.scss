@@ -83,12 +83,20 @@
     display: flex;
     gap: 16px;
     width: 100%;
+
+    .ValueCard {
+      width: 50%;
+    }
   }
 
   &__BurnFreezeCards {
     display: flex;
     gap: 16px;
     width: 100%;
+
+    .ValueCard {
+      width: 50%;
+    }
   }
 
   &__StatCard {
@@ -96,10 +104,15 @@
     justify-content: space-between;
     align-items: center;
     gap: 4px;
-    padding: 24px;
-    background: rgba(var(--chakra-colors-gray-800-rgb), .5);
-    border-radius: $border-radius-def;
+    //padding: 24px;
+    //background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+    //border-radius: $border-radius-def;
     width: 100%;
+
+    svg {
+      width: 1.75rem;
+      height: auto;
+    }
 
     .ValueCard {
       width: 100%;
@@ -166,61 +179,61 @@
     overflow: hidden;
   }
 
-  // Responsive breakpoints
-  @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
-  screen and (max-width: $breakpoint-sm) {
-    &--Loading {
-      .InfoLine__Value {
-        width: 100% !important;
-      }
-    }
-
-    &__StatsCards,
-    &__BurnFreezeCards {
-      flex-direction: column;
-    }
-
-    &__StatCard {
-      width: 100%;
-    }
-
-    &__SupplyData {
-      align-items: stretch;
-      width: 100%;
-    }
-
-    &__SupplyCardFooter {
-      align-self: flex-start;
-    }
-  }
-
-  @container (max-width: 24em) {
-    &--Loading {
-      .InfoLine__Value {
-        width: 100% !important;
-      }
-    }
-
-    &__InfoLine {
-      flex-direction: column;
-      align-items: flex-start;
-
-      .InfoLine__Value {
-        width: 100%;
-        text-align: left;
-      }
-    }
-
-    &__GasSpent {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-    }
-
-    &__DistributionType {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
-  }
+  //// Responsive breakpoints
+  //@media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
+  //screen and (max-width: $breakpoint-sm) {
+  //  &--Loading {
+  //    .InfoLine__Value {
+  //      width: 100% !important;
+  //    }
+  //  }
+  //
+  //  &__StatsCards,
+  //  &__BurnFreezeCards {
+  //    flex-direction: column;
+  //  }
+  //
+  //  &__StatCard {
+  //    width: 100%;
+  //  }
+  //
+  //  &__SupplyData {
+  //    align-items: stretch;
+  //    width: 100%;
+  //  }
+  //
+  //  &__SupplyCardFooter {
+  //    align-self: flex-start;
+  //  }
+  //}
+  //
+  //@container (max-width: 24em) {
+  //  &--Loading {
+  //    .InfoLine__Value {
+  //      width: 100% !important;
+  //    }
+  //  }
+  //
+  //  &__InfoLine {
+  //    flex-direction: column;
+  //    align-items: flex-start;
+  //
+  //    .InfoLine__Value {
+  //      width: 100%;
+  //      text-align: left;
+  //    }
+  //  }
+  //
+  //  &__GasSpent {
+  //    flex-direction: column;
+  //    align-items: flex-start;
+  //    gap: 4px;
+  //  }
+  //
+  //  &__DistributionType {
+  //    flex-direction: column;
+  //    align-items: flex-start;
+  //    gap: 8px;
+  //  }
+  //}
 }

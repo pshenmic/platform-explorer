@@ -55,34 +55,34 @@ function TokenDigestCard ({ token, className }) {
 
       {/* Middle Row - Stats Cards */}
       <div className={'TokenDigestCard__StatsCards'}>
-        <ValueCard colorScheme={'transparent'}>
+        <ValueContainer>
           <div className={'TokenDigestCard__StatCard'}>
             <div className={'TokenDigestCard__StatHeader'}>
               <TransactionsIcon />
-              <span className={'TokenDigestCard__StatTitle'}>Total Transactions:</span>
+              <span className={'TokenDigestCard__StatTitle'}>Total<br/>Transactions:</span>
             </div>
             <div className={'TokenDigestCard__StatValue'}>
               {mockData.totalTransactions}
             </div>
           </div>
-        </ValueCard>
+        </ValueContainer>
 
-        <ValueCard colorScheme={'transparent'}>
+        <ValueContainer>
           <div className={'TokenDigestCard__StatCard'}>
             <div className={'TokenDigestCard__StatHeader'}>
-              <MembersIcon />
+              <MembersIcon/>
               <span className={'TokenDigestCard__StatTitle'}>Holders:</span>
             </div>
             <div className={'TokenDigestCard__StatValue'}>
               {mockData.holders}
             </div>
           </div>
-        </ValueCard>
+        </ValueContainer>
       </div>
 
       {/* Burn and Freeze Row */}
       <div className={'TokenDigestCard__BurnFreezeCards'}>
-        <ValueCard colorScheme={'transparent'}>
+        <ValueContainer>
           <div className={'TokenDigestCard__StatCard'}>
             <div className={'TokenDigestCard__StatHeader'}>
               <TokenBurnIcon />
@@ -92,9 +92,9 @@ function TokenDigestCard ({ token, className }) {
               {mockData.burnt}
             </div>
           </div>
-        </ValueCard>
+        </ValueContainer>
 
-        <ValueCard colorScheme={'transparent'}>
+        <ValueContainer>
           <div className={'TokenDigestCard__StatCard'}>
             <div className={'TokenDigestCard__StatHeader'}>
               <TokenFreezeIcon />
@@ -104,7 +104,7 @@ function TokenDigestCard ({ token, className }) {
               {mockData.frozen}
             </div>
           </div>
-        </ValueCard>
+        </ValueContainer>
       </div>
 
       {/* Distribution Type */}
