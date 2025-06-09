@@ -3,13 +3,14 @@
 import { Alias, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { findActiveAlias } from '../../util'
+// import TokenDigestCard from './TokenDigestCard'
 import './TokenTotalCard.scss'
 
-function TokenTotalCard ({ token }) {
+function TokenTotalCard ({ token, loading }) {
   const activeAlias = findActiveAlias(token.data?.aliases)
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient tokenPage__CommonInfo TokenTotalCard ${token.loading ? 'TokenTotalCard--Loading' : ''} `}>
+    <div className={`InfoBlock InfoBlock--Gradient tokenPage__CommonInfo TokenTotalCard ${loading ? 'TokenTotalCard--Loading' : ''} `}>
       {activeAlias &&
         <div className={'TokenTotalCard__Title'}>
           <Alias ellipsis={false}>{activeAlias.alias}</Alias>
@@ -23,8 +24,8 @@ function TokenTotalCard ({ token }) {
               <InfoLine
                 className={'TokenTotalCard__InfoLine TokenTotalCard__InfoLine--Identifier'}
                 title={'Identifier'}
-                loading={token.loading}
-                error={token.error || (!token.loading && !token.data?.identifier)}
+                loading={loading}
+                error={token.error || (!loading && !token.data?.identifier)}
                 value={(
                   <Identifier
                     copyButton={true}
@@ -39,7 +40,7 @@ function TokenTotalCard ({ token }) {
                 className={'TokenTotalCard__InfoLine TokenTotalCard__InfoLine--Balance'}
                 title={'Name'}
                 value={'Tether'}
-                loading={token.loading}
+                loading={loading}
                 error={token.error}
               />
             </div>
@@ -55,8 +56,8 @@ function TokenTotalCard ({ token }) {
               className={'TokenTotalCard__InfoLine'}
               title={'Token Info'}
               value={'The first stablecoin on Dash. Tether is everywhere, even on Platform-explorer thanks to Pshenmic team and DCG'}
-              loading={token.loading}
-              error={token.error || (!token.loading && token.data?.revision === undefined)}
+              loading={loading}
+              error={token.error || (!loading && token.data?.revision === undefined)}
             />
           </div>
         </div>

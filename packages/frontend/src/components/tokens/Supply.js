@@ -1,6 +1,7 @@
 'use client'
 
 import { Progress } from '@chakra-ui/react'
+import { BigNumber } from '../data'
 import './Supply.scss'
 
 function Supply ({ currentSupply, maxSupply, className, progressPosition = 'bottom' }) {
@@ -9,14 +10,14 @@ function Supply ({ currentSupply, maxSupply, className, progressPosition = 'bott
   return (
     <div className={`Supply ${progressClass} ${className || ''}`}>
       <div className={'Supply__Titles'}>
-        <span className={'Supply__CurrentSupply'}>{currentSupply}</span>
-        <span className={'Supply__MaxSupply'}>{maxSupply}</span>
+        <span className={'Supply__CurrentSupply'}><BigNumber>{currentSupply}</BigNumber></span>
+        <span className={'Supply__MaxSupply'}><BigNumber>{maxSupply}</BigNumber></span>
       </div>
       <Progress
         className={'Supply__Progress'}
-        value={(parseInt(currentSupply.replace(/\D/g, '')) / parseInt(maxSupply.replace(/\D/g, ''))) * 100}
+        value={(Number(currentSupply) / Number(maxSupply)) * 100}
         height={'1px'}
-        width={'9rem'}
+        width={'100%'}
         colorScheme={'gray'}
       />
     </div>
