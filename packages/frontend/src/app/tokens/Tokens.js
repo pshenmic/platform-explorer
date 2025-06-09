@@ -26,8 +26,8 @@ const mockTokens = [
     ticker: 'DGLD',
     tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
     dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    currentSupply: '40 MLN',
-    maxSupply: '50 MLN',
+    currentSupply: '40000',
+    maxSupply: '500000',
     ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
   },
   {
@@ -35,8 +35,8 @@ const mockTokens = [
     ticker: 'CRSL',
     tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
     dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    currentSupply: '40 MLN',
-    maxSupply: '50 MLN',
+    currentSupply: '40000',
+    maxSupply: '500000',
     ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
   },
   {
@@ -44,8 +44,8 @@ const mockTokens = [
     ticker: 'ALPH',
     tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
     dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    currentSupply: '40 MLN',
-    maxSupply: '50 MLN',
+    currentSupply: '40000',
+    maxSupply: '500000',
     ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
   },
   {
@@ -53,8 +53,8 @@ const mockTokens = [
     ticker: 'BTCN',
     tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
     dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    currentSupply: '40 MLN',
-    maxSupply: '50 MLN',
+    currentSupply: '40000',
+    maxSupply: '500000',
     ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
   },
   {
@@ -62,8 +62,8 @@ const mockTokens = [
     ticker: 'GMMT',
     tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
     dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    currentSupply: '40 MLN',
-    maxSupply: '50 MLN',
+    currentSupply: '40000',
+    maxSupply: '500000',
     ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
   }
 ]
