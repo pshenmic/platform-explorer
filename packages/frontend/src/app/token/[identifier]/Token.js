@@ -76,7 +76,7 @@ function Token ({ identifier }) {
       className={'TokenPage'}
       title={'Token info'}
     >
-       <TokenTotalCard token={token}/>
+       <TokenTotalCard token={token} />
 
       <InfoContainer styles={['tabs']} className={'tokenPage__ListContainer'}>
         <Tabs onChange={setActiveTab} index={activeTab}>
