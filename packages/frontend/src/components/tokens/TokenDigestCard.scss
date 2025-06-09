@@ -1,0 +1,226 @@
+@use '../../styles/mixins';
+@import '../../styles/variables';
+
+.TokenDigestCard {
+  @include mixins.DigestCard();
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+
+  &--Loading & {
+    .LoadingLine {
+      height: 24px;
+    }
+  }
+
+  &__TopCards {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+  }
+
+  &__SupplyCard {
+    width: 100%;
+
+    .ValueCard {
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      height: 100%;
+      padding: 24px;
+      background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+      border-radius: $border-radius-def;
+
+      svg {
+        width: 1.75rem;
+        height: auto;
+      }
+    }
+
+    &--Minted {
+      .ValueCard {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+  }
+
+  &__CurrentSupplyTitle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 88px;
+  }
+
+  &__SupplyCardTitle {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__SupplyData {
+    flex-grow: 1;
+  }
+
+
+  &__TotalSupplyTitle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    align-self: flex-end;
+  }
+
+  &__SupplyFooterTitle {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+    text-align: right;
+    line-height: 1.1;
+  }
+
+  &__StatsCards {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+  }
+
+  &__BurnFreezeCards {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+  }
+
+  &__StatCard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    padding: 24px;
+    background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+    border-radius: $border-radius-def;
+    width: 100%;
+
+    .ValueCard {
+      width: 100%;
+      padding: 0;
+      background: transparent;
+    }
+  }
+
+  &__StatHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__StatTitle {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+    white-space: nowrap;
+  }
+
+  &__StatValue {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8125rem;
+    line-height: 1.32;
+    color: var(--chakra-colors-white);
+    text-align: right;
+  }
+
+  &__DistributionType {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  &__DistributionLabel {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__DistributionValue {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.6875rem;
+    line-height: 1.32;
+    color: var(--chakra-colors-green-300);
+  }
+
+  &__DistributionIcon {
+    margin-left: 8px;
+  }
+
+  &__InfoLine {
+    gap: 4px;
+    column-gap: 8px;
+
+    .InfoLine__Value {
+      text-align: right;
+    }
+  }
+
+  &__ValueContainer {
+    display: flex;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  // Responsive breakpoints
+  @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
+  screen and (max-width: $breakpoint-sm) {
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+
+    &__StatsCards,
+    &__BurnFreezeCards {
+      flex-direction: column;
+    }
+
+    &__StatCard {
+      width: 100%;
+    }
+
+    &__SupplyData {
+      align-items: stretch;
+      width: 100%;
+    }
+
+    &__SupplyCardFooter {
+      align-self: flex-start;
+    }
+  }
+
+  @container (max-width: 24em) {
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+
+    &__InfoLine {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .InfoLine__Value {
+        width: 100%;
+        text-align: left;
+      }
+    }
+
+    &__GasSpent {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    &__DistributionType {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  }
+}
