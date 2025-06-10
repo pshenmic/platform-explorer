@@ -9,47 +9,15 @@
   &__Content {
     @include localisation.Columns();
     align-items: center;
-
-    &--Inline {
-      display: inline !important;
-    }
   }
 
   &__Column {
     @include localisation.Column();
-    font-size: 0.688rem;
-
-    &--Language {
-      font-size: 0.75rem;
-    }
-
-    &--Plural {
-      flex-direction: column;
-      align-items: flex-start;
-      overflow: hidden;
-      display: flex;
-    }
-
-    &--Singular {
-      font-size: 0.688rem;
-      color: var(--chakra-colors-gray-250);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+    color: #ffffff;
+    font-size: 0.75rem;
 
     &--Capitalize {
       justify-content: flex-end;
     }
-  }
-
-  &__Plural, &__Singular {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    word-break: break-all;
-    white-space: break-spaces;
-    min-width: 100px;
-    width: 100%;
   }
 }
