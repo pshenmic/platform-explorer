@@ -22,6 +22,7 @@
 
   &__SupplyCardContainer {
     width: 100%;
+    min-height: 4.75rem;
   }
 
   &__SupplyCard {
@@ -76,18 +77,19 @@
     .ValueContainer {
       width: 50%;
       line-height: 1.1;
+      min-height: 4.75rem;
     }
   }
 
-  &__BurnFreezeCards {
-    display: flex;
-    gap: 16px;
-    width: 100%;
-
-    .ValueContainer {
-      width: 50%;
-    }
-  }
+  //&__BurnFreezeCards {
+  //  display: flex;
+  //  gap: 16px;
+  //  width: 100%;
+  //
+  //  .ValueContainer {
+  //    width: 50%;
+  //  }
+  //}
 
   &__StatCard {
     display: flex;

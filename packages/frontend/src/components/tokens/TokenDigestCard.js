@@ -76,29 +76,25 @@ function TokenDigestCard ({ token, className, loading, error }) {
       </div>
 
       {/* Burn and Freeze Row */}
-      <div className={'TokenDigestCard__BurnFreezeCards'}>
+      <div className={'TokenDigestCard__StatsCards'}>
         <ValueContainer>
-          <div className={'TokenDigestCard__StatCard'}>
-            <div className={'TokenDigestCard__StatHeader'}>
-              <TokenBurnIcon />
-              <span className={'TokenDigestCard__StatTitle'}>Burnt:</span>
-            </div>
-            <div className={'TokenDigestCard__StatValue'}>
-              {mockData.burnt}
-            </div>
-          </div>
+          <InfoLine
+            title={'Burnt'}
+            value={mockData.burnt}
+            icon={<TokenBurnIcon/>}
+            loading={loading}
+            error={error}
+          />
         </ValueContainer>
 
         <ValueContainer>
-          <div className={'TokenDigestCard__StatCard'}>
-            <div className={'TokenDigestCard__StatHeader'}>
-              <TokenFreezeIcon />
-              <span className={'TokenDigestCard__StatTitle'}>Frozen:</span>
-            </div>
-            <div className={'TokenDigestCard__StatValue'}>
-              {mockData.frozen}
-            </div>
-          </div>
+          <InfoLine
+            title={'Frozen'}
+            value={mockData.frozen}
+            icon={<TokenFreezeIcon/>}
+            loading={loading}
+            error={error}
+          />
         </ValueContainer>
       </div>
 
