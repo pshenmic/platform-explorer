@@ -31,6 +31,11 @@
     background: rgba(var(--chakra-colors-green-label-rgb), .2);
   }
 
+  &--Emeralds {
+    color: var(--chakra-colors-green-emeralds);
+    background: rgba(var(--chakra-colors-green-emeralds-rgb), .2);
+  }
+
   &--Blue {
     color: var(--chakra-colors-brand-light);
     background: rgba(var(--chakra-colors-brand-normal-rgb), .2);

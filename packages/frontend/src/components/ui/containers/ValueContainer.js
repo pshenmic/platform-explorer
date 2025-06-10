@@ -33,6 +33,7 @@ function ValueContainer ({
     default: '',
     red: 'ValueContainer--Red',
     green: 'ValueContainer--Green',
+    emeralds: 'ValueContainer--Emeralds',
     blue: 'ValueContainer--Blue',
     brand: 'ValueContainer--Brand',
     lightGray: 'ValueContainer--LightGray',
