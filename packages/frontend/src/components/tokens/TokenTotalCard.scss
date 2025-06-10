@@ -84,6 +84,16 @@
     }
   }
 
+  &__LocalisationShowButton {
+    width: max-content;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+
+    svg {
+      transition: .2s;
+    }
+  }
+
   &__PublicKeysList {
     position: absolute;
     width: 100%;
@@ -97,7 +107,32 @@
     }
   }
 
+  &__LocalisationList {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    opacity: 0;
+    transition: opacity .3s;
+
+    &--Show {
+      position: relative;
+      opacity: 1;
+    }
+  }
+
   &__PublicKeysListContainer {
+    transition: .3s !important;
+
+    &--Hidden {
+      margin-top: -$gap !important;
+    }
+
+    &--Mobile {
+      display: none !important;
+    }
+  }
+
+  &__LocalisationListContainer {
     transition: .3s !important;
 
     &--Hidden {
@@ -163,6 +198,20 @@
     }
 
     &__PublicKeysListContainer {
+      &--Hidden {
+        margin-top: -$gap !important;
+      }
+
+      &--Mobile {
+        display: block !important;
+      }
+
+      &--Desktop {
+        display: none !important;
+      }
+    }
+
+    &__LocalisationListContainer {
       &--Hidden {
         margin-top: -$gap !important;
       }
