@@ -11,7 +11,7 @@ import {
 } from '../ui/icons'
 import './TokenDigestCard.scss'
 
-function TokenDigestCard ({ token, className }) {
+function TokenDigestCard ({ token, className, loading, error }) {
   const mockData = {
     minted: 342342941941,
     maxSupply: 100000000000000,
@@ -54,28 +54,24 @@ function TokenDigestCard ({ token, className }) {
 
       {/* Middle Row - Stats Cards */}
       <div className={'TokenDigestCard__StatsCards'}>
-        <ValueContainer>
-          <div className={'TokenDigestCard__StatCard'}>
-            <div className={'TokenDigestCard__StatHeader'}>
-              <TransactionsIcon />
-              <span className={'TokenDigestCard__StatTitle'}>Total<br/>Transactions:</span>
-            </div>
-            <div className={'TokenDigestCard__StatValue'}>
-              {mockData.totalTransactions}
-            </div>
-          </div>
+        <ValueContainer size={'xl'}>
+          <InfoLine
+            title={<>Total<br/>Transactions</>}
+            value={mockData.totalTransactions}
+            icon={<TransactionsIcon/>}
+            loading={loading}
+            error={error}
+          />
         </ValueContainer>
 
-        <ValueContainer>
-          <div className={'TokenDigestCard__StatCard'}>
-            <div className={'TokenDigestCard__StatHeader'}>
-              <MembersIcon/>
-              <span className={'TokenDigestCard__StatTitle'}>Holders:</span>
-            </div>
-            <div className={'TokenDigestCard__StatValue'}>
-              {mockData.holders}
-            </div>
-          </div>
+        <ValueContainer size={'xl'}>
+          <InfoLine
+            title={'Holders'}
+            icon={<MembersIcon/>}
+            value={mockData.holders}
+            loading={loading}
+            error={error}
+          />
         </ValueContainer>
       </div>
 

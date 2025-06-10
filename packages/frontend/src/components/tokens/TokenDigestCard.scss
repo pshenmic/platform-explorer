@@ -75,6 +75,7 @@
 
     .ValueContainer {
       width: 50%;
+      line-height: 1.1;
     }
   }
 
@@ -90,6 +91,7 @@
 
   &__StatCard {
     display: flex;
+    //display: inline-flex;
     justify-content: space-between;
     align-items: center;
     gap: 4px;
@@ -97,6 +99,7 @@
     //background: rgba(var(--chakra-colors-gray-800-rgb), .5);
     //border-radius: $border-radius-def;
     width: 100%;
+    line-height: 1.1;
 
     svg {
       width: 1.75rem;
@@ -111,7 +114,7 @@
   }
 
   &__StatHeader {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 12px;
   }
