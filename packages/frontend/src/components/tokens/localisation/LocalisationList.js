@@ -35,4 +35,4 @@ function LocalisationList ({ localisations = [], className }) {
   )
 }
 
-export default LocalisationList 
+export default LocalisationList

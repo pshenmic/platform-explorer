@@ -1,6 +1,4 @@
-import {Badge, Grid, GridItem} from '@chakra-ui/react'
-import { ValueCard } from '../../cards'
-import { ValueContainer } from '../../ui/containers'
+import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import { NotActive } from '../../data'
 import './LocalisationListItem.scss'
 
