@@ -7,8 +7,11 @@ import {
   TokenBurnIcon,
   TokenFreezeIcon,
   TransactionsIcon,
-  MembersIcon
+  MembersIcon,
+  InfoIcon
 } from '../ui/icons'
+import { ValueCard } from '../cards'
+import { Flex } from '@chakra-ui/react'
 import './TokenDigestCard.scss'
 
 function TokenDigestCard ({ token, className, loading, error }) {
@@ -98,31 +101,29 @@ function TokenDigestCard ({ token, className, loading, error }) {
         </ValueContainer>
       </div>
 
-      {/* Distribution Type */}
-      <div className={'TokenDigestCard__DistributionType'}>
-        <span className={'TokenDigestCard__DistributionLabel'}>Distribution Type:</span>
-        <ValueContainer colorScheme={'green'} size={'sm'}>
-          <span className={'TokenDigestCard__DistributionValue'}>
-            {mockData.distributionType}
-          </span>
-          <div className={'TokenDigestCard__DistributionIcon'}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="8" r="8" fill="#58F4BC"/>
-              <path d="M8 4V8" stroke="#181F22" strokeWidth="1.78" strokeLinecap="round"/>
-            </svg>
-          </div>
-        </ValueContainer>
-      </div>
+      <InfoLine
+        title={'Distribution Type'}
+        value={
+          <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+            <Flex gap={'0.5rem'} alignItems={'center'}>
+              {mockData.distributionType}
+              <InfoIcon width={'1rem'} height={'1rem'} color={'#58F4BC'}/>
+            </Flex>
+          </ValueContainer>
+        }
+        loading={loading}
+        error={error}
+      />
 
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Token Creator'}
         value={(
-          <ValueContainer link={`identity/${mockData.tokenCreator}`} className={'TokenDigestCard__ValueContainer'} clickable={false}>
+          <ValueCard link={`identity/${mockData.tokenCreator}`} className={'TokenDigestCard__ValueContainer'} clickable={false}>
             <Identifier avatar={true} copyButton={true} styles={['highlight-both']} ellipsis={false}>
               {mockData.tokenCreator}
             </Identifier>
-          </ValueContainer>
+          </ValueCard>
         )}
         loading={token?.loading}
         error={token?.error || (!token?.loading && !mockData.tokenCreator)}
