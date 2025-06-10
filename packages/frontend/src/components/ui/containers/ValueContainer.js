@@ -43,6 +43,7 @@ function ValueContainer ({
 
   const sizeClasses = {
     default: '',
+    xl: 'ValueContainer--SizeXl',
     lg: 'ValueContainer--SizeLg',
     md: 'ValueContainer--SizeMd',
     sm: 'ValueContainer--SizeSm',
