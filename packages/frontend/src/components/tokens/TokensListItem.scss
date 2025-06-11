@@ -23,6 +23,12 @@
       justify-content: flex-start;
     }
 
+    &--Supply {
+      .Supply {
+        width: 100%;
+      }
+    }
+
     &--OwnerIdentity {
       overflow: hidden;
       justify-content: flex-end;
