@@ -5,10 +5,10 @@
   gap: 24px;
 
   grid-template-columns: 
-    minmax(101px, 101px)
-    minmax(123px, 123px)
-    minmax(427px, 427px)
-    auto;
+    minmax(6.25rem, 6.25rem) // Language
+    minmax(7.75rem, 7.75rem) // Singular
+    minmax(14rem, 100rem) // Plural
+    auto; // Capitalize
 
   @container (max-width: 800px) {
     gap: 16px;
@@ -18,24 +18,5 @@
 @mixin Column () {
   display: flex;
   align-items: center;
-
-  &--Language {
-    max-width: 101px;
-    width: 100%;
-  }
-
-  &--Singular {
-    max-width: 123px;
-    width: 100%;
-  }
-
-  &--Plural {
-    max-width: 427px;
-    width: 100%;
-  }
-
-  &--Capitalize {
-    min-width: 80px;
-    width: 100%;
-  }
+  width: 100%;
 }
