@@ -2,7 +2,7 @@
 
 @mixin Columns () {
   display: grid;
-  gap: 24px;
+  gap: 1.5rem;
 
   grid-template-columns: 
     minmax(6.25rem, 6.25rem) // Language
@@ -11,7 +11,7 @@
     auto; // Capitalize
 
   @container (max-width: 800px) {
-    gap: 16px;
+    gap: 1rem;
   }
 }
 
