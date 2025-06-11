@@ -7,8 +7,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import './Token.scss'
 import { TokenTotalCard } from '../../../components/tokens'
+import './Token.scss'
 
 const tabs = [
   'activity',
@@ -74,9 +74,9 @@ function Token ({ identifier }) {
   return (
     <PageDataContainer
       className={'TokenPage'}
-      title={'Token info'}
+      title={'Token Info'}
     >
-       <TokenTotalCard token={token} />
+      <TokenTotalCard token={token} />
 
       <InfoContainer styles={['tabs']} className={'tokenPage__ListContainer'}>
         <Tabs onChange={setActiveTab} index={activeTab}>
