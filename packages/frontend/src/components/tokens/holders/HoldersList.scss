@@ -13,14 +13,9 @@
 
   &__ColumnTitle {
     @include holders.Column();
-    width: 100%;
     display: block;
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;
-
-    &:not(&--Holder) {
-      text-align: right;
-    }
   }
 } 

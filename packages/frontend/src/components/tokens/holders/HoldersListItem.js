@@ -32,22 +32,20 @@ function HoldersListItem ({ holder }) {
           }
         </GridItem>
 
-        <GridItem className={'HoldersListItem__Column HoldersListItem__Column--TokensAmount'}>
+        <GridItem className={'HoldersListItem__Column HoldersListItem__Column--TokensAmount HoldersListItem__Column--Number'}>
           <div className={'HoldersListItem__ColumnContent'}>
             <BigNumber>{holder.tokensAmount}</BigNumber>
           </div>
         </GridItem>
 
-        <GridItem className={'HoldersListItem__Column HoldersListItem__Column--DashAmount'}>
+        <GridItem className={'HoldersListItem__Column HoldersListItem__Column--DashAmount HoldersListItem__Column--Number'}>
           <div className={'HoldersListItem__ColumnContent'}>
             <BigNumber>{holder.dashAmount}</BigNumber>
           </div>
         </GridItem>
 
-        <GridItem className={'HoldersListItem__Column HoldersListItem__Column--LastActivity'}>
-          <div className={'HoldersListItem__ColumnContent'}>
-            <TimeDelta endDate={holder?.lastActivity}/>
-          </div>
+        <GridItem className={'HoldersListItem__Column HoldersListItem__Column--LastActivity HoldersListItem__Column--Timestamp'}>
+          <TimeDelta endDate={holder?.lastActivity}/>
         </GridItem>
       </Grid>
     </Link>

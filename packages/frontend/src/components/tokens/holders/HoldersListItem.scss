@@ -12,9 +12,9 @@
 
   &__Column {
     @include holders.Column();
-  }
 
-  &__ColumnContent {
-    overflow: hidden;
+    .LinkContainer {
+      overflow: hidden;
+    }
   }
-} 
+}

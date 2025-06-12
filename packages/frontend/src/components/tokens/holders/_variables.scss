@@ -1,6 +1,6 @@
 @mixin Columns () {
   display: grid;
-  gap: 16px;
+  gap: 1rem;
 
   grid-template-columns:
     8fr
@@ -32,23 +32,11 @@
 
 @mixin Column () {
   display: flex;
-  align-items: center;
   width: 100%;
 
-  &--Holder {
-    overflow: hidden;
-  }
-
-  &--TokensAmount {
+  &:last-child {
     justify-content: flex-end;
-  }
-
-  &--DashAmount {
-    justify-content: flex-end;
-  }
-
-  &--LastActivity {
-    justify-content: flex-end;
+    text-align: right;
   }
 
   @container (max-width: 45rem) {
