@@ -1,0 +1,87 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as act;
+@import '../../../styles/variables.scss';
+
+.ActivityListItem {
+  @include mixins.DefListItem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &__Content {
+    @include act.Columns();
+    flex: 1;
+  }
+
+  &__Column {
+    @include act.Column();
+  }
+
+  &__CreatorLink, &__RecipientLink {
+    position: relative;
+    z-index: 2;
+    transition: mixins.$transition-time-def;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  &__StatusIcon {
+    transition: $transition-time-def;
+    flex-shrink: 0;
+
+    &:hover, &:active {
+      transform: scale(1.07);
+    }
+  }
+
+  @container (max-width: 900px) {
+    &__Column {
+      &--Recipient {
+        width: max-content;
+
+        * {
+          display: none;
+        }
+
+        .ActivityList__Recipient,
+        .ImageGenerator,
+        img {
+          display: block !important;
+        }
+
+        .ImageGenerator {
+          margin: 0;
+        }
+      }
+    }
+
+    &__CreatorLink, &__RecipientLink {
+      &:after {
+        display: none;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, .1);
+      }
+    }
+  }
+
+  @container (max-width: 400px) {
+    padding: 5px 8px;
+
+    &__Column {
+      &, .ActivityList__Address {
+        font-size: 0.563rem;
+      }
+    }
+
+    &__TypeLabel {
+      font-size: 0.438rem !important;
+      line-height: 15px;
+    }
+
+    &__StatusIcon {
+      display: none !important;
+    }
+  }
+} 

@@ -1,0 +1,107 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as act;
+@import '../../../styles/variables.scss';
+
+.ActivityList {
+  @include mixins.List;
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include act.Columns();
+  }
+
+  &__ColumnTitle {
+    @include act.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &--Hash {
+      white-space: nowrap;
+    }
+
+    &--Amount {
+      text-align: center;
+    }
+
+    &--Creator, &--Recipient {
+      text-align: center;
+    }
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  @container (max-width: 900px) {
+    &__ColumnTitle {
+      &--Recipient {
+        white-space: nowrap;
+        width: 20px;
+      }
+
+      &--Type {
+        width: 60px;
+      }
+    }
+  }
+
+  @container (max-width: 600px) {
+    &__ColumnTitle {
+      &--Creator {
+        display: none;
+      }
+    }
+  }
+
+  @container (max-width: 400px) {
+    &__ColumnTitle {
+      &--Amount {
+        display: none;
+      }
+
+      &--Type {
+        width: max-content;
+      }
+    }
+  }
+
+  &__Creator,
+  &__Recipient {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__Address {
+    color: var(--chakra-colors-gray-250);
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.75rem;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 160px;
+    background: linear-gradient(90deg, 
+      #FFFFFF 0%, 
+      #FFFFFF 13.5%, 
+      rgba(255, 255, 255, 0) 13.6%, 
+      rgba(255, 255, 255, 0) 86%, 
+      #FFFFFF 86.1%, 
+      #FFFFFF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  &__Pagination {
+    margin-top: 20px;
+  }
+} 
