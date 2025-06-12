@@ -46,28 +46,6 @@ export default function ActivityListItem ({ activity }) {
     return configs[type?.toLowerCase()] || { color: 'gray', label: type || 'Unknown' }
   }
 
-  const Recipient = () => {
-    if (!activity?.recipient) return <NotActive>-</NotActive>
-
-    return (
-      <LinkContainer
-        onClick={e => {
-          e.stopPropagation()
-          e.preventDefault()
-          router.push(`/identity/${activity?.recipient}`)
-        }}
-      >
-        <Identifier
-          avatar={true}
-          styles={['highlight-both']}
-          clickable={true}
-        >
-          {activity.recipient}
-        </Identifier>
-      </LinkContainer>
-    )
-  }
-
   const typeConfig = getActivityTypeConfig(activity?.type)
 
   return (
@@ -102,12 +80,29 @@ export default function ActivityListItem ({ activity }) {
                 {activity.creator}
               </Identifier>
             </LinkContainer>
-            : <>-</>
+            : <NotActive>-</NotActive>
           }
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Recipient'}>
-          <Recipient/>
+          {activity?.recipient
+            ? <LinkContainer
+                onClick={e => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  router.push(`/identity/${activity?.recipient}`)
+                }}
+              >
+                <Identifier
+                  avatar={true}
+                  styles={['highlight-both']}
+                  clickable={true}
+                >
+                  {activity.recipient}
+                </Identifier>
+              </LinkContainer>
+            : <NotActive>-</NotActive>
+          }
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Amount'}>
