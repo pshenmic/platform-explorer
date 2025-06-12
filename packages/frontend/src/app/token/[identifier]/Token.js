@@ -8,6 +8,7 @@ import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { TokenTotalCard } from '../../../components/tokens'
+import { ActivityList } from '../../../components/tokens/activity'
 import { IdentitiesList } from '../../../components/identities'
 import './Token.scss'
 
@@ -117,6 +118,69 @@ const mockIdentities = {
   }
 }
 
+const mockActivities = [
+  {
+    id: 1,
+    timestamp: '2024-09-03T18:46:26.452Z',
+    txHash: '98876C29071F74E6048B32D5E123456789ABCDEF12',
+    amount: 109.23,
+    creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
+    recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
+    type: 'transfer',
+    status: 'completed'
+  },
+  {
+    id: 2,
+    timestamp: '2024-09-03T18:45:12.400Z',
+    txHash: '12345C29071F74E6048B32D5E123456789ABCDEF98',
+    amount: 12.5,
+    creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
+    recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
+    type: 'transfer',
+    status: 'completed'
+  },
+  {
+    id: 3,
+    timestamp: '2024-09-03T18:44:56.812Z',
+    txHash: 'ABCDEFC29071F74E6048B32D5E123456789ABCDEF',
+    amount: 5000.0,
+    creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
+    recipient: null,
+    type: 'mint',
+    status: 'completed'
+  },
+  {
+    id: 4,
+    timestamp: '2024-09-03T18:43:42.400Z',
+    txHash: 'FEDCBA9071F74E6048B32D5E123456789ABCDEF12',
+    amount: 1000.0,
+    creator: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
+    recipient: null,
+    type: 'burn',
+    status: 'completed'
+  },
+  {
+    id: 5,
+    timestamp: '2024-09-03T18:42:30.812Z',
+    txHash: '5432109071F74E6048B32D5E123456789ABCDEF12',
+    amount: 1540.24,
+    creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
+    recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
+    type: 'unfreeze',
+    status: 'completed'
+  },
+  {
+    id: 6,
+    timestamp: '2024-09-03T18:41:18.400Z',
+    txHash: 'ZYXWVU9071F74E6048B32D5E123456789ABCDEF12',
+    amount: 1000.99,
+    creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
+    recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
+    type: 'destroy',
+    status: 'completed'
+  }
+]
+
 const tabs = [
   'activity',
   'holders'
@@ -203,7 +267,7 @@ function Token ({ identifier }) {
           </TabList>
           <TabPanels>
             <TabPanel>
-              Activity
+              <ActivityList activities={mockActivities} loading={false} error={false}/>
             </TabPanel>
             <TabPanel>
               <IdentitiesList identities={mockIdentities.resultSet} loading={false} error={false}/>
