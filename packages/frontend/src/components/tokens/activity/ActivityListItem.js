@@ -1,6 +1,7 @@
 import { LinkContainer } from '../../ui/containers'
 import { StatusIcon } from '../../ui/status'
 import { Identifier, NotActive } from '../../data'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import TokenTransitionBadge from '../TokenTransitionBadge'
 import './ActivityListItem.scss'
@@ -33,7 +34,10 @@ export default function ActivityListItem ({ activity }) {
   }
 
   return (
-    <div className={'ActivityListItem'}>
+    <Link
+      href={`/transaction/${activity?.txHash}`}
+      className={'ActivityListItem'}
+    >
       <div className={'ActivityListItem__Content'}>
         <div className={'ActivityListItem__Column ActivityListItem__Column--Timestamp'}>
           <StatusIcon status={activity?.status || 'completed'} className={'ActivityListItem__StatusIcon'}/>
@@ -97,6 +101,6 @@ export default function ActivityListItem ({ activity }) {
           <TokenTransitionBadge typeId={activity?.type} className={'ActivityListItem__TypeLabel'}/>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
