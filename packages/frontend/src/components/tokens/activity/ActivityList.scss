@@ -6,6 +6,21 @@
   @include mixins.List;
   container-type: inline-size;
 
+  @container (max-width: 58rem) {
+    @include mixins.BrandScroll();
+    overflow-x: auto;
+  }
+
+  @media (max-width: 62rem) {
+    @include mixins.BrandScroll();
+    overflow-x: auto;
+  }
+
+  &__ScrollZone {
+    width: fit-content;
+    min-width: 100%;
+  }
+
   &__ColumnTitles {
     @include mixins.defListTitles;
     @include act.Columns();
@@ -13,17 +28,5 @@
 
   &__ColumnTitle {
     @include act.Column();
-    width: 100%;
-    //word-break: normal;
-    //white-space: normal;
-    //overflow-wrap: break-word;
-
-    //&--Hash {
-    //  white-space: nowrap;
-    //}
-
-    &:last-child {
-      text-align: right;
-    }
   }
 }
