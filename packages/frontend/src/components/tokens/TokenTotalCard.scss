@@ -2,9 +2,9 @@
 @import '../../styles/variables';
 
 .TokenTotalCard {
-  $gap: 14px;
   @include mixins.TotalCard();
   @include mixins.InfoContainerPadding(padding, 0px, true);
+  $gap: 1rem;
   display: flex;
   flex-direction: column;
   gap: $gap;

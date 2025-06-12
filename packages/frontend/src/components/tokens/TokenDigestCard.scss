@@ -7,6 +7,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 24px;
+  container-type: inline-size;
 
   &--Loading & {
     .LoadingLine {
@@ -54,7 +55,6 @@
     flex-grow: 1;
   }
 
-
   &__TotalSupplyTitle {
     display: flex;
     align-items: center;
@@ -69,93 +69,16 @@
     line-height: 1.1;
   }
 
-  &__StatsCards {
+  &__RowContainer {
     display: flex;
     gap: 16px;
     width: 100%;
 
     .ValueContainer {
-      width: 50%;
+      width: 100%;
       line-height: 1.1;
       min-height: 4.75rem;
     }
-  }
-
-  //&__BurnFreezeCards {
-  //  display: flex;
-  //  gap: 16px;
-  //  width: 100%;
-  //
-  //  .ValueContainer {
-  //    width: 50%;
-  //  }
-  //}
-
-  &__StatCard {
-    display: flex;
-    //display: inline-flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 4px;
-    //padding: 24px;
-    //background: rgba(var(--chakra-colors-gray-800-rgb), .5);
-    //border-radius: $border-radius-def;
-    width: 100%;
-    line-height: 1.1;
-
-    svg {
-      width: 1.75rem;
-      height: auto;
-    }
-
-    .ValueCard {
-      width: 100%;
-      padding: 0;
-      background: transparent;
-    }
-  }
-
-  &__StatHeader {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  &__StatTitle {
-    font-size: 0.75rem;
-    color: var(--chakra-colors-gray-250);
-    white-space: nowrap;
-  }
-
-  &__StatValue {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 0.8125rem;
-    line-height: 1.32;
-    color: var(--chakra-colors-white);
-    text-align: right;
-  }
-
-  &__DistributionType {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-  }
-
-  &__DistributionLabel {
-    font-size: 0.75rem;
-    color: var(--chakra-colors-gray-250);
-  }
-
-  &__DistributionValue {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 0.6875rem;
-    line-height: 1.32;
-    color: var(--chakra-colors-green-300);
-  }
-
-  &__DistributionIcon {
-    margin-left: 8px;
   }
 
   &__InfoLine {
@@ -173,61 +96,26 @@
     overflow: hidden;
   }
 
-  //// Responsive breakpoints
-  //@media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
-  //screen and (max-width: $breakpoint-sm) {
-  //  &--Loading {
-  //    .InfoLine__Value {
-  //      width: 100% !important;
-  //    }
-  //  }
-  //
-  //  &__StatsCards,
-  //  &__BurnFreezeCards {
-  //    flex-direction: column;
-  //  }
-  //
-  //  &__StatCard {
-  //    width: 100%;
-  //  }
-  //
-  //  &__SupplyData {
-  //    align-items: stretch;
-  //    width: 100%;
-  //  }
-  //
-  //  &__SupplyCardFooter {
-  //    align-self: flex-start;
-  //  }
-  //}
-  //
-  //@container (max-width: 24em) {
-  //  &--Loading {
-  //    .InfoLine__Value {
-  //      width: 100% !important;
-  //    }
-  //  }
-  //
+  @container (max-width: 35rem) {
+    &__RowContainer {
+      flex-wrap: wrap;
+    }
+  }
+
+  //@media screen and (max-width: $breakpoint-sm) {
   //  &__InfoLine {
-  //    flex-direction: column;
-  //    align-items: flex-start;
+  //    flex-wrap: wrap;
   //
-  //    .InfoLine__Value {
-  //      width: 100%;
-  //      text-align: left;
+  //    &--Validator {
+  //      .InfoLine__Value {
+  //        width: 100%;
+  //
+  //        .Identifier {
+  //          width: 100%;
+  //          justify-content: space-between;
+  //        }
+  //      }
   //    }
-  //  }
-  //
-  //  &__GasSpent {
-  //    flex-direction: column;
-  //    align-items: flex-start;
-  //    gap: 4px;
-  //  }
-  //
-  //  &__DistributionType {
-  //    flex-direction: column;
-  //    align-items: flex-start;
-  //    gap: 8px;
   //  }
   //}
 }

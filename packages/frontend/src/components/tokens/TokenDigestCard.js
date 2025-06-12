@@ -56,7 +56,7 @@ function TokenDigestCard ({ token, className, loading, error }) {
       </div>
 
       {/* Middle Row - Stats Cards */}
-      <div className={'TokenDigestCard__StatsCards'}>
+      <div className={'TokenDigestCard__RowContainer'}>
         <ValueContainer size={'xl'}>
           <InfoLine
             title={<>Total<br/>Transactions</>}
@@ -79,7 +79,7 @@ function TokenDigestCard ({ token, className, loading, error }) {
       </div>
 
       {/* Burn and Freeze Row */}
-      <div className={'TokenDigestCard__StatsCards'}>
+      <div className={'TokenDigestCard__RowContainer'}>
         <ValueContainer>
           <InfoLine
             title={'Burnt'}
