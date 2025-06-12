@@ -82,7 +82,7 @@ const mockActivities = [
     amount: 109.23,
     creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
     recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
-    type: 'transfer',
+    type: 2,
     status: 'completed'
   },
   {
@@ -92,7 +92,7 @@ const mockActivities = [
     amount: 12.5,
     creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
     recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
-    type: 'transfer',
+    type: 2,
     status: 'completed'
   },
   {
@@ -102,7 +102,7 @@ const mockActivities = [
     amount: 5000.0,
     creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
     recipient: null,
-    type: 'mint',
+    type: 1,
     status: 'completed'
   },
   {
@@ -112,7 +112,7 @@ const mockActivities = [
     amount: 1000.0,
     creator: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
     recipient: null,
-    type: 'burn',
+    type: 0,
     status: 'completed'
   },
   {
@@ -122,7 +122,7 @@ const mockActivities = [
     amount: 1540.24,
     creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
     recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
-    type: 'unfreeze',
+    type: 4,
     status: 'completed'
   },
   {
@@ -132,7 +132,7 @@ const mockActivities = [
     amount: 1000.99,
     creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
     recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
-    type: 'destroy',
+    type: 5,
     status: 'completed'
   }
 ]

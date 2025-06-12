@@ -1,8 +1,8 @@
 import { LinkContainer } from '../../ui/containers'
 import { StatusIcon } from '../../ui/status'
-import { TypeLabel } from '../../ui/labels'
 import { Identifier, NotActive } from '../../data'
 import { useRouter } from 'next/navigation'
+import TokenTransitionBadge from '../TokenTransitionBadge'
 import './ActivityListItem.scss'
 
 export default function ActivityListItem ({ activity }) {
@@ -31,22 +31,6 @@ export default function ActivityListItem ({ activity }) {
     const diffInDays = Math.floor(diffInHours / 24)
     return `${diffInDays} d. ago`
   }
-
-  const getActivityTypeConfig = (type) => {
-    const configs = {
-      transfer: { color: 'green', label: 'Transfer' },
-      mint: { color: 'blue', label: 'Mint' },
-      burn: { color: 'red', label: 'Burn' },
-      freeze: { color: 'gray', label: 'Freeze' },
-      unfreeze: { color: 'orange', label: 'Unfreeze' },
-      destroy: { color: 'red', label: 'Destroy' },
-      claim: { color: 'green', label: 'Claim' },
-      emergency: { color: 'red', label: 'Emergency' }
-    }
-    return configs[type?.toLowerCase()] || { color: 'gray', label: type || 'Unknown' }
-  }
-
-  const typeConfig = getActivityTypeConfig(activity?.type)
 
   return (
     <div className={'ActivityListItem'}>
@@ -110,11 +94,7 @@ export default function ActivityListItem ({ activity }) {
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Type'}>
-          <TypeLabel
-            type={typeConfig.label}
-            colorScheme={typeConfig.color}
-            className={'ActivityListItem__TypeLabel'}
-          />
+          <TokenTransitionBadge typeId={activity?.type} className={'ActivityListItem__TypeLabel'}/>
         </div>
       </div>
     </div>

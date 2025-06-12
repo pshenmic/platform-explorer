@@ -14,50 +14,16 @@
   &__ColumnTitle {
     @include act.Column();
     width: 100%;
-    display: block;
-    word-break: normal;
-    white-space: normal;
-    overflow-wrap: break-word;
+    //word-break: normal;
+    //white-space: normal;
+    //overflow-wrap: break-word;
 
-    &--Hash {
-      white-space: nowrap;
-    }
+    //&--Hash {
+    //  white-space: nowrap;
+    //}
 
     &:last-child {
       text-align: right;
-    }
-  }
-
-  @container (max-width: 900px) {
-    &__ColumnTitle {
-      &--Recipient {
-        white-space: nowrap;
-        width: 20px;
-      }
-
-      &--Type {
-        width: 60px;
-      }
-    }
-  }
-
-  @container (max-width: 600px) {
-    &__ColumnTitle {
-      &--Creator {
-        display: none;
-      }
-    }
-  }
-
-  @container (max-width: 400px) {
-    &__ColumnTitle {
-      &--Amount {
-        display: none;
-      }
-
-      &--Type {
-        width: max-content;
-      }
     }
   }
 }
