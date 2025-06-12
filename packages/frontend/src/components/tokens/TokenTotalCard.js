@@ -100,11 +100,11 @@ function TokenTotalCard ({ token, loading }) {
               error={token.error}
             />
             <InfoLine
-              className={'TokenTotalCard__InfoLine'}
+              className={'TokenTotalCard__InfoLine TokenTotalCard__InfoLine--DataContract'}
               title={'Data Contract'}
               value={
                 <ValueCard link={`/dataContract/${'Cgjuqav7uD7FnWNqNyHEWet382Yzx7NYNRUNqfJ3d2je'}`}>
-                  <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                  <Identifier avatar={true} copyButton={true} ellipsis={false} styles={['highlight-both']}>
                     Cgjuqav7uD7FnWNqNyHEWet382Yzx7NYNRUNqfJ3d2je
                   </Identifier>
                 </ValueCard>

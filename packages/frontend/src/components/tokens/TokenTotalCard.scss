@@ -47,6 +47,12 @@
   }
 
   &__InfoLine {
+    &--DataContract {
+      .InfoLine__Value {
+        overflow: hidden;
+      }
+    }
+
     &--Names {
       align-items: baseline;
       flex-wrap: wrap;
@@ -62,7 +68,6 @@
         container-type: inline-size;
         width: 100%;
       }
-
 
       .Identifier__SymbolsContainer {
         margin-left: auto;
