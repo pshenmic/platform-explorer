@@ -2,140 +2,43 @@
 
 @mixin Columns () {
   display: grid;
-  gap: 16px;
+  gap: 1rem;
 
   grid-template-columns: 
-    minmax(100px, 100px) // time
-    minmax(0, 180px) // hash
-    minmax(120px, 120px) // amount
-    minmax(0, 200px) // creator
-    minmax(0, 200px) // recipient
-    100px; // type
+    1fr // time
+    2fr // hash
+    2fr // creator
+    2fr // recipient
+    1fr // amount
+    0.5fr; // type
 
-  @container (max-width: 1200px) {
-    grid-template-columns: 
-      minmax(100px, 100px)
-      minmax(0, 160px)
-      minmax(100px, 100px)
-      minmax(0, 180px)
-      minmax(0, 180px)
-      80px;
+  @container (max-width: 104rem) {
+    grid-template-columns:
+    7.5rem // time
+    minmax(0, 25rem) // hash
+    minmax(0, 25rem) // creator
+    minmax(0, 25rem) // recipient
+    minmax(0, 10rem) // amount
+    5rem; // type
   }
 
-  @container (max-width: 900px) {
-    grid-template-columns: 
-      minmax(80px, 80px)
-      minmax(0, 140px)
-      minmax(80px, 80px)
-      minmax(0, 1fr)
-      20px
-      60px;
-  }
-
-  @container (max-width: 600px) {
-    gap: 12px;
-    grid-template-columns: 
-      minmax(80px, 80px)
-      minmax(0, 140px)
-      minmax(80px, 80px)
-      auto;
-  }
-
-  @container (max-width: 400px) {
-    grid-template-columns: 
-      minmax(60px, 60px)
-      minmax(0, 120px)
-      auto;
+  @container (max-width: 48rem) {
+    grid-template-columns:
+    7.5rem // time
+    minmax(0, 25rem) // hash
+    minmax(0, 25rem) // creator
+    minmax(0, 25rem) // recipient
+    minmax(0, 10rem) // amount
+    5rem; // type
   }
 }
 
 @mixin Column () {
   display: flex;
-  align-items: center;
-
-  &--Timestamp {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    color: #fff;
-  }
-
-  &--Hash {
-    max-width: 180px;
-    color: var(--chakra-colors-gray-250);
-    font-family: 'Roboto Mono', monospace;
-    font-size: 0.75rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &--Amount {
-    justify-content: center;
-    font-family: 'Roboto Mono', monospace;
-    font-weight: 700;
-    font-size: 0.75rem;
-    color: #fff;
-    white-space: nowrap;
-  }
-
-  &--Creator, &--Recipient {
-    max-width: 200px;
-    width: 100%;
-    color: var(--chakra-colors-gray-250);
-    font-family: 'Roboto Mono', monospace;
-    font-size: 0.75rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  width: 100%;
 
   &--Type {
     justify-content: flex-end;
     white-space: nowrap;
   }
-
-  @container (max-width: 900px) {
-    &--Recipient {
-      width: max-content;
-
-      * {
-        display: none;
-      }
-
-      .ActivityList__Recipient,
-      .ImageGenerator,
-      img {
-        display: block !important;
-      }
-
-      .ImageGenerator {
-        margin: 0;
-      }
-    }
-  }
-
-  @container (max-width: 600px) {
-    &--Creator {
-      display: none;
-    }
-  }
-
-  @container (max-width: 400px) {
-    &--Amount {
-      display: none;
-    }
-  }
 }
-
-@mixin CardPaddings ($property) {
-  #{$property}: 40px !important;
-
-  @media screen and (max-width: $breakpoint-md) {
-    #{$property}: 32px !important;
-  }
-
-  @media screen and (max-width: $breakpoint-sm) {
-    #{$property}: 16px !important;
-  }
-} 

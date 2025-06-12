@@ -46,28 +46,6 @@ export default function ActivityListItem ({ activity }) {
     return configs[type?.toLowerCase()] || { color: 'gray', label: type || 'Unknown' }
   }
 
-  const Creator = () => {
-    if (!activity?.creator) return <NotActive>-</NotActive>
-
-    return (
-      <LinkContainer
-        onClick={e => {
-          e.stopPropagation()
-          e.preventDefault()
-          router.push(`/identity/${activity?.creator}`)
-        }}
-      >
-        <Identifier
-          avatar={true}
-          styles={['highlight-both']}
-          clickable={true}
-        >
-          {activity.creator}
-        </Identifier>
-      </LinkContainer>
-    )
-  }
-
   const Recipient = () => {
     if (!activity?.recipient) return <NotActive>-</NotActive>
 
@@ -94,10 +72,9 @@ export default function ActivityListItem ({ activity }) {
 
   return (
     <div className={'ActivityListItem'}>
-      <StatusIcon status={activity?.status || 'completed'} className={'ActivityListItem__StatusIcon'} />
-
       <div className={'ActivityListItem__Content'}>
         <div className={'ActivityListItem__Column ActivityListItem__Column--Timestamp'}>
+          <StatusIcon status={activity?.status || 'completed'} className={'ActivityListItem__StatusIcon'}/>
           {formatTime(activity?.timestamp)}
         </div>
 
@@ -108,16 +85,33 @@ export default function ActivityListItem ({ activity }) {
           }
         </div>
 
-        <div className={'ActivityListItem__Column ActivityListItem__Column--Amount'}>
-          {formatAmount(activity?.amount)}
-        </div>
-
         <div className={'ActivityListItem__Column ActivityListItem__Column--Creator'}>
-          <Creator/>
+          {activity.creator
+            ? <LinkContainer
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push(`/identity/${activity?.creator}`)
+              }}
+            >
+              <Identifier
+                avatar={true}
+                styles={['highlight-both']}
+                clickable={true}
+              >
+                {activity.creator}
+              </Identifier>
+            </LinkContainer>
+            : <>-</>
+          }
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Recipient'}>
           <Recipient/>
+        </div>
+
+        <div className={'ActivityListItem__Column ActivityListItem__Column--Amount'}>
+          {formatAmount(activity?.amount)}
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Type'}>

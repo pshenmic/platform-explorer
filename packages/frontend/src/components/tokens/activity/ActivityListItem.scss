@@ -4,8 +4,8 @@
 
 .ActivityListItem {
   @include mixins.DefListItem;
-  display: flex;
-  align-items: center;
+  //display: flex;
+  //align-items: center;
   gap: 12px;
 
   &__Content {
@@ -15,73 +15,82 @@
 
   &__Column {
     @include act.Column();
+
+    &--Timestamp {
+      align-items: center;
+      gap: 0.5rem;
+    }
   }
 
-  &__CreatorLink, &__RecipientLink {
-    position: relative;
-    z-index: 2;
-    transition: mixins.$transition-time-def;
+  .LinkContainer {
     overflow: hidden;
-    border-radius: 4px;
   }
+
+    //&__CreatorLink, &__RecipientLink {
+  //  position: relative;
+  //  z-index: 2;
+  //  transition: mixins.$transition-time-def;
+  //  overflow: hidden;
+  //  border-radius: 4px;
+  //}
 
   &__StatusIcon {
     transition: $transition-time-def;
     flex-shrink: 0;
 
     &:hover, &:active {
-      transform: scale(1.07);
+      //transform: scale(1.07);
     }
   }
 
-  @container (max-width: 900px) {
-    &__Column {
-      &--Recipient {
-        width: max-content;
+  //@container (max-width: 900px) {
+  //  &__Column {
+  //    &--Recipient {
+  //      width: max-content;
+  //
+  //      * {
+  //        display: none;
+  //      }
+  //
+  //      .ActivityList__Recipient,
+  //      .ImageGenerator,
+  //      img {
+  //        display: block !important;
+  //      }
+  //
+  //      .ImageGenerator {
+  //        margin: 0;
+  //      }
+  //    }
+  //  }
+  //
+  //  &__CreatorLink, &__RecipientLink {
+  //    &:after {
+  //      display: none;
+  //    }
+  //
+  //    &:hover {
+  //      background: rgba(255, 255, 255, .1);
+  //    }
+  //  }
+  //}
 
-        * {
-          display: none;
-        }
-
-        .ActivityList__Recipient,
-        .ImageGenerator,
-        img {
-          display: block !important;
-        }
-
-        .ImageGenerator {
-          margin: 0;
-        }
-      }
-    }
-
-    &__CreatorLink, &__RecipientLink {
-      &:after {
-        display: none;
-      }
-
-      &:hover {
-        background: rgba(255, 255, 255, .1);
-      }
-    }
-  }
-
-  @container (max-width: 400px) {
-    padding: 5px 8px;
-
-    &__Column {
-      &, .ActivityList__Address {
-        font-size: 0.563rem;
-      }
-    }
-
-    &__TypeLabel {
-      font-size: 0.438rem !important;
-      line-height: 15px;
-    }
-
-    &__StatusIcon {
-      display: none !important;
-    }
-  }
+  //@container (max-width: 400px) {
+  //  padding: 5px 8px;
+  //
+  //  &__Column {
+  //    &, .ActivityList__Address {
+  //      font-size: 0.563rem;
+  //    }
+  //  }
+  //
+  //  &__TypeLabel {
+  //    font-size: 0.438rem !important;
+  //    line-height: 15px;
+  //  }
+  //
+  //  &__StatusIcon {
+  //    display: none !important;
+  //  }
+  //}
 } 

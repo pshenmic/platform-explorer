@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import ActivityListItem from './ActivityListItem'
 import { EmptyListMessage } from '../../ui/lists'
-import { Grid, GridItem } from '@chakra-ui/react'
+import { Grid, GridItem, useBreakpointValue } from '@chakra-ui/react'
 import { LoadingList } from '../../loading'
 import Pagination from '../../pagination'
 import { ErrorMessageBlock } from '../../Errors'
@@ -16,6 +16,7 @@ export default function ActivityList ({
   loading,
   itemsCount = 10
 }) {
+  const isLargeScreen = useBreakpointValue({ base: true, lg: false })
   const headerExtraClass = {
     default: '',
     light: 'ActivityList__ColumnTitles--Light'
@@ -30,14 +31,14 @@ export default function ActivityList ({
         <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Hash'}>
           Hash
         </GridItem>
-        <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Amount'}>
-          Amount USDT
-        </GridItem>
         <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Creator'}>
-          Transaction Creator
+          Tx Creator
         </GridItem>
         <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Recipient'}>
           Recipient
+        </GridItem>
+        <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Amount'}>
+          Amount {!isLargeScreen && <>Tokens</>}
         </GridItem>
         <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Type'}>
           Type
