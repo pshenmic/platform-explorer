@@ -32,26 +32,19 @@ function TokenDigestCard ({ token, className, loading, error }) {
   return (
     <div className={`TokenDigestCard ${className || ''} ${token?.loading ? 'TokenDigestCard--Loading' : ''}`}>
       <div className={'TokenDigestCard__TopCards'}>
-        <ValueContainer className={'TokenDigestCard__SupplyCardContainer'}>
-          <div className={'TokenDigestCard__SupplyCard'}>
-            <div className={'TokenDigestCard__CurrentSupplyTitle'}>
-              <TokenMintIcon/>
-              <span className={'TokenDigestCard__SupplyCardTitle'}>Minted</span>
-            </div>
-
-            <div className={'TokenDigestCard__SupplyData'}>
-              <Supply
-                currentSupply={mockData.minted}
-                maxSupply={mockData.maxSupply}
-                progressPosition="bottom"
-              />
-            </div>
-
-            <div className={'TokenDigestCard__TotalSupplyTitle'}>
-              <span className={'TokenDigestCard__SupplyFooterTitle'}>Total<br/>Supply</span>
-              <TokenTotalIcon/>
-            </div>
-          </div>
+        <ValueContainer className={'TokenDigestCard__SupplyCardContainer'} size={'xl'}>
+          <Supply
+            currentSupply={mockData.minted}
+            maxSupply={mockData.maxSupply}
+            progressPosition={'bottom'}
+            showTitles={true}
+            showIcons={true}
+            minTitle={'Minted'}
+            maxTitle={<>Total<br/>Supply</>}
+            topIcon={<TokenMintIcon/>}
+            bottomIcon={<TokenTotalIcon/>}
+            className={'TokenDigestCard__SupplyCard'}
+          />
         </ValueContainer>
       </div>
 
