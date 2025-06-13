@@ -3,6 +3,7 @@
 import { Progress } from '@chakra-ui/react'
 import { BigNumber } from '../data'
 import { currencyRound } from '../../util'
+import { Tooltip } from '../ui/Tooltips'
 import './Supply.scss'
 
 function Supply ({
@@ -34,13 +35,23 @@ function Supply ({
           <div className={'Supply__SupplyTitles'}>
             <span className={'Supply__CurrentSupply'}>
               {tooBigNumber
-                ? currencyRound(currentSupply)
+                ? <Tooltip
+                    placement={'top'}
+                    content={<BigNumber>{Number(currentSupply)}</BigNumber>}
+                  >
+                    <span>{currencyRound(currentSupply)}</span>
+                  </Tooltip>
                 : <BigNumber>{Number(currentSupply)}</BigNumber>
               }
             </span>
             <span className={'Supply__MaxSupply'}>
               {tooBigNumber
-                ? currencyRound(maxSupply)
+                ? <Tooltip
+                    placement={'top'}
+                    content={<BigNumber>{Number(maxSupply)}</BigNumber>}
+                  >
+                    <span>{currencyRound(maxSupply)}</span>
+                  </Tooltip>
                 : <BigNumber>{Number(maxSupply)}</BigNumber>
               }
             </span>
