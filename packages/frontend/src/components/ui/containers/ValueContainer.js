@@ -33,6 +33,7 @@ function ValueContainer ({
     default: '',
     red: 'ValueContainer--Red',
     green: 'ValueContainer--Green',
+    emeralds: 'ValueContainer--Emeralds',
     blue: 'ValueContainer--Blue',
     brand: 'ValueContainer--Brand',
     lightGray: 'ValueContainer--LightGray',
@@ -43,6 +44,8 @@ function ValueContainer ({
 
   const sizeClasses = {
     default: '',
+    xl: 'ValueContainer--SizeXl',
+    lg: 'ValueContainer--SizeLg',
     md: 'ValueContainer--SizeMd',
     sm: 'ValueContainer--SizeSm',
     xs: 'ValueContainer--SizeXs',
