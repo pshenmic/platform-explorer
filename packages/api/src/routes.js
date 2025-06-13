@@ -51,6 +51,11 @@ module.exports = ({
       }
     },
     {
+      path: '/epoch',
+      method: 'GET',
+      handler: epochController.getEpochByIndex
+    },
+    {
       path: '/block/:hash',
       method: 'GET',
       handler: blocksController.getBlockByHash,
