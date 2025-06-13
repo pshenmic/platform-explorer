@@ -21,7 +21,6 @@ function Supply ({
   return (
     <div className={`Supply ${progressClass} ${showTitles && 'Supply--WithIcons'} ${className || ''}`}>
       <div className={'Supply__ContentWrapper'}>
-        {/* Top title with icon */}
         {showTitles && (
           <div className={'Supply__Title'}>
             {showIcons && topIcon}
@@ -31,8 +30,12 @@ function Supply ({
 
         <div className={'Supply__ProgressContainer'}>
           <div className={'Supply__SupplyTitles'}>
-            <span className={'Supply__CurrentSupply'}><BigNumber>{currentSupply}</BigNumber></span>
-            <span className={'Supply__MaxSupply'}><BigNumber>{maxSupply}</BigNumber></span>
+            <span className={'Supply__CurrentSupply'}>
+              <BigNumber>{Number(currentSupply)}</BigNumber>
+            </span>
+            <span className={'Supply__MaxSupply'}>
+              <BigNumber>{Number(maxSupply)}</BigNumber>
+            </span>
           </div>
 
           <Progress
