@@ -590,7 +590,7 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
       alias: alias.alias,
       status: 'ok',
       contested: false,
-      timestamp: alias.timestamp,
+      timestamp: alias.timestamp ? new Date(alias.timestamp) : null,
       txHash: alias.tx
     })
   }
@@ -611,7 +611,7 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     alias: alias.alias ?? alias,
     status,
     contested: true,
-    timestamp: alias.timestamp,
+    timestamp: alias.timestamp ? new Date(alias.timestamp) : null,
     txHash: alias.tx
   })
 }

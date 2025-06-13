@@ -237,7 +237,7 @@ describe('Identities routes', () => {
           alias: alias.alias,
           contested: false,
           status: 'ok',
-          timestamp: '1970-01-01T00:00:00+00:00',
+          timestamp: '1970-01-01T00:00:00.000Z',
           txHash: alias.state_transition_hash
         }],
         totalGasSpent: 0,
@@ -435,7 +435,7 @@ describe('Identities routes', () => {
           txHash: alias.state_transition_hash,
           status: 'ok',
           contested: false,
-          timestamp: '1970-01-01T00:00:00+00:00'
+          timestamp: '1970-01-01T00:00:00.000Z'
         })),
         totalGasSpent: null,
         averageGasSpent: null,
@@ -497,7 +497,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -560,7 +560,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -624,7 +624,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -703,7 +703,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -794,7 +794,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
