@@ -48,7 +48,6 @@ function TokenDigestCard ({ token, className, loading, error }) {
         </ValueContainer>
       </div>
 
-      {/* Middle Row - Stats Cards */}
       <div className={'TokenDigestCard__RowContainer'}>
         <ValueContainer size={'xl'}>
           <InfoLine

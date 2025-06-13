@@ -2,6 +2,7 @@
 
 import { Progress } from '@chakra-ui/react'
 import { BigNumber } from '../data'
+import { currencyRound } from '../../util'
 import './Supply.scss'
 
 function Supply ({
@@ -17,6 +18,7 @@ function Supply ({
   bottomIcon
 }) {
   const progressClass = progressPosition === 'top' ? 'Supply--ProgressTop' : ''
+  const tooBigNumber = Number(maxSupply) > 9999999999999
 
   return (
     <div className={`Supply ${progressClass} ${showTitles && 'Supply--WithIcons'} ${className || ''}`}>
@@ -31,10 +33,16 @@ function Supply ({
         <div className={'Supply__ProgressContainer'}>
           <div className={'Supply__SupplyTitles'}>
             <span className={'Supply__CurrentSupply'}>
-              <BigNumber>{Number(currentSupply)}</BigNumber>
+              {tooBigNumber
+                ? currencyRound(currentSupply)
+                : <BigNumber>{Number(currentSupply)}</BigNumber>
+              }
             </span>
             <span className={'Supply__MaxSupply'}>
-              <BigNumber>{Number(maxSupply)}</BigNumber>
+              {tooBigNumber
+                ? currencyRound(maxSupply)
+                : <BigNumber>{Number(maxSupply)}</BigNumber>
+              }
             </span>
           </div>
 
