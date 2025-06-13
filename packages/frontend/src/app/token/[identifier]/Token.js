@@ -83,7 +83,7 @@ const mockActivities = [
     creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
     recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
     type: 2,
-    status: 'completed'
+    status: 'SUCCESS'
   },
   {
     id: 2,
@@ -93,7 +93,7 @@ const mockActivities = [
     creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
     recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
     type: 2,
-    status: 'completed'
+    status: 'FAIL'
   },
   {
     id: 3,
@@ -103,7 +103,7 @@ const mockActivities = [
     creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
     recipient: null,
     type: 1,
-    status: 'completed'
+    status: 'QUEUED'
   },
   {
     id: 4,
@@ -113,7 +113,7 @@ const mockActivities = [
     creator: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
     recipient: null,
     type: 0,
-    status: 'completed'
+    status: 'POOLED'
   },
   {
     id: 5,
@@ -123,7 +123,7 @@ const mockActivities = [
     creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
     recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
     type: 4,
-    status: 'completed'
+    status: 'BROADCASTED'
   },
   {
     id: 6,
@@ -133,7 +133,7 @@ const mockActivities = [
     creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
     recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
     type: 5,
-    status: 'completed'
+    status: 'SUCCESS'
   }
 ]
 

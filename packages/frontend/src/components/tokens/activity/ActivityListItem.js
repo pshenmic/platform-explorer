@@ -1,5 +1,5 @@
 import { LinkContainer } from '../../ui/containers'
-import { StatusIcon } from '../../ui/status'
+import { StatusIcon } from '../../transactions'
 import { BigNumber, Identifier, NotActive, TimeDelta } from '../../data'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
