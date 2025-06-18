@@ -46,6 +46,7 @@ export default function MasternodeVotesFilters ({ initialFilters, onFilterChange
       isMobile={isMobile}
       className={`BlocksFilter ${className || ''}`}
       buttonText={'Add filter'}
+      applyOnChange={false}
     />
   )
 }

@@ -8,7 +8,6 @@ import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Box, Container, Heading, useBreakpointValue } from '@chakra-ui/react'
-import { useDebounce } from '../../hooks'
 import { VotesList } from '../../components/contestedResources/votes'
 import { MasternodeVotesFilters } from '../../components/contestedResources'
 import './MasternodeVotes.scss'
@@ -28,7 +27,6 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const pageCount = Math.ceil(total / pageSize) ? Math.ceil(total / pageSize) : 1
   const [filters, setFilters] = useState({})
-  const debouncedFilters = useDebounce(filters, 250)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -47,7 +45,7 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
         Math.max(1, currentPage + 1),
         Math.max(1, pageSize),
         'desc',
-        debouncedFilters
+        filters
       ).then(res => {
         setTotal(res?.pagination?.total)
         fetchHandlerSuccess(setMasternodeVotes, res)
@@ -58,7 +56,7 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
     }
 
     fetchData()
-  }, [currentPage, pageSize, debouncedFilters])
+  }, [currentPage, pageSize, filters])
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
