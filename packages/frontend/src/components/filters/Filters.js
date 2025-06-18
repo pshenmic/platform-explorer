@@ -27,7 +27,7 @@ export const Filters = ({
     ])
   )
 
-  // Menu filters - temporary state while user is selecting filters
+  /** Menu filters - temporary state while user is selecting filters */
   const {
     filters: menuFilters,
     setFilters: setMenuFilters,
@@ -35,7 +35,7 @@ export const Filters = ({
     handleMultipleValuesChange: baseHandleMultipleValuesChange
   } = useFilters(defaultFilters)
 
-  // Applied filters - actual filters that are applied and shown in ActiveFilters
+  /** Applied filters - actual filters that are applied and shown in ActiveFilters */
   const [appliedFilters, setAppliedFilters] = useState(defaultFilters)
 
   const previousAppliedFilters = useRef(appliedFilters)
@@ -82,7 +82,7 @@ export const Filters = ({
       }, {})
     })()
 
-    // Update applied filters state
+    /** Update applied filters state */
     setAppliedFilters(filtersToApply)
 
     if (JSON.stringify(previousAppliedFilters.current) === JSON.stringify(processedFilters)) {
@@ -93,7 +93,7 @@ export const Filters = ({
     onFilterChange(processedFilters)
   }, [menuFilters, onFilterChange, filtersConfig])
 
-  // Apply filters immediately only if applyOnChange is true
+  /** Apply filters immediately only if applyOnChange is true */
   useEffect(() => {
     if (applyOnChange) {
       applyFilters()
@@ -102,14 +102,14 @@ export const Filters = ({
 
   const { isOpen: menuIsOpen, onOpen: menuOnOpen, onClose: menuOnClose } = useDisclosure()
 
-  // Sync menu filters with applied filters when menu opens
+  /** Sync menu filters with applied filters when menu opens */
   const handleMenuOpen = useCallback(() => {
     setMenuFilters(appliedFilters)
     menuOnOpen()
   }, [appliedFilters, setMenuFilters, menuOnOpen])
 
   const handleMenuClose = useCallback(() => {
-    // Apply filters when menu closes (if not applying on change)
+    /** Apply filters when menu closes (if not applying on change) */
     if (!applyOnChange) {
       applyFilters()
     }
@@ -117,7 +117,7 @@ export const Filters = ({
   }, [applyFilters, applyOnChange, menuOnClose])
 
   const submitHandler = () => {
-    // Always apply filters when submit is pressed
+    /** Always apply filters when submit is pressed */
     applyFilters()
     menuOnClose()
   }
@@ -146,11 +146,11 @@ export const Filters = ({
       [filterName]: filtersConfig[filterName].defaultValue
     }
 
-    // Update both applied and menu filters
+    /** Update both applied and menu filters */
     setAppliedFilters(newAppliedFilters)
     setMenuFilters(newAppliedFilters)
 
-    // Apply filters immediately
+    /** Apply filters immediately */
     applyFilters(newAppliedFilters)
   }, [appliedFilters, filtersConfig, setMenuFilters, applyFilters])
 
@@ -162,11 +162,11 @@ export const Filters = ({
       ])
     )
 
-    // Update both applied and menu filters
+    /** Update both applied and menu filters */
     setAppliedFilters(defaultFilters)
     setMenuFilters(defaultFilters)
 
-    // Apply empty filters immediately
+    /** Apply empty filters immediately */
     if (typeof onFilterChange === 'function') {
       onFilterChange({})
     }
@@ -250,7 +250,7 @@ export const Filters = ({
         content = null
     }
 
-    // Use applied filters for activeFilterValue (what shows in ActiveFilters)
+    /** Use applied filters for activeFilterValue (what shows in ActiveFilters) */
     const activeFilterValue = !filtersConfig[key].isAllSelected?.(appliedFilters[key]) && appliedFilters[key]
       ? filtersConfig[key].formatValue?.(appliedFilters[key])
       : null
