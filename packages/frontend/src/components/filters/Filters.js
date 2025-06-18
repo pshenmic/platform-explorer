@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button, useDisclosure } from '@chakra-ui/react'
 import { useFilters } from '../../hooks'
 import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters, SearchFilter } from './'
@@ -17,7 +17,8 @@ export const Filters = ({
   onFilterChange,
   isMobile = false,
   buttonText = 'Add filter',
-  className = ''
+  className = '',
+  applyOnChange = false // If true, filters apply immediately on change. If false, filters apply only on menu close/submit
 }) => {
   const defaultFilters = Object.fromEntries(
     Object.keys(filtersConfig).map(key => [
@@ -26,20 +27,24 @@ export const Filters = ({
     ])
   )
 
+  /** Menu filters - temporary state while user is selecting filters */
   const {
-    filters,
-    setFilters,
+    filters: menuFilters,
+    setFilters: setMenuFilters,
     handleFilterChange: baseHandleFilterChange,
     handleMultipleValuesChange: baseHandleMultipleValuesChange
   } = useFilters(defaultFilters)
 
-  const previousFilters = useRef(filters)
+  /** Applied filters - actual filters that are applied and shown in ActiveFilters */
+  const [appliedFilters, setAppliedFilters] = useState(defaultFilters)
 
-  const applyFilters = useCallback(() => {
+  const previousAppliedFilters = useRef(appliedFilters)
+
+  const applyFilters = useCallback((filtersToApply = menuFilters) => {
     if (typeof onFilterChange !== 'function') return
 
     const processedFilters = (() => {
-      return Object.entries(filters).reduce((result, [key, value]) => {
+      return Object.entries(filtersToApply).reduce((result, [key, value]) => {
         const filterKeyConfig = filtersConfig[key]
 
         if (filterKeyConfig.type === 'multiselect' && (filterKeyConfig.isAllSelected(value) || value?.length === 0)) {
@@ -77,61 +82,95 @@ export const Filters = ({
       }, {})
     })()
 
-    if (JSON.stringify(previousFilters.current) === JSON.stringify(processedFilters)) {
+    /** Update applied filters state */
+    setAppliedFilters(filtersToApply)
+
+    if (JSON.stringify(previousAppliedFilters.current) === JSON.stringify(processedFilters)) {
       return
     }
 
-    previousFilters.current = processedFilters
+    previousAppliedFilters.current = processedFilters
     onFilterChange(processedFilters)
-  }, [filters, onFilterChange, filtersConfig])
+  }, [menuFilters, onFilterChange, filtersConfig])
 
-  useEffect(applyFilters, [applyFilters])
+  /** Apply filters immediately only if applyOnChange is true */
+  useEffect(() => {
+    if (applyOnChange) {
+      applyFilters()
+    }
+  }, [applyFilters, applyOnChange])
 
   const { isOpen: menuIsOpen, onOpen: menuOnOpen, onClose: menuOnClose } = useDisclosure()
 
+  /** Sync menu filters with applied filters when menu opens */
+  const handleMenuOpen = useCallback(() => {
+    setMenuFilters(appliedFilters)
+    menuOnOpen()
+  }, [appliedFilters, setMenuFilters, menuOnOpen])
+
+  const handleMenuClose = useCallback(() => {
+    /** Apply filters when menu closes (if not applying on change) */
+    if (!applyOnChange) {
+      applyFilters()
+    }
+    menuOnClose()
+  }, [applyFilters, applyOnChange, menuOnClose])
+
   const submitHandler = () => {
+    /** Always apply filters when submit is pressed */
     applyFilters()
     menuOnClose()
   }
 
-  /** Handle single filter change */
+  /** Handle single filter change in menu */
   const handleFilterChange = useCallback((filterName, value) => {
     const newFilters = baseHandleFilterChange(filterName, value)
-    setFilters(newFilters)
-  }, [baseHandleFilterChange, setFilters])
+    setMenuFilters(newFilters)
+  }, [baseHandleFilterChange, setMenuFilters])
 
-  /** Handle multiple values filter change */
+  /** Handle multiple values filter change in menu */
   const handleMultipleValuesChange = useCallback((fieldName, value) => {
     const newFilters = baseHandleMultipleValuesChange(fieldName, value)
-    setFilters(newFilters)
-  }, [baseHandleMultipleValuesChange, setFilters])
+    setMenuFilters(newFilters)
+  }, [baseHandleMultipleValuesChange, setMenuFilters])
 
   const handleToggleAll = useCallback((filterName, values) => {
     const newFilters = baseHandleFilterChange(filterName, values)
-    setFilters(newFilters)
-  }, [baseHandleFilterChange, setFilters])
+    setMenuFilters(newFilters)
+  }, [baseHandleFilterChange, setMenuFilters])
 
-  /** Clear a specific filter */
-  const clearFilter = useCallback((filterName) => {
-    const newFilters = {
-      ...filters,
+  /** Clear a specific applied filter */
+  const clearAppliedFilter = useCallback((filterName) => {
+    const newAppliedFilters = {
+      ...appliedFilters,
       [filterName]: filtersConfig[filterName].defaultValue
     }
-    setFilters(newFilters)
-  }, [filters, filtersConfig, setFilters])
 
-  const resetAllFilters = useCallback(() => {
+    /** Update both applied and menu filters */
+    setAppliedFilters(newAppliedFilters)
+    setMenuFilters(newAppliedFilters)
+
+    /** Apply filters immediately */
+    applyFilters(newAppliedFilters)
+  }, [appliedFilters, filtersConfig, setMenuFilters, applyFilters])
+
+  const resetAllAppliedFilters = useCallback(() => {
     const defaultFilters = Object.fromEntries(
       Object.keys(filtersConfig).map(key => [
         key,
         filtersConfig[key].defaultValue
       ])
     )
-    setFilters(defaultFilters)
+
+    /** Update both applied and menu filters */
+    setAppliedFilters(defaultFilters)
+    setMenuFilters(defaultFilters)
+
+    /** Apply empty filters immediately */
     if (typeof onFilterChange === 'function') {
       onFilterChange({})
     }
-  }, [filtersConfig, setFilters, onFilterChange])
+  }, [filtersConfig, setMenuFilters, onFilterChange])
 
   const menuData = Object.entries(filtersConfig).map(([key, config]) => {
     let content
@@ -142,7 +181,7 @@ export const Filters = ({
           <FilterGroup title={config.title}>
             <MultiSelectFilter
               items={config.options}
-              selectedValues={filters[key]}
+              selectedValues={menuFilters[key]}
               onItemClick={(value) => handleMultipleValuesChange(key, value)}
               onSelectAll={(values) => handleToggleAll(key, values)}
               showToggleAll={true}
@@ -156,7 +195,7 @@ export const Filters = ({
         content = (
           <FilterGroup title={config.title}>
             <RangeFilter
-              value={filters[key]}
+              value={menuFilters[key]}
               onChange={(value) => handleFilterChange(key, value)}
               type={'number'}
               minTitle={config.minTitle}
@@ -173,7 +212,7 @@ export const Filters = ({
         content = (
           <FilterGroup title={config.title}>
             <InputFilter
-              value={filters[key]}
+              value={menuFilters[key]}
               onChange={(value) => handleFilterChange(key, value)}
               placeholder={config.placeholder}
               showSubmitButton={true}
@@ -186,7 +225,7 @@ export const Filters = ({
         content = (
           <FilterGroup title={config?.title}>
             <SearchFilter
-              value={filters[key]}
+              value={menuFilters[key]}
               onChange={(value) => handleFilterChange(key, value)}
               placeholder={config?.placeholder}
               showSubmitButton={true}
@@ -200,7 +239,7 @@ export const Filters = ({
         content = (
           <FilterGroup title={config?.title}>
             <DateRangeFilter
-              value={filters[key]}
+              value={menuFilters[key]}
               onChange={(value) => handleFilterChange(key, value)}
               onSubmit={submitHandler}
             />
@@ -211,8 +250,9 @@ export const Filters = ({
         content = null
     }
 
-    const activeFilterValue = !filtersConfig[key].isAllSelected?.(filters[key]) && filters[key]
-      ? filtersConfig[key].formatValue?.(filters[key])
+    /** Use applied filters for activeFilterValue (what shows in ActiveFilters) */
+    const activeFilterValue = !filtersConfig[key].isAllSelected?.(appliedFilters[key]) && appliedFilters[key]
+      ? filtersConfig[key].formatValue?.(appliedFilters[key])
       : null
 
     return {
@@ -222,7 +262,7 @@ export const Filters = ({
       activeFilterValue,
       type: config.type,
       filterKey: key,
-      rawValue: filters[key],
+      rawValue: appliedFilters[key], // Use applied filters for ActiveFilters display
       options: config.options || null,
       mobileTagRenderer: config.mobileTagRenderer || null
     }
@@ -231,7 +271,7 @@ export const Filters = ({
   const TriggerButton = () => (
     <Button
       className={'Filters__Button Filters__Button--ToggleFilters '}
-      onClick={() => menuIsOpen ? menuOnClose() : menuOnOpen()}
+      onClick={() => menuIsOpen ? handleMenuClose() : handleMenuOpen()}
       variant={'brand'}
       size={'sm'}
     >
@@ -255,9 +295,9 @@ export const Filters = ({
                 placement={'bottom-start'}
                 trigger={TriggerButton()}
                 menuData={menuData}
-                onClose={menuOnClose}
+                onClose={handleMenuClose}
                 isOpen={menuIsOpen}
-                onOpen={menuOnOpen}
+                onOpen={handleMenuOpen}
               />
           }
 
@@ -266,7 +306,7 @@ export const Filters = ({
               className={'Filters__Button'}
               variant={'gray'}
               size={'sm'}
-              onClick={resetAllFilters}
+              onClick={resetAllAppliedFilters}
             >
               Clear ({activeFiltersCount})
             </Button>
@@ -274,8 +314,8 @@ export const Filters = ({
         </div>
 
         <ActiveFilters
-          filters={filters}
-          onClearFilter={clearFilter}
+          filters={appliedFilters}
+          onClearFilter={clearAppliedFilter}
           allValuesSelected={(key, value) => filtersConfig[key]?.isAllSelected?.(value) || false}
           formatValue={(key, value) => filtersConfig[key]?.formatValue(value)}
           getFilterLabel={(key) => filtersConfig[key]?.label || key}
@@ -285,14 +325,14 @@ export const Filters = ({
       {isMobile && (
         <BottomSheet
           isOpen={menuIsOpen}
-          onClose={menuOnClose}
-          onOpen={menuOnOpen}
+          onClose={handleMenuClose}
+          onOpen={handleMenuOpen}
           fullHeightOnly={true}
         >
           <MobileFilterMenu
             menuData={menuData}
             onSubmit={submitHandler}
-            onReset={resetAllFilters}
+            onReset={resetAllAppliedFilters}
           />
         </BottomSheet>
       )}
