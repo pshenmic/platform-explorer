@@ -26,6 +26,25 @@
     }
   }
 
+  &__BlockHeight {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.75rem;
+    justify-content: space-between;
+    align-items: center;
+
+    .ValueCard {
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.25rem;
+      width: max-content;
+
+      svg {
+        height: 0.5rem;
+      }
+    }
+  }
+
   @media screen and (max-width: $breakpoint-sm) {
     @include mixins.TotalCard(true);
 
