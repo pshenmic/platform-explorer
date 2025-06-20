@@ -1,11 +1,30 @@
+'use client'
+
+import * as Api from '../../util/Api'
 import { DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueContainer } from '../ui/containers'
-import { BlockIcon } from '../ui/icons'
+import { BlockIcon, ChevronIcon } from '../ui/icons'
+import { ValueCard } from '../cards'
+import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
+import { useEffect, useState } from 'react'
 import './BlockTotalCard.scss'
 
 function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
+  const [blocks, setBlocks] = useState({ data: {}, loading: true, error: false })
   const blockData = block?.data?.header
+  const [previousBlock] = blocks.data?.resultSet?.filter(block => block?.header?.height === blockData?.height - 1) || []
+  const [nextBlock] = blocks.data?.resultSet?.filter(block => block?.header?.height === blockData?.height + 1) || []
+
+  const fetchData = () => {
+    setBlocks(state => ({ ...state, loading: true }))
+
+    Api.getBlocks(1, 3, 'desc', { height_min: Math.max(blockData?.height - 1, 0), height_max: blockData?.height + 1 })
+      .then(res => fetchHandlerSuccess(setBlocks, res))
+      .catch(err => fetchHandlerError(setBlocks, err))
+  }
+
+  useEffect(fetchData, [blockData])
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient BlockTotalCard ${block?.loading ? 'BlockTotalCard--Loading' : ''} ${className || ''}`}>
@@ -55,7 +74,21 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
       <div className={'BlockTotalCard__CommonInfo'}>
         <InfoLine
           title={'Height'}
-          value={blockData?.height}
+          value={
+            <div className={'BlockTotalCard__BlockHeight'}>
+              {previousBlock &&
+                <ValueCard link={`/block/${previousBlock.header?.hash}`}>
+                  <ChevronIcon transform={'rotate(180deg)'}/>
+                </ValueCard>
+              }
+              <div>{blockData?.height}</div>
+              {nextBlock &&
+                <ValueCard link={`/block/${nextBlock.header?.hash}`}>
+                  <ChevronIcon/>
+                </ValueCard>
+              }
+            </div>
+          }
           loading={block.loading}
           error={block.error}
         />
