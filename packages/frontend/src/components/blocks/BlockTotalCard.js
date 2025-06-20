@@ -17,9 +17,11 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
   const [nextBlock] = blocks.data?.resultSet?.filter(block => block?.header?.height === blockData?.height + 1) || []
 
   const fetchData = () => {
+    if (!blockData?.height) return
+
     setBlocks(state => ({ ...state, loading: true }))
 
-    Api.getBlocks(1, 3, 'desc', { height_min: Math.max(blockData?.height - 1, 0), height_max: blockData?.height + 1 })
+    Api.getBlocks(1, 3, 'desc', { height_min: Math.max(blockData?.height - 1, 1), height_max: blockData?.height + 1 })
       .then(res => fetchHandlerSuccess(setBlocks, res))
       .catch(err => fetchHandlerError(setBlocks, err))
   }
