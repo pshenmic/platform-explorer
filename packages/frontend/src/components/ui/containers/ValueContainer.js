@@ -2,19 +2,19 @@ import { ArrowCornerIcon } from '../icons'
 import Link from 'next/link'
 import './ValueContainer.scss'
 
-const Wrapper = (props) => {
-  return typeof props?.link === 'string'
+const Wrapper = ({ external, link, children, className, ...otherProps }) => {
+  return typeof link === 'string'
     ? <Link
-        href={props?.link}
-        {...(props?.external &&
+        href={link}
+        {...(external &&
           { target: '_blank', rel: 'noreferrer' }
         )}
-        className={props?.className}
-        {...props}
+        className={className}
+        {...otherProps}
       >
-        {props?.children}
+        {children}
       </Link>
-    : <div className={props?.className} {...props}>{props?.children}</div>
+    : <div className={className} {...otherProps}>{children}</div>
 }
 
 function ValueContainer ({
