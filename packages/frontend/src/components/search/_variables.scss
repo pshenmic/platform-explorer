@@ -6,15 +6,15 @@
   width: 100%;
 
   grid-template-columns: 
-    minmax(0, 600px)
-    minmax(0, 600px)
+    minmax(0, 80rem)
+    minmax(0, 80rem)
     5rem
     1rem;
 
   &--Validator {
     grid-template-columns: 
-      minmax(0, 600px)
-      minmax(0, 600px)
+      minmax(0, 80rem)
+      minmax(0, 80rem)
       6rem
       1rem;
   }
@@ -23,14 +23,14 @@
     &--Document,
     &--DataContract {
       grid-template-columns: 
-        minmax(0, 600px)
+        minmax(0, 80rem)
         4.5rem
         1rem;
     }
 
     &--Validator {
       grid-template-columns: 
-        minmax(0, 600px)
+        minmax(0, 80rem)
         6rem
         1rem;
     }
@@ -41,7 +41,7 @@
     &--Identity,
     &--Transaction {
       grid-template-columns: 
-        minmax(0, 600px)
+        minmax(0, 80rem)
         4.5rem
         1rem;
     }
