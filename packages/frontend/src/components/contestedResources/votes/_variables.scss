@@ -15,7 +15,7 @@
       minmax(8.125rem, 30rem) // proTxHash
       $dataContract
       minmax(8.125rem, 30rem) // document
-      minmax(8.125rem, 30rem) // towardsIdentity
+      minmax(8.125rem, 500rem) // towardsIdentity
       $choice
       $power;
   } @else {
@@ -23,7 +23,7 @@
       $timestamp
       minmax(9rem, 30rem) // proTxHash
       minmax(9rem, 30rem) // document
-      minmax(9rem, 30rem) // towardsIdentity
+      minmax(9rem, 500rem) // towardsIdentity
       $choice
       $power;
   }

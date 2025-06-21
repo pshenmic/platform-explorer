@@ -1,5 +1,37 @@
 # CHANGELOG
 
+### v1.0.26
+
+## Changes
+
+## API
+
+- Fields naming fix in Epoch status  @owl352 (#564)
+
+## Frontend
+
+- Reduce maximum width of page content @AlexeyTripleA (#567)
+- Update global layout @AlexeyTripleA (#558)
+- Create Masternode Votes page @AlexeyTripleA (#556)
+
+### v1.0.25
+
+## Changes
+
+New page: Contested Resources
+
+## API
+
+- Contested resource fix @owl352 (#560)
+
+### v1.0.24
+
+## Changes
+
+## Frontend
+
+- Absolute timestamp in Block list @AlexeyTripleA (#546)
+
 ### v1.0.23
 
 ## Changes

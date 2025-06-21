@@ -88,12 +88,12 @@ function Validators ({ defaultPage = 1, defaultPageSize, defaultIsActive }) {
 
   return (
     <Container
-      maxW={'container.xl'}
+      maxW={'container.maxPageW'}
       mt={8}
       className={'Transactions'}
     >
       <Container
-        maxW={'container.xl'}
+        maxW={'container.maxPageW'}
         className={'InfoBlock'}
       >
         <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>

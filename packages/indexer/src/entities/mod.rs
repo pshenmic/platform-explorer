@@ -6,3 +6,4 @@ pub mod identity;
 pub mod masternode_vote;
 pub mod transfer;
 pub mod validator;
+pub mod token_config;

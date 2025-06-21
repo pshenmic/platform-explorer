@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { DashboardCards } from '../cards'
 import { SignatureIcon, ListIcon, CalendarGradientIcon } from '../ui/icons'
-import { ExpiringContestedResourceContent } from '../cards/dashboard'
+import { ContestedResourceContent } from '../cards/dashboard'
 import './ContestedResourcesDashboardCards.scss'
 
 function ContestedResourcesDashboardCards () {
@@ -18,6 +18,8 @@ function ContestedResourcesDashboardCards () {
   }
 
   useEffect(fetchData, [])
+
+  console.log('stats.data?.expiringContestedResource', stats.data?.expiringContestedResource)
 
   return (
     <DashboardCards
@@ -48,7 +50,7 @@ function ContestedResourcesDashboardCards () {
         },
         {
           title: 'Ending soon',
-          value: <ExpiringContestedResourceContent contestedResource={stats.data?.expiringContestedResource}/>,
+          value: <ContestedResourceContent contestedResource={stats.data?.expiringContestedResource}/>,
           className: 'ContestedResourcesDashboardCards__Card',
           error: stats.error,
           loading: stats.loading,

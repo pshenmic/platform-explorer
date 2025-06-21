@@ -4,6 +4,17 @@
   width: 100%;
   display: grid;
   gap: 16px;
+
+  @container (min-width: 90em) {
+    grid-template-columns:
+    70px
+    minmax(0, 400px)
+    minmax(0, 500rem)
+    minmax(185px, 185px)
+    minmax(100px, 100px)
+    128px;
+  }
+
   grid-template-columns:
     70px
     minmax(0, 400px)

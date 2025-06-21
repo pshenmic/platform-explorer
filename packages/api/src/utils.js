@@ -8,11 +8,12 @@ const { base58 } = require('@scure/base')
 const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
-const { InstantAssetLockProof, ChainAssetLockProof, Identifier } = require('@dashevo/wasm-dpp')
+const { Identifier } = require('@dashevo/wasm-dpp')
 const SecurityLevelEnum = require('./enums/SecurityLevelEnum')
 const KeyPurposeEnum = require('./enums/KeyPurposeEnum')
 const KeyTypeEnum = require('./enums/KeyTypeEnum')
 const Alias = require('./models/Alias')
+const TokenTransitionEnum = require('./enums/TokenTransitionsEnum')
 
 const getKnex = () => {
   return require('knex')({
@@ -62,7 +63,8 @@ const decodeStateTransition = async (client, base64) => {
   const stateTransition = await client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(base64, 'base64'))
 
   const decoded = {
-    type: stateTransition.getType()
+    type: stateTransition.getType(),
+    typeString: StateTransitionEnum[stateTransition.getType()]
   }
 
   switch (decoded.type) {
@@ -92,55 +94,153 @@ const decodeStateTransition = async (client, base64) => {
 
       break
     }
-    case StateTransitionEnum.DOCUMENTS_BATCH: {
-      decoded.transitions = stateTransition.getTransitions().map((documentTransition) => {
-        const out = {
-          id: documentTransition.getId().toString(),
-          dataContractId: documentTransition.getDataContractId().toString(),
-          revision: String(documentTransition.getRevision()),
-          type: documentTransition.getType(),
-          action: documentTransition.getAction(),
-          identityContractNonce: String(documentTransition.getIdentityContractNonce())
+    case StateTransitionEnum.BATCH: {
+      decoded.transitions = stateTransition.getTransitions().map((transition) => {
+        const transitionType = transition.constructor.name === 'TokenTransition' ? 1 : 0
+
+        let out = {}
+
+        switch (transitionType) {
+          case 1: {
+            const tokenTransitionType = transition.getTransitionType()
+
+            out = {
+              transitionType: 'tokenTransition',
+              tokenTransitionType,
+              tokenTransitionTypeString: TokenTransitionEnum[tokenTransitionType],
+              tokenId: transition.getTokenId().toString(),
+              identityContractNonce: String(transition.getIdentityContractNonce()),
+              tokenContractPosition: transition.getTokenContractPosition(),
+              dataContractId: transition.getDataContractId().toString(),
+              historicalDocumentTypeName: transition.getHistoricalDocumentTypeName(),
+              historicalDocumentId: transition.getHistoricalDocumentId(stateTransition.getOwnerId())?.toString()
+            }
+
+            const tokenTransition = transition.toTransition()
+
+            switch (tokenTransitionType) {
+              case TokenTransitionEnum.Burn: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.burnAmount = tokenTransition.getBurnAmount().toString()
+
+                break
+              }
+              case TokenTransitionEnum.Mint: {
+                out.issuedToIdentityId = tokenTransition.getIssuedToIdentityId().toString()
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.amount = tokenTransition.getAmount().toString()
+
+                break
+              }
+              case TokenTransitionEnum.Transfer: {
+                out.recipient = tokenTransition.getRecipientId().toString()
+                out.amount = tokenTransition.getAmount().toString()
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+
+                break
+              }
+              case TokenTransitionEnum.Freeze: {
+                out.frozenIdentityId = tokenTransition.getFrozenIdentityId().toString()
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+
+                break
+              }
+              case TokenTransitionEnum.Unfreeze: {
+                out.frozenIdentityId = tokenTransition.getFrozenIdentityId().toString()
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+
+                break
+              }
+              case TokenTransitionEnum.DestroyFrozenFunds: {
+                out.frozenIdentityId = tokenTransition.getFrozenIdentityId().toString()
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+
+                break
+              }
+              case TokenTransitionEnum.Claim: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.distributionType = tokenTransition.getDistributionType()
+
+                break
+              }
+              case TokenTransitionEnum.EmergencyAction: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.emergencyAction = tokenTransition.getEmergencyAction()
+
+                break
+              }
+              case TokenTransitionEnum.ConfigUpdate: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+
+                break
+              }
+              case TokenTransitionEnum.DirectPurchase: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.price = tokenTransition.getPrice().toString()
+
+                break
+              }
+              case TokenTransitionEnum.SetPriceForDirectPurchase: {
+                out.publicNote = tokenTransition.getPublicNote() ?? null
+                out.price = tokenTransition.getPrice()?.toString() ?? null
+
+                break
+              }
+            }
+            break
+          }
+          case 0: {
+            out = {
+              transitionType: 'documentTransition',
+              id: transition.getId().toString(),
+              dataContractId: transition.getDataContractId().toString(),
+              revision: String(transition.getRevision()),
+              type: transition.getType(),
+              action: transition.getAction(),
+              actionString: DocumentActionEnum[transition.getAction()],
+              identityContractNonce: String(transition.getIdentityContractNonce())
+            }
+
+            switch (transition.getAction()) {
+              case DocumentActionEnum.Create: {
+                const prefundedVotingBalance = transition.getPrefundedVotingBalance()
+
+                out.entropy = Buffer.from(transition.getEntropy()).toString('hex')
+
+                out.data = transition.getData()
+                out.prefundedVotingBalance = prefundedVotingBalance
+                  ? Object.fromEntries(
+                    Object.entries(prefundedVotingBalance)
+                      .map(prefund => [prefund[0], Number(prefund[1])])
+                  )
+                  : null
+
+                break
+              }
+              case DocumentActionEnum.Replace: {
+                out.data = transition.getData()
+
+                break
+              }
+              case DocumentActionEnum.UpdatePrice: {
+                out.price = Number(transition.get_price())
+
+                break
+              }
+              case DocumentActionEnum.Purchase: {
+                out.price = Number(transition.get_price())
+
+                break
+              }
+              case DocumentActionEnum.Transfer: {
+                out.receiverId = transition.getReceiverId().toString()
+
+                break
+              }
+            }
+            break
+          }
         }
-
-        switch (documentTransition.getAction()) {
-          case DocumentActionEnum.Create: {
-            const prefundedVotingBalance = documentTransition.getPrefundedVotingBalance()
-
-            out.entropy = Buffer.from(documentTransition.getEntropy()).toString('hex')
-
-            out.data = documentTransition.getData()
-            out.prefundedVotingBalance = prefundedVotingBalance
-              ? Object.fromEntries(
-                Object.entries(prefundedVotingBalance)
-                  .map(prefund => [prefund[0], Number(prefund[1])])
-              )
-              : null
-
-            break
-          }
-          case DocumentActionEnum.Replace: {
-            out.data = documentTransition.getData()
-
-            break
-          }
-          case DocumentActionEnum.UpdatePrice: {
-            out.price = Number(documentTransition.get_price())
-
-            break
-          }
-          case DocumentActionEnum.Purchase: {
-            out.price = Number(documentTransition.get_price())
-
-            break
-          }
-          case DocumentActionEnum.Transfer: {
-            out.receiverId = documentTransition.getReceiverId().toString()
-
-            break
-          }
-        }
-
         return out
       })
 
@@ -156,14 +256,14 @@ const decodeStateTransition = async (client, base64) => {
       const assetLockProof = stateTransition.getAssetLockProof()
 
       const decodedTransaction =
-        assetLockProof instanceof InstantAssetLockProof
+        assetLockProof.constructor.name === 'InstantAssetLockProof'
           ? dashcorelib.Transaction(assetLockProof.getTransaction())
           : null
 
       decoded.assetLockProof = {
-        coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
-        type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
-        instantLock: assetLockProof instanceof InstantAssetLockProof ? assetLockProof.getInstantLock().toString('base64') : null,
+        coreChainLockedHeight: assetLockProof.constructor.name === 'ChainAssetLockProof' ? assetLockProof.getCoreChainLockedHeight() : null,
+        type: assetLockProof.constructor.name === 'InstantAssetLockProof' ? 'instantSend' : 'chainLock',
+        instantLock: assetLockProof.constructor.name === 'InstantAssetLockProof' ? assetLockProof.getInstantLock().toString('base64') : null,
         fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis
           ? String(decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis)
           : null,
@@ -205,13 +305,13 @@ const decodeStateTransition = async (client, base64) => {
       const output = assetLockProof.getOutput()
 
       const decodedTransaction =
-        assetLockProof instanceof InstantAssetLockProof
+        assetLockProof.constructor.name === 'InstantAssetLockProof'
           ? dashcorelib.Transaction(assetLockProof.getTransaction())
           : null
 
       decoded.assetLockProof = {
-        coreChainLockedHeight: assetLockProof instanceof ChainAssetLockProof ? assetLockProof.getCoreChainLockedHeight() : null,
-        type: assetLockProof instanceof InstantAssetLockProof ? 'instantSend' : 'chainLock',
+        coreChainLockedHeight: assetLockProof.constructor.name === 'ChainAssetLockProof' ? assetLockProof.getCoreChainLockedHeight() : null,
+        type: assetLockProof.constructor.name === 'InstantAssetLockProof' ? 'instantSend' : 'chainLock',
         fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis
           ? String(decodedTransaction?.outputs[assetLockProof.getOutPoint().readInt8(32)].satoshis)
           : null,

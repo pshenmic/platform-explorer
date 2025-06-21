@@ -22,26 +22,26 @@ impl PostgresDAO {
         let version = data_contract.version as i32;
         let is_system = data_contract.is_system;
 
-        let query = "INSERT INTO data_contracts(identifier, name, owner, schema, version, \
-        state_transition_hash, is_system) VALUES ($1, $2, $3, $4, $5, $6, $7);";
+    let format_version = match data_contract.format_version {
+      None => None,
+      Some(version) => Some(version as i32)
+    };
+
+    let query = "INSERT INTO data_contracts(identifier, name, owner, schema, version, \
+        state_transition_hash, is_system, format_version) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
-        sql_transaction
-            .query(
-                &stmt,
-                &[
-                    &id.to_string(Base58),
-                    &name,
-                    &owner.to_string(Base58),
-                    &schema_decoded,
-                    &version,
-                    &st_hash,
-                    &is_system,
-                ],
-            )
-            .await
-            .unwrap();
+    sql_transaction.query(&stmt, &[
+      &id.to_string(Base58),
+      &name,
+      &owner.to_string(Base58),
+      &schema_decoded,
+      &version,
+      &st_hash,
+      &is_system,
+      &format_version
+    ]).await.unwrap();
 
         println!(
             "Created DataContract {} [{} version]",

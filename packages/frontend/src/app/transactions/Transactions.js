@@ -95,11 +95,11 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
 
   return (
     <Container
-      maxW={'container.xl'}
+      maxW={'container.maxPageW'}
       mt={8}
       className={'Transactions'}
     >
-        <Container maxW={'container.xl'} className={'InfoBlock'}>
+        <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
           <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
 
           <TransactionsFilter

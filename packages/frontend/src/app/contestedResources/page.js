@@ -34,7 +34,7 @@ function ContestedResourcesRoute ({ searchParams }) {
   return (
     <div>
       <Container
-        maxW={'container.xl'}
+        maxW={'container.maxPageW'}
         color={'white'}
         mt={8}
         mb={0}

@@ -10,7 +10,7 @@ use deadpool_postgres::{PoolError, Transaction};
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::platform_value::{platform_value, BinaryData};
-use dpp::state_transition::documents_batch_transition::document_transition::action_type::DocumentTransitionActionType;
+use dpp::state_transition::state_transitions::batch_transition::batched_transition::document_transition_action_type::DocumentTransitionActionType;
 use std::env;
 use std::num::ParseIntError;
 
@@ -133,8 +133,11 @@ impl PSQLProcessor {
                     .await
                     .unwrap();
             }
+            // TODO: Implement contracts
             SystemDataContract::Dashpay => {}
             SystemDataContract::WalletUtils => {}
+            SystemDataContract::TokenHistory => {}
+            SystemDataContract::KeywordSearch => {}
         }
     }
 }
