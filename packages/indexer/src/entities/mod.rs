@@ -4,6 +4,6 @@ pub mod data_contract;
 pub mod document;
 pub mod identity;
 pub mod masternode_vote;
+pub mod token_config;
 pub mod transfer;
 pub mod validator;
-pub mod token_config;

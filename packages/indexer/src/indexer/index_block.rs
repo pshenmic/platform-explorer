@@ -77,24 +77,6 @@ impl Indexer {
         let core_chain_locked_height = block.block.header.core_chain_locked_height;
         let app_hash = block.block.header.app_hash;
 
-        let block_l1_hash = self.processor.get_l1_block_hash(core_chain_locked_height);
-        let block_l1 = self.processor.get_l1_block(&block_l1_hash);
-
-        let l2_reward: Option<i64> = match block_l1 {
-            Some(block) => block
-                .txdata
-                .iter()
-                .flat_map(|txdata| &txdata.output)
-                .find_map(|output| {
-                    if output.script_pubkey.is_op_return() {
-                        Some(output.value as i64)
-                    } else {
-                        None
-                    }
-                }),
-            None => None,
-        };
-
         let block = Block {
             header: BlockHeader {
                 hash: block_hash,
@@ -105,7 +87,6 @@ impl Indexer {
                 l1_locked_height: core_chain_locked_height,
                 app_hash,
                 proposer_pro_tx_hash: block.block.header.proposer_pro_tx_hash,
-                validators_reward: l2_reward,
             },
             txs,
         };

@@ -10,9 +10,14 @@ impl PostgresDAO {
         block_header: BlockHeader,
         sql_transaction: &Transaction<'_>,
     ) -> String {
-        let stmt = sql_transaction.prepare_cached("INSERT INTO blocks(hash, height, \
-        timestamp, block_version, app_version, l1_locked_height, validator, app_hash, validators_reward) \
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING hash;").await.unwrap();
+        let stmt = sql_transaction
+            .prepare_cached(
+                "INSERT INTO blocks(hash, height, \
+        timestamp, block_version, app_version, l1_locked_height, validator, app_hash) \
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING hash;",
+            )
+            .await
+            .unwrap();
 
         sql_transaction
             .execute(
@@ -26,7 +31,6 @@ impl PostgresDAO {
                     &block_header.l1_locked_height,
                     &block_header.proposer_pro_tx_hash,
                     &block_header.app_hash,
-                    &block_header.validators_reward,
                 ],
             )
             .await

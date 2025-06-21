@@ -1,12 +1,12 @@
-use std::collections::BTreeMap;
-use dpp::data_contract::serialized_version::DataContractInSerializationFormat;
 use data_contracts::SystemDataContract;
-use dpp::identifier::Identifier;
+use dpp::data_contract::serialized_version::DataContractInSerializationFormat;
 use dpp::data_contract::{TokenConfiguration, TokenContractPosition};
+use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::state_transition::data_contract_create_transition::DataContractCreateTransition;
 use dpp::state_transition::data_contract_update_transition::DataContractUpdateTransition;
 use serde_json::Value;
+use std::collections::BTreeMap;
 use tokio_postgres::Row;
 
 #[derive(Clone)]
@@ -19,7 +19,7 @@ pub struct DataContract {
     pub version: u32,
     pub is_system: bool,
     pub tokens: Option<BTreeMap<TokenContractPosition, TokenConfiguration>>,
-    pub format_version: Option<u32>
+    pub format_version: Option<u32>,
 }
 
 impl From<DataContractCreateTransition> for DataContract {
@@ -45,7 +45,7 @@ impl From<DataContractCreateTransition> for DataContract {
                             version,
                             is_system: false,
                             tokens: None,
-                            format_version: Some(0u32)
+                            format_version: Some(0u32),
                         };
                     }
 
@@ -66,7 +66,7 @@ impl From<DataContractCreateTransition> for DataContract {
                             version,
                             is_system: false,
                             tokens: Some(tokens),
-                            format_version: Some(1u32)
+                            format_version: Some(1u32),
                         };
                     }
                 }
@@ -98,7 +98,7 @@ impl From<DataContractUpdateTransition> for DataContract {
                             version,
                             is_system: false,
                             tokens: None,
-                            format_version: Some(0u32)
+                            format_version: Some(0u32),
                         };
                     }
 
@@ -119,7 +119,7 @@ impl From<DataContractUpdateTransition> for DataContract {
                             version,
                             is_system: false,
                             tokens: Some(tokens),
-                            format_version: Some(1u32)
+                            format_version: Some(1u32),
                         };
                     }
                 }
@@ -139,7 +139,7 @@ impl From<SystemDataContract> for DataContract {
             SystemDataContract::Dashpay => "Dashpay",
             SystemDataContract::WalletUtils => "WalletUtils",
             SystemDataContract::TokenHistory => "TokenHistory",
-            SystemDataContract::KeywordSearch => "KeywordSearch"
+            SystemDataContract::KeywordSearch => "KeywordSearch",
         };
         let identifier = data_contract.id();
         let source = data_contract.source(platform_version).unwrap();
@@ -156,7 +156,7 @@ impl From<SystemDataContract> for DataContract {
             version: 0,
             is_system: true,
             tokens: None,
-            format_version: None
+            format_version: None,
         };
     }
 }

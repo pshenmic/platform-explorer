@@ -8,9 +8,9 @@ pub mod documents;
 pub mod identities;
 pub mod masternode_votes;
 pub mod state_transitions;
+pub mod token;
 pub mod transfers;
 pub mod validators;
-pub mod token;
 
 pub struct PostgresDAO {
     pub(crate) connection_pool: Pool,

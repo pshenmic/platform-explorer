@@ -15,7 +15,6 @@ use std::env;
 use std::num::ParseIntError;
 
 pub mod handlers;
-mod utils;
 
 #[derive(Debug)]
 pub enum ProcessorError {

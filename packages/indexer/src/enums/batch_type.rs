@@ -39,7 +39,9 @@ impl fmt::Display for BatchType {
             BatchType::TokenEmergencyActionTransition => "TOKEN_EMERGENCY_ACTION",
             BatchType::TokenConfigUpdateTransition => "TOKEN_CONFIG_UPDATE",
             BatchType::TokenDirectPurchaseTransition => "TOKEN_DIRECT_PURCHASE",
-            BatchType::TokenSetPriceForDirectPurchaseTransition => "TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE"
+            BatchType::TokenSetPriceForDirectPurchaseTransition => {
+                "TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE"
+            }
         };
 
         write!(f, "{:?}", batch_type_string)

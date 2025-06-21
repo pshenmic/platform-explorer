@@ -2,11 +2,11 @@ use dotenv::dotenv;
 
 mod decoder;
 mod entities;
+mod enums;
 mod indexer;
 mod models;
 mod processor;
 mod utils;
-mod enums;
 
 extern crate chrono;
 extern crate core;
