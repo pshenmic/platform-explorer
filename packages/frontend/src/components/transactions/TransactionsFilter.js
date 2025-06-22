@@ -139,6 +139,7 @@ export default function TransactionsFilter ({ initialFilters, onFilterChange, is
       isMobile={isMobile}
       className={`TransactionsFilter ${className || ''}`}
       buttonText={'Add filter'}
+      applyOnChange={false}
     />
   )
 }

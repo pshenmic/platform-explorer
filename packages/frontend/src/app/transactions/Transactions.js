@@ -10,7 +10,6 @@ import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Container, Heading, Box, useBreakpointValue } from '@chakra-ui/react'
-import { useDebounce } from '../../hooks'
 import './Transactions.scss'
 
 const paginateConfig = {
@@ -27,7 +26,6 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
   const [total, setTotal] = useState(0)
   const [transactions, setTransactions] = useState({ data: [], loading: true, error: null })
   const [filters, setFilters] = useState({})
-  const debouncedFilters = useDebounce(filters, 250)
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
@@ -43,7 +41,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
           Math.max(1, currentPage + 1),
           Math.max(1, pageSize),
           'desc',
-          debouncedFilters
+          filters
         )
 
         setTotal(response.pagination.total)
@@ -56,7 +54,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
     }
 
     fetchTransactions()
-  }, [currentPage, pageSize, debouncedFilters])
+  }, [currentPage, pageSize, filters])
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage

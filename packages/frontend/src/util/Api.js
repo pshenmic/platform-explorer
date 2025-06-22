@@ -202,11 +202,11 @@ const getValidatorByProTxHash = (proTxHash) => {
 }
 
 const getBlocksStatsByValidator = (proTxHash, start, end, intervalsCount) => {
-  return call(`validator/${proTxHash}/stats?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+  return call(`validator/${proTxHash}/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
 const getRewardsStatsByValidator = (proTxHash, start, end, intervalsCount) => {
-  return call(`validator/${proTxHash}/rewards/stats?start=${start}&end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+  return call(`validator/${proTxHash}/rewards/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
 const getMasternodeVotes = (page = 1, limit = 10, order = 'asc', filters = {}) => {

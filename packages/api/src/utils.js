@@ -59,6 +59,17 @@ const createDocumentBatchTransition = async (client, dataContractObject, owner, 
   return tx.toBuffer().toString('base64')
 }
 
+/**
+ * allows to get address from output script
+ * @param {Buffer} script
+ * @returns {String}
+ */
+
+const outputScriptToAddress = (script) => {
+  const address = dashcorelib.Script(script).toAddress(NETWORK)
+  return address ? address.toString() : null
+}
+
 const decodeStateTransition = async (client, base64) => {
   const stateTransition = await client.platform.dpp.stateTransition.createFromBuffer(Buffer.from(base64, 'base64'))
 
@@ -403,10 +414,7 @@ const decodeStateTransition = async (client, base64) => {
     }
     case StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL: {
       decoded.outputAddress = stateTransition.getOutputScript()
-        ? dashcorelib
-          .Script(stateTransition.getOutputScript())
-          .toAddress(NETWORK)
-          .toString()
+        ? outputScriptToAddress(stateTransition.getOutputScript())
         : null
 
       decoded.userFeeIncrease = stateTransition.getUserFeeIncrease()
@@ -582,7 +590,7 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
       alias: alias.alias,
       status: 'ok',
       contested: false,
-      timestamp: alias.timestamp,
+      timestamp: alias.timestamp ? new Date(alias.timestamp) : null,
       txHash: alias.tx
     })
   }
@@ -603,7 +611,7 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
     alias: alias.alias ?? alias,
     status,
     contested: true,
-    timestamp: alias.timestamp,
+    timestamp: alias.timestamp ? new Date(alias.timestamp) : null,
     txHash: alias.tx
   })
 }
@@ -645,5 +653,6 @@ module.exports = {
   getAliasInfo,
   getAliasStateByVote,
   buildIndexBuffer,
-  createDocumentBatchTransition
+  createDocumentBatchTransition,
+  outputScriptToAddress
 }
