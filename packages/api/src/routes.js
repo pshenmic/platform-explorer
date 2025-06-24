@@ -11,6 +11,8 @@
  * @param validatorsController {ValidatorsController}
  * @param rateController {RateController}
  * @param masternodeVotesController {MasternodeVotesController}
+ * @param contestedResourcesController {ContestedResourcesController}
+ * @param tokensController {TokensController}
  */
 module.exports = ({
   fastify,
@@ -24,7 +26,8 @@ module.exports = ({
   validatorsController,
   rateController,
   masternodeVotesController,
-  contestedResourcesController
+  contestedResourcesController,
+  tokensController
 }) => {
   const routes = [
     {
@@ -524,6 +527,12 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/tokens',
+      method: 'GET',
+      handler: tokensController.getTokens,
+      schema: {}
     }
   ]
 

@@ -1,5 +1,6 @@
+use std::collections::BTreeMap;
+use dpp::data_contract::associated_token::token_configuration_localization::TokenConfigurationLocalization;
 use dpp::data_contract::associated_token::token_distribution_rules::TokenDistributionRules;
-use dpp::data_contract::change_control_rules::ChangeControlRules;
 use dpp::identifier::Identifier;
 
 #[derive(Clone)]
@@ -7,8 +8,11 @@ pub struct TokenConfig {
     pub position: u16,
     pub identifier: Identifier,
     pub data_contract_identifier: Identifier,
+    pub owner: Identifier,
+    pub decimals: u8,
     pub max_supply: Option<u64>,
     pub base_supply: u64,
+    pub localizations: BTreeMap<String, TokenConfigurationLocalization>,
     pub keeps_transfer_history: bool,
     pub keeps_freezing_history: bool,
     pub keeps_minting_history: bool,
@@ -16,10 +20,10 @@ pub struct TokenConfig {
     pub keeps_direct_pricing_history: bool,
     pub keeps_direct_purchase_history: bool,
     pub distribution_rules: TokenDistributionRules,
-    pub manual_minting_rules: ChangeControlRules,
-    pub manual_burning_rules: ChangeControlRules,
-    pub freeze_rules: ChangeControlRules,
-    pub unfreeze_rules: ChangeControlRules,
-    pub destroy_frozen_funds_rules: ChangeControlRules,
-    pub emergency_action_rules: ChangeControlRules,
+    pub mintable: bool,
+    pub burnable: bool,
+    pub freezable: bool,
+    pub unfreezable: bool,
+    pub destroyable: bool,
+    pub allowed_emergency_actions: bool,
 }
