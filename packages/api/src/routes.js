@@ -532,7 +532,9 @@ module.exports = ({
       path: '/tokens',
       method: 'GET',
       handler: tokensController.getTokens,
-      schema: {}
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
     }
   ]
 
