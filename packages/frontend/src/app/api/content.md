@@ -48,7 +48,7 @@ Reference:
 * [Decode Raw Transaction](#decode-raw-transaction)
 * [Identity Nonce](#identity-nonce)
 * [Identity Contract Nonce](#identity-contract-nonce)
-* [tokens](#tokens)
+* [Tokens](#tokens)
 * [Broadcast Transaction](#broadcast-transaction)
 
 ### Status
