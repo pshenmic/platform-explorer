@@ -1,7 +1,7 @@
 const Token = require('../models/Token')
 
 module.exports = class TokensDAO {
-  constructor(knex, dapi) {
+  constructor (knex, dapi) {
     this.knex = knex
     this.dapi = dapi
   }
@@ -27,12 +27,12 @@ module.exports = class TokensDAO {
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)
 
-    return  Promise.all(rows.map(async (row) => {
-      const {totalSystemAmount} = await this.dapi.getTokenTotalSupply(row.identifier)
+    return Promise.all(rows.map(async (row) => {
+      const { totalSystemAmount } = await this.dapi.getTokenTotalSupply(row.identifier)
 
       return Token.fromObject({
         ...Token.fromRow(row),
-        totalSupply: totalSystemAmount.toString(),
+        totalSupply: totalSystemAmount.toString()
       })
     }))
   }

@@ -1,7 +1,7 @@
-const TokensDAO = require("../dao/TokensDAO");
+const TokensDAO = require('../dao/TokensDAO')
 
 class TokensController {
-  constructor(knex, dapi) {
+  constructor (knex, dapi) {
     this.tokensDAO = new TokensDAO(knex, dapi)
   }
 
@@ -9,10 +9,10 @@ class TokensController {
     const {
       page = 1,
       limit = 10,
-      order = 'asc',
+      order = 'asc'
     } = request.query
 
-    const tokens = await this.tokensDAO.getTokens(Number(page ?? 0), Number(limit ?? 0), order);
+    const tokens = await this.tokensDAO.getTokens(Number(page ?? 0), Number(limit ?? 0), order)
 
     response.send(tokens)
   }

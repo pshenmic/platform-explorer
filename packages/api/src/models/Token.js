@@ -15,7 +15,7 @@ module.exports = class Token {
   allowedEmergencyActions
   dataContractIdentifier
 
-  constructor(identifier, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalSupply) {
+  constructor (identifier, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalSupply) {
     this.identifier = identifier ?? null
     this.localizations = localizations ?? null
     this.baseSupply = baseSupply ?? null
@@ -31,44 +31,44 @@ module.exports = class Token {
     this.totalSupply = totalSupply ?? null
   }
 
-  static fromRow({
-                   identifier,
-                   localizations,
-                   base_supply,
-                   max_supply,
-                   owner,
-                   mintable,
-                   burnable,
-                   freezable,
-                   unfreezable,
-                   destroyable,
-                   allowed_emergency_actions,
-                   data_contract_identifier
-                 }) {
+  /* eslint-disable */
+  static fromRow ({
+    identifier,
+    localizations,
+    base_supply,
+    max_supply,
+    owner,
+    mintable,
+    burnable,
+    freezable,
+    unfreezable,
+    destroyable,
+    allowed_emergency_actions,
+    data_contract_identifier
+  }) {
     return new Token(identifier, localizations, base_supply, max_supply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowed_emergency_actions, data_contract_identifier)
   }
 
-  static fromObject({
-                      identifier,
-                      localizations,
-                      baseSupply,
-                      maxSupply,
-                      owner,
-                      mintable,
-                      burnable,
-                      freezable,
-                      unfreezable,
-                      destroyable,
-                      allowedEmergencyActions,
-                      dataContractIdentifier,
-                      totalSupply,
-                    }) {
+  static fromObject ({
+    identifier,
+    localizations,
+    baseSupply,
+    maxSupply,
+    owner,
+    mintable,
+    burnable,
+    freezable,
+    unfreezable,
+    destroyable,
+    allowedEmergencyActions,
+    dataContractIdentifier,
+    totalSupply
+  }) {
     if (localizations) {
-      for (let locale in localizations) {
+      for (const locale in localizations) {
         localizations[locale] = Localization.fromObject(localizations[locale])
       }
     }
-
 
     return new Token(identifier, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalSupply)
   }

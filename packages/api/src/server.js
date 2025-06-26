@@ -105,7 +105,7 @@ module.exports = {
       rateController,
       masternodeVotesController,
       contestedResourcesController,
-      tokensController,
+      tokensController
     })
 
     fastify.setErrorHandler(errorHandler)
