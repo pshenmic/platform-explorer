@@ -90,7 +90,7 @@ module.exports = {
     const rateController = new RateController()
     const masternodeVotesController = new MasternodeVotesController(knex, dapi)
     const contestedResourcesController = new ContestedResourcesController(knex, dapi)
-    const tokensController = new TokensController(knex)
+    const tokensController = new TokensController(knex, dapi)
 
     Routes({
       fastify,
