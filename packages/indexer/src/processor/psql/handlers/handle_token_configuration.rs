@@ -1,14 +1,18 @@
-use deadpool_postgres::Transaction;
 use crate::entities::data_contract::DataContract;
 use crate::entities::token_config::TokenConfig;
 use crate::processor::psql::PSQLProcessor;
+use deadpool_postgres::Transaction;
 use dpp::data_contract::associated_token::token_configuration::accessors::v0::TokenConfigurationV0Getters;
 use dpp::data_contract::associated_token::token_keeps_history_rules::accessors::v0::TokenKeepsHistoryRulesV0Getters;
 use dpp::identifier::Identifier;
 use dpp::tokens::calculate_token_id;
 
 impl PSQLProcessor {
-    pub async fn handle_token_configuration(&self, data_contract: DataContract, sql_transaction: &Transaction<'_>) -> () {
+    pub async fn handle_token_configuration(
+        &self,
+        data_contract: DataContract,
+        sql_transaction: &Transaction<'_>,
+    ) -> () {
         if data_contract.tokens.is_some() {
             let tokens = data_contract.tokens.clone().unwrap();
 

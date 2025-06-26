@@ -19,18 +19,16 @@ pub struct MasternodeVote {
     pub towards_identity_identifier: Option<Identifier>,
     pub document_type_name: String,
     pub index_name: String,
-    pub index_values: Vec<Value>
+    pub index_values: Vec<Value>,
 }
-
 
 struct VoteInfo {
     pub choice: ResourceVoteChoice,
     pub data_contract_identifier: Identifier,
     pub document_type_name: String,
     pub index_name: String,
-    pub index_values: Vec<Value>
+    pub index_values: Vec<Value>,
 }
-
 
 impl From<(MasternodeVoteTransition, ProTxInfo)> for MasternodeVote {
     fn from((transition, pro_tx_info): (MasternodeVoteTransition, ProTxInfo)) -> Self {
@@ -41,33 +39,27 @@ impl From<(MasternodeVoteTransition, ProTxInfo)> for MasternodeVote {
 
         let power = match pro_tx_info.mn_type.unwrap().as_str() {
             "Evo" => 4i16,
-            _ => 1i16
+            _ => 1i16,
         };
 
         let vote_info: VoteInfo = match vote {
-            Vote::ResourceVote(resource_vote) => {
-                match resource_vote {
-                    ResourceVote::V0(resource_vote_v0) => {
-                        match resource_vote_v0.clone().vote_poll {
-                            VotePoll::ContestedDocumentResourceVotePoll(vote_poll) => {
-                                VoteInfo {
-                                    choice: resource_vote_v0.resource_vote_choice,
-                                    data_contract_identifier: vote_poll.contract_id,
-                                    document_type_name: vote_poll.document_type_name,
-                                    index_name: vote_poll.index_name,
-                                    index_values: vote_poll.index_values
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            Vote::ResourceVote(resource_vote) => match resource_vote {
+                ResourceVote::V0(resource_vote_v0) => match resource_vote_v0.clone().vote_poll {
+                    VotePoll::ContestedDocumentResourceVotePoll(vote_poll) => VoteInfo {
+                        choice: resource_vote_v0.resource_vote_choice,
+                        data_contract_identifier: vote_poll.contract_id,
+                        document_type_name: vote_poll.document_type_name,
+                        index_name: vote_poll.index_name,
+                        index_values: vote_poll.index_values,
+                    },
+                },
+            },
         };
 
         let towards_identity_identifier: Option<Identifier> = match vote_info.choice {
             ResourceVoteChoice::TowardsIdentity(identifier) => Some(identifier),
             ResourceVoteChoice::Abstain => None,
-            ResourceVoteChoice::Lock => None
+            ResourceVoteChoice::Lock => None,
         };
 
         MasternodeVote {
