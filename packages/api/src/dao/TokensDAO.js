@@ -1,4 +1,5 @@
 const Token = require('../models/Token')
+const PaginatedResultSet = require('../models/PaginatedResultSet')
 
 module.exports = class TokensDAO {
   constructor (knex, dapi) {
@@ -24,10 +25,13 @@ module.exports = class TokensDAO {
         'burnable', 'freezable', 'unfreezable', 'destroyable', 'allowed_emergency_actions',
         'data_contract_identifier'
       )
+      .select(this.knex('tokens').count('*').as('total_count'))
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)
 
-    return Promise.all(rows.map(async (row) => {
+    const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
+
+    const tokens = await Promise.all(rows.map(async (row) => {
       const { totalSystemAmount } = await this.dapi.getTokenTotalSupply(row.identifier)
 
       return Token.fromObject({
@@ -35,5 +39,7 @@ module.exports = class TokensDAO {
         totalSupply: totalSystemAmount.toString()
       })
     }))
+
+    return new PaginatedResultSet(tokens, page, limit, totalCount)
   }
 }

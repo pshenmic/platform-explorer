@@ -8,7 +8,16 @@ const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase(
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
 const fixtures = {
   identifier: () => generateIdentifier(),
-  block: async (knex, { hash, height, timestamp, block_version, app_version, l1_locked_height, validator, app_hash } = {}) => {
+  block: async (knex, {
+    hash,
+    height,
+    timestamp,
+    block_version,
+    app_version,
+    l1_locked_height,
+    validator,
+    app_hash
+  } = {}) => {
     const row = {
       hash: hash ?? generateHash(),
       height: height ?? 1,
@@ -24,7 +33,18 @@ const fixtures = {
 
     return row
   },
-  transaction: async (knex, { hash, data, type, batch_type = null, index, block_hash, owner, gas_used, status, error } = {}) => {
+  transaction: async (knex, {
+    hash,
+    data,
+    type,
+    batch_type = null,
+    index,
+    block_hash,
+    owner,
+    gas_used,
+    status,
+    error
+  } = {}) => {
     if (!block_hash) {
       throw new Error('block_hash must be provided for transaction fixture')
     }
@@ -252,7 +272,79 @@ const fixtures = {
 
     return { ...row, id: result.id }
   },
+  token: async (knex, {
+    position,
+    identifier,
+    owner,
+    data_contract_id,
+    decimals,
+    max_supply,
+    base_supply,
+    localizations,
+    keeps_transfer_history,
+    keeps_freezing_history,
+    keeps_minting_history,
+    keeps_burning_history,
+    keeps_direct_pricing_history,
+    keeps_direct_purchase_history,
+    distribution_rules,
+    mintable,
+    burnable,
+    freezable,
+    unfreezable,
+    destroyable,
+    allowed_emergency_actions
+  }) => {
+    if (position === undefined) {
+      throw new Error('position must be provided')
+    }
+    if (!identifier) {
+      identifier = generateIdentifier()
+    }
+    if (!owner) {
+      throw new Error('owner must be provided')
+    }
+    if (!data_contract_id) {
+      throw new Error('data_contract_id must be provided')
+    }
+    if (decimals === undefined) {
+      throw new Error('decimals must be provided')
+    }
+    if (!base_supply) {
+      throw new Error('base_supply must be provided')
+    }
+
+    const row = {
+      position,
+      identifier,
+      owner,
+      data_contract_id,
+      decimals,
+      max_supply,
+      base_supply,
+      localizations,
+      keeps_transfer_history: keeps_transfer_history ?? true,
+      keeps_freezing_history: keeps_freezing_history ?? true,
+      keeps_minting_history: keeps_minting_history ?? true,
+      keeps_burning_history: keeps_burning_history ?? true,
+      keeps_direct_pricing_history: keeps_direct_pricing_history ?? true,
+      keeps_direct_purchase_history: keeps_direct_purchase_history ?? true,
+      distribution_rules,
+      mintable: mintable ?? true,
+      burnable: burnable ?? true,
+      freezable: freezable ?? true,
+      unfreezable: unfreezable ?? true,
+      destroyable: destroyable ?? true,
+      allowed_emergency_actions: allowed_emergency_actions ?? true
+    }
+
+    const [result] = await knex('tokens').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
   cleanup: async (knex) => {
+    await knex.raw('DELETE FROM token_transitions')
+    await knex.raw('DELETE FROM tokens')
     await knex.raw('DELETE FROM masternode_votes')
     await knex.raw('DELETE FROM identities')
     await knex.raw('DELETE FROM identity_aliases')
