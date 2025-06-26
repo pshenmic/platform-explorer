@@ -1,7 +1,7 @@
-use std::collections::BTreeMap;
 use dpp::data_contract::associated_token::token_configuration_localization::TokenConfigurationLocalization;
 use dpp::data_contract::associated_token::token_distribution_rules::TokenDistributionRules;
 use dpp::identifier::Identifier;
+use std::collections::BTreeMap;
 
 #[derive(Clone)]
 pub struct TokenConfig {

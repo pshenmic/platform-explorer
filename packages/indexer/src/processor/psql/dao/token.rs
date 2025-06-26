@@ -27,7 +27,7 @@ impl PostgresDAO {
                 token.data_contract_identifier.to_string(Base58)
             ));
         let data_contract_id = data_contract.id.unwrap() as i32;
-        
+
         let localizations = serde_json::to_value(token.localizations).unwrap();
 
         let query = "INSERT INTO tokens(position, identifier, owner, data_contract_id, \
