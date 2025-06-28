@@ -53,7 +53,7 @@ class DAPI {
     return raw
       ? documents
       : (documents ?? []).map(
-          (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument())
+        (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument())
   }
 
   /**
@@ -69,13 +69,13 @@ class DAPI {
    * @returns {Promise<contestedResourceContenders>}
    */
   async getContestedState (contractId,
-    documentTypeName,
-    indexName,
-    resultType,
-    indexValuesList,
-    startAtIdentifierInfo,
-    allowIncludeLockedAndAbstainingVoteTally,
-    count
+                           documentTypeName,
+                           indexName,
+                           resultType,
+                           indexValuesList,
+                           startAtIdentifierInfo,
+                           allowIncludeLockedAndAbstainingVoteTally,
+                           count
   ) {
     const { contestedResourceContenders } = await this.dapi.platform.getContestedResourceVoteState(
       Buffer.from(contractId, 'base64'),
@@ -110,10 +110,10 @@ class DAPI {
         hash: Buffer.from(serialized.hash()).toString('hex'),
         contractBounds: contractBounds
           ? {
-              type: contractBounds.type,
-              id: Identifier.from(Buffer.from(contractBounds.id)),
-              typeName: contractBounds.document_type_name
-            }
+            type: contractBounds.type,
+            id: Identifier.from(Buffer.from(contractBounds.id)),
+            typeName: contractBounds.document_type_name
+          }
           : null
       }
     })
@@ -136,6 +136,10 @@ class DAPI {
    */
   async getTokenTotalSupply (tokenId) {
     return this.dapi.platform.getTokenTotalSupply(Identifier.from(tokenId))
+  }
+
+  async getTokenContractInfo (tokenId) {
+    return this.dapi.platform.getTokenContractInfo(Identifier.from(tokenId))
   }
 
   async getStatus () {
