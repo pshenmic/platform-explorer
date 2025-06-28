@@ -138,6 +138,10 @@ class DAPI {
     return this.dapi.platform.getTokenTotalSupply(Identifier.from(tokenId))
   }
 
+  async getTokenContractInfo (tokenId) {
+    return this.dapi.platform.getTokenContractInfo(Identifier.from(tokenId))
+  }
+
   async getStatus () {
     return this.dapi.platform.getStatus()
   }
