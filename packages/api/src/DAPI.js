@@ -142,6 +142,10 @@ class DAPI {
     return this.dapi.platform.getTokenContractInfo(Identifier.from(tokenId))
   }
 
+  async getDataContract (dataContractId) {
+    return this.dapi.platform.getDataContract(Identifier.from(dataContractId))
+  }
+
   async getStatus () {
     return this.dapi.platform.getStatus()
   }
