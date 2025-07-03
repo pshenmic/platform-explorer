@@ -226,7 +226,7 @@ module.exports = class DataContractsDAO {
       let decodedTx
 
       if (row.data) {
-        decodedTx = await decodeStateTransition(this.client, row.data)
+        decodedTx = await decodeStateTransition(row.data)
       }
 
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
