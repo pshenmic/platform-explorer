@@ -15,7 +15,7 @@ const {
   DataContractCreateTransitionWASM,
   IdentityCreateTransitionWASM, IdentityTopUpTransitionWASM, DataContractUpdateTransitionWASM,
   IdentityUpdateTransitionWASM, IdentityCreditTransferWASM, IdentityCreditWithdrawalTransitionWASM,
-  MasternodeVoteTransitionWASM
+  MasternodeVoteTransitionWASM, IdentifierWASM
 } = require('pshenmic-dpp')
 
 const getKnex = () => {
@@ -241,7 +241,7 @@ const decodeStateTransition = async (base64) => {
                 const transferTransition = transition.transferTransition
 
                 out.receiverId = transferTransition.receiverId
-                out.recipientId = transferTransition.recipientId
+                out.recipientId = transferTransition.recipientId.base58()
 
                 break
               }
@@ -643,7 +643,7 @@ const getAliasInfo = async (aliasText, dapi) => {
     const labelBuffer = buildIndexBuffer(normalizedLabel)
 
     const contestedState = await dapi.getContestedState(
-      Buffer.from(base58.decode(DPNS_CONTRACT)).toString('base64'),
+      new IdentifierWASM(DPNS_CONTRACT).base64(),
       'domain',
       'parentNameAndLabel',
       1,

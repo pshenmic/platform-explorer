@@ -222,6 +222,45 @@ module.exports = class DataContractsDAO {
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)
 
+
+    try {
+      await Promise.all(rows.map(async (row) => {
+        let decodedTx
+
+        try {
+          if (row.data) {
+            decodedTx = await decodeStateTransition(row.data)
+          }
+        } catch (error) {
+          console.log()
+        }
+
+        const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
+          const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+
+          return getAliasStateByVote(aliasInfo, alias, row.owner)
+        }))
+
+        return {
+          type: decodedTx?.type ?? null,
+          action: decodedTx?.transitions?.map(transition => ({
+            action: transition.action,
+            id: transition.id
+          })) ?? null,
+          owner: {
+            identifier: row.owner?.trim() ?? null,
+            aliases: aliases ?? []
+          },
+          timestamp: row.timestamp,
+          gasUsed: Number(row.gas_used ?? 0),
+          error: row.error,
+          hash: row.state_transition_hash
+        }
+      }))
+    } catch (e) {
+      console.error(e)
+    }
+
     const resultSet = await Promise.all(rows.map(async (row) => {
       let decodedTx
 

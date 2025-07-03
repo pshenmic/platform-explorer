@@ -253,6 +253,8 @@ const fixtures = {
     return { ...row, id: result.id }
   },
   cleanup: async (knex) => {
+    await knex.raw('DELETE FROM token_transitions')
+    await knex.raw('DELETE FROM tokens')
     await knex.raw('DELETE FROM masternode_votes')
     await knex.raw('DELETE FROM identities')
     await knex.raw('DELETE FROM identity_aliases')
