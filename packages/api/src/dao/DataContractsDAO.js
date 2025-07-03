@@ -222,7 +222,6 @@ module.exports = class DataContractsDAO {
       .whereBetween('rank', [fromRank, toRank])
       .orderBy('id', order)
 
-
     try {
       await Promise.all(rows.map(async (row) => {
         let decodedTx
