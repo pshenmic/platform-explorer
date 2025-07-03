@@ -18,7 +18,6 @@ const {
   MasternodeVoteTransitionWASM
 } = require('pshenmic-dpp')
 
-
 const getKnex = () => {
   return require('knex')({
     client: 'pg',
