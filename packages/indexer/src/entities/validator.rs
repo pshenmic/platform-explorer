@@ -9,9 +9,6 @@ impl From<Row> for Validator {
     fn from(row: Row) -> Self {
         let pro_tx_hash: String = row.get(0);
 
-        return Validator {
-            pro_tx_hash
-        }
+        return Validator { pro_tx_hash };
     }
 }
-

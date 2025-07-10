@@ -98,6 +98,7 @@ export default function BlocksFilter ({ initialFilters, onFilterChange, isMobile
       isMobile={isMobile}
       className={`BlocksFilter ${className || ''}`}
       buttonText={'Add filter'}
+      applyOnChange={false}
     />
   )
 }

@@ -24,7 +24,7 @@ const fixtures = {
 
     return row
   },
-  transaction: async (knex, { hash, data, type, index, block_hash, owner, gas_used, status, error } = {}) => {
+  transaction: async (knex, { hash, data, type, batch_type = null, index, block_hash, owner, gas_used, status, error } = {}) => {
     if (!block_hash) {
       throw new Error('block_hash must be provided for transaction fixture')
     }
@@ -40,6 +40,7 @@ const fixtures = {
     const row = {
       block_hash,
       type,
+      batch_type,
       owner,
       hash: hash ?? generateHash(),
       data: data ?? {},

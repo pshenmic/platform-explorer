@@ -237,7 +237,7 @@ describe('Identities routes', () => {
           alias: alias.alias,
           contested: false,
           status: 'ok',
-          timestamp: '1970-01-01T00:00:00+00:00',
+          timestamp: '1970-01-01T00:00:00.000Z',
           txHash: alias.state_transition_hash
         }],
         totalGasSpent: 0,
@@ -435,7 +435,7 @@ describe('Identities routes', () => {
           txHash: alias.state_transition_hash,
           status: 'ok',
           contested: false,
-          timestamp: '1970-01-01T00:00:00+00:00'
+          timestamp: '1970-01-01T00:00:00.000Z'
         })),
         totalGasSpent: null,
         averageGasSpent: null,
@@ -497,7 +497,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -560,7 +560,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -624,7 +624,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -703,7 +703,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -794,7 +794,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -1371,6 +1371,7 @@ describe('Identities routes', () => {
           index: 0,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
+          batchType: null,
           type: i === 0 ? StateTransitionEnum.IDENTITY_CREATE : StateTransitionEnum.BATCH,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
@@ -1416,6 +1417,7 @@ describe('Identities routes', () => {
         .map((_transaction) => ({
           hash: _transaction.transaction.hash,
           index: 0,
+          batchType: null,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
           type: StateTransitionEnum.BATCH,
@@ -1466,6 +1468,7 @@ describe('Identities routes', () => {
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
           type: StateTransitionEnum.BATCH,
+          batchType: null,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
@@ -1513,6 +1516,7 @@ describe('Identities routes', () => {
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
           type: StateTransitionEnum.BATCH,
+          batchType: null,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,

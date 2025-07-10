@@ -21,7 +21,6 @@ import {
   useOutsideClick
 } from '@chakra-ui/react'
 import { BlocksFilter } from '../../components/blocks'
-import { useDebounce } from '../../hooks'
 import { SearchResultsList, GlobalSearchInput } from '../../components/search'
 import './Blocks.scss'
 
@@ -45,7 +44,6 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const pageCount = Math.ceil(total / pageSize) ? Math.ceil(total / pageSize) : 1
   const [filters, setFilters] = useState({})
-  const debouncedFilters = useDebounce(filters, 250)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -78,7 +76,7 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
         Math.max(1, currentPage + 1),
         Math.max(1, pageSize),
         'desc',
-        debouncedFilters
+        filters
       ).then(res => {
         setTotal(res.pagination.total)
         fetchHandlerSuccess(setBlocks, res)
@@ -89,7 +87,7 @@ function Blocks ({ defaultPage = 1, defaultPageSize }) {
     }
 
     fetchData()
-  }, [currentPage, pageSize, debouncedFilters])
+  }, [currentPage, pageSize, filters])
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
