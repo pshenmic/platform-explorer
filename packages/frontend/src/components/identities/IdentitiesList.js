@@ -50,10 +50,6 @@ function IdentitiesList ({ identities, headerStyles = 'default', pagination, loa
           justify={true}
         />
       }
-
-      {identities.length === 0 &&
-        <EmptyListMessage>There are no identities created yet.</EmptyListMessage>
-      }
     </div>
   )
 }
