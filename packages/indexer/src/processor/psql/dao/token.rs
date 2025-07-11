@@ -17,13 +17,6 @@ impl PostgresDAO {
         };
 
         let distribution_rules = serde_json::to_value(token.distribution_rules).unwrap();
-        let manual_minting_rules = serde_json::to_value(token.manual_minting_rules).unwrap();
-        let manual_burning_rules = serde_json::to_value(token.manual_burning_rules).unwrap();
-        let freeze_rules = serde_json::to_value(token.freeze_rules).unwrap();
-        let unfreeze_rules = serde_json::to_value(token.unfreeze_rules).unwrap();
-        let destroy_frozen_funds_rules =
-            serde_json::to_value(token.destroy_frozen_funds_rules).unwrap();
-        let emergency_action_rules = serde_json::to_value(token.emergency_action_rules).unwrap();
 
         let data_contract = self
             .get_data_contract_by_identifier(token.data_contract_identifier, sql_transaction)
@@ -35,11 +28,14 @@ impl PostgresDAO {
             ));
         let data_contract_id = data_contract.id.unwrap() as i32;
 
-        let query = "INSERT INTO tokens(position, identifier, data_contract_id, max_supply, base_supply, \
+        let localizations = serde_json::to_value(token.localizations).unwrap();
+
+        let query = "INSERT INTO tokens(position, identifier, owner, data_contract_id, \
+        decimals, max_supply, base_supply, localizations, \
         keeps_transfer_history, keeps_freezing_history, keeps_minting_history, keeps_burning_history, \
         keeps_direct_pricing_history, keeps_direct_purchase_history, \
-        distribution_rules, manual_minting_rules, manual_burning_rules, freeze_rules, unfreeze_rules, destroy_frozen_funds_rules, \
-        emergency_action_rules) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18);";
+        distribution_rules, mintable, burnable, freezable, unfreezable, destroyable, \
+        allowed_emergency_actions) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -49,9 +45,12 @@ impl PostgresDAO {
                 &[
                     &(token.position as i16),
                     &(token.identifier.to_string(Base58)),
+                    &(token.owner.to_string(Base58)),
                     &data_contract_id,
+                    &(token.decimals as i16),
                     &(max_supply),
                     &(token.base_supply as i64),
+                    &localizations,
                     &token.keeps_transfer_history,
                     &token.keeps_freezing_history,
                     &token.keeps_minting_history,
@@ -59,12 +58,12 @@ impl PostgresDAO {
                     &token.keeps_direct_pricing_history,
                     &token.keeps_direct_purchase_history,
                     &distribution_rules,
-                    &manual_minting_rules,
-                    &manual_burning_rules,
-                    &freeze_rules,
-                    &unfreeze_rules,
-                    &destroy_frozen_funds_rules,
-                    &emergency_action_rules,
+                    &token.mintable,
+                    &token.burnable,
+                    &token.freezable,
+                    &token.unfreezable,
+                    &token.destroyable,
+                    &token.allowed_emergency_actions,
                 ],
             )
             .await
