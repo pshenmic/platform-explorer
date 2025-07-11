@@ -103,7 +103,7 @@ describe('Other routes', () => {
 
     documentTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
-      type: StateTransitionEnum.DOCUMENTS_BATCH,
+      type: StateTransitionEnum.BATCH,
       owner: identity.identifier,
       data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ==',
       index: 2
@@ -172,6 +172,7 @@ describe('Other routes', () => {
         },
         txs: [
           {
+            batchType: null,
             hash: identityTransaction.hash,
             index: identityTransaction.index,
             blockHash: identityTransaction.block_hash,
@@ -188,12 +189,13 @@ describe('Other routes', () => {
                 alias: 'dpns.dash',
                 contested: false,
                 status: 'ok',
-                timestamp: '1970-01-01T00:00:00+00:00',
+                timestamp: '1970-01-01T00:00:00.000Z',
                 txHash: identityTransaction.hash
               }]
             }
           },
           {
+            batchType: null,
             hash: dataContractTransaction.hash,
             index: dataContractTransaction.index,
             blockHash: dataContractTransaction.block_hash,
@@ -210,12 +212,13 @@ describe('Other routes', () => {
                 alias: 'dpns.dash',
                 status: 'ok',
                 contested: false,
-                timestamp: '1970-01-01T00:00:00+00:00',
+                timestamp: '1970-01-01T00:00:00.000Z',
                 txHash: identityTransaction.hash
               }]
             }
           },
           {
+            batchType: null,
             hash: documentTransaction.hash,
             index: documentTransaction.index,
             blockHash: documentTransaction.block_hash,
@@ -232,7 +235,7 @@ describe('Other routes', () => {
                 alias: 'dpns.dash',
                 status: 'ok',
                 contested: false,
-                timestamp: '1970-01-01T00:00:00+00:00',
+                timestamp: '1970-01-01T00:00:00.000Z',
                 txHash: identityTransaction.hash
               }]
             }
@@ -249,6 +252,7 @@ describe('Other routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedTransaction = {
+        batchType: null,
         hash: dataContractTransaction.hash,
         index: dataContractTransaction.index,
         blockHash: dataContractTransaction.block_hash,
@@ -265,7 +269,7 @@ describe('Other routes', () => {
             alias: identityAlias.alias,
             contested: false,
             status: 'ok',
-            timestamp: '1970-01-01T00:00:00+00:00',
+            timestamp: '1970-01-01T00:00:00.000Z',
             txHash: identityTransaction.hash
           }]
         }
@@ -448,7 +452,7 @@ describe('Other routes', () => {
           alias: 'dpns.dash',
           contested: false,
           status: 'ok',
-          timestamp: '1970-01-01T00:00:00+00:00',
+          timestamp: '1970-01-01T00:00:00.000Z',
           txHash: identityTransaction.hash
         }],
         totalGasSpent: 480000,

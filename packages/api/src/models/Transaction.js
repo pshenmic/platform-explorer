@@ -8,6 +8,7 @@ module.exports = class Transaction {
   blockHash
   blockHeight
   type
+  batchType
   data
   timestamp
   gasUsed
@@ -15,12 +16,13 @@ module.exports = class Transaction {
   error
   owner
 
-  constructor (hash, index, blockHash, blockHeight, type, data, timestamp, gasUsed, status, error, owner) {
+  constructor (hash, index, blockHash, blockHeight, type, batchType, data, timestamp, gasUsed, status, error, owner) {
     this.hash = hash ?? null
     this.index = index ?? null
     this.blockHash = blockHash ?? null
     this.blockHeight = blockHeight ?? null
     this.type = type ?? null
+    this.batchType = batchType ?? null
     this.data = data ?? null
     this.timestamp = timestamp ?? null
     this.gasUsed = gasUsed ?? null
@@ -36,6 +38,7 @@ module.exports = class Transaction {
     block_hash,
     block_height,
     type,
+    batch_type,
     data,
     timestamp,
     gas_used,
@@ -58,7 +61,7 @@ module.exports = class Transaction {
 
     return new Transaction(
       tx_hash, index, block_hash,
-      block_height, type, data,
+      block_height, type, batch_type, data,
       timestamp, parseInt(gas_used),
       status, decodedError ?? error,
       {

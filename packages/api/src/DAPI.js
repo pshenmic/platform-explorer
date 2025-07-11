@@ -129,6 +129,19 @@ class DAPI {
     return identityContractNonce
   }
 
+  /**
+   * Fetch token total credits in platform by token id
+   * @param tokenId {String} base58
+   * @returns {Promise<*|GetTotalCreditsInPlatformResponse>}
+   */
+  async getTokenTotalSupply (tokenId) {
+    return this.dapi.platform.getTokenTotalSupply(Identifier.from(tokenId))
+  }
+
+  async getTokenContractInfo (tokenId) {
+    return this.dapi.platform.getTokenContractInfo(Identifier.from(tokenId))
+  }
+
   async getStatus () {
     return this.dapi.platform.getStatus()
   }

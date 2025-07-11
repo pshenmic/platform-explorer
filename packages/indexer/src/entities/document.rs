@@ -2,15 +2,17 @@ use dpp::fee::Credits;
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::prelude::Revision;
-use dpp::state_transition::documents_batch_transition::document_base_transition::v0::v0_methods::DocumentBaseTransitionV0Methods;
-use dpp::state_transition::documents_batch_transition::document_create_transition::v0::v0_methods::DocumentCreateTransitionV0Methods;
-use dpp::state_transition::documents_batch_transition::document_delete_transition::v0::v0_methods::DocumentDeleteTransitionV0Methods;
-use dpp::state_transition::documents_batch_transition::document_replace_transition::v0::v0_methods::DocumentReplaceTransitionV0Methods;
-use dpp::state_transition::documents_batch_transition::document_transition::{DocumentTransition, DocumentTransitionV0Methods};
-use dpp::state_transition::documents_batch_transition::document_transition::action_type::{DocumentTransitionActionType, TransitionActionTypeGetter};
-use dpp::state_transition::documents_batch_transition::document_transition::document_purchase_transition::v0::v0_methods::DocumentPurchaseTransitionV0Methods;
-use dpp::state_transition::documents_batch_transition::document_transition::document_transfer_transition::v0::v0_methods::DocumentTransferTransitionV0Methods;
-use dpp::state_transition::documents_batch_transition::document_transition::document_update_price_transition::v0::v0_methods::DocumentUpdatePriceTransitionV0Methods;
+use dpp::state_transition::batch_transition::batched_transition::document_transition::DocumentTransition;
+use dpp::state_transition::batch_transition::batched_transition::document_transition::DocumentTransitionV0Methods;
+use dpp::state_transition::batch_transition::document_base_transition::v0::v0_methods::DocumentBaseTransitionV0Methods;
+use dpp::state_transition::batch_transition::document_create_transition::v0::v0_methods::DocumentCreateTransitionV0Methods;
+// use dpp::state_transition::batch_transition::document_delete_transition::v0::v0_methods;
+use dpp::state_transition::batch_transition::document_replace_transition::v0::v0_methods::DocumentReplaceTransitionV0Methods;
+use dpp::state_transition::batch_transition::batched_transition::document_transition_action_type::{DocumentTransitionActionType, DocumentTransitionActionTypeGetter};
+use dpp::state_transition::batch_transition::batched_transition::document_purchase_transition::v0::v0_methods::DocumentPurchaseTransitionV0Methods;
+use dpp::state_transition::batch_transition::batched_transition::document_transfer_transition::v0::v0_methods::DocumentTransferTransitionV0Methods;
+use dpp::state_transition::batch_transition::batched_transition::document_update_price_transition::v0::v0_methods::DocumentUpdatePriceTransitionV0Methods;
+use dpp::state_transition::batch_transition::document_base_transition::document_base_transition_trait::DocumentBaseTransitionAccessors;
 use serde_json::Value;
 use tokio_postgres::Row;
 
@@ -152,7 +154,6 @@ impl From<DocumentTransition> for Document {
                 let data_contract_identifier = base.data_contract_id();
                 let document_type_name = base.document_type_name().clone();
 
-
                 Document {
                     identifier,
                     document_type_name,
@@ -170,7 +171,6 @@ impl From<DocumentTransition> for Document {
         }
     }
 }
-
 
 impl From<Row> for Document {
     fn from(row: Row) -> Self {
@@ -192,13 +192,14 @@ impl From<Row> for Document {
             3 => DocumentTransitionActionType::Transfer,
             4 => DocumentTransitionActionType::Purchase,
             5 => DocumentTransitionActionType::UpdatePrice,
-            _ => panic!("Unknown document transition type")
+            _ => panic!("Unknown document transition type"),
         };
 
         Document {
             owner: owner.map(|e| Identifier::from_string(e.as_str(), Base58).unwrap()),
             price: price.map(|e| Credits::from(e as u64)),
-            data_contract_identifier: Identifier::from_string(&data_contract_identifier, Base58).unwrap(),
+            data_contract_identifier: Identifier::from_string(&data_contract_identifier, Base58)
+                .unwrap(),
             data: None,
             deleted,
             identifier: Identifier::from_string(identifier.as_str(), Base58).unwrap(),
@@ -206,7 +207,7 @@ impl From<Row> for Document {
             is_system,
             revision: Revision::from(revision as u64),
             transition_type: DocumentTransitionActionType::try_from(transition_type).unwrap(),
-            prefunded_voting_balance: prefunded_voting_balance.map(|value|{
+            prefunded_voting_balance: prefunded_voting_balance.map(|value| {
                 let test = value.as_object().unwrap();
 
                 let (index_name, credits) = test.iter().nth(0).unwrap();

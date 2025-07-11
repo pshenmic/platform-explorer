@@ -237,7 +237,7 @@ describe('Identities routes', () => {
           alias: alias.alias,
           contested: false,
           status: 'ok',
-          timestamp: '1970-01-01T00:00:00+00:00',
+          timestamp: '1970-01-01T00:00:00.000Z',
           txHash: alias.state_transition_hash
         }],
         totalGasSpent: 0,
@@ -435,7 +435,7 @@ describe('Identities routes', () => {
           txHash: alias.state_transition_hash,
           status: 'ok',
           contested: false,
-          timestamp: '1970-01-01T00:00:00+00:00'
+          timestamp: '1970-01-01T00:00:00.000Z'
         })),
         totalGasSpent: null,
         averageGasSpent: null,
@@ -497,7 +497,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -560,7 +560,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -624,7 +624,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -654,7 +654,7 @@ describe('Identities routes', () => {
         for (let j = 0; j < Math.floor(Math.random() * 50); j++) {
           const tx = await fixtures.transaction(knex, {
             block_hash: block.hash,
-            type: StateTransitionEnum.DOCUMENTS_BATCH,
+            type: StateTransitionEnum.BATCH,
             owner: identity.identifier
           })
 
@@ -703,7 +703,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -794,7 +794,7 @@ describe('Identities routes', () => {
             txHash: alias.state_transition_hash,
             status: 'ok',
             contested: false,
-            timestamp: '1970-01-01T00:00:00+00:00'
+            timestamp: '1970-01-01T00:00:00.000Z'
           })),
           totalGasSpent: null,
           averageGasSpent: null,
@@ -1027,7 +1027,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1090,7 +1090,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1156,7 +1156,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1224,7 +1224,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1290,7 +1290,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1349,7 +1349,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         transactions.push({ transaction, block })
       }
@@ -1371,7 +1371,8 @@ describe('Identities routes', () => {
           index: 0,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
-          type: i === 0 ? StateTransitionEnum.IDENTITY_CREATE : StateTransitionEnum.DOCUMENTS_BATCH,
+          batchType: null,
+          type: i === 0 ? StateTransitionEnum.IDENTITY_CREATE : StateTransitionEnum.BATCH,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
@@ -1396,7 +1397,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         transactions.push({ transaction, block })
       }
@@ -1416,9 +1417,10 @@ describe('Identities routes', () => {
         .map((_transaction) => ({
           hash: _transaction.transaction.hash,
           index: 0,
+          batchType: null,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
-          type: StateTransitionEnum.DOCUMENTS_BATCH,
+          type: StateTransitionEnum.BATCH,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
@@ -1443,7 +1445,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         transactions.push({ transaction, block })
       }
@@ -1465,7 +1467,8 @@ describe('Identities routes', () => {
           index: 0,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
-          type: StateTransitionEnum.DOCUMENTS_BATCH,
+          type: StateTransitionEnum.BATCH,
+          batchType: null,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
@@ -1490,7 +1493,7 @@ describe('Identities routes', () => {
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           owner: identity.identifier,
-          type: StateTransitionEnum.DOCUMENTS_BATCH
+          type: StateTransitionEnum.BATCH
         })
         transactions.push({ transaction, block })
       }
@@ -1512,7 +1515,8 @@ describe('Identities routes', () => {
           index: 0,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
-          type: StateTransitionEnum.DOCUMENTS_BATCH,
+          type: StateTransitionEnum.BATCH,
+          batchType: null,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,

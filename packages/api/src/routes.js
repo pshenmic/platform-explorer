@@ -11,6 +11,8 @@
  * @param validatorsController {ValidatorsController}
  * @param rateController {RateController}
  * @param masternodeVotesController {MasternodeVotesController}
+ * @param contestedResourcesController {ContestedResourcesController}
+ * @param tokensController {TokensController}
  */
 module.exports = ({
   fastify,
@@ -24,7 +26,8 @@ module.exports = ({
   validatorsController,
   rateController,
   masternodeVotesController,
-  contestedResourcesController
+  contestedResourcesController,
+  tokensController
 }) => {
   const routes = [
     {
@@ -49,6 +52,11 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/epoch',
+      method: 'GET',
+      handler: epochController.getEpochByIndex
     },
     {
       path: '/block/:hash',
@@ -518,6 +526,14 @@ module.exports = ({
             data_contract_id: { $ref: 'identifier#' }
           }
         }
+      }
+    },
+    {
+      path: '/tokens',
+      method: 'GET',
+      handler: tokensController.getTokens,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
       }
     }
   ]

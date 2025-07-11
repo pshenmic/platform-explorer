@@ -1,0 +1,92 @@
+@use '../../components/transactions/variables' as txs;
+@import '../variables';
+
+@mixin BaseTransitionCard() {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .InfoLine {
+    justify-content: flex-start;
+  }
+
+  &__InfoLine {
+    .InfoLine__Title {
+      width: 200px;
+    }
+
+    &--IdContainer {
+      .InfoLine__Value {
+        flex-grow: 0;
+        max-width: max-content;
+      }
+
+      .Identifier, .Identifier__SymbolsContainer {
+        flex-grow: 1;
+      }
+    }
+
+    &--Data {
+      align-items: flex-start;
+
+      code {
+        max-width: 100%;
+      }
+    }
+  }
+
+  @container (max-width: 600px) {
+    &__InfoLine {
+      &--Data, &--PrefundedBalance {
+        flex-wrap: wrap;
+      }
+
+      &--Data {
+        code {
+          width: 100%;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__InfoLine {
+      &:not(&--Revision):not(&--Action) {
+        .InfoLine {
+          .InfoLine__Value {
+            flex-grow: 1;
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__InfoLine {
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      &:not(&--Revision):not(&--Action) {
+        .InfoLine__Title {
+          margin-bottom: 4px;
+          margin-right: 0;
+        }
+      }
+
+      &--Revision, &--Action {
+        justify-content: space-between;
+
+        .InfoLine__Title, .InfoLine__Value {
+          width: max-content !important;
+        }
+
+        .InfoLine__Value {
+          width: max-content;
+          text-align: right !important;
+        }
+      }
+    }
+  }
+}

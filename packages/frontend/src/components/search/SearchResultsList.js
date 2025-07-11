@@ -7,7 +7,7 @@ const COLUMN_TITLES = {
   [categoryMap.validators]: ['Identity', 'Balance'],
   [categoryMap.identities]: ['Status', 'Time'],
   [categoryMap.dataContracts]: ['Owner', 'Time'],
-  [categoryMap.blocks]: ['Epoch', 'Time'],
+  [categoryMap.blocks]: ['Height', 'Time'],
   [categoryMap.documents]: ['Identity', 'Time'],
   [categoryMap.transactions]: ['Status', 'Time']
 }

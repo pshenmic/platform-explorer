@@ -20,6 +20,7 @@ const RateController = require('./controllers/RateController')
 const DAPIClient = require('@dashevo/dapi-client')
 const MasternodeVotesController = require('./controllers/MasternodeVotesController')
 const ContestedResourcesController = require('./controllers/ContestedResourcesController')
+const TokensController = require('./controllers/TokensController')
 const { default: loadWasmDpp } = require('dash').PlatformProtocol
 
 function errorHandler (err, req, reply) {
@@ -89,6 +90,7 @@ module.exports = {
     const rateController = new RateController()
     const masternodeVotesController = new MasternodeVotesController(knex, dapi)
     const contestedResourcesController = new ContestedResourcesController(knex, dapi)
+    const tokensController = new TokensController(knex, dapi)
 
     Routes({
       fastify,
@@ -102,7 +104,8 @@ module.exports = {
       validatorsController,
       rateController,
       masternodeVotesController,
-      contestedResourcesController
+      contestedResourcesController,
+      tokensController
     })
 
     fastify.setErrorHandler(errorHandler)
