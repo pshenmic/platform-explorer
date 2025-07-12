@@ -156,7 +156,7 @@ module.exports = class IdentitiesDAO {
     let fundingCoreTx = null
 
     if (row.tx_data) {
-      const { assetLockProof } = await decodeStateTransition(this.client, row.tx_data)
+      const { assetLockProof } = await decodeStateTransition(row.tx_data)
 
       fundingCoreTx = assetLockProof?.fundingCoreTx
     }

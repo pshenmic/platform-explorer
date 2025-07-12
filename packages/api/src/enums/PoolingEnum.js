@@ -1,7 +1,7 @@
 const PoolingEnum = {
-  0: 'Standard',
-  1: 'Never',
-  3: 'If Available'
+  0: 'Never',
+  1: 'If Available',
+  2: 'Standard'
 }
 
 module.exports = PoolingEnum
