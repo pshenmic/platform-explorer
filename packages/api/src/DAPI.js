@@ -134,11 +134,11 @@ class DAPI {
    * @returns {Promise<*|GetTotalCreditsInPlatformResponse>}
    */
   async getTokenTotalSupply (tokenId) {
-    return this.dapi.platform.getTokenTotalSupply(Identifier.from(tokenId))
+    return this.dapi.platform.getTokenTotalSupply(new IdentifierWASM(tokenId).bytes())
   }
 
   async getTokenContractInfo (tokenId) {
-    return this.dapi.platform.getTokenContractInfo(Identifier.from(tokenId))
+    return this.dapi.platform.getTokenContractInfo(new IdentifierWASM(tokenId).bytes())
   }
 
   async getStatus () {
