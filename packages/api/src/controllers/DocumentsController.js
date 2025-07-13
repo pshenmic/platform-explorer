@@ -35,7 +35,7 @@ class DocumentsController {
       return response.status(400).send({ message: 'data contract not found' })
     }
 
-    const [extendedDocument] = await this.dapi.getDocuments(
+    const [dapiDocument] = await this.dapi.getDocuments(
       documentTypeName,
       {
         $format_version: '0',
@@ -48,20 +48,20 @@ class DocumentsController {
       1
     )
 
-    if (!extendedDocument) {
+    if (!dapiDocument) {
       return response.status(404).send({ message: 'not found' })
     }
 
     response.send(Document.fromObject({
       dataContractIdentifier: dataContract.identifier,
       deleted: false,
-      identifier: extendedDocument?.getId().toString(),
+      identifier: dapiDocument?.id.base64(),
       system: false,
-      owner: extendedDocument.getOwnerId().toString(),
-      revision: extendedDocument.getRevision(),
-      timestamp: extendedDocument.getCreatedAt(),
+      owner: dapiDocument.ownerId.base58(),
+      revision: dapiDocument.revision.toString(),
+      timestamp: dapiDocument.createdAt.toString(),
       txHash: document?.txHash ?? null,
-      data: JSON.stringify(extendedDocument.getData()),
+      data: JSON.stringify(dapiDocument.properties),
       typeName: documentTypeName,
       transitionType: null
     }))

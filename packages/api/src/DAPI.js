@@ -1,12 +1,10 @@
-const { IdentifierWASM, IdentityPublicKeyWASM } = require('pshenmic-dpp')
+const { IdentifierWASM, IdentityPublicKeyWASM, DataContractWASM, PlatformVersionWASM, DocumentWASM } = require('pshenmic-dpp')
 
 class DAPI {
   dapi
-  dpp
 
-  constructor (dapi, dpp) {
+  constructor (dapi) {
     this.dapi = dapi
-    this.dpp = dpp
   }
 
   async getIdentityBalance (identifier) {
@@ -37,7 +35,7 @@ class DAPI {
    * @param {Object} skip - {startAfter?: {Buffer}, startAt?: {Buffer}}
    */
   async getDocuments (type, dataContractObject, query, limit, orderBy, skip, raw) {
-    const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
+    const dataContract = DataContractWASM.fromValue(dataContractObject, true, PlatformVersionWASM.PLATFORM_V9)
 
     const { startAt, startAfter } = skip ?? {}
 
@@ -52,7 +50,7 @@ class DAPI {
     return raw
       ? documents
       : (documents ?? []).map(
-          (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument())
+          (document) => DocumentWASM.fromBytes(document, dataContract, type, PlatformVersionWASM.PLATFORM_V9))
   }
 
   /**

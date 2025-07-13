@@ -1,4 +1,4 @@
-const { describe, it, before } = require('node:test')
+const { describe, it } = require('node:test')
 const assert = require('node:assert').strict
 const utils = require('../../src/utils')
 const createIdentityMock = require('./mocks/create_identity.json')
@@ -12,18 +12,10 @@ const identityUpdateMock = require('./mocks/identity_update.json')
 const identityCreditTransfer = require('./mocks/identity_credit_transfer.json')
 const identityWithdrawal = require('./mocks/identity_withdrawal.json')
 const masternodeVote = require('./mocks/masternode_vote.json')
-const Dash = require('dash')
 const Alias = require('../../src/models/Alias')
 const { buildIndexBuffer } = require('../../src/utils')
 
 describe('Utils', () => {
-  let client
-
-  before(async () => {
-    client = new Dash.Client()
-    await client.platform.initialize()
-  })
-
   describe('decodeStateTransition()', () => {
     it('should decode DataContractCreate', async () => {
       const decoded = await utils.decodeStateTransition(dataContractCreateMock.data)
