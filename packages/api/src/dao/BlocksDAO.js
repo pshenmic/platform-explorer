@@ -75,7 +75,7 @@ module.exports = class BlockDAO {
 
     const txs = block.tx_hash
       ? await Promise.all(rows.map(async (row) => {
-        const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]])
+        const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]], 1)
 
         const aliases = []
 
