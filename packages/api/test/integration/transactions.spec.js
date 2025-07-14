@@ -120,13 +120,7 @@ describe('Transaction routes', () => {
         error: transaction.transaction.error,
         owner: {
           identifier: transaction.transaction.owner,
-          aliases: [{
-            alias: identityAlias.alias,
-            contested: false,
-            status: 'ok',
-            timestamp: transaction.block.timestamp.toISOString(),
-            txHash: identityAlias.state_transition_hash
-          }]
+          aliases: []
         }
       }
 
@@ -153,13 +147,7 @@ describe('Transaction routes', () => {
         error: 'Cannot deserialize',
         owner: {
           identifier: transaction.transaction.owner,
-          aliases: [{
-            alias: identityAlias.alias,
-            contested: false,
-            status: 'ok',
-            timestamp: transaction.block.timestamp.toISOString(),
-            txHash: identityAlias.state_transition_hash
-          }]
+          aliases: []
         }
       }
 
@@ -200,13 +188,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -240,13 +222,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -283,13 +259,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -328,13 +298,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -371,13 +335,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -416,13 +374,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -465,13 +417,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -515,13 +461,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -555,13 +495,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -595,13 +529,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -635,13 +563,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
@@ -675,13 +597,7 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: [{
-              alias: identityAlias.alias,
-              contested: false,
-              status: 'ok',
-              timestamp: null,
-              txHash: identityAlias.state_transition_hash
-            }]
+            aliases: []
           }
         }))
 
