@@ -26,7 +26,7 @@ module.exports = class TransactionsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]], 1)
+    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
 
     const aliases = []
 
@@ -100,7 +100,6 @@ module.exports = class TransactionsDAO {
       )
       .whereRaw(timestampsQuery, timestampBindings)
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
-      .orderBy(orderBy, order)
 
     const calculatingSubquery = this.knex
       .with('subquery', subquery)
@@ -121,11 +120,12 @@ module.exports = class TransactionsDAO {
         'rank', 'block_hash', 'tx_hash', 'total_count',
         'gas_used', 'status', 'error', 'timestamp', 'block_height')
       .whereBetween('rank', [fromRank, toRank])
+      .orderBy(orderBy, order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]], 1)
+      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
 
       const aliases = []
 
