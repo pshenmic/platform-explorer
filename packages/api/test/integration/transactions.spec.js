@@ -27,7 +27,7 @@ describe('Transaction routes', () => {
       }
     }))
 
-    mock.method(DAPI.prototype, 'getContestedState', async () => null)
+    mock.method(DAPI.prototype, 'getDocuments', async () => [])
 
     const startDate = new Date(new Date() - 1000 * 60 * 60)
 
