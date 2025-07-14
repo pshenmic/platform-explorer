@@ -1,7 +1,8 @@
 const Block = require('../models/Block')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { getAliasInfo, getAliasStateByVote } = require('../utils')
+const { getAliasFromDocument} = require('../utils')
 const Transaction = require('../models/Transaction')
+const dpnsContract = require('../../data_contracts/dpns.json')
 
 module.exports = class BlockDAO {
   constructor (knex, dapi) {
@@ -37,23 +38,6 @@ module.exports = class BlockDAO {
   }
 
   getBlockByHash = async (blockHash) => {
-    const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier',
-        this.knex.raw(`
-          array_agg(
-            json_build_object(
-              'alias', alias,
-              'timestamp', timestamp::timestamptz,
-              'tx', state_transition_hash
-            )
-          ) as aliases
-        `)
-      )
-      .groupBy('identity_identifier')
-      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
-      .leftJoin('blocks', 'block_hash', 'blocks.hash')
-      .as('aliases')
-
     const subquery = this.knex('blocks')
       .select(
         'blocks.hash as hash', 'state_transitions.hash as tx_hash',
@@ -62,18 +46,17 @@ module.exports = class BlockDAO {
         'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator',
         'state_transitions.gas_used as gas_used', 'state_transitions.data as data',
         'state_transitions.status as status', 'state_transitions.owner as owner',
-        'aliases.aliases as aliases', 'state_transitions.error as error', 'block_hash',
+        'state_transitions.error as error', 'block_hash',
         'state_transitions.index as index', 'state_transitions.type as type', 'app_hash'
       )
       .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
-      .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'state_transitions.owner')
       .whereILike('blocks.hash', blockHash)
       .orderBy('state_transitions.index', 'asc')
       .as('subquery')
 
     const rows = await this.knex(subquery)
       .select(
-        'aliases', 'error', 'block_hash',
+        'error', 'block_hash',
         'l1_locked_height', 'validator',
         'block_version', 'app_version',
         'index', 'type', 'app_hash',
@@ -92,13 +75,19 @@ module.exports = class BlockDAO {
 
     const txs = block.tx_hash
       ? await Promise.all(rows.map(async (row) => {
-        const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-          const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
 
-          return getAliasStateByVote(aliasInfo, alias, row.owner)
-        }))
+        const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]], )
 
-        return Transaction.fromRow({ ...row, aliases })
+        let aliases = []
+
+        if(aliasDocument){
+          aliases.push(getAliasFromDocument(aliasDocument))
+        }
+
+        return Transaction.fromRow({
+          ...row,
+          aliases
+        })
       }))
       : []
 
