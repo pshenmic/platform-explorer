@@ -42,8 +42,7 @@ module.exports = class TransactionsDAO {
   }
 
   getTransactions = async (page, limit, order, orderBy, transactionsTypes, owner, status, min, max, timestampStart, timestampEnd) => {
-    const fromRank = ((page - 1) * limit) + 1
-    const toRank = fromRank + limit - 1
+    const fromRank = ((page - 1) * limit)
 
     let filtersQuery = ''
     const filtersBindings = []
@@ -82,16 +81,8 @@ module.exports = class TransactionsDAO {
       timestampBindings.push(timestampStart, timestampEnd)
     }
 
-    const filtersSubquery = this.knex('state_transitions')
-      .select('state_transitions.hash as tx_hash', 'state_transitions.data as data',
-        'state_transitions.type as type', 'state_transitions.index as index', 'state_transitions.batch_type as batch_type',
-        'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
-        'state_transitions.block_hash as block_hash', 'state_transitions.id as id', 'state_transitions.owner as owner')
-      .whereRaw(filtersQuery, filtersBindings)
-      .as('filters_subquery')
-
-    const subquery = this.knex(filtersSubquery)
-      .select('tx_hash',
+    const subquery = this.knex('state_transitions')
+      .select('state_transitions.hash as tx_hash',
         'data', 'type', 'index', 'batch_type',
         'gas_used', 'status', 'error',
         'block_hash', 'id', 'owner',
@@ -99,9 +90,10 @@ module.exports = class TransactionsDAO {
         'blocks.timestamp as timestamp'
       )
       .whereRaw(timestampsQuery, timestampBindings)
+      .whereRaw(filtersQuery, filtersBindings)
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
 
-    const calculatingSubquery = this.knex
+    const sortedSubquery = this.knex
       .with('subquery', subquery)
       .select('tx_hash',
         'data', 'type', 'index', 'batch_type',
@@ -109,18 +101,20 @@ module.exports = class TransactionsDAO {
         'block_hash', 'id', 'owner',
         'block_height', 'timestamp'
       )
-      .select(this.knex.raw(`row_number() over (order by ${orderBy} ${order}) rank`))
-      .select(this.knex('subquery').count('*').as('total_count'))
-      .from('subquery')
-      .as('calculated_subquery')
-
-    const rows = await this.knex(calculatingSubquery)
-      .select(
-        'data', 'type', 'index', 'owner', 'batch_type',
-        'rank', 'block_hash', 'tx_hash', 'total_count',
-        'gas_used', 'status', 'error', 'timestamp', 'block_height')
-      .whereBetween('rank', [fromRank, toRank])
+      .offset(fromRank)
+      .limit(limit)
       .orderBy(orderBy, order)
+      .from('subquery')
+      .as('sorted_subquery')
+
+    const rows = await this.knex(sortedSubquery)
+      .select('tx_hash',
+        'data', 'type', 'index', 'batch_type',
+        'gas_used', 'status', 'error',
+        'block_hash', 'id', 'owner',
+        'block_height', 'timestamp',
+        'total_count.total_count')
+      .join(this.knex.with('subquery', subquery).select(this.knex.raw('count(*) over () as total_count')).limit(1).from('subquery').as('total_count'), this.knex.raw(true), '=', this.knex.raw(true))
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
