@@ -1,8 +1,8 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
-const { getAliasFromDocument} = require('../utils')
-const dpnsContract = require("../../data_contracts/dpns.json");
+const { getAliasFromDocument } = require('../utils')
+const dpnsContract = require('../../data_contracts/dpns.json')
 
 module.exports = class TransactionsDAO {
   constructor (knex, dapi) {
@@ -17,7 +17,7 @@ module.exports = class TransactionsDAO {
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
         'state_transitions.error as error', 'state_transitions.type as type', 'state_transitions.batch_type as batch_type',
         'state_transitions.index as index', 'blocks.height as block_height',
-        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner',
+        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner'
       )
       .whereILike('state_transitions.hash', hash)
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
@@ -26,11 +26,11 @@ module.exports = class TransactionsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]], )
+    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]])
 
-    let aliases = []
+    const aliases = []
 
-    if(aliasDocument){
+    if (aliasDocument) {
       aliases.push(getAliasFromDocument(aliasDocument))
     }
 
@@ -125,11 +125,11 @@ module.exports = class TransactionsDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]], )
+      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]])
 
-      let aliases = []
+      const aliases = []
 
-      if(aliasDocument){
+      if (aliasDocument) {
         aliases.push(getAliasFromDocument(aliasDocument))
       }
 

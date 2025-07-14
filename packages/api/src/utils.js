@@ -617,7 +617,7 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
 }
 
 const getAliasFromDocument = (aliasDocument) => {
-  const {label, parentDomainName, normalizedLabel} = aliasDocument.getData()
+  const { label, parentDomainName, normalizedLabel } = aliasDocument.getData()
   const documentId = aliasDocument.getId()
   const timestamp = aliasDocument.getCreatedAt()
 

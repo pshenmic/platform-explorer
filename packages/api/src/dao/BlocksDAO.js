@@ -1,6 +1,6 @@
 const Block = require('../models/Block')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { getAliasFromDocument} = require('../utils')
+const { getAliasFromDocument } = require('../utils')
 const Transaction = require('../models/Transaction')
 const dpnsContract = require('../../data_contracts/dpns.json')
 
@@ -75,12 +75,11 @@ module.exports = class BlockDAO {
 
     const txs = block.tx_hash
       ? await Promise.all(rows.map(async (row) => {
+        const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]])
 
-        const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner]], )
+        const aliases = []
 
-        let aliases = []
-
-        if(aliasDocument){
+        if (aliasDocument) {
           aliases.push(getAliasFromDocument(aliasDocument))
         }
 
