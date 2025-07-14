@@ -54,6 +54,8 @@ describe('Other routes', () => {
       }
     }))
 
+    mock.method(DAPI.prototype, 'getDocuments', async () => [])
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -185,13 +187,7 @@ describe('Other routes', () => {
             error: null,
             owner: {
               identifier: identityTransaction.owner,
-              aliases: [{
-                alias: 'dpns.dash',
-                contested: false,
-                status: 'ok',
-                timestamp: '1970-01-01T00:00:00.000Z',
-                txHash: identityTransaction.hash
-              }]
+              aliases: []
             }
           },
           {
@@ -208,13 +204,7 @@ describe('Other routes', () => {
             error: null,
             owner: {
               identifier: dataContractTransaction.owner,
-              aliases: [{
-                alias: 'dpns.dash',
-                status: 'ok',
-                contested: false,
-                timestamp: '1970-01-01T00:00:00.000Z',
-                txHash: identityTransaction.hash
-              }]
+              aliases: []
             }
           },
           {
@@ -231,13 +221,7 @@ describe('Other routes', () => {
             error: null,
             owner: {
               identifier: documentTransaction.owner,
-              aliases: [{
-                alias: 'dpns.dash',
-                status: 'ok',
-                contested: false,
-                timestamp: '1970-01-01T00:00:00.000Z',
-                txHash: identityTransaction.hash
-              }]
+              aliases: []
             }
           }
         ]
@@ -265,13 +249,7 @@ describe('Other routes', () => {
         error: dataContractTransaction.error,
         owner: {
           identifier: dataContractTransaction.owner,
-          aliases: [{
-            alias: identityAlias.alias,
-            contested: false,
-            status: 'ok',
-            timestamp: '1970-01-01T00:00:00.000Z',
-            txHash: identityTransaction.hash
-          }]
+          aliases: []
         }
       }
 

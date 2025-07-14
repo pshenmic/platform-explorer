@@ -616,6 +616,22 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   })
 }
 
+const getAliasFromDocument = (aliasDocument) => {
+  const { label, parentDomainName, normalizedLabel } = aliasDocument.getData()
+  const documentId = aliasDocument.getId()
+  const timestamp = aliasDocument.getCreatedAt()
+
+  const alias = `${label}.${parentDomainName}`
+
+  return {
+    alias,
+    status: 'ok',
+    timestamp,
+    documentId: documentId.toString(),
+    contested: /^[a-zA-Z01-]{3,19}$/.test(normalizedLabel)
+  }
+}
+
 const getAliasInfo = async (aliasText, dapi) => {
   const [label, domain] = aliasText.split('.')
 
@@ -654,5 +670,6 @@ module.exports = {
   getAliasStateByVote,
   buildIndexBuffer,
   createDocumentBatchTransition,
-  outputScriptToAddress
+  outputScriptToAddress,
+  getAliasFromDocument
 }
