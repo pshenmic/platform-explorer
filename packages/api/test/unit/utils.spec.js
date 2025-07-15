@@ -1,4 +1,4 @@
-const { describe, it, before } = require('node:test')
+const { describe, it } = require('node:test')
 const assert = require('node:assert').strict
 const utils = require('../../src/utils')
 const createIdentityMock = require('./mocks/create_identity.json')
@@ -12,21 +12,13 @@ const identityUpdateMock = require('./mocks/identity_update.json')
 const identityCreditTransfer = require('./mocks/identity_credit_transfer.json')
 const identityWithdrawal = require('./mocks/identity_withdrawal.json')
 const masternodeVote = require('./mocks/masternode_vote.json')
-const Dash = require('dash')
 const Alias = require('../../src/models/Alias')
 const { buildIndexBuffer } = require('../../src/utils')
 
 describe('Utils', () => {
-  let client
-
-  before(async () => {
-    client = new Dash.Client()
-    await client.platform.initialize()
-  })
-
   describe('decodeStateTransition()', () => {
     it('should decode DataContractCreate', async () => {
-      const decoded = await utils.decodeStateTransition(client, dataContractCreateMock.data)
+      const decoded = await utils.decodeStateTransition(dataContractCreateMock.data)
 
       assert.deepEqual(decoded, {
         type: 0,
@@ -77,7 +69,7 @@ describe('Utils', () => {
     })
 
     it('should decode Document Transition', async () => {
-      const decoded = await utils.decodeStateTransition(client, documentTransitionMock.data)
+      const decoded = await utils.decodeStateTransition(documentTransitionMock.data)
 
       assert.deepEqual(decoded, {
         type: 1,
@@ -108,7 +100,7 @@ describe('Utils', () => {
     })
 
     it('should decode Token Transfer Transition', async () => {
-      const decoded = await utils.decodeStateTransition(client, tokenTransferTransitionMock.data)
+      const decoded = await utils.decodeStateTransition(tokenTransferTransitionMock.data)
 
       assert.deepEqual(decoded, {
         type: 1,
@@ -138,7 +130,7 @@ describe('Utils', () => {
     })
 
     it('should decode Token Mint Transition', async () => {
-      const decoded = await utils.decodeStateTransition(client, tokenMintTransitionMock.data)
+      const decoded = await utils.decodeStateTransition(tokenMintTransitionMock.data)
 
       assert.deepEqual(decoded, {
         type: 1,
@@ -168,7 +160,7 @@ describe('Utils', () => {
     })
 
     it('should decode CreateIdentity', async () => {
-      const decoded = await utils.decodeStateTransition(client, createIdentityMock.data)
+      const decoded = await utils.decodeStateTransition(createIdentityMock.data)
 
       assert.deepEqual(decoded, {
         type: 2,
@@ -224,7 +216,7 @@ describe('Utils', () => {
     })
 
     it('should decode IdentityTopUp', async () => {
-      const decoded = await utils.decodeStateTransition(client, identityTopUpMock.data)
+      const decoded = await utils.decodeStateTransition(identityTopUpMock.data)
 
       assert.deepEqual(decoded, {
         type: 3,
@@ -234,7 +226,8 @@ describe('Utils', () => {
           type: 'instantSend',
           fundingAmount: '300000',
           vout: 0,
-          fundingCoreTx: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64'
+          fundingCoreTx: '7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64',
+          instantLock: 'AQHs1rAxR380KAbfV0C3D5O4o+klu/LZDZeaXtFiqNfVZgAAAABk6hdzwsOI+DwiWAOgXQYToU/speBwMPdkn7XFmPQ0d5QP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAApegVl+lFWGGL8UZIARiOy8CcehLnNIkiXGNoQlnwdfh6o9R+qbu+H5wxQIbdw1ptGLMP9P5XmFV3n5JouL9ceXYMfYxW00Fjkx8BbC4wNoUt0zprZD3VncjFQZnzTj0t'
         },
         identityId: '4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF',
         amount: '300000000',
@@ -244,7 +237,7 @@ describe('Utils', () => {
     })
 
     it.only('should decode DataContractUpdate', async () => {
-      const decoded = await utils.decodeStateTransition(client, dataContractUpdateMock.data)
+      const decoded = await utils.decodeStateTransition(dataContractUpdateMock.data)
 
       assert.deepEqual(decoded, {
         type: 4,
@@ -259,13 +252,12 @@ describe('Utils', () => {
           requiresIdentityDecryptionBoundedKey: null,
           requiresIdentityEncryptionBoundedKey: null
         },
-        identityContractNonce: 4,
+        identityContractNonce: '4',
         signaturePublicKeyId: 2,
         signature: '204b16deb1faf827d76dddb4228c717c09baa153b9a6c82952439191d7dddd3a171385ef31482ef7c7950a95605fc4b7096ff50d8c4aceb24f259276979f16b188',
         userFeeIncrease: 0,
         ownerId: '7dwjL5frrkM69pv3BsKSQb4ELrMYmDeE11KNoDSefG6c',
         dataContractId: '8BzeH7dmyLHNzcCtG6DGowAkWyRgWEq15y88Zz2zBxVg',
-        dataContractIdentityNonce: '0',
         schema: {
           labler: {
             type: 'object',
@@ -297,7 +289,7 @@ describe('Utils', () => {
     })
 
     it('should decode IdentityUpdate', async () => {
-      const decoded = await utils.decodeStateTransition(client, identityUpdateMock.data)
+      const decoded = await utils.decodeStateTransition(identityUpdateMock.data)
 
       assert.deepEqual(decoded, {
         type: 5,
@@ -346,7 +338,7 @@ describe('Utils', () => {
     })
 
     it('should decode IdentityCreditTransfer', async () => {
-      const decoded = await utils.decodeStateTransition(client, identityCreditTransfer.data)
+      const decoded = await utils.decodeStateTransition(identityCreditTransfer.data)
 
       assert.deepEqual(decoded, {
         type: 7,
@@ -363,7 +355,7 @@ describe('Utils', () => {
     })
 
     it('should decode IdentityWithdrawal', async () => {
-      const decoded = await utils.decodeStateTransition(client, identityWithdrawal.data)
+      const decoded = await utils.decodeStateTransition(identityWithdrawal.data)
 
       assert.deepEqual(decoded, {
         type: 6,
@@ -377,13 +369,13 @@ describe('Utils', () => {
         coreFeePerByte: 2,
         signature: '8422df782b5e51b8a53ae46fe9b7a9280df4de575f031e58ed527e7a17c1e9',
         signaturePublicKeyId: 65,
-        pooling: 'Standard',
+        pooling: 'Never',
         raw: '0500ddcecc8cd40dfc1d88a7135a3f29834ca8788f844bca10349140507905f09926fc000f424002001976a9148dc5fd6be194390035cca6293a357bac8e3c35c588ac0102411f8422df782b5e51b8a53ae46fe9b7a9280df4de575f031e58ed527e7a17c1e9'
       })
     })
 
     it('should decode MasternodeVote', async () => {
-      const decoded = await utils.decodeStateTransition(client, masternodeVote.data)
+      const decoded = await utils.decodeStateTransition(masternodeVote.data)
 
       assert.deepEqual(decoded, {
         type: 8,
