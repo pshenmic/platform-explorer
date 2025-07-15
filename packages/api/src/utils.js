@@ -292,10 +292,10 @@ const decodeStateTransition = async (base64) => {
         return {
           contractBounds: contractBounds
             ? {
-              type: contractBounds.contractBoundsType,
-              id: contractBounds.identi.base58(),
-              typeName: contractBounds.document_type_name
-            }
+                type: contractBounds.contractBoundsType,
+                id: contractBounds.identi.base58(),
+                typeName: contractBounds.document_type_name
+              }
             : null,
           id: key.keyId,
           type: key.keyType,
@@ -386,10 +386,10 @@ const decodeStateTransition = async (base64) => {
           return {
             contractBounds: contractBounds
               ? {
-                type: contractBounds.contractBoundsType,
-                id: contractBounds.identifier.base58(),
-                typeName: contractBounds.documentTypeName
-              }
+                  type: contractBounds.contractBoundsType,
+                  id: contractBounds.identifier.base58(),
+                  typeName: contractBounds.documentTypeName
+                }
               : null,
             id: key.keyId,
             type: key.keyType,
