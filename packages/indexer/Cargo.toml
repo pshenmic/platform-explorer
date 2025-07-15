@@ -1,6 +1,6 @@
 [package]
 name = "indexer"
-version = "1.0.27"
+version = "1.0.29"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,8 +11,8 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1.12.0", features = ["full"] }
 futures = "0.3"
-dpp = { path = "../../../platform/packages/rs-dpp" }
-data-contracts = { path = "../../../platform/packages/data-contracts" }
+dpp = { git = "https://github.com/dashpay/platform", tag = "v2.0.1" }
+data-contracts = { git = "https://github.com/dashpay/platform", tag = "v2.0.1" }
 async-trait = { version = "0.1"}
 anyhow = { version = "1.0"}
 base64 = "0.21.2"

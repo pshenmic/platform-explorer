@@ -1,7 +1,8 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
-const { getAliasInfo, getAliasStateByVote } = require('../utils')
+const { getAliasFromDocument } = require('../utils')
+const dpnsContract = require('../../data_contracts/dpns.json')
 
 module.exports = class TransactionsDAO {
   constructor (knex, dapi) {
@@ -10,45 +11,28 @@ module.exports = class TransactionsDAO {
   }
 
   getTransactionByHash = async (hash) => {
-    const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier',
-        this.knex.raw(`
-          array_agg(
-            json_build_object(
-              'alias', alias,
-              'timestamp', timestamp::timestamptz,
-              'tx', state_transition_hash
-            )
-          ) as aliases
-        `)
-      )
-      .groupBy('identity_identifier')
-      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
-      .leftJoin('blocks', 'block_hash', 'blocks.hash')
-      .as('aliases')
-
     const [row] = await this.knex('state_transitions')
       .select(
         'state_transitions.hash as tx_hash', 'state_transitions.data as data',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
         'state_transitions.error as error', 'state_transitions.type as type', 'state_transitions.batch_type as batch_type',
         'state_transitions.index as index', 'blocks.height as block_height',
-        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner',
-        'aliases.aliases as aliases'
+        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner'
       )
       .whereILike('state_transitions.hash', hash)
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-      .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'owner')
 
     if (!row) {
       return null
     }
 
-    const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-      const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
 
-      return getAliasStateByVote(aliasInfo, alias, row.owner)
-    }))
+    const aliases = []
+
+    if (aliasDocument) {
+      aliases.push(getAliasFromDocument(aliasDocument))
+    }
 
     return Transaction.fromRow(
       {
@@ -58,8 +42,7 @@ module.exports = class TransactionsDAO {
   }
 
   getTransactions = async (page, limit, order, orderBy, transactionsTypes, owner, status, min, max, timestampStart, timestampEnd) => {
-    const fromRank = ((page - 1) * limit) + 1
-    const toRank = fromRank + limit - 1
+    const fromRank = ((page - 1) * limit)
 
     let filtersQuery = ''
     const filtersBindings = []
@@ -98,70 +81,51 @@ module.exports = class TransactionsDAO {
       timestampBindings.push(timestampStart, timestampEnd)
     }
 
-    const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier')
-      .select(this.knex.raw(`
-          array_agg(
-            json_build_object(
-              'alias', alias,
-              'tx', state_transition_hash
-            )
-          ) as aliases
-        `))
-      .groupBy('identity_identifier')
-      .as('aliases')
-
-    const filtersSubquery = this.knex('state_transitions')
-      .select('state_transitions.hash as tx_hash', 'state_transitions.data as data',
-        'state_transitions.type as type', 'state_transitions.index as index', 'state_transitions.batch_type as batch_type',
-        'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
-        'state_transitions.block_hash as block_hash', 'state_transitions.id as id', 'state_transitions.owner as owner')
-      .whereRaw(filtersQuery, filtersBindings)
-      .as('filters_subquery')
-
-    const subquery = this.knex(filtersSubquery)
-      .select('tx_hash', 'aliases',
+    const subquery = this.knex('state_transitions')
+      .select('state_transitions.hash as tx_hash',
         'data', 'type', 'index', 'batch_type',
         'gas_used', 'status', 'error',
         'block_hash', 'id', 'owner',
-        'identity_identifier',
         'blocks.height as block_height',
         'blocks.timestamp as timestamp'
       )
       .whereRaw(timestampsQuery, timestampBindings)
-      .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'filters_subquery.owner')
+      .whereRaw(filtersQuery, filtersBindings)
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
-      .orderBy(orderBy, order)
 
-    const calculatingSubquery = this.knex
+    const sortedSubquery = this.knex
       .with('subquery', subquery)
-      .select('tx_hash', 'aliases',
+      .select('tx_hash',
         'data', 'type', 'index', 'batch_type',
         'gas_used', 'status', 'error',
         'block_hash', 'id', 'owner',
-        'identity_identifier',
         'block_height', 'timestamp'
       )
-      .select(this.knex.raw(`row_number() over (order by ${orderBy} ${order}) rank`))
-      .select(this.knex('subquery').count('*').as('total_count'))
+      .offset(fromRank)
+      .limit(limit)
+      .orderBy(orderBy, order)
       .from('subquery')
-      .as('calculated_subquery')
+      .as('sorted_subquery')
 
-    const rows = await this.knex(calculatingSubquery)
-      .select(
-        'data', 'type', 'index', 'owner', 'aliases', 'batch_type',
-        'rank', 'block_hash', 'tx_hash', 'total_count',
-        'gas_used', 'status', 'error', 'timestamp', 'block_height')
-      .whereBetween('rank', [fromRank, toRank])
+    const rows = await this.knex(sortedSubquery)
+      .select('tx_hash',
+        'data', 'type', 'index', 'batch_type',
+        'gas_used', 'status', 'error',
+        'block_hash', 'id', 'owner',
+        'block_height', 'timestamp',
+        'total_count.total_count')
+      .join(this.knex.with('subquery', subquery).select(this.knex.raw('count(*) over () as total_count')).limit(1).from('subquery').as('total_count'), this.knex.raw(true), '=', this.knex.raw(true))
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
 
-        return getAliasStateByVote(aliasInfo, alias, row.owner)
-      }))
+      const aliases = []
+
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
 
       return Transaction.fromRow({ ...row, aliases })
     }))

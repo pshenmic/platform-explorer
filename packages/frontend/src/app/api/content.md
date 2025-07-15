@@ -48,6 +48,7 @@ Reference:
 * [Decode Raw Transaction](#decode-raw-transaction)
 * [Identity Nonce](#identity-nonce)
 * [Identity Contract Nonce](#identity-contract-nonce)
+* [Tokens](#tokens)
 * [Broadcast Transaction](#broadcast-transaction)
 
 ### Status
@@ -2130,23 +2131,23 @@ IDENTITY_CREATE with instantLock
 ```
 ```json
 {
-  "type": 8,
-  "typeString": "IDENTITY_CREDIT_TRANSFER",
-  "indexValues": [
-    "EgRkYXNo",
-    "EgN5MDE="
-  ],
-  "contractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-  "modifiedDataIds": [
-    "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse"
-  ],
-  "ownerId": "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse",
-  "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
-  "documentTypeName": "domain",
-  "indexName": "parentNameAndLabel",
-  "choice": "Abstain",
-  "proTxHash": "ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b",
-  "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
+    "type": 8,
+    "typeString": "IDENTITY_CREDIT_TRANSFER",
+    "indexValues": [
+        "EgRkYXNo",
+        "EgN5MDE="
+    ],
+    "contractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+    "modifiedDataIds": [
+        "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse"
+    ],
+    "ownerId": "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse",
+    "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
+    "documentTypeName": "domain",
+    "indexName": "parentNameAndLabel",
+    "choice": "Abstain",
+    "proTxHash": "ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b",
+    "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
 }
 ```
 Response codes:
@@ -2178,6 +2179,88 @@ GET /identity/HTfJKDuW8omFfFrSQuNTkgW39WpncdwFUrL91VJyJXUS/contract/6hVQW16jyvZy
 {
     "identityContractNonce": "2"
 }
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Broadcast Transaction
+Send Transaction for Broadcast
+
+* `base64` optional field. State transition buffer in base64
+* `hex` optional field. State transition buffer in hex
+* You must pass `hex` or `base64`
+
+```
+POST /transaction/broadcast
+BODY:
+{
+    "base64": "AgDpAd/Bcqls4/fTNNbAtp3zsByG0w/wOnwk9RaDj5Q0DQEAAAAetrSpdOHzvWhmll5EyXQFOW6JEoHRY2Alb0wBP6ic9AcEbm90ZYpK8hfzQOnEyVhXSWzzO2jrbHEqxtIKHreFTRSv2f/PxVTtZXkupT+mJytiIWsAU0U1Ke1abN0JJvNNU1182eoCBmF1dGhvchIGb3dsMzUyB21lc3NhZ2USBHRlc3QAAAAA"
+}
+
+RESPONSE:
+{
+  "message": "broadcasted"
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Tokens
+Return list of tokens
+```
+GET /tokens?limit=2&page=1&order=asc
+[
+  {
+    "identifier": "5kRUF1SRTFtdskfaaQE9pCdADq8wyLFB1TNttnrBq3F8",
+    "localizations": {
+      "en": {
+        "pluralForm": "k1-id1",
+        "singularForm": "k1-id1",
+        "shouldCapitalize": true
+      }
+    },
+    "baseSupply": "100000",
+    "totalSupply": "100500",
+    "maxSupply": null,
+    "owner": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
+    "mintable": true,
+    "burnable": true,
+    "freezable": true,
+    "unfreezable": true,
+    "destroyable": true,
+    "allowedEmergencyActions": true,
+    "dataContractIdentifier": "CNvyZaBWofWPmgKYCBMF23h3cEhQfQHVY3wXCRkHEaau"
+  },
+  {
+    "identifier": "GUo3MpaLeaLDvjDnF5XQLRCjWC9WhkNPbtrVWZ5FKjLp",
+    "localizations": {
+      "en": {
+        "pluralForm": "a1-1",
+        "singularForm": "a1-1",
+        "shouldCapitalize": true
+      }
+    },
+    "baseSupply": "100000",
+    "totalSupply": "120000",
+    "maxSupply": "5000",
+    "owner": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
+    "mintable": true,
+    "burnable": true,
+    "freezable": true,
+    "unfreezable": true,
+    "destroyable": true,
+    "allowedEmergencyActions": true,
+    "dataContractIdentifier": "5BwVvDstM6FaXQcLNUGkuPHAk5xH3uEoYEKqHKXjw5nL"
+  }
+]
 ```
 Response codes:
 ```

@@ -1,17 +1,14 @@
-const { IdentityPublicKey } = require('@dashevo/wasm-dpp/dist/wasm/wasm_dpp')
-const { Identifier } = require('@dashevo/wasm-dpp')
+const { IdentifierWASM, IdentityPublicKeyWASM, DataContractWASM, PlatformVersionWASM, DocumentWASM } = require('pshenmic-dpp')
 
 class DAPI {
   dapi
-  dpp
 
-  constructor (dapi, dpp) {
+  constructor (dapi) {
     this.dapi = dapi
-    this.dpp = dpp
   }
 
   async getIdentityBalance (identifier) {
-    const { balance } = await this.dapi.platform.getIdentityBalance(Identifier.from(identifier))
+    const { balance } = await this.dapi.platform.getIdentityBalance(new IdentifierWASM(identifier).bytes())
     return balance
   }
 
@@ -38,11 +35,11 @@ class DAPI {
    * @param {Object} skip - {startAfter?: {Buffer}, startAt?: {Buffer}}
    */
   async getDocuments (type, dataContractObject, query, limit, orderBy, skip, raw) {
-    const dataContract = await this.dpp.dataContract.createFromObject(dataContractObject)
+    const dataContract = DataContractWASM.fromValue(dataContractObject, true, PlatformVersionWASM.PLATFORM_V9)
 
     const { startAt, startAfter } = skip ?? {}
 
-    const { documents } = await this.dapi.platform.getDocuments(Identifier.from(dataContractObject.id), type, {
+    const { documents } = await this.dapi.platform.getDocuments(new IdentifierWASM(dataContractObject.id).bytes(), type, {
       limit,
       where: query,
       orderBy,
@@ -53,7 +50,7 @@ class DAPI {
     return raw
       ? documents
       : (documents ?? []).map(
-          (document) => this.dpp.document.createExtendedDocumentFromDocumentBuffer(document, type, dataContract).getDocument())
+          (document) => DocumentWASM.fromBytes(document, dataContract, type, PlatformVersionWASM.PLATFORM_V9))
   }
 
   /**
@@ -91,28 +88,28 @@ class DAPI {
   }
 
   async getIdentityKeys (identifier, keysIds, limit) {
-    const { identityKeys } = await this.dapi.platform.getIdentityKeys(Identifier.from(identifier), keysIds, limit)
+    const { identityKeys } = await this.dapi.platform.getIdentityKeys(new IdentifierWASM(identifier).bytes(), keysIds, limit)
 
     return identityKeys.map(key => {
-      const serialized = IdentityPublicKey.fromBuffer(Buffer.from(key))
+      const serialized = IdentityPublicKeyWASM.fromBytes(key)
 
-      const { contractBounds } = IdentityPublicKey.fromBuffer(Buffer.from(key)).toObject()
+      const contractBounds = serialized.getContractBounds()
 
       return {
-        keyId: serialized.getId(),
-        type: serialized.getType(),
+        keyId: serialized.keyId,
+        type: serialized.keyTypeNumber,
         raw: Buffer.from(key).toString('hex'),
-        data: Buffer.from(serialized.getData()).toString('hex'),
-        purpose: serialized.getPurpose(),
-        securityLevel: serialized.getSecurityLevel(),
-        isReadOnly: serialized.isReadOnly(),
+        data: serialized.data,
+        purpose: serialized.purposeNumber,
+        securityLevel: serialized.securityLevelNumber,
+        isReadOnly: serialized.readOnly,
         isMaster: serialized.isMaster(),
-        hash: Buffer.from(serialized.hash()).toString('hex'),
+        hash: serialized.getPublicKeyHash(),
         contractBounds: contractBounds
           ? {
-              type: contractBounds.type,
-              id: Identifier.from(Buffer.from(contractBounds.id)),
-              typeName: contractBounds.document_type_name
+              type: contractBounds.contractBoundsType,
+              id: contractBounds.identifier.base58(),
+              typeName: contractBounds.documentTypeName
             }
           : null
       }
@@ -120,13 +117,26 @@ class DAPI {
   }
 
   async getIdentityNonce (identifier) {
-    const { identityNonce } = await this.dapi.platform.getIdentityNonce(Identifier.from(identifier))
+    const { identityNonce } = await this.dapi.platform.getIdentityNonce(new IdentifierWASM(identifier).bytes())
     return identityNonce
   }
 
   async getIdentityContractNonce (identifier, dataContractId) {
-    const { identityContractNonce } = await this.dapi.platform.getIdentityContractNonce(Identifier.from(identifier), Identifier.from(dataContractId))
+    const { identityContractNonce } = await this.dapi.platform.getIdentityContractNonce(new IdentifierWASM(identifier).bytes(), new IdentifierWASM(dataContractId).bytes())
     return identityContractNonce
+  }
+
+  /**
+   * Fetch token total credits in platform by token id
+   * @param tokenId {String} base58
+   * @returns {Promise<*|GetTotalCreditsInPlatformResponse>}
+   */
+  async getTokenTotalSupply (tokenId) {
+    return this.dapi.platform.getTokenTotalSupply(new IdentifierWASM(tokenId).bytes())
+  }
+
+  async getTokenContractInfo (tokenId) {
+    return this.dapi.platform.getTokenContractInfo(new IdentifierWASM(tokenId).bytes())
   }
 
   async getStatus () {
