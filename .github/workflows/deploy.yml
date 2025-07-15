@@ -54,22 +54,6 @@ jobs:
           text: ${{ github.event.workflow_run.head_branch }}
           regex: ${{env.SEMVER_REGEX}}
 
-      - name: Drop database
-        if: ${{steps.regex-match.outputs.match != ''}}
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            git -C ./platform-explorer pull
-            docker pull owl352/refinery_cli_docker
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
-            
-            docker run --rm --env-file testnet.env ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api npm run db:drop
-            docker run --rm --env-file testnet.env -v ./platform-explorer/packages/indexer/migrations:/migrations owl352/refinery_cli_docker ./refinery migrate -e DATABASE_URL -p /migrations
-
   start:
     runs-on: ubuntu-latest
 
@@ -89,8 +73,10 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             git -C ./platform-explorer pull
+            docker pull owl352/refinery_cli_docker
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
+            docker run --rm --env-file testnet.env -v ./platform-explorer/packages/indexer/migrations:/migrations owl352/refinery_cli_docker ./refinery migrate -e DATABASE_URL -p /migrations
             docker run -d -p 3005:3005 --restart always --env-file testnet.env --name pe-testnet-api ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
             sleep 3
             docker run -d --env-file testnet.env --restart always --name pe-testnet-indexer ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer ./indexer
