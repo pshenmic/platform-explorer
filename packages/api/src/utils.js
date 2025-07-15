@@ -15,7 +15,7 @@ const {
   DataContractCreateTransitionWASM,
   IdentityCreateTransitionWASM, IdentityTopUpTransitionWASM, DataContractUpdateTransitionWASM,
   IdentityUpdateTransitionWASM, IdentityCreditTransferWASM, IdentityCreditWithdrawalTransitionWASM,
-  MasternodeVoteTransitionWASM, IdentifierWASM
+  MasternodeVoteTransitionWASM, IdentifierWASM, PlatformVersionWASM
 } = require('pshenmic-dpp')
 
 const getKnex = () => {
@@ -59,7 +59,7 @@ const decodeStateTransition = async (base64) => {
     case StateTransitionEnum.DATA_CONTRACT_CREATE: {
       const dataContractCreateTransition = DataContractCreateTransitionWASM.fromStateTransition(stateTransition)
 
-      const dataContract = dataContractCreateTransition.getDataContract()
+      const dataContract = dataContractCreateTransition.getDataContract(PlatformVersionWASM.PLATFORM_V9)
 
       const dataContractConfig = dataContract.getConfig()
 
@@ -292,10 +292,10 @@ const decodeStateTransition = async (base64) => {
         return {
           contractBounds: contractBounds
             ? {
-                type: contractBounds.contractBoundsType,
-                id: contractBounds.identi.base58(),
-                typeName: contractBounds.document_type_name
-              }
+              type: contractBounds.contractBoundsType,
+              id: contractBounds.identi.base58(),
+              typeName: contractBounds.document_type_name
+            }
             : null,
           id: key.keyId,
           type: key.keyType,
@@ -386,10 +386,10 @@ const decodeStateTransition = async (base64) => {
           return {
             contractBounds: contractBounds
               ? {
-                  type: contractBounds.contractBoundsType,
-                  id: contractBounds.identifier.base58(),
-                  typeName: contractBounds.documentTypeName
-                }
+                type: contractBounds.contractBoundsType,
+                id: contractBounds.identifier.base58(),
+                typeName: contractBounds.documentTypeName
+              }
               : null,
             id: key.keyId,
             type: key.keyType,
@@ -633,9 +633,9 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
 }
 
 const getAliasFromDocument = (aliasDocument) => {
-  const { label, parentDomainName, normalizedLabel } = aliasDocument.getData()
-  const documentId = aliasDocument.getId()
-  const timestamp = aliasDocument.getCreatedAt()
+  const { label, parentDomainName, normalizedLabel } = aliasDocument.properties
+  const documentId = aliasDocument.id
+  const timestamp = new Date(Number(aliasDocument.createdAt))
 
   const alias = `${label}.${parentDomainName}`
 
@@ -643,7 +643,7 @@ const getAliasFromDocument = (aliasDocument) => {
     alias,
     status: 'ok',
     timestamp,
-    documentId: documentId.toString(),
+    documentId: documentId.base58(),
     contested: /^[a-zA-Z01-]{3,19}$/.test(normalizedLabel)
   }
 }
