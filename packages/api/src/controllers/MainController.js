@@ -22,8 +22,8 @@ class MainController {
   }
 
   getStatus = async (request, response) => {
-    const [blocks, stats, status, tdStatus, epochsInfo, totalCredits, totalCollectedFeesDay] = (await Promise.allSettled([
-      this.blocksDAO.getBlocks(1, 1, 'desc'),
+    const [currentBlock, stats, status, tdStatus, epochsInfo, totalCredits, totalCollectedFeesDay] = (await Promise.allSettled([
+      this.blocksDAO.getLastBlock(),
       this.blocksDAO.getStats(),
       this.dapi.getStatus(),
       TenderdashRPC.getStatus(),
@@ -32,14 +32,12 @@ class MainController {
       this.transactionsDAO.getCollectedFees('24h')
     ])).map((e) => e.value ?? null)
 
-    const [currentBlock] = blocks?.resultSet ?? []
-
     const [epochInfo] = epochsInfo ?? []
 
     const epoch = epochInfo ? Epoch.fromObject(epochInfo) : null
 
     const tdHeight = tdStatus?.highestBlock?.height
-    const indexerHeight = blocks?.pagination.total
+    const indexerHeight = currentBlock.height
 
     const indexerSynced = (tdHeight - indexerHeight) <= 1
 

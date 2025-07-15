@@ -12,6 +12,7 @@ impl PostgresDAO {
     pub async fn create_state_transition(
         &self,
         block_hash: String,
+        block_height: i32,
         owner: Identifier,
         st_type: u32,
         index: u32,
@@ -33,7 +34,7 @@ impl PostgresDAO {
         };
 
         let query = "INSERT INTO state_transitions(hash, owner, data, type, \
-        index, block_hash, gas_used, status, error, batch_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
+        index, block_hash, block_height, gas_used, status, error, batch_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -47,6 +48,7 @@ impl PostgresDAO {
                     &st_type,
                     &index_i32,
                     &block_hash,
+                    &block_height,
                     &(gas_used as i64),
                     &status_str,
                     &error,
