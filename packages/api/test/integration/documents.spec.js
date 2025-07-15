@@ -7,6 +7,7 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const { IdentifierWASM } = require('pshenmic-dpp')
 
 describe('Documents routes', () => {
   let app
@@ -18,7 +19,21 @@ describe('Documents routes', () => {
   let block
   let documents
 
+  let aliasTimestamp
+
   before(async () => {
+    aliasTimestamp = new Date()
+
+    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+      properties: {
+        label: 'alias',
+        parentDomainName: 'dash',
+        normalizedLabel: 'a11as'
+      },
+      id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
+      createdAt: BigInt(aliasTimestamp.getTime())
+    }])
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -26,18 +41,6 @@ describe('Documents routes', () => {
         }
       }
     }))
-
-    mock.method(DAPI.prototype, 'getDocuments', async (type, dataContractObject, identifier) => [{
-      getData: () => ({
-        type,
-        dataContractObject,
-        identifier
-      }),
-      getId: () => identifier,
-      getRevision: () => 1,
-      getCreatedAt: () => (new Date(0)).toISOString()
-
-    }])
 
     app = await server.start()
     client = supertest(app.server)
@@ -49,10 +52,13 @@ describe('Documents routes', () => {
     documents = []
 
     block = await fixtures.block(knex, { height: 1, timestamp: new Date(0).toISOString() })
-    identity = await fixtures.identity(knex, { block_hash: block.hash })
+    identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
     const dataContractTransaction = await fixtures.transaction(knex, {
-      block_hash: block.hash, type: StateTransitionEnum.DATA_CONTRACT_CREATE, owner: identity.identifier
+      block_hash: block.hash,
+      block_height: block.height,
+      type: StateTransitionEnum.DATA_CONTRACT_CREATE,
+      owner: identity.identifier
     })
     dataContract = await fixtures.dataContract(knex, {
       state_transition_hash: dataContractTransaction.hash,
@@ -75,6 +81,7 @@ describe('Documents routes', () => {
 
     const documentTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
+      block_height: block.height,
       type: StateTransitionEnum.BATCH,
       owner: identity.identifier,
       data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ=='
@@ -109,6 +116,7 @@ describe('Documents routes', () => {
     for (let i = 5; i < 30; i++) {
       const documentTransaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         type: StateTransitionEnum.BATCH,
         owner: identity.identifier,
         data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ=='
@@ -125,6 +133,7 @@ describe('Documents routes', () => {
     for (let i = 5; i < 30; i++) {
       const documentTransaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         type: StateTransitionEnum.BATCH,
         owner: identity.identifier,
         data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ=='
@@ -168,7 +177,15 @@ describe('Documents routes', () => {
         prefundedVotingBalance: null,
         owner: {
           identifier: document.document.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         system: document.document.is_system,
         identityContractNonce: null,
@@ -200,7 +217,15 @@ describe('Documents routes', () => {
         prefundedVotingBalance: null,
         owner: {
           identifier: document.document.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         txHash: document.transaction.hash,
         identityContractNonce: null,
@@ -232,7 +257,15 @@ describe('Documents routes', () => {
         revision: document.document.revision,
         owner: {
           identifier: document.document.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         txHash: document.transaction.hash,
         timestamp: document.block.timestamp,
@@ -277,7 +310,15 @@ describe('Documents routes', () => {
           timestamp: block.timestamp,
           owner: {
             identifier: document.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           },
           system: document.is_system,
           entropy: null,
@@ -331,7 +372,15 @@ describe('Documents routes', () => {
           timestamp: block.timestamp,
           owner: {
             identifier: document.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           },
           system: document.is_system,
           gasUsed: null,
@@ -366,7 +415,15 @@ describe('Documents routes', () => {
           timestamp: block.timestamp,
           owner: {
             identifier: document.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           },
           system: document.is_system,
           entropy: null,
@@ -416,7 +473,15 @@ describe('Documents routes', () => {
           timestamp: document.is_system ? null : block.timestamp,
           owner: {
             identifier: document.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           },
           system: document.is_system,
           entropy: null,
@@ -461,7 +526,15 @@ describe('Documents routes', () => {
           timestamp: block.timestamp,
           owner: {
             identifier: document.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           },
           system: document.is_system,
           entropy: null,
@@ -506,7 +579,15 @@ describe('Documents routes', () => {
           timestamp: document.is_system ? null : block.timestamp,
           owner: {
             identifier: document.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           },
           system: document.is_system,
           entropy: null,

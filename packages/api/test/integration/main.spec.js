@@ -8,6 +8,7 @@ const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/DAPI')
+const { IdentifierWASM } = require('pshenmic-dpp')
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
@@ -27,8 +28,11 @@ describe('Other routes', () => {
   let documentTransaction
   let document
   let transactions
+  let aliasTimestamp
 
   before(async () => {
+    aliasTimestamp = new Date()
+
     mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
     mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
     mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
@@ -54,7 +58,15 @@ describe('Other routes', () => {
       }
     }))
 
-    mock.method(DAPI.prototype, 'getDocuments', async () => [])
+    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+      properties: {
+        label: 'alias',
+        parentDomainName: 'dash',
+        normalizedLabel: 'a11as'
+      },
+      id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
+      createdAt: BigInt(aliasTimestamp.getTime())
+    }])
 
     app = await server.start()
     client = supertest(app.server)
@@ -70,17 +82,19 @@ describe('Other routes', () => {
     // for the search() test
 
     const identityIdentifier = fixtures.identifier()
-    block = await fixtures.block(knex, { timestamp: new Date(genesisTime + blockDiffTime) })
+    block = await fixtures.block(knex, { timestamp: new Date(genesisTime + blockDiffTime), height: 1 })
     blocks.push(block)
 
     identityTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
+      block_height: block.height,
       type: StateTransitionEnum.IDENTITY_CREATE,
       data: '',
       owner: identityIdentifier
     })
     identity = await fixtures.identity(knex, {
       identifier: identityIdentifier,
+      block_height: block.height,
       state_transition_hash: identityTransaction.hash,
       block_hash: block.hash
     })
@@ -93,6 +107,7 @@ describe('Other routes', () => {
 
     dataContractTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
+      block_height: block.height,
       type: StateTransitionEnum.DATA_CONTRACT_CREATE,
       owner: identity.identifier,
       index: 1
@@ -105,6 +120,7 @@ describe('Other routes', () => {
 
     documentTransaction = await fixtures.transaction(knex, {
       block_hash: block.hash,
+      block_height: block.height,
       type: StateTransitionEnum.BATCH,
       owner: identity.identifier,
       data: 'AgAOCeQUD4t3d4EL5WxH8KtcvZvtHnc6vZ+f3y/memaf9wEAAABgCLhdmCbncK0httWF8BDx37Oz8q3GSSMpu++P3sGx1wIEbm90ZdpXZPiQJeml9oBjOQnbWPb39tNYLERTk/FarViCHJ8r8Jo86sqi8SuYeboiPVuMZsMQbv5Y7cURVW8x7pZ2QSsBB21lc3NhZ2USMFR1dG9yaWFsIENJIFRlc3QgQCBUaHUsIDA4IEF1ZyAyMDI0IDIwOjI1OjAzIEdNVAAAAUEfLtRrTrHXdpT9Pzp4PcNiKV13nnAYAqrl0w3KfWI8QR5f7TTen0N66ZUU7R7AoXV8kliIwVqpxiCVwChbh2XiYQ==',
@@ -125,7 +141,7 @@ describe('Other routes', () => {
 
     for (let i = 1; i < 10; i++) {
       const newBlock = await fixtures.block(knex, {
-        height: i + 1,
+        height: i + 2,
         timestamp: new Date(block.timestamp.getTime() + blockDiffTime * i)
       })
       blocks.push(newBlock)
@@ -134,10 +150,11 @@ describe('Other routes', () => {
     for (let i = 0; i < 48; i++) {
       const tmpBlock = await fixtures.block(knex, {
         timestamp: new Date(new Date().getTime() - 3600000 * i),
-        height: i + 10
+        height: i + 11
       })
 
       const transaction = await fixtures.transaction(knex, {
+        block_height: tmpBlock.height,
         block_hash: tmpBlock.hash,
         type: 0,
         owner: identity.identifier,
@@ -187,7 +204,15 @@ describe('Other routes', () => {
             error: null,
             owner: {
               identifier: identityTransaction.owner,
-              aliases: []
+              aliases: [
+                {
+                  alias: 'alias.dash',
+                  contested: true,
+                  documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  status: 'ok',
+                  timestamp: aliasTimestamp.toISOString()
+                }
+              ]
             }
           },
           {
@@ -204,7 +229,15 @@ describe('Other routes', () => {
             error: null,
             owner: {
               identifier: dataContractTransaction.owner,
-              aliases: []
+              aliases: [
+                {
+                  alias: 'alias.dash',
+                  contested: true,
+                  documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  status: 'ok',
+                  timestamp: aliasTimestamp.toISOString()
+                }
+              ]
             }
           },
           {
@@ -221,7 +254,15 @@ describe('Other routes', () => {
             error: null,
             owner: {
               identifier: documentTransaction.owner,
-              aliases: []
+              aliases: [
+                {
+                  alias: 'alias.dash',
+                  contested: true,
+                  documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  status: 'ok',
+                  timestamp: aliasTimestamp.toISOString()
+                }
+              ]
             }
           }
         ]
@@ -249,7 +290,15 @@ describe('Other routes', () => {
         error: dataContractTransaction.error,
         owner: {
           identifier: dataContractTransaction.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         }
       }
 
@@ -291,11 +340,11 @@ describe('Other routes', () => {
           identifier: identity.identifier.trim(),
           aliases: [
             {
-              alias: 'dpns.dash',
-              contested: false,
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
               status: 'ok',
-              timestamp: null,
-              txHash: identityTransaction.hash
+              timestamp: aliasTimestamp.toISOString()
             }
           ]
         },
@@ -312,11 +361,11 @@ describe('Other routes', () => {
           identifier: identity.identifier.trim(),
           aliases: [
             {
-              alias: 'dpns.dash',
-              contested: false,
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
               status: 'ok',
-              timestamp: null,
-              txHash: identityTransaction.hash
+              timestamp: aliasTimestamp.toISOString()
             }
           ]
         }
@@ -371,11 +420,11 @@ describe('Other routes', () => {
           identifier: document.owner,
           aliases: [
             {
-              alias: identityAlias.alias,
-              contested: false,
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
               status: 'ok',
-              timestamp: null,
-              txHash: identityTransaction.hash
+              timestamp: aliasTimestamp.toISOString()
             }
           ]
         },
@@ -519,7 +568,7 @@ describe('Other routes', () => {
         api: {
           version: require('../../package.json').version,
           block: {
-            height: blocks.length - 1,
+            height: blocks.length,
             hash: blocks[blocks.length - 1].hash,
             timestamp: blocks[blocks.length - 1].timestamp.toISOString()
           }

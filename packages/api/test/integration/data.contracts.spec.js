@@ -6,6 +6,7 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const DAPI = require('../../src/DAPI')
+const { IdentifierWASM } = require('pshenmic-dpp')
 
 describe('DataContracts routes', () => {
   let app
@@ -20,7 +21,21 @@ describe('DataContracts routes', () => {
 
   let diferentVersionsDataContract
 
+  let aliasTimestamp
+
   before(async () => {
+    aliasTimestamp = new Date()
+
+    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+      properties: {
+        label: 'alias',
+        parentDomainName: 'dash',
+        normalizedLabel: 'a11as'
+      },
+      id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
+      createdAt: BigInt(aliasTimestamp.getTime())
+    }])
+
     app = await server.start()
     client = supertest(app.server)
     knex = getKnex()
@@ -34,7 +49,10 @@ describe('DataContracts routes', () => {
     documents = []
     diferentVersionsDataContract = []
     block = await fixtures.block(knex)
-    identity = await fixtures.identity(knex, { block_hash: block.hash })
+    identity = await fixtures.identity(knex, {
+      block_hash: block.hash,
+      block_height: block.height
+    })
 
     // first 5 system documents
     for (let i = 0; i < 5; i++) {
@@ -50,6 +68,7 @@ describe('DataContracts routes', () => {
     for (let i = 5; i < 29; i++) {
       const block = await fixtures.block(knex, { height: i + 1 })
       const transaction = await fixtures.transaction(knex, {
+        block_height: block.height,
         block_hash: block.hash,
         type: StateTransitionEnum.DATA_CONTRACT_CREATE,
         owner: identity.identifier,
@@ -67,6 +86,7 @@ describe('DataContracts routes', () => {
 
     const block2 = await fixtures.block(knex, { height })
     const contractCreateTransaction = await fixtures.transaction(knex, {
+      block_height: block2.height,
       block_hash: block2.hash,
       type: StateTransitionEnum.DATA_CONTRACT_CREATE,
       owner: identity.identifier,
@@ -84,6 +104,7 @@ describe('DataContracts routes', () => {
     // create some documents in different data contract versions
     for (let i = 0; i < 5; i++) {
       const contractCreateTransaction = await fixtures.transaction(knex, {
+        block_height: block2.height,
         block_hash: block2.hash,
         type: StateTransitionEnum.DATA_CONTRACT_UPDATE,
         owner: identity.identifier,
@@ -100,6 +121,7 @@ describe('DataContracts routes', () => {
       })
 
       const documentTransaction = await fixtures.transaction(knex, {
+        block_height: block2.height,
         block_hash: block2.hash,
         type: StateTransitionEnum.BATCH,
         owner: identity.identifier,
@@ -302,7 +324,15 @@ describe('DataContracts routes', () => {
         name: dataContract.dataContract.name,
         owner: {
           identifier: identity.identifier.trim(),
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         schema: '{}',
         version: 0,
@@ -314,7 +344,15 @@ describe('DataContracts routes', () => {
         identitiesInteracted: 0,
         topIdentity: {
           identifier: null,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         totalGasUsed: 0
       }
@@ -334,7 +372,15 @@ describe('DataContracts routes', () => {
         name: dataContract.dataContract.name,
         owner: {
           identifier: identity.identifier.trim(),
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         schema: '{}',
         version: dataContract.dataContract.version,
@@ -346,7 +392,15 @@ describe('DataContracts routes', () => {
         identitiesInteracted: 1,
         topIdentity: {
           identifier: dataContract.dataContract.owner.trim(),
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         totalGasUsed: 0
       }
@@ -379,7 +433,15 @@ describe('DataContracts routes', () => {
         action: null,
         owner: {
           identifier: dataContractVersion.dataContract.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: dataContract.block.timestamp.toISOString(),
         gasUsed: 0,
@@ -396,7 +458,15 @@ describe('DataContracts routes', () => {
         }],
         owner: {
           identifier: document.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: block.timestamp.toISOString(),
         gasUsed: 0,
@@ -437,7 +507,15 @@ describe('DataContracts routes', () => {
         action: null,
         owner: {
           identifier: dataContractVersion.dataContract.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: dataContract.block.timestamp.toISOString(),
         gasUsed: 0,
@@ -454,7 +532,15 @@ describe('DataContracts routes', () => {
         }],
         owner: {
           identifier: document.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: block.timestamp.toISOString(),
         gasUsed: 0,
@@ -495,7 +581,15 @@ describe('DataContracts routes', () => {
         action: null,
         owner: {
           identifier: dataContractVersion.dataContract.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: dataContract.block.timestamp.toISOString(),
         gasUsed: 0,
@@ -512,7 +606,15 @@ describe('DataContracts routes', () => {
         }],
         owner: {
           identifier: document.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: block.timestamp.toISOString(),
         gasUsed: 0,
