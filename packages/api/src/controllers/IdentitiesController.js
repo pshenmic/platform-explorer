@@ -3,7 +3,7 @@ const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
 const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { outputScriptToAddress } = require('../utils')
-const { Identifier } = require('@dashevo/wasm-dpp')
+const { IdentifierWASM } = require('pshenmic-dpp')
 const { base58 } = require('@scure/base')
 
 class IdentitiesController {
@@ -92,7 +92,7 @@ class IdentitiesController {
     const { identifier } = request.params
     const { limit = 100, timestamp_start: timestampStart, start_at: startAt } = request.query
 
-    const query = [['$ownerId', '=', Identifier.from(identifier)]]
+    const query = [['$ownerId', '=', new IdentifierWASM(identifier).base58()]]
 
     if (timestampStart) {
       query.push(['status', 'in', [0, 1, 2, 3, 4]], ['$createdAt', '>=', new Date(timestampStart).getTime()])

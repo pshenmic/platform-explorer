@@ -143,7 +143,7 @@ class TransactionsController {
   decode = async (request, reply) => {
     const { base64 } = request.body
 
-    const decoded = await utils.decodeStateTransition(this.client, base64)
+    const decoded = await utils.decodeStateTransition(base64)
 
     reply.send(decoded)
   }
