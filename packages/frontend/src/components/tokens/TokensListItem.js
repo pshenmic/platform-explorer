@@ -1,28 +1,42 @@
 import Link from 'next/link'
-import { Alias, Identifier } from '../data'
+import { Alias, Identifier, BigNumber } from '../data'
 import { Grid, GridItem } from '@chakra-ui/react'
-import { Supply, TickerBadge } from './index'
+import { Supply } from './index'
 import { LinkContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
 import './TokensListItem.scss'
 
 function TokensListItem ({ token }) {
-  const { name, ticker, tokenId, dataContract, currentSupply, maxSupply, ownerIdentity } = token
+  const {
+    identifier,
+    dataContractIdentifier,
+    maxSupply,
+    totalSupply,
+    owner,
+    localizations
+  } = token
   const router = useRouter()
 
+  const name = localizations?.en?.singularForm ||
+    Object.values(localizations || {})[0]?.singularForm ||
+    ''
+
   return (
-    <Link href={`/token/${tokenId}`} className={'TokensListItem'}>
+    <Link href={`/token/${identifier}`} className={'TokensListItem'}>
       <Grid className={'TokensListItem__Content'}>
         <GridItem className={'TokensListItem__Column TokensListItem__Column--TokenName'}>
-          <Alias>{name}</Alias>
-        </GridItem>
-
-        <GridItem className={'TokensListItem__Column TokensListItem__Column--Ticker'}>
-          <TickerBadge>{ticker}</TickerBadge>
+          <Alias avatarSource={identifier}>{name}</Alias>
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Supply'}>
-          <Supply currentSupply={currentSupply} maxSupply={maxSupply}/>
+          {maxSupply
+            ? <Supply
+                currentSupply={totalSupply}
+                maxSupply={maxSupply || totalSupply}
+              />
+            : <BigNumber>{totalSupply}</BigNumber>
+          }
+
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--DataContract'}>
@@ -31,7 +45,7 @@ function TokensListItem ({ token }) {
             onClick={e => {
               e.stopPropagation()
               e.preventDefault()
-              router.push(`/identity/${dataContract}`)
+              router.push(`/dataContract/${dataContractIdentifier}`)
             }}
           >
             <Identifier
@@ -40,7 +54,7 @@ function TokensListItem ({ token }) {
               styles={['highlight-both']}
               avatar={true}
             >
-              {dataContract}
+              {dataContractIdentifier}
             </Identifier>
           </LinkContainer>
         </GridItem>
@@ -51,7 +65,7 @@ function TokensListItem ({ token }) {
             onClick={e => {
               e.stopPropagation()
               e.preventDefault()
-              router.push(`/identity/${dataContract}`)
+              router.push(`/identity/${owner}`)
             }}
           >
             <Identifier
@@ -60,7 +74,7 @@ function TokensListItem ({ token }) {
               styles={['highlight-both']}
               avatar={true}
             >
-              {ownerIdentity}
+              {owner}
             </Identifier>
           </LinkContainer>
         </GridItem>

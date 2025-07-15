@@ -9,6 +9,8 @@ import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Container, Heading, Box, useBreakpointValue } from '@chakra-ui/react'
 import { TokenFilters } from '../../components/tokens'
+import * as Api from '../../util/Api'
+import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
 import './Tokens.scss'
 
 const paginateConfig = {
@@ -19,65 +21,33 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-// Mock data based on Figma design
-const mockTokens = [
-  {
-    name: 'DashGold',
-    ticker: 'DGLD',
-    tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    currentSupply: '40000',
-    maxSupply: '500000',
-    ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
-  },
-  {
-    name: 'CryptoSilver',
-    ticker: 'CRSL',
-    tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    currentSupply: '40000',
-    maxSupply: '500000',
-    ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
-  },
-  {
-    name: 'TokenAlpha',
-    ticker: 'ALPH',
-    tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    currentSupply: '40000',
-    maxSupply: '500000',
-    ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
-  },
-  {
-    name: 'BetaCoin',
-    ticker: 'BTCN',
-    tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    currentSupply: '40000',
-    maxSupply: '500000',
-    ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
-  },
-  {
-    name: 'GammaToken',
-    ticker: 'GMMT',
-    tokenId: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    dataContract: 'DFTG9G5mzmb4ANpoTtfRigrPjnrYTapHvznnCXNA3vfF',
-    currentSupply: '40000',
-    maxSupply: '500000',
-    ownerIdentity: 'FXyN2NZAdRFADg7CeGjfUBdEqGPRw8RJXkpN5r4tMuLQ'
-  }
-]
-
 function Tokens ({ defaultPage = 1, defaultPageSize }) {
-  const [tokens] = useState({ data: mockTokens, loading: false, error: false })
-  const [total] = useState(mockTokens.length)
+  const [tokens, setTokens] = useState({ data: {}, loading: false, error: false })
+  const [total, setTotal] = useState(0)
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const pageCount = Math.ceil(total / pageSize)
+  const [filters] = useState({})
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isMobile = useBreakpointValue({ base: true, md: false })
+
+  const fetchData = (page, count, filters) => {
+    setTokens({ data: {}, loading: true, error: false })
+
+    Api.getTokens(page, count, 'desc', filters)
+      .then(res => {
+        if (res.pagination.total === -1) {
+          setCurrentPage(0)
+        }
+        fetchHandlerSuccess(setTokens, res)
+        setTotal(res.pagination.total)
+      })
+      .catch(err => fetchHandlerError(setTokens, err))
+  }
+
+  useEffect(() => fetchData(currentPage + 1, pageSize, filters), [pageSize, currentPage, filters])
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
@@ -98,9 +68,6 @@ function Tokens ({ defaultPage = 1, defaultPageSize }) {
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [currentPage, pageSize])
-
-  // Get paginated tokens
-  const paginatedTokens = mockTokens.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
 
   return (
     <Container
@@ -124,12 +91,12 @@ function Tokens ({ defaultPage = 1, defaultPageSize }) {
 
         {!tokens.error
           ? !tokens.loading
-              ? <TokensList tokens={paginatedTokens}/>
+              ? <TokensList tokens={tokens?.data?.resultSet || []}/>
               : <LoadingList itemsCount={pageSize}/>
           : <ErrorMessageBlock h={20}/>
         }
 
-        {tokens.data?.length > 0 &&
+        {tokens.data?.resultSet?.length > 0 &&
           <div className={'ListNavigation'}>
             <Box display={['none', 'none', 'block']} width={'155px'}/>
             <Pagination

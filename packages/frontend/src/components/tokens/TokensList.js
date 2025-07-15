@@ -20,9 +20,6 @@ function TokensList ({ tokens, headerStyles = 'default', pagination, loading, it
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--TokenName'}>
           Token Name
         </GridItem>
-        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Ticker'}>
-          TICKER
-        </GridItem>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Supply'}>
           Supply
         </GridItem>
