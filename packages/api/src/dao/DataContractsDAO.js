@@ -199,7 +199,7 @@ module.exports = class DataContractsDAO {
       let decodedTx
 
       if (row.data) {
-        decodedTx = await decodeStateTransition(this.client, row.data)
+        decodedTx = await decodeStateTransition(row.data)
       }
 
       const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)

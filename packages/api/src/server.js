@@ -1,4 +1,3 @@
-const Dash = require('dash')
 const Fastify = require('fastify')
 const metricsPlugin = require('fastify-metrics')
 const cors = require('@fastify/cors')
@@ -48,20 +47,14 @@ let dapi
 
 module.exports = {
   start: async () => {
-    client = new Dash.Client()
-
     await loadWasmDpp()
-
-    await client.platform.initialize()
 
     const dapiClient = new DAPIClient({
       dapiAddresses: (process.env.DAPI_URL ?? '127.0.0.1:1443:self-signed').split(','),
       network: process.env.NETWORK ?? 'testnet'
     })
 
-    const { dpp } = client.platform
-
-    dapi = new DAPI(dapiClient, dpp)
+    dapi = new DAPI(dapiClient)
 
     fastify = Fastify()
 

@@ -1,7 +1,7 @@
 const DocumentsDAO = require('../dao/DocumentsDAO')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const Document = require('../models/Document')
-const { Identifier } = require('@dashevo/wasm-dpp')
+const { IdentifierWASM } = require('pshenmic-dpp')
 
 class DocumentsController {
   constructor (client, knex, dapi) {
@@ -35,7 +35,7 @@ class DocumentsController {
       return response.status(400).send({ message: 'data contract not found' })
     }
 
-    const [extendedDocument] = await this.dapi.getDocuments(
+    const [dapiDocument] = await this.dapi.getDocuments(
       documentTypeName,
       {
         $format_version: '0',
@@ -44,24 +44,24 @@ class DocumentsController {
         version: dataContract.version,
         documentSchemas: JSON.parse(dataContract.schema)
       },
-      [['$id', '=', Buffer.from(Identifier.from(identifier))]],
+      [['$id', '=', new IdentifierWASM(identifier).base58()]],
       1
     )
 
-    if (!extendedDocument) {
+    if (!dapiDocument) {
       return response.status(404).send({ message: 'not found' })
     }
 
     response.send(Document.fromObject({
       dataContractIdentifier: dataContract.identifier,
       deleted: false,
-      identifier: extendedDocument?.getId().toString(),
+      identifier: dapiDocument?.id.base64(),
       system: false,
-      owner: extendedDocument.getOwnerId().toString(),
-      revision: extendedDocument.getRevision(),
-      timestamp: extendedDocument.getCreatedAt(),
+      owner: dapiDocument.ownerId.base58(),
+      revision: dapiDocument.revision.toString(),
+      timestamp: dapiDocument.createdAt.toString(),
       txHash: document?.txHash ?? null,
-      data: JSON.stringify(extendedDocument.getData()),
+      data: JSON.stringify(dapiDocument.properties),
       typeName: documentTypeName,
       transitionType: null
     }))
@@ -90,7 +90,7 @@ class DocumentsController {
         version: dataContract.version,
         documentSchemas: JSON.parse(dataContract.schema)
       },
-      [['$id', '=', Buffer.from(Identifier.from(identifier))]],
+      [['$id', '=', new IdentifierWASM(identifier).base58()]],
       1,
       undefined,
       undefined,

@@ -75,7 +75,7 @@ module.exports = class DocumentsDAO {
     let transitions = []
 
     if (row.create_tx_data) {
-      const decodedTransitions = await decodeStateTransition(this.client, row.create_tx_data)
+      const decodedTransitions = await decodeStateTransition(row.create_tx_data)
 
       transitions = decodedTransitions.transitions ?? []
     }
@@ -210,7 +210,7 @@ module.exports = class DocumentsDAO {
       let transitions = []
 
       if (row.tx_data) {
-        const decodedTransitions = await decodeStateTransition(this.client, row.tx_data)
+        const decodedTransitions = await decodeStateTransition(row.tx_data)
 
         transitions = decodedTransitions.transitions ?? []
       }
