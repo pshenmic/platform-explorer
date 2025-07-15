@@ -40,6 +40,7 @@ const fixtures = {
     batch_type = null,
     index,
     block_hash,
+    block_height,
     owner,
     gas_used,
     status,
@@ -47,6 +48,10 @@ const fixtures = {
   } = {}) => {
     if (!block_hash) {
       throw new Error('block_hash must be provided for transaction fixture')
+    }
+
+    if (!block_height) {
+      throw new Error('block_height must be provided for transaction fixture')
     }
 
     if (!type && type !== 0) {
@@ -59,6 +64,7 @@ const fixtures = {
 
     const row = {
       block_hash,
+      block_height,
       type,
       batch_type,
       owner,
@@ -74,7 +80,7 @@ const fixtures = {
 
     return { ...row, id: result.id }
   },
-  identity: async (knex, { identifier, block_hash, state_transition_hash, revision, owner, is_system } = {}) => {
+  identity: async (knex, { identifier, block_hash, block_height, state_transition_hash, revision, owner, is_system } = {}) => {
     if (!identifier) {
       identifier = generateIdentifier()
     }
@@ -83,11 +89,16 @@ const fixtures = {
       throw Error('Block hash must be provided')
     }
 
+    if (!block_height) {
+      throw Error('Block height must be provided')
+    }
+
     let transaction
 
     if (!state_transition_hash) {
       transaction = await fixtures.transaction(knex, {
         block_hash,
+        block_height,
         owner: identifier,
         type: StateTransitionEnum.IDENTITY_CREATE
       })

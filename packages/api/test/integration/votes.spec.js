@@ -1,9 +1,10 @@
-const { describe, it, before, after } = require('node:test')
+const { describe, it, before, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
+const DAPI = require('../../src/DAPI')
 
 describe('Masternode routes', () => {
   let app
@@ -14,6 +15,8 @@ describe('Masternode routes', () => {
   let masternodeVotes
 
   before(async () => {
+    mock.method(DAPI.prototype, 'getDocuments', async () => [])
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -25,7 +28,10 @@ describe('Masternode routes', () => {
 
     const block = await fixtures.block(knex)
 
-    const identity = await fixtures.identity(knex, { block_hash: block.hash })
+    const identity = await fixtures.identity(knex, {
+      block_height: block.height,
+      block_hash: block.hash
+    })
 
     dataContract = await fixtures.dataContract(knex, {
       owner: identity.identifier
@@ -35,8 +41,12 @@ describe('Masternode routes', () => {
       const block = await fixtures.block(knex, {
         timestamp: new Date(300000 * i).toISOString()
       })
-      const voterIdentity = await fixtures.identity(knex, { block_hash: block.hash })
+      const voterIdentity = await fixtures.identity(knex, {
+        block_height: block.height,
+        block_hash: block.hash
+      })
       const transaction = await fixtures.transaction(knex, {
+        block_height: block.height,
         block_hash: block.hash,
         type: 8,
         owner: voterIdentity.identifier

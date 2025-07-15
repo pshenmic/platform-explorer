@@ -1,7 +1,7 @@
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { decodeStateTransition, getAliasInfo, getAliasStateByVote, getAliasFromDocument} = require('../utils')
-const dpnsContract = require("../../data_contracts/dpns.json");
+const { decodeStateTransition, getAliasFromDocument } = require('../utils')
+const dpnsContract = require('../../data_contracts/dpns.json')
 
 module.exports = class DataContractsDAO {
   constructor (knex, client, dapi) {

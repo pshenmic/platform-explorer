@@ -197,16 +197,18 @@ describe('Identities routes', () => {
   describe('getIdentityByIdentifier()', async () => {
     it('should return identity by identifier', async () => {
       const block = await fixtures.block(knex, { timestamp: new Date(0) })
-      const owner = await fixtures.identity(knex, { block_hash: block.hash })
+      const owner = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       const transaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         type: StateTransitionEnum.IDENTITY_CREATE,
         owner: owner.identifier,
         data: ''
       })
       const identity = await fixtures.identity(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         state_transition_hash: transaction.hash
       })
       const alias = await fixtures.identity_alias(knex,
@@ -265,7 +267,7 @@ describe('Identities routes', () => {
   describe('getIdentityWithdrawalByIdentifier()', async () => {
     it('should return default set of Withdrawals from state_transitions table', async () => {
       block = await fixtures.block(knex)
-      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      const identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       dataContract = await fixtures.dataContract(knex, {
         owner: identity.identifier,
         schema: dataContractSchema,
@@ -279,6 +281,7 @@ describe('Identities routes', () => {
 
         const transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           type: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL,
           owner: identity.owner,
           data: 'BQFh0z9HiTN5e+TeiDU8fC2EPCExD20A9u/zFCSnVu59+/0AAAB0alKIAAEAAAEAAUEf89R9GPHIX5QLD/HKJ1xjd86KrnTsfAOxPMxBNDO8cJkAT5yUhcl/sGbQYoHSuNVIZcVVTVnSsYMXIyimihp3Vw=='
@@ -329,7 +332,7 @@ describe('Identities routes', () => {
   describe('getIdentityByDPNS()', async () => {
     it('should return identity by dpns', async () => {
       const block = await fixtures.block(knex)
-      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      const identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       const alias = await fixtures.identity_alias(knex, {
         alias: 'test-name.1.dash',
         identity,
@@ -357,7 +360,7 @@ describe('Identities routes', () => {
 
     it('should return identity by dpns with any case', async () => {
       const block = await fixtures.block(knex)
-      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      const identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       const alias = await fixtures.identity_alias(knex, {
         alias: 'test-name.2.dash',
         identity,
@@ -397,7 +400,7 @@ describe('Identities routes', () => {
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
-        identity = await fixtures.identity(knex, { block_hash: block.hash })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
         alias = await fixtures.identity_alias(knex, {
           alias: `#test$${i}`,
           identity,
@@ -457,7 +460,7 @@ describe('Identities routes', () => {
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
-        identity = await fixtures.identity(knex, { block_hash: block.hash })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
         alias = await fixtures.identity_alias(knex, {
           alias: `#test1$${i}`,
           identity,
@@ -520,7 +523,7 @@ describe('Identities routes', () => {
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
-        identity = await fixtures.identity(knex, { block_hash: block.hash })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
         alias = await fixtures.identity_alias(knex, {
           alias: `#test2$${i}`,
           identity,
@@ -583,7 +586,7 @@ describe('Identities routes', () => {
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
-        identity = await fixtures.identity(knex, { block_hash: block.hash })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
         alias = await fixtures.identity_alias(knex, {
           alias: `#test3$${i}`,
           identity,
@@ -649,11 +652,12 @@ describe('Identities routes', () => {
         const transactions = []
 
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
-        identity = await fixtures.identity(knex, { block_hash: block.hash })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
         for (let j = 0; j < Math.floor(Math.random() * 50); j++) {
           const tx = await fixtures.transaction(knex, {
             block_hash: block.hash,
+            block_height: block.height,
             type: StateTransitionEnum.BATCH,
             owner: identity.identifier
           })
@@ -726,8 +730,9 @@ describe('Identities routes', () => {
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
-        identity = await fixtures.identity(knex, { block_hash: block.hash })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
         transferTx = await fixtures.transaction(knex, {
+          block_height: block.height,
           block_hash: block.hash,
           type: StateTransitionEnum.IDENTITY_TOP_UP,
           owner: identity.identifier
@@ -816,11 +821,12 @@ describe('Identities routes', () => {
     it('should return default set of data contracts by identity', async () => {
       dataContracts = []
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
+          block_height: block.height,
           block_hash: block.hash,
           owner: identity.identifier,
           type: StateTransitionEnum.DATA_CONTRACT_CREATE
@@ -862,11 +868,12 @@ describe('Identities routes', () => {
     it('should return default set of data contracts by identity desc', async () => {
       dataContracts = []
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
+          block_height: block.height,
           block_hash: block.hash,
           owner: identity.identifier,
           type: StateTransitionEnum.DATA_CONTRACT_CREATE
@@ -911,11 +918,12 @@ describe('Identities routes', () => {
     it('should allow walk through pages', async () => {
       dataContracts = []
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
+          block_height: block.height,
           block_hash: block.hash,
           owner: identity.identifier,
           type: StateTransitionEnum.DATA_CONTRACT_CREATE
@@ -960,11 +968,12 @@ describe('Identities routes', () => {
     it('should allow walk through pages desc', async () => {
       dataContracts = []
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
+          block_height: block.height,
           block_hash: block.hash,
           owner: identity.identifier,
           type: StateTransitionEnum.DATA_CONTRACT_CREATE
@@ -1011,12 +1020,13 @@ describe('Identities routes', () => {
     it('should return default set of documents by identity', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         dataContractTransaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.DATA_CONTRACT_CREATE
         })
@@ -1026,6 +1036,7 @@ describe('Identities routes', () => {
         })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.BATCH
         })
@@ -1074,12 +1085,13 @@ describe('Identities routes', () => {
     it('should return default set of documents by identity dsc', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         dataContractTransaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.DATA_CONTRACT_CREATE
         })
@@ -1089,6 +1101,7 @@ describe('Identities routes', () => {
         })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.BATCH
         })
@@ -1140,12 +1153,13 @@ describe('Identities routes', () => {
     it('should return default set of documents by identity and type_name dsc', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         dataContractTransaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.DATA_CONTRACT_CREATE
         })
@@ -1155,6 +1169,7 @@ describe('Identities routes', () => {
         })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.BATCH
         })
@@ -1208,12 +1223,13 @@ describe('Identities routes', () => {
     it('should be able to walk through pages', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         dataContractTransaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.DATA_CONTRACT_CREATE
         })
@@ -1223,6 +1239,7 @@ describe('Identities routes', () => {
         })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.BATCH
         })
@@ -1274,12 +1291,13 @@ describe('Identities routes', () => {
     it('should be able to walk through pages desc', async () => {
       documents = []
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         dataContractTransaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.DATA_CONTRACT_CREATE
         })
@@ -1289,6 +1307,7 @@ describe('Identities routes', () => {
         })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.BATCH
         })
@@ -1341,13 +1360,14 @@ describe('Identities routes', () => {
   describe('getTransactionsByIdentity()', async () => {
     it('should return default set of transactions by identity', async () => {
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       transactions = [{ transaction: identity.transaction, block }]
 
       for (let i = 1; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.BATCH
         })
@@ -1389,13 +1409,14 @@ describe('Identities routes', () => {
 
     it('should return default set of transactions by identity desc', async () => {
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       transactions = [{ transaction: identity.transaction, block }]
 
       for (let i = 1; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.BATCH
         })
@@ -1437,13 +1458,14 @@ describe('Identities routes', () => {
 
     it('should allow walk through pages', async () => {
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       transactions = [{ transaction: identity.transaction, block }]
 
       for (let i = 1; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.BATCH
         })
@@ -1485,13 +1507,14 @@ describe('Identities routes', () => {
 
     it('should allow walk through pages desc', async () => {
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       transactions = [{ transaction: identity.transaction, block }]
 
       for (let i = 1; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.BATCH
         })
@@ -1535,13 +1558,14 @@ describe('Identities routes', () => {
   describe('getTransfersByIdentity()', async () => {
     it('should return default set of transfers by identity', async () => {
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       transfers = []
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.IDENTITY_TOP_UP,
           gas_used: 123
@@ -1583,13 +1607,14 @@ describe('Identities routes', () => {
 
     it('should return default set of transfers by identity and type', async () => {
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       transfers = []
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: i % 2 === 0 ? 5 : 6,
           gas_used: 123
@@ -1632,11 +1657,12 @@ describe('Identities routes', () => {
 
     it('should return transfer by identity and tx hash', async () => {
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       transfers = []
 
       transaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         owner: identity.identifier,
         type: StateTransitionEnum.IDENTITY_TOP_UP,
         gas_used: 123
@@ -1673,13 +1699,14 @@ describe('Identities routes', () => {
 
     it('should return default set of transfers by identity desc', async () => {
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       transfers = []
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.IDENTITY_TOP_UP,
           gas_used: 12
@@ -1721,13 +1748,14 @@ describe('Identities routes', () => {
 
     it('should allow to walk through pages', async () => {
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       transfers = []
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.IDENTITY_TOP_UP,
           gas_used: 22
@@ -1769,13 +1797,14 @@ describe('Identities routes', () => {
 
     it('should allow to walk through pages desc', async () => {
       block = await fixtures.block(knex, { height: 1 })
-      identity = await fixtures.identity(knex, { block_hash: block.hash })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       transfers = []
 
       for (let i = 1; i < 31; i++) {
         block = await fixtures.block(knex, { height: i + 1 })
         transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           owner: identity.identifier,
           type: StateTransitionEnum.IDENTITY_TOP_UP,
           gas_used: 33

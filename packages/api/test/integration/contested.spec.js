@@ -7,6 +7,7 @@ const { getKnex } = require('../../src/utils')
 const DAPI = require('../../src/DAPI')
 const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../../src/constants')
 const ChoiceEnum = require('../../src/enums/ChoiceEnum')
+const { IdentifierWASM } = require('pshenmic-dpp')
 
 describe('Contested documents routes', () => {
   let app
@@ -20,7 +21,21 @@ describe('Contested documents routes', () => {
 
   let resourceValue
 
+  let aliasTimestamp
+
   before(async () => {
+    aliasTimestamp = new Date()
+
+    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+      properties: {
+        label: 'alias',
+        parentDomainName: 'dash',
+        normalizedLabel: 'a11as'
+      },
+      id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
+      createdAt: BigInt(aliasTimestamp.getTime())
+    }])
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -32,7 +47,10 @@ describe('Contested documents routes', () => {
 
     resourceValue = Buffer.from('["dash", "xyz"]').toString('base64')
     block = await fixtures.block(knex)
-    identity = await fixtures.identity(knex, { block_hash: block.hash })
+    identity = await fixtures.identity(knex, {
+      block_hash: block.hash,
+      block_height: block.height
+    })
     dataContract = await fixtures.dataContract(knex, {
       owner: identity.identifier,
       schema: {
@@ -72,10 +90,12 @@ describe('Contested documents routes', () => {
         height: i + 1
       })
       const contender = await fixtures.identity(knex, {
-        block_hash: block.hash
+        block_hash: block.hash,
+        block_height: block.height
       })
       const documentTransaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         type: 0,
         owner: contender.identifier,
         gas_used: 11
@@ -103,11 +123,13 @@ describe('Contested documents routes', () => {
       })
 
       const masternodeIdentity = await fixtures.identity(knex, {
-        block_hash: block.hash
+        block_hash: block.hash,
+        block_height: block.height
       })
 
       const masternodeTransaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         type: 0,
         owner: masternodeIdentity.identifier,
         gas_used: 13
@@ -141,10 +163,12 @@ describe('Contested documents routes', () => {
         height: i + 11
       })
       const contender = await fixtures.identity(knex, {
-        block_hash: block.hash
+        block_hash: block.hash,
+        block_height: block.height
       })
       const documentTransaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         type: 0,
         owner: contender.identifier,
         gas_used: 11
@@ -175,11 +199,13 @@ describe('Contested documents routes', () => {
       })
 
       const masternodeIdentity = await fixtures.identity(knex, {
+        block_height: block.height,
         block_hash: block.hash
       })
 
       const masternodeTransaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         type: 0,
         owner: masternodeIdentity.identifier,
         gas_used: 13
@@ -229,7 +255,15 @@ describe('Contested documents routes', () => {
             timestamp: resource.block.timestamp.toISOString(),
             documentIdentifier: resource.document.identifier,
             documentStateTransition: resource.document.state_transition_hash,
-            aliases: [],
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ],
             towardsIdentityVotes: contestedResources.filter(res => res.masternodeVote.towards_identity_identifier === resource.contender.identifier).length,
             abstainVotes: contestedResources
               .filter(res =>
@@ -293,7 +327,17 @@ describe('Contested documents routes', () => {
           documentIdentifier: masternodeVote.choice === 0 ? document.identifier : null,
           indexName: masternodeVote.index_name,
           indexValues: JSON.parse(masternodeVote.index_values),
-          identityAliases: [],
+          identityAliases: masternodeVote.choice === 0
+            ? [
+                {
+                  alias: 'alias.dash',
+                  contested: true,
+                  documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  status: 'ok',
+                  timestamp: aliasTimestamp.toISOString()
+                }
+              ]
+            : [],
           power: masternodeVote.power
         }))
 
@@ -480,9 +524,11 @@ describe('Contested documents routes', () => {
         height: 99
       })
       const contender = await fixtures.identity(knex, {
+        block_height: block.height,
         block_hash: block.hash
       })
       const documentTransaction = await fixtures.transaction(knex, {
+        block_height: block.height,
         block_hash: block.hash,
         type: 0,
         owner: contender.identifier,

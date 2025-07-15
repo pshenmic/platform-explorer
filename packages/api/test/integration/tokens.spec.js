@@ -30,7 +30,7 @@ describe('Tokens', () => {
 
     block = await fixtures.block(knex)
 
-    identity = await fixtures.identity(knex, { block_hash: block.hash })
+    identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
     dataContract = await fixtures.dataContract(knex, {
       owner: identity.identifier

@@ -37,7 +37,7 @@ class MainController {
     const epoch = epochInfo ? Epoch.fromObject(epochInfo) : null
 
     const tdHeight = tdStatus?.highestBlock?.height
-    const indexerHeight = currentBlock.height
+    const indexerHeight = currentBlock.header.height
 
     const indexerSynced = (tdHeight - indexerHeight) <= 1
 

@@ -7,6 +7,7 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/DAPI')
+const { IdentifierWASM } = require('pshenmic-dpp')
 
 describe('Transaction routes', () => {
   let app
@@ -16,8 +17,11 @@ describe('Transaction routes', () => {
   let identity
   let block
   let transactions
+  let aliasTimestamp
 
   before(async () => {
+    aliasTimestamp = new Date()
+
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
         header: {
@@ -26,7 +30,15 @@ describe('Transaction routes', () => {
       }
     }))
 
-    mock.method(DAPI.prototype, 'getDocuments', async () => [])
+    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+      properties: {
+        label: 'alias',
+        parentDomainName: 'dash',
+        normalizedLabel: 'a11as'
+      },
+      id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
+      createdAt: BigInt(aliasTimestamp.getTime())
+    }])
 
     const startDate = new Date(new Date() - 1000 * 60 * 60)
 
@@ -39,13 +51,17 @@ describe('Transaction routes', () => {
     block = await fixtures.block(knex, {
       height: 1, timestamp: startDate
     })
-    identity = await fixtures.identity(knex, { block_hash: block.hash })
+    identity = await fixtures.identity(knex, {
+      block_hash: block.hash,
+      block_height: block.height
+    })
 
     transactions = [{ transaction: identity.transaction, block }]
 
     // error tx
     const errorTx = await fixtures.transaction(knex, {
       block_hash: block.hash,
+      block_height: block.height,
       data: '{}',
       type: StateTransitionEnum.BATCH,
       owner: identity.identifier,
@@ -62,6 +78,7 @@ describe('Transaction routes', () => {
 
       const transaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         data: '{}',
         type: StateTransitionEnum.DATA_CONTRACT_UPDATE,
         owner: identity.identifier,
@@ -79,6 +96,7 @@ describe('Transaction routes', () => {
       for (let j = 0; j < Math.ceil(Math.random() * 30); j++) {
         const transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
+          block_height: block.height,
           data: '{}',
           type: StateTransitionEnum.DATA_CONTRACT_CREATE,
           owner: identity.identifier,
@@ -117,7 +135,15 @@ describe('Transaction routes', () => {
         error: transaction.transaction.error,
         owner: {
           identifier: transaction.transaction.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         }
       }
 
@@ -144,7 +170,15 @@ describe('Transaction routes', () => {
         error: 'Cannot deserialize',
         owner: {
           identifier: transaction.transaction.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         }
       }
 
@@ -185,7 +219,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -219,7 +261,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -256,7 +306,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -295,7 +353,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -332,7 +398,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -371,7 +445,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -414,7 +496,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -458,7 +548,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -492,7 +590,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -526,7 +632,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -560,7 +674,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 
@@ -594,7 +716,15 @@ describe('Transaction routes', () => {
           error: transaction.transaction.error,
           owner: {
             identifier: transaction.transaction.owner,
-            aliases: []
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
           }
         }))
 

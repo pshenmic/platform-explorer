@@ -1,8 +1,8 @@
 const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
-const { decodeStateTransition, getAliasInfo, getAliasStateByVote, getAliasFromDocument} = require('../utils')
-const dpnsContract = require("../../data_contracts/dpns.json");
+const { decodeStateTransition, getAliasFromDocument } = require('../utils')
+const dpnsContract = require('../../data_contracts/dpns.json')
 
 module.exports = class DocumentsDAO {
   constructor (knex, dapi, client) {
@@ -188,7 +188,7 @@ module.exports = class DocumentsDAO {
 
     const rows = await this.knex(subquery)
       .select('revision', 'gas_used', 'subquery.owner', 'hash as tx_hash', 'timestamp',
-        'transition_type', 'data', 'identifier', 'aliases', 'tx_data')
+        'transition_type', 'data', 'identifier', 'tx_data')
       .select(this.knex(subquery).count('*').as('total_count'))
       .offset(fromRank)
       .limit(limit)

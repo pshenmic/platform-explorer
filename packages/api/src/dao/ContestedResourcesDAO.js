@@ -1,12 +1,12 @@
 const ChoiceEnum = require('../enums/ChoiceEnum')
 const ContestedResource = require('../models/ContestedResource')
-const { buildIndexBuffer, getAliasInfo, getAliasStateByVote, getAliasFromDocument} = require('../utils')
+const { buildIndexBuffer, getAliasFromDocument } = require('../utils')
 const { base58 } = require('@scure/base')
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../constants')
 const ContestedResourceStatus = require('../models/ContestedResourcesStatus')
-const dpnsContract = require("../../data_contracts/dpns.json");
+const dpnsContract = require('../../data_contracts/dpns.json')
 
 module.exports = class ContestedDAO {
   constructor (knex, dapi) {
@@ -367,7 +367,7 @@ module.exports = class ContestedDAO {
       .orderBy('subquery.id', order)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = row.towards_identity_identifier ? await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.towards_identity_identifier.trim()]], 1) : []
 
       const aliases = []
 

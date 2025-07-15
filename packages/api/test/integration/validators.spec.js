@@ -142,6 +142,7 @@ describe('Validators routes', () => {
     for (let i = 0; i < 50; i++) {
       const identity = await fixtures.identity(knex, {
         identifier: base58.encode(Buffer.from(validators[i].pro_tx_hash, 'hex')),
+        block_height: blocks[i].height,
         block_hash: blocks[i].hash
       })
 
@@ -157,6 +158,7 @@ describe('Validators routes', () => {
         {
           type: IDENTITY_CREDIT_WITHDRAWAL,
           block_hash: blocks[i].hash,
+          block_height: blocks[i].height,
           owner: base58.encode(Buffer.from((
             (i % 2)
               ? inactiveValidators
