@@ -16,6 +16,16 @@ class TokensController {
 
     response.send(tokens)
   }
+
+  getTokenByIdentifier = async (request, response) => {
+    const {
+      identifier
+    } = request.params
+
+    const token = await this.tokensDAO.getTokenByIdentifier(identifier)
+
+    response.send(token)
+  }
 }
 
 module.exports = TokensController

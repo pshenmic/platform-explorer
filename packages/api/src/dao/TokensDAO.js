@@ -41,4 +41,39 @@ module.exports = class TokensDAO {
 
     return new PaginatedResultSet(tokens, page, limit, totalCount)
   }
+
+  getTokenByIdentifier = async (identifier) => {
+    const rows = await this.knex('tokens')
+      .select(
+        'position', 'tokens.identifier',
+        'tokens.owner', 'distribution_rules',
+        'timestamp', 'data_contracts.identifier as data_contract_identifier',
+      )
+      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transitions_hash')
+      .leftJoin('blocks', 'block_hash', 'blocks.hash')
+      .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
+      .where('tokens.identifier', identifier)
+
+    const [row] = rows
+
+    const token = Token.fromRow(row)
+
+    const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
+
+    const tokenConfig = dataContract.tokens[row.position]
+
+    console.log()
+    return Token.fromObject({
+      ...token,
+      description: tokenConfig.description,
+      localizations: tokenConfig.conventions.localizations,
+      decimals: tokenConfig.conventions.decimals,
+      baseSupply: tokenConfig.baseSupply,
+      maxSupply: tokenConfig.maxSupply,
+      mintable: tokenConfig.manualMintingRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
+      burnable: tokenConfig.manualBurningRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
+      freezable: tokenConfig.freezeRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
+      changeMaxSupply: tokenConfig.maxSupplyChangeRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
+    })
+  }
 }

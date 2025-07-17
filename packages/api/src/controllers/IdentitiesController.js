@@ -111,7 +111,7 @@ class IdentitiesController {
       return response.send(new PaginatedResultSet([], null, null, null))
     }
 
-    const timestamps = documents.map(document => new Date(document.getCreatedAt()).toISOString())
+    const timestamps = documents.map(document => new Date(Number(document.createdAt)).toISOString())
 
     const withdrawals = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
 

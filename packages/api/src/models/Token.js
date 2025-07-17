@@ -2,6 +2,8 @@ const Localization = require('./Localization')
 
 module.exports = class Token {
   identifier
+  timestamp
+  description
   localizations
   baseSupply
   totalSupply
@@ -14,9 +16,12 @@ module.exports = class Token {
   destroyable
   allowedEmergencyActions
   dataContractIdentifier
+  changeMaxSupply
 
-  constructor (identifier, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalSupply) {
+  constructor (identifier, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalSupply, changeMaxSupply) {
     this.identifier = identifier ?? null
+    this.timestamp = timestamp ?? null
+    this.description = description ?? null
     this.localizations = localizations ?? null
     this.baseSupply = baseSupply ?? null
     this.maxSupply = maxSupply ?? null
@@ -29,11 +34,14 @@ module.exports = class Token {
     this.allowedEmergencyActions = allowedEmergencyActions ?? null
     this.dataContractIdentifier = dataContractIdentifier ?? null
     this.totalSupply = totalSupply ?? null
+    this.changeMaxSupply = changeMaxSupply ?? null
   }
 
   /* eslint-disable */
   static fromRow ({
     identifier,
+    timestamp,
+    description,
     localizations,
     base_supply,
     max_supply,
@@ -46,11 +54,13 @@ module.exports = class Token {
     allowed_emergency_actions,
     data_contract_identifier
   }) {
-    return new Token(identifier, localizations, base_supply, max_supply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowed_emergency_actions, data_contract_identifier)
+    return new Token(identifier, timestamp, description, localizations, base_supply, max_supply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowed_emergency_actions, data_contract_identifier)
   }
 
   static fromObject ({
     identifier,
+    timestamp,
+    description,
     localizations,
     baseSupply,
     maxSupply,
@@ -62,7 +72,8 @@ module.exports = class Token {
     destroyable,
     allowedEmergencyActions,
     dataContractIdentifier,
-    totalSupply
+    totalSupply,
+    changeMaxSupply
   }) {
     if (localizations) {
       for (const locale in localizations) {
@@ -70,6 +81,6 @@ module.exports = class Token {
       }
     }
 
-    return new Token(identifier, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalSupply)
+    return new Token(identifier, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalSupply, changeMaxSupply)
   }
 }
