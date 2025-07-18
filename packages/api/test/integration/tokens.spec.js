@@ -1,10 +1,10 @@
-const {describe, it, before, after, mock} = require('node:test')
+const { describe, it, before, after, mock } = require('node:test')
 const DAPI = require('../../src/DAPI')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const {getKnex} = require('../../src/utils')
+const { getKnex } = require('../../src/utils')
 
 describe('Tokens', () => {
   let app
@@ -19,7 +19,7 @@ describe('Tokens', () => {
   before(async () => {
     tokens = []
 
-    mock.method(DAPI.prototype, 'getTokenTotalSupply', async () => ({totalSystemAmount: 1000, totalAggregatedAmountInUserAccounts: 1000}))
+    mock.method(DAPI.prototype, 'getTokenTotalSupply', async () => ({ totalSystemAmount: 1000, totalAggregatedAmountInUserAccounts: 1000 }))
     mock.method(DAPI.prototype, 'getDataContract', async () => ({
       tokens: {
         29: {
@@ -27,7 +27,7 @@ describe('Tokens', () => {
           baseSupply: 1000n,
           maxSupply: 1010n,
           conventions: {
-            decimals: 1000,
+            decimals: 1000
           },
           manualMintingRules: {
             authorizedToMakeChange: {
@@ -64,7 +64,7 @@ describe('Tokens', () => {
               distributionType: {
                 getDistribution: () => ({
                   constructor: {
-                    name: "TimeBasedDistributionWASM"
+                    name: 'TimeBasedDistributionWASM'
                   }
                 })
               }
@@ -84,14 +84,14 @@ describe('Tokens', () => {
 
     block = await fixtures.block(knex)
 
-    identity = await fixtures.identity(knex, {block_hash: block.hash, block_height: block.height})
+    identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
     dataContract = await fixtures.dataContract(knex, {
       owner: identity.identifier
     })
 
     for (let i = 0; i < 30; i++) {
-      let stateTransition = undefined
+      let stateTransition
 
       if (i > 10) {
         stateTransition = await fixtures.transaction(knex, {
@@ -112,7 +112,7 @@ describe('Tokens', () => {
         state_transition_hash: stateTransition?.hash
       })
 
-      tokens.push({token, stateTransition})
+      tokens.push({ token, stateTransition })
     }
   })
 
@@ -123,7 +123,7 @@ describe('Tokens', () => {
 
   describe('getTokens()', () => {
     it('should return default tokens set', async () => {
-      const {body} = await client.get('/tokens')
+      const { body } = await client.get('/tokens')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -134,7 +134,7 @@ describe('Tokens', () => {
       const expectedTokens = tokens
         .sort((a, b) => a.id - b.id)
         .slice(0, 10)
-        .map(({token}) => ({
+        .map(({ token }) => ({
           identifier: token.identifier,
           localizations: token.localizations ?? null,
           baseSupply: token.base_supply.toString(),
@@ -157,14 +157,14 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
-          totalTransitionsCount: null,
+          totalTransitionsCount: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
     })
 
     it('should return tokens set with order desc', async () => {
-      const {body} = await client.get('/tokens?order=desc')
+      const { body } = await client.get('/tokens?order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -175,7 +175,7 @@ describe('Tokens', () => {
       const expectedTokens = tokens
         .sort((a, b) => b.token.id - a.token.id)
         .slice(0, 10)
-        .map(({token}) => ({
+        .map(({ token }) => ({
           identifier: token.identifier,
           localizations: token.localizations ?? null,
           baseSupply: token.base_supply.toString(),
@@ -198,14 +198,14 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
-          totalTransitionsCount: null,
+          totalTransitionsCount: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
     })
 
     it('should return tokens set with order desc and custom limit', async () => {
-      const {body} = await client.get('/tokens?order=desc&limit=3')
+      const { body } = await client.get('/tokens?order=desc&limit=3')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -216,7 +216,7 @@ describe('Tokens', () => {
       const expectedTokens = tokens
         .sort((a, b) => b.token.id - a.token.id)
         .slice(0, 3)
-        .map(({token}) => ({
+        .map(({ token }) => ({
           identifier: token.identifier,
           localizations: token.localizations ?? null,
           baseSupply: token.base_supply.toString(),
@@ -239,14 +239,14 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
-          totalTransitionsCount: null,
+          totalTransitionsCount: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
     })
 
     it('should return tokens set with order desc and custom limit and pagination', async () => {
-      const {body} = await client.get('/tokens?order=desc&limit=11&page=2')
+      const { body } = await client.get('/tokens?order=desc&limit=11&page=2')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -257,7 +257,7 @@ describe('Tokens', () => {
       const expectedTokens = tokens
         .sort((a, b) => b.token.id - a.token.id)
         .slice(11, 22)
-        .map(({token}) => ({
+        .map(({ token }) => ({
           identifier: token.identifier,
           localizations: token.localizations ?? null,
           baseSupply: token.base_supply.toString(),
@@ -280,7 +280,7 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
-          totalTransitionsCount: null,
+          totalTransitionsCount: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
@@ -291,7 +291,7 @@ describe('Tokens', () => {
     it('should return token by id', async () => {
       const token = tokens[0]
 
-      const {body} = await client.get(`/token/${token.token.identifier}`)
+      const { body } = await client.get(`/token/${token.token.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -301,9 +301,9 @@ describe('Tokens', () => {
         timestamp: block.timestamp.toISOString(),
         description: null,
         localizations: null,
-        baseSupply: "1000",
-        maxSupply: "1010",
-        totalSupply: "1000",
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
         owner: token.token.owner,
         mintable: false,
         burnable: false,
@@ -325,7 +325,7 @@ describe('Tokens', () => {
     })
 
     it('should return 404 on not found', async () => {
-      await client.get(`/token//444444446WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL`)
+      await client.get('/token//444444446WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })

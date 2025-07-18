@@ -163,7 +163,7 @@ module.exports = class DataContractsDAO {
     let groups = null
 
     try {
-      const { groups } = await this.dapi.getDataContract(identifier) ?? { groups: undefined }
+      groups = (await this.dapi.getDataContract(identifier) ?? { groups: undefined }).groups
     } catch (error) {}
 
     return DataContract.fromObject({

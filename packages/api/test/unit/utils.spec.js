@@ -167,32 +167,32 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 1,
-        typeString: "BATCH",
+        typeString: 'BATCH',
         transitions: [
           {
-            transitionType: "tokenTransition",
+            transitionType: 'tokenTransition',
             tokenTransitionType: 8,
-            tokenTransitionTypeString: "ConfigUpdate",
-            tokenId: "6p86udGakFcMxG2yJdZaWavcs6RbFeV3bmx4EGwBKkyN",
-            identityContractNonce: "3",
+            tokenTransitionTypeString: 'ConfigUpdate',
+            tokenId: '6p86udGakFcMxG2yJdZaWavcs6RbFeV3bmx4EGwBKkyN',
+            identityContractNonce: '3',
             tokenContractPosition: 0,
-            dataContractId: "3J8WVdMqwbaCWyvUYCDEFakXcoT6vwHMjFRjCcTBezqn",
-            historicalDocumentTypeName: "configUpdate",
-            historicalDocumentId: "453L2ynEPDc6ScMVYoQd8Nfn6ps2H49khYEQuuTv69MK",
+            dataContractId: '3J8WVdMqwbaCWyvUYCDEFakXcoT6vwHMjFRjCcTBezqn',
+            historicalDocumentTypeName: 'configUpdate',
+            historicalDocumentId: '453L2ynEPDc6ScMVYoQd8Nfn6ps2H49khYEQuuTv69MK',
             groupInfo: null,
             publicNote: null,
-            itemName: "ManualMinting",
+            itemName: 'ManualMinting',
             itemValue: {
-              takerType: "Identity(HNKNaYnZhBFywgbv7WiycDPVzGh7LZHqiaUR3WhiNx7r)",
-              value: "HNKNaYnZhBFywgbv7WiycDPVzGh7LZHqiaUR3WhiNx7r"
+              takerType: 'Identity(HNKNaYnZhBFywgbv7WiycDPVzGh7LZHqiaUR3WhiNx7r)',
+              value: 'HNKNaYnZhBFywgbv7WiycDPVzGh7LZHqiaUR3WhiNx7r'
             }
           }
         ],
         userFeeIncrease: 0,
-        signature: "2072f21d135de51a80d00bd501ab04b78f590bb98cfca22facdb4995cab0211abc1d8ce20d67e2c727031aeabdccfb2978beec78784f29b9da20b0d5f9e364f269",
+        signature: '2072f21d135de51a80d00bd501ab04b78f590bb98cfca22facdb4995cab0211abc1d8ce20d67e2c727031aeabdccfb2978beec78784f29b9da20b0d5f9e364f269',
         signaturePublicKeyId: 1,
-        ownerId: "HJCQnUa9CVVYGWwbyzHyvrwh5KamyrNGzPCA4N3aMT8r",
-        raw: "0201f222c41778db4bf7fc1c2a58f3aabe803b04750460f5159a6dbbc21d6ef5f69f01010800000300221abccd324e28c6d23bfd9c134f9ed1c382d53d432ae35b1a3a94d8f5c984f9565cc34357ee9967a21b1dcba6ddae7cad3a6cc1efb8498da38382878f464a41001002f330f60da878e53be24aa1160ccb39492f903e8400b774a847e70efeff251e61000001412072f21d135de51a80d00bd501ab04b78f590bb98cfca22facdb4995cab0211abc1d8ce20d67e2c727031aeabdccfb2978beec78784f29b9da20b0d5f9e364f269"
+        ownerId: 'HJCQnUa9CVVYGWwbyzHyvrwh5KamyrNGzPCA4N3aMT8r',
+        raw: '0201f222c41778db4bf7fc1c2a58f3aabe803b04750460f5159a6dbbc21d6ef5f69f01010800000300221abccd324e28c6d23bfd9c134f9ed1c382d53d432ae35b1a3a94d8f5c984f9565cc34357ee9967a21b1dcba6ddae7cad3a6cc1efb8498da38382878f464a41001002f330f60da878e53be24aa1160ccb39492f903e8400b774a847e70efeff251e61000001412072f21d135de51a80d00bd501ab04b78f590bb98cfca22facdb4995cab0211abc1d8ce20d67e2c727031aeabdccfb2978beec78784f29b9da20b0d5f9e364f269'
       })
     })
 
