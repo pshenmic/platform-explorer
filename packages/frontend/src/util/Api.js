@@ -82,6 +82,17 @@ const getTransaction = (txHash) => {
   return call(`transaction/${txHash}`, 'GET')
 }
 
+const getTokens = (page = 1, limit = 30, order = 'asc', filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    ...filters
+  })
+
+  return call(`tokens?${params.toString()}`, 'GET')
+}
+
 const getBlocks = (page = 1, limit = 30, order = 'asc', filters = {}) => {
   const params = prepareQueryParams({
     page: Math.max(1, parseInt(page)),
@@ -250,6 +261,7 @@ export {
   getTransactionsHistory,
   getTransactions,
   getTransaction,
+  getTokens,
   search,
   decodeTx,
   getDocumentsByDataContract,

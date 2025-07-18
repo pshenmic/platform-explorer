@@ -1,0 +1,23 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as localisation;
+@import '../../../styles/variables.scss';
+
+.LocalisationList {
+  @include mixins.BrandScroll();
+  overflow-x: auto;
+  container-type: inline-size;
+
+  &__ScrollZone {
+    width: fit-content;
+    min-width: 100%;
+  }
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include localisation.Columns();
+  }
+
+  &__ColumnTitle {
+    @include localisation.Column();
+  }
+}
