@@ -62,7 +62,7 @@ module.exports = class TokensDAO {
         'timestamp', 'data_contracts.identifier as data_contract_identifier',
         'total_freeze_transitions_count', 'total_burn_transitions_count'
       )
-      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transitions_hash')
+      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
       .joinRaw('CROSS JOIN (?) as gas_and_counts', [gasUsedSubquery])

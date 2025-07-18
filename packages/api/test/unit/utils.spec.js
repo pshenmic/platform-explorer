@@ -5,6 +5,7 @@ const createIdentityMock = require('./mocks/create_identity.json')
 const dataContractCreateMock = require('./mocks/data_contract_create.json')
 const documentTransitionMock = require('./mocks/document_transition.json')
 const tokenTransferTransitionMock = require('./mocks/token_transfer_transition.json')
+const tokenConfigUpdateTransitionMock = require('./mocks/token_config_update_transition.json')
 const tokenMintTransitionMock = require('./mocks/token_mint_transition.json')
 const identityTopUpMock = require('./mocks/identity_top_up.json')
 const dataContractUpdateMock = require('./mocks/data_contract_update.json')
@@ -113,6 +114,7 @@ describe('Utils', () => {
             tokenId: '8AnZE2i955j9PC55m3y3e6rVQVZHbLWTk66iNp8eoNWn',
             identityContractNonce: '16',
             tokenContractPosition: 1,
+            groupInfo: null,
             dataContractId: '9g672HNThwyShq1c5MqQURENR2Ncxce8fLrafh6MmHLr',
             historicalDocumentTypeName: 'transfer',
             historicalDocumentId: 'EmF2uMAEWrZKwcN3WnZW5ajt9YwkTe5Zr5y4NYJMCHFx',
@@ -145,6 +147,7 @@ describe('Utils', () => {
             tokenContractPosition: 0,
             dataContractId: 'AXBhHJpZtSMHMgDrSVpb6aJzBTWYMk7cjCZAZt34XYJT',
             historicalDocumentTypeName: 'mint',
+            groupInfo: null,
             historicalDocumentId: 'DeuEqvk4yWtPesJJZsjWqkHZk3CtZZzwqeAKKzuAruGD',
             issuedToIdentityId: 'CcGoZt1etCP7NXitxe1Df18eBAEKuCfoM86yLMFNmcGi',
             publicNote: null,
@@ -156,6 +159,40 @@ describe('Utils', () => {
         signaturePublicKeyId: 2,
         ownerId: '3G6e2uxNTAZ8eQnsFPvKH7BCHLKQC19A1ANxR56DEcsT',
         raw: '0201219576224b11ffdf5f7c659e227b91abb4c5ae9e2bf1b90d32593696dda3b642010101000003008d74b2ec913a2379ae097ed38a56fa82ceb0edbc64bd0fb003ab8d8a251a82302cfe38c3c30f331ea18c42f57c16c2595a1e931533c8afdf7621d4464d6397b50001ac79c0bc9b7fcf3ef61d0a41ede605a2b239e165df15cd00ca08d42797af29eb0500000241201f6c4b7755a040db6ac00b6aa6810cb07cb9b3178673eb95fa3b2d2a73bdf502742bae71d509268364ba24485f16647f01a300695e72d1f4e2a872cd9c36e272'
+      })
+    })
+
+    it('should decode Token Config Update Transition', async () => {
+      const decoded = await utils.decodeStateTransition(tokenConfigUpdateTransitionMock.data)
+
+      assert.deepEqual(decoded, {
+        type: 1,
+        typeString: "BATCH",
+        transitions: [
+          {
+            transitionType: "tokenTransition",
+            tokenTransitionType: 8,
+            tokenTransitionTypeString: "ConfigUpdate",
+            tokenId: "6p86udGakFcMxG2yJdZaWavcs6RbFeV3bmx4EGwBKkyN",
+            identityContractNonce: "3",
+            tokenContractPosition: 0,
+            dataContractId: "3J8WVdMqwbaCWyvUYCDEFakXcoT6vwHMjFRjCcTBezqn",
+            historicalDocumentTypeName: "configUpdate",
+            historicalDocumentId: "453L2ynEPDc6ScMVYoQd8Nfn6ps2H49khYEQuuTv69MK",
+            groupInfo: null,
+            publicNote: null,
+            itemName: "ManualMinting",
+            itemValue: {
+              takerType: "Identity(HNKNaYnZhBFywgbv7WiycDPVzGh7LZHqiaUR3WhiNx7r)",
+              value: "HNKNaYnZhBFywgbv7WiycDPVzGh7LZHqiaUR3WhiNx7r"
+            }
+          }
+        ],
+        userFeeIncrease: 0,
+        signature: "2072f21d135de51a80d00bd501ab04b78f590bb98cfca22facdb4995cab0211abc1d8ce20d67e2c727031aeabdccfb2978beec78784f29b9da20b0d5f9e364f269",
+        signaturePublicKeyId: 1,
+        ownerId: "HJCQnUa9CVVYGWwbyzHyvrwh5KamyrNGzPCA4N3aMT8r",
+        raw: "0201f222c41778db4bf7fc1c2a58f3aabe803b04750460f5159a6dbbc21d6ef5f69f01010800000300221abccd324e28c6d23bfd9c134f9ed1c382d53d432ae35b1a3a94d8f5c984f9565cc34357ee9967a21b1dcba6ddae7cad3a6cc1efb8498da38382878f464a41001002f330f60da878e53be24aa1160ccb39492f903e8400b774a847e70efeff251e61000001412072f21d135de51a80d00bd501ab04b78f590bb98cfca22facdb4995cab0211abc1d8ce20d67e2c727031aeabdccfb2978beec78784f29b9da20b0d5f9e364f269"
       })
     })
 
