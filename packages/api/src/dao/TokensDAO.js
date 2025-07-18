@@ -26,9 +26,9 @@ module.exports = class TokensDAO {
         'data_contract_identifier'
       )
       .select(this.knex('tokens').count('*').as('total_count'))
+      .orderBy('id', order)
       .offset(fromRank)
       .limit(limit)
-      .orderBy('id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
@@ -79,21 +79,21 @@ module.exports = class TokensDAO {
 
     return Token.fromObject({
       ...token,
-      description: tokenConfig.description,
-      localizations: tokenConfig.conventions.localizations,
-      decimals: tokenConfig.conventions.decimals,
-      baseSupply: tokenConfig.baseSupply.toString(),
-      totalSupply: tokenTotalSupply.totalAggregatedAmountInUserAccounts.toString(),
-      maxSupply: tokenConfig.maxSupply?.toString(),
-      mintable: tokenConfig.manualMintingRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      burnable: tokenConfig.manualBurningRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      freezable: tokenConfig.freezeRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      changeMaxSupply: tokenConfig.maxSupplyChangeRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      unfreezable: tokenConfig.unfreezeRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      destroyable: tokenConfig.destroyFrozenFundsRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      allowedEmergencyActions: tokenConfig.emergencyActionRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      distributionType: tokenConfig.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
-      mainGroup: tokenConfig.mainControlGroup
+      totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
+      description: tokenConfig?.description,
+      localizations: tokenConfig?.conventions?.localizations,
+      decimals: tokenConfig?.conventions?.decimals,
+      baseSupply: tokenConfig?.baseSupply.toString(),
+      maxSupply: tokenConfig?.maxSupply?.toString(),
+      mintable: tokenConfig?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+      burnable: tokenConfig?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+      freezable: tokenConfig?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+      changeMaxSupply: tokenConfig?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+      unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+      destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+      allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+      distributionType: tokenConfig?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
+      mainGroup: tokenConfig?.mainControlGroup
     })
   }
 

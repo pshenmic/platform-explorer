@@ -24,6 +24,10 @@ class TokensController {
 
     const token = await this.tokensDAO.getTokenByIdentifier(identifier)
 
+    if(!token) {
+      response.status(404).send({ message: 'not found' })
+    }
+
     response.send(token)
   }
 

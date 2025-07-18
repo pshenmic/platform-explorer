@@ -304,7 +304,9 @@ const fixtures = {
     freezable,
     unfreezable,
     destroyable,
-    allowed_emergency_actions
+    allowed_emergency_actions,
+    state_transition_hash,
+    description
   }) => {
     if (position === undefined) {
       throw new Error('position must be provided')
@@ -334,6 +336,8 @@ const fixtures = {
       max_supply,
       base_supply,
       localizations,
+      state_transition_hash,
+      description,
       keeps_transfer_history: keeps_transfer_history ?? true,
       keeps_freezing_history: keeps_freezing_history ?? true,
       keeps_minting_history: keeps_minting_history ?? true,
