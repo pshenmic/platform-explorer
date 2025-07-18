@@ -1,7 +1,4 @@
-const Localization = require('./Localization')
-
 module.exports = class Token {
-
   amount
   recipient
   owner

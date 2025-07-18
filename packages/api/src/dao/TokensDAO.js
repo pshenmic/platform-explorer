@@ -92,7 +92,7 @@ module.exports = class TokensDAO {
       unfreezable: tokenConfig.unfreezeRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
       destroyable: tokenConfig.destroyFrozenFundsRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
       allowedEmergencyActions: tokenConfig.emergencyActionRules.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      distributionType: tokenConfig.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0,-4) ?? null,
+      distributionType: tokenConfig.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
       mainGroup: tokenConfig.mainControlGroup
     })
   }

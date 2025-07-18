@@ -32,7 +32,7 @@ class TokensController {
       identifier
     } = request.params
 
-    const {page = 1, limit = 10, order = 'asc'} = request.query
+    const { page = 1, limit = 10, order = 'asc' } = request.query
 
     const transitions = await this.tokensDAO.getTokenTransitions(identifier, page, limit, order)
 

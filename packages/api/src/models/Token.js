@@ -25,7 +25,7 @@ module.exports = class Token {
   totalFreezeTransitionsCount
   totalBurnTransitionsCount
 
-  constructor(identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, distributionType, mainGroup) {
+  constructor (identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, distributionType, mainGroup) {
     this.identifier = identifier ?? null
     this.position = position ?? null
     this.timestamp = timestamp ?? null

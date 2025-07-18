@@ -37,28 +37,28 @@ module.exports = class DataContract {
   }
 
   static fromObject ({
-                       identifier,
-                       name,
-                       owner,
-                       schema,
-                       version,
-                       txHash,
-                       timestamp,
-                       isSystem,
-                       documentsCount,
-                       topIdentity,
-                       identitiesInteracted,
-                       totalGasUsed,
-                       averageGasUsed,
-                       groups
-                     }) {
-    if(groups){
-      let groupsKeys = Object.keys(groups)
+    identifier,
+    name,
+    owner,
+    schema,
+    version,
+    txHash,
+    timestamp,
+    isSystem,
+    documentsCount,
+    topIdentity,
+    identitiesInteracted,
+    totalGasUsed,
+    averageGasUsed,
+    groups
+  }) {
+    if (groups) {
+      const groupsKeys = Object.keys(groups)
 
       groupsKeys.forEach(key => {
         groups[key] = {
           members: groups[key].members,
-          requiredPower: groups[key].requiredPower,
+          requiredPower: groups[key].requiredPower
         }
       })
     }
