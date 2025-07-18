@@ -548,6 +548,20 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/token/:identifier/transitions',
+      method: 'GET',
+      handler: tokensController.getTokenTransitions,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: { $ref: 'paginationOptions#' }
+      }
     }
   ]
 

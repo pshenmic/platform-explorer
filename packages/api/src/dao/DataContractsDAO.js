@@ -101,7 +101,7 @@ module.exports = class DataContractsDAO {
     const dataSubquery = this.knex('data_contracts')
       .with('gas_sub', gasSubquery)
       .select('data_contracts.identifier as identifier', 'data_contracts.name as name', 'data_contracts.owner as owner',
-        'data_contracts.schema as schema', 'data_contracts.is_system as is_system',
+        'data_contracts.schema as schema', 'data_contracts.is_system as is_system', 'state_transitions.data as state_transition_data',
         'data_contracts.version as version', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
       .select(this.knex('documents').count('*')
         .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
@@ -119,7 +119,7 @@ module.exports = class DataContractsDAO {
       .as('data_sub')
 
     const rows = await this.knex(dataSubquery)
-      .select('identifier', 'owner', 'name', 'schema', 'is_system', 'version', 'tx_hash', 'timestamp',
+      .select('identifier', 'owner', 'name', 'schema', 'is_system', 'version', 'tx_hash', 'timestamp', 'state_transition_data',
         'documents_count', 'top_identity', 'identities_interacted', 'total_gas_used', 'average_gas_used')
 
     const [row] = rows
@@ -148,7 +148,7 @@ module.exports = class DataContractsDAO {
       }
     }
 
-    return DataContract.fromRow({
+    const dataContract = DataContract.fromRow({
       ...row,
       owner: {
         identifier: row.owner?.trim() ?? null,
@@ -158,6 +158,13 @@ module.exports = class DataContractsDAO {
         identifier: row.top_identity?.trim() ?? null,
         aliases: topIdentityAliases
       }
+    })
+
+    const {groups} = await this.dapi.getDataContract(identifier) ?? {groups: undefined}
+
+    return DataContract.fromObject({
+      ...dataContract,
+      groups,
     })
   }
 
