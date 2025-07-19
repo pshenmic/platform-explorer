@@ -108,10 +108,10 @@ module.exports = class TokensDAO {
       .where('token_identifier', identifier)
       .offset(fromRank)
       .limit(limit)
-      .orderBy('timestamp', order)
+      .orderBy('token_transitions.id', order)
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
 
-    return rows.map(TokenTransition.fromRow)
+    return new PaginatedResultSet(rows.map(TokenTransition.fromRow), page, limit, order)
   }
 }
