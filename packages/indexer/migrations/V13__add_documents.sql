@@ -1,6 +1,6 @@
 CREATE TABLE documents (
     id SERIAL PRIMARY KEY,
-    identifier char(44) NOT NULL,
+    identifier varchar(44) NOT NULL,
     revision int NOT NULL,
     "data" jsonb DEFAULT NULL,
     deleted boolean NOT NULL,

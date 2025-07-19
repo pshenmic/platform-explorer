@@ -304,7 +304,9 @@ const fixtures = {
     freezable,
     unfreezable,
     destroyable,
-    allowed_emergency_actions
+    allowed_emergency_actions,
+    state_transition_hash,
+    description
   }) => {
     if (position === undefined) {
       throw new Error('position must be provided')
@@ -334,6 +336,8 @@ const fixtures = {
       max_supply,
       base_supply,
       localizations,
+      state_transition_hash,
+      description,
       keeps_transfer_history: keeps_transfer_history ?? true,
       keeps_freezing_history: keeps_freezing_history ?? true,
       keeps_minting_history: keeps_minting_history ?? true,
@@ -350,6 +354,52 @@ const fixtures = {
     }
 
     const [result] = await knex('tokens').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
+  tokeTransition: async (knex, {
+    token_identifier,
+    owner,
+    action,
+    amount,
+    public_note,
+    state_transition_hash,
+    token_contract_position,
+    data_contract_id,
+    recipient
+  }) => {
+    if (token_identifier === undefined) {
+      throw new Error('token_identifier must be provided')
+    }
+    if (owner === undefined) {
+      throw new Error('owner must be provided')
+    }
+    if (action === undefined) {
+      throw new Error('action must be provided')
+    }
+    if (state_transition_hash === undefined) {
+      throw new Error('state_transition_hash must be provided')
+    }
+    if (token_contract_position === undefined) {
+      throw new Error('token_contract_position must be provided')
+    }
+    if (data_contract_id === undefined) {
+      throw new Error('data_contract_id must be provided')
+    }
+
+    const row = {
+      token_identifier,
+      owner,
+      action,
+      amount: amount ?? null,
+      public_note: public_note ?? null,
+      state_transition_hash,
+      token_contract_position,
+      data_contract_id,
+      recipient: recipient ?? null
+    }
+
+    const [result] = await knex('token_transitions').insert(row).returning('id')
 
     return { ...row, id: result.id }
   },

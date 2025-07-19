@@ -13,6 +13,7 @@ impl PSQLProcessor {
     pub async fn handle_token_configuration(
         &self,
         data_contract: DataContract,
+        st_hash: Option<String>,
         sql_transaction: &Transaction<'_>,
     ) -> () {
         if data_contract.tokens.is_some() {
@@ -38,6 +39,7 @@ impl PSQLProcessor {
                         != AuthorizedActionTakers::NoOne;
 
                 let token = TokenConfig {
+                    state_transition_hash: st_hash.clone(),
                     position: k,
                     identifier: Identifier::new(token_id),
                     data_contract_identifier: data_contract.identifier,
@@ -53,6 +55,7 @@ impl PSQLProcessor {
                     keeps_direct_pricing_history: keeps_history.keeps_direct_pricing_history(),
                     keeps_direct_purchase_history: keeps_history.keeps_direct_purchase_history(),
                     distribution_rules: v.distribution_rules().clone(),
+                    description: v.description().clone(),
                     burnable,
                     mintable,
                     freezable,

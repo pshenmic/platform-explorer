@@ -1,2 +1,2 @@
 ALTER TABLE identities
-ADD COLUMN "owner" char(44) not null;
+ADD COLUMN "owner" varchar(44) not null;
