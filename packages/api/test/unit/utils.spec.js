@@ -39,6 +39,7 @@ describe('Utils', () => {
         identityNonce: '10',
         dataContractId: 'GbGD5YbS9GVh7FSZjz3uUJpbrXo9ctbdKycfTqqg3Cmn',
         ownerId: '7dwjL5frrkM69pv3BsKSQb4ELrMYmDeE11KNoDSefG6c',
+        tokens: {},
         schema: {
           labler: {
             type: 'object',
@@ -295,6 +296,7 @@ describe('Utils', () => {
         userFeeIncrease: 0,
         ownerId: '7dwjL5frrkM69pv3BsKSQb4ELrMYmDeE11KNoDSefG6c',
         dataContractId: '8BzeH7dmyLHNzcCtG6DGowAkWyRgWEq15y88Zz2zBxVg',
+        tokens: {},
         schema: {
           labler: {
             type: 'object',
