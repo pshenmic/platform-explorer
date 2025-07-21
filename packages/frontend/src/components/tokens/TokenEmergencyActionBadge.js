@@ -1,4 +1,6 @@
-import { Badge } from '@chakra-ui/react'
+import { CirclePauseIcon, CirclePlayIcon } from '../ui/icons'
+import { ValueContainer } from '../ui/containers'
+import './TokenEmergencyActionBadge.scss'
 
 const TokenEmergencyActionBadge = ({ type, size = 'sm', ...props }) => {
   const colorScheme = {
@@ -7,14 +9,23 @@ const TokenEmergencyActionBadge = ({ type, size = 'sm', ...props }) => {
     default: 'gray'
   }
 
+  const icons = {
+    pause: <CirclePauseIcon w={6} h={6}/>,
+    resume: <CirclePlayIcon w={6} h={6}/>
+  }
+
   return (
-    <Badge
+    <ValueContainer
+      className={'TokenEmergencyActionBadge'}
       size={size}
       colorScheme={colorScheme?.[String(type).toLowerCase()]}
       {...props}
     >
-      {type}
-    </Badge>
+      <div className={'TokenEmergencyActionBadge__Content'}>
+        {icons?.[String(type).toLowerCase()]}
+        {type}
+      </div>
+    </ValueContainer>
   )
 }
 
