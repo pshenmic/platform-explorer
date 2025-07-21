@@ -36,6 +36,8 @@ describe('DataContracts routes', () => {
       createdAt: BigInt(aliasTimestamp.getTime())
     }])
 
+    mock.method(DAPI.prototype, 'getDataContract', async () => ({ groups: undefined }))
+
     app = await server.start()
     client = supertest(app.server)
     knex = getKnex()
@@ -162,6 +164,7 @@ describe('DataContracts routes', () => {
           name: dataContract.name,
           owner: identity.identifier,
           schema: null,
+          groups: null,
           version: 0,
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
@@ -193,6 +196,7 @@ describe('DataContracts routes', () => {
           identifier: dataContract.identifier,
           name: dataContract.name,
           owner: identity.identifier,
+          groups: null,
           schema: null,
           version: dataContract.version,
           txHash: dataContract.is_system ? null : transaction.hash,
@@ -225,6 +229,7 @@ describe('DataContracts routes', () => {
           identifier: dataContract.identifier,
           name: dataContract.name,
           owner: identity.identifier,
+          groups: null,
           schema: null,
           version: 0,
           txHash: dataContract.is_system ? null : transaction.hash,
@@ -257,6 +262,7 @@ describe('DataContracts routes', () => {
           identifier: dataContract.identifier,
           name: dataContract.name,
           owner: identity.identifier,
+          groups: null,
           schema: null,
           version: 0,
           txHash: dataContract.is_system ? null : transaction.hash,
@@ -290,6 +296,7 @@ describe('DataContracts routes', () => {
           identifier: dataContract.identifier,
           name: dataContract.name,
           owner: identity.identifier,
+          groups: null,
           schema: null,
           version: dataContract.version,
           txHash: dataContract.is_system ? null : transaction.hash,
@@ -334,6 +341,7 @@ describe('DataContracts routes', () => {
             }
           ]
         },
+        groups: null,
         schema: '{}',
         version: 0,
         txHash: null,
@@ -382,6 +390,7 @@ describe('DataContracts routes', () => {
             }
           ]
         },
+        groups: null,
         schema: '{}',
         version: dataContract.dataContract.version,
         txHash: dataContract.transaction.hash,

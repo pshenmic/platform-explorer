@@ -368,7 +368,8 @@ describe('Other routes', () => {
               timestamp: aliasTimestamp.toISOString()
             }
           ]
-        }
+        },
+        groups: null
       }
 
       assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
@@ -392,7 +393,8 @@ describe('Other routes', () => {
         averageGasUsed: null,
         identitiesInteracted: null,
         totalGasUsed: null,
-        topIdentity: null
+        topIdentity: null,
+        groups: null
       }
 
       assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
