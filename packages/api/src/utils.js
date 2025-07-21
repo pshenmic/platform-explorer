@@ -244,6 +244,18 @@ const decodeStateTransition = async (base64) => {
       decoded.signaturePublicKeyId = stateTransition.signaturePublicKeyId
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
 
+      const groupsKeys = Object.keys(dataContract.groups)
+
+      decoded.groups = groupsKeys.reduce((acc, key) => {
+        return {
+          ...acc,
+          key: {
+            members: dataContract.groups[key].members,
+            requiredPower: dataContract.groups[key].requiredPower
+          }
+        }
+      }, {})
+
       break
     }
     case StateTransitionEnum.BATCH: {
@@ -812,6 +824,18 @@ const decodeStateTransition = async (base64) => {
       decoded.version = dataContractUpdateTransition.getDataContract().version
       decoded.dataContractOwner = dataContractUpdateTransition.getDataContract().ownerId.base58()
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      const groupsKeys = Object.keys(dataContractUpdateTransition.getDataContract().groups)
+
+      decoded.groups = groupsKeys.reduce((acc, key) => {
+        return {
+          ...acc,
+          key: {
+            members: dataContractUpdateTransition.getDataContract().groups[key].members,
+            requiredPower: dataContractUpdateTransition.getDataContract().groups[key].requiredPower
+          }
+        }
+      }, {})
 
       break
     }
