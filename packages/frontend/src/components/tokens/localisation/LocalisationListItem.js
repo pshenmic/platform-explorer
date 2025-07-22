@@ -2,32 +2,32 @@ import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import { NotActive } from '../../data'
 import './LocalisationListItem.scss'
 
-function LocalisationListItem ({ localisation, className }) {
+function LocalisationListItem ({ langCode, localisation, className }) {
   return (
     <div className={`LocalisationListItem ${className || ''}`}>
       <Grid className={'LocalisationListItem__Content'}>
         <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Language'}>
-          {localisation?.language !== undefined
-            ? localisation?.language
+          {langCode !== undefined
+            ? langCode
             : <NotActive>-</NotActive>
           }
         </GridItem>
         <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Singular'}>
-          {localisation?.singular !== undefined
-            ? localisation?.singular
+          {localisation?.singularForm !== undefined
+            ? localisation?.singularForm
             : <NotActive/>
           }
         </GridItem>
         <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Plural'}>
-          {localisation?.plural !== undefined
-            ? localisation?.plural
+          {localisation?.pluralForm !== undefined
+            ? localisation?.pluralForm
             : <NotActive/>
           }
         </GridItem>
         <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Capitalize'}>
-          {localisation?.capitalize !== undefined
-            ? <Badge colorScheme={localisation?.capitalize ? 'orange' : 'gray'}>
-                {localisation?.capitalize ? 'true' : 'false'}
+          {localisation?.shouldCapitalize !== undefined
+            ? <Badge colorScheme={localisation?.shouldCapitalize ? 'orange' : 'gray'}>
+                {localisation?.shouldCapitalize ? 'true' : 'false'}
               </Badge>
             : <NotActive/>
           }

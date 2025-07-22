@@ -4,7 +4,9 @@ import { EmptyListMessage } from '../../ui/lists'
 import './LocalisationList.scss'
 import './LocalisationListItem.scss'
 
-function LocalisationList ({ localisations = [], className }) {
+function LocalisationList ({ localisations = {}, className }) {
+  const localisationEntries = Object.entries(localisations)
+
   return (
     <div className={`LocalisationList ${className || ''}`}>
       <div className={'LocalisationList__ScrollZone'}>
@@ -23,11 +25,17 @@ function LocalisationList ({ localisations = [], className }) {
           </GridItem>
         </Grid>
 
-        {localisations?.length > 0 &&
-          localisations.map((localisation, i) => <LocalisationListItem localisation={localisation} key={i}/>)
+        {localisationEntries?.length > 0 &&
+          localisationEntries.map(([langCode, localisationData], i) => (
+            <LocalisationListItem
+              key={langCode}
+              langCode={langCode}
+              localisation={localisationData}
+            />
+          ))
         }
 
-        {localisations?.length === 0 &&
+        {localisationEntries?.length === 0 &&
           <EmptyListMessage>There are no localisations</EmptyListMessage>
         }
       </div>
