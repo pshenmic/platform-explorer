@@ -36,7 +36,6 @@ function TokensListItem ({ token }) {
               />
             : <BigNumber>{totalSupply}</BigNumber>
           }
-
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--DataContract'}>
