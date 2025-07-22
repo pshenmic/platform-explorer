@@ -9,7 +9,7 @@ import { ValueContainer, PageDataContainer } from '../../../components/ui/contai
 import { ValueCard } from '../../../components/cards'
 import { HorisontalSeparator } from '../../../components/ui/separators'
 import { CopyButton } from '../../../components/ui/Buttons'
-import { TypeBadge, BatchTypeBadge, FeeMultiplier, TransactionStatusBadge } from '../../../components/transactions'
+import { TypeBadge, FeeMultiplier, TransactionStatusBadge } from '../../../components/transactions'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { networks } from '../../../constants/networks'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
@@ -110,11 +110,7 @@ function Transaction ({ hash }) {
           <InfoLine
             className={'TransactionPage__InfoLine TransactionPage__InfoLine--Type'}
             title={'Type'}
-            value={(
-              transaction.data?.batchType
-                ? <BatchTypeBadge batchType={transaction.data?.batchType?.replace(/[\\""]/g, '')}/>
-                : <TypeBadge typeId={transaction.data?.type}/>
-            )}
+            value={<TypeBadge typeId={transaction.data?.type}/>}
             loading={transaction.loading}
             error={transaction.error}
           />
