@@ -10,9 +10,9 @@ const transactionOptions = [
     value: StateTransitionEnum.DATA_CONTRACT_CREATE
   },
   {
-    label: <TypeBadge typeId={StateTransitionEnum.DOCUMENTS_BATCH}/>,
-    title: TransactionTypesInfo.DOCUMENTS_BATCH.title,
-    value: StateTransitionEnum.DOCUMENTS_BATCH
+    label: <TypeBadge typeId={StateTransitionEnum.BATCH}/>,
+    title: TransactionTypesInfo.BATCH.title,
+    value: StateTransitionEnum.BATCH
   },
   {
     label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREATE}/>,
