@@ -9,70 +9,8 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { TokenTotalCard } from '../../../components/tokens'
 import { ActivityList } from '../../../components/tokens/activity'
-import { HoldersList } from '../../../components/tokens/holders'
+// import { HoldersList } from '../../../components/tokens/holders'
 import './Token.scss'
-
-const mockHolders = [
-  {
-    identifier: '8jRiSLHXeRnmtc8F9iEeoxVZorAywG4apurjS2BHUgQM',
-    aliases: [
-      {
-        alias: '2x2.dash',
-        status: 'ok',
-        contested: false,
-        timestamp: '2024-09-03T21:47:12.253+03:00',
-        txHash: '996161AFE95D7D0E12E35A6519E76C5FAA00FAA59FAF8CF998ACB1741E3C1834'
-      }
-    ],
-    tokensAmount: 150000,
-    dashAmount: 783.31,
-    lastActivity: '2024-09-03T18:46:26.452Z'
-  },
-  {
-    identifier: '6Lar6YD3ZBWhV6kmstSPmDpsgJ9BT3DGA7cV2yp251Jf',
-    aliases: [
-      {
-        alias: 'Dash-007.dash',
-        status: 'ok',
-        contested: false,
-        timestamp: '2024-09-03T21:48:29.074+03:00',
-        txHash: '90BFFF2B9C3BED44336A6F29EE95F09DF596AD3A3FF11FEFFB724BAC5C7C2C06'
-      }
-    ],
-    tokensAmount: 125000,
-    dashAmount: 782.18,
-    lastActivity: '2024-09-03T18:46:42.400Z'
-  },
-  {
-    identifier: '96C5EqyAZh3eDsPpFTrFXrMefWnMegxZLq9wUYUUkosX',
-    aliases: [
-      {
-        alias: 'Aaron2.dash',
-        status: 'ok',
-        contested: false,
-        timestamp: '2024-09-03T21:52:17.562+03:00',
-        txHash: '1A98D47561ACF4E5451AE50A7A6D06517B5BD511A113C231622CCC8FB4EA537A'
-      }
-    ],
-    tokensAmount: 100000,
-    dashAmount: 782.91,
-    lastActivity: '2024-09-03T18:46:56.812Z'
-  },
-  {
-    identifier: 'ABC123def456GHI789jklMNO012pqrSTU345vwxYZ678',
-    aliases: [],
-    tokensAmount: 75000,
-    dashAmount: 650.45,
-    lastActivity: '2024-09-02T14:30:15.123Z'
-  },
-  {
-    identifier: 'XYZ987wvu654TSR321onmLKJ098ihgFED765cbAZYX432',
-    aliases: [],
-    tokensAmount: 50000,
-    dashAmount: 423.67,
-    lastActivity: '2024-09-01T09:15:42.789Z'
-  }
-]
 
 const tabs = [
   'activity',
@@ -169,7 +107,7 @@ function Token ({ identifier }) {
               <ActivityList activities={tokenTransactions.data?.resultSet} loading={false} error={false}/>
             </TabPanel>
             <TabPanel>
-              <HoldersList holders={mockHolders} loading={false} error={false}/>
+              {/* <HoldersList holders={} loading={false} error={false}/> */}
             </TabPanel>
           </TabPanels>
         </Tabs>
