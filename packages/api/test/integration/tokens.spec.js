@@ -168,7 +168,7 @@ describe('Tokens', () => {
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
           totalTransitionsCount: null,
-          decimals: null,
+          decimals: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
