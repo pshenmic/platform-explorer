@@ -31,27 +31,27 @@ function Supply ({
         {showTitles && (
           <div className={'Supply__Title'}>
             {showIcons && topIcon}
-            <span className={'Supply__TitleText'}>{minTitle}{!hasMaxSupply && ':'}</span>
+            <span className={'Supply__TitleText'}>{minTitle}{(!hasMaxSupply && !loading) && ':'}</span>
           </div>
         )}
 
-        {hasMaxSupply || loading
-          ? <div className={'Supply__ProgressContainer'}>
-              {loading
-                ? <LoadingLine w='100%' h={'20px'}/>
-                : <>
-                  <div className={'Supply__SupplyTitles'}>
-                    <span className={'Supply__CurrentSupply'}>
-                      {tooBigNumber
-                        ? <Tooltip
-                            placement={'top'}
-                            content={<BigNumber>{Number(currentSupply)}</BigNumber>}
-                          >
-                            <span>{currencyRound(currentSupply)}</span>
-                          </Tooltip>
-                        : <BigNumber>{Number(currentSupply)}</BigNumber>
-                      }
-                    </span>
+        <div className={`Supply__ProgressContainer ${!hasMaxSupply ? 'Supply__ProgressContainer--Single' : ''}`}>
+          {loading
+            ? <LoadingLine w='100%' h={'20px'}/>
+            : <>
+                <div className={'Supply__SupplyTitles'}>
+                  <span className={'Supply__CurrentSupply'}>
+                    {tooBigCurrentNumber
+                      ? <Tooltip
+                          placement={'top'}
+                          content={<BigNumber>{Number(currentSupply)}</BigNumber>}
+                        >
+                          <span>{currencyRound(currentSupply)}</span>
+                        </Tooltip>
+                      : <BigNumber>{Number(currentSupply)}</BigNumber>
+                    }
+                  </span>
+                  {hasMaxSupply && (
                     <span className={'Supply__MaxSupply'}>
                       {tooBigNumber
                         ? <Tooltip
@@ -63,7 +63,9 @@ function Supply ({
                         : <BigNumber>{Number(maxSupply)}</BigNumber>
                       }
                     </span>
-                  </div>
+                  )}
+                </div>
+                {hasMaxSupply && (
                   <Progress
                     className={'Supply__Progress'}
                     value={(Number(currentSupply) / Number(maxSupply)) * 100}
@@ -71,26 +73,10 @@ function Supply ({
                     width={'100%'}
                     colorScheme={'gray'}
                   />
-                </>
-              }
-            </div>
-          : <div className={'Supply__SimpleValue'}>
-              {loading
-                ? <LoadingLine w={'100%'} h={'20px'}/>
-                : <>
-                  {tooBigCurrentNumber
-                    ? <Tooltip
-                        placement={'top'}
-                        content={<BigNumber>{Number(currentSupply)}</BigNumber>}
-                      >
-                        <span>{currencyRound(currentSupply)}</span>
-                      </Tooltip>
-                    : <BigNumber>{Number(currentSupply)}</BigNumber>
-                  }
-                </>
-              }
-            </div>
-        }
+                )}
+              </>
+          }
+        </div>
 
         {showTitles && (loading || hasMaxSupply) && (
           <div className={'Supply__Title'}>
