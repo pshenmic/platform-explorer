@@ -167,7 +167,8 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
-          totalTransitionsCount: null
+          totalTransitionsCount: null,
+          decimals: null,
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
@@ -208,6 +209,7 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
+          decimals: null,
           totalTransitionsCount: null
         }))
 
@@ -249,6 +251,7 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
+          decimals: null,
           totalTransitionsCount: null
         }))
 
@@ -290,6 +293,7 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
+          decimals: null,
           totalTransitionsCount: null
         }))
 
@@ -327,6 +331,7 @@ describe('Tokens', () => {
         totalGasUsed: 0,
         mainGroup: null,
         totalTransitionsCount: 0,
+        decimals: 1000,
         totalFreezeTransitionsCount: 0,
         totalBurnTransitionsCount: 0
       }
@@ -363,6 +368,7 @@ describe('Tokens', () => {
         totalGasUsed: 1111,
         mainGroup: null,
         totalTransitionsCount: 1,
+        decimals: 1000,
         totalFreezeTransitionsCount: 0,
         totalBurnTransitionsCount: 0
       }
