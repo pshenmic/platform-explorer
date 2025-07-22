@@ -97,6 +97,10 @@ const getToken = (identifier) => {
   return call(`token/${identifier}`, 'GET')
 }
 
+const getTokenTransitions = (identifier, page = 1, limit = 30, order = 'asc') => {
+  return call(`token/${identifier}/transitions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+}
+
 const getBlocks = (page = 1, limit = 30, order = 'asc', filters = {}) => {
   const params = prepareQueryParams({
     page: Math.max(1, parseInt(page)),
@@ -267,6 +271,7 @@ export {
   getTransaction,
   getTokens,
   getToken,
+  getTokenTransitions,
   search,
   decodeTx,
   getDocumentsByDataContract,
