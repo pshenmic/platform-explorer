@@ -78,6 +78,17 @@
     color: var(--chakra-colors-gray-250);
   }
 
+  &__SimpleValue {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    line-height: 0.75rem;
+    color: #fff;
+    min-width: fit-content;
+  }
+
   @container (max-width: 27.5rem) {
     &--WithIcons {
       margin-bottom: 0;
