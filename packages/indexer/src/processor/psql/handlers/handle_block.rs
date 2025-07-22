@@ -41,7 +41,10 @@ impl PSQLProcessor {
                         .await?;
                 }
 
-                let block_hash = self.dao.create_block(block.header.clone(), &sql_transaction).await;
+                let block_hash = self
+                    .dao
+                    .create_block(block.header.clone(), &sql_transaction)
+                    .await;
 
                 if block.txs.len() as i32 == 0 {
                     println!(

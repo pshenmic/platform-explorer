@@ -67,7 +67,7 @@ impl PostgresDAO {
                     &token.allowed_emergency_actions,
                     &token.description,
                     &token.state_transition_hash,
-                    &token.name
+                    &token.name,
                 ],
             )
             .await
