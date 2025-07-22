@@ -7,7 +7,6 @@ import {
   TokenBurnIcon,
   TokenFreezeIcon,
   TransactionsIcon,
-  MembersIcon,
   InfoIcon
 } from '../ui/icons'
 import { ValueCard } from '../cards'
@@ -29,13 +28,40 @@ function TokenDigestCard ({ token, className, loading, error }) {
     gasSpentInUsd: 2209.15
   }
 
+  const {
+    // identifier,
+    // position,
+    // timestamp,
+    // description,
+    // localizations,
+    // baseSupply,
+    totalSupply,
+    maxSupply,
+    owner,
+    // mintable,
+    // burnable,
+    // freezable,
+    // unfreezable,
+    // destroyable,
+    // allowedEmergencyActions,
+    // dataContractIdentifier,
+    // changeMaxSupply,
+    distributionType,
+    totalGasUsed,
+    // mainGroup,
+    totalTransitionsCount,
+    totalFreezeTransitionsCount,
+    totalBurnTransitionsCount,
+    // decimals
+  } = token?.data || {}
+
   return (
     <div className={`TokenDigestCard ${className || ''} ${token?.loading ? 'TokenDigestCard--Loading' : ''}`}>
       <div className={'TokenDigestCard__TopCards'}>
         <ValueContainer className={'TokenDigestCard__SupplyCardContainer'} size={'xl'}>
           <Supply
-            currentSupply={mockData.minted}
-            maxSupply={mockData.maxSupply}
+            currentSupply={totalSupply}
+            maxSupply={maxSupply}
             progressPosition={'bottom'}
             showTitles={true}
             showIcons={true}
@@ -44,6 +70,7 @@ function TokenDigestCard ({ token, className, loading, error }) {
             topIcon={<TokenMintIcon/>}
             bottomIcon={<TokenTotalIcon/>}
             className={'TokenDigestCard__SupplyCard'}
+            loading={loading}
           />
         </ValueContainer>
       </div>
@@ -52,22 +79,24 @@ function TokenDigestCard ({ token, className, loading, error }) {
         <ValueContainer size={'xl'}>
           <InfoLine
             title={<>Total<br/>Transactions</>}
-            value={mockData.totalTransactions}
+            value={totalTransitionsCount}
             icon={<TransactionsIcon/>}
             loading={loading}
-            error={error}
+            error={error || totalTransitionsCount == null}
           />
         </ValueContainer>
 
+        {/*
         <ValueContainer size={'xl'}>
           <InfoLine
             title={'Holders'}
             icon={<MembersIcon/>}
-            value={mockData.holders}
+            value={'-'}
             loading={loading}
             error={error}
           />
         </ValueContainer>
+        */}
       </div>
 
       {/* Burn and Freeze Row */}
@@ -75,33 +104,34 @@ function TokenDigestCard ({ token, className, loading, error }) {
         <ValueContainer>
           <InfoLine
             title={'Burnt'}
-            value={mockData.burnt}
+            value={totalBurnTransitionsCount || 0}
             icon={<TokenBurnIcon/>}
             loading={loading}
-            error={error}
+            error={error || totalBurnTransitionsCount == null}
           />
         </ValueContainer>
 
         <ValueContainer>
           <InfoLine
             title={'Frozen'}
-            value={mockData.frozen}
+            value={totalFreezeTransitionsCount || 0}
             icon={<TokenFreezeIcon/>}
             loading={loading}
-            error={error}
+            error={error || totalFreezeTransitionsCount == null}
           />
         </ValueContainer>
       </div>
 
       <InfoLine
         title={'Distribution Type'}
-        value={
-          <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-            <Flex gap={'0.5rem'} alignItems={'center'}>
-              {mockData.distributionType}
-              <InfoIcon width={'1rem'} height={'1rem'} color={'#58F4BC'}/>
-            </Flex>
-          </ValueContainer>
+        value={distributionType
+          ? <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+              <Flex gap={'0.5rem'} alignItems={'center'}>
+                {distributionType}
+                <InfoIcon width={'1rem'} height={'1rem'} color={'#58F4BC'}/>
+              </Flex>
+            </ValueContainer>
+          : <ValueContainer className={'TokenTotalCard__ZeroListBadge'}>none</ValueContainer>
         }
         loading={loading}
         error={error}
@@ -111,22 +141,22 @@ function TokenDigestCard ({ token, className, loading, error }) {
         className={'TokenDigestCard__InfoLine'}
         title={'Token Creator'}
         value={(
-          <ValueCard link={`identity/${mockData.tokenCreator}`} className={'TokenDigestCard__ValueContainer'} clickable={false}>
+          <ValueCard link={`identity/${owner}`} className={'TokenDigestCard__ValueContainer'} clickable={false}>
             <Identifier avatar={true} copyButton={true} styles={['highlight-both']} ellipsis={false}>
-              {mockData.tokenCreator}
+              {owner}
             </Identifier>
           </ValueCard>
         )}
         loading={token?.loading}
-        error={token?.error || (!token?.loading && !mockData.tokenCreator)}
+        error={token?.error || (!token?.loading && !owner)}
       />
 
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Total Gas Spent'}
-        value={<CreditsBlock credits={mockData.totalGasSpent} rate={null}/>}
+        value={<CreditsBlock credits={totalGasUsed} rate={null}/>}
         loading={token?.loading}
-        error={token?.error || (!token?.loading && mockData.totalGasSpent === undefined)}
+        error={token?.error || (!token?.loading && totalGasUsed === undefined)}
       />
     </div>
   )
