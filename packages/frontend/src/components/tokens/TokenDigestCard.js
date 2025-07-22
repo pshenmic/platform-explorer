@@ -10,7 +10,7 @@ import {
   InfoIcon
 } from '../ui/icons'
 import { ValueCard } from '../cards'
-import { Flex } from '@chakra-ui/react'
+import { Badge, Flex } from '@chakra-ui/react'
 import './TokenDigestCard.scss'
 
 function TokenDigestCard ({ token, className, loading, error }) {
@@ -29,30 +29,21 @@ function TokenDigestCard ({ token, className, loading, error }) {
   // }
 
   const {
-    // identifier,
-    // position,
-    // timestamp,
-    // description,
-    // localizations,
-    // baseSupply,
     totalSupply,
     maxSupply,
     owner,
-    // mintable,
-    // burnable,
-    // freezable,
-    // unfreezable,
-    // destroyable,
-    // allowedEmergencyActions,
-    // dataContractIdentifier,
-    // changeMaxSupply,
+    mintable,
+    burnable,
+    freezable,
+    unfreezable,
+    destroyable,
+    allowedEmergencyActions,
+    changeMaxSupply,
     distributionType,
     totalGasUsed,
-    // mainGroup,
     totalTransitionsCount,
     totalFreezeTransitionsCount,
     totalBurnTransitionsCount
-    // decimals
   } = token?.data || {}
 
   return (
@@ -101,7 +92,7 @@ function TokenDigestCard ({ token, className, loading, error }) {
 
       {/* Burn and Freeze Row */}
       <div className={'TokenDigestCard__RowContainer'}>
-        <ValueContainer>
+        <ValueContainer size={'xl'}>
           <InfoLine
             title={'Burnt'}
             value={totalBurnTransitionsCount || 0}
@@ -111,7 +102,7 @@ function TokenDigestCard ({ token, className, loading, error }) {
           />
         </ValueContainer>
 
-        <ValueContainer>
+        <ValueContainer size={'xl'}>
           <InfoLine
             title={'Frozen'}
             value={totalFreezeTransitionsCount || 0}
@@ -156,7 +147,63 @@ function TokenDigestCard ({ token, className, loading, error }) {
         title={'Total Gas Spent'}
         value={<CreditsBlock credits={totalGasUsed} rate={null}/>}
         loading={token?.loading}
-        error={token?.error || (!token?.loading && totalGasUsed === undefined)}
+        error={token?.error || (!token?.loading && totalGasUsed == null)}
+      />
+
+      <InfoLine
+        className={'TokenDigestCard__InfoLine'}
+        title={'Mintable'}
+        value={<Badge colorScheme={mintable ? 'green' : 'red'}>{mintable ? 'Yes' : 'No'}</Badge>}
+        loading={token?.loading}
+        error={token?.error || (!token?.loading && totalGasUsed == null)}
+      />
+
+      <InfoLine
+        className={'TokenDigestCard__InfoLine'}
+        title={'Change max supply'}
+        value={<Badge colorScheme={changeMaxSupply ? 'green' : 'red'}>{changeMaxSupply ? 'Yes' : 'No'}</Badge>}
+        loading={token?.loading}
+        error={token?.error || (!token?.loading && changeMaxSupply == null)}
+      />
+
+      <InfoLine
+        className={'TokenDigestCard__InfoLine'}
+        title={'Burnable'}
+        value={<Badge colorScheme={burnable ? 'green' : 'red'}>{burnable ? 'Yes' : 'No'}</Badge>}
+        loading={token?.loading}
+        error={token?.error || (!token?.loading && burnable == null)}
+      />
+
+      <InfoLine
+        className={'TokenDigestCard__InfoLine'}
+        title={'Freezable'}
+        value={<Badge colorScheme={freezable ? 'green' : 'red'}>{freezable ? 'Yes' : 'No'}</Badge>}
+        loading={token?.loading}
+        error={token?.error || (!token?.loading && freezable == null)}
+      />
+
+      <InfoLine
+        className={'TokenDigestCard__InfoLine'}
+        title={'Unfreezable'}
+        value={<Badge colorScheme={unfreezable ? 'green' : 'red'}>{unfreezable ? 'Yes' : 'No'}</Badge>}
+        loading={token?.loading}
+        error={token?.error || (!token?.loading && unfreezable == null)}
+      />
+
+      <InfoLine
+        className={'TokenDigestCard__InfoLine'}
+        title={'Destroyable'}
+        value={<Badge colorScheme={destroyable ? 'green' : 'red'}>{destroyable ? 'Yes' : 'No'}</Badge>}
+        loading={token?.loading}
+        error={token?.error || (!token?.loading && destroyable == null)}
+      />
+
+      <InfoLine
+        className={'TokenDigestCard__InfoLine'}
+        title={'Allowed Emergency Actions'}
+        value={<Badge colorScheme={allowedEmergencyActions ? 'green' : 'red'}>{allowedEmergencyActions ? 'Yes' : 'No'}</Badge>}
+        loading={token?.loading}
+        error={token?.error || (!token?.loading && allowedEmergencyActions == null)}
       />
     </div>
   )
