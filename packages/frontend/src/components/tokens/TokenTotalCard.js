@@ -13,38 +13,6 @@ import { useState } from 'react'
 import ImageGenerator from '../imageGenerator'
 import './TokenTotalCard.scss'
 
-const m = {
-  identifier: '4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL',
-  position: 0,
-  timestamp: '2025-07-15T09:14:43.782Z',
-  description: null,
-  localizations: {
-    en: {
-      pluralForm: 'A1-preprog-1',
-      singularForm: 'A1-preprog-1',
-      shouldCapitalize: true
-    }
-  },
-  baseSupply: '100000',
-  totalSupply: '101310',
-  maxSupply: null,
-  owner: 'DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD',
-  mintable: true,
-  burnable: true,
-  freezable: true,
-  unfreezable: true,
-  destroyable: true,
-  allowedEmergencyActions: true,
-  dataContractIdentifier: 'BU9B9aoh54Y8aXqRnrD6zmerxivw1ePLeARSmqGm52eN',
-  changeMaxSupply: true,
-  distributionType: null,
-  totalGasUsed: 921522940,
-  mainGroup: null,
-  totalTransitionsCount: 13,
-  totalFreezeTransitionsCount: 1,
-  totalBurnTransitionsCount: 0
-}
-
 const LocalisationTranslations = ({ className, show, localisations = {} }) => (
   <SmoothSize className={className || ''}>
     {Object.keys(localisations).length > 0 &&
@@ -56,7 +24,7 @@ const LocalisationTranslations = ({ className, show, localisations = {} }) => (
   </SmoothSize>
 )
 
-function TokenTotalCard ({ token, loading }) {
+function TokenTotalCard ({ token, rate, loading }) {
   const activeAlias = findActiveAlias(token.data?.aliases)
   const [showLocalisations, setShowLocalisations] = useState(false)
 
@@ -67,24 +35,9 @@ function TokenTotalCard ({ token, loading }) {
     timestamp,
     description,
     localizations,
-    baseSupply,
-    totalSupply,
-    maxSupply,
-    owner,
-    mintable,
-    burnable,
-    freezable,
-    unfreezable,
-    destroyable,
-    allowedEmergencyActions,
     dataContractIdentifier,
-    changeMaxSupply,
-    distributionType,
-    totalGasUsed,
     mainGroup,
-    totalTransitionsCount,
-    totalFreezeTransitionsCount,
-    totalBurnTransitionsCountDecimals
+    decimals
   } = token?.data || {}
 
   console.log('identifieridentifier', identifier)
@@ -150,9 +103,9 @@ function TokenTotalCard ({ token, loading }) {
             <InfoLine
               className={'TokenTotalCard__InfoLine'}
               title={'Decimals'}
-              value={2}
+              value={decimals}
               loading={loading}
-              error={token.error}
+              error={token.error || (!loading && decimals == null)}
             />
             <InfoLine
               className={'TokenTotalCard__InfoLine'}
@@ -160,6 +113,13 @@ function TokenTotalCard ({ token, loading }) {
               value={position}
               loading={loading}
               error={token.error || (!loading && position == null)}
+            />
+            <InfoLine
+              className={'TokenTotalCard__InfoLine'}
+              title={'Main Group'}
+              value={mainGroup}
+              loading={loading}
+              error={token.error || (!loading && mainGroup == null)}
             />
             <InfoLine
               className={'TokenTotalCard__InfoLine TokenTotalCard__InfoLine--DataContract'}
@@ -212,8 +172,9 @@ function TokenTotalCard ({ token, loading }) {
 
         <div className={'TokenTotalCard__Column'}>
           <TokenDigestCard
-            token={{ loading: false, error: null }}
-            rate={{ data: { usd: 259.15 } }}
+            token={token}
+            rate={rate}
+            loading={loading}
           />
         </div>
       </div>
