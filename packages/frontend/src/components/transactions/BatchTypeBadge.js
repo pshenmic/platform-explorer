@@ -8,7 +8,6 @@ const BatchTypeInfo = {
   ...DocumentActionInfo
 }
 
-// Мапинг серверных значений к ключам енумов
 const batchTypeMapping = {
   // Document actions
   DOCUMENT_CREATE: 'CREATE',
@@ -24,11 +23,12 @@ const batchTypeMapping = {
   TOKEN_FREEZE: 'FREEZE',
   TOKEN_UNFREEZE: 'UNFREEZE',
   TOKEN_DESTROY: 'DESTROY_FROZEN_FUNDS',
+  TOKEN_DESTROY_FROZEN_FUNDS: 'DESTROY_FROZEN_FUNDS',
   TOKEN_CLAIM: 'CLAIM',
   TOKEN_EMERGENCY_ACTION: 'EMERGENCY_ACTION',
   TOKEN_CONFIG_UPDATE: 'CONFIG_UPDATE',
   TOKEN_DIRECT_PURCHASE: 'DIRECT_PURCHASE',
-  TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE: 'SET_PRICE_FOR_DIRECT_PURCHASE'
+  TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE: 'SET_PRICE_FOR_DIRECT_PURCHASE',
 }
 
 function BatchTypeBadge ({ batchType, ...props }) {
