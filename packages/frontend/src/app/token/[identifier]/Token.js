@@ -10,7 +10,6 @@ import { InfoContainer, PageDataContainer } from '../../../components/ui/contain
 import { TokenTotalCard } from '../../../components/tokens'
 import { ActivityList } from '../../../components/tokens/activity'
 // import { HoldersList } from '../../../components/tokens/holders'
-import './Token.scss'
 
 const tabs = [
   'activity',
