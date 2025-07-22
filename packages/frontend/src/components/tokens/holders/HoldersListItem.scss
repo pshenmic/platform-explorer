@@ -1,0 +1,20 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as holders;
+@import '../../../styles/variables.scss';
+
+.HoldersListItem {
+  @include mixins.DefListItem;
+  display: block;
+
+  &__Content {
+    @include holders.Columns();
+  }
+
+  &__Column {
+    @include holders.Column();
+
+    .LinkContainer {
+      overflow: hidden;
+    }
+  }
+}

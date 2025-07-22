@@ -6,12 +6,20 @@
   justify-content: space-between;
   align-items: center;
   font-family: $font-mono;
-  gap: 8px;
+  gap: 0.75rem;
+
+  &__Icon {
+    &, svg {
+      width: 1.75rem;
+      height: auto;
+    }
+  }
 
   &__Title {
     font-size: 0.75rem;
     color: var(--chakra-colors-gray-250);
     flex-shrink: 0;
+    flex-grow: 1;
   }
 
   &__Value {

@@ -88,6 +88,10 @@ function findActiveAlias (aliases = []) {
   return aliases?.find(alias => alias.status === 'ok')
 }
 
+const getTokenName = (localizations) => localizations?.en?.singularForm ||
+  Object.values(localizations || {})[0]?.singularForm ||
+  ''
+
 export {
   fetchHandlerSuccess,
   fetchHandlerError,
@@ -103,5 +107,6 @@ export {
   removeTrailingZeros,
   getDaysBetweenDates,
   getDynamicRange,
-  findActiveAlias
+  findActiveAlias,
+  getTokenName
 }
