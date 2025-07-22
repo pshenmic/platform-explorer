@@ -13,7 +13,7 @@ import { ValueCard } from '../cards'
 import { Badge, Flex } from '@chakra-ui/react'
 import './TokenDigestCard.scss'
 
-function TokenDigestCard ({ token, className, loading, error }) {
+function TokenDigestCard ({ token, rate, className, loading, error }) {
   const {
     totalSupply,
     maxSupply,
@@ -131,7 +131,7 @@ function TokenDigestCard ({ token, className, loading, error }) {
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Total Gas Spent'}
-        value={<CreditsBlock credits={totalGasUsed} rate={null}/>}
+        value={<CreditsBlock credits={totalGasUsed} rate={rate}/>}
         loading={token?.loading}
         error={token?.error || (!token?.loading && totalGasUsed == null)}
       />

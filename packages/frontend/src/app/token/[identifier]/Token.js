@@ -74,69 +74,6 @@ const mockHolders = [
   }
 ]
 
-const mockActivities = [
-  {
-    id: 1,
-    timestamp: '2024-09-03T18:46:26.452Z',
-    txHash: '98876C29071F74E6048B32D5E123456789ABCDEF12',
-    amount: 109.23,
-    creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
-    recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
-    type: 2,
-    status: 'SUCCESS'
-  },
-  {
-    id: 2,
-    timestamp: '2024-09-03T18:45:12.400Z',
-    txHash: '12345C29071F74E6048B32D5E123456789ABCDEF98',
-    amount: 12.5,
-    creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
-    recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
-    type: 2,
-    status: 'FAIL'
-  },
-  {
-    id: 3,
-    timestamp: '2024-09-03T18:44:56.812Z',
-    txHash: 'ABCDEFC29071F74E6048B32D5E123456789ABCDEF',
-    amount: 5000.0,
-    creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
-    recipient: null,
-    type: 1,
-    status: 'QUEUED'
-  },
-  {
-    id: 4,
-    timestamp: '2024-09-03T18:43:42.400Z',
-    txHash: 'FEDCBA9071F74E6048B32D5E123456789ABCDEF12',
-    amount: 1000.0,
-    creator: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
-    recipient: null,
-    type: 0,
-    status: 'POOLED'
-  },
-  {
-    id: 5,
-    timestamp: '2024-09-03T18:42:30.812Z',
-    txHash: '5432109071F74E6048B32D5E123456789ABCDEF12',
-    amount: 1540.24,
-    creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
-    recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
-    type: 4,
-    status: 'BROADCASTED'
-  },
-  {
-    id: 6,
-    timestamp: '2024-09-03T18:41:18.400Z',
-    txHash: 'ZYXWVU9071F74E6048B32D5E123456789ABCDEF12',
-    amount: 1000.99,
-    creator: 'qIOI8NOucMTvziNjtciKr6UR7rdbxXeXCLfb8NVRlb7A',
-    recipient: 'ZRI3Un0TK7uUjndJPjW6fSuWy5DwiY70b9MZCRYQ8d4A',
-    type: 5,
-    status: 'SUCCESS'
-  }
-]
-
 const tabs = [
   'activity',
   'holders'
@@ -152,6 +89,7 @@ function Token ({ identifier }) {
   const [token, setToken] = useState({ data: {}, loading: true, error: false })
   const [tokenTransactions, setTokenTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const pageSize = 10
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1
     ? tabs.indexOf(defaultTabName.toLowerCase())
     : tabs.indexOf(defaultTabName)
@@ -174,9 +112,9 @@ function Token ({ identifier }) {
       .then(res => fetchHandlerSuccess(setTokenTransactions, res))
       .catch(err => fetchHandlerError(setTokenTransactions, err))
 
-    // Api.getRate()
-    //   .then(res => fetchHandlerSuccess(setRate, res))
-    //   .catch(err => fetchHandlerError(setRate, err))
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }, [identifier])
 
   useEffect(() => {
@@ -208,7 +146,7 @@ function Token ({ identifier }) {
       className={'TokenPage'}
       title={'Token Info'}
     >
-      <TokenTotalCard token={token} loading={token.loading}/>
+      <TokenTotalCard token={token} loading={token.loading} rate={rate}/>
 
       <InfoContainer styles={['tabs']} className={'tokenPage__ListContainer'}>
         <Tabs onChange={setActiveTab} index={activeTab}>
