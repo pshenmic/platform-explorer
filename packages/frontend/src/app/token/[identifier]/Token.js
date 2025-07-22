@@ -150,7 +150,8 @@ function Token ({ identifier }) {
   const searchParams = useSearchParams()
   const { setBreadcrumbs } = useBreadcrumbs()
   const [token, setToken] = useState({ data: {}, loading: true, error: false })
-  // const pageSize = 10
+  const [tokenTransactions, setTokenTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const pageSize = 10
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1
     ? tabs.indexOf(defaultTabName.toLowerCase())
     : tabs.indexOf(defaultTabName)
@@ -168,6 +169,10 @@ function Token ({ identifier }) {
     Api.getToken(identifier)
       .then(res => fetchHandlerSuccess(setToken, res))
       .catch(err => fetchHandlerError(setToken, err))
+
+    Api.getTokenTransitions(identifier, tokenTransactions.props.currentPage + 1, pageSize, 'desc')
+      .then(res => fetchHandlerSuccess(setTokenTransactions, res))
+      .catch(err => fetchHandlerError(setTokenTransactions, err))
 
     // Api.getRate()
     //   .then(res => fetchHandlerSuccess(setRate, res))
@@ -214,7 +219,7 @@ function Token ({ identifier }) {
                 </span>
               : ''}
             </Tab>
-            <Tab>Holders {token.data?.totalDataContracts !== undefined
+            <Tab isDisabled>Holders {token.data?.totalDataContracts !== undefined
               ? <span className={`Tabs__TabItemsCount ${token.data?.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
                   {token.data?.totalDataContracts}
                 </span>
@@ -223,7 +228,7 @@ function Token ({ identifier }) {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <ActivityList activities={mockActivities} loading={false} error={false}/>
+              <ActivityList activities={tokenTransactions.data?.resultSet} loading={false} error={false}/>
             </TabPanel>
             <TabPanel>
               <HoldersList holders={mockHolders} loading={false} error={false}/>
