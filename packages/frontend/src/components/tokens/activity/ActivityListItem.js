@@ -3,7 +3,8 @@ import { StatusIcon } from '../../transactions'
 import { BigNumber, Identifier, NotActive, TimeDelta } from '../../data'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import TokenTransitionBadge from '../TokenTransitionBadge'
+import BatchTypeBadge from '../../transactions/BatchTypeBadge'
+import { TokenTransitionEnum } from '../../../enums/tokenTransition'
 import { Tooltip } from '../../ui/Tooltips'
 import './ActivityListItem.scss'
 
@@ -91,7 +92,10 @@ export default function ActivityListItem ({ activity }) {
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Type'}>
-          <TokenTransitionBadge typeId={activity?.action} className={'ActivityListItem__TypeLabel'}/>
+          <BatchTypeBadge
+            batchType={activity?.action !== undefined ? `TOKEN_${TokenTransitionEnum[activity.action]}` : undefined}
+            className={'ActivityListItem__TypeLabel'}
+          />
         </div>
       </div>
     </Link>
