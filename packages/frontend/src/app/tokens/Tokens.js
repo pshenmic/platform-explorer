@@ -1,5 +1,7 @@
 'use client'
 
+import * as Api from '../../util/Api'
+import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
 import { useEffect, useState } from 'react'
 import TokensList from '../../components/tokens/TokensList'
 import Pagination from '../../components/pagination'
@@ -9,8 +11,6 @@ import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Container, Heading, Box } from '@chakra-ui/react'
 // import { TokenFilters } from '../../components/tokens'
-import * as Api from '../../util/Api'
-import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
 import './Tokens.scss'
 
 const paginateConfig = {
