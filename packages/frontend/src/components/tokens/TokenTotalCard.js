@@ -27,8 +27,6 @@ const LocalisationTranslations = ({ className, show, localisations = {} }) => (
 function TokenTotalCard ({ token, rate, loading }) {
   const activeAlias = findActiveAlias(token.data?.aliases)
   const [showLocalisations, setShowLocalisations] = useState(false)
-
-  console.log('token', token)
   const {
     identifier,
     position,
@@ -39,9 +37,6 @@ function TokenTotalCard ({ token, rate, loading }) {
     mainGroup,
     decimals
   } = token?.data || {}
-
-  console.log('identifieridentifier', identifier)
-
   const localizationsCount = Object.keys(localizations || {}).length
 
   return (
