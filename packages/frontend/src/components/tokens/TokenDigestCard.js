@@ -14,19 +14,19 @@ import { Flex } from '@chakra-ui/react'
 import './TokenDigestCard.scss'
 
 function TokenDigestCard ({ token, className, loading, error }) {
-  const mockData = {
-    minted: 342342941941,
-    maxSupply: 100000000000000,
-    totalTransactions: 42941,
-    holders: 5213,
-    burnt: 0,
-    frozen: 0,
-    distributionType: 'Step Decreasing Amount',
-    tokenCreator: 'Cgjuqav7uD7FnWNqNyHEWet382Yzx7NYNRUNqfJ3d2je',
-    totalGasSpent: 2185800000,
-    gasSpentInDash: 8.523,
-    gasSpentInUsd: 2209.15
-  }
+  // const mockData = {
+  //   minted: 342342941941,
+  //   maxSupply: 100000000000000,
+  //   totalTransactions: 42941,
+  //   holders: 5213,
+  //   burnt: 0,
+  //   frozen: 0,
+  //   distributionType: 'Step Decreasing Amount',
+  //   tokenCreator: 'Cgjuqav7uD7FnWNqNyHEWet382Yzx7NYNRUNqfJ3d2je',
+  //   totalGasSpent: 2185800000,
+  //   gasSpentInDash: 8.523,
+  //   gasSpentInUsd: 2209.15
+  // }
 
   const {
     // identifier,
@@ -51,7 +51,7 @@ function TokenDigestCard ({ token, className, loading, error }) {
     // mainGroup,
     totalTransitionsCount,
     totalFreezeTransitionsCount,
-    totalBurnTransitionsCount,
+    totalBurnTransitionsCount
     // decimals
   } = token?.data || {}
 
