@@ -139,6 +139,12 @@ class DAPI {
     return this.dapi.platform.getTokenContractInfo(new IdentifierWASM(tokenId).bytes())
   }
 
+  async getDataContract (contractId) {
+    const { dataContract } = await this.dapi.platform.getDataContract(new IdentifierWASM(contractId).bytes())
+
+    return DataContractWASM.fromBytes(dataContract, true, PlatformVersionWASM.PLATFORM_V9)
+  }
+
   async getStatus () {
     return this.dapi.platform.getStatus()
   }

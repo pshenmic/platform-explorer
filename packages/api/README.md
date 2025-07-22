@@ -82,6 +82,8 @@ Reference:
 * [Identity Nonce](#identity-nonce)
 * [Identity Contract Nonce](#identity-contract-nonce)
 * [Tokens](#tokens)
+* [Token By Identifier](#token-by-identifier)
+* [Token Transitions](#token-transitions)
 * [Broadcast Transaction](#broadcast-transaction)
 
 ### Status
@@ -932,7 +934,7 @@ Response codes:
 ### Document Revisions
 Return revisions for selected document
 
-* Valid `order_by` values are `asc` or `desc`
+* Valid `order` values are `asc` or `desc`
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 
@@ -1855,6 +1857,142 @@ POST /transaction/decode
       "additionalProperties": false
     }
   },
+  "tokens": {
+    "0": {
+      "position": 0,
+      "conventions": {
+        "decimals": 1,
+        "localizations": {
+          "en": {
+            "shouldCapitalize": true,
+            "pluralForm": "tokens",
+            "singularForm": "token"
+          }
+        }
+      },
+      "conventionsChangeRules": {
+        "authorizedToMakeChange": {
+          "takerType": "NoOne"
+        },
+        "adminActionTakers": {
+          "takerType": "NoOne"
+        },
+        "changingAuthorizedActionTakersToNoOneAllowed": true,
+        "changingAdminActionTakersToNoOneAllowed": true,
+        "selfChangingAdminActionTakersAllowed": true
+      },
+      "baseSupply": "1",
+      "keepsHistory": {
+        "keepsTransferHistory": true,
+        "keepsFreezingHistory": true,
+        "keepsMintingHistory": true,
+        "keepsBurningHistory": true,
+        "keepsDirectPricingHistory": true,
+        "keepsDirectPurchaseHistory": true
+      },
+      "startAsPaused": false,
+      "isAllowedTransferToFrozenBalance": false,
+      "maxSupply": null,
+      "maxSupplyChangeRules": {
+        "authorizedToMakeChange": {
+          "takerType": "NoOne"
+        },
+        "adminActionTakers": {
+          "takerType": "NoOne"
+        },
+        "changingAuthorizedActionTakersToNoOneAllowed": true,
+        "changingAdminActionTakersToNoOneAllowed": true,
+        "selfChangingAdminActionTakersAllowed": true
+      },
+      "distributionRules": null,
+      "marketplaceRules": {
+        "tradeMode": "NotTradeable",
+        "tradeModeChangeRules": {
+          "authorizedToMakeChange": {
+            "takerType": "NoOne"
+          },
+          "adminActionTakers": {
+            "takerType": "NoOne"
+          },
+          "changingAuthorizedActionTakersToNoOneAllowed": true,
+          "changingAdminActionTakersToNoOneAllowed": true,
+          "selfChangingAdminActionTakersAllowed": true
+        }
+      },
+      "manualMintingRules": {
+        "authorizedToMakeChange": {
+          "takerType": "NoOne"
+        },
+        "adminActionTakers": {
+          "takerType": "NoOne"
+        },
+        "changingAuthorizedActionTakersToNoOneAllowed": true,
+        "changingAdminActionTakersToNoOneAllowed": true,
+        "selfChangingAdminActionTakersAllowed": true
+      },
+      "manualBurningRules": {
+        "authorizedToMakeChange": {
+          "takerType": "NoOne"
+        },
+        "adminActionTakers": {
+          "takerType": "NoOne"
+        },
+        "changingAuthorizedActionTakersToNoOneAllowed": true,
+        "changingAdminActionTakersToNoOneAllowed": true,
+        "selfChangingAdminActionTakersAllowed": true
+      },
+      "freezeRules": {
+        "authorizedToMakeChange": {
+          "takerType": "NoOne"
+        },
+        "adminActionTakers": {
+          "takerType": "NoOne"
+        },
+        "changingAuthorizedActionTakersToNoOneAllowed": true,
+        "changingAdminActionTakersToNoOneAllowed": true,
+        "selfChangingAdminActionTakersAllowed": true
+      },
+      "unfreezeRules": {
+        "authorizedToMakeChange": {
+          "takerType": "NoOne"
+        },
+        "adminActionTakers": {
+          "takerType": "NoOne"
+        },
+        "changingAuthorizedActionTakersToNoOneAllowed": true,
+        "changingAdminActionTakersToNoOneAllowed": true,
+        "selfChangingAdminActionTakersAllowed": true
+      },
+      "destroyFrozenFundsRules": {
+        "authorizedToMakeChange": {
+          "takerType": "NoOne"
+        },
+        "adminActionTakers": {
+          "takerType": "NoOne"
+        },
+        "changingAuthorizedActionTakersToNoOneAllowed": true,
+        "changingAdminActionTakersToNoOneAllowed": true,
+        "selfChangingAdminActionTakersAllowed": true
+      },
+      "emergencyActionRules": {
+        "authorizedToMakeChange": {
+          "takerType": "NoOne"
+        },
+        "adminActionTakers": {
+          "takerType": "NoOne"
+        },
+        "changingAuthorizedActionTakersToNoOneAllowed": true,
+        "changingAdminActionTakersToNoOneAllowed": true,
+        "selfChangingAdminActionTakersAllowed": true
+      },
+      "mainControlGroupCanBeModified": {
+        "takerType": "NoOne"
+      },
+      "mainControlGroup": null,
+      "description": "note"
+    }
+  },
+  "groups": {},
   "signature": "1f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d",
   "signaturePublicKeyId": 2,
   "raw": "000000e7a63f573069e6f96b251f094423d20cb95a6639e0c32339d30f1d4009807b7100000000000101000001629ce9f3eb4e43c8fa936e16ec55e3aa8ef36663197326cc2032f0ed57cb4f410001066c61626c6572160412047479706512066f626a656374120a70726f706572746965731602120a636f6e7472616374496416041204747970651206737472696e6712096d696e4c656e677468035612096d61784c656e67746803581208706f736974696f6e0300120973686f72744e616d6516041204747970651206737472696e6712096d61784c656e677468034012096d696e4c656e67746803061208706f736974696f6e0302120872657175697265641502120973686f72744e616d65120a636f6e7472616374496412146164646974696f6e616c50726f7065727469657313000a0002411f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d"
@@ -2065,6 +2203,8 @@ IDENTITY_CREATE with instantLock
         "requiresIdentityDecryptionBoundedKey": null,
         "requiresIdentityEncryptionBoundedKey": null
     },
+    "tokens": {},
+    "groups": {},
     "identityContractNonce": 6,
     "signaturePublicKeyId": 2,
     "signature": "1ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903",
@@ -2248,6 +2388,10 @@ Response codes:
 ___
 ### Tokens
 Return list of tokens
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
 ```
 GET /tokens?limit=2&page=1&order=asc
 [
@@ -2300,6 +2444,95 @@ Response codes:
 200: OK
 500: Internal Server Error
 503: Service Temporarily Unavailable
+```
+___
+### Token By Identifier
+Return token info by token identifier
+```
+GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL
+{
+    "identifier": "4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL",
+    "position": 0,
+    "timestamp": "2025-07-15T09:14:43.782Z",
+    "description": null,
+    "localizations": {
+        "en": {
+            "pluralForm": "A1-preprog-1",
+            "singularForm": "A1-preprog-1",
+            "shouldCapitalize": true
+        }
+    },
+    "baseSupply": "100000",
+    "totalSupply": "101310",
+    "maxSupply": null,
+    "owner": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+    "mintable": true,
+    "burnable": true,
+    "freezable": true,
+    "unfreezable": true,
+    "destroyable": true,
+    "allowedEmergencyActions": true,
+    "dataContractIdentifier": "BU9B9aoh54Y8aXqRnrD6zmerxivw1ePLeARSmqGm52eN",
+    "changeMaxSupply": true,
+    "distributionType": null,
+    "totalGasUsed": 921522940,
+    "mainGroup": null,
+    "totalTransitionsCount": 13,
+    "totalFreezeTransitionsCount": 1,
+    "totalBurnTransitionsCount": 0
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+404: Not Found
+```
+___
+### Token Transitions
+Return list of transitions for token
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+```
+GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL/transitions?limit=10&order=desc&page=1
+{
+    "resultSet": [
+        {
+            "amount": 2000,
+            "recipient": "HxEj8nUyvfuPzDGm9Wif1vWnUaeRcfvfDN1HZxV7q5rf",
+            "owner": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+            "action": 2,
+            "stateTransitionHash": "432D47C8955424A5E61BD4204A33C2E1FCEB951BED6ED5B2C4B27E05C6433781",
+            "timestamp": "2025-07-17T14:08:21.217Z",
+            "publicNote": null
+        },
+        {
+            "amount": 0,
+            "recipient": "HxEj8nUyvfuPzDGm9Wif1vWnUaeRcfvfDN1HZxV7q5rf",
+            "owner": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+            "action": 4,
+            "stateTransitionHash": "2F329C99AA7E7C52ABEB2340FFAC098EB19ADDB7B2CC0D5CA3A891B077E12FBB",
+            "timestamp": "2025-07-15T14:44:17.346Z",
+            "publicNote": null
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": "desc"
+    }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+404: Not Found
 ```
 ___
 ### Broadcast Transaction

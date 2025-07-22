@@ -291,12 +291,18 @@ describe('Identities routes', () => {
       }
 
       const withdrawals = transactions.sort((a, b) => b.block.height - a.block.height).map(transaction => ({
-        $createdAt: transaction.block.timestamp.toISOString(),
+        createdAt: transaction.block.timestamp.getTime(),
         hash: null,
-        $id: transaction.transaction.hash,
-        $ownerId: transaction.transaction.owner,
-        amount: 12345678,
-        status: 0,
+        id: {
+          base58: () => transaction.transaction.hash
+        },
+        ownerId: {
+          base58: () => transaction.transaction.owner
+        },
+        properties: {
+          status: 0,
+          amount: 12345678
+        },
         getCreatedAt: () => transaction.block.timestamp,
         getId: () => transaction.transaction.hash,
         getOwnerId: () => transaction.transaction.owner,
@@ -310,12 +316,12 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.deepEqual(body.resultSet, withdrawals.map(withdrawal => ({
-        hash: withdrawal.$id,
-        document: withdrawal.$id,
-        sender: withdrawal.$ownerId,
+        hash: withdrawal.id.base58(),
+        document: withdrawal.id.base58(),
+        sender: withdrawal.ownerId.base58(),
         status: 0,
-        timestamp: withdrawal.$createdAt,
-        amount: withdrawal.amount,
+        timestamp: new Date(withdrawal.createdAt).toISOString(),
+        amount: withdrawal.properties.amount,
         withdrawalAddress: null
       })))
     })
@@ -860,7 +866,8 @@ describe('Identities routes', () => {
         averageGasUsed: null,
         identitiesInteracted: null,
         topIdentity: null,
-        totalGasUsed: null
+        totalGasUsed: null,
+        groups: null
       }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -910,7 +917,8 @@ describe('Identities routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          groups: null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -960,7 +968,8 @@ describe('Identities routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          groups: null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -1010,7 +1019,8 @@ describe('Identities routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          groups: null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
