@@ -40,6 +40,7 @@ const fixtures = {
     batch_type = null,
     index,
     block_hash,
+    block_height,
     owner,
     gas_used,
     status,
@@ -47,6 +48,10 @@ const fixtures = {
   } = {}) => {
     if (!block_hash) {
       throw new Error('block_hash must be provided for transaction fixture')
+    }
+
+    if (!block_height) {
+      throw new Error('block_height must be provided for transaction fixture')
     }
 
     if (!type && type !== 0) {
@@ -59,6 +64,7 @@ const fixtures = {
 
     const row = {
       block_hash,
+      block_height,
       type,
       batch_type,
       owner,
@@ -74,7 +80,7 @@ const fixtures = {
 
     return { ...row, id: result.id }
   },
-  identity: async (knex, { identifier, block_hash, state_transition_hash, revision, owner, is_system } = {}) => {
+  identity: async (knex, { identifier, block_hash, block_height, state_transition_hash, revision, owner, is_system } = {}) => {
     if (!identifier) {
       identifier = generateIdentifier()
     }
@@ -83,11 +89,16 @@ const fixtures = {
       throw Error('Block hash must be provided')
     }
 
+    if (!block_height) {
+      throw Error('Block height must be provided')
+    }
+
     let transaction
 
     if (!state_transition_hash) {
       transaction = await fixtures.transaction(knex, {
         block_hash,
+        block_height,
         owner: identifier,
         type: StateTransitionEnum.IDENTITY_CREATE
       })
@@ -293,7 +304,9 @@ const fixtures = {
     freezable,
     unfreezable,
     destroyable,
-    allowed_emergency_actions
+    allowed_emergency_actions,
+    state_transition_hash,
+    description
   }) => {
     if (position === undefined) {
       throw new Error('position must be provided')
@@ -323,6 +336,8 @@ const fixtures = {
       max_supply,
       base_supply,
       localizations,
+      state_transition_hash,
+      description,
       keeps_transfer_history: keeps_transfer_history ?? true,
       keeps_freezing_history: keeps_freezing_history ?? true,
       keeps_minting_history: keeps_minting_history ?? true,
@@ -339,6 +354,52 @@ const fixtures = {
     }
 
     const [result] = await knex('tokens').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
+  tokeTransition: async (knex, {
+    token_identifier,
+    owner,
+    action,
+    amount,
+    public_note,
+    state_transition_hash,
+    token_contract_position,
+    data_contract_id,
+    recipient
+  }) => {
+    if (token_identifier === undefined) {
+      throw new Error('token_identifier must be provided')
+    }
+    if (owner === undefined) {
+      throw new Error('owner must be provided')
+    }
+    if (action === undefined) {
+      throw new Error('action must be provided')
+    }
+    if (state_transition_hash === undefined) {
+      throw new Error('state_transition_hash must be provided')
+    }
+    if (token_contract_position === undefined) {
+      throw new Error('token_contract_position must be provided')
+    }
+    if (data_contract_id === undefined) {
+      throw new Error('data_contract_id must be provided')
+    }
+
+    const row = {
+      token_identifier,
+      owner,
+      action,
+      amount: amount ?? null,
+      public_note: public_note ?? null,
+      state_transition_hash,
+      token_contract_position,
+      data_contract_id,
+      recipient: recipient ?? null
+    }
+
+    const [result] = await knex('token_transitions').insert(row).returning('id')
 
     return { ...row, id: result.id }
   },

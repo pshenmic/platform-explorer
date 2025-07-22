@@ -535,6 +535,33 @@ module.exports = ({
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       }
+    },
+    {
+      path: '/token/:identifier',
+      method: 'GET',
+      handler: tokensController.getTokenByIdentifier,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/token/:identifier/transitions',
+      method: 'GET',
+      handler: tokensController.getTokenTransitions,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: { $ref: 'paginationOptions#' }
+      }
     }
   ]
 

@@ -5,6 +5,7 @@ import TypeBadge from './TypeBadge'
 import PublicKeyCard from './PublicKeyCard'
 import TransactionStatusBadge from './TransactionStatusBadge'
 import VoteIndexValues from './VoteIndexValues'
+import BatchTypeBadge from './BatchTypeBadge'
 import StatusIcon from './StatusIcon'
 
 export {
@@ -15,5 +16,6 @@ export {
   PublicKeyCard,
   TransactionStatusBadge,
   VoteIndexValues,
+  BatchTypeBadge,
   StatusIcon
 }

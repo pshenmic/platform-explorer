@@ -14,10 +14,10 @@ impl PSQLProcessor {
         let data_contract = DataContract::from(state_transition);
 
         self.dao
-            .create_data_contract(data_contract.clone(), Some(st_hash), sql_transaction)
+            .create_data_contract(data_contract.clone(), Some(st_hash.clone()), sql_transaction)
             .await;
 
-        self.handle_token_configuration(data_contract.clone(), sql_transaction)
+        self.handle_token_configuration(data_contract.clone(), Some(st_hash), sql_transaction)
             .await;
     }
 
@@ -30,10 +30,10 @@ impl PSQLProcessor {
         let data_contract = DataContract::from(state_transition);
 
         self.dao
-            .create_data_contract(data_contract.clone(), Some(st_hash), sql_transaction)
+            .create_data_contract(data_contract.clone(), Some(st_hash.clone()), sql_transaction)
             .await;
 
-        self.handle_token_configuration(data_contract.clone(), sql_transaction)
+        self.handle_token_configuration(data_contract.clone(), None, sql_transaction)
             .await;
     }
 }

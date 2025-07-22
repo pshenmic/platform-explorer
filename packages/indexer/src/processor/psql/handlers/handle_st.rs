@@ -14,6 +14,7 @@ impl PSQLProcessor {
     pub async fn handle_st(
         &self,
         block_hash: String,
+        block_height: i32,
         index: u32,
         state_transition: StateTransition,
         tx_result: TransactionResult,
@@ -140,6 +141,7 @@ impl PSQLProcessor {
         self.dao
             .create_state_transition(
                 block_hash.clone(),
+                block_height,
                 owner,
                 st_type,
                 index,
