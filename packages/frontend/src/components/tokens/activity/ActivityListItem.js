@@ -12,7 +12,7 @@ export default function ActivityListItem ({ activity }) {
 
   return (
     <Link
-      href={`/transaction/${activity?.txHash}`}
+      href={`/transaction/${activity?.stateTransitionHash}`}
       className={'ActivityListItem'}
     >
       <div className={'ActivityListItem__Content'}>
@@ -38,19 +38,19 @@ export default function ActivityListItem ({ activity }) {
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Hash'}>
-          {activity?.txHash
-            ? <Identifier styles={['highlight-both']}>{activity.txHash}</Identifier>
+          {activity?.stateTransitionHash
+            ? <Identifier styles={['highlight-both']}>{activity.stateTransitionHash}</Identifier>
             : <NotActive/>
           }
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Creator'}>
-          {activity.creator
+          {activity.owner
             ? <LinkContainer
                 onClick={e => {
                   e.stopPropagation()
                   e.preventDefault()
-                  router.push(`/identity/${activity?.creator}`)
+                  router.push(`/identity/${activity?.owner}`)
                 }}
               >
                 <Identifier
@@ -58,7 +58,7 @@ export default function ActivityListItem ({ activity }) {
                   styles={['highlight-both']}
                   clickable={true}
                 >
-                  {activity.creator}
+                  {activity.owner}
                 </Identifier>
               </LinkContainer>
             : <NotActive>-</NotActive>
@@ -91,7 +91,7 @@ export default function ActivityListItem ({ activity }) {
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Type'}>
-          <TokenTransitionBadge typeId={activity?.type} className={'ActivityListItem__TypeLabel'}/>
+          <TokenTransitionBadge typeId={activity?.action} className={'ActivityListItem__TypeLabel'}/>
         </div>
       </div>
     </Link>
