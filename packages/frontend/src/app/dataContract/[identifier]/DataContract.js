@@ -40,9 +40,12 @@ function DataContract ({ identifier }) {
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const pageSize = pagintationConfig.itemsOnPage.default
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+  const [expandedGroups, setExpandedGroups] = useState({})
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  console.log('expandedGroups', expandedGroups)
 
   console.log('dataContract', dataContract)
 
@@ -66,13 +69,17 @@ function DataContract ({ identifier }) {
 
   useEffect(() => {
     const tab = searchParams.get('tab')
+    const group = searchParams.get('group')
 
     if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
       setActiveTab(tabs.indexOf(tab.toLowerCase()))
-      return
+    } else {
+      setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
     }
 
-    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+    if (group) {
+      setExpandedGroups({ [group]: true })
+    }
   }, [searchParams])
 
   useEffect(() => {
@@ -87,6 +94,21 @@ function DataContract ({ identifier }) {
 
     router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }, [activeTab])
+
+  const handleExpandedGroupsChange = (newExpandedGroups) => {
+    setExpandedGroups(newExpandedGroups)
+
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+    const expandedGroupIds = Object.keys(newExpandedGroups).filter(id => newExpandedGroups[id])
+
+    if (expandedGroupIds.length > 0) {
+      urlParameters.set('group', expandedGroupIds[0])
+    } else {
+      urlParameters.delete('group')
+    }
+
+    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  }
 
   useEffect(() => {
     if (!identifier) return
@@ -179,7 +201,11 @@ function DataContract ({ identifier }) {
             <TabPanel position={'relative'}>
               {!dataContract.error
                 ? <LoadingBlock h={'250px'} loading={dataContract.loading}>
-                    <GroupsList groups={dataContract.data?.groups || {}} />
+                    <GroupsList
+                      groups={dataContract.data?.groups || {}}
+                      expandedGroups={expandedGroups}
+                      onExpandedGroupsChange={handleExpandedGroupsChange}
+                    />
                   </LoadingBlock>
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
