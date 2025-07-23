@@ -3,11 +3,42 @@
 const { base58 } = require('@scure/base')
 const crypto = require('crypto')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+const knex = require("knex");
 
 const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase()
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
 const fixtures = {
   identifier: () => generateIdentifier(),
+  getDataContract: async (knex, {identifier, id}) => {
+    if(!identifier && !id) {
+      throw new Error('identifier or id must be provided')
+    }
+
+    const eqValue = identifier ?? id
+    const eqField = identifier ? 'identifier' : 'id'
+
+    const rows = await knex('data_contracts')
+      .where(eqField,eqValue)
+
+    const [row] = rows;
+
+    return row
+  },
+  getStateTransition: async (knex, {hash, id}) => {
+    if(!hash && !id) {
+      throw new Error('hash or id must be provided')
+    }
+
+    const eqValue = hash ?? id
+    const eqField = hash ? 'hash' : 'id'
+
+    const rows = await knex('state_transitions')
+      .where(eqField,eqValue)
+
+    const [row] = rows;
+
+    return row
+  },
   block: async (knex, {
     hash,
     height,
@@ -117,7 +148,7 @@ const fixtures = {
     return { ...row, txHash: state_transition_hash ?? transaction.hash, id: result[0].id, transaction }
   },
 
-  identity_alias: async (knex, { alias, identity, block_hash, state_transition_hash } = {}) => {
+  identity_alias: async function (knex, { alias, identity, block_hash, state_transition_hash } = {}) {
     if (!identity) {
       identity = this.identity(knex, { block_hash })
     }
@@ -132,7 +163,29 @@ const fixtures = {
 
     return { ...row }
   },
-  dataContract: async (knex, {
+  dataContractTransition: async (knex, {
+    data_contract_id,
+    data_contract_identifier,
+    state_transition_id,
+  }) => {
+    if (!data_contract_id) {
+      throw new Error('data contract id must be provided for dataContractTransitions fixture')
+    }
+    if (!data_contract_identifier) {
+      throw new Error('data contract identifier must be provided for dataContractTransitions fixture')
+    }
+
+    const row = {
+      data_contract_id,
+      data_contract_identifier,
+      state_transition_id,
+    }
+
+    const result = await knex('data_contract_transitions').insert(row).returning('id')
+
+    return { ...row, id: result[0].id }
+  },
+  dataContract: async function (knex, {
     identifier,
     name,
     schema,
@@ -141,7 +194,7 @@ const fixtures = {
     owner,
     is_system,
     documents = []
-  } = {}) => {
+  } = {}) {
     if (!identifier) {
       identifier = generateIdentifier()
     }
@@ -162,9 +215,17 @@ const fixtures = {
 
     const result = await knex('data_contracts').insert(row).returning('id')
 
-    return { ...row, id: result[0].id, documents }
+    const st = state_transition_hash ? await this.getStateTransition(knex, {hash: state_transition_hash}) : null
+
+    const transition = await this.dataContractTransition(knex, {
+      data_contract_id: result[0].id,
+      data_contract_identifier: identifier,
+      state_transition_id: st?.id,
+    })
+
+    return { ...row, id: result[0].id, documents, transition }
   },
-  document: async (knex, {
+  document: async function (knex, {
     identifier,
     revision,
     data,
@@ -176,7 +237,7 @@ const fixtures = {
     transition_type,
     document_type_name,
     prefunded_voting_balance
-  }) => {
+  }) {
     if (!identifier) {
       identifier = generateIdentifier()
     }
@@ -205,7 +266,19 @@ const fixtures = {
 
     const result = await knex('documents').insert(row).returning('id')
 
-    return { ...row, id: result[0].id }
+    const dataContract = await this.getDataContract(knex, {
+      id: data_contract_id
+    })
+
+    const st = await this.getStateTransition(knex, {hash: state_transition_hash})
+
+    const transition = await this.dataContractTransition(knex, {
+      data_contract_id: data_contract_id,
+      data_contract_identifier: dataContract.identifier,
+      state_transition_id: st.id,
+    })
+
+    return { ...row, id: result[0].id, transition }
   },
   transfer: async (knex, {
     amount,
@@ -357,7 +430,7 @@ const fixtures = {
 
     return { ...row, id: result.id }
   },
-  tokeTransition: async (knex, {
+  tokeTransition: async function (knex, {
     token_identifier,
     owner,
     action,
@@ -367,7 +440,7 @@ const fixtures = {
     token_contract_position,
     data_contract_id,
     recipient
-  }) => {
+  }) {
     if (token_identifier === undefined) {
       throw new Error('token_identifier must be provided')
     }
@@ -401,9 +474,22 @@ const fixtures = {
 
     const [result] = await knex('token_transitions').insert(row).returning('id')
 
-    return { ...row, id: result.id }
+    const dataContract = await this.getDataContract(knex, {
+      id: data_contract_id
+    })
+
+    const st = await this.getStateTransition(knex, {hash: state_transition_hash})
+
+    const transition = await this.dataContractTransition(knex, {
+      data_contract_id: data_contract_id,
+      data_contract_identifier: dataContract.identifier,
+      state_transition_id: st.id,
+    })
+
+    return { ...row, id: result.id, transition }
   },
   cleanup: async (knex) => {
+    await knex.raw('DELETE FROM data_contract_transitions')
     await knex.raw('DELETE FROM token_transitions')
     await knex.raw('DELETE FROM tokens')
     await knex.raw('DELETE FROM masternode_votes')

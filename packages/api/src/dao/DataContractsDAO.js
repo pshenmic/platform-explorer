@@ -175,36 +175,23 @@ module.exports = class DataContractsDAO {
   getDataContractTransactions = async (identifier, page, limit, order) => {
     const fromRank = ((page - 1) * limit)
 
-    const dataContractsSubquery = this.knex('data_contracts')
-      .select('state_transition_hash')
-      .where('data_contracts.identifier', '=', identifier)
-      .andWhereRaw('data_contracts.state_transition_hash is not null')
+    const transactionsSubquery = this.knex('data_contract_transitions')
+      .select('data_contract_id', 'data_contract_identifier', 'state_transition_id')
+      .select(this.knex.raw('count(*) over () as total_count'))
+      .where('data_contract_identifier', identifier)
+      .whereRaw('state_transition_id is not null')
+      .orderBy('state_transition_id', order)
+      .as('transactions_subquery')
 
-    const documentsSubquery = this.knex('documents')
-      .select('documents.state_transition_hash as state_transition_hash')
-      .where('data_contracts.identifier', '=', identifier)
-      .andWhereRaw('documents.state_transition_hash is not null')
-      .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
-
-    const unionSubquery = this.knex
-      .unionAll([dataContractsSubquery, documentsSubquery])
-      .as('sub')
-
-    const additionalDataSubquery = this.knex(unionSubquery)
+    const rows = await this.knex(transactionsSubquery)
       .select(
-        'timestamp', 'sub.state_transition_hash as state_transition_hash',
-        'owner', 'gas_used', 'data', 'error', 'state_transitions.id as id'
+        'state_transitions.hash as state_transition_hash', 'state_transitions.data', 'total_count', 'block_height',
+        'owner', 'gas_used', 'data', 'error', 'state_transitions.id as id', 'timestamp', 'blocks.hash as block_hash'
       )
-      .leftJoin('state_transitions', 'sub.state_transition_hash', 'state_transitions.hash')
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-      .as('additional_subquery')
-
-    const rows = await this.knex(additionalDataSubquery)
-      .select('timestamp', 'state_transition_hash', 'owner', 'gas_used', 'data', 'error')
-      .select(this.knex(additionalDataSubquery).count('*').as('total_count'))
-      .limit(limit)
+      .leftJoin('state_transitions', 'transactions_subquery.state_transition_id', 'state_transitions.id')
+      .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .offset(fromRank)
-      .orderBy('id', order)
+      .limit(limit)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       let decodedTx
@@ -224,8 +211,13 @@ module.exports = class DataContractsDAO {
       return {
         type: decodedTx?.type ?? null,
         action: decodedTx?.transitions?.map(transition => ({
-          action: transition.action,
-          id: transition.id
+          documentAction: transition.action ?? null,
+          tokenAction: transition.tokenTransitionType ?? null,
+          documentIdentifier: transition.id ?? null,
+          tokenIdentifier: transition.tokenId ?? null,
+          recipient: (transition.recipient ?? transition.frozenIdentityId) ?? null,
+          price: (transition.price ?? transition.totalAgreedPrice) ?? null,
+          amount: (transition.amount ?? transition.burnAmount ?? transition.tokenCount) ?? null,
         })) ?? null,
         owner: {
           identifier: row.owner?.trim() ?? null,

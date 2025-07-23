@@ -50,7 +50,7 @@ describe('DataContracts routes', () => {
     dataContracts = []
     documents = []
     diferentVersionsDataContract = []
-    block = await fixtures.block(knex)
+    block = await fixtures.block(knex, {height})
     identity = await fixtures.identity(knex, {
       block_hash: block.hash,
       block_height: block.height
@@ -68,10 +68,12 @@ describe('DataContracts routes', () => {
     }
 
     for (let i = 5; i < 29; i++) {
-      const block = await fixtures.block(knex, { height: i + 1 })
+      height = i
+
+      const block1 = await fixtures.block(knex, { height })
       const transaction = await fixtures.transaction(knex, {
-        block_height: block.height,
-        block_hash: block.hash,
+        block_height: block1.height,
+        block_hash: block1.hash,
         type: StateTransitionEnum.DATA_CONTRACT_CREATE,
         owner: identity.identifier,
         data: 'AAAANB6g6fZVacLiESmz0Z1FUW4fi2YzEfBw1Val4hjUsnIAAAAAAAEBAAABcZnx9oQEyG7PYNnLk67zGPoPKwjln/0Xa970MVT/3msAAQ1kYXRhQ29udHJhY3RzFgQSBHR5cGUSBm9iamVjdBIKcHJvcGVydGllcxYCEgppZGVudGlmaWVyFgQSBHR5cGUSBnN0cmluZxIJbWluTGVuZ3RoA1YSCW1heExlbmd0aANYEghwb3NpdGlvbgMAEgRuYW1lFgQSBHR5cGUSBnN0cmluZxIJbWF4TGVuZ3RoA0ASCW1pbkxlbmd0aAMGEghwb3NpdGlvbgMCEghyZXF1aXJlZBUCEgppZGVudGlmaWVyEgRuYW1lEhRhZGRpdGlvbmFsUHJvcGVydGllcxMAAQACQSAyv1MhMb7BIg1n8F0cn2etI1ONNbxCBSCSrdja5W6F1TRtKQiW4Dckvj5otqvvquK14L8RZMgT1Rhz/GupDl+Z'
@@ -82,10 +84,10 @@ describe('DataContracts routes', () => {
         schema: '{}'
       })
 
-      dataContracts.push({ transaction, block, dataContract })
-      height = i
+      dataContracts.push({ transaction, block: block1, dataContract })
     }
 
+    height = height + 1
     const block2 = await fixtures.block(knex, { height })
     const contractCreateTransaction = await fixtures.transaction(knex, {
       block_height: block2.height,
@@ -105,9 +107,11 @@ describe('DataContracts routes', () => {
     diferentVersionsDataContract.push({ dataContract: dataContracts[dataContracts.length - 1].dataContract, transaction: dataContracts[dataContracts.length - 1].transaction })
     // create some documents in different data contract versions
     for (let i = 0; i < 5; i++) {
+      height = height + 1
+      const block3 = await fixtures.block(knex, { height, timestamp: dataContracts[dataContracts.length - 1].block.timestamp })
       const contractCreateTransaction = await fixtures.transaction(knex, {
-        block_height: block2.height,
-        block_hash: block2.hash,
+        block_height: block3.height,
+        block_hash: block3.hash,
         type: StateTransitionEnum.DATA_CONTRACT_UPDATE,
         owner: identity.identifier,
         data: 'AAAANB6g6fZVacLiESmz0Z1FUW4fi2YzEfBw1Val4hjUsnIAAAAAAAEBAAABcZnx9oQEyG7PYNnLk67zGPoPKwjln/0Xa970MVT/3msAAQ1kYXRhQ29udHJhY3RzFgQSBHR5cGUSBm9iamVjdBIKcHJvcGVydGllcxYCEgppZGVudGlmaWVyFgQSBHR5cGUSBnN0cmluZxIJbWluTGVuZ3RoA1YSCW1heExlbmd0aANYEghwb3NpdGlvbgMAEgRuYW1lFgQSBHR5cGUSBnN0cmluZxIJbWF4TGVuZ3RoA0ASCW1pbkxlbmd0aAMGEghwb3NpdGlvbgMCEghyZXF1aXJlZBUCEgppZGVudGlmaWVyEgRuYW1lEhRhZGRpdGlvbmFsUHJvcGVydGllcxMAAQACQSAyv1MhMb7BIg1n8F0cn2etI1ONNbxCBSCSrdja5W6F1TRtKQiW4Dckvj5otqvvquK14L8RZMgT1Rhz/GupDl+Z'
@@ -122,12 +126,15 @@ describe('DataContracts routes', () => {
         documents: dataContracts[dataContracts.length - 1].dataContract.documents
       })
 
+      height = height + 1
+
+      const block4 = await fixtures.block(knex, { height })
       const documentTransaction = await fixtures.transaction(knex, {
-        block_height: block2.height,
-        block_hash: block2.hash,
+        block_height: block4.height,
+        block_hash: block4.hash,
         type: StateTransitionEnum.BATCH,
         owner: identity.identifier,
-        data: 'AgBxmfH2hATIbs9g2cuTrvMY+g8rCOWf/Rdr3vQxVP/eawEDAABF/LZHZLWdw2w3F4+EpbOlpl8RNK6icPPgAI9u0KsLgwMFQ2xhaW2q3m53l6rTxI+1VTW/2E/dRKsBVNmCJOId0FU9WzapBQRiKSUxGfUgcL2NTlWbhbJM3jqldTUNCUFqM2l63hfROQABQR8ouGytATEcwiRiyIQUYhv0HL3oiPWMtzS8SE668LoJ+Geo+PQq0fMsigWlNUNG4bz3UYQfwiubqFmrX8XflISM'
+        data: 'AgEhlXYiSxH/3198ZZ4ie5GrtMWunivxuQ0yWTaW3aO2QgEBAQAAAwCNdLLskTojea4JftOKVvqCzrDtvGS9D7ADq42KJRqCMCz+OMPDDzMeoYxC9XwWwllaHpMVM8iv33Yh1EZNY5e1AAGsecC8m3/PPvYdCkHt5gWisjnhZd8VzQDKCNQnl68p6wUAAAJBIB9sS3dVoEDbasALaqaBDLB8ubMXhnPrlfo7LSpzvfUCdCuucdUJJoNkuiRIXxZkfwGjAGlectH04qhyzZw24nI='
       })
 
       const document = await fixtures.document(knex, {
@@ -140,7 +147,7 @@ describe('DataContracts routes', () => {
 
       diferentVersionsDataContract.push({ dataContract, transaction: contractCreateTransaction })
       dataContract.documents.push(document)
-      documents.push({ transaction: documentTransaction, block: block2, dataContract, document })
+      documents.push({ transaction: documentTransaction, block: block4, dataContract, document })
       dataContracts[dataContracts.length - 1].transaction = contractCreateTransaction
       dataContracts[dataContracts.length - 1].dataContract = dataContract
     }
@@ -462,8 +469,13 @@ describe('DataContracts routes', () => {
       const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
-          action: 3,
-          id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
+          documentAction: null,
+          tokenAction: 1,
+          documentIdentifier: null,
+          tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
+          recipient: null,
+          price: null,
+          amount: '5'
         }],
         owner: {
           identifier: document.owner,
@@ -536,8 +548,13 @@ describe('DataContracts routes', () => {
       const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
-          action: 3,
-          id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
+          documentAction: null,
+          tokenAction: 1,
+          documentIdentifier: null,
+          tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
+          recipient: null,
+          price: null,
+          amount: '5'
         }],
         owner: {
           identifier: document.owner,
@@ -610,8 +627,13 @@ describe('DataContracts routes', () => {
       const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
-          action: 3,
-          id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
+          documentAction: null,
+          tokenAction: 1,
+          documentIdentifier: null,
+          tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
+          recipient: null,
+          price: null,
+          amount: '5'
         }],
         owner: {
           identifier: document.owner,
