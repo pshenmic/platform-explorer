@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import GroupsListItem from './GroupsListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import { ErrorMessageBlock } from '../../Errors'
@@ -19,8 +19,8 @@ const convertMembersToArray = (members) => {
   }))
 }
 
-function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount = 10 }) {
-  const [expandedGroups, setExpandedGroups] = useState({})
+function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount = 10, expandedGroups, onExpandedGroupsChange }) {
+  const [localExpandedGroups, setLocalExpandedGroups] = useState(expandedGroups || {})
 
   const headerExtraClass = {
     default: '',
@@ -32,11 +32,19 @@ function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount 
     ...group
   }))
 
+  useEffect(() => setLocalExpandedGroups(expandedGroups), [expandedGroups])
+
   const toggleGroup = (groupId) => {
-    setExpandedGroups(prev => ({
-      ...prev,
-      [groupId]: !prev[groupId]
-    }))
+    const newExpandedGroups = {
+      ...localExpandedGroups,
+      [groupId]: !localExpandedGroups?.[groupId]
+    }
+
+    setLocalExpandedGroups(newExpandedGroups)
+
+    if (typeof onExpandedGroupsChange === 'function') {
+      onExpandedGroupsChange(newExpandedGroups)
+    }
   }
 
   return (
@@ -45,7 +53,7 @@ function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount 
         ? <div className={'GroupsList__Items'}>
             {groupsArray?.map((group) => {
               const membersArray = convertMembersToArray(group?.members)
-              const isExpanded = expandedGroups[group.id]
+              const isExpanded = localExpandedGroups?.[group?.id]
 
               return (
                 <div key={group.id} className={`GroupsList__Group ${isExpanded ? 'GroupsList__Group--Expanded' : ''}`}>
