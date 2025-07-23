@@ -50,7 +50,7 @@ describe('DataContracts routes', () => {
     dataContracts = []
     documents = []
     diferentVersionsDataContract = []
-    block = await fixtures.block(knex, {height})
+    block = await fixtures.block(knex, { height })
     identity = await fixtures.identity(knex, {
       block_hash: block.hash,
       block_height: block.height

@@ -217,7 +217,7 @@ module.exports = class DataContractsDAO {
           tokenIdentifier: transition.tokenId ?? null,
           recipient: (transition.recipient ?? transition.frozenIdentityId) ?? null,
           price: (transition.price ?? transition.totalAgreedPrice) ?? null,
-          amount: (transition.amount ?? transition.burnAmount ?? transition.tokenCount) ?? null,
+          amount: (transition.amount ?? transition.burnAmount ?? transition.tokenCount) ?? null
         })) ?? null,
         owner: {
           identifier: row.owner?.trim() ?? null,
