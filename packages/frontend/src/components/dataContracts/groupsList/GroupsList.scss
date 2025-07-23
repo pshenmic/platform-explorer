@@ -35,10 +35,17 @@
   &__GroupHeader {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 16px;
+    gap: 1rem;
     padding: 1rem;
     background: var(--chakra-colors-gray-800);
-    border-bottom: 1px solid var(--chakra-colors-gray-700);
+    border-bottom: 1px solid transparent;
+    transition: $transition-time-def;
+  }
+
+  &__Group--Expanded & {
+    &__GroupHeader {
+      border-bottom: 1px solid var(--chakra-colors-gray-700);
+    }
   }
 
   &__GroupTitle {

@@ -48,14 +48,12 @@ function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount 
               const isExpanded = expandedGroups[group.id]
 
               return (
-                <div key={group.id} className={'GroupsList__Group'}>
+                <div key={group.id} className={`GroupsList__Group ${isExpanded ? 'GroupsList__Group--Expanded' : ''}`}>
                   <Grid className={'GroupsList__GroupHeader'}>
                     <GridItem className={'GroupsList__GroupHeaderColumn'}>
-                      {/* <ValueContainer colorScheme={'lightGray'} size={'sm'}> */}
                       <span className={'GroupsList__GroupTitle'}>
                         Group #{group.id}
                       </span>
-                      {/* </ValueContainer> */}
                       <span className={'GroupsList__RequiredPower'}>
                         Required Power: {group.requiredPower}
                       </span>
@@ -68,12 +66,12 @@ function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount 
                         className={'GroupsList__ToggleButton'}
                       >
                         {membersArray.length} members
-                        <ChevronIcon
-                          ml={'4px'}
-                          h={'10px'}
-                          w={'10px'}
-                          transform={`rotate(${isExpanded ? '-90deg' : '90deg'})`}
-                        />
+                          <ChevronIcon
+                            ml={'0.25rem'}
+                            h={'0.625rem'}
+                            w={'0.625rem'}
+                            transform={`rotate(${isExpanded ? '-90deg' : '90deg'})`}
+                          />
                       </Button>
                     </GridItem>
                   </Grid>
