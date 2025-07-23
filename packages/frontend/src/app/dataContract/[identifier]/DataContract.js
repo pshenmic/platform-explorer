@@ -9,7 +9,7 @@ import { fetchHandlerSuccess, fetchHandlerError, setLoadingProp, paginationHandl
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CodeBlock } from '../../../components/data'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import { DataContractDigestCard, DataContractTotalCard } from '../../../components/dataContracts'
+import { DataContractDigestCard, DataContractTotalCard, GroupsList } from '../../../components/dataContracts'
 import { Container, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { TransactionsList } from '../../../components/transactions'
@@ -26,7 +26,8 @@ const pagintationConfig = {
 const tabs = [
   'transactions',
   'documents',
-  'schema'
+  'schema',
+  'groups'
 ]
 
 const defaultTabName = 'documents'
@@ -42,6 +43,8 @@ function DataContract ({ identifier }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  console.log('dataContract', dataContract)
 
   useEffect(() => {
     setBreadcrumbs([
@@ -132,6 +135,7 @@ function DataContract ({ identifier }) {
               : ''}
             </Tab>
             <Tab>Schema</Tab>
+            <Tab>Groups</Tab>
           </TabList>
           <TabPanels>
             <TabPanel position={'relative'}>
@@ -169,6 +173,14 @@ function DataContract ({ identifier }) {
                     ? <CodeBlock smoothSize={activeTab === 1} className={'DataContract__Schema'} code={dataContract.data?.schema}/>
                     : <Container h={20}><ErrorMessageBlock/></Container>}
                 </LoadingBlock>
+                : <Container h={20}><ErrorMessageBlock/></Container>
+              }
+            </TabPanel>
+            <TabPanel position={'relative'}>
+              {!dataContract.error
+                ? <LoadingBlock h={'250px'} loading={dataContract.loading}>
+                    <GroupsList groups={dataContract.data?.groups || {}} />
+                  </LoadingBlock>
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
