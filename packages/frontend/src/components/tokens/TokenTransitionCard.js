@@ -2,6 +2,7 @@ import { ValueCard } from '../cards'
 import { BigNumber, CreditsBlock, Identifier, InfoLine } from '../data'
 import { TokenTransitionEnum } from '../../enums/tokenTransition'
 import TokenTransitionBadge from './TokenTransitionBadge'
+import TokenEmergencyActionBadge from './TokenEmergencyActionBadge'
 import { Code, Badge } from '@chakra-ui/react'
 import { colors } from '../../styles/colors'
 import './TokenTransitionCard.scss'
@@ -78,11 +79,11 @@ const fieldsOfTypes = {
   ],
   EMERGENCY_ACTION: [
     'Action',
+    'EmergencyAction',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce'
-    // 'EmergencyDetails'
   ],
   CONFIG_UPDATE: [
     'Action',
@@ -134,6 +135,16 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
           error={transition?.tokenTransitionType === undefined}
         />
        )}
+
+      {/* Action Badge */}
+      {fields.includes('EmergencyAction') && (
+        <InfoLine
+          className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--EmergencyAction'}
+          title={'Emergency Action'}
+          value={<TokenEmergencyActionBadge type={transition?.emergencyAction}/>}
+          error={transition?.emergencyAction === undefined}
+        />
+      )}
 
       {/* Amount */}
       {fields.includes('Amount') && (
