@@ -180,7 +180,6 @@ module.exports = class DataContractsDAO {
       .select(this.knex.raw('count(*) over () as total_count'))
       .where('data_contract_identifier', identifier)
       .whereRaw('state_transition_id is not null')
-      .orderBy('state_transition_id', order)
       .as('transactions_subquery')
 
     const rows = await this.knex(transactionsSubquery)
@@ -190,6 +189,7 @@ module.exports = class DataContractsDAO {
       )
       .leftJoin('state_transitions', 'transactions_subquery.state_transition_id', 'state_transitions.id')
       .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
+      .orderBy('state_transition_id', order)
       .offset(fromRank)
       .limit(limit)
 
