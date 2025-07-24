@@ -2403,6 +2403,7 @@ GET /tokens?limit=2&page=1&order=asc
     "destroyable": true,
     "allowedEmergencyActions": true,
     "dataContractIdentifier": "5BwVvDstM6FaXQcLNUGkuPHAk5xH3uEoYEKqHKXjw5nL"
+    "decimals": null,
   }
 ]
 ```
@@ -2446,6 +2447,7 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL
     "mainGroup": null,
     "totalTransitionsCount": 13,
     "totalFreezeTransitionsCount": 1,
+    "decimals": 10,
     "totalBurnTransitionsCount": 0
 }
 ```
