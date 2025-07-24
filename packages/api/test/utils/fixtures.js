@@ -269,12 +269,12 @@ const fixtures = {
       id: data_contract_id
     })
 
-    const st = await this.getStateTransition(knex, { hash: state_transition_hash })
+    const st = state_transition_hash ? await this.getStateTransition(knex, { hash: state_transition_hash }) : undefined
 
     const transition = await this.dataContractTransition(knex, {
       data_contract_id,
       data_contract_identifier: dataContract.identifier,
-      state_transition_id: st.id
+      state_transition_id: st?.id
     })
 
     return { ...row, id: result[0].id, transition }
