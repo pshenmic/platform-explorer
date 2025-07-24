@@ -52,17 +52,17 @@ module.exports = class DataContract {
     averageGasUsed,
     groups
   }) {
+    let formattedGroups
     if (groups) {
       const groupsKeys = Object.keys(groups)
 
-      groupsKeys.forEach(key => {
-        groups[key] = {
-          members: groups[key].members,
-          requiredPower: groups[key].requiredPower
-        }
-      })
+      formattedGroups = groupsKeys.map(key => ({
+        position: Number(key),
+        members: groups[key].members,
+        requiredPower: groups[key].requiredPower
+      }))
     }
 
-    return new DataContract(identifier, name, owner, schema, version, txHash, timestamp, isSystem, documentsCount, topIdentity, identitiesInteracted, totalGasUsed, averageGasUsed, groups)
+    return new DataContract(identifier, name, owner, schema, version, txHash, timestamp, isSystem, documentsCount, topIdentity, identitiesInteracted, totalGasUsed, averageGasUsed, formattedGroups)
   }
 }

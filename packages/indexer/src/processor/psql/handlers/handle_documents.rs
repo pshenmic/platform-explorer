@@ -24,20 +24,20 @@ impl PSQLProcessor {
         match document_transition {
             DocumentTransition::Transfer(_) => {
                 self.dao
-                    .assign_document(document, owner_id, sql_transaction)
+                    .assign_document(document.clone(), owner_id, sql_transaction)
                     .await
                     .unwrap();
             }
             DocumentTransition::UpdatePrice(_) => {
                 self.dao
-                    .update_document_price(document, sql_transaction)
+                    .update_document_price(document.clone(), sql_transaction)
                     .await
                     .unwrap();
             }
             DocumentTransition::Purchase(_) => {
                 let current_document = self
                     .dao
-                    .get_document_by_identifier(document.identifier, sql_transaction)
+                    .get_document_by_identifier(document.clone().identifier, sql_transaction)
                     .await
                     .unwrap()
                     .expect(&format!(
@@ -51,9 +51,9 @@ impl PSQLProcessor {
                     .unwrap();
 
                 let transfer = Transfer {
-                    sender: document.owner,
+                    sender: document.clone().owner,
                     recipient: current_document.owner,
-                    amount: document.price.unwrap(),
+                    amount: document.clone().price.unwrap(),
                 };
                 self.dao
                     .create_transfer(transfer, st_hash.clone(), sql_transaction)
@@ -62,7 +62,7 @@ impl PSQLProcessor {
             }
             _ => {
                 self.dao
-                    .create_document(document, Some(st_hash.clone()), sql_transaction)
+                    .create_document(document.clone(), Some(st_hash.clone()), sql_transaction)
                     .await
                     .unwrap();
             }
@@ -114,6 +114,13 @@ impl PSQLProcessor {
                 .unwrap();
         }
 
+        self.handle_data_contract_transition(
+            Some(st_hash.clone()),
+            document.data_contract_identifier,
+            sql_transaction,
+        )
+        .await;
+
         if document_type == "dataContracts"
             && document_transition.data_contract_id() == self.platform_explorer_identifier
         {
@@ -148,7 +155,7 @@ impl PSQLProcessor {
             if data_contract.owner == owner_id {
                 self.dao
                     .set_data_contract_name(
-                        data_contract,
+                        data_contract.clone(),
                         String::from(data_contract_name),
                         sql_transaction,
                     )

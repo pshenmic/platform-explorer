@@ -28,4 +28,5 @@ pub struct TokenConfig {
     pub destroyable: bool,
     pub allowed_emergency_actions: bool,
     pub description: Option<String>,
+    pub name: String,
 }

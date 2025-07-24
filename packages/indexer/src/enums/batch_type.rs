@@ -44,6 +44,6 @@ impl fmt::Display for BatchType {
             }
         };
 
-        write!(f, "{:?}", batch_type_string)
+        write!(f, "{batch_type_string}")
     }
 }

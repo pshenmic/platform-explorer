@@ -246,15 +246,11 @@ const decodeStateTransition = async (base64) => {
 
       const groupsKeys = Object.keys(dataContract.groups)
 
-      decoded.groups = groupsKeys.reduce((acc, key) => {
-        return {
-          ...acc,
-          key: {
-            members: dataContract.groups[key].members,
-            requiredPower: dataContract.groups[key].requiredPower
-          }
-        }
-      }, {})
+      decoded.groups = groupsKeys.map((key) => ({
+        position: Number(key),
+        members: dataContract.groups[key].members,
+        requiredPower: dataContract.groups[key].requiredPower
+      }))
 
       break
     }

@@ -84,6 +84,36 @@ impl PostgresDAO {
         Ok(())
     }
 
+    pub async fn create_data_contract_transition(
+        &self,
+        data_contract_id: u32,
+        data_contract_identifier: Identifier,
+        state_transition_id: Option<i32>,
+        sql_transaction: &Transaction<'_>,
+    ) {
+        let query = "INSERT INTO data_contract_transitions(data_contract_id, data_contract_identifier, state_transition_id) \
+        VALUES ($1, $2, $3);";
+
+        let stmt = sql_transaction.prepare_cached(query).await.unwrap();
+
+        sql_transaction
+            .query(
+                &stmt,
+                &[
+                    &(data_contract_id as i32),
+                    &data_contract_identifier.to_string(Base58),
+                    &(state_transition_id),
+                ],
+            )
+            .await
+            .unwrap();
+
+        println!(
+            "Created DataContract Transition for {}",
+            data_contract_identifier.to_string(Base58),
+        );
+    }
+
     pub async fn get_data_contract_by_identifier(
         &self,
         identifier: Identifier,

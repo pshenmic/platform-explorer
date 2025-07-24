@@ -83,7 +83,10 @@ impl PSQLProcessor {
         let data_contract_identifier = data_contract.identifier.clone();
         let data_contract_owner = data_contract.owner.clone();
         self.dao
-            .create_data_contract(data_contract, None, sql_transaction)
+            .create_data_contract(data_contract.clone(), None, sql_transaction)
+            .await;
+
+        self.handle_data_contract_transition(None, data_contract.identifier, sql_transaction)
             .await;
 
         match system_data_contract {
@@ -131,6 +134,13 @@ impl PSQLProcessor {
                     .create_document(dash_tld_document, None, sql_transaction)
                     .await
                     .unwrap();
+
+                self.handle_data_contract_transition(
+                    None,
+                    data_contract.identifier,
+                    sql_transaction,
+                )
+                .await;
             }
             // TODO: Implement contracts
             SystemDataContract::Dashpay => {}

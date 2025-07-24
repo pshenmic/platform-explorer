@@ -4,6 +4,7 @@ use crate::processor::psql::PSQLProcessor;
 use deadpool_postgres::Transaction;
 use dpp::data_contract::associated_token::token_configuration::accessors::v0::TokenConfigurationV0Getters;
 use dpp::data_contract::associated_token::token_configuration_convention::accessors::v0::TokenConfigurationConventionV0Getters;
+use dpp::data_contract::associated_token::token_configuration_localization::accessors::v0::TokenConfigurationLocalizationV0Getters;
 use dpp::data_contract::associated_token::token_keeps_history_rules::accessors::v0::TokenKeepsHistoryRulesV0Getters;
 use dpp::data_contract::change_control_rules::authorized_action_takers::AuthorizedActionTakers;
 use dpp::identifier::Identifier;
@@ -62,6 +63,14 @@ impl PSQLProcessor {
                     unfreezable,
                     destroyable,
                     allowed_emergency_actions,
+                    name: v
+                        .conventions()
+                        .localizations()
+                        .get("en")
+                        .unwrap()
+                        .clone()
+                        .singular_form()
+                        .to_string(),
                 };
 
                 self.dao.create_token(token, sql_transaction).await;

@@ -40,7 +40,7 @@ describe('Utils', () => {
         dataContractId: 'GbGD5YbS9GVh7FSZjz3uUJpbrXo9ctbdKycfTqqg3Cmn',
         ownerId: '7dwjL5frrkM69pv3BsKSQb4ELrMYmDeE11KNoDSefG6c',
         tokens: {},
-        groups: {},
+        groups: [],
         schema: {
           labler: {
             type: 'object',
