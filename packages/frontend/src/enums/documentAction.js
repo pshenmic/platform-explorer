@@ -26,7 +26,7 @@ export const DocumentActionInfo = {
   TRANSFER: {
     title: 'Document Transfer',
     description: 'Transfers ownership or access rights of a document to another identity. This action facilitates secure exchange of document control.',
-    colorScheme: 'blue'
+    colorScheme: 'orange'
   },
   UPDATE_PRICE: {
     title: 'Document Update Price',

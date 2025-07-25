@@ -237,7 +237,7 @@ function TransactionData ({ data, type, loading, rate }) {
     </>)
   }
 
-  if (type === StateTransitionEnum.DOCUMENTS_BATCH) {
+  if (type === StateTransitionEnum.BATCH) {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--Transitions'}

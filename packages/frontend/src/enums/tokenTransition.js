@@ -26,7 +26,7 @@ export const TokenTransitionInfo = {
   TRANSFER: {
     title: 'Token Transfer',
     description: 'Transfers tokens from one identity to another.',
-    colorScheme: 'blue'
+    colorScheme: 'orange'
   },
   FREEZE: {
     title: 'Token Freeze',
@@ -36,7 +36,7 @@ export const TokenTransitionInfo = {
   UNFREEZE: {
     title: 'Token Unfreeze',
     description: 'Unfreezes previously frozen tokens, allowing their use again.',
-    colorScheme: 'emerald'
+    colorScheme: 'orange'
   },
   DESTROY_FROZEN_FUNDS: {
     title: 'Destroy Frozen Funds',
