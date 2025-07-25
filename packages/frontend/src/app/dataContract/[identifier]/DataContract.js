@@ -13,6 +13,8 @@ import { DataContractDigestCard, DataContractTotalCard } from '../../../componen
 import { Container, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { TransactionsList } from '../../../components/transactions'
+import { TokenTransitionEnum } from '../../../enums/tokenTransition'
+import { DocumentActionEnum } from '../../../enums/documentAction'
 import './DataContract.scss'
 
 const pagintationConfig = {
@@ -137,7 +139,10 @@ function DataContract ({ identifier }) {
             <TabPanel position={'relative'}>
               {!transactions.error
                 ? <TransactionsList
-                    transactions={transactions.data?.resultSet}
+                    transactions={transactions.data?.resultSet?.map((transaction) => ({
+                      ...transaction,
+                      batchType: DocumentActionEnum[transaction.action?.[0]?.documentAction] ?? TokenTransitionEnum[transaction.action?.[0]?.tokenAction]
+                    }))}
                     loading={transactions.loading}
                     pagination={{
                       onPageChange: pagination => paginationHandler(setTransactions, pagination.selected),
