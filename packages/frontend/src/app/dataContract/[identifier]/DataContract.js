@@ -45,10 +45,6 @@ function DataContract ({ identifier }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  console.log('expandedGroups', expandedGroups)
-
-  console.log('dataContract', dataContract)
-
   useEffect(() => {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
