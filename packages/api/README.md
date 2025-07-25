@@ -84,6 +84,7 @@ Reference:
 * [Tokens](#tokens)
 * [Token By Identifier](#token-by-identifier)
 * [Token Transitions](#token-transitions)
+* [Tokens Rating](#tokens-rating)
 * [Broadcast Transaction](#broadcast-transaction)
 
 ### Status
@@ -2535,6 +2536,44 @@ Response codes:
 500: Internal Server Error
 503: Service Temporarily Unavailable
 404: Not Found
+```
+___
+### Tokens Rating
+Return list of tokens identifier with order by transactions count
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+```
+GET tokens/rating?order=desc&limit=10&page=1
+{
+    "resultSet": [
+        {
+            "tokenIdentifier": "8RsBCPSDUwWMnvLTDooh7ZcfZmnRb5tecsagsrdAFrrd",
+            "transitionCount": 15
+        },
+        {
+            "tokenIdentifier": "4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL",
+            "transitionCount": 13
+        },
+        {
+            "tokenIdentifier": "5F4Q7PNmdxBP7ULbfUwKP6gNxdgZKygQaQ6m79LPQBd4",
+            "transitionCount": 5
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 11
+    }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
 ```
 ___
 ### Broadcast Transaction
