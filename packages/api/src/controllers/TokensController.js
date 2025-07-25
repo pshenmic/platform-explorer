@@ -38,9 +38,17 @@ class TokensController {
 
     const { page = 1, limit = 10, order = 'asc' } = request.query
 
-    const transitions = await this.tokensDAO.getTokenTransitions(identifier, page, limit, order)
+    const transitions = await this.tokensDAO.getTokenTransitions(identifier, Number(page ?? 0), Number(limit ?? 0), order)
 
     response.send(transitions)
+  }
+
+  getTokensTrends = async (request, response) => {
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+
+    const rating = await this.tokensDAO.getTokensTrends(Number(page ?? 0), Number(limit ?? 0), order)
+
+    response.send(rating)
   }
 }
 

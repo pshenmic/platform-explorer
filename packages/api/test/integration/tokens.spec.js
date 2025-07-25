@@ -19,7 +19,10 @@ describe('Tokens', () => {
   before(async () => {
     tokens = []
 
-    mock.method(DAPI.prototype, 'getTokenTotalSupply', async () => ({ totalSystemAmount: 1000, totalAggregatedAmountInUserAccounts: 1000 }))
+    mock.method(DAPI.prototype, 'getTokenTotalSupply', async () => ({
+      totalSystemAmount: 1000,
+      totalAggregatedAmountInUserAccounts: 1000
+    }))
     mock.method(DAPI.prototype, 'getDataContract', async () => ({
       tokens: {
         29: {
@@ -503,6 +506,142 @@ describe('Tokens', () => {
           }))
 
       assert.deepEqual(body.resultSet, expectedTransitions)
+    })
+  })
+
+  describe('getTokensTrends()', () => {
+    before(async () => {
+      tokens = []
+
+      await fixtures.cleanup(knex)
+
+      block = await fixtures.block(knex)
+
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      dataContract = await fixtures.dataContract(knex, {
+        owner: identity.identifier
+      })
+
+      for (let i = 0; i < 30; i++) {
+        let tokenTransition
+
+        const stateTransition = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          data: 'AAABB/ElAIxLgoxYzc+KXVe7+xw3ml3m11Rozv7zfz4qlh8BAAAAAAEBAAABAXGZ8faEBMhuz2DZy5Ou8xj6DysI5Z/9F2ve9DFU/95rAAEKd2l0aGRyYXdhbBYHEgtkZXNjcmlwdGlvbhKAV2l0aGRyYXdhbCBkb2N1bWVudCB0byB0cmFjayB1bmRlcmx5aW5nIHdpdGhkcmF3YWwgdHJhbnNhY3Rpb25zLiBXaXRoZHJhd2FscyBzaG91bGQgYmUgY3JlYXRlZCB3aXRoIElkZW50aXR5V2l0aGRyYXdhbFRyYW5zaXRpb24SF2NyZWF0aW9uUmVzdHJpY3Rpb25Nb2RlAwQSBHR5cGUSBm9iamVjdBIHaW5kaWNlcxUEFgMSBG5hbWUSDmlkZW50aXR5U3RhdHVzEgpwcm9wZXJ0aWVzFQMWARIIJG93bmVySWQSA2FzYxYBEgZzdGF0dXMSA2FzYxYBEgokY3JlYXRlZEF0EgNhc2MSBnVuaXF1ZRMAFgMSBG5hbWUSDmlkZW50aXR5UmVjZW50Egpwcm9wZXJ0aWVzFQMWARIIJG93bmVySWQSA2FzYxYBEgokdXBkYXRlZEF0EgNhc2MWARIGc3RhdHVzEgNhc2MSBnVuaXF1ZRMAFgMSBG5hbWUSB3Bvb2xpbmcSCnByb3BlcnRpZXMVBBYBEgZzdGF0dXMSA2FzYxYBEgdwb29saW5nEgNhc2MWARIOY29yZUZlZVBlckJ5dGUSA2FzYxYBEgokdXBkYXRlZEF0EgNhc2MSBnVuaXF1ZRMAFgMSBG5hbWUSC3RyYW5zYWN0aW9uEgpwcm9wZXJ0aWVzFQIWARIGc3RhdHVzEgNhc2MWARIQdHJhbnNhY3Rpb25JbmRleBIDYXNjEgZ1bmlxdWUTABIKcHJvcGVydGllcxYHEhB0cmFuc2FjdGlvbkluZGV4FgQSBHR5cGUSB2ludGVnZXISC2Rlc2NyaXB0aW9uEnlTZXF1ZW50aWFsIGluZGV4IG9mIGFzc2V0IHVubG9jayAod2l0aGRyYXdhbCkgdHJhbnNhY3Rpb24uIFBvcHVsYXRlZCB3aGVuIGEgd2l0aGRyYXdhbCBwb29sZWQgaW50byB3aXRoZHJhd2FsIHRyYW5zYWN0aW9uEgdtaW5pbXVtAwISCHBvc2l0aW9uAwASFXRyYW5zYWN0aW9uU2lnbkhlaWdodBYEEgR0eXBlEgdpbnRlZ2VyEgtkZXNjcmlwdGlvbhIvVGhlIENvcmUgaGVpZ2h0IG9uIHdoaWNoIHRyYW5zYWN0aW9uIHdhcyBzaWduZWQSB21pbmltdW0DAhIIcG9zaXRpb24DAhIGYW1vdW50FgQSBHR5cGUSB2ludGVnZXISC2Rlc2NyaXB0aW9uEhpUaGUgYW1vdW50IHRvIGJlIHdpdGhkcmF3bhIHbWluaW11bQP7B9ASCHBvc2l0aW9uAwQSDmNvcmVGZWVQZXJCeXRlFgUSBHR5cGUSB2ludGVnZXISC2Rlc2NyaXB0aW9uElBUaGlzIGlzIHRoZSBmZWUgdGhhdCB5b3UgYXJlIHdpbGxpbmcgdG8gc3BlbmQgZm9yIHRoaXMgdHJhbnNhY3Rpb24gaW4gRHVmZnMvQnl0ZRIHbWluaW11bQMCEgdtYXhpbXVtA/0AAAAB/////hIIcG9zaXRpb24DBhIHcG9vbGluZxYEEgR0eXBlEgdpbnRlZ2VyEgtkZXNjcmlwdGlvbhJOVGhpcyBpbmRpY2F0ZWQgdGhlIGxldmVsIGF0IHdoaWNoIFBsYXRmb3JtIHNob3VsZCB0cnkgdG8gcG9vbCB0aGlzIHRyYW5zYWN0aW9uEgRlbnVtFQMDAAMCAwQSCHBvc2l0aW9uAwgSDG91dHB1dFNjcmlwdBYFEgR0eXBlEgVhcnJheRIJYnl0ZUFycmF5EwESCG1pbkl0ZW1zAy4SCG1heEl0ZW1zAzISCHBvc2l0aW9uAwoSBnN0YXR1cxYEEgR0eXBlEgdpbnRlZ2VyEgRlbnVtFQUDAAMCAwQDBgMIEgtkZXNjcmlwdGlvbhJDMCAtIFBlbmRpbmcsIDEgLSBTaWduZWQsIDIgLSBCcm9hZGNhc3RlZCwgMyAtIENvbXBsZXRlLCA0IC0gRXhwaXJlZBIIcG9zaXRpb24DDBIUYWRkaXRpb25hbFByb3BlcnRpZXMTABIIcmVxdWlyZWQVBxIKJGNyZWF0ZWRBdBIKJHVwZGF0ZWRBdBIGYW1vdW50Eg5jb3JlRmVlUGVyQnl0ZRIHcG9vbGluZxIMb3V0cHV0U2NyaXB0EgZzdGF0dXMAAAAAAAAAAQAAAAECZW4AAQV0b2tlbgZ0b2tlbnMBAAAAAQEBAQAAAQEBAQEBAAAAAAABAQEAAAAAAAEBAQAAAAAAAQEBAQAAAAEBAQAAAAEBAQAAAAAAAQEBAAAAAQEBAAAAAQEBAAAAAQEBAAAAAQEBAAAAAQEBAAAAAQEBAAABBG5vdGUAABIAAkEgb0tBVP6C6SuQ546sZq7bRYDt4+gShWY4ajVH4eKUwbYWblZRoVKYmQbfdoqy5wUIlOeBPMM43jYQ/BdmvOeiEQ==',
+          type: 0,
+          gas_used: 1111,
+          owner: identity.identifier
+        })
+
+        const token = await fixtures.token(knex, {
+          position: 29,
+          owner: identity.identifier,
+          data_contract_id: dataContract.id,
+          decimals: i,
+          base_supply: (i + 1) * 1000,
+          state_transition_hash: stateTransition?.hash
+        })
+
+        const tokenTransitions = []
+
+        for (let t = 0; t < (i + 1) ** 2; t++) {
+          tokenTransition = await fixtures.tokeTransition(knex, {
+            token_identifier: token.identifier,
+            owner: identity.identifier,
+            action: 8,
+            state_transition_hash: stateTransition?.hash,
+            token_contract_position: token.position,
+            data_contract_id: dataContract.id
+          })
+
+          tokenTransitions.push(tokenTransition)
+        }
+
+        tokens.push({ token, stateTransition, tokenTransitions })
+      }
+    })
+
+    it('Should allow to get default rating', async () => {
+      const { body } = await client.get('/tokens/rating')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 30)
+      assert.equal(body.resultSet.length, 10)
+
+      const expected = tokens
+        .map(({ token, tokenTransitions }) => ({
+          tokenIdentifier: token.identifier,
+          transitionCount: tokenTransitions.length
+        }))
+        .slice(0, 10)
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get default rating with custom limit ', async () => {
+      const { body } = await client.get('/tokens/rating?limit=15')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 15)
+      assert.equal(body.pagination.total, 30)
+      assert.equal(body.resultSet.length, 15)
+
+      const expected = tokens
+        .map(({ token, tokenTransitions }) => ({
+          tokenIdentifier: token.identifier,
+          transitionCount: tokenTransitions.length
+        }))
+        .slice(0, 15)
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get default rating with custom limit and page size', async () => {
+      const { body } = await client.get('/tokens/rating?limit=7&page=3')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 7)
+      assert.equal(body.pagination.total, 30)
+      assert.equal(body.resultSet.length, 7)
+
+      const expected = tokens
+        .map(({ token, tokenTransitions }) => ({
+          tokenIdentifier: token.identifier,
+          transitionCount: tokenTransitions.length
+        }))
+        .slice(14, 21)
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get default rating in order desc with custom limit and page size', async () => {
+      const { body } = await client.get('/tokens/rating?limit=7&page=3&order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 7)
+      assert.equal(body.pagination.total, 30)
+      assert.equal(body.resultSet.length, 7)
+
+      const expected = tokens
+        .sort((a, b) => b.tokenTransitions.length - a.tokenTransitions.length)
+        .map(({ token, tokenTransitions }) => ({
+          tokenIdentifier: token.identifier,
+          transitionCount: tokenTransitions.length
+        }))
+        .slice(14, 21)
+
+      assert.deepEqual(body.resultSet, expected)
     })
   })
 })

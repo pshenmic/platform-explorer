@@ -114,4 +114,30 @@ module.exports = class TokensDAO {
 
     return new PaginatedResultSet(rows.map(TokenTransition.fromRow), page, limit, order)
   }
+
+  getTokensTrends = async (page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const subquery = this.knex('token_transitions')
+      .select('token_identifier')
+      .select(this.knex.raw('count(token_identifier) as transitions_count'))
+      .groupBy('token_identifier')
+      .orderBy('transitions_count', order)
+      .as('subquery')
+
+    const rows = await this.knex(subquery)
+      .select('token_identifier', 'transitions_count')
+      .select(this.knex.raw('count(*) OVER() as total_count'))
+      .limit(limit)
+      .offset(fromRank)
+
+    const [row] = rows
+
+    const resultSet = rows.map(row => ({
+      tokenIdentifier: row.token_identifier ?? null,
+      transitionCount: Number(row.transitions_count ?? null)
+    }))
+
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
+  }
 }
