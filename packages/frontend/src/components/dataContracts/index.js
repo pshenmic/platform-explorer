@@ -1,4 +1,5 @@
 import DataContractsList from './DataContractsList'
+import GroupsList from './groupsList/GroupsList'
 import { DataContractCards } from './Cards'
 import InternalConfigCard from './InternalConfigCard'
 import DataContractTotalCard from './DataContractTotalCard'
@@ -9,5 +10,6 @@ export {
   DataContractCards,
   InternalConfigCard,
   DataContractTotalCard,
-  DataContractDigestCard
+  DataContractDigestCard,
+  GroupsList
 }

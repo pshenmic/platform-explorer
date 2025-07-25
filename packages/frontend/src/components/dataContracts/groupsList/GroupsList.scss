@@ -1,0 +1,89 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as dc;
+@import '../../../styles/variables.scss';
+
+.GroupsList {
+  @include mixins.List;
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include dc.Columns();
+  }
+
+  &__ColumnTitle {
+    @include dc.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  &__Group {
+    margin-bottom: 1rem;
+    border: 1px solid var(--chakra-colors-gray-750);
+    border-radius: $border-radius-def;
+    background: rgba(var(--chakra-colors-gray-800-rgb), 0.5);
+    overflow: hidden;
+  }
+
+  &__GroupHeader {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--chakra-colors-gray-800);
+    border-bottom: 1px solid transparent;
+    transition: $transition-time-def;
+  }
+
+  &__Group--Expanded & {
+    &__GroupHeader {
+      border-bottom: 1px solid var(--chakra-colors-gray-700);
+    }
+  }
+
+  &__GroupTitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--chakra-colors-gray-100);
+    font-family: $font-heading;
+  }
+
+  &__GroupHeaderColumn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    &--Button {
+      justify-content: flex-end;
+    }
+  }
+
+  &__RequiredPower {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-400);
+  }
+
+  &__ToggleButton {
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+
+    svg {
+      transition: transform 0.2s;
+    }
+  }
+
+  &__MembersContainer {
+    width: 100%;
+  }
+
+  &__MembersList {
+    padding: 0.5rem 1rem 1rem 1rem;
+  }
+}
