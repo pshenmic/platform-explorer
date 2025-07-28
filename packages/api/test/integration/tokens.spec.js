@@ -30,7 +30,14 @@ describe('Tokens', () => {
           baseSupply: 1000n,
           maxSupply: 1010n,
           conventions: {
-            decimals: 1000
+            decimals: 1000,
+            localizations: {
+              en: {
+                pluralForm: 'tests',
+                singularForm: 'test',
+                shouldCapitalize: true
+              }
+            }
           },
           manualMintingRules: {
             authorizedToMakeChange: {
@@ -313,11 +320,17 @@ describe('Tokens', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
         identifier: token.token.identifier,
         position: 29,
         timestamp: block.timestamp.toISOString(),
         description: null,
-        localizations: null,
         baseSupply: '1000',
         maxSupply: '1010',
         totalSupply: '1000',
@@ -350,11 +363,17 @@ describe('Tokens', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
         identifier: token.token.identifier,
         position: 29,
         timestamp: block.timestamp.toISOString(),
         description: null,
-        localizations: null,
         baseSupply: '1000',
         maxSupply: '1010',
         totalSupply: '1000',
@@ -575,6 +594,13 @@ describe('Tokens', () => {
 
       const expected = tokens
         .map(({ token, tokenTransitions }) => ({
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
           tokenIdentifier: token.identifier,
           transitionCount: tokenTransitions.length
         }))
@@ -595,6 +621,13 @@ describe('Tokens', () => {
 
       const expected = tokens
         .map(({ token, tokenTransitions }) => ({
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
           tokenIdentifier: token.identifier,
           transitionCount: tokenTransitions.length
         }))
@@ -615,6 +648,13 @@ describe('Tokens', () => {
 
       const expected = tokens
         .map(({ token, tokenTransitions }) => ({
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
           tokenIdentifier: token.identifier,
           transitionCount: tokenTransitions.length
         }))
@@ -636,6 +676,13 @@ describe('Tokens', () => {
       const expected = tokens
         .sort((a, b) => b.tokenTransitions.length - a.tokenTransitions.length)
         .map(({ token, tokenTransitions }) => ({
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
           tokenIdentifier: token.identifier,
           transitionCount: tokenTransitions.length
         }))

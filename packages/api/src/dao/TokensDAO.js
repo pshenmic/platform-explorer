@@ -124,7 +124,6 @@ module.exports = class TokensDAO {
       .select(this.knex.raw('count(token_identifier) as transitions_count'))
       .whereBetween('timestamp', [startDate.toISOString(), endDate.toISOString()])
       .groupBy('token_identifier')
-      .orderBy('transitions_count', order)
       .leftJoin('state_transitions', 'state_transitions.hash', 'token_transitions.state_transition_hash')
       .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
       .as('subquery')
@@ -134,6 +133,7 @@ module.exports = class TokensDAO {
       .select(this.knex.raw('count(*) OVER() as total_count'))
       .limit(limit)
       .offset(fromRank)
+      .orderBy('transitions_count', order)
       .leftJoin('tokens', 'tokens.identifier', 'token_identifier')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
