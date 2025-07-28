@@ -85,6 +85,7 @@ Reference:
 * [Token By Identifier](#token-by-identifier)
 * [Token Transitions](#token-transitions)
 * [Tokens Rating](#tokens-rating)
+* [Tokens By Identity](#tokens-by-identity)
 * [Broadcast Transaction](#broadcast-transaction)
 
 ### Status
