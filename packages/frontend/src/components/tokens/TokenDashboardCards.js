@@ -31,11 +31,11 @@ function TokenDashboardCards ({ items, error, loading, className }) {
   }
 
   return (
-    <div className={`TokenDashboardCards ${loading ? 'TokenDashboardCards--Loading' : ''} ${className || ''}`}>
+    <div className={`TokenDashboardCards ${loading ? 'TokenDashboardCards--Loading' : ''} ${columnLayout.length === 1 ? 'TokenDashboardCards--SingleColumn' : ''} ${className || ''}`}>
       {!error
         ? !loading && (!items || items.length === 0)
             ? <NotActive>No tokens available</NotActive>
-            : <DashboardCards cards={displayCards} columnLayout={columnLayout}/>
+            : <DashboardCards cards={displayCards} columnLayout={columnLayout} sliderMode={columnLayout.length === 1 ? 'never' : 'responsive'}/>
         : <ErrorMessageBlock h={250}/>
       }
     </div>
