@@ -93,6 +93,16 @@ const getTokens = (page = 1, limit = 30, order = 'asc', filters = {}) => {
   return call(`tokens?${params.toString()}`, 'GET')
 }
 
+const getTokensRating = (page = 1, limit = 10, order = 'asc') => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order
+  })
+
+  return call(`tokens/rating?${params.toString()}`, 'GET')
+}
+
 const getToken = (identifier) => {
   return call(`token/${identifier}`, 'GET')
 }
@@ -272,6 +282,7 @@ export {
   getTokens,
   getToken,
   getTokenTransitions,
+  getTokensRating,
   search,
   decodeTx,
   getDocumentsByDataContract,
