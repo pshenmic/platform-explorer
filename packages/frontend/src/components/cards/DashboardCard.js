@@ -25,7 +25,9 @@ const DashboardCard = ({ card, className: extraClass }) => {
     >
       <div className={`DashboardCard__ContentWrapper ${(icon && IconComponent) ? 'DashboardCard__ContentWrapper--Icon' : ''}`}>
         <div className={'DashboardCard__Content'}>
-          <div className={'DashboardCard__Title'}>{title}</div>
+          {title &&
+            <div className={'DashboardCard__Title'}>{title}</div>
+          }
 
           <div className={'DashboardCard__Value'}>
             {!error ? value : 'N/A'}
