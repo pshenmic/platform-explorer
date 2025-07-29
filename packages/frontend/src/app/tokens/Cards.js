@@ -27,7 +27,7 @@ export default function Cards () {
   useEffect(() => fetchData(), [])
 
   return (
-    <Flex className={styles.Container} direction={'column'} w={'100%'}>
+    <Flex className={styles.Container} direction={'column'} w={'100%'} gap={'1rem'}>
       <div className={styles.Title}>Trending Tokens of the week:</div>
       <TokenDashboardCards
         items={tokens?.data?.resultSet}
