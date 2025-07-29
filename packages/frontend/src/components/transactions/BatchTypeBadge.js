@@ -8,7 +8,6 @@ const BatchTypeInfo = {
   ...DocumentActionInfo
 }
 
-// Мапинг серверных значений к ключам енумов
 const batchTypeMapping = {
   // Document actions
   DOCUMENT_CREATE: 'CREATE',
