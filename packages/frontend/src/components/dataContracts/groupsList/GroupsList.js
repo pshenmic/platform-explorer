@@ -109,7 +109,7 @@ function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount 
               )
             })}
             {groupsArray?.length === 0 &&
-              <EmptyListMessage>There are no groups available.</EmptyListMessage>
+              <EmptyListMessage>No groups created yet</EmptyListMessage>
             }
             {groupsArray === undefined && <ErrorMessageBlock/>}
           </div>
