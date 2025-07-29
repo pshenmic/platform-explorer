@@ -13,7 +13,13 @@ export default function Cards () {
   const fetchData = () => {
     setTokens({ data: {}, loading: true, error: false })
 
-    Api.getTokensRating(1, 6, 'desc')
+    const endDate = new Date()
+    const startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000) // 7 days
+
+    Api.getTokensRating(1, 6, 'desc', {
+      timestamp_start: startDate.toISOString(),
+      timestamp_end: endDate.toISOString()
+    })
       .then(res => fetchHandlerSuccess(setTokens, res))
       .catch(err => fetchHandlerError(setTokens, err))
   }
