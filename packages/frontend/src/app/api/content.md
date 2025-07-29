@@ -2511,21 +2511,47 @@ Return list of tokens identifier with order by transactions count
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
+* `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater then `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
 ```
-GET tokens/rating?order=desc&limit=10&page=1
+GET tokens/rating?order=desc&limit=10&page=1&timestamp_start=2025-06-20T17:10:28.585Z&timestamp_end=2025-07-28T20:37:28.585Z
 {
     "resultSet": [
         {
             "tokenIdentifier": "8RsBCPSDUwWMnvLTDooh7ZcfZmnRb5tecsagsrdAFrrd",
-            "transitionCount": 15
-        },
-        {
-            "tokenIdentifier": "4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL",
-            "transitionCount": 13
-        },
-        {
-            "tokenIdentifier": "5F4Q7PNmdxBP7ULbfUwKP6gNxdgZKygQaQ6m79LPQBd4",
-            "transitionCount": 5
+            "transitionCount": 15,
+            {
+                "localizations": {
+                    "en": {
+                        "pluralForm": "A1-keyword",
+                        "singularForm": "A1-keyword",
+                        "shouldCapitalize": true
+                    }
+                },
+                "tokenIdentifier": "FWuCZYmNo2qWfLcYsNUnu1LdqBWbzvWBUcGQHRFE2mVt",
+                "transitionCount": 1
+            },
+            {
+                "localizations": {
+                    "en": {
+                        "pluralForm": "A1-test-1",
+                        "singularForm": "A1-test-1",
+                        "shouldCapitalize": true
+                    }
+                },
+                "tokenIdentifier": "Eg49SNkMVgo84vGhj89bEK53X2mURGuVSERzteaT1brr",
+                "transitionCount": 1
+            },
+            {
+                "localizations": {
+                    "en": {
+                        "pluralForm": "aaa",
+                        "singularForm": "aaa",
+                        "shouldCapitalize": true
+                    }
+                },
+                "tokenIdentifier": "8Uv6WJEf7pyw17AtcJpGdURkU3wrmz86RkXxUdNNx575",
+                "transitionCount": 2
+            },
         },
         ...
     ],

@@ -2,6 +2,7 @@ const Token = require('../models/Token')
 const TokenTransition = require('../models/TokenTransition')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
+const Localization = require('../models/Localization')
 
 module.exports = class TokensDAO {
   constructor (knex, dapi) {
@@ -115,28 +116,46 @@ module.exports = class TokensDAO {
     return new PaginatedResultSet(rows.map(TokenTransition.fromRow), page, limit, order)
   }
 
-  getTokensTrends = async (page, limit, order) => {
+  getTokensTrends = async (startDate, endDate, page, limit, order) => {
     const fromRank = (page - 1) * limit
 
     const subquery = this.knex('token_transitions')
       .select('token_identifier')
       .select(this.knex.raw('count(token_identifier) as transitions_count'))
+      .whereBetween('timestamp', [startDate.toISOString(), endDate.toISOString()])
       .groupBy('token_identifier')
-      .orderBy('transitions_count', order)
+      .leftJoin('state_transitions', 'state_transitions.hash', 'token_transitions.state_transition_hash')
+      .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
       .as('subquery')
 
     const rows = await this.knex(subquery)
-      .select('token_identifier', 'transitions_count')
+      .select('token_identifier', 'transitions_count', 'data_contracts.identifier as data_contract_identifier', 'tokens.position')
       .select(this.knex.raw('count(*) OVER() as total_count'))
       .limit(limit)
       .offset(fromRank)
+      .orderBy('transitions_count', order)
+      .leftJoin('tokens', 'tokens.identifier', 'token_identifier')
+      .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
+
+    const resultSet = await Promise.all(rows.map(async (row) => {
+      const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
+
+      const token = dataContract.tokens[row.position]
+
+      const localizations = {}
+
+      for (const locale in token.conventions.localizations) {
+        localizations[locale] = Localization.fromObject(token.conventions.localizations[locale])
+      }
+
+      return {
+        localizations,
+        tokenIdentifier: row.token_identifier ?? null,
+        transitionCount: Number(row.transitions_count ?? null)
+      }
+    }))
 
     const [row] = rows
-
-    const resultSet = rows.map(row => ({
-      tokenIdentifier: row.token_identifier ?? null,
-      transitionCount: Number(row.transitions_count ?? null)
-    }))
 
     return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
   }

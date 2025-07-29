@@ -32,21 +32,47 @@ class TokensController {
   }
 
   getTokenTransitions = async (request, response) => {
+    const { identifier } = request.params
     const {
-      identifier
-    } = request.params
+      page = 1,
+      limit = 10,
+      order = 'asc'
+    } = request.query
 
-    const { page = 1, limit = 10, order = 'asc' } = request.query
-
-    const transitions = await this.tokensDAO.getTokenTransitions(identifier, Number(page ?? 0), Number(limit ?? 0), order)
+    const transitions = await this.tokensDAO.getTokenTransitions(
+      identifier,
+      Number(page ?? 0),
+      Number(limit ?? 0),
+      order
+    )
 
     response.send(transitions)
   }
 
   getTokensTrends = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      timestamp_start: start = new Date().getTime() - 2592000000,
+      timestamp_end: end = new Date().getTime()
+    } = request.query
 
-    const rating = await this.tokensDAO.getTokensTrends(Number(page ?? 0), Number(limit ?? 0), order)
+    if (!start || !end) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const rating = await this.tokensDAO.getTokensTrends(
+      new Date(start),
+      new Date(end),
+      Number(page ?? 0),
+      Number(limit ?? 0),
+      order
+    )
 
     response.send(rating)
   }
