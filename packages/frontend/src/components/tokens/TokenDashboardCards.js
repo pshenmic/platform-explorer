@@ -16,12 +16,26 @@ function TokenDashboardCards ({ items, error, loading, className }) {
     link: `/token/${token?.identifier}`
   })) || Array.from({ length: 6 }, () => ({ loading: true }))
 
+  let displayCards = cards
+  let columnLayout = [3, 3]
+
+  if (!loading && !error && items && items.length > 0 && items.length < 6) {
+    const itemsCount = items.length
+
+    if (itemsCount >= 4) {
+      columnLayout = [2, 2]
+      displayCards = cards.slice(0, 4)
+    } else {
+      columnLayout = [itemsCount]
+    }
+  }
+
   return (
     <div className={`TokenDashboardCards ${loading ? 'TokenDashboardCards--Loading' : ''} ${className || ''}`}>
       {!error
         ? !loading && (!items || items.length === 0)
             ? <NotActive>No tokens available</NotActive>
-            : <DashboardCards cards={cards} columnLayout={[3, 3]}/>
+            : <DashboardCards cards={displayCards} columnLayout={columnLayout}/>
         : <ErrorMessageBlock h={250}/>
       }
     </div>
