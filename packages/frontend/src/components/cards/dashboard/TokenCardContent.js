@@ -7,7 +7,6 @@ import './TokenCardContent.scss'
 
 export function TokenCardContent ({ token = {}, nullMessage = 'No data' }) {
   const {
-    identifier,
     tokenIdentifier,
     localizations,
     transitionCount
@@ -20,7 +19,7 @@ export function TokenCardContent ({ token = {}, nullMessage = 'No data' }) {
   const txsCount = currencyRound(transitionCount)
 
   return (
-    <Link className={'TokenCardContent'} href={`/token/${identifier}`}>
+    <Link className={'TokenCardContent'} href={`/token/${tokenIdentifier}`}>
       <Flex gap={'0.75rem'} alignItems={'center'} justifyContent={'space-between'}>
         <div className={'TokenCardContent__NameContainer'}>
           <ImageGenerator
