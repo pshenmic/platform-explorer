@@ -2,6 +2,7 @@ const Token = require('../models/Token')
 const TokenTransition = require('../models/TokenTransition')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
+const Localization = require('../models/Localization')
 
 module.exports = class TokensDAO {
   constructor (knex, dapi) {
@@ -113,5 +114,127 @@ module.exports = class TokensDAO {
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
 
     return new PaginatedResultSet(rows.map(TokenTransition.fromRow), page, limit, order)
+  }
+
+  getTokensTrends = async (startDate, endDate, page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const subquery = this.knex('token_transitions')
+      .select('token_identifier')
+      .select(this.knex.raw('count(token_identifier) as transitions_count'))
+      .whereBetween('timestamp', [startDate.toISOString(), endDate.toISOString()])
+      .groupBy('token_identifier')
+      .leftJoin('state_transitions', 'state_transitions.hash', 'token_transitions.state_transition_hash')
+      .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
+      .as('subquery')
+
+    const rows = await this.knex(subquery)
+      .select('token_identifier', 'transitions_count', 'data_contracts.identifier as data_contract_identifier', 'tokens.position')
+      .select(this.knex.raw('count(*) OVER() as total_count'))
+      .limit(limit)
+      .offset(fromRank)
+      .orderBy('transitions_count', order)
+      .leftJoin('tokens', 'tokens.identifier', 'token_identifier')
+      .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
+
+    const resultSet = await Promise.all(rows.map(async (row) => {
+      const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
+
+      const token = dataContract.tokens[row.position]
+
+      const localizations = {}
+
+      for (const locale in token.conventions.localizations) {
+        localizations[locale] = Localization.fromObject(token.conventions.localizations[locale])
+      }
+
+      return {
+        localizations,
+        tokenIdentifier: row.token_identifier ?? null,
+        transitionCount: Number(row.transitions_count ?? null)
+      }
+    }))
+
+    const [row] = rows
+
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
+  }
+
+  getTokensByIdentity = async (identifier, page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const subquery = this.knex('tokens')
+      .select('tokens.identifier as token_identifier', 'position', 'data_contract_id', 'id')
+      .select(this.knex.raw('count(*) OVER() as total_count'))
+      .where('tokens.owner', identifier)
+      .orderBy('id', order)
+      .limit(limit)
+      .offset(fromRank)
+      .as('subquery')
+
+    const rows = await this.knex(subquery)
+      .select('data_contracts.identifier as data_contract_identifier', 'total_count', 'subquery.id')
+      .select(this.knex.raw(`
+        array_agg(
+          json_build_object(
+            'token_identifier', token_identifier, 
+            'position', position
+          )
+        ) as tokens
+      `))
+      .groupBy('data_contracts.identifier', 'total_count', 'subquery.id')
+      .orderBy('id', order)
+      .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
+
+    const dataContractsTokens = await Promise.all(rows.map(async (row) => {
+      const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
+
+      if (!dataContract) {
+        return undefined
+      }
+
+      const tokensPositions = Object.keys(dataContract.tokens)
+
+      return Promise.all(tokensPositions.map(async (tokenPosition) => {
+        const tokenIdentifier = row.tokens.find(token => token.position === Number(tokenPosition))?.token_identifier
+
+        if (!tokenIdentifier) {
+          return undefined
+        }
+
+        const tokenConfig = dataContract.tokens[tokenPosition]
+
+        const tokenTotalSupply = await this.dapi.getTokenTotalSupply(tokenIdentifier)
+
+        return Token.fromObject({
+          identifier: tokenIdentifier,
+          dataContractIdentifier: row.data_contract_identifier,
+          owner: identifier,
+          position: Number(tokenPosition),
+          totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
+          description: tokenConfig?.description,
+          localizations: tokenConfig?.conventions?.localizations,
+          decimals: tokenConfig?.conventions?.decimals,
+          baseSupply: tokenConfig?.baseSupply.toString(),
+          maxSupply: tokenConfig?.maxSupply?.toString(),
+          mintable: tokenConfig?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          burnable: tokenConfig?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          freezable: tokenConfig?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          changeMaxSupply: tokenConfig?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          distributionType: tokenConfig?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
+          mainGroup: tokenConfig?.mainControlGroup
+        })
+      }))
+    }))
+
+    const tokens = dataContractsTokens
+      .reduce((acc, contract) => contract ? [...acc, ...contract.filter((token) => token !== undefined)] : acc, [])
+
+    const [row] = rows
+
+    return new PaginatedResultSet(tokens, page, limit, Number(row?.total_count ?? 0))
   }
 }

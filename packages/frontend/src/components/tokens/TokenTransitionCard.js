@@ -2,6 +2,7 @@ import { ValueCard } from '../cards'
 import { BigNumber, CreditsBlock, Identifier, InfoLine } from '../data'
 import { TokenTransitionEnum } from '../../enums/tokenTransition'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
+import TokenEmergencyActionBadge from './TokenEmergencyActionBadge'
 import { Code, Badge } from '@chakra-ui/react'
 import { colors } from '../../styles/colors'
 import './TokenTransitionCard.scss'
@@ -78,11 +79,11 @@ const fieldsOfTypes = {
   ],
   EMERGENCY_ACTION: [
     'Action',
+    'EmergencyAction',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce'
-    // 'EmergencyDetails'
   ],
   CONFIG_UPDATE: [
     'Action',
@@ -117,12 +118,6 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
   const transitionType = TokenTransitionEnum[transition?.tokenTransitionType]
   const fields = fieldsOfTypes[transitionType] || []
 
-  console.log('TokenTransitionEnum', TokenTransitionEnum)
-  console.log('transition', transition)
-  console.log('transition?.tokenTransitionType', transition?.tokenTransitionType)
-  console.log('TokenTransitionCard transitionType', transitionType)
-  console.log('TokenTransitionCard fields', fields)
-
   return (
     <div className={`InfoBlock InfoBlock--Gradient TokenTransitionCard ${className || ''}`}>
        {/* Action Badge */}
@@ -138,6 +133,16 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
           error={transition?.tokenTransitionType === undefined}
         />
        )}
+
+      {/* Action Badge */}
+      {fields.includes('EmergencyAction') && (
+        <InfoLine
+          className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--EmergencyAction'}
+          title={'Emergency Action'}
+          value={<TokenEmergencyActionBadge type={transition?.emergencyAction}/>}
+          error={transition?.emergencyAction === undefined}
+        />
+      )}
 
       {/* Amount */}
       {fields.includes('Amount') && (
