@@ -546,10 +546,9 @@ describe('Tokens', () => {
         let tokenTransition
 
         block = await fixtures.block(knex, {
-          timestamp: new Date(new Date().getTime()-3600000*(31-i)),
-          height: i+2
+          timestamp: new Date(new Date().getTime() - 3600000 * (31 - i)),
+          height: i + 2
         })
-
 
         const stateTransition = await fixtures.transaction(knex, {
           block_hash: block.hash,
@@ -698,7 +697,7 @@ describe('Tokens', () => {
     })
 
     it('Should allow to get default rating in order desc with custom limit and page size and time', async () => {
-      const start = new Date(new Date().getTime()-3600000*20)
+      const start = new Date(new Date().getTime() - 3600000 * 20)
       const end = new Date()
 
       const { body } = await client.get(`/tokens/rating?limit=4&page=2&order=desc&timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
