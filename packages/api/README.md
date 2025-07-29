@@ -85,6 +85,7 @@ Reference:
 * [Token By Identifier](#token-by-identifier)
 * [Token Transitions](#token-transitions)
 * [Tokens Rating](#tokens-rating)
+* [Tokens By Identity](#tokens-by-identity)
 * [Broadcast Transaction](#broadcast-transaction)
 
 ### Status
@@ -2592,6 +2593,64 @@ GET tokens/rating?order=desc&limit=10&page=1&timestamp_start=2025-06-20T17:10:28
         "page": 1,
         "limit": 10,
         "total": 11
+    }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Tokens By Identity
+Return list of tokens which created by identity
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+```
+GET identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1&order=asc
+{
+    "resultSet": [
+        {
+            "identifier": "Hqyu8WcRwXCTwbNxdga4CN5gsVEGc67wng4TFzceyLUv",
+            "position": 0,
+            "timestamp": null,
+            "description": "The flurgon contract on testnet",
+            "localizations": {
+                "en": {
+                    "pluralForm": "Flurgons",
+                    "singularForm": "Flurgon",
+                    "shouldCapitalize": true
+                }
+            },
+            "baseSupply": "10000",
+            "totalSupply": "10000",
+            "maxSupply": null,
+            "owner": "5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk",
+            "mintable": true,
+            "burnable": true,
+            "freezable": true,
+            "unfreezable": true,
+            "destroyable": true,
+            "allowedEmergencyActions": true,
+            "dataContractIdentifier": "ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A",
+            "changeMaxSupply": true,
+            "distributionType": "TimeBasedDistribution",
+            "totalGasUsed": null,
+            "mainGroup": null,
+            "totalTransitionsCount": null,
+            "totalFreezeTransitionsCount": null,
+            "totalBurnTransitionsCount": null,
+            "decimals": 0
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 3
     }
 }
 ```

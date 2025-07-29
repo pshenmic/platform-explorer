@@ -76,6 +76,15 @@ class TokensController {
 
     response.send(rating)
   }
+
+  getTokensByIdentity = async (request, response) => {
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const { identifier } = request.params
+
+    const tokens = await this.tokensDAO.getTokensByIdentity(identifier, Number(page ?? 0), Number(limit ?? 0), order)
+
+    response.send(tokens)
+  }
 }
 
 module.exports = TokensController
