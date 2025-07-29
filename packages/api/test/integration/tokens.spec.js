@@ -1,10 +1,10 @@
-const {describe, it, before, after, mock} = require('node:test')
+const { describe, it, before, after, mock } = require('node:test')
 const DAPI = require('../../src/DAPI')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
-const {getKnex} = require('../../src/utils')
+const { getKnex } = require('../../src/utils')
 
 describe('Tokens', () => {
   let app
@@ -94,7 +94,7 @@ describe('Tokens', () => {
 
     block = await fixtures.block(knex)
 
-    identity = await fixtures.identity(knex, {block_hash: block.hash, block_height: block.height})
+    identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
     dataContract = await fixtures.dataContract(knex, {
       owner: identity.identifier
@@ -132,7 +132,7 @@ describe('Tokens', () => {
         })
       }
 
-      tokens.push({token, stateTransition, tokenTransition})
+      tokens.push({ token, stateTransition, tokenTransition })
     }
   })
 
@@ -143,7 +143,7 @@ describe('Tokens', () => {
 
   describe('getTokens()', () => {
     it('should return default tokens set', async () => {
-      const {body} = await client.get('/tokens')
+      const { body } = await client.get('/tokens')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -154,7 +154,7 @@ describe('Tokens', () => {
       const expectedTokens = tokens
         .sort((a, b) => a.id - b.id)
         .slice(0, 10)
-        .map(({token}) => ({
+        .map(({ token }) => ({
           identifier: token.identifier,
           localizations: token.localizations ?? null,
           baseSupply: token.base_supply.toString(),
@@ -185,7 +185,7 @@ describe('Tokens', () => {
     })
 
     it('should return tokens set with order desc', async () => {
-      const {body} = await client.get('/tokens?order=desc')
+      const { body } = await client.get('/tokens?order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -196,7 +196,7 @@ describe('Tokens', () => {
       const expectedTokens = tokens
         .sort((a, b) => b.token.id - a.token.id)
         .slice(0, 10)
-        .map(({token}) => ({
+        .map(({ token }) => ({
           identifier: token.identifier,
           localizations: token.localizations ?? null,
           baseSupply: token.base_supply.toString(),
@@ -227,7 +227,7 @@ describe('Tokens', () => {
     })
 
     it('should return tokens set with order desc and custom limit', async () => {
-      const {body} = await client.get('/tokens?order=desc&limit=3')
+      const { body } = await client.get('/tokens?order=desc&limit=3')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -238,7 +238,7 @@ describe('Tokens', () => {
       const expectedTokens = tokens
         .sort((a, b) => b.token.id - a.token.id)
         .slice(0, 3)
-        .map(({token}) => ({
+        .map(({ token }) => ({
           identifier: token.identifier,
           localizations: token.localizations ?? null,
           baseSupply: token.base_supply.toString(),
@@ -269,7 +269,7 @@ describe('Tokens', () => {
     })
 
     it('should return tokens set with order desc and custom limit and pagination', async () => {
-      const {body} = await client.get('/tokens?order=desc&limit=11&page=2')
+      const { body } = await client.get('/tokens?order=desc&limit=11&page=2')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -280,7 +280,7 @@ describe('Tokens', () => {
       const expectedTokens = tokens
         .sort((a, b) => b.token.id - a.token.id)
         .slice(11, 22)
-        .map(({token}) => ({
+        .map(({ token }) => ({
           identifier: token.identifier,
           localizations: token.localizations ?? null,
           baseSupply: token.base_supply.toString(),
@@ -315,7 +315,7 @@ describe('Tokens', () => {
     it('should return token by id', async () => {
       const token = tokens[29]
 
-      const {body} = await client.get(`/token/${token.token.identifier}`)
+      const { body } = await client.get(`/token/${token.token.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -358,7 +358,7 @@ describe('Tokens', () => {
     it('should return token by id with transition', async () => {
       const [token] = tokens
 
-      const {body} = await client.get(`/token/${token.token.identifier}`)
+      const { body } = await client.get(`/token/${token.token.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -436,19 +436,19 @@ describe('Tokens', () => {
           data_contract_id: dataContract.id
         })
 
-        tokenTransitions.push({tokenTransition, stateTransition})
+        tokenTransitions.push({ tokenTransition, stateTransition })
       }
     })
 
     it('should allow to get default token transitions list', async () => {
-      const {body} = await client.get(`/token/${token.identifier}/transitions`)
+      const { body } = await client.get(`/token/${token.identifier}/transitions`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedTransitions =
         tokenTransitions
           .slice(0, 10)
-          .map(({tokenTransition}) => ({
+          .map(({ tokenTransition }) => ({
             amount: tokenTransition.amount ?? 0,
             recipient: tokenTransition.recipient,
             owner: tokenTransition.owner,
@@ -462,7 +462,7 @@ describe('Tokens', () => {
     })
 
     it('should allow to get default token transitions list with order desc', async () => {
-      const {body} = await client.get(`/token/${token.identifier}/transitions?order=desc`)
+      const { body } = await client.get(`/token/${token.identifier}/transitions?order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -470,7 +470,7 @@ describe('Tokens', () => {
         tokenTransitions
           .sort((a, b) => b.tokenTransition.id - a.tokenTransition.id)
           .slice(0, 10)
-          .map(({tokenTransition}) => ({
+          .map(({ tokenTransition }) => ({
             amount: tokenTransition.amount ?? 0,
             recipient: tokenTransition.recipient,
             owner: tokenTransition.owner,
@@ -484,7 +484,7 @@ describe('Tokens', () => {
     })
 
     it('should allow to get default token transitions list with order desc and custom limit', async () => {
-      const {body} = await client.get(`/token/${token.identifier}/transitions?order=desc&limit=7`)
+      const { body } = await client.get(`/token/${token.identifier}/transitions?order=desc&limit=7`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -492,7 +492,7 @@ describe('Tokens', () => {
         tokenTransitions
           .sort((a, b) => b.tokenTransition.id - a.tokenTransition.id)
           .slice(0, 7)
-          .map(({tokenTransition}) => ({
+          .map(({ tokenTransition }) => ({
             amount: tokenTransition.amount ?? 0,
             recipient: tokenTransition.recipient,
             owner: tokenTransition.owner,
@@ -506,7 +506,7 @@ describe('Tokens', () => {
     })
 
     it('should allow to get default token transitions list with order desc and custom limit and custom page', async () => {
-      const {body} = await client.get(`/token/${token.identifier}/transitions?order=desc&limit=7&page=2`)
+      const { body } = await client.get(`/token/${token.identifier}/transitions?order=desc&limit=7&page=2`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -514,7 +514,7 @@ describe('Tokens', () => {
         tokenTransitions
           .sort((a, b) => b.tokenTransition.id - a.tokenTransition.id)
           .slice(7, 14)
-          .map(({tokenTransition}) => ({
+          .map(({ tokenTransition }) => ({
             amount: tokenTransition.amount ?? 0,
             recipient: tokenTransition.recipient,
             owner: tokenTransition.owner,
@@ -538,7 +538,7 @@ describe('Tokens', () => {
 
       block = await fixtures.block(knex)
 
-      identity = await fixtures.identity(knex, {block_hash: block.hash, block_height: block.height})
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       for (let i = 0; i < 30; i++) {
         const stateTransition = await fixtures.transaction(knex, {
@@ -563,12 +563,12 @@ describe('Tokens', () => {
           state_transition_hash: stateTransition?.hash
         })
 
-        dataContracts.push({dataContract, token})
+        dataContracts.push({ dataContract, token })
       }
     })
 
     it('should allow to get default list of tokens for identity', async () => {
-      const {body} = await client.get(`/identity/${identity.identifier}/tokens`)
+      const { body } = await client.get(`/identity/${identity.identifier}/tokens`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -579,7 +579,7 @@ describe('Tokens', () => {
       const expectedTokens = dataContracts
         .sort((a, b) => a.token.id - b.token.id)
         .slice(0, 10)
-        .map(({token, dataContract}) => ({
+        .map(({ token, dataContract }) => ({
           identifier: token.identifier,
           position: 29,
           description: null,
@@ -616,7 +616,7 @@ describe('Tokens', () => {
     })
 
     it('should allow to get list of tokens for identity with custom limit', async () => {
-      const {body} = await client.get(`/identity/${identity.identifier}/tokens?limit=5`)
+      const { body } = await client.get(`/identity/${identity.identifier}/tokens?limit=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -627,7 +627,7 @@ describe('Tokens', () => {
       const expectedTokens = dataContracts
         .sort((a, b) => a.token.id - b.token.id)
         .slice(0, 5)
-        .map(({token, dataContract}) => ({
+        .map(({ token, dataContract }) => ({
           identifier: token.identifier,
           position: 29,
           description: null,
@@ -664,7 +664,7 @@ describe('Tokens', () => {
     })
 
     it('should allow to get list of tokens for identity with custom limit and order desc', async () => {
-      const {body} = await client.get(`/identity/${identity.identifier}/tokens?limit=5&order=desc`)
+      const { body } = await client.get(`/identity/${identity.identifier}/tokens?limit=5&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -675,7 +675,7 @@ describe('Tokens', () => {
       const expectedTokens = dataContracts
         .sort((a, b) => b.token.id - a.token.id)
         .slice(0, 5)
-        .map(({token, dataContract}) => ({
+        .map(({ token, dataContract }) => ({
           identifier: token.identifier,
           position: 29,
           description: null,
@@ -712,7 +712,7 @@ describe('Tokens', () => {
     })
 
     it('should allow to get list of tokens for identity with custom limit, page and order desc', async () => {
-      const {body} = await client.get(`/identity/${identity.identifier}/tokens?limit=7&order=desc&page=2`)
+      const { body } = await client.get(`/identity/${identity.identifier}/tokens?limit=7&order=desc&page=2`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -723,7 +723,7 @@ describe('Tokens', () => {
       const expectedTokens = dataContracts
         .sort((a, b) => b.token.id - a.token.id)
         .slice(7, 14)
-        .map(({token, dataContract}) => ({
+        .map(({ token, dataContract }) => ({
           identifier: token.identifier,
           position: 29,
           description: null,
@@ -768,7 +768,7 @@ describe('Tokens', () => {
 
       block = await fixtures.block(knex)
 
-      identity = await fixtures.identity(knex, {block_hash: block.hash, block_height: block.height})
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       dataContract = await fixtures.dataContract(knex, {
         owner: identity.identifier
@@ -815,12 +815,12 @@ describe('Tokens', () => {
           tokenTransitions.push(tokenTransition)
         }
 
-        tokens.push({token, stateTransition, tokenTransitions, block})
+        tokens.push({ token, stateTransition, tokenTransitions, block })
       }
     })
 
     it('Should allow to get default rating', async () => {
-      const {body} = await client.get('/tokens/rating')
+      const { body } = await client.get('/tokens/rating')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -830,7 +830,7 @@ describe('Tokens', () => {
       assert.equal(body.resultSet.length, 10)
 
       const expected = tokens
-        .map(({token, tokenTransitions}) => ({
+        .map(({ token, tokenTransitions }) => ({
           localizations: {
             en: {
               pluralForm: 'tests',
@@ -847,7 +847,7 @@ describe('Tokens', () => {
     })
 
     it('Should allow to get default rating with custom limit ', async () => {
-      const {body} = await client.get('/tokens/rating?limit=15')
+      const { body } = await client.get('/tokens/rating?limit=15')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -857,7 +857,7 @@ describe('Tokens', () => {
       assert.equal(body.resultSet.length, 15)
 
       const expected = tokens
-        .map(({token, tokenTransitions}) => ({
+        .map(({ token, tokenTransitions }) => ({
           localizations: {
             en: {
               pluralForm: 'tests',
@@ -874,7 +874,7 @@ describe('Tokens', () => {
     })
 
     it('Should allow to get default rating with custom limit and page size', async () => {
-      const {body} = await client.get('/tokens/rating?limit=7&page=3')
+      const { body } = await client.get('/tokens/rating?limit=7&page=3')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -884,7 +884,7 @@ describe('Tokens', () => {
       assert.equal(body.resultSet.length, 7)
 
       const expected = tokens
-        .map(({token, tokenTransitions}) => ({
+        .map(({ token, tokenTransitions }) => ({
           localizations: {
             en: {
               pluralForm: 'tests',
@@ -901,7 +901,7 @@ describe('Tokens', () => {
     })
 
     it('Should allow to get default rating in order desc with custom limit and page size', async () => {
-      const {body} = await client.get('/tokens/rating?limit=7&page=3&order=desc')
+      const { body } = await client.get('/tokens/rating?limit=7&page=3&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -912,7 +912,7 @@ describe('Tokens', () => {
 
       const expected = tokens
         .sort((a, b) => b.tokenTransitions.length - a.tokenTransitions.length)
-        .map(({token, tokenTransitions}) => ({
+        .map(({ token, tokenTransitions }) => ({
           localizations: {
             en: {
               pluralForm: 'tests',
@@ -932,7 +932,7 @@ describe('Tokens', () => {
       const start = new Date(new Date().getTime() - 3600000 * 20)
       const end = new Date()
 
-      const {body} = await client.get(`/tokens/rating?limit=4&page=2&order=desc&timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
+      const { body } = await client.get(`/tokens/rating?limit=4&page=2&order=desc&timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -943,9 +943,9 @@ describe('Tokens', () => {
 
       const expected = tokens
         .sort((a, b) => b.tokenTransitions.length - a.tokenTransitions.length)
-        .filter(({block}) => block.timestamp.getTime() > start.getTime() && block.timestamp.getTime() < end.getTime())
+        .filter(({ block }) => block.timestamp.getTime() > start.getTime() && block.timestamp.getTime() < end.getTime())
         .slice(4, 8)
-        .map(({token, tokenTransitions}) => ({
+        .map(({ token, tokenTransitions }) => ({
           localizations: {
             en: {
               pluralForm: 'tests',
