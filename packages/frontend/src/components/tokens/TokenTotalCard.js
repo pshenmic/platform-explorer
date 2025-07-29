@@ -112,7 +112,10 @@ function TokenTotalCard ({ token, rate, loading }) {
             <InfoLine
               className={'TokenTotalCard__InfoLine'}
               title={'Main Group'}
-              value={mainGroup}
+              value={dataContractIdentifier
+                ? <ValueCard link={`/dataContract/${dataContractIdentifier}?tab=groups&group=${mainGroup}#tabs`}>{mainGroup}</ValueCard>
+                : mainGroup
+              }
               loading={loading}
               error={token.error || (!loading && mainGroup == null)}
             />
