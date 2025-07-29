@@ -93,11 +93,12 @@ const getTokens = (page = 1, limit = 30, order = 'asc', filters = {}) => {
   return call(`tokens?${params.toString()}`, 'GET')
 }
 
-const getTokensRating = (page = 1, limit = 10, order = 'asc') => {
+const getTokensRating = (page = 1, limit = 10, order = 'asc', filters = {}) => {
   const params = prepareQueryParams({
     page: Math.max(1, parseInt(page)),
     limit: Math.max(1, parseInt(limit)),
-    order
+    order,
+    ...filters
   })
 
   return call(`tokens/rating?${params.toString()}`, 'GET')
