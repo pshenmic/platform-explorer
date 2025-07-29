@@ -583,7 +583,13 @@ describe('Tokens', () => {
           identifier: token.identifier,
           position: 29,
           description: null,
-          localizations: null,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              shouldCapitalize: true,
+              singularForm: 'test'
+            }
+          },
           baseSupply: '1000',
           maxSupply: '1010',
           totalSupply: '1000',
@@ -625,7 +631,13 @@ describe('Tokens', () => {
           identifier: token.identifier,
           position: 29,
           description: null,
-          localizations: null,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              shouldCapitalize: true,
+              singularForm: 'test'
+            }
+          },
           baseSupply: '1000',
           maxSupply: '1010',
           totalSupply: '1000',
@@ -667,7 +679,13 @@ describe('Tokens', () => {
           identifier: token.identifier,
           position: 29,
           description: null,
-          localizations: null,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              shouldCapitalize: true,
+              singularForm: 'test'
+            }
+          },
           baseSupply: '1000',
           maxSupply: '1010',
           totalSupply: '1000',
@@ -709,7 +727,13 @@ describe('Tokens', () => {
           identifier: token.identifier,
           position: 29,
           description: null,
-          localizations: null,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              shouldCapitalize: true,
+              singularForm: 'test'
+            }
+          },
           baseSupply: '1000',
           maxSupply: '1010',
           totalSupply: '1000',
