@@ -12,6 +12,13 @@
     color: #fff;
   }
 
+  &__Name {
+    font-family: $font-heading;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   @media screen and (min-width: 600px) {
     .SliderNavigation {
       display: none;
