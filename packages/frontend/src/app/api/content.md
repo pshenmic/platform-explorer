@@ -821,6 +821,28 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
       "error": null,
       "hash": "5FBEE4EC0030159C5D25D0C3DEC3AB894ED0DC89B07BEAFAF8A1BE1E3EFCCC10"
     },
+    {
+            "type": 1,
+            "action": [
+                {
+                    "documentAction": null,
+                    "tokenAction": 9,
+                    "documentIdentifier": null,
+                    "tokenIdentifier": "8RsBCPSDUwWMnvLTDooh7ZcfZmnRb5tecsagsrdAFrrd",
+                    "recipient": null,
+                    "price": "2000000000",
+                    "amount": "2"
+                }
+            ],
+            "owner": {
+                "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+                "aliases": []
+            },
+            "timestamp": "2025-07-18T13:04:10.823Z",
+            "gasUsed": 115490580,
+            "error": null,
+            "hash": "99B92C060C88425A596DC92A2BE4785EAA4864038BF69785475C44D5A30EC841"
+        }
     ...
   ],
   "pagination": {
@@ -860,6 +882,7 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
   "gasUsed": null,
   "totalGasUsed": 15999780,
   "identityContractNonce": null,
+  "groups": null,
   "owner": {
     "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
     "aliases": [
@@ -1961,7 +1984,7 @@ POST /transaction/decode
       "description": "note"
     }
   },
-  "groups": {},
+  "groups": [],
   "signature": "1f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d",
   "signaturePublicKeyId": 2,
   "raw": "000000e7a63f573069e6f96b251f094423d20cb95a6639e0c32339d30f1d4009807b7100000000000101000001629ce9f3eb4e43c8fa936e16ec55e3aa8ef36663197326cc2032f0ed57cb4f410001066c61626c6572160412047479706512066f626a656374120a70726f706572746965731602120a636f6e7472616374496416041204747970651206737472696e6712096d696e4c656e677468035612096d61784c656e67746803581208706f736974696f6e0300120973686f72744e616d6516041204747970651206737472696e6712096d61784c656e677468034012096d696e4c656e67746803061208706f736974696f6e0302120872657175697265641502120973686f72744e616d65120a636f6e7472616374496412146164646974696f6e616c50726f7065727469657313000a0002411f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d"
@@ -2160,46 +2183,46 @@ IDENTITY_CREATE with instantLock
 ```
 ```json
 {
-    "type": 4,
-    "typeString": "DATA_CONTRACT_UPDATE",
-    "internalConfig": {
-        "canBeDeleted": false,
-        "readonly": false,
-        "keepsHistory": false,
-        "documentsKeepHistoryContractDefault": false,
-        "documentsMutableContractDefault": true,
-        "documentsCanBeDeletedContractDefault": true,
-        "requiresIdentityDecryptionBoundedKey": null,
-        "requiresIdentityEncryptionBoundedKey": null
-    },
-    "tokens": {},
-    "groups": {},
-    "identityContractNonce": 6,
-    "signaturePublicKeyId": 2,
-    "signature": "1ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903",
-    "userFeeIncrease": 0,
-    "ownerId": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-    "dataContractId": "AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18",
-    "dataContractIdentityNonce": "0",
-    "schema": {
-        "note": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "position": 0
-                },
-                "author": {
-                    "type": "string",
-                    "position": 1
-                }
-            },
-            "additionalProperties": false
+  "type": 4,
+  "typeString": "DATA_CONTRACT_UPDATE",
+  "internalConfig": {
+    "canBeDeleted": false,
+    "readonly": false,
+    "keepsHistory": false,
+    "documentsKeepHistoryContractDefault": false,
+    "documentsMutableContractDefault": true,
+    "documentsCanBeDeletedContractDefault": true,
+    "requiresIdentityDecryptionBoundedKey": null,
+    "requiresIdentityEncryptionBoundedKey": null
+  },
+  "tokens": {},
+  "groups": [],
+  "identityContractNonce": 6,
+  "signaturePublicKeyId": 2,
+  "signature": "1ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903",
+  "userFeeIncrease": 0,
+  "ownerId": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
+  "dataContractId": "AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18",
+  "dataContractIdentityNonce": "0",
+  "schema": {
+    "note": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "position": 0
+        },
+        "author": {
+          "type": "string",
+          "position": 1
         }
-    },
-    "version": 2,
-    "dataContractOwner": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-    "raw": "010006008a4af217f340e9c4c95857496cf33b68eb6c712ac6d20a1eb7854d14afd9ffcf00000000000101000002e901dfc172a96ce3f7d334d6c0b69df3b01c86d30ff03a7c24f516838f94340d0001046e6f7465160312047479706512066f626a656374120a70726f70657274696573160212076d65737361676516021204747970651206737472696e671208706f736974696f6e02001206617574686f7216021204747970651206737472696e671208706f736974696f6e020112146164646974696f6e616c50726f7065727469657313000002411ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903"
+      },
+      "additionalProperties": false
+    }
+  },
+  "version": 2,
+  "dataContractOwner": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
+  "raw": "010006008a4af217f340e9c4c95857496cf33b68eb6c712ac6d20a1eb7854d14afd9ffcf00000000000101000002e901dfc172a96ce3f7d334d6c0b69df3b01c86d30ff03a7c24f516838f94340d0001046e6f7465160312047479706512066f626a656374120a70726f70657274696573160212076d65737361676516021204747970651206737472696e671208706f736974696f6e02001206617574686f7216021204747970651206737472696e671208706f736974696f6e020112146164646974696f6e616c50726f7065727469657313000002411ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903"
 }
 ```
 ```json

@@ -854,6 +854,28 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
       "error": null,
       "hash": "5FBEE4EC0030159C5D25D0C3DEC3AB894ED0DC89B07BEAFAF8A1BE1E3EFCCC10"
     },
+    {
+            "type": 1,
+            "action": [
+                {
+                    "documentAction": null,
+                    "tokenAction": 9,
+                    "documentIdentifier": null,
+                    "tokenIdentifier": "8RsBCPSDUwWMnvLTDooh7ZcfZmnRb5tecsagsrdAFrrd",
+                    "recipient": null,
+                    "price": "2000000000",
+                    "amount": "2"
+                }
+            ],
+            "owner": {
+                "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+                "aliases": []
+            },
+            "timestamp": "2025-07-18T13:04:10.823Z",
+            "gasUsed": 115490580,
+            "error": null,
+            "hash": "99B92C060C88425A596DC92A2BE4785EAA4864038BF69785475C44D5A30EC841"
+        }
     ...
   ],
   "pagination": {
@@ -893,6 +915,7 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
   "gasUsed": null,
   "totalGasUsed": 15999780,
   "identityContractNonce": null,
+  "groups": null,
   "owner": {
     "identifier": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
     "aliases": [
@@ -1994,7 +2017,7 @@ POST /transaction/decode
       "description": "note"
     }
   },
-  "groups": {},
+  "groups": [],
   "signature": "1f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d",
   "signaturePublicKeyId": 2,
   "raw": "000000e7a63f573069e6f96b251f094423d20cb95a6639e0c32339d30f1d4009807b7100000000000101000001629ce9f3eb4e43c8fa936e16ec55e3aa8ef36663197326cc2032f0ed57cb4f410001066c61626c6572160412047479706512066f626a656374120a70726f706572746965731602120a636f6e7472616374496416041204747970651206737472696e6712096d696e4c656e677468035612096d61784c656e67746803581208706f736974696f6e0300120973686f72744e616d6516041204747970651206737472696e6712096d61784c656e677468034012096d696e4c656e67746803061208706f736974696f6e0302120872657175697265641502120973686f72744e616d65120a636f6e7472616374496412146164646974696f6e616c50726f7065727469657313000a0002411f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d"
@@ -2206,7 +2229,7 @@ IDENTITY_CREATE with instantLock
         "requiresIdentityEncryptionBoundedKey": null
     },
     "tokens": {},
-    "groups": {},
+    "groups": [],
     "identityContractNonce": 6,
     "signaturePublicKeyId": 2,
     "signature": "1ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903",
