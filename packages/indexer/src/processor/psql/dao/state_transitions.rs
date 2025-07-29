@@ -85,4 +85,24 @@ impl PostgresDAO {
 
         Ok(owner)
     }
+
+    pub async fn get_state_transition_id(
+        &self,
+        hash: String,
+        sql_transaction: &Transaction<'_>,
+    ) -> Result<i32, PoolError> {
+        let stmt = sql_transaction
+            .prepare_cached(
+                "SELECT id FROM state_transitions \
+        where hash = $1 LIMIT 1;",
+            )
+            .await
+            .unwrap();
+
+        let row = sql_transaction.query_one(&stmt, &[&hash]).await.unwrap();
+
+        let id: i32 = row.get(0);
+
+        Ok(id)
+    }
 }

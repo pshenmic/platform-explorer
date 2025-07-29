@@ -7,4 +7,5 @@ mod handle_init_chain;
 mod handle_masternode_vote;
 mod handle_st;
 mod handle_token_configuration;
+mod handle_tokens;
 mod handle_validator;
