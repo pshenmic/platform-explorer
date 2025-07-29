@@ -51,6 +51,8 @@ Reference:
 * [Tokens](#tokens)
 * [Token By Identifier](#token-by-identifier)
 * [Token Transitions](#token-transitions)
+* [Tokens Rating](#tokens-rating)
+* [Tokens By Identity](#tokens-by-identity)
 * [Broadcast Transaction](#broadcast-transaction)
 
 ### Status
@@ -2232,28 +2234,28 @@ IDENTITY_CREATE with instantLock
   "identityId": "4NGALjtX2t3AXE3ZCqJiSmYuiWEY3ZPQNUBxNWWRrRSp",
   "revision": 2,
   "publicKeysToAdd": [
-    {
-      "contractBounds": null,
-      "id": 5,
-      "type": "ECDSA_HASH160",
-      "data": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
-      "publicKeyHash": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
-      "purpose": "AUTHENTICATION",
-      "securityLevel": "HIGH",
-      "readOnly": false,
-      "signature": ""
-    },
-    {
-      "contractBounds": null,
-      "id": 6,
-      "type": "ECDSA_SECP256K1",
-      "data": "026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0",
-      "publicKeyHash": "d39eda042126256a372c388bd191532a7c9612ce",
-      "purpose": "AUTHENTICATION",
-      "securityLevel": "MASTER",
-      "readOnly": false,
-      "signature": "1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06"
-    }
+      {
+          "contractBounds": null,
+          "id": 5,
+          "type": "ECDSA_HASH160",
+          "data": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
+          "publicKeyHash": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
+          "purpose": "AUTHENTICATION",
+          "securityLevel": "HIGH",
+          "readOnly": false,
+          "signature": ""
+      },
+      {
+          "contractBounds": null,
+          "id": 6,
+          "type": "ECDSA_SECP256K1",
+          "data": "026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0",
+          "publicKeyHash": "d39eda042126256a372c388bd191532a7c9612ce",
+          "purpose": "AUTHENTICATION",
+          "securityLevel": "MASTER",
+          "readOnly": false,
+          "signature": "1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06"
+      }
   ],
   "setPublicKeyIdsToDisable": [],
   "signature": "1f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1",
@@ -2263,54 +2265,54 @@ IDENTITY_CREATE with instantLock
 ```
 ```json
 {
-  "type": 6,
-  "typeString": "IDENTITY_CREDIT_WITHDRAWAL",
-  "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
-  "userFeeIncrease": 0,
-  "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
-  "amount": 200000,
-  "identityNonce": 6,
-  "outputScript": "76a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac",
-  "coreFeePerByte": 5,
-  "signature": "20cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b",
-  "signaturePublicKeyId": 3,
-  "pooling": "Standard",
-  "raw": "05017199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6bfc00030d400500011976a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac0600034120cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b"
+    "type": 6,
+    "typeString": "IDENTITY_CREDIT_WITHDRAWAL",
+    "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
+    "userFeeIncrease": 0,
+    "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+    "amount": 200000,
+    "identityNonce": 6,
+    "outputScript": "76a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac",
+    "coreFeePerByte": 5,
+    "signature": "20cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b",
+    "signaturePublicKeyId": 3,
+    "pooling": "Standard",
+    "raw": "05017199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6bfc00030d400500011976a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac0600034120cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b"
 }
 ```
 ```json
 {
-  "type": 7,
-  "typeString": "IDENTITY_CREDIT_TRANSFER",
-  "identityNonce": 1,
-  "userFeeIncrease": 0,
-  "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
-  "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
-  "amount": 21856638,
-  "signaturePublicKeyId": 3,
-  "signature": "1f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8",
-  "raw": "07000fc3bf4a26bff60f4f79a1f4b929ce4d4c5833d226c1c7f68758e71d7ae229db569fd4f616b3dedecbeef95352cf38f1fb04d232a0d20623bc195b0c3f721840fc014d817e010003411f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8"
+    "type": 7,
+    "typeString": "IDENTITY_CREDIT_TRANSFER",
+    "identityNonce": 1,
+    "userFeeIncrease": 0,
+    "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
+    "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+    "amount": 21856638,
+    "signaturePublicKeyId": 3,
+    "signature": "1f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8",
+    "raw": "07000fc3bf4a26bff60f4f79a1f4b929ce4d4c5833d226c1c7f68758e71d7ae229db569fd4f616b3dedecbeef95352cf38f1fb04d232a0d20623bc195b0c3f721840fc014d817e010003411f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8"
 }
 ```
 ```json
 {
-  "type": 8,
-  "typeString": "IDENTITY_CREDIT_TRANSFER",
-  "indexValues": [
-    "EgRkYXNo",
-    "EgN5MDE="
-  ],
-  "contractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-  "modifiedDataIds": [
-    "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse"
-  ],
-  "ownerId": "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse",
-  "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
-  "documentTypeName": "domain",
-  "indexName": "parentNameAndLabel",
-  "choice": "Abstain",
-  "proTxHash": "ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b",
-  "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
+    "type": 8,
+    "typeString": "IDENTITY_CREDIT_TRANSFER",
+    "indexValues": [
+        "EgRkYXNo",
+        "EgN5MDE="
+    ],
+    "contractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+    "modifiedDataIds": [
+        "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse"
+    ],
+    "ownerId": "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse",
+    "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
+    "documentTypeName": "domain",
+    "indexName": "parentNameAndLabel",
+    "choice": "Abstain",
+    "proTxHash": "ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b",
+    "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
 }
 ```
 Response codes:
@@ -2426,6 +2428,7 @@ GET /tokens?limit=2&page=1&order=asc
     "destroyable": true,
     "allowedEmergencyActions": true,
     "dataContractIdentifier": "5BwVvDstM6FaXQcLNUGkuPHAk5xH3uEoYEKqHKXjw5nL"
+    "decimals": null,
   }
 ]
 ```
@@ -2469,6 +2472,7 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL
     "mainGroup": null,
     "totalTransitionsCount": 13,
     "totalFreezeTransitionsCount": 1,
+    "decimals": 10,
     "totalBurnTransitionsCount": 0
 }
 ```
@@ -2523,6 +2527,128 @@ Response codes:
 500: Internal Server Error
 503: Service Temporarily Unavailable
 404: Not Found
+```
+___
+### Tokens Rating
+Return list of tokens identifier with order by transactions count
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater then `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
+```
+GET tokens/rating?order=desc&limit=10&page=1&timestamp_start=2025-06-20T17:10:28.585Z&timestamp_end=2025-07-28T20:37:28.585Z
+{
+    "resultSet": [
+        {
+            "tokenIdentifier": "8RsBCPSDUwWMnvLTDooh7ZcfZmnRb5tecsagsrdAFrrd",
+            "transitionCount": 15,
+            {
+                "localizations": {
+                    "en": {
+                        "pluralForm": "A1-keyword",
+                        "singularForm": "A1-keyword",
+                        "shouldCapitalize": true
+                    }
+                },
+                "tokenIdentifier": "FWuCZYmNo2qWfLcYsNUnu1LdqBWbzvWBUcGQHRFE2mVt",
+                "transitionCount": 1
+            },
+            {
+                "localizations": {
+                    "en": {
+                        "pluralForm": "A1-test-1",
+                        "singularForm": "A1-test-1",
+                        "shouldCapitalize": true
+                    }
+                },
+                "tokenIdentifier": "Eg49SNkMVgo84vGhj89bEK53X2mURGuVSERzteaT1brr",
+                "transitionCount": 1
+            },
+            {
+                "localizations": {
+                    "en": {
+                        "pluralForm": "aaa",
+                        "singularForm": "aaa",
+                        "shouldCapitalize": true
+                    }
+                },
+                "tokenIdentifier": "8Uv6WJEf7pyw17AtcJpGdURkU3wrmz86RkXxUdNNx575",
+                "transitionCount": 2
+            },
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 11
+    }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Tokens By Identity
+Return list of tokens which created by identity
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+```
+GET identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1&order=asc
+{
+    "resultSet": [
+        {
+            "identifier": "Hqyu8WcRwXCTwbNxdga4CN5gsVEGc67wng4TFzceyLUv",
+            "position": 0,
+            "timestamp": null,
+            "description": "The flurgon contract on testnet",
+            "localizations": {
+                "en": {
+                    "pluralForm": "Flurgons",
+                    "singularForm": "Flurgon",
+                    "shouldCapitalize": true
+                }
+            },
+            "baseSupply": "10000",
+            "totalSupply": "10000",
+            "maxSupply": null,
+            "owner": "5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk",
+            "mintable": true,
+            "burnable": true,
+            "freezable": true,
+            "unfreezable": true,
+            "destroyable": true,
+            "allowedEmergencyActions": true,
+            "dataContractIdentifier": "ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A",
+            "changeMaxSupply": true,
+            "distributionType": "TimeBasedDistribution",
+            "totalGasUsed": null,
+            "mainGroup": null,
+            "totalTransitionsCount": null,
+            "totalFreezeTransitionsCount": null,
+            "totalBurnTransitionsCount": null,
+            "decimals": 0
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 3
+    }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
 ```
 ___
 ### Broadcast Transaction
