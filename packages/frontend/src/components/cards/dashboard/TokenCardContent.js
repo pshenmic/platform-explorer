@@ -1,5 +1,4 @@
 import { Badge, Flex } from '@chakra-ui/react'
-import Link from 'next/link'
 import { Identifier, NotActive } from '../../data'
 import { currencyRound, getTokenName } from '../../../util'
 import ImageGenerator from '../../imageGenerator'
@@ -19,7 +18,7 @@ export function TokenCardContent ({ token = {}, nullMessage = 'No data' }) {
   const txsCount = currencyRound(transitionCount)
 
   return (
-    <Link className={'TokenCardContent'} href={`/token/${tokenIdentifier}`}>
+    <div className={'TokenCardContent'}>
       <Flex gap={'0.75rem'} alignItems={'center'} justifyContent={'space-between'}>
         <div className={'TokenCardContent__NameContainer'}>
           <ImageGenerator
@@ -44,6 +43,6 @@ export function TokenCardContent ({ token = {}, nullMessage = 'No data' }) {
       >
         {tokenIdentifier}
       </Identifier>
-    </Link>
+    </div>
   )
 }

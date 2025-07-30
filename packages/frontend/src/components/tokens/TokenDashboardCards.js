@@ -13,7 +13,7 @@ function TokenDashboardCards ({ items, error, loading, className }) {
     className: 'TokenDashboardCards__Card',
     error: false,
     loading,
-    link: `/token/${token?.identifier}`
+    link: `/token/${token?.tokenIdentifier}`
   })) || Array.from({ length: 6 }, () => ({ loading: true }))
 
   let displayCards = cards
