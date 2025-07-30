@@ -1548,7 +1548,7 @@ describe('Identities routes', () => {
           index: 0,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
-          type: StateTransitionEnum.BATCH,
+          type: StateTransitionEnum[StateTransitionEnum.BATCH],
           batchType: null,
           data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
