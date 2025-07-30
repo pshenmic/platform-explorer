@@ -1,0 +1,104 @@
+@use '../../styles/mixins';
+@import '../../styles/variables';
+
+.TokenDigestCard {
+  @include mixins.DigestCard();
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  container-type: inline-size;
+
+  &--Loading & {
+    .LoadingLine {
+      height: 24px;
+    }
+  }
+
+  &__TopCards {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+  }
+
+  &__SupplyCardContainer {
+    width: 100%;
+    min-height: 4.75rem;
+  }
+
+  &__SupplyCard {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+
+    svg {
+      width: 1.75rem;
+      height: auto;
+    }
+  }
+
+  &__CurrentSupplyTitle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 88px;
+  }
+
+  &__SupplyCardTitle {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__SupplyData {
+    flex-grow: 1;
+  }
+
+  &__TotalSupplyTitle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    align-self: flex-end;
+  }
+
+  &__SupplyFooterTitle {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+    text-align: right;
+    line-height: 1.1;
+  }
+
+  &__RowContainer {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+
+    .ValueContainer {
+      overflow: hidden;
+      width: 100%;
+      line-height: 1.1;
+      min-height: 4.75rem;
+    }
+  }
+
+  &__InfoLine {
+    gap: 4px;
+    column-gap: 8px;
+
+    .InfoLine__Value {
+      text-align: right;
+    }
+  }
+
+  &__ValueContainer {
+    display: flex;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  @container (max-width: 35rem) {
+    &__RowContainer {
+      flex-wrap: wrap;
+    }
+  }
+}

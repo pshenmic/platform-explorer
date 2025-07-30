@@ -1,0 +1,23 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as localisation;
+@import '../../../styles/variables.scss';
+
+.LocalisationListItem {
+  @include mixins.DefListItem(false);
+  display: block;
+
+  &__Content {
+    @include localisation.Columns();
+    align-items: center;
+  }
+
+  &__Column {
+    @include localisation.Column();
+    color: #ffffff;
+    font-size: 0.75rem;
+
+    &--Capitalize {
+      justify-content: flex-end;
+    }
+  }
+}

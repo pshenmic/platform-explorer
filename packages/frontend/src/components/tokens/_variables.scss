@@ -1,0 +1,73 @@
+@import '../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns:
+    3fr
+    2fr
+    3fr
+    3fr;
+
+  @container (max-width: 80rem) {
+    grid-template-columns:
+      10rem
+      10rem
+      auto
+      22rem;
+  }
+
+  @container (max-width: 75rem) {
+    grid-template-columns:
+      minmax(10rem, 22rem)
+      10rem
+      minmax(0, 22rem)
+      minmax(0, 22rem);
+  }
+
+  @container (max-width: 48rem) {
+    grid-template-columns:
+      minmax(10rem, 16rem)
+      10rem
+      minmax(0, 22rem);
+  }
+
+  @container (max-width: 40rem) {
+    grid-template-columns:
+      minmax(10rem, 18rem)
+      minmax(0, 22rem);
+  }
+
+  @container (max-width: 30rem) {
+    grid-template-columns:
+      10rem
+      minmax(0, 22rem);
+  }
+
+  @container (max-width: 23rem) {
+    grid-template-columns:
+      8rem
+      minmax(0, 22rem);
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+
+  @container (max-width: 48rem) {
+    &--DataContract {
+      display: none;
+    }
+  }
+
+  @container (max-width: 40rem) {
+    &--Supply {
+      display: none;
+    }
+  }
+}

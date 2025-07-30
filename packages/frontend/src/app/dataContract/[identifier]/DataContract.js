@@ -139,7 +139,7 @@ function DataContract ({ identifier }) {
         <DataContractDigestCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate}/>
       </div>
 
-      <InfoContainer styles={['tabs']}>
+      <InfoContainer styles={['tabs']} id={'tabs'}>
         <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
           <TabList>
             <Tab>Transactions {transactions.data?.pagination?.total !== undefined

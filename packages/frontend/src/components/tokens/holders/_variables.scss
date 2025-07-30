@@ -1,0 +1,53 @@
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns:
+    8fr
+    2.5fr
+    2.5fr
+    2fr;
+
+  @container (max-width: 65rem) {
+    grid-template-columns:
+      minmax(0, 125rem)
+      10rem
+      10rem
+      7.5rem;
+  }
+
+  @container (max-width: 45rem) {
+    grid-template-columns:
+      minmax(0, 125rem)
+      auto
+      7.5rem;
+  }
+
+  @container (max-width: 30rem) {
+    grid-template-columns:
+      minmax(0, 125rem)
+      auto;
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  width: 100%;
+
+  &:last-child {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  @container (max-width: 45rem) {
+    &--DashAmount {
+      display: none;
+    }
+  }
+
+  @container (max-width: 30rem) {
+    &--LastActivity {
+      display: none;
+    }
+  }
+} 

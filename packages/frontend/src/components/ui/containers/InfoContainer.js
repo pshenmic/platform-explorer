@@ -1,6 +1,6 @@
 import './InfoContainer.scss'
 
-function InfoContainer ({ children, styles = [], className }) {
+function InfoContainer ({ children, styles = [], id, className }) {
   const styleClasses = {
     tabs: 'InfoContainer--Tabs',
     translucentBg: 'InfoContainer--TranslucentBg'
@@ -12,7 +12,7 @@ function InfoContainer ({ children, styles = [], className }) {
     .join(' ')
 
   return (
-    <div className={`InfoContainer ${extraClasses} ${className || ''}`}>
+    <div className={`InfoContainer ${extraClasses} ${className || ''}`} id={id}>
       {children}
     </div>
   )

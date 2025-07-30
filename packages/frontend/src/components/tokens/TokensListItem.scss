@@ -1,0 +1,59 @@
+@use '../../styles/mixins.scss';
+@use './variables' as tokens;
+@import '../../styles/variables.scss';
+
+.TokensListItem {
+  @include mixins.DefListItem;
+  display: block;
+
+  &__Content {
+    @include tokens.Columns();
+  }
+
+  &__Column {
+    @include tokens.Column();
+
+    &--TokenName {
+      overflow: hidden;
+      justify-content: flex-start;
+    }
+
+    &--DataContract {
+      overflow: hidden;
+      justify-content: flex-start;
+    }
+
+    &--Supply {
+      .Supply {
+        width: 100%;
+      }
+
+      .BigNumber {
+        font-size: 0.75rem;
+      }
+    }
+
+    &--OwnerIdentity {
+      overflow: hidden;
+      justify-content: flex-end;
+    }
+  }
+
+  &__TokenNameContainer {
+    width: 100px;
+  }
+
+  &__TokenName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__DataContractLink, &__OwnerLink {
+    max-width: 100%;
+  }
+
+  &__OwnerIdentifier {
+    overflow: hidden;
+  }
+}
