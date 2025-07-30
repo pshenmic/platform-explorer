@@ -740,7 +740,7 @@ describe('Identities routes', () => {
         transferTx = await fixtures.transaction(knex, {
           block_height: block.height,
           block_hash: block.hash,
-          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          type: StateTransitionEnum[StateTransitionEnum.IDENTITY_TOP_UP],
           owner: identity.identifier
         })
         transfer = await fixtures.transfer(knex, {
@@ -1577,7 +1577,7 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          type: StateTransitionEnum[StateTransitionEnum.IDENTITY_TOP_UP],
           gas_used: 123
         })
         transfer = await fixtures.transfer(knex, {
@@ -1724,7 +1724,7 @@ describe('Identities routes', () => {
         block_hash: block.hash,
         block_height: block.height,
         owner: identity.identifier,
-        type: StateTransitionEnum.IDENTITY_TOP_UP,
+        type: StateTransitionEnum[StateTransitionEnum.IDENTITY_TOP_UP],
         gas_used: 123
       })
       transfer = await fixtures.transfer(knex, {
@@ -1768,7 +1768,7 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          type: StateTransitionEnum[StateTransitionEnum.IDENTITY_TOP_UP],
           gas_used: 12
         })
         transfer = await fixtures.transfer(knex, {
@@ -1817,7 +1817,7 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          type: StateTransitionEnum[StateTransitionEnum.IDENTITY_TOP_UP],
           gas_used: 22
         })
         transfer = await fixtures.transfer(knex, {
@@ -1866,7 +1866,7 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          type: StateTransitionEnum[StateTransitionEnum.IDENTITY_TOP_UP],
           gas_used: 33
         })
         transfer = await fixtures.transfer(knex, {

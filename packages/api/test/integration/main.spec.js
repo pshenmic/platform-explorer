@@ -246,7 +246,7 @@ describe('Other routes', () => {
             index: documentTransaction.index,
             blockHash: documentTransaction.block_hash,
             blockHeight: null,
-            type: documentTransaction.type,
+            type: StateTransitionEnum[documentTransaction.type],
             data: documentTransaction.data,
             timestamp: block.timestamp.toISOString(),
             gasUsed: 0,
