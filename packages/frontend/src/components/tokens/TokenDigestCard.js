@@ -62,21 +62,8 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
             error={error || totalTransitionsCount == null}
           />
         </ValueContainer>
-
-        {/*
-        <ValueContainer size={'xl'}>
-          <InfoLine
-            title={'Holders'}
-            icon={<MembersIcon/>}
-            value={'-'}
-            loading={loading}
-            error={error}
-          />
-        </ValueContainer>
-        */}
       </div>
 
-      {/* Burn and Freeze Row */}
       <div className={'TokenDigestCard__RowContainer'}>
         <ValueContainer size={'xl'}>
           <InfoLine

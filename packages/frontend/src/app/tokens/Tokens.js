@@ -10,7 +10,6 @@ import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Container, Heading, Box } from '@chakra-ui/react'
-// import { TokenFilters } from '../../components/tokens'
 import './Tokens.scss'
 
 const paginateConfig = {
@@ -31,7 +30,6 @@ function Tokens ({ defaultPage = 1, defaultPageSize }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  // const isMobile = useBreakpointValue({ base: true, md: false })
 
   const fetchData = (page, count, filters) => {
     setTokens({ data: {}, loading: true, error: false })
@@ -80,16 +78,6 @@ function Tokens ({ defaultPage = 1, defaultPageSize }) {
         className={'InfoBlock'}
       >
         <Heading className={'InfoBlock__Title'} as={'h1'}>Tokens</Heading>
-
-        {/*
-        <div className={'Tokens__Controls'}>
-          <TokenFilters
-            onFilterChange={filtersChangeHandler}
-            isMobile={isMobile}
-            className={'Tokens__Filters'}
-          />
-        </div>
-        */}
 
         {!tokens.error
           ? !tokens.loading
