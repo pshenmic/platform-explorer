@@ -420,7 +420,7 @@ describe('Utils', () => {
 
       assert.deepEqual(decoded, {
         type: 8,
-        typeString: 'IDENTITY_CREDIT_TRANSFER',
+        typeString: 'MASTERNODE_VOTE',
         indexValues: [
           'EgRkYXNo',
           'Egh0ZXN0MDEwMA=='
