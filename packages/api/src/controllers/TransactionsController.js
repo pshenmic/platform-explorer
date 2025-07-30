@@ -4,6 +4,7 @@ const { calculateInterval, iso8601duration } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
+const BatchTypeEnum = require('../enums/BatchEnum')
 
 class TransactionsController {
   constructor (client, knex, dapi) {
@@ -36,6 +37,7 @@ class TransactionsController {
       gas_min: gasMin,
       gas_max: gasMax,
       transaction_type: transactionTypes,
+      batch_type: batchTypes,
       timestamp_start: timestampStart,
       timestamp_end: timestampEnd
     } = request.query
@@ -45,6 +47,10 @@ class TransactionsController {
     }
 
     if (transactionTypes?.length === 0 && transactionTypes) {
+      return response.status(400).send({ message: 'invalid filters values' })
+    }
+
+    if (batchTypes?.length === 0 && batchTypes) {
       return response.status(400).send({ message: 'invalid filters values' })
     }
 
@@ -62,6 +68,7 @@ class TransactionsController {
       order,
       orderBy,
       transactionTypes?.map(transactionType => typeof transactionType === 'string' ? StateTransitionEnum[transactionType] : transactionType),
+      batchTypes?.map(batchType => typeof batchType === 'string' ? BatchTypeEnum[batchType] : batchType),
       owner,
       status,
       gasMin,
