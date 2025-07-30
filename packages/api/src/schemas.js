@@ -77,6 +77,39 @@ const schemaTypes = [
           ]
         }
       },
+      batch_type: {
+        type: ['array', 'null'],
+        items: {
+          oneOf: [
+            {
+              type: 'string',
+              enum: [
+                'DocumentCreateTransition',
+                'DocumentReplaceTransition',
+                'DocumentDeleteTransition',
+                'DocumentTransferTransition',
+                'DocumentUpdatePriceTransition',
+                'DocumentPurchaseTransition',
+                'TokenBurnTransition',
+                'TokenMintTransition',
+                'TokenTransferTransition',
+                'TokenFreezeTransition',
+                'TokenUnfreezeTransition',
+                'TokenDestroyFrozenFundsTransition',
+                'TokenClaimTransition',
+                'TokenEmergencyActionTransition',
+                'TokenConfigUpdateTransition',
+                'TokenDirectPurchaseTransition',
+                'TokenSetPriceForDirectPurchaseTransition'
+              ]
+            },
+            {
+              type: 'number',
+              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+            }
+          ]
+        }
+      },
       status: {
         type: ['string', 'null'],
         enum: ['SUCCESS', 'FAIL', 'ALL']

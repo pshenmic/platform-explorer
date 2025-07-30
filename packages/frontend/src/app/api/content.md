@@ -623,12 +623,33 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `page` cannot be less then 1
 * `owner` Identity identifier
 * `status` can be `SUCCESS`, `FAIL` or `ALL`
-* `transaction_type` number of tx type. Can be set multiple times
+* `transaction_type` number or string of tx type. Can be set multiple times
+* `batch_type` number or string of batch type. Can be set multiple times.
 * `gas_min` number of min `gas_used`
 * `gas_max` number of max `gas_used`
 * `timestamp_start` must be used with `timestamp_end`
 * `timestamp_end` must be used with `timestamp_start`
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
+
+| Batch Type String                        | Batch type Number |
+|:-----------------------------------------|:------------------|
+| DocumentCreateTransition                 | 0                 |
+| DocumentReplaceTransition                | 1                 |
+| DocumentDeleteTransition                 | 2                 |
+| DocumentTransferTransition               | 3                 |
+| DocumentUpdatePriceTransition            | 4                 |
+| DocumentPurchaseTransition               | 5                 |
+| TokenBurnTransition                      | 6                 |
+| TokenMintTransition                      | 7                 |
+| TokenTransferTransition                  | 8                 |
+| TokenFreezeTransition                    | 9                 |
+| TokenUnfreezeTransition                  | 10                |
+| TokenDestroyFrozenFundsTransition        | 11                |
+| TokenClaimTransition                     | 12                |
+| TokenEmergencyActionTransition           | 13                |
+| TokenConfigUpdateTransition              | 14                |
+| TokenDirectPurchaseTransition            | 15                |
+| TokenSetPriceForDirectPurchaseTransition | 16                |
 
 ```
 GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
