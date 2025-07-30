@@ -28,9 +28,25 @@ const schemaTypes = [
       },
       isActive: { type: ['boolean', 'null'] },
       type: {
-        type: ['integer', 'null'],
-        minimum: 0,
-        maximum: 8
+        oneOf: [
+          {
+            type: 'string',
+            enum: [
+              'DATA_CONTRACT_CREATE',
+              'BATCH',
+              'IDENTITY_CREATE',
+              'IDENTITY_TOP_UP',
+              'DATA_CONTRACT_UPDATE',
+              'IDENTITY_UPDATE',
+              'IDENTITY_CREDIT_WITHDRAWAL',
+              'MASTERNODE_VOTE'
+            ]
+          },
+          {
+            type: 'number',
+            enum: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+          }
+        ]
       },
       hash: {
         type: 'string',
@@ -40,9 +56,25 @@ const schemaTypes = [
       transaction_type: {
         type: ['array', 'null'],
         items: {
-          type: 'number',
-          minimum: 0,
-          maximum: 8
+          oneOf: [
+            {
+              type: 'string',
+              enum: [
+                'DATA_CONTRACT_CREATE',
+                'BATCH',
+                'IDENTITY_CREATE',
+                'IDENTITY_TOP_UP',
+                'DATA_CONTRACT_UPDATE',
+                'IDENTITY_UPDATE',
+                'IDENTITY_CREDIT_WITHDRAWAL',
+                'MASTERNODE_VOTE'
+              ]
+            },
+            {
+              type: 'number',
+              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+            }
+          ]
         }
       },
       status: {

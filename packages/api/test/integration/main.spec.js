@@ -282,7 +282,7 @@ describe('Other routes', () => {
         index: dataContractTransaction.index,
         blockHash: dataContractTransaction.block_hash,
         blockHeight: block.height,
-        type: dataContractTransaction.type,
+        type: StateTransitionEnum[dataContractTransaction.type],
         data: JSON.stringify(dataContractTransaction.data),
         timestamp: block.timestamp.toISOString(),
         gasUsed: dataContractTransaction.gas_used,

@@ -6,6 +6,7 @@ const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
 const { getAliasInfo, decodeStateTransition, getAliasStateByVote } = require('../utils')
+const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 module.exports = class IdentitiesDAO {
   constructor (knex, dapi, client) {
@@ -499,7 +500,10 @@ module.exports = class IdentitiesDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    return new PaginatedResultSet(rows.map(row => Transfer.fromRow(row)), page, limit, totalCount)
+    return new PaginatedResultSet(rows.map(row => Transfer.fromRow({
+      ...row,
+      type: StateTransitionEnum[row.type]
+    })), page, limit, totalCount)
   }
 
   getIdentityWithdrawalsByTimestamps = async (identifier, timestamps = []) => {

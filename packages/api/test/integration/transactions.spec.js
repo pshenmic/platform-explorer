@@ -128,7 +128,7 @@ describe('Transaction routes', () => {
         hash: transaction.transaction.hash,
         index: transaction.transaction.index,
         timestamp: transaction.block.timestamp.toISOString(),
-        type: transaction.transaction.type,
+        type: StateTransitionEnum[transaction.transaction.type],
         batchType: transaction.transaction.batch_type,
         gasUsed: transaction.transaction.gas_used,
         status: transaction.transaction.status,
@@ -163,7 +163,7 @@ describe('Transaction routes', () => {
         hash: transaction.transaction.hash,
         index: transaction.transaction.index,
         timestamp: transaction.block.timestamp.toISOString(),
-        type: transaction.transaction.type,
+        type: StateTransitionEnum[transaction.transaction.type],
         batchType: transaction.transaction.batch_type,
         gasUsed: 0,
         status: 'FAIL',
@@ -212,7 +212,7 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
@@ -255,7 +255,7 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
           error: transaction.transaction.error,
@@ -299,7 +299,7 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
@@ -346,7 +346,54 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
+          batchType: transaction.transaction.batch_type,
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          }
+        }))
+
+      assert.deepEqual(expectedTransactions, body.resultSet)
+    })
+
+    it('should return default set of transactions desc with owner and type filter in string', async () => {
+      const owner = transactions[0].transaction.owner
+
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&transaction_type=0&transaction_type=MASTERNODE_VOTE`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const txsWithType = transactions.filter(transaction => transaction.transaction.type === 0 || transaction.transaction.type === 8)
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, txsWithType.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedTransactions = txsWithType
+        .filter(transaction => transaction.transaction.owner === owner)
+        .sort((a, b) => b.transaction.id - a.transaction.id)
+        .slice(0, 10)
+        .map(transaction => ({
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
@@ -391,7 +438,7 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
@@ -438,7 +485,7 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
@@ -489,7 +536,7 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
@@ -541,7 +588,7 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
@@ -583,7 +630,7 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
@@ -625,7 +672,7 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
@@ -667,7 +714,7 @@ describe('Transaction routes', () => {
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           timestamp: transaction.block.timestamp.toISOString(),
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           gasUsed: transaction.transaction.gas_used,
           status: transaction.transaction.status,
@@ -707,7 +754,7 @@ describe('Transaction routes', () => {
           index: transaction.transaction.index,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
-          type: transaction.transaction.type,
+          type: StateTransitionEnum[transaction.transaction.type],
           batchType: transaction.transaction.batch_type,
           data: '{}',
           timestamp: transaction.block.timestamp.toISOString(),

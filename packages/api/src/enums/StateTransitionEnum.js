@@ -16,7 +16,7 @@ const StateTransitionEnum = {
   5: 'IDENTITY_UPDATE',
   6: 'IDENTITY_CREDIT_WITHDRAWAL',
   7: 'IDENTITY_CREDIT_TRANSFER',
-  8: 'IDENTITY_CREDIT_TRANSFER'
+  8: 'MASTERNODE_VOTE'
 }
 
 module.exports = StateTransitionEnum

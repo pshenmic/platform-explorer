@@ -1607,7 +1607,7 @@ describe('Identities routes', () => {
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
           txHash: _transfer.transfer.state_transition_hash,
-          type: _transfer.transaction.type,
+          type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
           gasUsed: _transfer.transaction.gas_used
         }))
@@ -1657,7 +1657,57 @@ describe('Identities routes', () => {
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
           txHash: _transfer.transfer.state_transition_hash,
-          type: _transfer.transaction.type,
+          type: StateTransitionEnum[_transfer.transaction.type],
+          blockHash: _transfer.block.hash,
+          gasUsed: _transfer.transaction.gas_used
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTransfers)
+    })
+
+    it('should return default set of transfers by identity and type with string value', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+      transfers = []
+
+      for (let i = 1; i < 31; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: i % 2 === 0 ? 5 : 6,
+          gas_used: 123
+        })
+        transfer = await fixtures.transfer(knex, {
+          amount: 1000,
+          recipient: identity.identifier,
+          sender: null,
+          state_transition_hash: transaction.hash
+        })
+        transfers.push({ transfer, transaction, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transfers?type=IDENTITY_UPDATE`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 10)
+      assert.equal(body.pagination.total, 15)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedTransfers = transfers
+        .filter(_transfer => _transfer.transaction.type === 5)
+        .sort((a, b) => a.block.height - b.block.height)
+        .slice(0, 10)
+        .map((_transfer) => ({
+          amount: parseInt(_transfer.transfer.amount),
+          sender: _transfer.transfer.sender,
+          recipient: _transfer.transfer.recipient,
+          timestamp: _transfer.block.timestamp.toISOString(),
+          txHash: _transfer.transfer.state_transition_hash,
+          type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
           gasUsed: _transfer.transaction.gas_used
         }))
@@ -1699,7 +1749,7 @@ describe('Identities routes', () => {
         recipient: identity.identifier,
         timestamp: block.timestamp.toISOString(),
         txHash: transaction.hash,
-        type: transaction.type,
+        type: StateTransitionEnum[transaction.type],
         blockHash: block.hash,
         gasUsed: transaction.gas_used
       }
@@ -1748,7 +1798,7 @@ describe('Identities routes', () => {
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
           txHash: _transfer.transfer.state_transition_hash,
-          type: _transfer.transaction.type,
+          type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
           gasUsed: _transfer.transaction.gas_used
         }))
@@ -1797,7 +1847,7 @@ describe('Identities routes', () => {
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
           txHash: _transfer.transfer.state_transition_hash,
-          type: _transfer.transaction.type,
+          type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
           gasUsed: _transfer.transaction.gas_used
         }))
@@ -1846,7 +1896,7 @@ describe('Identities routes', () => {
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
           txHash: _transfer.transfer.state_transition_hash,
-          type: _transfer.transaction.type,
+          type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
           gasUsed: _transfer.transaction.gas_used
         }))
