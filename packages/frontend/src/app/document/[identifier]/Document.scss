@@ -2,7 +2,7 @@
 @import '../../../styles/variables.scss';
 
 .Document {
-  $gap: 1.5rem;
+  $gap: 1.25rem;
 
   &__Data {
     @include mixins.DigestCard();
@@ -16,12 +16,6 @@
     font-size: 0.75rem;
     letter-spacing: 0.4px;
     text-transform: uppercase;
-  }
-
-  .PageDataContainer__Content {
-    display: flex;
-    flex-direction: column;
-    gap: $gap;
   }
 
   &__InfoBlocks {
@@ -45,10 +39,6 @@
 
   @media screen and (max-width: $breakpoint-md) {
     $gap: 0.75rem;
-
-    .PageDataContainer__Content {
-      gap: $gap;
-    }
 
     &__InfoBlocks {
       flex-direction: column;

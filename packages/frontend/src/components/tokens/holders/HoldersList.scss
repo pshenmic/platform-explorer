@@ -1,0 +1,21 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as holders;
+@import '../../../styles/variables.scss';
+
+.HoldersList {
+  @include mixins.List;
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include holders.Columns();
+  }
+
+  &__ColumnTitle {
+    @include holders.Column();
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+} 

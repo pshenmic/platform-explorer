@@ -1,0 +1,35 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as act;
+@import '../../../styles/variables.scss';
+
+.ActivityListItem {
+  @include mixins.DefListItem;
+  gap: 12px;
+
+  &__Content {
+    @include act.Columns();
+    flex: 1;
+  }
+
+  &__Column {
+    @include act.Column();
+
+    &--Timestamp {
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .LinkContainer {
+    overflow: hidden;
+  }
+
+  &__StatusIcon {
+    transition: $transition-time-def;
+    flex-shrink: 0;
+
+    &:hover, &:active {
+      //transform: scale(1.07);
+    }
+  }
+}

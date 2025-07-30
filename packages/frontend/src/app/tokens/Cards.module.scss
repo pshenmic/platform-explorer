@@ -1,0 +1,10 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.Title {
+  font-family: $font-heading;
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: .8;
+  padding-left: 10px;
+}
