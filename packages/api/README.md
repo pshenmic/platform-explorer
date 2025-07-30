@@ -224,7 +224,7 @@ GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
       "index": 0,
       "blockHash": "04D16F8EE2A892E5F9F884C11DB97CD20BAA4A9539111A9131F847B93422DB26",
       "blockHeight": 37994,
-      "type": 1,
+      "type": "BATCH",
       "data": "AgDuMmDTP4yp4UxhCAbUbbj9M0NSKtDkSMDXiaFYkDf05gEAAAD8TaL0Ynpk50URo4Lr7GID83h4Q7YxOfxNyBcNWF7mwQEIcHJlb3JkZXLmaMZZr2au4ecsGG3ee1t+Ch1xKgnEDVch9iK/U8UxVe4PfekoUsU6NnJAmQzOoXBkr3P+LpzyoMFt1ppC7LqAARBzYWx0ZWREb21haW5IYXNoDLF9yHanBZpOsaoAIQ7+WgMlafEFgvsSfAqiyosXA967AAABQR8wm64iVoCLY0WmrqLS13iPcikGVcuYsqpuoqIWfYRLLlqXQlyHQ5XnsfTKor5spJtUz8gvlN3//sqH+sI8y/gz",
       "timestamp": "2024-10-20T21:35:48.669Z",
       "gasUsed": 34509040,
@@ -673,30 +673,23 @@ GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZh
         "total": 10
     },
     "resultSet": [
-    {
-        "blockHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        "blockHeight": 1337,
-        "data": "{}",
-        "hash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        "index": 0,
-        "timestamp": "2024-03-18T10:13:54.150Z",
-        "type": 0,
-        "gasUsed": 1337000,
-        "status": "SUCCESS",
-        "error": null,
-        "owner": {
-          "identifier": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
-          "aliases": [
-            {
-              "alias": "alias.dash",
-              "status": "locked",
-              "contested": true,
-              "timestamp": "2024-08-26 13:29:44.606+00",
-              "txHash": "2508B35FDDB3E2E797D4F2CB9C1FAEE71D4DC43B91CE2043BEC8CE2B4A442DD7"
+      {
+            "hash": "845E3D4FADDE4A439D433FAA8D347DF0C8AA90D03BF3C0DC798C7162AB3E8A09",
+            "index": 0,
+            "blockHash": "890AB057D3E0589ECCFE39B99159D3C7B78B7523A0BBD0B8CC44458A22F677FD",
+            "blockHeight": 153886,
+            "type": "BATCH",
+            "batchType": "TOKEN_DESTROY",
+            "data": "AgG5BZwAg32+HPkczu8vW/+JvgoxqyypH+IC1KWlLtXX+AEBBQAACwCbiMtpA6d+vzAtw94GNRJHq4fwB34qQQEzrXqSVfZAWzrS4mQNCYzn5pR3R9NTjxQS7yJebl2ShErW4h/ObaL5AIu9OaYYa3jGyt5B+ApYhRzbdO4bGGL5ra2piVS3+dt/AAABQR8jZTTmxLRVrsT2jkPynIbzGNAXctI4fqn+bE2zzLXOcm3tDePi/tnfctTUtQ4CsJYwG3l411apgtMwVYVb/Qb2",
+            "timestamp": "2025-07-15T14:42:41.156Z",
+            "gasUsed": 1040160,
+            "status": "FAIL",
+            "error": "Identity AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW account is not frozen for token 4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL. Action attempted: destroy_frozen_funds",
+            "owner": {
+                "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+                "aliases": []
             }
-          ]
-        }
-    }, ...
+        }, ...
     ]
 }
 ```
@@ -828,7 +821,7 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
 {
   "resultSet": [
     {
-      "type": 0,
+      "type": "DATA_CONTRACT_CREATE",
       "action": null,
       "owner": {
         "identifier": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
@@ -855,27 +848,35 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
       "hash": "5FBEE4EC0030159C5D25D0C3DEC3AB894ED0DC89B07BEAFAF8A1BE1E3EFCCC10"
     },
     {
-            "type": 1,
-            "action": [
+        "type": "BATCH",
+        "action": [
+            {
+                "documentAction": "Replace",
+                "tokenAction": null,
+                "documentIdentifier": "AeUwXZc3TsLTvtmiSFcnWpp4jjDPAv66kjh7AiRoRECh",
+                "tokenIdentifier": null,
+                "recipient": null,
+                "price": null,
+                "amount": null
+            }
+        ],
+        "owner": {
+            "identifier": "7Yowk46VwwHqmD5yZyyygggh937aP6h2UW7aQWBdWpM5",
+            "aliases": [
                 {
-                    "documentAction": null,
-                    "tokenAction": 9,
-                    "documentIdentifier": null,
-                    "tokenIdentifier": "8RsBCPSDUwWMnvLTDooh7ZcfZmnRb5tecsagsrdAFrrd",
-                    "recipient": null,
-                    "price": "2000000000",
-                    "amount": "2"
+                    "alias": "my-unit-test-3.dash",
+                    "status": "ok",
+                    "timestamp": "2024-08-30T18:26:03.394Z",
+                    "documentId": "2qsGt3eFi7xsr35ToAa51XEshk9bM7AsRcuuaWz7zTNP",
+                    "contested": false
                 }
-            ],
-            "owner": {
-                "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
-                "aliases": []
-            },
-            "timestamp": "2025-07-18T13:04:10.823Z",
-            "gasUsed": 115490580,
-            "error": null,
-            "hash": "99B92C060C88425A596DC92A2BE4785EAA4864038BF69785475C44D5A30EC841"
-        }
+            ]
+        },
+        "timestamp": "2024-08-25T16:46:41.370Z",
+        "gasUsed": 18096920,
+        "error": null,
+        "hash": "E26EF4624CBC1DC3A3FFC643FC41218D528D0262D6940B21FF8DC7E82AA0AA3D"
+    },
     ...
   ],
   "pagination": {
@@ -1342,7 +1343,7 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `page` cannot be less then 1
 
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
+GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
 
 {
     "pagination": {
@@ -1356,7 +1357,7 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1
         "index": 0,
         "blockHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF,
         "blockHeight": 1337,
-        "type": 0,
+        "type": "DATA_CONTRACT_CREATE",
         "data": null,
         "timestamp": "2024-03-18T10:13:54.150Z",
         "gasUsed": 1337000,
@@ -1379,7 +1380,7 @@ Return all transfers made by the given identity
 * `page` cannot be less then 1
 * `type` cannot be less, then 0 and more then 8
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
+GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
 {
     "pagination": {
@@ -1388,15 +1389,16 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E
         "total": 10
     },
     "resultSet": [
-    {
-        "amount": 100000,
-        "sender": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        "recipient": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        "timestamp": "2024-03-18T10:13:54.150Z",
-        "txHash": "445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118",
-        "type": 6,
-        "blockHash": "73171E0A8DCC10C6DA501E1C70A9C1E0BD6F1F8F834C2A1E787AF19B1F361D5E"
-    }
+      {
+          "amount": 199997000000,
+          "sender": null,
+          "recipient": "46r7vHmNRHFDAH2xcTdhDDeL4kv5aHemgPLThZgCtqt2",
+          "timestamp": "2025-07-30T12:20:11.316Z",
+          "txHash": "705C8F9C5010BFA50AC1A05E8E6D54B5F7B2D866ECD0C958BD8B9191CADB02EE",
+          "type": "IDENTITY_TOP_UP",
+          "blockHash": "10B265FA3B46CEF229A78E6ACE10ABDB168DDD5FFA445079181FA8FD2E77BE3E",
+          "gasUsed": 7880180
+      }
     ]
 }
 ```

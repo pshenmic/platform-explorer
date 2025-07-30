@@ -3,6 +3,7 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { getAliasFromDocument } = require('../utils')
 const Transaction = require('../models/Transaction')
 const dpnsContract = require('../../data_contracts/dpns.json')
+const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 module.exports = class BlockDAO {
   constructor (knex, dapi) {
@@ -85,6 +86,7 @@ module.exports = class BlockDAO {
 
         return Transaction.fromRow({
           ...row,
+          type: StateTransitionEnum[row.type],
           aliases
         })
       }))

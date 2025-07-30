@@ -209,10 +209,10 @@ module.exports = class DataContractsDAO {
       }
 
       return {
-        type: decodedTx?.type ?? null,
+        type: decodedTx?.typeString ?? null,
         action: decodedTx?.transitions?.map(transition => ({
-          documentAction: transition.action ?? null,
-          tokenAction: transition.tokenTransitionType ?? null,
+          documentAction: transition.actionString ?? null,
+          tokenAction: transition.tokenTransitionTypeString ?? null,
           documentIdentifier: transition.id ?? null,
           tokenIdentifier: transition.tokenId ?? null,
           recipient: (transition.recipient ?? transition.frozenIdentityId) ?? null,
