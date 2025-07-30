@@ -90,7 +90,7 @@ function TokenTotalCard ({ token, rate, loading }) {
           <div className={'TokenTotalCard__CommonLines'}>
             <InfoLine
               className={'TokenTotalCard__InfoLine'}
-              title={'Token Info'}
+              title={'Description'}
               value={description}
               loading={loading}
               error={token.error || (!loading && !description)}
