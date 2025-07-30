@@ -470,7 +470,7 @@ describe('DataContracts routes', () => {
         type: 1,
         action: [{
           documentAction: null,
-          tokenAction: 1,
+          tokenAction: 'Mint',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
@@ -549,7 +549,7 @@ describe('DataContracts routes', () => {
         type: 1,
         action: [{
           documentAction: null,
-          tokenAction: 1,
+          tokenAction: 'Mint',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
@@ -628,7 +628,7 @@ describe('DataContracts routes', () => {
         type: 1,
         action: [{
           documentAction: null,
-          tokenAction: 1,
+          tokenAction: 'Mint',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
@@ -707,7 +707,7 @@ describe('DataContracts routes', () => {
         type: 1,
         action: [{
           documentAction: null,
-          tokenAction: 1,
+          tokenAction: 'Mint',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
