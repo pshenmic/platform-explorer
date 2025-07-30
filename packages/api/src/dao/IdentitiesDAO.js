@@ -452,7 +452,7 @@ module.exports = class IdentitiesDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    return new PaginatedResultSet(rows.map(row => Transaction.fromRow({...row, type: StateTransitionEnum[row.type]})), page, limit, totalCount)
+    return new PaginatedResultSet(rows.map(row => Transaction.fromRow({ ...row, type: StateTransitionEnum[row.type] })), page, limit, totalCount)
   }
 
   getTransfersByIdentity = async (identifier, hash, page, limit, order, type) => {
