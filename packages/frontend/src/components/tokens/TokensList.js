@@ -27,7 +27,7 @@ function TokensList ({ tokens, headerStyles = 'default', pagination, loading, it
           Contract
         </GridItem>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--OwnerIdentity'}>
-          Owner Identity
+          Owner
         </GridItem>
       </Grid>
 
