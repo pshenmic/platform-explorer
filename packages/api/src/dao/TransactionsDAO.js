@@ -3,6 +3,7 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
 const { getAliasFromDocument } = require('../utils')
 const dpnsContract = require('../../data_contracts/dpns.json')
+const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 module.exports = class TransactionsDAO {
   constructor (knex, dapi) {
@@ -37,6 +38,7 @@ module.exports = class TransactionsDAO {
     return Transaction.fromRow(
       {
         ...row,
+        type: StateTransitionEnum[row.type],
         aliases
       })
   }
@@ -127,7 +129,11 @@ module.exports = class TransactionsDAO {
         aliases.push(getAliasFromDocument(aliasDocument))
       }
 
-      return Transaction.fromRow({ ...row, aliases })
+      return Transaction.fromRow({
+        ...row,
+        type: StateTransitionEnum[row.type],
+        aliases
+      })
     }))
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)

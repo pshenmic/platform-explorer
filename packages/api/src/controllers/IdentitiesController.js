@@ -5,6 +5,7 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { outputScriptToAddress } = require('../utils')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const { base58 } = require('@scure/base')
+const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 class IdentitiesController {
   constructor (client, knex, dapi) {
@@ -82,7 +83,7 @@ class IdentitiesController {
       Number(page ?? 1),
       Number(limit ?? 10),
       order,
-      type
+      typeof type === 'string' ? StateTransitionEnum[type] : type
     )
 
     response.send(transfers)

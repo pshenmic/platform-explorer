@@ -470,7 +470,7 @@ describe('DataContracts routes', () => {
         type: 1,
         action: [{
           documentAction: null,
-          tokenAction: 1,
+          tokenAction: 'Mint',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
@@ -499,7 +499,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => a.id - b.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
@@ -549,7 +549,7 @@ describe('DataContracts routes', () => {
         type: 1,
         action: [{
           documentAction: null,
-          tokenAction: 1,
+          tokenAction: 'Mint',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
@@ -578,7 +578,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => a.id - b.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
@@ -628,7 +628,7 @@ describe('DataContracts routes', () => {
         type: 1,
         action: [{
           documentAction: null,
-          tokenAction: 1,
+          tokenAction: 'Mint',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
@@ -657,7 +657,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => b.id - a.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
@@ -707,7 +707,7 @@ describe('DataContracts routes', () => {
         type: 1,
         action: [{
           documentAction: null,
-          tokenAction: 1,
+          tokenAction: 'Mint',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
@@ -736,7 +736,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => b.id - a.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
