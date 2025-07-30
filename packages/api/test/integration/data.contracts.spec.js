@@ -499,7 +499,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => a.id - b.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
@@ -578,7 +578,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => a.id - b.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
@@ -657,7 +657,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => b.id - a.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
@@ -736,7 +736,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => b.id - a.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
