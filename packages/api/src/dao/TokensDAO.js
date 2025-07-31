@@ -142,7 +142,6 @@ module.exports = class TokensDAO {
       .select(this.knex.raw('0 as transitions_count'))
       .select(this.knex.raw('0 as total_count'))
 
-
     const unionQuery = this.knex
       .with('counted_subquery', countedSubquery)
       .unionAll([
