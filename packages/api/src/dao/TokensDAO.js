@@ -126,14 +126,29 @@ module.exports = class TokensDAO {
       .groupBy('token_identifier')
       .leftJoin('state_transitions', 'state_transitions.hash', 'token_transitions.state_transition_hash')
       .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
+
+    const reserveTokensSubquery = this.knex('tokens')
+      .with('subquery', subquery)
+      .select('identifier as token_identifier')
+      .select(this.knex.raw('0 as transitions_count'))
+      .whereNotIn('identifier', function () {
+        this.select('token_identifier').from('subquery')
+      })
+      .orderBy('id', order)
+      .limit(limit)
+      .offset(fromRank)
+
+    const unionQuery = this.knex
+      .unionAll([subquery, reserveTokensSubquery], true)
       .as('subquery')
 
-    const rows = await this.knex(subquery)
+    const rows = await this.knex(unionQuery)
       .select('token_identifier', 'transitions_count', 'data_contracts.identifier as data_contract_identifier', 'tokens.position')
       .select(this.knex.raw('count(*) OVER() as total_count'))
       .limit(limit)
       .offset(fromRank)
       .orderBy('transitions_count', order)
+      .orderBy('data_contracts.id', order)
       .leftJoin('tokens', 'tokens.identifier', 'token_identifier')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
