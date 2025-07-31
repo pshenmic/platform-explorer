@@ -131,7 +131,6 @@ module.exports = class TokensDAO {
       .with('subquery', subquery)
       .select('token_identifier', 'transitions_count')
       .select(this.knex.raw('0 as id'))
-      .select(this.knex.raw('count(*) OVER() as total_count'))
       .orderBy('transitions_count', order)
       .limit(limit)
       .offset(fromRank)
@@ -145,7 +144,6 @@ module.exports = class TokensDAO {
           .select('identifier as token_identifier')
           .select(this.knex.raw("'0'::int as transitions_count"))
           .select('id')
-          .select(this.knex.raw('0 as total_count'))
           .whereNotIn('identifier', function () {
             this.select('token_identifier').from('counted_subquery')
           })
@@ -157,9 +155,10 @@ module.exports = class TokensDAO {
       .as('subquery')
 
     const rows = await this.knex(unionQuery)
-      .select('token_identifier', 'transitions_count', 'data_contracts.identifier as data_contract_identifier', 'tokens.position', 'total_count')
+      .select('token_identifier', 'transitions_count', 'data_contracts.identifier as data_contract_identifier', 'tokens.position')
       .orderBy('transitions_count', order)
       .orderBy('subquery.id', order)
+      .select(this.knex('tokens').select(this.knex.raw('count(*) OVER() as total_count')).limit(1).as('total_count'))
       .leftJoin('tokens', 'tokens.identifier', 'token_identifier')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 

@@ -2557,7 +2557,6 @@ Return list of tokens identifier with order by transactions count
 
 If it is not possible to get tokens transitions for selected period, 
 then will be returned list of tokens in order of creation date 
-and `pagination.total` will be equal zero
 
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more then 100

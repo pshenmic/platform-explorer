@@ -826,7 +826,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, tokens.length)
       assert.equal(body.resultSet.length, 10)
 
       const expected = tokens
@@ -853,7 +853,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 15)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, tokens.length)
       assert.equal(body.resultSet.length, 15)
 
       const expected = tokens
@@ -880,7 +880,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 3)
       assert.equal(body.pagination.limit, 7)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, tokens.length)
       assert.equal(body.resultSet.length, 7)
 
       const expected = tokens
@@ -907,7 +907,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 3)
       assert.equal(body.pagination.limit, 7)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, tokens.length)
       assert.equal(body.resultSet.length, 7)
 
       const expected = tokens
@@ -938,7 +938,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 4)
-      assert.equal(body.pagination.total, 18)
+      assert.equal(body.pagination.total, tokens.length)
       assert.equal(body.resultSet.length, 4)
 
       const expected = tokens
@@ -970,7 +970,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 4)
-      assert.equal(body.pagination.total, 0)
+      assert.equal(body.pagination.total, tokens.length)
 
       const expected = tokens
         .sort((a, b) => b.token.id - a.token.id)
