@@ -88,7 +88,7 @@ function TransactionsListItem ({ transaction, rate }) {
           {transaction?.batchType
             ? <BatchTypeBadge className={'TransactionsListItem__TypeBadge'} batchType={transaction.batchType?.replace(/[\\""]/g, '')}/>
             : transaction?.type !== undefined
-              ? <TypeBadge className={'TransactionsListItem__TypeBadge'} typeId={transaction.type}/>
+              ? <TypeBadge className={'TransactionsListItem__TypeBadge'} type={transaction.type}/>
               : <NotActive/>
           }
         </GridItem>
