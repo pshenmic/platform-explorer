@@ -130,10 +130,11 @@ module.exports = class TokensDAO {
     const countedSubquery = this.knex
       .with('subquery', subquery)
       .select('token_identifier', 'transitions_count')
+      .select(this.knex.raw('0 as id'))
       .select(this.knex.raw('count(*) OVER() as total_count'))
+      .orderBy('transitions_count', order)
       .limit(limit)
       .offset(fromRank)
-      .orderBy('transitions_count', order)
       .from('subquery')
 
     const unionQuery = this.knex
@@ -142,7 +143,8 @@ module.exports = class TokensDAO {
         this.knex.select('*').from('counted_subquery'),
         this.knex('tokens')
           .select('identifier as token_identifier')
-          .select(this.knex.raw('0 as transitions_count'))
+          .select(this.knex.raw("'0'::int as transitions_count"))
+          .select('id')
           .select(this.knex.raw('0 as total_count'))
           .whereNotIn('identifier', function () {
             this.select('token_identifier').from('counted_subquery')
@@ -157,10 +159,9 @@ module.exports = class TokensDAO {
     const rows = await this.knex(unionQuery)
       .select('token_identifier', 'transitions_count', 'data_contracts.identifier as data_contract_identifier', 'tokens.position', 'total_count')
       .orderBy('transitions_count', order)
-      .orderBy('data_contracts.id', order)
+      .orderBy('subquery.id', order)
       .leftJoin('tokens', 'tokens.identifier', 'token_identifier')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
-      .limit(limit)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
