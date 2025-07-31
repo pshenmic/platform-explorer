@@ -2,7 +2,7 @@ import { Badge } from '@chakra-ui/react'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { Tooltip } from '../ui/Tooltips'
 
-function TypeBadge ({ typeId, type, ...props }) {
+function TypeBadge ({ type, ...props }) {
   return (
     <Tooltip
       title={TransactionTypesInfo?.[type]?.title}
