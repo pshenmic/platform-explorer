@@ -136,19 +136,16 @@ module.exports = class TokensDAO {
       .orderBy('transitions_count', order)
       .from('subquery')
 
-    const reserveTokensSubquery = this.knex('tokens')
-      .with('subquery', countedSubquery)
-      .select('identifier as token_identifier')
-      .select(this.knex.raw('0 as transitions_count'))
-      .select(this.knex.raw('0 as total_count'))
-
     const unionQuery = this.knex
       .with('counted_subquery', countedSubquery)
       .unionAll([
         this.knex.select('*').from('counted_subquery'),
-        reserveTokensSubquery
+        this.knex('tokens')
+          .select('identifier as token_identifier')
+          .select(this.knex.raw('0 as transitions_count'))
+          .select(this.knex.raw('0 as total_count'))
           .whereNotIn('identifier', function () {
-            this.select('token_identifier').from('subquery')
+            this.select('token_identifier').from('counted_subquery')
           })
           .whereNotExists(this.knex.select('*').from('counted_subquery'))
           .orderBy('id', order)
