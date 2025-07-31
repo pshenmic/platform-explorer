@@ -1,15 +1,6 @@
 import copyToClipboard from './copyToClipboard'
-import { StateTransitionEnum } from '../enums/state.transition.type'
 import currencyRound from './currencyRound'
 import { getDaysBetweenDates, getDynamicRange, getTimeDelta } from './datetime'
-
-function getTransitionTypeKeyById (id) {
-  const [stateTransitionType] = Object.entries(StateTransitionEnum)
-    .filter(([key]) => StateTransitionEnum[key] === id)
-    .map(([key]) => key)
-
-  return stateTransitionType
-}
 
 function fetchHandlerSuccess (setter, data) {
   setter(state => ({
@@ -101,7 +92,6 @@ export {
   currencyRound,
   copyToClipboard,
   getTimeDelta,
-  getTransitionTypeKeyById,
   creditsToDash,
   roundUsd,
   removeTrailingZeros,

@@ -1,10 +1,8 @@
 import { Badge } from '@chakra-ui/react'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { Tooltip } from '../ui/Tooltips'
-import { getTransitionTypeKeyById } from '../../util'
 
 function TypeBadge ({ type, ...props }) {
-  const transitionType = getTransitionTypeKeyById(type)
   const TransferTypesTitle = {
     IDENTITY_TOP_UP: 'Credit Top Up',
     IDENTITY_CREDIT_WITHDRAWAL: 'Credit Withdrawal',
@@ -14,15 +12,15 @@ function TypeBadge ({ type, ...props }) {
 
   return (
     <Tooltip
-      title={TransferTypesTitle[transitionType]}
-      content={TransactionTypesInfo?.[transitionType]?.description}
+      title={TransferTypesTitle[type]}
+      content={TransactionTypesInfo?.[type]?.description}
       placement={'top'}
     >
       <Badge
-        colorScheme={TransactionTypesInfo?.[transitionType]?.colorScheme}
+        colorScheme={TransactionTypesInfo?.[type]?.colorScheme}
         {...props}
       >
-        {TransferTypesTitle[transitionType]}
+        {TransferTypesTitle[type]}
       </Badge>
     </Tooltip>
   )
