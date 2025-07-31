@@ -127,30 +127,44 @@ module.exports = class TokensDAO {
       .leftJoin('state_transitions', 'state_transitions.hash', 'token_transitions.state_transition_hash')
       .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
 
-    const reserveTokensSubquery = this.knex('tokens')
+    const countedSubquery = this.knex
       .with('subquery', subquery)
-      .select('identifier as token_identifier')
-      .select(this.knex.raw('0 as transitions_count'))
-      .whereNotIn('identifier', function () {
-        this.select('token_identifier').from('subquery')
-      })
-      .orderBy('id', order)
-      .limit(limit)
-      .offset(fromRank)
-
-    const unionQuery = this.knex
-      .unionAll([subquery, reserveTokensSubquery], true)
-      .as('subquery')
-
-    const rows = await this.knex(unionQuery)
-      .select('token_identifier', 'transitions_count', 'data_contracts.identifier as data_contract_identifier', 'tokens.position')
+      .select('token_identifier', 'transitions_count')
       .select(this.knex.raw('count(*) OVER() as total_count'))
       .limit(limit)
       .offset(fromRank)
       .orderBy('transitions_count', order)
+      .from('subquery')
+
+    const reserveTokensSubquery = this.knex('tokens')
+      .with('subquery', countedSubquery)
+      .select('identifier as token_identifier')
+      .select(this.knex.raw('0 as transitions_count'))
+      .select(this.knex.raw('0 as total_count'))
+
+
+    const unionQuery = this.knex
+      .with('counted_subquery', countedSubquery)
+      .unionAll([
+        this.knex.select('*').from('counted_subquery'),
+        reserveTokensSubquery
+          .whereNotIn('identifier', function () {
+            this.select('token_identifier').from('subquery')
+          })
+          .whereNotExists(this.knex.select('*').from('counted_subquery'))
+          .orderBy('id', order)
+          .limit(limit)
+          .offset(fromRank)
+      ], true)
+      .as('subquery')
+
+    const rows = await this.knex(unionQuery)
+      .select('token_identifier', 'transitions_count', 'data_contracts.identifier as data_contract_identifier', 'tokens.position', 'total_count')
+      .orderBy('transitions_count', order)
       .orderBy('data_contracts.id', order)
       .leftJoin('tokens', 'tokens.identifier', 'token_identifier')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
+      .limit(limit)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
