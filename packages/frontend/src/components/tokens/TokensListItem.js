@@ -25,7 +25,10 @@ function TokensListItem ({ token }) {
     <Link href={`/token/${identifier}`} className={'TokensListItem'}>
       <Grid className={'TokensListItem__Content'}>
         <GridItem className={'TokensListItem__Column TokensListItem__Column--TokenName'}>
-          <Alias avatarSource={identifier}>{name}</Alias>
+          {name
+            ? <Alias avatarSource={identifier}>{name}</Alias>
+            : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{identifier}</Identifier>
+          }
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Supply'}>

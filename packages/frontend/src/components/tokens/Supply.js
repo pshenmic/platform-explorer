@@ -21,9 +21,8 @@ function Supply ({
   loading
 }) {
   const progressClass = progressPosition === 'top' ? 'Supply--ProgressTop' : ''
-  const tooBigNumber = Number(maxSupply) > 9999999999999
+  const isTooBigNumber = (number) => Number(number) > 999999999
   const hasMaxSupply = maxSupply && Number(maxSupply) > 0 && Number(maxSupply) !== Number(currentSupply)
-  const tooBigCurrentNumber = Number(currentSupply) > 9999999999999
 
   return (
     <div className={`Supply ${progressClass} ${showTitles && 'Supply--WithIcons'} ${className || ''} ${loading ? 'Supply--Loading' : ''}`}>
@@ -41,7 +40,7 @@ function Supply ({
             : <>
                 <div className={'Supply__SupplyTitles'}>
                   <span className={'Supply__CurrentSupply'}>
-                    {tooBigCurrentNumber
+                    {isTooBigNumber(currentSupply)
                       ? <Tooltip
                           placement={'top'}
                           content={<BigNumber>{Number(currentSupply)}</BigNumber>}
@@ -53,7 +52,7 @@ function Supply ({
                   </span>
                   {hasMaxSupply && (
                     <span className={'Supply__MaxSupply'}>
-                      {tooBigNumber
+                      {isTooBigNumber(maxSupply)
                         ? <Tooltip
                             placement={'top'}
                             content={<BigNumber>{Number(maxSupply)}</BigNumber>}
