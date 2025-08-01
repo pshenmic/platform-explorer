@@ -258,8 +258,17 @@ module.exports = class TokensDAO {
     const tokens = dataContractsTokens
       .reduce((acc, contract) => contract ? [...acc, ...contract.filter((token) => token !== undefined)] : acc, [])
 
+    const tokenIdentifierList = tokens.map((token) => token.identifier)
+
+    const tokenBalances = await this.dapi.getIdentityTokenBalances(identifier, tokenIdentifierList)
+
+    const tokensWithBalance = tokens.map(token => ({
+      ...token,
+      balance: tokenBalances?.find(t => t.identifier === token.identifier)?.balance ?? null
+    }))
+
     const [row] = rows
 
-    return new PaginatedResultSet(tokens, page, limit, Number(row?.total_count ?? 0))
+    return new PaginatedResultSet(tokensWithBalance, page, limit, Number(row?.total_count ?? 0))
   }
 }

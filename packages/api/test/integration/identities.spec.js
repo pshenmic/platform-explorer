@@ -867,7 +867,8 @@ describe('Identities routes', () => {
         identitiesInteracted: null,
         topIdentity: null,
         totalGasUsed: null,
-        groups: null
+        groups: null,
+        tokens: null
       }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -918,7 +919,8 @@ describe('Identities routes', () => {
           identitiesInteracted: null,
           topIdentity: null,
           totalGasUsed: null,
-          groups: null
+          groups: null,
+          tokens: null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -969,6 +971,7 @@ describe('Identities routes', () => {
           identitiesInteracted: null,
           topIdentity: null,
           totalGasUsed: null,
+          tokens: null,
           groups: null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
@@ -1020,6 +1023,7 @@ describe('Identities routes', () => {
           identitiesInteracted: null,
           topIdentity: null,
           totalGasUsed: null,
+          tokens: null,
           groups: null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)

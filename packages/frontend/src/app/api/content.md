@@ -631,25 +631,25 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `timestamp_end` must be used with `timestamp_start`
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
 
-| Batch Type String                        | Batch type Number |
-|:-----------------------------------------|:------------------|
-| DocumentCreateTransition                 | 0                 |
-| DocumentReplaceTransition                | 1                 |
-| DocumentDeleteTransition                 | 2                 |
-| DocumentTransferTransition               | 3                 |
-| DocumentUpdatePriceTransition            | 4                 |
-| DocumentPurchaseTransition               | 5                 |
-| TokenBurnTransition                      | 6                 |
-| TokenMintTransition                      | 7                 |
-| TokenTransferTransition                  | 8                 |
-| TokenFreezeTransition                    | 9                 |
-| TokenUnfreezeTransition                  | 10                |
-| TokenDestroyFrozenFundsTransition        | 11                |
-| TokenClaimTransition                     | 12                |
-| TokenEmergencyActionTransition           | 13                |
-| TokenConfigUpdateTransition              | 14                |
-| TokenDirectPurchaseTransition            | 15                |
-| TokenSetPriceForDirectPurchaseTransition | 16                |
+| Batch type string                   | Batch type number |
+|:------------------------------------|:------------------|
+| DOCUMENT_CREATE                     | 0                 |
+| DOCUMENT_REPLACE                    | 1                 |
+| DOCUMENT_DELETE                     | 2                 |
+| DOCUMENT_TRANSFER                   | 3                 |
+| DOCUMENT_UPDATE_PRICE               | 4                 |
+| DOCUMENT_PURCHASE                   | 5                 |
+| TOKEN_BURN                          | 6                 |
+| TOKEN_MINT                          | 7                 |
+| TOKEN_TRANSFER                      | 8                 |
+| TOKEN_FREEZE                        | 9                 |
+| TOKEN_UNFREEZE                      | 10                |
+| TOKEN_DESTROY_FROZEN_FUNDS          | 11                |
+| TOKEN_CLAIM                         | 12                |
+| TOKEN_EMERGENCY_ACTION              | 13                |
+| TOKEN_CONFIG_UPDATE                 | 14                |
+| TOKEN_DIRECT_PURCHASE               | 15                |
+| TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE | 16                |
 
 ```
 GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
@@ -694,44 +694,77 @@ Return data contract by given identifier
 * `topIdentity` - identity with the largest number of documents
 
 ```
-GET /dataContract/H4wBXB2RCu58EP7H7gGyehVmD7ij5MLZkAXW9SVUGPYb
+GET /dataContract/HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF
 
 {
-  "identifier": "H4wBXB2RCu58EP7H7gGyehVmD7ij5MLZkAXW9SVUGPYb",
-  "name": null,
-  "owner": {
-    "identifier": "Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd",
-    "aliases": [
-      {
-        "alias": "ajcwebdev20250128.dash",
-        "status": "ok",
-        "contested": false,
-        "timestamp": null,
-        "txHash": "2508B35FDDB3E2E797D4F2CB9C1FAEE71D4DC43B91CE2043BEC8CE2B4A442DD7"
-      }
+    "identifier": "HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF",
+    "name": null,
+    "owner": {
+        "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+        "aliases": []
+    },
+    "schema": "{}",
+    "version": 1,
+    "txHash": "A26C97F3F5C8C52E6635E7547FE08C7C159ACE7D8BEE6A649E714B7A8E854F55",
+    "timestamp": "2025-07-31T07:31:37.624Z",
+    "isSystem": false,
+    "documentsCount": 0,
+    "topIdentity": {
+        "identifier": null,
+        "aliases": []
+    },
+    "identitiesInteracted": 0,
+    "totalGasUsed": 30124352540,
+    "averageGasUsed": 30124352540,
+    "groups": [
+        {
+            "position": 0,
+            "members": {
+                "35SD29sWhmKEeQt1h87B2yXQVvBPDhevUYeubpAwGEow": 1,
+                "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW": 1,
+                "CuG7FxrSwt35A6SpEqqLn5RTNNwuxeN6kJ3JBof8QdPz": 1,
+                "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD": 1
+            },
+            "requiredPower": 2
+        }
+    ],
+    "tokens": [
+        {
+            "identifier": "9itsUTJYiiroLNSyr3Nrmiyd9gdk7X9HH22bSew9dmrF",
+            "position": 0,
+            "timestamp": null,
+            "description": null,
+            "localizations": {
+                "en": {
+                    "pluralForm": "A1-mint-grps",
+                    "singularForm": "A1-mint-grp",
+                    "shouldCapitalize": true
+                }
+            },
+            "baseSupply": "1000000000",
+            "totalSupply": "1000102300",
+            "maxSupply": "20000000000",
+            "owner": {
+                "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+                "aliases": []
+            },
+            "mintable": true,
+            "burnable": true,
+            "freezable": true,
+            "unfreezable": true,
+            "destroyable": true,
+            "allowedEmergencyActions": true,
+            "dataContractIdentifier": "HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF",
+            "changeMaxSupply": true,
+            "distributionType": null,
+            "totalGasUsed": null,
+            "mainGroup": 0,
+            "totalTransitionsCount": null,
+            "totalFreezeTransitionsCount": null,
+            "totalBurnTransitionsCount": null,
+            "decimals": 4
+        }
     ]
-  },
-  "schema": "{\"note\":{\"type\":\"object\",\"properties\":{\"author\":{\"type\":\"string\",\"position\":1},\"message\":{\"type\":\"string\",\"position\":0}},\"additionalProperties\":false}}",
-  "version": 2,
-  "txHash": "90525E94FFCDA0C55053E0E4629862CF57D3264462E8CC25A8B55CDAD3B601B2",
-  "timestamp": "2025-01-31T00:30:08.174Z",
-  "isSystem": false,
-  "documentsCount": 1,
-  "topIdentity": {
-    "identifier": "Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd",
-    "aliases": [
-      {
-        "alias": "ajcwebdev20250128.dash",
-        "status": "ok",
-        "contested": false,
-        "timestamp": null,
-        "txHash": "2508B35FDDB3E2E797D4F2CB9C1FAEE71D4DC43B91CE2043BEC8CE2B4A442DD7"
-      }
-    ]
-  },
-  "identitiesInteracted": 1,
-  "totalGasUsed": 51529650,
-  "averageGasUsed": 10305930
 }
 ```
 Response codes:
@@ -2021,15 +2054,13 @@ DOCUMENT TRANSITION
   "typeString": "BATCH",
   "transitions": [
     {
-      "transitionType": "documentTransition",
+      "action": "DOCUMENT_CREATE",
       "id": "7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL",
       "dataContractId": "FhKAsUnPbqe7K4TZxgRdtPUrfSvNCtYV8iPsvjX7ZG58",
       "revision": "1",
       "prefundedVotingBalance": null,
       "type": "note",
       "entropy": "f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b",
-      "action": 0,
-      "actionString": "Create",
       "identityContractNonce": "2",
       "data": {
         "message": "Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT"
@@ -2051,9 +2082,7 @@ TOKEN TRANSITION
   "typeString": "BATCH",
   "transitions": [
     {
-      "transitionType": "tokenTransition",
-      "tokenTransitionType": 2,
-      "tokenTransitionTypeString": "Transfer",
+      "action": "TOKEN_TRANSFER",
       "tokenId": "8AnZE2i955j9PC55m3y3e6rVQVZHbLWTk66iNp8eoNWn",
       "identityContractNonce": "16",
       "tokenContractPosition": 1,
@@ -2553,10 +2582,10 @@ Response codes:
 ```
 ___
 ### Tokens Rating
-Return list of tokens identifier with order by transactions count
+Return list of tokens identifier with order by transactions count.
 
-If it is not possible to get tokens transitions for selected period, 
-then will be returned list of tokens in order of creation date 
+If it is not possible to get tokens transitions for selected period,
+then will be returned list of tokens in order of creation date
 
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more then 100

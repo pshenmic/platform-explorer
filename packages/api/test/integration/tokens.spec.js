@@ -134,6 +134,8 @@ describe('Tokens', () => {
 
       tokens.push({ token, stateTransition, tokenTransition })
     }
+
+    mock.method(DAPI.prototype, 'getIdentityTokenBalances', async () => null)
   })
 
   after(async () => {
@@ -609,7 +611,8 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalTransitionsCount: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          balance: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)
@@ -657,7 +660,8 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalTransitionsCount: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          balance: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)
@@ -705,7 +709,8 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalTransitionsCount: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          balance: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)
@@ -753,7 +758,8 @@ describe('Tokens', () => {
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalTransitionsCount: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          balance: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)

@@ -180,7 +180,8 @@ describe('DataContracts routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          tokens: null
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -213,7 +214,8 @@ describe('DataContracts routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          tokens: null
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -246,7 +248,8 @@ describe('DataContracts routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          tokens: null
         }))
 
       assert.equal(body.resultSet.length, 6)
@@ -279,7 +282,8 @@ describe('DataContracts routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          tokens: null
         }))
 
       assert.equal(body.resultSet.length, 6)
@@ -313,7 +317,8 @@ describe('DataContracts routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          tokens: null
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -369,7 +374,8 @@ describe('DataContracts routes', () => {
             }
           ]
         },
-        totalGasUsed: 0
+        totalGasUsed: 0,
+        tokens: []
       }
 
       assert.deepEqual(body, expectedDataContract)
@@ -418,7 +424,8 @@ describe('DataContracts routes', () => {
             }
           ]
         },
-        totalGasUsed: 0
+        totalGasUsed: 0,
+        tokens: []
       }
 
       assert.deepEqual(body, expectedDataContract)
@@ -469,8 +476,7 @@ describe('DataContracts routes', () => {
       const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
-          documentAction: null,
-          tokenAction: 'Mint',
+          action: 'TOKEN_MINT',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
@@ -548,8 +554,7 @@ describe('DataContracts routes', () => {
       const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
-          documentAction: null,
-          tokenAction: 'Mint',
+          action: 'TOKEN_MINT',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
@@ -627,8 +632,7 @@ describe('DataContracts routes', () => {
       const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
-          documentAction: null,
-          tokenAction: 'Mint',
+          action: 'TOKEN_MINT',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,
@@ -706,8 +710,7 @@ describe('DataContracts routes', () => {
       const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
-          documentAction: null,
-          tokenAction: 'Mint',
+          action: 'TOKEN_MINT',
           documentIdentifier: null,
           tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
           recipient: null,

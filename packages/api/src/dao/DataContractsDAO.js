@@ -2,6 +2,8 @@ const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { decodeStateTransition, getAliasFromDocument } = require('../utils')
 const dpnsContract = require('../../data_contracts/dpns.json')
+const Token = require('../models/Token')
+const { TokenConfigurationWASM } = require('pshenmic-dpp')
 
 module.exports = class DataContractsDAO {
   constructor (knex, client, dapi) {
@@ -161,14 +163,50 @@ module.exports = class DataContractsDAO {
     })
 
     let groups = null
+    let tokens = null
 
     try {
-      groups = (await this.dapi.getDataContract(identifier) ?? { groups: undefined }).groups
+      const config = await this.dapi.getDataContract(identifier)
+
+      groups = (config ?? { groups: undefined }).groups
+
+      const tokenPositions = Object.keys(config?.tokens ?? {})
+
+      tokens = await Promise.all(tokenPositions.map(async (tokenPosition) => {
+        const tokenConfig = config.tokens[tokenPosition]
+
+        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(identifier, Number(tokenPosition))
+
+        const tokenTotalSupply = await this.dapi.getTokenTotalSupply(tokenIdentifier.base58())
+
+        return Token.fromObject({
+          identifier: tokenIdentifier.base58(),
+          dataContractIdentifier: identifier,
+          owner: dataContract.owner,
+          position: Number(tokenPosition),
+          totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
+          description: tokenConfig?.description,
+          localizations: tokenConfig?.conventions?.localizations,
+          decimals: tokenConfig?.conventions?.decimals,
+          baseSupply: tokenConfig?.baseSupply.toString(),
+          maxSupply: tokenConfig?.maxSupply?.toString(),
+          mintable: tokenConfig?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          burnable: tokenConfig?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          freezable: tokenConfig?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          changeMaxSupply: tokenConfig?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          distributionType: tokenConfig?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
+          mainGroup: tokenConfig?.mainControlGroup
+        })
+      }))
     } catch (error) {}
 
     return DataContract.fromObject({
       ...dataContract,
-      groups
+      groups,
+      tokens
     })
   }
 
@@ -211,8 +249,7 @@ module.exports = class DataContractsDAO {
       return {
         type: decodedTx?.typeString ?? null,
         action: decodedTx?.transitions?.map(transition => ({
-          documentAction: transition.actionString ?? null,
-          tokenAction: transition.tokenTransitionTypeString ?? null,
+          action: transition.action ?? null,
           documentIdentifier: transition.id ?? null,
           tokenIdentifier: transition.tokenId ?? null,
           recipient: (transition.recipient ?? transition.frozenIdentityId) ?? null,

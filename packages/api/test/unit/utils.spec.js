@@ -79,15 +79,13 @@ describe('Utils', () => {
         typeString: 'BATCH',
         transitions: [
           {
-            transitionType: 'documentTransition',
+            action: 'DOCUMENT_CREATE',
             id: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
             dataContractId: 'FhKAsUnPbqe7K4TZxgRdtPUrfSvNCtYV8iPsvjX7ZG58',
             revision: '1',
             prefundedVotingBalance: null,
             type: 'note',
             entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
-            action: 0,
-            actionString: 'Create',
             identityContractNonce: '2',
             data: {
               message: 'Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT'
@@ -110,9 +108,7 @@ describe('Utils', () => {
         typeString: 'BATCH',
         transitions: [
           {
-            transitionType: 'tokenTransition',
-            tokenTransitionType: 2,
-            tokenTransitionTypeString: 'Transfer',
+            action: 'TOKEN_TRANSFER',
             tokenId: '8AnZE2i955j9PC55m3y3e6rVQVZHbLWTk66iNp8eoNWn',
             identityContractNonce: '16',
             tokenContractPosition: 1,
@@ -141,9 +137,7 @@ describe('Utils', () => {
         typeString: 'BATCH',
         transitions: [
           {
-            transitionType: 'tokenTransition',
-            tokenTransitionType: 1,
-            tokenTransitionTypeString: 'Mint',
+            action: 'TOKEN_MINT',
             tokenId: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
             identityContractNonce: '3',
             tokenContractPosition: 0,
@@ -172,9 +166,7 @@ describe('Utils', () => {
         typeString: 'BATCH',
         transitions: [
           {
-            transitionType: 'tokenTransition',
-            tokenTransitionType: 8,
-            tokenTransitionTypeString: 'ConfigUpdate',
+            action: 'TOKEN_CONFIG_UPDATE',
             tokenId: '6p86udGakFcMxG2yJdZaWavcs6RbFeV3bmx4EGwBKkyN',
             identityContractNonce: '3',
             tokenContractPosition: 0,
