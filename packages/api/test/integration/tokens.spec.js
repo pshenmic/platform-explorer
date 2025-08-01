@@ -802,7 +802,7 @@ describe('Tokens', () => {
 
         const tokenTransitions = []
 
-        for (let t = 0; t < (i + 1) ** 2; t++) {
+        for (let t = 0; t < (i + 1) * 2; t++) {
           tokenTransition = await fixtures.tokeTransition(knex, {
             token_identifier: token.identifier,
             owner: identity.identifier,
@@ -826,7 +826,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, tokens.length)
       assert.equal(body.resultSet.length, 10)
 
       const expected = tokens
@@ -853,7 +853,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 15)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, tokens.length)
       assert.equal(body.resultSet.length, 15)
 
       const expected = tokens
@@ -880,7 +880,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 3)
       assert.equal(body.pagination.limit, 7)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, tokens.length)
       assert.equal(body.resultSet.length, 7)
 
       const expected = tokens
@@ -907,7 +907,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 3)
       assert.equal(body.pagination.limit, 7)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, tokens.length)
       assert.equal(body.resultSet.length, 7)
 
       const expected = tokens
@@ -938,7 +938,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 4)
-      assert.equal(body.pagination.total, 18)
+      assert.equal(body.pagination.total, tokens.length)
       assert.equal(body.resultSet.length, 4)
 
       const expected = tokens
@@ -955,6 +955,36 @@ describe('Tokens', () => {
           },
           tokenIdentifier: token.identifier,
           transitionCount: tokenTransitions.length
+        }))
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get rating without txs in order desc with custom limit', async () => {
+      const start = new Date(new Date().getTime() + 3600000)
+      const end = new Date(new Date().getTime() + 3600000 * 20)
+
+      const { body } = await client.get(`/tokens/rating?limit=4&page=2&order=desc&timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 4)
+      assert.equal(body.pagination.total, tokens.length)
+
+      const expected = tokens
+        .sort((a, b) => b.token.id - a.token.id)
+        .slice(4, 8)
+        .map(({ token, tokenTransitions }) => ({
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          tokenIdentifier: token.identifier,
+          transitionCount: 0
         }))
 
       assert.deepEqual(body.resultSet, expected)

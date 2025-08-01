@@ -126,14 +126,39 @@ module.exports = class TokensDAO {
       .groupBy('token_identifier')
       .leftJoin('state_transitions', 'state_transitions.hash', 'token_transitions.state_transition_hash')
       .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
-      .as('subquery')
 
-    const rows = await this.knex(subquery)
-      .select('token_identifier', 'transitions_count', 'data_contracts.identifier as data_contract_identifier', 'tokens.position')
-      .select(this.knex.raw('count(*) OVER() as total_count'))
+    const countedSubquery = this.knex
+      .with('subquery', subquery)
+      .select('token_identifier', 'transitions_count')
+      .select(this.knex.raw('0 as id'))
+      .orderBy('transitions_count', order)
       .limit(limit)
       .offset(fromRank)
+      .from('subquery')
+
+    const unionQuery = this.knex
+      .with('counted_subquery', countedSubquery)
+      .unionAll([
+        this.knex.select('*').from('counted_subquery'),
+        this.knex('tokens')
+          .select('identifier as token_identifier')
+          .select(this.knex.raw("'0'::int as transitions_count"))
+          .select('id')
+          .whereNotIn('identifier', function () {
+            this.select('token_identifier').from('counted_subquery')
+          })
+          .whereNotExists(this.knex.select('*').from('counted_subquery'))
+          .orderBy('id', order)
+          .limit(limit)
+          .offset(fromRank)
+      ], true)
+      .as('subquery')
+
+    const rows = await this.knex(unionQuery)
+      .select('token_identifier', 'transitions_count', 'data_contracts.identifier as data_contract_identifier', 'tokens.position')
       .orderBy('transitions_count', order)
+      .orderBy('subquery.id', order)
+      .select(this.knex('tokens').select(this.knex.raw('count(*) OVER() as total_count')).limit(1).as('total_count'))
       .leftJoin('tokens', 'tokens.identifier', 'token_identifier')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
