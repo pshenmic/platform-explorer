@@ -8,14 +8,16 @@ import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
 import './TokensList.scss'
 
-function TokensList ({ tokens, headerStyles = 'default', pagination, loading, itemsCount = 10 }) {
+function TokensList ({ tokens, headerStyles = 'default', variant = 'default', pagination, loading, itemsCount = 10 }) {
   const headerExtraClass = {
     default: '',
     light: 'TokensList__ColumnTitles--Light'
   }
 
+  const variantClass = variant === 'balance' ? 'TokensList--Balance' : ''
+
   return (
-    <div className={'TokensList'}>
+    <div className={`TokensList ${variantClass}`}>
       <Grid className={`TokensList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--TokenName'}>
           Token Name
@@ -29,12 +31,17 @@ function TokensList ({ tokens, headerStyles = 'default', pagination, loading, it
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--OwnerIdentity'}>
           Owner
         </GridItem>
+        {variant === 'balance' && (
+          <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Balance'}>
+            Balance
+          </GridItem>
+        )}
       </Grid>
 
       {!loading
         ? <div className={'TokensList__Items'}>
           {tokens?.map((token, key) =>
-            <TokensListItem token={token} key={key}/>
+            <TokensListItem token={token} variant={variant} key={key}/>
           )}
           {!tokens?.length &&
             <EmptyListMessage>There are no tokens yet.</EmptyListMessage>

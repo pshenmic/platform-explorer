@@ -56,4 +56,14 @@
   &__OwnerIdentifier {
     overflow: hidden;
   }
+
+  &--Balance {
+    .TokensListItem__Content {
+      @include tokens.ColumnsBalance();
+    }
+
+    .TokensListItem__Column {
+      @include tokens.ColumnBalance();
+    }
+  }
 }

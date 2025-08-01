@@ -1,19 +1,21 @@
 import Link from 'next/link'
-import { Alias, Identifier, BigNumber } from '../data'
+import { Alias, Identifier, BigNumber, NotActive } from '../data'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { Supply } from './index'
-import { LinkContainer } from '../ui/containers'
+import { LinkContainer, ValueContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
+import { currencyRound } from '../../util'
 import './TokensListItem.scss'
 
-function TokensListItem ({ token }) {
+function TokensListItem ({ token, variant = 'default' }) {
   const {
     identifier,
     dataContractIdentifier,
     maxSupply,
     totalSupply,
     owner,
-    localizations
+    localizations,
+    balance
   } = token
   const router = useRouter()
 
@@ -21,8 +23,10 @@ function TokensListItem ({ token }) {
     Object.values(localizations || {})[0]?.singularForm ||
     ''
 
+  const variantClass = variant === 'balance' ? 'TokensListItem--Balance' : ''
+
   return (
-    <Link href={`/token/${identifier}`} className={'TokensListItem'}>
+    <Link href={`/token/${identifier}`} className={`TokensListItem ${variantClass}`}>
       <Grid className={'TokensListItem__Content'}>
         <GridItem className={'TokensListItem__Column TokensListItem__Column--TokenName'}>
           {name
@@ -80,6 +84,20 @@ function TokensListItem ({ token }) {
             </Identifier>
           </LinkContainer>
         </GridItem>
+
+        {variant === 'balance' && (
+          <GridItem className={'TokensListItem__Column TokensListItem__Column--Balance TokensListItem__Column--Number'}>
+            {typeof balance === 'number'
+              ? <ValueContainer colorScheme={'emeralds'} size='sm'>
+                  {balance < 999999999
+                    ? <BigNumber>{balance}</BigNumber>
+                    : currencyRound(balance)
+                  }
+                </ValueContainer>
+              : <NotActive/>
+            }
+          </GridItem>
+        )}
       </Grid>
     </Link>
   )
