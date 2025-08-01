@@ -4,6 +4,8 @@ import { useMemo } from 'react'
 import './ImageGenerator.scss'
 
 export default function ImageGenerator ({ username, className, hat = null, saturation, lightness, ...props }) {
+  if (typeof username !== 'string') return
+
   const svgURI = useMemo(
     () => 'data:image/svg+xml;utf8,' + encodeURIComponent(minidenticon(username, saturation, lightness)),
     [username, saturation, lightness]
