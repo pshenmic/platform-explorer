@@ -420,7 +420,7 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and batch filter string', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&batch_type=DocumentDeleteTransition`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&batch_type=DOCUMENT_DELETE`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
