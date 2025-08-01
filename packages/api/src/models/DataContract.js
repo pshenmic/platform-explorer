@@ -13,8 +13,9 @@ module.exports = class DataContract {
   totalGasUsed
   averageGasUsed
   groups
+  tokens
 
-  constructor (identifier, name, owner, schema, version, txHash, timestamp, isSystem, documentsCount, topIdentity, identitiesInteracted, totalGasUsed, averageGasUsed, groups) {
+  constructor (identifier, name, owner, schema, version, txHash, timestamp, isSystem, documentsCount, topIdentity, identitiesInteracted, totalGasUsed, averageGasUsed, groups, tokens) {
     this.identifier = identifier ? identifier.trim() : null
     this.name = name ? name.trim() : null
     this.owner = owner ?? null
@@ -29,6 +30,7 @@ module.exports = class DataContract {
     this.totalGasUsed = totalGasUsed ?? null
     this.averageGasUsed = averageGasUsed ?? null
     this.groups = groups ?? null
+    this.tokens = tokens ?? null
   }
 
   /* eslint-disable camelcase */
@@ -50,7 +52,8 @@ module.exports = class DataContract {
     identitiesInteracted,
     totalGasUsed,
     averageGasUsed,
-    groups
+    groups,
+    tokens
   }) {
     let formattedGroups
     if (groups) {
@@ -63,6 +66,6 @@ module.exports = class DataContract {
       }))
     }
 
-    return new DataContract(identifier, name, owner, schema, version, txHash, timestamp, isSystem, documentsCount, topIdentity, identitiesInteracted, totalGasUsed, averageGasUsed, formattedGroups)
+    return new DataContract(identifier, name, owner, schema, version, txHash, timestamp, isSystem, documentsCount, topIdentity, identitiesInteracted, totalGasUsed, averageGasUsed, formattedGroups, tokens)
   }
 }
