@@ -102,10 +102,10 @@ function Identity ({ identifier }) {
     if (!identifier) return
     setLoadingProp(setTokens)
 
-    Api.getTokensByIdentity(identifier, documents.props.currentPage + 1, pageSize, 'desc')
+    Api.getTokensByIdentity(identifier, tokens.props.currentPage + 1, pageSize, 'desc')
       .then(paginatedDataContracts => fetchHandlerSuccess(setTokens, paginatedDataContracts))
       .catch(err => fetchHandlerError(setTokens, err))
-  }, [identifier, documents.props.currentPage])
+  }, [identifier, tokens.props.currentPage])
 
   useEffect(() => {
     const tab = searchParams.get('tab')
