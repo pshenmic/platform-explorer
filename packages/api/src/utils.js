@@ -17,6 +17,7 @@ const {
   IdentityUpdateTransitionWASM, IdentityCreditTransferWASM, IdentityCreditWithdrawalTransitionWASM,
   MasternodeVoteTransitionWASM, IdentifierWASM, PlatformVersionWASM
 } = require('pshenmic-dpp')
+const BatchEnum = require('./enums/BatchEnum')
 
 const getKnex = () => {
   return require('knex')({
@@ -266,14 +267,12 @@ const decodeStateTransition = async (base64) => {
 
         switch (transitionType) {
           case 1: {
-            const tokenTransitionType = transition.getTransitionTypeNumber()
+            const tokenTransitionType = transition.getTransitionType()
 
             const tokenTransition = transition.getTransition()
 
             out = {
-              transitionType: 'tokenTransition',
-              tokenTransitionType,
-              tokenTransitionTypeString: TokenTransitionEnum[tokenTransitionType],
+              action: BatchEnum[tokenTransitionType],
               tokenId: tokenTransition.base.tokenId.base58(),
               identityContractNonce: String(transition.identityContractNonce),
               tokenContractPosition: tokenTransition.base.tokenContractPosition,
@@ -289,7 +288,7 @@ const decodeStateTransition = async (base64) => {
                 : null
             }
 
-            switch (tokenTransitionType) {
+            switch (TokenTransitionEnum[tokenTransitionType]) {
               case TokenTransitionEnum.Burn: {
                 out.publicNote = tokenTransition.publicNote ?? null
                 out.burnAmount = tokenTransition.burnAmount.toString()
@@ -639,13 +638,11 @@ const decodeStateTransition = async (base64) => {
           }
           case 0: {
             out = {
-              transitionType: 'documentTransition',
+              action: BatchEnum[transition.actionTypeNumber],
               id: transition.id.base58(),
               dataContractId: transition.dataContractId.base58(),
               revision: String(transition.revision),
               type: transition.documentTypeName,
-              action: transition.actionTypeNumber,
-              actionString: DocumentActionEnum[transition.actionTypeNumber],
               identityContractNonce: String(transition.identityContractNonce)
             }
 
