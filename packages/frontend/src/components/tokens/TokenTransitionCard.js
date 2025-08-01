@@ -1,6 +1,5 @@
 import { ValueCard } from '../cards'
 import { BigNumber, CreditsBlock, Identifier, InfoLine } from '../data'
-import { TokenTransitionEnum } from '../../enums/tokenTransition'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
 import TokenEmergencyActionBadge from './TokenEmergencyActionBadge'
 import { Code, Badge } from '@chakra-ui/react'
@@ -8,7 +7,7 @@ import { colors } from '../../styles/colors'
 import './TokenTransitionCard.scss'
 
 const fieldsOfTypes = {
-  MINT: [
+  TOKEN_MINT: [
     'Action',
     'Amount',
     'TokenId',
@@ -19,7 +18,7 @@ const fieldsOfTypes = {
     'PublicNote'
     // 'GroupInfo'
   ],
-  TRANSFER: [
+  TOKEN_TRANSFER: [
     'Action',
     'Amount',
     'TokenId',
@@ -32,7 +31,7 @@ const fieldsOfTypes = {
     // 'PrivateEncryptedNote',
     // 'GroupInfo'
   ],
-  BURN: [
+  TOKEN_BURN: [
     'Action',
     'Amount',
     'TokenId',
@@ -41,7 +40,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce'
     // 'BurnFromIdentity'
   ],
-  FREEZE: [
+  TOKEN_FREEZE: [
     'Action',
     'Amount',
     'TokenId',
@@ -50,7 +49,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce',
     'FrozenIdentityId'
   ],
-  UNFREEZE: [
+  TOKEN_UNFREEZE: [
     'Action',
     'Amount',
     'TokenId',
@@ -59,7 +58,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce',
     'FrozenIdentityId'
   ],
-  DESTROY_FROZEN_FUNDS: [
+  TOKEN_DESTROY_FROZEN_FUNDS: [
     'Action',
     'Amount',
     'TokenId',
@@ -68,7 +67,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce',
     'FrozenIdentityId'
   ],
-  CLAIM: [
+  TOKEN_CLAIM: [
     'Action',
     'Amount',
     'TokenId',
@@ -77,7 +76,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce',
     'Recipient'
   ],
-  EMERGENCY_ACTION: [
+  TOKEN_EMERGENCY_ACTION: [
     'Action',
     'EmergencyAction',
     'TokenId',
@@ -85,7 +84,7 @@ const fieldsOfTypes = {
     'DataContractId',
     'IdentityContractNonce'
   ],
-  CONFIG_UPDATE: [
+  TOKEN_CONFIG_UPDATE: [
     'Action',
     'TokenId',
     'TokenContractPosition',
@@ -93,7 +92,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce'
     // 'ConfigChanges'
   ],
-  DIRECT_PURCHASE: [
+  TOKEN_DIRECT_PURCHASE: [
     'Action',
     'Amount',
     'TokenId',
@@ -104,7 +103,7 @@ const fieldsOfTypes = {
     // 'Buyer',
     // 'Seller'
   ],
-  SET_PRICE_FOR_DIRECT_PURCHASE: [
+  TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE: [
     'Action',
     'TokenId',
     'TokenContractPosition',
@@ -115,8 +114,7 @@ const fieldsOfTypes = {
 }
 
 const TokenTransitionCard = ({ transition, rate, className }) => {
-  const transitionType = TokenTransitionEnum[transition?.tokenTransitionType]
-  const fields = fieldsOfTypes[transitionType] || []
+  const fields = fieldsOfTypes[transition?.action] || []
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient TokenTransitionCard ${className || ''}`}>
@@ -127,10 +125,10 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
           title={'Action'}
           value={
             <BatchTypeBadge
-              batchType={transition?.tokenTransitionType !== undefined ? `TOKEN_${TokenTransitionEnum[transition.tokenTransitionType]}` : undefined}
+              batchType={transition?.action !== undefined ? transition?.action : undefined}
             />
           }
-          error={transition?.tokenTransitionType === undefined}
+          error={transition?.action === undefined}
         />
        )}
 

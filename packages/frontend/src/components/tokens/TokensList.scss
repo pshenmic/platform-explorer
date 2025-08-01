@@ -47,4 +47,14 @@
   &__EmptyMessage {
     text-align: center;
   }
+
+  &--Balance {
+    .TokensList__ColumnTitles {
+      @include tokens.ColumnsBalance();
+    }
+
+    .TokensList__ColumnTitle {
+      @include tokens.ColumnBalance();
+    }
+  }
 }
