@@ -37,6 +37,11 @@
       overflow: hidden;
       justify-content: flex-end;
     }
+
+    &--Balance {
+      font-size: 0.625rem;
+      font-weight: 400;
+    }
   }
 
   &__TokenNameContainer {
