@@ -215,6 +215,10 @@ const getTransfersByIdentity = (identifier, page = 1, limit = 10, order = 'asc')
   return call(`identity/${identifier}/transfers?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
+const getTokensByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
+  return call(`identity/${identifier}/tokens?page=${page}&limit=${limit}&order=${order}`, 'GET')
+}
+
 const getIdentity = (identifier) => {
   return call(`identity/${identifier}`, 'GET')
 }
@@ -299,6 +303,7 @@ export {
   getDocumentsByIdentity,
   getTransfersByIdentity,
   getWithdrawalsByIdentity,
+  getTokensByIdentity,
   getValidators,
   getValidatorByProTxHash,
   getBlocksByValidator,
