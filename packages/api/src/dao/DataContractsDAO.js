@@ -170,7 +170,7 @@ module.exports = class DataContractsDAO {
 
       groups = (config ?? { groups: undefined }).groups
 
-      const tokenPositions = Object.keys(config.tokens)
+      const tokenPositions = Object.keys(config?.tokens ?? {})
 
       tokens = await Promise.all(tokenPositions.map(async (tokenPosition) => {
         const tokenConfig = config.tokens[tokenPosition]

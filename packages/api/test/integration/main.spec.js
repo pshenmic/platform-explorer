@@ -369,7 +369,8 @@ describe('Other routes', () => {
             }
           ]
         },
-        groups: null
+        groups: null,
+        tokens: null
       }
 
       assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
@@ -394,7 +395,8 @@ describe('Other routes', () => {
         identitiesInteracted: null,
         totalGasUsed: null,
         topIdentity: null,
-        groups: null
+        groups: null,
+        tokens: null
       }
 
       assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
