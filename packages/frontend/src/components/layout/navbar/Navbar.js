@@ -41,7 +41,7 @@ const menuItems = [
   {
     title: 'API',
     href: '/api',
-    breakpoints: { base: true, sm: true, md: true, lg: false, xl: false, '2xl': true, '3xl': false }
+    breakpoints: { base: true, sm: true, md: true, lg: false, xl: false, '2xl': true, '3xl': true }
   },
   {
     title: 'more',
