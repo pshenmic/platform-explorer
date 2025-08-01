@@ -89,9 +89,9 @@ function TokensListItem ({ token, variant = 'default' }) {
           <GridItem className={'TokensListItem__Column TokensListItem__Column--Balance TokensListItem__Column--Number'}>
             {typeof balance === 'number'
               ? <ValueContainer colorScheme={'emeralds'} size='sm'>
-                  {balance < 999999999
-                    ? <BigNumber>{balance}</BigNumber>
-                    : currencyRound(balance)
+                  {balance > 999999999
+                    ? currencyRound(balance)
+                    : <BigNumber>{balance}</BigNumber>
                   }
                 </ValueContainer>
               : <NotActive/>
