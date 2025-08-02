@@ -3,6 +3,8 @@ const TokenTransition = require('../models/TokenTransition')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
 const Localization = require('../models/Localization')
+const PerpetualDistribution = require('../models/PerpetualDistribution')
+const PreProgrammedDistribution = require('../models/PreProgrammedDistribution')
 
 module.exports = class TokensDAO {
   constructor (knex, dapi) {
@@ -78,6 +80,14 @@ module.exports = class TokensDAO {
 
     const tokenConfig = dataContract.tokens[row.position]
 
+    const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.distributionRules ?? {}
+
+    const preProgrammedDistributions = preProgrammedDistribution?.distributions
+
+    const preProgrammedDistributionTimestamps = preProgrammedDistributions ? Object.keys(preProgrammedDistributions) : undefined
+
+    const preProgrammedDistributionNormal = preProgrammedDistributionTimestamps?.map((timestamp) => PreProgrammedDistribution.fromWASMObject({ timestamp, value: preProgrammedDistributions[timestamp] }))
+
     return Token.fromObject({
       ...token,
       totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
@@ -93,8 +103,9 @@ module.exports = class TokensDAO {
       unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
       destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
       allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      distributionType: tokenConfig?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
-      mainGroup: tokenConfig?.mainControlGroup
+      perpetualDistribution: perpetualDistribution ? PerpetualDistribution.fromWASMObject(perpetualDistribution) : null,
+      mainGroup: tokenConfig?.mainControlGroup,
+      preProgrammedDistribution: preProgrammedDistributionNormal
     })
   }
 

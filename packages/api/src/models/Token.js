@@ -18,15 +18,16 @@ module.exports = class Token {
   allowedEmergencyActions
   dataContractIdentifier
   changeMaxSupply
-  distributionType
   totalGasUsed
   mainGroup
   totalTransitionsCount
   totalFreezeTransitionsCount
   totalBurnTransitionsCount
   decimals
+  perpetualDistribution
+  preProgrammedDistribution
 
-  constructor (identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, distributionType, mainGroup, decimals) {
+  constructor (identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, perpetualDistribution, mainGroup, decimals, preProgrammedDistribution) {
     this.identifier = identifier ?? null
     this.position = position ?? null
     this.timestamp = timestamp ?? null
@@ -44,13 +45,14 @@ module.exports = class Token {
     this.dataContractIdentifier = dataContractIdentifier ?? null
     this.totalSupply = totalSupply ?? null
     this.changeMaxSupply = changeMaxSupply ?? null
-    this.distributionType = distributionType ?? null
     this.totalGasUsed = totalGasUsed ?? null
     this.mainGroup = mainGroup ?? null
     this.totalTransitionsCount = totalTransitionsCount ?? null
     this.totalFreezeTransitionsCount = totalFreezeTransitionsCount ?? null
     this.totalBurnTransitionsCount = totalBurnTransitionsCount ?? null
     this.decimals = decimals ?? null
+    this.perpetualDistribution = perpetualDistribution ?? null
+    this.preProgrammedDistribution = preProgrammedDistribution ?? null
   }
 
   /* eslint-disable */
@@ -96,13 +98,14 @@ module.exports = class Token {
                       dataContractIdentifier,
                       totalSupply,
                       changeMaxSupply,
-                      distributionType,
+                      perpetualDistribution,
                       totalGasUsed,
                       mainGroup,
                       totalTransitionsCount,
                       totalFreezeTransitionsCount,
                       totalBurnTransitionsCount,
                       decimals,
+                      preProgrammedDistribution
                     }) {
     if (localizations) {
       for (const locale in localizations) {
@@ -110,6 +113,6 @@ module.exports = class Token {
       }
     }
 
-    return new Token(identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, distributionType, mainGroup, decimals)
+    return new Token(identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, perpetualDistribution, mainGroup, decimals, preProgrammedDistribution)
   }
 }
