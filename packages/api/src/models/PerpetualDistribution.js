@@ -26,12 +26,12 @@ module.exports = class PerpetualDistribution {
    * @returns {PerpetualDistribution}
    */
   static fromWASMObject (perpetualDistribution) {
-    const perpetualDistributionType = perpetualDistribution.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null
+    const perpetualDistributionValue = perpetualDistribution.distributionType?.getDistribution()
 
     const perpetualDistributionRecipientType = perpetualDistribution?.distributionRecipient?.getType() ?? null
     const perpetualDistributionRecipientValue = perpetualDistribution?.distributionRecipient?.getValue() ?? null
 
-    const perpetualDistributionValue = perpetualDistribution?.distributionType?.getDistribution()
+    const perpetualDistributionType = perpetualDistributionValue.constructor?.name?.slice(0, -4) ?? null
     const perpetualDistributionInterval = perpetualDistributionValue?.interval ? Number(perpetualDistributionValue?.interval) : null
     const perpetualDistributionFunctionName = perpetualDistributionValue?.function?.getFunctionName() ?? null
 
