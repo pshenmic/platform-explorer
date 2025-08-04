@@ -632,13 +632,15 @@ const decodeStateTransition = async (base64) => {
                 out.price = null
                 out.prices = null
 
-                switch (tokenTransition.price.getScheduleType()) {
-                  case "SinglePrice": {
-                    out.price = tokenTransition.price.getValue().toString()
-                    break
-                  }
-                  case "SetPrices": {
-                    out.prices = tokenTransition.price.getValue()
+                if(tokenTransition.price){
+                  switch (tokenTransition.price.getScheduleType()) {
+                    case "SinglePrice": {
+                      out.price = tokenTransition.price.getValue().toString()
+                      break
+                    }
+                    case "SetPrices": {
+                      out.prices = tokenTransition.price.getValue()
+                    }
                   }
                 }
                 break
