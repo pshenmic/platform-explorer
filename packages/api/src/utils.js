@@ -639,7 +639,12 @@ const decodeStateTransition = async (base64) => {
                       break
                     }
                     case "SetPrices": {
-                      out.prices = tokenTransition.price.getValue()
+                      const prices = tokenTransition.price.getValue()
+                      if(prices){
+                        const priceKeys = Object.keys(prices)
+
+                        out.prices = priceKeys.map(key => ({amount: key, price: prices[key].toString()}))
+                      }
                     }
                   }
                 }
