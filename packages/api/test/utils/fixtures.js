@@ -511,7 +511,7 @@ const fixtures = {
 
     const token = await this.getToken(knex, { identifier: token_identifier })
 
-    const tokenHolder = await this.tokenHolder(knex, { holder: owner, token_id: token.id })
+    await this.tokenHolder(knex, { holder: owner, token_id: token.id })
 
     return { ...row, id: result.id, transition }
   },
