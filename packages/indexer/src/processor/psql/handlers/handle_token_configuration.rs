@@ -74,6 +74,14 @@ impl PSQLProcessor {
                 };
 
                 self.dao.create_token(token, sql_transaction).await;
+                self.dao
+                    .token_holder(
+                        data_contract.owner,
+                        Identifier::from(token_id),
+                        &sql_transaction,
+                    )
+                    .await
+                    .unwrap();
             }
         }
     }

@@ -2525,7 +2525,9 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL
     "totalTransitionsCount": 13,
     "totalFreezeTransitionsCount": 1,
     "decimals": 10,
-    "totalBurnTransitionsCount": 0
+    "totalBurnTransitionsCount": 0,
+    "balance": "10",
+    "balances": null
 }
 ```
 Response codes:
