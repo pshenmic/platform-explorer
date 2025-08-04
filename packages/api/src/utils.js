@@ -629,8 +629,18 @@ const decodeStateTransition = async (base64) => {
               }
               case TokenTransitionEnum.SetPriceForDirectPurchase: {
                 out.publicNote = tokenTransition.publicNote ?? null
-                out.price = tokenTransition.price.toString() ?? null
+                out.price = null
+                out.prices = null
 
+                switch (tokenTransition.price.getScheduleType()) {
+                  case "SinglePrice": {
+                    out.price = tokenTransition.price.getValue().toString()
+                    break
+                  }
+                  case "SetPrices": {
+                    out.prices = tokenTransition.price.getValue()
+                  }
+                }
                 break
               }
             }
