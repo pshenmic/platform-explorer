@@ -31,6 +31,15 @@ impl PSQLProcessor {
         )
         .await;
 
+        self.dao
+            .token_holder(
+                owner_id,
+                transition.token_id(),
+                &sql_transaction,
+            )
+            .await
+            .unwrap();
+
         match transition.clone() {
             TokenTransition::Mint(mint) => self
                 .dao
