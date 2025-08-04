@@ -136,15 +136,13 @@ describe('Tokens', () => {
     }
 
     for (let i = 0; i < 5; i++) {
-      let tokenTransition
-
       const stateTransition = await fixtures.transaction(knex, {
         block_hash: block.hash,
         block_height: block.height,
         data:
-          i%2===0
-            ?'AgG5BZwAg32+HPkczu8vW/+JvgoxqyypH+IC1KWlLtXX+AEBCgAACwDzGOdLDmuMO+LzhxqoUD27hy0iOXXmTgtqUBfkbuocK1qATLyeQ7SGhaPaequ9LTc28gNTVAJVI/372kNoKvmPAAEBBAH9AAABF2WS4AAC/QAAAEXZZLgACv0AAABJG9vEAPwF9eEA/QAAAAJUC+QAAAABQR8uWDXdK0f/ZYsZPfKK3JTUJqEZs1zMPY6OVbzRQ2nDoyggK6X0sUpl3fOkf0v1sAyYDKiDp0LLyqJECrIPg4VS'
-            :'AgH0Z0dWPzi+nB/g9cz0JvDSstQcBxUflSKbAKmE+PjyJAEBCgAAAgAJZIbY2wo/Shtxo0mIuagf9Ro+X89oUbKos8GVbeY0uFYAWtls/LUGnuwod79+fX4OQgW8rj/Az8rO4twC5kZnAAEACgABBUEfVJP/Rc/YDMRnDXAlU1bDHHGmBIWjCyx3LfnMSeaMZLokSZt6hRsN7cxVL6O9t5n2PoXZ46VYnUXSeeNkNJuzLg==',
+          i % 2 === 0
+            ? 'AgG5BZwAg32+HPkczu8vW/+JvgoxqyypH+IC1KWlLtXX+AEBCgAACwDzGOdLDmuMO+LzhxqoUD27hy0iOXXmTgtqUBfkbuocK1qATLyeQ7SGhaPaequ9LTc28gNTVAJVI/372kNoKvmPAAEBBAH9AAABF2WS4AAC/QAAAEXZZLgACv0AAABJG9vEAPwF9eEA/QAAAAJUC+QAAAABQR8uWDXdK0f/ZYsZPfKK3JTUJqEZs1zMPY6OVbzRQ2nDoyggK6X0sUpl3fOkf0v1sAyYDKiDp0LLyqJECrIPg4VS'
+            : 'AgH0Z0dWPzi+nB/g9cz0JvDSstQcBxUflSKbAKmE+PjyJAEBCgAAAgAJZIbY2wo/Shtxo0mIuagf9Ro+X89oUbKos8GVbeY0uFYAWtls/LUGnuwod79+fX4OQgW8rj/Az8rO4twC5kZnAAEACgABBUEfVJP/Rc/YDMRnDXAlU1bDHHGmBIWjCyx3LfnMSeaMZLokSZt6hRsN7cxVL6O9t5n2PoXZ46VYnUXSeeNkNJuzLg==',
         type: 0,
         gas_used: 1111,
         owner: identity.identifier
@@ -159,7 +157,7 @@ describe('Tokens', () => {
         state_transition_hash: stateTransition?.hash
       })
 
-      tokenTransition = await fixtures.tokeTransition(knex, {
+      const tokenTransition = await fixtures.tokeTransition(knex, {
         token_identifier: token.identifier,
         owner: identity.identifier,
         action: 10,
@@ -404,7 +402,7 @@ describe('Tokens', () => {
     })
 
     it('should return token by id with single price', async () => {
-      const [,token] = tokens
+      const [, token] = tokens
 
       const { body } = await client.get(`/token/${token.token.identifier}`)
         .expect(200)
@@ -489,20 +487,20 @@ describe('Tokens', () => {
         price: null,
         prices: [
           {
-            amount: "1",
-            price: "1200000000000"
+            amount: '1',
+            price: '1200000000000'
           },
           {
-            amount: "2",
-            price: "300000000000"
+            amount: '2',
+            price: '300000000000'
           },
           {
-            amount: "10",
-            price: "314000000000"
+            amount: '10',
+            price: '314000000000'
           },
           {
-            amount: "100000000",
-            price: "10000000000"
+            amount: '100000000',
+            price: '10000000000'
           }
         ]
       }
@@ -551,20 +549,20 @@ describe('Tokens', () => {
         price: null,
         prices: [
           {
-            amount: "1",
-            price: "1200000000000"
+            amount: '1',
+            price: '1200000000000'
           },
           {
-            amount: "2",
-            price: "300000000000"
+            amount: '2',
+            price: '300000000000'
           },
           {
-            amount: "10",
-            price: "314000000000"
+            amount: '10',
+            price: '314000000000'
           },
           {
-            amount: "100000000",
-            price: "10000000000"
+            amount: '100000000',
+            price: '10000000000'
           }
         ]
       }

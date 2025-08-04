@@ -42,7 +42,7 @@ const fixtures = {
     }
 
     const [row] = await knex('tokens')
-      .where('identifier',identifier)
+      .where('identifier', identifier)
       .limit(1)
 
     return row
@@ -377,7 +377,7 @@ const fixtures = {
 
     return { ...row, id: result.id }
   },
-  token: async function(knex, {
+  token: async function (knex, {
     position,
     identifier,
     owner,
@@ -449,7 +449,7 @@ const fixtures = {
 
     const [result] = await knex('tokens').insert(row).returning('id')
 
-    const tokenHolder = await this.tokenHolder(knex, {holder: owner, token_id: result.id})
+    await this.tokenHolder(knex, { holder: owner, token_id: result.id })
 
     return { ...row, id: result.id }
   },
@@ -509,10 +509,9 @@ const fixtures = {
       state_transition_id: st.id
     })
 
-    const token = await this.getToken(knex, {identifier: token_identifier})
+    const token = await this.getToken(knex, { identifier: token_identifier })
 
-    const tokenHolder = await this.tokenHolder(knex, {holder: owner, token_id: token.id})
-
+    const tokenHolder = await this.tokenHolder(knex, { holder: owner, token_id: token.id })
 
     return { ...row, id: result.id, transition }
   },

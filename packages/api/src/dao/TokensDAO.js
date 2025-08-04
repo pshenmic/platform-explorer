@@ -3,7 +3,7 @@ const TokenTransition = require('../models/TokenTransition')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
 const Localization = require('../models/Localization')
-const {decodeStateTransition} = require("../utils");
+const { decodeStateTransition } = require('../utils')
 
 module.exports = class TokensDAO {
   constructor (knex, dapi) {
@@ -51,7 +51,7 @@ module.exports = class TokensDAO {
       .select('data', 'action', 'status', 'token_identifier')
       .where('action', TokenTransitionsEnum.SetPriceForDirectPurchase)
       .andWhere('token_identifier', identifier)
-      .andWhere('status', "SUCCESS")
+      .andWhere('status', 'SUCCESS')
       .orderBy('token_transitions.id', 'desc')
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .limit(1)
@@ -85,13 +85,13 @@ module.exports = class TokensDAO {
 
     const [row] = rows
 
-    if(!row) {
+    if (!row) {
       return undefined
     }
 
     let priceTx = null
 
-    if(row.price_transition_data){
+    if (row.price_transition_data) {
       const decodedTx = await decodeStateTransition(row.price_transition_data)
 
       priceTx = decodedTx.transitions[0]
@@ -122,7 +122,7 @@ module.exports = class TokensDAO {
       distributionType: tokenConfig?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
       mainGroup: tokenConfig?.mainControlGroup,
       price: priceTx?.price,
-      prices: priceTx?.prices,
+      prices: priceTx?.prices
     })
   }
 
