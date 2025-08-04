@@ -48,7 +48,7 @@ module.exports = class TokensDAO {
 
   getTokenByIdentifier = async (identifier) => {
     const priceSubquery = this.knex('token_transitions')
-      .select('data', 'action', 'status')
+      .select('data', 'action', 'status', 'token_identifier')
       .where('action', TokenTransitionsEnum.SetPriceForDirectPurchase)
       .andWhere('token_identifier', identifier)
       .andWhere('status', "SUCCESS")
@@ -79,7 +79,7 @@ module.exports = class TokensDAO {
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
-      .joinRaw('CROSS JOIN ?', [priceSubquery])
+      .leftJoin(priceSubquery, 'price_subquery.token_identifier', 'tokens.identifier')
       .joinRaw('CROSS JOIN gas_used_subquery as gas_and_counts')
       .where('tokens.identifier', identifier)
 
