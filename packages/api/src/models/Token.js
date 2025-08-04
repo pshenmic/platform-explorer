@@ -116,12 +116,6 @@ module.exports = class Token {
       }
     }
 
-    if(prices){
-      const priceKeys = Object.keys(prices)
-
-      prices = priceKeys.map(key => ({amount: key, price: prices[key].toString()}))
-    }
-
     return new Token(identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, distributionType, mainGroup, decimals, price?.toString(), prices)
   }
 }
