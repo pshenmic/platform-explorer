@@ -221,6 +221,9 @@ module.exports = class TokensDAO {
       .select(this.knex.raw('count(*) OVER() as total_count'))
       .where('holder', identifier)
       .leftJoin('tokens', 'tokens.id', 'token_holders.token_id')
+      .orderBy('token_id', order)
+      .limit(limit)
+      .offset(fromRank)
       .as('subquery')
 
     const rows = await this.knex(subquery)
