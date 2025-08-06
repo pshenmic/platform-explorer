@@ -92,10 +92,13 @@ export default function ActivityListItem ({ activity }) {
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Type'}>
-          <BatchTypeBadge
-            batchType={activity?.action !== undefined ? `TOKEN_${TokenTransitionEnum[activity.action]}` : undefined}
-            className={'ActivityListItem__TypeLabel'}
-          />
+          {activity?.action !== undefined
+            ? <BatchTypeBadge
+                batchType={typeof activity?.action === 'string' ? activity?.action : TokenTransitionEnum?.[activity.action]}
+                className={'ActivityListItem__TypeLabel'}
+              />
+            : <NotActive/>
+          }
         </div>
       </div>
     </Link>
