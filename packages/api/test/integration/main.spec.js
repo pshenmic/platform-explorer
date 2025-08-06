@@ -9,7 +9,7 @@ const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/DAPI')
 const { IdentifierWASM } = require('pshenmic-dpp')
-const BatchEnum = require("../../src/enums/BatchEnum");
+const BatchEnum = require('../../src/enums/BatchEnum')
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
