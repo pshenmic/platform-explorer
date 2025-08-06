@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { RateTooltip } from '../../ui/Tooltips'
 import Link from 'next/link'
 import { findActiveAlias } from '../../../util'
-import DocumentActionBadge from '../DocumentActionBadge'
+import { BatchTypeBadge } from '../../transactions'
+import { DocumentActionEnum } from '../../../enums/documentAction'
 import './DocumentsRevisionsListItem.scss'
 
 function DocumentsRevisionsListItem ({ revision, rate }) {
@@ -59,7 +60,7 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
 
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--TransitionType'}>
           {typeof revision?.transitionType === 'number'
-            ? <DocumentActionBadge typeId={revision?.transitionType}/>
+            ? <BatchTypeBadge batchType={typeof revision?.transitionType === 'string' ? revision.transitionType : DocumentActionEnum?.[revision.transitionType]}/>
             : <NotActive>-</NotActive>
           }
         </GridItem>
