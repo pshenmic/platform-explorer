@@ -3,6 +3,7 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
 const { decodeStateTransition, getAliasFromDocument } = require('../utils')
 const dpnsContract = require('../../data_contracts/dpns.json')
+const BatchEnum = require('../enums/BatchEnum')
 
 module.exports = class DocumentsDAO {
   constructor (knex, dapi, client) {
@@ -84,6 +85,7 @@ module.exports = class DocumentsDAO {
 
     const document = Document.fromRow({
       ...row,
+      transition_type: BatchEnum[row.transition_type],
       owner: {
         identifier: row.document_owner?.trim(),
         aliases: aliases ?? []
@@ -164,6 +166,7 @@ module.exports = class DocumentsDAO {
       return Document.fromRow({
         ...row,
         data: row.document_data,
+        transition_type: BatchEnum[row.transition_type],
         owner: {
           identifier: row.document_owner?.trim(),
           aliases: aliases ?? []
@@ -219,6 +222,7 @@ module.exports = class DocumentsDAO {
 
       const document = Document.fromRow({
         ...row,
+        transition_type: BatchEnum[row.transition_type],
         owner: {
           identifier: row.owner?.trim(),
           aliases: aliases ?? []

@@ -8,6 +8,7 @@ const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const { IdentifierWASM } = require('pshenmic-dpp')
+const BatchEnum = require('../../src/enums/BatchEnum')
 
 describe('Documents routes', () => {
   let app
@@ -191,7 +192,7 @@ describe('Documents routes', () => {
         identityContractNonce: null,
         gasUsed: null,
         totalGasUsed: 0,
-        transitionType: 0
+        transitionType: BatchEnum[0]
       }
 
       assert.deepEqual(body, expectedDocument)
@@ -231,7 +232,7 @@ describe('Documents routes', () => {
         identityContractNonce: null,
         gasUsed: null,
         totalGasUsed: 0,
-        transitionType: 0
+        transitionType: BatchEnum[0]
       }
 
       assert.deepEqual(body, expectedDocument)
@@ -269,7 +270,7 @@ describe('Documents routes', () => {
         },
         txHash: document.transaction.hash,
         timestamp: document.block.timestamp,
-        transitionType: document.document.transition_type,
+        transitionType: BatchEnum[document.document.transition_type],
         data: '{}',
         dataContractIdentifier: null,
         deleted: null,
@@ -323,7 +324,7 @@ describe('Documents routes', () => {
           system: document.is_system,
           entropy: null,
           documentTypeName: document.document_type_name,
-          transitionType: document.transition_type,
+          transitionType: BatchEnum[document.transition_type],
           prefundedVotingBalance: null,
           gasUsed: null,
           totalGasUsed: null,
@@ -365,7 +366,7 @@ describe('Documents routes', () => {
                 }
               }
             : {}),
-          transitionType: 0,
+          transitionType: BatchEnum[0],
           entropy: null,
           prefundedVotingBalance: null,
           documentTypeName: document.document_type_name,
@@ -410,7 +411,7 @@ describe('Documents routes', () => {
           txHash: transaction.hash,
           deleted: document.deleted,
           data: JSON.stringify(document.data),
-          transitionType: 0,
+          transitionType: BatchEnum[0],
           documentTypeName: document.document_type_name,
           timestamp: block.timestamp,
           owner: {
@@ -468,7 +469,7 @@ describe('Documents routes', () => {
                 }
               }
             : {}),
-          transitionType: 0,
+          transitionType: BatchEnum[0],
           documentTypeName: document.document_type_name,
           timestamp: document.is_system ? null : block.timestamp,
           owner: {
@@ -521,7 +522,7 @@ describe('Documents routes', () => {
                 }
               }
             : {}),
-          transitionType: 0,
+          transitionType: BatchEnum[0],
           documentTypeName: 'type_name',
           timestamp: block.timestamp,
           owner: {
@@ -574,7 +575,7 @@ describe('Documents routes', () => {
                 }
               }
             : {}),
-          transitionType: 0,
+          transitionType: BatchEnum[0],
           documentTypeName: document.document_type_name,
           timestamp: document.is_system ? null : block.timestamp,
           owner: {
