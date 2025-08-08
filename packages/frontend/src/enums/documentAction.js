@@ -1,8 +1,0 @@
-export const DocumentActionEnum = {
-  0: 'DOCUMENT_CREATE',
-  1: 'DOCUMENT_REPLACE',
-  2: 'DOCUMENT_DELETE',
-  3: 'DOCUMENT_TRANSFER',
-  4: 'DOCUMENT_PURCHASE',
-  5: 'DOCUMENT_UPDATE_PRICE'
-}

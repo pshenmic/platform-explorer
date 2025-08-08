@@ -4,7 +4,6 @@ import { BigNumber, Identifier, NotActive, TimeDelta } from '../../data'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import BatchTypeBadge from '../../transactions/BatchTypeBadge'
-import { TokenTransitionEnum } from '../../../enums/tokenTransition'
 import { Tooltip } from '../../ui/Tooltips'
 import './ActivityListItem.scss'
 
@@ -94,7 +93,7 @@ export default function ActivityListItem ({ activity }) {
         <div className={'ActivityListItem__Column ActivityListItem__Column--Type'}>
           {activity?.action !== undefined
             ? <BatchTypeBadge
-                batchType={typeof activity?.action === 'string' ? activity?.action : TokenTransitionEnum?.[activity.action]}
+                batchType={activity?.action}
                 className={'ActivityListItem__TypeLabel'}
               />
             : <NotActive/>
