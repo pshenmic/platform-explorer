@@ -129,8 +129,6 @@ function DataContract ({ identifier }) {
       .catch(err => fetchHandlerError(setTransactions, err))
   }, [identifier, transactions.props.currentPage])
 
-  console.log('dataContract', dataContract?.data?.tokens)
-
   return (
     <PageDataContainer
       className={'DataContract'}
