@@ -11,6 +11,7 @@ import {
 } from '../ui/icons'
 import { ValueCard } from '../cards'
 import { Badge, Flex } from '@chakra-ui/react'
+import { Tooltip } from '../ui/Tooltips'
 import './TokenDigestCard.scss'
 
 function TokenDigestCard ({ token, rate, className, loading, error }) {
@@ -25,7 +26,8 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
     destroyable,
     allowedEmergencyActions,
     changeMaxSupply,
-    distributionType,
+    perpetualDistribution,
+    preProgrammedDistribution,
     totalGasUsed,
     totalTransitionsCount,
     totalFreezeTransitionsCount,
@@ -88,17 +90,54 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
 
       <InfoLine
         title={'Distribution Type'}
-        value={distributionType
-          ? <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-              <Flex gap={'0.5rem'} alignItems={'center'}>
-                {distributionType}
-                <InfoIcon width={'1rem'} height={'1rem'} color={'#58F4BC'}/>
-              </Flex>
-            </ValueContainer>
+        value={(perpetualDistribution != null || preProgrammedDistribution != null)
+          ? <Flex flexDirection={'column'} gap={'0.5rem'} alignItems={'flex-end'}>
+              {perpetualDistribution &&
+                  <Tooltip
+                    content={
+                      <Flex gap={'0.5rem'} flexDir={'column'} justifyContent={'space-between'}>
+                        <Flex gap={'0.5rem'} grow={1}>
+                          <span>Type:</span>
+                          <b>{perpetualDistribution?.type}</b>
+                        </Flex>
+                        <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                          <span>Recipient Type:</span>
+                          <b>{perpetualDistribution?.recipientType}</b>
+                        </Flex>
+                        <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                          <span>Interval:</span>
+                          <b>{perpetualDistribution?.interval}</b>
+                        </Flex>
+                        <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                          <span>Function Name:</span>
+                          <b>{perpetualDistribution?.functionName}</b>
+                        </Flex>
+                      </Flex>
+                    }
+                    placement={'top'}
+                  >
+                    <div style={{ cursor: 'pointer' }}>
+                      <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+                        <Flex gap={'0.5rem'} alignItems={'center'}>
+                          Perpetual distribution
+                          <InfoIcon width={'1rem'} height={'1rem'} color={'#58F4BC'}/>
+                        </Flex>
+                      </ValueContainer>
+                    </div>
+                  </Tooltip>
+              }
+              {preProgrammedDistribution &&
+                <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+                  <Flex gap={'0.5rem'} alignItems={'center'}>
+                    Pre programmed distribution
+                  </Flex>
+                </ValueContainer>
+              }
+            </Flex>
           : <ValueContainer className={'TokenTotalCard__ZeroListBadge'}>none</ValueContainer>
         }
         loading={loading}
-        error={error}
+        error={error || (perpetualDistribution == null && preProgrammedDistribution == null)}
       />
 
       <InfoLine
