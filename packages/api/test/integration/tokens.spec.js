@@ -5,6 +5,7 @@ const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
+const BatchEnum = require('../../src/enums/BatchEnum')
 
 describe('Tokens', () => {
   let app
@@ -616,7 +617,7 @@ describe('Tokens', () => {
             amount: tokenTransition.amount ?? 0,
             recipient: tokenTransition.recipient,
             owner: tokenTransition.owner,
-            action: tokenTransition.action,
+            action: BatchEnum[tokenTransition.action + 6],
             stateTransitionHash: tokenTransition.state_transition_hash,
             timestamp: block.timestamp.toISOString(),
             publicNote: null
@@ -638,7 +639,7 @@ describe('Tokens', () => {
             amount: tokenTransition.amount ?? 0,
             recipient: tokenTransition.recipient,
             owner: tokenTransition.owner,
-            action: tokenTransition.action,
+            action: BatchEnum[tokenTransition.action + 6],
             stateTransitionHash: tokenTransition.state_transition_hash,
             timestamp: block.timestamp.toISOString(),
             publicNote: null
@@ -660,7 +661,7 @@ describe('Tokens', () => {
             amount: tokenTransition.amount ?? 0,
             recipient: tokenTransition.recipient,
             owner: tokenTransition.owner,
-            action: tokenTransition.action,
+            action: BatchEnum[tokenTransition.action + 6],
             stateTransitionHash: tokenTransition.state_transition_hash,
             timestamp: block.timestamp.toISOString(),
             publicNote: null
@@ -682,7 +683,7 @@ describe('Tokens', () => {
             amount: tokenTransition.amount ?? 0,
             recipient: tokenTransition.recipient,
             owner: tokenTransition.owner,
-            action: tokenTransition.action,
+            action: BatchEnum[tokenTransition.action + 6],
             stateTransitionHash: tokenTransition.state_transition_hash,
             timestamp: block.timestamp.toISOString(),
             publicNote: null
