@@ -91,7 +91,7 @@ export default function ActivityListItem ({ activity }) {
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Type'}>
-          {activity?.action !== undefined
+          {activity?.action != null
             ? <BatchTypeBadge
                 batchType={activity?.action}
                 className={'ActivityListItem__TypeLabel'}

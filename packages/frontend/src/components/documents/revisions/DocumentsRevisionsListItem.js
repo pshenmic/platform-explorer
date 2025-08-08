@@ -58,7 +58,7 @@ function DocumentsRevisionsListItem ({ revision, rate }) {
         </GridItem>
 
         <GridItem className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--TransitionType'}>
-          {revision?.transitionType !== undefined
+          {revision?.transitionType != null
             ? <BatchTypeBadge batchType={revision.transitionType}/>
             : <NotActive>-</NotActive>
           }
