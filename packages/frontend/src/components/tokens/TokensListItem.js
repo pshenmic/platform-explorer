@@ -4,7 +4,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import { Supply } from './index'
 import { LinkContainer, ValueContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
-import { currencyRound } from '../../util'
+import { currencyRound, findActiveAlias } from '../../util'
 import './TokensListItem.scss'
 
 function TokensListItem ({ token, variant = 'default' }) {
@@ -19,6 +19,8 @@ function TokensListItem ({ token, variant = 'default' }) {
   } = token
   const router = useRouter()
 
+  const ownerId = typeof owner === 'object' ? owner?.identifier : owner
+  const ownerName = typeof owner === 'object' ? findActiveAlias(owner?.aliases) : null
   const name = localizations?.en?.singularForm ||
     Object.values(localizations || {})[0]?.singularForm ||
     ''
@@ -71,17 +73,20 @@ function TokensListItem ({ token, variant = 'default' }) {
             onClick={e => {
               e.stopPropagation()
               e.preventDefault()
-              router.push(`/identity/${owner}`)
+              router.push(`/identity/${ownerId}`)
             }}
           >
-            <Identifier
-              className={'TokensListItem__OwnerIdentifier'}
-              ellipsis={true}
-              styles={['highlight-both']}
-              avatar={true}
-            >
-              {owner}
-            </Identifier>
+            {ownerName
+              ? <Alias avatarSource={ownerId} alias={ownerName?.alias}/>
+              : <Identifier
+                  className={'TokensListItem__OwnerIdentifier'}
+                  ellipsis={true}
+                  avatar={true}
+                  styles={['highlight-both']}
+                >
+                  {ownerId}
+                </Identifier>
+            }
           </LinkContainer>
         </GridItem>
 
