@@ -2451,18 +2451,7 @@ GET /tokens?limit=2&page=1&order=asc
     "baseSupply": "100000",
     "totalSupply": "100500",
     "maxSupply": null,
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
-        {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
-        }
-      ]
-    },
+    "owner": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
     "mintable": true,
     "burnable": true,
     "freezable": true,
@@ -2483,18 +2472,7 @@ GET /tokens?limit=2&page=1&order=asc
     "baseSupply": "100000",
     "totalSupply": "120000",
     "maxSupply": "5000",
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
-        {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
-        }
-      ]
-    },
+    "owner": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
     "mintable": true,
     "burnable": true,
     "freezable": true,
@@ -2532,18 +2510,7 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL
     "baseSupply": "100000",
     "totalSupply": "101310",
     "maxSupply": null,
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
-        {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
-        }
-      ]
-    },
+    "owner": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
     "mintable": true,
     "burnable": true,
     "freezable": true,
@@ -2582,18 +2549,7 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL/transitions?limit=10&ord
         {
             "amount": 2000,
             "recipient": "HxEj8nUyvfuPzDGm9Wif1vWnUaeRcfvfDN1HZxV7q5rf",
-            "owner": {
-              "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-              "aliases": [
-                {
-                  "alias": "alias.dash",
-                  "contested": true,
-                  "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-                  "status": "ok",
-                  "timestamp": "2025-08-10T19:09:39.485Z"
-                }
-              ]
-            },
+            "owner": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
             "action": "TOKEN_MINT",
             "stateTransitionHash": "432D47C8955424A5E61BD4204A33C2E1FCEB951BED6ED5B2C4B27E05C6433781",
             "timestamp": "2025-07-17T14:08:21.217Z",
@@ -2602,18 +2558,7 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL/transitions?limit=10&ord
         {
             "amount": 0,
             "recipient": "HxEj8nUyvfuPzDGm9Wif1vWnUaeRcfvfDN1HZxV7q5rf",
-            "owner": {
-              "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-              "aliases": [
-                {
-                  "alias": "alias.dash",
-                  "contested": true,
-                  "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-                  "status": "ok",
-                  "timestamp": "2025-08-10T19:09:39.485Z"
-                }
-              ]
-            },
+            "owner": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
             "action": "TOKEN_FREEZE",
             "stateTransitionHash": "2F329C99AA7E7C52ABEB2340FFAC098EB19ADDB7B2CC0D5CA3A891B077E12FBB",
             "timestamp": "2025-07-15T14:44:17.346Z",
@@ -2728,18 +2673,7 @@ GET identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1
             "baseSupply": "10000",
             "totalSupply": "10000",
             "maxSupply": null,
-            "owner": {
-              "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-              "aliases": [
-                {
-                  "alias": "alias.dash",
-                  "contested": true,
-                  "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-                  "status": "ok",
-                  "timestamp": "2025-08-10T19:09:39.485Z"
-                }
-              ]
-            },
+            "owner": "5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk",
             "mintable": true,
             "burnable": true,
             "freezable": true,
