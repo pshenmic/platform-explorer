@@ -9,6 +9,7 @@ const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/DAPI')
 const { IdentifierWASM } = require('pshenmic-dpp')
+const BatchEnum = require('../../src/enums/BatchEnum')
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
@@ -419,7 +420,7 @@ describe('Other routes', () => {
         entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
         prefundedVotingBalance: null,
         documentTypeName: document.document_type_name,
-        transitionType: 0,
+        transitionType: BatchEnum[0],
         owner: {
           identifier: document.owner,
           aliases: [

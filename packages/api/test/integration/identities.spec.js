@@ -7,6 +7,7 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/DAPI')
+const BatchEnum = require('../../src/enums/BatchEnum')
 
 describe('Identities routes', () => {
   let app
@@ -1087,7 +1088,7 @@ describe('Identities routes', () => {
         documentTypeName: 'type_name',
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
-        transitionType: 0,
+        transitionType: BatchEnum[0],
         identityContractNonce: null,
         gasUsed: null,
         totalGasUsed: null
@@ -1155,7 +1156,7 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: 0,
+          transitionType: BatchEnum[0],
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
@@ -1222,7 +1223,7 @@ describe('Identities routes', () => {
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: 0,
+          transitionType: BatchEnum[0],
           documentTypeName: 'my_type',
           prefundedVotingBalance: null,
           entropy: null,
@@ -1293,7 +1294,7 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: 0,
+          transitionType: BatchEnum[0],
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
@@ -1361,7 +1362,7 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: 0,
+          transitionType: BatchEnum[0],
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null

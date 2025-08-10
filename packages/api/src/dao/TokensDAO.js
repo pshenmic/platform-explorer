@@ -4,6 +4,7 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
 const Localization = require('../models/Localization')
 const { decodeStateTransition } = require('../utils')
+const BatchEnum = require('../enums/BatchEnum')
 
 module.exports = class TokensDAO {
   constructor (knex, dapi) {
@@ -141,7 +142,10 @@ module.exports = class TokensDAO {
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
 
-    return new PaginatedResultSet(rows.map(TokenTransition.fromRow), page, limit, order)
+    return new PaginatedResultSet(rows.map(row => TokenTransition.fromRow({
+      ...row,
+      action: BatchEnum[row.action + 6]
+    })), page, limit, order)
   }
 
   getTokensTrends = async (startDate, endDate, page, limit, order) => {

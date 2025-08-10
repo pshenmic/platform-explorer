@@ -1002,7 +1002,7 @@ GET /document/5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd/revisions
       "entropy": "3627d6398617e9bd6e7a14a10f7a5dd8b1ed458d9f0df38eb69cb67a30075aa3",
       "prefundedVotingBalance": null,
       "documentTypeName": null,
-      "transitionType": 0,
+      "transitionType": "DOCUMENT_CREATE",
       "identityContractNonce": "2",
       "gasUsed": 15048420,
       "totalGasUsed": null,
@@ -2552,7 +2552,7 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL/transitions?limit=10&ord
             "amount": 2000,
             "recipient": "HxEj8nUyvfuPzDGm9Wif1vWnUaeRcfvfDN1HZxV7q5rf",
             "owner": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
-            "action": 2,
+            "action": "TOKEN_MINT",
             "stateTransitionHash": "432D47C8955424A5E61BD4204A33C2E1FCEB951BED6ED5B2C4B27E05C6433781",
             "timestamp": "2025-07-17T14:08:21.217Z",
             "publicNote": null
@@ -2561,7 +2561,7 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL/transitions?limit=10&ord
             "amount": 0,
             "recipient": "HxEj8nUyvfuPzDGm9Wif1vWnUaeRcfvfDN1HZxV7q5rf",
             "owner": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
-            "action": 4,
+            "action": "TOKEN_FREEZE",
             "stateTransitionHash": "2F329C99AA7E7C52ABEB2340FFAC098EB19ADDB7B2CC0D5CA3A891B077E12FBB",
             "timestamp": "2025-07-15T14:44:17.346Z",
             "publicNote": null
