@@ -582,10 +582,10 @@ describe('Tokens', () => {
           recipientType: 'ContractOwner',
           recipientValue: null,
           type: 'BlockBasedDistribution'
-        }
-      },
-      price: null,
-      prices: null
+        },
+        price: null,
+        prices: null
+      }
 
       assert.deepEqual(body, expectedToken)
     })
@@ -709,6 +709,8 @@ describe('Tokens', () => {
               }
             ],
             timestamp: '2025-07-15T09:18:30.493Z'
+          }
+        ],
         price: null,
         prices: [
           {

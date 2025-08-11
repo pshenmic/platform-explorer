@@ -132,8 +132,7 @@ module.exports = class TokensDAO {
       allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
       mainGroup: tokenConfig?.mainControlGroup,
       perpetualDistribution: perpetualDistribution ? PerpetualDistribution.fromWASMObject(perpetualDistribution) : null,
-      preProgrammedDistribution: preProgrammedDistributionNormal
-      mainGroup: tokenConfig?.mainControlGroup,
+      preProgrammedDistribution: preProgrammedDistributionNormal,
       price: priceTx?.price,
       prices: priceTx?.prices
     })
