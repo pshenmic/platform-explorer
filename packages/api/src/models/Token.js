@@ -25,8 +25,10 @@ module.exports = class Token {
   totalFreezeTransitionsCount
   totalBurnTransitionsCount
   decimals
+  price
+  prices
 
-  constructor (identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, distributionType, mainGroup, decimals) {
+  constructor (identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, distributionType, mainGroup, decimals, price, prices) {
     this.identifier = identifier ?? null
     this.position = position ?? null
     this.timestamp = timestamp ?? null
@@ -51,6 +53,8 @@ module.exports = class Token {
     this.totalFreezeTransitionsCount = totalFreezeTransitionsCount ?? null
     this.totalBurnTransitionsCount = totalBurnTransitionsCount ?? null
     this.decimals = decimals ?? null
+    this.price = price ?? null
+    this.prices = prices ?? null
   }
 
   /* eslint-disable */
@@ -103,6 +107,8 @@ module.exports = class Token {
                       totalFreezeTransitionsCount,
                       totalBurnTransitionsCount,
                       decimals,
+                      price,
+                      prices
                     }) {
     if (localizations) {
       for (const locale in localizations) {
@@ -110,6 +116,6 @@ module.exports = class Token {
       }
     }
 
-    return new Token(identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, distributionType, mainGroup, decimals)
+    return new Token(identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, distributionType, mainGroup, decimals, price?.toString(), prices)
   }
 }
