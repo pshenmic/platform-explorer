@@ -2605,7 +2605,10 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL
     "totalTransitionsCount": 13,
     "totalFreezeTransitionsCount": 1,
     "totalBurnTransitionsCount": 0,
-    "decimals": 8,
+    "decimals": 10,
+    "totalBurnTransitionsCount": 0,
+    "balance": "10",
+    "balances": null
     "perpetualDistribution": null,
     "preProgrammedDistribution": [
         {
@@ -2654,7 +2657,10 @@ GET /token/4tyvbA2ZGFLvjXLnJRCacSoMbFfpmBwGRrAZsVwnfYri
     "totalTransitionsCount": 6,
     "totalFreezeTransitionsCount": 3,
     "totalBurnTransitionsCount": 0,
-    "decimals": 8,
+    "decimals": 10,
+    "totalBurnTransitionsCount": 0,
+    "balance": "10",
+    "balances": null
     "perpetualDistribution": {
         "type": "BlockBasedDistribution",
         "recipientType": "ContractOwner",

@@ -3,8 +3,8 @@ const BatchEnum = {
   DOCUMENT_REPLACE: 1,
   DOCUMENT_DELETE: 2,
   DOCUMENT_TRANSFER: 3,
-  DOCUMENT_UPDATE_PRICE: 4,
-  DOCUMENT_PURCHASE: 5,
+  DOCUMENT_PURCHASE: 4,
+  DOCUMENT_UPDATE_PRICE: 5,
   TOKEN_BURN: 6,
   TOKEN_MINT: 7,
   TOKEN_TRANSFER: 8,
@@ -20,8 +20,8 @@ const BatchEnum = {
   1: 'DOCUMENT_REPLACE',
   2: 'DOCUMENT_DELETE',
   3: 'DOCUMENT_TRANSFER',
-  4: 'DOCUMENT_UPDATE_PRICE',
-  5: 'DOCUMENT_PURCHASE',
+  4: 'DOCUMENT_PURCHASE',
+  5: 'DOCUMENT_UPDATE_PRICE',
   6: 'TOKEN_BURN',
   7: 'TOKEN_MINT',
   8: 'TOKEN_TRANSFER',
@@ -40,8 +40,8 @@ BatchEnum.create = BatchEnum[0]
 BatchEnum.replace = BatchEnum[1]
 BatchEnum.delete = BatchEnum[2]
 BatchEnum.transfer = BatchEnum[3]
-BatchEnum.updatePrice = BatchEnum[4]
-BatchEnum.purchase = BatchEnum[5]
+BatchEnum.purchase = BatchEnum[4]
+BatchEnum.updatePrice = BatchEnum[5]
 // pshenmic-dpp remap tokens
 BatchEnum.Burn = BatchEnum[6]
 BatchEnum.Mint = BatchEnum[7]

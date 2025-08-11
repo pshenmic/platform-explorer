@@ -26,8 +26,10 @@ module.exports = class Token {
   decimals
   perpetualDistribution
   preProgrammedDistribution
-
-  constructor (identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, perpetualDistribution, mainGroup, decimals, preProgrammedDistribution) {
+  price
+  prices
+  
+  constructor (identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, perpetualDistribution, mainGroup, decimals, preProgrammedDistribution, price, prices) {
     this.identifier = identifier ?? null
     this.position = position ?? null
     this.timestamp = timestamp ?? null
@@ -53,6 +55,8 @@ module.exports = class Token {
     this.decimals = decimals ?? null
     this.perpetualDistribution = perpetualDistribution ?? null
     this.preProgrammedDistribution = preProgrammedDistribution ?? null
+    this.price = price ?? null
+    this.prices = prices ?? null
   }
 
   /* eslint-disable */
@@ -105,7 +109,9 @@ module.exports = class Token {
                       totalFreezeTransitionsCount,
                       totalBurnTransitionsCount,
                       decimals,
-                      preProgrammedDistribution
+                      preProgrammedDistribution,
+                      price,
+                      prices
                     }) {
     if (localizations) {
       for (const locale in localizations) {
@@ -113,6 +119,6 @@ module.exports = class Token {
       }
     }
 
-    return new Token(identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, perpetualDistribution, mainGroup, decimals, preProgrammedDistribution)
+    return new Token(identifier, position, timestamp, description, localizations, baseSupply, maxSupply, owner, mintable, burnable, freezable, unfreezable, destroyable, allowedEmergencyActions, dataContractIdentifier, totalGasUsed, totalTransitionsCount, totalFreezeTransitionsCount, totalBurnTransitionsCount, totalSupply, changeMaxSupply, perpetualDistribution, mainGroup, decimals, preProgrammedDistribution, price?.toString(), prices)
   }
 }

@@ -148,6 +148,40 @@ describe('Tokens', () => {
       tokens.push({ token, stateTransition, tokenTransition })
     }
 
+    for (let i = 0; i < 5; i++) {
+      const stateTransition = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        data:
+          i % 2 === 0
+            ? 'AgG5BZwAg32+HPkczu8vW/+JvgoxqyypH+IC1KWlLtXX+AEBCgAACwDzGOdLDmuMO+LzhxqoUD27hy0iOXXmTgtqUBfkbuocK1qATLyeQ7SGhaPaequ9LTc28gNTVAJVI/372kNoKvmPAAEBBAH9AAABF2WS4AAC/QAAAEXZZLgACv0AAABJG9vEAPwF9eEA/QAAAAJUC+QAAAABQR8uWDXdK0f/ZYsZPfKK3JTUJqEZs1zMPY6OVbzRQ2nDoyggK6X0sUpl3fOkf0v1sAyYDKiDp0LLyqJECrIPg4VS'
+            : 'AgH0Z0dWPzi+nB/g9cz0JvDSstQcBxUflSKbAKmE+PjyJAEBCgAAAgAJZIbY2wo/Shtxo0mIuagf9Ro+X89oUbKos8GVbeY0uFYAWtls/LUGnuwod79+fX4OQgW8rj/Az8rO4twC5kZnAAEACgABBUEfVJP/Rc/YDMRnDXAlU1bDHHGmBIWjCyx3LfnMSeaMZLokSZt6hRsN7cxVL6O9t5n2PoXZ46VYnUXSeeNkNJuzLg==',
+        type: 0,
+        gas_used: 1111,
+        owner: identity.identifier
+      })
+
+      const token = await fixtures.token(knex, {
+        position: 29,
+        owner: identity.identifier,
+        data_contract_id: dataContract.id,
+        decimals: i,
+        base_supply: (i + 1) * 1000,
+        state_transition_hash: stateTransition?.hash
+      })
+
+      const tokenTransition = await fixtures.tokeTransition(knex, {
+        token_identifier: token.identifier,
+        owner: identity.identifier,
+        action: 10,
+        state_transition_hash: stateTransition?.hash,
+        token_contract_position: token.position,
+        data_contract_id: dataContract.id
+      })
+
+      tokens.push({ token, stateTransition, tokenTransition })
+    }
+
     mock.method(DAPI.prototype, 'getIdentityTokenBalances', async () => null)
   })
 
@@ -194,7 +228,9 @@ describe('Tokens', () => {
           totalTransitionsCount: null,
           decimals: null,
           perpetualDistribution: null,
-          preProgrammedDistribution: null
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
@@ -237,7 +273,9 @@ describe('Tokens', () => {
           decimals: null,
           totalTransitionsCount: null,
           perpetualDistribution: null,
-          preProgrammedDistribution: null
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
@@ -280,7 +318,9 @@ describe('Tokens', () => {
           decimals: null,
           totalTransitionsCount: null,
           perpetualDistribution: null,
-          preProgrammedDistribution: null
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
@@ -323,7 +363,9 @@ describe('Tokens', () => {
           decimals: null,
           totalTransitionsCount: null,
           perpetualDistribution: null,
-          preProgrammedDistribution: null
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
@@ -378,7 +420,116 @@ describe('Tokens', () => {
           recipientType: 'ContractOwner',
           recipientValue: null,
           type: 'BlockBasedDistribution'
-        }
+        },
+        price: null,
+        prices: null
+      }
+
+      assert.deepEqual(body, expectedToken)
+    })
+
+    it('should return token by id with single price', async () => {
+      const [, token] = tokens
+
+      const { body } = await client.get(`/token/${token.token.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
+        identifier: token.token.identifier,
+        position: 29,
+        timestamp: block.timestamp.toISOString(),
+        description: null,
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
+        owner: token.token.owner,
+        mintable: false,
+        burnable: false,
+        freezable: false,
+        unfreezable: false,
+        destroyable: false,
+        allowedEmergencyActions: false,
+        dataContractIdentifier: dataContract.identifier,
+        changeMaxSupply: true,
+        distributionType: 'TimeBasedDistribution',
+        totalGasUsed: 1111,
+        mainGroup: null,
+        totalTransitionsCount: 1,
+        decimals: 1000,
+        totalFreezeTransitionsCount: 0,
+        totalBurnTransitionsCount: 0,
+        price: '10',
+        prices: null
+      }
+
+      assert.deepEqual(body, expectedToken)
+    })
+
+    it('should return token by id with multi price', async () => {
+      const [token] = tokens
+
+      const { body } = await client.get(`/token/${token.token.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
+        identifier: token.token.identifier,
+        position: 29,
+        timestamp: block.timestamp.toISOString(),
+        description: null,
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
+        owner: token.token.owner,
+        mintable: false,
+        burnable: false,
+        freezable: false,
+        unfreezable: false,
+        destroyable: false,
+        allowedEmergencyActions: false,
+        dataContractIdentifier: dataContract.identifier,
+        changeMaxSupply: true,
+        distributionType: 'TimeBasedDistribution',
+        totalGasUsed: 1111,
+        mainGroup: null,
+        totalTransitionsCount: 1,
+        decimals: 1000,
+        totalFreezeTransitionsCount: 0,
+        totalBurnTransitionsCount: 0,
+        price: null,
+        prices: [
+          {
+            amount: '1',
+            price: '1200000000000'
+          },
+          {
+            amount: '2',
+            price: '300000000000'
+          },
+          {
+            amount: '10',
+            price: '314000000000'
+          },
+          {
+            amount: '100000000',
+            price: '10000000000'
+          }
+        ]
       }
 
       assert.deepEqual(body, expectedToken)
@@ -432,7 +583,9 @@ describe('Tokens', () => {
           recipientValue: null,
           type: 'BlockBasedDistribution'
         }
-      }
+      },
+      price: null,
+      prices: null
 
       assert.deepEqual(body, expectedToken)
     })
@@ -556,6 +709,23 @@ describe('Tokens', () => {
               }
             ],
             timestamp: '2025-07-15T09:18:30.493Z'
+        price: null,
+        prices: [
+          {
+            amount: '1',
+            price: '1200000000000'
+          },
+          {
+            amount: '2',
+            price: '300000000000'
+          },
+          {
+            amount: '10',
+            price: '314000000000'
+          },
+          {
+            amount: '100000000',
+            price: '10000000000'
           }
         ]
       }
@@ -564,7 +734,7 @@ describe('Tokens', () => {
     })
 
     it('should return 404 on not found', async () => {
-      await client.get('/token//444444446WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL')
+      await client.get('/token/444444446WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
@@ -795,7 +965,9 @@ describe('Tokens', () => {
               ],
               timestamp: '2025-07-15T09:18:30.493Z'
             }
-          ]
+          ],
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)
@@ -864,7 +1036,9 @@ describe('Tokens', () => {
               ],
               timestamp: '2025-07-15T09:18:30.493Z'
             }
-          ]
+          ],
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)
@@ -933,7 +1107,9 @@ describe('Tokens', () => {
               ],
               timestamp: '2025-07-15T09:18:30.493Z'
             }
-          ]
+          ],
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)
@@ -1002,7 +1178,9 @@ describe('Tokens', () => {
               ],
               timestamp: '2025-07-15T09:18:30.493Z'
             }
-          ]
+          ],
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)

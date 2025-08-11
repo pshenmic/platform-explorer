@@ -31,10 +31,19 @@ const fixtures = {
     const eqValue = hash ?? id
     const eqField = hash ? 'hash' : 'id'
 
-    const rows = await knex('state_transitions')
+    const [row] = await knex('state_transitions')
       .where(eqField, eqValue)
 
-    const [row] = rows
+    return row
+  },
+  getToken: async (knex, { identifier }) => {
+    if (!identifier) {
+      throw new Error('identifier must be provided')
+    }
+
+    const [row] = await knex('tokens')
+      .where('identifier', identifier)
+      .limit(1)
 
     return row
   },
@@ -355,7 +364,20 @@ const fixtures = {
 
     return { ...row, id: result.id }
   },
-  token: async (knex, {
+  tokenHolder: async (knex, {
+    holder,
+    token_id
+  }) => {
+    const row = {
+      token_id,
+      holder
+    }
+
+    const [result] = await knex('token_holders').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
+  token: async function (knex, {
     position,
     identifier,
     owner,
@@ -379,7 +401,7 @@ const fixtures = {
     allowed_emergency_actions,
     state_transition_hash,
     description
-  }) => {
+  }) {
     if (position === undefined) {
       throw new Error('position must be provided')
     }
@@ -426,6 +448,8 @@ const fixtures = {
     }
 
     const [result] = await knex('tokens').insert(row).returning('id')
+
+    await this.tokenHolder(knex, { holder: owner, token_id: result.id })
 
     return { ...row, id: result.id }
   },
@@ -485,9 +509,14 @@ const fixtures = {
       state_transition_id: st.id
     })
 
+    const token = await this.getToken(knex, { identifier: token_identifier })
+
+    await this.tokenHolder(knex, { holder: owner, token_id: token.id })
+
     return { ...row, id: result.id, transition }
   },
   cleanup: async (knex) => {
+    await knex.raw('DELETE FROM token_holders')
     await knex.raw('DELETE FROM data_contract_transitions')
     await knex.raw('DELETE FROM token_transitions')
     await knex.raw('DELETE FROM tokens')
