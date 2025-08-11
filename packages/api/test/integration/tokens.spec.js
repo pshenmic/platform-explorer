@@ -459,7 +459,6 @@ describe('Tokens', () => {
         allowedEmergencyActions: false,
         dataContractIdentifier: dataContract.identifier,
         changeMaxSupply: true,
-        distributionType: 'TimeBasedDistribution',
         totalGasUsed: 1111,
         mainGroup: null,
         totalTransitionsCount: 1,
@@ -467,7 +466,19 @@ describe('Tokens', () => {
         totalFreezeTransitionsCount: 0,
         totalBurnTransitionsCount: 0,
         price: '10',
-        prices: null
+        prices: null,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        }
+
       }
 
       assert.deepEqual(body, expectedToken)
@@ -504,13 +515,23 @@ describe('Tokens', () => {
         allowedEmergencyActions: false,
         dataContractIdentifier: dataContract.identifier,
         changeMaxSupply: true,
-        distributionType: 'TimeBasedDistribution',
         totalGasUsed: 1111,
         mainGroup: null,
         totalTransitionsCount: 1,
         decimals: 1000,
         totalFreezeTransitionsCount: 0,
         totalBurnTransitionsCount: 0,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
         price: null,
         prices: [
           {
@@ -584,7 +605,24 @@ describe('Tokens', () => {
           type: 'BlockBasedDistribution'
         },
         price: null,
-        prices: null
+        prices: [
+          {
+            amount: '1',
+            price: '1200000000000'
+          },
+          {
+            amount: '2',
+            price: '300000000000'
+          },
+          {
+            amount: '10',
+            price: '314000000000'
+          },
+          {
+            amount: '100000000',
+            price: '10000000000'
+          }
+        ]
       }
 
       assert.deepEqual(body, expectedToken)
