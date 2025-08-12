@@ -2,8 +2,10 @@ import { ValueCard } from '../cards'
 import { BigNumber, CreditsBlock, Identifier, InfoLine } from '../data'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
 import TokenEmergencyActionBadge from './TokenEmergencyActionBadge'
-import { Code, Badge } from '@chakra-ui/react'
+import { PriceList } from './prices'
+import { Code, Badge, Flex } from '@chakra-ui/react'
 import { colors } from '../../styles/colors'
+import { getMinTokenPrice } from '../../util'
 import './TokenTransitionCard.scss'
 
 const fieldsOfTypes = {
@@ -255,14 +257,28 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
       )}
 
       {/* Price (for purchases) */}
-      {fields.includes('Price') && (
+      {fields.includes('Price') && (<>
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Price'}
           title={'Price'}
-          value={<CreditsBlock credits={transition?.price} rate={rate}/>}
-          error={transition?.price === undefined}
+          value={
+            transition?.price != null
+              ? <CreditsBlock credits={transition?.price} rate={rate}/>
+              : transition?.prices != null && transition?.prices?.length > 0
+                ? <Flex gap={'0.25rem'}>From <BigNumber>{getMinTokenPrice(transition?.prices)}</BigNumber> Credits</Flex>
+                : 'none'
+          }
+          error={transition?.price === undefined && (!transition?.prices || transition?.prices?.length === 0)}
         />
-      )}
+        {transition?.prices != null && transition?.prices?.length > 0 &&
+          <div className={'TokenTransitionCard__PriceList'}>
+            <PriceList
+              prices={transition?.prices}
+              rate={rate}
+            />
+          </div>
+        }
+      </>)}
 
       {/* Public Note */}
       {fields.includes('PublicNote') && (
