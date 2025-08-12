@@ -85,7 +85,7 @@ function Token ({ identifier }) {
     >
       <TokenTotalCard token={token} loading={token.loading} rate={rate}/>
 
-      <InfoContainer styles={['tabs']} className={'tokenPage__ListContainer'}>
+      <InfoContainer styles={['tabs']} className={'TokenPage__ListContainer'}>
         <Tabs onChange={setActiveTab} index={activeTab}>
           <TabList>
             <Tab>Activity {token.data?.totalTxs !== undefined
