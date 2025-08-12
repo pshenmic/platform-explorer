@@ -1,13 +1,14 @@
 import Link from 'next/link'
-import { Alias, Identifier, BigNumber, NotActive } from '../data'
-import { Grid, GridItem } from '@chakra-ui/react'
+import { Alias, Identifier, BigNumber, NotActive, CreditsBlock } from '../data'
+import { Grid, GridItem, Flex } from '@chakra-ui/react'
 import { Supply } from './index'
 import { LinkContainer, ValueContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
-import { currencyRound } from '../../util'
+import { currencyRound, getMinTokenPrice } from '../../util'
+import { Tooltip } from '../ui/Tooltips'
 import './TokensListItem.scss'
 
-function TokensListItem ({ token, variant = 'default' }) {
+function TokensListItem ({ token, variant = 'default', rate }) {
   const {
     identifier,
     dataContractIdentifier,
@@ -42,6 +43,33 @@ function TokensListItem ({ token, variant = 'default' }) {
                 maxSupply={maxSupply || totalSupply}
               />
             : <BigNumber>{totalSupply}</BigNumber>
+          }
+        </GridItem>
+
+        <GridItem className={'TokensListItem__Column TokensListItem__Column--Price TokensListItem__Column--Number'}>
+          {token.price != null
+            ? <Tooltip
+                placement={'top'}
+                maxW={'none'}
+                content={<CreditsBlock credits={token.price} rate={rate}/>}
+              >
+                <div>
+                  <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+                    <BigNumber>{token.price}</BigNumber>
+                  </ValueContainer>
+                </div>
+              </Tooltip>
+            : token.prices != null && token.prices.length > 0
+              ? <Tooltip
+                  placement={'top'}
+                  maxW={'none'}
+                  content={<CreditsBlock credits={getMinTokenPrice(token.prices)} rate={rate}/>}
+                >
+                  <Flex gap={'0.25rem'} fontSize={'0.75rem'} fontWeight={500}>
+                    From <BigNumber>{getMinTokenPrice(token.prices)}</BigNumber>
+                  </Flex>
+                </Tooltip>
+              : <NotActive/>
           }
         </GridItem>
 
@@ -88,7 +116,7 @@ function TokensListItem ({ token, variant = 'default' }) {
         {variant === 'balance' && (
           <GridItem className={'TokensListItem__Column TokensListItem__Column--Balance TokensListItem__Column--Number'}>
             {typeof balance === 'number'
-              ? <ValueContainer colorScheme={'emeralds'} size='sm'>
+              ? <ValueContainer colorScheme={'emeralds'} size={'sm'}>
                   {balance > 999999999
                     ? currencyRound(balance)
                     : <BigNumber>{balance}</BigNumber>

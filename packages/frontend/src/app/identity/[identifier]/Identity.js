@@ -234,6 +234,7 @@ function Identity ({ identifier }) {
                 ? <TokensList
                   tokens={tokens.data?.resultSet}
                   variant={'balance'}
+                  rate={rate}
                   pagination={{
                     onPageChange: pagination => paginationHandler(setTokens, pagination.selected),
                     pageCount: Math.ceil(tokens.data?.pagination?.total / pageSize) || 1,

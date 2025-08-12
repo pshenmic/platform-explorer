@@ -8,7 +8,7 @@ import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
 import './TokensList.scss'
 
-function TokensList ({ tokens, headerStyles = 'default', variant = 'default', pagination, loading, itemsCount = 10 }) {
+function TokensList ({ tokens, rate, headerStyles = 'default', variant = 'default', pagination, loading, itemsCount = 10 }) {
   const headerExtraClass = {
     default: '',
     light: 'TokensList__ColumnTitles--Light'
@@ -24,6 +24,9 @@ function TokensList ({ tokens, headerStyles = 'default', variant = 'default', pa
         </GridItem>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Supply'}>
           Supply
+        </GridItem>
+        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Price'}>
+          Price
         </GridItem>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--DataContract'}>
           Contract
@@ -41,7 +44,7 @@ function TokensList ({ tokens, headerStyles = 'default', variant = 'default', pa
       {!loading
         ? <div className={'TokensList__Items'}>
           {tokens?.map((token, key) =>
-            <TokensListItem token={token} variant={variant} key={key}/>
+            <TokensListItem token={token} rate={rate} variant={variant} key={key}/>
           )}
           {!tokens?.length &&
             <EmptyListMessage>There are no tokens yet.</EmptyListMessage>
