@@ -203,12 +203,12 @@ class MainController {
       return response.status(400).send({ message: 'quorumType must be provided.' })
     }
 
-    let lastCommitQuorumHash
+    let lastQuorumHash
 
     if (!quorumHash) {
       const block = await this.blocksDAO.getLastBlock()
 
-      const { block: blockInfo } = await TenderdashRPC.getBlockByHeight(block.header.height + 1)
+      const { block: blockInfo } = await TenderdashRPC.getBlockByHeight(block.header.height)
 
       const { last_commit: lastCommit } = blockInfo ?? { last_commit: undefined }
 
@@ -216,10 +216,10 @@ class MainController {
         return response.status(500).send({ message: 'Last Commit not found try to provide quorum hash manually' })
       }
 
-      lastCommitQuorumHash = lastCommit.quorum_hash
+      lastQuorumHash = lastCommit.quorum_hash
     }
 
-    const quorumInfo = await DashCoreRPC.getQuorumInfo(quorumHash ?? lastCommitQuorumHash, quorumType)
+    const quorumInfo = await DashCoreRPC.getQuorumInfo(quorumHash ?? lastQuorumHash, quorumType)
 
     response.send(quorumInfo)
   }
