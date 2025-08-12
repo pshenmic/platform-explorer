@@ -13,6 +13,7 @@ import { DataContractDigestCard, DataContractTotalCard, GroupsList } from '../..
 import { Container, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { TransactionsList } from '../../../components/transactions'
+import TokensList from '../../../components/tokens/TokensList'
 import './DataContract.scss'
 
 const pagintationConfig = {
@@ -26,6 +27,7 @@ const pagintationConfig = {
 const tabs = [
   'transactions',
   'documents',
+  'tokens',
   'schema',
   'groups'
 ]
@@ -140,15 +142,21 @@ function DataContract ({ identifier }) {
       <InfoContainer styles={['tabs']} id={'tabs'}>
         <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
           <TabList>
-            <Tab>Transactions {transactions.data?.pagination?.total !== undefined
+            <Tab>Transactions {transactions.data?.pagination?.total != null
               ? <span className={`Tabs__TabItemsCount ${transactions.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
                   {transactions.data?.pagination?.total}
                 </span>
               : ''}
             </Tab>
-            <Tab>Documents {dataContract.data?.documentsCount !== undefined
+            <Tab>Documents {dataContract.data?.documentsCount != null
               ? <span className={`Tabs__TabItemsCount ${dataContract.data?.documentsCount === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
                   {dataContract.data?.documentsCount}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Tokens {dataContract.data?.tokens?.length != null
+              ? <span className={`Tabs__TabItemsCount ${dataContract.data?.tokens?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {dataContract.data?.tokens?.length}
                 </span>
               : ''}
             </Tab>
@@ -176,14 +184,20 @@ function DataContract ({ identifier }) {
             <TabPanel position={'relative'}>
               {!documents.error
                 ? <DocumentsList
-                    documents={documents.data?.resultSet}
-                    loading={documents.loading}
-                    pagination={{
-                      onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
-                      pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
-                      forcePage: documents.props.currentPage
-                    }}
-                  />
+                  documents={documents.data?.resultSet}
+                  loading={documents.loading}
+                  pagination={{
+                    onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
+                    pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
+                    forcePage: documents.props.currentPage
+                  }}
+                />
+                : <Container h={20}><ErrorMessageBlock/></Container>
+              }
+            </TabPanel>
+            <TabPanel position={'relative'}>
+              {!documents.error
+                ? <TokensList tokens={dataContract.data?.tokens} loading={dataContract.loading}/>
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
@@ -200,12 +214,12 @@ function DataContract ({ identifier }) {
             <TabPanel position={'relative'}>
               {!dataContract.error
                 ? <LoadingBlock h={'250px'} loading={dataContract.loading}>
-                    <GroupsList
-                      groups={dataContract.data?.groups || {}}
-                      expandedGroups={expandedGroups}
-                      onExpandedGroupsChange={handleExpandedGroupsChange}
-                    />
-                  </LoadingBlock>
+                  <GroupsList
+                    groups={dataContract.data?.groups || {}}
+                    expandedGroups={expandedGroups}
+                    onExpandedGroupsChange={handleExpandedGroupsChange}
+                  />
+                </LoadingBlock>
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
