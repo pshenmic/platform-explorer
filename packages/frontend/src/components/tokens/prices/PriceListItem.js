@@ -1,8 +1,9 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import { NotActive, BigNumber } from '../../data'
+import { NotActive, BigNumber, CreditsBlock } from '../../data'
+import { Tooltip } from '../../ui/Tooltips'
 import './PriceListItem.scss'
 
-function PriceListItem ({ priceData, className }) {
+function PriceListItem ({ priceData, rate, className }) {
   const { amount, price } = priceData || {}
 
   return (
@@ -16,7 +17,15 @@ function PriceListItem ({ priceData, className }) {
         </GridItem>
         <GridItem className={'PriceListItem__Column PriceListItem__Column--Price PriceListItem__Column--Number'}>
           {price !== undefined
-            ? <BigNumber>{price}</BigNumber>
+            ? <Tooltip
+                placement={'top'}
+                maxW={'none'}
+                content={<CreditsBlock credits={price} rate={rate}/>}
+              >
+                <div>
+                  <BigNumber>{price}</BigNumber>
+                </div>
+              </Tooltip>
             : <NotActive/>
           }
         </GridItem>

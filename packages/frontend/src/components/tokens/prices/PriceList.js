@@ -4,7 +4,7 @@ import { EmptyListMessage } from '../../ui/lists'
 import './PriceList.scss'
 import './PriceListItem.scss'
 
-function PriceList ({ prices = [], className }) {
+function PriceList ({ prices = [], rate, className }) {
   return (
     <div className={`PriceList ${className || ''}`}>
       <Grid className={'PriceList__ColumnTitles'}>
@@ -21,6 +21,7 @@ function PriceList ({ prices = [], className }) {
           <PriceListItem
             key={i}
             priceData={priceData}
+            rate={rate}
           />
         ))
       }
