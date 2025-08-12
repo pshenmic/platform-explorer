@@ -328,7 +328,7 @@ module.exports = class TokensDAO {
         if (aliasDocument) {
           aliases.push(getAliasFromDocument(aliasDocument))
         }
-        
+
         const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.distributionRules ?? {}
 
         const preProgrammedDistributions = preProgrammedDistribution?.distributions
