@@ -22,10 +22,10 @@ function Supply ({
 }) {
   const progressClass = progressPosition === 'top' ? 'Supply--ProgressTop' : ''
   const isTooBigNumber = (number) => Number(number) > 999999999
-  const hasMaxSupply = maxSupply && Number(maxSupply) > 0 && Number(maxSupply) !== Number(currentSupply)
+  const hasMaxSupply = maxSupply && Number(maxSupply) > 0
 
   return (
-    <div className={`Supply ${progressClass} ${showTitles && 'Supply--WithIcons'} ${className || ''} ${loading ? 'Supply--Loading' : ''}`}>
+    <div className={`Supply ${progressClass || ''} ${showTitles && 'Supply--WithIcons'} ${className || ''} ${loading ? 'Supply--Loading' : ''}`}>
       <div className={'Supply__ContentWrapper'}>
         {showTitles && (
           <div className={'Supply__Title'}>
