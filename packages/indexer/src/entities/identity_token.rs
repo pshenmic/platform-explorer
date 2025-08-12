@@ -11,6 +11,9 @@ impl From<Row> for TokenHolder {
         let token_id: i32 = row.get(0);
         let owner: String = row.get(1);
 
-        TokenHolder {token_id: token_id as u32, owner}
+        TokenHolder {
+            token_id: token_id as u32,
+            owner,
+        }
     }
 }

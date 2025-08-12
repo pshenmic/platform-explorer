@@ -27,7 +27,7 @@ impl PostgresDAO {
         let hash = digest(bytes.clone()).to_uppercase();
         let st_type = st_type as i32;
         let index_i32 = index as i32;
-        
+
         let batch_type_i32 = batch_type.map(|t| t as i32);
 
         let status_str = match status {
