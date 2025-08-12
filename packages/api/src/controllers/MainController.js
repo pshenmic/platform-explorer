@@ -7,6 +7,8 @@ const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
+const DashCoreRPC = require('../dashcoreRpc')
+const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
 
 const API_VERSION = require('../../package.json').version
 
@@ -193,6 +195,18 @@ class MainController {
     }
 
     response.send(result)
+  }
+
+  getQuorum = async (request, response) => {
+    const { quorum_type: quorumType, quorum_hash: quorumHash } = request.query
+
+    try {
+      const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(quorumHash, QuorumTypeEnum[quorumType])
+
+      response.send(quorumDetailedInfo)
+    } catch (error) {
+      response.status(404).send({ message: 'Quorum not found' })
+    }
   }
 }
 

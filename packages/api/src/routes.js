@@ -571,7 +571,6 @@ module.exports = ({
         querystring: { $ref: 'paginationOptions#' }
       }
     },
-
     {
       path: '/identity/:identifier/tokens',
       method: 'GET',
@@ -582,6 +581,38 @@ module.exports = ({
           type: 'object',
           properties: {
             identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/quorum/info',
+      method: 'GET',
+      handler: mainController.getQuorum,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            quorum_type: {
+              type: 'string',
+              enum: [
+                'llmq_50_60',
+                'llmq_400_60',
+                'llmq_400_85',
+                'llmq_100_67',
+                'llmq_60_75',
+                'llmq_25_67',
+                'llmq_test',
+                'llmq_devnet',
+                'llmq_test_v17',
+                'llmq_test_dip0024',
+                'llmq_test_instantsend',
+                'llmq_devnet_dip0024',
+                'llmq_test_platform',
+                'llmq_devnet_platform'
+              ]
+            },
+            quorum_hash: { $ref: 'hash#' }
           }
         }
       }
