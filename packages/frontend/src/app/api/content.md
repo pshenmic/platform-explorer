@@ -2859,7 +2859,7 @@ ___
 ### Quorum Info
 Returns info about quorum by type and hash
 
-* `type` contains quorum type number
+* `quorumType` contains quorum type number
   * `llmq_50_60` - 1
   * `llmq_400_60` - 2
   * `llmq_400_85` - 3
@@ -2874,10 +2874,10 @@ Returns info about quorum by type and hash
   * `llmq_devnet_dip0024` - 105
   * `llmq_test_platform` - 106
   * `llmq_devnet_platform` - 107
-* `hash` optional. hash of quorum
+* `quorumHash` optional. hash of quorum
 
 ```
-GET /quorum/info?type=llmq_25_67&hash=000001148d84a95dd1dbbe309900f3ed434c10039dcc824b18543d413b83f7c8
+GET /quorum/info?type=6&hash=000001148d84a95dd1dbbe309900f3ed434c10039dcc824b18543d413b83f7c8
 
 {
     "height": 1306464,
