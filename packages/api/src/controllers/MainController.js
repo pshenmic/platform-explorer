@@ -7,6 +7,7 @@ const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
+const DashCoreRPC = require('../dashcoreRpc')
 
 const API_VERSION = require('../../package.json').version
 
@@ -193,6 +194,34 @@ class MainController {
     }
 
     response.send(result)
+  }
+
+  getQuorumInfo = async (request, response) => {
+    const { quorumType, quorumHash } = request.query
+
+    if (!quorumType) {
+      return response.status(400).send({ message: 'quorumType must be provided.' })
+    }
+
+    let lastQuorumHash
+
+    if (!quorumHash) {
+      const block = await this.blocksDAO.getLastBlock()
+
+      const { block: blockInfo } = await TenderdashRPC.getBlockByHeight(block.header.height)
+
+      const { last_commit: lastCommit } = blockInfo ?? { last_commit: undefined }
+
+      if (!lastCommit) {
+        return response.status(500).send({ message: 'Last Commit not found try to provide quorum hash manually' })
+      }
+
+      lastQuorumHash = lastCommit.quorum_hash
+    }
+
+    const quorumInfo = await DashCoreRPC.getQuorumInfo(quorumHash ?? lastQuorumHash, quorumType)
+
+    response.send(quorumInfo)
   }
 }
 
