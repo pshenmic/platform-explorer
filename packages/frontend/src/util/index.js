@@ -83,6 +83,11 @@ const getTokenName = (localizations) => localizations?.en?.singularForm ||
   Object.values(localizations || {})[0]?.singularForm ||
   ''
 
+const getMinTokenPrice = (prices) => {
+  if (!prices || prices.length === 0) return null
+  return Math.min(...prices.map(p => parseFloat(p.price)))
+}
+
 export {
   fetchHandlerSuccess,
   fetchHandlerError,
@@ -98,5 +103,6 @@ export {
   getDaysBetweenDates,
   getDynamicRange,
   findActiveAlias,
-  getTokenName
+  getTokenName,
+  getMinTokenPrice
 }
