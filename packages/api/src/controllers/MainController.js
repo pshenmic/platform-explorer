@@ -8,7 +8,6 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
-const lastCommit = require('@dashevo/dapi-client/lib/methods/platform/response/Proof')
 
 const API_VERSION = require('../../package.json').version
 
