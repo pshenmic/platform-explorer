@@ -75,10 +75,22 @@ describe('Tokens', () => {
               distributionType: {
                 getDistribution: () => ({
                   constructor: {
-                    name: 'TimeBasedDistributionWASM'
+                    name: 'BlockBasedDistributionWASM'
+                  },
+                  interval: 100n,
+                  function: {
+                    getFunctionName: () => 'FixedAmount',
+                    getFunctionValue: () => ({
+                      amount: 100n
+                    })
                   }
                 })
+              },
+              distributionRecipient: {
+                getType: () => 'ContractOwner',
+                getValue: () => undefined
               }
+
             }
           },
           mainGroup: undefined
@@ -209,13 +221,14 @@ describe('Tokens', () => {
           position: null,
           description: null,
           changeMaxSupply: null,
-          distributionType: null,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
           totalTransitionsCount: null,
           decimals: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: null,
           prices: null,
           price: null
         }))
@@ -253,13 +266,14 @@ describe('Tokens', () => {
           position: null,
           description: null,
           changeMaxSupply: null,
-          distributionType: null,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
           decimals: null,
           totalTransitionsCount: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: null,
           prices: null,
           price: null
         }))
@@ -297,13 +311,14 @@ describe('Tokens', () => {
           position: null,
           description: null,
           changeMaxSupply: null,
-          distributionType: null,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
           decimals: null,
           totalTransitionsCount: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: null,
           prices: null,
           price: null
         }))
@@ -341,13 +356,14 @@ describe('Tokens', () => {
           position: null,
           description: null,
           changeMaxSupply: null,
-          distributionType: null,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
           decimals: null,
           totalTransitionsCount: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: null,
           prices: null,
           price: null
         }))
@@ -388,13 +404,23 @@ describe('Tokens', () => {
         allowedEmergencyActions: false,
         dataContractIdentifier: dataContract.identifier,
         changeMaxSupply: true,
-        distributionType: 'TimeBasedDistribution',
         totalGasUsed: 0,
         mainGroup: null,
         totalTransitionsCount: 0,
         decimals: 1000,
         totalFreezeTransitionsCount: 0,
         totalBurnTransitionsCount: 0,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
         price: null,
         prices: null
       }
@@ -433,7 +459,6 @@ describe('Tokens', () => {
         allowedEmergencyActions: false,
         dataContractIdentifier: dataContract.identifier,
         changeMaxSupply: true,
-        distributionType: 'TimeBasedDistribution',
         totalGasUsed: 1111,
         mainGroup: null,
         totalTransitionsCount: 1,
@@ -441,7 +466,19 @@ describe('Tokens', () => {
         totalFreezeTransitionsCount: 0,
         totalBurnTransitionsCount: 0,
         price: '10',
-        prices: null
+        prices: null,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        }
+
       }
 
       assert.deepEqual(body, expectedToken)
@@ -478,13 +515,23 @@ describe('Tokens', () => {
         allowedEmergencyActions: false,
         dataContractIdentifier: dataContract.identifier,
         changeMaxSupply: true,
-        distributionType: 'TimeBasedDistribution',
         totalGasUsed: 1111,
         mainGroup: null,
         totalTransitionsCount: 1,
         decimals: 1000,
         totalFreezeTransitionsCount: 0,
         totalBurnTransitionsCount: 0,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
         price: null,
         prices: [
           {
@@ -540,13 +587,168 @@ describe('Tokens', () => {
         allowedEmergencyActions: false,
         dataContractIdentifier: dataContract.identifier,
         changeMaxSupply: true,
-        distributionType: 'TimeBasedDistribution',
         totalGasUsed: 1111,
         mainGroup: null,
         totalTransitionsCount: 1,
         decimals: 1000,
         totalFreezeTransitionsCount: 0,
         totalBurnTransitionsCount: 0,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
+        price: null,
+        prices: [
+          {
+            amount: '1',
+            price: '1200000000000'
+          },
+          {
+            amount: '2',
+            price: '300000000000'
+          },
+          {
+            amount: '10',
+            price: '314000000000'
+          },
+          {
+            amount: '100000000',
+            price: '10000000000'
+          }
+        ]
+      }
+
+      assert.deepEqual(body, expectedToken)
+    })
+
+    it('should return token by id with transition and pre programmed distribution', async () => {
+      mock.method(DAPI.prototype, 'getDataContract', async () => ({
+        tokens: {
+          29: {
+            description: null,
+            baseSupply: 1000n,
+            maxSupply: 1010n,
+            conventions: {
+              decimals: 1000,
+              localizations: {
+                en: {
+                  pluralForm: 'tests',
+                  singularForm: 'test',
+                  shouldCapitalize: true
+                }
+              }
+            },
+            manualMintingRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            manualBurningRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            freezeRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            unfreezeRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            destroyFrozenFundsRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            emergencyActionRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            distributionRules: {
+              preProgrammedDistribution: {
+                distributions: {
+                  1752571480493: {
+                    AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW: 1n
+                  },
+                  1752571110493: {
+                    AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW: 10n
+                  }
+                }
+              }
+            },
+            mainGroup: undefined
+          }
+        }
+      }))
+
+      const [token] = tokens
+
+      const { body } = await client.get(`/token/${token.token.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
+        identifier: token.token.identifier,
+        position: 29,
+        timestamp: block.timestamp.toISOString(),
+        description: null,
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
+        owner: token.token.owner,
+        mintable: false,
+        burnable: false,
+        freezable: false,
+        unfreezable: false,
+        destroyable: false,
+        allowedEmergencyActions: false,
+        dataContractIdentifier: dataContract.identifier,
+        changeMaxSupply: true,
+        totalGasUsed: 1111,
+        mainGroup: null,
+        totalTransitionsCount: 1,
+        decimals: 1000,
+        totalFreezeTransitionsCount: 0,
+        totalBurnTransitionsCount: 0,
+        perpetualDistribution: null,
+        preProgrammedDistribution: [
+          {
+            out: [
+              {
+                identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                tokenAmount: '1'
+              }
+            ],
+            timestamp: '2025-07-15T09:24:40.493Z'
+          },
+          {
+            out: [
+              {
+                identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                tokenAmount: '10'
+              }
+            ],
+            timestamp: '2025-07-15T09:18:30.493Z'
+          }
+        ],
         price: null,
         prices: [
           {
@@ -775,7 +977,6 @@ describe('Tokens', () => {
           allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           changeMaxSupply: true,
-          distributionType: 'TimeBasedDistribution',
           mainGroup: null,
           decimals: 1000,
           timestamp: null,
@@ -784,6 +985,27 @@ describe('Tokens', () => {
           totalTransitionsCount: null,
           totalGasUsed: null,
           balance: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
           prices: null,
           price: null
         }))
@@ -826,7 +1048,6 @@ describe('Tokens', () => {
           allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           changeMaxSupply: true,
-          distributionType: 'TimeBasedDistribution',
           mainGroup: null,
           decimals: 1000,
           timestamp: null,
@@ -835,6 +1056,27 @@ describe('Tokens', () => {
           totalTransitionsCount: null,
           totalGasUsed: null,
           balance: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
           prices: null,
           price: null
         }))
@@ -877,7 +1119,6 @@ describe('Tokens', () => {
           allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           changeMaxSupply: true,
-          distributionType: 'TimeBasedDistribution',
           mainGroup: null,
           decimals: 1000,
           timestamp: null,
@@ -886,6 +1127,27 @@ describe('Tokens', () => {
           totalTransitionsCount: null,
           totalGasUsed: null,
           balance: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
           prices: null,
           price: null
         }))
@@ -928,7 +1190,6 @@ describe('Tokens', () => {
           allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           changeMaxSupply: true,
-          distributionType: 'TimeBasedDistribution',
           mainGroup: null,
           decimals: 1000,
           timestamp: null,
@@ -937,6 +1198,27 @@ describe('Tokens', () => {
           totalTransitionsCount: null,
           totalGasUsed: null,
           balance: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
           prices: null,
           price: null
         }))

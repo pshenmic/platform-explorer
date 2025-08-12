@@ -2075,7 +2075,7 @@ DOCUMENT TRANSITION
 }
 ```
 ```json lines
-TOKEN TRANSITION 
+TOKEN TRANSITION
 
 {
   "type": 1,
@@ -2404,32 +2404,6 @@ Response codes:
 503: Service Temporarily Unavailable
 ```
 ___
-### Broadcast Transaction
-Send Transaction for Broadcast
-
-* `base64` optional field. State transition buffer in base64
-* `hex` optional field. State transition buffer in hex
-* You must pass `hex` or `base64`
-
-```
-POST /transaction/broadcast
-BODY:
-{
-    "base64": "AgDpAd/Bcqls4/fTNNbAtp3zsByG0w/wOnwk9RaDj5Q0DQEAAAAetrSpdOHzvWhmll5EyXQFOW6JEoHRY2Alb0wBP6ic9AcEbm90ZYpK8hfzQOnEyVhXSWzzO2jrbHEqxtIKHreFTRSv2f/PxVTtZXkupT+mJytiIWsAU0U1Ke1abN0JJvNNU1182eoCBmF1dGhvchIGb3dsMzUyB21lc3NhZ2USBHRlc3QAAAAA"
-}
-
-RESPONSE:
-{
-  "message": "broadcasted"
-}
-```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
-___
 ### Tokens
 Return list of tokens
 
@@ -2493,6 +2467,80 @@ Response codes:
 ___
 ### Token By Identifier
 Return token info by token identifier
+
+* `perpetualDistribution` can have a different structure due to the extensive range of data formats for functions:
+  * FixedAmount
+    * `amount`
+  * Random
+    * `min`
+    * `max`
+  * StepDecreasingAmount
+    * `stepCount`
+    * `decreasePerIntervalNumerator`
+    * `decreasePerIntervalDenominator`
+    * `startDecreasingOffset`
+    * `maxIntervalCount`
+    * `distributionStartAmount`
+    * `trailingDistributionIntervalAmount`
+    * `minValue`
+  * Linear
+    * `a`
+    * `d`
+    * `startStep`
+    * `startingAmount`
+    * `minValue`
+    * `maxValue`
+  * Polynomial
+    * `a`
+    * `b`
+    * `d`
+    * `m`
+    * `n`
+    * `o`
+    * `startMoment`
+    * `minValue`
+    * `maxValue`
+  * Exponential
+    * `a`
+    * `b`
+    * `d`
+    * `m`
+    * `n`
+    * `o`
+    * `startMoment`
+    * `minValue`
+    * `maxValue`
+  * Exponential
+    * `a`
+    * `b`
+    * `d`
+    * `m`
+    * `n`
+    * `o`
+    * `startMoment`
+    * `minValue`
+    * `maxValue`
+  * Logarithmic
+    * `a`
+    * `b`
+    * `d`
+    * `m`
+    * `n`
+    * `o`
+    * `startMoment`
+    * `minValue`
+    * `maxValue`
+  * InvertedLogarithmic
+    * `a`
+    * `b`
+    * `d`
+    * `m`
+    * `n`
+    * `o`
+    * `startMoment`
+    * `minValue`
+    * `maxValue`
+
 ```
 GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL
 {
@@ -2519,15 +2567,78 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL
     "allowedEmergencyActions": true,
     "dataContractIdentifier": "BU9B9aoh54Y8aXqRnrD6zmerxivw1ePLeARSmqGm52eN",
     "changeMaxSupply": true,
-    "distributionType": null,
     "totalGasUsed": 921522940,
     "mainGroup": null,
     "totalTransitionsCount": 13,
     "totalFreezeTransitionsCount": 1,
+    "totalBurnTransitionsCount": 0,
     "decimals": 10,
     "totalBurnTransitionsCount": 0,
     "balance": "10",
     "balances": null
+    "perpetualDistribution": null,
+    "preProgrammedDistribution": [
+        {
+            "timestamp": "2025-07-15T09:24:40.493Z",
+            "out": [
+                {
+                    "identifier": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
+                    "tokenAmount": "1000"
+                },
+                {
+                    "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+                    "tokenAmount": "1000"
+                }
+            ]
+        }
+    ]
+}
+
+GET /token/4tyvbA2ZGFLvjXLnJRCacSoMbFfpmBwGRrAZsVwnfYri
+{
+    "identifier": "4tyvbA2ZGFLvjXLnJRCacSoMbFfpmBwGRrAZsVwnfYri",
+    "position": 0,
+    "timestamp": "2025-07-30T15:23:08.238Z",
+    "description": null,
+    "localizations": {
+        "en": {
+            "pluralForm": "sdk-02",
+            "singularForm": "sdk-02",
+            "shouldCapitalize": true
+        }
+    },
+    "baseSupply": "100000",
+    "totalSupply": "100000",
+    "maxSupply": null,
+    "owner": "5RG84o6KsTaZudDqS8ytbaRB8QP4YYQ2uwzb6Hj8cfjX",
+    "mintable": true,
+    "burnable": true,
+    "freezable": true,
+    "unfreezable": true,
+    "destroyable": true,
+    "allowedEmergencyActions": true,
+    "dataContractIdentifier": "GZSQWeXohuc4YRPR54XFo56AC9XafmjyWpAKaMWKLBG8",
+    "changeMaxSupply": false,
+    "totalGasUsed": 353664760,
+    "mainGroup": null,
+    "totalTransitionsCount": 6,
+    "totalFreezeTransitionsCount": 3,
+    "totalBurnTransitionsCount": 0,
+    "decimals": 10,
+    "totalBurnTransitionsCount": 0,
+    "balance": "10",
+    "balances": null
+    "perpetualDistribution": {
+        "type": "BlockBasedDistribution",
+        "recipientType": "ContractOwner",
+        "recipientValue": null,
+        "interval": 100,
+        "functionName": "FixedAmount",
+        "functionValue": {
+            "amount": "5"
+        }
+    },
+    "preProgrammedDistribution": null
 }
 ```
 Response codes:
@@ -2684,13 +2795,23 @@ GET identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1
             "allowedEmergencyActions": true,
             "dataContractIdentifier": "ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A",
             "changeMaxSupply": true,
-            "distributionType": "TimeBasedDistribution",
             "totalGasUsed": null,
             "mainGroup": null,
             "totalTransitionsCount": null,
             "totalFreezeTransitionsCount": null,
             "totalBurnTransitionsCount": null,
-            "decimals": 0
+            "decimals": 0,
+            "perpetualDistribution": {
+                "type": "BlockBasedDistribution",
+                "recipientType": "ContractOwner",
+                "recipientValue": null,
+                "interval": 100,
+                "functionName": "FixedAmount",
+                "functionValue": {
+                    "amount": "5"
+                }
+            },
+            "preProgrammedDistribution": null
         },
         ...
     ],
