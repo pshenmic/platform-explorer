@@ -610,7 +610,7 @@ module.exports = ({
                 'llmq_devnet_dip0024',
                 'llmq_test_platform',
                 'llmq_devnet_platform'
-              ],
+              ]
             },
             hash: { $ref: 'hash#' }
           }
