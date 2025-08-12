@@ -8,7 +8,7 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
-const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
+const lastCommit = require("@dashevo/dapi-client/lib/methods/platform/response/Proof");
 
 const API_VERSION = require('../../package.json').version
 
@@ -198,15 +198,31 @@ class MainController {
   }
 
   getQuorum = async (request, response) => {
-    const { type: quorumType, hash: quorumHash } = request.query
+    const { quorumType, quorumHash } = request.query
 
-    if (!quorumHash || !quorumType) {
-      return response.status(400).send({ message: 'quorumHash and quorumType must be provided.' })
+    if (!quorumType) {
+      return response.status(400).send({ message: 'quorumType must be provided.' })
     }
 
-    const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(quorumHash, QuorumTypeEnum[quorumType])
+    let lastCommitQuorumHash
 
-    response.send(quorumDetailedInfo)
+    if(!quorumHash) {
+      const block = await this.blocksDAO.getLastBlock()
+
+      const { block: blockInfo } = await TenderdashRPC.getBlockByHeight(block.header.height + 1)
+
+      const { last_commit: lastCommit } = blockInfo ?? { last_commit: undefined }
+
+      if(!lastCommit){
+        return response.status(500).send({ message: 'Last Commit not found try to provide quorum hash manually' })
+      }
+
+      lastCommitQuorumHash = lastCommit.quorum_hash
+    }
+
+    const quorumInfo = await DashCoreRPC.getQuorumInfo(quorumHash ?? lastCommitQuorumHash, quorumType)
+
+    response.send(quorumInfo)
   }
 }
 
