@@ -63,10 +63,6 @@ function TokensList ({ tokens, rate, headerStyles = 'default', variant = 'defaul
           justify={true}
         />
       }
-
-      {tokens?.length === 0 &&
-        <EmptyListMessage>There are no tokens created yet.</EmptyListMessage>
-      }
     </div>
   )
 }
