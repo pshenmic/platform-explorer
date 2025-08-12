@@ -90,10 +90,22 @@ describe('Tokens', () => {
               distributionType: {
                 getDistribution: () => ({
                   constructor: {
-                    name: 'TimeBasedDistributionWASM'
+                    name: 'BlockBasedDistributionWASM'
+                  },
+                  interval: 100n,
+                  function: {
+                    getFunctionName: () => 'FixedAmount',
+                    getFunctionValue: () => ({
+                      amount: 100n
+                    })
                   }
                 })
+              },
+              distributionRecipient: {
+                getType: () => 'ContractOwner',
+                getValue: () => undefined
               }
+
             }
           },
           mainGroup: undefined
@@ -151,6 +163,40 @@ describe('Tokens', () => {
       tokens.push({ token, stateTransition, tokenTransition })
     }
 
+    for (let i = 0; i < 5; i++) {
+      const stateTransition = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        data:
+          i % 2 === 0
+            ? 'AgG5BZwAg32+HPkczu8vW/+JvgoxqyypH+IC1KWlLtXX+AEBCgAACwDzGOdLDmuMO+LzhxqoUD27hy0iOXXmTgtqUBfkbuocK1qATLyeQ7SGhaPaequ9LTc28gNTVAJVI/372kNoKvmPAAEBBAH9AAABF2WS4AAC/QAAAEXZZLgACv0AAABJG9vEAPwF9eEA/QAAAAJUC+QAAAABQR8uWDXdK0f/ZYsZPfKK3JTUJqEZs1zMPY6OVbzRQ2nDoyggK6X0sUpl3fOkf0v1sAyYDKiDp0LLyqJECrIPg4VS'
+            : 'AgH0Z0dWPzi+nB/g9cz0JvDSstQcBxUflSKbAKmE+PjyJAEBCgAAAgAJZIbY2wo/Shtxo0mIuagf9Ro+X89oUbKos8GVbeY0uFYAWtls/LUGnuwod79+fX4OQgW8rj/Az8rO4twC5kZnAAEACgABBUEfVJP/Rc/YDMRnDXAlU1bDHHGmBIWjCyx3LfnMSeaMZLokSZt6hRsN7cxVL6O9t5n2PoXZ46VYnUXSeeNkNJuzLg==',
+        type: 0,
+        gas_used: 1111,
+        owner: identity.identifier
+      })
+
+      const token = await fixtures.token(knex, {
+        position: 29,
+        owner: identity.identifier,
+        data_contract_id: dataContract.id,
+        decimals: i,
+        base_supply: (i + 1) * 1000,
+        state_transition_hash: stateTransition?.hash
+      })
+
+      const tokenTransition = await fixtures.tokeTransition(knex, {
+        token_identifier: token.identifier,
+        owner: identity.identifier,
+        action: 10,
+        state_transition_hash: stateTransition?.hash,
+        token_contract_position: token.position,
+        data_contract_id: dataContract.id
+      })
+
+      tokens.push({ token, stateTransition, tokenTransition })
+    }
+
     mock.method(DAPI.prototype, 'getIdentityTokenBalances', async () => null)
   })
 
@@ -201,13 +247,16 @@ describe('Tokens', () => {
           position: null,
           description: null,
           changeMaxSupply: null,
-          distributionType: null,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
           totalTransitionsCount: null,
-          decimals: null
+          decimals: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
@@ -254,13 +303,16 @@ describe('Tokens', () => {
           position: null,
           description: null,
           changeMaxSupply: null,
-          distributionType: null,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
           decimals: null,
-          totalTransitionsCount: null
+          totalTransitionsCount: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
@@ -307,13 +359,16 @@ describe('Tokens', () => {
           position: null,
           description: null,
           changeMaxSupply: null,
-          distributionType: null,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
           decimals: null,
-          totalTransitionsCount: null
+          totalTransitionsCount: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
@@ -360,13 +415,16 @@ describe('Tokens', () => {
           position: null,
           description: null,
           changeMaxSupply: null,
-          distributionType: null,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
           decimals: null,
-          totalTransitionsCount: null
+          totalTransitionsCount: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(expectedTokens, body.resultSet)
@@ -416,13 +474,153 @@ describe('Tokens', () => {
         allowedEmergencyActions: false,
         dataContractIdentifier: dataContract.identifier,
         changeMaxSupply: true,
-        distributionType: 'TimeBasedDistribution',
         totalGasUsed: 0,
         mainGroup: null,
         totalTransitionsCount: 0,
         decimals: 1000,
         totalFreezeTransitionsCount: 0,
-        totalBurnTransitionsCount: 0
+        totalBurnTransitionsCount: 0,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
+        price: null,
+        prices: null
+      }
+
+      assert.deepEqual(body, expectedToken)
+    })
+
+    it('should return token by id with single price', async () => {
+      const [, token] = tokens
+
+      const { body } = await client.get(`/token/${token.token.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
+        identifier: token.token.identifier,
+        position: 29,
+        timestamp: block.timestamp.toISOString(),
+        description: null,
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
+        owner: token.token.owner,
+        mintable: false,
+        burnable: false,
+        freezable: false,
+        unfreezable: false,
+        destroyable: false,
+        allowedEmergencyActions: false,
+        dataContractIdentifier: dataContract.identifier,
+        changeMaxSupply: true,
+        totalGasUsed: 1111,
+        mainGroup: null,
+        totalTransitionsCount: 1,
+        decimals: 1000,
+        totalFreezeTransitionsCount: 0,
+        totalBurnTransitionsCount: 0,
+        price: '10',
+        prices: null,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        }
+
+      }
+
+      assert.deepEqual(body, expectedToken)
+    })
+
+    it('should return token by id with multi price', async () => {
+      const [token] = tokens
+
+      const { body } = await client.get(`/token/${token.token.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
+        identifier: token.token.identifier,
+        position: 29,
+        timestamp: block.timestamp.toISOString(),
+        description: null,
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
+        owner: token.token.owner,
+        mintable: false,
+        burnable: false,
+        freezable: false,
+        unfreezable: false,
+        destroyable: false,
+        allowedEmergencyActions: false,
+        dataContractIdentifier: dataContract.identifier,
+        changeMaxSupply: true,
+        totalGasUsed: 1111,
+        mainGroup: null,
+        totalTransitionsCount: 1,
+        decimals: 1000,
+        totalFreezeTransitionsCount: 0,
+        totalBurnTransitionsCount: 0,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
+        price: null,
+        prices: [
+          {
+            amount: '1',
+            price: '1200000000000'
+          },
+          {
+            amount: '2',
+            price: '300000000000'
+          },
+          {
+            amount: '10',
+            price: '314000000000'
+          },
+          {
+            amount: '100000000',
+            price: '10000000000'
+          }
+        ]
       }
 
       assert.deepEqual(body, expectedToken)
@@ -470,20 +668,194 @@ describe('Tokens', () => {
         allowedEmergencyActions: false,
         dataContractIdentifier: dataContract.identifier,
         changeMaxSupply: true,
-        distributionType: 'TimeBasedDistribution',
         totalGasUsed: 1111,
         mainGroup: null,
         totalTransitionsCount: 1,
         decimals: 1000,
         totalFreezeTransitionsCount: 0,
-        totalBurnTransitionsCount: 0
+        totalBurnTransitionsCount: 0,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
+        price: null,
+        prices: [
+          {
+            amount: '1',
+            price: '1200000000000'
+          },
+          {
+            amount: '2',
+            price: '300000000000'
+          },
+          {
+            amount: '10',
+            price: '314000000000'
+          },
+          {
+            amount: '100000000',
+            price: '10000000000'
+          }
+        ]
+      }
+
+      assert.deepEqual(body, expectedToken)
+    })
+
+    it('should return token by id with transition and pre programmed distribution', async () => {
+      mock.method(DAPI.prototype, 'getDataContract', async () => ({
+        tokens: {
+          29: {
+            description: null,
+            baseSupply: 1000n,
+            maxSupply: 1010n,
+            conventions: {
+              decimals: 1000,
+              localizations: {
+                en: {
+                  pluralForm: 'tests',
+                  singularForm: 'test',
+                  shouldCapitalize: true
+                }
+              }
+            },
+            manualMintingRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            manualBurningRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            freezeRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            unfreezeRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            destroyFrozenFundsRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            emergencyActionRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            distributionRules: {
+              preProgrammedDistribution: {
+                distributions: {
+                  1752571480493: {
+                    AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW: 1n
+                  },
+                  1752571110493: {
+                    AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW: 10n
+                  }
+                }
+              }
+            },
+            mainGroup: undefined
+          }
+        }
+      }))
+
+      const [token] = tokens
+
+      const { body } = await client.get(`/token/${token.token.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
+        identifier: token.token.identifier,
+        position: 29,
+        timestamp: block.timestamp.toISOString(),
+        description: null,
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
+        owner: token.token.owner,
+        mintable: false,
+        burnable: false,
+        freezable: false,
+        unfreezable: false,
+        destroyable: false,
+        allowedEmergencyActions: false,
+        dataContractIdentifier: dataContract.identifier,
+        changeMaxSupply: true,
+        totalGasUsed: 1111,
+        mainGroup: null,
+        totalTransitionsCount: 1,
+        decimals: 1000,
+        totalFreezeTransitionsCount: 0,
+        totalBurnTransitionsCount: 0,
+        perpetualDistribution: null,
+        preProgrammedDistribution: [
+          {
+            out: [
+              {
+                identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                tokenAmount: '1'
+              }
+            ],
+            timestamp: '2025-07-15T09:24:40.493Z'
+          },
+          {
+            out: [
+              {
+                identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                tokenAmount: '10'
+              }
+            ],
+            timestamp: '2025-07-15T09:18:30.493Z'
+          }
+        ],
+        price: null,
+        prices: [
+          {
+            amount: '1',
+            price: '1200000000000'
+          },
+          {
+            amount: '2',
+            price: '300000000000'
+          },
+          {
+            amount: '10',
+            price: '314000000000'
+          },
+          {
+            amount: '100000000',
+            price: '10000000000'
+          }
+        ]
       }
 
       assert.deepEqual(body, expectedToken)
     })
 
     it('should return 404 on not found', async () => {
-      await client.get('/token//444444446WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL')
+      await client.get('/token/444444446WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
@@ -741,7 +1113,6 @@ describe('Tokens', () => {
           allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           changeMaxSupply: true,
-          distributionType: 'TimeBasedDistribution',
           mainGroup: null,
           decimals: 1000,
           timestamp: null,
@@ -749,7 +1120,30 @@ describe('Tokens', () => {
           totalFreezeTransitionsCount: null,
           totalTransitionsCount: null,
           totalGasUsed: null,
-          balance: null
+          balance: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)
@@ -801,7 +1195,6 @@ describe('Tokens', () => {
           allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           changeMaxSupply: true,
-          distributionType: 'TimeBasedDistribution',
           mainGroup: null,
           decimals: 1000,
           timestamp: null,
@@ -809,7 +1202,30 @@ describe('Tokens', () => {
           totalFreezeTransitionsCount: null,
           totalTransitionsCount: null,
           totalGasUsed: null,
-          balance: null
+          balance: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)
@@ -861,7 +1277,6 @@ describe('Tokens', () => {
           allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           changeMaxSupply: true,
-          distributionType: 'TimeBasedDistribution',
           mainGroup: null,
           decimals: 1000,
           timestamp: null,
@@ -869,7 +1284,30 @@ describe('Tokens', () => {
           totalFreezeTransitionsCount: null,
           totalTransitionsCount: null,
           totalGasUsed: null,
-          balance: null
+          balance: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)
@@ -921,7 +1359,6 @@ describe('Tokens', () => {
           allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           changeMaxSupply: true,
-          distributionType: 'TimeBasedDistribution',
           mainGroup: null,
           decimals: 1000,
           timestamp: null,
@@ -929,7 +1366,30 @@ describe('Tokens', () => {
           totalFreezeTransitionsCount: null,
           totalTransitionsCount: null,
           totalGasUsed: null,
-          balance: null
+          balance: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
+          prices: null,
+          price: null
         }))
 
       assert.deepEqual(body.resultSet, expectedTokens)

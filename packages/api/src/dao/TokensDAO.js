@@ -3,6 +3,9 @@ const TokenTransition = require('../models/TokenTransition')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
 const Localization = require('../models/Localization')
+const PerpetualDistribution = require('../models/PerpetualDistribution')
+const PreProgrammedDistribution = require('../models/PreProgrammedDistribution')
+const { decodeStateTransition } = require('../utils')
 const BatchEnum = require('../enums/BatchEnum')
 const dpnsContract = require('../../data_contracts/dpns.json')
 const { getAliasFromDocument } = require('../utils')
@@ -63,6 +66,16 @@ module.exports = class TokensDAO {
   }
 
   getTokenByIdentifier = async (identifier) => {
+    const priceSubquery = this.knex('token_transitions')
+      .select('data', 'action', 'status', 'token_identifier')
+      .where('action', TokenTransitionsEnum.SetPriceForDirectPurchase)
+      .andWhere('token_identifier', identifier)
+      .andWhere('status', 'SUCCESS')
+      .orderBy('token_transitions.id', 'desc')
+      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
+      .limit(1)
+      .as('price_subquery')
+
     const gasUsedSubquery = this.knex('token_transitions')
       .select(
         this.knex.raw('sum(gas_used) as total_gas_used'),
@@ -74,22 +87,25 @@ module.exports = class TokensDAO {
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
 
     const rows = await this.knex('tokens')
+      .with('gas_used_subquery', gasUsedSubquery)
       .select(
         'position', 'tokens.identifier', 'total_gas_used',
         'tokens.owner', 'distribution_rules', 'total_transitions_count',
         'timestamp', 'data_contracts.identifier as data_contract_identifier',
-        'total_freeze_transitions_count', 'total_burn_transitions_count'
+        'total_freeze_transitions_count', 'total_burn_transitions_count',
+        'price_subquery.data as price_transition_data'
       )
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
-      .joinRaw('CROSS JOIN (?) as gas_and_counts', [gasUsedSubquery])
+      .leftJoin(priceSubquery, 'price_subquery.token_identifier', 'tokens.identifier')
+      .joinRaw('CROSS JOIN gas_used_subquery as gas_and_counts')
       .where('tokens.identifier', identifier)
 
     const [row] = rows
 
     if (!row) {
-      return null
+      return undefined
     }
 
     const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
@@ -108,10 +124,26 @@ module.exports = class TokensDAO {
       }
     })
 
+    let priceTx = null
+
+    if (row.price_transition_data) {
+      const decodedTx = await decodeStateTransition(row.price_transition_data)
+
+      priceTx = decodedTx.transitions[0]
+    }
+
     const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
     const tokenTotalSupply = await this.dapi.getTokenTotalSupply(row.identifier)
 
     const tokenConfig = dataContract.tokens[row.position]
+
+    const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.distributionRules ?? {}
+
+    const preProgrammedDistributions = preProgrammedDistribution?.distributions
+
+    const preProgrammedDistributionTimestamps = preProgrammedDistributions ? Object.keys(preProgrammedDistributions) : undefined
+
+    const preProgrammedDistributionNormal = preProgrammedDistributionTimestamps?.map((timestamp) => PreProgrammedDistribution.fromWASMObject({ timestamp, value: preProgrammedDistributions[timestamp] }))
 
     return Token.fromObject({
       ...token,
@@ -128,8 +160,11 @@ module.exports = class TokensDAO {
       unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
       destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
       allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      distributionType: tokenConfig?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
-      mainGroup: tokenConfig?.mainControlGroup
+      mainGroup: tokenConfig?.mainControlGroup,
+      perpetualDistribution: perpetualDistribution ? PerpetualDistribution.fromWASMObject(perpetualDistribution) : null,
+      preProgrammedDistribution: preProgrammedDistributionNormal,
+      price: priceTx?.price,
+      prices: priceTx?.prices
     })
   }
 
@@ -242,17 +277,18 @@ module.exports = class TokensDAO {
   getTokensByIdentity = async (identifier, page, limit, order) => {
     const fromRank = (page - 1) * limit
 
-    const subquery = this.knex('tokens')
-      .select('tokens.identifier as token_identifier', 'position', 'data_contract_id', 'id')
+    const subquery = this.knex('token_holders')
+      .select('position', 'data_contract_id', 'token_id', 'identifier as token_identifier')
       .select(this.knex.raw('count(*) OVER() as total_count'))
-      .where('tokens.owner', identifier)
-      .orderBy('id', order)
+      .where('holder', identifier)
+      .leftJoin('tokens', 'tokens.id', 'token_holders.token_id')
+      .orderBy('token_id', order)
       .limit(limit)
       .offset(fromRank)
       .as('subquery')
 
     const rows = await this.knex(subquery)
-      .select('data_contracts.identifier as data_contract_identifier', 'total_count', 'subquery.id')
+      .select('data_contracts.identifier as data_contract_identifier', 'total_count')
       .select(this.knex.raw(`
         array_agg(
           json_build_object(
@@ -261,8 +297,8 @@ module.exports = class TokensDAO {
           )
         ) as tokens
       `))
-      .groupBy('data_contracts.identifier', 'total_count', 'subquery.id')
-      .orderBy('id', order)
+      .groupBy('data_contracts.identifier', 'total_count', 'token_id')
+      .orderBy('token_id', order)
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
     const dataContractsTokens = await Promise.all(rows.map(async (row) => {
@@ -292,6 +328,14 @@ module.exports = class TokensDAO {
         if (aliasDocument) {
           aliases.push(getAliasFromDocument(aliasDocument))
         }
+        
+        const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.distributionRules ?? {}
+
+        const preProgrammedDistributions = preProgrammedDistribution?.distributions
+
+        const preProgrammedDistributionTimestamps = preProgrammedDistributions ? Object.keys(preProgrammedDistributions) : undefined
+
+        const preProgrammedDistributionNormal = preProgrammedDistributionTimestamps?.map((timestamp) => PreProgrammedDistribution.fromWASMObject({ timestamp, value: preProgrammedDistributions[timestamp] }))
 
         return Token.fromObject({
           identifier: tokenIdentifier,
@@ -314,8 +358,9 @@ module.exports = class TokensDAO {
           unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
           destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
           allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          distributionType: tokenConfig?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
-          mainGroup: tokenConfig?.mainControlGroup
+          mainGroup: tokenConfig?.mainControlGroup,
+          perpetualDistribution: perpetualDistribution ? PerpetualDistribution.fromWASMObject(perpetualDistribution) : null,
+          preProgrammedDistribution: preProgrammedDistributionNormal
         })
       }))
     }))

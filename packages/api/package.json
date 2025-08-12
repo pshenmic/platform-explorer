@@ -14,7 +14,7 @@
   "dependencies": {
     "@dashevo/dapi-client": "github:owl352/dapi-client#experimental",
     "@dashevo/dashd-rpc": "github:owl352/dashd-rpc",
-    "pshenmic-dpp": "^1.0.18",
+    "pshenmic-dpp": "^1.0.19",
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
     "bs58": "^6.0.0",
