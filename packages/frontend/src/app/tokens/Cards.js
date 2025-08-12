@@ -5,6 +5,7 @@ import { TokenDashboardCards } from '../../components/tokens/TokenDashboardCards
 import { useEffect, useState } from 'react'
 import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
 import { Flex } from '@chakra-ui/react'
+import { EmptyListMessage } from '../../components/ui/lists'
 import styles from './Cards.module.scss'
 
 export default function Cards () {
@@ -26,8 +27,8 @@ export default function Cards () {
 
   useEffect(() => fetchData(), [])
 
-  return (
-    <Flex className={styles.Container} direction={'column'} w={'100%'} gap={'1rem'}>
+  return tokens?.data?.resultSet?.length > 0
+    ? <Flex className={styles.Container} direction={'column'} w={'100%'} gap={'1rem'}>
       <div className={styles.Title}>Trending Tokens of the week:</div>
       <TokenDashboardCards
         items={tokens?.data?.resultSet}
@@ -35,5 +36,7 @@ export default function Cards () {
         error={tokens?.error}
       />
     </Flex>
-  )
+    : <Flex className={styles.Container} direction={'column'} w={'100%'} gap={'1rem'}>
+        <EmptyListMessage>There are no tokens yet.</EmptyListMessage>
+      </Flex>
 }
