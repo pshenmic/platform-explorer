@@ -89,7 +89,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       </div>
 
       <InfoLine
-        title={'Distribution Type'}
+        title={'Distribution'}
         value={(perpetualDistribution != null || preProgrammedDistribution != null)
           ? <Flex flexDirection={'column'} gap={'0.5rem'} alignItems={'flex-end'}>
               {perpetualDistribution &&
@@ -137,7 +137,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
           : <ValueContainer className={'TokenTotalCard__ZeroListBadge'}>none</ValueContainer>
         }
         loading={loading}
-        error={error || (perpetualDistribution == null && preProgrammedDistribution == null)}
+        error={error}
       />
 
       <InfoLine
