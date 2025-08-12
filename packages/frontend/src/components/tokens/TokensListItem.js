@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import { Alias, Identifier, BigNumber, NotActive, CreditsBlock } from '../data'
+import { Alias, Identifier, BigNumber, NotActive, CreditsBlock, FormattedNumber } from '../data'
 import { Grid, GridItem, Flex } from '@chakra-ui/react'
 import { Supply } from './index'
 import { LinkContainer, ValueContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
-import { currencyRound, getMinTokenPrice } from '../../util'
+import { getMinTokenPrice } from '../../util'
 import { Tooltip } from '../ui/Tooltips'
 import './TokensListItem.scss'
 
@@ -55,7 +55,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
               >
                 <div>
                   <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-                    <BigNumber>{token.price}</BigNumber>
+                    <FormattedNumber>{token.price}</FormattedNumber>
                   </ValueContainer>
                 </div>
               </Tooltip>
@@ -66,7 +66,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
                   content={<CreditsBlock credits={getMinTokenPrice(token.prices)} rate={rate}/>}
                 >
                   <Flex gap={'0.25rem'} fontSize={'0.75rem'} fontWeight={500}>
-                    From <BigNumber>{getMinTokenPrice(token.prices)}</BigNumber>
+                    From <FormattedNumber>{getMinTokenPrice(token.prices)}</FormattedNumber>
                   </Flex>
                 </Tooltip>
               : <NotActive/>
@@ -117,10 +117,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
           <GridItem className={'TokensListItem__Column TokensListItem__Column--Balance TokensListItem__Column--Number'}>
             {typeof balance === 'number'
               ? <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-                  {balance > 999999999
-                    ? currencyRound(balance)
-                    : <BigNumber>{balance}</BigNumber>
-                  }
+                  <FormattedNumber>{balance}</FormattedNumber>
                 </ValueContainer>
               : <NotActive/>
             }

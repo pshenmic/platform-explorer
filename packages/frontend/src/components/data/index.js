@@ -13,6 +13,7 @@ import BigNumber from './BigNumber'
 import CodeBlock from './CodeBlock'
 import NotActive from './NotActive'
 import TimeRemaining from './TimeRemaining'
+import FormattedNumber from './FormattedNumber'
 
 export {
   Identifier,
@@ -29,5 +30,6 @@ export {
   BigNumber,
   CodeBlock,
   NotActive,
-  TimeRemaining
+  TimeRemaining,
+  FormattedNumber
 }
