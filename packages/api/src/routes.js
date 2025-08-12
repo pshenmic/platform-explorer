@@ -588,7 +588,7 @@ module.exports = ({
     {
       path: '/quorum/info',
       method: 'GET',
-      handler: mainController.getQuorum,
+      handler: mainController.getQuorumInfo,
       schema: {
         querystring: {
           type: 'object',

@@ -196,7 +196,7 @@ class MainController {
     response.send(result)
   }
 
-  getQuorum = async (request, response) => {
+  getQuorumInfo = async (request, response) => {
     const { quorumType, quorumHash } = request.query
 
     if (!quorumType) {
