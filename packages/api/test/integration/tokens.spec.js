@@ -520,7 +520,18 @@ describe('Tokens', () => {
         baseSupply: '1000',
         maxSupply: '1010',
         totalSupply: '1000',
-        owner: token.token.owner,
+        owner: {
+          identifier: token.token.owner,
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
         mintable: false,
         burnable: false,
         freezable: false,
@@ -576,7 +587,18 @@ describe('Tokens', () => {
         baseSupply: '1000',
         maxSupply: '1010',
         totalSupply: '1000',
-        owner: token.token.owner,
+        owner: {
+          identifier: token.token.owner,
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
         mintable: false,
         burnable: false,
         freezable: false,
@@ -794,7 +816,18 @@ describe('Tokens', () => {
         baseSupply: '1000',
         maxSupply: '1010',
         totalSupply: '1000',
-        owner: token.token.owner,
+        owner: {
+          identifier: token.token.owner,
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
         mintable: false,
         burnable: false,
         freezable: false,
