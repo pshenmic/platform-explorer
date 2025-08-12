@@ -8,7 +8,7 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
-const lastCommit = require("@dashevo/dapi-client/lib/methods/platform/response/Proof");
+const lastCommit = require('@dashevo/dapi-client/lib/methods/platform/response/Proof')
 
 const API_VERSION = require('../../package.json').version
 
@@ -206,14 +206,14 @@ class MainController {
 
     let lastCommitQuorumHash
 
-    if(!quorumHash) {
+    if (!quorumHash) {
       const block = await this.blocksDAO.getLastBlock()
 
       const { block: blockInfo } = await TenderdashRPC.getBlockByHeight(block.header.height + 1)
 
       const { last_commit: lastCommit } = blockInfo ?? { last_commit: undefined }
 
-      if(!lastCommit){
+      if (!lastCommit) {
         return response.status(500).send({ message: 'Last Commit not found try to provide quorum hash manually' })
       }
 
