@@ -623,7 +623,7 @@ const decodeStateTransition = async (base64) => {
               case TokenTransitionEnum.DirectPurchase: {
                 out.publicNote = tokenTransition.publicNote ?? null
                 out.totalAgreedPrice = tokenTransition.totalAgreedPrice.toString()
-                out.tokenCount = tokenTransition.tokenCount.toString()
+                out.amount = tokenTransition.amount.toString()
 
                 break
               }
