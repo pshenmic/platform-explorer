@@ -1,14 +1,15 @@
 'use client'
 
-import { Alias, DateBlock, Identifier, InfoLine } from '../data'
+import { Alias, BigNumber, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { SmoothSize, ValueContainer } from '../ui/containers'
-import { Button } from '@chakra-ui/react'
+import { Button, Flex } from '@chakra-ui/react'
 import { ChevronIcon } from '../ui/icons'
-import { findActiveAlias, getTokenName } from '../../util'
+import { findActiveAlias, getTokenName, getMinTokenPrice } from '../../util'
 import TokenDigestCard from './TokenDigestCard'
 import { ValueCard } from '../cards'
 import { LocalisationList } from './localisation'
+import { PriceList } from './prices'
 import { useState } from 'react'
 import ImageGenerator from '../imageGenerator'
 import './TokenTotalCard.scss'
@@ -24,9 +25,21 @@ const LocalisationTranslations = ({ className, show, localisations = {} }) => (
   </SmoothSize>
 )
 
+const PriceTable = ({ className, show, prices = [] }) => (
+  <SmoothSize className={className || ''}>
+    {prices?.length > 0 &&
+      <PriceList
+        className={`TokenTotalCard__PriceList ${show ? 'TokenTotalCard__PriceList--Show' : ''}`}
+        prices={prices}
+      />
+    }
+  </SmoothSize>
+)
+
 function TokenTotalCard ({ token, rate, loading }) {
   const activeAlias = findActiveAlias(token.data?.aliases)
   const [showLocalisations, setShowLocalisations] = useState(false)
+  const [showPrices, setShowPrices] = useState(false)
   const {
     identifier,
     position,
@@ -35,9 +48,12 @@ function TokenTotalCard ({ token, rate, loading }) {
     localizations,
     dataContractIdentifier,
     mainGroup,
-    decimals
+    decimals,
+    price,
+    prices
   } = token?.data || {}
   const localizationsCount = Object.keys(localizations || {}).length
+  const minPrice = getMinTokenPrice(prices)
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient tokenPage__CommonInfo TokenTotalCard ${loading ? 'TokenTotalCard--Loading' : ''} `}>
@@ -88,6 +104,43 @@ function TokenTotalCard ({ token, rate, loading }) {
           <HorisontalSeparator className={'TokenTotalCard__Separator'}/>
 
           <div className={'TokenTotalCard__CommonLines'}>
+            <InfoLine
+              className={'TokenTotalCard__InfoLine'}
+              title={'Price'}
+              value={price != null
+                ? <ValueContainer size={'md'} colorScheme={'emeralds'}>
+                    <BigNumber>{price}</BigNumber>
+                  </ValueContainer>
+                : prices && prices?.length > 0
+                  ? <Button
+                      className={'TokenTotalCard__PriceShowButton'}
+                      size={'sm'}
+                      variant={showPrices ? 'gray' : 'blue'}
+                      onClick={() => setShowPrices(prev => !prev)}
+                    >
+                      <Flex gap={'0.5rem'}>
+                        <div>From</div>
+                        <BigNumber>{minPrice}</BigNumber>
+                      </Flex>
+                      <ChevronIcon
+                        ml={'4px'}
+                        h={'10px'}
+                        w={'10px'}
+                        transform={`rotate(${showPrices ? '-90deg' : '90deg'})`}
+                      />
+                    </Button>
+                  : <ValueContainer size={'md'} className={'TokenTotalCard__ZeroListBadge'}>none</ValueContainer>
+              }
+              loading={loading}
+              error={token.error || (!loading && price == null && prices == null)}
+            />
+            <PriceTable
+              prices={prices}
+              show={showPrices}
+              className={`TokenTotalCard__PriceListContainer ${showPrices
+                ? ' TokenTotalCard__PriceListContainer--Opened'
+                : ' TokenTotalCard__PriceListContainer--Hidden'}`}
+            />
             <InfoLine
               className={'TokenTotalCard__InfoLine'}
               title={'Description'}
