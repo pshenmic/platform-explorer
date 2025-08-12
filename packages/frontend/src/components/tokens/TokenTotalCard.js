@@ -1,6 +1,6 @@
 'use client'
 
-import { Alias, BigNumber, DateBlock, Identifier, InfoLine } from '../data'
+import { Alias, BigNumber, DateBlock, Identifier, InfoLine, CreditsBlock } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { SmoothSize, ValueContainer } from '../ui/containers'
 import { Button, Flex } from '@chakra-ui/react'
@@ -25,12 +25,13 @@ const LocalisationTranslations = ({ className, show, localisations = {} }) => (
   </SmoothSize>
 )
 
-const PriceTable = ({ className, show, prices = [] }) => (
+const PriceTable = ({ className, show, prices = [], rate }) => (
   <SmoothSize className={className || ''}>
     {prices?.length > 0 &&
       <PriceList
         className={`TokenTotalCard__PriceList ${show ? 'TokenTotalCard__PriceList--Show' : ''}`}
         prices={prices}
+        rate={rate}
       />
     }
   </SmoothSize>
@@ -108,9 +109,7 @@ function TokenTotalCard ({ token, rate, loading }) {
               className={'TokenTotalCard__InfoLine'}
               title={'Price'}
               value={price != null
-                ? <ValueContainer size={'md'} colorScheme={'emeralds'}>
-                    <BigNumber>{price}</BigNumber>
-                  </ValueContainer>
+                ? <CreditsBlock credits={price} rate={rate}/>
                 : prices && prices?.length > 0
                   ? <Button
                       className={'TokenTotalCard__PriceShowButton'}
@@ -140,6 +139,7 @@ function TokenTotalCard ({ token, rate, loading }) {
               className={`TokenTotalCard__PriceListContainer ${showPrices
                 ? ' TokenTotalCard__PriceListContainer--Opened'
                 : ' TokenTotalCard__PriceListContainer--Hidden'}`}
+              rate={rate}
             />
             <InfoLine
               className={'TokenTotalCard__InfoLine'}
