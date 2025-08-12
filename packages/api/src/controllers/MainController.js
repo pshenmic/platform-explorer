@@ -198,15 +198,15 @@ class MainController {
   }
 
   getQuorum = async (request, response) => {
-    const { quorum_type: quorumType, quorum_hash: quorumHash } = request.query
+    const { type: quorumType, hash: quorumHash } = request.query
 
-    try {
-      const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(quorumHash, QuorumTypeEnum[quorumType])
-
-      response.send(quorumDetailedInfo)
-    } catch (error) {
-      response.status(404).send({ message: 'Quorum not found' })
+    if(!quorumHash || !quorumType) {
+      return response.status(400).send({message: 'quorumHash and quorumType must be provided.'})
     }
+
+    const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(quorumHash, QuorumTypeEnum[quorumType])
+
+    response.send(quorumDetailedInfo)
   }
 }
 

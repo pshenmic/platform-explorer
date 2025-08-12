@@ -593,7 +593,7 @@ module.exports = ({
         querystring: {
           type: 'object',
           properties: {
-            quorum_type: {
+            type: {
               type: 'string',
               enum: [
                 'llmq_50_60',
@@ -610,9 +610,9 @@ module.exports = ({
                 'llmq_devnet_dip0024',
                 'llmq_test_platform',
                 'llmq_devnet_platform'
-              ]
+              ],
             },
-            quorum_hash: { $ref: 'hash#' }
+            hash: { $ref: 'hash#' }
           }
         }
       }
