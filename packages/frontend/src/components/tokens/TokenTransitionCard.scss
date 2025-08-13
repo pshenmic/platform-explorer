@@ -3,6 +3,10 @@
 .TokenTransitionCard {
   @include mixins.BaseTransitionCard();
 
+  .InfoLine__Value {
+    text-align: left;
+  }
+
   .ValueCard {
     width: max-content;
     max-width: 100%;
@@ -73,6 +77,14 @@
       .InfoLine__Title {
         min-width: 80px;
       }
+    }
+  }
+
+  @container (max-width: 600px) {
+    .InfoLine__Value {
+      text-align: right !important;
+      display: flex;
+      justify-content: flex-end;
     }
   }
 }

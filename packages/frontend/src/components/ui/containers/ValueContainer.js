@@ -63,7 +63,7 @@ function ValueContainer ({
   extraClass += ' ' + sizeClasses?.[size] || sizeClasses.default
 
   return (
-    <Wrapper link={link} external={external} className={`ValueContainer ${extraClass} ${className || ''}`} {...props}>
+    <Wrapper link={link} external={external} className={`ValueContainer ${extraClass || ''} ${className || ''}`} {...props}>
       {external && (
         <div className={'ValueContainer__ExternalIcon'}>
           <ArrowCornerIcon color={'brand.normal'} w={'10px'} h={'10px'} mr={'12px'}/>

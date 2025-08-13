@@ -22,6 +22,7 @@ const paginateConfig = {
 
 function Tokens ({ defaultPage = 1, defaultPageSize }) {
   const [tokens, setTokens] = useState({ data: {}, loading: false, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [total, setTotal] = useState(0)
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
@@ -43,6 +44,10 @@ function Tokens ({ defaultPage = 1, defaultPageSize }) {
         setTotal(res.pagination.total)
       })
       .catch(err => fetchHandlerError(setTokens, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
   }
 
   useEffect(() => fetchData(currentPage + 1, pageSize, filters), [pageSize, currentPage, filters])
@@ -81,7 +86,7 @@ function Tokens ({ defaultPage = 1, defaultPageSize }) {
 
         {!tokens.error
           ? !tokens.loading
-              ? <TokensList tokens={tokens?.data?.resultSet || []}/>
+              ? <TokensList tokens={tokens?.data?.resultSet || []} rate={rate}/>
               : <LoadingList itemsCount={pageSize}/>
           : <ErrorMessageBlock h={20}/>
         }
