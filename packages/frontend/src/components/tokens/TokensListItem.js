@@ -69,7 +69,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
                     From <FormattedNumber>{getMinTokenPrice(token.prices)}</FormattedNumber>
                   </Flex>
                 </Tooltip>
-              : <NotActive/>
+              : <></>
           }
         </GridItem>
 
