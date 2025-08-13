@@ -7,6 +7,8 @@ const PerpetualDistribution = require('../models/PerpetualDistribution')
 const PreProgrammedDistribution = require('../models/PreProgrammedDistribution')
 const { decodeStateTransition } = require('../utils')
 const BatchEnum = require('../enums/BatchEnum')
+const dpnsContract = require('../../data_contracts/dpns.json')
+const { getAliasFromDocument } = require('../utils')
 
 module.exports = class TokensDAO {
   constructor (knex, dapi) {
@@ -40,8 +42,22 @@ module.exports = class TokensDAO {
     const tokens = await Promise.all(rows.map(async (row) => {
       const { totalSystemAmount } = await this.dapi.getTokenTotalSupply(row.identifier)
 
+      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+
+      const aliases = []
+
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
+
       return Token.fromObject({
-        ...Token.fromRow(row),
+        ...Token.fromRow({
+          ...row,
+          owner: {
+            identifier: row.owner?.trim(),
+            aliases: aliases ?? []
+          }
+        }),
         totalSupply: totalSystemAmount.toString()
       })
     }))
@@ -92,6 +108,22 @@ module.exports = class TokensDAO {
       return undefined
     }
 
+    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+
+    const aliases = []
+
+    if (aliasDocument) {
+      aliases.push(getAliasFromDocument(aliasDocument))
+    }
+
+    const token = Token.fromRow({
+      ...row,
+      owner: {
+        identifier: row.owner?.trim(),
+        aliases: aliases ?? []
+      }
+    })
+
     let priceTx = null
 
     if (row.price_transition_data) {
@@ -99,8 +131,6 @@ module.exports = class TokensDAO {
 
       priceTx = decodedTx.transitions[0]
     }
-
-    const token = Token.fromRow(row)
 
     const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
     const tokenTotalSupply = await this.dapi.getTokenTotalSupply(row.identifier)
@@ -153,10 +183,26 @@ module.exports = class TokensDAO {
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
 
-    return new PaginatedResultSet(rows.map(row => TokenTransition.fromRow({
-      ...row,
-      action: BatchEnum[row.action + 6]
-    })), page, limit, order)
+    const resultSet = await Promise.all(rows.map(async (row) => {
+      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+
+      const aliases = []
+
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
+
+      return TokenTransition.fromRow({
+        ...row,
+        action: BatchEnum[row.action + 6],
+        owner: {
+          identifier: row.owner?.trim(),
+          aliases: aliases ?? []
+        }
+      })
+    }))
+
+    return new PaginatedResultSet(resultSet, page, limit, order)
   }
 
   getTokensTrends = async (startDate, endDate, page, limit, order) => {
@@ -275,6 +321,14 @@ module.exports = class TokensDAO {
 
         const tokenTotalSupply = await this.dapi.getTokenTotalSupply(tokenIdentifier)
 
+        const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', identifier.trim()]], 1)
+
+        const aliases = []
+
+        if (aliasDocument) {
+          aliases.push(getAliasFromDocument(aliasDocument))
+        }
+
         const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.distributionRules ?? {}
 
         const preProgrammedDistributions = preProgrammedDistribution?.distributions
@@ -286,7 +340,10 @@ module.exports = class TokensDAO {
         return Token.fromObject({
           identifier: tokenIdentifier,
           dataContractIdentifier: row.data_contract_identifier,
-          owner: identifier,
+          owner: {
+            identifier,
+            aliases: aliases ?? []
+          },
           position: Number(tokenPosition),
           totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
           description: tokenConfig?.description,

@@ -4,12 +4,12 @@
   display: grid;
   gap: 1rem;
 
-  grid-template-columns: 
-    1fr // time
-    2fr // hash
-    2fr // creator
-    2fr // recipient
-    1fr // amount
+  grid-template-columns:
+    8rem // time
+    minmax(0, 2fr) // hash
+    minmax(0, 2fr) // creator
+    minmax(0, 2fr) // recipient
+    8rem // amount
     9rem; // type
 
   @container (max-width: 104rem) {

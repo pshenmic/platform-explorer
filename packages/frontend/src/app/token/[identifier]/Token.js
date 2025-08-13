@@ -9,7 +9,6 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { TokenTotalCard } from '../../../components/tokens'
 import { ActivityList } from '../../../components/tokens/activity'
-// import { HoldersList } from '../../../components/tokens/holders'
 
 const tabs = [
   'activity',
@@ -106,7 +105,6 @@ function Token ({ identifier }) {
               <ActivityList activities={tokenTransactions.data?.resultSet} loading={false} error={false}/>
             </TabPanel>
             <TabPanel>
-              {/* <HoldersList holders={} loading={false} error={false}/> */}
             </TabPanel>
           </TabPanels>
         </Tabs>

@@ -33,7 +33,7 @@ export default function ActivityList ({
             Hash
           </GridItem>
           <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Creator'}>
-            Tx Creator
+            Owner
           </GridItem>
           <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Recipient'}>
             Recipient

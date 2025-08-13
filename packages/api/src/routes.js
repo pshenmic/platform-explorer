@@ -571,7 +571,6 @@ module.exports = ({
         querystring: { $ref: 'paginationOptions#' }
       }
     },
-
     {
       path: '/identity/:identifier/tokens',
       method: 'GET',
@@ -582,6 +581,38 @@ module.exports = ({
           type: 'object',
           properties: {
             identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/quorum/info',
+      method: 'GET',
+      handler: mainController.getQuorumInfo,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            quorumType: {
+              type: 'number',
+              enum: [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                100,
+                101,
+                102,
+                103,
+                104,
+                105,
+                106,
+                107
+              ]
+            },
+            quorumHash: { $ref: 'hash#' }
           }
         }
       }

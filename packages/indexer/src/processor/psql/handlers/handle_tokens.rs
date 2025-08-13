@@ -6,6 +6,7 @@ use dpp::state_transition::batch_transition::token_burn_transition::v0::v0_metho
 use dpp::state_transition::batch_transition::token_claim_transition::v0::v0_methods::TokenClaimTransitionV0Methods;
 use dpp::state_transition::batch_transition::token_config_update_transition::v0::v0_methods::TokenConfigUpdateTransitionV0Methods;
 use dpp::state_transition::batch_transition::token_destroy_frozen_funds_transition::v0::v0_methods::TokenDestroyFrozenFundsTransitionV0Methods;
+use dpp::state_transition::batch_transition::token_direct_purchase_transition::v0::v0_methods::TokenDirectPurchaseTransitionV0Methods;
 use dpp::state_transition::batch_transition::token_emergency_action_transition::v0::v0_methods::TokenEmergencyActionTransitionV0Methods;
 use dpp::state_transition::batch_transition::token_freeze_transition::v0::v0_methods::TokenFreezeTransitionV0Methods;
 use dpp::state_transition::batch_transition::token_mint_transition::v0::v0_methods::TokenMintTransitionV0Methods;
@@ -32,11 +33,7 @@ impl PSQLProcessor {
         .await;
 
         self.dao
-            .token_holder(
-                owner_id,
-                transition.token_id(),
-                &sql_transaction,
-            )
+            .token_holder(owner_id, transition.token_id(), &sql_transaction)
             .await
             .unwrap();
 
@@ -145,12 +142,12 @@ impl PSQLProcessor {
                 )
                 .await
                 .unwrap(),
-            TokenTransition::Claim(config_update) => self
+            TokenTransition::Claim(claim) => self
                 .dao
                 .token_transition(
                     transition.clone(),
                     None,
-                    config_update.public_note(),
+                    claim.public_note(),
                     owner_id,
                     None,
                     st_hash.clone(),
@@ -158,11 +155,11 @@ impl PSQLProcessor {
                 )
                 .await
                 .unwrap(),
-            TokenTransition::DirectPurchase(_) => self
+            TokenTransition::DirectPurchase(purchase) => self
                 .dao
                 .token_transition(
                     transition.clone(),
-                    None,
+                    Some(purchase.token_count()),
                     None,
                     owner_id,
                     None,
@@ -171,12 +168,12 @@ impl PSQLProcessor {
                 )
                 .await
                 .unwrap(),
-            TokenTransition::SetPriceForDirectPurchase(config_update) => self
+            TokenTransition::SetPriceForDirectPurchase(set_price) => self
                 .dao
                 .token_transition(
                     transition.clone(),
                     None,
-                    config_update.public_note(),
+                    set_price.public_note(),
                     owner_id,
                     None,
                     st_hash.clone(),
