@@ -4,7 +4,7 @@ import { Grid, GridItem, Flex } from '@chakra-ui/react'
 import { Supply } from './index'
 import { LinkContainer, ValueContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
-import { currencyRound, findActiveAlias, getMinTokenPrice } from '../../util'
+import { findActiveAlias, getMinTokenPrice } from '../../util'
 import { Tooltip } from '../ui/Tooltips'
 import './TokensListItem.scss'
 
