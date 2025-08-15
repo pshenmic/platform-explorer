@@ -1,13 +1,12 @@
 import { ValueCard } from '../cards'
 import { CreditsBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
-import { DocumentActionEnum } from '../../enums/documentAction'
-import { DocumentActionBadge } from './index'
+import BatchTypeBadge from '../transactions/BatchTypeBadge'
 import { ValueContainer } from '../ui/containers'
 import { Code } from '@chakra-ui/react'
 import './DocumentTransitionCard.scss'
 
 const fieldsOfTypes = {
-  CREATE: [
+  DOCUMENT_CREATE: [
     'DataContractIdentifier',
     'DocumentIdentifier',
     'DocumentType',
@@ -16,7 +15,7 @@ const fieldsOfTypes = {
     'Data',
     'PrefundedVotingBalance'
   ],
-  REPLACE: [
+  DOCUMENT_REPLACE: [
     'DataContractIdentifier',
     'DocumentIdentifier',
     'DocumentType',
@@ -27,14 +26,14 @@ const fieldsOfTypes = {
     'LastTimeTransferred',
     'Data'
   ],
-  DELETE: [
+  DOCUMENT_DELETE: [
     'DataContractIdentifier',
     'DocumentIdentifier',
     'DocumentType',
     'IdentityContractNonce',
     'Data'
   ],
-  TRANSFER: [
+  DOCUMENT_TRANSFER: [
     'DataContractIdentifier',
     'DocumentIdentifier',
     'SenderIdentifier',
@@ -47,7 +46,7 @@ const fieldsOfTypes = {
     'LastTimeTransferred',
     'Data'
   ],
-  PURCHASE: [
+  DOCUMENT_PURCHASE: [
     'DataContractIdentifier',
     'DocumentIdentifier',
     'BuyerIdentifier',
@@ -61,7 +60,7 @@ const fieldsOfTypes = {
     'LastTimeTransferred',
     'Data'
   ],
-  UPDATE_PRICE: [
+  DOCUMENT_UPDATE_PRICE: [
     'DataContractIdentifier',
     'DocumentIdentifier',
     'SenderIdentifier',
@@ -78,18 +77,18 @@ const fieldsOfTypes = {
 }
 
 const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
-  const fields = fieldsOfTypes?.[DocumentActionEnum?.[transition?.action]]
+  const fields = fieldsOfTypes?.[transition?.action] || []
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient DocumentTransitionCard ${className || ''}`}>
       <InfoLine
         className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Action'}
         title={'Action'}
-        value={<DocumentActionBadge typeId={transition?.action}/>}
+        value={<BatchTypeBadge batchType={transition?.action}/>}
         error={transition?.action === undefined}
       />
 
-      {fields.indexOf('DataContractIdentifier') !== -1 &&
+      {fields?.indexOf('DataContractIdentifier') !== -1 &&
         <InfoLine
           className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
           title={'Data Contract Identifier'}
@@ -104,7 +103,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
         />
       }
 
-      {fields.indexOf('DocumentIdentifier') !== -1 &&
+      {fields?.indexOf('DocumentIdentifier') !== -1 &&
         <InfoLine
           className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
           title={'Document Identifier'}
@@ -119,7 +118,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
         />
       }
 
-      {fields.indexOf('ReceiverIdentifier') !== -1 &&
+      {fields?.indexOf('ReceiverIdentifier') !== -1 &&
         transition?.receiverId &&
           <>
             {owner &&
@@ -150,7 +149,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
           </>
       }
 
-      {fields.indexOf('SellerIdentifier') !== -1 && owner &&
+      {fields?.indexOf('SellerIdentifier') !== -1 && owner &&
         <InfoLine
           className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
           title={'Buyer Identifier'}
@@ -164,7 +163,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
         />
       }
 
-      {fields.indexOf('Price') !== -1 &&
+      {fields?.indexOf('Price') !== -1 &&
         <InfoLine
           className={'DocumentTransitionCard__InfoLine'}
           title={'Price'}
@@ -173,7 +172,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
         />
       }
 
-      {fields.indexOf('DocumentType') !== -1 &&
+      {fields?.indexOf('DocumentType') !== -1 &&
         <InfoLine
           className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--DocumentType'}
           title={'Document Type'}
@@ -186,7 +185,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
         />
       }
 
-      {fields.indexOf('Revision') !== -1 &&
+      {fields?.indexOf('Revision') !== -1 &&
         <InfoLine
           className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Revision'}
           title={'Revision'}
@@ -195,7 +194,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
         />
       }
 
-      {fields.indexOf('IdentityContractNonce') !== -1 &&
+      {fields?.indexOf('IdentityContractNonce') !== -1 &&
         <InfoLine
           className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Nonce'}
           title={'Identity Contract Nonce'}
@@ -204,7 +203,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
         />
       }
 
-      {fields.indexOf('Data') !== -1 && transition?.data &&
+      {fields?.indexOf('Data') !== -1 && transition?.data &&
         <InfoLine
           className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Data'}
           title={'Data'}

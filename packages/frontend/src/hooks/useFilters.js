@@ -1,32 +1,10 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 const useFilters = (defaultFilters = {}) => {
   const [filters, setFilters] = useState(defaultFilters)
 
-  /** Edit single fields */
-  const handleFilterChange = (filterName, value) => {
-    const newFilters = {
-      ...filters,
-      [filterName]: value ?? ''
-    }
-    return prepareFilters(newFilters)
-  }
-
-  /** Edit array type filters */
-  const handleMultipleValuesChange = (fieldName, value) => {
-    const currentValues = filters[fieldName]
-    const newValues = currentValues.includes(value)
-      ? currentValues.filter(v => v !== value)
-      : [...currentValues, value]
-
-    return prepareFilters({
-      ...filters,
-      [fieldName]: newValues
-    })
-  }
-
   /** Delete empty fields */
-  const prepareFilters = (filters) => {
+  const prepareFilters = useCallback((filters) => {
     const preparedFilters = { ...filters }
 
     Object.keys(preparedFilters).forEach(key => {
@@ -36,7 +14,33 @@ const useFilters = (defaultFilters = {}) => {
     })
 
     return preparedFilters
-  }
+  }, [])
+
+  /** Edit single fields */
+  const handleFilterChange = useCallback((filterName, value) => {
+    setFilters(prevFilters => {
+      const newFilters = {
+        ...prevFilters,
+        [filterName]: value ?? ''
+      }
+      return prepareFilters(newFilters)
+    })
+  }, [prepareFilters])
+
+  /** Edit array type filters */
+  const handleMultipleValuesChange = useCallback((fieldName, value) => {
+    setFilters(prevFilters => {
+      const currentValues = prevFilters[fieldName] || []
+      const newValues = currentValues.includes(value)
+        ? currentValues.filter(v => v !== value)
+        : [...currentValues, value]
+
+      return prepareFilters({
+        ...prevFilters,
+        [fieldName]: newValues
+      })
+    })
+  }, [prepareFilters])
 
   return {
     filters,

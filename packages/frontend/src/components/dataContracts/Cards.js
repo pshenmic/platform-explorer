@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Flex, Box } from '@chakra-ui/react'
-import Link from 'next/link'
 import { InfoCard } from '../cards'
 import { ErrorMessageBlock } from '../Errors'
 import ImageGenerator from '../imageGenerator'
@@ -14,17 +13,22 @@ import './DataContractCards.scss'
 
 function DataContractCard ({ dataContract, className, loading = false }) {
   return (
-    <InfoCard className={`DataContractCard ${className || ''}`} loading={loading} clickable={true}>
+    <InfoCard
+      className={`DataContractCard ${className || ''}`}
+      loading={loading}
+      link={!loading ? `/dataContract/${dataContract.identifier}` : null}
+      clickable={true}
+    >
       {!loading
-        ? <Link href={`/dataContract/${dataContract.identifier}`}>
-          <Flex mb={1} alignItems={'center'}>
-            <div className={'DataContractCard__Img'}>
-              <ImageGenerator username={dataContract.identifier} lightness={50} saturation={50} width={28} height={28}/>
-            </div>
-            <div className={'DataContractCard__Name'}>{dataContract.name}</div>
-          </Flex>
-          <Identifier className={'DataContractCard__Id'} ellipsis={true} styles={['highlight-both']}>{dataContract.identifier}</Identifier>
-        </Link>
+        ? <div>
+            <Flex mb={1} alignItems={'center'}>
+              <div className={'DataContractCard__Img'}>
+                <ImageGenerator username={dataContract.identifier} lightness={50} saturation={50} width={28} height={28}/>
+              </div>
+              <div className={'DataContractCard__Name'}>{dataContract.name}</div>
+            </Flex>
+            <Identifier className={'DataContractCard__Id'} ellipsis={true} styles={['highlight-both']}>{dataContract.identifier}</Identifier>
+          </div>
         : <Box h={'55px'}/>
       }
     </InfoCard>

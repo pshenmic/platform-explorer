@@ -15,8 +15,9 @@ const {
   DataContractCreateTransitionWASM,
   IdentityCreateTransitionWASM, IdentityTopUpTransitionWASM, DataContractUpdateTransitionWASM,
   IdentityUpdateTransitionWASM, IdentityCreditTransferWASM, IdentityCreditWithdrawalTransitionWASM,
-  MasternodeVoteTransitionWASM, IdentifierWASM
+  MasternodeVoteTransitionWASM, IdentifierWASM, PlatformVersionWASM
 } = require('pshenmic-dpp')
+const BatchEnum = require('./enums/BatchEnum')
 
 const getKnex = () => {
   return require('knex')({
@@ -47,6 +48,165 @@ const outputScriptToAddress = (script) => {
   return address ? address.toString() : null
 }
 
+const tokensConfigToObject = (config) => {
+  const tokensKeys = Object.keys(config)
+
+  return tokensKeys.reduce((acc, tokenKey) => {
+    const token = config[tokenKey]
+
+    return {
+      ...acc,
+      [tokenKey]: {
+        position: Number(tokenKey),
+        conventions: {
+          decimals: token.conventions.decimals,
+          localizations: token.conventions.localizations
+        },
+        conventionsChangeRules: {
+          authorizedToMakeChange: {
+            takerType: token.conventionsChangeRules.authorizedToMakeChange.getTakerType(),
+            taker: typeof token.conventionsChangeRules.authorizedToMakeChange.getValue() === 'number' ? token.conventionsChangeRules.authorizedToMakeChange.getValue() : token.conventionsChangeRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          adminActionTakers: {
+            takerType: token.conventionsChangeRules.adminActionTakers.getTakerType(),
+            taker: typeof token.conventionsChangeRules.adminActionTakers.getValue() === 'number' ? token.conventionsChangeRules.authorizedToMakeChange.getValue() : token.conventionsChangeRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          changingAuthorizedActionTakersToNoOneAllowed: token.conventionsChangeRules.changingAuthorizedActionTakersToNoOneAllowed,
+          changingAdminActionTakersToNoOneAllowed: token.conventionsChangeRules.changingAdminActionTakersToNoOneAllowed,
+          selfChangingAdminActionTakersAllowed: token.conventionsChangeRules.selfChangingAdminActionTakersAllowed
+        },
+        baseSupply: token.baseSupply.toString(),
+        keepsHistory: {
+          keepsTransferHistory: token.keepsHistory.keepsTransferHistory,
+          keepsFreezingHistory: token.keepsHistory.keepsFreezingHistory,
+          keepsMintingHistory: token.keepsHistory.keepsMintingHistory,
+          keepsBurningHistory: token.keepsHistory.keepsBurningHistory,
+          keepsDirectPricingHistory: token.keepsHistory.keepsDirectPricingHistory,
+          keepsDirectPurchaseHistory: token.keepsHistory.keepsDirectPurchaseHistory
+        },
+        startAsPaused: token.startAsPaused,
+        isAllowedTransferToFrozenBalance: token.isAllowedTransferToFrozenBalance,
+        maxSupply: token.maxSupply?.toString() ?? null,
+        maxSupplyChangeRules: {
+          authorizedToMakeChange: {
+            takerType: token.maxSupplyChangeRules.authorizedToMakeChange.getTakerType(),
+            taker: typeof token.maxSupplyChangeRules.authorizedToMakeChange.getValue() === 'number' ? token.maxSupplyChangeRules.authorizedToMakeChange.getValue() : token.maxSupplyChangeRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          adminActionTakers: {
+            takerType: token.maxSupplyChangeRules.adminActionTakers.getTakerType(),
+            taker: typeof token.maxSupplyChangeRules.adminActionTakers.getValue() === 'number' ? token.maxSupplyChangeRules.authorizedToMakeChange.getValue() : token.maxSupplyChangeRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          changingAuthorizedActionTakersToNoOneAllowed: token.maxSupplyChangeRules.changingAuthorizedActionTakersToNoOneAllowed,
+          changingAdminActionTakersToNoOneAllowed: token.maxSupplyChangeRules.changingAdminActionTakersToNoOneAllowed,
+          selfChangingAdminActionTakersAllowed: token.maxSupplyChangeRules.selfChangingAdminActionTakersAllowed
+        },
+        // TODO: Implement distributionRules
+        distributionRules: null,
+        marketplaceRules: {
+          tradeMode: token.marketplaceRules.tradeMode.getValue(),
+          tradeModeChangeRules: {
+            authorizedToMakeChange: {
+              takerType: token.marketplaceRules.tradeModeChangeRules.authorizedToMakeChange.getTakerType(),
+              taker: typeof token.marketplaceRules.tradeModeChangeRules.authorizedToMakeChange.getValue() === 'number' ? token.conventionsChangeRules.authorizedToMakeChange.getValue() : token.marketplaceRules.tradeModeChangeRules.authorizedToMakeChange.getValue()?.base58()
+            },
+            adminActionTakers: {
+              takerType: token.marketplaceRules.tradeModeChangeRules.adminActionTakers.getTakerType(),
+              taker: typeof token.marketplaceRules.tradeModeChangeRules.adminActionTakers.getValue() === 'number' ? token.conventionsChangeRules.authorizedToMakeChange.getValue() : token.marketplaceRules.tradeModeChangeRules.authorizedToMakeChange.getValue()?.base58()
+            },
+            changingAuthorizedActionTakersToNoOneAllowed: token.marketplaceRules.tradeModeChangeRules.changingAuthorizedActionTakersToNoOneAllowed,
+            changingAdminActionTakersToNoOneAllowed: token.marketplaceRules.tradeModeChangeRules.changingAdminActionTakersToNoOneAllowed,
+            selfChangingAdminActionTakersAllowed: token.marketplaceRules.tradeModeChangeRules.selfChangingAdminActionTakersAllowed
+          }
+        },
+        manualMintingRules: {
+          authorizedToMakeChange: {
+            takerType: token.manualMintingRules.authorizedToMakeChange.getTakerType(),
+            taker: typeof token.manualMintingRules.authorizedToMakeChange.getValue() === 'number' ? token.manualMintingRules.authorizedToMakeChange.getValue() : token.manualMintingRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          adminActionTakers: {
+            takerType: token.manualMintingRules.adminActionTakers.getTakerType(),
+            taker: typeof token.manualMintingRules.adminActionTakers.getValue() === 'number' ? token.manualMintingRules.authorizedToMakeChange.getValue() : token.manualMintingRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          changingAuthorizedActionTakersToNoOneAllowed: token.manualMintingRules.changingAuthorizedActionTakersToNoOneAllowed,
+          changingAdminActionTakersToNoOneAllowed: token.manualMintingRules.changingAdminActionTakersToNoOneAllowed,
+          selfChangingAdminActionTakersAllowed: token.manualMintingRules.selfChangingAdminActionTakersAllowed
+        },
+        manualBurningRules: {
+          authorizedToMakeChange: {
+            takerType: token.manualBurningRules.authorizedToMakeChange.getTakerType(),
+            taker: typeof token.manualBurningRules.authorizedToMakeChange.getValue() === 'number' ? token.manualBurningRules.authorizedToMakeChange.getValue() : token.manualBurningRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          adminActionTakers: {
+            takerType: token.manualBurningRules.adminActionTakers.getTakerType(),
+            taker: typeof token.manualBurningRules.adminActionTakers.getValue() === 'number' ? token.manualBurningRules.authorizedToMakeChange.getValue() : token.manualBurningRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          changingAuthorizedActionTakersToNoOneAllowed: token.manualBurningRules.changingAuthorizedActionTakersToNoOneAllowed,
+          changingAdminActionTakersToNoOneAllowed: token.manualBurningRules.changingAdminActionTakersToNoOneAllowed,
+          selfChangingAdminActionTakersAllowed: token.manualBurningRules.selfChangingAdminActionTakersAllowed
+        },
+        freezeRules: {
+          authorizedToMakeChange: {
+            takerType: token.freezeRules.authorizedToMakeChange.getTakerType(),
+            taker: typeof token.freezeRules.authorizedToMakeChange.getValue() === 'number' ? token.freezeRules.authorizedToMakeChange.getValue() : token.freezeRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          adminActionTakers: {
+            takerType: token.freezeRules.adminActionTakers.getTakerType(),
+            taker: typeof token.freezeRules.adminActionTakers.getValue() === 'number' ? token.freezeRules.authorizedToMakeChange.getValue() : token.freezeRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          changingAuthorizedActionTakersToNoOneAllowed: token.freezeRules.changingAuthorizedActionTakersToNoOneAllowed,
+          changingAdminActionTakersToNoOneAllowed: token.freezeRules.changingAdminActionTakersToNoOneAllowed,
+          selfChangingAdminActionTakersAllowed: token.freezeRules.selfChangingAdminActionTakersAllowed
+        },
+        unfreezeRules: {
+          authorizedToMakeChange: {
+            takerType: token.unfreezeRules.authorizedToMakeChange.getTakerType(),
+            taker: typeof token.unfreezeRules.authorizedToMakeChange.getValue() === 'number' ? token.unfreezeRules.authorizedToMakeChange.getValue() : token.unfreezeRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          adminActionTakers: {
+            takerType: token.unfreezeRules.adminActionTakers.getTakerType(),
+            taker: typeof token.unfreezeRules.adminActionTakers.getValue() === 'number' ? token.unfreezeRules.authorizedToMakeChange.getValue() : token.unfreezeRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          changingAuthorizedActionTakersToNoOneAllowed: token.unfreezeRules.changingAuthorizedActionTakersToNoOneAllowed,
+          changingAdminActionTakersToNoOneAllowed: token.unfreezeRules.changingAdminActionTakersToNoOneAllowed,
+          selfChangingAdminActionTakersAllowed: token.unfreezeRules.selfChangingAdminActionTakersAllowed
+        },
+        destroyFrozenFundsRules: {
+          authorizedToMakeChange: {
+            takerType: token.destroyFrozenFundsRules.authorizedToMakeChange.getTakerType(),
+            taker: typeof token.destroyFrozenFundsRules.authorizedToMakeChange.getValue() === 'number' ? token.destroyFrozenFundsRules.authorizedToMakeChange.getValue() : token.destroyFrozenFundsRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          adminActionTakers: {
+            takerType: token.destroyFrozenFundsRules.adminActionTakers.getTakerType(),
+            taker: typeof token.destroyFrozenFundsRules.adminActionTakers.getValue() === 'number' ? token.destroyFrozenFundsRules.authorizedToMakeChange.getValue() : token.destroyFrozenFundsRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          changingAuthorizedActionTakersToNoOneAllowed: token.destroyFrozenFundsRules.changingAuthorizedActionTakersToNoOneAllowed,
+          changingAdminActionTakersToNoOneAllowed: token.destroyFrozenFundsRules.changingAdminActionTakersToNoOneAllowed,
+          selfChangingAdminActionTakersAllowed: token.destroyFrozenFundsRules.selfChangingAdminActionTakersAllowed
+        },
+        emergencyActionRules: {
+          authorizedToMakeChange: {
+            takerType: token.emergencyActionRules.authorizedToMakeChange.getTakerType(),
+            taker: typeof token.emergencyActionRules.authorizedToMakeChange.getValue() === 'number' ? token.emergencyActionRules.authorizedToMakeChange.getValue() : token.emergencyActionRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          adminActionTakers: {
+            takerType: token.emergencyActionRules.adminActionTakers.getTakerType(),
+            taker: typeof token.emergencyActionRules.adminActionTakers.getValue() === 'number' ? token.emergencyActionRules.authorizedToMakeChange.getValue() : token.emergencyActionRules.authorizedToMakeChange.getValue()?.base58()
+          },
+          changingAuthorizedActionTakersToNoOneAllowed: token.emergencyActionRules.changingAuthorizedActionTakersToNoOneAllowed,
+          changingAdminActionTakersToNoOneAllowed: token.emergencyActionRules.changingAdminActionTakersToNoOneAllowed,
+          selfChangingAdminActionTakersAllowed: token.emergencyActionRules.selfChangingAdminActionTakersAllowed
+        },
+        mainControlGroupCanBeModified: {
+          takerType: token.mainControlGroupCanBeModified.getTakerType(),
+          taker: typeof token.mainControlGroupCanBeModified.getValue() === 'number' ? token.mainControlGroupCanBeModified.getValue() : token.mainControlGroupCanBeModified.getValue()?.base58()
+        },
+        mainControlGroup: token.mainControlGroup ?? null,
+        description: token.description
+      }
+    }
+  }, {})
+}
+
 const decodeStateTransition = async (base64) => {
   const stateTransition = StateTransitionWASM.fromBase64(base64)
 
@@ -59,7 +219,7 @@ const decodeStateTransition = async (base64) => {
     case StateTransitionEnum.DATA_CONTRACT_CREATE: {
       const dataContractCreateTransition = DataContractCreateTransitionWASM.fromStateTransition(stateTransition)
 
-      const dataContract = dataContractCreateTransition.getDataContract()
+      const dataContract = dataContractCreateTransition.getDataContract(PlatformVersionWASM.PLATFORM_V9)
 
       const dataContractConfig = dataContract.getConfig()
 
@@ -80,9 +240,18 @@ const decodeStateTransition = async (base64) => {
       decoded.dataContractId = dataContract.id.base58()
       decoded.ownerId = dataContract.ownerId.base58()
       decoded.schema = dataContract.getSchemas()
+      decoded.tokens = tokensConfigToObject(dataContract.tokens ?? {})
       decoded.signature = Buffer.from(stateTransition.signature).toString('hex')
       decoded.signaturePublicKeyId = stateTransition.signaturePublicKeyId
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      const groupsKeys = Object.keys(dataContract.groups)
+
+      decoded.groups = groupsKeys.map((key) => ({
+        position: Number(key),
+        members: dataContract.groups[key].members,
+        requiredPower: dataContract.groups[key].requiredPower
+      }))
 
       break
     }
@@ -98,23 +267,28 @@ const decodeStateTransition = async (base64) => {
 
         switch (transitionType) {
           case 1: {
-            const tokenTransitionType = transition.getTransitionTypeNumber()
+            const tokenTransitionType = transition.getTransitionType()
 
             const tokenTransition = transition.getTransition()
 
             out = {
-              transitionType: 'tokenTransition',
-              tokenTransitionType,
-              tokenTransitionTypeString: TokenTransitionEnum[tokenTransitionType],
+              action: BatchEnum[tokenTransitionType],
               tokenId: tokenTransition.base.tokenId.base58(),
               identityContractNonce: String(transition.identityContractNonce),
               tokenContractPosition: tokenTransition.base.tokenContractPosition,
               dataContractId: tokenTransition.base.dataContractId.base58(),
               historicalDocumentTypeName: transition.getHistoricalDocumentTypeName(),
-              historicalDocumentId: transition.getHistoricalDocumentId(stateTransition.getOwnerId()).base58()
+              historicalDocumentId: transition.getHistoricalDocumentId(stateTransition.getOwnerId()).base58(),
+              groupInfo: tokenTransition.base.usingGroupInfo
+                ? {
+                    groupContractPosition: tokenTransition.base.usingGroupInfo.groupContractPosition,
+                    actionId: tokenTransition.base.usingGroupInfo.actionId.base58(),
+                    actionIsProposer: tokenTransition.base.usingGroupInfo.actionIsProposer
+                  }
+                : null
             }
 
-            switch (tokenTransitionType) {
+            switch (TokenTransitionEnum[tokenTransitionType]) {
               case TokenTransitionEnum.Burn: {
                 out.publicNote = tokenTransition.publicNote ?? null
                 out.burnAmount = tokenTransition.burnAmount.toString()
@@ -122,7 +296,7 @@ const decodeStateTransition = async (base64) => {
                 break
               }
               case TokenTransitionEnum.Mint: {
-                out.issuedToIdentityId = tokenTransition.issuedToIdentityId.base58()
+                out.issuedToIdentityId = tokenTransition.issuedToIdentityId?.base58() ?? null
                 out.publicNote = tokenTransition.publicNote ?? null
                 out.amount = tokenTransition.amount.toString()
 
@@ -167,20 +341,313 @@ const decodeStateTransition = async (base64) => {
               }
               case TokenTransitionEnum.ConfigUpdate: {
                 out.publicNote = tokenTransition.publicNote ?? null
+                out.itemName = tokenTransition.updateTokenConfigurationItem.getItemName()
+
+                switch (out.itemName) {
+                  case 'TokenConfigurationNoChange': {
+                    out.itemValue = null
+                    break
+                  }
+                  case 'Conventions': {
+                    out.itemValue = {
+                      decimals: tokenTransition.updateTokenConfigurationItem.getItem().decimals,
+                      localizations: tokenTransition.updateTokenConfigurationItem.getItem().localizations
+                    }
+                    break
+                  }
+                  case 'ConventionsControlGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'ConventionsAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'MaxSupply': {
+                    out.itemValue = {
+                      amount: tokenTransition.updateTokenConfigurationItem.getItem() ?? null
+                    }
+                    break
+                  }
+                  case 'MaxSupplyControlGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'MaxSupplyAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'PerpetualDistribution': {
+                    out.itemValue = tokenTransition.updateTokenConfigurationItem.getItem()
+                      ? {
+                          distributionType: {
+                            interval: tokenTransition.updateTokenConfigurationItem.getItem().distributionType.getDistribution().interval,
+                            function: tokenTransition.updateTokenConfigurationItem.getItem().distributionType.getDistribution().function
+                          },
+                          distributionRecipient: {
+                            type: tokenTransition.updateTokenConfigurationItem.getItem().distributionRecipient.getType(),
+                            recipient: tokenTransition.updateTokenConfigurationItem.getItem().distributionRecipient.getValue()?.base58()
+                          }
+                        }
+                      : null
+                    break
+                  }
+                  case 'PerpetualDistributionControlGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'PerpetualDistributionAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'NewTokensDestinationIdentity': {
+                    out.itemValue = {
+                      identifier: tokenTransition.updateTokenConfigurationItem.getItem()?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'NewTokensDestinationIdentityControlGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'NewTokensDestinationIdentityAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'MintingAllowChoosingDestination': {
+                    out.itemValue = {
+                      allowed: tokenTransition.updateTokenConfigurationItem.getItem()
+                    }
+                    break
+                  }
+                  case 'MintingAllowChoosingDestinationControlGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'MintingAllowChoosingDestinationAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'ManualMinting': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'ManualMintingAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'ManualBurning': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'ManualBurningAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'Freeze': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'FreezeAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'Unfreeze': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'UnfreezeAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'DestroyFrozenFunds': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'DestroyFrozenFundsAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'EmergencyAction': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'EmergencyActionAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'MarketplaceTradeMode': {
+                    out.itemValue = {
+                      tradeMode: tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+                    }
+                    break
+                  }
+                  case 'MarketplaceTradeModeControlGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'MarketplaceTradeModeAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'MainControlGroup': {
+                    out.itemValue = {
+                      contractPosition: tokenTransition.updateTokenConfigurationItem.getItem() ?? null
+                    }
+                    break
+                  }
+                }
 
                 break
               }
               case TokenTransitionEnum.DirectPurchase: {
                 out.publicNote = tokenTransition.publicNote ?? null
                 out.totalAgreedPrice = tokenTransition.totalAgreedPrice.toString()
-                out.tokenCount = tokenTransition.tokenCount.toString()
+                out.amount = tokenTransition.tokenCount.toString()
 
                 break
               }
               case TokenTransitionEnum.SetPriceForDirectPurchase: {
                 out.publicNote = tokenTransition.publicNote ?? null
-                out.price = tokenTransition.price.toString() ?? null
+                out.price = null
+                out.prices = null
 
+                if (tokenTransition.price) {
+                  switch (tokenTransition.price.getScheduleType()) {
+                    case 'SinglePrice': {
+                      out.price = tokenTransition.price.getValue().toString()
+                      break
+                    }
+                    case 'SetPrices': {
+                      const prices = tokenTransition.price.getValue()
+                      if (prices) {
+                        const priceKeys = Object.keys(prices)
+
+                        out.prices = priceKeys.map(key => ({ amount: key, price: prices[key].toString() }))
+                      }
+                    }
+                  }
+                }
                 break
               }
             }
@@ -188,13 +655,11 @@ const decodeStateTransition = async (base64) => {
           }
           case 0: {
             out = {
-              transitionType: 'documentTransition',
+              action: BatchEnum[transition.actionTypeNumber],
               id: transition.id.base58(),
               dataContractId: transition.dataContractId.base58(),
               revision: String(transition.revision),
               type: transition.documentTypeName,
-              action: transition.actionTypeNumber,
-              actionString: DocumentActionEnum[transition.actionTypeNumber],
               identityContractNonce: String(transition.identityContractNonce)
             }
 
@@ -365,9 +830,22 @@ const decodeStateTransition = async (base64) => {
       decoded.ownerId = dataContractUpdateTransition.getDataContract().ownerId.base58()
       decoded.dataContractId = dataContractUpdateTransition.getDataContract().id.base58()
       decoded.schema = dataContractUpdateTransition.getDataContract().getSchemas()
+      decoded.tokens = tokensConfigToObject(dataContractUpdateTransition.getDataContract().tokens ?? {})
       decoded.version = dataContractUpdateTransition.getDataContract().version
       decoded.dataContractOwner = dataContractUpdateTransition.getDataContract().ownerId.base58()
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      const groupsKeys = Object.keys(dataContractUpdateTransition.getDataContract().groups)
+
+      decoded.groups = groupsKeys.reduce((acc, key) => {
+        return {
+          ...acc,
+          key: {
+            members: dataContractUpdateTransition.getDataContract().groups[key].members,
+            requiredPower: dataContractUpdateTransition.getDataContract().groups[key].requiredPower
+          }
+        }
+      }, {})
 
       break
     }
@@ -633,9 +1111,9 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
 }
 
 const getAliasFromDocument = (aliasDocument) => {
-  const { label, parentDomainName, normalizedLabel } = aliasDocument.getData()
-  const documentId = aliasDocument.getId()
-  const timestamp = aliasDocument.getCreatedAt()
+  const { label, parentDomainName, normalizedLabel } = aliasDocument.properties
+  const documentId = aliasDocument.id
+  const timestamp = new Date(Number(aliasDocument.createdAt))
 
   const alias = `${label}.${parentDomainName}`
 
@@ -643,7 +1121,7 @@ const getAliasFromDocument = (aliasDocument) => {
     alias,
     status: 'ok',
     timestamp,
-    documentId: documentId.toString(),
+    documentId: documentId.base58(),
     contested: /^[a-zA-Z01-]{3,19}$/.test(normalizedLabel)
   }
 }

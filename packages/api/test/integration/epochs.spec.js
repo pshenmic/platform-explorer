@@ -67,9 +67,10 @@ describe('Epoch routes', () => {
         timestamp: new Date(60000 * i),
         validator: i % 5 === 0 ? validator.pro_tx_hash : null
       })
-      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      const identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
       const transaction = await fixtures.transaction(knex, {
         block_hash: block.hash,
+        block_height: block.height,
         index: i,
         type: 0,
         gas_used: Math.ceil(Math.random() * 1000),

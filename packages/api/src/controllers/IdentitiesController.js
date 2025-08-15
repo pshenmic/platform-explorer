@@ -5,6 +5,7 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { outputScriptToAddress } = require('../utils')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const { base58 } = require('@scure/base')
+const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 class IdentitiesController {
   constructor (client, knex, dapi) {
@@ -82,7 +83,7 @@ class IdentitiesController {
       Number(page ?? 1),
       Number(limit ?? 10),
       order,
-      type
+      typeof type === 'string' ? StateTransitionEnum[type] : type
     )
 
     response.send(transfers)
@@ -111,20 +112,20 @@ class IdentitiesController {
       return response.send(new PaginatedResultSet([], null, null, null))
     }
 
-    const timestamps = documents.map(document => new Date(document.getCreatedAt()).toISOString())
+    const timestamps = documents.map(document => new Date(Number(document.createdAt)).toISOString())
 
     const withdrawals = await this.identitiesDAO.getIdentityWithdrawalsByTimestamps(identifier, timestamps)
 
     const resultSet = documents.map(document => ({
-      document: document.getId(),
-      sender: document.getOwnerId(),
-      status: document.getData().status,
-      timestamp: document.getCreatedAt(),
-      amount: document.getData().amount,
-      withdrawalAddress: outputScriptToAddress(Buffer.from(document.getData().outputScript ?? [], 'base64')),
+      document: document.id.base58(),
+      sender: document.ownerId.base58(),
+      status: document.properties.status,
+      timestamp: new Date(Number(document.createdAt)),
+      amount: document.properties.amount,
+      withdrawalAddress: outputScriptToAddress(Buffer.from(document.properties.outputScript ?? [], 'base64')),
       hash: withdrawals.find(
         withdrawal =>
-          withdrawal.timestamp.getTime() === document.getCreatedAt().getTime()
+          withdrawal.timestamp.getTime() === Number(document.createdAt)
       )?.hash
     }))
 

@@ -1,0 +1,22 @@
+@use '../../../styles/mixins.scss';
+@import '../../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns: 
+    minmax(6.25rem, 1000rem) // Amount
+    auto; // Price
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  &--Price {
+    margin-left: auto;
+    text-align: right;
+  }
+}

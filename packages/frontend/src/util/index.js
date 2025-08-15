@@ -1,15 +1,6 @@
 import copyToClipboard from './copyToClipboard'
-import { StateTransitionEnum } from '../enums/state.transition.type'
 import currencyRound from './currencyRound'
 import { getDaysBetweenDates, getDynamicRange, getTimeDelta } from './datetime'
-
-function getTransitionTypeKeyById (id) {
-  const [stateTransitionType] = Object.entries(StateTransitionEnum)
-    .filter(([key]) => StateTransitionEnum[key] === id)
-    .map(([key]) => key)
-
-  return stateTransitionType
-}
 
 function fetchHandlerSuccess (setter, data) {
   setter(state => ({
@@ -88,6 +79,15 @@ function findActiveAlias (aliases = []) {
   return aliases?.find(alias => alias.status === 'ok')
 }
 
+const getTokenName = (localizations) => localizations?.en?.singularForm ||
+  Object.values(localizations || {})[0]?.singularForm ||
+  ''
+
+const getMinTokenPrice = (prices) => {
+  if (!prices || prices.length === 0) return null
+  return Math.min(...prices.map(p => parseFloat(p.price)))
+}
+
 export {
   fetchHandlerSuccess,
   fetchHandlerError,
@@ -97,11 +97,12 @@ export {
   currencyRound,
   copyToClipboard,
   getTimeDelta,
-  getTransitionTypeKeyById,
   creditsToDash,
   roundUsd,
   removeTrailingZeros,
   getDaysBetweenDates,
   getDynamicRange,
-  findActiveAlias
+  findActiveAlias,
+  getTokenName,
+  getMinTokenPrice
 }

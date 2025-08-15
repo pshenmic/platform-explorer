@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 
 #[derive(Clone)]
 pub struct TokenConfig {
+    pub state_transition_hash: Option<String>,
     pub position: u16,
     pub identifier: Identifier,
     pub data_contract_identifier: Identifier,
@@ -26,4 +27,6 @@ pub struct TokenConfig {
     pub unfreezable: bool,
     pub destroyable: bool,
     pub allowed_emergency_actions: bool,
+    pub description: Option<String>,
+    pub name: String,
 }

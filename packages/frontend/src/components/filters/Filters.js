@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 import { Button, useDisclosure } from '@chakra-ui/react'
 import { useFilters } from '../../hooks'
 import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters, SearchFilter } from './'
@@ -101,43 +101,51 @@ export const Filters = ({
   }, [applyFilters, applyOnChange])
 
   const { isOpen: menuIsOpen, onOpen: menuOnOpen, onClose: menuOnClose } = useDisclosure()
+  const [isMenuInitialized, setIsMenuInitialized] = useState(false)
 
   /** Sync menu filters with applied filters when menu opens */
   const handleMenuOpen = useCallback(() => {
-    setMenuFilters(appliedFilters)
+    // Only sync on first open or in desktop mode
+    if (!isMenuInitialized || !isMobile) {
+      setMenuFilters(appliedFilters)
+      setIsMenuInitialized(true)
+    }
+
     menuOnOpen()
-  }, [appliedFilters, setMenuFilters, menuOnOpen])
+  }, [appliedFilters, setMenuFilters, menuOnOpen, isMenuInitialized, isMobile])
 
   const handleMenuClose = useCallback(() => {
     /** Apply filters when menu closes (if not applying on change) */
     if (!applyOnChange) {
       applyFilters()
     }
+    setIsMenuInitialized(false)
     menuOnClose()
   }, [applyFilters, applyOnChange, menuOnClose])
 
   const submitHandler = () => {
     /** Always apply filters when submit is pressed */
     applyFilters()
+    setIsMenuInitialized(false)
     menuOnClose()
   }
 
   /** Handle single filter change in menu */
   const handleFilterChange = useCallback((filterName, value) => {
-    const newFilters = baseHandleFilterChange(filterName, value)
-    setMenuFilters(newFilters)
-  }, [baseHandleFilterChange, setMenuFilters])
+    baseHandleFilterChange(filterName, value)
+  }, [baseHandleFilterChange])
 
   /** Handle multiple values filter change in menu */
   const handleMultipleValuesChange = useCallback((fieldName, value) => {
-    const newFilters = baseHandleMultipleValuesChange(fieldName, value)
-    setMenuFilters(newFilters)
-  }, [baseHandleMultipleValuesChange, setMenuFilters])
+    baseHandleMultipleValuesChange(fieldName, value)
+  }, [baseHandleMultipleValuesChange])
 
   const handleToggleAll = useCallback((filterName, values) => {
-    const newFilters = baseHandleFilterChange(filterName, values)
-    setMenuFilters(newFilters)
-  }, [baseHandleFilterChange, setMenuFilters])
+    setMenuFilters(prevFilters => ({
+      ...prevFilters,
+      [filterName]: values
+    }))
+  }, [setMenuFilters])
 
   /** Clear a specific applied filter */
   const clearAppliedFilter = useCallback((filterName) => {
@@ -165,6 +173,7 @@ export const Filters = ({
     /** Update both applied and menu filters */
     setAppliedFilters(defaultFilters)
     setMenuFilters(defaultFilters)
+    setIsMenuInitialized(false)
 
     /** Apply empty filters immediately */
     if (typeof onFilterChange === 'function') {
@@ -172,7 +181,7 @@ export const Filters = ({
     }
   }, [filtersConfig, setMenuFilters, onFilterChange])
 
-  const menuData = Object.entries(filtersConfig).map(([key, config]) => {
+  const menuData = useMemo(() => Object.entries(filtersConfig).map(([key, config]) => {
     let content
 
     switch (config.type) {
@@ -266,7 +275,7 @@ export const Filters = ({
       options: config.options || null,
       mobileTagRenderer: config.mobileTagRenderer || null
     }
-  })
+  }), [filtersConfig, menuFilters, appliedFilters, isMobile, handleMultipleValuesChange, handleFilterChange, handleToggleAll, submitHandler])
 
   const TriggerButton = () => (
     <Button

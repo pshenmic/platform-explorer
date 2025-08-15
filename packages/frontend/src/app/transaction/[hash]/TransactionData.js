@@ -1,4 +1,3 @@
-import { StateTransitionEnum } from '../../../enums/state.transition.type'
 import { ValueCard } from '../../../components/cards'
 import { Identifier, InfoLine, CreditsBlock, VoteChoice, CodeBlock } from '../../../components/data'
 import { TransitionCard, PublicKeyCard, VoteIndexValues } from '../../../components/transactions'
@@ -63,7 +62,7 @@ function TransactionData ({ data, type, loading, rate }) {
 
   if (data === null) return <></>
 
-  if (type === StateTransitionEnum.MASTERNODE_VOTE) {
+  if (type === 'MASTERNODE_VOTE') {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -163,7 +162,7 @@ function TransactionData ({ data, type, loading, rate }) {
     </>)
   }
 
-  if (type === StateTransitionEnum.DATA_CONTRACT_CREATE) {
+  if (type === 'DATA_CONTRACT_CREATE') {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -237,7 +236,7 @@ function TransactionData ({ data, type, loading, rate }) {
     </>)
   }
 
-  if (type === StateTransitionEnum.DOCUMENTS_BATCH) {
+  if (type === 'BATCH') {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--Transitions'}
@@ -258,7 +257,7 @@ function TransactionData ({ data, type, loading, rate }) {
     </>)
   }
 
-  if (type === StateTransitionEnum.IDENTITY_CREATE) {
+  if (type === 'IDENTITY_CREATE') {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -294,7 +293,7 @@ function TransactionData ({ data, type, loading, rate }) {
     </>)
   }
 
-  if (type === StateTransitionEnum.IDENTITY_TOP_UP) {
+  if (type === 'IDENTITY_TOP_UP') {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -328,7 +327,7 @@ function TransactionData ({ data, type, loading, rate }) {
     </>)
   }
 
-  if (type === StateTransitionEnum.DATA_CONTRACT_UPDATE) {
+  if (type === 'DATA_CONTRACT_UPDATE') {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -395,7 +394,7 @@ function TransactionData ({ data, type, loading, rate }) {
     </>)
   }
 
-  if (type === StateTransitionEnum.IDENTITY_UPDATE) {
+  if (type === 'IDENTITY_UPDATE') {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -459,7 +458,7 @@ function TransactionData ({ data, type, loading, rate }) {
     </>)
   }
 
-  if (type === StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL) {
+  if (type === 'IDENTITY_CREDIT_WITHDRAWAL') {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -527,7 +526,7 @@ function TransactionData ({ data, type, loading, rate }) {
     </>)
   }
 
-  if (type === StateTransitionEnum.IDENTITY_CREDIT_TRANSFER) {
+  if (type === 'IDENTITY_CREDIT_TRANSFER') {
     return (<>
       <InfoLine
         className={'TransactionPage__InfoLine'}

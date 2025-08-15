@@ -1,0 +1,17 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as prices;
+@import '../../../styles/variables.scss';
+
+.PriceList {
+  @include mixins.List;
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include prices.Columns();
+  }
+
+  &__ColumnTitle {
+    @include prices.Column();
+  }
+}

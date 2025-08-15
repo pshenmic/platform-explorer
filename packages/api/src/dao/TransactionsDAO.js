@@ -3,6 +3,8 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
 const { getAliasFromDocument } = require('../utils')
 const dpnsContract = require('../../data_contracts/dpns.json')
+const StateTransitionEnum = require('../enums/StateTransitionEnum')
+const BatchEnum = require('../enums/BatchEnum')
 
 module.exports = class TransactionsDAO {
   constructor (knex, dapi) {
@@ -37,11 +39,12 @@ module.exports = class TransactionsDAO {
     return Transaction.fromRow(
       {
         ...row,
+        type: StateTransitionEnum[row.type],
         aliases
       })
   }
 
-  getTransactions = async (page, limit, order, orderBy, transactionsTypes, owner, status, min, max, timestampStart, timestampEnd) => {
+  getTransactions = async (page, limit, order, orderBy, transactionsTypes, batchTypes, owner, status, min, max, timestampStart, timestampEnd) => {
     const fromRank = ((page - 1) * limit)
 
     let filtersQuery = ''
@@ -54,6 +57,15 @@ module.exports = class TransactionsDAO {
       // Currently knex cannot digest an array of numbers correctly
       // https://github.com/knex/knex/issues/2060
       filtersQuery = transactionsTypes.length > 1 ? `type in (${transactionsTypes.join(',')})` : `type = ${transactionsTypes[0]}`
+    }
+
+    if (batchTypes) {
+      // Currently knex cannot digest an array of numbers correctly
+      // https://github.com/knex/knex/issues/2060
+      filtersQuery = filtersQuery + `${filtersQuery !== '' ? ' and' : ''}` +
+        (batchTypes.length > 1
+          ? `batch_type in (${batchTypes.join(',')})`
+          : `batch_type = ${batchTypes[0]}`)
     }
 
     if (owner) {
@@ -127,7 +139,12 @@ module.exports = class TransactionsDAO {
         aliases.push(getAliasFromDocument(aliasDocument))
       }
 
-      return Transaction.fromRow({ ...row, aliases })
+      return Transaction.fromRow({
+        ...row,
+        type: StateTransitionEnum[row.type],
+        batch_type: BatchEnum[row.batch_type],
+        aliases
+      })
     }))
 
     return new PaginatedResultSet(resultSet, page, limit, totalCount)

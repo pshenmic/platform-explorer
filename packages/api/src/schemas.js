@@ -28,9 +28,25 @@ const schemaTypes = [
       },
       isActive: { type: ['boolean', 'null'] },
       type: {
-        type: ['integer', 'null'],
-        minimum: 0,
-        maximum: 8
+        oneOf: [
+          {
+            type: 'string',
+            enum: [
+              'DATA_CONTRACT_CREATE',
+              'BATCH',
+              'IDENTITY_CREATE',
+              'IDENTITY_TOP_UP',
+              'DATA_CONTRACT_UPDATE',
+              'IDENTITY_UPDATE',
+              'IDENTITY_CREDIT_WITHDRAWAL',
+              'MASTERNODE_VOTE'
+            ]
+          },
+          {
+            type: 'number',
+            enum: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+          }
+        ]
       },
       hash: {
         type: 'string',
@@ -40,9 +56,58 @@ const schemaTypes = [
       transaction_type: {
         type: ['array', 'null'],
         items: {
-          type: 'number',
-          minimum: 0,
-          maximum: 8
+          oneOf: [
+            {
+              type: 'string',
+              enum: [
+                'DATA_CONTRACT_CREATE',
+                'BATCH',
+                'IDENTITY_CREATE',
+                'IDENTITY_TOP_UP',
+                'DATA_CONTRACT_UPDATE',
+                'IDENTITY_UPDATE',
+                'IDENTITY_CREDIT_WITHDRAWAL',
+                'MASTERNODE_VOTE'
+              ]
+            },
+            {
+              type: 'number',
+              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+            }
+          ]
+        }
+      },
+      batch_type: {
+        type: ['array', 'null'],
+        items: {
+          oneOf: [
+            {
+              type: 'string',
+              enum: [
+                'DOCUMENT_CREATE',
+                'DOCUMENT_REPLACE',
+                'DOCUMENT_DELETE',
+                'DOCUMENT_TRANSFER',
+                'DOCUMENT_UPDATE_PRICE',
+                'DOCUMENT_PURCHASE',
+                'TOKEN_BURN',
+                'TOKEN_MINT',
+                'TOKEN_TRANSFER',
+                'TOKEN_FREEZE',
+                'TOKEN_UNFREEZE',
+                'TOKEN_DESTROY_FROZEN_FUNDS',
+                'TOKEN_CLAIM',
+                'TOKEN_EMERGENCY_ACTION',
+                'TOKEN_CONFIG_UPDATE',
+                'TOKEN_DIRECT_PURCHASE',
+                'TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE'
+              ]
+            },
+            {
+              type: 'number',
+              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+            }
+          ]
         }
       },
       status: {

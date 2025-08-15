@@ -35,7 +35,8 @@ impl PostgresDAO {
         keeps_transfer_history, keeps_freezing_history, keeps_minting_history, keeps_burning_history, \
         keeps_direct_pricing_history, keeps_direct_purchase_history, \
         distribution_rules, mintable, burnable, freezable, unfreezable, destroyable, \
-        allowed_emergency_actions) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21);";
+        allowed_emergency_actions, description, state_transition_hash, name) \
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -64,6 +65,9 @@ impl PostgresDAO {
                     &token.unfreezable,
                     &token.destroyable,
                     &token.allowed_emergency_actions,
+                    &token.description,
+                    &token.state_transition_hash,
+                    &token.name,
                 ],
             )
             .await

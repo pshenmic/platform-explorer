@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
+import BatchTypeBadge from './BatchTypeBadge'
 import { Identifier, BigNumber, Alias, TimeDelta, NotActive } from '../data'
 import StatusIcon from './StatusIcon'
 import { RateTooltip, Tooltip } from '../ui/Tooltips'
@@ -84,9 +85,11 @@ function TransactionsListItem ({ transaction, rate }) {
             }
           </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Type'}>
-          {transaction?.type !== undefined
-            ? <TypeBadge className={'TransactionsListItem__TypeBadge'} typeId={transaction.type}/>
-            : <NotActive/>
+          {transaction?.batchType
+            ? <BatchTypeBadge className={'TransactionsListItem__TypeBadge'} batchType={transaction.batchType?.replace(/[\\""]/g, '')}/>
+            : transaction?.type !== undefined
+              ? <TypeBadge className={'TransactionsListItem__TypeBadge'} type={transaction.type}/>
+              : <NotActive/>
           }
         </GridItem>
       </Grid>

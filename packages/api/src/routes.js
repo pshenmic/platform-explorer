@@ -535,6 +535,87 @@ module.exports = ({
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       }
+    },
+    {
+      path: '/token/:identifier',
+      method: 'GET',
+      handler: tokensController.getTokenByIdentifier,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/token/:identifier/transitions',
+      method: 'GET',
+      handler: tokensController.getTokenTransitions,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/tokens/rating',
+      method: 'GET',
+      handler: tokensController.getTokensTrends,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/identity/:identifier/tokens',
+      method: 'GET',
+      handler: tokensController.getTokensByIdentity,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' },
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/quorum/info',
+      method: 'GET',
+      handler: mainController.getQuorumInfo,
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            quorumType: {
+              type: 'number',
+              enum: [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                100,
+                101,
+                102,
+                103,
+                104,
+                105,
+                106,
+                107
+              ]
+            },
+            quorumHash: { $ref: 'hash#' }
+          }
+        }
+      }
     }
   ]
 

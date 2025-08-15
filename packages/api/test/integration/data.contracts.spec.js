@@ -6,6 +6,7 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const DAPI = require('../../src/DAPI')
+const { IdentifierWASM } = require('pshenmic-dpp')
 
 describe('DataContracts routes', () => {
   let app
@@ -20,7 +21,23 @@ describe('DataContracts routes', () => {
 
   let diferentVersionsDataContract
 
+  let aliasTimestamp
+
   before(async () => {
+    aliasTimestamp = new Date()
+
+    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+      properties: {
+        label: 'alias',
+        parentDomainName: 'dash',
+        normalizedLabel: 'a11as'
+      },
+      id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
+      createdAt: BigInt(aliasTimestamp.getTime())
+    }])
+
+    mock.method(DAPI.prototype, 'getDataContract', async () => ({ groups: undefined }))
+
     app = await server.start()
     client = supertest(app.server)
     knex = getKnex()
@@ -33,8 +50,11 @@ describe('DataContracts routes', () => {
     dataContracts = []
     documents = []
     diferentVersionsDataContract = []
-    block = await fixtures.block(knex)
-    identity = await fixtures.identity(knex, { block_hash: block.hash })
+    block = await fixtures.block(knex, { height })
+    identity = await fixtures.identity(knex, {
+      block_hash: block.hash,
+      block_height: block.height
+    })
 
     // first 5 system documents
     for (let i = 0; i < 5; i++) {
@@ -48,9 +68,12 @@ describe('DataContracts routes', () => {
     }
 
     for (let i = 5; i < 29; i++) {
-      const block = await fixtures.block(knex, { height: i + 1 })
+      height = i
+
+      const block1 = await fixtures.block(knex, { height })
       const transaction = await fixtures.transaction(knex, {
-        block_hash: block.hash,
+        block_height: block1.height,
+        block_hash: block1.hash,
         type: StateTransitionEnum.DATA_CONTRACT_CREATE,
         owner: identity.identifier,
         data: 'AAAANB6g6fZVacLiESmz0Z1FUW4fi2YzEfBw1Val4hjUsnIAAAAAAAEBAAABcZnx9oQEyG7PYNnLk67zGPoPKwjln/0Xa970MVT/3msAAQ1kYXRhQ29udHJhY3RzFgQSBHR5cGUSBm9iamVjdBIKcHJvcGVydGllcxYCEgppZGVudGlmaWVyFgQSBHR5cGUSBnN0cmluZxIJbWluTGVuZ3RoA1YSCW1heExlbmd0aANYEghwb3NpdGlvbgMAEgRuYW1lFgQSBHR5cGUSBnN0cmluZxIJbWF4TGVuZ3RoA0ASCW1pbkxlbmd0aAMGEghwb3NpdGlvbgMCEghyZXF1aXJlZBUCEgppZGVudGlmaWVyEgRuYW1lEhRhZGRpdGlvbmFsUHJvcGVydGllcxMAAQACQSAyv1MhMb7BIg1n8F0cn2etI1ONNbxCBSCSrdja5W6F1TRtKQiW4Dckvj5otqvvquK14L8RZMgT1Rhz/GupDl+Z'
@@ -61,12 +84,13 @@ describe('DataContracts routes', () => {
         schema: '{}'
       })
 
-      dataContracts.push({ transaction, block, dataContract })
-      height = i
+      dataContracts.push({ transaction, block: block1, dataContract })
     }
 
+    height = height + 1
     const block2 = await fixtures.block(knex, { height })
     const contractCreateTransaction = await fixtures.transaction(knex, {
+      block_height: block2.height,
       block_hash: block2.hash,
       type: StateTransitionEnum.DATA_CONTRACT_CREATE,
       owner: identity.identifier,
@@ -83,8 +107,11 @@ describe('DataContracts routes', () => {
     diferentVersionsDataContract.push({ dataContract: dataContracts[dataContracts.length - 1].dataContract, transaction: dataContracts[dataContracts.length - 1].transaction })
     // create some documents in different data contract versions
     for (let i = 0; i < 5; i++) {
+      height = height + 1
+      const block3 = await fixtures.block(knex, { height, timestamp: dataContracts[dataContracts.length - 1].block.timestamp })
       const contractCreateTransaction = await fixtures.transaction(knex, {
-        block_hash: block2.hash,
+        block_height: block3.height,
+        block_hash: block3.hash,
         type: StateTransitionEnum.DATA_CONTRACT_UPDATE,
         owner: identity.identifier,
         data: 'AAAANB6g6fZVacLiESmz0Z1FUW4fi2YzEfBw1Val4hjUsnIAAAAAAAEBAAABcZnx9oQEyG7PYNnLk67zGPoPKwjln/0Xa970MVT/3msAAQ1kYXRhQ29udHJhY3RzFgQSBHR5cGUSBm9iamVjdBIKcHJvcGVydGllcxYCEgppZGVudGlmaWVyFgQSBHR5cGUSBnN0cmluZxIJbWluTGVuZ3RoA1YSCW1heExlbmd0aANYEghwb3NpdGlvbgMAEgRuYW1lFgQSBHR5cGUSBnN0cmluZxIJbWF4TGVuZ3RoA0ASCW1pbkxlbmd0aAMGEghwb3NpdGlvbgMCEghyZXF1aXJlZBUCEgppZGVudGlmaWVyEgRuYW1lEhRhZGRpdGlvbmFsUHJvcGVydGllcxMAAQACQSAyv1MhMb7BIg1n8F0cn2etI1ONNbxCBSCSrdja5W6F1TRtKQiW4Dckvj5otqvvquK14L8RZMgT1Rhz/GupDl+Z'
@@ -99,11 +126,15 @@ describe('DataContracts routes', () => {
         documents: dataContracts[dataContracts.length - 1].dataContract.documents
       })
 
+      height = height + 1
+
+      const block4 = await fixtures.block(knex, { height })
       const documentTransaction = await fixtures.transaction(knex, {
-        block_hash: block2.hash,
+        block_height: block4.height,
+        block_hash: block4.hash,
         type: StateTransitionEnum.BATCH,
         owner: identity.identifier,
-        data: 'AgBxmfH2hATIbs9g2cuTrvMY+g8rCOWf/Rdr3vQxVP/eawEDAABF/LZHZLWdw2w3F4+EpbOlpl8RNK6icPPgAI9u0KsLgwMFQ2xhaW2q3m53l6rTxI+1VTW/2E/dRKsBVNmCJOId0FU9WzapBQRiKSUxGfUgcL2NTlWbhbJM3jqldTUNCUFqM2l63hfROQABQR8ouGytATEcwiRiyIQUYhv0HL3oiPWMtzS8SE668LoJ+Geo+PQq0fMsigWlNUNG4bz3UYQfwiubqFmrX8XflISM'
+        data: 'AgEhlXYiSxH/3198ZZ4ie5GrtMWunivxuQ0yWTaW3aO2QgEBAQAAAwCNdLLskTojea4JftOKVvqCzrDtvGS9D7ADq42KJRqCMCz+OMPDDzMeoYxC9XwWwllaHpMVM8iv33Yh1EZNY5e1AAGsecC8m3/PPvYdCkHt5gWisjnhZd8VzQDKCNQnl68p6wUAAAJBIB9sS3dVoEDbasALaqaBDLB8ubMXhnPrlfo7LSpzvfUCdCuucdUJJoNkuiRIXxZkfwGjAGlectH04qhyzZw24nI='
       })
 
       const document = await fixtures.document(knex, {
@@ -116,7 +147,7 @@ describe('DataContracts routes', () => {
 
       diferentVersionsDataContract.push({ dataContract, transaction: contractCreateTransaction })
       dataContract.documents.push(document)
-      documents.push({ transaction: documentTransaction, block: block2, dataContract, document })
+      documents.push({ transaction: documentTransaction, block: block4, dataContract, document })
       dataContracts[dataContracts.length - 1].transaction = contractCreateTransaction
       dataContracts[dataContracts.length - 1].dataContract = dataContract
     }
@@ -140,6 +171,7 @@ describe('DataContracts routes', () => {
           name: dataContract.name,
           owner: identity.identifier,
           schema: null,
+          groups: null,
           version: 0,
           txHash: dataContract.is_system ? null : transaction.hash,
           timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
@@ -148,7 +180,8 @@ describe('DataContracts routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          tokens: null
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -171,6 +204,7 @@ describe('DataContracts routes', () => {
           identifier: dataContract.identifier,
           name: dataContract.name,
           owner: identity.identifier,
+          groups: null,
           schema: null,
           version: dataContract.version,
           txHash: dataContract.is_system ? null : transaction.hash,
@@ -180,7 +214,8 @@ describe('DataContracts routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          tokens: null
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -203,6 +238,7 @@ describe('DataContracts routes', () => {
           identifier: dataContract.identifier,
           name: dataContract.name,
           owner: identity.identifier,
+          groups: null,
           schema: null,
           version: 0,
           txHash: dataContract.is_system ? null : transaction.hash,
@@ -212,7 +248,8 @@ describe('DataContracts routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          tokens: null
         }))
 
       assert.equal(body.resultSet.length, 6)
@@ -235,6 +272,7 @@ describe('DataContracts routes', () => {
           identifier: dataContract.identifier,
           name: dataContract.name,
           owner: identity.identifier,
+          groups: null,
           schema: null,
           version: 0,
           txHash: dataContract.is_system ? null : transaction.hash,
@@ -244,7 +282,8 @@ describe('DataContracts routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          tokens: null
         }))
 
       assert.equal(body.resultSet.length, 6)
@@ -268,6 +307,7 @@ describe('DataContracts routes', () => {
           identifier: dataContract.identifier,
           name: dataContract.name,
           owner: identity.identifier,
+          groups: null,
           schema: null,
           version: dataContract.version,
           txHash: dataContract.is_system ? null : transaction.hash,
@@ -277,7 +317,8 @@ describe('DataContracts routes', () => {
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
-          totalGasUsed: null
+          totalGasUsed: null,
+          tokens: null
         }))
 
       assert.equal(body.resultSet.length, 10)
@@ -302,8 +343,17 @@ describe('DataContracts routes', () => {
         name: dataContract.dataContract.name,
         owner: {
           identifier: identity.identifier.trim(),
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
+        groups: null,
         schema: '{}',
         version: 0,
         txHash: null,
@@ -314,9 +364,18 @@ describe('DataContracts routes', () => {
         identitiesInteracted: 0,
         topIdentity: {
           identifier: null,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
-        totalGasUsed: 0
+        totalGasUsed: 0,
+        tokens: []
       }
 
       assert.deepEqual(body, expectedDataContract)
@@ -334,8 +393,17 @@ describe('DataContracts routes', () => {
         name: dataContract.dataContract.name,
         owner: {
           identifier: identity.identifier.trim(),
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
+        groups: null,
         schema: '{}',
         version: dataContract.dataContract.version,
         txHash: dataContract.transaction.hash,
@@ -346,9 +414,18 @@ describe('DataContracts routes', () => {
         identitiesInteracted: 1,
         topIdentity: {
           identifier: dataContract.dataContract.owner.trim(),
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
-        totalGasUsed: 0
+        totalGasUsed: 0,
+        tokens: []
       }
 
       assert.deepEqual(body, expectedDataContract)
@@ -379,7 +456,15 @@ describe('DataContracts routes', () => {
         action: null,
         owner: {
           identifier: dataContractVersion.dataContract.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: dataContract.block.timestamp.toISOString(),
         gasUsed: 0,
@@ -391,12 +476,24 @@ describe('DataContracts routes', () => {
       const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
-          action: 3,
-          id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
+          action: 'TOKEN_MINT',
+          documentIdentifier: null,
+          tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
+          recipient: null,
+          price: null,
+          amount: '5'
         }],
         owner: {
           identifier: document.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: block.timestamp.toISOString(),
         gasUsed: 0,
@@ -408,7 +505,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => a.id - b.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
@@ -437,7 +534,15 @@ describe('DataContracts routes', () => {
         action: null,
         owner: {
           identifier: dataContractVersion.dataContract.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: dataContract.block.timestamp.toISOString(),
         gasUsed: 0,
@@ -449,12 +554,24 @@ describe('DataContracts routes', () => {
       const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
-          action: 3,
-          id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
+          action: 'TOKEN_MINT',
+          documentIdentifier: null,
+          tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
+          recipient: null,
+          price: null,
+          amount: '5'
         }],
         owner: {
           identifier: document.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: block.timestamp.toISOString(),
         gasUsed: 0,
@@ -466,7 +583,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => a.id - b.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
@@ -495,7 +612,15 @@ describe('DataContracts routes', () => {
         action: null,
         owner: {
           identifier: dataContractVersion.dataContract.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: dataContract.block.timestamp.toISOString(),
         gasUsed: 0,
@@ -507,12 +632,24 @@ describe('DataContracts routes', () => {
       const documentsTransactions = documents.map(({ document, transaction, block }) => ({
         type: 1,
         action: [{
-          action: 3,
-          id: '5iCdbVb5Tn3GLzqCzsX7SVXaZgFeNQ1NDmVZ51Rap1Tx'
+          action: 'TOKEN_MINT',
+          documentIdentifier: null,
+          tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
+          recipient: null,
+          price: null,
+          amount: '5'
         }],
         owner: {
           identifier: document.owner,
-          aliases: []
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
         },
         timestamp: block.timestamp.toISOString(),
         gasUsed: 0,
@@ -524,7 +661,7 @@ describe('DataContracts routes', () => {
       const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
         .sort((a, b) => b.id - a.id)
         .map(tx => ({
-          type: tx.type,
+          type: StateTransitionEnum[tx.type],
           action: tx.action,
           owner: tx.owner,
           timestamp: tx.timestamp,
@@ -534,6 +671,84 @@ describe('DataContracts routes', () => {
         }))
 
       assert.deepEqual(body.resultSet, expectedDataTransactions.slice(0, 5))
+    })
+
+    it('should return data contract transactions by identifier with custom page size and order desc and custom page', async () => {
+      const [dataContract] = dataContracts.filter(dataContract => dataContract.dataContract.documents?.length > 0).sort((a, b) => a.dataContract.id - b.dataContract.id)
+
+      const { body } = await client.get(`/dataContract/${dataContract.dataContract.identifier}/transactions?limit=5&order=desc&page=2`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body.resultSet.length, 5)
+      assert.deepEqual(body.pagination.page, 2)
+      assert.deepEqual(body.pagination.limit, 5)
+      assert.deepEqual(body.pagination.total, 11)
+
+      const dataContractVersions = diferentVersionsDataContract.map(dataContractVersion => ({
+        type: 0,
+        action: null,
+        owner: {
+          identifier: dataContractVersion.dataContract.owner,
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
+        timestamp: dataContract.block.timestamp.toISOString(),
+        gasUsed: 0,
+        error: null,
+        hash: dataContractVersion.transaction.hash,
+        id: dataContractVersion.transaction.id
+      }))
+
+      const documentsTransactions = documents.map(({ document, transaction, block }) => ({
+        type: 1,
+        action: [{
+          action: 'TOKEN_MINT',
+          documentIdentifier: null,
+          tokenIdentifier: '42dmsi5zHvZg5Mg5q6rgghhQqn8bdAPhfnP96bH5GEQL',
+          recipient: null,
+          price: null,
+          amount: '5'
+        }],
+        owner: {
+          identifier: document.owner,
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
+        timestamp: block.timestamp.toISOString(),
+        gasUsed: 0,
+        error: null,
+        hash: transaction.hash,
+        id: transaction.id
+      }))
+
+      const expectedDataTransactions = [...dataContractVersions, ...documentsTransactions]
+        .sort((a, b) => b.id - a.id)
+        .map(tx => ({
+          type: StateTransitionEnum[tx.type],
+          action: tx.action,
+          owner: tx.owner,
+          timestamp: tx.timestamp,
+          gasUsed: tx.gasUsed,
+          error: tx.error,
+          hash: tx.hash
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDataTransactions.slice(5, 10))
     })
   })
 })

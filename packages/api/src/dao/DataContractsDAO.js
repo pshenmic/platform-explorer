@@ -1,6 +1,9 @@
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { decodeStateTransition, getAliasInfo, getAliasStateByVote } = require('../utils')
+const { decodeStateTransition, getAliasFromDocument } = require('../utils')
+const dpnsContract = require('../../data_contracts/dpns.json')
+const Token = require('../models/Token')
+const { TokenConfigurationWASM } = require('pshenmic-dpp')
 
 module.exports = class DataContractsDAO {
   constructor (knex, client, dapi) {
@@ -66,18 +69,6 @@ module.exports = class DataContractsDAO {
   }
 
   getDataContractByIdentifier = async (identifier) => {
-    const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier')
-      .select(this.knex.raw(`
-          array_agg(
-            json_build_object(
-              'alias', alias,
-              'tx', state_transition_hash
-            )
-          ) as aliases
-        `))
-      .groupBy('identity_identifier')
-
     const identitiesSubquery = this.knex('documents')
       .select(this.knex.raw('COUNT(*) OVER(PARTITION BY documents.owner) as documents_count'))
       .select('documents.owner as identity')
@@ -112,7 +103,7 @@ module.exports = class DataContractsDAO {
     const dataSubquery = this.knex('data_contracts')
       .with('gas_sub', gasSubquery)
       .select('data_contracts.identifier as identifier', 'data_contracts.name as name', 'data_contracts.owner as owner',
-        'data_contracts.schema as schema', 'data_contracts.is_system as is_system',
+        'data_contracts.schema as schema', 'data_contracts.is_system as is_system', 'state_transitions.data as state_transition_data',
         'data_contracts.version as version', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
       .select(this.knex('documents').count('*')
         .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
@@ -130,11 +121,8 @@ module.exports = class DataContractsDAO {
       .as('data_sub')
 
     const rows = await this.knex(dataSubquery)
-      .with('aliases_subquery', aliasesSubquery)
-      .select('identifier', 'owner', 'name', 'schema', 'is_system', 'version', 'tx_hash', 'timestamp',
+      .select('identifier', 'owner', 'name', 'schema', 'is_system', 'version', 'tx_hash', 'timestamp', 'state_transition_data',
         'documents_count', 'top_identity', 'identities_interacted', 'total_gas_used', 'average_gas_used')
-      .select(this.knex('aliases_subquery').select('aliases').whereRaw('identity_identifier = owner').limit(1).as('owner_aliases'))
-      .select(this.knex('aliases_subquery').select('aliases').whereRaw('identity_identifier = top_identity').limit(1).as('top_identity_aliases'))
 
     const [row] = rows
 
@@ -142,25 +130,27 @@ module.exports = class DataContractsDAO {
       return null
     }
 
-    const ownerAliases = await Promise.all((row.owner_aliases ?? []).map(async alias => {
-      const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
 
-      return getAliasStateByVote(aliasInfo, alias, row.owner)
-    }))
+    const ownerAliases = []
+
+    if (aliasDocument) {
+      ownerAliases.push(getAliasFromDocument(aliasDocument))
+    }
 
     let topIdentityAliases = []
 
     if (row.owner === row.top_identity) {
       topIdentityAliases = ownerAliases
     } else {
-      topIdentityAliases = await Promise.all((row.top_identity_aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
 
-        return getAliasStateByVote(aliasInfo, alias, row.owner)
-      }))
+      if (aliasDocument) {
+        topIdentityAliases.push(getAliasFromDocument(aliasDocument))
+      }
     }
 
-    return DataContract.fromRow({
+    const dataContract = DataContract.fromRow({
       ...row,
       owner: {
         identifier: row.owner?.trim() ?? null,
@@ -171,56 +161,75 @@ module.exports = class DataContractsDAO {
         aliases: topIdentityAliases
       }
     })
+
+    let groups = null
+    let tokens = null
+
+    try {
+      const config = await this.dapi.getDataContract(identifier)
+
+      groups = (config ?? { groups: undefined }).groups
+
+      const tokenPositions = Object.keys(config?.tokens ?? {})
+
+      tokens = await Promise.all(tokenPositions.map(async (tokenPosition) => {
+        const tokenConfig = config.tokens[tokenPosition]
+
+        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(identifier, Number(tokenPosition))
+
+        const tokenTotalSupply = await this.dapi.getTokenTotalSupply(tokenIdentifier.base58())
+
+        return Token.fromObject({
+          identifier: tokenIdentifier.base58(),
+          dataContractIdentifier: identifier,
+          owner: dataContract.owner,
+          position: Number(tokenPosition),
+          totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
+          description: tokenConfig?.description,
+          localizations: tokenConfig?.conventions?.localizations,
+          decimals: tokenConfig?.conventions?.decimals,
+          baseSupply: tokenConfig?.baseSupply.toString(),
+          maxSupply: tokenConfig?.maxSupply?.toString(),
+          mintable: tokenConfig?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          burnable: tokenConfig?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          freezable: tokenConfig?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          changeMaxSupply: tokenConfig?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          distributionType: tokenConfig?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
+          mainGroup: tokenConfig?.mainControlGroup
+        })
+      }))
+    } catch (error) {}
+
+    return DataContract.fromObject({
+      ...dataContract,
+      groups,
+      tokens
+    })
   }
 
   getDataContractTransactions = async (identifier, page, limit, order) => {
-    const fromRank = ((page - 1) * limit) + 1
-    const toRank = fromRank + limit - 1
+    const fromRank = ((page - 1) * limit)
 
-    const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier')
-      .select(this.knex.raw(`
-          array_agg(
-            json_build_object(
-              'alias', alias,
-              'tx', state_transition_hash
-            )
-          ) as aliases
-        `))
-      .groupBy('identity_identifier')
-      .as('aliases')
+    const transactionsSubquery = this.knex('data_contract_transitions')
+      .select('data_contract_id', 'data_contract_identifier', 'state_transition_id')
+      .select(this.knex.raw('count(*) over () as total_count'))
+      .where('data_contract_identifier', identifier)
+      .whereRaw('state_transition_id is not null')
+      .as('transactions_subquery')
 
-    const dataContractsSubquery = this.knex('data_contracts')
-      .select('state_transition_hash')
-      .where('data_contracts.identifier', '=', identifier)
-      .andWhereRaw('data_contracts.state_transition_hash is not null')
-
-    const documentsSubquery = this.knex('documents')
-      .select('documents.state_transition_hash as state_transition_hash')
-      .where('data_contracts.identifier', '=', identifier)
-      .andWhereRaw('documents.state_transition_hash is not null')
-      .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
-
-    const unionSubquery = this.knex
-      .unionAll([dataContractsSubquery, documentsSubquery])
-      .as('sub')
-
-    const additionalDataSubquery = this.knex(unionSubquery)
+    const rows = await this.knex(transactionsSubquery)
       .select(
-        'timestamp', 'sub.state_transition_hash as state_transition_hash',
-        'owner', 'gas_used', 'data', 'error', 'aliases', 'state_transitions.id as id'
+        'state_transitions.hash as state_transition_hash', 'state_transitions.data', 'total_count', 'block_height',
+        'owner', 'gas_used', 'data', 'error', 'state_transitions.id as id', 'timestamp', 'blocks.hash as block_hash'
       )
-      .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) as rank`))
-      .leftJoin('state_transitions', 'sub.state_transition_hash', 'state_transitions.hash')
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-      .leftJoin(aliasesSubquery, 'owner', 'aliases.identity_identifier')
-      .as('additional_subquery')
-
-    const rows = await this.knex(additionalDataSubquery)
-      .select('timestamp', 'state_transition_hash', 'owner', 'gas_used', 'data', 'error', 'aliases')
-      .select(this.knex(additionalDataSubquery).count('*').as('total_count'))
-      .whereBetween('rank', [fromRank, toRank])
-      .orderBy('id', order)
+      .leftJoin('state_transitions', 'transactions_subquery.state_transition_id', 'state_transitions.id')
+      .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
+      .orderBy('state_transition_id', order)
+      .offset(fromRank)
+      .limit(limit)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       let decodedTx
@@ -229,17 +238,23 @@ module.exports = class DataContractsDAO {
         decodedTx = await decodeStateTransition(row.data)
       }
 
-      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
 
-        return getAliasStateByVote(aliasInfo, alias, row.owner)
-      }))
+      const aliases = []
+
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
 
       return {
-        type: decodedTx?.type ?? null,
+        type: decodedTx?.typeString ?? null,
         action: decodedTx?.transitions?.map(transition => ({
-          action: transition.action,
-          id: transition.id
+          action: transition.action ?? null,
+          documentIdentifier: transition.id ?? null,
+          tokenIdentifier: transition.tokenId ?? null,
+          recipient: (transition.recipient ?? transition.frozenIdentityId) ?? null,
+          price: (transition.price ?? transition.totalAgreedPrice) ?? null,
+          amount: (transition.amount ?? transition.burnAmount ?? transition.tokenCount) ?? null
         })) ?? null,
         owner: {
           identifier: row.owner?.trim() ?? null,

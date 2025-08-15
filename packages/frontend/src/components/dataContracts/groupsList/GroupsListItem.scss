@@ -1,0 +1,32 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as dc;
+@import '../../../styles/variables.scss';
+
+.GroupsListItem {
+  @include mixins.DefListItem;
+  display: block;
+
+  &__Content {
+    @include dc.Columns();
+  }
+
+  &__Column {
+    @include dc.Column();
+    font-size: 0.75rem;
+
+    &--Power {
+      text-align: right;
+      
+      .ValueContainer {
+        padding: 0.25rem 0.5rem;
+        border-radius: $border-radius-def;
+      }
+    }
+
+    &--Identifier {
+      .Identifier {
+        width: 100%;
+      }
+    }
+  }
+}

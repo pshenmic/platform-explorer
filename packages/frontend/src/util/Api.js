@@ -82,6 +82,36 @@ const getTransaction = (txHash) => {
   return call(`transaction/${txHash}`, 'GET')
 }
 
+const getTokens = (page = 1, limit = 30, order = 'asc', filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    ...filters
+  })
+
+  return call(`tokens?${params.toString()}`, 'GET')
+}
+
+const getTokensRating = (page = 1, limit = 10, order = 'asc', filters = {}) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    ...filters
+  })
+
+  return call(`tokens/rating?${params.toString()}`, 'GET')
+}
+
+const getToken = (identifier) => {
+  return call(`token/${identifier}`, 'GET')
+}
+
+const getTokenTransitions = (identifier, page = 1, limit = 30, order = 'asc') => {
+  return call(`token/${identifier}/transitions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+}
+
 const getBlocks = (page = 1, limit = 30, order = 'asc', filters = {}) => {
   const params = prepareQueryParams({
     page: Math.max(1, parseInt(page)),
@@ -185,6 +215,10 @@ const getTransfersByIdentity = (identifier, page = 1, limit = 10, order = 'asc')
   return call(`identity/${identifier}/transfers?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
+const getTokensByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
+  return call(`identity/${identifier}/tokens?page=${page}&limit=${limit}&order=${order}`, 'GET')
+}
+
 const getIdentity = (identifier) => {
   return call(`identity/${identifier}`, 'GET')
 }
@@ -250,6 +284,10 @@ export {
   getTransactionsHistory,
   getTransactions,
   getTransaction,
+  getTokens,
+  getToken,
+  getTokenTransitions,
+  getTokensRating,
   search,
   decodeTx,
   getDocumentsByDataContract,
@@ -265,6 +303,7 @@ export {
   getDocumentsByIdentity,
   getTransfersByIdentity,
   getWithdrawalsByIdentity,
+  getTokensByIdentity,
   getValidators,
   getValidatorByProTxHash,
   getBlocksByValidator,

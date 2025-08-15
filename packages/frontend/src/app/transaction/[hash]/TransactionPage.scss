@@ -68,6 +68,7 @@
 
     .InfoLine__Title {
       width: 200px;
+      max-width: 200px;
       line-height: 20px;
     }
 
@@ -78,7 +79,7 @@
   }
 
   .HorisontalSeparator {
-    margin: 14px 0;
+    margin: 0;
   }
 
   &__Signature, &__AssetLockProof, &__OutputScript {

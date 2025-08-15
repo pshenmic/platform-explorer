@@ -12,6 +12,7 @@ impl PostgresDAO {
     pub async fn create_state_transition(
         &self,
         block_hash: String,
+        block_height: i32,
         owner: Identifier,
         st_type: u32,
         index: u32,
@@ -27,13 +28,15 @@ impl PostgresDAO {
         let st_type = st_type as i32;
         let index_i32 = index as i32;
 
+        let batch_type_i32 = batch_type.map(|t| t as i32);
+
         let status_str = match status {
             TransactionStatus::FAIL => "FAIL",
             TransactionStatus::SUCCESS => "SUCCESS",
         };
 
         let query = "INSERT INTO state_transitions(hash, owner, data, type, \
-        index, block_hash, gas_used, status, error, batch_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
+        index, block_hash, block_height, gas_used, status, error, batch_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -47,10 +50,11 @@ impl PostgresDAO {
                     &st_type,
                     &index_i32,
                     &block_hash,
+                    &block_height,
                     &(gas_used as i64),
                     &status_str,
                     &error,
-                    &batch_type.map(|b| b.to_string()),
+                    &batch_type_i32,
                 ],
             )
             .await
@@ -82,5 +86,25 @@ impl PostgresDAO {
         let owner: Option<String> = row.get(0);
 
         Ok(owner)
+    }
+
+    pub async fn get_state_transition_id(
+        &self,
+        hash: String,
+        sql_transaction: &Transaction<'_>,
+    ) -> Result<i32, PoolError> {
+        let stmt = sql_transaction
+            .prepare_cached(
+                "SELECT id FROM state_transitions \
+        where hash = $1 LIMIT 1;",
+            )
+            .await
+            .unwrap();
+
+        let row = sql_transaction.query_one(&stmt, &[&hash]).await.unwrap();
+
+        let id: i32 = row.get(0);
+
+        Ok(id)
     }
 }

@@ -110,7 +110,7 @@ function Transaction ({ hash }) {
           <InfoLine
             className={'TransactionPage__InfoLine TransactionPage__InfoLine--Type'}
             title={'Type'}
-            value={(<TypeBadge typeId={transaction.data?.type}/>)}
+            value={<TypeBadge type={transaction.data?.type}/>}
             loading={transaction.loading}
             error={transaction.error}
           />

@@ -1,0 +1,60 @@
+@use '../../styles/mixins.scss';
+@use './variables' as tokens;
+@import '../../styles/variables.scss';
+
+.TokensList {
+  @include mixins.List;
+  container-type: inline-size;
+
+  &__ColumnTitles {
+    @include mixins.defListTitles;
+    @include tokens.Columns();
+  }
+
+  &__ColumnTitle {
+    @include tokens.Column();
+    width: 100%;
+    display: block;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    &--TokenName {
+      justify-content: flex-start;
+    }
+
+    &--Ticker {
+      justify-content: center;
+    }
+
+    &--Supply {
+      justify-content: center;
+    }
+
+    &--Contract {
+      justify-content: flex-start;
+    }
+
+    &--OwnerIdentity {
+      justify-content: flex-end;
+    }
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  &__EmptyMessage {
+    text-align: center;
+  }
+
+  &--Balance {
+    .TokensList__ColumnTitles {
+      @include tokens.ColumnsBalance();
+    }
+
+    .TokensList__ColumnTitle {
+      @include tokens.ColumnBalance();
+    }
+  }
+}

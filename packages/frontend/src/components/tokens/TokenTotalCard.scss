@@ -1,0 +1,299 @@
+@use '../../styles/mixins';
+@import '../../styles/variables';
+
+.TokenTotalCard {
+  @include mixins.TotalCard();
+  @include mixins.InfoContainerPadding(padding, 0px, true);
+  $gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+
+  &--Loading & {
+    &__InfoLine {
+      .InfoLine__Value {
+        height: 24px;
+      }
+    }
+
+    &__Avatar {
+      @include mixins.LoadingContainer;
+    }
+
+    &__Header {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+  }
+
+  &__Header {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  &__ZeroListBadge {
+    padding: 4px 10px;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__CommonLines {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  &__InfoLine {
+    &--DataContract {
+      .InfoLine__Value {
+        overflow: hidden;
+      }
+    }
+
+    &--Names {
+      align-items: baseline;
+      flex-wrap: wrap;
+
+      .InfoLine__Value {
+        margin-left: auto;
+        max-width: 100%;
+      }
+    }
+
+    &--Identifier {
+      .InfoLine__Value {
+        container-type: inline-size;
+        width: 100%;
+      }
+
+      .Identifier__SymbolsContainer {
+        margin-left: auto;
+
+        @container (max-width: 22rem) {
+          max-width: 10rem;
+        }
+      }
+    }
+  }
+
+  &__PublicKeysShowButton {
+    width: max-content;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+
+    svg {
+      transition: .2s;
+    }
+  }
+
+  &__LocalisationShowButton {
+    width: max-content;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+
+    svg {
+      transition: .2s;
+    }
+  }
+
+  &__PriceShowButton {
+    width: max-content;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+
+    svg {
+      transition: .2s;
+    }
+  }
+
+  &__PublicKeysList {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    opacity: 0;
+    transition: opacity .3s;
+
+    &--Show {
+      position: relative;
+      opacity: 1;
+    }
+  }
+
+  &__LocalisationList {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    opacity: 0;
+    transition: opacity .3s;
+
+    &--Show {
+      position: relative;
+      opacity: 1;
+    }
+  }
+
+  &__PriceList {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    opacity: 0;
+    transition: opacity .3s;
+
+    &--Show {
+      position: relative;
+      opacity: 1;
+    }
+  }
+
+  &__PublicKeysListContainer {
+    transition: .3s !important;
+
+    &--Hidden {
+      margin-top: -$gap !important;
+    }
+
+    &--Mobile {
+      display: none !important;
+    }
+  }
+
+  &__LocalisationListContainer {
+    transition: .3s !important;
+
+    &--Hidden {
+      margin-top: -$gap !important;
+    }
+
+    &--Mobile {
+      display: none !important;
+    }
+  }
+
+  &__PriceListContainer {
+    transition: .3s !important;
+
+    &--Hidden {
+      margin-top: -$gap !important;
+    }
+  }
+
+  &__Separator {
+    margin: 20px 0;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__InfoLine {
+      &--Names {
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        .InfoLine__Value {
+          margin-left: auto;
+        }
+      }
+
+      &--Identifier, &--Balance  {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .InfoLine__Value {
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
+  screen and (max-width: $breakpoint-md) {
+    &__InfoLine {
+      gap: 0.25rem;
+
+      &--Identifier {
+        .Identifier__SymbolsContainer {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    @include mixins.TotalCard(true);
+    $gap: 0.75rem;
+
+    &__Avatar {
+      right: 4px;
+      top: 0;
+    }
+
+    &__Separator {
+      @include mixins.InfoContainerPadding(margin-top, 0px, true);
+      @include mixins.InfoContainerPadding(margin-bottom, 0px, true);
+    }
+
+    &__PublicKeysListContainer {
+      &--Hidden {
+        margin-top: -$gap !important;
+      }
+
+      &--Mobile {
+        display: block !important;
+      }
+
+      &--Desktop {
+        display: none !important;
+      }
+    }
+
+    &__LocalisationListContainer {
+      &--Hidden {
+        margin-top: -$gap !important;
+      }
+
+      &--Mobile {
+        display: block !important;
+      }
+
+      &--Desktop {
+        display: none !important;
+      }
+    }
+
+    &__InfoLine {
+      flex-wrap: wrap;
+    }
+
+    &__InfoLine {
+      &--Identifier {
+        padding-right: 100px;
+      }
+
+      &--Identifier, &--Balance  {
+        padding-right: 100px;
+      }
+    }
+
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__Digest {
+      @include mixins.InfoContainerPadding(margin-left, 0px, true, true);
+      @include mixins.InfoContainerPadding(margin-right, 0px, true, true);
+      @include mixins.InfoContainerPadding(margin-bottom, 0px, true, true);
+    }
+
+    &__InfoLine {
+      &--Balance  {
+        margin-top: 8px;
+        padding-right: 0;
+      }
+    }
+  }
+}

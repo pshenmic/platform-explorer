@@ -23,6 +23,10 @@ export const theme = extendTheme({
     useSystemColorMode: false,
     initialColorMode: 'dark'
   },
+  breakpoints: {
+    '2xl': '96em', // 1536px
+    '3xl': '120em' // 1920px
+  },
   fonts: {
     heading: montserrat.style.fontFamily,
     body: openSans.style.fontFamily,

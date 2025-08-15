@@ -1,6 +1,6 @@
 import './BigNumber.scss'
 
-function BigNumber ({ children }) {
+function BigNumber ({ children, className }) {
   if (children === undefined) return null
 
   const numberStr = children.toString()
@@ -14,7 +14,7 @@ function BigNumber ({ children }) {
     }, [])
 
   return (
-    <span className={'BigNumber'}>
+    <span className={`BigNumber ${className || ''}`}>
       {parts.map((part, i) => (
         <span key={i}>
           <span className={'BigNumber__Group'}>{part}</span>

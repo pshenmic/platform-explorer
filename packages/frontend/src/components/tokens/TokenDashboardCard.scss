@@ -1,0 +1,31 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.TokenDashboardCard {
+  padding: 24px 30px;
+
+  &__Name, &__Ticker  {
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: $font-heading;
+    font-style: italic;
+    color: #fff;
+  }
+
+  &__Name {
+    font-family: $font-heading;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media screen and (min-width: 600px) {
+    .SliderNavigation {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    padding: 14px 16px;
+  }
+}

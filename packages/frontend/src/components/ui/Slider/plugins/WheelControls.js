@@ -47,10 +47,11 @@ const WheelControls = (slider) => {
   }
 
   const initPlugin = () => {
-    if (!slider) return
+    if (!slider?.container) return
 
-    const totalSlides = slider?.slides?.length
-    const visibleSlides = slider?.options?.slides?.perView || 1
+    const details = slider.track?.details
+    const totalSlides = details?.slides?.length || 0
+    const visibleSlides = slider.options?.slides?.perView || 1
 
     slider.container.removeEventListener('wheel', eventWheel)
 

@@ -27,6 +27,9 @@ $borderRadius: 20px;
   }
 
   &__Content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
     padding-top: 32px;
     padding-bottom: 32px;
     position: relative;
@@ -88,6 +91,12 @@ $borderRadius: 20px;
       &::before {
         border-radius: $border-radius-medium;
       }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__Content {
+      gap: 0.75rem;
     }
   }
 

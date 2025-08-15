@@ -13,13 +13,15 @@ import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { IdentityTotalCard } from '../../../components/identities'
+import TokensList from '../../../components/tokens/TokensList'
 import './Identity.scss'
 
 const tabs = [
   'transactions',
   'datacontracts',
   'documents',
-  'transfers'
+  'transfers',
+  'tokens'
 ]
 
 const defaultTabName = 'transactions'
@@ -32,6 +34,7 @@ function Identity ({ identifier }) {
   const [identity, setIdentity] = useState({ data: {}, loading: true, error: false })
   const [dataContracts, setDataContracts] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [documents, setDocuments] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [tokens, setTokens] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
@@ -96,6 +99,15 @@ function Identity ({ identifier }) {
   }, [identifier, documents.props.currentPage])
 
   useEffect(() => {
+    if (!identifier) return
+    setLoadingProp(setTokens)
+
+    Api.getTokensByIdentity(identifier, tokens.props.currentPage + 1, pageSize, 'desc')
+      .then(paginatedDataContracts => fetchHandlerSuccess(setTokens, paginatedDataContracts))
+      .catch(err => fetchHandlerError(setTokens, err))
+  }, [identifier, tokens.props.currentPage])
+
+  useEffect(() => {
     const tab = searchParams.get('tab')
 
     if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
@@ -151,6 +163,10 @@ function Identity ({ identifier }) {
               ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{identity.data?.totalTransfers}</span>
               : ''}
             </Tab>
+            <Tab>Tokens {tokens.data?.pagination?.total !== undefined
+              ? <span className={`Tabs__TabItemsCount ${tokens.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{tokens.data?.pagination?.total}</span>
+              : ''}
+            </Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -171,7 +187,7 @@ function Identity ({ identifier }) {
             <TabPanel>
               {!dataContracts.error
                 ? <DataContractsList
-                    dataContracts={dataContracts.data.resultSet}
+                    dataContracts={dataContracts.data?.resultSet}
                     pagination={{
                       onPageChange: pagination => paginationHandler(setDataContracts, pagination.selected),
                       pageCount: Math.ceil(dataContracts.data?.pagination?.total / pageSize) || 1,
@@ -186,7 +202,7 @@ function Identity ({ identifier }) {
             <TabPanel>
               {!documents.error
                 ? <DocumentsList
-                    documents={documents.data.resultSet}
+                    documents={documents.data?.resultSet}
                     pagination={{
                       onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
                       pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
@@ -201,15 +217,32 @@ function Identity ({ identifier }) {
             <TabPanel>
               {!transfers.error
                 ? <TransfersList
-                    transfers={transfers.data.resultSet}
-                    pagination={{
-                      onPageChange: pagination => paginationHandler(setTransfers, pagination.selected),
-                      pageCount: Math.ceil(transfers.data?.pagination?.total / pageSize) || 1,
-                      forcePage: transfers?.props?.currentPage
-                    }}
-                    loading={transfers.loading}
-                    itemsCount={pageSize}
-                  />
+                  transfers={transfers.data?.resultSet}
+                  pagination={{
+                    onPageChange: pagination => paginationHandler(setTransfers, pagination.selected),
+                    pageCount: Math.ceil(transfers.data?.pagination?.total / pageSize) || 1,
+                    forcePage: transfers?.props?.currentPage
+                  }}
+                  loading={transfers.loading}
+                  itemsCount={pageSize}
+                />
+                : <ErrorMessageBlock/>
+              }
+            </TabPanel>
+            <TabPanel>
+              {!tokens.error
+                ? <TokensList
+                  tokens={tokens.data?.resultSet}
+                  variant={'balance'}
+                  rate={rate}
+                  pagination={{
+                    onPageChange: pagination => paginationHandler(setTokens, pagination.selected),
+                    pageCount: Math.ceil(tokens.data?.pagination?.total / pageSize) || 1,
+                    forcePage: tokens?.props?.currentPage
+                  }}
+                  loading={tokens.loading}
+                  itemsCount={pageSize}
+                />
                 : <ErrorMessageBlock/>
               }
             </TabPanel>

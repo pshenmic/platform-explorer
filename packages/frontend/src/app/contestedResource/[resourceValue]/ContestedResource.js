@@ -5,7 +5,7 @@ import * as Api from '../../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, setLoadingProp } from '../../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import { Tabs, TabList, TabPanels, Tab, TabPanel, Box } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { ContestedResourceTotalCard } from '../../../components/contestedResources'
 import { VotesList } from '../../../components/contestedResources/votes'
@@ -138,8 +138,6 @@ function ContestedResource ({ resourceValue }) {
       title={'Contested Resource info'}
     >
       <ContestedResourceTotalCard contestedResource={contestedResource} rate={rate}/>
-
-      <Box boxSize={'2rem'}/>
 
       <InfoContainer styles={['tabs']}>
         <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>

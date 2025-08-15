@@ -139,6 +139,18 @@ class DAPI {
     return this.dapi.platform.getTokenContractInfo(new IdentifierWASM(tokenId).bytes())
   }
 
+  async getDataContract (contractId) {
+    const { dataContract } = await this.dapi.platform.getDataContract(new IdentifierWASM(contractId).bytes())
+
+    return DataContractWASM.fromBytes(dataContract, true, PlatformVersionWASM.PLATFORM_V9)
+  }
+
+  async getIdentityTokenBalances (identityId, tokenIdList) {
+    const { tokenBalances } = await this.dapi.platform.getIdentityTokenBalances(new IdentifierWASM(identityId).bytes(), tokenIdList.map(id => new IdentifierWASM(id).bytes()))
+
+    return tokenBalances.map(({ id, balance }) => ({ identifier: new IdentifierWASM(id).base58(), balance }))
+  }
+
   async getStatus () {
     return this.dapi.platform.getStatus()
   }

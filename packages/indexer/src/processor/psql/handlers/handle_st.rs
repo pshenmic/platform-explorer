@@ -14,6 +14,7 @@ impl PSQLProcessor {
     pub async fn handle_st(
         &self,
         block_hash: String,
+        block_height: i32,
         index: u32,
         state_transition: StateTransition,
         tx_result: TransactionResult,
@@ -140,6 +141,7 @@ impl PSQLProcessor {
         self.dao
             .create_state_transition(
                 block_hash.clone(),
+                block_height,
                 owner,
                 st_type,
                 index,
@@ -161,28 +163,28 @@ impl PSQLProcessor {
 
         match state_transition {
             StateTransition::DataContractCreate(st) => {
-                self.handle_data_contract_create(st, st_hash, sql_transaction)
+                self.handle_data_contract_create(st.clone(), st_hash.clone(), sql_transaction)
                     .await;
 
                 println!("Processed DataContractCreate at block hash {}", block_hash);
             }
-            StateTransition::DataContractUpdate(_st) => {
-                self.handle_data_contract_update(_st, st_hash, sql_transaction)
+            StateTransition::DataContractUpdate(st) => {
+                self.handle_data_contract_update(st.clone(), st_hash.clone(), sql_transaction)
                     .await;
 
                 println!("Processed DataContractUpdate at block hash {}", block_hash);
             }
-            StateTransition::Batch(_st) => {
-                match _st {
+            StateTransition::Batch(st) => {
+                match st.clone() {
                     BatchTransition::V0(st) => {
-                        self.handle_batch_v0(st.clone(), st_hash, sql_transaction)
+                        self.handle_batch_v0(st.clone(), st_hash.clone(), sql_transaction)
                             .await;
                     }
                     BatchTransition::V1(st) => {
                         self.handle_batch_v1(
                             st.transitions.clone(),
                             st.owner_id().clone(),
-                            st_hash,
+                            st_hash.clone(),
                             sql_transaction,
                         )
                         .await

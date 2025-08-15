@@ -1,13 +1,15 @@
 import { ValueCard } from '../cards'
 import { BigNumber, CreditsBlock, Identifier, InfoLine } from '../data'
-import { TokenTransitionEnum } from '../../enums/tokenTransition'
-import TokenTransitionBadge from './TokenTransitionBadge'
-import { Code, Badge } from '@chakra-ui/react'
+import BatchTypeBadge from '../transactions/BatchTypeBadge'
+import TokenEmergencyActionBadge from './TokenEmergencyActionBadge'
+import { PriceList } from './prices'
+import { Code, Badge, Flex } from '@chakra-ui/react'
 import { colors } from '../../styles/colors'
+import { getMinTokenPrice } from '../../util'
 import './TokenTransitionCard.scss'
 
 const fieldsOfTypes = {
-  MINT: [
+  TOKEN_MINT: [
     'Action',
     'Amount',
     'TokenId',
@@ -18,7 +20,7 @@ const fieldsOfTypes = {
     'PublicNote'
     // 'GroupInfo'
   ],
-  TRANSFER: [
+  TOKEN_TRANSFER: [
     'Action',
     'Amount',
     'TokenId',
@@ -31,7 +33,7 @@ const fieldsOfTypes = {
     // 'PrivateEncryptedNote',
     // 'GroupInfo'
   ],
-  BURN: [
+  TOKEN_BURN: [
     'Action',
     'Amount',
     'TokenId',
@@ -40,7 +42,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce'
     // 'BurnFromIdentity'
   ],
-  FREEZE: [
+  TOKEN_FREEZE: [
     'Action',
     'Amount',
     'TokenId',
@@ -49,7 +51,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce',
     'FrozenIdentityId'
   ],
-  UNFREEZE: [
+  TOKEN_UNFREEZE: [
     'Action',
     'Amount',
     'TokenId',
@@ -58,7 +60,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce',
     'FrozenIdentityId'
   ],
-  DESTROY_FROZEN_FUNDS: [
+  TOKEN_DESTROY_FROZEN_FUNDS: [
     'Action',
     'Amount',
     'TokenId',
@@ -67,7 +69,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce',
     'FrozenIdentityId'
   ],
-  CLAIM: [
+  TOKEN_CLAIM: [
     'Action',
     'Amount',
     'TokenId',
@@ -76,15 +78,15 @@ const fieldsOfTypes = {
     'IdentityContractNonce',
     'Recipient'
   ],
-  EMERGENCY_ACTION: [
+  TOKEN_EMERGENCY_ACTION: [
     'Action',
+    'EmergencyAction',
     'TokenId',
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce'
-    // 'EmergencyDetails'
   ],
-  CONFIG_UPDATE: [
+  TOKEN_CONFIG_UPDATE: [
     'Action',
     'TokenId',
     'TokenContractPosition',
@@ -92,7 +94,7 @@ const fieldsOfTypes = {
     'IdentityContractNonce'
     // 'ConfigChanges'
   ],
-  DIRECT_PURCHASE: [
+  TOKEN_DIRECT_PURCHASE: [
     'Action',
     'Amount',
     'TokenId',
@@ -103,7 +105,7 @@ const fieldsOfTypes = {
     // 'Buyer',
     // 'Seller'
   ],
-  SET_PRICE_FOR_DIRECT_PURCHASE: [
+  TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE: [
     'Action',
     'TokenId',
     'TokenContractPosition',
@@ -114,14 +116,7 @@ const fieldsOfTypes = {
 }
 
 const TokenTransitionCard = ({ transition, rate, className }) => {
-  const transitionType = TokenTransitionEnum[transition?.tokenTransitionType]
-  const fields = fieldsOfTypes[transitionType] || []
-
-  console.log('TokenTransitionEnum', TokenTransitionEnum)
-  console.log('transition', transition)
-  console.log('transition?.tokenTransitionType', transition?.tokenTransitionType)
-  console.log('TokenTransitionCard transitionType', transitionType)
-  console.log('TokenTransitionCard fields', fields)
+  const fields = fieldsOfTypes[transition?.action] || []
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient TokenTransitionCard ${className || ''}`}>
@@ -130,10 +125,24 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Action'}
           title={'Action'}
-          value={<TokenTransitionBadge typeId={transition?.tokenTransitionType}/>}
-          error={transition?.tokenTransitionType === undefined}
+          value={
+            <BatchTypeBadge
+              batchType={transition?.action !== undefined ? transition?.action : undefined}
+            />
+          }
+          error={transition?.action === undefined}
         />
        )}
+
+      {/* Action Badge */}
+      {fields.includes('EmergencyAction') && (
+        <InfoLine
+          className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--EmergencyAction'}
+          title={'Emergency Action'}
+          value={<TokenEmergencyActionBadge type={transition?.emergencyAction}/>}
+          error={transition?.emergencyAction === undefined}
+        />
+      )}
 
       {/* Amount */}
       {fields.includes('Amount') && (
@@ -248,14 +257,28 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
       )}
 
       {/* Price (for purchases) */}
-      {fields.includes('Price') && (
+      {fields.includes('Price') && (<>
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Price'}
           title={'Price'}
-          value={<CreditsBlock credits={transition?.price} rate={rate}/>}
-          error={transition?.price === undefined}
+          value={
+            transition?.price != null
+              ? <CreditsBlock credits={transition?.price} rate={rate}/>
+              : transition?.prices != null && transition?.prices?.length > 0
+                ? <Flex gap={'0.25rem'}>From <BigNumber>{getMinTokenPrice(transition?.prices)}</BigNumber> Credits</Flex>
+                : 'none'
+          }
+          error={transition?.price === undefined && (!transition?.prices || transition?.prices?.length === 0)}
         />
-      )}
+        {transition?.prices != null && transition?.prices?.length > 0 &&
+          <div className={'TokenTransitionCard__PriceList'}>
+            <PriceList
+              prices={transition?.prices}
+              rate={rate}
+            />
+          </div>
+        }
+      </>)}
 
       {/* Public Note */}
       {fields.includes('PublicNote') && (

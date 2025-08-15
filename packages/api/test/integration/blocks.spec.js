@@ -687,7 +687,7 @@ describe('Blocks routes', () => {
     it('should allow search by transactions count', async () => {
       const [block] = blocks
 
-      const identity = await fixtures.identity(knex, { block_hash: block.hash })
+      const identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
       const { body } = await client.get('/blocks?tx_count_min=1&tx_count_max=2&order=desc')
         .expect(200)

@@ -1,53 +1,53 @@
-import { StateTransitionEnum, TransactionTypesInfo } from '../../enums/state.transition.type'
+import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { TransactionStatusBadge, TypeBadge } from './index'
 import { Filters } from '../filters'
 import { Identifier } from '../data'
 
 const transactionOptions = [
   {
-    label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_CREATE}/>,
+    label: <TypeBadge type={'DATA_CONTRACT_CREATE'}/>,
     title: TransactionTypesInfo.DATA_CONTRACT_CREATE.title,
-    value: StateTransitionEnum.DATA_CONTRACT_CREATE
+    value: 'DATA_CONTRACT_CREATE'
   },
   {
-    label: <TypeBadge typeId={StateTransitionEnum.DOCUMENTS_BATCH}/>,
-    title: TransactionTypesInfo.DOCUMENTS_BATCH.title,
-    value: StateTransitionEnum.DOCUMENTS_BATCH
+    label: <TypeBadge type={'BATCH'}/>,
+    title: TransactionTypesInfo.BATCH.title,
+    value: 'BATCH'
   },
   {
-    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREATE}/>,
+    label: <TypeBadge type={'IDENTITY_CREATE'}/>,
     title: TransactionTypesInfo.IDENTITY_CREATE.title,
-    value: StateTransitionEnum.IDENTITY_CREATE
+    value: 'IDENTITY_CREATE'
   },
   {
-    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_TOP_UP}/>,
+    label: <TypeBadge type={'IDENTITY_TOP_UP'}/>,
     title: TransactionTypesInfo.IDENTITY_TOP_UP.title,
-    value: StateTransitionEnum.IDENTITY_TOP_UP
+    value: 'IDENTITY_TOP_UP'
   },
   {
-    label: <TypeBadge typeId={StateTransitionEnum.DATA_CONTRACT_UPDATE}/>,
+    label: <TypeBadge type={'DATA_CONTRACT_UPDATE'}/>,
     title: TransactionTypesInfo.DATA_CONTRACT_UPDATE.title,
-    value: StateTransitionEnum.DATA_CONTRACT_UPDATE
+    value: 'DATA_CONTRACT_UPDATE'
   },
   {
-    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_UPDATE}/>,
+    label: <TypeBadge type={'IDENTITY_UPDATE'}/>,
     title: TransactionTypesInfo.IDENTITY_UPDATE.title,
-    value: StateTransitionEnum.IDENTITY_UPDATE
+    value: 'IDENTITY_UPDATE'
   },
   {
-    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL}/>,
+    label: <TypeBadge type={'IDENTITY_CREDIT_WITHDRAWAL'}/>,
     title: TransactionTypesInfo.IDENTITY_CREDIT_WITHDRAWAL.title,
-    value: StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL
+    value: 'IDENTITY_CREDIT_WITHDRAWAL'
   },
   {
-    label: <TypeBadge typeId={StateTransitionEnum.IDENTITY_CREDIT_TRANSFER}/>,
+    label: <TypeBadge type={'IDENTITY_CREDIT_TRANSFER'}/>,
     title: TransactionTypesInfo.IDENTITY_CREDIT_TRANSFER.title,
-    value: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER
+    value: 'IDENTITY_CREDIT_TRANSFER'
   },
   {
-    label: <TypeBadge typeId={StateTransitionEnum.MASTERNODE_VOTE}/>,
+    label: <TypeBadge type={'MASTERNODE_VOTE'}/>,
     title: TransactionTypesInfo.MASTERNODE_VOTE.title,
-    value: StateTransitionEnum.MASTERNODE_VOTE
+    value: 'MASTERNODE_VOTE'
   }
 ]
 

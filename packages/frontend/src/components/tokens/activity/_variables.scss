@@ -1,0 +1,46 @@
+@import '../../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns:
+    8rem // time
+    minmax(0, 2fr) // hash
+    minmax(0, 2fr) // creator
+    minmax(0, 2fr) // recipient
+    8rem // amount
+    9rem; // type
+
+  @container (max-width: 104rem) {
+    grid-template-columns:
+    7.5rem // time
+    minmax(0, 25rem) // hash
+    minmax(0, 25rem) // creator
+    minmax(0, 25rem) // recipient
+    minmax(0, 10rem) // amount
+    9rem; // type
+  }
+
+  @container (max-width: 48rem) {
+    grid-template-columns:
+    7.5rem // time
+    minmax(6.5rem, 25rem) // hash
+    minmax(6.5rem, 25rem) // creator
+    minmax(6.5rem, 25rem) // recipient
+    minmax(10rem, 10rem) // amount
+    5rem; // type
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  width: 100%;
+
+  &:last-child {
+    justify-content: flex-end;
+    white-space: nowrap;
+    margin-left: auto;
+    text-align: right;
+  }
+}

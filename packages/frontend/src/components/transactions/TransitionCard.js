@@ -3,7 +3,7 @@ import { DocumentTransitionCard } from '../documents'
 import './TransitionCard.scss'
 
 const TransitionCard = ({ transition, owner, rate, className }) => {
-  if (transition?.transitionType === 'tokenTransition') {
+  if (transition?.transitionType === 'tokenTransition' || transition?.action?.includes('TOKEN')) {
     return (
       <TokenTransitionCard
         transition={transition}

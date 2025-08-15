@@ -1,0 +1,186 @@
+@import '../../styles/variables.scss';
+
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns:
+    3fr
+    10rem
+    2fr
+    3fr
+    3fr;
+
+  @container (max-width: 90rem) {
+    grid-template-columns:
+      minmax(10rem, 20rem)
+      10rem
+      10rem
+      auto
+      22rem;
+  }
+
+  @container (max-width: 80rem) {
+    grid-template-columns:
+      10rem
+      10rem
+      10rem
+      auto
+      22rem;
+  }
+
+  @container (max-width: 64rem) {
+    grid-template-columns:
+      minmax(10rem, 22rem)
+      10rem
+      10rem
+      minmax(0, 22rem);
+  }
+
+  @container (max-width: 48rem) {
+    grid-template-columns:
+      minmax(10rem, 16rem)
+      10rem
+      minmax(0, 22rem);
+  }
+
+  @container (max-width: 40rem) {
+    grid-template-columns:
+      minmax(10rem, 18rem)
+      minmax(0, 22rem);
+  }
+
+  @container (max-width: 30rem) {
+    grid-template-columns:
+      10rem
+      minmax(0, 22rem);
+  }
+
+  @container (max-width: 23rem) {
+    grid-template-columns:
+      8rem
+      minmax(0, 22rem);
+  }
+}
+
+// With balance
+@mixin ColumnsBalance () {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns:
+    3fr
+    10rem
+    2fr
+    3fr
+    3fr
+    2fr;
+
+  @container (max-width: 100rem) {
+    grid-template-columns:
+      minmax(10rem, 26rem)
+      10rem
+      10rem
+      minmax(10rem, 22rem)
+      minmax(10rem, 22rem)
+      8rem;
+  }
+
+  @container (max-width: 90rem) {
+    grid-template-columns:
+      minmax(12rem, 18rem)
+      10rem
+      10rem
+      minmax(6rem, 18rem)
+      minmax(6rem, 18rem)
+      8rem;
+  }
+
+  @container (max-width: 80rem) {
+    grid-template-columns:
+      minmax(12rem, 26rem)
+      10rem
+      10rem
+      minmax(8rem, 26rem)
+      8rem;
+  }
+
+  @container (max-width: 64rem) {
+    grid-template-columns:
+      minmax(8rem, 26rem)
+      10rem
+      8rem
+      minmax(8rem, 18rem);
+  }
+
+  @container (max-width: 48rem) {
+    grid-template-columns:
+      minmax(8rem, 16rem)
+      10rem
+      auto;
+  }
+
+  @container (max-width: 40rem) {
+    grid-template-columns:
+      minmax(8rem, 16rem)
+      auto;
+  }
+
+  @container (max-width: 30rem) {
+    grid-template-columns:
+      8rem
+      minmax(0, 18rem);
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+
+  @container (max-width: 64rem) {
+    &--DataContract {
+      display: none;
+    }
+  }
+
+  @container (max-width: 48rem) {
+    &--Price {
+      display: none;
+    }
+  }
+
+  @container (max-width: 40rem) {
+    &--Supply {
+      display: none;
+    }
+  }
+}
+
+// With balance
+@mixin ColumnBalance () {
+  @container (max-width: 80rem) {
+    &--OwnerIdentity {
+      display: none;
+    }
+  }
+
+  @container (max-width: 64rem) {
+    &--DataContract {
+      display: none;
+    }
+  }
+
+  @container (max-width: 48rem) {
+    &--Price {
+      display: none;
+    }
+  }
+
+  @container (max-width: 40rem) {
+    &--Supply {
+      display: none;
+    }
+  }
+}

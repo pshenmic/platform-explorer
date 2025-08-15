@@ -1,0 +1,34 @@
+@mixin Columns () {
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns:
+    minmax(0, 999rem)
+    auto;
+
+  @container (max-width: 22.5rem) {
+    grid-template-columns:
+      minmax(0, 999rem);
+  }
+}
+
+@mixin Column () {
+  display: flex;
+  align-items: center;
+
+  &--Identifier {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &--Power {
+    width: max-content;
+    text-align: right;
+  }
+
+  @container (max-width: 22.5rem) {
+    &--Power {
+      display: none;
+    }
+  }
+}

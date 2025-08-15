@@ -33,6 +33,7 @@ function ValueContainer ({
     default: '',
     red: 'ValueContainer--Red',
     green: 'ValueContainer--Green',
+    emeralds: 'ValueContainer--Emeralds',
     blue: 'ValueContainer--Blue',
     brand: 'ValueContainer--Brand',
     lightGray: 'ValueContainer--LightGray',
@@ -43,6 +44,8 @@ function ValueContainer ({
 
   const sizeClasses = {
     default: '',
+    xl: 'ValueContainer--SizeXl',
+    lg: 'ValueContainer--SizeLg',
     md: 'ValueContainer--SizeMd',
     sm: 'ValueContainer--SizeSm',
     xs: 'ValueContainer--SizeXs',
@@ -60,7 +63,7 @@ function ValueContainer ({
   extraClass += ' ' + sizeClasses?.[size] || sizeClasses.default
 
   return (
-    <Wrapper link={link} external={external} className={`ValueContainer ${extraClass} ${className || ''}`} {...props}>
+    <Wrapper link={link} external={external} className={`ValueContainer ${extraClass || ''} ${className || ''}`} {...props}>
       {external && (
         <div className={'ValueContainer__ExternalIcon'}>
           <ArrowCornerIcon color={'brand.normal'} w={'10px'} h={'10px'} mr={'12px'}/>

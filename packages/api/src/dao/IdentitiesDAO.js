@@ -6,6 +6,8 @@ const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
 const { getAliasInfo, decodeStateTransition, getAliasStateByVote } = require('../utils')
+const StateTransitionEnum = require('../enums/StateTransitionEnum')
+const BatchEnum = require('../enums/BatchEnum')
 
 module.exports = class IdentitiesDAO {
   constructor (knex, dapi, client) {
@@ -416,6 +418,7 @@ module.exports = class IdentitiesDAO {
       return Document.fromRow({
         ...row,
         is_system: row.document_is_system,
+        transition_type: BatchEnum[row.transition_type],
         owner: {
           identifier: row.document_owner?.trim() ?? null,
           aliases: aliases ?? []
@@ -451,7 +454,7 @@ module.exports = class IdentitiesDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    return new PaginatedResultSet(rows.map(row => Transaction.fromRow(row)), page, limit, totalCount)
+    return new PaginatedResultSet(rows.map(row => Transaction.fromRow({ ...row, type: StateTransitionEnum[row.type] })), page, limit, totalCount)
   }
 
   getTransfersByIdentity = async (identifier, hash, page, limit, order, type) => {
@@ -499,7 +502,10 @@ module.exports = class IdentitiesDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    return new PaginatedResultSet(rows.map(row => Transfer.fromRow(row)), page, limit, totalCount)
+    return new PaginatedResultSet(rows.map(row => Transfer.fromRow({
+      ...row,
+      type: StateTransitionEnum[row.type]
+    })), page, limit, totalCount)
   }
 
   getIdentityWithdrawalsByTimestamps = async (identifier, timestamps = []) => {

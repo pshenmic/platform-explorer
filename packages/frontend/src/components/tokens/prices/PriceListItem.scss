@@ -1,0 +1,15 @@
+@use '../../../styles/mixins.scss';
+@use './variables' as prices;
+@import '../../../styles/variables.scss';
+
+.PriceListItem {
+  @include mixins.DefListItem(false);
+
+  &__Content {
+    @include prices.Columns();
+  }
+
+  &__Column {
+    @include prices.Column();
+  }
+}
