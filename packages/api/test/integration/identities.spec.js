@@ -1053,7 +1053,8 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.BATCH
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1118,7 +1119,8 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.BATCH
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1186,7 +1188,8 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.BATCH
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1256,7 +1259,8 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.BATCH
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1324,7 +1328,8 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.BATCH
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
         })
         document = await fixtures.document(knex, {
           state_transition_hash: transaction.hash,
@@ -1384,7 +1389,8 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.BATCH
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
         })
         transactions.push({ transaction, block })
       }
@@ -1406,9 +1412,9 @@ describe('Identities routes', () => {
           index: 0,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
-          batchType: null,
+          batchType: i === 0 ? null : 'DOCUMENT_CREATE',
+          data: i === 0 ? '{}' : 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ==',
           type: i === 0 ? StateTransitionEnum[StateTransitionEnum.IDENTITY_CREATE] : StateTransitionEnum[StateTransitionEnum.BATCH],
-          data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
@@ -1433,7 +1439,8 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.BATCH
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
         })
         transactions.push({ transaction, block })
       }
@@ -1453,11 +1460,11 @@ describe('Identities routes', () => {
         .map((_transaction) => ({
           hash: _transaction.transaction.hash,
           index: 0,
-          batchType: null,
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
+          batchType: 'DOCUMENT_CREATE',
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ==',
           type: StateTransitionEnum[StateTransitionEnum.BATCH],
-          data: null,
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
@@ -1482,7 +1489,8 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.BATCH
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
         })
         transactions.push({ transaction, block })
       }
@@ -1505,8 +1513,8 @@ describe('Identities routes', () => {
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
           type: StateTransitionEnum[StateTransitionEnum.BATCH],
-          batchType: null,
-          data: null,
+          batchType: 'DOCUMENT_CREATE',
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ==',
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
@@ -1531,7 +1539,8 @@ describe('Identities routes', () => {
           block_hash: block.hash,
           block_height: block.height,
           owner: identity.identifier,
-          type: StateTransitionEnum.BATCH
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
         })
         transactions.push({ transaction, block })
       }
@@ -1554,8 +1563,8 @@ describe('Identities routes', () => {
           blockHash: _transaction.transaction.block_hash,
           blockHeight: _transaction.block.height,
           type: StateTransitionEnum[StateTransitionEnum.BATCH],
-          batchType: null,
-          data: null,
+          batchType: 'DOCUMENT_CREATE',
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ==',
           timestamp: _transaction.block.timestamp.toISOString(),
           gasUsed: _transaction.transaction.gas_used,
           status: _transaction.transaction.status,
