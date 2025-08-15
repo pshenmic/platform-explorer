@@ -1423,6 +1423,7 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&l
     ]
 }
 ```
+
 Response codes:
 ```
 200: OK
