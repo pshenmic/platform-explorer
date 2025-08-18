@@ -75,6 +75,7 @@ describe('Other routes', () => {
       totalAggregatedAmountInUserAccounts: 1000
     }))
     mock.method(DAPI.prototype, 'getDataContract', async () => ({
+      ownerId: new IdentifierWASM('11111111111111111111111111111111'),
       tokens: {
         29: {
           description: null,
@@ -656,7 +657,7 @@ describe('Other routes', () => {
         maxSupply: '1010',
         totalSupply: '1000',
         owner: {
-          identifier: token.owner,
+          identifier: '11111111111111111111111111111111',
           aliases: [
             {
               alias: 'alias.dash',

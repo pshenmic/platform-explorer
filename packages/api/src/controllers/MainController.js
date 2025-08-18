@@ -187,9 +187,9 @@ class MainController {
     }
 
     // by token name
-    const tokens = await this.tokensDAO.getTokensByName(query, 1, 20, 'desc')
+    const { resultSet: tokens } = await this.tokensDAO.getTokensByName(query, 1, 20, 'desc')
 
-    if (tokens) {
+    if (tokens.length > 0) {
       if (result.tokens) {
         result.tokens.push(tokens)
       } else {
