@@ -381,4 +381,38 @@ module.exports = class TokensDAO {
 
     return new PaginatedResultSet(tokensWithBalance, page, limit, Number(row?.total_count ?? 0))
   }
+
+  getTokensByName = async (name, page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const subquery = this.knex('tokens')
+      .select(
+        'tokens.identifier', 'position', 'data_contracts.identifier as data_contract_identifier',
+        'tokens.owner', 'decimals', 'tokens.state_transition_hash', 'timestamp', 'tokens.name', 'tokens.id'
+      )
+      .whereILike('tokens.name', `${name}%`)
+      .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
+      .leftJoin('state_transitions', 'tokens.state_transition_hash', 'state_transitions.hash')
+      .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
+
+    const rows = await this.knex
+      .with('subquery', subquery)
+      .select(
+        'identifier', 'position', 'data_contract_identifier', 'name',
+        'owner', 'decimals', 'state_transition_hash', 'timestamp', 'id'
+      )
+      .select(
+        this.knex('subquery').select(this.knex.raw('count(*) over () as total_count')).limit(1).as('total_count')
+      )
+      .orderBy('id', order)
+      .offset(fromRank)
+      .limit(limit)
+      .from('subquery')
+
+    const [row] = rows
+
+    const resultSet = rows.map(Token.fromRow)
+
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
+  }
 }

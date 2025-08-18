@@ -8,6 +8,7 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
+const TokensDAO = require('../dao/TokensDAO')
 
 const API_VERSION = require('../../package.json').version
 
@@ -19,6 +20,7 @@ class MainController {
     this.transactionsDAO = new TransactionsDAO(knex, dapi)
     this.identitiesDAO = new IdentitiesDAO(knex, dapi, client)
     this.validatorsDAO = new ValidatorsDAO(knex, dapi)
+    this.tokensDAO = new TokensDAO(knex, dapi)
     this.dapi = dapi
   }
 
@@ -165,6 +167,12 @@ class MainController {
       if (document) {
         result = { ...result, documents: [document] }
       }
+
+      const token = await this.tokensDAO.getTokenByIdentifier(query)
+
+      if (token) {
+        result = { ...result, tokens: [token] }
+      }
     }
 
     // by dpns name
@@ -175,6 +183,17 @@ class MainController {
         result.identities.push(identities)
       } else {
         result = { ...result, identities }
+      }
+    }
+
+    // by token name
+    const tokens = await this.tokensDAO.getTokensByName(query, 1, 20, 'desc')
+
+    if (tokens) {
+      if (result.tokens) {
+        result.tokens.push(tokens)
+      } else {
+        result = { ...result, tokens }
       }
     }
 

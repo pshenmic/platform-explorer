@@ -8,7 +8,7 @@ const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DAPI = require('../../src/DAPI')
-const { IdentifierWASM } = require('pshenmic-dpp')
+const { IdentifierWASM, TokenConfigurationWASM } = require('pshenmic-dpp')
 const BatchEnum = require('../../src/enums/BatchEnum')
 
 const genesisTime = new Date(0)
@@ -30,6 +30,7 @@ describe('Other routes', () => {
   let document
   let transactions
   let aliasTimestamp
+  let token
 
   before(async () => {
     aliasTimestamp = new Date()
@@ -68,6 +69,84 @@ describe('Other routes', () => {
       id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
       createdAt: BigInt(aliasTimestamp.getTime())
     }])
+
+    mock.method(DAPI.prototype, 'getTokenTotalSupply', async () => ({
+      totalSystemAmount: 1000,
+      totalAggregatedAmountInUserAccounts: 1000
+    }))
+    mock.method(DAPI.prototype, 'getDataContract', async () => ({
+      tokens: {
+        29: {
+          description: null,
+          baseSupply: 1000n,
+          maxSupply: 1010n,
+          conventions: {
+            decimals: 1000,
+            localizations: {
+              en: {
+                pluralForm: 'tests',
+                singularForm: 'test',
+                shouldCapitalize: true
+              }
+            }
+          },
+          manualMintingRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          manualBurningRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          freezeRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          unfreezeRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          destroyFrozenFundsRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          emergencyActionRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          distributionRules: {
+            perpetualDistribution: {
+              distributionType: {
+                getDistribution: () => ({
+                  constructor: {
+                    name: 'BlockBasedDistributionWASM'
+                  },
+                  interval: 100n,
+                  function: {
+                    getFunctionName: () => 'FixedAmount',
+                    getFunctionValue: () => ({
+                      amount: 100n
+                    })
+                  }
+                })
+              },
+              distributionRecipient: {
+                getType: () => 'ContractOwner',
+                getValue: () => undefined
+              }
+
+            }
+          },
+          mainGroup: undefined
+        }
+      }
+    }))
 
     app = await server.start()
     client = supertest(app.server)
@@ -132,6 +211,15 @@ describe('Other routes', () => {
       state_transition_hash: documentTransaction.hash,
       owner: identity.identifier,
       data_contract_id: dataContract.id
+    })
+
+    token = await fixtures.token(knex, {
+      position: 29,
+      owner: identity.identifier,
+      data_contract_id: dataContract.id,
+      decimals: 10,
+      base_supply: 1000,
+      state_transition_hash: dataContractTransaction?.hash
     })
 
     transactions.push(identityTransaction.hash)
@@ -371,10 +459,55 @@ describe('Other routes', () => {
           ]
         },
         groups: null,
-        tokens: null
+        tokens: [{
+          identifier: TokenConfigurationWASM.calculateTokenId(dataContract.identifier, 29).base58(),
+          position: 29,
+          timestamp: null,
+          description: null,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
+          totalSupply: '1000',
+          maxSupply: '1010',
+          owner: {
+            identifier: identity.identifier,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString(),
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                contested: true
+              }
+            ]
+          },
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
+          dataContractIdentifier: dataContract.identifier,
+          changeMaxSupply: true,
+          totalGasUsed: null,
+          mainGroup: null,
+          totalTransitionsCount: null,
+          totalFreezeTransitionsCount: null,
+          totalBurnTransitionsCount: null,
+          decimals: 1000,
+          perpetualDistribution: null,
+          preProgrammedDistribution: null,
+          price: null,
+          prices: null
+        }]
       }
 
-      assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
+      assert.deepEqual(body, { dataContracts: [expectedDataContract] })
     })
 
     it('should search by data contract name', async () => {
@@ -499,7 +632,71 @@ describe('Other routes', () => {
         totalWithdrawals: 0
       }
 
-      assert.deepEqual({ identities: [expectedIdentity] }, body)
+      assert.deepEqual(body, { identities: [expectedIdentity] })
+    })
+
+    it('should search token', async () => {
+      const { body } = await client.get(`/search?query=${token.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
+        identifier: token.identifier,
+        position: 29,
+        timestamp: block.timestamp.toISOString(),
+        description: null,
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
+        owner: {
+          identifier: token.owner,
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
+        mintable: false,
+        burnable: false,
+        freezable: false,
+        unfreezable: false,
+        destroyable: false,
+        allowedEmergencyActions: false,
+        dataContractIdentifier: dataContract.identifier,
+        changeMaxSupply: true,
+        totalGasUsed: 0,
+        mainGroup: null,
+        totalTransitionsCount: 0,
+        decimals: 1000,
+        totalFreezeTransitionsCount: 0,
+        totalBurnTransitionsCount: 0,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
+        price: null,
+        prices: null
+      }
+
+      assert.deepEqual({ tokens: [expectedToken] }, body)
     })
   })
 
