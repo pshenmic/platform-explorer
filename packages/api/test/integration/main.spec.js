@@ -196,7 +196,7 @@ describe('Other routes', () => {
     dataContract = await fixtures.dataContract(knex, {
       state_transition_hash: dataContractTransaction.hash,
       owner: identity.identifier,
-      name: 'test'
+      name: 'testContract'
     })
 
     documentTransaction = await fixtures.transaction(knex, {
@@ -220,6 +220,7 @@ describe('Other routes', () => {
       data_contract_id: dataContract.id,
       decimals: 10,
       base_supply: 1000,
+      name: 'test',
       state_transition_hash: dataContractTransaction?.hash
     })
 
@@ -512,7 +513,7 @@ describe('Other routes', () => {
     })
 
     it('should search by data contract name', async () => {
-      const { body } = await client.get('/search?query=test')
+      const { body } = await client.get('/search?query=testContract')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -698,6 +699,88 @@ describe('Other routes', () => {
       }
 
       assert.deepEqual({ tokens: [expectedToken] }, body)
+    })
+
+    it('should search token by name', async () => {
+      const { body } = await client.get('/search?query=test')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
+        identifier: token.identifier,
+        position: 29,
+        timestamp: block.timestamp.toISOString(),
+        description: null,
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
+        owner: {
+          identifier: '11111111111111111111111111111111',
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
+        mintable: false,
+        burnable: false,
+        freezable: false,
+        unfreezable: false,
+        destroyable: false,
+        allowedEmergencyActions: false,
+        dataContractIdentifier: dataContract.identifier,
+        changeMaxSupply: true,
+        totalGasUsed: null,
+        mainGroup: null,
+        totalTransitionsCount: null,
+        decimals: 1000,
+        totalFreezeTransitionsCount: null,
+        totalBurnTransitionsCount: null,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
+        price: null,
+        prices: null
+      }
+
+      const expectedDataContract = {
+        identifier: dataContract.identifier,
+        name: dataContract.name,
+        owner: identity.identifier.trim(),
+        schema: JSON.stringify(dataContract.schema),
+        version: 0,
+        txHash: dataContractTransaction.hash,
+        timestamp: block.timestamp.toISOString(),
+        isSystem: false,
+        documentsCount: 1,
+        averageGasUsed: null,
+        identitiesInteracted: null,
+        totalGasUsed: null,
+        topIdentity: null,
+        groups: null,
+        tokens: null
+      }
+
+      assert.deepEqual({ tokens: [expectedToken], dataContracts: [expectedDataContract] }, body)
     })
   })
 
