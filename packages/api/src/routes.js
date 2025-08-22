@@ -564,6 +564,25 @@ module.exports = ({
       }
     },
     {
+      path: '/tokens/:name/info',
+      method: 'GET',
+      handler: tokensController.getTokensByName,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              // minimal token name is 3 but for search by part name we use minimal length 1
+              minLength: 1,
+              maxLength: 25
+            }
+          }
+        },
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/tokens/rating',
       method: 'GET',
       handler: tokensController.getTokensTrends,
