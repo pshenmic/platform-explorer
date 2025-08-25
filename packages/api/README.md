@@ -385,8 +385,8 @@ GET /validators
         "feeMultiplier": 1,
         "endTime": 1728492066559
       },
-      "totalReward": 0,
-      "epochReward": 0,
+      "totalReward": null,
+      "epochReward": null,
       "withdrawalsCount": null,
       "lastWithdrawal": null,
       "lastWithdrawalTime": null,

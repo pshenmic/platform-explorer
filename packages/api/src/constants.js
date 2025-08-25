@@ -7,6 +7,8 @@ module.exports = {
   WITHDRAWAL_CONTRACT_TYPE: 'withdrawal',
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
   TCP_CONNECT_TIMEOUT: Number(process.env.TCP_CONNECT_TIMEOUT),
+  VALIDATORS_CACHE_LIFE_INTERVAL: Number(process.env.VALIDATORS_CACHE_LIFE_INTERVAL ?? 300000),
+  VALIDATORS_CACHE_KEY: 'validators',
   DPNS_CONTRACT: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
   NETWORK: process.env.NETWORK ?? 'testnet',
   get genesisTime () {

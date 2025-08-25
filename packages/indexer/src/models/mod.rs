@@ -114,6 +114,7 @@ impl TryFrom<TenderdashRPCValidatorsResponse> for Vec<Validator> {
             .iter()
             .map(|td_validator| Validator {
                 pro_tx_hash: td_validator.pro_tx_hash.clone(),
+                id: None,
             })
             .collect();
 
