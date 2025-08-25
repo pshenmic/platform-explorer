@@ -1,7 +1,7 @@
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { getAliasFromDocument } = require('../utils')
-const {DPNS_CONTRACT} = require("../constants");
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class MasternodeVotesDAO {
   constructor (knex, sdk) {

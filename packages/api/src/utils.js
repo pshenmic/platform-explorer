@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT, NETWORK } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK } = require('./constants')
 const { base58 } = require('@scure/base')
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
@@ -14,11 +14,11 @@ const {
   DataContractCreateTransitionWASM,
   IdentityCreateTransitionWASM, IdentityTopUpTransitionWASM, DataContractUpdateTransitionWASM,
   IdentityUpdateTransitionWASM, IdentityCreditTransferWASM, IdentityCreditWithdrawalTransitionWASM,
-  MasternodeVoteTransitionWASM, IdentifierWASM, PlatformVersionWASM, DataContractWASM
+  MasternodeVoteTransitionWASM, PlatformVersionWASM, DataContractWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
 const dpns = require('../data_contracts/dpns.json')
-const {ContestedStateResultType} = require("dash-platform-sdk/src/types");
+const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
 
 const getKnex = () => {
   return require('knex')({

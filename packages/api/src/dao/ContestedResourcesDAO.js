@@ -1,13 +1,11 @@
 const ChoiceEnum = require('../enums/ChoiceEnum')
 const ContestedResource = require('../models/ContestedResource')
 const { buildIndexBuffer, getAliasFromDocument } = require('../utils')
-const { base58 } = require('@scure/base')
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { CONTESTED_RESOURCE_VOTE_DEADLINE, DPNS_CONTRACT} = require('../constants')
+const { CONTESTED_RESOURCE_VOTE_DEADLINE, DPNS_CONTRACT } = require('../constants')
 const ContestedResourceStatus = require('../models/ContestedResourcesStatus')
-const dpnsContract = require('../../data_contracts/dpns.json')
-const {ContestedStateResultType} = require("dash-platform-sdk/src/types");
+const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
 
 module.exports = class ContestedDAO {
   constructor (knex, sdk) {
@@ -160,7 +158,7 @@ module.exports = class ContestedDAO {
         firstTx.document_type_name,
         firstTx.index_name,
         firstTx.resource_value.map(buildIndexBuffer),
-        ContestedStateResultType.DOCUMENTS_AND_VOTE_TALLY,
+        ContestedStateResultType.DOCUMENTS_AND_VOTE_TALLY
       )
 
       status = typeof finishedVoteInfo !== 'undefined'

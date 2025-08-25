@@ -119,7 +119,7 @@ class BlocksController {
       const [startEpoch] = await this.sdk.node.getEpochsInfo(
         1,
         true,
-        Number(epochIndexMin),
+        Number(epochIndexMin)
       )
 
       epochStartTimestamp = startEpoch?.startTime

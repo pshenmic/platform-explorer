@@ -12,13 +12,13 @@ const DocumentsController = require('./controllers/DocumentsController')
 const IdentitiesController = require('./controllers/IdentitiesController')
 const DataContractsController = require('./controllers/DataContractsController')
 const ValidatorsController = require('./controllers/ValidatorsController')
-const { getKnex, decodeStateTransition} = require('./utils')
+const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const RateController = require('./controllers/RateController')
 const MasternodeVotesController = require('./controllers/MasternodeVotesController')
 const ContestedResourcesController = require('./controllers/ContestedResourcesController')
 const TokensController = require('./controllers/TokensController')
-const {DashPlatformSDK} = require("dash-platform-sdk");
+const { DashPlatformSDK } = require('dash-platform-sdk')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -43,7 +43,6 @@ let fastify
 
 module.exports = {
   start: async () => {
-
     const sdk = new DashPlatformSDK({
       grpc: {
         poolLimit: 5,

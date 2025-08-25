@@ -2,9 +2,8 @@ const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
 const { decodeStateTransition, getAliasFromDocument } = require('../utils')
-const dpnsContract = require('../../data_contracts/dpns.json')
 const BatchEnum = require('../enums/BatchEnum')
-const {DPNS_CONTRACT} = require("../constants");
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class DocumentsDAO {
   constructor (knex, sdk) {

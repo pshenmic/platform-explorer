@@ -1,10 +1,9 @@
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { decodeStateTransition, getAliasFromDocument } = require('../utils')
-const dpnsContract = require('../../data_contracts/dpns.json')
 const Token = require('../models/Token')
-const { TokenConfigurationWASM, IdentifierWASM} = require('pshenmic-dpp')
-const {DPNS_CONTRACT} = require("../constants");
+const { TokenConfigurationWASM, IdentifierWASM } = require('pshenmic-dpp')
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class DataContractsDAO {
   constructor (knex, sdk) {

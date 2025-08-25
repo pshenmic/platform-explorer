@@ -8,7 +8,7 @@ const PreProgrammedDistribution = require('../models/PreProgrammedDistribution')
 const { decodeStateTransition } = require('../utils')
 const BatchEnum = require('../enums/BatchEnum')
 const { getAliasFromDocument } = require('../utils')
-const {DPNS_CONTRACT} = require("../constants");
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class TokensDAO {
   constructor (knex, sdk) {
@@ -301,7 +301,7 @@ module.exports = class TokensDAO {
       .orderBy('token_id', order)
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
-    if(rows.length === 0) {
+    if (rows.length === 0) {
       return new PaginatedResultSet([], page, limit, 0)
     }
 

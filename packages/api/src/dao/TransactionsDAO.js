@@ -2,10 +2,9 @@ const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
 const { getAliasFromDocument } = require('../utils')
-const dpnsContract = require('../../data_contracts/dpns.json')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
-const {DPNS_CONTRACT} = require("../constants");
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class TransactionsDAO {
   constructor (knex, sdk) {

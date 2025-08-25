@@ -2,9 +2,8 @@ const Block = require('../models/Block')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { getAliasFromDocument } = require('../utils')
 const Transaction = require('../models/Transaction')
-const dpnsContract = require('../../data_contracts/dpns.json')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
-const {DPNS_CONTRACT} = require("../constants");
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class BlockDAO {
   constructor (knex, sdk) {

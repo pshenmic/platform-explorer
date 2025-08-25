@@ -1,5 +1,5 @@
 const cbor = require('cbor')
-const {ConsensusErrorWASM} = require("pshenmic-dpp");
+const { ConsensusErrorWASM } = require('pshenmic-dpp')
 
 module.exports = class Transaction {
   hash
