@@ -3,12 +3,13 @@ const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { decodeStateTransition, getAliasFromDocument } = require('../utils')
 const dpnsContract = require('../../data_contracts/dpns.json')
 const Token = require('../models/Token')
-const { TokenConfigurationWASM } = require('pshenmic-dpp')
+const { TokenConfigurationWASM, IdentifierWASM} = require('pshenmic-dpp')
+const {DPNS_CONTRACT} = require("../constants");
 
 module.exports = class DataContractsDAO {
-  constructor (knex, dapi) {
+  constructor (knex, sdk) {
     this.knex = knex
-    this.dapi = dapi
+    this.sdk = sdk
   }
 
   getDataContracts = async (page, limit, order, orderBy) => {
@@ -129,7 +130,7 @@ module.exports = class DataContractsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+    const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
 
     const ownerAliases = []
 
@@ -142,7 +143,7 @@ module.exports = class DataContractsDAO {
     if (row.owner === row.top_identity) {
       topIdentityAliases = ownerAliases
     } else {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
 
       if (aliasDocument) {
         topIdentityAliases.push(getAliasFromDocument(aliasDocument))
@@ -165,7 +166,7 @@ module.exports = class DataContractsDAO {
     let tokens = null
 
     try {
-      const config = await this.dapi.getDataContract(identifier)
+      const config = await this.sdk.dataContracts.getDataContractByIdentifier(identifier)
 
       groups = (config ?? { groups: undefined }).groups
 
@@ -174,9 +175,9 @@ module.exports = class DataContractsDAO {
       tokens = await Promise.all(tokenPositions.map(async (tokenPosition) => {
         const tokenConfig = config.tokens[tokenPosition]
 
-        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(identifier, Number(tokenPosition))
+        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(new IdentifierWASM(identifier), tokenConfig.position)
 
-        const tokenTotalSupply = await this.dapi.getTokenTotalSupply(tokenIdentifier.base58())
+        const tokenTotalSupply = await this.sdk.tokens.getTokenTotalSupply(tokenIdentifier.base58())
 
         return Token.fromObject({
           identifier: tokenIdentifier.base58(),
@@ -200,7 +201,9 @@ module.exports = class DataContractsDAO {
           mainGroup: tokenConfig?.mainControlGroup
         })
       }))
-    } catch (error) {}
+    } catch (error) {
+      console.error(error)
+    }
 
     return DataContract.fromObject({
       ...dataContract,
@@ -237,7 +240,7 @@ module.exports = class DataContractsDAO {
         decodedTx = await decodeStateTransition(row.data)
       }
 
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
 
       const aliases = []
 

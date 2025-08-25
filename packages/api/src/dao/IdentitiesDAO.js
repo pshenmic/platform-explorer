@@ -147,12 +147,12 @@ module.exports = class IdentitiesDAO {
     const identity = Identity.fromRow(row)
 
     const aliases = await Promise.all(identity.aliases.map(async alias => {
-      const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+      const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
 
       return getAliasStateByVote(aliasInfo, alias, identifier)
     }))
 
-    const publicKeys = await this.dapi.getIdentityKeys(identity.identifier)
+    const publicKeys = await this.sdk.identities.getIdentityPublicKeys(identity.identifier)
 
     let fundingCoreTx = null
 
@@ -162,7 +162,7 @@ module.exports = class IdentitiesDAO {
       fundingCoreTx = assetLockProof?.fundingCoreTx
     }
 
-    const balance = await this.dapi.getIdentityBalance(identity.identifier)
+    const balance = await this.sdk.identities.getIdentityBalance(identity.identifier)
 
     return Identity.fromObject({
       ...identity,

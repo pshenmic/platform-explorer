@@ -4,14 +4,15 @@ const { buildIndexBuffer, getAliasFromDocument } = require('../utils')
 const { base58 } = require('@scure/base')
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../constants')
+const { CONTESTED_RESOURCE_VOTE_DEADLINE, DPNS_CONTRACT} = require('../constants')
 const ContestedResourceStatus = require('../models/ContestedResourcesStatus')
 const dpnsContract = require('../../data_contracts/dpns.json')
+const {ContestedStateResultType} = require("dash-platform-sdk/src/types");
 
 module.exports = class ContestedDAO {
-  constructor (knex, dapi) {
+  constructor (knex, sdk) {
     this.knex = knex
-    this.dapi = dapi
+    this.sdk = sdk
   }
 
   getContestedResource = async (resourceValue) => {
@@ -118,7 +119,7 @@ module.exports = class ContestedDAO {
       .reduce((accumulator, currentValue) => accumulator + Number((currentValue.document_tx_gas_used ?? 0)), 0)
 
     const contenders = await Promise.all(uniqueContenders.map(async (row) => {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = row.towards_identity_identifier ? await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.towards_identity_identifier.trim()]], 1) : []
 
       const aliases = []
 
@@ -152,12 +153,14 @@ module.exports = class ContestedDAO {
     let status
 
     if (firstTx.data_contract_identifier && firstTx.index_name && firstTx.document_type_name && firstTx.resource_value) {
-      const { finishedVoteInfo } = await this.dapi.getContestedState(
-        base58.decode(firstTx.data_contract_identifier),
+      const dataContract = await this.sdk.dataContracts.getDataContractByIdentifier(firstTx.data_contract_identifier)
+
+      const { finishedVoteInfo } = await this.sdk.contestedResources.getContestedResourceVoteState(
+        dataContract,
         firstTx.document_type_name,
         firstTx.index_name,
-        1,
-        firstTx.resource_value.map(buildIndexBuffer)
+        firstTx.resource_value.map(buildIndexBuffer),
+        ContestedStateResultType.DOCUMENTS_AND_VOTE_TALLY,
       )
 
       status = typeof finishedVoteInfo !== 'undefined'
@@ -367,7 +370,7 @@ module.exports = class ContestedDAO {
       .orderBy('subquery.id', order)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = row.towards_identity_identifier ? await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.towards_identity_identifier.trim()]], 1) : []
+      const [aliasDocument] = row.towards_identity_identifier ? await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.towards_identity_identifier.trim()]], 1) : []
 
       const aliases = []
 

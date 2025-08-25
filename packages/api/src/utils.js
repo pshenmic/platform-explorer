@@ -18,6 +18,7 @@ const {
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
 const dpns = require('../data_contracts/dpns.json')
+const {ContestedStateResultType} = require("dash-platform-sdk/src/types");
 
 const getKnex = () => {
   return require('knex')({
@@ -1158,7 +1159,7 @@ const getAliasInfo = async (aliasText, sdk) => {
         domainBuffer,
         labelBuffer
       ],
-      1
+      ContestedStateResultType.DOCUMENTS_AND_VOTE_TALLY
     )
 
     return { alias: aliasText, contestedState }

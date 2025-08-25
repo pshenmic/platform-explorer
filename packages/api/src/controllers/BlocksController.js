@@ -116,10 +116,10 @@ class BlocksController {
         return response.status(400).send('Bad epochs range')
       }
 
-      const [startEpoch] = await this.dapi.getEpochsInfo(
+      const [startEpoch] = await this.sdk.node.getEpochsInfo(
         1,
+        true,
         Number(epochIndexMin),
-        true
       )
 
       epochStartTimestamp = startEpoch?.startTime
