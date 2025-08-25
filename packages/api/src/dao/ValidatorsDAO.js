@@ -110,12 +110,9 @@ module.exports = class ValidatorsDAO {
 
     const validator = Validator.fromRow(row)
 
-    const identityBalance = await this.dapi.getIdentityBalance(identifier)
 
     return Validator.fromObject({
       ...validator,
-      identityBalance: String(identityBalance),
-      identity: identifier
     })
   }
 

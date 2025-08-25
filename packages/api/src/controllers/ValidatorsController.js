@@ -35,15 +35,30 @@ class ValidatorsController {
 
     const cached = cache.get(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`)
 
-    let proTxInfo = null
+    let validatorInfo = null
 
     if (cached) {
-      proTxInfo = cached
+      validatorInfo = cached
     } else {
-      proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
+      const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
+      const identifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
+      const identityBalance = identifier ? await this.dapi.getIdentityBalance(identifier) : null
 
-      cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, proTxInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
+      validatorInfo = Validator.fromObject(
+        {
+          ...validator,
+          isActive,
+          proTxInfo: ProTxInfo.fromObject(proTxInfo),
+          identity: identifier,
+          identityBalance: String(identityBalance),
+          epochInfo
+        }
+      )
+
+      cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
     }
+
+    const {proTxInfo} = validatorInfo
 
     const [host] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
     const [servicePort] = proTxInfo?.state?.service?.match(/\d+$/) ?? [null]
@@ -79,9 +94,8 @@ class ValidatorsController {
     response.send(
       Validator.fromObject(
         {
-          ...validator,
+          ...validatorInfo,
           isActive,
-          proTxInfo: ProTxInfo.fromObject(proTxInfo),
           epochInfo,
           endpoints
         }
