@@ -9,9 +9,9 @@ const { base58 } = require('@scure/base')
 const Intervals = require('../enums/IntervalsEnum')
 
 class ValidatorsController {
-  constructor (knex, dapi) {
-    this.validatorsDAO = new ValidatorsDAO(knex, dapi)
-    this.dapi = dapi
+  constructor (knex, sdk) {
+    this.validatorsDAO = new ValidatorsDAO(knex, sdk)
+    this.sdk = sdk
   }
 
   getValidatorByProTxHash = async (request, response) => {

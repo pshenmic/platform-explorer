@@ -6,10 +6,10 @@ class EpochController {
   epochDAO
   blocksDAO
 
-  constructor (knex, dapi) {
+  constructor (knex, sdk) {
     this.epochDAO = new EpochDAO(knex)
     this.blocksDAO = new BlocksDAO(knex)
-    this.dapi = dapi
+    this.sdk = sdk
   }
 
   getEpochByIndex = async (request, response) => {

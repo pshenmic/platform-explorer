@@ -12,24 +12,24 @@ const DashCoreRPC = require('../dashcoreRpc')
 const API_VERSION = require('../../package.json').version
 
 class MainController {
-  constructor (knex, dapi, client) {
-    this.blocksDAO = new BlocksDAO(knex, dapi)
-    this.dataContractsDAO = new DataContractsDAO(knex, client, dapi)
-    this.documentsDAO = new DocumentsDAO(knex, dapi, client)
-    this.transactionsDAO = new TransactionsDAO(knex, dapi)
-    this.identitiesDAO = new IdentitiesDAO(knex, dapi, client)
-    this.validatorsDAO = new ValidatorsDAO(knex, dapi)
-    this.dapi = dapi
+  constructor (knex, sdk) {
+    this.blocksDAO = new BlocksDAO(knex, sdk)
+    this.dataContractsDAO = new DataContractsDAO(knex, sdk)
+    this.documentsDAO = new DocumentsDAO(knex, sdk)
+    this.transactionsDAO = new TransactionsDAO(knex, sdk)
+    this.identitiesDAO = new IdentitiesDAO(knex, sdk)
+    this.validatorsDAO = new ValidatorsDAO(knex, sdk)
+    this.sdk = sdk
   }
 
   getStatus = async (request, response) => {
     const [currentBlock, stats, status, tdStatus, epochsInfo, totalCredits, totalCollectedFeesDay] = (await Promise.allSettled([
       this.blocksDAO.getLastBlock(),
       this.blocksDAO.getStats(),
-      this.dapi.getStatus(),
+      this.sdk.node.status(),
       TenderdashRPC.getStatus(),
-      this.dapi.getEpochsInfo(1),
-      this.dapi.getTotalCredits(),
+      this.sdk.node.getEpochsInfo(1),
+      this.sdk.node.totalCredits(),
       this.transactionsDAO.getCollectedFees('24h')
     ])).map((e) => e.value ?? null)
 
@@ -61,7 +61,7 @@ class MainController {
         }
       },
       tenderdash: {
-        version: status?.version?.tenderdashVersion ?? null,
+        version: status?.version?.software?.tenderdash ?? null,
         block: {
           height: tdStatus?.highestBlock?.height ?? null,
           hash: tdStatus?.highestBlock?.hash ?? null,
@@ -74,18 +74,18 @@ class MainController {
       },
       versions: {
         software: {
-          dapi: status?.version?.dapiVersion ?? null,
-          drive: status?.version?.driveVersion ?? null,
-          tenderdash: status?.version?.tenderdashVersion ?? null
+          dapi: status?.version?.software?.dapi ?? null,
+          drive: status?.version?.software?.drive ?? null,
+          tenderdash: status?.version?.software?.tenderdash ?? null
         },
         protocol: {
           tenderdash: {
-            p2p: status?.version?.tenderdashP2pProtocol ?? null,
-            block: status?.version?.tenderdashBlockProtocol ?? null
+            p2p: status?.version?.protocol?.tenderdash.p2p ?? null,
+            block: status?.version?.protocol?.tenderdash.block ?? null
           },
           drive: {
-            latest: status?.version?.driveLatestProtocol ?? null,
-            current: status?.version?.driveCurrentProtocol ?? null
+            latest: status?.version?.protocol?.drive.latest ?? null,
+            current: status?.version?.protocol?.drive.current ?? null
           }
         }
       }

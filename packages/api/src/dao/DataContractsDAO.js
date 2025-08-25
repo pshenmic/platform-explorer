@@ -6,9 +6,8 @@ const Token = require('../models/Token')
 const { TokenConfigurationWASM } = require('pshenmic-dpp')
 
 module.exports = class DataContractsDAO {
-  constructor (knex, client, dapi) {
+  constructor (knex, dapi) {
     this.knex = knex
-    this.client = client
     this.dapi = dapi
   }
 

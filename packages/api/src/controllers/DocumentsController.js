@@ -4,11 +4,10 @@ const Document = require('../models/Document')
 const { IdentifierWASM } = require('pshenmic-dpp')
 
 class DocumentsController {
-  constructor (client, knex, dapi) {
-    this.documentsDAO = new DocumentsDAO(knex, dapi, client)
-    this.dataContractsDAO = new DataContractsDAO(knex, client, dapi)
-    this.client = client
-    this.dapi = dapi
+  constructor (knex, sdk) {
+    this.documentsDAO = new DocumentsDAO(knex, sdk)
+    this.dataContractsDAO = new DataContractsDAO(knex, sdk)
+    this.sdk = sdk
   }
 
   getDocumentByIdentifier = async (request, response) => {

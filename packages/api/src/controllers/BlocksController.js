@@ -6,9 +6,9 @@ const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
 
 class BlocksController {
-  constructor (knex, dapi) {
-    this.blocksDAO = new BlocksDAO(knex, dapi)
-    this.dapi = dapi
+  constructor (knex, sdk) {
+    this.blocksDAO = new BlocksDAO(knex, sdk)
+    this.sdk = sdk
   }
 
   getBlockByHash = async (request, response) => {

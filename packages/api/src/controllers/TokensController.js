@@ -1,8 +1,8 @@
 const TokensDAO = require('../dao/TokensDAO')
 
 class TokensController {
-  constructor (knex, dapi) {
-    this.tokensDAO = new TokensDAO(knex, dapi)
+  constructor (knex, sdk) {
+    this.tokensDAO = new TokensDAO(knex, sdk)
   }
 
   getTokens = async (request, response) => {

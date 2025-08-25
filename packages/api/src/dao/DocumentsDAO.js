@@ -6,9 +6,8 @@ const dpnsContract = require('../../data_contracts/dpns.json')
 const BatchEnum = require('../enums/BatchEnum')
 
 module.exports = class DocumentsDAO {
-  constructor (knex, dapi, client) {
+  constructor (knex, dapi) {
     this.knex = knex
-    this.client = client
     this.dapi = dapi
   }
 

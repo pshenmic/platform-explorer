@@ -8,10 +8,9 @@ const { base58 } = require('@scure/base')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 class IdentitiesController {
-  constructor (client, knex, dapi) {
-    this.identitiesDAO = new IdentitiesDAO(knex, dapi, client)
-    this.dapi = dapi
-    this.client = client
+  constructor (knex, sdk) {
+    this.identitiesDAO = new IdentitiesDAO(knex, sdk)
+    this.sdk = sdk
   }
 
   getIdentityByIdentifier = async (request, response) => {

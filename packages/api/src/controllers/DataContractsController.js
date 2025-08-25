@@ -1,9 +1,9 @@
 const DataContractsDAO = require('../dao/DataContractsDAO')
 
 class DataContractsController {
-  constructor (knex, client, dapi) {
-    this.dataContractsDAO = new DataContractsDAO(knex, client, dapi)
-    this.dapi = dapi
+  constructor (knex, sdk) {
+    this.dataContractsDAO = new DataContractsDAO(knex, sdk)
+    this.sdk = sdk
   }
 
   getDataContractByIdentifier = async (request, response) => {

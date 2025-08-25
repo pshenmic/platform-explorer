@@ -7,11 +7,10 @@ const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchTypeEnum = require('../enums/BatchEnum')
 
 class TransactionsController {
-  constructor (client, knex, dapi) {
-    this.client = client
-    this.transactionsDAO = new TransactionsDAO(knex, dapi)
-    this.dataContractsDAO = new DataContractsDAO(knex, client, dapi)
-    this.dapi = dapi
+  constructor (knex, sdk) {
+    this.transactionsDAO = new TransactionsDAO(knex, sdk)
+    this.dataContractsDAO = new DataContractsDAO(knex, sdk)
+    this.sdk = sdk
   }
 
   getTransactionByHash = async (request, reply) => {

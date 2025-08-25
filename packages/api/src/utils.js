@@ -4,7 +4,6 @@ const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
 const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT, NETWORK } = require('./constants')
 const { base58 } = require('@scure/base')
-const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
 const Alias = require('./models/Alias')
@@ -15,9 +14,10 @@ const {
   DataContractCreateTransitionWASM,
   IdentityCreateTransitionWASM, IdentityTopUpTransitionWASM, DataContractUpdateTransitionWASM,
   IdentityUpdateTransitionWASM, IdentityCreditTransferWASM, IdentityCreditWithdrawalTransitionWASM,
-  MasternodeVoteTransitionWASM, IdentifierWASM, PlatformVersionWASM
+  MasternodeVoteTransitionWASM, IdentifierWASM, PlatformVersionWASM, DataContractWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
+const dpns = require('../data_contracts/dpns.json')
 
 const getKnex = () => {
   return require('knex')({
@@ -35,6 +35,18 @@ const getKnex = () => {
 
 const hash = (data) => {
   return crypto.createHash('sha1').update(data).digest('hex')
+}
+
+const convertToHomographSafeChars = (input) => {
+  return input.toLowerCase().replace(/[oli]/g, (match) => {
+    if (match === 'o') {
+      return '0'
+    }
+    if (match === 'l' || match === 'i') {
+      return '1'
+    }
+    return match
+  })
 }
 
 /**
@@ -944,6 +956,8 @@ const decodeStateTransition = async (base64) => {
       throw new Error('Unknown state transition')
   }
 
+  // stateTransition.free()
+
   return decoded
 }
 
@@ -1090,7 +1104,7 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   }
 
   const bs58Identifier = base58.encode(
-    Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
+    Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId?.bytes() ?? [], 'base64')
   )
 
   if (identifier === bs58Identifier) {
@@ -1126,7 +1140,7 @@ const getAliasFromDocument = (aliasDocument) => {
   }
 }
 
-const getAliasInfo = async (aliasText, dapi) => {
+const getAliasInfo = async (aliasText, sdk) => {
   const [label, domain] = aliasText.split('.')
 
   const normalizedLabel = convertToHomographSafeChars(label ?? '')
@@ -1136,15 +1150,15 @@ const getAliasInfo = async (aliasText, dapi) => {
 
     const labelBuffer = buildIndexBuffer(normalizedLabel)
 
-    const contestedState = await dapi.getContestedState(
-      new IdentifierWASM(DPNS_CONTRACT).base64(),
+    const contestedState = await sdk.contestedResources.getContestedResourceVoteState(
+      DataContractWASM.fromValue(dpns, true, PlatformVersionWASM.PLATFORM_V9),
       'domain',
       'parentNameAndLabel',
-      1,
       [
         domainBuffer,
         labelBuffer
-      ]
+      ],
+      1
     )
 
     return { alias: aliasText, contestedState }

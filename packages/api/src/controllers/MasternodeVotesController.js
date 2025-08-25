@@ -1,8 +1,8 @@
 const MasternodeVotesDAO = require('../dao/MasternodeVotesDAO')
 
 class MasternodeVotesController {
-  constructor (knex, dapi) {
-    this.masternodeVotesDAO = new MasternodeVotesDAO(knex, dapi)
+  constructor (knex, sdk) {
+    this.masternodeVotesDAO = new MasternodeVotesDAO(knex, sdk)
   }
 
   getMasternodeVotes = async (request, response) => {

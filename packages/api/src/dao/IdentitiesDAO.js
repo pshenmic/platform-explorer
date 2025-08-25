@@ -10,10 +10,9 @@ const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
 
 module.exports = class IdentitiesDAO {
-  constructor (knex, dapi, client) {
+  constructor (knex, sdk) {
     this.knex = knex
-    this.dapi = dapi
-    this.client = client
+    this.sdk = sdk
   }
 
   getIdentityByIdentifier = async (identifier) => {
@@ -196,7 +195,7 @@ module.exports = class IdentitiesDAO {
     }
 
     return Promise.all(rows.map(async row => {
-      const aliasInfo = await getAliasInfo(row.alias, this.dapi)
+      const aliasInfo = await getAliasInfo(row.alias, this.sdk)
 
       return {
         identifier: row.identity_identifier,
@@ -286,10 +285,10 @@ module.exports = class IdentitiesDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const resultSet = await Promise.all(rows.map(async row => {
-      const balance = await this.dapi.getIdentityBalance(row.identifier.trim())
+      const balance = await this.sdk.identities.getIdentityBalance(row.identifier.trim())
 
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
 
         return getAliasStateByVote(aliasInfo, alias, row.identifier.trim())
       }))
@@ -410,7 +409,7 @@ module.exports = class IdentitiesDAO {
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
 
         return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
