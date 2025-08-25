@@ -58,7 +58,7 @@ class ValidatorsController {
       cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
     }
 
-    const {proTxInfo} = validatorInfo
+    const { proTxInfo } = validatorInfo
 
     const [host] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
     const [servicePort] = proTxInfo?.state?.service?.match(/\d+$/) ?? [null]

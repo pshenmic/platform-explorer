@@ -110,9 +110,8 @@ module.exports = class ValidatorsDAO {
 
     const validator = Validator.fromRow(row)
 
-
     return Validator.fromObject({
-      ...validator,
+      ...validator
     })
   }
 
