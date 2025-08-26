@@ -1,5 +1,4 @@
 const { describe, it, before, after, mock } = require('node:test')
-const DAPI = require('../../src/DAPI')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
@@ -7,6 +6,9 @@ const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const BatchEnum = require('../../src/enums/BatchEnum')
 const { IdentifierWASM } = require('pshenmic-dpp')
+const {DocumentsController} = require("dash-platform-sdk/src/documents");
+const TokensController = require("dash-platform-sdk/src/tokens");
+const {DataContractsController} = require("dash-platform-sdk/src/dataContracts");
 
 describe('Tokens', () => {
   let app
@@ -25,7 +27,7 @@ describe('Tokens', () => {
 
     aliasTimestamp = new Date()
 
-    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+    mock.method(DocumentsController.prototype, 'query', async () => [{
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -35,11 +37,11 @@ describe('Tokens', () => {
       createdAt: BigInt(aliasTimestamp.getTime())
     }])
 
-    mock.method(DAPI.prototype, 'getTokenTotalSupply', async () => ({
+    mock.method(TokensController.default.prototype, 'getTokenTotalSupply', async () => ({
       totalSystemAmount: 1000,
       totalAggregatedAmountInUserAccounts: 1000
     }))
-    mock.method(DAPI.prototype, 'getDataContract', async () => ({
+    mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({
       ownerId: new IdentifierWASM('11111111111111111111111111111111'),
       tokens: {
         29: {
@@ -199,7 +201,7 @@ describe('Tokens', () => {
       tokens.push({ token, stateTransition, tokenTransition })
     }
 
-    mock.method(DAPI.prototype, 'getIdentityTokenBalances', async () => null)
+    mock.method(TokensController.default.prototype, 'getIdentityTokensBalances', async () => null)
   })
 
   after(async () => {
@@ -734,7 +736,7 @@ describe('Tokens', () => {
     })
 
     it('should return token by id with transition and pre programmed distribution', async () => {
-      mock.method(DAPI.prototype, 'getDataContract', async () => ({
+      mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({
         ownerId: new IdentifierWASM('11111111111111111111111111111111'),
         tokens: {
           29: {
