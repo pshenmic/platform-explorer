@@ -7,9 +7,9 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const BatchEnum = require('../../src/enums/BatchEnum')
-const ContestedResourcesController = require("dash-platform-sdk/src/contestedResources");
-const {IdentitiesController} = require("dash-platform-sdk/src/identities");
-const {DocumentsController} = require("dash-platform-sdk/src/documents");
+const ContestedResourcesController = require('dash-platform-sdk/src/contestedResources')
+const { IdentitiesController } = require('dash-platform-sdk/src/identities')
+const { DocumentsController } = require('dash-platform-sdk/src/documents')
 
 describe('Identities routes', () => {
   let app

@@ -8,7 +8,7 @@ const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const BatchEnum = require('../../src/enums/BatchEnum')
-const {DocumentsController} = require("dash-platform-sdk/src/documents");
+const { DocumentsController } = require('dash-platform-sdk/src/documents')
 
 describe('Documents routes', () => {
   let app

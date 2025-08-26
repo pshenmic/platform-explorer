@@ -14,8 +14,8 @@ const Epoch = require('../../src/models/Epoch')
 const { base58 } = require('@scure/base')
 const { IDENTITY_CREDIT_WITHDRAWAL } = require('../../src/enums/StateTransitionEnum')
 const cache = require('../../src/cache')
-const {NodeController} = require("dash-platform-sdk/src/node");
-const {IdentitiesController} = require("dash-platform-sdk/src/identities");
+const { NodeController } = require('dash-platform-sdk/src/node')
+const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 
 describe('Validators routes', () => {
   let app

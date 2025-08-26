@@ -6,7 +6,7 @@ const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const {NodeController} = require('dash-platform-sdk/src/node')
+const { NodeController } = require('dash-platform-sdk/src/node')
 
 describe('Epoch routes', () => {
   let app

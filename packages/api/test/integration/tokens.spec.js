@@ -6,9 +6,9 @@ const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const BatchEnum = require('../../src/enums/BatchEnum')
 const { IdentifierWASM } = require('pshenmic-dpp')
-const {DocumentsController} = require("dash-platform-sdk/src/documents");
-const TokensController = require("dash-platform-sdk/src/tokens");
-const {DataContractsController} = require("dash-platform-sdk/src/dataContracts");
+const { DocumentsController } = require('dash-platform-sdk/src/documents')
+const TokensController = require('dash-platform-sdk/src/tokens')
+const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
 
 describe('Tokens', () => {
   let app

@@ -6,9 +6,9 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { IdentifierWASM } = require('pshenmic-dpp')
-const {DocumentsController} = require("dash-platform-sdk/src/documents");
-const {DataContractsController} = require("dash-platform-sdk/src/dataContracts");
-const ContestedResourcesController = require("dash-platform-sdk/src/contestedResources");
+const { DocumentsController } = require('dash-platform-sdk/src/documents')
+const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
+const ContestedResourcesController = require('dash-platform-sdk/src/contestedResources')
 
 describe('DataContracts routes', () => {
   let app

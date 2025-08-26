@@ -8,7 +8,7 @@ const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const BatchTypeEnum = require('../../src/enums/BatchEnum')
-const {DocumentsController} = require("dash-platform-sdk/src/documents");
+const { DocumentsController } = require('dash-platform-sdk/src/documents')
 
 describe('Transaction routes', () => {
   let app

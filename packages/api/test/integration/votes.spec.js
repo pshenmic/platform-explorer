@@ -4,7 +4,7 @@ const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
-const {DocumentsController} = require("dash-platform-sdk/src/documents");
+const { DocumentsController } = require('dash-platform-sdk/src/documents')
 
 describe('Masternode routes', () => {
   let app

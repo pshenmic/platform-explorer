@@ -7,9 +7,9 @@ const { getKnex } = require('../../src/utils')
 const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../../src/constants')
 const ChoiceEnum = require('../../src/enums/ChoiceEnum')
 const { IdentifierWASM } = require('pshenmic-dpp')
-const {DocumentsController} = require('dash-platform-sdk/src/documents')
+const { DocumentsController } = require('dash-platform-sdk/src/documents')
 const ContestedResourcesController = require('dash-platform-sdk/src/contestedResources/index')
-const {DataContractsController} = require('dash-platform-sdk/src/dataContracts')
+const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
 
 describe('Contested documents routes', () => {
   let app
