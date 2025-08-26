@@ -23,6 +23,18 @@ const fixtures = {
 
     return row
   },
+  getValidator: async (knex, { pro_tx_hash }) => {
+    if (!pro_tx_hash) {
+      throw new Error('pro_tx_hash must be provided')
+    }
+
+    const rows = await knex('validators')
+      .where('pro_tx_hash', pro_tx_hash)
+
+    const [row] = rows
+
+    return row
+  },
   getStateTransition: async (knex, { hash, id }) => {
     if (!hash && !id) {
       throw new Error('hash or id must be provided')
@@ -57,6 +69,9 @@ const fixtures = {
     validator,
     app_hash
   } = {}) => {
+    const validatorObject = validator
+      ? await fixtures.getValidator(knex, { pro_tx_hash: validator })
+      : await fixtures.validator(knex)
     const row = {
       hash: hash ?? generateHash(),
       height: height ?? 1,
@@ -64,7 +79,8 @@ const fixtures = {
       block_version: block_version ?? 13,
       app_version: app_version ?? 1,
       l1_locked_height: l1_locked_height ?? 1337,
-      validator: validator ?? (await fixtures.validator(knex)).pro_tx_hash,
+      validator: validatorObject.pro_tx_hash,
+      validator_id: validatorObject.id,
       app_hash: app_hash ?? generateHash()
     }
 
@@ -386,6 +402,7 @@ const fixtures = {
     max_supply,
     base_supply,
     localizations,
+    name,
     keeps_transfer_history,
     keeps_freezing_history,
     keeps_minting_history,
@@ -432,6 +449,7 @@ const fixtures = {
       localizations,
       state_transition_hash,
       description,
+      name,
       keeps_transfer_history: keeps_transfer_history ?? true,
       keeps_freezing_history: keeps_freezing_history ?? true,
       keeps_minting_history: keeps_minting_history ?? true,
@@ -512,6 +530,10 @@ const fixtures = {
     const token = await this.getToken(knex, { identifier: token_identifier })
 
     await this.tokenHolder(knex, { holder: owner, token_id: token.id })
+
+    if (recipient) {
+      await this.tokenHolder(knex, { holder: recipient, token_id: token.id })
+    }
 
     return { ...row, id: result.id, transition }
   },

@@ -17,8 +17,11 @@ const {
   MasternodeVoteTransitionWASM, PlatformVersionWASM, DataContractWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
-const dpns = require('../data_contracts/dpns.json')
+const dpnsContract = require('../data_contracts/dpns.json')
 const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
+const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
+const Token = require('./models/Token')
+const PerpetualDistribution = require('./models/PerpetualDistribution')
 
 const getKnex = () => {
   return require('knex')({
@@ -59,6 +62,90 @@ const convertToHomographSafeChars = (input) => {
 const outputScriptToAddress = (script) => {
   const address = dashcorelib.Script(script).toAddress(NETWORK)
   return address ? address.toString() : null
+}
+
+const fetchTokenInfoByRows = async (rows, dapi) => {
+  const dataContractsWithTokens = await Promise.all(rows.map(async (row) => {
+    const dataContract = await dapi.getDataContract(row.data_contract_identifier)
+
+    if (!dataContract) {
+      return undefined
+    }
+
+    const tokensPositions = Object.keys(dataContract.tokens)
+
+    return await Promise.all(tokensPositions.map(async (tokenPosition) => {
+      const tokenIdentifier =
+        row.tokens?.find(token => token.position === Number(tokenPosition))?.token_identifier ?? row.identifier
+
+      if (!tokenIdentifier) {
+        return undefined
+      }
+
+      const tokenConfig = dataContract.tokens[tokenPosition]
+
+      const tokenTotalSupply = await dapi.getTokenTotalSupply(tokenIdentifier)
+
+      const [aliasDocument] = await dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', dataContract.ownerId.base58()]], 1)
+
+      const aliases = []
+
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
+
+      const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.distributionRules ?? {}
+
+      const preProgrammedDistributions = preProgrammedDistribution?.distributions
+
+      const preProgrammedDistributionTimestamps = preProgrammedDistributions ? Object.keys(preProgrammedDistributions) : undefined
+
+      const preProgrammedDistributionNormal = preProgrammedDistributionTimestamps?.map((timestamp) => PreProgrammedDistribution.fromWASMObject({ timestamp, value: preProgrammedDistributions[timestamp] }))
+
+      let priceTx = null
+
+      if (row.price_transition_data) {
+        const decodedTx = await decodeStateTransition(row.price_transition_data)
+
+        priceTx = decodedTx.transitions[0]
+      }
+
+      return Token.fromObject({
+        identifier: tokenIdentifier,
+        dataContractIdentifier: row.data_contract_identifier,
+        owner: {
+          identifier: dataContract.ownerId.base58(),
+          aliases: aliases ?? []
+        },
+        price: priceTx?.price,
+        prices: priceTx?.prices,
+        timestamp: row.timestamp,
+        totalGasUsed: Number(row.total_gas_used),
+        totalTransitionsCount: Number(row.total_transitions_count),
+        totalBurnTransitionsCount: Number(row.total_burn_transitions_count),
+        totalFreezeTransitionsCount: Number(row.total_freeze_transitions_count),
+        position: Number(tokenPosition),
+        totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
+        description: tokenConfig?.description,
+        localizations: tokenConfig?.conventions?.localizations,
+        decimals: tokenConfig?.conventions?.decimals,
+        baseSupply: tokenConfig?.baseSupply.toString(),
+        maxSupply: tokenConfig?.maxSupply?.toString(),
+        mintable: tokenConfig?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        burnable: tokenConfig?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        freezable: tokenConfig?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        changeMaxSupply: tokenConfig?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        mainGroup: tokenConfig?.mainControlGroup,
+        perpetualDistribution: perpetualDistribution ? PerpetualDistribution.fromWASMObject(perpetualDistribution) : null,
+        preProgrammedDistribution: preProgrammedDistributionNormal
+      })
+    }))
+  }))
+
+  return dataContractsWithTokens.reduce((acc, contract) => contract ? [...acc, ...contract.filter((token) => token !== undefined)] : acc, [])
 }
 
 const tokensConfigToObject = (config) => {
@@ -957,8 +1044,6 @@ const decodeStateTransition = async (base64) => {
       throw new Error('Unknown state transition')
   }
 
-  // stateTransition.free()
-
   return decoded
 }
 
@@ -1179,5 +1264,6 @@ module.exports = {
   getAliasStateByVote,
   buildIndexBuffer,
   outputScriptToAddress,
-  getAliasFromDocument
+  getAliasFromDocument,
+  fetchTokenInfoByRows
 }

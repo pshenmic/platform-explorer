@@ -12,7 +12,7 @@ class TokensController {
       order = 'asc'
     } = request.query
 
-    const tokens = await this.tokensDAO.getTokens(Number(page ?? 0), Number(limit ?? 0), order)
+    const tokens = await this.tokensDAO.getTokens(Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(tokens)
   }
@@ -41,8 +41,8 @@ class TokensController {
 
     const transitions = await this.tokensDAO.getTokenTransitions(
       identifier,
-      Number(page ?? 0),
-      Number(limit ?? 0),
+      Number(page ?? 1),
+      Number(limit ?? 10),
       order
     )
 
@@ -69,8 +69,8 @@ class TokensController {
     const rating = await this.tokensDAO.getTokensTrends(
       new Date(start),
       new Date(end),
-      Number(page ?? 0),
-      Number(limit ?? 0),
+      Number(page ?? 1),
+      Number(limit ?? 10),
       order
     )
 
@@ -81,7 +81,16 @@ class TokensController {
     const { page = 1, limit = 10, order = 'asc' } = request.query
     const { identifier } = request.params
 
-    const tokens = await this.tokensDAO.getTokensByIdentity(identifier, Number(page ?? 0), Number(limit ?? 0), order)
+    const tokens = await this.tokensDAO.getTokensByIdentity(identifier, Number(page ?? 1), Number(limit ?? 10), order)
+
+    response.send(tokens)
+  }
+
+  getTokensByName = async (request, response) => {
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const { name } = request.params
+
+    const tokens = await this.tokensDAO.getTokensByName(name, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(tokens)
   }

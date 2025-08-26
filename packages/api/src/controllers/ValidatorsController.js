@@ -8,6 +8,9 @@ const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const Intervals = require('../enums/IntervalsEnum')
 
+const cache = require('../cache')
+const { VALIDATORS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL } = require('../constants')
+
 class ValidatorsController {
   constructor (knex, sdk) {
     this.validatorsDAO = new ValidatorsDAO(knex, sdk)
@@ -28,9 +31,34 @@ class ValidatorsController {
 
     const validators = await TenderdashRPC.getValidators()
 
-    const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
-
     const isActive = validators.some(validator => validator.pro_tx_hash === hash)
+
+    const cached = cache.get(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`)
+
+    let validatorInfo = null
+
+    if (cached) {
+      validatorInfo = cached
+    } else {
+      const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
+      const identifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
+      const identityBalance = identifier ? await this.dapi.getIdentityBalance(identifier) : null
+
+      validatorInfo = Validator.fromObject(
+        {
+          ...validator,
+          isActive,
+          proTxInfo: ProTxInfo.fromObject(proTxInfo),
+          identity: identifier,
+          identityBalance: String(identityBalance),
+          epochInfo
+        }
+      )
+
+      cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
+    }
+
+    const { proTxInfo } = validatorInfo
 
     const [host] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
     const [servicePort] = proTxInfo?.state?.service?.match(/\d+$/) ?? [null]
@@ -66,9 +94,8 @@ class ValidatorsController {
     response.send(
       Validator.fromObject(
         {
-          ...validator,
+          ...validatorInfo,
           isActive,
-          proTxInfo: ProTxInfo.fromObject(proTxInfo),
           epochInfo,
           endpoints
         }
@@ -101,33 +128,39 @@ class ValidatorsController {
       epochInfo
     )
 
-    const validatorsWithInfo = await Promise.all(
-      validators.resultSet.map(async (validator) =>
-        ({ ...validator, proTxInfo: await DashCoreRPC.getProTxInfo(validator.proTxHash) })))
-
     const resultSet = await Promise.all(
-      validatorsWithInfo.map(
-        async (validator) => {
+      validators.resultSet.map(async (validator) => {
+        const cached = cache.get(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`)
+
+        let validatorInfo = null
+
+        if (cached) {
+          validatorInfo = cached
+        } else {
+          const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
           const identifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
           const identityBalance = identifier ? await this.dapi.getIdentityBalance(identifier) : null
 
-          return Validator.fromObject(
+          validatorInfo = Validator.fromObject(
             {
               ...validator,
               isActive: activeValidators.some(activeValidator =>
                 activeValidator.pro_tx_hash === validator.proTxHash),
-              proTxInfo: ProTxInfo.fromObject(validator.proTxInfo),
+              proTxInfo: ProTxInfo.fromObject(proTxInfo),
               identity: identifier,
               identityBalance: String(identityBalance),
               epochInfo
             }
           )
+
+          cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
         }
-      )
-    )
+
+        return validatorInfo
+      }))
 
     return response.send({
-      ...validators,
+      pagination: validators.pagination,
       resultSet
     })
   }
