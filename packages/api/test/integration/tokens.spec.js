@@ -40,6 +40,7 @@ describe('Tokens', () => {
       totalAggregatedAmountInUserAccounts: 1000
     }))
     mock.method(DAPI.prototype, 'getDataContract', async () => ({
+      ownerId: new IdentifierWASM('11111111111111111111111111111111'),
       tokens: {
         29: {
           description: null,
@@ -146,7 +147,8 @@ describe('Tokens', () => {
         data_contract_id: dataContract.id,
         decimals: i,
         base_supply: (i + 1) * 1000,
-        state_transition_hash: stateTransition?.hash
+        state_transition_hash: stateTransition?.hash,
+        name: `test${i}`
       })
 
       if (i > 15) {
@@ -455,7 +457,7 @@ describe('Tokens', () => {
         maxSupply: '1010',
         totalSupply: '1000',
         owner: {
-          identifier: token.token.owner,
+          identifier: '11111111111111111111111111111111',
           aliases: [
             {
               alias: 'alias.dash',
@@ -521,7 +523,7 @@ describe('Tokens', () => {
         maxSupply: '1010',
         totalSupply: '1000',
         owner: {
-          identifier: token.token.owner,
+          identifier: '11111111111111111111111111111111',
           aliases: [
             {
               alias: 'alias.dash',
@@ -588,7 +590,7 @@ describe('Tokens', () => {
         maxSupply: '1010',
         totalSupply: '1000',
         owner: {
-          identifier: token.token.owner,
+          identifier: '11111111111111111111111111111111',
           aliases: [
             {
               alias: 'alias.dash',
@@ -671,7 +673,7 @@ describe('Tokens', () => {
         maxSupply: '1010',
         totalSupply: '1000',
         owner: {
-          identifier: token.token.owner,
+          identifier: '11111111111111111111111111111111',
           aliases: [
             {
               alias: 'alias.dash',
@@ -733,6 +735,7 @@ describe('Tokens', () => {
 
     it('should return token by id with transition and pre programmed distribution', async () => {
       mock.method(DAPI.prototype, 'getDataContract', async () => ({
+        ownerId: new IdentifierWASM('11111111111111111111111111111111'),
         tokens: {
           29: {
             description: null,
@@ -817,7 +820,7 @@ describe('Tokens', () => {
         maxSupply: '1010',
         totalSupply: '1000',
         owner: {
-          identifier: token.token.owner,
+          identifier: '11111111111111111111111111111111',
           aliases: [
             {
               alias: 'alias.dash',
@@ -891,6 +894,336 @@ describe('Tokens', () => {
       await client.get('/token/444444446WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
+    })
+  })
+
+  describe('getTokensByName()', () => {
+    it('should return default list of tokens with name', async () => {
+      const { body } = await client.get('/tokens/test/info')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 30)
+
+      const expectedTokens = tokens
+        .filter(({ token }) => token.name?.includes('test'))
+        .sort((a, b) => a.token.id - b.token.id)
+        .slice(0, 10)
+        .map(({ token }) => ({
+          identifier: token.identifier,
+          position: 29,
+          timestamp: block.timestamp.toISOString(),
+          description: null,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
+          totalSupply: '1000',
+          maxSupply: '1010',
+          owner: {
+            identifier: '11111111111111111111111111111111',
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
+          dataContractIdentifier: dataContract.identifier,
+          changeMaxSupply: true,
+          totalGasUsed: null,
+          mainGroup: null,
+          totalTransitionsCount: null,
+          decimals: 1000,
+          totalFreezeTransitionsCount: null,
+          totalBurnTransitionsCount: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
+          price: null,
+          prices: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTokens)
+    })
+
+    it('should return default list of tokens with name with order desc', async () => {
+      const { body } = await client.get('/tokens/test/info?order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 30)
+
+      const expectedTokens = tokens
+        .filter(({ token }) => token.name?.includes('test'))
+        .sort((a, b) => b.token.id - a.token.id)
+        .slice(0, 10)
+        .map(({ token }) => ({
+          identifier: token.identifier,
+          position: 29,
+          timestamp: block.timestamp.toISOString(),
+          description: null,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
+          totalSupply: '1000',
+          maxSupply: '1010',
+          owner: {
+            identifier: '11111111111111111111111111111111',
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
+          dataContractIdentifier: dataContract.identifier,
+          changeMaxSupply: true,
+          totalGasUsed: null,
+          mainGroup: null,
+          totalTransitionsCount: null,
+          decimals: 1000,
+          totalFreezeTransitionsCount: null,
+          totalBurnTransitionsCount: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
+          price: null,
+          prices: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTokens)
+    })
+
+    it('should return default list of tokens with name with order desc and custom page size', async () => {
+      const { body } = await client.get('/tokens/test/info?order=desc&limit=11')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 11)
+      assert.equal(body.pagination.total, 30)
+
+      const expectedTokens = tokens
+        .filter(({ token }) => token.name?.includes('test'))
+        .sort((a, b) => b.token.id - a.token.id)
+        .slice(0, 11)
+        .map(({ token }) => ({
+          identifier: token.identifier,
+          position: 29,
+          timestamp: block.timestamp.toISOString(),
+          description: null,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
+          totalSupply: '1000',
+          maxSupply: '1010',
+          owner: {
+            identifier: '11111111111111111111111111111111',
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
+          dataContractIdentifier: dataContract.identifier,
+          changeMaxSupply: true,
+          totalGasUsed: null,
+          mainGroup: null,
+          totalTransitionsCount: null,
+          decimals: 1000,
+          totalFreezeTransitionsCount: null,
+          totalBurnTransitionsCount: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
+          price: null,
+          prices: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTokens)
+    })
+
+    it('should return default list of tokens with name with order desc and custom page size and page number', async () => {
+      const { body } = await client.get('/tokens/test/info?order=desc&limit=11&page=2')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 11)
+      assert.equal(body.pagination.total, 30)
+
+      const expectedTokens = tokens
+        .filter(({ token }) => token.name?.includes('test'))
+        .sort((a, b) => b.token.id - a.token.id)
+        .slice(11, 22)
+        .map(({ token }) => ({
+          identifier: token.identifier,
+          position: 29,
+          timestamp: block.timestamp.toISOString(),
+          description: null,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
+          totalSupply: '1000',
+          maxSupply: '1010',
+          owner: {
+            identifier: '11111111111111111111111111111111',
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
+          dataContractIdentifier: dataContract.identifier,
+          changeMaxSupply: true,
+          totalGasUsed: null,
+          mainGroup: null,
+          totalTransitionsCount: null,
+          decimals: 1000,
+          totalFreezeTransitionsCount: null,
+          totalBurnTransitionsCount: null,
+          perpetualDistribution: null,
+          preProgrammedDistribution: [
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '1'
+                }
+              ],
+              timestamp: '2025-07-15T09:24:40.493Z'
+            },
+            {
+              out: [
+                {
+                  identifier: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  tokenAmount: '10'
+                }
+              ],
+              timestamp: '2025-07-15T09:18:30.493Z'
+            }
+          ],
+          price: null,
+          prices: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTokens)
     })
   })
 
@@ -1127,7 +1460,7 @@ describe('Tokens', () => {
           maxSupply: '1010',
           totalSupply: '1000',
           owner: {
-            identifier: token.owner,
+            identifier: '11111111111111111111111111111111',
             aliases: [
               {
                 alias: 'alias.dash',
@@ -1209,7 +1542,7 @@ describe('Tokens', () => {
           maxSupply: '1010',
           totalSupply: '1000',
           owner: {
-            identifier: token.owner,
+            identifier: '11111111111111111111111111111111',
             aliases: [
               {
                 alias: 'alias.dash',
@@ -1291,7 +1624,7 @@ describe('Tokens', () => {
           maxSupply: '1010',
           totalSupply: '1000',
           owner: {
-            identifier: token.owner,
+            identifier: '11111111111111111111111111111111',
             aliases: [
               {
                 alias: 'alias.dash',
@@ -1373,7 +1706,7 @@ describe('Tokens', () => {
           maxSupply: '1010',
           totalSupply: '1000',
           owner: {
-            identifier: token.owner,
+            identifier: '11111111111111111111111111111111',
             aliases: [
               {
                 alias: 'alias.dash',
