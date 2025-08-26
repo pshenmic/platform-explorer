@@ -4,10 +4,12 @@ const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
-const DAPI = require('../../src/DAPI')
 const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../../src/constants')
 const ChoiceEnum = require('../../src/enums/ChoiceEnum')
 const { IdentifierWASM } = require('pshenmic-dpp')
+const {DocumentsController} = require('dash-platform-sdk/src/documents')
+const ContestedResourcesController = require('dash-platform-sdk/src/contestedResources/index')
+const {DataContractsController} = require('dash-platform-sdk/src/dataContracts')
 
 describe('Contested documents routes', () => {
   let app
@@ -26,7 +28,9 @@ describe('Contested documents routes', () => {
   before(async () => {
     aliasTimestamp = new Date()
 
-    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+    mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => {})
+
+    mock.method(DocumentsController.prototype, 'query', async () => [{
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -35,6 +39,8 @@ describe('Contested documents routes', () => {
       id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
       createdAt: BigInt(aliasTimestamp.getTime())
     }])
+
+    mock.method(ContestedResourcesController.default.prototype, 'getContestedResourceVoteState', async () => ({ finishedVoteInfo: {} }))
 
     app = await server.start()
     client = supertest(app.server)
@@ -232,8 +238,6 @@ describe('Contested documents routes', () => {
         masternodeVote
       })
     }
-
-    mock.method(DAPI.prototype, 'getContestedState', async () => ({ finishedVoteInfo: {} }))
   })
 
   after(async () => {

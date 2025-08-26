@@ -117,7 +117,7 @@ module.exports = class ContestedDAO {
       .reduce((accumulator, currentValue) => accumulator + Number((currentValue.document_tx_gas_used ?? 0)), 0)
 
     const contenders = await Promise.all(uniqueContenders.map(async (row) => {
-      const [aliasDocument] = row.towards_identity_identifier ? await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.towards_identity_identifier.trim()]], 1) : []
+      const [aliasDocument] = row.owner ? await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1) : []
 
       const aliases = []
 
