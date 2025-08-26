@@ -125,7 +125,7 @@ class BlocksController {
       epochStartTimestamp = startEpoch?.startTime
 
       if (epochIndexMax) {
-        const [endEpoch] = await this.dapi.getEpochsInfo(
+        const [endEpoch] = await this.sdk.node.getEpochsInfo(
           1,
           Number(epochIndexMax),
           true

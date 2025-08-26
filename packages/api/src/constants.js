@@ -10,6 +10,7 @@ module.exports = {
   VALIDATORS_CACHE_LIFE_INTERVAL: Number(process.env.VALIDATORS_CACHE_LIFE_INTERVAL ?? 300000),
   VALIDATORS_CACHE_KEY: 'validators',
   DPNS_CONTRACT: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
+  WITHDRAWAL_CONTRACT: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6',
   NETWORK: process.env.NETWORK ?? 'testnet',
   get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {

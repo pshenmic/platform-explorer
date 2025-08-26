@@ -5,6 +5,7 @@ const Intervals = require('../enums/IntervalsEnum')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchTypeEnum = require('../enums/BatchEnum')
+const { StateTransitionWASM } = require('pshenmic-dpp')
 
 class TransactionsController {
   constructor (knex, sdk) {
@@ -162,12 +163,12 @@ class TransactionsController {
       return response.status(400).send('hex or base64 must be set')
     }
 
-    const transactionBuffer = hex
-      ? Buffer.from(hex, 'hex')
-      : Buffer.from(base64, 'base64')
+    const transaction = hex
+      ? StateTransitionWASM.fromHex(hex)
+      : StateTransitionWASM.fromBase64(base64)
 
     try {
-      await this.dapi.broadcastTransition(transactionBuffer.toString('base64'))
+      await this.sdk.stateTransitions.broadcast(transaction)
     } catch (e) {
       return response.status(400).send({ error: e.toString() })
     }

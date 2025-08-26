@@ -36,22 +36,14 @@ class DataContractsController {
     let dataContract
 
     if (identifier) {
-      dataContract = await this.dataContractsDAO.getDataContractByIdentifier(identifier)
+      dataContract = await this.sdk.dataContracts.getDataContractByIdentifier(identifier)
     }
 
     if (!dataContract) {
       return response.status(404).send({ message: 'data contract not found' })
     }
 
-    const buffer = (await this.dapi.dpp.dataContract.createFromObject({
-      $format_version: '0',
-      ownerId: dataContract.owner.identifier,
-      id: dataContract.identifier,
-      version: dataContract.version,
-      documentSchemas: JSON.parse(dataContract.schema)
-    })).toBuffer()
-
-    response.send({ base64: buffer.toString('base64') })
+    response.send({ base64: dataContract.base64() })
   }
 
   getDataContractTransactions = async (request, response) => {

@@ -106,7 +106,7 @@ module.exports = class TokensDAO {
       return undefined
     }
 
-    const [tokenWithFullInfo] = await fetchTokenInfoByRows(rows, this.dapi)
+    const [tokenWithFullInfo] = await fetchTokenInfoByRows(rows, this.sdk)
 
     return tokenWithFullInfo
   }
@@ -244,9 +244,13 @@ module.exports = class TokensDAO {
       .orderBy('token_id', order)
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
-    const tokens = await fetchTokenInfoByRows(rows, this.dapi)
+    if (rows.length === 0) {
+      return new PaginatedResultSet([], page, limit, 0)
+    }
 
-    const tokenIdentifierList = tokens.map((token) => token.identifier.base58())
+    const tokens = await fetchTokenInfoByRows(rows, this.sdk)
+
+    const tokenIdentifierList = tokens.map((token) => token.identifier)
 
     const tokenBalances = await this.sdk.tokens.getIdentityTokensBalances(identifier, tokenIdentifierList)
 
@@ -289,7 +293,7 @@ module.exports = class TokensDAO {
 
     const [row] = rows
 
-    const resultSet = await fetchTokenInfoByRows(rows, this.dapi)
+    const resultSet = await fetchTokenInfoByRows(rows, this.sdk)
 
     return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
   }

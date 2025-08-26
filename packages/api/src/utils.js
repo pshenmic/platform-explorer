@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT } = require('./constants')
 const { base58 } = require('@scure/base')
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
@@ -64,9 +64,9 @@ const outputScriptToAddress = (script) => {
   return address ? address.toString() : null
 }
 
-const fetchTokenInfoByRows = async (rows, dapi) => {
+const fetchTokenInfoByRows = async (rows, sdk) => {
   const dataContractsWithTokens = await Promise.all(rows.map(async (row) => {
-    const dataContract = await dapi.getDataContract(row.data_contract_identifier)
+    const dataContract = await sdk.dataContracts.getDataContractByIdentifier(row.data_contract_identifier)
 
     if (!dataContract) {
       return undefined
@@ -84,9 +84,9 @@ const fetchTokenInfoByRows = async (rows, dapi) => {
 
       const tokenConfig = dataContract.tokens[tokenPosition]
 
-      const tokenTotalSupply = await dapi.getTokenTotalSupply(tokenIdentifier)
+      const tokenTotalSupply = await sdk.tokens.getTokenTotalSupply(tokenIdentifier)
 
-      const [aliasDocument] = await dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', dataContract.ownerId.base58()]], 1)
+      const [aliasDocument] = await sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', dataContract.ownerId.base58()]], 1)
 
       const aliases = []
 
@@ -773,10 +773,9 @@ const decodeStateTransition = async (base64) => {
 
                 out.data = createTransition.data
                 out.prefundedVotingBalance = prefundedVotingBalance
-                  ? Object.fromEntries(
-                    Object.entries(prefundedVotingBalance)
-                      .map(prefund => [prefund[0], Number(prefund[1])])
-                  )
+                  ? {
+                    [prefundedVotingBalance.indexName]: String(prefundedVotingBalance.credits),
+                  }
                   : null
 
                 break
@@ -1237,7 +1236,7 @@ const getAliasInfo = async (aliasText, sdk) => {
     const labelBuffer = buildIndexBuffer(normalizedLabel)
 
     const contestedState = await sdk.contestedResources.getContestedResourceVoteState(
-      DataContractWASM.fromValue(dpns, true, PlatformVersionWASM.PLATFORM_V9),
+      DataContractWASM.fromValue(dpnsContract, true, PlatformVersionWASM.PLATFORM_V9),
       'domain',
       'parentNameAndLabel',
       [

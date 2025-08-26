@@ -19,7 +19,7 @@ class MainController {
     this.documentsDAO = new DocumentsDAO(knex, sdk)
     this.transactionsDAO = new TransactionsDAO(knex, sdk)
     this.identitiesDAO = new IdentitiesDAO(knex, sdk)
-    this.validatorsDAO = new ValidatorsDAO(knex, sdk)
+    this.validatorsDAO = new ValidatorsDAO(knex)
     this.tokensDAO = new TokensDAO(knex, sdk)
     this.sdk = sdk
   }
