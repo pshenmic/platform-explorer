@@ -25,7 +25,7 @@
     "knex": "^2.5.1",
     "node-fetch": "^2.6.11",
     "pg": "^8.11.3",
-    "pshenmic-dpp": "^1.0.21-rc.2"
+    "pshenmic-dpp": "1.0.21"
   },
   "devDependencies": {
     "standard": "^17.1.0",
