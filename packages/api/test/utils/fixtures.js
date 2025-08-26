@@ -531,6 +531,10 @@ const fixtures = {
 
     await this.tokenHolder(knex, { holder: owner, token_id: token.id })
 
+    if (recipient) {
+      await this.tokenHolder(knex, { holder: recipient, token_id: token.id })
+    }
+
     return { ...row, id: result.id, transition }
   },
   cleanup: async (knex) => {

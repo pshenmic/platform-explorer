@@ -430,8 +430,7 @@ module.exports = class IdentitiesDAO {
   }
 
   getTransactionsByIdentity = async (identifier, page, limit, order) => {
-    const fromRank = (page - 1) * limit + 1
-    const toRank = fromRank + limit - 1
+    const fromRank = (page - 1) * limit
 
     const subquery = this.knex('state_transitions')
       .select('state_transitions.id as state_transition_id', 'state_transitions.hash as tx_hash',
@@ -439,17 +438,17 @@ module.exports = class IdentitiesDAO {
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
         'state_transitions.owner as owner', 'state_transitions.data as data'
       )
-      .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
       .where('state_transitions.owner', '=', identifier)
 
     const rows = await this.knex.with('with_alias', subquery)
-      .select('state_transition_id', 'tx_hash', 'index', 'block_hash', 'type', 'rank',
+      .select('state_transition_id', 'tx_hash', 'index', 'block_hash', 'type',
         'gas_used', 'status', 'gas_used', 'owner', 'data',
         'blocks.timestamp as timestamp', 'blocks.height as block_height')
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
       .from('with_alias')
-      .whereBetween('rank', [fromRank, toRank])
+      .offset(fromRank)
+      .limit(limit)
       .orderBy('state_transition_id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
@@ -469,8 +468,7 @@ module.exports = class IdentitiesDAO {
   }
 
   getTransfersByIdentity = async (identifier, hash, page, limit, order, type) => {
-    const fromRank = (page - 1) * limit + 1
-    const toRank = fromRank + limit - 1
+    const fromRank = (page - 1) * limit
 
     let searchQuery = '(transfers.sender = ? OR transfers.recipient = ?)'
     const searchBingings = [identifier, identifier]
@@ -494,13 +492,13 @@ module.exports = class IdentitiesDAO {
         'state_transitions.type as type',
         'state_transitions.gas_used as gas_used'
       )
-      .select(this.knex.raw(`rank() over (order by transfers.id ${order}) rank`))
       .whereRaw(searchQuery, searchBingings)
       .leftJoin('state_transitions', 'state_transitions.hash', 'transfers.state_transition_hash')
 
-    const rows = await this.knex.with('with_alias', subquery)
+    const rows = await this.knex
+      .with('with_alias', subquery)
       .select(
-        'rank', 'amount', 'block_hash', 'type',
+        'amount', 'block_hash', 'type',
         'sender', 'recipient', 'with_alias.id',
         'tx_hash', 'blocks.timestamp as timestamp',
         'block_hash', 'gas_used'
@@ -508,7 +506,8 @@ module.exports = class IdentitiesDAO {
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'with_alias.block_hash')
       .from('with_alias')
-      .whereBetween('rank', [fromRank, toRank])
+      .offset(fromRank)
+      .limit(limit)
       .orderBy('with_alias.id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
