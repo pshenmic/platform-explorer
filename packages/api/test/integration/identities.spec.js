@@ -6,8 +6,10 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const DAPI = require('../../src/DAPI')
 const BatchEnum = require('../../src/enums/BatchEnum')
+const ContestedResourcesController = require("dash-platform-sdk/src/contestedResources");
+const {IdentitiesController} = require("dash-platform-sdk/src/identities");
+const {DocumentsController} = require("dash-platform-sdk/src/documents");
 
 describe('Identities routes', () => {
   let app
@@ -167,11 +169,11 @@ describe('Identities routes', () => {
       }
     }
 
-    mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
+    mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
 
-    mock.method(DAPI.prototype, 'getContestedState', async () => null)
+    mock.method(IdentitiesController.prototype, 'getIdentityPublicKeys', async () => null)
 
-    mock.method(DAPI.prototype, 'getIdentityKeys', async () => null)
+    mock.method(ContestedResourcesController.default.prototype, 'getContestedResourceVoteState', async () => null)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
@@ -310,7 +312,7 @@ describe('Identities routes', () => {
         getData: () => ({ status: 0, amount: 12345678 })
       }))
 
-      mock.method(DAPI.prototype, 'getDocuments', async () => withdrawals)
+      mock.method(DocumentsController.prototype, 'query', async () => withdrawals)
 
       const { body } = await client.get(`/identity/${identity.identifier}/withdrawals`)
         .expect(200)
@@ -328,7 +330,7 @@ describe('Identities routes', () => {
     })
 
     it('should return 404 when identity not exist', async () => {
-      mock.method(DAPI.prototype, 'getDocuments', async () => [])
+      mock.method(DocumentsController.prototype, 'query', async () => [])
       const { body } = await client.get('/identity/D1111QnZXVpMW9yg4X6MjuWzSZ5Nui8TmCLUDY18FBtq/withdrawals')
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -763,7 +765,7 @@ describe('Identities routes', () => {
 
       mock.reset()
 
-      mock.method(DAPI.prototype, 'getIdentityBalance', async (identifier) => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => {
         const { identity } = identities.find(({ identity }) => identity.identifier === identifier)
         return identity.balance
       })
