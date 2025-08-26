@@ -1194,10 +1194,10 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
 
   if (identifier === bs58Identifier) {
     status = 'ok'
-  } else if (bs58Identifier !== '' || aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === '') {
-    status = 'locked'
-  } else if (aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === undefined) {
+  } else if (aliasInfo.contestedState?.finishedVoteInfo === undefined) {
     status = 'pending'
+  } else {
+    status = 'locked'
   }
 
   return Alias.fromObject({
