@@ -6,7 +6,7 @@ const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const DAPI = require('../../src/DAPI')
+const {NodeController} = require('dash-platform-sdk/src/node')
 
 describe('Epoch routes', () => {
   let app
@@ -30,7 +30,7 @@ describe('Epoch routes', () => {
         }
       }
     }))
-    mock.method(DAPI.prototype, 'getEpochsInfo', () => [
+    mock.method(NodeController.prototype, 'getEpochsInfo', () => [
       {
         number: 0,
         firstBlockHeight: 0,
@@ -126,7 +126,7 @@ describe('Epoch routes', () => {
           firstBlockHeight: '0',
           firstCoreBlockHeight: 1,
           startTime: 0,
-          feeMultiplier: 1,
+          feeMultiplier: '1',
           endTime: 1800000
         },
         tps: (identities.length + transactions.length) / 1800,
@@ -152,7 +152,7 @@ describe('Epoch routes', () => {
 
     it('should return error if not valid date', async () => {
       mock.reset()
-      mock.method(DAPI.prototype, 'getEpochsInfo', () => {
+      mock.method(NodeController.prototype, 'getEpochsInfo', () => {
         throw new Error()
       })
       await client.get('/epoch/10000000000000000000')
