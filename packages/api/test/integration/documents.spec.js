@@ -1,5 +1,4 @@
 const { describe, it, before, after, mock } = require('node:test')
-const DAPI = require('../../src/DAPI')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
@@ -9,6 +8,7 @@ const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const BatchEnum = require('../../src/enums/BatchEnum')
+const {DocumentsController} = require("dash-platform-sdk/src/documents");
 
 describe('Documents routes', () => {
   let app
@@ -25,7 +25,7 @@ describe('Documents routes', () => {
   before(async () => {
     aliasTimestamp = new Date()
 
-    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+    mock.method(DocumentsController.prototype, 'query', async () => [{
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
