@@ -4,7 +4,7 @@ const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
-const DAPI = require('../../src/DAPI')
+const {DocumentsController} = require("dash-platform-sdk/src/documents");
 
 describe('Masternode routes', () => {
   let app
@@ -15,7 +15,7 @@ describe('Masternode routes', () => {
   let masternodeVotes
 
   before(async () => {
-    mock.method(DAPI.prototype, 'getDocuments', async () => [])
+    mock.method(DocumentsController.prototype, 'query', async () => [])
 
     app = await server.start()
     client = supertest(app.server)

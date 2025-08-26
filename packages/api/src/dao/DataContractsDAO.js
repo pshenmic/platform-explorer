@@ -139,7 +139,7 @@ module.exports = class DataContractsDAO {
 
     let topIdentityAliases = []
 
-    if (row.owner === row.top_identity) {
+    if (row.owner === row.top_identity || !row.top_identity) {
       topIdentityAliases = ownerAliases
     } else if(row.top_identity) {
       const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.top_identity.trim()]], 1)
