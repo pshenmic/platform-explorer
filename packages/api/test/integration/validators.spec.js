@@ -14,6 +14,7 @@ const DAPI = require('../../src/DAPI')
 const Epoch = require('../../src/models/Epoch')
 const { base58 } = require('@scure/base')
 const { IDENTITY_CREDIT_WITHDRAWAL } = require('../../src/enums/StateTransitionEnum')
+const cache = require('../../src/cache')
 
 describe('Validators routes', () => {
   let app
@@ -107,6 +108,8 @@ describe('Validators routes', () => {
     await fixtures.cleanup(knex)
 
     mock.method(tenderdashRpc, 'getValidators', async () => [])
+
+    mock.method(cache, 'set', () => {})
 
     for (let i = 0; i < 50; i++) {
       const validator = await fixtures.validator(knex)
@@ -432,7 +435,7 @@ describe('Validators routes', () => {
                   totalGasUsed: 0,
                   appHash: blockHeader.appHash
                 }))
-                .toReversed()[0] ?? null,
+                .sort((a, b) => b.height - a.height)[0] ?? null,
               proTxInfo: {
                 type: dashCoreRpcResponse.type,
                 collateralHash: dashCoreRpcResponse.collateralHash,
@@ -442,8 +445,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -498,8 +501,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -555,8 +558,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -613,8 +616,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -675,8 +678,8 @@ describe('Validators routes', () => {
                   confirmations: dashCoreRpcResponse.confirmations,
                   state: dashCoreRpcResponse.state
                 },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -733,8 +736,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -791,8 +794,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -847,8 +850,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -922,8 +925,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -978,8 +981,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1036,8 +1039,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1094,8 +1097,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1152,8 +1155,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1210,8 +1213,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1269,8 +1272,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1327,8 +1330,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1388,8 +1391,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1430,8 +1433,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1475,8 +1478,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1519,8 +1522,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1563,8 +1566,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1607,8 +1610,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1664,8 +1667,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1720,8 +1723,8 @@ describe('Validators routes', () => {
                 confirmations: dashCoreRpcResponse.confirmations,
                 state: dashCoreRpcResponse.state
               },
-              totalReward: 0,
-              epochReward: 0,
+              totalReward: null,
+              epochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
