@@ -7,9 +7,14 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const DAPI = require('../../src/DAPI')
 const { IdentifierWASM, TokenConfigurationWASM } = require('pshenmic-dpp')
 const BatchEnum = require('../../src/enums/BatchEnum')
+const {IdentitiesController} = require("dash-platform-sdk/src/identities");
+const {NodeController} = require("dash-platform-sdk/src/node");
+const ContestedResourcesController = require("dash-platform-sdk/src/contestedResources");
+const {DocumentsController} = require("dash-platform-sdk/src/documents");
+const TokensController = require("dash-platform-sdk/src/tokens");
+const {DataContractsController} = require("dash-platform-sdk/src/dataContracts");
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
@@ -35,9 +40,9 @@ describe('Other routes', () => {
   before(async () => {
     aliasTimestamp = new Date()
 
-    mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
-    mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
-    mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
+    mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+    mock.method(NodeController.prototype, 'totalCredits', async () => 0)
+    mock.method(NodeController.prototype, 'getEpochsInfo', async () => [{
       number: 0,
       firstBlockHeight: 0,
       firstCoreBlockHeight: 0,
@@ -46,11 +51,11 @@ describe('Other routes', () => {
       nextEpoch: 0
     }])
 
-    mock.method(DAPI.prototype, 'getContestedState', async () => null)
+    mock.method(ContestedResourcesController.default.prototype, 'getContestedResourceVoteState', async () => null)
 
-    mock.method(DAPI.prototype, 'getIdentityKeys', async () => null)
+    mock.method(IdentitiesController.prototype, 'getIdentityPublicKeys', async () => null)
 
-    mock.method(DAPI.prototype, 'getStatus', async () => null)
+    mock.method(NodeController.prototype, 'status', async () => null)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
@@ -60,7 +65,7 @@ describe('Other routes', () => {
       }
     }))
 
-    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+    mock.method(DocumentsController.prototype, 'query', async () => [{
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -70,11 +75,11 @@ describe('Other routes', () => {
       createdAt: BigInt(aliasTimestamp.getTime())
     }])
 
-    mock.method(DAPI.prototype, 'getTokenTotalSupply', async () => ({
+    mock.method(TokensController.default.prototype, 'getTokenTotalSupply', async () => ({
       totalSystemAmount: 1000,
       totalAggregatedAmountInUserAccounts: 1000
     }))
-    mock.method(DAPI.prototype, 'getDataContract', async () => ({
+    mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({
       ownerId: new IdentifierWASM('11111111111111111111111111111111'),
       tokens: {
         29: {
@@ -577,7 +582,7 @@ describe('Other routes', () => {
     })
 
     it('should search by identity DPNS', async () => {
-      mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
 
       const { body } = await client.get(`/search?query=${identityAlias.alias}`)
         .expect(200)
@@ -796,22 +801,30 @@ describe('Other routes', () => {
       }
       const mockDapiStatus = {
         version: {
-          dapiVersion: '1.5.1',
-          driveVersion: '1.6.2',
-          tenderdashVersion: '1.4.0',
-          tenderdashP2pProtocol: 10,
-          tenderdashBlockProtocol: 14,
-          driveLatestProtocol: 6,
-          driveCurrentProtocol: 6
+          software: {
+            tenderdash: '1.4.0',
+            dapi: '1.5.1',
+            drive: '1.6.2'
+          },
+          protocol: {
+            tenderdash: {
+              p2p: 10,
+              block: 14
+            },
+            drive: {
+              latest: 6,
+              current: 10
+            }
+          }
         }
       }
 
       mock.reset()
-      mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
-      mock.method(DAPI.prototype, 'getStatus', async () => mockDapiStatus)
-      mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
+      mock.method(NodeController.prototype, 'totalCredits', async () => 0)
+      mock.method(NodeController.prototype, 'status', async () => null)
+      mock.method(NodeController.prototype, 'getEpochsInfo', async () => [{
         number: 0,
-        firstBlockHeight: '0',
+        firstBlockHeight: 0,
         firstCoreBlockHeight: 0,
         startTime: 0,
         feeMultiplier: 0,
@@ -836,7 +849,7 @@ describe('Other routes', () => {
           firstBlockHeight: '0',
           firstCoreBlockHeight: 0,
           startTime: 0,
-          feeMultiplier: 0,
+          feeMultiplier: '0',
           endTime: null
         },
         identitiesCount: 1,

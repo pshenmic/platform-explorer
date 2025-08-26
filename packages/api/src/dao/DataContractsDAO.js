@@ -141,8 +141,8 @@ module.exports = class DataContractsDAO {
 
     if (row.owner === row.top_identity) {
       topIdentityAliases = ownerAliases
-    } else {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+    } else if(row.top_identity) {
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.top_identity.trim()]], 1)
 
       if (aliasDocument) {
         topIdentityAliases.push(getAliasFromDocument(aliasDocument))
@@ -174,7 +174,7 @@ module.exports = class DataContractsDAO {
       tokens = await Promise.all(tokenPositions.map(async (tokenPosition) => {
         const tokenConfig = config.tokens[tokenPosition]
 
-        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(new IdentifierWASM(identifier), tokenConfig.position)
+        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(new IdentifierWASM(identifier), Number(tokenPosition))
 
         const tokenTotalSupply = await this.sdk.tokens.getTokenTotalSupply(tokenIdentifier.base58())
 
