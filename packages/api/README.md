@@ -385,8 +385,8 @@ GET /validators
         "feeMultiplier": 1,
         "endTime": 1728492066559
       },
-      "totalReward": 0,
-      "epochReward": 0,
+      "totalReward": null,
+      "epochReward": null,
       "withdrawalsCount": null,
       "lastWithdrawal": null,
       "lastWithdrawalTime": null,
@@ -1526,6 +1526,9 @@ This endpoint allows search any types of data
   * Part `name`
 * Document
   * Full `Identifier`
+* Tokens
+  * Full `Identifier`
+  * Part `name`
 
 ```
 GET /search?query=xyz
@@ -2919,6 +2922,79 @@ GET identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1
         "page": 1,
         "limit": 10,
         "total": 3
+    }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Tokens By Name
+Return list of tokens info with selected part name 
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+
+```
+GET /tokens/psh/info?limit=10&page=1&order=asc
+{
+    "resultSet": [
+        {
+            "identifier": "6niNoQpsT9zyVDJtXcbpV3tR3qEGi6BC6xoDdJyx1u7C",
+            "position": 0,
+            "timestamp": null,
+            "description": null,
+            "localizations": {
+                "en": {
+                    "pluralForm": "PSHM",
+                    "singularForm": "PSHM",
+                    "shouldCapitalize": true
+                }
+            },
+            "baseSupply": "1337",
+            "totalSupply": "1338",
+            "maxSupply": "13370",
+            "owner": {
+                "identifier": "HT3pUBM1Uv2mKgdPEN1gxa7A4PdsvNY89aJbdSKQb5wR",
+                "aliases": []
+            },
+            "mintable": false,
+            "burnable": false,
+            "freezable": false,
+            "unfreezable": false,
+            "destroyable": false,
+            "allowedEmergencyActions": false,
+            "dataContractIdentifier": "dfaPU4HsMpUX7NMF2TR5oeAC4cZvLwYrSU6WT4884bq",
+            "changeMaxSupply": false,
+            "totalGasUsed": null,
+            "mainGroup": null,
+            "totalTransitionsCount": null,
+            "totalFreezeTransitionsCount": null,
+            "totalBurnTransitionsCount": null,
+            "decimals": 8,
+            "perpetualDistribution": {
+                "type": "TimeBasedDistribution",
+                "recipientType": "ContractOwner",
+                "recipientValue": null,
+                "interval": 14515200000,
+                "functionName": "FixedAmount",
+                "functionValue": {
+                    "amount": "1337"
+                }
+            },
+            "preProgrammedDistribution": null,
+            "price": null,
+            "prices": null
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 1
     }
 }
 ```

@@ -11,7 +11,7 @@ impl PostgresDAO {
     ) -> Result<Option<Validator>, PoolError> {
         let stmt = sql_transaction
             .prepare_cached(
-                "SELECT pro_tx_hash \
+                "SELECT pro_tx_hash, id \
         FROM validators where pro_tx_hash = $1 LIMIT 1;",
             )
             .await
