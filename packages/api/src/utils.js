@@ -774,8 +774,8 @@ const decodeStateTransition = async (base64) => {
                 out.data = createTransition.data
                 out.prefundedVotingBalance = prefundedVotingBalance
                   ? {
-                    [prefundedVotingBalance.indexName]: String(prefundedVotingBalance.credits),
-                  }
+                      [prefundedVotingBalance.indexName]: String(prefundedVotingBalance.credits)
+                    }
                   : null
 
                 break
