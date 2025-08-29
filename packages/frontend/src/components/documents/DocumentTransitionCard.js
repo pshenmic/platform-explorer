@@ -37,7 +37,7 @@ const fieldsOfTypes = {
     'DataContractIdentifier',
     'DocumentIdentifier',
     'SenderIdentifier',
-    'ReceiverIdentifier',
+    'RecipientIdentifier',
     'DocumentType',
     'Revision',
     'IdentityContractNonce',
@@ -64,7 +64,7 @@ const fieldsOfTypes = {
     'DataContractIdentifier',
     'DocumentIdentifier',
     'SenderIdentifier',
-    'ReceiverIdentifier',
+    'RecipientIdentifier',
     'DocumentType',
     'Price',
     'Revision',
@@ -78,6 +78,8 @@ const fieldsOfTypes = {
 
 const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
   const fields = fieldsOfTypes?.[transition?.action] || []
+
+  console.log('transition', transition)
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient DocumentTransitionCard ${className || ''}`}>
@@ -118,35 +120,18 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
         />
       }
 
-      {fields?.indexOf('ReceiverIdentifier') !== -1 &&
-        transition?.receiverId &&
-          <>
-            {owner &&
-              <InfoLine
-                className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
-                title={'Sender Identifier:'}
-                value={(
-                  <ValueCard link={`/identity/${owner}`}>
-                    <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-                      {owner}
-                    </Identifier>
-                  </ValueCard>
-                )}
-              />
-            }
-
-            <InfoLine
-              className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
-              title={'Receiver Identifier'}
-              value={(
-                <ValueCard link={`/identity/${transition?.receiverId}`}>
-                  <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-                    {transition?.receiverId}
-                  </Identifier>
-                </ValueCard>
-              )}
-            />
-          </>
+      {fields?.indexOf('RecipientIdentifier') !== -1 && transition?.recipientId &&
+        <InfoLine
+          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
+          title={'Recipient Identifier'}
+          value={(
+            <ValueCard link={`/identity/${transition?.recipientId}`}>
+              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                {transition?.recipientId}
+              </Identifier>
+            </ValueCard>
+          )}
+        />
       }
 
       {fields?.indexOf('SellerIdentifier') !== -1 && owner &&
