@@ -79,8 +79,6 @@ const fieldsOfTypes = {
 const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
   const fields = fieldsOfTypes?.[transition?.action] || []
 
-  console.log('transition', transition)
-
   return (
     <div className={`InfoBlock InfoBlock--Gradient DocumentTransitionCard ${className || ''}`}>
       <InfoLine
