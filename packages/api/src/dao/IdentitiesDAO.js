@@ -180,11 +180,13 @@ module.exports = class IdentitiesDAO {
           securityLevel: key.securityLevel,
           readOnly: key.readOnly,
           hash: key.hash,
-          contractBounds: contractBounds ? {
-            identifier: contractBounds.identifier.base58(),
-            documentTypeName: contractBounds.documentTypeName ?? null,
-            contractBoundsType: contractBounds.contractBoundsType,
-          } : null
+          contractBounds: contractBounds
+            ? {
+                identifier: contractBounds.identifier.base58(),
+                documentTypeName: contractBounds.documentTypeName ?? null,
+                contractBoundsType: contractBounds.contractBoundsType
+              }
+            : null
         }
       }),
       fundingCoreTx
