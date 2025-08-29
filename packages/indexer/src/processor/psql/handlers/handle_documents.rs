@@ -22,18 +22,6 @@ impl PSQLProcessor {
         let document_identifier = document.identifier.clone();
 
         match document_transition {
-            DocumentTransition::Transfer(_) => {
-                self.dao
-                    .assign_document(document.clone(), owner_id, sql_transaction)
-                    .await
-                    .unwrap();
-            }
-            DocumentTransition::UpdatePrice(_) => {
-                self.dao
-                    .update_document_price(document.clone(), sql_transaction)
-                    .await
-                    .unwrap();
-            }
             DocumentTransition::Purchase(_) => {
                 let current_document = self
                     .dao
@@ -46,7 +34,7 @@ impl PSQLProcessor {
                     ));
 
                 self.dao
-                    .assign_document(document.clone(), owner_id, sql_transaction)
+                    .create_document(document.clone(), Some(st_hash.clone()), sql_transaction)
                     .await
                     .unwrap();
 

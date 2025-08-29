@@ -48,7 +48,7 @@ module.exports = {
         poolLimit: 5,
         dapiUrl: (process.env.DAPI_URL ?? 'http://127.0.0.1:1443').split(',')
       },
-      network: 'testnet'
+      network: process.env.NETWORK ?? 'testnet'
     })
 
     fastify = Fastify()
