@@ -8,7 +8,7 @@ const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
 const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
-const ContestedResourcesController = require('dash-platform-sdk/src/contestedResources')
+const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 
 describe('DataContracts routes', () => {
   let app
@@ -46,7 +46,7 @@ describe('DataContracts routes', () => {
 
     await fixtures.cleanup(knex)
 
-    mock.method(ContestedResourcesController.default.prototype, 'getContestedResourceVoteState', async () => null)
+    mock.method(ContestedResourcesController.prototype, 'getContestedResourceVoteState', async () => null)
 
     height = 1
     dataContracts = []

@@ -11,9 +11,9 @@ const { IdentifierWASM, TokenConfigurationWASM } = require('pshenmic-dpp')
 const BatchEnum = require('../../src/enums/BatchEnum')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 const { NodeController } = require('dash-platform-sdk/src/node')
-const ContestedResourcesController = require('dash-platform-sdk/src/contestedResources')
+const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
-const TokensController = require('dash-platform-sdk/src/tokens')
+const { TokensController } = require('dash-platform-sdk/src/tokens')
 const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
 
 const genesisTime = new Date(0)
@@ -51,7 +51,7 @@ describe('Other routes', () => {
       nextEpoch: 0
     }])
 
-    mock.method(ContestedResourcesController.default.prototype, 'getContestedResourceVoteState', async () => null)
+    mock.method(ContestedResourcesController.prototype, 'getContestedResourceVoteState', async () => null)
 
     mock.method(IdentitiesController.prototype, 'getIdentityPublicKeys', async () => null)
 
@@ -75,7 +75,7 @@ describe('Other routes', () => {
       createdAt: BigInt(aliasTimestamp.getTime())
     }])
 
-    mock.method(TokensController.default.prototype, 'getTokenTotalSupply', async () => ({
+    mock.method(TokensController.prototype, 'getTokenTotalSupply', async () => ({
       totalSystemAmount: 1000,
       totalAggregatedAmountInUserAccounts: 1000
     }))

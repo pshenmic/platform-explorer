@@ -168,17 +168,27 @@ module.exports = class IdentitiesDAO {
       ...identity,
       aliases,
       balance: String(balance),
-      publicKeys: publicKeys?.map(key => ({
-        keyId: key.keyId,
-        type: key.type,
-        raw: key.raw,
-        data: key.data,
-        purpose: key.purpose,
-        securityLevel: key.securityLevel,
-        readOnly: key.isReadOnly,
-        hash: key.hash,
-        contractBounds: key.contractBounds
-      })),
+      publicKeys: publicKeys?.map(key => {
+        const contractBounds = key.getContractBounds()
+
+        return {
+          keyId: key.keyId,
+          type: key.keyType,
+          raw: key.hex(),
+          data: key.data,
+          purpose: key.purpose,
+          securityLevel: key.securityLevel,
+          readOnly: key.readOnly,
+          hash: key.hash,
+          contractBounds: contractBounds
+            ? {
+                identifier: contractBounds.identifier.base58(),
+                documentTypeName: contractBounds.documentTypeName ?? null,
+                contractBoundsType: contractBounds.contractBoundsType
+              }
+            : null
+        }
+      }),
       fundingCoreTx
     })
   }

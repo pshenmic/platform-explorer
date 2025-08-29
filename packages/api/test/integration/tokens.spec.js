@@ -7,7 +7,7 @@ const { getKnex } = require('../../src/utils')
 const BatchEnum = require('../../src/enums/BatchEnum')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
-const TokensController = require('dash-platform-sdk/src/tokens')
+const { TokensController } = require('dash-platform-sdk/src/tokens')
 const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
 
 describe('Tokens', () => {
@@ -37,7 +37,7 @@ describe('Tokens', () => {
       createdAt: BigInt(aliasTimestamp.getTime())
     }])
 
-    mock.method(TokensController.default.prototype, 'getTokenTotalSupply', async () => ({
+    mock.method(TokensController.prototype, 'getTokenTotalSupply', async () => ({
       totalSystemAmount: 1000,
       totalAggregatedAmountInUserAccounts: 1000
     }))
@@ -201,7 +201,7 @@ describe('Tokens', () => {
       tokens.push({ token, stateTransition, tokenTransition })
     }
 
-    mock.method(TokensController.default.prototype, 'getIdentityTokensBalances', async () => null)
+    mock.method(TokensController.prototype, 'getIdentityTokensBalances', async () => null)
   })
 
   after(async () => {
