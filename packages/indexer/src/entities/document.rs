@@ -119,7 +119,7 @@ impl From<DocumentTransition> for Document {
                     data: None,
                     data_contract_identifier,
                     revision,
-                    deleted: true,
+                    deleted: false,
                     is_system: false,
                     prefunded_voting_balance: None,
                 }
@@ -141,7 +141,7 @@ impl From<DocumentTransition> for Document {
                     data: None,
                     data_contract_identifier,
                     revision,
-                    deleted: true,
+                    deleted: false,
                     is_system: false,
                     prefunded_voting_balance: None,
                 }
@@ -163,7 +163,7 @@ impl From<DocumentTransition> for Document {
                     data: None,
                     data_contract_identifier,
                     revision,
-                    deleted: true,
+                    deleted: false,
                     is_system: false,
                     prefunded_voting_balance: None,
                 }
