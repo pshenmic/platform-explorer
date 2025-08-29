@@ -14,13 +14,11 @@ const DataContractsController = require('./controllers/DataContractsController')
 const ValidatorsController = require('./controllers/ValidatorsController')
 const { getKnex } = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
-const DAPI = require('./DAPI')
 const RateController = require('./controllers/RateController')
-const DAPIClient = require('@dashevo/dapi-client')
 const MasternodeVotesController = require('./controllers/MasternodeVotesController')
 const ContestedResourcesController = require('./controllers/ContestedResourcesController')
 const TokensController = require('./controllers/TokensController')
-const { default: loadWasmDpp } = require('dash').PlatformProtocol
+const { DashPlatformSDK } = require('dash-platform-sdk')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -40,21 +38,18 @@ function errorHandler (err, req, reply) {
   reply.send({ error: err.message })
 }
 
-let client
 let knex
 let fastify
-let dapi
 
 module.exports = {
   start: async () => {
-    await loadWasmDpp()
-
-    const dapiClient = new DAPIClient({
-      dapiAddresses: (process.env.DAPI_URL ?? '127.0.0.1:1443:self-signed').split(','),
-      network: process.env.NETWORK ?? 'testnet'
+    const sdk = new DashPlatformSDK({
+      grpc: {
+        poolLimit: 5,
+        dapiUrl: (process.env.DAPI_URL ?? 'http://127.0.0.1:1443').split(',')
+      },
+      network: 'testnet'
     })
-
-    dapi = new DAPI(dapiClient)
 
     fastify = Fastify()
 
@@ -72,18 +67,18 @@ module.exports = {
 
     await knex.raw('select 1+1')
 
-    const mainController = new MainController(knex, dapi, client)
-    const epochController = new EpochController(knex, dapi)
-    const blocksController = new BlocksController(knex, dapi)
-    const transactionsController = new TransactionsController(client, knex, dapi)
-    const dataContractsController = new DataContractsController(knex, client, dapi)
-    const documentsController = new DocumentsController(client, knex, dapi)
-    const identitiesController = new IdentitiesController(client, knex, dapi)
-    const validatorsController = new ValidatorsController(knex, dapi)
+    const mainController = new MainController(knex, sdk)
+    const epochController = new EpochController(knex, sdk)
+    const blocksController = new BlocksController(knex, sdk)
+    const transactionsController = new TransactionsController(knex, sdk)
+    const dataContractsController = new DataContractsController(knex, sdk)
+    const documentsController = new DocumentsController(knex, sdk)
+    const identitiesController = new IdentitiesController(knex, sdk)
+    const validatorsController = new ValidatorsController(knex, sdk)
     const rateController = new RateController()
-    const masternodeVotesController = new MasternodeVotesController(knex, dapi)
-    const contestedResourcesController = new ContestedResourcesController(knex, dapi)
-    const tokensController = new TokensController(knex, dapi)
+    const masternodeVotesController = new MasternodeVotesController(knex, sdk)
+    const contestedResourcesController = new ContestedResourcesController(knex, sdk)
+    const tokensController = new TokensController(knex, sdk)
 
     Routes({
       fastify,

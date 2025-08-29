@@ -2,9 +2,8 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, DPNS_CONTRACT, NETWORK } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT } = require('./constants')
 const { base58 } = require('@scure/base')
-const convertToHomographSafeChars = require('dash/build/utils/convertToHomographSafeChars').default
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
 const Alias = require('./models/Alias')
@@ -15,10 +14,11 @@ const {
   DataContractCreateTransitionWASM,
   IdentityCreateTransitionWASM, IdentityTopUpTransitionWASM, DataContractUpdateTransitionWASM,
   IdentityUpdateTransitionWASM, IdentityCreditTransferWASM, IdentityCreditWithdrawalTransitionWASM,
-  MasternodeVoteTransitionWASM, IdentifierWASM, PlatformVersionWASM
+  MasternodeVoteTransitionWASM, PlatformVersionWASM, DataContractWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
 const dpnsContract = require('../data_contracts/dpns.json')
+const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
 const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
 const Token = require('./models/Token')
 const PerpetualDistribution = require('./models/PerpetualDistribution')
@@ -41,6 +41,18 @@ const hash = (data) => {
   return crypto.createHash('sha1').update(data).digest('hex')
 }
 
+const convertToHomographSafeChars = (input) => {
+  return input.toLowerCase().replace(/[oli]/g, (match) => {
+    if (match === 'o') {
+      return '0'
+    }
+    if (match === 'l' || match === 'i') {
+      return '1'
+    }
+    return match
+  })
+}
+
 /**
  * allows to get address from output script
  * @param {Buffer} script
@@ -52,9 +64,9 @@ const outputScriptToAddress = (script) => {
   return address ? address.toString() : null
 }
 
-const fetchTokenInfoByRows = async (rows, dapi) => {
+const fetchTokenInfoByRows = async (rows, sdk) => {
   const dataContractsWithTokens = await Promise.all(rows.map(async (row) => {
-    const dataContract = await dapi.getDataContract(row.data_contract_identifier)
+    const dataContract = await sdk.dataContracts.getDataContractByIdentifier(row.data_contract_identifier)
 
     if (!dataContract) {
       return undefined
@@ -72,9 +84,9 @@ const fetchTokenInfoByRows = async (rows, dapi) => {
 
       const tokenConfig = dataContract.tokens[tokenPosition]
 
-      const tokenTotalSupply = await dapi.getTokenTotalSupply(tokenIdentifier)
+      const tokenTotalSupply = await sdk.tokens.getTokenTotalSupply(tokenIdentifier)
 
-      const [aliasDocument] = await dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', dataContract.ownerId.base58()]], 1)
+      const [aliasDocument] = await sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', dataContract.ownerId.base58()]], 1)
 
       const aliases = []
 
@@ -761,10 +773,9 @@ const decodeStateTransition = async (base64) => {
 
                 out.data = createTransition.data
                 out.prefundedVotingBalance = prefundedVotingBalance
-                  ? Object.fromEntries(
-                    Object.entries(prefundedVotingBalance)
-                      .map(prefund => [prefund[0], Number(prefund[1])])
-                  )
+                  ? {
+                      [prefundedVotingBalance.indexName]: String(prefundedVotingBalance.credits)
+                    }
                   : null
 
                 break
@@ -1178,15 +1189,15 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   }
 
   const bs58Identifier = base58.encode(
-    Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId ?? '', 'base64')
+    Buffer.from(aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId?.bytes() ?? [], 'base64')
   )
 
   if (identifier === bs58Identifier) {
     status = 'ok'
-  } else if (bs58Identifier !== '' || aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === '') {
-    status = 'locked'
-  } else if (aliasInfo.contestedState?.finishedVoteInfo?.wonByIdentityId === undefined) {
+  } else if (aliasInfo.contestedState?.finishedVoteInfo === undefined) {
     status = 'pending'
+  } else {
+    status = 'locked'
   }
 
   return Alias.fromObject({
@@ -1214,7 +1225,7 @@ const getAliasFromDocument = (aliasDocument) => {
   }
 }
 
-const getAliasInfo = async (aliasText, dapi) => {
+const getAliasInfo = async (aliasText, sdk) => {
   const [label, domain] = aliasText.split('.')
 
   const normalizedLabel = convertToHomographSafeChars(label ?? '')
@@ -1224,15 +1235,15 @@ const getAliasInfo = async (aliasText, dapi) => {
 
     const labelBuffer = buildIndexBuffer(normalizedLabel)
 
-    const contestedState = await dapi.getContestedState(
-      new IdentifierWASM(DPNS_CONTRACT).base64(),
+    const contestedState = await sdk.contestedResources.getContestedResourceVoteState(
+      DataContractWASM.fromValue(dpnsContract, true, PlatformVersionWASM.PLATFORM_V9),
       'domain',
       'parentNameAndLabel',
-      1,
       [
         domainBuffer,
         labelBuffer
-      ]
+      ],
+      ContestedStateResultType.DOCUMENTS_AND_VOTE_TALLY
     )
 
     return { alias: aliasText, contestedState }

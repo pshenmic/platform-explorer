@@ -5,9 +5,8 @@ const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
 const { base58 } = require('@scure/base')
 
 module.exports = class ValidatorsDAO {
-  constructor (knex, dapi) {
+  constructor (knex) {
     this.knex = knex
-    this.dapi = dapi
   }
 
   getValidatorByProTxHash = async (proTxHash, currentEpoch) => {

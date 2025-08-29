@@ -15,6 +15,7 @@ const identityWithdrawal = require('./mocks/identity_withdrawal.json')
 const masternodeVote = require('./mocks/masternode_vote.json')
 const Alias = require('../../src/models/Alias')
 const { buildIndexBuffer } = require('../../src/utils')
+const { IdentifierWASM } = require('pshenmic-dpp')
 
 describe('Utils', () => {
   describe('decodeStateTransition()', () => {
@@ -458,7 +459,7 @@ describe('Utils', () => {
         contestedState: {
           contendersList: [
             {
-              identifier: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+              identifier: new IdentifierWASM('BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp'),
               voteCount: 16,
               document: ''
             }
@@ -467,7 +468,7 @@ describe('Utils', () => {
           lockVoteTally: 0,
           finishedVoteInfo: {
             finishedVoteOutcome: 0,
-            wonByIdentityId: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+            wonByIdentityId: new IdentifierWASM('BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp'),
             finishedAtBlockHeight: 24407,
             finishedAtCoreBlockHeight: 2158202,
             finishedAtBlockTimeMs: 1729411671125,
@@ -540,7 +541,7 @@ describe('Utils', () => {
         contestedState: {
           contendersList: [
             {
-              identifier: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+              identifier: new IdentifierWASM('BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp'),
               voteCount: 16,
               document: ''
             }
@@ -549,7 +550,7 @@ describe('Utils', () => {
           lockVoteTally: 0,
           finishedVoteInfo: {
             finishedVoteOutcome: 0,
-            wonByIdentityId: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+            wonByIdentityId: new IdentifierWASM('BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp'),
             finishedAtBlockHeight: 24407,
             finishedAtCoreBlockHeight: 2158202,
             finishedAtBlockTimeMs: 1729411671125,
@@ -577,7 +578,7 @@ describe('Utils', () => {
         contestedState: {
           contendersList: [
             {
-              identifier: 'n4ay5zy5fRyuqEYkMwlkmmIay6RP9mlhSjLeBK3puwM=',
+              identifier: new IdentifierWASM('BjixEUbqeUZK7BRdqtLgjzwFBovx4BRwS2iwhMriiYqp'),
               voteCount: 16,
               document: ''
             }
@@ -586,7 +587,7 @@ describe('Utils', () => {
           lockVoteTally: 0,
           finishedVoteInfo: {
             finishedVoteOutcome: 0,
-            wonByIdentityId: '',
+            wonByIdentityId: undefined,
             finishedAtBlockHeight: 24407,
             finishedAtCoreBlockHeight: 2158202,
             finishedAtBlockTimeMs: 1729411671125,

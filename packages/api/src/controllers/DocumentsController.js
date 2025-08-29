@@ -4,11 +4,10 @@ const Document = require('../models/Document')
 const { IdentifierWASM } = require('pshenmic-dpp')
 
 class DocumentsController {
-  constructor (client, knex, dapi) {
-    this.documentsDAO = new DocumentsDAO(knex, dapi, client)
-    this.dataContractsDAO = new DataContractsDAO(knex, client, dapi)
-    this.client = client
-    this.dapi = dapi
+  constructor (knex, sdk) {
+    this.documentsDAO = new DocumentsDAO(knex, sdk)
+    this.dataContractsDAO = new DataContractsDAO(knex, sdk)
+    this.sdk = sdk
   }
 
   getDocumentByIdentifier = async (request, response) => {
@@ -35,15 +34,9 @@ class DocumentsController {
       return response.status(400).send({ message: 'data contract not found' })
     }
 
-    const [dapiDocument] = await this.dapi.getDocuments(
+    const [dapiDocument] = await this.sdk.documents.query(
+      dataContract.owner.identifier,
       documentTypeName,
-      {
-        $format_version: '0',
-        ownerId: dataContract.owner.identifier,
-        id: dataContract.identifier,
-        version: dataContract.version,
-        documentSchemas: JSON.parse(dataContract.schema)
-      },
       [['$id', '=', new IdentifierWASM(identifier).base58()]],
       1
     )
@@ -73,35 +66,26 @@ class DocumentsController {
 
     let dataContract
 
-    if (contractId) {
-      dataContract = await this.dataContractsDAO.getDataContractByIdentifier(contractId)
+    if (identifier) {
+      dataContract = await this.sdk.dataContracts.getDataContractByIdentifier(contractId)
     }
 
     if (!dataContract) {
       return response.status(404).send({ message: 'data contract not found' })
     }
 
-    const [extendedDocument] = await this.dapi.getDocuments(
+    const [extendedDocument] = await this.sdk.documents.query(
+      contractId,
       documentTypeName,
-      {
-        $format_version: '0',
-        ownerId: dataContract.owner.identifier,
-        id: dataContract.identifier,
-        version: dataContract.version,
-        documentSchemas: JSON.parse(dataContract.schema)
-      },
       [['$id', '=', new IdentifierWASM(identifier).base58()]],
-      1,
-      undefined,
-      undefined,
-      true
+      1
     )
 
     if (!extendedDocument) {
       return response.status(404).send({ message: 'document not found' })
     }
 
-    response.send({ base64: extendedDocument.toString('base64') })
+    response.send({ base64: extendedDocument.base64(dataContract) })
   }
 
   getDocumentsByDataContract = async (request, response) => {

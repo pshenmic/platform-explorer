@@ -2,14 +2,13 @@ const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
 const { decodeStateTransition, getAliasFromDocument } = require('../utils')
-const dpnsContract = require('../../data_contracts/dpns.json')
 const BatchEnum = require('../enums/BatchEnum')
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class DocumentsDAO {
-  constructor (knex, dapi, client) {
+  constructor (knex, sdk) {
     this.knex = knex
-    this.client = client
-    this.dapi = dapi
+    this.sdk = sdk
   }
 
   getDocumentByIdentifier = async (identifier) => {
@@ -60,7 +59,7 @@ module.exports = class DocumentsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.document_owner.trim()]], 1)
+    const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
 
     const aliases = []
 
@@ -150,7 +149,7 @@ module.exports = class DocumentsDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.document_owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
 
       const aliases = []
 
@@ -197,7 +196,7 @@ module.exports = class DocumentsDAO {
     const totalCount = row?.total_count
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
 
       const aliases = []
 
