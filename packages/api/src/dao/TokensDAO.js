@@ -5,13 +5,13 @@ const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
 const Localization = require('../models/Localization')
 const { fetchTokenInfoByRows } = require('../utils')
 const BatchEnum = require('../enums/BatchEnum')
-const dpnsContract = require('../../data_contracts/dpns.json')
 const { getAliasFromDocument } = require('../utils')
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class TokensDAO {
-  constructor (knex, dapi) {
+  constructor (knex, sdk) {
     this.knex = knex
-    this.dapi = dapi
+    this.sdk = sdk
   }
 
   getTokens = async (page, limit, order) => {
@@ -38,9 +38,9 @@ module.exports = class TokensDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const tokens = await Promise.all(rows.map(async (row) => {
-      const { totalSystemAmount } = await this.dapi.getTokenTotalSupply(row.identifier)
+      const { totalSystemAmount } = await this.sdk.tokens.getTokenTotalSupply(row.identifier)
 
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
 
       const aliases = []
 
@@ -106,7 +106,7 @@ module.exports = class TokensDAO {
       return undefined
     }
 
-    const [tokenWithFullInfo] = await fetchTokenInfoByRows(rows, this.dapi)
+    const [tokenWithFullInfo] = await fetchTokenInfoByRows(rows, this.sdk)
 
     return tokenWithFullInfo
   }
@@ -127,7 +127,7 @@ module.exports = class TokensDAO {
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
 
       const aliases = []
 
@@ -195,7 +195,7 @@ module.exports = class TokensDAO {
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
+      const dataContract = await this.sdk.dataContracts.getDataContractByIdentifier(row.data_contract_identifier)
 
       const token = dataContract.tokens[row.position]
 
@@ -244,11 +244,15 @@ module.exports = class TokensDAO {
       .orderBy('token_id', order)
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
-    const tokens = await fetchTokenInfoByRows(rows, this.dapi)
+    if (rows.length === 0) {
+      return new PaginatedResultSet([], page, limit, 0)
+    }
+
+    const tokens = await fetchTokenInfoByRows(rows, this.sdk)
 
     const tokenIdentifierList = tokens.map((token) => token.identifier)
 
-    const tokenBalances = await this.dapi.getIdentityTokenBalances(identifier, tokenIdentifierList)
+    const tokenBalances = await this.sdk.tokens.getIdentityTokensBalances(identifier, tokenIdentifierList)
 
     const tokensWithBalance = tokens.map(token => ({
       ...token,
@@ -289,7 +293,7 @@ module.exports = class TokensDAO {
 
     const [row] = rows
 
-    const resultSet = await fetchTokenInfoByRows(rows, this.dapi)
+    const resultSet = await fetchTokenInfoByRows(rows, this.sdk)
 
     return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
   }

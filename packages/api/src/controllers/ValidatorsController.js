@@ -12,15 +12,15 @@ const cache = require('../cache')
 const { VALIDATORS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL } = require('../constants')
 
 class ValidatorsController {
-  constructor (knex, dapi) {
-    this.validatorsDAO = new ValidatorsDAO(knex, dapi)
-    this.dapi = dapi
+  constructor (knex, sdk) {
+    this.validatorsDAO = new ValidatorsDAO(knex)
+    this.sdk = sdk
   }
 
   getValidatorByProTxHash = async (request, response) => {
     const { hash } = request.params
 
-    const [currentEpoch] = await this.dapi.getEpochsInfo(1)
+    const [currentEpoch] = await this.sdk.node.getEpochsInfo(1)
     const epochInfo = Epoch.fromObject(currentEpoch)
 
     const validator = await this.validatorsDAO.getValidatorByProTxHash(hash, epochInfo)
@@ -42,7 +42,7 @@ class ValidatorsController {
     } else {
       const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
       const identifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
-      const identityBalance = identifier ? await this.dapi.getIdentityBalance(identifier) : null
+      const identityBalance = identifier ? await this.sdk.identities.getIdentityBalance(identifier) : null
 
       validatorInfo = Validator.fromObject(
         {
@@ -116,7 +116,7 @@ class ValidatorsController {
 
     const activeValidators = await TenderdashRPC.getValidators()
 
-    const [currentEpoch] = await this.dapi.getEpochsInfo(1)
+    const [currentEpoch] = await this.sdk.node.getEpochsInfo(1)
     const epochInfo = Epoch.fromObject(currentEpoch)
 
     const validators = await this.validatorsDAO.getValidators(
@@ -139,7 +139,7 @@ class ValidatorsController {
         } else {
           const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
           const identifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
-          const identityBalance = identifier ? await this.dapi.getIdentityBalance(identifier) : null
+          const identityBalance = identifier ? await this.sdk.identities.getIdentityBalance(identifier) : null
 
           validatorInfo = Validator.fromObject(
             {

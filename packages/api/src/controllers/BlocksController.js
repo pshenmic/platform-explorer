@@ -6,9 +6,9 @@ const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
 
 class BlocksController {
-  constructor (knex, dapi) {
-    this.blocksDAO = new BlocksDAO(knex, dapi)
-    this.dapi = dapi
+  constructor (knex, sdk) {
+    this.blocksDAO = new BlocksDAO(knex, sdk)
+    this.sdk = sdk
   }
 
   getBlockByHash = async (request, response) => {
@@ -116,16 +116,16 @@ class BlocksController {
         return response.status(400).send('Bad epochs range')
       }
 
-      const [startEpoch] = await this.dapi.getEpochsInfo(
+      const [startEpoch] = await this.sdk.node.getEpochsInfo(
         1,
-        Number(epochIndexMin),
-        true
+        true,
+        Number(epochIndexMin)
       )
 
       epochStartTimestamp = startEpoch?.startTime
 
       if (epochIndexMax) {
-        const [endEpoch] = await this.dapi.getEpochsInfo(
+        const [endEpoch] = await this.sdk.node.getEpochsInfo(
           1,
           Number(epochIndexMax),
           true

@@ -1,6 +1,5 @@
 const cbor = require('cbor')
-
-const { deserializeConsensusError } = require('dash').PlatformProtocol
+const { ConsensusErrorWASM } = require('pshenmic-dpp')
 
 module.exports = class Transaction {
   hash
@@ -52,7 +51,7 @@ module.exports = class Transaction {
     try {
       if (typeof error === 'string') {
         const { serializedError } = cbor.decode(Buffer.from(error, 'base64'))?.data
-        decodedError = deserializeConsensusError(serializedError).message
+        decodedError = ConsensusErrorWASM.deserialize(serializedError)?.message
       }
     } catch (e) {
       console.error(e)

@@ -26,6 +26,6 @@ module.exports = class Epoch {
       endTime = Number(startTime) + EPOCH_CHANGE_TIME
     }
 
-    return new Epoch(number, String(firstBlockHeight), firstCoreBlockHeight, Number(startTime), feeMultiplier, endTime)
+    return new Epoch(number, String(firstBlockHeight), firstCoreBlockHeight, Number(startTime), String(feeMultiplier), endTime)
   }
 }

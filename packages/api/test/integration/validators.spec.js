@@ -10,11 +10,12 @@ const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
-const DAPI = require('../../src/DAPI')
 const Epoch = require('../../src/models/Epoch')
 const { base58 } = require('@scure/base')
 const { IDENTITY_CREDIT_WITHDRAWAL } = require('../../src/enums/StateTransitionEnum')
 const cache = require('../../src/cache')
+const { NodeController } = require('dash-platform-sdk/src/node')
+const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 
 describe('Validators routes', () => {
   let app
@@ -194,9 +195,9 @@ describe('Validators routes', () => {
 
     mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
 
-    mock.method(DAPI.prototype, 'getEpochsInfo', epochInfo)
+    mock.method(NodeController.prototype, 'getEpochsInfo', epochInfo)
 
-    mock.method(DAPI.prototype, 'getIdentityBalance', () => 0)
+    mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
 
     mock.fn(checkTcpConnect, () => 'ERROR')
   })

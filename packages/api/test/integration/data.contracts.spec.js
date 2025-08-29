@@ -5,8 +5,10 @@ const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
-const DAPI = require('../../src/DAPI')
 const { IdentifierWASM } = require('pshenmic-dpp')
+const { DocumentsController } = require('dash-platform-sdk/src/documents')
+const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
+const ContestedResourcesController = require('dash-platform-sdk/src/contestedResources')
 
 describe('DataContracts routes', () => {
   let app
@@ -26,7 +28,7 @@ describe('DataContracts routes', () => {
   before(async () => {
     aliasTimestamp = new Date()
 
-    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+    mock.method(DocumentsController.prototype, 'query', async () => [{
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -36,7 +38,7 @@ describe('DataContracts routes', () => {
       createdAt: BigInt(aliasTimestamp.getTime())
     }])
 
-    mock.method(DAPI.prototype, 'getDataContract', async () => ({ groups: undefined }))
+    mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({ groups: undefined }))
 
     app = await server.start()
     client = supertest(app.server)
@@ -44,7 +46,7 @@ describe('DataContracts routes', () => {
 
     await fixtures.cleanup(knex)
 
-    mock.method(DAPI.prototype, 'getContestedState', async () => null)
+    mock.method(ContestedResourcesController.default.prototype, 'getContestedResourceVoteState', async () => null)
 
     height = 1
     dataContracts = []
