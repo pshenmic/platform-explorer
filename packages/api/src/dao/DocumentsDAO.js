@@ -79,6 +79,7 @@ module.exports = class DocumentsDAO {
 
     const document = Document.fromRow({
       ...row,
+      data: !row.deleted ? row.data : undefined,
       transition_type: BatchEnum[row.transition_type],
       owner: {
         identifier: row.document_owner?.trim(),
