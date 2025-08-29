@@ -8,7 +8,7 @@ const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../../src/constants')
 const ChoiceEnum = require('../../src/enums/ChoiceEnum')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
-const ContestedResourcesController = require('dash-platform-sdk/src/contestedResources/index')
+const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources/index')
 const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
 
 describe('Contested documents routes', () => {
@@ -40,7 +40,7 @@ describe('Contested documents routes', () => {
       createdAt: BigInt(aliasTimestamp.getTime())
     }])
 
-    mock.method(ContestedResourcesController.default.prototype, 'getContestedResourceVoteState', async () => ({ finishedVoteInfo: {} }))
+    mock.method(ContestedResourcesController.prototype, 'getContestedResourceVoteState', async () => ({ finishedVoteInfo: {} }))
 
     app = await server.start()
     client = supertest(app.server)

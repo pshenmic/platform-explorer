@@ -7,7 +7,7 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const BatchEnum = require('../../src/enums/BatchEnum')
-const ContestedResourcesController = require('dash-platform-sdk/src/contestedResources')
+const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
 
@@ -173,7 +173,7 @@ describe('Identities routes', () => {
 
     mock.method(IdentitiesController.prototype, 'getIdentityPublicKeys', async () => null)
 
-    mock.method(ContestedResourcesController.default.prototype, 'getContestedResourceVoteState', async () => null)
+    mock.method(ContestedResourcesController.prototype, 'getContestedResourceVoteState', async () => null)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
