@@ -1009,7 +1009,7 @@ const decodeStateTransition = async (base64) => {
       decoded.userFeeIncrease = stateTransition.userFeeIncrease
       decoded.senderId = identityCreditWithdrawalTransition.identityId.base58()
       decoded.amount = String(identityCreditWithdrawalTransition.amount)
-      decoded.outputScript = identityCreditWithdrawalTransition?.outputScript.hex() ?? null
+      decoded.outputScript = identityCreditWithdrawalTransition?.outputScript?.hex() ?? null
       decoded.coreFeePerByte = identityCreditWithdrawalTransition.coreFeePerByte
       decoded.signature = Buffer.from(stateTransition.signature ?? []).toString('hex') ?? null
       decoded.signaturePublicKeyId = stateTransition.signaturePublicKeyId
