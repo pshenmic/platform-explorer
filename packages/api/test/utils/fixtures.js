@@ -389,9 +389,16 @@ const fixtures = {
       holder
     }
 
-    const [result] = await knex('token_holders').insert(row).returning('id')
+    const [alreadyExistHolder] = await knex('token_holders')
+      .where('holder', holder)
+      .andWhere('token_id', token_id)
+      .returning('id')
 
-    return { ...row, id: result.id }
+    if (!alreadyExistHolder) {
+      const [result] = await knex('token_holders').insert(row).returning('id')
+
+      return { ...row, id: result.id }
+    }
   },
   token: async function (knex, {
     position,

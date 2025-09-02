@@ -41,6 +41,7 @@ describe('Tokens', () => {
       totalSystemAmount: 1000,
       totalAggregatedAmountInUserAccounts: 1000
     }))
+
     mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({
       ownerId: new IdentifierWASM('11111111111111111111111111111111'),
       tokens: {
@@ -1269,6 +1270,10 @@ describe('Tokens', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, tokenTransitions.length)
+
       const expectedTransitions =
         tokenTransitions
           .slice(0, 10)
@@ -1300,6 +1305,10 @@ describe('Tokens', () => {
       const { body } = await client.get(`/token/${token.identifier}/transitions?order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, tokenTransitions.length)
 
       const expectedTransitions =
         tokenTransitions
@@ -1334,6 +1343,10 @@ describe('Tokens', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 7)
+      assert.equal(body.pagination.total, tokenTransitions.length)
+
       const expectedTransitions =
         tokenTransitions
           .sort((a, b) => b.tokenTransition.id - a.tokenTransition.id)
@@ -1366,6 +1379,10 @@ describe('Tokens', () => {
       const { body } = await client.get(`/token/${token.identifier}/transitions?order=desc&limit=7&page=2`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 7)
+      assert.equal(body.pagination.total, tokenTransitions.length)
 
       const expectedTransitions =
         tokenTransitions
@@ -1819,7 +1836,7 @@ describe('Tokens', () => {
           tokenTransitions.push(tokenTransition)
         }
 
-        tokens.push({ token, stateTransition, tokenTransitions, block })
+        tokens.push({ token, stateTransition, tokenTransitions, block, holders: [identity] })
       }
     })
 
@@ -1989,6 +2006,169 @@ describe('Tokens', () => {
           },
           tokenIdentifier: token.identifier,
           transitionCount: 0
+        }))
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+  })
+
+  describe('getTokensHolders()', () => {
+    before(async () => {
+      const [token] = tokens
+
+      for (let i = 0; i < 30; i++) {
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+        const tokenTransition = await fixtures.tokeTransition(knex, {
+          token_identifier: token.token.identifier,
+          owner: identity.identifier,
+          action: 8,
+          state_transition_hash: token.stateTransition?.hash,
+          token_contract_position: token.token.position,
+          data_contract_id: dataContract.id
+        })
+
+        token.tokenTransitions.push(tokenTransition)
+
+        token.holders.push(identity)
+      }
+      tokens[0] = token
+
+      mock.method(TokensController.prototype, 'getIdentitiesTokenBalances', async (holders) =>
+        holders.map(holder => ({
+          identityId: new IdentifierWASM(holder),
+          balance: 123n
+        })))
+    })
+
+    it('Should allow to get default token holders list', async () => {
+      const [{ token, holders }] = tokens
+
+      const { body } = await client.get(`/token/${token.identifier}/holders`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, holders.length)
+      assert.equal(body.resultSet.length, 10)
+
+      const expected = holders
+        .slice(0, 10)
+        .map((holder) => ({
+          balance: '123',
+          holder: {
+            identifier: holder.identifier,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          }
+        }))
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get token holders list with custom page', async () => {
+      const [{ token, holders }] = tokens
+
+      const { body } = await client.get(`/token/${token.identifier}/holders?page=2`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, holders.length)
+      assert.equal(body.resultSet.length, 10)
+
+      const expected = holders
+        .slice(10, 20)
+        .map((holder) => ({
+          balance: '123',
+          holder: {
+            identifier: holder.identifier,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          }
+        }))
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get token holders list with custom page and custom limit', async () => {
+      const [{ token, holders }] = tokens
+
+      const { body } = await client.get(`/token/${token.identifier}/holders?page=2&limit=14`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 14)
+      assert.equal(body.pagination.total, holders.length)
+      assert.equal(body.resultSet.length, 14)
+
+      const expected = holders
+        .slice(14, 28)
+        .map((holder) => ({
+          balance: '123',
+          holder: {
+            identifier: holder.identifier,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          }
+        }))
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get token holders list with custom page and custom limit order desc', async () => {
+      const [{ token, holders }] = tokens
+
+      const { body } = await client.get(`/token/${token.identifier}/holders?page=2&limit=14&order=desc`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 14)
+      assert.equal(body.pagination.total, holders.length)
+      assert.equal(body.resultSet.length, 14)
+
+      const expected = holders
+        .sort((a, b) => b.id - a.id)
+        .slice(14, 28)
+        .map((holder) => ({
+          balance: '123',
+          holder: {
+            identifier: holder.identifier,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          }
         }))
 
       assert.deepEqual(body.resultSet, expected)
