@@ -312,14 +312,14 @@ module.exports = class TokensDAO {
     const fromRank = (page - 1) * limit
 
     const subquery = this.knex('token_holders')
-      .select('owner', 'tokens.identifier as token_identifier', 'token_holders.id')
+      .select('holder', 'tokens.identifier as token_identifier', 'token_holders.id')
       .select(this.knex.raw('count(*) OVER() as total_count'))
       .where('tokens.identifier', identifier)
       .leftJoin('tokens', 'token_holders.token_id', 'tokens.id')
       .as('subquery')
 
     const rows = await this.knex(subquery)
-      .select('owner', 'token_identifier', 'total_count')
+      .select('holder', 'token_identifier', 'total_count')
       .offset(fromRank)
       .limit(limit)
       .orderBy('id', order)
@@ -330,9 +330,9 @@ module.exports = class TokensDAO {
       return new PaginatedResultSet([], page, limit, 0)
     }
 
-    const owners = rows.map((row) => row.owner)
+    const holders = rows.map((row) => row.holder)
 
-    const balances = await this.sdk.tokens.getIdentitiesTokenBalances(owners, row.token_identifier)
+    const balances = await this.sdk.tokens.getIdentitiesTokenBalances(holders, row.token_identifier)
 
     const ownersWithBalance = balances.reduce((acc, balance) => {
       return {
@@ -342,7 +342,7 @@ module.exports = class TokensDAO {
     }, {})
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.holder.trim()]], 1)
 
       const aliases = []
 
@@ -351,9 +351,9 @@ module.exports = class TokensDAO {
       }
 
       return {
-        balance: ownersWithBalance[row.owner.trim()] ?? null,
-        owner: {
-          identifier: row.owner?.trim(),
+        balance: ownersWithBalance[row.holder.trim()] ?? null,
+        holder: {
+          identifier: row.holder?.trim(),
           aliases: aliases ?? []
         }
       }
