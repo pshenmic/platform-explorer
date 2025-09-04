@@ -11,6 +11,7 @@ export default function PageSizeSelector ({ PageSizeSelectHandler, value, items,
           onChange={PageSizeSelectHandler}
           options={items}
           menuPlacement={menuPlacement}
+          usePortal={true}
         />
     </div>
   )
