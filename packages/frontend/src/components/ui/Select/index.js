@@ -13,7 +13,7 @@ export default function Select ({
   className
 }) {
   const portalTarget = usePortal || menuPortalTarget
-    ? menuPortalTarget ?? document?.body
+    ? menuPortalTarget ?? (typeof window !== 'undefined' ? document.body : null)
     : null
 
   return (
@@ -22,7 +22,7 @@ export default function Select ({
       isSearchable={false}
       classNamePrefix={'react-select'}
       menuPlacement={menuPlacement}
-      menuPortalTarget={usePortal && (portalTarget ?? null)}
+      menuPortalTarget={portalTarget}
       onChange={onChange}
       {...(value ? { value: { value: value?.value || value, label: value?.label || value } } : {})}
       options={options?.map((option) => ({
