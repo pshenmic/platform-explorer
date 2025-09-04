@@ -27,7 +27,7 @@ export default function Select ({
       {...(value ? { value: { value: value?.value || value, label: value?.label || value?.label || value } } : {})}
       options={options?.map((option) => ({
         value: option?.value || option,
-        label: option?.label || option
+        label: option?.label || option?.label || option
       }))}
     />
   )
