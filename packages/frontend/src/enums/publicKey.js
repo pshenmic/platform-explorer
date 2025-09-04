@@ -23,7 +23,7 @@ export const SecurityLevelInfo = {
     colorScheme: 'blue'
   }
 }
-//todo: check is need?
+
 export const KeyTypeEnum = {
   0: 'ECDSA_SECP256K1',
   1: 'BLS12_381',
@@ -32,7 +32,6 @@ export const KeyTypeEnum = {
   4: 'EDDSA_25519_HASH160'
 }
 
-//todo: check is need?
 export const KeyPurposeEnum = {
   0: 'AUTHENTICATION',
   1: 'ENCRYPTION',
