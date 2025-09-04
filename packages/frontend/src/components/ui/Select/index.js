@@ -24,10 +24,10 @@ export default function Select ({
       menuPlacement={menuPlacement}
       menuPortalTarget={usePortal && (portalTarget ?? null)}
       onChange={onChange}
-      {...(value ? { value: { value: value?.value || value, label: value?.label || value?.label || value } } : {})}
+      {...(value ? { value: { value: value?.value || value, label: value?.label || value } } : {})}
       options={options?.map((option) => ({
         value: option?.value || option,
-        label: option?.label || option?.label || option
+        label: option?.label || option
       }))}
     />
   )
