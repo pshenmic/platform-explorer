@@ -25,6 +25,9 @@ function ContendersList ({ contenders = [], className, loading, itemsCount = 10 
           <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Votes'}>
             Votes
           </GridItem>
+          <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Actions'}>
+            Actions
+          </GridItem>
         </Grid>
 
         {!loading

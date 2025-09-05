@@ -1,11 +1,14 @@
-import { Grid, GridItem } from '@chakra-ui/react'
+import { Button, Grid, GridItem, Icon } from '@chakra-ui/react'
 import { ProportionsLine } from '../../ui/infographics'
 import { Identifier, TimeDelta } from '../../data'
 import { LinkContainer } from '../../ui/containers'
+import { checkPlatformExtension, ExtensionStatusEnum } from '../../../util/extension'
 import { colors } from '../../../styles/colors'
 import './ContendersListItem.scss'
 
 function ContendersListItem ({ contender, className }) {
+  const isExtensionConnected = checkPlatformExtension() === ExtensionStatusEnum.CONNECTED;
+
   return (
     <div className={`ContendersListItem ${className || ''}`}>
       <div className={'ContendersListItem__ScrollZone'}>
@@ -75,6 +78,16 @@ function ContendersListItem ({ contender, className }) {
                 tooltipContent: <span>{contender?.lockVotes} Lock votes</span>
               }
             ]} />
+          </GridItem>
+             
+          <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
+            {
+              isExtensionConnected ? 
+              <Button className='ContendersListItem__Column_Vote-btn' variant="brand" size="sm">Vote</Button>
+              : <>
+              <Icon />
+              </>
+            }
           </GridItem>
         </Grid>
       </div>
