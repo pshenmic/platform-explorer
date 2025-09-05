@@ -856,13 +856,12 @@ const decodeStateTransition = async (base64) => {
         return {
           contractBounds: contractBounds
             ? {
-                type: contractBounds.contractBoundsType,
-                id: contractBounds.identi.base58(),
-                typeName: contractBounds.document_type_name
+                type: contractBounds.contractBoundsType ?? null,
+                id: contractBounds.identifier.base58()
               }
             : null,
           id: key.keyId,
-          type: key.keyType,
+          keyType: key.keyType,
           data: Buffer.from(key.data).toString('hex'),
           publicKeyHash: Buffer.from(key.getHash()).toString('hex'),
           purpose: key.purpose,

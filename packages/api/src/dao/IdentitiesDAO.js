@@ -173,18 +173,17 @@ module.exports = class IdentitiesDAO {
 
         return {
           keyId: key.keyId,
-          type: key.keyType,
+          keyType: key.keyType,
           raw: key.hex(),
           data: key.data,
           purpose: key.purpose,
           securityLevel: key.securityLevel,
           readOnly: key.readOnly,
-          hash: key.getPublicKeyHash(),
+          publicKeyHash: key.getPublicKeyHash(),
           contractBounds: contractBounds
             ? {
                 identifier: contractBounds.identifier.base58(),
-                documentTypeName: contractBounds.documentTypeName ?? null,
-                contractBoundsType: contractBounds.contractBoundsType
+                documentTypeName: contractBounds.documentTypeName ?? null
               }
             : null
         }
