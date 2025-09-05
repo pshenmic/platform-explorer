@@ -1147,13 +1147,13 @@ GET /identity/3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ
   "publicKeys": [
     {
       "keyId": 0,
-      "type": 0,
+      "keyType": 0,
       "data": "0386067dea94b1cfb23bf252084a2020a4a6712df7e4ac16c211558a1dbb66904a",
       "purpose": 0,
       "securityLevel": 0,
-      "isReadOnly": false,
+      "readOnly": false,
       "isMaster": true,
-      "hash": "5501114f5842004d1ff6c7d04512c438afe0cb11",
+      "publicKeyHash": "5501114f5842004d1ff6c7d04512c438afe0cb11",
       "contractBounds": null
     },
     {
