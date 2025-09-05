@@ -11,6 +11,7 @@ import './PublicKeyBoundCard.scss'
 function PublicKeysListItem ({ publicKey, className }) {
   const securityLevel = pkEnums.SecurityLevelInfo?.[publicKey?.securityLevel]
   const purpose = pkEnums.KeyPurposeInfo?.[publicKey?.purpose]
+  console.log({publicKey})
   return (
     <div className={`PublicKeysListItem ${className || ''}`}>
       <Grid className={'PublicKeysListItem__Content'}>
@@ -18,10 +19,10 @@ function PublicKeysListItem ({ publicKey, className }) {
           {publicKey?.keyId !== undefined ? publicKey?.keyId : <NotActive>-</NotActive>}
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column--PublicKeyHash'}>
-          {publicKey?.raw !== undefined
+          {publicKey?.publicKeyHash !== undefined
             ? <ValueCard className={'PublicKeysListItem__PublicKeyHash'} size={'sm'} colorScheme={'transparent'}>
-                {publicKey.raw}
-                <CopyButton text={publicKey.raw}/>
+                {publicKey.publicKeyHash}
+                <CopyButton text={publicKey.publicKeyHash}/>
               </ValueCard>
             : <NotActive/>
           }
