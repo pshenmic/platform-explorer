@@ -179,7 +179,7 @@ module.exports = class IdentitiesDAO {
           purpose: key.purpose,
           securityLevel: key.securityLevel,
           readOnly: key.readOnly,
-          hash: key.hash,
+          hash: key.getPublicKeyHash(),
           contractBounds: contractBounds
             ? {
                 identifier: contractBounds.identifier.base58(),
