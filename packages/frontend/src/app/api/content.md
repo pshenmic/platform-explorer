@@ -2068,6 +2068,13 @@ DOCUMENT TRANSITION
       "identityContractNonce": "2",
       "data": {
         "message": "Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT"
+      },
+      "tokenPaymentInfo": {
+        "paymentTokenContractId": "dfaPU4HsMpUX7NMF2TR5oeAC4cZvLwYrSU6WT4884bq",
+        "tokenContractPosition": 0,
+        "minimumTokenCost": null,
+        "maximumTokenCost": "15",
+        "gasFeesPaidBy": "DocumentOwner"
       }
     }
   ],
