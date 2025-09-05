@@ -213,7 +213,7 @@ describe('Utils', () => {
           {
             contractBounds: null,
             id: 0,
-            type: 'ECDSA_SECP256K1',
+            keyType: 'ECDSA_SECP256K1',
             data: '0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5',
             publicKeyHash: '07630dddc55729c043de7bdeb145ee0d44feae3b',
             purpose: 'AUTHENTICATION',
@@ -224,7 +224,7 @@ describe('Utils', () => {
           {
             contractBounds: null,
             id: 1,
-            type: 'ECDSA_SECP256K1',
+            keyType: 'ECDSA_SECP256K1',
             data: '034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf',
             publicKeyHash: 'e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23',
             purpose: 'AUTHENTICATION',
@@ -235,7 +235,7 @@ describe('Utils', () => {
           {
             contractBounds: null,
             id: 2,
-            type: 'ECDSA_SECP256K1',
+            keyType: 'ECDSA_SECP256K1',
             data: '0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4',
             publicKeyHash: 'd53ee3b3518fee80816ab26af98a34ea60ae9af7',
             purpose: 'AUTHENTICATION',
