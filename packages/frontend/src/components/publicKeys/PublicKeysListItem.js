@@ -27,9 +27,9 @@ function PublicKeysListItem ({ publicKey, className }) {
           }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Type'}>
-          {publicKey?.type !== undefined
+          {publicKey?.keyType !== undefined
             ? <ValueContainer colorScheme={'gray'} size={'sm'}>
-                {publicKey?.type || '-'}
+                {publicKey?.keyType || '-'}
               </ValueContainer>
             : <NotActive/>
           }
