@@ -11,7 +11,6 @@ import './PublicKeyBoundCard.scss'
 function PublicKeysListItem ({ publicKey, className }) {
   const securityLevel = pkEnums.SecurityLevelInfo?.[publicKey?.securityLevel]
   const purpose = pkEnums.KeyPurposeInfo?.[publicKey?.purpose]
-  console.log({publicKey})
   return (
     <div className={`PublicKeysListItem ${className || ''}`}>
       <Grid className={'PublicKeysListItem__Content'}>
