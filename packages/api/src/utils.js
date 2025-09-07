@@ -2,7 +2,10 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT } = require('./constants')
+const {
+  TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, STATE_TRANSITION_STATUS_INTERVAL,
+  STATE_TRANSITION_STATUS_MAX_RETRIES
+} = require('./constants')
 const { base58 } = require('@scure/base')
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
@@ -22,6 +25,7 @@ const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
 const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
 const Token = require('./models/Token')
 const PerpetualDistribution = require('./models/PerpetualDistribution')
+const TenderdashRPC = require('./tenderdashRpc')
 
 const getKnex = () => {
   return require('knex')({
@@ -1251,6 +1255,44 @@ const getAliasInfo = async (aliasText, sdk) => {
   return { alias: aliasText, contestedState: null }
 }
 
+const waitForStateTransition = async (hash) => {
+  const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash)
+
+  if (unconfirmed.code === -32603) {
+    const confirmed = await TenderdashRPC.getTransactionByHash(hash)
+
+    if (confirmed.tx) {
+      return {
+        tx: confirmed.tx
+      }
+    } else {
+      throw new Error("ST doesn't exist")
+    }
+  } else if (unconfirmed.tx) {
+    return new Promise((resolve, reject) => {
+      let retries = 0
+
+      const interval = setInterval(async () => {
+        retries++
+
+        const confirmed = await waitForStateTransition(hash)
+
+        if (confirmed.tx) {
+          clearInterval(interval)
+          return resolve({
+            tx: confirmed.tx
+          })
+        }
+
+        if (retries >= STATE_TRANSITION_STATUS_MAX_RETRIES) {
+          clearInterval(interval)
+          return reject(new Error("ST wait timeout"))
+        }
+      }, STATE_TRANSITION_STATUS_INTERVAL)
+    })
+  }
+}
+
 module.exports = {
   hash,
   decodeStateTransition,
@@ -1263,5 +1305,6 @@ module.exports = {
   buildIndexBuffer,
   outputScriptToAddress,
   getAliasFromDocument,
-  fetchTokenInfoByRows
+  fetchTokenInfoByRows,
+  waitForStateTransition
 }

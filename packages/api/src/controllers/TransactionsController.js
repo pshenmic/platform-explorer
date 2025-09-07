@@ -1,6 +1,6 @@
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const utils = require('../utils')
-const { calculateInterval, iso8601duration } = require('../utils')
+const { calculateInterval, iso8601duration, waitForStateTransition } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
@@ -174,6 +174,14 @@ class TransactionsController {
     }
 
     response.send({ message: 'broadcasted' })
+  }
+
+  waitForStateTransitionResult = async (request, response) => {
+    const { hash } = request.params
+
+    const result = await waitForStateTransition(hash)
+
+    response.send(result)
   }
 }
 
