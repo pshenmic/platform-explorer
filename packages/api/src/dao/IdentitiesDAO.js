@@ -10,10 +10,9 @@ const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
 
 module.exports = class IdentitiesDAO {
-  constructor (knex, dapi, client) {
+  constructor (knex, sdk) {
     this.knex = knex
-    this.dapi = dapi
-    this.client = client
+    this.sdk = sdk
   }
 
   getIdentityByIdentifier = async (identifier) => {
@@ -148,12 +147,12 @@ module.exports = class IdentitiesDAO {
     const identity = Identity.fromRow(row)
 
     const aliases = await Promise.all(identity.aliases.map(async alias => {
-      const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+      const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
 
       return getAliasStateByVote(aliasInfo, alias, identifier)
     }))
 
-    const publicKeys = await this.dapi.getIdentityKeys(identity.identifier)
+    const publicKeys = await this.sdk.identities.getIdentityPublicKeys(identity.identifier)
 
     let fundingCoreTx = null
 
@@ -163,23 +162,32 @@ module.exports = class IdentitiesDAO {
       fundingCoreTx = assetLockProof?.fundingCoreTx
     }
 
-    const balance = await this.dapi.getIdentityBalance(identity.identifier)
+    const balance = await this.sdk.identities.getIdentityBalance(identity.identifier)
 
     return Identity.fromObject({
       ...identity,
       aliases,
       balance: String(balance),
-      publicKeys: publicKeys?.map(key => ({
-        keyId: key.keyId,
-        type: key.type,
-        raw: key.raw,
-        data: key.data,
-        purpose: key.purpose,
-        securityLevel: key.securityLevel,
-        readOnly: key.isReadOnly,
-        hash: key.hash,
-        contractBounds: key.contractBounds
-      })),
+      publicKeys: publicKeys?.map(key => {
+        const contractBounds = key.getContractBounds()
+
+        return {
+          keyId: key.keyId,
+          keyType: key.keyType,
+          raw: key.hex(),
+          data: key.data,
+          purpose: key.purpose,
+          securityLevel: key.securityLevel,
+          readOnly: key.readOnly,
+          publicKeyHash: key.getPublicKeyHash(),
+          contractBounds: contractBounds
+            ? {
+                identifier: contractBounds.identifier.base58(),
+                documentTypeName: contractBounds.documentTypeName ?? null
+              }
+            : null
+        }
+      }),
       fundingCoreTx
     })
   }
@@ -196,7 +204,7 @@ module.exports = class IdentitiesDAO {
     }
 
     return Promise.all(rows.map(async row => {
-      const aliasInfo = await getAliasInfo(row.alias, this.dapi)
+      const aliasInfo = await getAliasInfo(row.alias, this.sdk)
 
       return {
         identifier: row.identity_identifier,
@@ -286,10 +294,10 @@ module.exports = class IdentitiesDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const resultSet = await Promise.all(rows.map(async row => {
-      const balance = await this.dapi.getIdentityBalance(row.identifier.trim())
+      const balance = await this.sdk.identities.getIdentityBalance(row.identifier.trim())
 
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
 
         return getAliasStateByVote(aliasInfo, alias, row.identifier.trim())
       }))
@@ -410,7 +418,7 @@ module.exports = class IdentitiesDAO {
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias.alias, this.dapi)
+        const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
 
         return getAliasStateByVote(aliasInfo, alias, row.owner)
       }))
@@ -430,36 +438,45 @@ module.exports = class IdentitiesDAO {
   }
 
   getTransactionsByIdentity = async (identifier, page, limit, order) => {
-    const fromRank = (page - 1) * limit + 1
-    const toRank = fromRank + limit - 1
+    const fromRank = (page - 1) * limit
 
     const subquery = this.knex('state_transitions')
       .select('state_transitions.id as state_transition_id', 'state_transitions.hash as tx_hash',
         'state_transitions.index as index', 'state_transitions.type as type', 'state_transitions.block_hash as block_hash',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
-        'state_transitions.owner as owner'
+        'state_transitions.owner as owner', 'state_transitions.data as data'
       )
-      .select(this.knex.raw(`rank() over (order by state_transitions.id ${order}) rank`))
       .where('state_transitions.owner', '=', identifier)
 
     const rows = await this.knex.with('with_alias', subquery)
-      .select('state_transition_id', 'tx_hash', 'index', 'block_hash', 'type', 'rank',
-        'gas_used', 'status', 'gas_used', 'owner',
+      .select('state_transition_id', 'tx_hash', 'index', 'block_hash', 'type',
+        'gas_used', 'status', 'gas_used', 'owner', 'data',
         'blocks.timestamp as timestamp', 'blocks.height as block_height')
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
       .from('with_alias')
-      .whereBetween('rank', [fromRank, toRank])
+      .offset(fromRank)
+      .limit(limit)
       .orderBy('state_transition_id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    return new PaginatedResultSet(rows.map(row => Transaction.fromRow({ ...row, type: StateTransitionEnum[row.type] })), page, limit, totalCount)
+    const resultSet = await Promise.all(rows.map(async (row) => {
+      const decodedTransaction = row.type === StateTransitionEnum.BATCH ? await decodeStateTransition(row.data) : {}
+      const [transition] = decodedTransaction?.transitions ?? []
+
+      return Transaction.fromRow({
+        ...row,
+        type: StateTransitionEnum[row.type],
+        batch_type: transition?.action
+      })
+    }))
+
+    return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }
 
   getTransfersByIdentity = async (identifier, hash, page, limit, order, type) => {
-    const fromRank = (page - 1) * limit + 1
-    const toRank = fromRank + limit - 1
+    const fromRank = (page - 1) * limit
 
     let searchQuery = '(transfers.sender = ? OR transfers.recipient = ?)'
     const searchBingings = [identifier, identifier]
@@ -483,13 +500,13 @@ module.exports = class IdentitiesDAO {
         'state_transitions.type as type',
         'state_transitions.gas_used as gas_used'
       )
-      .select(this.knex.raw(`rank() over (order by transfers.id ${order}) rank`))
       .whereRaw(searchQuery, searchBingings)
       .leftJoin('state_transitions', 'state_transitions.hash', 'transfers.state_transition_hash')
 
-    const rows = await this.knex.with('with_alias', subquery)
+    const rows = await this.knex
+      .with('with_alias', subquery)
       .select(
-        'rank', 'amount', 'block_hash', 'type',
+        'amount', 'block_hash', 'type',
         'sender', 'recipient', 'with_alias.id',
         'tx_hash', 'blocks.timestamp as timestamp',
         'block_hash', 'gas_used'
@@ -497,7 +514,8 @@ module.exports = class IdentitiesDAO {
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'with_alias.block_hash')
       .from('with_alias')
-      .whereBetween('rank', [fromRank, toRank])
+      .offset(fromRank)
+      .limit(limit)
       .orderBy('with_alias.id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0

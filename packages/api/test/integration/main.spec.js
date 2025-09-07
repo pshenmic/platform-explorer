@@ -7,9 +7,14 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const DAPI = require('../../src/DAPI')
-const { IdentifierWASM } = require('pshenmic-dpp')
+const { IdentifierWASM, TokenConfigurationWASM } = require('pshenmic-dpp')
 const BatchEnum = require('../../src/enums/BatchEnum')
+const { IdentitiesController } = require('dash-platform-sdk/src/identities')
+const { NodeController } = require('dash-platform-sdk/src/node')
+const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
+const { DocumentsController } = require('dash-platform-sdk/src/documents')
+const { TokensController } = require('dash-platform-sdk/src/tokens')
+const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
@@ -30,13 +35,14 @@ describe('Other routes', () => {
   let document
   let transactions
   let aliasTimestamp
+  let token
 
   before(async () => {
     aliasTimestamp = new Date()
 
-    mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
-    mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
-    mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
+    mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+    mock.method(NodeController.prototype, 'totalCredits', async () => 0)
+    mock.method(NodeController.prototype, 'getEpochsInfo', async () => [{
       number: 0,
       firstBlockHeight: 0,
       firstCoreBlockHeight: 0,
@@ -45,11 +51,11 @@ describe('Other routes', () => {
       nextEpoch: 0
     }])
 
-    mock.method(DAPI.prototype, 'getContestedState', async () => null)
+    mock.method(ContestedResourcesController.prototype, 'getContestedResourceVoteState', async () => null)
 
-    mock.method(DAPI.prototype, 'getIdentityKeys', async () => null)
+    mock.method(IdentitiesController.prototype, 'getIdentityPublicKeys', async () => null)
 
-    mock.method(DAPI.prototype, 'getStatus', async () => null)
+    mock.method(NodeController.prototype, 'status', async () => null)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
       block: {
@@ -59,7 +65,7 @@ describe('Other routes', () => {
       }
     }))
 
-    mock.method(DAPI.prototype, 'getDocuments', async () => [{
+    mock.method(DocumentsController.prototype, 'query', async () => [{
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -68,6 +74,85 @@ describe('Other routes', () => {
       id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
       createdAt: BigInt(aliasTimestamp.getTime())
     }])
+
+    mock.method(TokensController.prototype, 'getTokenTotalSupply', async () => ({
+      totalSystemAmount: 1000,
+      totalAggregatedAmountInUserAccounts: 1000
+    }))
+    mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({
+      ownerId: new IdentifierWASM('11111111111111111111111111111111'),
+      tokens: {
+        29: {
+          description: null,
+          baseSupply: 1000n,
+          maxSupply: 1010n,
+          conventions: {
+            decimals: 1000,
+            localizations: {
+              en: {
+                pluralForm: 'tests',
+                singularForm: 'test',
+                shouldCapitalize: true
+              }
+            }
+          },
+          manualMintingRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          manualBurningRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          freezeRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          unfreezeRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          destroyFrozenFundsRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          emergencyActionRules: {
+            authorizedToMakeChange: {
+              getTakerType: () => 'NoOne'
+            }
+          },
+          distributionRules: {
+            perpetualDistribution: {
+              distributionType: {
+                getDistribution: () => ({
+                  constructor: {
+                    name: 'BlockBasedDistributionWASM'
+                  },
+                  interval: 100n,
+                  function: {
+                    getFunctionName: () => 'FixedAmount',
+                    getFunctionValue: () => ({
+                      amount: 100n
+                    })
+                  }
+                })
+              },
+              distributionRecipient: {
+                getType: () => 'ContractOwner',
+                getValue: () => undefined
+              }
+
+            }
+          },
+          mainGroup: undefined
+        }
+      }
+    }))
 
     app = await server.start()
     client = supertest(app.server)
@@ -116,7 +201,7 @@ describe('Other routes', () => {
     dataContract = await fixtures.dataContract(knex, {
       state_transition_hash: dataContractTransaction.hash,
       owner: identity.identifier,
-      name: 'test'
+      name: 'testContract'
     })
 
     documentTransaction = await fixtures.transaction(knex, {
@@ -132,6 +217,16 @@ describe('Other routes', () => {
       state_transition_hash: documentTransaction.hash,
       owner: identity.identifier,
       data_contract_id: dataContract.id
+    })
+
+    token = await fixtures.token(knex, {
+      position: 29,
+      owner: identity.identifier,
+      data_contract_id: dataContract.id,
+      decimals: 10,
+      base_supply: 1000,
+      name: 'test',
+      state_transition_hash: dataContractTransaction?.hash
     })
 
     transactions.push(identityTransaction.hash)
@@ -371,14 +466,59 @@ describe('Other routes', () => {
           ]
         },
         groups: null,
-        tokens: null
+        tokens: [{
+          identifier: TokenConfigurationWASM.calculateTokenId(dataContract.identifier, 29).base58(),
+          position: 29,
+          timestamp: null,
+          description: null,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
+          totalSupply: '1000',
+          maxSupply: '1010',
+          owner: {
+            identifier: identity.identifier,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString(),
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                contested: true
+              }
+            ]
+          },
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
+          dataContractIdentifier: dataContract.identifier,
+          changeMaxSupply: true,
+          totalGasUsed: null,
+          mainGroup: null,
+          totalTransitionsCount: null,
+          totalFreezeTransitionsCount: null,
+          totalBurnTransitionsCount: null,
+          decimals: 1000,
+          perpetualDistribution: null,
+          preProgrammedDistribution: null,
+          price: null,
+          prices: null
+        }]
       }
 
-      assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
+      assert.deepEqual(body, { dataContracts: [expectedDataContract] })
     })
 
     it('should search by data contract name', async () => {
-      const { body } = await client.get('/search?query=test')
+      const { body } = await client.get('/search?query=testContract')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -442,7 +582,7 @@ describe('Other routes', () => {
     })
 
     it('should search by identity DPNS', async () => {
-      mock.method(DAPI.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
 
       const { body } = await client.get(`/search?query=${identityAlias.alias}`)
         .expect(200)
@@ -499,7 +639,153 @@ describe('Other routes', () => {
         totalWithdrawals: 0
       }
 
-      assert.deepEqual({ identities: [expectedIdentity] }, body)
+      assert.deepEqual(body, { identities: [expectedIdentity] })
+    })
+
+    it('should search token', async () => {
+      const { body } = await client.get(`/search?query=${token.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
+        identifier: token.identifier,
+        position: 29,
+        timestamp: block.timestamp.toISOString(),
+        description: null,
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
+        owner: {
+          identifier: '11111111111111111111111111111111',
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
+        mintable: false,
+        burnable: false,
+        freezable: false,
+        unfreezable: false,
+        destroyable: false,
+        allowedEmergencyActions: false,
+        dataContractIdentifier: dataContract.identifier,
+        changeMaxSupply: true,
+        totalGasUsed: 0,
+        mainGroup: null,
+        totalTransitionsCount: 0,
+        decimals: 1000,
+        totalFreezeTransitionsCount: 0,
+        totalBurnTransitionsCount: 0,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
+        price: null,
+        prices: null
+      }
+
+      assert.deepEqual({ tokens: [expectedToken] }, body)
+    })
+
+    it('should search token by name', async () => {
+      const { body } = await client.get('/search?query=test')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedToken = {
+        localizations: {
+          en: {
+            pluralForm: 'tests',
+            singularForm: 'test',
+            shouldCapitalize: true
+          }
+        },
+        identifier: token.identifier,
+        position: 29,
+        timestamp: block.timestamp.toISOString(),
+        description: null,
+        baseSupply: '1000',
+        maxSupply: '1010',
+        totalSupply: '1000',
+        owner: {
+          identifier: '11111111111111111111111111111111',
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
+        mintable: false,
+        burnable: false,
+        freezable: false,
+        unfreezable: false,
+        destroyable: false,
+        allowedEmergencyActions: false,
+        dataContractIdentifier: dataContract.identifier,
+        changeMaxSupply: true,
+        totalGasUsed: null,
+        mainGroup: null,
+        totalTransitionsCount: null,
+        decimals: 1000,
+        totalFreezeTransitionsCount: null,
+        totalBurnTransitionsCount: null,
+        preProgrammedDistribution: null,
+        perpetualDistribution: {
+          functionName: 'FixedAmount',
+          functionValue: {
+            amount: '100'
+          },
+          interval: 100,
+          recipientType: 'ContractOwner',
+          recipientValue: null,
+          type: 'BlockBasedDistribution'
+        },
+        price: null,
+        prices: null
+      }
+
+      const expectedDataContract = {
+        identifier: dataContract.identifier,
+        name: dataContract.name,
+        owner: identity.identifier.trim(),
+        schema: JSON.stringify(dataContract.schema),
+        version: 0,
+        txHash: dataContractTransaction.hash,
+        timestamp: block.timestamp.toISOString(),
+        isSystem: false,
+        documentsCount: 1,
+        averageGasUsed: null,
+        identitiesInteracted: null,
+        totalGasUsed: null,
+        topIdentity: null,
+        groups: null,
+        tokens: null
+      }
+
+      assert.deepEqual({ tokens: [expectedToken], dataContracts: [expectedDataContract] }, body)
     })
   })
 
@@ -515,22 +801,30 @@ describe('Other routes', () => {
       }
       const mockDapiStatus = {
         version: {
-          dapiVersion: '1.5.1',
-          driveVersion: '1.6.2',
-          tenderdashVersion: '1.4.0',
-          tenderdashP2pProtocol: 10,
-          tenderdashBlockProtocol: 14,
-          driveLatestProtocol: 6,
-          driveCurrentProtocol: 6
+          software: {
+            tenderdash: '1.4.0',
+            dapi: '1.5.1',
+            drive: '1.6.2'
+          },
+          protocol: {
+            tenderdash: {
+              p2p: 10,
+              block: 14
+            },
+            drive: {
+              latest: 6,
+              current: 10
+            }
+          }
         }
       }
 
       mock.reset()
-      mock.method(DAPI.prototype, 'getTotalCredits', async () => 0)
-      mock.method(DAPI.prototype, 'getStatus', async () => mockDapiStatus)
-      mock.method(DAPI.prototype, 'getEpochsInfo', async () => [{
+      mock.method(NodeController.prototype, 'totalCredits', async () => 0)
+      mock.method(NodeController.prototype, 'status', async () => null)
+      mock.method(NodeController.prototype, 'getEpochsInfo', async () => [{
         number: 0,
-        firstBlockHeight: '0',
+        firstBlockHeight: 0,
         firstCoreBlockHeight: 0,
         startTime: 0,
         feeMultiplier: 0,
@@ -555,7 +849,7 @@ describe('Other routes', () => {
           firstBlockHeight: '0',
           firstCoreBlockHeight: 0,
           startTime: 0,
-          feeMultiplier: 0,
+          feeMultiplier: '0',
           endTime: null
         },
         identitiesCount: 1,

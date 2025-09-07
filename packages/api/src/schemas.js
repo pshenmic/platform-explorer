@@ -67,6 +67,7 @@ const schemaTypes = [
                 'DATA_CONTRACT_UPDATE',
                 'IDENTITY_UPDATE',
                 'IDENTITY_CREDIT_WITHDRAWAL',
+                'IDENTITY_CREDIT_TRANSFER',
                 'MASTERNODE_VOTE'
               ]
             },

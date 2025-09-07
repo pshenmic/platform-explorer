@@ -5,9 +5,8 @@ const { IDENTITY_CREDIT_WITHDRAWAL } = require('../enums/StateTransitionEnum')
 const { base58 } = require('@scure/base')
 
 module.exports = class ValidatorsDAO {
-  constructor (knex, dapi) {
+  constructor (knex) {
     this.knex = knex
-    this.dapi = dapi
   }
 
   getValidatorByProTxHash = async (proTxHash, currentEpoch) => {
@@ -110,75 +109,25 @@ module.exports = class ValidatorsDAO {
 
     const validator = Validator.fromRow(row)
 
-    const identityBalance = await this.dapi.getIdentityBalance(identifier)
-
     return Validator.fromObject({
-      ...validator,
-      identityBalance: String(identityBalance),
-      identity: identifier
+      ...validator
     })
   }
 
   getValidators = async (page, limit, order, isActive, validators, currentEpoch) => {
-    const fromRank = ((page - 1) * limit) + 1
-    const toRank = limit ? fromRank + limit - 1 : this.knex.raw("'+infinity'::numeric")
+    const fromRank = ((page - 1) * limit)
 
     const validatorsSubquery = this.knex('validators')
       .select(
         'validators.pro_tx_hash as pro_tx_hash',
-        'validators.id',
-        this.knex('validators')
-          .modify(function (knex) {
-            if (isActive !== undefined && isActive) {
-              knex.whereIn('pro_tx_hash', validators.map(validator => validator.pro_tx_hash))
-            } else if (isActive !== undefined && !isActive) {
-              knex.whereNotIn('pro_tx_hash', validators.map(validator => validator.pro_tx_hash))
-            }
-          })
-          .count('pro_tx_hash').as('total_count'),
-        this.knex('blocks')
-          .count('*')
-          .whereRaw('blocks.validator = validators.pro_tx_hash')
-          .as('proposed_blocks_amount'),
-        this.knex('blocks')
-          .select('hash')
-          .whereRaw('pro_tx_hash = blocks.validator')
-          .orderBy('height', 'desc')
-          .limit(1)
-          .as('proposed_block_hash'),
-        this.knex('blocks')
-          .select(this.knex.raw('SUM(state_transitions.gas_used) OVER () as total_collected_fees'))
-          .leftJoin('state_transitions', 'blocks.hash', 'state_transitions.block_hash')
-          .whereRaw('pro_tx_hash = blocks.validator')
-          .limit(1)
-          .as('total_collected_reward'),
-        this.knex('blocks')
-          .select(this.knex.raw('SUM(state_transitions.gas_used) OVER () as total_collected_reward_by_epoch'))
-          .leftJoin('state_transitions', 'blocks.hash', 'state_transitions.block_hash')
-          .whereRaw('pro_tx_hash = blocks.validator')
-          .andWhere('blocks.timestamp', '>=', new Date(currentEpoch.startTime).toISOString())
-          .andWhere('blocks.timestamp', '<=', new Date(currentEpoch.endTime).toISOString())
-          .limit(1)
-          .as('total_collected_reward_by_epoch')
+        'validators.id'
       )
       .as('validators')
 
     const subquery = this.knex(validatorsSubquery)
       .select(
         'pro_tx_hash',
-        'id',
-        'total_count',
-        'total_collected_reward',
-        'proposed_blocks_amount',
-        'total_collected_reward_by_epoch',
-        this.knex.raw(`rank() over (order by validators.id ${order}) as rank`),
-        'blocks.hash as block_hash',
-        'blocks.height as latest_height',
-        'blocks.timestamp as latest_timestamp',
-        'blocks.l1_locked_height as l1_locked_height',
-        'blocks.app_version as app_version',
-        'blocks.app_hash as app_hash',
-        'blocks.block_version as block_version'
+        'id'
       )
       .modify(function (knex) {
         if (isActive !== undefined && isActive) {
@@ -187,28 +136,59 @@ module.exports = class ValidatorsDAO {
           knex.whereNotIn('pro_tx_hash', validators.map(validator => validator.pro_tx_hash))
         }
       })
-      .leftJoin('blocks', 'blocks.hash', 'proposed_block_hash')
-      .as('blocks')
 
-    const rows = await this.knex(subquery)
+    const limitedSubquery = this.knex
+      .with('subquery', subquery)
       .select(
         'id',
-        'rank',
-        'total_count',
-        'pro_tx_hash',
-        'total_collected_reward',
-        'proposed_blocks_amount',
-        'total_collected_reward_by_epoch',
-        'block_hash',
-        'latest_height',
-        'latest_timestamp',
-        'l1_locked_height',
-        'app_version',
-        'block_version',
-        'app_hash'
+        'pro_tx_hash'
       )
-      .whereBetween('rank', [fromRank, toRank])
+      .select(this.knex('subquery').select(this.knex.raw('COUNT(id) over ()')).limit(1).as('total_count'))
+      .offset(fromRank)
       .orderBy('id', order)
+      .from('subquery')
+
+    if (limit > 0) {
+      limitedSubquery.limit(limit)
+    }
+
+    const blocksSubquery = this.knex('subquery')
+      .select(
+        'blocks.validator', 'subquery.id as validator_id', 'hash', 'app_hash',
+        'height', 'l1_locked_height', 'app_version', 'block_version',
+        'blocks.timestamp'
+      )
+      .leftJoin('blocks', 'blocks.validator_id', 'subquery.id')
+
+    const rows = await this.knex
+      .with('subquery', limitedSubquery)
+      .with('blocks_subquery', blocksSubquery)
+      .select(
+        'total_count', 'pro_tx_hash', 'block_hash',
+        'latest_height', 'latest_timestamp', 'l1_locked_height',
+        'app_version', 'block_version', 'app_hash'
+      )
+      .select(
+        this.knex('blocks_subquery')
+          .select(this.knex.raw('count(hash) over ()'))
+          .whereRaw('validator_id = subquery.id')
+          .limit(1)
+          .as('proposed_blocks_amount')
+      )
+      .joinRaw(
+        `LEFT JOIN LATERAL 
+        (
+          SELECT 
+            hash as block_hash,  height as latest_height,
+            timestamp as latest_timestamp, l1_locked_height,
+            app_version, block_version, app_hash
+          FROM blocks_subquery b
+          WHERE b.validator_id = subquery.id
+          ORDER BY height desc
+          LIMIT 1
+        ) as blocks_subquery ON TRUE`
+      )
+      .from('subquery')
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 

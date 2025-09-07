@@ -1,12 +1,12 @@
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { getAliasFromDocument } = require('../utils')
-const dpnsContract = require('../../data_contracts/dpns.json')
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class MasternodeVotesDAO {
-  constructor (knex, dapi) {
+  constructor (knex, sdk) {
     this.knex = knex
-    this.dapi = dapi
+    this.sdk = sdk
   }
 
   getMasternodeVotes = async (choice, timestampStart, timestampEnd, voterIdentity, towardsIdentity, power, page, limit, order) => {
@@ -71,7 +71,7 @@ module.exports = class MasternodeVotesDAO {
       .orderBy('subquery.id', order)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = row.towards_identity_identifier ? await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.towards_identity_identifier.trim()]], 1) : []
+      const [aliasDocument] = row.towards_identity_identifier ? await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.towards_identity_identifier.trim()]], 1) : []
 
       const aliases = []
 

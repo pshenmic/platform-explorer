@@ -1,8 +1,8 @@
 const ContestedDAO = require('../dao/ContestedResourcesDAO')
 
 class ContestedResourcesController {
-  constructor (knex, dapi) {
-    this.contestedResourcesDAO = new ContestedDAO(knex, dapi)
+  constructor (knex, sdk) {
+    this.contestedResourcesDAO = new ContestedDAO(knex, sdk)
   }
 
   getContestedResource = async (request, response) => {

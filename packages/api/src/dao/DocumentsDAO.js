@@ -2,14 +2,13 @@ const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
 const { decodeStateTransition, getAliasFromDocument } = require('../utils')
-const dpnsContract = require('../../data_contracts/dpns.json')
 const BatchEnum = require('../enums/BatchEnum')
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class DocumentsDAO {
-  constructor (knex, dapi, client) {
+  constructor (knex, sdk) {
     this.knex = knex
-    this.client = client
-    this.dapi = dapi
+    this.sdk = sdk
   }
 
   getDocumentByIdentifier = async (identifier) => {
@@ -27,37 +26,32 @@ module.exports = class DocumentsDAO {
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
       .leftJoin('state_transitions', 'hash', 'documents.state_transition_hash')
       .where('documents.identifier', '=', identifier)
-      .as('documents')
 
-    const rows = await this.knex(subquery)
+    const rows = await this.knex
+      .with('subquery', subquery)
       .select('identifier', 'document_owner', 'data_contract_identifier', 'transition_type',
-        'deleted', 'tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'document_type_name')
+        'deleted', 'tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'document_type_name', 'revision')
       .select(
-        this.knex(subquery)
-          .select('documents.data')
-          .orderBy('documents.id', 'desc')
+        this.knex('subquery')
+          .select('data')
+          .whereRaw('data is not null')
+          .orderBy('subquery.id', 'desc')
           .limit(1)
           .as('data')
       )
       .select(
-        this.knex(subquery)
-          .select('documents.revision')
-          .orderBy('documents.revision', 'desc')
-          .limit(1)
-          .as('revision')
-      )
-      .select(
-        this.knex(subquery)
-          .select('documents.tx_data')
-          .where('documents.transition_type', DocumentActionEnum.Create)
+        this.knex('subquery')
+          .select('tx_data')
+          .where('transition_type', DocumentActionEnum.Create)
           .limit(1)
           .as('create_tx_data')
       )
       .select(this.knex(gasSubquery).select('total_gas_used').as('total_gas_used'))
-      .orderBy('documents.id', 'desc')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .orderBy('subquery.id', 'desc')
       .limit(1)
+      .from('subquery')
 
     const [row] = rows
 
@@ -65,7 +59,7 @@ module.exports = class DocumentsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.document_owner.trim()]], 1)
+    const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
 
     const aliases = []
 
@@ -85,6 +79,7 @@ module.exports = class DocumentsDAO {
 
     const document = Document.fromRow({
       ...row,
+      data: !row.deleted ? row.data : undefined,
       transition_type: BatchEnum[row.transition_type],
       owner: {
         identifier: row.document_owner?.trim(),
@@ -155,7 +150,7 @@ module.exports = class DocumentsDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.document_owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
 
       const aliases = []
 
@@ -183,7 +178,7 @@ module.exports = class DocumentsDAO {
     const subquery = this.knex('documents')
       .select(
         'documents.id as id', 'revision', 'transition_type', 'gas_used', 'timestamp', 'identifier',
-        'documents.owner as owner', 'state_transitions.hash as hash', 'documents.data as data', 'state_transitions.data as tx_data')
+        'state_transitions.owner as owner', 'state_transitions.hash as hash', 'documents.data as data', 'state_transitions.data as tx_data')
       .where('documents.identifier', '=', identifier)
       .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
@@ -202,7 +197,7 @@ module.exports = class DocumentsDAO {
     const totalCount = row?.total_count
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
 
       const aliases = []
 

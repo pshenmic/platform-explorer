@@ -7,7 +7,10 @@ module.exports = {
   WITHDRAWAL_CONTRACT_TYPE: 'withdrawal',
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
   TCP_CONNECT_TIMEOUT: Number(process.env.TCP_CONNECT_TIMEOUT),
+  VALIDATORS_CACHE_LIFE_INTERVAL: Number(process.env.VALIDATORS_CACHE_LIFE_INTERVAL ?? 300000),
+  VALIDATORS_CACHE_KEY: 'validators',
   DPNS_CONTRACT: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
+  WITHDRAWAL_CONTRACT: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6',
   NETWORK: process.env.NETWORK ?? 'testnet',
   get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {

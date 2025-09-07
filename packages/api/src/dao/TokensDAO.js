@@ -3,17 +3,15 @@ const TokenTransition = require('../models/TokenTransition')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
 const Localization = require('../models/Localization')
-const PerpetualDistribution = require('../models/PerpetualDistribution')
-const PreProgrammedDistribution = require('../models/PreProgrammedDistribution')
-const { decodeStateTransition } = require('../utils')
+const { fetchTokenInfoByRows } = require('../utils')
 const BatchEnum = require('../enums/BatchEnum')
-const dpnsContract = require('../../data_contracts/dpns.json')
 const { getAliasFromDocument } = require('../utils')
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class TokensDAO {
-  constructor (knex, dapi) {
+  constructor (knex, sdk) {
     this.knex = knex
-    this.dapi = dapi
+    this.sdk = sdk
   }
 
   getTokens = async (page, limit, order) => {
@@ -40,9 +38,9 @@ module.exports = class TokensDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const tokens = await Promise.all(rows.map(async (row) => {
-      const { totalSystemAmount } = await this.dapi.getTokenTotalSupply(row.identifier)
+      const { totalSystemAmount } = await this.sdk.tokens.getTokenTotalSupply(row.identifier)
 
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
 
       const aliases = []
 
@@ -108,64 +106,9 @@ module.exports = class TokensDAO {
       return undefined
     }
 
-    const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+    const [tokenWithFullInfo] = await fetchTokenInfoByRows(rows, this.sdk)
 
-    const aliases = []
-
-    if (aliasDocument) {
-      aliases.push(getAliasFromDocument(aliasDocument))
-    }
-
-    const token = Token.fromRow({
-      ...row,
-      owner: {
-        identifier: row.owner?.trim(),
-        aliases: aliases ?? []
-      }
-    })
-
-    let priceTx = null
-
-    if (row.price_transition_data) {
-      const decodedTx = await decodeStateTransition(row.price_transition_data)
-
-      priceTx = decodedTx.transitions[0]
-    }
-
-    const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
-    const tokenTotalSupply = await this.dapi.getTokenTotalSupply(row.identifier)
-
-    const tokenConfig = dataContract.tokens[row.position]
-
-    const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.distributionRules ?? {}
-
-    const preProgrammedDistributions = preProgrammedDistribution?.distributions
-
-    const preProgrammedDistributionTimestamps = preProgrammedDistributions ? Object.keys(preProgrammedDistributions) : undefined
-
-    const preProgrammedDistributionNormal = preProgrammedDistributionTimestamps?.map((timestamp) => PreProgrammedDistribution.fromWASMObject({ timestamp, value: preProgrammedDistributions[timestamp] }))
-
-    return Token.fromObject({
-      ...token,
-      totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
-      description: tokenConfig?.description,
-      localizations: tokenConfig?.conventions?.localizations,
-      decimals: tokenConfig?.conventions?.decimals,
-      baseSupply: tokenConfig?.baseSupply.toString(),
-      maxSupply: tokenConfig?.maxSupply?.toString(),
-      mintable: tokenConfig?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      burnable: tokenConfig?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      freezable: tokenConfig?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      changeMaxSupply: tokenConfig?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-      mainGroup: tokenConfig?.mainControlGroup,
-      perpetualDistribution: perpetualDistribution ? PerpetualDistribution.fromWASMObject(perpetualDistribution) : null,
-      preProgrammedDistribution: preProgrammedDistributionNormal,
-      price: priceTx?.price,
-      prices: priceTx?.prices
-    })
+    return tokenWithFullInfo
   }
 
   getTokenTransitions = async (identifier, page, limit, order) => {
@@ -184,7 +127,7 @@ module.exports = class TokensDAO {
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', row.owner.trim()]], 1)
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
 
       const aliases = []
 
@@ -252,7 +195,7 @@ module.exports = class TokensDAO {
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
+      const dataContract = await this.sdk.dataContracts.getDataContractByIdentifier(row.data_contract_identifier)
 
       const token = dataContract.tokens[row.position]
 
@@ -301,76 +244,15 @@ module.exports = class TokensDAO {
       .orderBy('token_id', order)
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
-    const dataContractsTokens = await Promise.all(rows.map(async (row) => {
-      const dataContract = await this.dapi.getDataContract(row.data_contract_identifier)
+    if (rows.length === 0) {
+      return new PaginatedResultSet([], page, limit, 0)
+    }
 
-      if (!dataContract) {
-        return undefined
-      }
-
-      const tokensPositions = Object.keys(dataContract.tokens)
-
-      return Promise.all(tokensPositions.map(async (tokenPosition) => {
-        const tokenIdentifier = row.tokens.find(token => token.position === Number(tokenPosition))?.token_identifier
-
-        if (!tokenIdentifier) {
-          return undefined
-        }
-
-        const tokenConfig = dataContract.tokens[tokenPosition]
-
-        const tokenTotalSupply = await this.dapi.getTokenTotalSupply(tokenIdentifier)
-
-        const [aliasDocument] = await this.dapi.getDocuments('domain', dpnsContract, [['records.identity', '=', identifier.trim()]], 1)
-
-        const aliases = []
-
-        if (aliasDocument) {
-          aliases.push(getAliasFromDocument(aliasDocument))
-        }
-
-        const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.distributionRules ?? {}
-
-        const preProgrammedDistributions = preProgrammedDistribution?.distributions
-
-        const preProgrammedDistributionTimestamps = preProgrammedDistributions ? Object.keys(preProgrammedDistributions) : undefined
-
-        const preProgrammedDistributionNormal = preProgrammedDistributionTimestamps?.map((timestamp) => PreProgrammedDistribution.fromWASMObject({ timestamp, value: preProgrammedDistributions[timestamp] }))
-
-        return Token.fromObject({
-          identifier: tokenIdentifier,
-          dataContractIdentifier: row.data_contract_identifier,
-          owner: {
-            identifier,
-            aliases: aliases ?? []
-          },
-          position: Number(tokenPosition),
-          totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
-          description: tokenConfig?.description,
-          localizations: tokenConfig?.conventions?.localizations,
-          decimals: tokenConfig?.conventions?.decimals,
-          baseSupply: tokenConfig?.baseSupply.toString(),
-          maxSupply: tokenConfig?.maxSupply?.toString(),
-          mintable: tokenConfig?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          burnable: tokenConfig?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          freezable: tokenConfig?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          changeMaxSupply: tokenConfig?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          mainGroup: tokenConfig?.mainControlGroup,
-          perpetualDistribution: perpetualDistribution ? PerpetualDistribution.fromWASMObject(perpetualDistribution) : null,
-          preProgrammedDistribution: preProgrammedDistributionNormal
-        })
-      }))
-    }))
-
-    const tokens = dataContractsTokens
-      .reduce((acc, contract) => contract ? [...acc, ...contract.filter((token) => token !== undefined)] : acc, [])
+    const tokens = await fetchTokenInfoByRows(rows, this.sdk)
 
     const tokenIdentifierList = tokens.map((token) => token.identifier)
 
-    const tokenBalances = await this.dapi.getIdentityTokenBalances(identifier, tokenIdentifierList)
+    const tokenBalances = await this.sdk.tokens.getIdentityTokensBalances(identifier, tokenIdentifierList)
 
     const tokensWithBalance = tokens.map(token => ({
       ...token,
@@ -380,5 +262,39 @@ module.exports = class TokensDAO {
     const [row] = rows
 
     return new PaginatedResultSet(tokensWithBalance, page, limit, Number(row?.total_count ?? 0))
+  }
+
+  getTokensByName = async (name, page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const subquery = this.knex('tokens')
+      .select(
+        'tokens.identifier', 'position', 'data_contracts.identifier as data_contract_identifier',
+        'tokens.owner', 'decimals', 'tokens.state_transition_hash', 'timestamp', 'tokens.name', 'tokens.id'
+      )
+      .whereILike('tokens.name', `${name}%`)
+      .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
+      .leftJoin('state_transitions', 'tokens.state_transition_hash', 'state_transitions.hash')
+      .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
+
+    const rows = await this.knex
+      .with('subquery', subquery)
+      .select(
+        'identifier', 'position', 'data_contract_identifier', 'name',
+        'owner', 'decimals', 'state_transition_hash', 'timestamp', 'id'
+      )
+      .select(
+        this.knex('subquery').select(this.knex.raw('count(*) over () as total_count')).limit(1).as('total_count')
+      )
+      .orderBy('id', order)
+      .offset(fromRank)
+      .limit(limit)
+      .from('subquery')
+
+    const [row] = rows
+
+    const resultSet = await fetchTokenInfoByRows(rows, this.sdk)
+
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
   }
 }

@@ -352,8 +352,8 @@ GET /validators
         "feeMultiplier": 1,
         "endTime": 1728492066559
       },
-      "totalReward": 0,
-      "epochReward": 0,
+      "totalReward": null,
+      "epochReward": null,
       "withdrawalsCount": null,
       "lastWithdrawal": null,
       "lastWithdrawalTime": null,
@@ -1114,13 +1114,13 @@ GET /identity/3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ
   "publicKeys": [
     {
       "keyId": 0,
-      "type": 0,
+      "keyType": 0,
       "data": "0386067dea94b1cfb23bf252084a2020a4a6712df7e4ac16c211558a1dbb66904a",
       "purpose": 0,
       "securityLevel": 0,
-      "isReadOnly": false,
+      "readOnly": false,
       "isMaster": true,
-      "hash": "5501114f5842004d1ff6c7d04512c438afe0cb11",
+      "publicKeyHash": "5501114f5842004d1ff6c7d04512c438afe0cb11",
       "contractBounds": null
     },
     {
@@ -1493,6 +1493,9 @@ This endpoint allows search any types of data
   * Part `name`
 * Document
   * Full `Identifier`
+* Tokens
+  * Full `Identifier`
+  * Part `name`
 
 ```
 GET /search?query=xyz
@@ -2076,7 +2079,7 @@ DOCUMENT TRANSITION
 }
 ```
 ```json lines
-TOKEN TRANSITION
+TOKEN TRANSITION 
 
 {
   "type": 1,
@@ -2886,6 +2889,79 @@ GET identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1
         "page": 1,
         "limit": 10,
         "total": 3
+    }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Tokens By Name
+Return list of tokens info with selected part name
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+
+```
+GET /tokens/psh/info?limit=10&page=1&order=asc
+{
+    "resultSet": [
+        {
+            "identifier": "6niNoQpsT9zyVDJtXcbpV3tR3qEGi6BC6xoDdJyx1u7C",
+            "position": 0,
+            "timestamp": null,
+            "description": null,
+            "localizations": {
+                "en": {
+                    "pluralForm": "PSHM",
+                    "singularForm": "PSHM",
+                    "shouldCapitalize": true
+                }
+            },
+            "baseSupply": "1337",
+            "totalSupply": "1338",
+            "maxSupply": "13370",
+            "owner": {
+                "identifier": "HT3pUBM1Uv2mKgdPEN1gxa7A4PdsvNY89aJbdSKQb5wR",
+                "aliases": []
+            },
+            "mintable": false,
+            "burnable": false,
+            "freezable": false,
+            "unfreezable": false,
+            "destroyable": false,
+            "allowedEmergencyActions": false,
+            "dataContractIdentifier": "dfaPU4HsMpUX7NMF2TR5oeAC4cZvLwYrSU6WT4884bq",
+            "changeMaxSupply": false,
+            "totalGasUsed": null,
+            "mainGroup": null,
+            "totalTransitionsCount": null,
+            "totalFreezeTransitionsCount": null,
+            "totalBurnTransitionsCount": null,
+            "decimals": 8,
+            "perpetualDistribution": {
+                "type": "TimeBasedDistribution",
+                "recipientType": "ContractOwner",
+                "recipientValue": null,
+                "interval": 14515200000,
+                "functionName": "FixedAmount",
+                "functionValue": {
+                    "amount": "1337"
+                }
+            },
+            "preProgrammedDistribution": null,
+            "price": null,
+            "prices": null
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 1
     }
 }
 ```

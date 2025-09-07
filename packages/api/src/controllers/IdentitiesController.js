@@ -1,17 +1,14 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
-const { WITHDRAWAL_CONTRACT_TYPE } = require('../constants')
-const WithdrawalsContract = require('../../data_contracts/withdrawals.json')
+const { WITHDRAWAL_CONTRACT_TYPE, WITHDRAWAL_CONTRACT } = require('../constants')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { outputScriptToAddress } = require('../utils')
 const { IdentifierWASM } = require('pshenmic-dpp')
-const { base58 } = require('@scure/base')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 class IdentitiesController {
-  constructor (client, knex, dapi) {
-    this.identitiesDAO = new IdentitiesDAO(knex, dapi, client)
-    this.dapi = dapi
-    this.client = client
+  constructor (knex, sdk) {
+    this.identitiesDAO = new IdentitiesDAO(knex, sdk)
+    this.sdk = sdk
   }
 
   getIdentityByIdentifier = async (request, response) => {
@@ -99,13 +96,13 @@ class IdentitiesController {
       query.push(['status', 'in', [0, 1, 2, 3, 4]], ['$createdAt', '>=', new Date(timestampStart).getTime()])
     }
 
-    const documents = await this.dapi.getDocuments(
+    const documents = await this.sdk.documents.query(
+      WITHDRAWAL_CONTRACT,
       WITHDRAWAL_CONTRACT_TYPE,
-      WithdrawalsContract,
       query,
-      limit,
       [['$ownerId', 'asc'], ['status', 'asc'], ['$createdAt', 'asc']],
-      { startAt: startAt ? Buffer.from(base58.decode(startAt)) : undefined }
+      limit,
+      startAt
     )
 
     if (documents.length === 0) {
@@ -135,7 +132,7 @@ class IdentitiesController {
   getIdentityNonce = async (request, response) => {
     const { identifier } = request.params
 
-    const nonce = await this.dapi.getIdentityNonce(identifier)
+    const nonce = await this.sdk.identities.getIdentityNonce(identifier)
 
     response.send({ identityNonce: String(nonce) })
   }
@@ -143,7 +140,7 @@ class IdentitiesController {
   getIdentityContractNonce = async (request, response) => {
     const { identifier, data_contract_id: dataContractId } = request.params
 
-    const nonce = await this.dapi.getIdentityContractNonce(identifier, dataContractId)
+    const nonce = await this.sdk.identities.getIdentityContractNonce(identifier, dataContractId)
 
     response.send({ identityContractNonce: String(nonce) })
   }
