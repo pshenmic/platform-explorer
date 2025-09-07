@@ -1286,7 +1286,7 @@ const waitForStateTransition = async (hash) => {
 
         if (retries >= STATE_TRANSITION_STATUS_MAX_RETRIES) {
           clearInterval(interval)
-          return reject(new Error("ST wait timeout"))
+          return reject(new Error('ST wait timeout'))
         }
       }, STATE_TRANSITION_STATUS_INTERVAL)
     })
