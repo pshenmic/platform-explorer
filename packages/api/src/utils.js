@@ -1255,48 +1255,15 @@ const getAliasInfo = async (aliasText, sdk) => {
   return { alias: aliasText, contestedState: null }
 }
 
-const waitForStateTransition = async (hash) => {
-  const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash)
-
-  if (unconfirmed.code === -32603) {
-    const confirmed = await TenderdashRPC.getTransactionByHash(hash)
-
-    if (confirmed.tx) {
-      return {
-        tx: confirmed.tx
-      }
-    } else {
-      throw new Error("ST doesn't exist")
-    }
-  } else if (unconfirmed.tx) {
-    return new Promise((resolve, reject) => {
-      let retries = 0
-
-      const interval = setInterval(async () => {
-        retries++
-
-        const confirmed = await waitForStateTransition(hash)
-
-        if (confirmed.tx) {
-          clearInterval(interval)
-          return resolve({
-            tx: confirmed.tx
-          })
-        }
-
-        if (retries >= STATE_TRANSITION_STATUS_MAX_RETRIES) {
-          clearInterval(interval)
-          return reject(new Error('ST wait timeout'))
-        }
-      }, STATE_TRANSITION_STATUS_INTERVAL)
-    })
-  }
+const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 module.exports = {
   hash,
   decodeStateTransition,
   getKnex,
+  sleep,
   checkTcpConnect,
   calculateInterval,
   iso8601duration,

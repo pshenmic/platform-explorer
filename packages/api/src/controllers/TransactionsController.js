@@ -1,11 +1,12 @@
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const utils = require('../utils')
-const { calculateInterval, iso8601duration, waitForStateTransition } = require('../utils')
+const { calculateInterval, iso8601duration, sleep } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchTypeEnum = require('../enums/BatchEnum')
 const { StateTransitionWASM } = require('pshenmic-dpp')
+const TenderdashRPC = require('../tenderdashRpc')
 
 class TransactionsController {
   constructor (knex, sdk) {
@@ -179,9 +180,35 @@ class TransactionsController {
   waitForStateTransitionResult = async (request, response) => {
     const { hash } = request.params
 
-    const result = await waitForStateTransition(hash)
+    // wait for transaction to propogate through the network from user
+    await sleep(100)
 
-    response.send(result)
+    const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash)
+
+    // if we don't see unconfirmed tx from the tenderdash on the first run, its either confirmed or is not in mempool
+    if (!unconfirmed.tx) {
+      return response.status(400).send({ message: 'tx is not in mempool or already confirmed' })
+    }
+
+    do {
+      // wait 250ms between calls to RPC
+      await sleep(250)
+
+      const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash)
+
+      const {data, tx} = unconfirmed
+
+      // still unconfirmed
+      if (tx) {
+        continue
+      }
+
+      if (data === `transaction ${hash.toUpperCase()} not found`) {
+        return response.status(200).send({ message: 'ok' })
+      }
+
+      return response.status(500).send({ message: 'internal server error' })
+    } while (true)
   }
 }
 
