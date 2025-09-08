@@ -34,7 +34,7 @@ function IdentitiesRoute ({ searchParams }) {
             <Tabs>
               <TabList>
                 <Tab>Top Identities</Tab>
-                <Tab>Chart</Tab>
+                <Tab>Identities Count</Tab>
               </TabList>
               <TabPanels>
                 <TabPanel>
