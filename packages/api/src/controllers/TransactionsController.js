@@ -180,7 +180,7 @@ class TransactionsController {
   waitForStateTransitionResult = async (request, response) => {
     const { hash } = request.params
 
-    const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash)
+    const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash.toUpperCase())
 
     // if we don't see unconfirmed tx from the tenderdash on the first run, its either confirmed or is not in mempool
     if (!unconfirmed.tx) {
@@ -188,7 +188,7 @@ class TransactionsController {
     }
 
     do {
-      const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash)
+      const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash.toUpperCase())
 
       const { data, tx } = unconfirmed
 

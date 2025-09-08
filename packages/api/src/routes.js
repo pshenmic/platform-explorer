@@ -637,7 +637,7 @@ module.exports = ({
       }
     },
     {
-      path: '/wait/transaction/:hash',
+      path: '/waitForStateTransitionResult',
       method: 'GET',
       handler: transactionsController.waitForStateTransitionResult,
       schema: {
