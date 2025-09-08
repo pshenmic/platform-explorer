@@ -1272,6 +1272,5 @@ module.exports = {
   buildIndexBuffer,
   outputScriptToAddress,
   getAliasFromDocument,
-  fetchTokenInfoByRows,
-  waitForStateTransition
+  fetchTokenInfoByRows
 }
