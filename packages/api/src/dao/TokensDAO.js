@@ -256,7 +256,7 @@ module.exports = class TokensDAO {
 
     const tokensWithBalance = tokens.map(token => ({
       ...token,
-      balance: tokenBalances?.find(t => t.identifier === token.identifier)?.balance ?? null
+      balance: tokenBalances?.find(t => t.tokenId.base58() === token.identifier)?.balance?.toString() ?? null
     }))
 
     const [row] = rows
