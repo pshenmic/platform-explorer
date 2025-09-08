@@ -180,26 +180,23 @@ class TransactionsController {
   waitForStateTransitionResult = async (request, response) => {
     const { hash } = request.params
 
-    // wait for transaction to propogate through the network from user
-    await sleep(100)
-
     const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash)
 
     // if we don't see unconfirmed tx from the tenderdash on the first run, its either confirmed or is not in mempool
     if (!unconfirmed.tx) {
-      return response.status(400).send({ message: 'tx is not in mempool or already confirmed' })
+      return response.status(200).send({ message: 'tx is not in mempool or already confirmed' })
     }
 
     do {
-      // wait 250ms between calls to RPC
-      await sleep(250)
-
       const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash)
 
       const { data, tx } = unconfirmed
 
       // still unconfirmed
       if (tx) {
+        // wait 250ms between calls to RPC
+        await sleep(250)
+
         continue
       }
 
