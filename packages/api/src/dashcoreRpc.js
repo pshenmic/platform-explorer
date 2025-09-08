@@ -3,10 +3,10 @@ const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 
 const config = {
   protocol: 'http',
-  host: process.env.DASHCORE_HOST,
-  port: Number(process.env.DASHCORE_PORT),
-  user: process.env.DASHCORE_USER,
-  pass: process.env.DASHCORE_PASS
+  host: process.env.CORE_RPC_HOST,
+  port: Number(process.env.CORE_RPC_PORT),
+  user: process.env.CORE_RPC_USER,
+  pass: process.env.CORE_RPC_PASS
 }
 
 const rpc = new RpcClient(config)
