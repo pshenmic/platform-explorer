@@ -18,5 +18,9 @@
 
   &__IdentitiesCountChart {
     overflow: visible !important;
+
+    .Chart {
+      overflow: visible !important;
+    }
   }
 }
