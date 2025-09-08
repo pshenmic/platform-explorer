@@ -6,7 +6,7 @@ const config = {
   host: process.env.CORE_RPC_HOST,
   port: Number(process.env.CORE_RPC_PORT),
   user: process.env.CORE_RPC_USER,
-  pass: process.env.CORE_RPC_PASS
+  pass: process.env.CORE_RPC_PASSWORD
 }
 
 const rpc = new RpcClient(config)
