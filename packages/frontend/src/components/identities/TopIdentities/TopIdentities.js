@@ -3,8 +3,7 @@
 import { TopIdentitiesCards } from '../index'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { useState, useEffect } from 'react'
-import { Heading, Grid, GridItem } from '@chakra-ui/react'
-import InfoContainer from '../../ui/containers/InfoContainer'
+import { Grid, GridItem } from '@chakra-ui/react'
 import * as Api from '../../../util/Api'
 import './TopIdentities.scss'
 
