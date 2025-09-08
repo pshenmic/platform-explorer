@@ -2,8 +2,11 @@ import Identities from './Identities'
 import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
-import { Container } from '@chakra-ui/react'
+import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
+import { InfoContainer } from '../../components/ui/containers'
 import { TopIdentities } from '../../components/identities'
+import IdentitiesCountChart from '../../components/charts/IdentitiesCountChart'
+import './IdentitiesPage.scss'
 
 export const metadata = {
   title: 'Identities — Dash Platform Explorer',
@@ -26,7 +29,28 @@ function IdentitiesRoute ({ searchParams }) {
       <Intro
         title={'Identities'}
         description={<Markdown>{introContent}</Markdown>}
-        block={<TopIdentities/>}
+        block={
+          <InfoContainer styles={['tabs']} className={'IdentitiesPage__IntroTabs'}>
+            <Tabs>
+              <TabList>
+                <Tab>Top Identities</Tab>
+                <Tab>Chart</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <TopIdentities/>
+                </TabPanel>
+                <TabPanel>
+                  <IdentitiesCountChart
+                    blockBorders={false}
+                    useInfoBlock={false}
+                    className={'IdentitiesPage__IdentitiesCountChart'}
+                  />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </InfoContainer>
+        }
       />
     </Container>
     <Identities defaultPage={page} defaultPageSize={pageSize}/>
