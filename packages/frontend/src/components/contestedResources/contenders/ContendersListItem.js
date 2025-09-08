@@ -2,7 +2,7 @@ import { Button, Grid, GridItem } from '@chakra-ui/react'
 import { ProportionsLine } from '../../ui/infographics'
 import { Identifier, TimeDelta } from '../../data'
 import { LinkContainer } from '../../ui/containers'
-import { VoteControls } from "./VoteControls"
+import { VoteControls } from './VoteControls'
 import { colors } from '../../../styles/colors'
 import { useWalletConnect } from '../../../hooks/useWallet'
 import './ContendersListItem.scss'
@@ -25,7 +25,7 @@ function ContendersListItem ({ contender, className, isExtensionConnected }) {
               <Identifier
                 ellipsis={false}
                 styles={['highlight-both']}
-              > 
+              >
                 {contender?.documentStateTransition}
               </Identifier>
             </LinkContainer>
@@ -80,15 +80,14 @@ function ContendersListItem ({ contender, className, isExtensionConnected }) {
               }
             ]} />
           </GridItem>
-             
+
           {
-            isExtensionConnected && 
+            isExtensionConnected &&
               <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
                 {
-                  connected ? 
-                  <VoteControls currentIdentity={currentIdentity} />
-                  :
-                  <Button onClick={connectWallet} className='ContendersListItem__Column_Vote-btn' variant="brand" size="sm">Vote</Button>
+                  connected
+                    ? <VoteControls currentIdentity={currentIdentity} />
+                    : <Button onClick={connectWallet} className='ContendersListItem__Column_Vote-btn' variant="brand" size="sm">Vote</Button>
                 }
               </GridItem>
           }

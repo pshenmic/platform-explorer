@@ -92,13 +92,13 @@ export const PrimalPostitiveIcon = (props) => (
       fill="none"
     />
   </Icon>
-);
+)
 
 export const PrimalNegativeIcon = (props) => (
   <Icon viewBox="0 0 12 2"{...props}>
     <path d="M1.13864 1.00003L10.8614 1.00003" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
   </Icon>
-);
+)
 
 const ErrorIcon = (props) => (
   <Icon viewBox='0 0 18 18' width='18' height='18' fill='none' {...props}>

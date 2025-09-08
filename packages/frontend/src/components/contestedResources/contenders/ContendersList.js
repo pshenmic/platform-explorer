@@ -8,8 +8,8 @@ import { checkPlatformExtension, ExtensionStatusEnum } from '../../../util/exten
 import './ContendersList.scss'
 
 function ContendersList ({ contenders = [], className, loading, itemsCount = 10 }) {
-  const isExtensionConnected = checkPlatformExtension() === ExtensionStatusEnum.CONNECTED;
-  
+  const isExtensionConnected = checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
+
   return (
     <div className={`ContendersList ${className || ''}`}>
       <div className={'ContendersList__ScrollZone'}>
