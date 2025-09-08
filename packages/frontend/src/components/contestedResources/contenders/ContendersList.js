@@ -3,9 +3,13 @@ import { EmptyListMessage } from '../../ui/lists'
 import ContendersListItem from './ContendersListItem'
 import { ErrorMessageBlock } from '../../Errors'
 import { LoadingList } from '../../loading'
+import { checkPlatformExtension, ExtensionStatusEnum } from '../../../util/extension'
+
 import './ContendersList.scss'
 
 function ContendersList ({ contenders = [], className, loading, itemsCount = 10 }) {
+  const isExtensionConnected = checkPlatformExtension() === ExtensionStatusEnum.CONNECTED;
+  
   return (
     <div className={`ContendersList ${className || ''}`}>
       <div className={'ContendersList__ScrollZone'}>
@@ -25,15 +29,18 @@ function ContendersList ({ contenders = [], className, loading, itemsCount = 10 
           <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Votes'}>
             Votes
           </GridItem>
-          <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Actions'}>
-            Actions
-          </GridItem>
+          {
+            isExtensionConnected &&
+            <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Actions'}>
+              Actions
+            </GridItem>
+          }
         </Grid>
 
         {!loading
           ? <div className={'VotesList__Items'}>
             {contenders.map((contender, i) =>
-              <ContendersListItem contender={contender} key={i}/>
+              <ContendersListItem isExtensionConnected={isExtensionConnected} contender={contender} key={i}/>
             )}
             {contenders?.length === 0 &&
               <EmptyListMessage>There are no contenders</EmptyListMessage>
