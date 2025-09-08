@@ -1268,5 +1268,6 @@ module.exports = {
   buildIndexBuffer,
   outputScriptToAddress,
   getAliasFromDocument,
-  fetchTokenInfoByRows
+  fetchTokenInfoByRows,
+  convertToHomographSafeChars
 }
