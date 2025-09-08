@@ -2,10 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const {
-  TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, STATE_TRANSITION_STATUS_INTERVAL,
-  STATE_TRANSITION_STATUS_MAX_RETRIES
-} = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT } = require('./constants')
 const { base58 } = require('@scure/base')
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
@@ -25,7 +22,6 @@ const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
 const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
 const Token = require('./models/Token')
 const PerpetualDistribution = require('./models/PerpetualDistribution')
-const TenderdashRPC = require('./tenderdashRpc')
 
 const getKnex = () => {
   return require('knex')({

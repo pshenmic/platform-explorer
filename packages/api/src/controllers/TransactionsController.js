@@ -196,7 +196,7 @@ class TransactionsController {
 
       const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash)
 
-      const {data, tx} = unconfirmed
+      const { data, tx } = unconfirmed
 
       // still unconfirmed
       if (tx) {
