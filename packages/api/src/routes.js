@@ -643,6 +643,19 @@ module.exports = ({
       schema: {
         querystring: { $ref: 'timeInterval#' }
       }
+    },
+    {
+      path: '/waitForStateTransitionResult/:hash',
+      method: 'GET',
+      handler: transactionsController.waitForStateTransitionResult,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        }
+      }
     }
   ]
 

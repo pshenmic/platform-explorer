@@ -88,6 +88,7 @@ Reference:
 * [Tokens Rating](#tokens-rating)
 * [Tokens By Identity](#tokens-by-identity)
 * [Broadcast Transaction](#broadcast-transaction)
+* [Wait for State Transition Result](#wait-for-state-transition-result)
 * [Quorum Info](#quorum-info)
 
 ### Status
@@ -2977,7 +2978,7 @@ Response codes:
 ```
 ___
 ### Tokens By Name
-Return list of tokens info with selected part name 
+Return list of tokens info with selected part name
 
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more then 100
@@ -3073,6 +3074,27 @@ Response codes:
 200: OK
 500: Internal Server Error
 503: Service Temporarily Unavailable
+```
+___
+### Wait For State Transition Result
+Awaits for a state transition confirmation in the network
+
+Assumes transaction already in mempool when this query is requested.
+Always returns 200, 500 in the unexpected states
+
+* `hash` state transitions hash
+
+```
+GET /waitForStateTransitionResult/:hash
+RESPONSE:
+{
+  "message": "ok" // or "tx is not in mempool or already confirmed" 
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
 ```
 ___
 ### Quorum Info

@@ -61,6 +61,10 @@ class TenderdashRPC {
     return call(`tx?hash=${hash}`, 'GET')
   }
 
+  static async getUnconfirmedTransactionByHash (hash) {
+    return call(`unconfirmed_tx?hash=${hash}`, 'GET')
+  }
+
   static async getTransactions (from, to) {
     let query = 'tx_search?query='
 
