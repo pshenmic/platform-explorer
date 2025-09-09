@@ -86,7 +86,7 @@ function ContendersListItem ({ contender, className, isExtensionConnected }) {
               <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
                 {
                   connected
-                    ? <VoteControls currentIdentity={currentIdentity} />
+                    ? <VoteControls contender={contender?.identifier} currentIdentity={currentIdentity} />
                     : <Button onClick={connectWallet} className='ContendersListItem__Column_Vote-btn' variant="brand" size="sm">Vote</Button>
                 }
               </GridItem>

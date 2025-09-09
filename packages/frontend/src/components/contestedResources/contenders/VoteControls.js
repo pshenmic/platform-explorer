@@ -6,7 +6,19 @@ import './VoteControls.scss'
 
 const dataContractId = '4P7d1iqwofPA1gFtbEcXiagDnANXAQhX2WZararioX8f'
 
-export const VoteControls = ({ currentIdentity }) => {
+const VoteEnum = {
+  TO_APPROVE: 'TO_APPROVE',
+  TO_REJECT: 'TO_REJECT',
+  TO_ABSTAIN: 'TO_ABSTAIN'
+}
+
+const VoteMsg = {
+  [VoteEnum.TO_APPROVE]: 'to approve',
+  [VoteEnum.TO_REJECT]: 'to reject',
+  [VoteEnum.TO_ABSTAIN]: 'to abstain'
+}
+
+export const VoteControls = ({ currentIdentity, contender }) => {
   const sdk = useSDK()
 
   const handleVoite = (voite) => {
@@ -15,8 +27,9 @@ export const VoteControls = ({ currentIdentity }) => {
     }
 
     const sendVoite = async () => {
+      const message = voite === VoteEnum.TO_APPROVE ? `${VoteMsg[voite]} for ${contender}` : VoteMsg[voite]
       const data = {
-        message: voite
+        message
       }
 
       if (!currentIdentity) {
@@ -47,7 +60,7 @@ export const VoteControls = ({ currentIdentity }) => {
                 aria-label="vote"
                 p={0}
                 icon={<PrimalPostitiveIcon width="18px" height="10px" />}
-                onClick={() => handleVoite('to approve')}
+                onClick={() => handleVoite(VoteEnum.TO_APPROVE)}
             />
             <IconButton
                 color="#F49A58"
@@ -59,7 +72,7 @@ export const VoteControls = ({ currentIdentity }) => {
                 aria-label="vote"
                 p={0}
                 icon={<PrimalNegativeIcon width="11px" height="10px" />}
-                onClick={() => handleVoite('to reject')}
+                onClick={() => handleVoite(VoteEnum.TO_REJECT)}
             />
             <IconButton
                 color="#F45858"
@@ -71,7 +84,7 @@ export const VoteControls = ({ currentIdentity }) => {
                 aria-label="vote"
                 p={0}
                 icon={<CloseIcon width="8px" height="8px" />}
-                onClick={() => handleVoite('to abstain')}
+                onClick={() => handleVoite(VoteEnum.TO_ABSTAIN)}
             />
         </div>
   )
