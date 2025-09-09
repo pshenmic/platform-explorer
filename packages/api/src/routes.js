@@ -635,6 +635,14 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/identities/history',
+      method: 'GET',
+      handler: identitiesController.getIdentitiesHistory,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
     }
   ]
 
