@@ -1251,10 +1251,15 @@ const getAliasInfo = async (aliasText, sdk) => {
   return { alias: aliasText, contestedState: null }
 }
 
+const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 module.exports = {
   hash,
   decodeStateTransition,
   getKnex,
+  sleep,
   checkTcpConnect,
   calculateInterval,
   iso8601duration,
