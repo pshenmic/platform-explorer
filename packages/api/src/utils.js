@@ -778,12 +778,47 @@ const decodeStateTransition = async (base64) => {
                     }
                   : null
 
+                out.tokenPaymentInfo = createTransition.base.tokenPaymentInfo
+                  ? {
+                      paymentTokenContractId: createTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: createTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: createTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: createTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: createTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
+                  : null
+
                 break
               }
               case DocumentActionEnum.Replace: {
                 const replaceTransition = transition.replaceTransition
 
                 out.data = replaceTransition.data
+
+                out.tokenPaymentInfo = replaceTransition.base.tokenPaymentInfo
+                  ? {
+                      paymentTokenContractId: replaceTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: replaceTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: replaceTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: replaceTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: replaceTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
+                  : null
+
+                break
+              }
+              case DocumentActionEnum.Delete: {
+                const deleteTransition = transition.deleteTransition
+
+                out.tokenPaymentInfo = deleteTransition.base.tokenPaymentInfo
+                  ? {
+                      paymentTokenContractId: deleteTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: deleteTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: deleteTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: deleteTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: deleteTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
+                  : null
 
                 break
               }
@@ -792,12 +827,32 @@ const decodeStateTransition = async (base64) => {
 
                 out.price = Number(updatePriceTransition.price)
 
+                out.tokenPaymentInfo = updatePriceTransition.base.tokenPaymentInfo
+                  ? {
+                      paymentTokenContractId: updatePriceTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: updatePriceTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: updatePriceTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: updatePriceTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: updatePriceTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
+                  : null
+
                 break
               }
               case DocumentActionEnum.Purchase: {
                 const purchaseTransition = transition.purchaseTransition
 
                 out.price = Number(purchaseTransition.price)
+
+                out.tokenPaymentInfo = purchaseTransition.base.tokenPaymentInfo
+                  ? {
+                      paymentTokenContractId: purchaseTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: purchaseTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: purchaseTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: purchaseTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: purchaseTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
+                  : null
 
                 break
               }
@@ -806,6 +861,16 @@ const decodeStateTransition = async (base64) => {
 
                 out.receiverId = transferTransition.receiverId
                 out.recipientId = transferTransition.recipientId.base58()
+
+                out.tokenPaymentInfo = transferTransition.base.tokenPaymentInfo
+                  ? {
+                      paymentTokenContractId: transferTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: transferTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: transferTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: transferTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: transferTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
+                  : null
 
                 break
               }
