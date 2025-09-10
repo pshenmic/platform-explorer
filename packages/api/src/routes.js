@@ -564,6 +564,20 @@ module.exports = ({
       }
     },
     {
+      path: '/token/:identifier/holders',
+      method: 'GET',
+      handler: tokensController.getTokenHolders,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/tokens/:name/info',
       method: 'GET',
       handler: tokensController.getTokensByName,

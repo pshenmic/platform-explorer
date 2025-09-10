@@ -53,6 +53,7 @@ Reference:
 * [Token Transitions](#token-transitions)
 * [Tokens Rating](#tokens-rating)
 * [Tokens By Identity](#tokens-by-identity)
+* [Token Holders](#token-holders)
 * [Broadcast Transaction](#broadcast-transaction)
 * [Wait for State Transition Result](#wait-for-state-transition-result)
 * [Quorum Info](#quorum-info)
@@ -2742,7 +2743,7 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL/transitions?limit=10&ord
     "pagination": {
         "page": 1,
         "limit": 10,
-        "total": "desc"
+        "total": 100
     }
 }
 ```
@@ -2828,7 +2829,7 @@ Return list of tokens which created by identity
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 ```
-GET identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1&order=asc
+GET /identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1&order=asc
 {
     "resultSet": [
         {
@@ -2890,6 +2891,61 @@ GET identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1
         "page": 1,
         "limit": 10,
         "total": 3
+    }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Token Holders
+Return list of token holders
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+```
+GET /token/Bu2749WKcP5HFNm8v3k5kshRKDSVyfsJMqoWnXmK4q7h/holders?order=desc&limit=10&page=1
+{
+    "resultSet": [
+        {
+            "balance": "0",
+            "holder": {
+                "identifier": "HJDxtN6FJF3U3T9TMLWCqudfJ5VRkaUrxTsRp36djXAG",
+                "aliases": [
+                    {
+                        "alias": "wasm-sdk-test-identity-2.dash",
+                        "status": "ok",
+                        "timestamp": "2025-08-26T13:20:11.698Z",
+                        "documentId": "Girj8ujNxqzhHnnvEyKcKfvJxQh8CTG8N4GCY4oVXMS2",
+                        "contested": false
+                    }
+                ]
+            }
+        },
+        {
+            "balance": "135",
+            "holder": {
+                "identifier": "7XcruVSsGQVSgTcmPewaE4tXLutnW1F6PXxwMbo8GYQC",
+                "aliases": [
+                    {
+                        "alias": "wasm-sdk-test-identity.dash",
+                        "status": "ok",
+                        "timestamp": "2025-08-21T19:42:41.349Z",
+                        "documentId": "9odEjcSxU3MqBNXxX2GvVjqZtYk1HSZmK7NHVmVqp35T",
+                        "contested": false
+                    }
+                ]
+            }
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 2
     }
 }
 ```
