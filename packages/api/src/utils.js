@@ -856,13 +856,12 @@ const decodeStateTransition = async (base64) => {
         return {
           contractBounds: contractBounds
             ? {
-                type: contractBounds.contractBoundsType,
-                id: contractBounds.identi.base58(),
-                typeName: contractBounds.document_type_name
+                type: contractBounds.contractBoundsType ?? null,
+                id: contractBounds.identifier.base58()
               }
             : null,
           id: key.keyId,
-          type: key.keyType,
+          keyType: key.keyType,
           data: Buffer.from(key.data).toString('hex'),
           publicKeyHash: Buffer.from(key.getHash()).toString('hex'),
           purpose: key.purpose,
@@ -1252,10 +1251,15 @@ const getAliasInfo = async (aliasText, sdk) => {
   return { alias: aliasText, contestedState: null }
 }
 
+const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 module.exports = {
   hash,
   decodeStateTransition,
   getKnex,
+  sleep,
   checkTcpConnect,
   calculateInterval,
   iso8601duration,
@@ -1264,5 +1268,6 @@ module.exports = {
   buildIndexBuffer,
   outputScriptToAddress,
   getAliasFromDocument,
-  fetchTokenInfoByRows
+  fetchTokenInfoByRows,
+  convertToHomographSafeChars
 }

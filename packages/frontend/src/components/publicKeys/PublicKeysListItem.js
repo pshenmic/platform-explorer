@@ -9,9 +9,8 @@ import './PublicKeysListItem.scss'
 import './PublicKeyBoundCard.scss'
 
 function PublicKeysListItem ({ publicKey, className }) {
-  const securityLevel = pkEnums.SecurityLevelInfo?.[pkEnums.SecurityLevelEnum?.[publicKey?.securityLevel]]
-  const purpose = pkEnums.KeyPurposeInfo?.[pkEnums.KeyPurposeEnum?.[publicKey?.purpose]]
-
+  const securityLevel = pkEnums.SecurityLevelInfo?.[publicKey?.securityLevel]
+  const purpose = pkEnums.KeyPurposeInfo?.[publicKey?.purpose]
   return (
     <div className={`PublicKeysListItem ${className || ''}`}>
       <Grid className={'PublicKeysListItem__Content'}>
@@ -19,18 +18,18 @@ function PublicKeysListItem ({ publicKey, className }) {
           {publicKey?.keyId !== undefined ? publicKey?.keyId : <NotActive>-</NotActive>}
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column--PublicKeyHash'}>
-          {publicKey?.hash !== undefined
+          {publicKey?.publicKeyHash !== undefined
             ? <ValueCard className={'PublicKeysListItem__PublicKeyHash'} size={'sm'} colorScheme={'transparent'}>
-                {publicKey?.hash}
-                <CopyButton text={publicKey?.hash}/>
+                {publicKey.publicKeyHash}
+                <CopyButton text={publicKey.publicKeyHash}/>
               </ValueCard>
             : <NotActive/>
           }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Type'}>
-          {publicKey?.type !== undefined
+          {publicKey?.keyType !== undefined
             ? <ValueContainer colorScheme={'gray'} size={'sm'}>
-                {pkEnums.KeyTypeEnum?.[publicKey?.type] || '-'}
+                {publicKey?.keyType || '-'}
               </ValueContainer>
             : <NotActive/>
           }

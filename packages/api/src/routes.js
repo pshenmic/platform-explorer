@@ -649,6 +649,19 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/waitForStateTransitionResult/:hash',
+      method: 'GET',
+      handler: transactionsController.waitForStateTransitionResult,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        }
+      }
     }
   ]
 

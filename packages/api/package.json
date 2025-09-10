@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -24,8 +24,7 @@
     "fastify-metrics": "^11.0.0",
     "knex": "^2.5.1",
     "node-fetch": "^2.6.11",
-    "pg": "^8.11.3",
-    "pshenmic-dpp": "1.0.21"
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "standard": "^17.1.0",
