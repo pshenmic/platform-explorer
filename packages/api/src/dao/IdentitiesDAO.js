@@ -5,9 +5,15 @@ const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
-const { getAliasInfo, decodeStateTransition, getAliasStateByVote } = require('../utils')
+const {
+  decodeStateTransition,
+  getAliasStateByVote,
+  getAliasFromDocument,
+  getAliasInfo
+} = require('../utils')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class IdentitiesDAO {
   constructor (knex, sdk) {
@@ -233,35 +239,16 @@ module.exports = class IdentitiesDAO {
         acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
     }
 
-    const aliasSubquery = this.knex('identity_aliases')
-      .select('identity_identifier',
-        this.knex.raw(`
-          array_agg(
-            json_build_object(
-              'alias', alias,
-              'timestamp', timestamp::timestamptz,
-              'tx', state_transition_hash
-            )
-          ) as aliases
-        `)
-      )
-      .groupBy('identity_identifier')
-      .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
-      .leftJoin('blocks', 'block_hash', 'blocks.hash')
-      .as('aliases')
-
     const subquery = this.knex('identities')
       .select('identities.id as identity_id', 'identities.identifier as identifier', 'identities.owner as identity_owner',
-        'identities.is_system as is_system', 'identities.state_transition_hash as tx_hash', 'aliases.aliases as aliases',
-        'identities.revision as revision')
+        'identities.is_system as is_system', 'identities.state_transition_hash as tx_hash', 'identities.revision as revision')
       .select(this.knex.raw('COALESCE((select sum(amount) from transfers where recipient = identifier), 0) - COALESCE((select sum(amount) from transfers where sender = identifier), 0) as balance'))
       .select(this.knex('state_transitions').count('*').whereRaw('owner = identifier').as('total_txs'))
       .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
-      .leftJoin(aliasSubquery, 'identity_identifier', 'identifier')
       .as('identities')
 
     const filteredIdentities = this.knex(subquery)
-      .select('balance', 'aliases', 'total_txs', 'identity_id', 'identifier', 'identity_owner', 'tx_hash', 'revision', 'rank', 'is_system')
+      .select('balance', 'total_txs', 'identity_id', 'identifier', 'identity_owner', 'tx_hash', 'revision', 'rank', 'is_system')
       .select(this.knex.raw(`row_number() over (${getRankString()}) row_number`))
       .where('rank', 1)
 
@@ -276,7 +263,7 @@ module.exports = class IdentitiesDAO {
       .as('as_data_contracts')
 
     const rows = await this.knex.with('with_alias', filteredIdentities)
-      .select('total_txs', 'identity_id', 'aliases', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'aliases', 'is_system', 'balance')
+      .select('total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system', 'balance')
       .select(this.knex('with_alias').count('*').as('total_count'))
       .select(this.knex(this.knex(documentsSubQuery)
         .select('id', this.knex.raw('rank() over (partition by as_documents.identifier order by as_documents.id desc) rank')).as('ranked_documents'))
@@ -296,11 +283,12 @@ module.exports = class IdentitiesDAO {
     const resultSet = await Promise.all(rows.map(async row => {
       const balance = await this.sdk.identities.getIdentityBalance(row.identifier.trim())
 
-      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
+      const aliases = []
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.identifier.trim()]], 1)
 
-        return getAliasStateByVote(aliasInfo, alias, row.identifier.trim())
-      }))
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
 
       return Identity.fromRow({
         ...row,
@@ -374,19 +362,6 @@ module.exports = class IdentitiesDAO {
       queryBindings.push(typeName)
     }
 
-    const aliasesSubquery = this.knex('identity_aliases')
-      .select('identity_identifier')
-      .select(this.knex.raw(`
-          array_agg(
-            json_build_object(
-              'alias', alias,
-              'tx', state_transition_hash
-            )
-          ) as aliases
-        `))
-      .groupBy('identity_identifier')
-      .as('aliases')
-
     const subquery = this.knex('documents')
       .select('documents.id', 'documents.identifier as identifier', 'documents.owner as document_owner', 'documents.data_contract_id as data_contract_id',
         'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
@@ -406,8 +381,7 @@ module.exports = class IdentitiesDAO {
     const rows = await this.knex(filteredDocuments)
       .select('document_id', 'documents.identifier as identifier', 'document_owner', 'data_contracts.identifier as data_contract_identifier',
         'revision', 'deleted', 'tx_hash', 'total_count', 'row_number', 'document_type_name', 'transition_type',
-        'data_contract_id', 'blocks.timestamp as timestamp', 'document_is_system', 'aliases')
-      .leftJoin(aliasesSubquery, 'aliases.identity_identifier', 'document_owner')
+        'data_contract_id', 'blocks.timestamp as timestamp', 'document_is_system')
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
@@ -417,11 +391,12 @@ module.exports = class IdentitiesDAO {
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const aliases = await Promise.all((row.aliases ?? []).map(async alias => {
-        const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
+      const aliases = []
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
 
-        return getAliasStateByVote(aliasInfo, alias, row.owner)
-      }))
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
 
       return Document.fromRow({
         ...row,

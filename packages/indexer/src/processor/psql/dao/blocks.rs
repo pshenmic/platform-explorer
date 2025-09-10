@@ -10,12 +10,18 @@ impl PostgresDAO {
         block_header: BlockHeader,
         sql_transaction: &Transaction<'_>,
     ) -> String {
-        
-        let validator = self.get_validator_by_pro_tx_hash(block_header.proposer_pro_tx_hash.clone(), sql_transaction)
+        let validator = self
+            .get_validator_by_pro_tx_hash(
+                block_header.proposer_pro_tx_hash.clone(),
+                sql_transaction,
+            )
             .await
-            .expect(&format!("Cannot find validator {}", block_header.proposer_pro_tx_hash))
+            .expect(&format!(
+                "Cannot find validator {}",
+                block_header.proposer_pro_tx_hash
+            ))
             .unwrap();
-        
+
         let stmt = sql_transaction
             .prepare_cached(
                 "INSERT INTO blocks(hash, height, \

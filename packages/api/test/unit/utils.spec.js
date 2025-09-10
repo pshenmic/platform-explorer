@@ -81,23 +81,30 @@ describe('Utils', () => {
         transitions: [
           {
             action: 'DOCUMENT_CREATE',
-            id: '7TsrNHXDy14fYoRcoYjZHH14K4riMGU2VeHMwopG82DL',
-            dataContractId: 'FhKAsUnPbqe7K4TZxgRdtPUrfSvNCtYV8iPsvjX7ZG58',
+            id: 'bohnFt5XRFTercyoJZbtUTR2G8fdA5EbUSsHCijHu4E',
+            dataContractId: 'Gx2XsZdt323XewFK7onzDKDTxT6Lg2ocDpz68FF63PgZ',
             revision: '1',
             prefundedVotingBalance: null,
             type: 'note',
-            entropy: 'f09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b',
-            identityContractNonce: '2',
+            entropy: '3b9a57348313149503540e71b0d2bcf747f85130b95a896f347506777d7c34a9',
+            identityContractNonce: '3',
             data: {
-              message: 'Tutorial CI Test @ Thu, 08 Aug 2024 20:25:03 GMT'
+              message: 'test'
+            },
+            tokenPaymentInfo: {
+              paymentTokenContractId: 'dfaPU4HsMpUX7NMF2TR5oeAC4cZvLwYrSU6WT4884bq',
+              tokenContractPosition: 0,
+              minimumTokenCost: null,
+              maximumTokenCost: '15',
+              gasFeesPaidBy: 'DocumentOwner'
             }
           }
         ],
-        userFeeIncrease: 0,
-        signature: '1f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261',
-        signaturePublicKeyId: 1,
-        ownerId: 'woTQprzGS4bLqqbAhY2heG8QfD58Doo2UhDbiVVrLKG',
-        raw: '02000e09e4140f8b7777810be56c47f0ab5cbd9bed1e773abd9f9fdf2fe67a669ff7010000006008b85d9826e770ad21b6d585f010f1dfb3b3f2adc6492329bbef8fdec1b1d702046e6f7465da5764f89025e9a5f680633909db58f6f7f6d3582c445393f15aad58821c9f2bf09a3ceacaa2f12b9879ba223d5b8c66c3106efe58edc511556f31ee9676412b01076d65737361676512305475746f7269616c20434920546573742040205468752c2030382041756720323032342032303a32353a303320474d54000001411f2ed46b4eb1d77694fd3f3a783dc362295d779e701802aae5d30dca7d623c411e5fed34de9f437ae99514ed1ec0a1757c925888c15aa9c62095c0285b8765e261'
+        userFeeIncrease: 1,
+        signature: '1f6ee1b3e98c2171b34ad67ff832bfede3e3d34e9140632d34f2e3ccf3a9b0b2200c5d097e45f5f16ac52fd9501a3ce3cd4cc3c61f0d2ca303f7d515015d85e8ad',
+        signaturePublicKeyId: 2,
+        ownerId: 'HT3pUBM1Uv2mKgdPEN1gxa7A4PdsvNY89aJbdSKQb5wR',
+        raw: '0201f46747563f38be9c1fe0f5ccf426f0d2b2d41c07151f95229b00a984f8f8f224010000000108ea8e0cb77412791567ec36b342f2f49616c154d54f216de657a5a500721e8b03046e6f7465ecf7fb1ede8dd6c6aba2cf7dc6afc7408a8990cb2568ceeeec84df879bae2a6e010001096486d8db0a3f4a1b71a34988b9a81ff51a3e5fcf6851b2a8b3c1956de634b80000010f003b9a57348313149503540e71b0d2bcf747f85130b95a896f347506777d7c34a901076d657373616765120474657374000102411f6ee1b3e98c2171b34ad67ff832bfede3e3d34e9140632d34f2e3ccf3a9b0b2200c5d097e45f5f16ac52fd9501a3ce3cd4cc3c61f0d2ca303f7d515015d85e8ad'
       })
     })
 
