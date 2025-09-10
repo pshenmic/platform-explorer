@@ -1,5 +1,137 @@
 # CHANGELOG
 
+### v2.1.0
+
+## Changes
+
+## API
+
+- Fix public keys naming @owl352 (#670)
+- Fix identity credit withdrawal decode  @owl352 (#660)
+- Fix Identity Public Keys  @owl352 (#659)
+- Fix deleted documents data @owl352 (#657)
+- Fix revision list for document details @owl352 (#656)
+- Memory leaks fix @owl352 (#650)
+- Fix transaction\_type enum in routes schema @owl352 (#651)
+- Index token interactions for transfers @owl352 (#646)
+- Tokens search  @owl352 (#647)
+- Validators optimization @owl352 (#648)
+- Fix batch action for identity transactions @owl352 (#645)
+
+## Frontend
+
+- Fix IdentityPublicKey data not shown @t1mee (#668)
+- Add recipient in document transition card @AlexeyTripleA (#655)
+
+
+### v2.0.0
+
+## Changes
+
+## API
+
+- Tokens owner format fix @owl352 (#641)
+- Quorum Info Endpoint @owl352 (#643)
+- Expand distribution info in tokens @owl352 (#634)
+- Identities with owned tokens @owl352 (#635)
+- Fix batch enum @owl352 (#640)
+- Fix transitions type for document revisions and token transitions @owl352 (#637)
+- Identity Tokens Balances @owl352 (#632)
+- Tokens trends list alghoritm update @owl352 (#626)
+- Batch type filter for transactions list @owl352 (#624)
+- Transaction types in string @owl352 (#623)
+- Token transitions in Data Contract transitions @owl352 (#617)
+- Tests fix for api @owl352 (#621)
+- Tokens By Identity @owl352 (#619)
+- Tokens rating `timestamp_start` and `timestamp_end` @owl352 (#620)
+- Tokens rating @owl352 (#618)
+- Token Decimals @owl352 (#615)
+- Token by identifier @owl352 (#611)
+- Query optimizations @owl352 (#609)
+- Fix for data contract deserialization @owl352 (#608)
+
+## Frontend
+
+- Implement token prices display @AlexeyTripleA (#642)
+- Implement a tokens list on the data contract page @AlexeyTripleA (#638)
+- Feat/token distribution format @AlexeyTripleA (#639)
+- Refactoring batch types @AlexeyTripleA (#636)
+- Add balance field to tokens list @AlexeyTripleA (#633)
+- Fix api link in navbar @AlexeyTripleA (#629)
+- Implement a list of tokens on the Identity page @AlexeyTripleA (#627)
+- Update transactions types format on the frontend @AlexeyTripleA (#625)
+- Token list and details @AlexeyTripleA (#580)
+- Improve transactions list @AlexeyTripleA (#614)
+- Data Contract's groups @AlexeyTripleA (#616)
+- Add emergency action value in transition card @AlexeyTripleA (#612)
+- Fix mobile filter menu @AlexeyTripleA (#613)
+
+## Indexer
+
+- Fix purchase token amount in token transitions @owl352 (#644)
+- Token transitions in Data Contract transitions @owl352 (#617)
+
+### v1.0.29
+
+## Changes
+
+## API
+
+-  Remove drop database step from CI @pshenmic (#607)
+- Integration of pshenmic-dpp @owl352 (#598)
+- New algoritm for transactions query @owl352 (#603)
+- Experimental optimization improvments and fixes @owl352 (#602)
+- Experimental optimization for Blocks and Transactions @owl352 (#601)
+
+## Indexer
+
+-  Remove drop database step from CI @pshenmic (#607)
+
+
+### v1.0.28
+
+## Changes
+
+## API
+
+- Tokens List @owl352 (#597)
+- Fix timestamp in tests @owl352 (#582)
+- Last epoch endpoint @owl352 (#559)
+- Withdrawals documents skip parameters @owl352 (#566)
+- Add BatchType to state transitions @pshenmic (#579)
+- Fix naming for token transitions @owl352 (#574)
+- More fields for decoded token transitions @owl352 (#573)
+- Decode Token Transitions @owl352 (#572)
+
+## Frontend
+
+- Implement links to nearby blocks @AlexeyTripleA (#596)
+- Fix ValueContainer props warning @AlexeyTripleA (#586)
+- Fix column title in search result list block title @AlexeyTripleA (#595)
+- Improve filter logic @AlexeyTripleA (#590)
+- Fix validator statistics API methods @AlexeyTripleA (#585)
+- Token transactions details @AlexeyTripleA (#575)
+
+## Indexer
+
+- Prefix dpp \& data contracts platform modules to git @pshenmic (#600)
+- Tokens List @owl352 (#597)
+- Indexer refactor @owl352 (#565)
+- Fix token amount is optional @pshenmic (#584)
+- Fix token receiver is optional @pshenmic (#583)
+- Add BatchType to state transitions @pshenmic (#579)
+- Change document owner to field type to varchar @owl352 (#571)
+- Indexer tokens support @owl352 (#483)
+
+
+### v1.0.27
+
+## Changes
+
+## API
+
+- First quorum info fix @owl352 (#570)
+
 ### v1.0.26
 
 ## Changes
