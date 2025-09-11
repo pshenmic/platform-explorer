@@ -1,6 +1,5 @@
 import { IconButton } from '@chakra-ui/react'
 import { PrimalPostitiveIcon, PrimalNegativeIcon, CloseIcon } from '../../ui/icons'
-import { useSDK } from '../../../hooks/useSDK'
 
 import './VoteControls.scss'
 
@@ -19,22 +18,21 @@ const VoteMsg = {
 }
 
 export const VoteControls = ({ currentIdentity, contender }) => {
-  const sdk = useSDK()
-
-  const handleVoite = (voite) => {
+  const handleVote = ({ vote, message = '' }) => {
     if (!window.dashPlatformExtension) {
       return
     }
 
-    const sendVoite = async () => {
-      const message = voite === VoteEnum.TO_APPROVE ? `${VoteMsg[voite]} for ${contender}` : VoteMsg[voite]
+    const castVote = async () => {
       const data = {
-        message
+        message: `${VoteMsg[vote]} ${message}`
       }
 
       if (!currentIdentity) {
         throw new Error('Current Identity not set')
       }
+
+      const sdk = window.dashPlatformSDK
 
       const document = await sdk.documents.create(dataContractId, 'posts', data, currentIdentity)
 
@@ -45,7 +43,7 @@ export const VoteControls = ({ currentIdentity, contender }) => {
       await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
     }
 
-    sendVoite()
+    castVote()
   }
 
   return (
@@ -60,7 +58,7 @@ export const VoteControls = ({ currentIdentity, contender }) => {
                 aria-label="vote"
                 p={0}
                 icon={<PrimalPostitiveIcon width="18px" height="10px" />}
-                onClick={() => handleVoite(VoteEnum.TO_APPROVE)}
+                onClick={() => handleVote({ vote: VoteEnum.TO_APPROVE })}
             />
             <IconButton
                 color="#F49A58"
@@ -72,7 +70,7 @@ export const VoteControls = ({ currentIdentity, contender }) => {
                 aria-label="vote"
                 p={0}
                 icon={<PrimalNegativeIcon width="11px" height="10px" />}
-                onClick={() => handleVoite(VoteEnum.TO_REJECT)}
+                onClick={() => handleVote({ vote: VoteEnum.TO_REJECT })}
             />
             <IconButton
                 color="#F45858"
@@ -84,7 +82,7 @@ export const VoteControls = ({ currentIdentity, contender }) => {
                 aria-label="vote"
                 p={0}
                 icon={<CloseIcon width="8px" height="8px" />}
-                onClick={() => handleVoite(VoteEnum.TO_ABSTAIN)}
+                onClick={() => handleVote({ vote: VoteEnum.TO_ABSTAIN, message: `for ${contender}` })}
             />
         </div>
   )
