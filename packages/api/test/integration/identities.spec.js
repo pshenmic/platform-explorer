@@ -10,6 +10,7 @@ const BatchEnum = require('../../src/enums/BatchEnum')
 const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
+const { IdentifierWASM } = require('pshenmic-dpp')
 
 describe('Identities routes', () => {
   let app
@@ -403,20 +404,25 @@ describe('Identities routes', () => {
   })
 
   describe('getIdentities()', async () => {
+    before(() => {
+      mock.method(DocumentsController.prototype, 'query', async () => [{
+        properties: {
+          label: 'test',
+          parentDomainName: 'test',
+          normalizedLabel: 'test'
+        },
+        id: new IdentifierWASM('Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7'),
+        createdAt: 0
+      }])
+    })
+
     it('should return default set of identities', async () => {
       const identities = []
-      const aliases = []
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
-        alias = await fixtures.identity_alias(knex, {
-          alias: `#test$${i}`,
-          identity,
-          state_transition_hash: identity.transaction.hash
-        })
         identities.push({ identity, block })
-        aliases.push(alias)
       }
 
       const { body } = await client.get('/identities')
@@ -441,14 +447,14 @@ describe('Identities routes', () => {
         totalDataContracts: 0,
         isSystem: false,
         aliases: [
-          aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-        ].map(alias => ({
-          alias: alias.alias,
-          txHash: alias.state_transition_hash,
-          status: 'ok',
-          contested: false,
-          timestamp: '1970-01-01T00:00:00.000Z'
-        })),
+          {
+            alias: 'test.test',
+            status: 'ok',
+            contested: true,
+            documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+            timestamp: '1970-01-01T00:00:00.000Z'
+          }
+        ],
         totalGasSpent: null,
         averageGasSpent: null,
         totalTopUpsAmount: null,
@@ -503,14 +509,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-          ].map(alias => ({
-            alias: alias.alias,
-            txHash: alias.state_transition_hash,
-            status: 'ok',
-            contested: false,
-            timestamp: '1970-01-01T00:00:00.000Z'
-          })),
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -566,14 +572,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-          ].map(alias => ({
-            alias: alias.alias,
-            txHash: alias.state_transition_hash,
-            status: 'ok',
-            contested: false,
-            timestamp: '1970-01-01T00:00:00.000Z'
-          })),
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -630,14 +636,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-          ].map(alias => ({
-            alias: alias.alias,
-            txHash: alias.state_transition_hash,
-            status: 'ok',
-            contested: false,
-            timestamp: '1970-01-01T00:00:00.000Z'
-          })),
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -710,14 +716,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-          ].map(alias => ({
-            alias: alias.alias,
-            txHash: alias.state_transition_hash,
-            status: 'ok',
-            contested: false,
-            timestamp: '1970-01-01T00:00:00.000Z'
-          })),
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -734,6 +740,16 @@ describe('Identities routes', () => {
     })
 
     it('should allow sort by balance', async () => {
+      mock.method(DocumentsController.prototype, 'query', async () => [{
+        properties: {
+          label: 'test',
+          parentDomainName: 'test',
+          normalizedLabel: 'test'
+        },
+        id: new IdentifierWASM('Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7'),
+        createdAt: 0
+      }])
+
       const identities = []
       const aliases = []
 
@@ -802,14 +818,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-          ].map(alias => ({
-            alias: alias.alias,
-            txHash: alias.state_transition_hash,
-            status: 'ok',
-            contested: false,
-            timestamp: '1970-01-01T00:00:00.000Z'
-          })),
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -1079,7 +1095,15 @@ describe('Identities routes', () => {
         identifier: _document.document.identifier,
         owner: {
           identifier: identity.identifier,
-          aliases: []
+          aliases: [
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ]
         },
         dataContractIdentifier: _document.dataContract.identifier,
         revision: 1,
@@ -1148,7 +1172,15 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: {
             identifier: identity.identifier,
-            aliases: []
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
           },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
@@ -1219,7 +1251,15 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: {
             identifier: identity.identifier,
-            aliases: []
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
           },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
@@ -1288,7 +1328,15 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: {
             identifier: identity.identifier,
-            aliases: []
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
           },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
@@ -1357,7 +1405,15 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: {
             identifier: identity.identifier,
-            aliases: []
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
           },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,

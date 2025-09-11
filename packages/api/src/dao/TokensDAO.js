@@ -114,17 +114,25 @@ module.exports = class TokensDAO {
   getTokenTransitions = async (identifier, page, limit, order) => {
     const fromRank = (page - 1) * limit
 
-    const rows = await this.knex('token_transitions')
+    const subquery = this.knex('token_transitions')
       .select(
-        'action', 'amount', 'state_transition_hash',
+        'action', 'amount', 'state_transition_hash', 'token_transitions.id',
         'recipient', 'timestamp', 'public_note', 'token_transitions.owner'
       )
+      .select(this.knex.raw('count(*) OVER () as total_count'))
       .where('token_identifier', identifier)
-      .offset(fromRank)
-      .limit(limit)
-      .orderBy('token_transitions.id', order)
       .leftJoin('state_transitions', 'state_transitions.hash', 'state_transition_hash')
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
+      .as('subquery')
+
+    const rows = await this.knex(subquery)
+      .select(
+        'action', 'amount', 'state_transition_hash', 'total_count',
+        'recipient', 'timestamp', 'public_note', 'owner'
+      )
+      .offset(fromRank)
+      .limit(limit)
+      .orderBy('id', order)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
       const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
@@ -145,7 +153,9 @@ module.exports = class TokensDAO {
       })
     }))
 
-    return new PaginatedResultSet(resultSet, page, limit, order)
+    const [row] = rows
+
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
   }
 
   getTokensTrends = async (startDate, endDate, page, limit, order) => {
@@ -256,7 +266,7 @@ module.exports = class TokensDAO {
 
     const tokensWithBalance = tokens.map(token => ({
       ...token,
-      balance: tokenBalances?.find(t => t.identifier === token.identifier)?.balance ?? null
+      balance: tokenBalances?.find(t => t.tokenId.base58() === token.identifier)?.balance?.toString() ?? null
     }))
 
     const [row] = rows
@@ -294,6 +304,60 @@ module.exports = class TokensDAO {
     const [row] = rows
 
     const resultSet = await fetchTokenInfoByRows(rows, this.sdk)
+
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
+  }
+
+  getTokenHolders = async (identifier, page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const subquery = this.knex('token_holders')
+      .select('holder', 'tokens.identifier as token_identifier', 'token_holders.id')
+      .select(this.knex.raw('count(*) OVER() as total_count'))
+      .where('tokens.identifier', identifier)
+      .leftJoin('tokens', 'token_holders.token_id', 'tokens.id')
+      .as('subquery')
+
+    const rows = await this.knex(subquery)
+      .select('holder', 'token_identifier', 'total_count')
+      .offset(fromRank)
+      .limit(limit)
+      .orderBy('id', order)
+
+    const [row] = rows
+
+    if (!row) {
+      return new PaginatedResultSet([], page, limit, 0)
+    }
+
+    const holders = rows.map((row) => row.holder)
+
+    const balances = await this.sdk.tokens.getIdentitiesTokenBalances(holders, row.token_identifier)
+
+    const ownersWithBalance = balances.reduce((acc, balance) => {
+      return {
+        ...acc,
+        [balance.identityId.base58()]: balance.balance.toString()
+      }
+    }, {})
+
+    const resultSet = await Promise.all(rows.map(async (row) => {
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.holder.trim()]], 1)
+
+      const aliases = []
+
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
+
+      return {
+        balance: ownersWithBalance[row.holder.trim()] ?? null,
+        holder: {
+          identifier: row.holder?.trim(),
+          aliases: aliases ?? []
+        }
+      }
+    }))
 
     return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
   }

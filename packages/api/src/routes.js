@@ -564,6 +564,20 @@ module.exports = ({
       }
     },
     {
+      path: '/token/:identifier/holders',
+      method: 'GET',
+      handler: tokensController.getTokenHolders,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/tokens/:name/info',
       method: 'GET',
       handler: tokensController.getTokensByName,
@@ -632,6 +646,19 @@ module.exports = ({
               ]
             },
             quorumHash: { $ref: 'hash#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/waitForStateTransitionResult/:hash',
+      method: 'GET',
+      handler: transactionsController.waitForStateTransitionResult,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
           }
         }
       }
