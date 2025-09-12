@@ -1,11 +1,15 @@
-import { Grid, GridItem } from '@chakra-ui/react'
+import { Button, Grid, GridItem } from '@chakra-ui/react'
 import { ProportionsLine } from '../../ui/infographics'
 import { Identifier, TimeDelta } from '../../data'
 import { LinkContainer } from '../../ui/containers'
+import { VoteControls } from './VoteControls'
 import { colors } from '../../../styles/colors'
+import { useWalletConnect } from '../../../hooks/useWallet'
 import './ContendersListItem.scss'
 
-function ContendersListItem ({ contender, className }) {
+function ContendersListItem ({ contender, className, isExtensionConnected }) {
+  const { currentIdentity, connected, connectWallet } = useWalletConnect()
+
   return (
     <div className={`ContendersListItem ${className || ''}`}>
       <div className={'ContendersListItem__ScrollZone'}>
@@ -76,6 +80,18 @@ function ContendersListItem ({ contender, className }) {
               }
             ]} />
           </GridItem>
+
+          {
+            isExtensionConnected &&
+              <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
+                {
+                  connected
+                    ? <VoteControls contender={contender?.identifier} currentIdentity={currentIdentity} />
+                    : <Button onClick={connectWallet} className='ContendersListItem__Column_Vote-btn' variant="brand" size="sm">Vote</Button>
+                }
+              </GridItem>
+          }
+
         </Grid>
       </div>
     </div>
