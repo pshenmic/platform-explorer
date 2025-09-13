@@ -11,6 +11,16 @@ impl PostgresDAO {
         st_hash: Option<String>,
         sql_transaction: &Transaction<'_>,
     ) -> Result<(), PoolError> {
+        let tx_id = match st_hash.clone() {
+            None => None,
+            Some(hash) => Some(
+                self
+                    .get_state_transition_id(hash, sql_transaction)
+                    .await
+                    .expect("Error getting state_transition_id"),
+            ),
+        };
+
         let identifier = identity.identifier;
         let revision = identity.revision;
         let revision_i32 = revision as i32;
@@ -19,7 +29,7 @@ impl PostgresDAO {
         let identity_type = identity.identity_type.to_string();
 
         let query = "INSERT INTO identities(identifier,owner,revision,\
-        state_transition_hash,is_system,type) VALUES ($1, $2, $3, $4, $5, $6);";
+        state_transition_hash,is_system,state_transition_id,type) VALUES ($1, $2, $3, $4, $5, $6, $7);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -32,6 +42,7 @@ impl PostgresDAO {
                     &revision_i32,
                     &st_hash,
                     &is_system,
+                    &tx_id,
                     &identity_type,
                 ],
             )

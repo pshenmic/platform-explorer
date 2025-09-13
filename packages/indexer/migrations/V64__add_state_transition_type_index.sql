@@ -1,0 +1,1 @@
+CREATE INDEX state_transition_type ON state_transitions(type);

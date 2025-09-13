@@ -43,8 +43,10 @@ const fixtures = {
     const eqValue = hash ?? id
     const eqField = hash ? 'hash' : 'id'
 
-    const [row] = await knex('state_transitions')
+    const rows = await knex('state_transitions')
       .where(eqField, eqValue)
+
+    const [row] = rows
 
     return row
   },
@@ -135,7 +137,15 @@ const fixtures = {
 
     return { ...row, id: result.id }
   },
-  identity: async (knex, { identifier, block_hash, block_height, state_transition_hash, revision, owner, is_system } = {}) => {
+  identity: async function (knex, {
+    identifier,
+    block_hash,
+    block_height,
+    state_transition_hash,
+    revision,
+    owner,
+    is_system
+  } = {}) {
     if (!identifier) {
       identifier = generateIdentifier()
     }
@@ -149,6 +159,7 @@ const fixtures = {
     }
 
     let transaction
+    let temp
 
     if (!state_transition_hash) {
       transaction = await fixtures.transaction(knex, {
@@ -157,12 +168,15 @@ const fixtures = {
         owner: identifier,
         type: StateTransitionEnum.IDENTITY_CREATE
       })
+    } else {
+      temp = await fixtures.getStateTransition(knex, { hash: state_transition_hash })
     }
 
     const row = {
       identifier,
       revision: revision ?? 0,
       state_transition_hash: state_transition_hash ?? transaction.hash,
+      state_transition_id: transaction?.id ?? temp?.id,
       owner: owner ?? identifier,
       is_system: is_system ?? false
     }
