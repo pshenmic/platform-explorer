@@ -3,44 +3,36 @@ import { PrimalPostitiveIcon, PrimalNegativeIcon, CloseIcon } from '../../ui/ico
 
 import './VoteControls.scss'
 
-const dataContractId = '4P7d1iqwofPA1gFtbEcXiagDnANXAQhX2WZararioX8f'
-
 const VoteEnum = {
-  TO_APPROVE: 'TO_APPROVE',
-  TO_REJECT: 'TO_REJECT',
-  TO_ABSTAIN: 'TO_ABSTAIN'
+  TO_REJECT: 'lock',
+  TO_ABSTAIN: 'abstain'
 }
 
-const VoteMsg = {
-  [VoteEnum.TO_APPROVE]: 'to approve',
-  [VoteEnum.TO_REJECT]: 'to reject',
-  [VoteEnum.TO_ABSTAIN]: 'to abstain'
-}
+const VOTING_DATA_CONTRACT_ID = process.env.NEXT_PUBLIC_VOTING_DATA_CONTRACT_ID ?? 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec'
+const DOCUMENT_TYPE = 'domain'
+const INDEX_NAME = 'parentNameAndLabel'
 
-export const VoteControls = ({ currentIdentity, contender }) => {
-  const handleVote = ({ vote, message = '' }) => {
+export const VoteControls = ({ proTxHash, currentIdentity, contender }) => {
+  const handleVote = ({ choice }) => {
     if (!window.dashPlatformExtension) {
       return
     }
 
     const castVote = async () => {
-      const data = {
-        message: `${VoteMsg[vote]} ${message}`
-      }
-
       if (!currentIdentity) {
         throw new Error('Current Identity not set')
       }
 
       const sdk = window.dashPlatformSDK
+      const indexValues = ['dash', sdk.names.normalizeLabel('testidentity')]
+      const voterIdentity = await sdk.identities.getIdentityByIdentifier(currentIdentity)
+      // const [identityPublicKey] = voterIdentity.getPublicKeys().filter(identityPublicKey => privateKey.getPublicKeyHash() === identityPublicKey.getPublicKeyHash())
+      const identityNonce = await sdk.identities.getIdentityNonce(voterIdentity.id)
 
-      const document = await sdk.documents.create(dataContractId, 'posts', data, currentIdentity)
-
-      const identityContractNonce = await sdk.identities.getIdentityContractNonce(currentIdentity, dataContractId)
-
-      const stateTransition = sdk.documents.createStateTransition(document, 'create', identityContractNonce + 1n)
-
+      const vote = sdk.voting.createVote(VOTING_DATA_CONTRACT_ID, DOCUMENT_TYPE, INDEX_NAME, indexValues, choice)
+      const stateTransition = sdk.voting.createStateTransition(vote, proTxHash, voterIdentity.id, identityNonce + BigInt(1))
       await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
+      console.log({ stateTransition })
     }
 
     castVote()
@@ -58,7 +50,7 @@ export const VoteControls = ({ currentIdentity, contender }) => {
                 aria-label="vote"
                 p={0}
                 icon={<PrimalPostitiveIcon width="18px" height="10px" />}
-                onClick={() => handleVote({ vote: VoteEnum.TO_APPROVE })}
+                onClick={() => handleVote({ choice: contender })}
             />
             <IconButton
                 color="#F49A58"
@@ -70,7 +62,7 @@ export const VoteControls = ({ currentIdentity, contender }) => {
                 aria-label="vote"
                 p={0}
                 icon={<PrimalNegativeIcon width="11px" height="10px" />}
-                onClick={() => handleVote({ vote: VoteEnum.TO_REJECT })}
+                onClick={() => handleVote({ choice: VoteEnum.TO_REJECT })}
             />
             <IconButton
                 color="#F45858"
@@ -82,7 +74,7 @@ export const VoteControls = ({ currentIdentity, contender }) => {
                 aria-label="vote"
                 p={0}
                 icon={<CloseIcon width="8px" height="8px" />}
-                onClick={() => handleVote({ vote: VoteEnum.TO_ABSTAIN, message: `for ${contender}` })}
+                onClick={() => handleVote({ choice: VoteEnum.TO_ABSTAIN })}
             />
         </div>
   )
