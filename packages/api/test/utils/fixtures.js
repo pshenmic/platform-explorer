@@ -144,7 +144,8 @@ const fixtures = {
     state_transition_hash,
     revision,
     owner,
-    is_system
+    is_system,
+    type
   } = {}) {
     if (!identifier) {
       identifier = generateIdentifier()
@@ -156,6 +157,12 @@ const fixtures = {
 
     if (!block_height) {
       throw Error('Block height must be provided')
+    }
+
+    if (!type) {
+      type = 'Regular'
+    } else if (type !== 'Regular' || type !== 'Masternode' || type !== 'Voting') {
+      throw new Error('Type must be one of: "Regular", "Masternode" or "Voting"')
     }
 
     let transaction
@@ -178,7 +185,8 @@ const fixtures = {
       state_transition_hash: state_transition_hash ?? transaction.hash,
       state_transition_id: transaction?.id ?? temp?.id,
       owner: owner ?? identifier,
-      is_system: is_system ?? false
+      is_system: is_system ?? false,
+      type
     }
 
     const result = await knex('identities').insert(row).returning('id')
