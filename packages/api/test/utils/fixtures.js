@@ -183,7 +183,7 @@ const fixtures = {
     const row = {
       identifier,
       revision: revision ?? 0,
-      state_transition_hash: state_transition_hash.toLowerCase() ?? transaction.hash,
+      state_transition_hash: (state_transition_hash ?? transaction.hash).toLowerCase(),
       state_transition_id: transaction?.id ?? temp?.id,
       owner: owner ?? identifier,
       is_system: is_system ?? false,
@@ -254,7 +254,7 @@ const fixtures = {
       owner,
       identifier,
       name: name ?? null,
-      state_transition_hash: state_transition_hash.toLowerCase(),
+      state_transition_hash: state_transition_hash?.toLowerCase(),
       schema: schema ?? {},
       version: version ?? 0,
       is_system: is_system === true
@@ -299,7 +299,7 @@ const fixtures = {
 
     const row = {
       identifier,
-      state_transition_hash: state_transition_hash.toLowerCase(),
+      state_transition_hash: state_transition_hash?.toLowerCase(),
       revision: revision ?? 1,
       data: data ?? {},
       deleted: deleted ?? false,
@@ -355,7 +355,7 @@ const fixtures = {
     pro_tx_hash
   } = {}) => {
     const row = {
-      pro_tx_hash: pro_tx_hash ?? generateHash()
+      pro_tx_hash: (pro_tx_hash ?? generateHash()).toLowerCase()
     }
 
     const [result] = await knex('validators').insert(row).returning('id')

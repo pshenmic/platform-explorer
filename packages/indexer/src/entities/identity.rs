@@ -23,7 +23,6 @@ pub struct Identity {
     pub balance: Option<u64>,
     pub is_system: bool,
     pub identity_type: IdentifierType,
-    pub id: Option<i32>,
 }
 
 impl From<(IdentityCreateTransition, Transaction)> for Identity {
@@ -47,7 +46,6 @@ impl From<(IdentityCreateTransition, Transaction)> for Identity {
             revision: Revision::from(0 as u64),
             is_system: false,
             identity_type: IdentifierType::REGULAR,
-            id: None,
         }
     }
 }
@@ -65,7 +63,6 @@ impl From<IdentityUpdateTransition> for Identity {
             revision,
             is_system: false,
             identity_type: IdentifierType::REGULAR,
-            id: None,
         }
     }
 }
@@ -84,7 +81,6 @@ impl From<SystemDataContract> for Identity {
             balance: None,
             is_system: true,
             identity_type: IdentifierType::REGULAR,
-            id: None,
         }
     }
 }
@@ -96,7 +92,6 @@ impl From<Row> for Identity {
         let revision: i32 = row.get(3);
         let is_system: bool = row.get(4);
         let identity_type: String = row.get(5);
-        let id: i32 = row.get(6);
 
         Identity {
             owner: Identifier::from_string(&owner.trim(), Base58).unwrap(),
@@ -105,7 +100,6 @@ impl From<Row> for Identity {
             is_system,
             balance: None,
             identity_type: IdentifierType::from(identity_type),
-            id: Some(id),
         }
     }
 }
@@ -124,7 +118,6 @@ impl From<Validator> for Identity {
             is_system,
             balance: None,
             identity_type: IdentifierType::MASTERNODE,
-            id: None,
         }
     }
 }
@@ -145,7 +138,6 @@ impl From<ProTxInfo> for Identity {
             is_system,
             balance: None,
             identity_type: IdentifierType::VOTING,
-            id: None,
         }
     }
 }
