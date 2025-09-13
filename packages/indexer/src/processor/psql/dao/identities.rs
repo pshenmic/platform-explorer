@@ -16,9 +16,10 @@ impl PostgresDAO {
         let revision_i32 = revision as i32;
         let owner = identity.owner;
         let is_system = identity.is_system;
+        let identity_type = identity.identity_type.to_string();
 
         let query = "INSERT INTO identities(identifier,owner,revision,\
-        state_transition_hash,is_system) VALUES ($1, $2, $3, $4, $5);";
+        state_transition_hash,is_system,type) VALUES ($1, $2, $3, $4, $5, $6);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -31,6 +32,7 @@ impl PostgresDAO {
                     &revision_i32,
                     &st_hash,
                     &is_system,
+                    &identity_type,
                 ],
             )
             .await
@@ -78,7 +80,7 @@ impl PostgresDAO {
         let stmt = sql_transaction
             .prepare_cached(
                 "SELECT id, owner, identifier, revision, \
-        is_system FROM identities where identifier = $1 LIMIT 1;",
+        is_system, type FROM identities where identifier = $1 LIMIT 1;",
             )
             .await
             .unwrap();
