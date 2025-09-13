@@ -66,7 +66,7 @@ impl PostgresDAO {
                     &token.destroyable,
                     &token.allowed_emergency_actions,
                     &token.description,
-                    &token.state_transition_hash,
+                    &token.state_transition_hash.map(|hash| hash.to_lowercase()),
                     &token.name,
                 ],
             )

@@ -5,6 +5,8 @@ use dashcore_rpc::RpcApi;
 use deadpool_postgres::Transaction;
 use dpp::dashcore::hashes::Hash;
 use dpp::dashcore::ProTxHash;
+use dpp::platform_value::string_encoding::encode;
+use dpp::platform_value::string_encoding::Encoding::Hex;
 
 impl PSQLProcessor {
     pub async fn handle_validator(
@@ -34,14 +36,24 @@ impl PSQLProcessor {
                     .get_protx_info(pro_tx_hash, l1_tx.blockhash.as_ref())
                     .unwrap();
 
+                let owner_identity = Identity::from(validator.clone());
+                let voting_identity = Identity::from(pro_tx_info.clone());
+
                 self.dao
-                    .create_validator(validator.clone(), sql_transaction)
+                    .create_identity(owner_identity.clone(), None, sql_transaction)
                     .await?;
                 self.dao
-                    .create_identity(Identity::from(validator), None, sql_transaction)
+                    .create_identity(voting_identity.clone(), None, sql_transaction)
                     .await?;
+
                 self.dao
-                    .create_identity(Identity::from(pro_tx_info), None, sql_transaction)
+                    .create_validator(
+                        validator.clone(),
+                        owner_identity,
+                        voting_identity,
+                        encode(&pro_tx_info.state.voting_address, Hex),
+                        sql_transaction,
+                    )
                     .await?;
                 Ok(())
             }

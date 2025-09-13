@@ -27,8 +27,9 @@ impl PostgresDAO {
         let is_system = identity.is_system;
         let identity_type = identity.identity_type.to_string();
 
-        let query = "INSERT INTO identities(identifier,owner,revision,\
-        state_transition_hash,is_system,state_transition_id,type) VALUES ($1, $2, $3, $4, $5, $6, $7);";
+        let query = "INSERT INTO identities( identifier, owner, revision,\
+        state_transition_hash, is_system, state_transition_id, type\
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -39,7 +40,7 @@ impl PostgresDAO {
                     &identifier.to_string(Base58),
                     &owner.to_string(Base58),
                     &revision_i32,
-                    &st_hash,
+                    &st_hash.map(|hash| hash.to_lowercase()),
                     &is_system,
                     &tx_id,
                     &identity_type,
@@ -67,7 +68,11 @@ impl PostgresDAO {
         sql_transaction
             .execute(
                 &stmt,
-                &[&identity.identifier.to_string(Base58), &alias, &st_hash],
+                &[
+                    &identity.identifier.to_string(Base58),
+                    &alias,
+                    &st_hash.to_lowercase(),
+                ],
             )
             .await
             .unwrap();
@@ -90,7 +95,7 @@ impl PostgresDAO {
         let stmt = sql_transaction
             .prepare_cached(
                 "SELECT id, owner, identifier, revision, \
-        is_system, type FROM identities where identifier = $1 LIMIT 1;",
+        is_system, type, id FROM identities where identifier = $1 LIMIT 1;",
             )
             .await
             .unwrap();

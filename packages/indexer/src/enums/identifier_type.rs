@@ -2,17 +2,17 @@ use std::fmt::Display;
 
 #[derive(Clone, Debug)]
 pub enum IdentifierType {
-    Regular,
-    Masternode,
-    Voting,
+    REGULAR,
+    MASTERNODE,
+    VOTING,
 }
 
 impl From<String> for IdentifierType {
     fn from(s: String) -> Self {
         match s.to_lowercase().as_str() {
-            "regular" => IdentifierType::Regular,
-            "masternode" => IdentifierType::Masternode,
-            "voting" => IdentifierType::Voting,
+            "regular" => IdentifierType::REGULAR,
+            "masternode" => IdentifierType::MASTERNODE,
+            "voting" => IdentifierType::VOTING,
             _ => {
                 panic!("Unsupported identifier type: {}", s);
             }
