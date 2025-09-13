@@ -161,7 +161,7 @@ const fixtures = {
 
     if (!type) {
       type = 'Regular'
-    } else if (type !== 'Regular' || type !== 'Masternode' || type !== 'Voting') {
+    } else if (type && (type !== 'Regular' || type !== 'Masternode' || type !== 'Voting')) {
       throw new Error('Type must be one of: "Regular", "Masternode" or "Voting"')
     }
 
