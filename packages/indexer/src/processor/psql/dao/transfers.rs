@@ -20,7 +20,10 @@ impl PostgresDAO {
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
         sql_transaction
-            .execute(&stmt, &[&amount, &sender, &recipient, &st_hash])
+            .execute(
+                &stmt,
+                &[&amount, &sender, &recipient, &st_hash.to_lowercase()],
+            )
             .await
             .unwrap();
 
