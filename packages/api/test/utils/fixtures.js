@@ -4,7 +4,7 @@ const { base58 } = require('@scure/base')
 const crypto = require('crypto')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 
-const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase()
+const generateHash = () => (crypto.randomBytes(32)).toString('hex').toLowerCase()
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
 const fixtures = {
   identifier: () => generateIdentifier(),
@@ -29,7 +29,7 @@ const fixtures = {
     }
 
     const rows = await knex('validators')
-      .where('pro_tx_hash', pro_tx_hash)
+      .where('pro_tx_hash', pro_tx_hash.toLowerCase())
 
     const [row] = rows
 
@@ -40,7 +40,7 @@ const fixtures = {
       throw new Error('hash or id must be provided')
     }
 
-    const eqValue = hash ?? id
+    const eqValue = hash.toLowerCase() ?? id
     const eqField = hash ? 'hash' : 'id'
 
     const rows = await knex('state_transitions')
@@ -75,15 +75,15 @@ const fixtures = {
       ? await fixtures.getValidator(knex, { pro_tx_hash: validator })
       : await fixtures.validator(knex)
     const row = {
-      hash: hash ?? generateHash(),
+      hash: (hash ?? generateHash()).toLowerCase(),
       height: height ?? 1,
       timestamp: timestamp ?? new Date(),
       block_version: block_version ?? 13,
       app_version: app_version ?? 1,
       l1_locked_height: l1_locked_height ?? 1337,
-      validator: validatorObject.pro_tx_hash,
+      validator: (validatorObject.pro_tx_hash).toLowerCase(),
       validator_id: validatorObject.id,
-      app_hash: app_hash ?? generateHash()
+      app_hash: (app_hash ?? generateHash()).toLowerCase()
     }
 
     await knex('blocks').insert(row)
@@ -120,12 +120,12 @@ const fixtures = {
     }
 
     const row = {
-      block_hash,
+      block_hash: block_hash.toLowerCase(),
       block_height,
       type,
       batch_type,
       owner,
-      hash: hash ?? generateHash(),
+      hash: (hash ?? generateHash()).toLowerCase(),
       data: data ?? {},
       index: index ?? 0,
       gas_used: gas_used ?? 0,
@@ -182,7 +182,7 @@ const fixtures = {
     const row = {
       identifier,
       revision: revision ?? 0,
-      state_transition_hash: state_transition_hash ?? transaction.hash,
+      state_transition_hash: state_transition_hash.toLowerCase() ?? transaction.hash,
       state_transition_id: transaction?.id ?? temp?.id,
       owner: owner ?? identifier,
       is_system: is_system ?? false,
@@ -253,7 +253,7 @@ const fixtures = {
       owner,
       identifier,
       name: name ?? null,
-      state_transition_hash,
+      state_transition_hash: state_transition_hash.toLowerCase(),
       schema: schema ?? {},
       version: version ?? 0,
       is_system: is_system === true
@@ -298,7 +298,7 @@ const fixtures = {
 
     const row = {
       identifier,
-      state_transition_hash,
+      state_transition_hash: state_transition_hash.toLowerCase(),
       revision: revision ?? 1,
       data: data ?? {},
       deleted: deleted ?? false,
@@ -343,7 +343,7 @@ const fixtures = {
       amount,
       sender,
       recipient,
-      state_transition_hash
+      state_transition_hash: state_transition_hash.toLowerCase()
     }
 
     const result = await knex('transfers').insert(row).returning('id')
@@ -386,8 +386,8 @@ const fixtures = {
     }
 
     const row = {
-      pro_tx_hash: pro_tx_hash ?? generateHash(),
-      state_transition_hash,
+      pro_tx_hash: (pro_tx_hash ?? generateHash()).toLowerCase(),
+      state_transition_hash: state_transition_hash.toLowerCase(),
       voter_identity_id,
       choice: choice ?? 0,
       towards_identity_identifier: towards_identity_identifier ?? null,
@@ -476,7 +476,7 @@ const fixtures = {
       max_supply,
       base_supply,
       localizations,
-      state_transition_hash,
+      state_transition_hash: state_transition_hash.toLowerCase(),
       description,
       name,
       keeps_transfer_history: keeps_transfer_history ?? true,
@@ -536,7 +536,7 @@ const fixtures = {
       action,
       amount: amount ?? null,
       public_note: public_note ?? null,
-      state_transition_hash,
+      state_transition_hash: state_transition_hash.toLowerCase(),
       token_contract_position,
       data_contract_id,
       recipient: recipient ?? null
