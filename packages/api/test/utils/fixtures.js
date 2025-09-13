@@ -3,6 +3,7 @@
 const { base58 } = require('@scure/base')
 const crypto = require('crypto')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+const {IdentityTypeEnum} = require("../../src/enums/IdentityTypeEnum");
 
 const generateHash = () => (crypto.randomBytes(32)).toString('hex').toLowerCase()
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
@@ -160,9 +161,9 @@ const fixtures = {
     }
 
     if (!type) {
-      type = 'Regular'
-    } else if (type && (type !== 'Regular' || type !== 'Masternode' || type !== 'Voting')) {
-      throw new Error('Type must be one of: "Regular", "Masternode" or "Voting"')
+      type = IdentityTypeEnum[0]
+    } else if (type && !Object.keys(IdentityTypeEnum).includes(type.toString())) {
+      throw new Error('Type must be one of: "REGULAR", "MASTERNODE" or "VOTING"')
     }
 
     let transaction
