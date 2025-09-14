@@ -26,7 +26,6 @@ export const VoteControls = ({ proTxHash, currentIdentity, contender }) => {
       const sdk = window.dashPlatformSDK
       const indexValues = ['dash', sdk.names.normalizeLabel('testidentity')]
       const voterIdentity = await sdk.identities.getIdentityByIdentifier(currentIdentity)
-      // const [identityPublicKey] = voterIdentity.getPublicKeys().filter(identityPublicKey => privateKey.getPublicKeyHash() === identityPublicKey.getPublicKeyHash())
       const identityNonce = await sdk.identities.getIdentityNonce(voterIdentity.id)
 
       const vote = sdk.voting.createVote(VOTING_DATA_CONTRACT_ID, DOCUMENT_TYPE, INDEX_NAME, indexValues, choice)

@@ -20,9 +20,5 @@
 
   &__ColumnTitle {
     @include contenders.Column();
-
-    &_Vote-btn {
-      border-radius: 10px;
-    }
   }
 }
