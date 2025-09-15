@@ -1,14 +1,15 @@
 import { ContendersContent } from './Content'
 import { ContendersTemplate } from './Template'
 
-import { checkPlatformExtension, ExtensionStatusEnum } from '../../../util/extension'
+import { useWalletConnect } from '../../../hooks/useWallet'
+import { useVoteValidation } from './useVoteValidation'
 
 const ContendersList = ({ className, isFinished, ...props }) => {
-  const isVoteVisible = checkPlatformExtension() === ExtensionStatusEnum.CONNECTED && !isFinished
-
+  const wallet = useWalletConnect()
+  const { isVoteVisible } = useVoteValidation({ wallet, isFinished })
   return (
         <ContendersTemplate isVoteVisible={isVoteVisible} className={className}>
-            <ContendersContent isVoteVisible={isVoteVisible} {...props} />
+            <ContendersContent isVoteVisible={isVoteVisible} {...wallet} {...props} />
         </ContendersTemplate>
   )
 }

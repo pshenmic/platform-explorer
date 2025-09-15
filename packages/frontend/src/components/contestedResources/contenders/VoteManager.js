@@ -3,9 +3,9 @@ import { VoteControls } from './VoteControls'
 
 import './VoteManager.scss'
 
-export const VoteManeger = ({ connected, currentIdentity, connectWallet, documentStateTransition, identifier }) => {
+export const VoteManeger = ({ connected, currentIdentity, connectWallet, identifier, resourceValue }) => {
   if (connected) {
-    return <VoteControls proTxHash={documentStateTransition} contender={identifier} currentIdentity={currentIdentity} />
+    return <VoteControls contender={identifier} currentIdentity={currentIdentity} resourceValue={resourceValue} />
   }
 
   return <Button onClick={connectWallet} className='ContendersListItem__Column_Vote-btn' variant="brand" size="sm">Vote</Button>

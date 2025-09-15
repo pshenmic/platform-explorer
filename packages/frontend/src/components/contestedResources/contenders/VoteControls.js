@@ -12,7 +12,9 @@ const VOTING_DATA_CONTRACT_ID = process.env.NEXT_PUBLIC_VOTING_DATA_CONTRACT_ID 
 const DOCUMENT_TYPE = 'domain'
 const INDEX_NAME = 'parentNameAndLabel'
 
-export const VoteControls = ({ proTxHash, currentIdentity, contender }) => {
+const PRO_TX_HASH = '559db949f305ae7ca1f2c3fafbde707a5adcb9ef7d53f99df4600d72b6bab965'
+
+export const VoteControls = ({ currentIdentity, contender, resourceValue }) => {
   const handleVote = ({ choice }) => {
     if (!window.dashPlatformExtension) {
       return
@@ -24,12 +26,12 @@ export const VoteControls = ({ proTxHash, currentIdentity, contender }) => {
       }
 
       const sdk = window.dashPlatformSDK
-      const indexValues = ['dash', sdk.names.normalizeLabel('testidentity')]
       const voterIdentity = await sdk.identities.getIdentityByIdentifier(currentIdentity)
       const identityNonce = await sdk.identities.getIdentityNonce(voterIdentity.id)
 
-      const vote = sdk.voting.createVote(VOTING_DATA_CONTRACT_ID, DOCUMENT_TYPE, INDEX_NAME, indexValues, choice)
-      const stateTransition = sdk.voting.createStateTransition(vote, proTxHash, voterIdentity.id, identityNonce + BigInt(1))
+      const vote = sdk.voting.createVote(VOTING_DATA_CONTRACT_ID, DOCUMENT_TYPE, INDEX_NAME, resourceValue, choice)
+      const stateTransition = sdk.voting.createStateTransition(vote, PRO_TX_HASH, voterIdentity.id, identityNonce + BigInt(1))
+      console.log(stateTransition.hex())
       await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
       console.log({ stateTransition })
     }
@@ -61,7 +63,7 @@ export const VoteControls = ({ proTxHash, currentIdentity, contender }) => {
                 aria-label="vote"
                 p={0}
                 icon={<PrimalNegativeIcon width="11px" height="10px" />}
-                onClick={() => handleVote({ choice: VoteEnum.TO_REJECT })}
+                onClick={() => handleVote({ choice: VoteEnum.TO_ABSTAIN })}
             />
             <IconButton
                 color="#F45858"
@@ -73,7 +75,7 @@ export const VoteControls = ({ proTxHash, currentIdentity, contender }) => {
                 aria-label="vote"
                 p={0}
                 icon={<CloseIcon width="8px" height="8px" />}
-                onClick={() => handleVote({ choice: VoteEnum.TO_ABSTAIN })}
+                onClick={() => handleVote({ choice: VoteEnum.TO_REJECT })}
             />
         </div>
   )
