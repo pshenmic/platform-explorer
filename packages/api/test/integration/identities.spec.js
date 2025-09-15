@@ -442,9 +442,9 @@ describe('Identities routes', () => {
         timestamp: _identity.block.timestamp.toISOString(),
         txHash: _identity.identity.txHash,
         totalTxs: 1,
-        totalTransfers: 0,
-        totalDocuments: 0,
-        totalDataContracts: 0,
+        totalTransfers: null,
+        totalDocuments: null,
+        totalDataContracts: null,
         isSystem: false,
         aliases: [
           {
@@ -504,9 +504,9 @@ describe('Identities routes', () => {
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 1,
-          totalTransfers: 0,
-          totalDocuments: 0,
-          totalDataContracts: 0,
+          totalTransfers: null,
+          totalDocuments: null,
+          totalDataContracts: null,
           isSystem: false,
           aliases: [
             {
@@ -567,9 +567,9 @@ describe('Identities routes', () => {
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 1,
-          totalTransfers: 0,
-          totalDocuments: 0,
-          totalDataContracts: 0,
+          totalTransfers: null,
+          totalDocuments: null,
+          totalDataContracts: null,
           isSystem: false,
           aliases: [
             {
@@ -631,9 +631,9 @@ describe('Identities routes', () => {
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 1,
-          totalTransfers: 0,
-          totalDocuments: 0,
-          totalDataContracts: 0,
+          totalTransfers: null,
+          totalDocuments: null,
+          totalDataContracts: null,
           isSystem: false,
           aliases: [
             {
@@ -711,9 +711,9 @@ describe('Identities routes', () => {
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: _identity.identity.transactions.length + 1,
-          totalTransfers: 0,
-          totalDocuments: 0,
-          totalDataContracts: 0,
+          totalTransfers: null,
+          totalDocuments: null,
+          totalDataContracts: null,
           isSystem: false,
           aliases: [
             {
@@ -813,9 +813,9 @@ describe('Identities routes', () => {
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 2,
-          totalTransfers: 1,
-          totalDocuments: 0,
-          totalDataContracts: 0,
+          totalTransfers: null,
+          totalDocuments: null,
+          totalDataContracts: null,
           isSystem: false,
           aliases: [
             {
