@@ -4,7 +4,7 @@ const Transaction = require('../models/Transaction')
 const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const {IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP} = require('../enums/StateTransitionEnum')
+const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
 const {
   decodeStateTransition,
   getAliasStateByVote,
@@ -13,11 +13,11 @@ const {
 } = require('../utils')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
-const {DPNS_CONTRACT} = require('../constants')
+const { DPNS_CONTRACT } = require('../constants')
 const SeriesData = require('../models/SeriesData')
 
 module.exports = class IdentitiesDAO {
-  constructor(knex, sdk) {
+  constructor (knex, sdk) {
     this.knex = knex
     this.sdk = sdk
   }
@@ -164,7 +164,7 @@ module.exports = class IdentitiesDAO {
     let fundingCoreTx = null
 
     if (row.tx_data) {
-      const {assetLockProof} = await decodeStateTransition(row.tx_data)
+      const { assetLockProof } = await decodeStateTransition(row.tx_data)
 
       fundingCoreTx = assetLockProof?.fundingCoreTx
     }
@@ -189,9 +189,9 @@ module.exports = class IdentitiesDAO {
           publicKeyHash: key.getPublicKeyHash(),
           contractBounds: contractBounds
             ? {
-              identifier: contractBounds.identifier.base58(),
-              documentTypeName: contractBounds.documentTypeName ?? null
-            }
+                identifier: contractBounds.identifier.base58(),
+                documentTypeName: contractBounds.documentTypeName ?? null
+              }
             : null
         }
       }),
@@ -216,7 +216,7 @@ module.exports = class IdentitiesDAO {
       return {
         identifier: row.identity_identifier,
         alias: row.alias,
-        status: getAliasStateByVote(aliasInfo, {...row}, row.identity_identifier)
+        status: getAliasStateByVote(aliasInfo, { ...row }, row.identity_identifier)
       }
     }))
   }
@@ -225,14 +225,14 @@ module.exports = class IdentitiesDAO {
     const fromRank = (page - 1) * limit
     // const toRank = fromRank + limit - 1
 
-    const orderByOptions = [{column: 'identity_id', order}]
+    const orderByOptions = [{ column: 'identity_id', order }]
 
     if (orderBy === 'tx_count') {
-      orderByOptions.unshift({column: 'total_txs', order})
+      orderByOptions.unshift({ column: 'total_txs', order })
     }
 
     if (orderBy === 'balance') {
-      orderByOptions.unshift({column: 'balance', order})
+      orderByOptions.unshift({ column: 'balance', order })
     }
 
     const subquery = this.knex('identities')
@@ -579,7 +579,7 @@ module.exports = class IdentitiesDAO {
         blockHash: row.block_hash
       }
     }))
-      .map(({timestamp, data}) => new SeriesData(timestamp, data))
+      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 }
