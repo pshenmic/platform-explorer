@@ -35,8 +35,19 @@ impl PostgresDAO {
             TransactionStatus::SUCCESS => "SUCCESS",
         };
 
+        let owner_id = match st_type {
+            2 => self.get_last_identity_id(sql_transaction).await.unwrap() + 1i32,
+            _ => self
+                .get_identity_by_identifier(owner.to_string(Base58), sql_transaction)
+                .await
+                .unwrap()
+                .expect(format!("Failed to get owner_id ({})", owner.to_string(Base58)).as_str())
+                .id
+                .unwrap(),
+        };
+
         let query = "INSERT INTO state_transitions(hash, owner, data, type, \
-        index, block_hash, block_height, gas_used, status, error, batch_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
+        index, block_hash, block_height, gas_used, status, error, batch_type, owner_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -55,6 +66,7 @@ impl PostgresDAO {
                     &status_str,
                     &error,
                     &batch_type_i32,
+                    &owner_id,
                 ],
             )
             .await

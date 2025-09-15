@@ -240,24 +240,41 @@ module.exports = class IdentitiesDAO {
         'identities.is_system as is_system', 'identities.state_transition_hash as tx_hash', 'identities.state_transition_id as tx_id', 'identities.revision as revision')
       .where('revision', 0)
 
+    const countSubquery = this.knex('with_alias')
+      .select(this.knex.raw('count(*) over () as total_count'))
+      .limit(1)
+      .as('total_count')
+
+    const transfersSubquery = this.knex('transfers')
+      .whereRaw('recipient_id = with_alias.identity_id')
+      .orWhereRaw('sender_id = with_alias.identity_id')
+      .as('balance')
+
     const identityDataSubquery = this.knex
       .with('with_alias', subquery)
-      .select('identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'is_system', 'tx_id')
-      .select(this.knex.raw('(SELECT SUM(CASE WHEN recipient = "with_alias"."identifier" THEN amount WHEN sender = "with_alias"."identifier" THEN -amount ELSE 0 END) FROM "transfers" WHERE recipient = "with_alias"."identifier" OR sender = "with_alias"."identifier" ) AS "balance"'))
-      .select(this.knex('state_transitions').count('*').whereRaw('owner = identifier').limit(1).as('total_txs'))
-      .select(this.knex('with_alias').count('*').as('total_count'))
+      .select('identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'is_system', 'tx_id', 'total_count')
+      .select(
+        this.knex(transfersSubquery)
+          .sum(this.knex.raw(
+            'CASE WHEN recipient_id = with_alias.identity_id THEN amount WHEN recipient_id = with_alias.identity_id THEN -amount ELSE 0 END'
+          ))
+          .as('balance')
+          .limit(1)
+          .as('balance')
+      )
+      .select(this.knex('state_transitions').count('*').whereRaw('owner_id = identity_id').limit(1).as('total_txs'))
+      .leftJoin(countSubquery, this.knex.raw('true'), this.knex.raw('true'))
       .from('with_alias')
       .as('subquery')
 
     const limitedDataSubquery = this.knex(identityDataSubquery)
       .select(
         'identity_id', 'identifier', 'identity_owner', 'tx_hash',
-        'is_system', 'tx_id', 'total_txs', 'balance', 'total_count'
+        'is_system', 'tx_id', 'total_txs', 'total_count'
       )
       .select(
         this.knex('identities')
           .select('revision')
-          // use whereRaw because default where generates bad sql "subquery"."identifier" = 'identities.identifier'
           .whereRaw('subquery.identifier = identities.identifier')
           .orderBy('revision', 'DESC')
           .limit(1)
@@ -271,13 +288,13 @@ module.exports = class IdentitiesDAO {
     const timestampSubquery = this.knex(limitedDataSubquery)
       .select(
         'blocks.timestamp as timestamp', 'revision', 'identity_id', 'identifier',
-        'identity_owner', 'tx_hash', 'is_system', 'tx_id', 'total_txs', 'balance', 'total_count'
+        'identity_owner', 'tx_hash', 'is_system', 'tx_id', 'total_txs', 'total_count'
       )
       .leftJoin('state_transitions', 'state_transitions.id', 'tx_id')
       .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
       .as('timestamp_subquery')
 
-    const rows = await this.knex(timestampSubquery)
+    const rows = this.knex(timestampSubquery)
       .orderBy(orderByOptions)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0

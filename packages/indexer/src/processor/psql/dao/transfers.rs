@@ -15,12 +15,32 @@ impl PostgresDAO {
         let sender = transfer.sender.map(|t| t.to_string(Base58));
         let recipient = transfer.recipient.map(|t| t.to_string(Base58));
 
-        let query = "INSERT INTO transfers(amount, sender, recipient, state_transition_hash) VALUES ($1, $2, $3, $4);";
+        let sender_id = match sender.clone() {
+            Some(id) => {
+                self.get_identity_by_identifier(id, sql_transaction)
+                    .await?
+                    .unwrap()
+                    .id
+            }
+            None => None,
+        };
+
+        let recipient_id = match recipient.clone() {
+            Some(id) => {
+                self.get_identity_by_identifier(id, sql_transaction)
+                    .await?
+                    .unwrap()
+                    .id
+            }
+            None => None,
+        };
+
+        let query = "INSERT INTO transfers(amount, sender, recipient, state_transition_hash, sender_id, recipient_id) VALUES ($1, $2, $3, $4, $5, $6);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
         sql_transaction
-            .execute(&stmt, &[&amount, &sender, &recipient, &st_hash])
+            .execute(&stmt, &[&amount, &sender, &recipient, &st_hash, &sender_id, &recipient_id])
             .await
             .unwrap();
 

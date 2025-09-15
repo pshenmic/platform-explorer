@@ -103,4 +103,21 @@ impl PostgresDAO {
 
         Ok(identities.first().cloned())
     }
+
+    pub async fn get_last_identity_id(
+        &self,
+        sql_transaction: &Transaction<'_>,
+    ) -> Result<i32, PoolError> {
+        let stmt = sql_transaction
+            .prepare_cached(
+                "SELECT id FROM identities order by id desc LIMIT 1;",
+            )
+            .await?;
+
+        let rows: Vec<Row> = sql_transaction.query(&stmt, &[]).await.unwrap();
+
+        let id: i32 = rows.first().unwrap().get(0);
+
+        Ok(id)
+    }
 }

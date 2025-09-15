@@ -20,6 +20,7 @@ pub struct Identity {
     pub revision: Revision,
     pub balance: Option<u64>,
     pub is_system: bool,
+    pub id: Option<i32>
 }
 
 impl From<(IdentityCreateTransition, Transaction)> for Identity {
@@ -42,6 +43,7 @@ impl From<(IdentityCreateTransition, Transaction)> for Identity {
             balance: Some(credits),
             revision: Revision::from(0 as u64),
             is_system: false,
+            id: None,
         }
     }
 }
@@ -58,6 +60,7 @@ impl From<IdentityUpdateTransition> for Identity {
             balance: None,
             revision,
             is_system: false,
+            id: None,
         }
     }
 }
@@ -75,12 +78,14 @@ impl From<SystemDataContract> for Identity {
             revision: 0,
             balance: None,
             is_system: true,
+            id: None,
         }
     }
 }
 
 impl From<Row> for Identity {
     fn from(row: Row) -> Self {
+        let id: Option<i32> = row.get(0);
         let owner: String = row.get(1);
         let identifier: String = row.get(2);
         let revision: i32 = row.get(3);
@@ -92,6 +97,7 @@ impl From<Row> for Identity {
             identifier: Identifier::from_string(&identifier.trim(), Base58).unwrap(),
             is_system,
             balance: None,
+            id,
         }
     }
 }
@@ -109,6 +115,7 @@ impl From<Validator> for Identity {
             identifier,
             is_system,
             balance: None,
+            id: None,
         }
     }
 }
