@@ -66,7 +66,7 @@ impl PostgresDAO {
                     &token.destroyable,
                     &token.allowed_emergency_actions,
                     &token.description,
-                    &token.state_transition_hash,
+                    &token.state_transition_hash.map(|hash| hash.to_lowercase()),
                     &token.name,
                 ],
             )
@@ -125,7 +125,7 @@ impl PostgresDAO {
                     &(amount.map(|token_amount| token_amount as i64)),
                     &public_note,
                     &(token_position as i16),
-                    &st_hash,
+                    &st_hash.to_lowercase(),
                     &data_contract_id,
                     &recipient.map(|identifier| identifier.to_string(Base58)),
                 ],

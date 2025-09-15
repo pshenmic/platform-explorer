@@ -1,9 +1,11 @@
 use crate::entities::validator::Validator;
+use crate::enums::identifier_type::IdentifierType;
 use base64::engine::general_purpose;
 use base64::Engine;
+use dashcore_rpc::json::ProTxInfo;
 use data_contracts::SystemDataContract;
 use dpp::dashcore::Transaction;
-use dpp::identifier::Identifier;
+use dpp::identifier::{Identifier, MasternodeIdentifiers};
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
 use dpp::prelude::Revision;
@@ -20,6 +22,7 @@ pub struct Identity {
     pub revision: Revision,
     pub balance: Option<u64>,
     pub is_system: bool,
+    pub identity_type: IdentifierType,
     pub id: Option<i32>
 }
 
@@ -43,6 +46,7 @@ impl From<(IdentityCreateTransition, Transaction)> for Identity {
             balance: Some(credits),
             revision: Revision::from(0 as u64),
             is_system: false,
+            identity_type: IdentifierType::REGULAR,
             id: None,
         }
     }
@@ -60,6 +64,7 @@ impl From<IdentityUpdateTransition> for Identity {
             balance: None,
             revision,
             is_system: false,
+            identity_type: IdentifierType::REGULAR,
             id: None,
         }
     }
@@ -78,6 +83,7 @@ impl From<SystemDataContract> for Identity {
             revision: 0,
             balance: None,
             is_system: true,
+            identity_type: IdentifierType::REGULAR,
             id: None,
         }
     }
@@ -90,6 +96,7 @@ impl From<Row> for Identity {
         let identifier: String = row.get(2);
         let revision: i32 = row.get(3);
         let is_system: bool = row.get(4);
+        let identity_type: String = row.get(5);
 
         Identity {
             owner: Identifier::from_string(&owner.trim(), Base58).unwrap(),
@@ -98,6 +105,7 @@ impl From<Row> for Identity {
             is_system,
             balance: None,
             id,
+            identity_type: IdentifierType::from(identity_type),
         }
     }
 }
@@ -116,6 +124,27 @@ impl From<Validator> for Identity {
             is_system,
             balance: None,
             id: None,
+            identity_type: IdentifierType::MASTERNODE,
+        }
+    }
+}
+
+impl From<ProTxInfo> for Identity {
+    fn from(pro_tx_info: ProTxInfo) -> Self {
+        let voter_id = Identifier::create_voter_identifier(
+            &pro_tx_info.pro_tx_hash.into(),
+            &pro_tx_info.state.voting_address,
+        );
+        let revision = 0u64;
+        let is_system: bool = false;
+
+        Identity {
+            owner: voter_id,
+            revision,
+            identifier: voter_id,
+            is_system,
+            balance: None,
+            identity_type: IdentifierType::VOTING,
         }
     }
 }

@@ -24,7 +24,7 @@ impl PostgresDAO {
         sql_transaction: &Transaction<'_>,
     ) {
         let data = general_purpose::STANDARD.encode(&bytes);
-        let hash = digest(bytes.clone()).to_uppercase();
+        let hash = digest(bytes.clone()).to_lowercase();
         let st_type = st_type as i32;
         let index_i32 = index as i32;
 
@@ -60,7 +60,7 @@ impl PostgresDAO {
                     &data,
                     &st_type,
                     &index_i32,
-                    &block_hash,
+                    &block_hash.to_lowercase(),
                     &block_height,
                     &(gas_used as i64),
                     &status_str,
@@ -93,7 +93,10 @@ impl PostgresDAO {
             .await
             .unwrap();
 
-        let row = sql_transaction.query_one(&stmt, &[&hash]).await.unwrap();
+        let row = sql_transaction
+            .query_one(&stmt, &[&hash.to_lowercase()])
+            .await
+            .unwrap();
 
         let owner: Option<String> = row.get(0);
 
@@ -113,7 +116,10 @@ impl PostgresDAO {
             .await
             .unwrap();
 
-        let row = sql_transaction.query_one(&stmt, &[&hash]).await.unwrap();
+        let row = sql_transaction
+            .query_one(&stmt, &[&hash.to_lowercase()])
+            .await
+            .unwrap();
 
         let id: i32 = row.get(0);
 
