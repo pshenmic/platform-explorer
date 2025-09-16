@@ -51,6 +51,30 @@ const fixtures = {
 
     return row
   },
+  getIdentity: async (knex, { identifier, id }) => {
+    if (!identifier && !id) {
+      throw new Error('identifier or id must be provided')
+    }
+
+    const eqValue = identifier ?? id
+    const eqField = identifier ? 'identifier' : 'id'
+
+    const rows = await knex('identities')
+      .where(eqField, eqValue)
+
+    const [row] = rows
+
+    return row
+  },
+  getLastIdentity: async (knex) => {
+    const rows = await knex('identities')
+      .orderBy('id', 'desc')
+      .limit(1)
+
+    const [row] = rows
+
+    return row
+  },
   getToken: async (knex, { identifier }) => {
     if (!identifier) {
       throw new Error('identifier must be provided')
@@ -120,12 +144,23 @@ const fixtures = {
       throw new Error('owner must be provided for transaction fixture')
     }
 
+    let owner_id
+
+    if (type === StateTransitionEnum.IDENTITY_CREATE) {
+      owner_id = ((await fixtures.getLastIdentity(knex))?.id ?? 0) + 1
+
+      console.log()
+    } else {
+      owner_id = (await fixtures.getIdentity(knex, { identifier: owner })).id
+    }
+
     const row = {
       block_hash: block_hash.toLowerCase(),
       block_height,
       type,
       batch_type,
       owner,
+      owner_id,
       hash: (hash ?? generateHash()).toLowerCase(),
       data: data ?? {},
       index: index ?? 0,
@@ -180,7 +215,10 @@ const fixtures = {
       temp = await fixtures.getStateTransition(knex, { hash: state_transition_hash })
     }
 
+    const last_identity_id = ((await fixtures.getLastIdentity(knex))?.id ?? 0) + 1
+
     const row = {
+      id: last_identity_id,
       identifier,
       revision: revision ?? 0,
       state_transition_hash: (state_transition_hash ?? transaction.hash).toLowerCase(),
@@ -573,11 +611,11 @@ const fixtures = {
     await knex.raw('DELETE FROM token_transitions')
     await knex.raw('DELETE FROM tokens')
     await knex.raw('DELETE FROM masternode_votes')
+    await knex.raw('DELETE FROM transfers')
     await knex.raw('DELETE FROM identities')
     await knex.raw('DELETE FROM identity_aliases')
     await knex.raw('DELETE FROM documents')
     await knex.raw('DELETE FROM data_contracts')
-    await knex.raw('DELETE FROM transfers')
     await knex.raw('DELETE FROM state_transitions')
     await knex.raw('DELETE FROM blocks')
     await knex.raw('DELETE FROM validators')
