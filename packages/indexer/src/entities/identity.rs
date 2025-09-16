@@ -4,7 +4,7 @@ use base64::engine::general_purpose;
 use base64::Engine;
 use dashcore_rpc::json::ProTxInfo;
 use data_contracts::SystemDataContract;
-use dpp::dashcore::Transaction;
+use dpp::dashcore::{ProTxHash, Transaction};
 use dpp::identifier::{Identifier, MasternodeIdentifiers};
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Base64};
@@ -23,7 +23,7 @@ pub struct Identity {
     pub balance: Option<u64>,
     pub is_system: bool,
     pub identity_type: IdentifierType,
-    pub id: Option<i32>
+    pub id: Option<i32>,
 }
 
 impl From<(IdentityCreateTransition, Transaction)> for Identity {
@@ -129,6 +129,7 @@ impl From<Validator> for Identity {
     }
 }
 
+
 impl From<ProTxInfo> for Identity {
     fn from(pro_tx_info: ProTxInfo) -> Self {
         let voter_id = Identifier::create_voter_identifier(
@@ -145,6 +146,7 @@ impl From<ProTxInfo> for Identity {
             is_system,
             balance: None,
             identity_type: IdentifierType::VOTING,
+            id: None,
         }
     }
 }

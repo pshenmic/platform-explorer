@@ -2,13 +2,17 @@ use crate::enums::batch_type::BatchType;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::processor::psql::PSQLProcessor;
 use deadpool_postgres::Transaction;
+use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::batch_transition::batched_transition::document_transition::DocumentTransition;
 use dpp::state_transition::batch_transition::batched_transition::token_transition::TokenTransition;
 use dpp::state_transition::batch_transition::batched_transition::BatchedTransition;
 use dpp::state_transition::batch_transition::BatchTransition;
 use dpp::state_transition::{StateTransition, StateTransitionLike};
+use dpp::state_transition::masternode_vote_transition::accessors::MasternodeVoteTransitionAccessorsV0;
 use sha256::digest;
+use crate::entities::identity::Identity;
+use crate::enums::identifier_type::IdentifierType;
 
 impl PSQLProcessor {
     pub async fn handle_st(
@@ -128,10 +132,31 @@ impl PSQLProcessor {
                 ))
                 .unwrap()
             }
-            StateTransition::MasternodeVote(st) => PlatformSerializable::serialize_to_bytes(
-                &StateTransition::MasternodeVote(st.clone()),
-            )
-            .unwrap(),
+            StateTransition::MasternodeVote(st) => {
+                let voter_id = st.voter_identity_id();
+                
+                let identity = self.dao.get_identity_by_identifier(voter_id.to_string(Base58), sql_transaction).await.unwrap();
+                
+                match identity { 
+                    Some(_)=>{}
+                    None => {
+                        self.dao.create_identity(Identity{
+                            identifier: voter_id,
+                            owner: voter_id,
+                            revision: 0,
+                            balance: None,
+                            is_system: false,
+                            identity_type: IdentifierType::VOTING,
+                            id: None,
+                        }, None, sql_transaction).await.unwrap();
+                    }
+                };
+                
+                PlatformSerializable::serialize_to_bytes(
+                    &StateTransition::MasternodeVote(st.clone()),
+                )
+                    .unwrap()
+            },
         };
 
         let st_hash = digest(bytes.clone()).to_uppercase();
