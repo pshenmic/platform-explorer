@@ -17,10 +17,7 @@ export default function IdentitiesCountChart ({ isActive, loading, timespanChang
     setIdentitiesHistory(state => ({ ...state, loading: true }))
 
     Api.getIdentitiesHistory(start, end, timespan?.intervalsCount)
-      .then(res => {
-        console.log('identities res', res)
-        fetchHandlerSuccess(setIdentitiesHistory, { resultSet: res })
-      })
+      .then(res => fetchHandlerSuccess(setIdentitiesHistory, { resultSet: res }))
       .catch(err => fetchHandlerError(setIdentitiesHistory, err))
   }, [timespan])
 
