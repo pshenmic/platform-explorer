@@ -296,4 +296,65 @@ module.exports = class DataContractsDAO {
 
     return rows.map(row => DataContract.fromRow(row))
   }
+
+  getContractsTrends = async (startDate, endDate, page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const subquery = this.knex('data_contracts')
+      .select('data_contract_id')
+      .select(this.knex.raw('count(data_contract_id) as transitions_count'))
+      .whereBetween('timestamp', [startDate.toISOString(), endDate.toISOString()])
+      .andWhere('version', 1)
+      .leftJoin('data_contract_transitions', 'data_contracts.id', 'data_contract_id')
+      .leftJoin('state_transitions', 'data_contract_transitions.state_transition_id', 'state_transitions.id')
+      .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
+      .groupBy('data_contract_id')
+
+    const countedSubquery = this.knex
+      .with('counted_subquery', subquery)
+      .select('transitions_count', 'identifier', 'data_contract_id')
+      .orderBy('transitions_count', order)
+      .limit(limit)
+      .offset(fromRank)
+      .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
+      .from('counted_subquery')
+
+    const unionSubquery = this.knex
+      .with('counted_subquery', countedSubquery)
+      .unionAll([
+        this.knex.select('*').from('counted_subquery'),
+        this.knex('data_contracts')
+          .select(this.knex.raw("'0'::int as transitions_count"))
+          .select('identifier', 'id as data_contract_id')
+          .whereNotIn('id', function () {
+            this.select('data_contract_id').from('counted_subquery')
+          })
+          .whereNotExists(this.knex.select('*').from('counted_subquery'))
+          .andWhere('version', 1)
+          .orderBy('id', order)
+          .limit(limit)
+          .offset(fromRank)
+      ], true)
+      .as('union_subquery')
+
+    const rows = await this.knex(unionSubquery)
+      .select('identifier', 'transitions_count')
+      .select(
+        this.knex('data_contracts')
+          .where('version', 1)
+          .count('*')
+          .limit(1)
+          .as('total_count')
+      )
+      .orderBy('transitions_count', order)
+
+    const resultSet = rows.map(row => ({
+      identifier: row.identifier,
+      transitionsCount: Number(row.transitions_count ?? 0)
+    }))
+
+    const [row] = rows
+
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
+  }
 }

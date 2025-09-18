@@ -177,6 +177,14 @@ module.exports = ({
       }
     },
     {
+      path: '/dataContracts/rating',
+      method: 'GET',
+      handler: dataContractsController.getDataContractTrends,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/document/:identifier',
       method: 'GET',
       handler: documentsController.getDocumentByIdentifier,
