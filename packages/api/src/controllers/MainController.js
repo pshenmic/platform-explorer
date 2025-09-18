@@ -10,6 +10,8 @@ const {base58} = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
 const TokensDAO = require('../dao/TokensDAO')
 const {comment} = require("cbor");
+const {decodeStateTransition, sleep} = require("../utils");
+const ServiceNotAvailableError = require("../errors/ServiceNotAvailableError");
 
 const API_VERSION = require('../../package.json').version
 
@@ -247,20 +249,41 @@ class MainController {
 
   test = async (request, response) => {
 
+    await sleep(10000)
+
     response.sse({
       data: JSON.stringify({message: 'listening'}),
       comment: 'initial message'
     })
 
-    this.tenderdashWebSocket.on('message', (data) => {
-      response.sse({
-        data: JSON.stringify(JSON.stringify(data))
-      })
-    })
+    const onMessage = async (data) => {
+      const block = JSON.parse(data.toString())
 
-    // request.raw.on('close', () => {
-    //
-    // })
+      if(block.error) {
+        console.error(block.error)
+        throw new ServiceNotAvailableError()
+      }
+
+      const {result} = block
+
+      const txs = result.data.value.block.data.txs
+
+      console.log()
+
+      const decodedTxs = await Promise.all(txs.map(async (tx) => {
+        return decodeStateTransition(tx)
+      }))
+
+      response.sse({
+        data: null,
+      })
+    }
+
+    this.tenderdashWebSocket.on('message', onMessage)
+
+    request.raw.on('close', () => {
+      this.tenderdashWebSocket.off('message', onMessage)
+    })
 
   }
 }
