@@ -6,7 +6,7 @@ impl Indexer {
     pub async fn start(&self) {
         println!("Indexer loop started");
 
-        let mut interval = time::interval(Duration::from_millis(3000));
+        let mut interval = time::interval(Duration::from_millis(500));
 
         loop {
             interval.tick().await;

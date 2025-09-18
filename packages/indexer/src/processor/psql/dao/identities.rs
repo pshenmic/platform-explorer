@@ -14,21 +14,22 @@ impl PostgresDAO {
         let tx_id = match st_hash.clone() {
             None => None,
             Some(hash) => Some(
-                self
-                    .get_state_transition_id(hash, sql_transaction)
+                self.get_state_transition_id(hash, sql_transaction)
                     .await
                     .expect("Error getting state_transition_id"),
             ),
         };
-        
+
         let identifier = identity.identifier;
         let revision = identity.revision;
         let revision_i32 = revision as i32;
         let owner = identity.owner;
         let is_system = identity.is_system;
+        let identity_type = identity.identity_type.to_string();
 
-        let query = "INSERT INTO identities(identifier,owner,revision,\
-        state_transition_hash,is_system,state_transition_id) VALUES ($1, $2, $3, $4, $5, $6);";
+        let query = "INSERT INTO identities( identifier, owner, revision,\
+        state_transition_hash, is_system, state_transition_id, type\
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -39,9 +40,10 @@ impl PostgresDAO {
                     &identifier.to_string(Base58),
                     &owner.to_string(Base58),
                     &revision_i32,
-                    &st_hash,
+                    &st_hash.map(|hash| hash.to_lowercase()),
                     &is_system,
                     &tx_id,
+                    &identity_type,
                 ],
             )
             .await
@@ -66,7 +68,11 @@ impl PostgresDAO {
         sql_transaction
             .execute(
                 &stmt,
-                &[&identity.identifier.to_string(Base58), &alias, &st_hash],
+                &[
+                    &identity.identifier.to_string(Base58),
+                    &alias,
+                    &st_hash.to_lowercase(),
+                ],
             )
             .await
             .unwrap();
@@ -89,7 +95,7 @@ impl PostgresDAO {
         let stmt = sql_transaction
             .prepare_cached(
                 "SELECT id, owner, identifier, revision, \
-        is_system FROM identities where identifier = $1 LIMIT 1;",
+        is_system, type, id FROM identities where identifier = $1 LIMIT 1;",
             )
             .await
             .unwrap();
@@ -102,5 +108,22 @@ impl PostgresDAO {
             .collect::<Vec<Identity>>();
 
         Ok(identities.first().cloned())
+    }
+
+    pub async fn get_last_identity_id(
+        &self,
+        sql_transaction: &Transaction<'_>,
+    ) -> Result<i32, PoolError> {
+        let stmt = sql_transaction
+            .prepare_cached(
+                "SELECT id FROM identities order by id desc LIMIT 1;",
+            )
+            .await?;
+
+        let rows: Vec<Row> = sql_transaction.query(&stmt, &[]).await.unwrap();
+
+        let id: i32 = rows.first().unwrap().get(0);
+
+        Ok(id)
     }
 }
