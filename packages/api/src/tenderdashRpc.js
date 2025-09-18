@@ -1,7 +1,6 @@
 const fetch = require('node-fetch')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
-
-const TENDERDASH_URL = process.env.TENDERDASH_URL
+// const {TENDERDASH_URL} = require("./constants");
 
 const call = async (path, method, body) => {
   try {

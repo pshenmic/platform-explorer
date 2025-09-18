@@ -1,6 +1,7 @@
 const Fastify = require('fastify')
 const metricsPlugin = require('fastify-metrics')
 const cors = require('@fastify/cors')
+const { FastifySSEPlugin } = require('fastify-sse-v2')
 const schemaTypes = require('./schemas')
 const Routes = require('./routes')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
@@ -19,6 +20,8 @@ const MasternodeVotesController = require('./controllers/MasternodeVotesControll
 const ContestedResourcesController = require('./controllers/ContestedResourcesController')
 const TokensController = require('./controllers/TokensController')
 const { DashPlatformSDK } = require('dash-platform-sdk')
+const TenderdashWebSocket = require("./tenderdashSubscribe");
+const {TENDERDASH_WS_BLOCKS_SUBSCRIPTION} = require("./constants");
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -51,6 +54,8 @@ module.exports = {
       network: process.env.NETWORK ?? 'testnet'
     })
 
+    const tenderdashWebSocket = new TenderdashWebSocket(TENDERDASH_WS_BLOCKS_SUBSCRIPTION)
+
     fastify = Fastify()
 
     await fastify.register(cors, {
@@ -61,13 +66,15 @@ module.exports = {
       endpoint: '/metrics'
     })
 
+    await fastify.register(FastifySSEPlugin)
+
     schemaTypes.forEach(schema => fastify.addSchema(schema))
 
     knex = getKnex()
 
     await knex.raw('select 1+1')
 
-    const mainController = new MainController(knex, sdk)
+    const mainController = new MainController(knex, sdk, tenderdashWebSocket)
     const epochController = new EpochController(knex, sdk)
     const blocksController = new BlocksController(knex, sdk)
     const transactionsController = new TransactionsController(knex, sdk)

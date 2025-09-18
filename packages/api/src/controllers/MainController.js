@@ -6,20 +6,22 @@ const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const ValidatorsDAO = require('../dao/ValidatorsDAO')
 const TenderdashRPC = require('../tenderdashRpc')
 const Epoch = require('../models/Epoch')
-const { base58 } = require('@scure/base')
+const {base58} = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
 const TokensDAO = require('../dao/TokensDAO')
+const {comment} = require("cbor");
 
 const API_VERSION = require('../../package.json').version
 
 class MainController {
-  constructor (knex, sdk) {
-    this.blocksDAO = new BlocksDAO(knex, sdk)
+  constructor(knex, sdk, tenderdashWebSocket) {
     this.dataContractsDAO = new DataContractsDAO(knex, sdk)
-    this.documentsDAO = new DocumentsDAO(knex, sdk)
     this.transactionsDAO = new TransactionsDAO(knex, sdk)
+    this.documentsDAO = new DocumentsDAO(knex, sdk)
     this.identitiesDAO = new IdentitiesDAO(knex, sdk)
+    this.tenderdashWebSocket = tenderdashWebSocket
     this.validatorsDAO = new ValidatorsDAO(knex)
+    this.blocksDAO = new BlocksDAO(knex, sdk)
     this.tokensDAO = new TokensDAO(knex, sdk)
     this.sdk = sdk
   }
@@ -95,7 +97,7 @@ class MainController {
   }
 
   search = async (request, response) => {
-    const { query } = request.query
+    const {query} = request.query
 
     let result = {}
 
@@ -109,7 +111,7 @@ class MainController {
       const block = await this.blocksDAO.getBlockByHeight(query)
 
       if (block) {
-        result = { ...result, blocks: [block] }
+        result = {...result, blocks: [block]}
       }
     }
 
@@ -118,21 +120,21 @@ class MainController {
       const block = await this.blocksDAO.getBlockByHash(query)
 
       if (block) {
-        result = { ...result, blocks: [block] }
+        result = {...result, blocks: [block]}
       }
 
       // search transactions
       const transaction = await this.transactionsDAO.getTransactionByHash(query)
 
       if (transaction) {
-        result = { ...result, transactions: [transaction] }
+        result = {...result, transactions: [transaction]}
       }
 
       // search validators by hash
       const validator = await this.validatorsDAO.getValidatorByProTxHash(query, epoch)
 
       if (validator) {
-        result = { ...result, validators: [validator] }
+        result = {...result, validators: [validator]}
       }
     }
 
@@ -142,7 +144,7 @@ class MainController {
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 
       if (identity) {
-        result = { ...result, identities: [identity] }
+        result = {...result, identities: [identity]}
       }
 
       // search validator by MasterNode identity
@@ -151,27 +153,27 @@ class MainController {
       const validator = await this.validatorsDAO.getValidatorByProTxHash(proTxHash, epoch)
 
       if (validator) {
-        result = { ...result, validators: [validator] }
+        result = {...result, validators: [validator]}
       }
 
       // search data contract by id
       const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(query)
 
       if (dataContract) {
-        result = { ...result, dataContracts: [dataContract] }
+        result = {...result, dataContracts: [dataContract]}
       }
 
       // search documents
       const document = await this.documentsDAO.getDocumentByIdentifier(query)
 
       if (document) {
-        result = { ...result, documents: [document] }
+        result = {...result, documents: [document]}
       }
 
       const token = await this.tokensDAO.getTokenByIdentifier(query)
 
       if (token) {
-        result = { ...result, tokens: [token] }
+        result = {...result, tokens: [token]}
       }
     }
 
@@ -182,18 +184,18 @@ class MainController {
       if (result.identities) {
         result.identities.push(identities)
       } else {
-        result = { ...result, identities }
+        result = {...result, identities}
       }
     }
 
     // by token name
-    const { resultSet: tokens } = await this.tokensDAO.getTokensByName(query, 1, 20, 'desc')
+    const {resultSet: tokens} = await this.tokensDAO.getTokensByName(query, 1, 20, 'desc')
 
     if (tokens.length > 0) {
       if (result.tokens) {
         result.tokens.push(tokens)
       } else {
-        result = { ...result, tokens }
+        result = {...result, tokens}
       }
     }
 
@@ -204,22 +206,22 @@ class MainController {
       if (result.dataContracts) {
         result.dataContracts.push(dataContracts)
       } else {
-        result = { ...result, dataContracts }
+        result = {...result, dataContracts}
       }
     }
 
     if (Object.keys(result).length === 0) {
-      return response.status(404).send({ message: 'not found' })
+      return response.status(404).send({message: 'not found'})
     }
 
     response.send(result)
   }
 
   getQuorumInfo = async (request, response) => {
-    const { quorumType, quorumHash } = request.query
+    const {quorumType, quorumHash} = request.query
 
     if (!quorumType) {
-      return response.status(400).send({ message: 'quorumType must be provided.' })
+      return response.status(400).send({message: 'quorumType must be provided.'})
     }
 
     let lastQuorumHash
@@ -227,12 +229,12 @@ class MainController {
     if (!quorumHash) {
       const block = await this.blocksDAO.getLastBlock()
 
-      const { block: blockInfo } = await TenderdashRPC.getBlockByHeight(block.header.height)
+      const {block: blockInfo} = await TenderdashRPC.getBlockByHeight(block.header.height)
 
-      const { last_commit: lastCommit } = blockInfo ?? { last_commit: undefined }
+      const {last_commit: lastCommit} = blockInfo ?? {last_commit: undefined}
 
       if (!lastCommit) {
-        return response.status(500).send({ message: 'Last Commit not found try to provide quorum hash manually' })
+        return response.status(500).send({message: 'Last Commit not found try to provide quorum hash manually'})
       }
 
       lastQuorumHash = lastCommit.quorum_hash
@@ -241,6 +243,25 @@ class MainController {
     const quorumInfo = await DashCoreRPC.getQuorumInfo(quorumHash ?? lastQuorumHash, quorumType)
 
     response.send(quorumInfo)
+  }
+
+  test = async (request, response) => {
+
+    response.sse({
+      data: JSON.stringify({message: 'listening'}),
+      comment: 'initial message'
+    })
+
+    this.tenderdashWebSocket.on('message', (data) => {
+      response.sse({
+        data: JSON.stringify(JSON.stringify(data))
+      })
+    })
+
+    // request.raw.on('close', () => {
+    //
+    // })
+
   }
 }
 
