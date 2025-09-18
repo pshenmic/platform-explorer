@@ -537,7 +537,7 @@ module.exports = class IdentitiesDAO {
 
     const blocksSubquery = this.knex('blocks')
       .with('sub_ranges', subRanges)
-      .whereRaw('blocks.timestamp > (SELECT min_date FROM sub_ranges) AND blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
+      .whereRaw('blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
       .as('blocks_sub')
 
     const dataSubquery = this.knex(blocksSubquery)
@@ -548,7 +548,7 @@ module.exports = class IdentitiesDAO {
       .whereRaw('identifier is not null')
       .leftJoin('identities', 'state_transition_id', 'state_transitions.id')
 
-    const counted = this.knex
+    const rows = await this.knex
       .with('ranges', ranges)
       .with(
         'filtered_data',
@@ -558,25 +558,15 @@ module.exports = class IdentitiesDAO {
       .select(this.knex.raw('count(identifier) as identities_count'))
       .select(this.knex.raw('min(height) as block_height'))
       .leftJoin('filtered_data', function () {
-        this.on('timestamp', '>', 'date_from').andOn('timestamp', '<=', 'date_to')
+        this.on('timestamp', '<=', 'date_to')
       })
       .groupBy('date_from')
       .from('ranges')
-      .as('counted')
-
-    const rows = await this.knex(counted)
-      .select('identities_count', 'block_height', 'hash as block_hash', 'date_from')
-      .leftJoin('blocks', function () {
-        this.on('blocks.height', '=', 'block_height').andOnNotNull('block_height')
-      })
-      .as('subquery')
 
     return rows.map(row => ({
       timestamp: row.date_from.toISOString(),
       data: {
-        registeredIdentities: Number(row.identities_count ?? 0),
-        blockHeight: row.block_height,
-        blockHash: row.block_hash
+        registeredIdentities: Number(row.identities_count ?? 0)
       }
     }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
