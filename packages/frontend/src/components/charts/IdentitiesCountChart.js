@@ -16,9 +16,11 @@ export default function IdentitiesCountChart ({ isActive, loading, timespanChang
 
     setIdentitiesHistory(state => ({ ...state, loading: true }))
 
-    // getTransactionsHistory as mock
-    Api.getTransactionsHistory(start, end, timespan?.intervalsCount)
-      .then(res => fetchHandlerSuccess(setIdentitiesHistory, { resultSet: res }))
+    Api.getIdentitiesHistory(start, end, timespan?.intervalsCount)
+      .then(res => {
+        console.log('identities res', res)
+        fetchHandlerSuccess(setIdentitiesHistory, { resultSet: res })
+      })
       .catch(err => fetchHandlerError(setIdentitiesHistory, err))
   }, [timespan])
 
@@ -35,7 +37,7 @@ export default function IdentitiesCountChart ({ isActive, loading, timespanChang
       timespanChange={handleTimespanChange}
       data={identitiesHistory.data?.resultSet?.map((item) => ({
         x: new Date(item.timestamp),
-        y: item.data.txs
+        y: item.data.registeredIdentities
       })) || []}
       loading={loading || identitiesHistory.loading}
       error={identitiesHistory.error}
