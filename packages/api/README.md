@@ -1291,24 +1291,18 @@ GET /identities/history?timestamp_start=2025-09-09T00:00:00.000Z&timestamp_end=2
         "timestamp": "2025-09-09T00:00:00.000Z",
         "data": {
             "registeredIdentities": 0,
-            "blockHeight": null,
-            "blockHash": null
         }
     },
     {
         "timestamp": "2025-09-09T08:00:00.000Z",
         "data": {
             "registeredIdentities": 26,
-            "blockHeight": 2,
-            "blockHash": "2BD91299D19649C8DA1EC963FF6304606C052F69CEEB98F72DE5E2E09C8B88E6"
         }
     },
     {
         "timestamp": "2025-09-09T16:00:00.000Z",
         "data": {
-            "registeredIdentities": 4,
-            "blockHeight": 28,
-            "blockHash": "E26D7A8B3497EB104924BB4D152A0BA62ECB3C46BF96F9A8440B6BF151069E5B"
+            "registeredIdentities": 30,
         }
     }
 ]
