@@ -1986,6 +1986,12 @@ describe('Identities routes', () => {
       const block = await fixtures.block(knex, { timestamp: new Date(0) })
       const owner = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
 
+      identities.push({
+        block,
+        transaction: null,
+        identity: owner
+      })
+
       for (let i = 0; i < 30; i++) {
         const block = await fixtures.block(knex, {
           timestamp: new Date(new Date().getTime() - (27000000 - 900000 * i)),
@@ -2030,16 +2036,13 @@ describe('Identities routes', () => {
         const prevPeriod = firstTimestamp - 300000 * (i - 1)
 
         const registeredIdentities = identities.filter(identity =>
-          new Date(identity.block.timestamp).getTime() <= prevPeriod &&
-          new Date(identity.block.timestamp).getTime() >= nextPeriod
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
         ).sort((a, b) => a.block.timestamp - b.block.timestamp)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            registeredIdentities: registeredIdentities.length,
-            blockHeight: registeredIdentities[0]?.block?.height ?? null,
-            blockHash: registeredIdentities[0]?.block?.hash ?? null
+            registeredIdentities: registeredIdentities.length
           }
         })
       }
@@ -2064,16 +2067,13 @@ describe('Identities routes', () => {
         const prevPeriod = firstTimestamp - 1440000 * (i - 1)
 
         const registeredIdentities = identities.filter(identity =>
-          new Date(identity.block.timestamp).getTime() <= prevPeriod &&
-          new Date(identity.block.timestamp).getTime() >= nextPeriod
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
         ).sort((a, b) => a.block.timestamp - b.block.timestamp)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            registeredIdentities: registeredIdentities.length,
-            blockHeight: registeredIdentities[0]?.block?.height ?? null,
-            blockHash: registeredIdentities[0]?.block?.hash ?? null
+            registeredIdentities: registeredIdentities.length
           }
         })
       }
@@ -2098,16 +2098,13 @@ describe('Identities routes', () => {
         const prevPeriod = firstTimestamp - 17280000 * (i - 1)
 
         const registeredIdentities = identities.filter(identity =>
-          new Date(identity.block.timestamp).getTime() <= prevPeriod &&
-          new Date(identity.block.timestamp).getTime() >= nextPeriod
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
         ).sort((a, b) => a.block.timestamp - b.block.timestamp)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            registeredIdentities: registeredIdentities.length,
-            blockHeight: registeredIdentities[0]?.block?.height ?? null,
-            blockHash: registeredIdentities[0]?.block?.hash ?? null
+            registeredIdentities: registeredIdentities.length
           }
         })
       }
@@ -2132,16 +2129,13 @@ describe('Identities routes', () => {
         const prevPeriod = firstTimestamp - 51840000 * (i - 1)
 
         const registeredIdentities = identities.filter(identity =>
-          new Date(identity.block.timestamp).getTime() <= prevPeriod &&
-          new Date(identity.block.timestamp).getTime() >= nextPeriod
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
         ).sort((a, b) => a.block.timestamp - b.block.timestamp)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            registeredIdentities: registeredIdentities.length,
-            blockHeight: registeredIdentities[0]?.block?.height ?? null,
-            blockHash: registeredIdentities[0]?.block?.hash ?? null
+            registeredIdentities: registeredIdentities.length
           }
         })
       }
@@ -2166,16 +2160,13 @@ describe('Identities routes', () => {
         const prevPeriod = firstTimestamp - 120960000 * (i - 1)
 
         const registeredIdentities = identities.filter(identity =>
-          new Date(identity.block.timestamp).getTime() <= prevPeriod &&
-          new Date(identity.block.timestamp).getTime() >= nextPeriod
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
         ).sort((a, b) => a.block.timestamp - b.block.timestamp)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            registeredIdentities: registeredIdentities.length,
-            blockHeight: registeredIdentities[0]?.block?.height ?? null,
-            blockHash: registeredIdentities[0]?.block?.hash ?? null
+            registeredIdentities: registeredIdentities.length
           }
         })
       }
@@ -2183,8 +2174,8 @@ describe('Identities routes', () => {
       assert.deepEqual(expectedSeriesData.reverse(), body)
     })
     it('should return series of 6 intervals timespan 3d', async () => {
-      const start = new Date(new Date().getTime())
-      const end = new Date(start.getTime() + 10800000)
+      const start = new Date(new Date().getTime() - 86400000)
+      const end = new Date()
 
       const { body } = await client.get(`/identities/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=6`)
         .expect(200)
@@ -2198,20 +2189,17 @@ describe('Identities routes', () => {
       const expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
-        const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 6) * 1000 * i
-        const prevPeriod = firstTimestamp - 3600000 * (i - 1)
+        const nextPeriod = firstTimestamp - 14400000 * i
+        const prevPeriod = firstTimestamp - 14400000 * (i - 1)
 
         const registeredIdentities = identities.filter(identity =>
-          new Date(identity.block.timestamp).getTime() <= prevPeriod &&
-          new Date(identity.block.timestamp).getTime() >= nextPeriod
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
         ).sort((a, b) => a.block.timestamp - b.block.timestamp)
 
         expectedSeriesData.push({
           timestamp: new Date(nextPeriod).toISOString(),
           data: {
-            registeredIdentities: registeredIdentities.length,
-            blockHeight: registeredIdentities[0]?.block?.height ?? null,
-            blockHash: registeredIdentities[0]?.block?.hash ?? null
+            registeredIdentities: registeredIdentities.length
           }
         })
       }
