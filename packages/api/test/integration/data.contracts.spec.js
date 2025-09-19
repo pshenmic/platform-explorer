@@ -753,4 +753,178 @@ describe('DataContracts routes', () => {
       assert.deepEqual(body.resultSet, expectedDataTransactions.slice(5, 10))
     })
   })
+
+  describe('getDataContractsTrends()', () => {
+    before(async () => {
+      block = undefined
+      identity = undefined
+      dataContracts = []
+
+      await fixtures.cleanup(knex)
+
+      for (let c = 0; c < 30; c++) {
+        block = await fixtures.block(knex, {
+          height: c * 150 + 1,
+          timestamp: new Date(new Date().getTime() - (1664000000 - (1664000000 / 30 * c)))
+        })
+
+        identity = await fixtures.identity(knex, {
+          block_hash: block.hash,
+          block_height: block.height
+        })
+        const dataContractTransition = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          type: 0,
+          owner: identity.identifier
+        })
+
+        const dataContract = await fixtures.dataContract(knex, {
+          owner: identity.id,
+          state_transition_hash: dataContractTransition.hash
+        })
+
+        documents = []
+
+        for (let d = 0; d < (c + 1) * 5; d++) {
+          block = await fixtures.block(knex, {
+            height: c * 150 + 2 + d,
+            timestamp: new Date(new Date().getTime() - (1664000000 - (1664000000 / 30 * c)))
+          })
+
+          const documentTransition = await fixtures.transaction(knex, {
+            block_height: block.height,
+            block_hash: block.hash,
+            type: 1,
+            owner: identity.id
+          })
+
+          const document = await fixtures.document(knex, {
+            owner: identity.id,
+            data_contract_id: dataContract.id,
+            state_transition_hash: documentTransition.hash
+          })
+
+          documents.push(document)
+        }
+
+        dataContracts.push({ dataContract, documents, block })
+      }
+    })
+
+    it('Should allow to get default rating', async () => {
+      const { body } = await client.get('/dataContracts/rating')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, dataContracts.length)
+      assert.equal(body.resultSet.length, 10)
+
+      const expected = dataContracts
+        .filter(dataContract => dataContract.block.timestamp.getTime() >= new Date().getTime() - 2592000000)
+        .sort((a, b) => a.documents.length - b.documents.length)
+        .slice(0, 10)
+        .map(({ dataContract, documents }) => ({
+          identifier: dataContract.identifier,
+          transitionsCount: documents.length + 1
+        }))
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get default rating with custom limit', async () => {
+      const { body } = await client.get('/dataContracts/rating?limit=15')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 15)
+      assert.equal(body.pagination.total, dataContracts.length)
+      assert.equal(body.resultSet.length, 15)
+
+      const expected = dataContracts
+        .filter(dataContract => dataContract.block.timestamp.getTime() >= new Date().getTime() - 2592000000)
+        .sort((a, b) => a.documents.length - b.documents.length)
+        .slice(0, 15)
+        .map(({ dataContract, documents }) => ({
+          identifier: dataContract.identifier,
+          transitionsCount: documents.length + 1
+        }))
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get default rating with custom limit and page', async () => {
+      const { body } = await client.get('/dataContracts/rating?limit=15&page=2')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 15)
+      assert.equal(body.pagination.total, dataContracts.length)
+      assert.equal(body.resultSet.length, 15)
+
+      const expected = dataContracts
+        .filter(dataContract => dataContract.block.timestamp.getTime() >= new Date().getTime() - 2592000000)
+        .sort((a, b) => a.documents.length - b.documents.length)
+        .slice(15, 30)
+        .map(({ dataContract, documents }) => ({
+          identifier: dataContract.identifier,
+          transitionsCount: documents.length + 1
+        }))
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get default rating with custom limit, page and order desc', async () => {
+      const { body } = await client.get('/dataContracts/rating?limit=15&page=2&order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 15)
+      assert.equal(body.pagination.total, dataContracts.length)
+      assert.equal(body.resultSet.length, 15)
+
+      const expected = dataContracts
+        .filter(dataContract => dataContract.block.timestamp.getTime() >= new Date().getTime() - 2592000000)
+        .sort((a, b) => b.documents.length - a.documents.length)
+        .slice(15, 30)
+        .map(({ dataContract, documents }) => ({
+          identifier: dataContract.identifier,
+          transitionsCount: documents.length + 1
+        }))
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+
+    it('Should allow to get rating with custom timestamps, limit, page and order desc', async () => {
+      // 55466666 - rounded interval in ms between waves of transactions
+      // 10 - waves count
+      const start = new Date(new Date().getTime() - 55466666 * 10)
+      const end = new Date()
+
+      const { body } = await client.get(`/dataContracts/rating?limit=4&page=2&order=desc&timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 4)
+      assert.equal(body.pagination.total, dataContracts.length)
+      assert.equal(body.resultSet.length, 4)
+
+      const expected = dataContracts
+        .filter(dataContract => dataContract.block.timestamp.getTime() >= start.getTime())
+        .sort((a, b) => b.documents.length - a.documents.length)
+        .slice(4, 8)
+        .map(({ dataContract, documents }) => ({
+          identifier: dataContract.identifier,
+          transitionsCount: documents.length + 1
+        }))
+
+      assert.deepEqual(body.resultSet, expected)
+    })
+  })
 })
