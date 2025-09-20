@@ -120,7 +120,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
 
         {variant === 'balance' && (
           <GridItem className={'TokensListItem__Column TokensListItem__Column--Balance TokensListItem__Column--Number'}>
-            {typeof balance === 'number'
+            {typeof balance === 'number' || typeof balance === 'string'
               ? <ValueContainer colorScheme={'emeralds'} size={'sm'}>
                   <FormattedNumber>{balance}</FormattedNumber>
                 </ValueContainer>

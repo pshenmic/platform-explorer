@@ -32,6 +32,7 @@ Reference:
 * [Identity by DPNS](#identity-by-dpns)
 * [Identity Withdrawals](#identity-withdrawals)
 * [Identities](#identities)
+* [Identities history](#identities-history)
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
 * [Transactions By Identity](#transactions-by-identity)
@@ -1235,6 +1236,43 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
       }, ...
     ]
 }
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
+### Identities history
+Return a series data for the amount of registered identities
+
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
+* `intervalsCount` intervals count in response ( _optional_ )
+
+```
+GET /identities/history?timestamp_start=2025-09-09T00:00:00.000Z&timestamp_end=2025-09-10T00:00:00.000Z&intervalsCount=3
+
+[
+    {
+        "timestamp": "2025-09-09T00:00:00.000Z",
+        "data": {
+            "registeredIdentities": 0,
+        }
+    },
+    {
+        "timestamp": "2025-09-09T08:00:00.000Z",
+        "data": {
+            "registeredIdentities": 26,
+        }
+    },
+    {
+        "timestamp": "2025-09-09T16:00:00.000Z",
+        "data": {
+            "registeredIdentities": 30,
+        }
+    }
+]
 ```
 Response codes:
 ```

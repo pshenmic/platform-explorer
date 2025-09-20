@@ -14,6 +14,7 @@ const {
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
 const { DPNS_CONTRACT } = require('../constants')
+const SeriesData = require('../models/SeriesData')
 
 module.exports = class IdentitiesDAO {
   constructor (knex, sdk) {
@@ -41,14 +42,14 @@ module.exports = class IdentitiesDAO {
 
     const subquery = this.knex('identities')
       .select('identities.id', 'identities.identifier as identifier', 'identities.owner as owner',
-        'identities.state_transition_hash as tx_hash', 'identities.revision as revision',
+        'identities.state_transition_hash as tx_hash', 'identities.state_transition_id as tx_id', 'identities.revision as revision',
         'identities.is_system as is_system')
       .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
       .where('identities.identifier', '=', identifier)
       .as('all_identities')
 
     const lastRevisionIdentities = this.knex(subquery)
-      .select('identifier', 'owner', 'revision', 'tx_hash', 'is_system', 'transfers.id as transfer_id',
+      .select('identifier', 'owner', 'revision', 'tx_hash', 'tx_id', 'is_system', 'transfers.id as transfer_id',
         'transfers.sender as sender', 'transfers.recipient as recipient', 'transfers.amount as amount')
       .where('rank', 1)
       .leftJoin('transfers', 'transfers.recipient', 'identifier')
@@ -84,8 +85,8 @@ module.exports = class IdentitiesDAO {
       .select(this.knex(dataContractsSubQuery).count('*').where('rank', 1).as('total_data_contracts'))
       .select(this.knex(transfersSubquery).count('*').as('total_transfers'))
       .select(this.knex(aliasSubquery).select('aliases').limit(1).as('aliases'))
-      .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
-      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+      .leftJoin('state_transitions', 'state_transitions.id', 'tx_id')
+      .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
       .from('with_alias')
       .limit(1)
 
@@ -241,14 +242,14 @@ module.exports = class IdentitiesDAO {
 
     const subquery = this.knex('identities')
       .select('identities.id as identity_id', 'identities.identifier as identifier', 'identities.owner as identity_owner',
-        'identities.is_system as is_system', 'identities.state_transition_hash as tx_hash', 'identities.revision as revision')
+        'identities.is_system as is_system', 'identities.state_transition_hash as tx_hash', 'identities.state_transition_id as tx_id', 'identities.revision as revision')
       .select(this.knex.raw('COALESCE((select sum(amount) from transfers where recipient = identifier), 0) - COALESCE((select sum(amount) from transfers where sender = identifier), 0) as balance'))
       .select(this.knex('state_transitions').count('*').whereRaw('owner = identifier').as('total_txs'))
       .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
       .as('identities')
 
     const filteredIdentities = this.knex(subquery)
-      .select('balance', 'total_txs', 'identity_id', 'identifier', 'identity_owner', 'tx_hash', 'revision', 'rank', 'is_system')
+      .select('balance', 'total_txs', 'identity_id', 'identifier', 'identity_owner', 'tx_hash', 'tx_id', 'revision', 'rank', 'is_system')
       .select(this.knex.raw(`row_number() over (${getRankString()}) row_number`))
       .where('rank', 1)
 
@@ -263,7 +264,7 @@ module.exports = class IdentitiesDAO {
       .as('as_data_contracts')
 
     const rows = await this.knex.with('with_alias', filteredIdentities)
-      .select('total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'blocks.timestamp as timestamp', 'row_number', 'is_system', 'balance')
+      .select('total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash', 'tx_id', 'blocks.timestamp as timestamp', 'row_number', 'is_system', 'balance')
       .select(this.knex('with_alias').count('*').as('total_count'))
       .select(this.knex(this.knex(documentsSubQuery)
         .select('id', this.knex.raw('rank() over (partition by as_documents.identifier order by as_documents.id desc) rank')).as('ranked_documents'))
@@ -272,7 +273,7 @@ module.exports = class IdentitiesDAO {
         .select('id', this.knex.raw('rank() over (partition by as_data_contracts.identifier order by as_data_contracts.id desc) rank')).as('ranked_data_contracts'))
         .count('*').where('rank', '1').as('total_data_contracts'))
       .select(this.knex('transfers').count('*').whereRaw('sender = identifier or recipient = identifier').as('total_transfers'))
-      .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
+      .leftJoin('state_transitions', 'state_transitions.id', 'tx_id')
       .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
       .whereBetween('row_number', [fromRank, toRank])
       .orderBy(orderByOptions)
@@ -512,5 +513,63 @@ module.exports = class IdentitiesDAO {
       .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
       .leftJoin('blocks', 'block_hash', 'blocks.hash')
       .orderBy('id', 'desc')
+  }
+
+  getIdentitiesHistorySeries = async (start, end, interval, intervalInMs) => {
+    const startSql = `'${new Date(start.getTime() + intervalInMs).toISOString()}'::timestamptz`
+
+    const endSql = `'${new Date(end.getTime()).toISOString()}'::timestamptz`
+
+    const ranges = this.knex
+      .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
+      .select('date_to')
+      .select(
+        this.knex.raw(
+          'LAG(date_to, 1, ?::timestamptz) OVER (ORDER BY date_to ASC) AS date_from',
+          [start.toISOString()]
+        )
+      )
+
+    const subRanges = this.knex('ranges')
+      .select(this.knex.raw('min(date_from) as min_date'))
+      .select(this.knex.raw('max(date_to) as max_date'))
+      .limit(1)
+
+    const blocksSubquery = this.knex('blocks')
+      .with('sub_ranges', subRanges)
+      .whereRaw('blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
+      .as('blocks_sub')
+
+    const dataSubquery = this.knex(blocksSubquery)
+      .select('blocks_sub.timestamp', 'identifier', 'blocks_sub.height')
+      .leftJoin('state_transitions', function () {
+        this.on('type', '=', StateTransitionEnum.IDENTITY_CREATE).andOn('state_transitions.block_height', '=', 'blocks_sub.height')
+      })
+      .whereRaw('identifier is not null')
+      .leftJoin('identities', 'state_transition_id', 'state_transitions.id')
+
+    const rows = await this.knex
+      .with('ranges', ranges)
+      .with(
+        'filtered_data',
+        dataSubquery
+      )
+      .select('date_from')
+      .select(this.knex.raw('count(identifier) as identities_count'))
+      .select(this.knex.raw('min(height) as block_height'))
+      .leftJoin('filtered_data', function () {
+        this.on('timestamp', '<=', 'date_to')
+      })
+      .groupBy('date_from')
+      .from('ranges')
+
+    return rows.map(row => ({
+      timestamp: row.date_from.toISOString(),
+      data: {
+        registeredIdentities: Number(row.identities_count ?? 0)
+      }
+    }))
+      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 }

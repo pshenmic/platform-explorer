@@ -651,6 +651,14 @@ module.exports = ({
       }
     },
     {
+      path: '/identities/history',
+      method: 'GET',
+      handler: identitiesController.getIdentitiesHistory,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
       path: '/waitForStateTransitionResult/:hash',
       method: 'GET',
       handler: transactionsController.waitForStateTransitionResult,
