@@ -57,6 +57,7 @@ Reference:
 * [RAW Data Contract By Identifier](#raw-data-contract-by-identifier)
 * [Data Contracts](#data-contracts)
 * [Data Contract Transactions](#data-contract-transactions)
+* [Data Contracts Rating](#data-contracts-rating)
 * [Document by Identifier](#document-by-identifier)
 * [RAW Document by Identifier](#raw-document-by-identifier)
 * [Document Revisions](#document-revisions)
@@ -942,6 +943,56 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
     "limit": 10,
     "total": 6
   }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
+### Data Contracts Rating
+Return Data Contracts rating based on txs in selected interval
+
+If it is not possible to get data contract transitions for selected period,
+then will be returned list of data contracts in order of creation date
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater then `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
+
+```
+GET /dataContracts/rating?timestamp_start=2025-08-18T21:13:57.191Z&timestamp_end=2025-09-18T21:13:57.191Z&limit=5&page=2&order=desc
+
+{
+    "resultSet": [
+        {
+            "identifier": "465jdPpFCZefhb4g2k2FpCcrKpPYhJJskDqbGFsKu6wb",
+            "transitionsCount": 26
+        },
+        {
+            "identifier": "GWghYQoDFEb3osEfigrF7CKdZLWauxC7TwM4jsJyqa23",
+            "transitionsCount": 21
+        },
+        {
+            "identifier": "4P7d1iqwofPA1gFtbEcXiagDnANXAQhX2WZararioX8f",
+            "transitionsCount": 17
+        },
+        {
+            "identifier": "Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7",
+            "transitionsCount": 13
+        },
+        {
+            "identifier": "dfaPU4HsMpUX7NMF2TR5oeAC4cZvLwYrSU6WT4884bq",
+            "transitionsCount": 9
+        }
+    ],
+    "pagination": {
+        "page": 2,
+        "limit": 5,
+        "total": 116
+    }
 }
 ```
 Response codes:
