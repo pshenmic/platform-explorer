@@ -152,6 +152,6 @@ pub fn pro_tx_info_to_identities(pro_tx_info: ProTxInfo) -> [Identity; 2] {
             is_system,
             balance: None,
             identity_type: IdentifierType::VOTING,
-        }
+        },
     ]
 }
