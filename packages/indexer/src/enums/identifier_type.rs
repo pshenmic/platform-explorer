@@ -3,7 +3,7 @@ use std::fmt::Display;
 #[derive(Clone, Debug)]
 pub enum IdentifierType {
     REGULAR,
-    MASTERNODE,
+    OWNER,
     VOTING,
 }
 
@@ -11,7 +11,7 @@ impl From<String> for IdentifierType {
     fn from(s: String) -> Self {
         match s.to_lowercase().as_str() {
             "regular" => IdentifierType::REGULAR,
-            "masternode" => IdentifierType::MASTERNODE,
+            "owner" => IdentifierType::OWNER,
             "voting" => IdentifierType::VOTING,
             _ => {
                 panic!("Unsupported identifier type: {}", s);

@@ -117,27 +117,41 @@ impl From<Validator> for Identity {
             identifier,
             is_system,
             balance: None,
-            identity_type: IdentifierType::MASTERNODE,
+            identity_type: IdentifierType::OWNER,
         }
     }
 }
 
-impl From<ProTxInfo> for Identity {
-    fn from(pro_tx_info: ProTxInfo) -> Self {
-        let voter_id = Identifier::create_voter_identifier(
-            &pro_tx_info.pro_tx_hash.into(),
-            &pro_tx_info.state.voting_address,
-        );
-        let revision = 0u64;
-        let is_system: bool = false;
+pub fn pro_tx_info_to_identities(pro_tx_info: ProTxInfo) -> [Identity; 2] {
+    let voting_id = Identifier::create_voter_identifier(
+        &pro_tx_info.pro_tx_hash.into(),
+        &pro_tx_info.state.voting_address,
+    );
 
+    let owner_voting_id = Identifier::create_voter_identifier(
+        &pro_tx_info.pro_tx_hash.into(),
+        &pro_tx_info.state.owner_address,
+    );
+
+    let revision = 0u64;
+    let is_system: bool = false;
+
+    [
         Identity {
-            owner: voter_id,
+            owner: voting_id,
             revision,
-            identifier: voter_id,
+            identifier: voting_id,
+            is_system,
+            balance: None,
+            identity_type: IdentifierType::VOTING,
+        },
+        Identity {
+            owner: owner_voting_id,
+            revision,
+            identifier: owner_voting_id,
             is_system,
             balance: None,
             identity_type: IdentifierType::VOTING,
         }
-    }
+    ]
 }

@@ -1,4 +1,4 @@
-use crate::entities::identity::Identity;
+use crate::entities::identity::{pro_tx_info_to_identities, Identity};
 use crate::entities::validator::Validator;
 use crate::processor::psql::{PSQLProcessor, ProcessorError};
 use dashcore_rpc::RpcApi;
@@ -36,11 +36,16 @@ impl PSQLProcessor {
                     .get_protx_info(pro_tx_hash, l1_tx.blockhash.as_ref())
                     .unwrap();
 
+                let voting_identities = pro_tx_info_to_identities(pro_tx_info.clone());
+
                 self.dao
                     .create_identity(Identity::from(validator.clone()), None, sql_transaction)
                     .await?;
                 self.dao
-                    .create_identity(Identity::from(pro_tx_info.clone()), None, sql_transaction)
+                    .create_identity(voting_identities[0].clone(), None, sql_transaction)
+                    .await?;
+                self.dao
+                    .create_identity(voting_identities[1].clone(), None, sql_transaction)
                     .await?;
 
                 self.dao
