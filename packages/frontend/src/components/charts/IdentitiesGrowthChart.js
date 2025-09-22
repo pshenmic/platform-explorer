@@ -6,7 +6,7 @@ import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates } from '../
 import { defaultChartConfig } from './config'
 import LineChartBlock from './LineChartBlock'
 
-export default function IdentitiesCountChart ({ isActive, loading, timespanChangeCallback, className }) {
+export default function IdentitiesGrowthChart ({ isActive, loading, timespanChangeCallback, className }) {
   const [identitiesHistory, setIdentitiesHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 

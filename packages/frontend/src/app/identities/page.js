@@ -5,7 +5,7 @@ import introContent from './intro.md'
 import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
 import { InfoContainer } from '../../components/ui/containers'
 import { TopIdentities } from '../../components/identities'
-import IdentitiesCountChart from '../../components/charts/IdentitiesCountChart'
+import IdentitiesGrowthChart from '../../components/charts/IdentitiesGrowthChart'
 import './IdentitiesPage.scss'
 
 export const metadata = {
@@ -34,14 +34,14 @@ function IdentitiesRoute ({ searchParams }) {
             <Tabs>
               <TabList>
                 <Tab>Top Identities</Tab>
-                <Tab>Identities Count</Tab>
+                <Tab>Identities Growth</Tab>
               </TabList>
               <TabPanels>
                 <TabPanel>
                   <TopIdentities/>
                 </TabPanel>
                 <TabPanel>
-                  <IdentitiesCountChart
+                  <IdentitiesGrowthChart
                     blockBorders={false}
                     useInfoBlock={false}
                     className={'IdentitiesPage__IdentitiesCountChart'}
