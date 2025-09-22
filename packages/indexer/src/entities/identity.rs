@@ -1,5 +1,6 @@
 use crate::entities::validator::Validator;
 use crate::enums::identifier_type::IdentifierType;
+use crate::enums::voting_key_purpose::VotingKeyPurpose;
 use base64::engine::general_purpose;
 use base64::Engine;
 use dashcore_rpc::json::ProTxInfo;
@@ -23,6 +24,7 @@ pub struct Identity {
     pub balance: Option<u64>,
     pub is_system: bool,
     pub identity_type: IdentifierType,
+    pub voting_key_purpose: Option<VotingKeyPurpose>,
 }
 
 impl From<(IdentityCreateTransition, Transaction)> for Identity {
@@ -46,6 +48,7 @@ impl From<(IdentityCreateTransition, Transaction)> for Identity {
             revision: Revision::from(0 as u64),
             is_system: false,
             identity_type: IdentifierType::REGULAR,
+            voting_key_purpose: None,
         }
     }
 }
@@ -63,6 +66,7 @@ impl From<IdentityUpdateTransition> for Identity {
             revision,
             is_system: false,
             identity_type: IdentifierType::REGULAR,
+            voting_key_purpose: None,
         }
     }
 }
@@ -81,6 +85,7 @@ impl From<SystemDataContract> for Identity {
             balance: None,
             is_system: true,
             identity_type: IdentifierType::REGULAR,
+            voting_key_purpose: None,
         }
     }
 }
@@ -92,6 +97,7 @@ impl From<Row> for Identity {
         let revision: i32 = row.get(3);
         let is_system: bool = row.get(4);
         let identity_type: String = row.get(5);
+        let voting_key_purpose: Option<String> = row.get(6);
 
         Identity {
             owner: Identifier::from_string(&owner.trim(), Base58).unwrap(),
@@ -100,6 +106,7 @@ impl From<Row> for Identity {
             is_system,
             balance: None,
             identity_type: IdentifierType::from(identity_type),
+            voting_key_purpose: voting_key_purpose.map(VotingKeyPurpose::from),
         }
     }
 }
@@ -118,6 +125,7 @@ impl From<Validator> for Identity {
             is_system,
             balance: None,
             identity_type: IdentifierType::OWNER,
+            voting_key_purpose: None,
         }
     }
 }
@@ -144,6 +152,7 @@ pub fn pro_tx_info_to_identities(pro_tx_info: ProTxInfo) -> [Identity; 2] {
             is_system,
             balance: None,
             identity_type: IdentifierType::VOTING,
+            voting_key_purpose: Some(VotingKeyPurpose::VOTING),
         },
         Identity {
             owner: owner_voting_id,
@@ -152,6 +161,7 @@ pub fn pro_tx_info_to_identities(pro_tx_info: ProTxInfo) -> [Identity; 2] {
             is_system,
             balance: None,
             identity_type: IdentifierType::VOTING,
+            voting_key_purpose: Some(VotingKeyPurpose::OWNER),
         },
     ]
 }

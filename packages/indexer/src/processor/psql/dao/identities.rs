@@ -26,10 +26,13 @@ impl PostgresDAO {
         let owner = identity.owner;
         let is_system = identity.is_system;
         let identity_type = identity.identity_type.to_string();
+        let voting_key_purpose = identity
+            .voting_key_purpose
+            .map(|purpose| purpose.to_string());
 
         let query = "INSERT INTO identities( identifier, owner, revision,\
-        state_transition_hash, is_system, state_transition_id, type\
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7);";
+        state_transition_hash, is_system, state_transition_id, type, voting_key_purpose\
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -44,6 +47,7 @@ impl PostgresDAO {
                     &is_system,
                     &tx_id,
                     &identity_type,
+                    &voting_key_purpose,
                 ],
             )
             .await
@@ -95,7 +99,7 @@ impl PostgresDAO {
         let stmt = sql_transaction
             .prepare_cached(
                 "SELECT id, owner, identifier, revision, \
-        is_system, type, id FROM identities where identifier = $1 LIMIT 1;",
+        is_system, type, voting_key_purpose, id FROM identities where identifier = $1 LIMIT 1;",
             )
             .await
             .unwrap();
