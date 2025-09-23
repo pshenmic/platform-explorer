@@ -3,7 +3,7 @@ import MenuLevel from './MenuLevel'
 import { useState, useRef } from 'react'
 import './MultiLevelMenu.scss'
 
-function MultiLevelMenu ({
+function MultiLevelMenu({
   menuData = [],
   trigger,
   placement = 'right-start',
@@ -44,6 +44,10 @@ function MultiLevelMenu ({
       placement={placement}
       variant={'menu'}
       isOpen={forceIsOpen}
+      isLazy={true}
+      lazyBehavior={'unmount'}
+      trapFocus={false}
+      returnFocusOnClose={false}
       {...props}
     >
       <PopoverTrigger>

@@ -231,15 +231,10 @@ const filtersConfig = {
 }
 
 export default function TransactionsFilter({ onFilterChange, isMobile, className }) {
-  const handleFiltersApply = (filters) => {
-    if (typeof onFilterChange !== 'function') return
-    onFilterChange(filters)
-  }
-
   return (
     <Filters
       filtersConfig={filtersConfig}
-      onFilterChange={handleFiltersApply}
+      onFilterChange={onFilterChange}
       isMobile={isMobile}
       className={`TransactionsFilter ${className || ''}`}
       buttonText={'Add filter'}

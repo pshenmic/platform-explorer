@@ -3,7 +3,7 @@ import { Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@cha
 import { ChevronIcon } from '../icons'
 import './MenuLevel.scss'
 
-function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose, forceClose, activeItemId, onActiveItemChange }) {
+function MenuLevel({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose, forceClose, activeItemId, onActiveItemChange }) {
   const [openSubMenuId, setOpenSubMenuId] = useState(null)
 
   useEffect(() => {
@@ -39,6 +39,10 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               key={index}
               onClick={() => onMenuItemClick && onMenuItemClick()}
               className={'MenuLevel__Item MenuLevel__Item--Disabled'}
+              isLazy={true}
+              lazyBehavior={'unmount'}
+              trapFocus={false}
+              returnFocusOnClose={false}
             >
               <span>{item.label}</span>
             </div>
@@ -83,7 +87,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                 >
                   {<span>{item.label}</span>}
                   <div className={'MenuLevel__ItemIcon'}>
-                    <ChevronIcon/>
+                    <ChevronIcon />
                   </div>
                 </div>
               </PopoverTrigger>
@@ -91,13 +95,13 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                 <PopoverBody overflow={'visible'} p={0}>
                   {item.subMenu
                     ? <MenuLevel
-                        items={item.subMenu}
-                        onMenuItemClick={onMenuItemClick}
-                        placement={placement}
-                        onLevelClose={handleSubMenuClose}
-                        activeItemId={activeItemId}
-                        onActiveItemChange={onActiveItemChange}
-                      />
+                      items={item.subMenu}
+                      onMenuItemClick={onMenuItemClick}
+                      placement={placement}
+                      onLevelClose={handleSubMenuClose}
+                      activeItemId={activeItemId}
+                      onActiveItemChange={onActiveItemChange}
+                    />
                     : item.content
                   }
                 </PopoverBody>
