@@ -14,7 +14,7 @@ import { Badge, Flex } from '@chakra-ui/react'
 import { Tooltip } from '../ui/Tooltips'
 import './TokenDigestCard.scss'
 
-function TokenDigestCard ({ token, rate, className, loading, error }) {
+function TokenDigestCard({ token, rate, className, loading, error }) {
   const {
     totalSupply,
     maxSupply,
@@ -45,9 +45,9 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
             showTitles={true}
             showIcons={true}
             minTitle={'Minted'}
-            maxTitle={<>Total<br/>Supply</>}
-            topIcon={<TokenMintIcon/>}
-            bottomIcon={<TokenTotalIcon/>}
+            maxTitle={<>Total<br />Supply</>}
+            topIcon={<TokenMintIcon />}
+            bottomIcon={<TokenTotalIcon />}
             className={'TokenDigestCard__SupplyCard'}
             loading={loading}
           />
@@ -57,9 +57,9 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <div className={'TokenDigestCard__RowContainer'}>
         <ValueContainer size={'xl'}>
           <InfoLine
-            title={<>Total<br/>Transactions</>}
+            title={<>Total<br />Transactions</>}
             value={totalTransitionsCount}
-            icon={<TransactionsIcon/>}
+            icon={<TransactionsIcon />}
             loading={loading}
             error={error || totalTransitionsCount == null}
           />
@@ -71,7 +71,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
           <InfoLine
             title={'Burnt'}
             value={totalBurnTransitionsCount || 0}
-            icon={<TokenBurnIcon/>}
+            icon={<TokenBurnIcon />}
             loading={loading}
             error={error || totalBurnTransitionsCount == null}
           />
@@ -81,7 +81,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
           <InfoLine
             title={'Frozen'}
             value={totalFreezeTransitionsCount || 0}
-            icon={<TokenFreezeIcon/>}
+            icon={<TokenFreezeIcon />}
             loading={loading}
             error={error || totalFreezeTransitionsCount == null}
           />
@@ -92,48 +92,48 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
         title={'Distribution'}
         value={(perpetualDistribution != null || preProgrammedDistribution != null)
           ? <Flex flexDirection={'column'} gap={'0.5rem'} alignItems={'flex-end'}>
-              {perpetualDistribution &&
-                  <Tooltip
-                    content={
-                      <Flex gap={'0.5rem'} flexDir={'column'} justifyContent={'space-between'}>
-                        <Flex gap={'0.5rem'} grow={1}>
-                          <span>Type:</span>
-                          <b>{perpetualDistribution?.type}</b>
-                        </Flex>
-                        <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
-                          <span>Recipient Type:</span>
-                          <b>{perpetualDistribution?.recipientType}</b>
-                        </Flex>
-                        <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
-                          <span>Interval:</span>
-                          <b>{perpetualDistribution?.interval}</b>
-                        </Flex>
-                        <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
-                          <span>Function Name:</span>
-                          <b>{perpetualDistribution?.functionName}</b>
-                        </Flex>
-                      </Flex>
-                    }
-                    placement={'top'}
-                  >
-                    <div style={{ cursor: 'pointer' }}>
-                      <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-                        <Flex gap={'0.5rem'} alignItems={'center'}>
-                          Perpetual distribution
-                          <InfoIcon width={'1rem'} height={'1rem'} color={'#58F4BC'}/>
-                        </Flex>
-                      </ValueContainer>
-                    </div>
-                  </Tooltip>
-              }
-              {preProgrammedDistribution &&
-                <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-                  <Flex gap={'0.5rem'} alignItems={'center'}>
-                    Pre programmed distribution
+            {perpetualDistribution &&
+              <Tooltip
+                content={
+                  <Flex gap={'0.5rem'} flexDir={'column'} justifyContent={'space-between'}>
+                    <Flex gap={'0.5rem'} grow={1}>
+                      <span>Type:</span>
+                      <b>{perpetualDistribution?.type}</b>
+                    </Flex>
+                    <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                      <span>Recipient Type:</span>
+                      <b>{perpetualDistribution?.recipientType}</b>
+                    </Flex>
+                    <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                      <span>Interval:</span>
+                      <b>{perpetualDistribution?.interval}</b>
+                    </Flex>
+                    <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                      <span>Function Name:</span>
+                      <b>{perpetualDistribution?.functionName}</b>
+                    </Flex>
                   </Flex>
-                </ValueContainer>
-              }
-            </Flex>
+                }
+                placement={'top'}
+              >
+                <div style={{ cursor: 'pointer' }}>
+                  <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+                    <Flex gap={'0.5rem'} alignItems={'center'}>
+                      Perpetual distribution
+                      <InfoIcon width={'1rem'} height={'1rem'} color={'#58F4BC'} />
+                    </Flex>
+                  </ValueContainer>
+                </div>
+              </Tooltip>
+            }
+            {preProgrammedDistribution &&
+              <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+                <Flex gap={'0.5rem'} alignItems={'center'}>
+                  Pre programmed distribution
+                </Flex>
+              </ValueContainer>
+            }
+          </Flex>
           : <ValueContainer className={'TokenTotalCard__ZeroListBadge'}>none</ValueContainer>
         }
         loading={loading}
@@ -144,7 +144,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
         className={'TokenDigestCard__InfoLine'}
         title={'Token Creator'}
         value={(
-          <ValueCard link={`identity/${owner}`} className={'TokenDigestCard__ValueContainer'} clickable={false}>
+          <ValueCard link={`identity/${owner?.identifier}`} className={'TokenDigestCard__ValueContainer'} clickable={false}>
             <Identifier avatar={true} copyButton={true} styles={['highlight-both']} ellipsis={false}>
               {owner}
             </Identifier>
@@ -157,7 +157,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Total Gas Spent'}
-        value={<CreditsBlock credits={totalGasUsed} rate={rate}/>}
+        value={<CreditsBlock credits={totalGasUsed} rate={rate} />}
         loading={token?.loading}
         error={token?.error || (!token?.loading && totalGasUsed == null)}
       />
