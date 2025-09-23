@@ -3,7 +3,7 @@ import MenuLevel from './MenuLevel'
 import { useState, useRef } from 'react'
 import './MultiLevelMenu.scss'
 
-function MultiLevelMenu({
+function MultiLevelMenu ({
   menuData = [],
   trigger,
   placement = 'right-start',

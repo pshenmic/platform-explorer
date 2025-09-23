@@ -230,7 +230,7 @@ const filtersConfig = {
   }
 }
 
-export default function TransactionsFilter({ onFilterChange, isMobile, className }) {
+export default function TransactionsFilter ({ onFilterChange, isMobile, className }) {
   return (
     <Filters
       filtersConfig={filtersConfig}

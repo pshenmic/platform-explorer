@@ -3,7 +3,7 @@ import { Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@cha
 import { ChevronIcon } from '../icons'
 import './MenuLevel.scss'
 
-function MenuLevel({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose, forceClose, activeItemId, onActiveItemChange }) {
+function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose, forceClose, activeItemId, onActiveItemChange }) {
   const [openSubMenuId, setOpenSubMenuId] = useState(null)
 
   useEffect(() => {
