@@ -14,7 +14,7 @@ import { Badge, Flex } from '@chakra-ui/react'
 import { Tooltip } from '../ui/Tooltips'
 import './TokenDigestCard.scss'
 
-function TokenDigestCard({ token, rate, className, loading, error }) {
+function TokenDigestCard ({ token, rate, className, loading, error }) {
   const {
     totalSupply,
     maxSupply,
