@@ -1,18 +1,18 @@
 use std::fmt::Display;
 
 #[derive(Clone, Debug)]
-pub enum IdentifierType {
+pub enum IdentityType {
     REGULAR,
     OWNER,
     VOTING,
 }
 
-impl From<String> for IdentifierType {
+impl From<String> for IdentityType {
     fn from(s: String) -> Self {
         match s.to_lowercase().as_str() {
-            "regular" => IdentifierType::REGULAR,
-            "owner" => IdentifierType::OWNER,
-            "voting" => IdentifierType::VOTING,
+            "regular" => IdentityType::REGULAR,
+            "owner" => IdentityType::OWNER,
+            "voting" => IdentityType::VOTING,
             _ => {
                 panic!("Unsupported identifier type: {}", s);
             }
@@ -20,7 +20,7 @@ impl From<String> for IdentifierType {
     }
 }
 
-impl Display for IdentifierType {
+impl Display for IdentityType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self)
     }

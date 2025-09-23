@@ -1,2 +1,2 @@
 pub mod batch_type;
-pub mod identifier_type;
+pub mod identity_type;

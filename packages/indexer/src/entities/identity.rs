@@ -1,5 +1,5 @@
 use crate::entities::validator::Validator;
-use crate::enums::identifier_type::IdentifierType;
+use crate::enums::identity_type::IdentityType;
 use base64::engine::general_purpose;
 use base64::Engine;
 use dashcore_rpc::json::ProTxInfo;
@@ -22,7 +22,7 @@ pub struct Identity {
     pub revision: Revision,
     pub balance: Option<u64>,
     pub is_system: bool,
-    pub identity_type: IdentifierType,
+    pub identity_type: IdentityType,
 }
 
 impl From<(IdentityCreateTransition, Transaction)> for Identity {
@@ -45,7 +45,7 @@ impl From<(IdentityCreateTransition, Transaction)> for Identity {
             balance: Some(credits),
             revision: Revision::from(0 as u64),
             is_system: false,
-            identity_type: IdentifierType::REGULAR,
+            identity_type: IdentityType::REGULAR,
         }
     }
 }
@@ -62,7 +62,7 @@ impl From<IdentityUpdateTransition> for Identity {
             balance: None,
             revision,
             is_system: false,
-            identity_type: IdentifierType::REGULAR,
+            identity_type: IdentityType::REGULAR,
         }
     }
 }
@@ -80,7 +80,7 @@ impl From<SystemDataContract> for Identity {
             revision: 0,
             balance: None,
             is_system: true,
-            identity_type: IdentifierType::REGULAR,
+            identity_type: IdentityType::REGULAR,
         }
     }
 }
@@ -99,7 +99,7 @@ impl From<Row> for Identity {
             identifier: Identifier::from_string(&identifier.trim(), Base58).unwrap(),
             is_system,
             balance: None,
-            identity_type: IdentifierType::from(identity_type),
+            identity_type: IdentityType::from(identity_type),
         }
     }
 }
@@ -117,7 +117,7 @@ impl From<Validator> for Identity {
             identifier,
             is_system,
             balance: None,
-            identity_type: IdentifierType::OWNER,
+            identity_type: IdentityType::OWNER,
         }
     }
 }
@@ -143,7 +143,7 @@ pub fn pro_tx_info_to_identities(pro_tx_info: ProTxInfo) -> [Identity; 2] {
             identifier: voting_id,
             is_system,
             balance: None,
-            identity_type: IdentifierType::VOTING,
+            identity_type: IdentityType::VOTING,
         },
         Identity {
             owner: owner_voting_id,
@@ -151,7 +151,7 @@ pub fn pro_tx_info_to_identities(pro_tx_info: ProTxInfo) -> [Identity; 2] {
             identifier: owner_voting_id,
             is_system,
             balance: None,
-            identity_type: IdentifierType::VOTING,
+            identity_type: IdentityType::VOTING,
         },
     ]
 }
