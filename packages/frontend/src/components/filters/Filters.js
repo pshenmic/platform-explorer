@@ -288,7 +288,7 @@ export const Filters = ({
       <ChevronIcon css={{
         transition: '.1s',
         transform: menuIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
-      }}/>
+      }} />
     </Button>
   )
 
@@ -299,15 +299,15 @@ export const Filters = ({
       <div className={'Filters__ButtonsContainer'}>
         <div className={'Filters__ControlButtons'}>
           {isMobile
-            ? <TriggerButton/>
+            ? <TriggerButton />
             : <MultiLevelMenu
-                placement={'bottom-start'}
-                trigger={TriggerButton()}
-                menuData={menuData}
-                onClose={handleMenuClose}
-                isOpen={menuIsOpen}
-                onOpen={handleMenuOpen}
-              />
+              placement={'bottom-start'}
+              trigger={TriggerButton()}
+              menuData={menuData}
+              onClose={handleMenuClose}
+              isOpen={menuIsOpen}
+              onOpen={handleMenuOpen}
+            />
           }
 
           {activeFiltersCount > 0 &&

@@ -7,7 +7,7 @@ import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import './TransactionsList.scss'
 
-export default function TransactionsList ({
+export default function TransactionsList({
   transactions = [],
   showMoreLink,
   headerStyles = 'default',
@@ -43,19 +43,19 @@ export default function TransactionsList ({
 
       {!loading
         ? <div className={'TransactionsList__Items'}>
-            {transactions?.map((transaction, key) => (
-              <TransactionsListItem
-                key={key}
-                transaction={transaction}
-                rate={rate}
-              />
-            ))}
-            {transactions?.length === 0 &&
-              <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
-            }
-            {transactions === undefined && <ErrorMessageBlock/>}
-          </div>
-        : <LoadingList itemsCount={itemsCount}/>
+          {transactions?.map((transaction, key) => (
+            <TransactionsListItem
+              key={key}
+              transaction={transaction}
+              rate={rate}
+            />
+          ))}
+          {transactions?.length === 0 &&
+            <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
+          }
+          {transactions === undefined && <ErrorMessageBlock />}
+        </div>
+        : <LoadingList itemsCount={itemsCount} />
       }
 
       {pagination &&
