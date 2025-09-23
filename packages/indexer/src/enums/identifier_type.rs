@@ -13,7 +13,9 @@ impl From<String> for IdentifierType {
             "regular" => IdentifierType::REGULAR,
             "owner" => IdentifierType::OWNER,
             "voting" => IdentifierType::VOTING,
-            _ => panic!("Unsupported identifier type: {}", s),
+            _ => {
+                panic!("Unsupported identifier type: {}", s);
+            }
         }
     }
 }
