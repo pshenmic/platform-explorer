@@ -14,7 +14,9 @@ const withToolTip = (Component) => {
 
     return (
       <Tooltip content={formatNumberWithSpaces(children)}>
-        {triggerElement}
+        <span>
+          {triggerElement}
+        </span>
       </Tooltip>
     )
   })
