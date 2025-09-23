@@ -4,3 +4,5 @@ package-lock.json
 .DS_Store
 launch.json
 .vscode
+redis.conf
+users.acl
