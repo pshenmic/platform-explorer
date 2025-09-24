@@ -54,7 +54,7 @@ export default function TransactionsList ({
             {transactions === undefined && <ErrorMessageBlock />}
           </div>
         : <LoadingList itemsCount={itemsCount} />
-        }
+      }
 
       {pagination &&
         <Pagination
