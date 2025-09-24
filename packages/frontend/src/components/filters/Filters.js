@@ -307,7 +307,7 @@ export const Filters = ({
                 onClose={handleMenuClose}
                 isOpen={menuIsOpen}
                 onOpen={handleMenuOpen}
-            />
+              />
           }
 
           {activeFiltersCount > 0 &&

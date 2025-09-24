@@ -23,8 +23,8 @@ export const MultiSelectFilter = ({
   }
 
   return (
-    <>
-      <div className='MultiSelectFilter_List'>
+    <div className={'MultiSelectFilter'}>
+      <div className='MultiSelectFilter__List'>
         {items.map((item) => (
           <div
             key={item.value}
@@ -59,6 +59,6 @@ export const MultiSelectFilter = ({
           )}
         </FilterActions>
       )}
-    </>
+    </div>
   )
 }

@@ -4,24 +4,17 @@
 .MultiSelectFilter {
   display: flex;
   flex-direction: column;
+  gap: 1.25rem;
 
-  &_List {
+  &__List {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    min-width: 200px;
-    max-height: 308px;
-    max-height: 352px;
+    gap: 0.75rem;
+    width: fit-content;
+    min-height: 308px;
+    max-height: 380px;
     overflow-y: auto;
-    overflow-x: hidden;
     @include mixins.BrandScroll();
-  }
-
-  &__Items {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    flex-wrap: wrap;
   }
 
   &__Item {
@@ -30,7 +23,7 @@
     gap: 0.75rem;
     cursor: pointer;
     padding: 0.5rem;
-    margin: -0.5rem;
+    margin: 0;
     border-radius: $border-radius-def;
     transition: background-color $transition-time-def;
 

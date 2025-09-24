@@ -136,8 +136,6 @@ const batchOptions = [
   }
 ]
 
-// removed combined typeOptions; using separate multiselects
-
 const statusOptions = [
   {
     label: <TransactionStatusBadge status={'SUCCESS'} />,
