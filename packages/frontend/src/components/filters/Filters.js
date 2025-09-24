@@ -301,12 +301,12 @@ export const Filters = ({
           {isMobile
             ? <TriggerButton />
             : <MultiLevelMenu
-              placement={'bottom-start'}
-              trigger={TriggerButton()}
-              menuData={menuData}
-              onClose={handleMenuClose}
-              isOpen={menuIsOpen}
-              onOpen={handleMenuOpen}
+                placement={'bottom-start'}
+                trigger={TriggerButton()}
+                menuData={menuData}
+                onClose={handleMenuClose}
+                isOpen={menuIsOpen}
+                onOpen={handleMenuOpen}
             />
           }
 

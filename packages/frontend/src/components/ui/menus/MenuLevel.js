@@ -95,13 +95,13 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                 <PopoverBody overflow={'visible'} p={0}>
                   {item.subMenu
                     ? <MenuLevel
-                      items={item.subMenu}
-                      onMenuItemClick={onMenuItemClick}
-                      placement={placement}
-                      onLevelClose={handleSubMenuClose}
-                      activeItemId={activeItemId}
-                      onActiveItemChange={onActiveItemChange}
-                    />
+                        items={item.subMenu}
+                        onMenuItemClick={onMenuItemClick}
+                        placement={placement}
+                        onLevelClose={handleSubMenuClose}
+                        activeItemId={activeItemId}
+                        onActiveItemChange={onActiveItemChange}
+                      />
                     : item.content
                   }
                 </PopoverBody>

@@ -43,20 +43,18 @@ export default function TransactionsList ({
 
       {!loading
         ? <div className={'TransactionsList__Items'}>
-          {transactions?.map((transaction, key) => (
-            <TransactionsListItem
-              key={key}
-              transaction={transaction}
-              rate={rate}
-            />
-          ))}
-          {transactions?.length === 0 &&
-            <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
-          }
-          {transactions === undefined && <ErrorMessageBlock />}
-        </div>
+            {transactions?.map((transaction, key) => (
+              <TransactionsListItem
+                key={key}
+                transaction={transaction}
+                rate={rate}
+              />
+            ))}
+            {transactions?.length === 0 && <EmptyListMessage>There are no transactions yet.</EmptyListMessage>}
+            {transactions === undefined && <ErrorMessageBlock />}
+          </div>
         : <LoadingList itemsCount={itemsCount} />
-      }
+        }
 
       {pagination &&
         <Pagination
