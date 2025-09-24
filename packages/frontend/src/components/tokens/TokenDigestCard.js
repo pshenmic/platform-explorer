@@ -92,30 +92,30 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
         title={'Distribution'}
         value={(perpetualDistribution != null || preProgrammedDistribution != null)
           ? <Flex flexDirection={'column'} gap={'0.5rem'} alignItems={'flex-end'}>
-            {perpetualDistribution &&
-              <Tooltip
-                content={
-                  <Flex gap={'0.5rem'} flexDir={'column'} justifyContent={'space-between'}>
-                    <Flex gap={'0.5rem'} grow={1}>
-                      <span>Type:</span>
-                      <b>{perpetualDistribution?.type}</b>
+              {perpetualDistribution &&
+                <Tooltip
+                  content={
+                    <Flex gap={'0.5rem'} flexDir={'column'} justifyContent={'space-between'}>
+                      <Flex gap={'0.5rem'} grow={1}>
+                        <span>Type:</span>
+                        <b>{perpetualDistribution?.type}</b>
+                      </Flex>
+                      <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                        <span>Recipient Type:</span>
+                        <b>{perpetualDistribution?.recipientType}</b>
+                      </Flex>
+                      <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                        <span>Interval:</span>
+                        <b>{perpetualDistribution?.interval}</b>
+                      </Flex>
+                      <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                        <span>Function Name:</span>
+                        <b>{perpetualDistribution?.functionName}</b>
+                      </Flex>
                     </Flex>
-                    <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
-                      <span>Recipient Type:</span>
-                      <b>{perpetualDistribution?.recipientType}</b>
-                    </Flex>
-                    <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
-                      <span>Interval:</span>
-                      <b>{perpetualDistribution?.interval}</b>
-                    </Flex>
-                    <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
-                      <span>Function Name:</span>
-                      <b>{perpetualDistribution?.functionName}</b>
-                    </Flex>
-                  </Flex>
-                }
-                placement={'top'}
-              >
+                  }
+                  placement={'top'}
+                >
                 <div style={{ cursor: 'pointer' }}>
                   <ValueContainer colorScheme={'emeralds'} size={'sm'}>
                     <Flex gap={'0.5rem'} alignItems={'center'}>

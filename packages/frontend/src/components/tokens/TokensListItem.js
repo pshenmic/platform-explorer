@@ -41,9 +41,9 @@ function TokensListItem ({ token, variant = 'default', rate }) {
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Supply'}>
           {maxSupply
             ? <Supply
-              currentSupply={totalSupply}
-              maxSupply={maxSupply || totalSupply}
-            />
+                currentSupply={totalSupply}
+                maxSupply={maxSupply || totalSupply}
+              />
             : <BigNumber>{totalSupply}</BigNumber>
           }
         </GridItem>
