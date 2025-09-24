@@ -39,10 +39,6 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               key={index}
               onClick={() => onMenuItemClick && onMenuItemClick()}
               className={'MenuLevel__Item MenuLevel__Item--Disabled'}
-              isLazy={true}
-              lazyBehavior={'unmount'}
-              trapFocus={false}
-              returnFocusOnClose={false}
             >
               <span>{item.label}</span>
             </div>

@@ -43,11 +43,8 @@ function MultiLevelMenu ({
       closeOnBlur={true}
       placement={placement}
       variant={'menu'}
+      isLazy
       isOpen={forceIsOpen}
-      isLazy={true}
-      lazyBehavior={'unmount'}
-      trapFocus={false}
-      returnFocusOnClose={false}
       {...props}
     >
       <PopoverTrigger>

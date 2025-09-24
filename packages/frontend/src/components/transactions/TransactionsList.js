@@ -65,10 +65,7 @@ export default function TransactionsList ({
           justify={true}
         />
       }
-
-      {showMoreLink &&
-        <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>Show more</Link>
-      }
+      {showMoreLink && <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>Show more</Link>}
     </div>
   )
 }
