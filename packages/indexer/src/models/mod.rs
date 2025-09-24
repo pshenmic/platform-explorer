@@ -1,6 +1,9 @@
 use crate::entities::validator::Validator;
 use chrono::{DateTime, Utc};
+use dpp::platform_value::platform_value;
 use serde::Deserialize;
+use serde_json::{Error, Value};
+use std::fmt::Display;
 
 #[derive(Deserialize)]
 pub struct TenderdashRPCStatusResponse {
@@ -74,10 +77,16 @@ pub struct TenderdashRPCBlockResultsResponse {
     pub txs_results: Option<Vec<TDTxResult>>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum TransactionStatus {
     FAIL,
     SUCCESS,
+}
+
+impl Display for TransactionStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }
 
 #[derive(Clone)]
@@ -86,6 +95,19 @@ pub struct TransactionResult {
     pub gas_used: u64,
     pub status: TransactionStatus,
     pub error: Option<String>,
+}
+
+impl TryFrom<TransactionResult> for Value {
+    type Error = Error;
+
+    fn try_from(tx_result: TransactionResult) -> Result<Self, Self::Error> {
+        serde_json::to_value(platform_value!({
+            "data": tx_result.data,
+            "gas_used": tx_result.gas_used,
+            "status": tx_result.status.to_string(),
+            "error": tx_result.error
+        }))
+    }
 }
 
 mod from_iso8601 {

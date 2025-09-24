@@ -4,10 +4,12 @@ use crate::processor::psql::{PSQLProcessor, ProcessorError};
 use base64::engine::general_purpose;
 use base64::Engine;
 use deadpool_postgres::GenericClient;
+use redis::Commands;
+use serde_json::Value;
 
 impl PSQLProcessor {
     pub async fn handle_block(
-        &self,
+        &mut self,
         block: Block,
         validators: Vec<Validator>,
     ) -> Result<(), ProcessorError> {
@@ -75,6 +77,17 @@ impl PSQLProcessor {
                     .commit()
                     .await
                     .expect("SQL Transaction Error");
+
+                if let Some(redis) = &mut self.redis {
+                    let json = Value::try_from(block).unwrap();
+
+                    redis
+                        .publish::<&str, &str, ()>(
+                            &self.redis_pubsub_new_block_channel.clone().unwrap(),
+                            json.to_string().as_str(),
+                        )
+                        .expect("PUBSUB publish error");
+                }
 
                 Ok(())
             }

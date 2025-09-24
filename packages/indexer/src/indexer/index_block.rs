@@ -7,7 +7,7 @@ use base64::engine::general_purpose;
 use base64::Engine;
 
 impl Indexer {
-    pub(crate) async fn index_block(&self, block_height: i32) -> Result<(), ProcessorError> {
+    pub(crate) async fn index_block(&mut self, block_height: i32) -> Result<(), ProcessorError> {
         let block = self
             .tenderdash_rpc
             .get_block_by_height(block_height.clone())
