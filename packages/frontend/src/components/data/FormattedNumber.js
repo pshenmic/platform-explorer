@@ -2,18 +2,20 @@ import { BigNumber } from './'
 import { currencyRound } from '../../util'
 import { Tooltip } from '../ui/Tooltips'
 import { forwardRef } from 'react'
-import { formatNumberWithSpaces } from '../../util/numbers'
+import { formatNumberWithSpaces, formatNumberByDecimals } from '../../util/numbers'
 
 const withToolTip = (Component) => {
-  const FormattedNumberWithTooltip = forwardRef(({ children, ...props }, ref) => {
+  const FormattedNumberWithTooltip = forwardRef(({ children, decimals, ...props }, ref) => {
+    const content = formatNumberByDecimals(children, decimals)
+
     const triggerElement = (
       <Component {...props} ref={ref}>
-        {children}
+        {content}
       </Component>
     )
 
     return (
-      <Tooltip content={formatNumberWithSpaces(children)}>
+      <Tooltip content={formatNumberWithSpaces(content, decimals)}>
         <span>
           {triggerElement}
         </span>

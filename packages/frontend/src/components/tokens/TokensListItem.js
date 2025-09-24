@@ -16,7 +16,8 @@ function TokensListItem ({ token, variant = 'default', rate }) {
     totalSupply,
     owner,
     localizations,
-    balance
+    balance,
+    decimals
   } = token
   const router = useRouter()
 
@@ -122,7 +123,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
           <GridItem className={'TokensListItem__Column TokensListItem__Column--Balance TokensListItem__Column--Number'}>
             {typeof balance === 'number' || typeof balance === 'string'
               ? <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-                <FormattedNumber threshold={0} >{balance}</FormattedNumber>
+                <FormattedNumber decimals={decimals} threshold={0} >{balance}</FormattedNumber>
               </ValueContainer>
               : <NotActive />
             }
