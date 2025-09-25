@@ -1,13 +1,13 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
-const { getAliasFromDocument } = require('../utils')
+const {getAliasFromDocument} = require('../utils')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
-const { DPNS_CONTRACT } = require('../constants')
+const {DPNS_CONTRACT} = require('../constants')
 
 module.exports = class TransactionsDAO {
-  constructor (knex, sdk) {
+  constructor(knex, sdk) {
     this.knex = knex
     this.sdk = sdk
   }
@@ -210,7 +210,7 @@ module.exports = class TransactionsDAO {
           blockHash: row.block_hash
         }
       }))
-      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+      .map(({timestamp, data}) => new SeriesData(timestamp, data))
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 
@@ -273,16 +273,16 @@ module.exports = class TransactionsDAO {
           blockHash: row.block_hash
         }
       }))
-      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+      .map(({timestamp, data}) => new SeriesData(timestamp, data))
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 
   getCollectedFees = async (timespan) => {
     const interval = {
-      '1h': { offset: '1 hour', step: '5 minute' },
-      '24h': { offset: '24 hour', step: '2 hour' },
-      '3d': { offset: '3 day', step: '6 hour' },
-      '1w': { offset: '1 week', step: '14 hour' }
+      '1h': {offset: '1 hour', step: '5 minute'},
+      '24h': {offset: '24 hour', step: '2 hour'},
+      '3d': {offset: '3 day', step: '6 hour'},
+      '1w': {offset: '1 week', step: '14 hour'}
     }[timespan]
 
     const ranges = this.knex
@@ -306,5 +306,35 @@ module.exports = class TransactionsDAO {
       )
 
     return Number(row.total_collected_fees ?? 0)
+  }
+
+  getTransactionsByIds = async (ids) => {
+    const rows = await this.knex('state_transitions')
+      .select(
+        'state_transitions.hash as tx_hash', 'state_transitions.data as data',
+        'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
+        'state_transitions.error as error', 'state_transitions.type as type', 'state_transitions.batch_type as batch_type',
+        'state_transitions.index as index', 'blocks.height as block_height',
+        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner'
+      )
+      .whereIn('state_transitions.id', ids)
+      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+
+    return Promise.all(rows.map(async (row) => {
+      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+
+      const aliases = []
+
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
+
+      return Transaction.fromRow(
+        {
+          ...row,
+          type: StateTransitionEnum[row.type],
+          aliases
+        })
+    }))
   }
 }

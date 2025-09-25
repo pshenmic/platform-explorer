@@ -26,6 +26,7 @@
     "knex": "^2.5.1",
     "node-fetch": "^2.6.11",
     "pg": "^8.11.3",
+    "redis": "^5.8.2",
     "ws": "^8.18.3"
   },
   "devDependencies": {

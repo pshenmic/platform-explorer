@@ -9,19 +9,22 @@ const Epoch = require('../models/Epoch')
 const {base58} = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
 const TokensDAO = require('../dao/TokensDAO')
-const {comment} = require("cbor");
-const {decodeStateTransition, sleep} = require("../utils");
-const ServiceNotAvailableError = require("../errors/ServiceNotAvailableError");
+const {REDIS_PUBSUB_NEW_BLOCK_CHANNEL} = require("../constants");
+const StateTransitionEnum = require('../enums/StateTransitionEnum');
+const MasternodeVotesDAO = require("../dao/MasternodeVotesDAO");
+const {decodeStateTransition} = require("../utils");
+const BatchEnum = require("../enums/BatchEnum");
 
 const API_VERSION = require('../../package.json').version
 
 class MainController {
-  constructor(knex, sdk, tenderdashWebSocket) {
+  constructor(knex, sdk, redis) {
     this.dataContractsDAO = new DataContractsDAO(knex, sdk)
     this.transactionsDAO = new TransactionsDAO(knex, sdk)
     this.documentsDAO = new DocumentsDAO(knex, sdk)
     this.identitiesDAO = new IdentitiesDAO(knex, sdk)
-    this.tenderdashWebSocket = tenderdashWebSocket
+    this.masternodeVotesDAO = new MasternodeVotesDAO(knex, sdk)
+    this.redis = redis
     this.validatorsDAO = new ValidatorsDAO(knex)
     this.blocksDAO = new BlocksDAO(knex, sdk)
     this.tokensDAO = new TokensDAO(knex, sdk)
@@ -248,42 +251,99 @@ class MainController {
   }
 
   test = async (request, response) => {
-
-    await sleep(10000)
-
     response.sse({
       data: JSON.stringify({message: 'listening'}),
       comment: 'initial message'
     })
 
-    const onMessage = async (data) => {
-      const block = JSON.parse(data.toString())
+    const redis = await this.redis.duplicate();
 
-      if(block.error) {
-        console.error(block.error)
-        throw new ServiceNotAvailableError()
-      }
+    await redis.connect()
 
-      const {result} = block
+    await redis.subscribe(REDIS_PUBSUB_NEW_BLOCK_CHANNEL, async (blockInfo) => {
+      const {txIds, blockHeight} = JSON.parse(blockInfo)
 
-      const txs = result.data.value.block.data.txs
+      const block = await this.blocksDAO.getBlockByHeight(blockHeight)
+      const txs = await this.transactionsDAO.getTransactionsByIds(txIds)
 
-      console.log()
-
-      const decodedTxs = await Promise.all(txs.map(async (tx) => {
-        return decodeStateTransition(tx)
+      const txsWithNumericTypes = txs.map(tx => ({
+        ...tx,
+        type: StateTransitionEnum[tx.type],
       }))
 
+      const masternodeVoteActions = txs.filter(tx => tx.type !== StateTransitionEnum.MASTERNODE_VOTE)
+      const batchActions = txs.filter(tx => tx.type !== StateTransitionEnum.BATCH)
+      const identityActions = txs
+        .filter(tx =>
+          tx.type === StateTransitionEnum.IDENTITY_CREATE ||
+          tx.type === StateTransitionEnum.IDENTITY_TOP_UP ||
+          tx.type === StateTransitionEnum.IDENTITY_UPDATE ||
+          tx.type === StateTransitionEnum.IDENTITY_CREDIT_TRANSFER ||
+          tx.type === StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL)
+      const dataContractActions = txs
+        .filter(tx =>
+          tx.type !== StateTransitionEnum.DATA_CONTRACT_CREATE ||
+          tx.type === StateTransitionEnum.DATA_CONTRACT_UPDATE)
+
+      const masternodeVotes = Promise.all(masternodeVoteActions.map(
+        async (vote) => this.masternodeVotesDAO.getMasternodeVoteByTx(vote.hash)
+      ))
+      const batches = Promise.all(batchActions.map(
+        async (batch) => {
+          const decodedBatchTx = await decodeStateTransition(batch.data)
+
+          const t = await Promise.all(decodedBatchTx.transitions.map(async (transition) => {
+            const numericAction = BatchEnum[transition.action]
+            if ( numericAction >= 0 || numericAction <= 5) {
+              const document = await this.documentsDAO.getDocumentByIdentifier(transition.id)
+            }else {
+
+            }
+          }))
+        }
+      ))
+
       response.sse({
-        data: null,
+        data: JSON.stringify({
+          block,
+          txs
+        })
       })
-    }
-
-    this.tenderdashWebSocket.on('message', onMessage)
-
-    request.raw.on('close', () => {
-      this.tenderdashWebSocket.off('message', onMessage)
     })
+
+    request.raw.on('close', async () => {
+      await redis.destroy()
+    })
+
+
+    // const onMessage = async (data) => {
+    //   const block = JSON.parse(data.toString())
+    //
+    //   if(block.error) {
+    //     console.error(block.error)
+    //     throw new ServiceNotAvailableError()
+    //   }
+    //
+    //   const {result} = block
+    //
+    //   const txs = result.data.value.block.data.txs
+    //
+    //   console.log()
+    //
+    //   const decodedTxs = await Promise.all(txs.map(async (tx) => {
+    //     return decodeStateTransition(tx)
+    //   }))
+    //
+    //   response.sse({
+    //     data: null,
+    //   })
+    // }
+    //
+    // this.tenderdashWebSocket.on('message', onMessage)
+    //
+    // request.raw.on('close', () => {
+    //   this.tenderdashWebSocket.off('message', onMessage)
+    // })
 
   }
 }

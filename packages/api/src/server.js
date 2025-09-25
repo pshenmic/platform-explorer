@@ -1,7 +1,7 @@
 const Fastify = require('fastify')
 const metricsPlugin = require('fastify-metrics')
 const cors = require('@fastify/cors')
-const { FastifySSEPlugin } = require('fastify-sse-v2')
+const {FastifySSEPlugin} = require('fastify-sse-v2')
 const schemaTypes = require('./schemas')
 const Routes = require('./routes')
 const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
@@ -13,32 +13,33 @@ const DocumentsController = require('./controllers/DocumentsController')
 const IdentitiesController = require('./controllers/IdentitiesController')
 const DataContractsController = require('./controllers/DataContractsController')
 const ValidatorsController = require('./controllers/ValidatorsController')
-const { getKnex } = require('./utils')
+const {getKnex} = require('./utils')
 const BlocksDAO = require('./dao/BlocksDAO')
 const RateController = require('./controllers/RateController')
 const MasternodeVotesController = require('./controllers/MasternodeVotesController')
 const ContestedResourcesController = require('./controllers/ContestedResourcesController')
 const TokensController = require('./controllers/TokensController')
-const { DashPlatformSDK } = require('dash-platform-sdk')
+const {DashPlatformSDK} = require('dash-platform-sdk')
 const TenderdashWebSocket = require("./tenderdashSubscribe");
 const {TENDERDASH_WS_BLOCKS_SUBSCRIPTION} = require("./constants");
+const {createClient} = require("redis");
 
-function errorHandler (err, req, reply) {
+function errorHandler(err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
-    return reply.status(503).send({ error: 'tenderdash/dashcore backend is not available' })
+    return reply.status(503).send({error: 'tenderdash/dashcore backend is not available'})
   }
 
   if (err?.constructor?.name === 'InvalidStateTransitionError') {
     const [error] = err.getErrors()
-    const { code, message } = error
+    const {code, message} = error
 
-    return reply.status(500).send({ error: message, code })
+    return reply.status(500).send({error: message, code})
   }
 
   console.error(err)
   reply.status(500)
 
-  reply.send({ error: err.message })
+  reply.send({error: err.message})
 }
 
 let knex
@@ -54,7 +55,9 @@ module.exports = {
       network: process.env.NETWORK ?? 'testnet'
     })
 
-    const tenderdashWebSocket = new TenderdashWebSocket(TENDERDASH_WS_BLOCKS_SUBSCRIPTION)
+    const redis = await createClient({
+      url: process.env.REDIS_URL ?? 'redis://default@127.0.0.1:6379',
+    })
 
     fastify = Fastify()
 
@@ -74,7 +77,7 @@ module.exports = {
 
     await knex.raw('select 1+1')
 
-    const mainController = new MainController(knex, sdk, tenderdashWebSocket)
+    const mainController = new MainController(knex, sdk, redis)
     const epochController = new EpochController(knex, sdk)
     const blocksController = new BlocksController(knex, sdk)
     const transactionsController = new TransactionsController(knex, sdk)
@@ -109,9 +112,9 @@ module.exports = {
     new fastify.metrics.client.Gauge({
       name: 'platform_explorer_api_block_height',
       help: 'The latest block height in the API',
-      async collect () {
+      async collect() {
         const blockDAO = new BlocksDAO(knex)
-        const { resultSet: [block] } = await blockDAO.getBlocks(1, 1, 'desc')
+        const {resultSet: [block]} = await blockDAO.getBlocks(1, 1, 'desc')
 
         this.set(block.header.height)
       }
