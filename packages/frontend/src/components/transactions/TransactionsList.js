@@ -50,12 +50,10 @@ export default function TransactionsList ({
                 rate={rate}
               />
             ))}
-            {transactions?.length === 0 &&
-              <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
-            }
-            {transactions === undefined && <ErrorMessageBlock/>}
+            {transactions?.length === 0 && <EmptyListMessage>There are no transactions yet.</EmptyListMessage>}
+            {transactions === undefined && <ErrorMessageBlock />}
           </div>
-        : <LoadingList itemsCount={itemsCount}/>
+        : <LoadingList itemsCount={itemsCount} />
       }
 
       {pagination &&
@@ -67,10 +65,7 @@ export default function TransactionsList ({
           justify={true}
         />
       }
-
-      {showMoreLink &&
-        <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>Show more</Link>
-      }
+      {showMoreLink && <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>Show more</Link>}
     </div>
   )
 }
