@@ -35,9 +35,14 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
     decimals
   } = token?.data || {}
   return (
-    <div className={`TokenDigestCard ${className || ''} ${token?.loading ? 'TokenDigestCard--Loading' : ''}`}>
+    <div
+      className={`TokenDigestCard ${className || ''} ${token?.loading ? 'TokenDigestCard--Loading' : ''}`}
+    >
       <div className={'TokenDigestCard__TopCards'}>
-        <ValueContainer className={'TokenDigestCard__SupplyCardContainer'} size={'xl'}>
+        <ValueContainer
+          className={'TokenDigestCard__SupplyCardContainer'}
+          size={'xl'}
+        >
           <Supply
             decimals={decimals}
             currentSupply={totalSupply}
@@ -91,25 +96,47 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
 
       <InfoLine
         title={'Distribution'}
-        value={(perpetualDistribution != null || preProgrammedDistribution != null)
-          ? <Flex flexDirection={'column'} gap={'0.5rem'} alignItems={'flex-end'}>
-              {perpetualDistribution &&
+        value={
+          perpetualDistribution != null || preProgrammedDistribution != null
+            ? (
+            <Flex
+              flexDirection={'column'}
+              gap={'0.5rem'}
+              alignItems={'flex-end'}
+            >
+              {perpetualDistribution && (
                 <Tooltip
                   content={
-                    <Flex gap={'0.5rem'} flexDir={'column'} justifyContent={'space-between'}>
+                    <Flex
+                      gap={'0.5rem'}
+                      flexDir={'column'}
+                      justifyContent={'space-between'}
+                    >
                       <Flex gap={'0.5rem'} grow={1}>
                         <span>Type:</span>
                         <b>{perpetualDistribution?.type}</b>
                       </Flex>
-                      <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                      <Flex
+                        gap={'0.5rem'}
+                        grow={1}
+                        justifyContent={'space-between'}
+                      >
                         <span>Recipient Type:</span>
                         <b>{perpetualDistribution?.recipientType}</b>
                       </Flex>
-                      <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                      <Flex
+                        gap={'0.5rem'}
+                        grow={1}
+                        justifyContent={'space-between'}
+                      >
                         <span>Interval:</span>
                         <b>{perpetualDistribution?.interval}</b>
                       </Flex>
-                      <Flex gap={'0.5rem'} grow={1} justifyContent={'space-between'}>
+                      <Flex
+                        gap={'0.5rem'}
+                        grow={1}
+                        justifyContent={'space-between'}
+                      >
                         <span>Function Name:</span>
                         <b>{perpetualDistribution?.functionName}</b>
                       </Flex>
@@ -117,25 +144,34 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
                   }
                   placement={'top'}
                 >
-                <div style={{ cursor: 'pointer' }}>
-                  <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-                    <Flex gap={'0.5rem'} alignItems={'center'}>
-                      Perpetual distribution
-                      <InfoIcon width={'1rem'} height={'1rem'} color={'#58F4BC'} />
-                    </Flex>
-                  </ValueContainer>
-                </div>
-              </Tooltip>
-            }
-            {preProgrammedDistribution &&
-              <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-                <Flex gap={'0.5rem'} alignItems={'center'}>
-                  Pre programmed distribution
-                </Flex>
-              </ValueContainer>
-            }
-          </Flex>
-          : <ValueContainer className={'TokenTotalCard__ZeroListBadge'}>none</ValueContainer>
+                  <div style={{ cursor: 'pointer' }}>
+                    <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+                      <Flex gap={'0.5rem'} alignItems={'center'}>
+                        Perpetual distribution
+                        <InfoIcon
+                          width={'1rem'}
+                          height={'1rem'}
+                          color={'#58F4BC'}
+                        />
+                      </Flex>
+                    </ValueContainer>
+                  </div>
+                </Tooltip>
+              )}
+              {preProgrammedDistribution && (
+                <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+                  <Flex gap={'0.5rem'} alignItems={'center'}>
+                    Pre programmed distribution
+                  </Flex>
+                </ValueContainer>
+              )}
+            </Flex>
+              )
+            : (
+            <ValueContainer className={'TokenTotalCard__ZeroListBadge'}>
+              none
+            </ValueContainer>
+              )
         }
         loading={loading}
         error={error}
@@ -144,13 +180,22 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Token Creator'}
-        value={(
-          <ValueCard link={`identity/${owner?.identifier}`} className={'TokenDigestCard__ValueContainer'} clickable={false}>
-            <Identifier avatar={true} copyButton={true} styles={['highlight-both']} ellipsis={false}>
+        value={
+          <ValueCard
+            link={`identity/${owner?.identifier}`}
+            className={'TokenDigestCard__ValueContainer'}
+            clickable={false}
+          >
+            <Identifier
+              avatar={true}
+              copyButton={true}
+              styles={['highlight-both']}
+              ellipsis={false}
+            >
               {owner}
             </Identifier>
           </ValueCard>
-        )}
+        }
         loading={token?.loading}
         error={token?.error || (!token?.loading && !owner)}
       />
@@ -166,7 +211,11 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Mintable'}
-        value={<Badge colorScheme={mintable ? 'green' : 'red'}>{mintable ? 'Yes' : 'No'}</Badge>}
+        value={
+          <Badge colorScheme={mintable ? 'green' : 'red'}>
+            {mintable ? 'Yes' : 'No'}
+          </Badge>
+        }
         loading={token?.loading}
         error={token?.error || (!token?.loading && totalGasUsed == null)}
       />
@@ -174,7 +223,11 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Change max supply'}
-        value={<Badge colorScheme={changeMaxSupply ? 'green' : 'red'}>{changeMaxSupply ? 'Yes' : 'No'}</Badge>}
+        value={
+          <Badge colorScheme={changeMaxSupply ? 'green' : 'red'}>
+            {changeMaxSupply ? 'Yes' : 'No'}
+          </Badge>
+        }
         loading={token?.loading}
         error={token?.error || (!token?.loading && changeMaxSupply == null)}
       />
@@ -182,7 +235,11 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Burnable'}
-        value={<Badge colorScheme={burnable ? 'green' : 'red'}>{burnable ? 'Yes' : 'No'}</Badge>}
+        value={
+          <Badge colorScheme={burnable ? 'green' : 'red'}>
+            {burnable ? 'Yes' : 'No'}
+          </Badge>
+        }
         loading={token?.loading}
         error={token?.error || (!token?.loading && burnable == null)}
       />
@@ -190,7 +247,11 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Freezable'}
-        value={<Badge colorScheme={freezable ? 'green' : 'red'}>{freezable ? 'Yes' : 'No'}</Badge>}
+        value={
+          <Badge colorScheme={freezable ? 'green' : 'red'}>
+            {freezable ? 'Yes' : 'No'}
+          </Badge>
+        }
         loading={token?.loading}
         error={token?.error || (!token?.loading && freezable == null)}
       />
@@ -198,7 +259,11 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Unfreezable'}
-        value={<Badge colorScheme={unfreezable ? 'green' : 'red'}>{unfreezable ? 'Yes' : 'No'}</Badge>}
+        value={
+          <Badge colorScheme={unfreezable ? 'green' : 'red'}>
+            {unfreezable ? 'Yes' : 'No'}
+          </Badge>
+        }
         loading={token?.loading}
         error={token?.error || (!token?.loading && unfreezable == null)}
       />
@@ -206,7 +271,11 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Destroyable'}
-        value={<Badge colorScheme={destroyable ? 'green' : 'red'}>{destroyable ? 'Yes' : 'No'}</Badge>}
+        value={
+          <Badge colorScheme={destroyable ? 'green' : 'red'}>
+            {destroyable ? 'Yes' : 'No'}
+          </Badge>
+        }
         loading={token?.loading}
         error={token?.error || (!token?.loading && destroyable == null)}
       />
@@ -214,9 +283,15 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <InfoLine
         className={'TokenDigestCard__InfoLine'}
         title={'Allowed Emergency Actions'}
-        value={<Badge colorScheme={allowedEmergencyActions ? 'green' : 'red'}>{allowedEmergencyActions ? 'Yes' : 'No'}</Badge>}
+        value={
+          <Badge colorScheme={allowedEmergencyActions ? 'green' : 'red'}>
+            {allowedEmergencyActions ? 'Yes' : 'No'}
+          </Badge>
+        }
         loading={token?.loading}
-        error={token?.error || (!token?.loading && allowedEmergencyActions == null)}
+        error={
+          token?.error || (!token?.loading && allowedEmergencyActions == null)
+        }
       />
     </div>
   )

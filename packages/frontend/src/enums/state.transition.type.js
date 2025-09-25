@@ -4,11 +4,6 @@ export const TransactionTypesInfo = {
     description: 'Creates a new data contract. This contract defines the schema for storing data on the platform.',
     colorScheme: 'blue'
   },
-  BATCH: {
-    title: 'Batch',
-    description: 'Creates a new document or token transitions. It is used to make create, modify, delete other document or token actions on the platform.',
-    colorScheme: 'gray'
-  },
   IDENTITY_CREATE: {
     title: 'Identity Create',
     description: 'Creates a new decentralized identity (DID) to manage digital assets and make actions.',
