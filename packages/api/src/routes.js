@@ -399,7 +399,10 @@ module.exports = ({
         querystring: {
           type: 'object',
           properties: {
-            query: { type: 'string' }
+            query: {
+              type: 'string',
+              pattern: '^[A-Za-z0-9.-]+$'
+            }
           }
         }
       }
