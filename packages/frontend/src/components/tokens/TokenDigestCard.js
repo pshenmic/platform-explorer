@@ -50,13 +50,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
             showTitles={true}
             showIcons={true}
             minTitle={'Minted'}
-            maxTitle={
-              <>
-                Total
-                <br />
-                Supply
-              </>
-            }
+            maxTitle={<>Total<br />Supply</>}
             topIcon={<TokenMintIcon />}
             bottomIcon={<TokenTotalIcon />}
             className={'TokenDigestCard__SupplyCard'}
@@ -68,13 +62,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
       <div className={'TokenDigestCard__RowContainer'}>
         <ValueContainer size={'xl'}>
           <InfoLine
-            title={
-              <>
-                Total
-                <br />
-                Transactions
-              </>
-            }
+            title={<>Total<br />Transactions</>}
             value={totalTransitionsCount}
             icon={<TransactionsIcon />}
             loading={loading}
