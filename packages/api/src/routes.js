@@ -248,7 +248,7 @@ module.exports = ({
           properties: {
             resourceValue: {
               type: 'string',
-              pattern: "^[A-Za-z0-9+/]+$",
+              pattern: '^[A-Za-z0-9+/]+$'
             }
           }
         }
@@ -265,7 +265,7 @@ module.exports = ({
           properties: {
             resourceValue: {
               type: 'string',
-              pattern: "^[A-Za-z0-9+/]+$"
+              pattern: '^[A-Za-z0-9+/]+$'
             }
           }
         }
@@ -316,7 +316,7 @@ module.exports = ({
           properties: {
             dpns: {
               type: 'string',
-              pattern: "^[A-Za-z0-9.-]+$",
+              pattern: '^[A-Za-z0-9.-]+$'
             }
           }
         }
@@ -605,7 +605,7 @@ module.exports = ({
             name: {
               type: 'string',
               // minimal token name is 3 but for search by part name we use minimal length 1
-              pattern: "^[A-Za-z0-9]+$",
+              pattern: '^[A-Za-z0-9]+$',
               minLength: 1,
               maxLength: 25
             }
