@@ -39,18 +39,3 @@ impl From<Row> for BlockHeader {
         };
     }
 }
-
-impl TryFrom<BlockHeader> for Value {
-    type Error = Error;
-
-    fn try_from(header: BlockHeader) -> Result<Self, Self::Error> {
-        serde_json::to_value(platform_value!({
-            "height": header.height,
-            "timestamp": header.timestamp.to_rfc3339(),
-            "block_version": header.block_version,
-            "app_version": header.app_version,
-            "l1_locked_height": header.l1_locked_height,
-            "proposer_pro_tx_hash": header.proposer_pro_tx_hash,
-        }))
-    }
-}
