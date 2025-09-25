@@ -62,7 +62,7 @@ module.exports = class TransactionsDAO {
     if (batchTypes) {
       // Currently knex cannot digest an array of numbers correctly
       // https://github.com/knex/knex/issues/2060
-      filtersQuery = filtersQuery + `${filtersQuery !== '' ? ' and' : ''}` +
+      filtersQuery = filtersQuery + `${filtersQuery !== '' ? ' and ' : ''}` +
         (batchTypes.length > 1
           ? `batch_type in (${batchTypes.join(',')})`
           : `batch_type = ${batchTypes[0]}`)
