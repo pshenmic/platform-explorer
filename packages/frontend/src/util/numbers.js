@@ -14,8 +14,8 @@ export const formatNumberByDecimals = (str, decimalPlaces) => {
   const number = Number(str)
   const decimal = Number(decimalPlaces)
 
-  if (isNaN(number)) return 'Invalid number'
-  if (!Number.isInteger(decimal) || decimal < 0) return 'Invalid decimal places'
+  if (isNaN(number)) return 0
+  if (!Number.isInteger(decimal) || decimal <= 0) return number
 
   return number / (10 ** decimal)
 }

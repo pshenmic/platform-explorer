@@ -1,11 +1,12 @@
 import Link from 'next/link'
-import { Alias, Identifier, BigNumber, NotActive, CreditsBlock, FormattedNumber } from '../data'
+import { Alias, Identifier, NotActive, CreditsBlock, FormattedNumber, BigNumber } from '../data'
 import { Grid, GridItem, Flex } from '@chakra-ui/react'
 import { Supply } from './index'
 import { LinkContainer, ValueContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
 import { findActiveAlias, getMinTokenPrice } from '../../util'
 import { Tooltip } from '../ui/Tooltips'
+import { formatNumberByDecimals } from '../../util/numbers'
 import './TokensListItem.scss'
 
 function TokensListItem ({ token, variant = 'default', rate }) {
@@ -20,7 +21,6 @@ function TokensListItem ({ token, variant = 'default', rate }) {
     decimals
   } = token
   const router = useRouter()
-
   const ownerId = typeof owner === 'object' ? owner?.identifier : owner
   const ownerName = typeof owner === 'object' ? findActiveAlias(owner?.aliases) : null
   const name = localizations?.en?.singularForm ||
@@ -44,8 +44,9 @@ function TokensListItem ({ token, variant = 'default', rate }) {
             ? <Supply
                 currentSupply={totalSupply}
                 maxSupply={maxSupply || totalSupply}
+                decimals={decimals}
               />
-            : <BigNumber>{totalSupply}</BigNumber>
+            : <BigNumber>{formatNumberByDecimals(totalSupply, decimals)}</BigNumber>
           }
         </GridItem>
 
@@ -58,7 +59,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
             >
               <div>
                 <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-                  <FormattedNumber>{token.price}</FormattedNumber>
+                  <FormattedNumber decimals={decimals}>{token.price}</FormattedNumber>
                 </ValueContainer>
               </div>
             </Tooltip>

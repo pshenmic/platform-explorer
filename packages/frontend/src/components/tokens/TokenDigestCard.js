@@ -31,14 +31,15 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
     totalGasUsed,
     totalTransitionsCount,
     totalFreezeTransitionsCount,
-    totalBurnTransitionsCount
+    totalBurnTransitionsCount,
+    decimals
   } = token?.data || {}
-
   return (
     <div className={`TokenDigestCard ${className || ''} ${token?.loading ? 'TokenDigestCard--Loading' : ''}`}>
       <div className={'TokenDigestCard__TopCards'}>
         <ValueContainer className={'TokenDigestCard__SupplyCardContainer'} size={'xl'}>
           <Supply
+            decimals={decimals}
             currentSupply={totalSupply}
             maxSupply={maxSupply}
             progressPosition={'bottom'}

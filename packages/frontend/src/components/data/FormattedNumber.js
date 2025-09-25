@@ -32,7 +32,6 @@ const FormattedNumber = forwardRef(({ children, threshold = 999999999, className
   if (children === undefined || children === null) return null
 
   const number = Number(children)
-
   if (isNaN(number)) {
     return <span ref={ref} className={className}>{children}</span>
   }

@@ -6,11 +6,13 @@ import { LoadingLine } from '../loading'
 import { currencyRound } from '../../util'
 import { Tooltip } from '../ui/Tooltips'
 import './Supply.scss'
+import { formatNumberByDecimals } from '../../util/numbers'
 
 function Supply ({
   currentSupply,
   maxSupply,
   className,
+  decimals,
   progressPosition = 'bottom',
   showTitles = false,
   showIcons = false,
@@ -23,6 +25,9 @@ function Supply ({
   const progressClass = progressPosition === 'top' ? 'Supply--ProgressTop' : ''
   const isTooBigNumber = (number) => Number(number) > 999999999
   const hasMaxSupply = maxSupply && Number(maxSupply) > 0
+
+  const displayFormatCurrentSupply = formatNumberByDecimals(currentSupply, decimals)
+  const displayFormatMaxSupply = formatNumberByDecimals(maxSupply, decimals)
 
   return (
     <div className={`Supply ${progressClass || ''} ${showTitles && 'Supply--WithIcons'} ${className || ''} ${loading ? 'Supply--Loading' : ''}`}>
@@ -40,14 +45,14 @@ function Supply ({
             : <>
                 <div className={'Supply__SupplyTitles'}>
                   <span className={'Supply__CurrentSupply'}>
-                    {isTooBigNumber(currentSupply)
+                    {isTooBigNumber(displayFormatCurrentSupply)
                       ? <Tooltip
                           placement={'top'}
-                          content={<BigNumber>{Number(currentSupply)}</BigNumber>}
+                          content={<BigNumber>{displayFormatCurrentSupply}</BigNumber>}
                         >
-                          <span>{currencyRound(currentSupply)}</span>
+                          <span>{currencyRound(displayFormatCurrentSupply)}</span>
                         </Tooltip>
-                      : <BigNumber>{Number(currentSupply)}</BigNumber>
+                      : <BigNumber>{displayFormatCurrentSupply}</BigNumber>
                     }
                   </span>
                   {hasMaxSupply && (
@@ -55,11 +60,11 @@ function Supply ({
                       {isTooBigNumber(maxSupply)
                         ? <Tooltip
                             placement={'top'}
-                            content={<BigNumber>{Number(maxSupply)}</BigNumber>}
+                            content={<BigNumber>{displayFormatMaxSupply}</BigNumber>}
                           >
-                            <span>{currencyRound(maxSupply)}</span>
+                            <span>{currencyRound(displayFormatMaxSupply)}</span>
                           </Tooltip>
-                        : <BigNumber>{Number(maxSupply)}</BigNumber>
+                        : <BigNumber>{displayFormatMaxSupply}</BigNumber>
                       }
                     </span>
                   )}
