@@ -4,7 +4,7 @@ use tokio::time::Interval;
 
 impl Indexer {
     pub(crate) async fn process_block(
-        &self,
+        &mut self,
         last_block_height: i32,
         current_block_height: i32,
         interval: &mut Interval,

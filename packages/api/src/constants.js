@@ -3,8 +3,10 @@ const TenderdashRPC = require('./tenderdashRpc')
 let genesisTime
 
 module.exports = {
+  TENDERDASH_URL: process.env.TENDERDASH_URL,
   CONTESTED_RESOURCE_VOTE_DEADLINE: Number(process.env.CONTESTED_RESOURCE_VOTE_DEADLINE ?? 1209600000),
   WITHDRAWAL_CONTRACT_TYPE: 'withdrawal',
+  REDIS_PUBSUB_NEW_BLOCK_CHANNEL: process.env.REDIS_PUBSUB_NEW_BLOCK_CHANNEL ?? 'update',
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
   TCP_CONNECT_TIMEOUT: Number(process.env.TCP_CONNECT_TIMEOUT),
   VALIDATORS_CACHE_LIFE_INTERVAL: Number(process.env.VALIDATORS_CACHE_LIFE_INTERVAL ?? 300000),
@@ -26,5 +28,13 @@ module.exports = {
       })
     }
     return genesisTime
+  },
+  TENDERDASH_WS_BLOCKS_SUBSCRIPTION: {
+    jsonrpc: "2.0",
+    method: "subscribe",
+    id: 1,
+    params: {
+      query: "tm.event='NewBlock'"
+    }
   }
 }

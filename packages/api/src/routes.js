@@ -685,6 +685,11 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/events/update',
+      method: 'GET',
+      handler: mainController.test
     }
   ]
 
