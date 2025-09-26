@@ -1827,7 +1827,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=
       ],
       "towardsIdentityVotes": 0,
       "abstainVotes": 1,
-      "lockVotes": 2
+      "lockVotes": 0
     }
   ],
   "indexName": "parentNameAndLabel",
