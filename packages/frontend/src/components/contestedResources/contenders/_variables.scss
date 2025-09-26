@@ -9,7 +9,8 @@
     minmax(5.875rem, 100rem) // Hash
     16.5rem // Identity
     16.5rem // Document
-    8rem; // Votes
+    8rem // Votes
+    fit-content(98px); //Actions
 
   @container (max-width: 66rem) {
     grid-template-columns:
@@ -17,7 +18,8 @@
       minmax(5.875rem, 46rem) // Hash
       14.5rem // Identity
       14.5rem // Document
-      8rem; // Votes
+      8rem // Votes
+      fit-content(98px); //Actions
   }
 
   @container (max-width: 62rem) {
@@ -26,7 +28,8 @@
       minmax(5.875rem, 46rem) // Hash
       12.5rem // Identity
       12.5rem // Document
-      8rem; // Votes
+      8rem // Votes
+      fit-content(98px); //Actions
   }
 
   @container (max-width: 50rem) {
@@ -35,7 +38,8 @@
       8rem // Votes
       12.5rem // Identity
       minmax(5.875rem, 46rem) // Hash
-      12.5rem; // Document
+      12.5rem // Document
+      fit-content(98px); //Actions
   }
 }
 
@@ -66,6 +70,10 @@
 
     &--Document {
       order: 3;
+    }
+
+    &--Actions {
+      order: 4;
     }
   }
 }
