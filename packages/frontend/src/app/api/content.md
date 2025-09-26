@@ -1268,7 +1268,7 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
           "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
           "owner": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
           "revision": 1,
-          "nonce": "1",
+          "nonce": null,
           "balance": "1000000",
           "timestamp": "2024-03-18T10:13:54.150Z",
           "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
