@@ -170,11 +170,15 @@ module.exports = class IdentitiesDAO {
     }
 
     const balance = await this.sdk.identities.getIdentityBalance(identity.identifier)
+    const identityNonce = await this.sdk.identities.getIdentityNonce(identity.identifier)
+    const identityInfo = await this.sdk.identities.getIdentityByIdentifier(identity.identifier)
 
     return Identity.fromObject({
       ...identity,
       aliases,
       balance: String(balance),
+      nonce: String(identityNonce),
+      revision: String(identityInfo.revision),
       publicKeys: publicKeys?.map(key => {
         const contractBounds = key.getContractBounds()
 
@@ -283,6 +287,7 @@ module.exports = class IdentitiesDAO {
 
     const resultSet = await Promise.all(rows.map(async row => {
       const balance = await this.sdk.identities.getIdentityBalance(row.identifier.trim())
+      const identityInfo = await this.sdk.identities.getIdentityByIdentifier(row.identifier)
 
       const aliases = []
       const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.identifier.trim()]], 1)
@@ -295,6 +300,7 @@ module.exports = class IdentitiesDAO {
         ...row,
         owner: row.identity_owner,
         total_data_contracts: parseInt(row.total_data_contracts),
+        revision: String(identityInfo.revision),
         total_documents: parseInt(row.total_documents),
         total_txs: parseInt(row.total_txs),
         balance: String(balance),
