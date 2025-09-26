@@ -13,8 +13,6 @@
 
   &__ColumnTitle {
     @include txs.Column();
-    width: 100%;
-    display: block;
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;
