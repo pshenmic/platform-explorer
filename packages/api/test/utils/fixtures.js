@@ -3,8 +3,9 @@
 const { base58 } = require('@scure/base')
 const crypto = require('crypto')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+const { IdentityTypeEnum } = require('../../src/enums/IdentityTypeEnum')
 
-const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase()
+const generateHash = () => (crypto.randomBytes(32)).toString('hex').toLowerCase()
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
 const fixtures = {
   identifier: () => generateIdentifier(),
@@ -29,7 +30,7 @@ const fixtures = {
     }
 
     const rows = await knex('validators')
-      .where('pro_tx_hash', pro_tx_hash)
+      .where('pro_tx_hash', pro_tx_hash.toLowerCase())
 
     const [row] = rows
 
@@ -40,11 +41,35 @@ const fixtures = {
       throw new Error('hash or id must be provided')
     }
 
-    const eqValue = hash ?? id
+    const eqValue = hash.toLowerCase() ?? id
     const eqField = hash ? 'hash' : 'id'
 
     const rows = await knex('state_transitions')
       .where(eqField, eqValue)
+
+    const [row] = rows
+
+    return row
+  },
+  getIdentity: async (knex, { identifier, id }) => {
+    if (!identifier && !id) {
+      throw new Error('identifier or id must be provided')
+    }
+
+    const eqValue = identifier ?? id
+    const eqField = identifier ? 'identifier' : 'id'
+
+    const rows = await knex('identities')
+      .where(eqField, eqValue)
+
+    const [row] = rows
+
+    return row
+  },
+  getLastIdentity: async (knex) => {
+    const rows = await knex('identities')
+      .orderBy('id', 'desc')
+      .limit(1)
 
     const [row] = rows
 
@@ -75,15 +100,15 @@ const fixtures = {
       ? await fixtures.getValidator(knex, { pro_tx_hash: validator })
       : await fixtures.validator(knex)
     const row = {
-      hash: hash ?? generateHash(),
+      hash: (hash ?? generateHash()).toLowerCase(),
       height: height ?? 1,
       timestamp: timestamp ?? new Date(),
       block_version: block_version ?? 13,
       app_version: app_version ?? 1,
       l1_locked_height: l1_locked_height ?? 1337,
-      validator: validatorObject.pro_tx_hash,
+      validator: (validatorObject.pro_tx_hash).toLowerCase(),
       validator_id: validatorObject.id,
-      app_hash: app_hash ?? generateHash()
+      app_hash: (app_hash ?? generateHash()).toLowerCase()
     }
 
     await knex('blocks').insert(row)
@@ -119,13 +144,24 @@ const fixtures = {
       throw new Error('owner must be provided for transaction fixture')
     }
 
+    let owner_id
+
+    if (type === StateTransitionEnum.IDENTITY_CREATE) {
+      owner_id = ((await fixtures.getLastIdentity(knex))?.id ?? 0) + 1
+
+      console.log()
+    } else {
+      owner_id = (await fixtures.getIdentity(knex, { identifier: owner })).id
+    }
+
     const row = {
-      block_hash,
+      block_hash: block_hash.toLowerCase(),
       block_height,
       type,
       batch_type,
       owner,
-      hash: hash ?? generateHash(),
+      owner_id,
+      hash: (hash ?? generateHash()).toLowerCase(),
       data: data ?? {},
       index: index ?? 0,
       gas_used: gas_used ?? 0,
@@ -144,7 +180,8 @@ const fixtures = {
     state_transition_hash,
     revision,
     owner,
-    is_system
+    is_system,
+    type
   } = {}) {
     if (!identifier) {
       identifier = generateIdentifier()
@@ -156,6 +193,12 @@ const fixtures = {
 
     if (!block_height) {
       throw Error('Block height must be provided')
+    }
+
+    if (!type) {
+      type = IdentityTypeEnum[0]
+    } else if (type && !Object.keys(IdentityTypeEnum).includes(type.toString())) {
+      throw new Error('Type must be one of: "REGULAR", "MASTERNODE" or "VOTING"')
     }
 
     let transaction
@@ -172,13 +215,17 @@ const fixtures = {
       temp = await fixtures.getStateTransition(knex, { hash: state_transition_hash })
     }
 
+    const last_identity_id = ((await fixtures.getLastIdentity(knex))?.id ?? 0) + 1
+
     const row = {
+      id: last_identity_id,
       identifier,
       revision: revision ?? 0,
-      state_transition_hash: state_transition_hash ?? transaction.hash,
+      state_transition_hash: (state_transition_hash ?? transaction.hash).toLowerCase(),
       state_transition_id: transaction?.id ?? temp?.id,
       owner: owner ?? identifier,
-      is_system: is_system ?? false
+      is_system: is_system ?? false,
+      type
     }
 
     const result = await knex('identities').insert(row).returning('id')
@@ -245,7 +292,7 @@ const fixtures = {
       owner,
       identifier,
       name: name ?? null,
-      state_transition_hash,
+      state_transition_hash: state_transition_hash?.toLowerCase(),
       schema: schema ?? {},
       version: version ?? 0,
       is_system: is_system === true
@@ -290,7 +337,7 @@ const fixtures = {
 
     const row = {
       identifier,
-      state_transition_hash,
+      state_transition_hash: state_transition_hash?.toLowerCase(),
       revision: revision ?? 1,
       data: data ?? {},
       deleted: deleted ?? false,
@@ -335,7 +382,7 @@ const fixtures = {
       amount,
       sender,
       recipient,
-      state_transition_hash
+      state_transition_hash: state_transition_hash.toLowerCase()
     }
 
     const result = await knex('transfers').insert(row).returning('id')
@@ -346,7 +393,7 @@ const fixtures = {
     pro_tx_hash
   } = {}) => {
     const row = {
-      pro_tx_hash: pro_tx_hash ?? generateHash()
+      pro_tx_hash: (pro_tx_hash ?? generateHash()).toLowerCase()
     }
 
     const [result] = await knex('validators').insert(row).returning('id')
@@ -378,8 +425,8 @@ const fixtures = {
     }
 
     const row = {
-      pro_tx_hash: pro_tx_hash ?? generateHash(),
-      state_transition_hash,
+      pro_tx_hash: (pro_tx_hash ?? generateHash()).toLowerCase(),
+      state_transition_hash: state_transition_hash.toLowerCase(),
       voter_identity_id,
       choice: choice ?? 0,
       towards_identity_identifier: towards_identity_identifier ?? null,
@@ -468,7 +515,7 @@ const fixtures = {
       max_supply,
       base_supply,
       localizations,
-      state_transition_hash,
+      state_transition_hash: state_transition_hash.toLowerCase(),
       description,
       name,
       keeps_transfer_history: keeps_transfer_history ?? true,
@@ -528,7 +575,7 @@ const fixtures = {
       action,
       amount: amount ?? null,
       public_note: public_note ?? null,
-      state_transition_hash,
+      state_transition_hash: state_transition_hash.toLowerCase(),
       token_contract_position,
       data_contract_id,
       recipient: recipient ?? null
@@ -564,11 +611,11 @@ const fixtures = {
     await knex.raw('DELETE FROM token_transitions')
     await knex.raw('DELETE FROM tokens')
     await knex.raw('DELETE FROM masternode_votes')
+    await knex.raw('DELETE FROM transfers')
     await knex.raw('DELETE FROM identities')
     await knex.raw('DELETE FROM identity_aliases')
     await knex.raw('DELETE FROM documents')
     await knex.raw('DELETE FROM data_contracts')
-    await knex.raw('DELETE FROM transfers')
     await knex.raw('DELETE FROM state_transitions')
     await knex.raw('DELETE FROM blocks')
     await knex.raw('DELETE FROM validators')

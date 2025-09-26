@@ -41,7 +41,7 @@ impl PostgresDAO {
                     &owner.to_string(Base58),
                     &schema_decoded,
                     &version,
-                    &st_hash,
+                    &st_hash.map(|hash| hash.to_lowercase()),
                     &is_system,
                     &format_version,
                 ],

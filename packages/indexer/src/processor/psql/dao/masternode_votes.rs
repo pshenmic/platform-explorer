@@ -45,8 +45,8 @@ impl PostgresDAO {
             .execute(
                 &stmt,
                 &[
-                    &masternode_vote.pro_tx_hash,
-                    &st_hash,
+                    &masternode_vote.pro_tx_hash.to_lowercase(),
+                    &st_hash.to_lowercase(),
                     &masternode_vote.voter_identity.to_string(Base58),
                     &choice,
                     &masternode_vote

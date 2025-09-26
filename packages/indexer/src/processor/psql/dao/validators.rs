@@ -17,7 +17,10 @@ impl PostgresDAO {
             .await
             .unwrap();
 
-        let rows: Vec<Row> = sql_transaction.query(&stmt, &[&pro_tx_hash]).await.unwrap();
+        let rows: Vec<Row> = sql_transaction
+            .query(&stmt, &[&pro_tx_hash.to_lowercase()])
+            .await
+            .unwrap();
 
         let validators: Vec<Validator> = rows
             .into_iter()
@@ -30,20 +33,25 @@ impl PostgresDAO {
     pub async fn create_validator(
         &self,
         validator: Validator,
+        voting_public_key_hash: String,
         sql_transaction: &Transaction<'_>,
     ) -> Result<(), PoolError> {
         let stmt = sql_transaction
             .prepare_cached(
-                "INSERT INTO validators(pro_tx_hash) \
-        VALUES ($1);",
+                "INSERT INTO validators(pro_tx_hash, voting_public_key_hash) VALUES ($1, $2);",
             )
             .await
             .unwrap();
 
         sql_transaction
-            .execute(&stmt, &[&validator.pro_tx_hash])
-            .await
-            .unwrap();
+            .execute(
+                &stmt,
+                &[
+                    &validator.pro_tx_hash.to_lowercase(),
+                    &voting_public_key_hash,
+                ],
+            )
+            .await?;
 
         println!(
             "Created Validator with proTxHash {}",

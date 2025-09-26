@@ -1271,9 +1271,9 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
           "timestamp": "2024-03-18T10:13:54.150Z",
           "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
           "totalTxs": 1,
-          "totalTransfers": 0,
-          "totalDocuments": 0,
-          "totalDataContracts": 0,
+          "totalTransfers": null,
+          "totalDocuments": null,
+          "totalDataContracts": null,
           "isSystem": false,
           "aliases": [
             {
