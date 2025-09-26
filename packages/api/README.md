@@ -1172,7 +1172,8 @@ GET /identity/3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ
 
 {
   "identifier": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ",
-  "revision": 0,
+  "revision": "0",
+  "nonce": "13",
   "balance": "49989647300",
   "timestamp": "2024-10-12T18:51:44.592Z",
   "txHash": "32FB988D87E4122A2FE030B5014A59A05786C1501FD97D765E2329F89A8AD01D",
@@ -1300,6 +1301,7 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
           "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
           "owner": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
           "revision": 1,
+          "nonce": "1",
           "balance": "1000000",
           "timestamp": "2024-03-18T10:13:54.150Z",
           "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",

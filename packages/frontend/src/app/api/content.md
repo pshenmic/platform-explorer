@@ -1139,7 +1139,8 @@ GET /identity/3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ
 
 {
   "identifier": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ",
-  "revision": 0,
+  "revision": "0",
+  "nonce": "13",
   "balance": "49989647300",
   "timestamp": "2024-10-12T18:51:44.592Z",
   "txHash": "32FB988D87E4122A2FE030B5014A59A05786C1501FD97D765E2329F89A8AD01D",
@@ -1267,6 +1268,7 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
           "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
           "owner": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
           "revision": 1,
+          "nonce": "1",
           "balance": "1000000",
           "timestamp": "2024-03-18T10:13:54.150Z",
           "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
@@ -2436,16 +2438,16 @@ IDENTITY_CREATE with instantLock
 ```
 ```json
 {
-  "type": 7,
-  "typeString": "IDENTITY_CREDIT_TRANSFER",
-  "identityNonce": 1,
-  "userFeeIncrease": 0,
-  "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
-  "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
-  "amount": 21856638,
-  "signaturePublicKeyId": 3,
-  "signature": "1f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8",
-  "raw": "07000fc3bf4a26bff60f4f79a1f4b929ce4d4c5833d226c1c7f68758e71d7ae229db569fd4f616b3dedecbeef95352cf38f1fb04d232a0d20623bc195b0c3f721840fc014d817e010003411f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8"
+    "type": 7,
+    "typeString": "IDENTITY_CREDIT_TRANSFER",
+    "identityNonce": 1,
+    "userFeeIncrease": 0,
+    "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
+    "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+    "amount": 21856638,
+    "signaturePublicKeyId": 3,
+    "signature": "1f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8",
+    "raw": "07000fc3bf4a26bff60f4f79a1f4b929ce4d4c5833d226c1c7f68758e71d7ae229db569fd4f616b3dedecbeef95352cf38f1fb04d232a0d20623bc195b0c3f721840fc014d817e010003411f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8"
 }
 ```
 ```json
