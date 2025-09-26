@@ -308,7 +308,10 @@ module.exports = ({
           type: 'object',
           required: ['dpns'],
           properties: {
-            dpns: { type: 'string' }
+            dpns: {
+              type: 'string',
+              pattern: '^[A-Za-z0-9.-]+$'
+            }
           }
         }
       }
@@ -390,7 +393,10 @@ module.exports = ({
         querystring: {
           type: 'object',
           properties: {
-            query: { type: 'string' }
+            query: {
+              type: 'string',
+              pattern: '^[A-Za-z0-9.-]+$'
+            }
           }
         }
       }
@@ -596,6 +602,7 @@ module.exports = ({
             name: {
               type: 'string',
               // minimal token name is 3 but for search by part name we use minimal length 1
+              pattern: '^[A-Za-z0-9-]+$',
               minLength: 1,
               maxLength: 25
             }
