@@ -7,7 +7,7 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const { IdentifierWASM, TokenConfigurationWASM } = require('pshenmic-dpp')
+const { IdentifierWASM, TokenConfigurationWASM, IdentityWASM} = require('pshenmic-dpp')
 const BatchEnum = require('../../src/enums/BatchEnum')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 const { NodeController } = require('dash-platform-sdk/src/node')
@@ -604,13 +604,22 @@ describe('Other routes', () => {
     })
 
     it('should search identity', async () => {
+      const mockIdentity = new IdentityWASM('5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk')
+
+      mockIdentity.revision = 123n
+
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0n)
+      mock.method(IdentitiesController.prototype, 'getIdentityNonce', async () => 0n)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
+
       const { body } = await client.get(`/search?query=${identity.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedIdentity = {
         identifier: identity.identifier,
-        revision: 0,
+        revision: '123',
+        nonce: '0',
         balance: '0',
         timestamp: block.timestamp.toISOString(),
         txHash: identityTransaction.hash,
