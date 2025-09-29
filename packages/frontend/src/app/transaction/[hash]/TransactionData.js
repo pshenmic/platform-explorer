@@ -109,9 +109,9 @@ function TransactionData ({ data, type, loading, rate }) {
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
         title={'Identity Nonce'}
-        value={data?.nonce}
+        value={data?.identityNonce}
         loading={loading}
-        error={data?.nonce === undefined}
+        error={data?.identityNonce === undefined}
       />
 
       <InfoLine
@@ -411,6 +411,14 @@ function TransactionData ({ data, type, loading, rate }) {
       />
 
       <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        title={'Identity Nonce'}
+        value={data?.identityNonce}
+        loading={loading}
+        error={data?.identityNonce === undefined}
+      />
+
+      <InfoLine
         className={'TransactionPage__InfoLine'}
         title={'Revision'}
         value={data?.revision}
@@ -485,9 +493,9 @@ function TransactionData ({ data, type, loading, rate }) {
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
         title={'Identity Nonce'}
-        value={data?.nonce}
+        value={data?.identityNonce}
         loading={loading}
-        error={data?.nonce === undefined}
+        error={data?.identityNonce === undefined}
       />
 
       <InfoLine
