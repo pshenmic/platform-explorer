@@ -475,7 +475,7 @@ const decodeStateTransition = async (base64) => {
                   }
                   case 'MaxSupply': {
                     out.itemValue = {
-                      amount: tokenTransition.updateTokenConfigurationItem.getItem() ?? null
+                      amount: tokenTransition.updateTokenConfigurationItem.getItem()?.toString() ?? null
                     }
                     break
                   }
