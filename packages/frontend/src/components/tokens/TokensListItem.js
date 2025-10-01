@@ -1,12 +1,13 @@
 import Link from 'next/link'
-import { Alias, Identifier, NotActive, CreditsBlock, FormattedNumber, BigNumber } from '../data'
+import { Alias, Identifier, NotActive, CreditsBlock } from '../data'
 import { Grid, GridItem, Flex } from '@chakra-ui/react'
 import { Supply } from './index'
 import { LinkContainer, ValueContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
 import { findActiveAlias, getMinTokenPrice } from '../../util'
 import { Tooltip } from '../ui/Tooltips'
-import { formatNumberByDecimals } from '../../util/numbers'
+import { FormattedNumber } from '../ui/FormattedNumber'
+
 import './TokensListItem.scss'
 
 function TokensListItem ({ token, variant = 'default', rate }) {
@@ -46,7 +47,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
                 maxSupply={maxSupply || totalSupply}
                 decimals={decimals}
               />
-            : <BigNumber>{formatNumberByDecimals(totalSupply, decimals)}</BigNumber>
+            : <FormattedNumber decimals={decimals}>{totalSupply}</FormattedNumber>
           }
         </GridItem>
 
@@ -70,7 +71,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
                 content={<CreditsBlock credits={getMinTokenPrice(token.prices)} rate={rate} />}
               >
                 <Flex gap={'0.25rem'} fontSize={'0.75rem'} fontWeight={500}>
-                  From <FormattedNumber>{getMinTokenPrice(token.prices)}</FormattedNumber>
+                  From <FormattedNumber decimals={decimals}>{getMinTokenPrice(token.prices)}</FormattedNumber>
                 </Flex>
               </Tooltip>
               : <></>

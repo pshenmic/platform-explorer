@@ -1,12 +1,10 @@
 'use client'
 
 import { Progress } from '@chakra-ui/react'
-import { BigNumber } from '../data'
 import { LoadingLine } from '../loading'
-import { currencyRound } from '../../util'
-import { Tooltip } from '../ui/Tooltips'
+import { FormattedNumber } from '../ui/FormattedNumber'
+
 import './Supply.scss'
-import { formatNumberByDecimals } from '../../util/numbers'
 
 function Supply ({
   currentSupply,
@@ -23,11 +21,7 @@ function Supply ({
   loading
 }) {
   const progressClass = progressPosition === 'top' ? 'Supply--ProgressTop' : ''
-  const isTooBigNumber = (number) => Number(number) > 999999999
   const hasMaxSupply = maxSupply && Number(maxSupply) > 0
-
-  const displayFormatCurrentSupply = formatNumberByDecimals(currentSupply, decimals)
-  const displayFormatMaxSupply = formatNumberByDecimals(maxSupply, decimals)
 
   return (
     <div className={`Supply ${progressClass || ''} ${showTitles && 'Supply--WithIcons'} ${className || ''} ${loading ? 'Supply--Loading' : ''}`}>
@@ -44,30 +38,15 @@ function Supply ({
             ? <LoadingLine w='100%' h={'20px'}/>
             : <>
                 <div className={'Supply__SupplyTitles'}>
-                  <span className={'Supply__CurrentSupply'}>
-                    {isTooBigNumber(displayFormatCurrentSupply)
-                      ? <Tooltip
-                          placement={'top'}
-                          content={<BigNumber>{displayFormatCurrentSupply}</BigNumber>}
-                        >
-                          <span>{currencyRound(displayFormatCurrentSupply)}</span>
-                        </Tooltip>
-                      : <BigNumber>{displayFormatCurrentSupply}</BigNumber>
-                    }
-                  </span>
-                  {hasMaxSupply && (
-                    <span className={'Supply__MaxSupply'}>
-                      {isTooBigNumber(maxSupply)
-                        ? <Tooltip
-                            placement={'top'}
-                            content={<BigNumber>{displayFormatMaxSupply}</BigNumber>}
-                          >
-                            <span>{currencyRound(displayFormatMaxSupply)}</span>
-                          </Tooltip>
-                        : <BigNumber>{displayFormatMaxSupply}</BigNumber>
-                      }
-                    </span>
-                  )}
+                  <FormattedNumber decimals={decimals} className={'Supply__CurrentSupply'}>
+                    {currentSupply}
+                  </FormattedNumber>
+                  {
+                    maxSupply &&
+                      <FormattedNumber decimals={decimals} className={'Supply__MaxSupply'}>
+                        {maxSupply}
+                      </FormattedNumber>
+                  }
                 </div>
                 {hasMaxSupply && (
                   <Progress

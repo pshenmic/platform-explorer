@@ -1,10 +1,10 @@
 import './BigNumber.scss'
 import { formatNumberWithSpaces } from '../../util/numbers'
 
-function BigNumber ({ children, className, decimalPlaces }) {
+function BigNumber ({ children, className }) {
   if (children === undefined || children === null) return null
 
-  const formatted = formatNumberWithSpaces(children, decimalPlaces)
+  const formatted = formatNumberWithSpaces(children)
 
   return (
         <span className={`BigNumber ${className || ''}`}>

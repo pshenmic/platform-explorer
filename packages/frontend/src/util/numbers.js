@@ -1,47 +1,49 @@
-export const formatNumberWithSpaces = (num, decimalPlaces) => {
-  if (num === undefined || num === null) return ''
+export const sliceNumberByDecimals = (str, decimalPlaces) => {
+  if (str === undefined || str === null) return { integer: '0', fractional: '' }
 
-  if (typeof num === 'bigint') {
-    return num.toLocaleString('ru-RU').replace(/,/g, ', ')
-  }
-
-  const number = Number(num)
-  if (isNaN(number)) return String(num)
-
-  return number.toLocaleString('ru-RU', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: decimalPlaces || 0
-  }).replace(/,/g, ', ')
-}
-
-export const formatNumberByDecimals = (str, decimalPlaces) => {
-  if (str === undefined || str === null) return '0'
-
-  const strNum = String(str).replace(/[^0-9]/g, '') // Remove non-digits
-  if (strNum === '' || strNum.startsWith('-')) return '0'
+  if (str === '') return { integer: '0', fractional: '' }
 
   const decimal = Number(decimalPlaces)
+
   if (isNaN(decimal) || !Number.isInteger(decimal) || decimal <= 0) {
-    return strNum
+    return { integer: str, fractional: '' }
   }
 
-  const len = strNum.length
-  let integerPart = '0'
-  let fractionalPart = ''
+  const len = str.length
 
   if (len > decimal) {
-    integerPart = strNum.slice(0, len - decimal)
-    fractionalPart = strNum.slice(len - decimal)
-  } else {
-    fractionalPart = '0'.repeat(decimal - len) + strNum
+    return {
+      integer: str.slice(0, len - decimal),
+      fractional: str.slice(len - decimal)
+    }
   }
 
-  fractionalPart = fractionalPart.replace(/0+$/, '')
+  return {
+    integer: '0',
+    fractional: '0'.repeat(decimal - len) + str
+  }
+}
 
-  let result = integerPart
-  if (fractionalPart) {
-    result += ',' + fractionalPart
+export const trimEndZeros = (str) => {
+  return str.replace(/0+$/, '')
+}
+
+export const formatNumberWithSpaces = (num) => {
+  try {
+    const formattedInteger = BigInt(num).toLocaleString('en')
+
+    return formattedInteger
+  } catch (e) {
+    const formattedInteger = String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+
+    return formattedInteger
+  }
+}
+
+export const concatDecimal = (integer, fractional) => {
+  if (fractional) {
+    return integer + ',' + fractional
   }
 
-  return result
+  return integer
 }
