@@ -2035,8 +2035,8 @@ POST /transaction/decode
       "additionalProperties": false
     }
   },
-  "tokens": {
-    "0": {
+  "tokens": [
+    {
       "position": 0,
       "conventions": {
         "decimals": 1,
@@ -2169,7 +2169,7 @@ POST /transaction/decode
       "mainControlGroup": null,
       "description": "note"
     }
-  },
+  ],
   "groups": [],
   "signature": "1f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d",
   "signaturePublicKeyId": 2,
@@ -2384,7 +2384,7 @@ IDENTITY_CREATE with instantLock
         "requiresIdentityDecryptionBoundedKey": null,
         "requiresIdentityEncryptionBoundedKey": null
     },
-    "tokens": {},
+    "tokens": [],
     "groups": [],
     "identityContractNonce": 6,
     "signaturePublicKeyId": 2,

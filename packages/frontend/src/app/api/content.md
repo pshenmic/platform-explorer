@@ -2002,8 +2002,8 @@ POST /transaction/decode
       "additionalProperties": false
     }
   },
-  "tokens": {
-    "0": {
+  "tokens": [
+    {
       "position": 0,
       "conventions": {
         "decimals": 1,
@@ -2136,7 +2136,7 @@ POST /transaction/decode
       "mainControlGroup": null,
       "description": "note"
     }
-  },
+  ],
   "groups": [],
   "signature": "1f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d",
   "signaturePublicKeyId": 2,
@@ -2339,46 +2339,46 @@ IDENTITY_CREATE with instantLock
 ```
 ```json
 {
-    "type": 4,
-    "typeString": "DATA_CONTRACT_UPDATE",
-    "internalConfig": {
-        "canBeDeleted": false,
-        "readonly": false,
-        "keepsHistory": false,
-        "documentsKeepHistoryContractDefault": false,
-        "documentsMutableContractDefault": true,
-        "documentsCanBeDeletedContractDefault": true,
-        "requiresIdentityDecryptionBoundedKey": null,
-        "requiresIdentityEncryptionBoundedKey": null
-    },
-    "tokens": {},
-    "groups": [],
-    "identityContractNonce": 6,
-    "signaturePublicKeyId": 2,
-    "signature": "1ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903",
-    "userFeeIncrease": 0,
-    "ownerId": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-    "dataContractId": "AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18",
-    "dataContractIdentityNonce": "0",
-    "schema": {
-        "note": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "position": 0
-                },
-                "author": {
-                    "type": "string",
-                    "position": 1
-                }
-            },
-            "additionalProperties": false
+  "type": 4,
+  "typeString": "DATA_CONTRACT_UPDATE",
+  "internalConfig": {
+    "canBeDeleted": false,
+    "readonly": false,
+    "keepsHistory": false,
+    "documentsKeepHistoryContractDefault": false,
+    "documentsMutableContractDefault": true,
+    "documentsCanBeDeletedContractDefault": true,
+    "requiresIdentityDecryptionBoundedKey": null,
+    "requiresIdentityEncryptionBoundedKey": null
+  },
+  "tokens": [],
+  "groups": [],
+  "identityContractNonce": 6,
+  "signaturePublicKeyId": 2,
+  "signature": "1ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903",
+  "userFeeIncrease": 0,
+  "ownerId": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
+  "dataContractId": "AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18",
+  "dataContractIdentityNonce": "0",
+  "schema": {
+    "note": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "position": 0
+        },
+        "author": {
+          "type": "string",
+          "position": 1
         }
-    },
-    "version": 2,
-    "dataContractOwner": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-    "raw": "010006008a4af217f340e9c4c95857496cf33b68eb6c712ac6d20a1eb7854d14afd9ffcf00000000000101000002e901dfc172a96ce3f7d334d6c0b69df3b01c86d30ff03a7c24f516838f94340d0001046e6f7465160312047479706512066f626a656374120a70726f70657274696573160212076d65737361676516021204747970651206737472696e671208706f736974696f6e02001206617574686f7216021204747970651206737472696e671208706f736974696f6e020112146164646974696f6e616c50726f7065727469657313000002411ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903"
+      },
+      "additionalProperties": false
+    }
+  },
+  "version": 2,
+  "dataContractOwner": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
+  "raw": "010006008a4af217f340e9c4c95857496cf33b68eb6c712ac6d20a1eb7854d14afd9ffcf00000000000101000002e901dfc172a96ce3f7d334d6c0b69df3b01c86d30ff03a7c24f516838f94340d0001046e6f7465160312047479706512066f626a656374120a70726f70657274696573160212076d65737361676516021204747970651206737472696e671208706f736974696f6e02001206617574686f7216021204747970651206737472696e671208706f736974696f6e020112146164646974696f6e616c50726f7065727469657313000002411ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903"
 }
 ```
 ```json
@@ -2390,28 +2390,28 @@ IDENTITY_CREATE with instantLock
   "identityId": "4NGALjtX2t3AXE3ZCqJiSmYuiWEY3ZPQNUBxNWWRrRSp",
   "revision": 2,
   "publicKeysToAdd": [
-      {
-          "contractBounds": null,
-          "id": 5,
-          "type": "ECDSA_HASH160",
-          "data": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
-          "publicKeyHash": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
-          "purpose": "AUTHENTICATION",
-          "securityLevel": "HIGH",
-          "readOnly": false,
-          "signature": ""
-      },
-      {
-          "contractBounds": null,
-          "id": 6,
-          "type": "ECDSA_SECP256K1",
-          "data": "026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0",
-          "publicKeyHash": "d39eda042126256a372c388bd191532a7c9612ce",
-          "purpose": "AUTHENTICATION",
-          "securityLevel": "MASTER",
-          "readOnly": false,
-          "signature": "1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06"
-      }
+    {
+      "contractBounds": null,
+      "id": 5,
+      "type": "ECDSA_HASH160",
+      "data": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
+      "publicKeyHash": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "HIGH",
+      "readOnly": false,
+      "signature": ""
+    },
+    {
+      "contractBounds": null,
+      "id": 6,
+      "type": "ECDSA_SECP256K1",
+      "data": "026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0",
+      "publicKeyHash": "d39eda042126256a372c388bd191532a7c9612ce",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "MASTER",
+      "readOnly": false,
+      "signature": "1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06"
+    }
   ],
   "publicKeyIdsToDisable": [],
   "signature": "1f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1",
@@ -2421,54 +2421,54 @@ IDENTITY_CREATE with instantLock
 ```
 ```json
 {
-    "type": 6,
-    "typeString": "IDENTITY_CREDIT_WITHDRAWAL",
-    "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
-    "userFeeIncrease": 0,
-    "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
-    "amount": 200000,
-    "identityNonce": 6,
-    "outputScript": "76a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac",
-    "coreFeePerByte": 5,
-    "signature": "20cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b",
-    "signaturePublicKeyId": 3,
-    "pooling": "Standard",
-    "raw": "05017199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6bfc00030d400500011976a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac0600034120cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b"
+  "type": 6,
+  "typeString": "IDENTITY_CREDIT_WITHDRAWAL",
+  "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
+  "userFeeIncrease": 0,
+  "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+  "amount": 200000,
+  "identityNonce": 6,
+  "outputScript": "76a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac",
+  "coreFeePerByte": 5,
+  "signature": "20cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b",
+  "signaturePublicKeyId": 3,
+  "pooling": "Standard",
+  "raw": "05017199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6bfc00030d400500011976a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac0600034120cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b"
 }
 ```
 ```json
 {
-    "type": 7,
-    "typeString": "IDENTITY_CREDIT_TRANSFER",
-    "identityNonce": 1,
-    "userFeeIncrease": 0,
-    "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
-    "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
-    "amount": 21856638,
-    "signaturePublicKeyId": 3,
-    "signature": "1f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8",
-    "raw": "07000fc3bf4a26bff60f4f79a1f4b929ce4d4c5833d226c1c7f68758e71d7ae229db569fd4f616b3dedecbeef95352cf38f1fb04d232a0d20623bc195b0c3f721840fc014d817e010003411f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8"
+  "type": 7,
+  "typeString": "IDENTITY_CREDIT_TRANSFER",
+  "identityNonce": 1,
+  "userFeeIncrease": 0,
+  "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
+  "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+  "amount": 21856638,
+  "signaturePublicKeyId": 3,
+  "signature": "1f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8",
+  "raw": "07000fc3bf4a26bff60f4f79a1f4b929ce4d4c5833d226c1c7f68758e71d7ae229db569fd4f616b3dedecbeef95352cf38f1fb04d232a0d20623bc195b0c3f721840fc014d817e010003411f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8"
 }
 ```
 ```json
 {
-    "type": 8,
-    "typeString": "IDENTITY_CREDIT_TRANSFER",
-    "indexValues": [
-        "EgRkYXNo",
-        "EgN5MDE="
-    ],
-    "contractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    "modifiedDataIds": [
-        "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse"
-    ],
-    "ownerId": "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse",
-    "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
-    "documentTypeName": "domain",
-    "indexName": "parentNameAndLabel",
-    "choice": "Abstain",
-    "proTxHash": "ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b",
-    "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
+  "type": 8,
+  "typeString": "IDENTITY_CREDIT_TRANSFER",
+  "indexValues": [
+    "EgRkYXNo",
+    "EgN5MDE="
+  ],
+  "contractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+  "modifiedDataIds": [
+    "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse"
+  ],
+  "ownerId": "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse",
+  "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
+  "documentTypeName": "domain",
+  "indexName": "parentNameAndLabel",
+  "choice": "Abstain",
+  "proTxHash": "ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b",
+  "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
 }
 ```
 Response codes:
