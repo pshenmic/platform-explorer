@@ -250,31 +250,77 @@ class MainController {
     response.send(quorumInfo)
   }
 
-  test = async (request, response) => {
-    response.sse({
-      data: JSON.stringify({message: 'listening'}),
-      comment: 'initial message'
+  subscribeTransactions = async (request, response) => {
+    // by default fastify sse plugin will send this with empty message only on first message
+    response.raw.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive'
     })
 
     const redis = await this.redis.duplicate();
 
     await redis.connect()
 
+    response.sse({
+      data: JSON.stringify({
+        status: 'ok'
+      })
+    })
+
+    let unsentBlocks = []
+    let processedBlocks = []
+
     await redis.subscribe(REDIS_PUBSUB_NEW_BLOCK_CHANNEL, async (blockInfo) => {
       const {txIds, blockHeight} = JSON.parse(blockInfo)
+
+      unsentBlocks.push(blockHeight)
 
       const block = await this.blocksDAO.getBlockByHeight(blockHeight)
       const txs = await this.transactionsDAO.getTransactionsByIds(txIds)
 
-      const txsWithData = await Promise.all(txs.map(async (tx) => ({
-        ...tx,
-        details: await decodeStateTransition(tx.data),
-      })))
+      processedBlocks.push({
+        block,
+        txs
+      })
+
+      // send if second unsent block height more current block height
+      // and already processed blocks count equal unsent blocks count
+      // or unsent blocks count == 1
+      if (processedBlocks.length === unsentBlocks.length) {
+        processedBlocks.sort((a, b) => a.block.header.height - b.block.header.height)
+
+        for (let i = 0; i < processedBlocks.length; i++) {
+          response.sse({
+            event: 'transactions',
+            data: JSON.stringify(processedBlocks[i]),
+            id: String(processedBlocks[i].block.header.height)
+          })
+        }
+
+        processedBlocks = []
+        unsentBlocks = []
+      }
+    })
+
+    request.raw.on('close', async () => {
+      await redis.destroy()
+    })
+  }
+
+  subscribeBlocks = async (request, response) => {
+    const redis = await this.redis.duplicate();
+
+    await redis.connect()
+
+    await redis.subscribe(REDIS_PUBSUB_NEW_BLOCK_CHANNEL, async (blockInfo) => {
+      const {blockHeight} = JSON.parse(blockInfo)
+
+      const block = await this.blocksDAO.getBlockByHeight(blockHeight)
 
       response.sse({
         data: JSON.stringify({
           block,
-          txs: txsWithData
         })
       })
     })

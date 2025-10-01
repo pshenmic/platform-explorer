@@ -687,9 +687,9 @@ module.exports = ({
       }
     },
     {
-      path: '/events/update',
+      path: '/events/update/transactions',
       method: 'GET',
-      handler: mainController.test
+      handler: mainController.subscribeTransactions
     }
   ]
 

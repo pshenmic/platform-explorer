@@ -20,8 +20,6 @@ const MasternodeVotesController = require('./controllers/MasternodeVotesControll
 const ContestedResourcesController = require('./controllers/ContestedResourcesController')
 const TokensController = require('./controllers/TokensController')
 const {DashPlatformSDK} = require('dash-platform-sdk')
-const TenderdashWebSocket = require("./tenderdashSubscribe");
-const {TENDERDASH_WS_BLOCKS_SUBSCRIPTION} = require("./constants");
 const {createClient} = require("redis");
 
 function errorHandler(err, req, reply) {
