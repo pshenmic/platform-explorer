@@ -58,6 +58,28 @@ class DataContractsController {
 
     response.send(transactions)
   }
+
+  getDataContractTrends = async (request, response) => {
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      timestamp_start: start = new Date().getTime() - 2592000000,
+      timestamp_end: end = new Date().getTime()
+    } = request.query
+
+    if (!start || !end) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const trends = await this.dataContractsDAO.getContractsTrends(new Date(start), new Date(end), page, limit, order)
+
+    response.send(trends)
+  }
 }
 
 module.exports = DataContractsController

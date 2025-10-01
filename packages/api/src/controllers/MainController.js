@@ -120,7 +120,7 @@ class MainController {
       }
     }
 
-    if (/^[0-9A-f]{64,64}$/.test(query)) {
+    if (/^[0-9A-Fa-f]{64,64}$/.test(query)) {
       // search block by hash
       const block = await this.blocksDAO.getBlockByHash(query)
 
@@ -144,7 +144,7 @@ class MainController {
     }
 
     // check for any Identifiers (identities, data contracts, documents)
-    if (/^[0-9A-z]{43,44}$/.test(query)) {
+    if (/^[0-9A-Za-z]{43,44}$/.test(query)) {
       // search identites
       const identity = await this.identitiesDAO.getIdentityByIdentifier(query)
 

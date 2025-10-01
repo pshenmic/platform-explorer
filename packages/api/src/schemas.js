@@ -2,6 +2,7 @@ const schemaTypes = [
   {
     $id: 'hash',
     type: 'string',
+    pattern: '^[A-Za-z0-9]+$',
     minLength: 64,
     maxLength: 64
   },
@@ -50,6 +51,7 @@ const schemaTypes = [
       },
       hash: {
         type: 'string',
+        pattern: '^[A-Za-z0-9]+$',
         minLength: 64,
         maxLength: 64
       },
@@ -116,7 +118,10 @@ const schemaTypes = [
         enum: ['SUCCESS', 'FAIL', 'ALL']
       },
       owner: {
-        type: ['string', 'null']
+        type: ['string', 'null'],
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 43,
+        maxLength: 44
       },
       gas_min: {
         type: ['number', 'null'],
@@ -139,6 +144,7 @@ const schemaTypes = [
       },
       validator: {
         type: 'string',
+        pattern: '^[A-Za-z0-9]+$',
         minLength: 64,
         maxLength: 64
       },
@@ -168,11 +174,13 @@ const schemaTypes = [
       },
       voter_identity: {
         type: ['string', 'null'],
+        pattern: '^[A-Za-z0-9]+$',
         minLength: 43,
         maxLength: 44
       },
       towards_identity: {
         type: ['string', 'null'],
+        pattern: '^[A-Za-z0-9]+$',
         minLength: 43,
         maxLength: 44
       },
@@ -187,6 +195,7 @@ const schemaTypes = [
       },
       start_at: {
         type: ['string', 'null'],
+        pattern: '^[A-Za-z0-9]+$',
         minLength: 43,
         maxLength: 44
       }
@@ -218,6 +227,7 @@ const schemaTypes = [
   {
     $id: 'identifier',
     type: 'string',
+    pattern: '^[A-Za-z0-9]+$',
     minLength: 43,
     maxLength: 44
   },
