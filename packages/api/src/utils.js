@@ -2,8 +2,8 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const {TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT} = require('./constants')
-const {base58} = require('@scure/base')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT } = require('./constants')
+const { base58 } = require('@scure/base')
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
 const Alias = require('./models/Alias')
@@ -18,7 +18,7 @@ const {
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
 const dpnsContract = require('../data_contracts/dpns.json')
-const {ContestedStateResultType} = require('dash-platform-sdk/src/types')
+const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
 const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
 const Token = require('./models/Token')
 const PerpetualDistribution = require('./models/PerpetualDistribution')
@@ -33,7 +33,7 @@ const getKnex = () => {
       user: process.env.POSTGRES_USER,
       database: process.env.POSTGRES_DB,
       password: process.env.POSTGRES_PASS,
-      ssl: process.env.POSTGRES_SSL ? {rejectUnauthorized: false} : false
+      ssl: process.env.POSTGRES_SSL ? { rejectUnauthorized: false } : false
     }
   })
 }
@@ -95,7 +95,7 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
         aliases.push(getAliasFromDocument(aliasDocument))
       }
 
-      const {perpetualDistribution, preProgrammedDistribution} = tokenConfig?.distributionRules ?? {}
+      const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.distributionRules ?? {}
 
       let priceTx = null
 
@@ -389,10 +389,10 @@ const decodeStateTransition = async (base64) => {
               historicalDocumentId: transition.getHistoricalDocumentId(stateTransition.getOwnerId()).base58(),
               groupInfo: tokenTransition.base.usingGroupInfo
                 ? {
-                  groupContractPosition: tokenTransition.base.usingGroupInfo.groupContractPosition,
-                  actionId: tokenTransition.base.usingGroupInfo.actionId.base58(),
-                  actionIsProposer: tokenTransition.base.usingGroupInfo.actionIsProposer
-                }
+                    groupContractPosition: tokenTransition.base.usingGroupInfo.groupContractPosition,
+                    actionId: tokenTransition.base.usingGroupInfo.actionId.base58(),
+                    actionIsProposer: tokenTransition.base.usingGroupInfo.actionIsProposer
+                  }
                 : null
             }
 
@@ -508,15 +508,15 @@ const decodeStateTransition = async (base64) => {
                   case 'PerpetualDistribution': {
                     out.itemValue = tokenTransition.updateTokenConfigurationItem.getItem()
                       ? {
-                        distributionType: {
-                          interval: tokenTransition.updateTokenConfigurationItem.getItem().distributionType.getDistribution().interval,
-                          function: tokenTransition.updateTokenConfigurationItem.getItem().distributionType.getDistribution().function
-                        },
-                        distributionRecipient: {
-                          type: tokenTransition.updateTokenConfigurationItem.getItem().distributionRecipient.getType(),
-                          recipient: tokenTransition.updateTokenConfigurationItem.getItem().distributionRecipient.getValue()?.base58()
+                          distributionType: {
+                            interval: tokenTransition.updateTokenConfigurationItem.getItem().distributionType.getDistribution().interval,
+                            function: tokenTransition.updateTokenConfigurationItem.getItem().distributionType.getDistribution().function
+                          },
+                          distributionRecipient: {
+                            type: tokenTransition.updateTokenConfigurationItem.getItem().distributionRecipient.getType(),
+                            recipient: tokenTransition.updateTokenConfigurationItem.getItem().distributionRecipient.getValue()?.base58()
+                          }
                         }
-                      }
                       : null
                     break
                   }
@@ -751,7 +751,7 @@ const decodeStateTransition = async (base64) => {
                       if (prices) {
                         const priceKeys = Object.keys(prices)
 
-                        out.prices = priceKeys.map(key => ({amount: key, price: prices[key].toString()}))
+                        out.prices = priceKeys.map(key => ({ amount: key, price: prices[key].toString() }))
                       }
                     }
                   }
@@ -782,18 +782,18 @@ const decodeStateTransition = async (base64) => {
                 out.data = createTransition.data
                 out.prefundedVotingBalance = prefundedVotingBalance
                   ? {
-                    [prefundedVotingBalance.indexName]: String(prefundedVotingBalance.credits)
-                  }
+                      [prefundedVotingBalance.indexName]: String(prefundedVotingBalance.credits)
+                    }
                   : null
 
                 out.tokenPaymentInfo = createTransition.base.tokenPaymentInfo
                   ? {
-                    paymentTokenContractId: createTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                    tokenContractPosition: createTransition.base.tokenPaymentInfo.tokenContractPosition,
-                    minimumTokenCost: createTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                    maximumTokenCost: createTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                    gasFeesPaidBy: createTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                  }
+                      paymentTokenContractId: createTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: createTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: createTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: createTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: createTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
                   : null
 
                 break
@@ -805,12 +805,12 @@ const decodeStateTransition = async (base64) => {
 
                 out.tokenPaymentInfo = replaceTransition.base.tokenPaymentInfo
                   ? {
-                    paymentTokenContractId: replaceTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                    tokenContractPosition: replaceTransition.base.tokenPaymentInfo.tokenContractPosition,
-                    minimumTokenCost: replaceTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                    maximumTokenCost: replaceTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                    gasFeesPaidBy: replaceTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                  }
+                      paymentTokenContractId: replaceTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: replaceTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: replaceTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: replaceTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: replaceTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
                   : null
 
                 break
@@ -820,12 +820,12 @@ const decodeStateTransition = async (base64) => {
 
                 out.tokenPaymentInfo = deleteTransition.base.tokenPaymentInfo
                   ? {
-                    paymentTokenContractId: deleteTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                    tokenContractPosition: deleteTransition.base.tokenPaymentInfo.tokenContractPosition,
-                    minimumTokenCost: deleteTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                    maximumTokenCost: deleteTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                    gasFeesPaidBy: deleteTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                  }
+                      paymentTokenContractId: deleteTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: deleteTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: deleteTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: deleteTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: deleteTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
                   : null
 
                 break
@@ -837,12 +837,12 @@ const decodeStateTransition = async (base64) => {
 
                 out.tokenPaymentInfo = updatePriceTransition.base.tokenPaymentInfo
                   ? {
-                    paymentTokenContractId: updatePriceTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                    tokenContractPosition: updatePriceTransition.base.tokenPaymentInfo.tokenContractPosition,
-                    minimumTokenCost: updatePriceTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                    maximumTokenCost: updatePriceTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                    gasFeesPaidBy: updatePriceTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                  }
+                      paymentTokenContractId: updatePriceTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: updatePriceTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: updatePriceTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: updatePriceTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: updatePriceTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
                   : null
 
                 break
@@ -854,12 +854,12 @@ const decodeStateTransition = async (base64) => {
 
                 out.tokenPaymentInfo = purchaseTransition.base.tokenPaymentInfo
                   ? {
-                    paymentTokenContractId: purchaseTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                    tokenContractPosition: purchaseTransition.base.tokenPaymentInfo.tokenContractPosition,
-                    minimumTokenCost: purchaseTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                    maximumTokenCost: purchaseTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                    gasFeesPaidBy: purchaseTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                  }
+                      paymentTokenContractId: purchaseTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: purchaseTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: purchaseTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: purchaseTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: purchaseTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
                   : null
 
                 break
@@ -872,12 +872,12 @@ const decodeStateTransition = async (base64) => {
 
                 out.tokenPaymentInfo = transferTransition.base.tokenPaymentInfo
                   ? {
-                    paymentTokenContractId: transferTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                    tokenContractPosition: transferTransition.base.tokenPaymentInfo.tokenContractPosition,
-                    minimumTokenCost: transferTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                    maximumTokenCost: transferTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                    gasFeesPaidBy: transferTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                  }
+                      paymentTokenContractId: transferTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: transferTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: transferTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: transferTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: transferTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
                   : null
 
                 break
@@ -924,14 +924,14 @@ const decodeStateTransition = async (base64) => {
       decoded.raw = stateTransition.hex()
 
       decoded.publicKeys = identityCreateTransition.publicKeys.map(key => {
-        const {contractBounds} = key
+        const { contractBounds } = key
 
         return {
           contractBounds: contractBounds
             ? {
-              type: contractBounds.contractBoundsType ?? null,
-              id: contractBounds.identifier.base58()
-            }
+                type: contractBounds.contractBoundsType ?? null,
+                id: contractBounds.identifier.base58()
+              }
             : null,
           id: key.keyId,
           keyType: key.keyType,
@@ -1030,15 +1030,15 @@ const decodeStateTransition = async (base64) => {
 
       decoded.publicKeysToAdd = identityUpdateTransition.publicKeyIdsToAdd
         .map(key => {
-          const {contractBounds} = key
+          const { contractBounds } = key
 
           return {
             contractBounds: contractBounds
               ? {
-                type: contractBounds.contractBoundsType,
-                id: contractBounds.identifier.base58(),
-                typeName: contractBounds.documentTypeName
-              }
+                  type: contractBounds.contractBoundsType,
+                  id: contractBounds.identifier.base58(),
+                  typeName: contractBounds.documentTypeName
+                }
               : null,
             id: key.keyId,
             type: key.keyType,
@@ -1282,7 +1282,7 @@ const getAliasStateByVote = (aliasInfo, alias, identifier) => {
 }
 
 const getAliasFromDocument = (aliasDocument) => {
-  const {label, parentDomainName, normalizedLabel} = aliasDocument.properties
+  const { label, parentDomainName, normalizedLabel } = aliasDocument.properties
   const documentId = aliasDocument.id
   const timestamp = new Date(Number(aliasDocument.createdAt))
 
@@ -1318,10 +1318,10 @@ const getAliasInfo = async (aliasText, sdk) => {
       ContestedStateResultType.DOCUMENTS_AND_VOTE_TALLY
     )
 
-    return {alias: aliasText, contestedState}
+    return { alias: aliasText, contestedState }
   }
 
-  return {alias: aliasText, contestedState: null}
+  return { alias: aliasText, contestedState: null }
 }
 
 const sleep = (ms) => {
