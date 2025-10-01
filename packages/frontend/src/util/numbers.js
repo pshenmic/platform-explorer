@@ -34,7 +34,7 @@ export const formatNumberWithSpaces = (num) => {
 
     return formattedInteger
   } catch (e) {
-    const formattedInteger = String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+    const formattedInteger = String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
     return formattedInteger
   }
