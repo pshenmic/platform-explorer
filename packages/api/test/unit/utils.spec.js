@@ -3,6 +3,7 @@ const assert = require('node:assert').strict
 const utils = require('../../src/utils')
 const createIdentityMock = require('./mocks/create_identity.json')
 const dataContractCreateMock = require('./mocks/data_contract_create.json')
+const dataContractCreateWithTokensMock = require('./mocks/data_contract_create_with_tokens.json')
 const documentTransitionMock = require('./mocks/document_transition.json')
 const tokenTransferTransitionMock = require('./mocks/token_transfer_transition.json')
 const tokenConfigUpdateTransitionMock = require('./mocks/token_config_update_transition.json')
@@ -16,6 +17,9 @@ const masternodeVote = require('./mocks/masternode_vote.json')
 const Alias = require('../../src/models/Alias')
 const { buildIndexBuffer } = require('../../src/utils')
 const { IdentifierWASM } = require('pshenmic-dpp')
+const Localization = require('../../src/models/Localization')
+const PerpetualDistribution = require('../../src/models/PerpetualDistribution')
+const DistributionFunction = require('../../src/models/DistributionFunction')
 
 describe('Utils', () => {
   describe('decodeStateTransition()', () => {
@@ -69,6 +73,224 @@ describe('Utils', () => {
         signature: '1f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d',
         signaturePublicKeyId: 2,
         raw: '000000e7a63f573069e6f96b251f094423d20cb95a6639e0c32339d30f1d4009807b7100000000000101000001629ce9f3eb4e43c8fa936e16ec55e3aa8ef36663197326cc2032f0ed57cb4f410001066c61626c6572160412047479706512066f626a656374120a70726f706572746965731602120a636f6e7472616374496416041204747970651206737472696e6712096d696e4c656e677468035612096d61784c656e67746803581208706f736974696f6e0300120973686f72744e616d6516041204747970651206737472696e6712096d61784c656e677468034012096d696e4c656e67746803061208706f736974696f6e0302120872657175697265641502120973686f72744e616d65120a636f6e7472616374496412146164646974696f6e616c50726f7065727469657313000a0002411f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d'
+      })
+    })
+
+    it('should decode DataContractCreate with Tokens', async () => {
+      const decoded = await utils.decodeStateTransition(dataContractCreateWithTokensMock.data)
+
+      assert.deepEqual(decoded, {
+        type: 0,
+        typeString: 'DATA_CONTRACT_CREATE',
+        internalConfig: {
+          canBeDeleted: false,
+          readonly: false,
+          keepsHistory: false,
+          documentsKeepHistoryContractDefault: false,
+          documentsMutableContractDefault: true,
+          documentsCanBeDeletedContractDefault: true,
+          requiresIdentityDecryptionBoundedKey: null,
+          requiresIdentityEncryptionBoundedKey: null
+        },
+        userFeeIncrease: 0,
+        version: 1,
+        identityNonce: '16',
+        dataContractId: 'HMx6XgczJQaMU67WGPM3TJkz5YptJFnge5ac8yErZ7Ce',
+        ownerId: 'DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD',
+        tokens: [
+          {
+            position: 0,
+            description: null,
+            conventions: {
+              decimals: 8,
+              localizations: {
+                en: Localization.fromObject({
+                  shouldCapitalize: true,
+                  pluralForm: 'A1-DISTS',
+                  singularForm: 'A1-DIST'
+                })
+              }
+            },
+            conventionsChangeRules: {
+              authorizedToMakeChange: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              adminActionTakers: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              changingAuthorizedActionTakersToNoOneAllowed: true,
+              changingAdminActionTakersToNoOneAllowed: true,
+              selfChangingAdminActionTakersAllowed: true
+            },
+            baseSupply: '10000000000000',
+            keepsHistory: {
+              keepsTransferHistory: true,
+              keepsFreezingHistory: true,
+              keepsMintingHistory: true,
+              keepsBurningHistory: true,
+              keepsDirectPricingHistory: true,
+              keepsDirectPurchaseHistory: true
+            },
+            startAsPaused: false,
+            isAllowedTransferToFrozenBalance: true,
+            maxSupply: null,
+            maxSupplyChangeRules: {
+              authorizedToMakeChange: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              adminActionTakers: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              changingAuthorizedActionTakersToNoOneAllowed: true,
+              changingAdminActionTakersToNoOneAllowed: true,
+              selfChangingAdminActionTakersAllowed: true
+            },
+            distributionRules: {
+              perpetualDistribution: PerpetualDistribution.fromObject({
+                type: 'BlockBasedDistribution',
+                recipientType: 'ContractOwner',
+                recipientValue: null,
+                interval: 100,
+                functionName: 'FixedAmount',
+                functionValue: DistributionFunction.fromObject({
+                  a: undefined,
+                  amount: '10000',
+                  b: undefined,
+                  d: undefined,
+                  decreasePerIntervalDenominator: undefined,
+                  decreasePerIntervalNumerator: undefined,
+                  distributionStartAmount: undefined,
+                  m: undefined,
+                  max: undefined,
+                  maxIntervalCount: undefined,
+                  maxValue: undefined,
+                  min: undefined,
+                  minValue: undefined,
+                  n: undefined,
+                  o: undefined,
+                  p: undefined,
+                  startDecreasingOffset: undefined,
+                  startMoment: undefined,
+                  startStep: undefined,
+                  startingAmount: undefined,
+                  stepCount: undefined,
+                  trailingDistributionIntervalAmount: undefined
+                })
+              }),
+              preProgrammedDistribution: null,
+              newTokenDestinationIdentity: 'DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD',
+              mintingAllowChoosingDestination: false
+            },
+            marketplaceRules: {
+              tradeMode: 'NotTradeable',
+              tradeModeChangeRules: {
+                authorizedToMakeChange: {
+                  takerType: 'ContractOwner',
+                  taker: null
+                },
+                adminActionTakers: {
+                  takerType: 'ContractOwner',
+                  taker: null
+                },
+                changingAuthorizedActionTakersToNoOneAllowed: true,
+                changingAdminActionTakersToNoOneAllowed: true,
+                selfChangingAdminActionTakersAllowed: true
+              }
+            },
+            manualMintingRules: {
+              authorizedToMakeChange: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              adminActionTakers: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              changingAuthorizedActionTakersToNoOneAllowed: true,
+              changingAdminActionTakersToNoOneAllowed: true,
+              selfChangingAdminActionTakersAllowed: true
+            },
+            manualBurningRules: {
+              authorizedToMakeChange: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              adminActionTakers: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              changingAuthorizedActionTakersToNoOneAllowed: true,
+              changingAdminActionTakersToNoOneAllowed: true,
+              selfChangingAdminActionTakersAllowed: true
+            },
+            freezeRules: {
+              authorizedToMakeChange: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              adminActionTakers: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              changingAuthorizedActionTakersToNoOneAllowed: true,
+              changingAdminActionTakersToNoOneAllowed: true,
+              selfChangingAdminActionTakersAllowed: true
+            },
+            unfreezeRules: {
+              authorizedToMakeChange: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              adminActionTakers: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              changingAuthorizedActionTakersToNoOneAllowed: true,
+              changingAdminActionTakersToNoOneAllowed: true,
+              selfChangingAdminActionTakersAllowed: true
+            },
+            destroyFrozenFundsRules: {
+              authorizedToMakeChange: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              adminActionTakers: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              changingAuthorizedActionTakersToNoOneAllowed: true,
+              changingAdminActionTakersToNoOneAllowed: true,
+              selfChangingAdminActionTakersAllowed: true
+            },
+            emergencyActionRules: {
+              authorizedToMakeChange: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              adminActionTakers: {
+                takerType: 'ContractOwner',
+                taker: null
+              },
+              changingAuthorizedActionTakersToNoOneAllowed: true,
+              changingAdminActionTakersToNoOneAllowed: true,
+              selfChangingAdminActionTakersAllowed: true
+            },
+            mainControlGroupCanBeModified: {
+              takerType: 'ContractOwner',
+              taker: null
+            },
+            mainControlGroup: null
+          }
+        ],
+        groups: [],
+        schema: {},
+        signature: '1f266a8a0153abceec829764c66b8f1b6fdec9e2c1e468b813a46d16bd18b26c2901a8be6c930b0cb0db0962b038ae419370a2ee2776145f238c5fb4239e0060fe',
+        signaturePublicKeyId: 1,
+        raw: '000001f318e74b0e6b8c3be2f3871aa8503dbb872d223975e64e0b6a5017e46eea1c2b0100000000010100000101b9059c00837dbe1cf91cceef2f5bff89be0a31ab2ca91fe202d4a5a52ed5d7f8000000000000000000010000000102656e00010741312d444953540841312d444953545308000101010101fd000009184e72a00000000101010101010001000101010101000100006400fb2710000001010101010001b9059c00837dbe1cf91cceef2f5bff89be0a31ab2ca91fe202d4a5a52ed5d7f8000101010101000001010101010001010101010000000101010101000101010101000101010101000101010101000101010101000101010101000101010101000100010741312d4449535400100001411f266a8a0153abceec829764c66b8f1b6fdec9e2c1e468b813a46d16bd18b26c2901a8be6c930b0cb0db0962b038ae419370a2ee2776145f238c5fb4239e0060fe'
       })
     })
 
