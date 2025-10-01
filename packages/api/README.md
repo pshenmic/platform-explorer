@@ -2039,27 +2039,29 @@ POST /transaction/decode
     {
       "position": 0,
       "conventions": {
-        "decimals": 1,
+        "decimals": 8,
         "localizations": {
           "en": {
-            "shouldCapitalize": true,
-            "pluralForm": "tokens",
-            "singularForm": "token"
+            "pluralForm": "A1-DISTS",
+            "singularForm": "A1-DIST",
+            "shouldCapitalize": true
           }
         }
       },
       "conventionsChangeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
         "selfChangingAdminActionTakersAllowed": true
       },
-      "baseSupply": "1",
+      "baseSupply": "10000000000000",
       "keepsHistory": {
         "keepsTransferHistory": true,
         "keepsFreezingHistory": true,
@@ -2069,28 +2071,46 @@ POST /transaction/decode
         "keepsDirectPurchaseHistory": true
       },
       "startAsPaused": false,
-      "isAllowedTransferToFrozenBalance": false,
+      "isAllowedTransferToFrozenBalance": true,
       "maxSupply": null,
       "maxSupplyChangeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
         "selfChangingAdminActionTakersAllowed": true
       },
-      "distributionRules": null,
+      "distributionRules": {
+        "perpetualDistribution": {
+          "type": "BlockBasedDistribution",
+          "recipientType": "ContractOwner",
+          "recipientValue": null,
+          "interval": 100,
+          "functionName": "FixedAmount",
+          "functionValue": {
+            "amount": "10000"
+          }
+        },
+        "preProgrammedDistribution": null,
+        "newTokenDestinationIdentity": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+        "mintingAllowChoosingDestination": false
+      },
       "marketplaceRules": {
         "tradeMode": "NotTradeable",
         "tradeModeChangeRules": {
           "authorizedToMakeChange": {
-            "takerType": "NoOne"
+            "takerType": "ContractOwner",
+            "taker": null
           },
           "adminActionTakers": {
-            "takerType": "NoOne"
+            "takerType": "ContractOwner",
+            "taker": null
           },
           "changingAuthorizedActionTakersToNoOneAllowed": true,
           "changingAdminActionTakersToNoOneAllowed": true,
@@ -2099,10 +2119,12 @@ POST /transaction/decode
       },
       "manualMintingRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2110,10 +2132,12 @@ POST /transaction/decode
       },
       "manualBurningRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2121,10 +2145,12 @@ POST /transaction/decode
       },
       "freezeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2132,10 +2158,12 @@ POST /transaction/decode
       },
       "unfreezeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2143,10 +2171,12 @@ POST /transaction/decode
       },
       "destroyFrozenFundsRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2154,20 +2184,23 @@ POST /transaction/decode
       },
       "emergencyActionRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
         "selfChangingAdminActionTakersAllowed": true
       },
       "mainControlGroupCanBeModified": {
-        "takerType": "NoOne"
+        "takerType": "ContractOwner",
+        "taker": null
       },
       "mainControlGroup": null,
-      "description": "note"
+      "description": null
     }
   ],
   "groups": [],
