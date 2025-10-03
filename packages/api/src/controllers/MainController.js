@@ -12,7 +12,7 @@ const TokensDAO = require('../dao/TokensDAO')
 const {REDIS_PUBSUB_NEW_BLOCK_CHANNEL} = require("../constants");
 const StateTransitionEnum = require('../enums/StateTransitionEnum');
 const MasternodeVotesDAO = require("../dao/MasternodeVotesDAO");
-const {decodeStateTransition} = require("../utils");
+const {decodeStateTransition, sleep} = require("../utils");
 const BatchEnum = require("../enums/BatchEnum");
 
 const API_VERSION = require('../../package.json').version
@@ -268,39 +268,49 @@ class MainController {
       })
     })
 
-    let unsentBlocks = []
-    let processedBlocks = []
+    let previousBlockHeight = -1
 
     await redis.subscribe(REDIS_PUBSUB_NEW_BLOCK_CHANNEL, async (blockInfo) => {
-      const {txIds, blockHeight} = JSON.parse(blockInfo)
+      const {blockHeight} = JSON.parse(blockInfo)
 
-      unsentBlocks.push(blockHeight)
+      const block = await this.blocksDAO.getBlockWithTransaction(blockHeight)
 
-      const block = await this.blocksDAO.getBlockByHeight(blockHeight)
-      const txs = await this.transactionsDAO.getTransactionsByIds(txIds)
+      async function sendBlock () {
+        if(previousBlockHeight === blockHeight-1 || previousBlockHeight === -1) {
+          response.sse({
+            event: 'transactions',
+            data: JSON.stringify({
+              block,
+            }),
+            id: String(blockHeight)
+          })
 
-      processedBlocks.push({
-        block,
-        txs
-      })
+          previousBlockHeight = blockHeight
+        }else{
+          await sleep(50)
+          return sendBlock()
+        }
+      }
+
+      await sendBlock()
 
       // send if second unsent block height more current block height
       // and already processed blocks count equal unsent blocks count
       // or unsent blocks count == 1
-      if (processedBlocks.length === unsentBlocks.length) {
-        processedBlocks.sort((a, b) => a.block.header.height - b.block.header.height)
-
-        for (let i = 0; i < processedBlocks.length; i++) {
-          response.sse({
-            event: 'transactions',
-            data: JSON.stringify(processedBlocks[i]),
-            id: String(processedBlocks[i].block.header.height)
-          })
-        }
-
-        processedBlocks = []
-        unsentBlocks = []
-      }
+      // if (processedBlocks.length === unsentBlocks.length) {
+      //   processedBlocks.sort((a, b) => a.block.header.height - b.block.header.height)
+      //
+      //   for (let i = 0; i < processedBlocks.length; i++) {
+      //     response.sse({
+      //       event: 'transactions',
+      //       data: JSON.stringify(processedBlocks[i]),
+      //       id: String(processedBlocks[i].block.header.height)
+      //     })
+      //   }
+      //
+      //   processedBlocks = []
+      //   unsentBlocks = []
+      // }
     })
 
     request.raw.on('close', async () => {

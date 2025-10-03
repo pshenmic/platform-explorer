@@ -1,0 +1,1 @@
+CREATE INDEX idx_state_transitions_block_height_id ON state_transitions (block_height, id);

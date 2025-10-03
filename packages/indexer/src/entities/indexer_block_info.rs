@@ -4,7 +4,6 @@ use serde_json::Value;
 
 pub struct IndexerBlockInfo {
     pub block_height: BlockHeight,
-    pub tx_ids: Vec<i32>
 }
 
 impl TryFrom<IndexerBlockInfo> for Value {
@@ -13,7 +12,6 @@ impl TryFrom<IndexerBlockInfo> for Value {
         serde_json::to_value(
             platform_value!({
                 "blockHeight": info.block_height,
-                "txIds": info.tx_ids
             })
         )
     }

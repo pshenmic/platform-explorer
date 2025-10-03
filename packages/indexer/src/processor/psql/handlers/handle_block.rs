@@ -58,9 +58,6 @@ impl PSQLProcessor {
                     );
                 }
 
-                // for redis
-                let mut tx_ids: Vec<i32> = Vec::new();
-
                 println!("Processing block at height {}", block_height.clone());
                 for (i, tx) in block.txs.iter().enumerate() {
                     let bytes = general_purpose::STANDARD.decode(tx.data.clone()).unwrap();
@@ -77,20 +74,6 @@ impl PSQLProcessor {
                         &sql_transaction,
                     )
                     .await;
-
-                    if self.redis.is_some() {
-                        let bytes = get_st_bytes(state_transition.clone());
-
-                        let st_hash = digest(bytes.clone()).to_uppercase();
-
-                        let st_id = self
-                            .dao
-                            .get_state_transition_id(st_hash, &sql_transaction)
-                            .await
-                            .expect("Failed to get state transition id");
-                        
-                        tx_ids.push(st_id);
-                    }
                 }
 
                 sql_transaction
@@ -104,8 +87,7 @@ impl PSQLProcessor {
                             .header
                             .height
                             .try_into()
-                            .expect("block height out of range u64"),
-                        tx_ids,
+                            .expect("block height out of range u64")
                     };
 
                     let json: Value = block_info.try_into().unwrap();

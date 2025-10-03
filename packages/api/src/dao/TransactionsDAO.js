@@ -4,6 +4,7 @@ const SeriesData = require('../models/SeriesData')
 const { getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
+const Block = require("../models/Block");
 
 module.exports = class TransactionsDAO {
   constructor(knex, sdk) {
@@ -309,35 +310,5 @@ module.exports = class TransactionsDAO {
       )
 
     return Number(row.total_collected_fees ?? 0)
-  }
-
-  getTransactionsByIds = async (ids) => {
-    const rows = await this.knex('state_transitions')
-      .select(
-        'state_transitions.hash as tx_hash', 'state_transitions.data as data',
-        'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
-        'state_transitions.error as error', 'state_transitions.type as type', 'state_transitions.batch_type as batch_type',
-        'state_transitions.index as index', 'blocks.height as block_height',
-        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner'
-      )
-      .whereIn('state_transitions.id', ids)
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-
-    return Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
-
-      const aliases = []
-
-      if (aliasDocument) {
-        aliases.push(getAliasFromDocument(aliasDocument))
-      }
-
-      return Transaction.fromRow(
-        {
-          ...row,
-          type: StateTransitionEnum[row.type],
-          aliases
-        })
-    }))
   }
 }
