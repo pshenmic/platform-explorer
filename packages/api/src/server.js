@@ -21,10 +21,13 @@ const ContestedResourcesController = require('./controllers/ContestedResourcesCo
 const TokensController = require('./controllers/TokensController')
 const {DashPlatformSDK} = require('dash-platform-sdk')
 const {createClient} = require("redis");
+const RedisNotConnectedError = require("./errors/RedisNotConnectedError");
 
 function errorHandler(err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
     return reply.status(503).send({error: 'tenderdash/dashcore backend is not available'})
+  } else if (err instanceof RedisNotConnectedError) {
+    return reply.status(503).send({error: 'redis is not connected'})
   }
 
   if (err?.constructor?.name === 'InvalidStateTransitionError') {
@@ -45,17 +48,21 @@ let fastify
 
 module.exports = {
   start: async () => {
+    const dapiURL = process.env.DAPI_URL ?? 'http://127.0.0.1:1443'
+    const network = process.env.NETWORK ?? 'testnet'
+    const redisURL = process.env.REDIS_URL
+
     const sdk = new DashPlatformSDK({
       grpc: {
         poolLimit: 5,
-        dapiUrl: (process.env.DAPI_URL ?? 'http://127.0.0.1:1443').split(',')
+        dapiUrl: dapiURL.split(',')
       },
-      network: process.env.NETWORK ?? 'testnet'
+      network: network
     })
 
-    const redis = await createClient({
-      url: process.env.REDIS_URL ?? 'redis://default@127.0.0.1:6379',
-    })
+    const redis = redisURL ? await createClient({
+      url: redisURL,
+    }) : undefined
 
     fastify = Fastify()
 

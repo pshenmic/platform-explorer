@@ -10,10 +10,9 @@ const {base58} = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
 const TokensDAO = require('../dao/TokensDAO')
 const {REDIS_PUBSUB_NEW_BLOCK_CHANNEL} = require("../constants");
-const StateTransitionEnum = require('../enums/StateTransitionEnum');
 const MasternodeVotesDAO = require("../dao/MasternodeVotesDAO");
-const {decodeStateTransition, sleep} = require("../utils");
-const BatchEnum = require("../enums/BatchEnum");
+const {sleep} = require("../utils");
+const RedisNotConnectedError = require("../errors/RedisNotConnectedError");
 
 const API_VERSION = require('../../package.json').version
 
@@ -251,6 +250,10 @@ class MainController {
   }
 
   subscribeTransactions = async (request, response) => {
+    if(!this.redis) {
+      throw new RedisNotConnectedError()
+    }
+
     // by default fastify sse plugin will send this with empty message only on first message
     response.raw.writeHead(200, {
       'Content-Type': 'text/event-stream',
@@ -287,30 +290,13 @@ class MainController {
 
           previousBlockHeight = blockHeight
         }else{
-          await sleep(50)
+          // wait previous block
+          await sleep(1)
           return sendBlock()
         }
       }
 
       await sendBlock()
-
-      // send if second unsent block height more current block height
-      // and already processed blocks count equal unsent blocks count
-      // or unsent blocks count == 1
-      // if (processedBlocks.length === unsentBlocks.length) {
-      //   processedBlocks.sort((a, b) => a.block.header.height - b.block.header.height)
-      //
-      //   for (let i = 0; i < processedBlocks.length; i++) {
-      //     response.sse({
-      //       event: 'transactions',
-      //       data: JSON.stringify(processedBlocks[i]),
-      //       id: String(processedBlocks[i].block.header.height)
-      //     })
-      //   }
-      //
-      //   processedBlocks = []
-      //   unsentBlocks = []
-      // }
     })
 
     request.raw.on('close', async () => {
