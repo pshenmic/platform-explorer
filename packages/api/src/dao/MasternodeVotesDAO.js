@@ -92,7 +92,7 @@ module.exports = class MasternodeVotesDAO {
       .select('pro_tx_hash', 'masternode_votes.state_transition_hash as state_transition_hash', 'voter_identity_id', 'choice',
         'blocks.timestamp as timestamp', 'towards_identity_identifier', 'document_type_name',
         'data_contracts.identifier as data_contract_identifier', 'index_name', 'index_values', 'power')
-      .where('masternode_votes.state_transition_hash', '=', hash)
+      .where('masternode_votes.state_transition_hash', '=', hash.toLowerCase())
       .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .leftJoin('data_contracts', 'data_contract_id', 'data_contracts.id')
