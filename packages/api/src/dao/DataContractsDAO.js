@@ -1,9 +1,8 @@
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { decodeStateTransition, getAliasFromDocument } = require('../utils')
+const { decodeStateTransition, getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
 const Token = require('../models/Token')
 const { TokenConfigurationWASM, IdentifierWASM } = require('pshenmic-dpp')
-const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class DataContractsDAO {
   constructor (knex, sdk) {
@@ -129,7 +128,7 @@ module.exports = class DataContractsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+    const aliasDocument = await getAliasDocumentForIdentifier(row.owner.trim(), this.sdk)
 
     const ownerAliases = []
 
@@ -142,7 +141,7 @@ module.exports = class DataContractsDAO {
     if (row.owner === row.top_identity || !row.top_identity) {
       topIdentityAliases = ownerAliases
     } else if (row.top_identity) {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.top_identity.trim()]], 1)
+      const aliasDocument = await getAliasDocumentForIdentifier(row.top_identity.trim(), this.sdk)
 
       if (aliasDocument) {
         topIdentityAliases.push(getAliasFromDocument(aliasDocument))
@@ -232,6 +231,10 @@ module.exports = class DataContractsDAO {
       .offset(fromRank)
       .limit(limit)
 
+    const owners = rows.map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
       let decodedTx
 
@@ -239,7 +242,7 @@ module.exports = class DataContractsDAO {
         decodedTx = await decodeStateTransition(row.data)
       }
 
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.owner.trim()]
 
       const aliases = []
 

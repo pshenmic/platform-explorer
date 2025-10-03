@@ -3,10 +3,9 @@ const TokenTransition = require('../models/TokenTransition')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
 const Localization = require('../models/Localization')
-const { fetchTokenInfoByRows } = require('../utils')
+const { fetchTokenInfoByRows, getAliasDocumentForIdentifiers } = require('../utils')
 const BatchEnum = require('../enums/BatchEnum')
 const { getAliasFromDocument } = require('../utils')
-const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class TokensDAO {
   constructor (knex, sdk) {
@@ -37,10 +36,14 @@ module.exports = class TokensDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
+    const owners = rows.map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const tokens = await Promise.all(rows.map(async (row) => {
       const { totalSystemAmount } = await this.sdk.tokens.getTokenTotalSupply(row.identifier)
 
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.owner.trim()]
 
       const aliases = []
 
@@ -134,8 +137,12 @@ module.exports = class TokensDAO {
       .limit(limit)
       .orderBy('id', order)
 
+    const owners = rows.map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.owner.trim()]
 
       const aliases = []
 
@@ -341,8 +348,10 @@ module.exports = class TokensDAO {
       }
     }, {})
 
+    const aliasDocuments = await getAliasDocumentForIdentifiers(holders, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.holder.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.holder.trim()]
 
       const aliases = []
 

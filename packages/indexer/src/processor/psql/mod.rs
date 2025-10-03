@@ -49,10 +49,16 @@ pub struct PSQLProcessor {
     dao: PostgresDAO,
     platform_explorer_identifier: Identifier,
     dashcore_rpc: Client,
+    redis: Option<redis::Connection>,
+    redis_pubsub_new_block_channel: Option<String>,
 }
 
 impl PSQLProcessor {
-    pub fn new(dashcore_rpc: Client) -> PSQLProcessor {
+    pub fn new(
+        dashcore_rpc: Client,
+        redis: Option<redis::Connection>,
+        redis_pubsub_new_block_channel: Option<String>,
+    ) -> PSQLProcessor {
         let dao = PostgresDAO::new();
         let decoder = StateTransitionDecoder::new();
         let platform_explorer_identifier_string: String =
@@ -62,12 +68,15 @@ impl PSQLProcessor {
                 .expect("Failed to parse PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER env");
         let platform_explorer_identifier =
             Identifier::from_string(&platform_explorer_identifier_string, Base58).unwrap();
-        return PSQLProcessor {
+
+        PSQLProcessor {
             decoder,
             dao,
             platform_explorer_identifier,
             dashcore_rpc,
-        };
+            redis,
+            redis_pubsub_new_block_channel,
+        }
     }
 
     pub async fn get_latest_block_height(&self) -> i32 {

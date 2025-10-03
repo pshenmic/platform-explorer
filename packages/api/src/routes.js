@@ -685,6 +685,11 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/events/update/transactions',
+      method: 'GET',
+      handler: mainController.subscribeTransactions
     }
   ]
 

@@ -1,9 +1,8 @@
 const Block = require('../models/Block')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { getAliasFromDocument } = require('../utils')
+const { getAliasFromDocument, getAliasDocumentForIdentifiers } = require('../utils')
 const Transaction = require('../models/Transaction')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
-const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class BlockDAO {
   constructor (knex, sdk) {
@@ -74,9 +73,15 @@ module.exports = class BlockDAO {
       return null
     }
 
+    const owners = rows
+      .filter(row => row.owner)
+      .map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const txs = block.tx_hash
       ? await Promise.all(rows.map(async (row) => {
-        const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+        const aliasDocument = aliasDocuments[row.owner.trim()]
 
         const aliases = []
 
@@ -276,5 +281,51 @@ module.exports = class BlockDAO {
     const [row] = rows
 
     return Block.fromRow({ header: row })
+  }
+
+  getBlockWithTransaction = async (blockHeight) => {
+    const rows = await this.knex('blocks')
+      .select(
+        'state_transitions.hash as tx_hash', 'state_transitions.data as data',
+        'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
+        'state_transitions.error as error', 'state_transitions.type as type', 'state_transitions.batch_type as batch_type',
+        'state_transitions.index as index', 'state_transitions.owner as owner',
+        'blocks.hash as hash', 'blocks.timestamp as timestamp', 'blocks.height as height',
+        'blocks.block_version as block_version', 'blocks.app_version as app_version',
+        'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator', 'blocks.app_hash as app_hash'
+      )
+      .where('height', blockHeight)
+      .leftJoin('state_transitions', 'blocks.height', 'state_transitions.block_height')
+
+    const [row] = rows
+
+    if(!row){
+      return null
+    }
+
+    const owners = rows
+      .filter(row => row.owner)
+      .map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
+    const transactions = owners.length ? await Promise.all(rows.map(async (row) => {
+      const aliasDocument = aliasDocuments[row.owner.trim()]
+
+      const aliases = []
+
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
+
+      return Transaction.fromRow(
+        {
+          ...row,
+          type: StateTransitionEnum[row.type],
+          aliases
+        })
+    })): []
+
+    return Block.fromRow({ header: row, txs: transactions })
   }
 }
