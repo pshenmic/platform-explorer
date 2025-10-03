@@ -378,7 +378,7 @@ module.exports = class ContestedDAO {
     const aliasDocuments = await getAliasDocumentForIdentifiers(towardsIdentityIdentifiers, this.sdk)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const aliasDocument = aliasDocuments[row.towards_identity_identifier.trim()]
+      const aliasDocument = row.towards_identity_identifier ? aliasDocuments[row.towards_identity_identifier.trim()] : undefined
 
       const aliases = []
 

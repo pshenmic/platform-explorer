@@ -69,12 +69,14 @@ module.exports = class MasternodeVotesDAO {
       .limit(limit)
       .orderBy('subquery.id', order)
 
-    const identifiers = rows.map(row => row.towards_identity_identifier.trim())
+    const identifiers = rows
+      .filter(row => row.towards_identity_identifier)
+      .map(row => row.towards_identity_identifier.trim())
 
     const aliasDocuments = await getAliasDocumentForIdentifiers(identifiers, this.sdk)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const aliasDocument = aliasDocuments[row.towards_identity_identifier.trim()]
+      const aliasDocument = row.towards_identity_identifier ? aliasDocuments[row.towards_identity_identifier.trim()] : undefined
 
       const aliases = []
 
