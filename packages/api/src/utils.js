@@ -1286,7 +1286,7 @@ const getAliasFromDocument = (aliasDocument) => {
   const documentId = aliasDocument.id
   const timestamp = new Date(Number(aliasDocument.createdAt))
 
-  const alias = `${label}.${parentDomainName}`
+  const alias = `${label}${parentDomainName ? '.' : ''}${parentDomainName}`
 
   return {
     alias,
@@ -1328,6 +1328,32 @@ const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+const getAliasDocumentForIdentifier = async (identifier, sdk) => {
+  const [alias] = await sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', identifier]], 1)
+
+  return alias
+}
+
+const getAliasDocumentForIdentifiers = async (identifiers, sdk) => {
+  const identifiersWithoutDuplicates = identifiers.filter((item, pos) => identifiers.indexOf(item) === pos)
+
+  const identifiersWithAliasDocument = await Promise.all(identifiersWithoutDuplicates.map(
+    async (identifier) => {
+      const alias = await getAliasDocumentForIdentifier(identifier, sdk)
+
+      return {
+        owner: identifier,
+        alias
+      }
+    }
+  ))
+
+  return identifiersWithAliasDocument.reduce((acc, identifierWithAliasDocument) => ({
+    ...acc,
+    [identifierWithAliasDocument.owner]: identifierWithAliasDocument.alias
+  }), {})
+}
+
 module.exports = {
   hash,
   decodeStateTransition,
@@ -1342,5 +1368,7 @@ module.exports = {
   outputScriptToAddress,
   getAliasFromDocument,
   fetchTokenInfoByRows,
-  convertToHomographSafeChars
+  convertToHomographSafeChars,
+  getAliasDocumentForIdentifiers,
+  getAliasDocumentForIdentifier
 }
