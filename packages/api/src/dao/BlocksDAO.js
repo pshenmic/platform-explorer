@@ -73,7 +73,9 @@ module.exports = class BlockDAO {
       return null
     }
 
-    const owners = rows.map(row => row.owner.trim())
+    const owners = rows
+      .filter(row => row.owner)
+      .map(row => row.owner.trim())
 
     const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
 
