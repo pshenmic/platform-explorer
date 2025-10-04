@@ -2583,71 +2583,52 @@ Return list of tokens
 ```
 GET /tokens?limit=2&page=1&order=asc
 [
-  {
-    "identifier": "5kRUF1SRTFtdskfaaQE9pCdADq8wyLFB1TNttnrBq3F8",
-    "localizations": {
-      "en": {
-        "pluralForm": "k1-id1",
-        "singularForm": "k1-id1",
-        "shouldCapitalize": true
-      }
-    },
-    "baseSupply": "100000",
-    "totalSupply": "100500",
-    "maxSupply": null,
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
-        {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
-        }
-      ]
-    },
-    "mintable": true,
-    "burnable": true,
-    "freezable": true,
-    "unfreezable": true,
-    "destroyable": true,
-    "allowedEmergencyActions": true,
-    "dataContractIdentifier": "CNvyZaBWofWPmgKYCBMF23h3cEhQfQHVY3wXCRkHEaau"
-  },
-  {
-    "identifier": "GUo3MpaLeaLDvjDnF5XQLRCjWC9WhkNPbtrVWZ5FKjLp",
-    "localizations": {
-      "en": {
-        "pluralForm": "a1-1",
-        "singularForm": "a1-1",
-        "shouldCapitalize": true
-      }
-    },
-    "baseSupply": "100000",
-    "totalSupply": "120000",
-    "maxSupply": "5000",
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
-        {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
-        }
-      ]
-    },
-    "mintable": true,
-    "burnable": true,
-    "freezable": true,
-    "unfreezable": true,
-    "destroyable": true,
-    "allowedEmergencyActions": true,
-    "dataContractIdentifier": "5BwVvDstM6FaXQcLNUGkuPHAk5xH3uEoYEKqHKXjw5nL"
-    "decimals": null,
-  }
+    {
+        "identifier": "9YxdbQUjJmQsmVPen95HjAU3Esj7tVkWSY2EQWT84ZQP",
+        "position": 0,
+        "timestamp": null,
+        "description": "note",
+        "localizations": {
+            "en": {
+                "pluralForm": "tokens",
+                "singularForm": "token",
+                "shouldCapitalize": true
+            }
+        },
+        "baseSupply": "1",
+        "totalSupply": "1",
+        "maxSupply": null,
+        "owner": {
+            "identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+            "aliases": [
+                {
+                    "alias": "canusieethat7.dash",
+                    "status": "ok",
+                    "timestamp": "2024-10-10T19:40:05.824Z",
+                    "documentId": "Qwb2FuwfnexmxxYoJUsMhM9pd192NVDvaEVFyjkSXAa",
+                    "contested": false
+                }
+            ]
+        },
+        "mintable": false,
+        "burnable": false,
+        "freezable": false,
+        "unfreezable": false,
+        "destroyable": false,
+        "allowedEmergencyActions": false,
+        "dataContractIdentifier": "Y189uedQG3CJCuu83P3DqnG7ngQaRKz69x3gY8uDzQe",
+        "changeMaxSupply": false,
+        "totalGasUsed": null,
+        "mainGroup": null,
+        "totalTransitionsCount": null,
+        "totalFreezeTransitionsCount": null,
+        "totalBurnTransitionsCount": null,
+        "decimals": 1,
+        "perpetualDistribution": null,
+        "preProgrammedDistribution": null,
+        "price": null,
+        "prices": null
+    }, ...
 ]
 ```
 Response codes:

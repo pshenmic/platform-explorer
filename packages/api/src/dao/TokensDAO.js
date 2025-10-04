@@ -1,4 +1,3 @@
-const Token = require('../models/Token')
 const TokenTransition = require('../models/TokenTransition')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
@@ -37,28 +36,7 @@ module.exports = class TokensDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    const tokens = await Promise.all(rows.map(async (row) => {
-      const { totalSystemAmount } = await this.sdk.tokens.getTokenTotalSupply(row.identifier)
-
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
-
-      const aliases = []
-
-      if (aliasDocument) {
-        aliases.push(getAliasFromDocument(aliasDocument))
-      }
-
-      return Token.fromObject({
-        ...Token.fromRow({
-          ...row,
-          owner: {
-            identifier: row.owner?.trim(),
-            aliases: aliases ?? []
-          }
-        }),
-        totalSupply: totalSystemAmount.toString()
-      })
-    }))
+    const tokens = await fetchTokenInfoByRows(rows, this.sdk)
 
     return new PaginatedResultSet(tokens, page, limit, totalCount)
   }
