@@ -1,14 +1,24 @@
 const BlocksDAO = require('../dao/BlocksDAO')
-const { EPOCH_CHANGE_TIME, NETWORK } = require('../constants')
+const {
+  EPOCH_CHANGE_TIME,
+  NETWORK,
+  REDIS_PUBSUB_NEW_BLOCK_CHANNEL,
+  SSE_HEAD,
+  ENABLE_SSE_ON_SYNC
+} = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
 const TenderdashRPC = require('../tenderdashRpc')
 const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
+const RedisNotConnectedError = require('../errors/RedisNotConnectedError')
+const BlocksPool = require('../sse')
+const IndexerNotSynchronized = require('../errors/IndexerNotSynchronized')
 
 class BlocksController {
-  constructor (knex, sdk) {
+  constructor (knex, sdk, redis) {
     this.blocksDAO = new BlocksDAO(knex, sdk)
     this.sdk = sdk
+    this.redis = redis
   }
 
   getBlockByHash = async (request, response) => {
@@ -154,6 +164,70 @@ class BlocksController {
     )
 
     response.send(blocks)
+  }
+
+  subscribeBlockWithTransactions = async (request, response) => {
+    if (!this.redis) {
+      throw new RedisNotConnectedError()
+    } else if (!ENABLE_SSE_ON_SYNC) {
+      throw new IndexerNotSynchronized()
+    }
+
+    // by default fastify sse plugin will send this with empty message only on first message
+    response.raw.writeHead(200, SSE_HEAD)
+
+    const redis = await this.redis.duplicate()
+    await redis.connect()
+
+    response.sse({ data: JSON.stringify({ status: 'ok' }) })
+
+    const blocksPool = new BlocksPool()
+
+    await redis.subscribe(REDIS_PUBSUB_NEW_BLOCK_CHANNEL, async (blockInfo) => {
+      const { blockHeight } = JSON.parse(blockInfo)
+
+      const block = await this.blocksDAO.getBlockWithTransaction(blockHeight)
+
+      const blockForSent = await blocksPool.waitBlockForSent(block)
+
+      response.sse(blockForSent)
+    })
+
+    request.raw.on('close', async () => {
+      await redis.destroy()
+    })
+  }
+
+  subscribeBlock = async (request, response) => {
+    if (!this.redis) {
+      throw new RedisNotConnectedError()
+    } else if (!ENABLE_SSE_ON_SYNC) {
+      throw new IndexerNotSynchronized()
+    }
+
+    // by default fastify sse plugin will send this with empty message only on first message
+    response.raw.writeHead(200, SSE_HEAD)
+
+    const redis = await this.redis.duplicate()
+    await redis.connect()
+
+    response.sse({ data: JSON.stringify({ status: 'ok' }) })
+
+    const blocksPool = new BlocksPool()
+
+    await redis.subscribe(REDIS_PUBSUB_NEW_BLOCK_CHANNEL, async (blockInfo) => {
+      const { blockHeight } = JSON.parse(blockInfo)
+
+      const block = await this.blocksDAO.getBlockByHeight(blockHeight)
+
+      const blockForSent = await blocksPool.waitBlockForSent(block)
+
+      response.sse(blockForSent)
+    })
+
+    request.raw.on('close', async () => {
+      await redis.destroy()
+    })
   }
 }
 

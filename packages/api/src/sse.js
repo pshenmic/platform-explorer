@@ -1,0 +1,32 @@
+const EventEmitter = require('events')
+
+module.exports = class BlocksPool extends EventEmitter {
+  constructor () {
+    super()
+    this.previousSentBlockHeight = -1
+  }
+
+  waitBlockForSent = async (block) => {
+    const blockHeight = block.header.height
+    const expectedHeight = this.previousSentBlockHeight + 1
+
+    if (this.previousSentBlockHeight === -1 || blockHeight === expectedHeight) {
+      this.previousSentBlockHeight = blockHeight
+
+      this.emit(`blockProcessed_${blockHeight}`)
+
+      return {
+        event: 'transactions',
+        data: JSON.stringify({ block }),
+        id: String(blockHeight)
+      }
+    }
+
+    return new Promise(resolve => {
+      this.once(`blockProcessed_${expectedHeight}`, async () => {
+        const result = await this.waitBlockForSent(block)
+        resolve(result)
+      })
+    })
+  }
+}

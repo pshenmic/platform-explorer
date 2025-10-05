@@ -689,7 +689,12 @@ module.exports = ({
     {
       path: '/events/update/transactions',
       method: 'GET',
-      handler: mainController.subscribeTransactions
+      handler: blocksController.subscribeBlockWithTransactions
+    },
+    {
+      path: '/events/update/blocks',
+      method: 'GET',
+      handler: blocksController.subscribeBlock
     }
   ]
 

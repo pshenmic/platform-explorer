@@ -299,7 +299,7 @@ module.exports = class BlockDAO {
 
     const [row] = rows
 
-    if(!row){
+    if (!row) {
       return null
     }
 
@@ -309,22 +309,24 @@ module.exports = class BlockDAO {
 
     const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
 
-    const transactions = owners.length ? await Promise.all(rows.map(async (row) => {
-      const aliasDocument = aliasDocuments[row.owner.trim()]
+    const transactions = owners.length
+      ? await Promise.all(rows.map(async (row) => {
+        const aliasDocument = aliasDocuments[row.owner.trim()]
 
-      const aliases = []
+        const aliases = []
 
-      if (aliasDocument) {
-        aliases.push(getAliasFromDocument(aliasDocument))
-      }
+        if (aliasDocument) {
+          aliases.push(getAliasFromDocument(aliasDocument))
+        }
 
-      return Transaction.fromRow(
-        {
-          ...row,
-          type: StateTransitionEnum[row.type],
-          aliases
-        })
-    })): []
+        return Transaction.fromRow(
+          {
+            ...row,
+            type: StateTransitionEnum[row.type],
+            aliases
+          })
+      }))
+      : []
 
     return Block.fromRow({ header: row, txs: transactions })
   }

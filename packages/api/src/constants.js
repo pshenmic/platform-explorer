@@ -6,6 +6,7 @@ module.exports = {
   CONTESTED_RESOURCE_VOTE_DEADLINE: Number(process.env.CONTESTED_RESOURCE_VOTE_DEADLINE ?? 1209600000),
   WITHDRAWAL_CONTRACT_TYPE: 'withdrawal',
   REDIS_PUBSUB_NEW_BLOCK_CHANNEL: process.env.REDIS_PUBSUB_NEW_BLOCK_CHANNEL ?? 'update',
+  ENABLE_SSE_ON_SYNC: Boolean(process.env.ENABLE_SSE_ON_SYNC),
   EPOCH_CHANGE_TIME: Number(process.env.EPOCH_CHANGE_TIME),
   TCP_CONNECT_TIMEOUT: Number(process.env.TCP_CONNECT_TIMEOUT),
   VALIDATORS_CACHE_LIFE_INTERVAL: Number(process.env.VALIDATORS_CACHE_LIFE_INTERVAL ?? 300000),
@@ -27,5 +28,10 @@ module.exports = {
       })
     }
     return genesisTime
+  },
+  SSE_HEAD: {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive'
   }
 }
