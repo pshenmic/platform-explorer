@@ -13,7 +13,7 @@ module.exports = class BlocksPool extends EventEmitter {
     if (this.previousSentBlockHeight === -1 || blockHeight === expectedHeight) {
       this.previousSentBlockHeight = blockHeight
 
-      this.emit(`blockProcessed_${blockHeight}`)
+      this.emit(`${blockHeight}`)
 
       return {
         event: 'transactions',
@@ -23,7 +23,7 @@ module.exports = class BlocksPool extends EventEmitter {
     }
 
     return new Promise(resolve => {
-      this.once(`blockProcessed_${expectedHeight}`, async () => {
+      this.once(`${expectedHeight}`, async () => {
         const result = await this.waitBlockForSent(block)
         resolve(result)
       })
