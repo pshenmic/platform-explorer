@@ -16,7 +16,7 @@ module.exports = class BlocksPool extends EventEmitter {
       this.emit(`${blockHeight}`)
 
       return {
-        event: 'transactions',
+        event: 'block',
         data: JSON.stringify({ block }),
         id: String(blockHeight)
       }
