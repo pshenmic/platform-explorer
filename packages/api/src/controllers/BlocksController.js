@@ -3,16 +3,14 @@ const {
   EPOCH_CHANGE_TIME,
   NETWORK,
   REDIS_PUBSUB_NEW_BLOCK_CHANNEL,
-  SSE_HEAD,
-  ENABLE_SSE_ON_SYNC
+  SSE_HEAD
 } = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
 const TenderdashRPC = require('../tenderdashRpc')
 const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
-const RedisNotConnectedError = require('../errors/RedisNotConnectedError')
 const BlocksPool = require('../sse')
-const IndexerNotSynchronized = require('../errors/IndexerNotSynchronized')
+const { checkSSEConditions } = require('../utils')
 
 class BlocksController {
   constructor (knex, sdk, redis) {
@@ -167,11 +165,7 @@ class BlocksController {
   }
 
   subscribeBlockWithTransactions = async (request, response) => {
-    if (!this.redis) {
-      throw new RedisNotConnectedError()
-    } else if (!ENABLE_SSE_ON_SYNC) {
-      throw new IndexerNotSynchronized()
-    }
+    await checkSSEConditions(this.redis, this.blocksDAO)
 
     // by default fastify sse plugin will send this with empty message only on first message
     response.raw.writeHead(200, SSE_HEAD)
@@ -199,11 +193,7 @@ class BlocksController {
   }
 
   subscribeBlock = async (request, response) => {
-    if (!this.redis) {
-      throw new RedisNotConnectedError()
-    } else if (!ENABLE_SSE_ON_SYNC) {
-      throw new IndexerNotSynchronized()
-    }
+    await checkSSEConditions(this.redis, this.blocksDAO)
 
     // by default fastify sse plugin will send this with empty message only on first message
     response.raw.writeHead(200, SSE_HEAD)

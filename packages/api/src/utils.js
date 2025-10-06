@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, ENABLE_SSE_ON_SYNC } = require('./constants')
 const { base58 } = require('@scure/base')
 const Intervals = require('./enums/IntervalsEnum')
 const dashcorelib = require('@dashevo/dashcore-lib')
@@ -23,6 +23,10 @@ const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
 const Token = require('./models/Token')
 const PerpetualDistribution = require('./models/PerpetualDistribution')
 const Localization = require('./models/Localization')
+const RedisNotConnectedError = require('./errors/RedisNotConnectedError')
+const TenderdashRPC = require('./tenderdashRpc')
+const IndexerNotSynchronized = require('./errors/IndexerNotSynchronized')
+const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 
 const getKnex = () => {
   return require('knex')({
@@ -1354,6 +1358,23 @@ const getAliasDocumentForIdentifiers = async (identifiers, sdk) => {
   }), {})
 }
 
+const checkSSEConditions = async (redis, blocksDAO) => {
+  if (!redis) {
+    throw new RedisNotConnectedError()
+  }
+
+  const lastIndexerBlock = await blocksDAO.getLastBlock()
+  const tdStatus = await TenderdashRPC.getStatus()
+
+  if (tdStatus?.highestBlock?.height === undefined) {
+    throw new ServiceNotAvailableError()
+  }
+
+  if (!ENABLE_SSE_ON_SYNC && tdStatus?.highestBlock?.height - 10 > lastIndexerBlock.header.height) {
+    throw new IndexerNotSynchronized()
+  }
+}
+
 module.exports = {
   hash,
   decodeStateTransition,
@@ -1370,5 +1391,6 @@ module.exports = {
   fetchTokenInfoByRows,
   convertToHomographSafeChars,
   getAliasDocumentForIdentifiers,
-  getAliasDocumentForIdentifier
+  getAliasDocumentForIdentifier,
+  checkSSEConditions
 }
