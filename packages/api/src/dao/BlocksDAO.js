@@ -1,9 +1,8 @@
 const Block = require('../models/Block')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { getAliasFromDocument } = require('../utils')
+const { getAliasFromDocument, getAliasDocumentForIdentifiers } = require('../utils')
 const Transaction = require('../models/Transaction')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
-const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class BlockDAO {
   constructor (knex, sdk) {
@@ -74,9 +73,15 @@ module.exports = class BlockDAO {
       return null
     }
 
+    const owners = rows
+      .filter(row => row.owner)
+      .map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const txs = block.tx_hash
       ? await Promise.all(rows.map(async (row) => {
-        const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+        const aliasDocument = aliasDocuments[row.owner.trim()]
 
         const aliases = []
 
