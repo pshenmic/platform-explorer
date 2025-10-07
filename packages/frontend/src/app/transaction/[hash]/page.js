@@ -1,4 +1,4 @@
-import Transaction from './TransactionPage'
+import { Transaction } from './components/Transaction'
 
 export function generateMetadata ({ params }) {
   return {
@@ -9,8 +9,8 @@ export function generateMetadata ({ params }) {
   }
 }
 
-function TransactionRoute ({ params }) {
-  return <Transaction hash={params.hash}/>
+function TransactionRoute () {
+  return <Transaction />
 }
 
 export default TransactionRoute

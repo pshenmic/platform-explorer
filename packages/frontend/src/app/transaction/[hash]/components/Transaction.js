@@ -1,28 +1,31 @@
 'use client'
 
-import * as Api from '../../../util/Api'
-import { useState, useEffect, useCallback } from 'react'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import { CreditsBlock, InfoLine, DateBlock, Identifier } from '../../../components/data'
-import TransactionData from './TransactionData'
-import { ValueContainer, PageDataContainer } from '../../../components/ui/containers'
-import { ValueCard } from '../../../components/cards'
-import { HorisontalSeparator } from '../../../components/ui/separators'
-import { CopyButton } from '../../../components/ui/Buttons'
-import { TypeBadge, FeeMultiplier, TransactionStatusBadge } from '../../../components/transactions'
-import { ErrorMessageBlock } from '../../../components/Errors'
-import { networks } from '../../../constants/networks'
-import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
-import './TransactionPage.scss'
+import { useEffect } from 'react'
+import { CreditsBlock, InfoLine, DateBlock, Identifier } from '../../../../components/data'
+import { TransactionType } from './TransactionType'
+import { PageDataContainer, ValueContainer } from '../../../../components/ui/containers'
+import { ValueCard } from '../../../../components/cards'
+import { HorisontalSeparator } from '../../../../components/ui/separators'
+import { CopyButton } from '../../../../components/ui/Buttons'
+import { TypeBadge, FeeMultiplier, TransactionStatusBadge } from '../../../../components/transactions'
+import { ErrorMessageBlock } from '../../../../components/Errors'
+import { networks } from '../../../../constants/networks'
+import { useBreadcrumbs } from '../../../../contexts/BreadcrumbsContext'
+import { useDecodedSTQuery, useRateQuery, useTransactionQuery } from './hooks'
+import { useParams } from 'next/navigation'
 
-function Transaction ({ hash }) {
+import './transaction.scss'
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
+const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+
+export const Transaction = () => {
+  const { hash } = useParams()
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [transaction, setTransaction] = useState({ data: {}, loading: true, error: false })
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const [decodedST, setDecodedST] = useState({ data: {}, loading: true, error: false })
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-  const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
-  const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+  const transaction = useTransactionQuery()
+  const decodedST = useDecodedSTQuery(transaction.data)
+  const rate = useRateQuery()
 
   useEffect(() => {
     setBreadcrumbs([
@@ -32,34 +35,11 @@ function Transaction ({ hash }) {
     ])
   }, [setBreadcrumbs, hash])
 
-  const decodeTx = useCallback((tx) => {
-    Api.decodeTx(tx)
-      .then(stateTransition => fetchHandlerSuccess(setDecodedST, stateTransition))
-      .catch(err => fetchHandlerError(setDecodedST, err))
-  }, [])
-
-  const fetchData = () => {
-    setTransaction(state => ({ ...state, loading: true }))
-
-    Api.getTransaction(hash)
-      .then((res) => {
-        fetchHandlerSuccess(setTransaction, res)
-        decodeTx(res.data)
-      })
-      .catch(err => fetchHandlerError(setTransaction, err))
-
-    Api.getRate()
-      .then(res => fetchHandlerSuccess(setRate, res))
-      .catch(err => fetchHandlerError(setRate, err))
-  }
-
-  useEffect(fetchData, [hash, decodeTx])
-
   return (
-    <PageDataContainer
-      className={'TransactionPage'}
-      title={'Transaction Info'}
-    >
+   <PageDataContainer
+        className={'TransactionPage'}
+        title={'Transaction Info'}
+      >
       {transaction.error && <ErrorMessageBlock h={'450px'}/>}
 
       {!transaction.error &&
@@ -173,7 +153,7 @@ function Transaction ({ hash }) {
             className={'TransactionPage__InfoLine TransactionPage__InfoLine--FeeMultiplier'}
             title={'Fee Multiplier'}
             value={<FeeMultiplier value={Number(decodedST.data?.userFeeIncrease)}/>}
-            loading={decodedST.loading}
+            loading={transaction.loading || decodedST.loading}
             error={decodedST.error || (!decodedST.loading && decodedST.data?.userFeeIncrease === undefined)}
           />
 
@@ -186,7 +166,7 @@ function Transaction ({ hash }) {
                 <CopyButton text={decodedST.data?.signature}/>
               </ValueCard>
             )}
-            loading={decodedST.loading}
+            loading={transaction.loading || decodedST.loading}
             error={decodedST.error || (!decodedST.loading && !decodedST.data?.signature)}
           />
         </div>
@@ -231,16 +211,16 @@ function Transaction ({ hash }) {
         </>
       }
 
-      {!transaction.loading && !transaction.error &&
+      {decodedST.data &&
         <>
           <HorisontalSeparator/>
           <div className={'TransactionPage__DetailsInfo'}>
             <div className={'TransactionPage__DetailsInfoTitle'}>Details</div>
-            <TransactionData data={decodedST.data} rate={rate} type={transaction.data?.type} loading={decodedST.loading}/>
+            <TransactionType rate={rate} {...decodedST.data} />
           </div>
         </>
       }
-    </PageDataContainer>
+ </PageDataContainer>
   )
 }
 
