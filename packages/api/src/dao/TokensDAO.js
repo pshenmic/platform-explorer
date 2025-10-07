@@ -239,7 +239,7 @@ module.exports = class TokensDAO {
       return new PaginatedResultSet([], page, limit, 0)
     }
 
-    const tokens = await fetchTokenInfoByRows(rows, this.sdk)
+    const tokens = await fetchTokenInfoByRows(rows.map(row => ({ ...row, owner: identifier })), this.sdk)
 
     const tokenIdentifierList = tokens.map((token) => token.identifier)
 

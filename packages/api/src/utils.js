@@ -66,7 +66,9 @@ const outputScriptToAddress = (script) => {
 }
 
 const fetchTokenInfoByRows = async (rows, sdk) => {
-  const owners = rows.map(row => row.owner.trim())
+  const owners = rows
+    .filter(row => row.owner)
+    .map(row => row.owner?.trim())
 
   const aliasDocuments = await getAliasDocumentForIdentifiers(owners, sdk)
 
@@ -91,7 +93,7 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
 
       const tokenTotalSupply = await sdk.tokens.getTokenTotalSupply(tokenIdentifier)
 
-      const aliasDocument = aliasDocuments[row.owner.trim()]
+      const aliasDocument = row.owner ? aliasDocuments[row.owner?.trim()] : undefined
 
       const aliases = []
 
