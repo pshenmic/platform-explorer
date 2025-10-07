@@ -44,7 +44,7 @@ module.exports = class TransactionsDAO {
       })
   }
 
-  getTransactions = async (page, limit, order, orderBy, transactionsTypes, batchTypes, owner, status, min, max, timestampStart, timestampEnd) => {
+  getTransactions = async (page, limit, order, orderBy, transactionsTypes, batchTypes, owner, status, min, max, timestampStart, timestampEnd, tokenName) => {
     const fromRank = ((page - 1) * limit)
 
     let filtersQuery = ''
@@ -93,17 +93,27 @@ module.exports = class TransactionsDAO {
       timestampBindings.push(timestampStart, timestampEnd)
     }
 
-    const subquery = this.knex('state_transitions')
-      .select('state_transitions.hash as tx_hash',
+    const transactionSubquery = tokenName
+      ? this.knex('tokens')
+        .select(
+          'state_transitions.hash', 'data', 'type', 'index', 'batch_type', 'state_transitions.owner',
+          'gas_used', 'status', 'error', 'block_hash', 'block_height', 'state_transitions.id')
+        .whereILike('name', tokenName)
+        .leftJoin('token_transitions', 'token_identifier', 'identifier')
+        .leftJoin('state_transitions', 'token_transitions.state_transition_hash', 'state_transitions.hash')
+        .whereRaw('state_transitions.id is not null')
+      : this.knex('state_transitions')
+
+    const subquery = this.knex(transactionSubquery.as('state_transitions_subquery'))
+      .select('state_transitions_subquery.hash as tx_hash',
+        'block_hash', 'id', 'owner', 'block_height',
         'data', 'type', 'index', 'batch_type',
         'gas_used', 'status', 'error',
-        'block_hash', 'id', 'owner',
-        'blocks.height as block_height',
         'blocks.timestamp as timestamp'
       )
       .whereRaw(timestampsQuery, timestampBindings)
       .whereRaw(filtersQuery, filtersBindings)
-      .leftJoin('blocks', 'blocks.hash', 'block_hash')
+      .leftJoin('blocks', 'blocks.height', 'block_height')
 
     const sortedSubquery = this.knex
       .with('subquery', subquery)

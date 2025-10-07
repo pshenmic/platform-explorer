@@ -198,6 +198,12 @@ const schemaTypes = [
         pattern: '^[A-Za-z0-9]+$',
         minLength: 43,
         maxLength: 44
+      },
+      token_name: {
+        type: 'string',
+        pattern: '^[A-Za-z0-9-]+$',
+        minLength: 3,
+        maxLength: 25
       }
     }
   },
