@@ -5,7 +5,7 @@ const Transaction = require('../models/Transaction')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 module.exports = class BlockDAO {
-  constructor(knex, sdk) {
+  constructor (knex, sdk) {
     this.knex = knex
     this.sdk = sdk
   }
@@ -97,7 +97,7 @@ module.exports = class BlockDAO {
       }))
       : []
 
-    return Block.fromRow({header: block, txs})
+    return Block.fromRow({ header: block, txs })
   }
 
   getBlocksByValidator = async (validator, page, limit, order) => {
@@ -130,14 +130,14 @@ module.exports = class BlockDAO {
 
     const blocksMap = rows.reduce((blocks, row) => {
       const block = blocks[row.hash]
-      const {st_hash: txHash} = row
+      const { st_hash: txHash } = row
       const txs = block?.txs || []
 
       if (txHash) {
         txs.push(txHash)
       }
 
-      return {...blocks, [row.hash]: {...row, txs}}
+      return { ...blocks, [row.hash]: { ...row, txs } }
     }, {})
 
     const resultSet = Object.keys(blocksMap).map(blockHash => Block.fromRow({
@@ -165,7 +165,7 @@ module.exports = class BlockDAO {
 
     const txs = results.reduce((acc, value) => value.st_hash ? [...acc, value.st_hash] : acc, [])
 
-    return Block.fromRow({header: block, txs})
+    return Block.fromRow({ header: block, txs })
   }
 
   getBlocks = async (
@@ -181,44 +181,44 @@ module.exports = class BlockDAO {
 
     const epochQuery = (epochStartTimestamp && epochEndTimestamp)
       ? [
-        'timestamp BETWEEN ? AND ?',
-        [new Date(epochStartTimestamp).toISOString(), new Date(epochEndTimestamp).toISOString()]
-      ]
+          'timestamp BETWEEN ? AND ?',
+          [new Date(epochStartTimestamp).toISOString(), new Date(epochEndTimestamp).toISOString()]
+        ]
       : ['true']
 
     const heightQuery = heightMin
       ? [
-        heightMax ? 'height BETWEEN ? AND ?' : 'height >= ?',
-        heightMax ? [heightMin, heightMax] : [heightMin]
-      ]
+          heightMax ? 'height BETWEEN ? AND ?' : 'height >= ?',
+          heightMax ? [heightMin, heightMax] : [heightMin]
+        ]
       : ['true']
 
     const timestampQuery = startTimestamp && endTimestamp
       ? [
-        'timestamp BETWEEN ? AND ?',
-        [new Date(startTimestamp).toISOString(), new Date(endTimestamp).toISOString()]
-      ]
+          'timestamp BETWEEN ? AND ?',
+          [new Date(startTimestamp).toISOString(), new Date(endTimestamp).toISOString()]
+        ]
       : ['true']
 
     const validatorQuery = validator
       ? [
-        'validator = ?',
-        validator
-      ]
+          'validator = ?',
+          validator
+        ]
       : ['true']
 
     const gasQuery = gasMin
       ? [
-        gasMax ? 'total_gas_used BETWEEN ? AND ?' : 'total_gas_used >= ?',
-        gasMax ? [gasMin, gasMax] : [gasMin]
-      ]
+          gasMax ? 'total_gas_used BETWEEN ? AND ?' : 'total_gas_used >= ?',
+          gasMax ? [gasMin, gasMax] : [gasMin]
+        ]
       : ['true']
 
     const transactionsQuery = transactionCountMin
       ? [
-        transactionCountMax ? 'cardinality(txs.txs) BETWEEN ? AND ?' : 'cardinality(txs.txs) >= ?',
-        transactionCountMax ? [transactionCountMin, transactionCountMax] : [transactionCountMin]
-      ]
+          transactionCountMax ? 'cardinality(txs.txs) BETWEEN ? AND ?' : 'cardinality(txs.txs) >= ?',
+          transactionCountMax ? [transactionCountMin, transactionCountMax] : [transactionCountMin]
+        ]
       : ['true']
 
     const subquery = this.knex('blocks')
@@ -280,6 +280,6 @@ module.exports = class BlockDAO {
 
     const [row] = rows
 
-    return Block.fromRow({header: row})
+    return Block.fromRow({ header: row })
   }
 }

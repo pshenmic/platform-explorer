@@ -23,10 +23,6 @@ const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
 const Token = require('./models/Token')
 const PerpetualDistribution = require('./models/PerpetualDistribution')
 const Localization = require('./models/Localization')
-const RedisNotConnectedError = require('./errors/RedisNotConnectedError')
-const TenderdashRPC = require('./tenderdashRpc')
-const IndexerNotSynchronized = require('./errors/IndexerNotSynchronized')
-const ServiceNotAvailableError = require('./errors/ServiceNotAvailableError')
 
 const getKnex = () => {
   return require('knex')({
@@ -1380,5 +1376,5 @@ module.exports = {
   fetchTokenInfoByRows,
   convertToHomographSafeChars,
   getAliasDocumentForIdentifiers,
-  getAliasDocumentForIdentifier,
+  getAliasDocumentForIdentifier
 }

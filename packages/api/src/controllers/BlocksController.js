@@ -11,7 +11,7 @@ const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
 const BlocksPool = require('../sse')
 const { checkSSEConditions } = require('../utils')
-const RedisNotConnectedError = require("../errors/RedisNotConnectedError");
+const RedisNotConnectedError = require('../errors/RedisNotConnectedError')
 
 class BlocksController {
   constructor (knex, sdk, redis) {
