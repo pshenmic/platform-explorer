@@ -20,9 +20,9 @@ const MasternodeVotesController = require('./controllers/MasternodeVotesControll
 const ContestedResourcesController = require('./controllers/ContestedResourcesController')
 const TokensController = require('./controllers/TokensController')
 const { DashPlatformSDK } = require('dash-platform-sdk')
-const { createClient } = require('redis')
 const RedisNotConnectedError = require('./errors/RedisNotConnectedError')
 const IndexerNotSynchronized = require('./errors/IndexerNotSynchronized')
+const RedisConnection = require('./redisConnection')
 
 function errorHandler (err, req, reply) {
   if (err instanceof ServiceNotAvailableError) {
@@ -64,9 +64,7 @@ module.exports = {
     })
 
     const redis = redisURL
-      ? await createClient({
-        url: redisURL
-      })
+      ? new RedisConnection(redisURL)
       : undefined
 
     fastify = Fastify()

@@ -3,7 +3,6 @@ const {
   EPOCH_CHANGE_TIME,
   NETWORK,
   REDIS_PUBSUB_NEW_BLOCK_CHANNEL,
-  SSE_HEAD
 } = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
 const TenderdashRPC = require('../tenderdashRpc')
@@ -168,24 +167,27 @@ class BlocksController {
       throw new RedisNotConnectedError()
     }
 
-    // by default fastify sse plugin will send this with empty message only on first message
-    response.raw.writeHead(200, SSE_HEAD)
+    const callback = async (channel, message) => {
+      if (channel === REDIS_PUBSUB_NEW_BLOCK_CHANNEL) {
+        const { blockHeight } = JSON.parse(message)
 
-    const redis = await this.redis.duplicate()
-    await redis.connect()
+        const block = await this.blocksDAO.getBlockByHeight(blockHeight)
 
+        response.sse({
+          data: JSON.stringify(block),
+          event: 'block',
+          id: String(blockHeight)
+        })
+      }
+    }
+
+    await this.redis.subscribeMessages(callback)
+
+    // initialize sse
     response.sse({ data: JSON.stringify({ status: 'ok' }) })
 
-    await redis.subscribe(REDIS_PUBSUB_NEW_BLOCK_CHANNEL, async (blockInfo) => {
-      const { blockHeight } = JSON.parse(blockInfo)
-
-      const block = await this.blocksDAO.getBlockByHeight(blockHeight)
-
-      response.sse(block)
-    })
-
-    request.raw.on('close', async () => {
-      await redis.destroy()
+    request.raw.on('close', () => {
+      this.redis.unsubscribeMessages(callback)
     })
   }
 }
