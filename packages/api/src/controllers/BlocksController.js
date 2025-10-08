@@ -9,7 +9,6 @@ const DashCoreRPC = require('../dashcoreRpc')
 const TenderdashRPC = require('../tenderdashRpc')
 const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
-const BlocksPool = require('../sse')
 const RedisNotConnectedError = require('../errors/RedisNotConnectedError')
 
 class BlocksController {
@@ -184,9 +183,7 @@ class BlocksController {
 
       const block = await this.blocksDAO.getBlockByHeight(blockHeight)
 
-      const blockForSent = await blocksPool.waitBlockForSent(block)
-
-      response.sse(blockForSent)
+      response.sse(block)
     })
 
     request.raw.on('close', async () => {
