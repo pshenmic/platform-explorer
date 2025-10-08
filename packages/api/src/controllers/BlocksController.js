@@ -11,6 +11,7 @@ const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
 const BlocksPool = require('../sse')
 const { checkSSEConditions } = require('../utils')
+const RedisNotConnectedError = require("../errors/RedisNotConnectedError");
 
 class BlocksController {
   constructor (knex, sdk, redis) {
@@ -164,36 +165,10 @@ class BlocksController {
     response.send(blocks)
   }
 
-  subscribeBlockWithTransactions = async (request, response) => {
-    await checkSSEConditions(this.redis, this.blocksDAO)
-
-    // by default fastify sse plugin will send this with empty message only on first message
-    response.raw.writeHead(200, SSE_HEAD)
-
-    const redis = await this.redis.duplicate()
-    await redis.connect()
-
-    response.sse({ data: JSON.stringify({ status: 'ok' }) })
-
-    const blocksPool = new BlocksPool()
-
-    await redis.subscribe(REDIS_PUBSUB_NEW_BLOCK_CHANNEL, async (blockInfo) => {
-      const { blockHeight } = JSON.parse(blockInfo)
-
-      const block = await this.blocksDAO.getBlockWithTransaction(blockHeight)
-
-      const blockForSent = await blocksPool.waitBlockForSent(block)
-
-      response.sse(blockForSent)
-    })
-
-    request.raw.on('close', async () => {
-      await redis.destroy()
-    })
-  }
-
   subscribeBlock = async (request, response) => {
-    await checkSSEConditions(this.redis, this.blocksDAO)
+    if (!this.redis) {
+      throw new RedisNotConnectedError()
+    }
 
     // by default fastify sse plugin will send this with empty message only on first message
     response.raw.writeHead(200, SSE_HEAD)
