@@ -1,9 +1,9 @@
 const ChoiceEnum = require('../enums/ChoiceEnum')
 const ContestedResource = require('../models/ContestedResource')
-const { buildIndexBuffer, getAliasFromDocument } = require('../utils')
+const { buildIndexBuffer, getAliasFromDocument, getAliasDocumentForIdentifiers } = require('../utils')
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { CONTESTED_RESOURCE_VOTE_DEADLINE, DPNS_CONTRACT } = require('../constants')
+const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../constants')
 const ContestedResourceStatus = require('../models/ContestedResourcesStatus')
 const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
 
@@ -116,8 +116,12 @@ module.exports = class ContestedDAO {
     const totalDocumentsGasUsed = uniqueContenders
       .reduce((accumulator, currentValue) => accumulator + Number((currentValue.document_tx_gas_used ?? 0)), 0)
 
+    const owners = rows.map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const contenders = await Promise.all(uniqueContenders.map(async (row) => {
-      const [aliasDocument] = row.owner ? await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1) : []
+      const aliasDocument = aliasDocuments[row.owner.trim()]
 
       const aliases = []
 
@@ -141,7 +145,7 @@ module.exports = class ContestedDAO {
           ? accumulator + 1 * currentValue.masternode_power
           : accumulator
         , 0) ?? null,
-        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => (currentValue.choice !== ChoiceEnum.ABSTAIN && currentValue.choice !== null) && currentValue.towards_identity?.trim() !== row.owner.trim()
+        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => (currentValue.choice === ChoiceEnum.LOCK) && currentValue.towards_identity?.trim() !== row.owner.trim()
           ? accumulator + 1 * currentValue.masternode_power
           : accumulator
         , 0) ?? null
@@ -367,8 +371,14 @@ module.exports = class ContestedDAO {
       .leftJoin(contestedDocumentsSubquery, 'towards_identity_identifier', 'owner')
       .orderBy('subquery.id', order)
 
+    const towardsIdentityIdentifiers = rows
+      .filter(row => row.towards_identity_identifier)
+      .map(row => row.towards_identity_identifier.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(towardsIdentityIdentifiers, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = row.towards_identity_identifier ? await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.towards_identity_identifier.trim()]], 1) : []
+      const aliasDocument = row.towards_identity_identifier ? aliasDocuments[row.towards_identity_identifier.trim()] : undefined
 
       const aliases = []
 

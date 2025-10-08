@@ -1172,8 +1172,9 @@ GET /identity/3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ
 
 {
   "identifier": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ",
-  "revision": 0,
-  "balance": 49989647300,
+  "revision": "0",
+  "nonce": "13",
+  "balance": "49989647300",
   "timestamp": "2024-10-12T18:51:44.592Z",
   "txHash": "32FB988D87E4122A2FE030B5014A59A05786C1501FD97D765E2329F89A8AD01D",
   "totalTxs": 13,
@@ -1300,7 +1301,8 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
           "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
           "owner": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
           "revision": 1,
-          "balance": 1000000,
+          "nonce": null,
+          "balance": "1000000",
           "timestamp": "2024-03-18T10:13:54.150Z",
           "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
           "totalTxs": 1,
@@ -1827,7 +1829,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=
       ],
       "towardsIdentityVotes": 0,
       "abstainVotes": 1,
-      "lockVotes": 2
+      "lockVotes": 0
     }
   ],
   "indexName": "parentNameAndLabel",
@@ -2033,31 +2035,33 @@ POST /transaction/decode
       "additionalProperties": false
     }
   },
-  "tokens": {
-    "0": {
+  "tokens": [
+    {
       "position": 0,
       "conventions": {
-        "decimals": 1,
+        "decimals": 8,
         "localizations": {
           "en": {
-            "shouldCapitalize": true,
-            "pluralForm": "tokens",
-            "singularForm": "token"
+            "pluralForm": "A1-DISTS",
+            "singularForm": "A1-DIST",
+            "shouldCapitalize": true
           }
         }
       },
       "conventionsChangeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
         "selfChangingAdminActionTakersAllowed": true
       },
-      "baseSupply": "1",
+      "baseSupply": "10000000000000",
       "keepsHistory": {
         "keepsTransferHistory": true,
         "keepsFreezingHistory": true,
@@ -2067,28 +2071,46 @@ POST /transaction/decode
         "keepsDirectPurchaseHistory": true
       },
       "startAsPaused": false,
-      "isAllowedTransferToFrozenBalance": false,
+      "isAllowedTransferToFrozenBalance": true,
       "maxSupply": null,
       "maxSupplyChangeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
         "selfChangingAdminActionTakersAllowed": true
       },
-      "distributionRules": null,
+      "distributionRules": {
+        "perpetualDistribution": {
+          "type": "BlockBasedDistribution",
+          "recipientType": "ContractOwner",
+          "recipientValue": null,
+          "interval": 100,
+          "functionName": "FixedAmount",
+          "functionValue": {
+            "amount": "10000"
+          }
+        },
+        "preProgrammedDistribution": null,
+        "newTokenDestinationIdentity": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+        "mintingAllowChoosingDestination": false
+      },
       "marketplaceRules": {
         "tradeMode": "NotTradeable",
         "tradeModeChangeRules": {
           "authorizedToMakeChange": {
-            "takerType": "NoOne"
+            "takerType": "ContractOwner",
+            "taker": null
           },
           "adminActionTakers": {
-            "takerType": "NoOne"
+            "takerType": "ContractOwner",
+            "taker": null
           },
           "changingAuthorizedActionTakersToNoOneAllowed": true,
           "changingAdminActionTakersToNoOneAllowed": true,
@@ -2097,10 +2119,12 @@ POST /transaction/decode
       },
       "manualMintingRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2108,10 +2132,12 @@ POST /transaction/decode
       },
       "manualBurningRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2119,10 +2145,12 @@ POST /transaction/decode
       },
       "freezeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2130,10 +2158,12 @@ POST /transaction/decode
       },
       "unfreezeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2141,10 +2171,12 @@ POST /transaction/decode
       },
       "destroyFrozenFundsRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2152,22 +2184,25 @@ POST /transaction/decode
       },
       "emergencyActionRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
         "selfChangingAdminActionTakersAllowed": true
       },
       "mainControlGroupCanBeModified": {
-        "takerType": "NoOne"
+        "takerType": "ContractOwner",
+        "taker": null
       },
       "mainControlGroup": null,
-      "description": "note"
+      "description": null
     }
-  },
+  ],
   "groups": [],
   "signature": "1f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d",
   "signaturePublicKeyId": 2,
@@ -2382,7 +2417,7 @@ IDENTITY_CREATE with instantLock
         "requiresIdentityDecryptionBoundedKey": null,
         "requiresIdentityEncryptionBoundedKey": null
     },
-    "tokens": {},
+    "tokens": [],
     "groups": [],
     "identityContractNonce": 6,
     "signaturePublicKeyId": 2,
@@ -2444,7 +2479,7 @@ IDENTITY_CREATE with instantLock
           "signature": "1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06"
       }
   ],
-  "setPublicKeyIdsToDisable": [],
+  "publicKeyIdsToDisable": [],
   "signature": "1f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1",
   "signaturePublicKeyId": 0,
   "raw": "0600320566816f366803517a7eb44d331ccb0e442fab6396f3d6ac631b1069aae0410203020005020002000014c208ded6d1af562b8e5387c02a446ea6e8bb325f000006000000000021026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0411faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06000000411f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1"
@@ -2548,71 +2583,52 @@ Return list of tokens
 ```
 GET /tokens?limit=2&page=1&order=asc
 [
-  {
-    "identifier": "5kRUF1SRTFtdskfaaQE9pCdADq8wyLFB1TNttnrBq3F8",
-    "localizations": {
-      "en": {
-        "pluralForm": "k1-id1",
-        "singularForm": "k1-id1",
-        "shouldCapitalize": true
-      }
-    },
-    "baseSupply": "100000",
-    "totalSupply": "100500",
-    "maxSupply": null,
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
-        {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
-        }
-      ]
-    },
-    "mintable": true,
-    "burnable": true,
-    "freezable": true,
-    "unfreezable": true,
-    "destroyable": true,
-    "allowedEmergencyActions": true,
-    "dataContractIdentifier": "CNvyZaBWofWPmgKYCBMF23h3cEhQfQHVY3wXCRkHEaau"
-  },
-  {
-    "identifier": "GUo3MpaLeaLDvjDnF5XQLRCjWC9WhkNPbtrVWZ5FKjLp",
-    "localizations": {
-      "en": {
-        "pluralForm": "a1-1",
-        "singularForm": "a1-1",
-        "shouldCapitalize": true
-      }
-    },
-    "baseSupply": "100000",
-    "totalSupply": "120000",
-    "maxSupply": "5000",
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
-        {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
-        }
-      ]
-    },
-    "mintable": true,
-    "burnable": true,
-    "freezable": true,
-    "unfreezable": true,
-    "destroyable": true,
-    "allowedEmergencyActions": true,
-    "dataContractIdentifier": "5BwVvDstM6FaXQcLNUGkuPHAk5xH3uEoYEKqHKXjw5nL"
-    "decimals": null,
-  }
+    {
+        "identifier": "9YxdbQUjJmQsmVPen95HjAU3Esj7tVkWSY2EQWT84ZQP",
+        "position": 0,
+        "timestamp": null,
+        "description": "note",
+        "localizations": {
+            "en": {
+                "pluralForm": "tokens",
+                "singularForm": "token",
+                "shouldCapitalize": true
+            }
+        },
+        "baseSupply": "1",
+        "totalSupply": "1",
+        "maxSupply": null,
+        "owner": {
+            "identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+            "aliases": [
+                {
+                    "alias": "canusieethat7.dash",
+                    "status": "ok",
+                    "timestamp": "2024-10-10T19:40:05.824Z",
+                    "documentId": "Qwb2FuwfnexmxxYoJUsMhM9pd192NVDvaEVFyjkSXAa",
+                    "contested": false
+                }
+            ]
+        },
+        "mintable": false,
+        "burnable": false,
+        "freezable": false,
+        "unfreezable": false,
+        "destroyable": false,
+        "allowedEmergencyActions": false,
+        "dataContractIdentifier": "Y189uedQG3CJCuu83P3DqnG7ngQaRKz69x3gY8uDzQe",
+        "changeMaxSupply": false,
+        "totalGasUsed": null,
+        "mainGroup": null,
+        "totalTransitionsCount": null,
+        "totalFreezeTransitionsCount": null,
+        "totalBurnTransitionsCount": null,
+        "decimals": 1,
+        "perpetualDistribution": null,
+        "preProgrammedDistribution": null,
+        "price": null,
+        "prices": null
+    }, ...
 ]
 ```
 Response codes:
