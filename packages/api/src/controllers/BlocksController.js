@@ -176,8 +176,6 @@ class BlocksController {
 
     response.sse({ data: JSON.stringify({ status: 'ok' }) })
 
-    const blocksPool = new BlocksPool()
-
     await redis.subscribe(REDIS_PUBSUB_NEW_BLOCK_CHANNEL, async (blockInfo) => {
       const { blockHeight } = JSON.parse(blockInfo)
 
