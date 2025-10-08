@@ -70,6 +70,12 @@ const outputScriptToAddress = (script) => {
 }
 
 const fetchTokenInfoByRows = async (rows, sdk) => {
+  const owners = rows
+    .filter(row => row.owner)
+    .map(row => row.owner?.trim())
+
+  const aliasDocuments = await getAliasDocumentForIdentifiers(owners, sdk)
+
   const dataContractsWithTokens = await Promise.all(rows.map(async (row) => {
     const dataContract = await sdk.dataContracts.getDataContractByIdentifier(row.data_contract_identifier)
 
@@ -91,7 +97,7 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
 
       const tokenTotalSupply = await sdk.tokens.getTokenTotalSupply(tokenIdentifier)
 
-      const [aliasDocument] = await sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', dataContract.ownerId.base58()]], 1)
+      const aliasDocument = row.owner ? aliasDocuments[row.owner?.trim()] : undefined
 
       const aliases = []
 
