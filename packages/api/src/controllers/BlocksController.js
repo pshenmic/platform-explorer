@@ -2,7 +2,7 @@ const BlocksDAO = require('../dao/BlocksDAO')
 const {
   EPOCH_CHANGE_TIME,
   NETWORK,
-  REDIS_PUBSUB_NEW_BLOCK_CHANNEL,
+  REDIS_PUBSUB_NEW_BLOCK_CHANNEL
 } = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
 const TenderdashRPC = require('../tenderdashRpc')
