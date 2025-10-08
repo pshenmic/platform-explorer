@@ -1,14 +1,12 @@
 use crate::entities::block::Block;
 use crate::entities::indexer_block_info::IndexerBlockInfo;
 use crate::entities::validator::Validator;
-use crate::processor::psql::handlers::handle_st::get_st_bytes;
 use crate::processor::psql::{PSQLProcessor, ProcessorError};
 use base64::engine::general_purpose;
 use base64::Engine;
 use deadpool_postgres::GenericClient;
 use redis::Commands;
 use serde_json::Value;
-use sha256::digest;
 
 impl PSQLProcessor {
     pub async fn handle_block(
@@ -87,7 +85,7 @@ impl PSQLProcessor {
                             .header
                             .height
                             .try_into()
-                            .expect("block height out of range u64")
+                            .expect("block height out of range u64"),
                     };
 
                     let json: Value = block_info.try_into().unwrap();

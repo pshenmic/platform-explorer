@@ -9,10 +9,8 @@ pub struct IndexerBlockInfo {
 impl TryFrom<IndexerBlockInfo> for Value {
     type Error = serde_json::Error;
     fn try_from(info: IndexerBlockInfo) -> Result<Self, Self::Error> {
-        serde_json::to_value(
-            platform_value!({
-                "blockHeight": info.block_height,
-            })
-        )
+        serde_json::to_value(platform_value!({
+            "blockHeight": info.block_height,
+        }))
     }
 }
