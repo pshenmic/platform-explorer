@@ -13,36 +13,47 @@ import { ValueCard } from '@components/cards'
  * @param {boolean} [props.loading] - Loading state flag.
  * @returns {JSX.Element}
  */
-export const IdentityTopUp = ({ amount, rate, identityId, assetLockProof, loading }) => (
-    <>
-      <InfoLine
-        className={'TransactionPage__InfoLine'}
-        title={'Amount'}
-        value={<CreditsBlock credits={amount} rate={rate}/>}
-        loading={loading}
-        error={amount === undefined}
-      />
+export const IdentityTopUp = ({
+  amount,
+  rate,
+  identityId,
+  assetLockProof,
+  loading
+}) => (
+  <>
+    <InfoLine
+      className={'TransactionPage__InfoLine'}
+      title={'Amount'}
+      value={<CreditsBlock credits={amount} rate={rate} />}
+      loading={loading}
+      error={amount === undefined}
+    />
 
-      <InfoLine
-        className={'TransactionPage__InfoLine'}
-        title={'Identity'}
-        value={(
-          <ValueCard link={`/identity/${identityId}`}>
-            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {identityId}
-            </Identifier>
-          </ValueCard>
-        )}
-        loading={loading}
-        error={!identityId}
-      />
-
-      {assetLockProof &&
-        <AssetLockProof
-          assetLockProof={assetLockProof}
-          rate={rate}
-          loading={loading}
-        />
+    <InfoLine
+      className={'TransactionPage__InfoLine'}
+      title={'Identity'}
+      value={
+        <ValueCard link={`/identity/${identityId}`}>
+          <Identifier
+            avatar={true}
+            copyButton={true}
+            ellipsis={true}
+            styles={['highlight-both']}
+          >
+            {identityId}
+          </Identifier>
+        </ValueCard>
       }
-    </>
+      loading={loading}
+      error={!identityId}
+    />
+
+    {assetLockProof && (
+      <AssetLockProof
+        assetLockProof={assetLockProof}
+        rate={rate}
+        loading={loading}
+      />
+    )}
+  </>
 )

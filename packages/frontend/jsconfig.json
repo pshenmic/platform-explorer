@@ -5,7 +5,7 @@
       "@components/*": ["./src/components/*"],
       "@ui/*": ["./src/components/ui/*"],
       "@utils/*": ["./src/util/*"],
-      "@utils": ["./src/util/index.js"],
+      "@utils": ["./src/util/index.js"]
     }
   },
   "include": ["**/*"],

@@ -40,20 +40,38 @@ export const TokenConfiguration = ({
 }) => {
   return (
     <div className={'InfoBlock'}>
-        <div className={styles.title}>TOKEN CONFIGURATION</div>
-        {
-          !isNaN(Number(position)) && (
-                        <InfoLine
-                            title={'Token Position'}
-                            value={
-                                <ValueContainer className={styles.position} size={'sm'} colorScheme={'gray'}>
-                                  {position}
-                                </ValueContainer>
-                            }
-                          />
-          )
+      <div className={styles.title}>TOKEN CONFIGURATION</div>
+      <div className={styles.container}>
+        {!isNaN(Number(position)) && (
+          <InfoLine
+            title={'Token Position'}
+            value={
+              <ValueContainer
+                className={styles.position}
+                size={'sm'}
+                colorScheme={'gray'}
+              >
+                {position}
+              </ValueContainer>
+            }
+          />
+        )}
 
-          }
+        {distributionRules?.newTokenDestinationIdentity && (
+          <InfoLine
+            title={'Token Identifier'}
+            value={
+              <Identifier
+                copyButton={true}
+                ellipsis={false}
+                styles={['highlight-both']}
+              >
+                {distributionRules.newTokenDestinationIdentity}
+              </Identifier>
+            }
+          />
+        )}
+      </div>
     </div>
   )
 }

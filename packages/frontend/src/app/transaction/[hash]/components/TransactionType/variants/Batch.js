@@ -12,22 +12,27 @@ import { TransitionCard } from '@components/transactions'
  * @returns {JSX.Element}
  */
 export const Batch = ({ transitions, ownerId, rate, loading }) => (
-    <>
-      <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Transitions'}
-        title={`Transitions ${transitions !== undefined ? `(${transitions?.length})` : ''}`}
-        value={(<>
+  <>
+    <InfoLine
+      className={
+        'TransactionPage__InfoLine TransactionPage__InfoLine--Transitions'
+      }
+      title={`Transitions ${transitions !== undefined ? `(${transitions?.length})` : ''}`}
+      value={
+        <>
           {transitions?.map((transition, i) => (
             <TransitionCard
               className={'TransactionPage__TransitionCard'}
               transition={transition}
               owner={ownerId}
               rate={rate}
-              key={i}/>
+              key={i}
+            />
           ))}
-        </>)}
-        loading={loading}
-        error={transitions === undefined}
-      />
-    </>
+        </>
+      }
+      loading={loading}
+      error={transitions === undefined}
+    />
+  </>
 )

@@ -16,74 +16,106 @@ import { PublicKeyCard } from '@components/transactions'
  * @param {boolean} [props.loading] - Loading state flag.
  * @returns {JSX.Element}
  */
-export const IdentityUpdate = ({ identityId, revision, identityContractNonce, publicKeysToAdd, publicKeys, setPublicKeyIdsToDisable, identityNonce, loading }) => (
-<>
-      <InfoLine
-        className={'TransactionPage__InfoLine'}
-        title={'Identity'}
-        value={(
-          <ValueCard link={`/identity/${identityId}`}>
-            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {identityId}
-            </Identifier>
-          </ValueCard>
-        )}
-        loading={loading}
-        error={!identityId}
-      />
+export const IdentityUpdate = ({
+  identityId,
+  revision,
+  identityContractNonce,
+  publicKeysToAdd,
+  publicKeys,
+  setPublicKeyIdsToDisable,
+  identityNonce,
+  loading
+}) => (
+  <>
+    <InfoLine
+      className={'TransactionPage__InfoLine'}
+      title={'Identity'}
+      value={
+        <ValueCard link={`/identity/${identityId}`}>
+          <Identifier
+            avatar={true}
+            copyButton={true}
+            ellipsis={true}
+            styles={['highlight-both']}
+          >
+            {identityId}
+          </Identifier>
+        </ValueCard>
+      }
+      loading={loading}
+      error={!identityId}
+    />
 
+    <InfoLine
+      className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+      title={'Identity Nonce'}
+      value={identityNonce}
+      loading={loading}
+      error={identityNonce === undefined}
+    />
+
+    <InfoLine
+      className={'TransactionPage__InfoLine'}
+      title={'Revision'}
+      value={revision}
+      loading={loading}
+      error={revision === undefined}
+    />
+
+    {identityContractNonce !== undefined && (
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        className={
+          'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
+        }
         title={'Identity Nonce'}
         value={identityNonce}
         loading={loading}
         error={identityNonce === undefined}
       />
+    )}
 
+    {publicKeysToAdd?.length > 0 && (
       <InfoLine
-        className={'TransactionPage__InfoLine'}
-        title={'Revision'}
-        value={revision}
-        loading={loading}
-        error={revision === undefined}
-      />
-
-      {identityContractNonce !== undefined &&
-        <InfoLine
-          className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
-          title={'Identity Nonce'}
-          value={identityNonce}
-          loading={loading}
-          error={identityNonce === undefined}
-        />
-      }
-
-      {publicKeysToAdd?.length > 0 &&
-        <InfoLine
-          className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
-          title={`Add Public Keys ${publicKeys !== undefined ? `(${publicKeysToAdd?.length})` : ''}`}
-          value={(<>
+        className={
+          'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'
+        }
+        title={`Add Public Keys ${publicKeys !== undefined ? `(${publicKeysToAdd?.length})` : ''}`}
+        value={
+          <>
             {publicKeysToAdd?.map((publicKey, i) => (
-              <PublicKeyCard className={'TransactionPage__PublicKeyCard'} publicKey={publicKey} key={i}/>
+              <PublicKeyCard
+                className={'TransactionPage__PublicKeyCard'}
+                publicKey={publicKey}
+                key={i}
+              />
             ))}
-          </>)}
-          loading={loading}
-          error={publicKeysToAdd === undefined}
-        />
-      }
+          </>
+        }
+        loading={loading}
+        error={publicKeysToAdd === undefined}
+      />
+    )}
 
-      {setPublicKeyIdsToDisable?.length > 0 &&
-        <InfoLine
-          className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
-          title={`Disable Public Keys ${setPublicKeyIdsToDisable !== undefined ? `(${setPublicKeyIdsToDisable?.length})` : ''}`}
-          value={(<>
+    {setPublicKeyIdsToDisable?.length > 0 && (
+      <InfoLine
+        className={
+          'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'
+        }
+        title={`Disable Public Keys ${setPublicKeyIdsToDisable !== undefined ? `(${setPublicKeyIdsToDisable?.length})` : ''}`}
+        value={
+          <>
             {setPublicKeyIdsToDisable?.map((publicKey, i) => (
-              <PublicKeyCard className={'TransactionPage__PublicKeyCard'} publicKey={{ id: publicKey }} key={i}/>
+              <PublicKeyCard
+                className={'TransactionPage__PublicKeyCard'}
+                publicKey={{ id: publicKey }}
+                key={i}
+              />
             ))}
-          </>)}
-          loading={loading}
-          error={setPublicKeyIdsToDisable === undefined}
-        />
-      }
-    </>
+          </>
+        }
+        loading={loading}
+        error={setPublicKeyIdsToDisable === undefined}
+      />
+    )}
+  </>
 )

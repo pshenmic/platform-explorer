@@ -14,38 +14,57 @@ import { ValueCard } from '@components/cards'
  * @param {boolean} [props.loading] - Loading state flag.
  * @returns {JSX.Element}
  */
-export const IdentityCreate = ({ identityId, assetLockProof, rate, publicKeys, loading }) => (
-    <>
-      <InfoLine
-        className={'TransactionPage__InfoLine'}
-        title={'Identity Address'}
-        value={(
-          <ValueCard link={`/identity/${identityId}`}>
-            <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-              {identityId}
-            </Identifier>
-          </ValueCard>
-        )}
-        loading={loading}
-        error={!identityId}
-      />
+export const IdentityCreate = ({
+  identityId,
+  assetLockProof,
+  rate,
+  publicKeys,
+  loading
+}) => (
+  <>
+    <InfoLine
+      className={'TransactionPage__InfoLine'}
+      title={'Identity Address'}
+      value={
+        <ValueCard link={`/identity/${identityId}`}>
+          <Identifier
+            avatar={true}
+            copyButton={true}
+            ellipsis={true}
+            styles={['highlight-both']}
+          >
+            {identityId}
+          </Identifier>
+        </ValueCard>
+      }
+      loading={loading}
+      error={!identityId}
+    />
 
-      <AssetLockProof
-        assetLockProof={assetLockProof}
-        rate={rate}
-        loading={loading}
-      />
+    <AssetLockProof
+      assetLockProof={assetLockProof}
+      rate={rate}
+      loading={loading}
+    />
 
-      <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
-        title={`Public Keys ${publicKeys !== undefined ? `(${publicKeys?.length})` : ''}`}
-        value={(<>
+    <InfoLine
+      className={
+        'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'
+      }
+      title={`Public Keys ${publicKeys !== undefined ? `(${publicKeys?.length})` : ''}`}
+      value={
+        <>
           {publicKeys?.map((publicKey, i) => (
-            <PublicKeyCard className={'TransactionPage__PublicKeyCard'} publicKey={publicKey} key={i}/>
+            <PublicKeyCard
+              className={'TransactionPage__PublicKeyCard'}
+              publicKey={publicKey}
+              key={i}
+            />
           ))}
-        </>)}
-        loading={loading}
-        error={publicKeys === undefined}
-      />
-    </>
+        </>
+      }
+      loading={loading}
+      error={publicKeys === undefined}
+    />
+  </>
 )
