@@ -1364,23 +1364,6 @@ const getAliasDocumentForIdentifiers = async (identifiers, sdk) => {
   }), {})
 }
 
-const checkSSEConditions = async (redis, blocksDAO) => {
-  if (!redis) {
-    throw new RedisNotConnectedError()
-  }
-
-  const lastIndexerBlock = await blocksDAO.getLastBlock()
-  const tdStatus = await TenderdashRPC.getStatus()
-
-  if (tdStatus?.highestBlock?.height === undefined) {
-    throw new ServiceNotAvailableError()
-  }
-
-  if (!ENABLE_SSE_ON_SYNC && tdStatus?.highestBlock?.height - 10 > lastIndexerBlock.header.height) {
-    throw new IndexerNotSynchronized()
-  }
-}
-
 module.exports = {
   hash,
   decodeStateTransition,
@@ -1398,5 +1381,4 @@ module.exports = {
   convertToHomographSafeChars,
   getAliasDocumentForIdentifiers,
   getAliasDocumentForIdentifier,
-  checkSSEConditions
 }
