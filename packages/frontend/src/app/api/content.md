@@ -634,6 +634,7 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `gas_max` number of max `gas_used`
 * `timestamp_start` must be used with `timestamp_end`
 * `timestamp_end` must be used with `timestamp_start`
+* `token_name` name of token
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
 
 | Batch type string                   | Batch type number |
