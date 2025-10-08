@@ -1,6 +1,7 @@
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier, CodeBlock } from '@components/data'
 import { InternalConfigCard } from '@components/dataContracts'
+import { TokenConfiguration } from '../TokenConfiguration'
 
 /**
  * Displays details for a Data Contract Create transition.
@@ -15,7 +16,7 @@ import { InternalConfigCard } from '@components/dataContracts'
  * @param {Object} [props.schema] - Contract JSON schema.
  * @returns {JSX.Element}
  */
-export const DataContractCreate = ({ dataContractId, ownerId, version, identityNonce, signaturePublicKeyId, internalConfig, schema }) =>  (
+export const DataContractCreate = ({ dataContractId, ownerId, version, identityNonce, signaturePublicKeyId, internalConfig, schema, tokens }) => (
     <>
       <InfoLine
         className={'TransactionPage__InfoLine'}
@@ -79,5 +80,13 @@ export const DataContractCreate = ({ dataContractId, ownerId, version, identityN
           error={schema === undefined}
         />
       }
+      {tokens?.length && tokens.map((token, i) => (
+              <InfoLine
+                key={i}
+                className={'TransactionPage__InfoLine TransactionPage__InfoLine--InternalConfig TransactionPage__InfoLine--Baseline'}
+                title={'Internal Config'}
+                value={<TokenConfiguration {...token} />}
+              />
+      ))}
     </>
 )
