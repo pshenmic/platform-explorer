@@ -43,6 +43,13 @@ ___
 
 ### Indexer
 
+If you want to use additional features, such as subscribing to new blocks, you must specify these variables.
+
+```
+REDIS_URL=redis://default@127.0.0.1:6379
+REDIS_PUBSUB_NEW_BLOCK_CHANNEL=block
+```
+
 Verify `packages/indexer/.env` with your PostgreSQL credentials and Core RPC URL, Tenderdash RPC URL, then do:
 ```bash
 cd packages/indexer

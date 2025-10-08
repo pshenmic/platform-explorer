@@ -21,6 +21,12 @@ DASHCORE_USER=username
 DASHCORE_PASS=password
 EPOCH_CHANGE_TIME=3600000
 ```
+If you want to use additional features, such as subscribing to new blocks, you must also specify these variables. 
+
+```
+REDIS_URL=redis://default@127.0.0.1:6379
+REDIS_PUBSUB_NEW_BLOCK_CHANNEL=block
+```
 
 
 ### Deploy
