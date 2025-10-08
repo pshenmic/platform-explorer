@@ -9,6 +9,12 @@ impl Indexer {
         current_block_height: i32,
         interval: &mut Interval,
     ) {
+        if last_block_height > current_block_height + 10 {
+            self.processor.set_indexing_flag(true).await;
+        } else {
+            self.processor.set_indexing_flag(false).await;
+        }
+
         if last_block_height > current_block_height {
             for block_height in current_block_height + 1..last_block_height + 1 {
                 loop {

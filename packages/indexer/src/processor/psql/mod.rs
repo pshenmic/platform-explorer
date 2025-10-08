@@ -13,6 +13,7 @@ use dpp::platform_value::{platform_value, BinaryData};
 use dpp::state_transition::state_transitions::batch_transition::batched_transition::document_transition_action_type::DocumentTransitionActionType;
 use std::env;
 use std::num::ParseIntError;
+use redis::Commands;
 
 pub mod handlers;
 
@@ -156,6 +157,14 @@ impl PSQLProcessor {
             SystemDataContract::WalletUtils => {}
             SystemDataContract::TokenHistory => {}
             SystemDataContract::KeywordSearch => {}
+        }
+    }
+
+    pub async fn set_indexing_flag(&mut self, indexing_flag: bool) {
+        if let Some(redis) = &mut self.redis {
+            redis
+                .set("indexing", indexing_flag.to_string())
+                .expect("Failed to set indexing flag")
         }
     }
 }
