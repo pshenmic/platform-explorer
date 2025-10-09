@@ -1,8 +1,14 @@
 .BigNumber {
   white-space: nowrap;
 
+  &__Group {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 3px;
+  }
+
   &__Space {
     display: inline-block;
-    width: 3px;
   }
 }

@@ -28,20 +28,8 @@ export const trimEndZeros = (str) => {
   return str.replace(/0+$/, '')
 }
 
-export const formatNumberWithSpaces = (num) => {
-  try {
-    const formattedInteger = BigInt(num).toLocaleString('ru-Ru')
-
-    return formattedInteger
-  } catch (e) {
-    const formattedInteger = String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-
-    return formattedInteger
-  }
-}
-
 export const splitNum = (str) =>
-  Array.from(str).reduceRight((acc, char) => {
+  Array.from(String(str)).reduceRight((acc, char) => {
     const [first, ...rest] = acc
 
     if (acc.length === 0) {
