@@ -1338,7 +1338,7 @@ describe('Tokens', () => {
         tokenTransitions
           .slice(0, 10)
           .map(({ tokenTransition }) => ({
-            amount: tokenTransition.amount ?? 0,
+            amount: String(tokenTransition.amount ?? 0),
             recipient: tokenTransition.recipient,
             owner: {
               identifier: tokenTransition.owner,
@@ -1375,7 +1375,7 @@ describe('Tokens', () => {
           .sort((a, b) => b.tokenTransition.id - a.tokenTransition.id)
           .slice(0, 10)
           .map(({ tokenTransition }) => ({
-            amount: tokenTransition.amount ?? 0,
+            amount: String(tokenTransition.amount ?? 0),
             recipient: tokenTransition.recipient,
             owner: {
               identifier: tokenTransition.owner,
@@ -1412,7 +1412,7 @@ describe('Tokens', () => {
           .sort((a, b) => b.tokenTransition.id - a.tokenTransition.id)
           .slice(0, 7)
           .map(({ tokenTransition }) => ({
-            amount: tokenTransition.amount ?? 0,
+            amount: String(tokenTransition.amount ?? 0),
             recipient: tokenTransition.recipient,
             owner: {
               identifier: tokenTransition.owner,
@@ -1449,7 +1449,7 @@ describe('Tokens', () => {
           .sort((a, b) => b.tokenTransition.id - a.tokenTransition.id)
           .slice(7, 14)
           .map(({ tokenTransition }) => ({
-            amount: tokenTransition.amount ?? 0,
+            amount: String(tokenTransition.amount ?? 0),
             recipient: tokenTransition.recipient,
             owner: {
               identifier: tokenTransition.owner,
