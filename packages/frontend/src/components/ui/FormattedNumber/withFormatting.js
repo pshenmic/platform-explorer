@@ -28,7 +28,7 @@ export const withFormatting = (Component) => {
 
       if (!integer) {
         return (
-          <Child tooltip={`0,${trimedFractional}`}>0,{trimedFractional}</Child>
+          <Child tooltip={value}>0,{trimedFractional}</Child>
         )
       }
 
