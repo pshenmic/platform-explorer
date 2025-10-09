@@ -1,1 +1,0 @@
-CREATE INDEX idx_document_revision ON documents(revision)
