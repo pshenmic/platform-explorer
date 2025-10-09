@@ -28,21 +28,20 @@ export const trimEndZeros = (str) => {
   return str.replace(/0+$/, '')
 }
 
-export const formatNumberWithSpaces = (num) => {
-  try {
-    const formattedInteger = BigInt(num).toLocaleString('en')
+export const splitNum = (str) =>
+  Array.from(String(str)).reduceRight((acc, char) => {
+    const [first = '', ...rest] = acc
 
-    return formattedInteger
-  } catch (e) {
-    const formattedInteger = String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    if (first.length < 3) {
+      return [char + first, ...rest]
+    }
 
-    return formattedInteger
-  }
-}
+    return [char, ...acc]
+  }, [])
 
 export const concatDecimal = (integer, fractional) => {
   if (fractional) {
-    return integer + ',' + fractional
+    return integer + '.' + fractional
   }
 
   return integer

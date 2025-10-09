@@ -9,6 +9,11 @@ export const TransactionTypesInfo = {
     description: 'Creates a new decentralized identity (DID) to manage digital assets and make actions.',
     colorScheme: 'blue'
   },
+  BATCH: {
+    title: 'Batch',
+    description: 'Creates a new document or token transitions. It is used to make create, modify, delete other document or token actions on the platform.',
+    colorScheme: 'gray'
+  },
   IDENTITY_TOP_UP: {
     title: 'Identity Top Up',
     description: 'Adds credits to an existing decentralized identity (DID) balance.',
