@@ -1,0 +1,1 @@
+CREATE INDEX idx_data_contract_version ON data_contracts(version)

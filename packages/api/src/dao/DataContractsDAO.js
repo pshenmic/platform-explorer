@@ -59,29 +59,34 @@ module.exports = class DataContractsDAO {
         acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
     }
 
-    const sumDocuments = this.knex('documents')
-      .select('documents.id', 'documents.data_contract_id', 'revision')
-      .where('revision', '=', '1')
-      .as('sum_documents')
-
     const subquery = this.knex('data_contracts')
-      .select('data_contracts.id as id', 'data_contracts.identifier as identifier', 'data_contracts.name as name',
-        'data_contracts.identifier as my_identifier', 'data_contracts.owner as owner',
-        'data_contracts.is_system as is_system', 'data_contracts.version as version',
-        'data_contracts.state_transition_hash as tx_hash')
       .select(
-        this.knex(sumDocuments)
-          .count('*')
-          .whereRaw('data_contracts.id = data_contract_id')
-          .limit(1)
-          .as('documents_count')
+        'data_contracts.id as id',
+        'data_contracts.identifier as identifier',
+        'data_contracts.name as name',
+        'data_contracts.identifier as my_identifier',
+        'data_contracts.owner as owner',
+        'data_contracts.is_system as is_system',
+        'data_contracts.version as version',
+        'data_contracts.state_transition_hash as tx_hash',
+        this.knex.raw('COALESCE(document_counts.count, 0) as documents_count') // Use COALESCE to handle data contracts with no matching documents
       )
-      .select(
+      .leftJoin(
+        this.knex('documents')
+          .select('data_contract_id')
+          .count('* as count')
+          .where('revision', '=', '1')
+          .groupBy('data_contract_id')
+          .as('document_counts'),
+        'document_counts.data_contract_id', '=', 'data_contracts.id'
+      )
+      .leftJoin(
         this.knex('tokens')
-          .count('id')
-          .whereRaw('tokens.data_contract_id = data_contracts.id')
-          .limit(1)
-          .as('tokens_count')
+          .select('data_contract_id')
+          .count('* as count')
+          .groupBy('data_contract_id')
+          .as('tokens_counts'),
+        'tokens_counts.data_contract_id', '=', 'data_contracts.id'
       )
       .where('version', 1)
       .orWhere('version', 0)
@@ -100,7 +105,7 @@ module.exports = class DataContractsDAO {
       .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .from('filtered_data_contracts')
 
-    const rows = this.knex
+    const rows = await this.knex
       .with('filtered_data_contracts', filteredContracts)
       .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
       .select(this.knex('filtered_data_contracts').count('*').as('total_count'))
