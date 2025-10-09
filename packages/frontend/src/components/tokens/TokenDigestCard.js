@@ -182,7 +182,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
         title={'Token Creator'}
         value={
           <ValueCard
-            link={`identity/${owner?.identifier}`}
+            link={`/identity/${owner?.identifier}`}
             className={'TokenDigestCard__ValueContainer'}
             clickable={false}
           >
