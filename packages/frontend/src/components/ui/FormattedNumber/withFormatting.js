@@ -8,6 +8,8 @@ import {
 import { Tooltip } from '../Tooltips'
 import { currencyRound } from '../../../util'
 
+import styles from './FormattedNumber.module.scss'
+
 export const withFormatting = (Component) => {
   const FormattedNumberWithTooltip = forwardRef(
     ({ children, decimals, threshold = 999999999, ...props }, ref) => {
@@ -16,17 +18,12 @@ export const withFormatting = (Component) => {
 
       const trimedFractional = trimEndZeros(fractional)
 
-      const handleCopy = (e) => {
-        e.preventDefault()
-        e.clipboardData.setData('text/plain', concatDecimal(integer, trimedFractional))
-      }
-
       const Child = ({ children: content }) => (
         <Tooltip
           placement={'top'}
           content={value}
         >
-          <span onCopy={handleCopy}>
+          <span>
             <Component
               {...props}
               ref={ref}
@@ -53,7 +50,7 @@ export const withFormatting = (Component) => {
         return (
           <Child>
             {splitNum(integer).map((num, i) => (
-              <span key={`${num}-${i}`}>{num}</span>
+              <span className={styles.item} key={`${num}-${i}`}>{num}</span>
             ))}
           </Child>
         )
@@ -62,7 +59,7 @@ export const withFormatting = (Component) => {
       return (
         <Child>
           {splitNum(integer).map((num, i) => (
-            <span key={`${num}-${i}`}>{num}</span>
+            <span className={styles.item} key={`${num}-${i}`}>{num}</span>
           ))}
           ,{trimedFractional}
         </Child>

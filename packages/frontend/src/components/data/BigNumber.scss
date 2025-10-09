@@ -1,14 +1,6 @@
 .BigNumber {
-  white-space: nowrap;
-
-  &__Group {
-    display: inline-flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 3px;
-  }
-
-  &__Space {
+  &__Space:not(:last-child) {
     display: inline-block;
+    border-right: transparent solid 3px;
   }
 }

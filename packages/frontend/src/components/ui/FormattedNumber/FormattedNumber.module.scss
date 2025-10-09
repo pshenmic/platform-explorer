@@ -1,6 +1,8 @@
 .root {
   white-space: nowrap;
-  display: inline-flex;
-  flex-direction: row;
-  gap: 3px;
+
+  .item:not(:last-child) {
+    display: inline-block;
+    border-right: transparent solid 3px;
+  }
 }
