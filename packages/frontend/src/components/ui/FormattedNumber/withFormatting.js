@@ -11,7 +11,8 @@ import { currencyRound } from '../../../util'
 export const withFormatting = (Component) => {
   const FormattedNumberWithTooltip = forwardRef(
     ({ children, decimals, threshold = 999999999, ...props }, ref) => {
-      const { integer, fractional } = sliceNumberByDecimals(children, decimals)
+      const value = String(children)
+      const { integer, fractional } = sliceNumberByDecimals(value, decimals)
 
       const trimedFractional = trimEndZeros(fractional)
 
