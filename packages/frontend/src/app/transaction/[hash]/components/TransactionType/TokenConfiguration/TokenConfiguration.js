@@ -1,8 +1,8 @@
-import { InfoLine, Identifier, CodeBlock } from '@components/data'
-import { ValueCard } from '@components/cards'
+import { InfoLine, Identifier } from '@components/data'
 import { ValueContainer } from '@ui/containers'
 
 import styles from './TokenConfiguration.module.scss'
+import { LocalisationGrid } from '@components/tokens/localisation/LocalisationGrid'
 
 /**
  * Token configuration block with flat props.
@@ -42,7 +42,7 @@ export const TokenConfiguration = ({
     <div className={'InfoBlock'}>
       <div className={styles.title}>TOKEN CONFIGURATION</div>
       <div className={styles.container}>
-        {!isNaN(Number(position)) && (
+        {!isNaN(position) && (
           <InfoLine
             title={'Token Position'}
             value={
@@ -70,6 +70,13 @@ export const TokenConfiguration = ({
               </Identifier>
             }
           />
+        )}
+
+        {!isNaN(conventions?.decimals) && (
+          <InfoLine title={'Decimals'} value={conventions.decimals} />
+        )}
+        {conventions.localizations && (
+          <LocalisationGrid localisations={conventions.localizations} isOpen />
         )}
       </div>
     </div>
