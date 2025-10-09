@@ -183,8 +183,13 @@ class BlocksController {
 
     await this.redis.subscribeMessages(callback)
 
-    // initialize sse
-    response.sse({ data: JSON.stringify({ status: 'ok' }) })
+    const lastBlock = await this.blocksDAO.getLastBlock()
+
+    response.sse({
+      data: JSON.stringify(lastBlock ?? { error: 'no blocks' }),
+      event: 'block',
+      id: String(-1)
+    })
 
     request.raw.on('close', () => {
       this.redis.unsubscribeMessages(callback)
