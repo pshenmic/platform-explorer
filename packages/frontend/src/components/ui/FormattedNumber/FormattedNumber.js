@@ -1,7 +1,12 @@
 import { withFormatting } from './withFormatting'
-import clsx from 'clsx'
-import './FormattedNumber.scss'
+import { cva } from 'class-variance-authority'
 
-const ViewNumber = ({ children, className }) => <span className={clsx('BigNumber', className)}>{children}</span>
+import styles from './FormattedNumber.module.scss'
+
+const BigNumberStyles = cva(styles.root)
+
+const ViewNumber = ({ children, className }) => (
+  <span className={BigNumberStyles({ className })}>{children}</span>
+)
 
 export const FormattedNumber = withFormatting(ViewNumber)

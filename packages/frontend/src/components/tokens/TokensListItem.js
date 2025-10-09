@@ -47,7 +47,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
                 maxSupply={maxSupply || totalSupply}
                 decimals={decimals}
               />
-            : <FormattedNumber decimals={decimals}>{totalSupply}</FormattedNumber>
+            : <FormattedNumber className={'TokensListItem__Column--SupplyBigNumber'} decimals={decimals}>{totalSupply}</FormattedNumber>
           }
         </GridItem>
 

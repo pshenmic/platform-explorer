@@ -192,7 +192,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
               styles={['highlight-both']}
               ellipsis={false}
             >
-              {owner}
+              {owner?.identifier}
             </Identifier>
           </ValueCard>
         }
