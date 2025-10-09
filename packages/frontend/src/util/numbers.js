@@ -30,11 +30,11 @@ export const trimEndZeros = (str) => {
 
 export const formatNumberWithSpaces = (num) => {
   try {
-    const formattedInteger = BigInt(num).toLocaleString('en')
+    const formattedInteger = BigInt(num).toLocaleString('ru-Ru')
 
     return formattedInteger
   } catch (e) {
-    const formattedInteger = String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    const formattedInteger = String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 
     return formattedInteger
   }
@@ -42,7 +42,7 @@ export const formatNumberWithSpaces = (num) => {
 
 export const concatDecimal = (integer, fractional) => {
   if (fractional) {
-    return integer + ',' + fractional
+    return integer + '.' + fractional
   }
 
   return integer
