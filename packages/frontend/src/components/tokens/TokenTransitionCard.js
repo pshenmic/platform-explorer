@@ -184,6 +184,7 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
               </span>
             </Badge>
           }
+          loading={token.loading}
           error={transition?.amount === undefined}
         />
       )}
