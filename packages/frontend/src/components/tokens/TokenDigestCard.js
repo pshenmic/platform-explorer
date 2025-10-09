@@ -31,9 +31,9 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
     totalGasUsed,
     totalTransitionsCount,
     totalFreezeTransitionsCount,
-    totalBurnTransitionsCount
+    totalBurnTransitionsCount,
+    decimals
   } = token?.data || {}
-
   return (
     <div
       className={`TokenDigestCard ${className || ''} ${token?.loading ? 'TokenDigestCard--Loading' : ''}`}
@@ -44,6 +44,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
           size={'xl'}
         >
           <Supply
+            decimals={decimals}
             currentSupply={totalSupply}
             maxSupply={maxSupply}
             progressPosition={'bottom'}
@@ -191,7 +192,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
               styles={['highlight-both']}
               ellipsis={false}
             >
-              {owner}
+              {owner?.identifier}
             </Identifier>
           </ValueCard>
         }
