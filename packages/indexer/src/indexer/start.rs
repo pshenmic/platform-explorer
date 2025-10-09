@@ -24,7 +24,8 @@ impl Indexer {
             let current_block_height: i32 = self.last_block_height.get();
 
             self.process_block(last_block_height, current_block_height, &mut interval)
-                .await;
+                .await
+                .expect("Cannot process block");
         }
     }
 

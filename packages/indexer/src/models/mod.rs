@@ -18,7 +18,24 @@ pub struct TenderdashRPCValidatorsResponse {
 
 #[derive(Deserialize)]
 pub struct TenderdashSyncInfo {
+    pub latest_block_hash: String,
+    pub latest_app_hash: String,
     pub latest_block_height: String,
+    pub latest_block_time: String,
+    pub earliest_block_hash: String,
+    pub earliest_app_hash: String,
+    pub earliest_block_height: String,
+    pub earliest_block_time: String,
+    pub max_peer_block_height: String,
+    pub catching_up: bool,
+    pub total_synced_time: String,
+    pub remaining_time: String,
+    pub total_snapshots: String,
+    pub chunk_process_avg_time: String,
+    pub snapshot_height: String,
+    pub snapshot_chunks_count: String,
+    pub backfilled_blocks: String,
+    pub backfill_blocks_total: String,
 }
 
 #[derive(Deserialize)]
