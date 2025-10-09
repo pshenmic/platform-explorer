@@ -11,14 +11,47 @@ module.exports = class DataContractsDAO {
     this.sdk = sdk
   }
 
-  getDataContracts = async (page, limit, order, orderBy) => {
+  getDataContracts = async (page, limit, order, orderBy, owner, isSystem, withTokens, timestampStart, timestampEnd, documentsCountMin, documentsCountMax) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
+
+    let filtersQuery = ''
+    const filtersBindings = []
+
+    let timestampsQuery = ''
+    const timestampBindings = []
+
+    let documentCountQuery = ''
+    const documentCountBindings = []
 
     const orderByOptions = [{ column: 'filtered_data_contracts.id', order }]
 
     if (orderBy === 'documents_count') {
       orderByOptions.unshift({ column: 'documents_count', order })
+    }
+
+    if (owner) {
+      filtersBindings.push(owner)
+      filtersQuery = 'owner = ?'
+    }
+
+    if (withTokens) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and tokens_count >= 1' : 'tokens_count >= 1'
+    }
+
+    if (isSystem === true || isSystem === false) {
+      filtersBindings.push(isSystem)
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and is_system = ?' : 'is_system = ?'
+    }
+
+    if (documentsCountMin && documentsCountMax) {
+      documentCountQuery = 'documents_count between ? and ?'
+      documentCountBindings.push(documentsCountMin, documentsCountMax)
+    }
+
+    if (timestampStart && timestampEnd) {
+      timestampsQuery = 'blocks.timestamp between ? and ?'
+      timestampBindings.push(timestampStart, timestampEnd)
     }
 
     const getRankString = () => {
@@ -41,24 +74,41 @@ module.exports = class DataContractsDAO {
         .whereRaw('data_contracts.identifier = sum_documents.dc_identifier')
         .andWhere('revision', '=', '1')
         .as('documents_count'))
+      .select(
+        this.knex('tokens')
+          .count('id')
+          .whereRaw('tokens.data_contract_id = data_contracts.id')
+          .limit(1)
+          .as('tokens_count')
+      )
       .select(this.knex.raw('rank() over (partition by identifier order by version desc) rank'))
 
     const filteredContracts = this.knex.with('filtered_data_contracts', subquery)
       .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
-      .select('id', 'name', 'owner', 'identifier', 'version', 'tx_hash', 'rank', 'is_system',
-        this.knex('filtered_data_contracts').count('*').as('total_count').where('rank', '1'))
+      .select(
+        'filtered_data_contracts.id', 'name', 'filtered_data_contracts.owner',
+        'version', 'tx_hash', 'rank', 'is_system', 'identifier'
+      )
       .select(this.knex.raw(`rank() over (${getRankString()}) row_number`))
-      .from('filtered_data_contracts')
+      .select('blocks.timestamp as timestamp', 'blocks.hash as block_hash')
       .where('rank', 1)
-      .as('filtered_data_contracts')
-
-    const rows = await this.knex(filteredContracts)
-      .select('filtered_data_contracts.documents_count', 'filtered_data_contracts.id', 'name', 'total_count', 'identifier', 'filtered_data_contracts.owner', 'version', 'row_number',
-        'filtered_data_contracts.tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'blocks.hash as block_hash')
+      .andWhereRaw(filtersQuery, filtersBindings)
+      .andWhereRaw(timestampsQuery, timestampBindings)
+      .andWhereRaw(documentCountQuery, documentCountBindings)
       .leftJoin('state_transitions', 'state_transitions.hash', 'filtered_data_contracts.tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .from('filtered_data_contracts')
+
+    const rows = await this.knex
+      .with('filtered_data_contracts', filteredContracts)
+      .select(this.knex('filtered_data_contracts').count('*').as('total_count').where('rank', '1'))
+      .select(
+        'filtered_data_contracts.documents_count', 'filtered_data_contracts.id', 'name',
+        'identifier', 'filtered_data_contracts.owner', 'version', 'row_number',
+        'filtered_data_contracts.tx_hash', 'is_system', 'timestamp', 'block_hash')
       .whereBetween('row_number', [fromRank, toRank])
       .orderBy(orderByOptions)
+      .from('filtered_data_contracts')
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 

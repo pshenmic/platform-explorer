@@ -204,6 +204,20 @@ const schemaTypes = [
         pattern: '^[A-Za-z0-9-]+$',
         minLength: 3,
         maxLength: 25
+      },
+      is_system: {
+        type: ['boolean', 'null']
+      },
+      with_tokens: {
+        type: ['boolean', 'null']
+      },
+      documents_count_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      documents_count_max: {
+        type: ['number', 'null'],
+        minimum: 0
       }
     }
   },
