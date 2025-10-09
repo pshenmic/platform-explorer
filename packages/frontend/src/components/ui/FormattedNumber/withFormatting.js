@@ -1,8 +1,8 @@
 import { forwardRef } from 'react'
 import {
   concatDecimal,
-  formatNumberWithSpaces,
   sliceNumberByDecimals,
+  splitNum,
   trimEndZeros
 } from '../../../util/numbers'
 import { Tooltip } from '../Tooltips'
@@ -16,10 +16,21 @@ export const withFormatting = (Component) => {
 
       const trimedFractional = trimEndZeros(fractional)
 
-      const Child = ({ children: content, tooltip }) => (
-        <Tooltip placement={'top'} content={tooltip}>
-          <span>
-            <Component {...props} ref={ref}>
+      const handleCopy = (e) => {
+        e.preventDefault()
+        e.clipboardData.setData('text/plain', concatDecimal(integer, trimedFractional))
+      }
+
+      const Child = ({ children: content }) => (
+        <Tooltip
+          placement={'top'}
+          content={value}
+        >
+          <span onCopy={handleCopy}>
+            <Component
+              {...props}
+              ref={ref}
+            >
               {content}
             </Component>
           </span>
@@ -27,21 +38,33 @@ export const withFormatting = (Component) => {
       )
 
       if (!integer) {
+        return <Child>0,{trimedFractional}</Child>
+      }
+
+      if (threshold <= integer) {
         return (
-          <Child tooltip={value}>0,{trimedFractional}</Child>
+          <Child>
+            {concatDecimal(currencyRound(integer), trimedFractional)}
+          </Child>
         )
       }
 
-      const formatedInteger = formatNumberWithSpaces(integer)
-      const fullValue = concatDecimal(formatedInteger, trimedFractional)
-
-      if (threshold > integer) {
-        return <Child tooltip={fullValue}>{fullValue}</Child>
+      if (integer > 0) {
+        return (
+          <Child>
+            {splitNum(integer).map((num, i) => (
+              <span key={`${num}-${i}`}>{num}</span>
+            ))}
+          </Child>
+        )
       }
 
       return (
-        <Child tooltip={fullValue}>
-          {concatDecimal(currencyRound(integer), trimedFractional)}
+        <Child>
+          {splitNum(integer).map((num, i) => (
+            <span key={`${num}-${i}`}>{num}</span>
+          ))}
+          ,{trimedFractional}
         </Child>
       )
     }

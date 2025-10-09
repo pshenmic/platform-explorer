@@ -40,6 +40,25 @@ export const formatNumberWithSpaces = (num) => {
   }
 }
 
+export const splitNum = (str) =>
+  Array.from(str).reduceRight((acc, char) => {
+    const [first, ...rest] = acc
+
+    if (acc.length === 0) {
+      return [char]
+    }
+
+    if (acc.length < 3 && first.length < 3) {
+      return [char + first, ...rest]
+    }
+
+    if (acc.length < 3) {
+      return [char, ...acc]
+    }
+
+    return [char + first, ...rest]
+  }, [])
+
 export const concatDecimal = (integer, fractional) => {
   if (fractional) {
     return integer + '.' + fractional

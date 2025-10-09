@@ -1,3 +1,6 @@
 .root {
   white-space: nowrap;
+  display: inline-flex;
+  flex-direction: row;
+  gap: 3px;
 }
