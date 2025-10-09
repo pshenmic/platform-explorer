@@ -69,10 +69,13 @@ module.exports = class DataContractsDAO {
         'data_contracts.identifier as my_identifier', 'data_contracts.owner as owner',
         'data_contracts.is_system as is_system', 'data_contracts.version as version',
         'data_contracts.state_transition_hash as tx_hash')
-      .select(this.knex(sumDocuments)
-        .count('*')
-        .whereRaw('data_contracts.id = sum_documents.data_contract_id')
-        .as('documents_count'))
+      .select(
+        this.knex(sumDocuments)
+          .count('*')
+          .whereRaw('data_contracts.id = data_contract_id')
+          .limit(1)
+          .as('documents_count')
+      )
       .select(
         this.knex('tokens')
           .count('id')
@@ -84,10 +87,9 @@ module.exports = class DataContractsDAO {
       .orWhere('version', 0)
 
     const filteredContracts = this.knex.with('filtered_data_contracts', subquery)
-      .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
       .select(
         'filtered_data_contracts.id', 'name', 'filtered_data_contracts.owner',
-        'version', 'tx_hash', 'is_system', 'identifier'
+        'version', 'tx_hash', 'is_system', 'identifier', 'documents_count'
       )
       .select(this.knex.raw(`rank() over (${getRankString()}) row_number`))
       .select('blocks.timestamp as timestamp', 'blocks.hash as block_hash')
@@ -98,11 +100,12 @@ module.exports = class DataContractsDAO {
       .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .from('filtered_data_contracts')
 
-    const rows = await this.knex
+    const rows = this.knex
       .with('filtered_data_contracts', filteredContracts)
+      .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
       .select(this.knex('filtered_data_contracts').count('*').as('total_count'))
       .select(
-        'filtered_data_contracts.documents_count', 'filtered_data_contracts.id', 'name',
+        'filtered_data_contracts.id', 'name',
         'identifier', 'filtered_data_contracts.owner', 'version', 'row_number',
         'filtered_data_contracts.tx_hash', 'is_system', 'timestamp', 'block_hash')
       .whereBetween('row_number', [fromRank, toRank])
