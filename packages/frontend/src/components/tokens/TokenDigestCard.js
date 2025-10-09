@@ -184,7 +184,6 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
           <ValueCard
             link={`/identity/${owner?.identifier}`}
             className={'TokenDigestCard__ValueContainer'}
-            clickable={false}
           >
             <Identifier
               avatar={true}
