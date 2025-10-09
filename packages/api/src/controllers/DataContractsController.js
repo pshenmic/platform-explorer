@@ -29,8 +29,6 @@ class DataContractsController {
       with_tokens: withTokens,
       timestamp_start: timestampStart,
       timestamp_end: timestampEnd,
-      // tx_count_min: txCountMin,
-      // tx_count_max: txCountMax,
       documents_count_min: documentsCountMin,
       documents_count_max: documentsCountMax
     } = request.query

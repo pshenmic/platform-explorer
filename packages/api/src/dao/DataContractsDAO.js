@@ -53,11 +53,6 @@ module.exports = class DataContractsDAO {
       timestampBindings.push(timestampStart, timestampEnd)
     }
 
-    const getRankString = () => {
-      return orderByOptions.reduce((acc, value, index, arr) =>
-        acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
-    }
-
     const subquery = this.knex('data_contracts')
       .select(
         'data_contracts.id as id',
