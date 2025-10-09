@@ -70,7 +70,7 @@ function ValueContainer ({
         </div>
       )}
       <div className={'ValueContainer__Value'}>
-        {children}
+        {children}1
       </div>
     </Wrapper>
   )

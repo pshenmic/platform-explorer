@@ -3,6 +3,7 @@ import { ValueContainer } from '@ui/containers'
 
 import styles from './TokenConfiguration.module.scss'
 import { LocalisationGrid } from '@components/tokens/localisation/LocalisationGrid'
+import { DistType } from './DistType'
 
 /**
  * Token configuration block with flat props.
@@ -73,11 +74,22 @@ export const TokenConfiguration = ({
         )}
 
         {!isNaN(conventions?.decimals) && (
-          <InfoLine title={'Decimals'} value={conventions.decimals} />
+          <InfoLine
+            title={'Decimals'}
+            value={conventions.decimals}
+          />
         )}
         {conventions.localizations && (
-          <LocalisationGrid localisations={conventions.localizations} isOpen />
+          <LocalisationGrid
+            localisations={conventions.localizations}
+            isOpen
+          />
         )}
+
+        <DistType
+          title='title'
+          subtitle='subtitle'
+        />
       </div>
     </div>
   )

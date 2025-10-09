@@ -1,0 +1,19 @@
+@import 'variables';
+
+.root {
+  .container {
+    width: fit-content;
+    max-width: 233px;
+    padding: 6px 10px;
+
+    .title {
+      font-family: $font-mono;
+    }
+
+    .card {
+      width: fit-content;
+      padding: 6px 10px;
+      background-color: #58f4bc33;
+    }
+  }
+}
