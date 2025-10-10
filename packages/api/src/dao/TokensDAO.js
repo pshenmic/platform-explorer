@@ -103,8 +103,9 @@ module.exports = class TokensDAO {
       .as('subquery')
 
     const rows = await this.knex(subquery)
+      .select(this.knex.raw('COALESCE(amount, 0) as amount'))
       .select(
-        'action', 'amount', 'state_transition_hash', 'total_count',
+        'action', 'state_transition_hash', 'total_count',
         'recipient', 'timestamp', 'public_note', 'owner'
       )
       .offset(fromRank)

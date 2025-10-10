@@ -1,3 +1,8 @@
 .root {
   white-space: nowrap;
+
+  .item:not(:last-child) {
+    display: inline-block;
+    border-right: transparent solid 3px;
+  }
 }
