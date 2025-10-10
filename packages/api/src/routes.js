@@ -685,6 +685,11 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/events/update/block',
+      method: 'GET',
+      handler: blocksController.subscribeBlock
     }
   ]
 

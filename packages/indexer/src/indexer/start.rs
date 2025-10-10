@@ -3,7 +3,7 @@ use std::time::Duration;
 use tokio::time;
 
 impl Indexer {
-    pub async fn start(&self) {
+    pub async fn start(&mut self) {
         println!("Indexer loop started");
 
         let mut interval = time::interval(Duration::from_millis(3000));
@@ -24,7 +24,8 @@ impl Indexer {
             let current_block_height: i32 = self.last_block_height.get();
 
             self.process_block(last_block_height, current_block_height, &mut interval)
-                .await;
+                .await
+                .expect("Cannot process block");
         }
     }
 

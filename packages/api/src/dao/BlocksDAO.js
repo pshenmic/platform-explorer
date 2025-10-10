@@ -268,18 +268,31 @@ module.exports = class BlockDAO {
   }
 
   getLastBlock = async () => {
-    const rows = await this.knex('blocks')
+    const subquery = this.knex
       .select(
-        'blocks.hash as hash', 'blocks.height as height', 'blocks.timestamp as timestamp',
-        'blocks.block_version as block_version', 'blocks.app_version as app_version',
-        'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator',
-        'blocks.app_hash as app_hash'
-      )
+        'blocks.hash as hash', 'blocks.height as height',
+        'blocks.timestamp as timestamp', 'blocks.block_version as block_version', 'blocks.app_version as app_version',
+        'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator', 'blocks.app_hash as app_hash')
+      .from('blocks')
       .limit(1)
       .orderBy('height', 'desc')
+      .as('subquery')
 
-    const [row] = rows
+    const results = await this.knex(subquery)
+      .select(
+        'state_transitions.hash as st_hash', 'subquery.hash', 'height', 'timestamp', 'block_version',
+        'app_version', 'app_hash', 'l1_locked_height', 'validator'
+      )
+      .leftJoin('state_transitions', 'state_transitions.block_height', 'height')
 
-    return Block.fromRow({ header: row })
+    const [block] = results
+
+    if (!block) {
+      return null
+    }
+
+    const txs = results.reduce((acc, value) => value.st_hash ? [...acc, value.st_hash] : acc, [])
+
+    return Block.fromRow({ header: block, txs })
   }
 }

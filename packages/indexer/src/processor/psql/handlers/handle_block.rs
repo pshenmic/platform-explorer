@@ -1,13 +1,16 @@
 use crate::entities::block::Block;
+use crate::entities::indexer_block_info::IndexerBlockInfo;
 use crate::entities::validator::Validator;
 use crate::processor::psql::{PSQLProcessor, ProcessorError};
 use base64::engine::general_purpose;
 use base64::Engine;
 use deadpool_postgres::GenericClient;
+use redis::Commands;
+use serde_json::Value;
 
 impl PSQLProcessor {
     pub async fn handle_block(
-        &self,
+        &mut self,
         block: Block,
         validators: Vec<Validator>,
     ) -> Result<(), ProcessorError> {
@@ -64,7 +67,7 @@ impl PSQLProcessor {
                         block_hash.clone(),
                         block.header.height,
                         i as u32,
-                        state_transition,
+                        state_transition.clone(),
                         tx.clone(),
                         &sql_transaction,
                     )
@@ -75,6 +78,25 @@ impl PSQLProcessor {
                     .commit()
                     .await
                     .expect("SQL Transaction Error");
+
+                if let Some(redis) = &mut self.redis {
+                    let block_info = IndexerBlockInfo {
+                        block_height: block
+                            .header
+                            .height
+                            .try_into()
+                            .expect("block height out of range u64"),
+                    };
+
+                    let json: Value = block_info.try_into().unwrap();
+
+                    redis
+                        .publish::<&str, &str, ()>(
+                            &self.redis_pubsub_new_block_channel.clone().unwrap(),
+                            &json.to_string(),
+                        )
+                        .expect("PUBSUB publish error");
+                }
 
                 Ok(())
             }
