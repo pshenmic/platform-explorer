@@ -1,9 +1,8 @@
 const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
-const { decodeStateTransition, getAliasFromDocument } = require('../utils')
+const { decodeStateTransition, getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
 const BatchEnum = require('../enums/BatchEnum')
-const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class DocumentsDAO {
   constructor (knex, sdk) {
@@ -59,7 +58,7 @@ module.exports = class DocumentsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
+    const aliasDocument = await getAliasDocumentForIdentifier(row.document_owner.trim(), this.sdk)
 
     const aliases = []
 
@@ -149,8 +148,12 @@ module.exports = class DocumentsDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
+    const owners = rows.map(row => row.document_owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.document_owner.trim()]
 
       const aliases = []
 
@@ -196,8 +199,12 @@ module.exports = class DocumentsDAO {
 
     const totalCount = row?.total_count
 
+    const owners = rows.map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.owner.trim()]
 
       const aliases = []
 

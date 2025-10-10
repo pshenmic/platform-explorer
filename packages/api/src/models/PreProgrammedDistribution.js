@@ -7,11 +7,18 @@ module.exports = class PreProgrammedDistribution {
     this.out = out ?? null
   }
 
-  static fromWASMObject ({ timestamp, value }) {
-    const recipients = value ? Object.keys(value) : null
+  static fromWASMObject ({ distributions }) {
+    const preProgrammedDistributionTimestamps = distributions ? Object.keys(distributions) : undefined
 
-    const out = recipients?.map((recipient) => ({ identifier: recipient, tokenAmount: String(value[recipient]) }))
+    return preProgrammedDistributionTimestamps?.map((timestamp) => {
+      const recipients = distributions[timestamp] ? Object.keys(distributions[timestamp]) : null
 
-    return new PreProgrammedDistribution(timestamp ? new Date(Number(timestamp)) : null, out)
+      const out = recipients?.map((recipient) => ({
+        identifier: recipient,
+        tokenAmount: String(distributions[timestamp][recipient])
+      }))
+
+      return new PreProgrammedDistribution(timestamp ? new Date(Number(timestamp)) : null, out)
+    })
   }
 }
