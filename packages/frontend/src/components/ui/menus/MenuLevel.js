@@ -83,7 +83,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                 >
                   {<span>{item.label}</span>}
                   <div className={'MenuLevel__ItemIcon'}>
-                    <ChevronIcon/>
+                    <ChevronIcon />
                   </div>
                 </div>
               </PopoverTrigger>

@@ -24,6 +24,7 @@ Reference:
 * [RAW Data Contract By Identifier](#raw-data-contract-by-identifier)
 * [Data Contracts](#data-contracts)
 * [Data Contract Transactions](#data-contract-transactions)
+* [Data Contracts Rating](#data-contracts-rating)
 * [Document by Identifier](#document-by-identifier)
 * [RAW Document by Identifier](#raw-document-by-identifier)
 * [Document Revisions](#document-revisions)
@@ -917,6 +918,56 @@ Response codes:
 500: Internal Server Error
 ```
 ---
+### Data Contracts Rating
+Return Data Contracts rating based on txs in selected interval
+
+If it is not possible to get data contract transitions for selected period,
+then will be returned list of data contracts in order of creation date
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater then `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
+
+```
+GET /dataContracts/rating?timestamp_start=2025-08-18T21:13:57.191Z&timestamp_end=2025-09-18T21:13:57.191Z&limit=5&page=2&order=desc
+
+{
+    "resultSet": [
+        {
+            "identifier": "465jdPpFCZefhb4g2k2FpCcrKpPYhJJskDqbGFsKu6wb",
+            "transitionsCount": 26
+        },
+        {
+            "identifier": "GWghYQoDFEb3osEfigrF7CKdZLWauxC7TwM4jsJyqa23",
+            "transitionsCount": 21
+        },
+        {
+            "identifier": "4P7d1iqwofPA1gFtbEcXiagDnANXAQhX2WZararioX8f",
+            "transitionsCount": 17
+        },
+        {
+            "identifier": "Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7",
+            "transitionsCount": 13
+        },
+        {
+            "identifier": "dfaPU4HsMpUX7NMF2TR5oeAC4cZvLwYrSU6WT4884bq",
+            "transitionsCount": 9
+        }
+    ],
+    "pagination": {
+        "page": 2,
+        "limit": 5,
+        "total": 116
+    }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
 ### Document by Identifier
 Return last revision of the document by given identifier.
 
@@ -1088,8 +1139,9 @@ GET /identity/3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ
 
 {
   "identifier": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ",
-  "revision": 0,
-  "balance": 49989647300,
+  "revision": "0",
+  "nonce": "13",
+  "balance": "49989647300",
   "timestamp": "2024-10-12T18:51:44.592Z",
   "txHash": "32FB988D87E4122A2FE030B5014A59A05786C1501FD97D765E2329F89A8AD01D",
   "totalTxs": 13,
@@ -1216,7 +1268,8 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
           "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
           "owner": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
           "revision": 1,
-          "balance": 1000000,
+          "nonce": null,
+          "balance": "1000000",
           "timestamp": "2024-03-18T10:13:54.150Z",
           "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
           "totalTxs": 1,
@@ -1743,7 +1796,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=
       ],
       "towardsIdentityVotes": 0,
       "abstainVotes": 1,
-      "lockVotes": 2
+      "lockVotes": 0
     }
   ],
   "indexName": "parentNameAndLabel",
@@ -1949,31 +2002,33 @@ POST /transaction/decode
       "additionalProperties": false
     }
   },
-  "tokens": {
-    "0": {
+  "tokens": [
+    {
       "position": 0,
       "conventions": {
-        "decimals": 1,
+        "decimals": 8,
         "localizations": {
           "en": {
-            "shouldCapitalize": true,
-            "pluralForm": "tokens",
-            "singularForm": "token"
+            "pluralForm": "A1-DISTS",
+            "singularForm": "A1-DIST",
+            "shouldCapitalize": true
           }
         }
       },
       "conventionsChangeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
         "selfChangingAdminActionTakersAllowed": true
       },
-      "baseSupply": "1",
+      "baseSupply": "10000000000000",
       "keepsHistory": {
         "keepsTransferHistory": true,
         "keepsFreezingHistory": true,
@@ -1983,28 +2038,46 @@ POST /transaction/decode
         "keepsDirectPurchaseHistory": true
       },
       "startAsPaused": false,
-      "isAllowedTransferToFrozenBalance": false,
+      "isAllowedTransferToFrozenBalance": true,
       "maxSupply": null,
       "maxSupplyChangeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
         "selfChangingAdminActionTakersAllowed": true
       },
-      "distributionRules": null,
+      "distributionRules": {
+        "perpetualDistribution": {
+          "type": "BlockBasedDistribution",
+          "recipientType": "ContractOwner",
+          "recipientValue": null,
+          "interval": 100,
+          "functionName": "FixedAmount",
+          "functionValue": {
+            "amount": "10000"
+          }
+        },
+        "preProgrammedDistribution": null,
+        "newTokenDestinationIdentity": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+        "mintingAllowChoosingDestination": false
+      },
       "marketplaceRules": {
         "tradeMode": "NotTradeable",
         "tradeModeChangeRules": {
           "authorizedToMakeChange": {
-            "takerType": "NoOne"
+            "takerType": "ContractOwner",
+            "taker": null
           },
           "adminActionTakers": {
-            "takerType": "NoOne"
+            "takerType": "ContractOwner",
+            "taker": null
           },
           "changingAuthorizedActionTakersToNoOneAllowed": true,
           "changingAdminActionTakersToNoOneAllowed": true,
@@ -2013,10 +2086,12 @@ POST /transaction/decode
       },
       "manualMintingRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2024,10 +2099,12 @@ POST /transaction/decode
       },
       "manualBurningRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2035,10 +2112,12 @@ POST /transaction/decode
       },
       "freezeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2046,10 +2125,12 @@ POST /transaction/decode
       },
       "unfreezeRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2057,10 +2138,12 @@ POST /transaction/decode
       },
       "destroyFrozenFundsRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
@@ -2068,22 +2151,25 @@ POST /transaction/decode
       },
       "emergencyActionRules": {
         "authorizedToMakeChange": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "adminActionTakers": {
-          "takerType": "NoOne"
+          "takerType": "ContractOwner",
+          "taker": null
         },
         "changingAuthorizedActionTakersToNoOneAllowed": true,
         "changingAdminActionTakersToNoOneAllowed": true,
         "selfChangingAdminActionTakersAllowed": true
       },
       "mainControlGroupCanBeModified": {
-        "takerType": "NoOne"
+        "takerType": "ContractOwner",
+        "taker": null
       },
       "mainControlGroup": null,
-      "description": "note"
+      "description": null
     }
-  },
+  ],
   "groups": [],
   "signature": "1f003ab4804374bf7a655620b4bc5b21dc300f7b0ad639ac7edd0780d28c09bfd31e8365d65c9bc8f2188748bae4d400b47cfcdef6e18871c213901ea526e62a4d",
   "signaturePublicKeyId": 2,
@@ -2126,7 +2212,7 @@ DOCUMENT TRANSITION
 }
 ```
 ```json lines
-TOKEN TRANSITION 
+TOKEN TRANSITION
 
 {
   "type": 1,
@@ -2156,176 +2242,176 @@ TOKEN TRANSITION
 IDENTITY_CREATE with chainLock
 
 {
-    "type": 2,
-    "typeString": "IDENTITY_CREATE",
+  "type": 2,
+  "typeString": "IDENTITY_CREATE",
+  "fundingAddress": null,
+  "assetLockProof": {
+    "coreChainLockedHeight": 1138871,
+    "type": "chainLock",
+    "fundingAmount": null,
+    "txid": "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
+    "vout": 0,
     "fundingAddress": null,
-    "assetLockProof": {
-      "coreChainLockedHeight": 1138871,
-      "type": "chainLock",
-      "fundingAmount": null,
-      "txid": "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
-      "vout": 0,
-      "fundingAddress": null,
-      "instantLock": null
+    "instantLock": null
+  },
+  "userFeeIncrease": 0,
+  "identityId": "awCc9STLEgw8pJozBq24QzGK5Th9mow7V3EjjY9M7aG",
+  "signature": "2015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f2141",
+  "raw": "0300010000020000000014b23f76cac0218f7637c924e45212bb260cff29250001fc001160b72021007051d2207c45d7592bb7e3e5b4b006a29cfe1899aea8abf00c50ee8a40860000412015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f214108b1737186062205ee3a5f7e19454121b648e0806c7bc1e8bc073c38217a28e1",
+  "publicKeys": [
+    {
+      "contractBounds": null,
+      "id": 0,
+      "type": "ECDSA_SECP256K1",
+      "data": "0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5",
+      "publicKeyHash": "07630dddc55729c043de7bdeb145ee0d44feae3b",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "MASTER",
+      "readOnly": false,
+      "signature": "2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99"
     },
-    "userFeeIncrease": 0,
-    "identityId": "awCc9STLEgw8pJozBq24QzGK5Th9mow7V3EjjY9M7aG",
-    "signature": "2015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f2141",
-    "raw": "0300010000020000000014b23f76cac0218f7637c924e45212bb260cff29250001fc001160b72021007051d2207c45d7592bb7e3e5b4b006a29cfe1899aea8abf00c50ee8a40860000412015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f214108b1737186062205ee3a5f7e19454121b648e0806c7bc1e8bc073c38217a28e1",
-    "publicKeys": [
-        {
-            "contractBounds": null,
-            "id": 0,
-            "type": "ECDSA_SECP256K1",
-            "data": "0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5",
-            "publicKeyHash": "07630dddc55729c043de7bdeb145ee0d44feae3b",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "MASTER",
-            "readOnly": false,
-            "signature": "2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99"
-        },
-        {
-            "contractBounds": null,
-            "id": 1,
-            "type": "ECDSA_SECP256K1",
-            "data": "034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf",
-            "publicKeyHash": "e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "HIGH",
-            "readOnly": false,
-            "signature": "1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4"
-        },
-        {
-            "contractBounds": null,
-            "id": 2,
-            "type": "ECDSA_SECP256K1",
-            "data": "0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4",
-            "publicKeyHash": "d53ee3b3518fee80816ab26af98a34ea60ae9af7",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "CRITICAL",
-            "readOnly": false,
-            "signature": "204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75"
-        }
-    ]
+    {
+      "contractBounds": null,
+      "id": 1,
+      "type": "ECDSA_SECP256K1",
+      "data": "034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf",
+      "publicKeyHash": "e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "HIGH",
+      "readOnly": false,
+      "signature": "1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4"
+    },
+    {
+      "contractBounds": null,
+      "id": 2,
+      "type": "ECDSA_SECP256K1",
+      "data": "0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4",
+      "publicKeyHash": "d53ee3b3518fee80816ab26af98a34ea60ae9af7",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "CRITICAL",
+      "readOnly": false,
+      "signature": "204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75"
+    }
+  ]
 }
 ```
 ```json lines
 IDENTITY_CREATE with instantLock
 
 {
-    "type": 2,
-    "typeString": "IDENTITY_CREATE",
-    "fundingAddress": "yV1ZYoep5FFSBxKWM24JUwKfnAkFHnXXV7",
-    "assetLockProof": {
-        "coreChainLockedHeight": null,
-        "type": "instantSend",
-        "fundingAmount": 34999000,
-        "txid": "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
-        "vout": 0,
-        "fundingAddress": "yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY",
-        "instantLock": 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq'
+  "type": 2,
+  "typeString": "IDENTITY_CREATE",
+  "fundingAddress": "yV1ZYoep5FFSBxKWM24JUwKfnAkFHnXXV7",
+  "assetLockProof": {
+    "coreChainLockedHeight": null,
+    "type": "instantSend",
+    "fundingAmount": 34999000,
+    "txid": "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
+    "vout": 0,
+    "fundingAddress": "yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY",
+    "instantLock": 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq'
+  },
+  "userFeeIncrease": 0,
+  "identityId": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
+  "signature": "1fc5b49ce2feb6cfc94f31de8167b806af0265657d5b8f01584e0db3ca011dba24328998bf40a50dd06b6ab10ed47622f46c07dec4d7cad3625b41aa52c9e11c2f",
+  "raw": "03000400000000000000210258abe04886308feb52b8f3d64eace4913c9d049f4dda9a88a217e6ca6b89a107411f60451588fe72a067daaa0a1ee04279e77ce346128560129162386f76d51eccdc1d88704f2262fe173de57e5598010655d410da94ae2e1cf7086049878b08e966000100000200002103e6680bb560e40adb299a6b940d3dcbe2b08e6e1a64bc8f6bc9ec3d638655c3554120066559ccd6cea8ac2d366980f77a94cbfdfbd978803edbf4066f42bc53adcdb51956fb0d3c9cec2012583d17b66456094a8620109d6dae29dc562b2870592940000200000100002102326a8c19a1c58d30d142e113d0ddf381d95a6306f56c9ec4d3cb8c4823685b29411f5bb82721b58d92e67db9fb699ab939ccc4a6d5e2e498e80dfb8a3535c13f571923f045e645a898762f8305a4a2218bfedb060f8a8492c48ae9c96247ce17710b00030003010000210252a2d08f295871ec4b04cb0bcf7b2899b0b004702d9058982dd797141d527e78412044820dc7651186634326922eda85741bb3f9f005057d94b36845a7edc16ed1df4d5ccabd7e7f003e9c189847fbc06e943252640bc47963c42ae6c0d87b7b506b00c601014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b10100000077ba9d450b94520434c5d15339922aa7df81b51344b98588649a44752f1a355cd0d05ce3df52f3fb7fc6e64cc414fb7cd9d0ffc4d088e77d9e542fade30000008a8678665212af134cfa36ea40984009adca338efa3131667f5a62b489d2fb2713eb7eccd14dd83cc6679b597548feae18bdc393dae2ab2a50844220359d4b87c428507808dc8df62f56dabb8d1eae2c1859b9ca54b3b4820ebc8453f57c34f6ef03000800014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b1010000006a473044022070293df3b93c523373f1f86272c5dba7886ab41cfc50b0b89658c07d0825c16002201afdf3b31393c5b99373597042b4d651028e824fc12f802aa1be51cc165bcf1e012103d55244573359ad586597b9bb4dd31b8f145121b7c01146656bc26c4b99184a47ffffffff0240420f0000000000026a0049ac4c2e000000001976a91441bb9b42b9f0d589008b4a7f6a72a6bb342b386d88ac0000000024010140420f00000000001976a9145f573cd6a8570cb0b74c4b0ea15334e6bd6b34a788ac0000411fc5b49ce2feb6cfc94f31de8167b806af0265657d5b8f01584e0db3ca011dba24328998bf40a50dd06b6ab10ed47622f46c07dec4d7cad3625b41aa52c9e11c2f98b95bbff1488807c3a4ed36c5fde32f9a6f1e05a622938476652041669e4135",
+  "publicKeys": [
+    {
+      "contractBounds": null,
+      "id": 0,
+      "type": "ECDSA_SECP256K1",
+      "data": "0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5",
+      "publicKeyHash": "07630dddc55729c043de7bdeb145ee0d44feae3b",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "MASTER",
+      "readOnly": false,
+      "signature": "2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99"
     },
-    "userFeeIncrease": 0,
-    "identityId": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
-    "signature": "1fc5b49ce2feb6cfc94f31de8167b806af0265657d5b8f01584e0db3ca011dba24328998bf40a50dd06b6ab10ed47622f46c07dec4d7cad3625b41aa52c9e11c2f",
-    "raw": "03000400000000000000210258abe04886308feb52b8f3d64eace4913c9d049f4dda9a88a217e6ca6b89a107411f60451588fe72a067daaa0a1ee04279e77ce346128560129162386f76d51eccdc1d88704f2262fe173de57e5598010655d410da94ae2e1cf7086049878b08e966000100000200002103e6680bb560e40adb299a6b940d3dcbe2b08e6e1a64bc8f6bc9ec3d638655c3554120066559ccd6cea8ac2d366980f77a94cbfdfbd978803edbf4066f42bc53adcdb51956fb0d3c9cec2012583d17b66456094a8620109d6dae29dc562b2870592940000200000100002102326a8c19a1c58d30d142e113d0ddf381d95a6306f56c9ec4d3cb8c4823685b29411f5bb82721b58d92e67db9fb699ab939ccc4a6d5e2e498e80dfb8a3535c13f571923f045e645a898762f8305a4a2218bfedb060f8a8492c48ae9c96247ce17710b00030003010000210252a2d08f295871ec4b04cb0bcf7b2899b0b004702d9058982dd797141d527e78412044820dc7651186634326922eda85741bb3f9f005057d94b36845a7edc16ed1df4d5ccabd7e7f003e9c189847fbc06e943252640bc47963c42ae6c0d87b7b506b00c601014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b10100000077ba9d450b94520434c5d15339922aa7df81b51344b98588649a44752f1a355cd0d05ce3df52f3fb7fc6e64cc414fb7cd9d0ffc4d088e77d9e542fade30000008a8678665212af134cfa36ea40984009adca338efa3131667f5a62b489d2fb2713eb7eccd14dd83cc6679b597548feae18bdc393dae2ab2a50844220359d4b87c428507808dc8df62f56dabb8d1eae2c1859b9ca54b3b4820ebc8453f57c34f6ef03000800014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b1010000006a473044022070293df3b93c523373f1f86272c5dba7886ab41cfc50b0b89658c07d0825c16002201afdf3b31393c5b99373597042b4d651028e824fc12f802aa1be51cc165bcf1e012103d55244573359ad586597b9bb4dd31b8f145121b7c01146656bc26c4b99184a47ffffffff0240420f0000000000026a0049ac4c2e000000001976a91441bb9b42b9f0d589008b4a7f6a72a6bb342b386d88ac0000000024010140420f00000000001976a9145f573cd6a8570cb0b74c4b0ea15334e6bd6b34a788ac0000411fc5b49ce2feb6cfc94f31de8167b806af0265657d5b8f01584e0db3ca011dba24328998bf40a50dd06b6ab10ed47622f46c07dec4d7cad3625b41aa52c9e11c2f98b95bbff1488807c3a4ed36c5fde32f9a6f1e05a622938476652041669e4135",
-    "publicKeys": [
-        {
-            "contractBounds": null,
-            "id": 0,
-            "type": "ECDSA_SECP256K1",
-            "data": "0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5",
-            "publicKeyHash": "07630dddc55729c043de7bdeb145ee0d44feae3b",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "MASTER",
-            "readOnly": false,
-            "signature": "2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99"
-        },
-        {
-            "contractBounds": null,
-            "id": 1,
-            "type": "ECDSA_SECP256K1",
-            "data": "034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf",
-            "publicKeyHash": "e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "HIGH",
-            "readOnly": false,
-            "signature": "1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4"
-        },
-        {
-            "contractBounds": null,
-            "id": 2,
-            "type": "ECDSA_SECP256K1",
-            "data": "0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4",
-            "publicKeyHash": "d53ee3b3518fee80816ab26af98a34ea60ae9af7",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "CRITICAL",
-            "readOnly": false,
-            "signature": "204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75"
-        }
-    ]
+    {
+      "contractBounds": null,
+      "id": 1,
+      "type": "ECDSA_SECP256K1",
+      "data": "034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf",
+      "publicKeyHash": "e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "HIGH",
+      "readOnly": false,
+      "signature": "1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4"
+    },
+    {
+      "contractBounds": null,
+      "id": 2,
+      "type": "ECDSA_SECP256K1",
+      "data": "0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4",
+      "publicKeyHash": "d53ee3b3518fee80816ab26af98a34ea60ae9af7",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "CRITICAL",
+      "readOnly": false,
+      "signature": "204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75"
+    }
+  ]
 }
 ```
 ```json
 {
-    "type": 3,
-    "typeString": "IDENTITY_TOP_UP",
-    "assetLockProof": {
-        "coreChainLockedHeight": null,
-        "type": "instantSend",
-        "fundingAmount": 999000,
-        "txid": "7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64",
-        "vout": 0,
-        "fundingAddress": "yWxCwVRgqRmePNPJxezgus1T7xSv5q17SU"
-    },
-    "identityId": "4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF",
-    "amount": 300000000,
-    "signature": "810cd0bfe02104362941d35bd05fdf82cdc50c3bc8510077bfa62d47b68710",
-    "raw": "040000c60101ecd6b031477f342806df5740b70f93b8a3e925bbf2d90d979a5ed162a8d7d5660000000064ea1773c2c388f83c225803a05d0613a14feca5e07030f7649fb5c598f43477940fe3dc8e934b89e9e97a96cf4298da3efb23d8a17d52c759561194d3000000a5e81597e94558618bf1464801188ecbc09c7a12e73489225c63684259f075f87aa3d47ea9bbbe1f9c314086ddc35a6d18b30ff4fe579855779f9268b8bf5c79760c7d8c56d34163931f016c2e3036852dd33a6b643dd59dc8c54199f34e3d2def0300080001ecd6b031477f342806df5740b70f93b8a3e925bbf2d90d979a5ed162a8d7d566000000006a4730440220339d4d894eb2ff9c193bd8c33cdb3030a8be18ddbf30d983e8286c08c6c4c7d90220181741d9eed3814ec077030c26c0b9fff63b9ef10e1e6ca1c87069b261b0127a0121034951bbd5d0d500942426507d4b84e6d88406300ed82009a8db087f493017786affffffff02e093040000000000026a0078aa0a00000000001976a914706db5d1e8fb5f925c6db64104f4b77f0c8b73d488ac00000000240101e0930400000000001976a91474a509b4f3b80ce818465dc0f9f66e2103d9178b88ac003012c19b98ec0033addb36cd64b7f510670f2a351a4304b5f6994144286efdac411f810cd0bfe02104362941d35bd05fdf82cdc50c3bc8510077bfa62d47b68710"
+  "type": 3,
+  "typeString": "IDENTITY_TOP_UP",
+  "assetLockProof": {
+    "coreChainLockedHeight": null,
+    "type": "instantSend",
+    "fundingAmount": 999000,
+    "txid": "7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64",
+    "vout": 0,
+    "fundingAddress": "yWxCwVRgqRmePNPJxezgus1T7xSv5q17SU"
+  },
+  "identityId": "4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF",
+  "amount": 300000000,
+  "signature": "810cd0bfe02104362941d35bd05fdf82cdc50c3bc8510077bfa62d47b68710",
+  "raw": "040000c60101ecd6b031477f342806df5740b70f93b8a3e925bbf2d90d979a5ed162a8d7d5660000000064ea1773c2c388f83c225803a05d0613a14feca5e07030f7649fb5c598f43477940fe3dc8e934b89e9e97a96cf4298da3efb23d8a17d52c759561194d3000000a5e81597e94558618bf1464801188ecbc09c7a12e73489225c63684259f075f87aa3d47ea9bbbe1f9c314086ddc35a6d18b30ff4fe579855779f9268b8bf5c79760c7d8c56d34163931f016c2e3036852dd33a6b643dd59dc8c54199f34e3d2def0300080001ecd6b031477f342806df5740b70f93b8a3e925bbf2d90d979a5ed162a8d7d566000000006a4730440220339d4d894eb2ff9c193bd8c33cdb3030a8be18ddbf30d983e8286c08c6c4c7d90220181741d9eed3814ec077030c26c0b9fff63b9ef10e1e6ca1c87069b261b0127a0121034951bbd5d0d500942426507d4b84e6d88406300ed82009a8db087f493017786affffffff02e093040000000000026a0078aa0a00000000001976a914706db5d1e8fb5f925c6db64104f4b77f0c8b73d488ac00000000240101e0930400000000001976a91474a509b4f3b80ce818465dc0f9f66e2103d9178b88ac003012c19b98ec0033addb36cd64b7f510670f2a351a4304b5f6994144286efdac411f810cd0bfe02104362941d35bd05fdf82cdc50c3bc8510077bfa62d47b68710"
 }
 ```
 ```json
 {
-    "type": 4,
-    "typeString": "DATA_CONTRACT_UPDATE",
-    "internalConfig": {
-        "canBeDeleted": false,
-        "readonly": false,
-        "keepsHistory": false,
-        "documentsKeepHistoryContractDefault": false,
-        "documentsMutableContractDefault": true,
-        "documentsCanBeDeletedContractDefault": true,
-        "requiresIdentityDecryptionBoundedKey": null,
-        "requiresIdentityEncryptionBoundedKey": null
-    },
-    "tokens": {},
-    "groups": [],
-    "identityContractNonce": 6,
-    "signaturePublicKeyId": 2,
-    "signature": "1ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903",
-    "userFeeIncrease": 0,
-    "ownerId": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-    "dataContractId": "AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18",
-    "dataContractIdentityNonce": "0",
-    "schema": {
-        "note": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "position": 0
-                },
-                "author": {
-                    "type": "string",
-                    "position": 1
-                }
-            },
-            "additionalProperties": false
+  "type": 4,
+  "typeString": "DATA_CONTRACT_UPDATE",
+  "internalConfig": {
+    "canBeDeleted": false,
+    "readonly": false,
+    "keepsHistory": false,
+    "documentsKeepHistoryContractDefault": false,
+    "documentsMutableContractDefault": true,
+    "documentsCanBeDeletedContractDefault": true,
+    "requiresIdentityDecryptionBoundedKey": null,
+    "requiresIdentityEncryptionBoundedKey": null
+  },
+  "tokens": [],
+  "groups": [],
+  "identityContractNonce": 6,
+  "signaturePublicKeyId": 2,
+  "signature": "1ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903",
+  "userFeeIncrease": 0,
+  "ownerId": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
+  "dataContractId": "AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18",
+  "dataContractIdentityNonce": "0",
+  "schema": {
+    "note": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "position": 0
+        },
+        "author": {
+          "type": "string",
+          "position": 1
         }
-    },
-    "version": 2,
-    "dataContractOwner": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-    "raw": "010006008a4af217f340e9c4c95857496cf33b68eb6c712ac6d20a1eb7854d14afd9ffcf00000000000101000002e901dfc172a96ce3f7d334d6c0b69df3b01c86d30ff03a7c24f516838f94340d0001046e6f7465160312047479706512066f626a656374120a70726f70657274696573160212076d65737361676516021204747970651206737472696e671208706f736974696f6e02001206617574686f7216021204747970651206737472696e671208706f736974696f6e020112146164646974696f6e616c50726f7065727469657313000002411ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903"
+      },
+      "additionalProperties": false
+    }
+  },
+  "version": 2,
+  "dataContractOwner": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
+  "raw": "010006008a4af217f340e9c4c95857496cf33b68eb6c712ac6d20a1eb7854d14afd9ffcf00000000000101000002e901dfc172a96ce3f7d334d6c0b69df3b01c86d30ff03a7c24f516838f94340d0001046e6f7465160312047479706512066f626a656374120a70726f70657274696573160212076d65737361676516021204747970651206737472696e671208706f736974696f6e02001206617574686f7216021204747970651206737472696e671208706f736974696f6e020112146164646974696f6e616c50726f7065727469657313000002411ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903"
 }
 ```
 ```json
@@ -2337,30 +2423,30 @@ IDENTITY_CREATE with instantLock
   "identityId": "4NGALjtX2t3AXE3ZCqJiSmYuiWEY3ZPQNUBxNWWRrRSp",
   "revision": 2,
   "publicKeysToAdd": [
-      {
-          "contractBounds": null,
-          "id": 5,
-          "type": "ECDSA_HASH160",
-          "data": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
-          "publicKeyHash": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
-          "purpose": "AUTHENTICATION",
-          "securityLevel": "HIGH",
-          "readOnly": false,
-          "signature": ""
-      },
-      {
-          "contractBounds": null,
-          "id": 6,
-          "type": "ECDSA_SECP256K1",
-          "data": "026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0",
-          "publicKeyHash": "d39eda042126256a372c388bd191532a7c9612ce",
-          "purpose": "AUTHENTICATION",
-          "securityLevel": "MASTER",
-          "readOnly": false,
-          "signature": "1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06"
-      }
+    {
+      "contractBounds": null,
+      "id": 5,
+      "type": "ECDSA_HASH160",
+      "data": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
+      "publicKeyHash": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "HIGH",
+      "readOnly": false,
+      "signature": ""
+    },
+    {
+      "contractBounds": null,
+      "id": 6,
+      "type": "ECDSA_SECP256K1",
+      "data": "026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0",
+      "publicKeyHash": "d39eda042126256a372c388bd191532a7c9612ce",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "MASTER",
+      "readOnly": false,
+      "signature": "1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06"
+    }
   ],
-  "setPublicKeyIdsToDisable": [],
+  "publicKeyIdsToDisable": [],
   "signature": "1f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1",
   "signaturePublicKeyId": 0,
   "raw": "0600320566816f366803517a7eb44d331ccb0e442fab6396f3d6ac631b1069aae0410203020005020002000014c208ded6d1af562b8e5387c02a446ea6e8bb325f000006000000000021026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0411faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06000000411f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1"
@@ -2368,54 +2454,54 @@ IDENTITY_CREATE with instantLock
 ```
 ```json
 {
-    "type": 6,
-    "typeString": "IDENTITY_CREDIT_WITHDRAWAL",
-    "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
-    "userFeeIncrease": 0,
-    "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
-    "amount": 200000,
-    "identityNonce": 6,
-    "outputScript": "76a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac",
-    "coreFeePerByte": 5,
-    "signature": "20cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b",
-    "signaturePublicKeyId": 3,
-    "pooling": "Standard",
-    "raw": "05017199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6bfc00030d400500011976a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac0600034120cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b"
+  "type": 6,
+  "typeString": "IDENTITY_CREDIT_WITHDRAWAL",
+  "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
+  "userFeeIncrease": 0,
+  "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+  "amount": 200000,
+  "identityNonce": 6,
+  "outputScript": "76a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac",
+  "coreFeePerByte": 5,
+  "signature": "20cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b",
+  "signaturePublicKeyId": 3,
+  "pooling": "Standard",
+  "raw": "05017199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6bfc00030d400500011976a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac0600034120cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b"
 }
 ```
 ```json
 {
-    "type": 7,
-    "typeString": "IDENTITY_CREDIT_TRANSFER",
-    "identityNonce": 1,
-    "userFeeIncrease": 0,
-    "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
-    "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
-    "amount": 21856638,
-    "signaturePublicKeyId": 3,
-    "signature": "1f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8",
-    "raw": "07000fc3bf4a26bff60f4f79a1f4b929ce4d4c5833d226c1c7f68758e71d7ae229db569fd4f616b3dedecbeef95352cf38f1fb04d232a0d20623bc195b0c3f721840fc014d817e010003411f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8"
+  "type": 7,
+  "typeString": "IDENTITY_CREDIT_TRANSFER",
+  "identityNonce": 1,
+  "userFeeIncrease": 0,
+  "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
+  "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+  "amount": 21856638,
+  "signaturePublicKeyId": 3,
+  "signature": "1f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8",
+  "raw": "07000fc3bf4a26bff60f4f79a1f4b929ce4d4c5833d226c1c7f68758e71d7ae229db569fd4f616b3dedecbeef95352cf38f1fb04d232a0d20623bc195b0c3f721840fc014d817e010003411f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8"
 }
 ```
 ```json
 {
-    "type": 8,
-    "typeString": "IDENTITY_CREDIT_TRANSFER",
-    "indexValues": [
-        "EgRkYXNo",
-        "EgN5MDE="
-    ],
-    "contractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    "modifiedDataIds": [
-        "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse"
-    ],
-    "ownerId": "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse",
-    "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
-    "documentTypeName": "domain",
-    "indexName": "parentNameAndLabel",
-    "choice": "Abstain",
-    "proTxHash": "ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b",
-    "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
+  "type": 8,
+  "typeString": "IDENTITY_CREDIT_TRANSFER",
+  "indexValues": [
+    "EgRkYXNo",
+    "EgN5MDE="
+  ],
+  "contractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+  "modifiedDataIds": [
+    "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse"
+  ],
+  "ownerId": "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse",
+  "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
+  "documentTypeName": "domain",
+  "indexName": "parentNameAndLabel",
+  "choice": "Abstain",
+  "proTxHash": "ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b",
+  "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
 }
 ```
 Response codes:
@@ -2464,71 +2550,52 @@ Return list of tokens
 ```
 GET /tokens?limit=2&page=1&order=asc
 [
-  {
-    "identifier": "5kRUF1SRTFtdskfaaQE9pCdADq8wyLFB1TNttnrBq3F8",
-    "localizations": {
-      "en": {
-        "pluralForm": "k1-id1",
-        "singularForm": "k1-id1",
-        "shouldCapitalize": true
-      }
-    },
-    "baseSupply": "100000",
-    "totalSupply": "100500",
-    "maxSupply": null,
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
-        {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
-        }
-      ]
-    },
-    "mintable": true,
-    "burnable": true,
-    "freezable": true,
-    "unfreezable": true,
-    "destroyable": true,
-    "allowedEmergencyActions": true,
-    "dataContractIdentifier": "CNvyZaBWofWPmgKYCBMF23h3cEhQfQHVY3wXCRkHEaau"
-  },
-  {
-    "identifier": "GUo3MpaLeaLDvjDnF5XQLRCjWC9WhkNPbtrVWZ5FKjLp",
-    "localizations": {
-      "en": {
-        "pluralForm": "a1-1",
-        "singularForm": "a1-1",
-        "shouldCapitalize": true
-      }
-    },
-    "baseSupply": "100000",
-    "totalSupply": "120000",
-    "maxSupply": "5000",
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
-        {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
-        }
-      ]
-    },
-    "mintable": true,
-    "burnable": true,
-    "freezable": true,
-    "unfreezable": true,
-    "destroyable": true,
-    "allowedEmergencyActions": true,
-    "dataContractIdentifier": "5BwVvDstM6FaXQcLNUGkuPHAk5xH3uEoYEKqHKXjw5nL"
-    "decimals": null,
-  }
+    {
+        "identifier": "9YxdbQUjJmQsmVPen95HjAU3Esj7tVkWSY2EQWT84ZQP",
+        "position": 0,
+        "timestamp": null,
+        "description": "note",
+        "localizations": {
+            "en": {
+                "pluralForm": "tokens",
+                "singularForm": "token",
+                "shouldCapitalize": true
+            }
+        },
+        "baseSupply": "1",
+        "totalSupply": "1",
+        "maxSupply": null,
+        "owner": {
+            "identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+            "aliases": [
+                {
+                    "alias": "canusieethat7.dash",
+                    "status": "ok",
+                    "timestamp": "2024-10-10T19:40:05.824Z",
+                    "documentId": "Qwb2FuwfnexmxxYoJUsMhM9pd192NVDvaEVFyjkSXAa",
+                    "contested": false
+                }
+            ]
+        },
+        "mintable": false,
+        "burnable": false,
+        "freezable": false,
+        "unfreezable": false,
+        "destroyable": false,
+        "allowedEmergencyActions": false,
+        "dataContractIdentifier": "Y189uedQG3CJCuu83P3DqnG7ngQaRKz69x3gY8uDzQe",
+        "changeMaxSupply": false,
+        "totalGasUsed": null,
+        "mainGroup": null,
+        "totalTransitionsCount": null,
+        "totalFreezeTransitionsCount": null,
+        "totalBurnTransitionsCount": null,
+        "decimals": 1,
+        "perpetualDistribution": null,
+        "preProgrammedDistribution": null,
+        "price": null,
+        "prices": null
+    }, ...
 ]
 ```
 Response codes:

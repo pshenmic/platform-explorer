@@ -15,7 +15,9 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   SEMVER_REGEX: ^\d.\d.\d+(?:-(\w)+(:?.\d+)?)?$
 
-
+concurrency:
+  group: "deploy"
+  cancel-in-progress: true
 
 jobs:
   stop:

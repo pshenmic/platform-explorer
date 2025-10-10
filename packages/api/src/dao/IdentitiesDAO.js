@@ -9,11 +9,10 @@ const {
   decodeStateTransition,
   getAliasStateByVote,
   getAliasFromDocument,
-  getAliasInfo
+  getAliasInfo, getAliasDocumentForIdentifiers
 } = require('../utils')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
-const { DPNS_CONTRACT } = require('../constants')
 const SeriesData = require('../models/SeriesData')
 
 module.exports = class IdentitiesDAO {
@@ -170,11 +169,15 @@ module.exports = class IdentitiesDAO {
     }
 
     const balance = await this.sdk.identities.getIdentityBalance(identity.identifier)
+    const identityNonce = await this.sdk.identities.getIdentityNonce(identity.identifier)
+    const identityInfo = await this.sdk.identities.getIdentityByIdentifier(identity.identifier)
 
     return Identity.fromObject({
       ...identity,
       aliases,
       balance: String(balance),
+      nonce: String(identityNonce),
+      revision: String(identityInfo.revision),
       publicKeys: publicKeys?.map(key => {
         const contractBounds = key.getContractBounds()
 
@@ -281,11 +284,17 @@ module.exports = class IdentitiesDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
+    const identifiers = rows.map(row => row.identifier.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(identifiers, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async row => {
       const balance = await this.sdk.identities.getIdentityBalance(row.identifier.trim())
+      const identityInfo = await this.sdk.identities.getIdentityByIdentifier(row.identifier)
+
+      const aliasDocument = aliasDocuments[row.identifier.trim()]
 
       const aliases = []
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.identifier.trim()]], 1)
 
       if (aliasDocument) {
         aliases.push(getAliasFromDocument(aliasDocument))
@@ -295,6 +304,7 @@ module.exports = class IdentitiesDAO {
         ...row,
         owner: row.identity_owner,
         total_data_contracts: parseInt(row.total_data_contracts),
+        revision: String(identityInfo.revision),
         total_documents: parseInt(row.total_documents),
         total_txs: parseInt(row.total_txs),
         balance: String(balance),
@@ -391,9 +401,14 @@ module.exports = class IdentitiesDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
+    const owners = rows.map(row => row.document_owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
+      const aliasDocument = aliasDocuments[row.document_owner.trim()]
+
       const aliases = []
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
 
       if (aliasDocument) {
         aliases.push(getAliasFromDocument(aliasDocument))
