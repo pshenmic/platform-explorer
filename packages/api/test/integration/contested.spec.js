@@ -277,8 +277,7 @@ describe('Contested documents routes', () => {
             lockVotes: contestedResources
               .filter(res =>
                 res.masternodeVote.index_values === JSON.stringify(['dash', 'xyz']) &&
-                res.masternodeVote.choice !== ChoiceEnum.ABSTAIN &&
-                (res.masternodeVote.choice === ChoiceEnum.LOCK || res.masternodeVote.towards_identity_identifier !== resource.contender.identifier))
+                res.masternodeVote.choice === ChoiceEnum.LOCK)
               .length
           })),
         indexName: 'parentNameAndLabel',

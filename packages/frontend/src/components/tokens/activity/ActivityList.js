@@ -14,7 +14,8 @@ export default function ActivityList ({
   rate,
   pagination,
   loading,
-  itemsCount = 10
+  itemsCount = 10,
+  decimals
 }) {
   const isLargeScreen = useBreakpointValue({ base: true, lg: false })
   const headerExtraClass = {
@@ -53,6 +54,7 @@ export default function ActivityList ({
                   key={key}
                   activity={activity}
                   rate={rate}
+                  decimals={decimals}
                 />
               ))}
               {activities?.length === 0 &&

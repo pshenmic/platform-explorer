@@ -1,13 +1,14 @@
 import { LinkContainer } from '../../ui/containers'
 import { StatusIcon } from '../../transactions'
-import { BigNumber, Identifier, NotActive, TimeDelta } from '../../data'
+import { Identifier, NotActive, TimeDelta } from '../../data'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import BatchTypeBadge from '../../transactions/BatchTypeBadge'
 import { Tooltip } from '../../ui/Tooltips'
 import './ActivityListItem.scss'
+import { FormattedNumber } from '../../ui/FormattedNumber'
 
-export default function ActivityListItem ({ activity }) {
+export default function ActivityListItem ({ activity, decimals }) {
   const router = useRouter()
 
   return (
@@ -50,7 +51,7 @@ export default function ActivityListItem ({ activity }) {
                 onClick={e => {
                   e.stopPropagation()
                   e.preventDefault()
-                  router.push(`/identity/${activity?.owner}`)
+                  router.push(`/identity/${activity?.owner?.identifier}`)
                 }}
               >
                 <Identifier
@@ -58,7 +59,7 @@ export default function ActivityListItem ({ activity }) {
                   styles={['highlight-both']}
                   clickable={true}
                 >
-                  {activity.owner}
+                  {activity.owner?.identifier}
                 </Identifier>
               </LinkContainer>
             : <NotActive>-</NotActive>
@@ -87,7 +88,7 @@ export default function ActivityListItem ({ activity }) {
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Amount ActivityListItem__Column--Number'}>
-          <BigNumber>{activity?.amount}</BigNumber>
+          <FormattedNumber decimals={decimals}>{activity?.amount}</FormattedNumber>
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Type'}>

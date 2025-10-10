@@ -1,10 +1,9 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
-const { getAliasFromDocument } = require('../utils')
+const { getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
-const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class TransactionsDAO {
   constructor (knex, sdk) {
@@ -28,7 +27,7 @@ module.exports = class TransactionsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+    const aliasDocument = await getAliasDocumentForIdentifier(row.owner.trim(), this.sdk)
 
     const aliases = []
 
@@ -62,7 +61,7 @@ module.exports = class TransactionsDAO {
     if (batchTypes) {
       // Currently knex cannot digest an array of numbers correctly
       // https://github.com/knex/knex/issues/2060
-      filtersQuery = filtersQuery + `${filtersQuery !== '' ? ' and' : ''}` +
+      filtersQuery = filtersQuery + `${filtersQuery !== '' ? ' and ' : ''}` +
         (batchTypes.length > 1
           ? `batch_type in (${batchTypes.join(',')})`
           : `batch_type = ${batchTypes[0]}`)
@@ -130,8 +129,12 @@ module.exports = class TransactionsDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
+    const owners = rows.map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.owner.trim()]
 
       const aliases = []
 

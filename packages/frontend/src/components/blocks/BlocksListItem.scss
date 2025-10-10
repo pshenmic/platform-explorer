@@ -21,8 +21,6 @@
 
   &__Column {
     @include blocks.Column();
-    display: flex;
-    align-items: center;
 
     &:last-child {
       text-align: right;

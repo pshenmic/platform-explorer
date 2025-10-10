@@ -1,9 +1,8 @@
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { decodeStateTransition, getAliasFromDocument } = require('../utils')
+const { decodeStateTransition, getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
 const Token = require('../models/Token')
 const { TokenConfigurationWASM, IdentifierWASM } = require('pshenmic-dpp')
-const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class DataContractsDAO {
   constructor (knex, sdk) {
@@ -129,7 +128,7 @@ module.exports = class DataContractsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+    const aliasDocument = await getAliasDocumentForIdentifier(row.owner.trim(), this.sdk)
 
     const ownerAliases = []
 
@@ -142,7 +141,7 @@ module.exports = class DataContractsDAO {
     if (row.owner === row.top_identity || !row.top_identity) {
       topIdentityAliases = ownerAliases
     } else if (row.top_identity) {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.top_identity.trim()]], 1)
+      const aliasDocument = await getAliasDocumentForIdentifier(row.top_identity.trim(), this.sdk)
 
       if (aliasDocument) {
         topIdentityAliases.push(getAliasFromDocument(aliasDocument))
@@ -232,6 +231,10 @@ module.exports = class DataContractsDAO {
       .offset(fromRank)
       .limit(limit)
 
+    const owners = rows.map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
       let decodedTx
 
@@ -239,7 +242,7 @@ module.exports = class DataContractsDAO {
         decodedTx = await decodeStateTransition(row.data)
       }
 
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.owner.trim()]
 
       const aliases = []
 
@@ -295,5 +298,66 @@ module.exports = class DataContractsDAO {
     }
 
     return rows.map(row => DataContract.fromRow(row))
+  }
+
+  getContractsTrends = async (startDate, endDate, page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const subquery = this.knex('data_contracts')
+      .select('data_contract_id')
+      .select(this.knex.raw('count(data_contract_id) as transitions_count'))
+      .whereBetween('timestamp', [startDate.toISOString(), endDate.toISOString()])
+      .andWhere('version', 0)
+      .leftJoin('data_contract_transitions', 'data_contracts.id', 'data_contract_id')
+      .leftJoin('state_transitions', 'data_contract_transitions.state_transition_id', 'state_transitions.id')
+      .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
+      .groupBy('data_contract_id')
+
+    const countedSubquery = this.knex
+      .with('counted_subquery', subquery)
+      .select('transitions_count', 'identifier', 'data_contract_id')
+      .orderBy('transitions_count', order)
+      .limit(limit)
+      .offset(fromRank)
+      .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
+      .from('counted_subquery')
+
+    const unionSubquery = this.knex
+      .with('counted_subquery', countedSubquery)
+      .unionAll([
+        this.knex.select('*').from('counted_subquery'),
+        this.knex('data_contracts')
+          .select(this.knex.raw("'0'::int as transitions_count"))
+          .select('identifier', 'id as data_contract_id')
+          .whereNotIn('id', function () {
+            this.select('data_contract_id').from('counted_subquery')
+          })
+          .andWhere('version', 0)
+          .orderBy('id', order)
+          .limit(limit)
+          .offset(fromRank)
+      ], true)
+      .limit(limit)
+      .as('union_subquery')
+
+    const rows = await this.knex(unionSubquery)
+      .select('identifier', 'transitions_count')
+      .select(
+        this.knex('data_contracts')
+          .where('version', 0)
+          .count('*')
+          .limit(1)
+          .as('total_count')
+      )
+      .orderBy('transitions_count', order)
+
+    const resultSet = rows.map(row => ({
+      identifier: row.identifier,
+      transitionsCount: Number(row.transitions_count ?? 0)
+    }))
+
+    const [row] = rows
+
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
   }
 }

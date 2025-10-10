@@ -43,6 +43,7 @@ function MultiLevelMenu ({
       closeOnBlur={true}
       placement={placement}
       variant={'menu'}
+      isLazy
       isOpen={forceIsOpen}
       {...props}
     >

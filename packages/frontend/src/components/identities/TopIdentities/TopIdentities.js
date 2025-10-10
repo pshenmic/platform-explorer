@@ -3,8 +3,7 @@
 import { TopIdentitiesCards } from '../index'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { useState, useEffect } from 'react'
-import { Heading, Grid, GridItem } from '@chakra-ui/react'
-import InfoContainer from '../../ui/containers/InfoContainer'
+import { Grid, GridItem } from '@chakra-ui/react'
 import * as Api from '../../../util/Api'
 import './TopIdentities.scss'
 
@@ -25,12 +24,7 @@ export default function TopIdentities ({ className }) {
   useEffect(fetchData, [])
 
   return (
-    <InfoContainer
-      styles={['translucentBg']}
-      className={`TopIdentities ${className || ''}`}
-    >
-      <Heading className={'InfoBlock__Title'} as={'h1'}>Top Identities</Heading>
-
+    <div className={`TopIdentities ${className || ''}`}>
       <Grid className={'TopIdentities__ColumnTitles '}>
         <GridItem className={'TopIdentities__ColumnTitle'}>
           Identifier
@@ -41,6 +35,6 @@ export default function TopIdentities ({ className }) {
       </Grid>
 
       <TopIdentitiesCards items={identities} rate={rate.data}/>
-    </InfoContainer>
+    </div>
   )
 }

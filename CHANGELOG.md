@@ -1,5 +1,17 @@
 # CHANGELOG
 
+### v2.1.1
+## Changes
+
+## API
+
+- TokenPaymentInfo for transaction decode @owl352 (#671)
+- Tokens Holders @owl352 (#661)
+- Fix waitForStateTransitionResult route path @pshenmic (#682)
+- API method waitForStateTransitionResult @owl352 (#675)
+- Remove alias contested resource vote poll check for identities list @owl352 (#680)
+- Fix tokens balance is null for identities @owl352 (#676)
+
 ### v2.1.0
 
 ## Changes

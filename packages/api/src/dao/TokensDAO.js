@@ -1,12 +1,10 @@
-const Token = require('../models/Token')
 const TokenTransition = require('../models/TokenTransition')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const TokenTransitionsEnum = require('../enums/TokenTransitionsEnum')
 const Localization = require('../models/Localization')
-const { fetchTokenInfoByRows } = require('../utils')
+const { fetchTokenInfoByRows, getAliasDocumentForIdentifiers } = require('../utils')
 const BatchEnum = require('../enums/BatchEnum')
 const { getAliasFromDocument } = require('../utils')
-const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class TokensDAO {
   constructor (knex, sdk) {
@@ -37,28 +35,7 @@ module.exports = class TokensDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    const tokens = await Promise.all(rows.map(async (row) => {
-      const { totalSystemAmount } = await this.sdk.tokens.getTokenTotalSupply(row.identifier)
-
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
-
-      const aliases = []
-
-      if (aliasDocument) {
-        aliases.push(getAliasFromDocument(aliasDocument))
-      }
-
-      return Token.fromObject({
-        ...Token.fromRow({
-          ...row,
-          owner: {
-            identifier: row.owner?.trim(),
-            aliases: aliases ?? []
-          }
-        }),
-        totalSupply: totalSystemAmount.toString()
-      })
-    }))
+    const tokens = await fetchTokenInfoByRows(rows, this.sdk)
 
     return new PaginatedResultSet(tokens, page, limit, totalCount)
   }
@@ -134,8 +111,12 @@ module.exports = class TokensDAO {
       .limit(limit)
       .orderBy('id', order)
 
+    const owners = rows.map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.owner.trim()]
 
       const aliases = []
 
@@ -258,7 +239,7 @@ module.exports = class TokensDAO {
       return new PaginatedResultSet([], page, limit, 0)
     }
 
-    const tokens = await fetchTokenInfoByRows(rows, this.sdk)
+    const tokens = await fetchTokenInfoByRows(rows.map(row => ({ ...row, owner: identifier })), this.sdk)
 
     const tokenIdentifierList = tokens.map((token) => token.identifier)
 
@@ -341,8 +322,10 @@ module.exports = class TokensDAO {
       }
     }, {})
 
+    const aliasDocuments = await getAliasDocumentForIdentifiers(holders, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.holder.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.holder.trim()]
 
       const aliases = []
 

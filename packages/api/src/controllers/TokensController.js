@@ -66,7 +66,7 @@ class TokensController {
       return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
     }
 
-    const rating = await this.tokensDAO.getTokensTrends(
+    const trends = await this.tokensDAO.getTokensTrends(
       new Date(start),
       new Date(end),
       Number(page ?? 1),
@@ -74,7 +74,7 @@ class TokensController {
       order
     )
 
-    response.send(rating)
+    response.send(trends)
   }
 
   getTokensByIdentity = async (request, response) => {

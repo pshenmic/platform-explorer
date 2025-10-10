@@ -9,11 +9,10 @@ const {
   decodeStateTransition,
   getAliasStateByVote,
   getAliasFromDocument,
-  getAliasInfo
+  getAliasInfo, getAliasDocumentForIdentifiers
 } = require('../utils')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
-const { DPNS_CONTRACT } = require('../constants')
 const SeriesData = require('../models/SeriesData')
 
 module.exports = class IdentitiesDAO {
@@ -170,11 +169,15 @@ module.exports = class IdentitiesDAO {
     }
 
     const balance = await this.sdk.identities.getIdentityBalance(identity.identifier)
+    const identityNonce = await this.sdk.identities.getIdentityNonce(identity.identifier)
+    const identityInfo = await this.sdk.identities.getIdentityByIdentifier(identity.identifier)
 
     return Identity.fromObject({
       ...identity,
       aliases,
       balance: String(balance),
+      nonce: String(identityNonce),
+      revision: String(identityInfo.revision),
       publicKeys: publicKeys?.map(key => {
         const contractBounds = key.getContractBounds()
 
@@ -281,11 +284,17 @@ module.exports = class IdentitiesDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
+    const identifiers = rows.map(row => row.identifier.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(identifiers, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async row => {
       const balance = await this.sdk.identities.getIdentityBalance(row.identifier.trim())
+      const identityInfo = await this.sdk.identities.getIdentityByIdentifier(row.identifier)
+
+      const aliasDocument = aliasDocuments[row.identifier.trim()]
 
       const aliases = []
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.identifier.trim()]], 1)
 
       if (aliasDocument) {
         aliases.push(getAliasFromDocument(aliasDocument))
@@ -295,6 +304,7 @@ module.exports = class IdentitiesDAO {
         ...row,
         owner: row.identity_owner,
         total_data_contracts: parseInt(row.total_data_contracts),
+        revision: String(identityInfo.revision),
         total_documents: parseInt(row.total_documents),
         total_txs: parseInt(row.total_txs),
         balance: String(balance),
@@ -391,9 +401,14 @@ module.exports = class IdentitiesDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
+    const owners = rows.map(row => row.document_owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
+      const aliasDocument = aliasDocuments[row.document_owner.trim()]
+
       const aliases = []
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
 
       if (aliasDocument) {
         aliases.push(getAliasFromDocument(aliasDocument))
@@ -537,7 +552,7 @@ module.exports = class IdentitiesDAO {
 
     const blocksSubquery = this.knex('blocks')
       .with('sub_ranges', subRanges)
-      .whereRaw('blocks.timestamp > (SELECT min_date FROM sub_ranges) AND blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
+      .whereRaw('blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
       .as('blocks_sub')
 
     const dataSubquery = this.knex(blocksSubquery)
@@ -548,7 +563,7 @@ module.exports = class IdentitiesDAO {
       .whereRaw('identifier is not null')
       .leftJoin('identities', 'state_transition_id', 'state_transitions.id')
 
-    const counted = this.knex
+    const rows = await this.knex
       .with('ranges', ranges)
       .with(
         'filtered_data',
@@ -558,25 +573,15 @@ module.exports = class IdentitiesDAO {
       .select(this.knex.raw('count(identifier) as identities_count'))
       .select(this.knex.raw('min(height) as block_height'))
       .leftJoin('filtered_data', function () {
-        this.on('timestamp', '>', 'date_from').andOn('timestamp', '<=', 'date_to')
+        this.on('timestamp', '<=', 'date_to')
       })
       .groupBy('date_from')
       .from('ranges')
-      .as('counted')
-
-    const rows = await this.knex(counted)
-      .select('identities_count', 'block_height', 'hash as block_hash', 'date_from')
-      .leftJoin('blocks', function () {
-        this.on('blocks.height', '=', 'block_height').andOnNotNull('block_height')
-      })
-      .as('subquery')
 
     return rows.map(row => ({
       timestamp: row.date_from.toISOString(),
       data: {
-        registeredIdentities: Number(row.identities_count ?? 0),
-        blockHeight: row.block_height,
-        blockHash: row.block_hash
+        registeredIdentities: Number(row.identities_count ?? 0)
       }
     }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))

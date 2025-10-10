@@ -225,12 +225,18 @@ describe('Tokens', () => {
         .slice(0, 10)
         .map(({ token }) => ({
           identifier: token.identifier,
-          localizations: token.localizations ?? null,
-          baseSupply: token.base_supply.toString(),
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
           totalSupply: '1000',
-          maxSupply: token.max_supply?.toString() ?? null,
+          maxSupply: '1010',
           owner: {
-            identifier: token.owner,
+            identifier: '11111111111111111111111111111111',
             aliases: [
               {
                 alias: 'alias.dash',
@@ -241,30 +247,39 @@ describe('Tokens', () => {
               }
             ]
           },
-          mintable: token.mintable,
-          burnable: token.burnable,
-          freezable: token.freezable,
-          unfreezable: token.unfreezable,
-          destroyable: token.destroyable,
-          allowedEmergencyActions: token.allowed_emergency_actions,
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           mainGroup: null,
-          position: null,
+          position: 29,
           description: null,
-          changeMaxSupply: null,
+          changeMaxSupply: true,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
           totalTransitionsCount: null,
-          decimals: null,
-          perpetualDistribution: null,
+          decimals: 1000,
+          perpetualDistribution: {
+            functionName: 'FixedAmount',
+            functionValue: {
+              amount: '100'
+            },
+            interval: 100,
+            recipientType: 'ContractOwner',
+            recipientValue: null,
+            type: 'BlockBasedDistribution'
+          },
           preProgrammedDistribution: null,
           prices: null,
           price: null
         }))
 
-      assert.deepEqual(expectedTokens, body.resultSet)
+      assert.deepEqual(body.resultSet, expectedTokens)
     })
 
     it('should return tokens set with order desc', async () => {
@@ -281,12 +296,18 @@ describe('Tokens', () => {
         .slice(0, 10)
         .map(({ token }) => ({
           identifier: token.identifier,
-          localizations: token.localizations ?? null,
-          baseSupply: token.base_supply.toString(),
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
           totalSupply: '1000',
-          maxSupply: token.max_supply?.toString() ?? null,
+          maxSupply: '1010',
           owner: {
-            identifier: token.owner,
+            identifier: '11111111111111111111111111111111',
             aliases: [
               {
                 alias: 'alias.dash',
@@ -297,24 +318,33 @@ describe('Tokens', () => {
               }
             ]
           },
-          mintable: token.mintable,
-          burnable: token.burnable,
-          freezable: token.freezable,
-          unfreezable: token.unfreezable,
-          destroyable: token.destroyable,
-          allowedEmergencyActions: token.allowed_emergency_actions,
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           mainGroup: null,
-          position: null,
+          position: 29,
           description: null,
-          changeMaxSupply: null,
+          changeMaxSupply: true,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
-          decimals: null,
           totalTransitionsCount: null,
-          perpetualDistribution: null,
+          decimals: 1000,
+          perpetualDistribution: {
+            functionName: 'FixedAmount',
+            functionValue: {
+              amount: '100'
+            },
+            interval: 100,
+            recipientType: 'ContractOwner',
+            recipientValue: null,
+            type: 'BlockBasedDistribution'
+          },
           preProgrammedDistribution: null,
           prices: null,
           price: null
@@ -337,12 +367,18 @@ describe('Tokens', () => {
         .slice(0, 3)
         .map(({ token }) => ({
           identifier: token.identifier,
-          localizations: token.localizations ?? null,
-          baseSupply: token.base_supply.toString(),
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
           totalSupply: '1000',
-          maxSupply: token.max_supply?.toString() ?? null,
+          maxSupply: '1010',
           owner: {
-            identifier: token.owner,
+            identifier: '11111111111111111111111111111111',
             aliases: [
               {
                 alias: 'alias.dash',
@@ -353,24 +389,33 @@ describe('Tokens', () => {
               }
             ]
           },
-          mintable: token.mintable,
-          burnable: token.burnable,
-          freezable: token.freezable,
-          unfreezable: token.unfreezable,
-          destroyable: token.destroyable,
-          allowedEmergencyActions: token.allowed_emergency_actions,
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           mainGroup: null,
-          position: null,
+          position: 29,
           description: null,
-          changeMaxSupply: null,
+          changeMaxSupply: true,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
-          decimals: null,
           totalTransitionsCount: null,
-          perpetualDistribution: null,
+          decimals: 1000,
+          perpetualDistribution: {
+            functionName: 'FixedAmount',
+            functionValue: {
+              amount: '100'
+            },
+            interval: 100,
+            recipientType: 'ContractOwner',
+            recipientValue: null,
+            type: 'BlockBasedDistribution'
+          },
           preProgrammedDistribution: null,
           prices: null,
           price: null
@@ -393,12 +438,18 @@ describe('Tokens', () => {
         .slice(11, 22)
         .map(({ token }) => ({
           identifier: token.identifier,
-          localizations: token.localizations ?? null,
-          baseSupply: token.base_supply.toString(),
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
           totalSupply: '1000',
-          maxSupply: token.max_supply?.toString() ?? null,
+          maxSupply: '1010',
           owner: {
-            identifier: token.owner,
+            identifier: '11111111111111111111111111111111',
             aliases: [
               {
                 alias: 'alias.dash',
@@ -409,24 +460,33 @@ describe('Tokens', () => {
               }
             ]
           },
-          mintable: token.mintable,
-          burnable: token.burnable,
-          freezable: token.freezable,
-          unfreezable: token.unfreezable,
-          destroyable: token.destroyable,
-          allowedEmergencyActions: token.allowed_emergency_actions,
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
           dataContractIdentifier: dataContract.identifier,
           mainGroup: null,
-          position: null,
+          position: 29,
           description: null,
-          changeMaxSupply: null,
+          changeMaxSupply: true,
           timestamp: null,
           totalBurnTransitionsCount: null,
           totalFreezeTransitionsCount: null,
           totalGasUsed: null,
-          decimals: null,
           totalTransitionsCount: null,
-          perpetualDistribution: null,
+          decimals: 1000,
+          perpetualDistribution: {
+            functionName: 'FixedAmount',
+            functionValue: {
+              amount: '100'
+            },
+            interval: 100,
+            recipientType: 'ContractOwner',
+            recipientValue: null,
+            type: 'BlockBasedDistribution'
+          },
           preProgrammedDistribution: null,
           prices: null,
           price: null
