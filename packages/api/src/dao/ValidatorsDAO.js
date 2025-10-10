@@ -114,8 +114,9 @@ module.exports = class ValidatorsDAO {
     })
   }
 
-  getValidators = async (page, limit, order, isActive, validators, currentEpoch) => {
+  getValidators = async (page, limit, order, isActive, validators, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockHash) => {
     const fromRank = ((page - 1) * limit)
+    const proTxHash = owner ? Buffer.from(base58.decode(owner)).toString('hex') : null
 
     const validatorsSubquery = this.knex('validators')
       .select(

@@ -112,7 +112,18 @@ class ValidatorsController {
   }
 
   getValidators = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc', isActive = undefined } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      isActive = undefined,
+      owner,
+      blocks_proposed_min: blocksProposedMin,
+      blocks_proposed_max: blocksProposedMax,
+      last_proposed_block_height_min: lastProposedBlockHeightMin,
+      last_proposed_block_height_max: lastProposedBlockHeightMax,
+      last_proposed_block_hash: lastProposedBlockHash
+    } = request.query
 
     const activeValidators = await TenderdashRPC.getValidators()
 
@@ -125,7 +136,12 @@ class ValidatorsController {
       order,
       isActive,
       activeValidators,
-      epochInfo
+      owner,
+      blocksProposedMin,
+      blocksProposedMax,
+      lastProposedBlockHeightMin,
+      lastProposedBlockHeightMax,
+      lastProposedBlockHash
     )
 
     const resultSet = await Promise.all(

@@ -218,6 +218,28 @@ const schemaTypes = [
       documents_count_max: {
         type: ['number', 'null'],
         minimum: 0
+      },
+      blocks_proposed_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      blocks_proposed_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      last_proposed_block_height_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      last_proposed_block_height_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      last_proposed_block_hash: {
+        type: 'string',
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 64,
+        maxLength: 64
       }
     }
   },
