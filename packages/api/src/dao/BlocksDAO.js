@@ -203,7 +203,7 @@ module.exports = class BlockDAO {
     const validatorQuery = validator
       ? [
           'validator = ?',
-          validator
+          validator.toLowerCase()
         ]
       : ['true']
 

@@ -35,15 +35,15 @@ impl PostgresDAO {
             .execute(
                 &stmt,
                 &[
-                    &block_header.hash,
+                    &block_header.hash.to_lowercase(),
                     &block_header.height,
                     &SystemTime::from(block_header.timestamp),
                     &block_header.block_version,
                     &block_header.app_version,
                     &block_header.l1_locked_height,
-                    &block_header.proposer_pro_tx_hash,
+                    &block_header.proposer_pro_tx_hash.to_lowercase(),
                     &validator.id,
-                    &block_header.app_hash,
+                    &block_header.app_hash.to_lowercase(),
                 ],
             )
             .await

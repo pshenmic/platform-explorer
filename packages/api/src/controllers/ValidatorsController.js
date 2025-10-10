@@ -31,7 +31,7 @@ class ValidatorsController {
 
     const validators = await TenderdashRPC.getValidators()
 
-    const isActive = validators.some(validator => validator.pro_tx_hash === hash)
+    const isActive = validators.some(validator => validator.pro_tx_hash === hash.toLowerCase())
 
     const cached = cache.get(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`)
 
