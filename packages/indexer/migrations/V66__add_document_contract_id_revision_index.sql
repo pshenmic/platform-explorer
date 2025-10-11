@@ -1,0 +1,1 @@
+CREATE INDEX idx_document_revision ON documents(data_contract_id, revision)

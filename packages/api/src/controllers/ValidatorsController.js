@@ -112,7 +112,32 @@ class ValidatorsController {
   }
 
   getValidators = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc', isActive = undefined } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      isActive = undefined,
+      owner,
+      blocks_proposed_min: blocksProposedMin,
+      blocks_proposed_max: blocksProposedMax,
+      last_proposed_block_height_min: lastProposedBlockHeightMin,
+      last_proposed_block_height_max: lastProposedBlockHeightMax,
+      last_proposed_block_timestamp_start: lastProposedBlockTimestampStart,
+      last_proposed_block_timestamp_end: lastProposedBlockTimestampEnd,
+      last_proposed_block_hash: lastProposedBlockHash
+    } = request.query
+
+    if (!blocksProposedMin !== !blocksProposedMax) {
+      return response.status(400).send({ message: 'you must use blocks_proposed_min and blocks_proposed_max' })
+    }
+
+    if (!lastProposedBlockHeightMin !== !lastProposedBlockHeightMax) {
+      return response.status(400).send({ message: 'you must use last_proposed_block_height_min and last_proposed_block_height_max' })
+    }
+
+    if (!lastProposedBlockTimestampStart !== !lastProposedBlockTimestampEnd) {
+      return response.status(400).send({ message: 'you must use lastProposedBlockTimestampStart and lastProposedBlockTimestampEnd' })
+    }
 
     const activeValidators = await TenderdashRPC.getValidators()
 
@@ -125,7 +150,14 @@ class ValidatorsController {
       order,
       isActive,
       activeValidators,
-      epochInfo
+      owner,
+      blocksProposedMin,
+      blocksProposedMax,
+      lastProposedBlockHeightMin,
+      lastProposedBlockHeightMax,
+      lastProposedBlockTimestampStart,
+      lastProposedBlockTimestampEnd,
+      lastProposedBlockHash
     )
 
     const resultSet = await Promise.all(

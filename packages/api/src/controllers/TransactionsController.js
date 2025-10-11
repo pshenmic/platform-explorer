@@ -40,8 +40,22 @@ class TransactionsController {
       transaction_type: transactionTypes,
       batch_type: batchTypes,
       timestamp_start: timestampStart,
-      timestamp_end: timestampEnd
+      timestamp_end: timestampEnd,
+      token_name: tokenName
     } = request.query
+
+    const normalizedTransactionTypes = transactionTypes?.map(transactionType => typeof transactionType === 'string' ? StateTransitionEnum[transactionType] : transactionType)
+    const normalizedBatchTypes = batchTypes?.map(batchType => typeof batchType === 'string' ? BatchTypeEnum[batchType] : batchType)
+
+    if (tokenName && normalizedBatchTypes?.some(batchType => batchType < 6)) {
+      return response.status(400).send({ message: 'with a filter by token name you must use only token token transitions types for filter by batch type' })
+    }
+
+    if (normalizedTransactionTypes && normalizedBatchTypes?.length > 0) {
+      if (normalizedTransactionTypes[0] !== 1 || normalizedTransactionTypes.length > 1) {
+        return response.status(400).send({ message: 'with a filter by batch type you must use only batch transaction type for filter by transaction types' })
+      }
+    }
 
     if (order !== 'asc' && order !== 'desc') {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
@@ -68,14 +82,15 @@ class TransactionsController {
       Number(limit ?? 10),
       order,
       orderBy,
-      transactionTypes?.map(transactionType => typeof transactionType === 'string' ? StateTransitionEnum[transactionType] : transactionType),
-      batchTypes?.map(batchType => typeof batchType === 'string' ? BatchTypeEnum[batchType] : batchType),
+      normalizedTransactionTypes,
+      normalizedBatchTypes,
       owner,
       status,
       gasMin,
       gasMax,
       timestampStart,
-      timestampEnd
+      timestampEnd,
+      tokenName
     )
 
     response.send(transactions)

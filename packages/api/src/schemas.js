@@ -198,6 +198,56 @@ const schemaTypes = [
         pattern: '^[A-Za-z0-9]+$',
         minLength: 43,
         maxLength: 44
+      },
+      token_name: {
+        type: 'string',
+        pattern: '^[A-Za-z0-9-]+$',
+        minLength: 3,
+        maxLength: 25
+      },
+      is_system: {
+        type: ['boolean', 'null']
+      },
+      with_tokens: {
+        type: ['boolean', 'null']
+      },
+      documents_count_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      documents_count_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      blocks_proposed_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      blocks_proposed_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      last_proposed_block_height_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      last_proposed_block_height_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      last_proposed_block_timestamp_start: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      },
+      last_proposed_block_timestamp_end: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      },
+      last_proposed_block_hash: {
+        type: 'string',
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 64,
+        maxLength: 64
       }
     }
   },
