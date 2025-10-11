@@ -114,9 +114,33 @@ module.exports = class ValidatorsDAO {
     })
   }
 
-  getValidators = async (page, limit, order, isActive, validators, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockHash) => {
+  getValidators = async (page, limit, order, isActive, validators, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockTimestampStart, lastProposedBlockTimestampEnd, lastProposedBlockHash) => {
     const fromRank = ((page - 1) * limit)
+
     const proTxHash = owner ? Buffer.from(base58.decode(owner)).toString('hex') : null
+
+    let filtersQuery = ''
+    const filtersBindings = []
+
+    if (blocksProposedMin && blocksProposedMax) {
+      filtersQuery = 'proposed_blocks_amount between ? and ?'
+      filtersBindings.push(blocksProposedMin, blocksProposedMax)
+    }
+
+    if (lastProposedBlockHeightMin && lastProposedBlockHeightMax) {
+      filtersQuery = filtersQuery !== '' ? ' and latest_height between ? and ?' : 'latest_height between ? and ?'
+      filtersBindings.push(lastProposedBlockHeightMin, lastProposedBlockHeightMax)
+    }
+
+    if (lastProposedBlockTimestampStart && lastProposedBlockTimestampEnd) {
+      filtersQuery = filtersQuery !== '' ? ' and latest_timestamp between ? and ?' : 'latest_timestamp between ? and ?'
+      filtersBindings.push(new Date(lastProposedBlockTimestampStart).toISOString(), new Date(lastProposedBlockTimestampEnd).toISOString())
+    }
+
+    if (lastProposedBlockHash) {
+      filtersQuery = filtersQuery !== '' ? ' and LOWER(block_hash) = ?' : 'LOWER(block_hash) = ?'
+      filtersBindings.push(lastProposedBlockHash.toLowerCase())
+    }
 
     const validatorsSubquery = this.knex('validators')
       .select(
@@ -124,6 +148,10 @@ module.exports = class ValidatorsDAO {
         'validators.id'
       )
       .as('validators')
+
+    if (proTxHash) {
+      validatorsSubquery.whereILike('pro_tx_hash', proTxHash)
+    }
 
     const subquery = this.knex(validatorsSubquery)
       .select(
@@ -138,58 +166,52 @@ module.exports = class ValidatorsDAO {
         }
       })
 
-    const limitedSubquery = this.knex
-      .with('subquery', subquery)
+    const blocksSubquery = this.knex('subquery')
       .select(
-        'id',
-        'pro_tx_hash'
+        'subquery.id as validator_id'
       )
-      .select(this.knex('subquery').select(this.knex.raw('COUNT(id) over ()')).limit(1).as('total_count'))
+      .select(this.knex.raw('MAX(height) AS max_height'))
+      .select(this.knex.raw('count(height) as proposed_blocks_amount'))
+      .groupBy('subquery.id')
+      .leftJoin('blocks', 'blocks.validator_id', 'subquery.id')
+      .as('blocks_subquery')
+
+    const joinedBlocksSubqeury = this.knex(blocksSubquery)
+      .select(
+        'hash as block_hash', 'height as latest_height', 'timestamp as latest_timestamp',
+        'l1_locked_height', 'max_height', 'app_version', 'block_version', 'app_hash',
+        'proposed_blocks_amount', 'blocks_subquery.validator_id'
+      )
+      .leftJoin('blocks', 'height', 'max_height')
+
+    const joinedSubquery = this.knex
+      .with('subquery', subquery)
+      .with('blocks_subquery', joinedBlocksSubqeury)
+      .select(
+        'block_hash', 'latest_height', 'latest_timestamp', 'l1_locked_height',
+        'app_version', 'block_version', 'app_hash', 'id', 'pro_tx_hash', 'proposed_blocks_amount'
+      )
+      .leftJoin('blocks_subquery', 'subquery.id', 'blocks_subquery.validator_id')
+      .whereRaw(filtersQuery, filtersBindings)
+      .from('subquery')
+
+    const filteredSubquery = this.knex
+      .with('subquery', joinedSubquery)
+      .select(
+        'pro_tx_hash', 'block_hash',
+        'latest_height', 'latest_timestamp', 'l1_locked_height',
+        'app_version', 'block_version', 'app_hash', 'proposed_blocks_amount'
+      )
+      .select(this.knex('subquery').select(this.knex.raw('COUNT(id)')).limit(1).as('total_count'))
       .offset(fromRank)
       .orderBy('id', order)
       .from('subquery')
 
     if (limit > 0) {
-      limitedSubquery.limit(limit)
+      filteredSubquery.limit(limit)
     }
 
-    const blocksSubquery = this.knex('subquery')
-      .select(
-        'blocks.validator', 'subquery.id as validator_id', 'hash', 'app_hash',
-        'height', 'l1_locked_height', 'app_version', 'block_version',
-        'blocks.timestamp'
-      )
-      .leftJoin('blocks', 'blocks.validator_id', 'subquery.id')
-
-    const rows = await this.knex
-      .with('subquery', limitedSubquery)
-      .with('blocks_subquery', blocksSubquery)
-      .select(
-        'total_count', 'pro_tx_hash', 'block_hash',
-        'latest_height', 'latest_timestamp', 'l1_locked_height',
-        'app_version', 'block_version', 'app_hash'
-      )
-      .select(
-        this.knex('blocks_subquery')
-          .select(this.knex.raw('count(hash) over ()'))
-          .whereRaw('validator_id = subquery.id')
-          .limit(1)
-          .as('proposed_blocks_amount')
-      )
-      .joinRaw(
-        `LEFT JOIN LATERAL 
-        (
-          SELECT 
-            hash as block_hash,  height as latest_height,
-            timestamp as latest_timestamp, l1_locked_height,
-            app_version, block_version, app_hash
-          FROM blocks_subquery b
-          WHERE b.validator_id = subquery.id
-          ORDER BY height desc
-          LIMIT 1
-        ) as blocks_subquery ON TRUE`
-      )
-      .from('subquery')
+    const rows = await filteredSubquery
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 

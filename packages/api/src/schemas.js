@@ -235,6 +235,14 @@ const schemaTypes = [
         type: ['number', 'null'],
         minimum: 0
       },
+      last_proposed_block_timestamp_start: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      },
+      last_proposed_block_timestamp_end: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      },
       last_proposed_block_hash: {
         type: 'string',
         pattern: '^[A-Za-z0-9]+$',

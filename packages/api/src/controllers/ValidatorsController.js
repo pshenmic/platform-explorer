@@ -122,8 +122,22 @@ class ValidatorsController {
       blocks_proposed_max: blocksProposedMax,
       last_proposed_block_height_min: lastProposedBlockHeightMin,
       last_proposed_block_height_max: lastProposedBlockHeightMax,
+      last_proposed_block_timestamp_start: lastProposedBlockTimestampStart,
+      last_proposed_block_timestamp_end: lastProposedBlockTimestampEnd,
       last_proposed_block_hash: lastProposedBlockHash
     } = request.query
+
+    if (!blocksProposedMin !== !blocksProposedMax) {
+      return response.status(400).send({ message: 'you must use blocks_proposed_min and blocks_proposed_max' })
+    }
+
+    if (!lastProposedBlockHeightMin !== !lastProposedBlockHeightMax) {
+      return response.status(400).send({ message: 'you must use last_proposed_block_height_min and last_proposed_block_height_max' })
+    }
+
+    if (!lastProposedBlockTimestampStart !== !lastProposedBlockTimestampEnd) {
+      return response.status(400).send({ message: 'you must use lastProposedBlockTimestampStart and lastProposedBlockTimestampEnd' })
+    }
 
     const activeValidators = await TenderdashRPC.getValidators()
 
@@ -141,6 +155,8 @@ class ValidatorsController {
       blocksProposedMax,
       lastProposedBlockHeightMin,
       lastProposedBlockHeightMax,
+      lastProposedBlockTimestampStart,
+      lastProposedBlockTimestampEnd,
       lastProposedBlockHash
     )
 
