@@ -248,6 +248,17 @@ const schemaTypes = [
         pattern: '^[A-Za-z0-9]+$',
         minLength: 64,
         maxLength: 64
+      },
+      position: {
+        type: ['number', 'null'],
+        maximum: 65535,
+        minimum: 0
+      },
+      contract_id: {
+        type: ['string', 'null'],
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 43,
+        maxLength: 44
       }
     }
   },
