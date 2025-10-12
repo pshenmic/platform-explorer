@@ -62,7 +62,7 @@ module.exports = class DataContractsDAO {
         'is_system',
         'version',
         'state_transition_hash as tx_hash',
-        this.knex.raw('ROW_NUMBER() OVER(PARTITION BY id ORDER BY version DESC) as rank')
+        this.knex.raw('ROW_NUMBER() OVER(PARTITION BY identifier ORDER BY version DESC) as rank')
       )
       .as('data_contracts_with_version')
 
@@ -75,19 +75,14 @@ module.exports = class DataContractsDAO {
         'is_system',
         'version',
         'tx_hash',
-        this.knex.raw('COALESCE(document_counts.count, 0) as documents_count'),
         this.knex.raw('COALESCE(tokens_counts.count, 0) as tokens_count')
       )
-      .where('rank', 1)
-      .leftJoin(
-        this.knex('documents')
-          .select('data_contract_id')
-          .count('* as count')
-          .where('revision', '=', 1)
-          .groupBy('data_contract_id')
-          .as('document_counts'),
-        'document_counts.data_contract_id', '=', 'data_contracts_with_version.id'
-      )
+      .select(this.knex('documents')
+        .count('*')
+        .whereRaw('data_contracts_with_version.identifier = data_contracts.identifier')
+        .andWhere('revision', '=', '1')
+        .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
+        .as('documents_count'))
       .leftJoin(
         this.knex('tokens')
           .select('data_contract_id')
@@ -96,11 +91,13 @@ module.exports = class DataContractsDAO {
           .as('tokens_counts'),
         'tokens_counts.data_contract_id', '=', 'data_contracts_with_version.id'
       )
+      .where('rank', 1)
 
     const filteredContracts = this.knex.with('filtered_data_contracts', subquery)
       .select(
         'filtered_data_contracts.id', 'name', 'filtered_data_contracts.owner',
-        'version', 'tx_hash', 'is_system', 'identifier', 'documents_count'
+        'version', 'tx_hash', 'is_system', 'identifier', 'tokens_count',
+        this.knex.raw('COALESCE(documents_count, 0) as documents_count')
       )
       .select('blocks.timestamp as timestamp', 'blocks.hash as block_hash')
       .andWhereRaw(filtersQuery, filtersBindings)
@@ -115,7 +112,7 @@ module.exports = class DataContractsDAO {
       .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
       .select(this.knex('filtered_data_contracts').count('*').as('total_count'))
       .select(
-        'filtered_data_contracts.id', 'name',
+        'filtered_data_contracts.id', 'name', 'tokens_count',
         'identifier', 'filtered_data_contracts.owner', 'version',
         'filtered_data_contracts.tx_hash', 'is_system', 'timestamp', 'block_hash')
       .orderBy(orderByOptions)
