@@ -106,7 +106,7 @@ describe('DataContracts routes', () => {
     dataContract.documents = []
     dataContracts.push({ transaction: contractCreateTransaction, block: block2, dataContract })
 
-    diferentVersionsDataContract.push({ dataContract: dataContracts[dataContracts.length - 1].dataContract, transaction: dataContracts[dataContracts.length - 1].transaction })
+    diferentVersionsDataContract.push({ dataContract: dataContracts[dataContracts.length - 1].dataContract, transaction: dataContracts[dataContracts.length - 1].transaction, block: block2 })
     // create some documents in different data contract versions
     for (let i = 0; i < 5; i++) {
       height = height + 1
@@ -147,7 +147,7 @@ describe('DataContracts routes', () => {
         state_transition_hash: documentTransaction.hash
       })
 
-      diferentVersionsDataContract.push({ dataContract, transaction: contractCreateTransaction })
+      diferentVersionsDataContract.push({ dataContract, transaction: contractCreateTransaction, block: block3 })
       dataContract.documents.push(document)
       documents.push({ transaction: documentTransaction, block: block4, dataContract, document })
       dataContracts[dataContracts.length - 1].transaction = contractCreateTransaction
@@ -166,25 +166,37 @@ describe('DataContracts routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      const allContracts = [...dataContracts, ...diferentVersionsDataContract]
+
       const expectedDataContracts = dataContracts.slice(0, 10)
         .sort((a, b) => a.dataContract.id - b.dataContract.id)
-        .map(({ transaction, dataContract, block }) => ({
-          identifier: dataContract.identifier,
-          name: dataContract.name,
-          owner: identity.identifier,
-          schema: null,
-          groups: null,
-          version: 0,
-          txHash: dataContract.is_system ? null : transaction.hash,
-          timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-          isSystem: dataContract.is_system,
-          documentsCount: dataContract.documents.length,
-          averageGasUsed: null,
-          identitiesInteracted: null,
-          topIdentity: null,
-          totalGasUsed: null,
-          tokens: null
-        }))
+        .map(({ dataContract }) => {
+          const [contractFirstVersion] = allContracts
+            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .sort((a, b) => a.dataContract.version - b.dataContract.version)
+
+          const [contractLastVersion] = allContracts
+            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .sort((a, b) => b.dataContract.version - a.dataContract.version)
+
+          return {
+            identifier: dataContract.identifier,
+            name: dataContract.name,
+            owner: identity.identifier,
+            schema: null,
+            groups: null,
+            version: contractLastVersion.dataContract.version,
+            txHash: dataContract.is_system ? null : contractFirstVersion.transaction.hash,
+            timestamp: dataContract.is_system ? null : contractFirstVersion.block.timestamp.toISOString(),
+            isSystem: dataContract.is_system,
+            documentsCount: dataContract.documents.length,
+            averageGasUsed: null,
+            identitiesInteracted: null,
+            topIdentity: null,
+            totalGasUsed: null,
+            tokens: null
+          }
+        })
 
       assert.equal(body.resultSet.length, 10)
       assert.equal(body.pagination.total, dataContracts.length)
@@ -199,26 +211,38 @@ describe('DataContracts routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      const allContracts = [...dataContracts, ...diferentVersionsDataContract]
+
       const expectedDataContracts = dataContracts
         .sort((a, b) => b.dataContract.id - a.dataContract.id)
         .slice(0, 10)
-        .map(({ transaction, dataContract, block }) => ({
-          identifier: dataContract.identifier,
-          name: dataContract.name,
-          owner: identity.identifier,
-          groups: null,
-          schema: null,
-          version: dataContract.version,
-          txHash: dataContract.is_system ? null : transaction.hash,
-          timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-          isSystem: dataContract.is_system,
-          documentsCount: dataContract.documents.length,
-          averageGasUsed: null,
-          identitiesInteracted: null,
-          topIdentity: null,
-          totalGasUsed: null,
-          tokens: null
-        }))
+        .map(({ dataContract }) => {
+          const [contractFirstVersion] = allContracts
+            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .sort((a, b) => a.dataContract.version - b.dataContract.version)
+
+          const [contractLastVersion] = allContracts
+            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .sort((a, b) => b.dataContract.version - a.dataContract.version)
+
+          return {
+            identifier: dataContract.identifier,
+            name: dataContract.name,
+            owner: identity.identifier,
+            schema: null,
+            groups: null,
+            version: contractLastVersion.dataContract.version,
+            txHash: dataContract.is_system ? null : contractFirstVersion.transaction.hash,
+            timestamp: dataContract.is_system ? null : contractFirstVersion.block.timestamp.toISOString(),
+            isSystem: dataContract.is_system,
+            documentsCount: dataContract.documents.length,
+            averageGasUsed: null,
+            identitiesInteracted: null,
+            topIdentity: null,
+            totalGasUsed: null,
+            tokens: null
+          }
+        })
 
       assert.equal(body.resultSet.length, 10)
       assert.equal(body.pagination.total, dataContracts.length)
@@ -233,26 +257,38 @@ describe('DataContracts routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      const allContracts = [...dataContracts, ...diferentVersionsDataContract]
+
       const expectedDataContracts = dataContracts
         .sort((a, b) => a.dataContract.id - b.dataContract.id)
         .slice(6, 12)
-        .map(({ transaction, dataContract, block }) => ({
-          identifier: dataContract.identifier,
-          name: dataContract.name,
-          owner: identity.identifier,
-          groups: null,
-          schema: null,
-          version: 0,
-          txHash: dataContract.is_system ? null : transaction.hash,
-          timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-          isSystem: dataContract.is_system,
-          documentsCount: dataContract.documents.length,
-          averageGasUsed: null,
-          identitiesInteracted: null,
-          topIdentity: null,
-          totalGasUsed: null,
-          tokens: null
-        }))
+        .map(({ dataContract }) => {
+          const [contractFirstVersion] = allContracts
+            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .sort((a, b) => a.dataContract.version - b.dataContract.version)
+
+          const [contractLastVersion] = allContracts
+            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .sort((a, b) => b.dataContract.version - a.dataContract.version)
+
+          return {
+            identifier: dataContract.identifier,
+            name: dataContract.name,
+            owner: identity.identifier,
+            schema: null,
+            groups: null,
+            version: contractLastVersion.dataContract.version,
+            txHash: dataContract.is_system ? null : contractFirstVersion.transaction.hash,
+            timestamp: dataContract.is_system ? null : contractFirstVersion.block.timestamp.toISOString(),
+            isSystem: dataContract.is_system,
+            documentsCount: dataContract.documents.length,
+            averageGasUsed: null,
+            identitiesInteracted: null,
+            topIdentity: null,
+            totalGasUsed: null,
+            tokens: null
+          }
+        })
 
       assert.equal(body.resultSet.length, 6)
       assert.equal(body.pagination.total, dataContracts.length)
@@ -267,26 +303,38 @@ describe('DataContracts routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      const allContracts = [...dataContracts, ...diferentVersionsDataContract]
+
       const expectedDataContracts = dataContracts
         .sort((a, b) => b.dataContract.id - a.dataContract.id)
         .slice(12, 18)
-        .map(({ transaction, dataContract, block }) => ({
-          identifier: dataContract.identifier,
-          name: dataContract.name,
-          owner: identity.identifier,
-          groups: null,
-          schema: null,
-          version: 0,
-          txHash: dataContract.is_system ? null : transaction.hash,
-          timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-          isSystem: dataContract.is_system,
-          documentsCount: dataContract.documents.length,
-          averageGasUsed: null,
-          identitiesInteracted: null,
-          topIdentity: null,
-          totalGasUsed: null,
-          tokens: null
-        }))
+        .map(({ dataContract }) => {
+          const [contractFirstVersion] = allContracts
+            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .sort((a, b) => a.dataContract.version - b.dataContract.version)
+
+          const [contractLastVersion] = allContracts
+            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .sort((a, b) => b.dataContract.version - a.dataContract.version)
+
+          return {
+            identifier: dataContract.identifier,
+            name: dataContract.name,
+            owner: identity.identifier,
+            schema: null,
+            groups: null,
+            version: contractLastVersion.dataContract.version,
+            txHash: dataContract.is_system ? null : contractFirstVersion.transaction.hash,
+            timestamp: dataContract.is_system ? null : contractFirstVersion.block.timestamp.toISOString(),
+            isSystem: dataContract.is_system,
+            documentsCount: dataContract.documents.length,
+            averageGasUsed: null,
+            identitiesInteracted: null,
+            topIdentity: null,
+            totalGasUsed: null,
+            tokens: null
+          }
+        })
 
       assert.equal(body.resultSet.length, 6)
       assert.equal(body.pagination.total, dataContracts.length)
@@ -301,27 +349,39 @@ describe('DataContracts routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
+      const allContracts = [...dataContracts, ...diferentVersionsDataContract]
+
       const expectedDataContracts = dataContracts
         .sort((a, b) => (b.dataContract.documents.length - a.dataContract.documents.length ||
           b.dataContract.id - a.dataContract.id))
         .slice(0, 10)
-        .map(({ transaction, dataContract, block }) => ({
-          identifier: dataContract.identifier,
-          name: dataContract.name,
-          owner: identity.identifier,
-          groups: null,
-          schema: null,
-          version: dataContract.version,
-          txHash: dataContract.is_system ? null : transaction.hash,
-          timestamp: dataContract.is_system ? null : block.timestamp.toISOString(),
-          isSystem: dataContract.is_system,
-          documentsCount: dataContract.documents.length,
-          averageGasUsed: null,
-          identitiesInteracted: null,
-          topIdentity: null,
-          totalGasUsed: null,
-          tokens: null
-        }))
+        .map(({ dataContract }) => {
+          const [contractFirstVersion] = allContracts
+            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .sort((a, b) => a.dataContract.version - b.dataContract.version)
+
+          const [contractLastVersion] = allContracts
+            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .sort((a, b) => b.dataContract.version - a.dataContract.version)
+
+          return {
+            identifier: dataContract.identifier,
+            name: dataContract.name,
+            owner: identity.identifier,
+            schema: null,
+            groups: null,
+            version: contractLastVersion.dataContract.version,
+            txHash: dataContract.is_system ? null : contractFirstVersion.transaction.hash,
+            timestamp: dataContract.is_system ? null : contractFirstVersion.block.timestamp.toISOString(),
+            isSystem: dataContract.is_system,
+            documentsCount: dataContract.documents.length,
+            averageGasUsed: null,
+            identitiesInteracted: null,
+            topIdentity: null,
+            totalGasUsed: null,
+            tokens: null
+          }
+        })
 
       assert.equal(body.resultSet.length, 10)
       assert.equal(body.pagination.total, dataContracts.length)

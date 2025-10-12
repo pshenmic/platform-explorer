@@ -62,11 +62,12 @@ module.exports = class DataContractsDAO {
         'owner',
         'is_system',
         'version',
-        this.knex.raw('ROW_NUMBER() OVER(PARTITION BY identifier ORDER BY version DESC) as rank')
+        'state_transition_hash',
+        this.knex.raw('ROW_NUMBER() OVER(PARTITION BY identifier ORDER BY version DESC) as rank'),
       )
-      .as('data_contracts_with_version')
 
-    const subquery = this.knex(dataContractsSubquery)
+    const subquery = this.knex
+      .with('data_contracts_with_version', dataContractsSubquery)
       .select(
         'id',
         'name',
@@ -82,11 +83,12 @@ module.exports = class DataContractsDAO {
         .andWhere('revision', '=', '1')
         .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
         .as('documents_count'))
-      .select(this.knex('data_contracts')
+      .select(this.knex
         .select('state_transition_hash')
-        .whereRaw('data_contracts_with_version.identifier = data_contracts.identifier')
-        .andWhere('version', '=', 1)
+        .whereRaw('data_contracts_with_version.identifier = d.identifier')
+        .orderBy('rank', 'DESC')
         .limit(1)
+        .fromRaw('data_contracts_with_version d')
         .as('tx_hash'))
       .leftJoin(
         this.knex('tokens')
@@ -97,6 +99,7 @@ module.exports = class DataContractsDAO {
         'tokens_counts.data_contract_id', '=', 'data_contracts_with_version.id'
       )
       .where('rank', 1)
+      .from('data_contracts_with_version')
 
     const filteredContracts = this.knex
       .with('filtered_data_contracts', subquery)
