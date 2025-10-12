@@ -71,6 +71,19 @@ describe('Transaction routes', () => {
     })
     transactions.push({ transaction: errorTx, block })
 
+    const dataContract = await fixtures.dataContract(knex, {
+      owner: identity.identifier
+    })
+
+    const token = await fixtures.token(knex, {
+      position: 0,
+      owner: identity.identifier,
+      data_contract_id: dataContract.id,
+      decimals: 1,
+      base_supply: 1,
+      name: 'tests111'
+    })
+
     for (let i = 2; i < 30; i++) {
       block = await fixtures.block(knex, {
         height: i + 1,
@@ -100,13 +113,26 @@ describe('Transaction routes', () => {
           block_height: block.height,
           data: '{}',
           type: j % 5 === 0 ? StateTransitionEnum.BATCH : StateTransitionEnum.DATA_CONTRACT_CREATE,
-          batch_type: j % 5 === 0 ? 2 : undefined,
+          batch_type: j % 5 === 0 ? BatchTypeEnum.TOKEN_CLAIM : undefined,
           owner: identity.identifier,
           index: j,
           gas_used: j * 123
         })
 
-        transactions.push({ transaction, block })
+        let tokenTransaction
+
+        if (j % 5 === 0) {
+          tokenTransaction = await fixtures.tokeTransition(knex, {
+            token_identifier: token.identifier,
+            owner: identity.identifier,
+            action: BatchTypeEnum.TOKEN_CLAIM,
+            state_transition_hash: transaction.hash,
+            token_contract_position: 0,
+            data_contract_id: dataContract.id
+          })
+        }
+
+        transactions.push({ transaction, block, tokenTransaction })
       }
     }
   })
@@ -373,11 +399,11 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and batch filter', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&batch_type=2`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&batch_type=${BatchTypeEnum.TOKEN_CLAIM}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      const txsWithType = transactions.filter(transaction => transaction.transaction.batch_type === 2)
+      const txsWithType = transactions.filter(transaction => transaction.transaction.batch_type === BatchTypeEnum.TOKEN_CLAIM)
 
       assert.equal(body.resultSet.length, 10)
       assert.equal(body.pagination.total, txsWithType.length)
@@ -420,11 +446,11 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and batch filter string', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&batch_type=DOCUMENT_DELETE`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&batch_type=${BatchTypeEnum[BatchTypeEnum.TOKEN_CLAIM]}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      const txsWithType = transactions.filter(transaction => transaction.transaction.batch_type === 2)
+      const txsWithType = transactions.filter(transaction => transaction.transaction.batch_type === BatchTypeEnum.TOKEN_CLAIM)
 
       assert.equal(body.resultSet.length, 10)
       assert.equal(body.pagination.total, txsWithType.length)
@@ -832,7 +858,52 @@ describe('Transaction routes', () => {
       assert.deepEqual(expectedTransactions, body.resultSet)
     })
 
-    it('should return be able to walk through pages', async () => {
+    it('should return transactions with token name, custom page size, custom page and order desc timestamp', async () => {
+      const { body } = await client.get('/transactions?token_name=tests111&limit=7&page=2&order=desc&orderBy=id')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const transactionWithTokenTransaction = transactions
+        .filter(({ tokenTransaction }) => tokenTransaction)
+
+      assert.equal(body.resultSet.length, 7)
+      assert.equal(body.pagination.total, transactionWithTokenTransaction.length)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 7)
+
+      const expectedTransactions = transactionWithTokenTransaction
+        .sort((a, b) => new Date(b.block.timestamp).getTime() - new Date(a.block.timestamp).getTime())
+        .slice(7, 14)
+        .map(transaction => ({
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          type: StateTransitionEnum[transaction.transaction.type],
+          batchType: BatchTypeEnum[transaction.transaction.batch_type] ?? null,
+          data: '{}',
+          timestamp: transaction.block.timestamp.toISOString(),
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          }
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTransactions)
+    })
+
+    it('should be able to walk through pages', async () => {
       const { body } = await client.get('/transactions?page=3&limit=3')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
