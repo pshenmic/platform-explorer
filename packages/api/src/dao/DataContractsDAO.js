@@ -167,11 +167,37 @@ module.exports = class DataContractsDAO {
       .select(this.knex.raw('count(*) as total_count'))
       .leftJoin('state_transitions', 'hash', 'state_transition_hash')
 
-    const dataSubquery = this.knex('data_contracts')
+    const dataContractSubquery = this.knex('data_contracts')
+      .where('data_contracts.identifier', identifier)
+
+    const dataContractInfoSubquery = this.knex('data_contract')
+      .orderBy('data_contract.id', 'asc')
+      .leftJoin('state_transitions', 'hash', 'state_transition_hash')
+
+    const dataSubquery = this.knex
+      .with('data_contract', dataContractSubquery)
+      .with('data_contract_info', dataContractInfoSubquery)
       .with('gas_sub', gasSubquery)
-      .select('data_contracts.identifier as identifier', 'data_contracts.name as name', 'data_contracts.owner as owner',
-        'data_contracts.schema as schema', 'data_contracts.is_system as is_system', 'state_transitions.data as state_transition_data',
-        'data_contracts.version as version', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
+      .select('data_contract.identifier as identifier', 'data_contract.name as name', 'data_contract.owner as owner',
+        'data_contract.schema as schema', 'data_contract.is_system as is_system')
+      // 'version', 'state_transitions.data as state_transition_data', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
+      .select(
+        this.knex('data_contract')
+          .select('version')
+          .orderBy('id', 'desc')
+          .limit(1)
+          .as('version')
+      )
+      .select(this.knex('data_contract_info').select('data').limit(1).as('state_transition_data'))
+      .select(this.knex('data_contract_info').select('hash').limit(1).as('tx_hash'))
+      .select(
+        this.knex('data_contract_info')
+          .select('timestamp')
+          .leftJoin('blocks', 'blocks.height', 'block_height')
+          .limit(1)
+          .orderBy('height', 'asc')
+          .as('timestamp')
+      )
       .select(this.knex('documents').count('*')
         .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
         .whereRaw('data_contracts.identifier = ? and revision = ?', [identifier, 1])
@@ -180,11 +206,10 @@ module.exports = class DataContractsDAO {
       .select(this.knex(groupedIdentities).select(this.knex.raw('count(*)')).limit(1).as('identities_interacted'))
       .select(this.knex('gas_sub').select('total_gas_used').as('total_gas_used'))
       .select(this.knex('gas_sub').select(this.knex.raw('round(total_gas_used/total_count,0)')).as('average_gas_used'))
-      .leftJoin('state_transitions', 'data_contracts.state_transition_hash', 'state_transitions.hash')
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-      .where('data_contracts.identifier', identifier)
-      .orderBy('data_contracts.id', 'desc')
+      .where('data_contract.identifier', identifier)
+      .orderBy('data_contract.id', 'desc')
       .limit(1)
+      .from('data_contract')
       .as('data_sub')
 
     const rows = await this.knex(dataSubquery)
