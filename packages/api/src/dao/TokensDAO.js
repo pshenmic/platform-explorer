@@ -19,7 +19,7 @@ module.exports = class TokensDAO {
     let filtersQuery = ''
 
     if (owner) {
-      filtersQuery = 'LOWER(data_contracts.owner) = ?'
+      filtersQuery = 'LOWER(tokens.owner) = ?'
       filtersBindings.push(owner.toLowerCase())
     }
 
