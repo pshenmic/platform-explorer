@@ -66,6 +66,12 @@ const outputScriptToAddress = (script) => {
 }
 
 const fetchTokenInfoByRows = async (rows, sdk) => {
+  const owners = rows
+    .filter(row => row.owner)
+    .map(row => row.owner?.trim())
+
+  const aliasDocuments = await getAliasDocumentForIdentifiers(owners, sdk)
+
   const dataContractsWithTokens = await Promise.all(rows.map(async (row) => {
     const dataContract = await sdk.dataContracts.getDataContractByIdentifier(row.data_contract_identifier)
 
@@ -87,7 +93,7 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
 
       const tokenTotalSupply = await sdk.tokens.getTokenTotalSupply(tokenIdentifier)
 
-      const [aliasDocument] = await sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', dataContract.ownerId.base58()]], 1)
+      const aliasDocument = row.owner ? aliasDocuments[row.owner?.trim()] : undefined
 
       const aliases = []
 
@@ -1286,7 +1292,7 @@ const getAliasFromDocument = (aliasDocument) => {
   const documentId = aliasDocument.id
   const timestamp = new Date(Number(aliasDocument.createdAt))
 
-  const alias = `${label}.${parentDomainName}`
+  const alias = `${label}${parentDomainName ? '.' : ''}${parentDomainName}`
 
   return {
     alias,
@@ -1328,6 +1334,32 @@ const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+const getAliasDocumentForIdentifier = async (identifier, sdk) => {
+  const [alias] = await sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', identifier]], 1)
+
+  return alias
+}
+
+const getAliasDocumentForIdentifiers = async (identifiers, sdk) => {
+  const identifiersWithoutDuplicates = identifiers.filter((item, pos) => identifiers.indexOf(item) === pos)
+
+  const identifiersWithAliasDocument = await Promise.all(identifiersWithoutDuplicates.map(
+    async (identifier) => {
+      const alias = await getAliasDocumentForIdentifier(identifier, sdk)
+
+      return {
+        owner: identifier,
+        alias
+      }
+    }
+  ))
+
+  return identifiersWithAliasDocument.reduce((acc, identifierWithAliasDocument) => ({
+    ...acc,
+    [identifierWithAliasDocument.owner]: identifierWithAliasDocument.alias
+  }), {})
+}
+
 module.exports = {
   hash,
   decodeStateTransition,
@@ -1342,5 +1374,7 @@ module.exports = {
   outputScriptToAddress,
   getAliasFromDocument,
   fetchTokenInfoByRows,
-  convertToHomographSafeChars
+  convertToHomographSafeChars,
+  getAliasDocumentForIdentifiers,
+  getAliasDocumentForIdentifier
 }

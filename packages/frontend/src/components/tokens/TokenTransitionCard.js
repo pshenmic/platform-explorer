@@ -1,3 +1,5 @@
+import * as Api from '../../util/Api'
+import { useState, useEffect } from 'react'
 import { ValueCard } from '../cards'
 import { BigNumber, CreditsBlock, Identifier, InfoLine } from '../data'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
@@ -6,6 +8,7 @@ import { PriceList } from './prices'
 import { Code, Badge, Flex } from '@chakra-ui/react'
 import { colors } from '../../styles/colors'
 import { getMinTokenPrice } from '../../util'
+import { FormattedNumber } from '../ui/FormattedNumber'
 import './TokenTransitionCard.scss'
 
 const fieldsOfTypes = {
@@ -117,6 +120,18 @@ const fieldsOfTypes = {
 
 const TokenTransitionCard = ({ transition, rate, className }) => {
   const fields = fieldsOfTypes[transition?.action] || []
+  const [token, setToken] = useState({ data: {}, loading: true, error: false })
+
+  useEffect(() => {
+    const tokensInfo = () => {
+      if (transition?.tokenId) {
+        Api.getToken(transition.tokenId).then((res) => {
+          setToken(() => ({ data: res, loading: false, error: false }))
+        })
+      }
+    }
+    tokensInfo()
+  }, [transition])
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient TokenTransitionCard ${className || ''}`}>
@@ -161,14 +176,15 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
               maxWidth={'max-content'}
               color={`${colors.green.emeralds}`}
             >
-              <BigNumber>
+              <FormattedNumber decimals={token.data.decimals}>
                 {transition?.amount || '0'}
-              </BigNumber>
+              </FormattedNumber>
               <span>
                 {transition?.tokenSymbol || 'TOKEN'}
               </span>
             </Badge>
           }
+          loading={token.loading}
           error={transition?.amount === undefined}
         />
       )}
