@@ -128,17 +128,17 @@ module.exports = class ValidatorsDAO {
     }
 
     if (lastProposedBlockHeightMin && lastProposedBlockHeightMax) {
-      filtersQuery = filtersQuery !== '' ? ' and latest_height between ? and ?' : 'latest_height between ? and ?'
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and latest_height between ? and ?' : 'latest_height between ? and ?'
       filtersBindings.push(lastProposedBlockHeightMin, lastProposedBlockHeightMax)
     }
 
     if (lastProposedBlockTimestampStart && lastProposedBlockTimestampEnd) {
-      filtersQuery = filtersQuery !== '' ? ' and latest_timestamp between ? and ?' : 'latest_timestamp between ? and ?'
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and latest_timestamp between ? and ?' : 'latest_timestamp between ? and ?'
       filtersBindings.push(new Date(lastProposedBlockTimestampStart).toISOString(), new Date(lastProposedBlockTimestampEnd).toISOString())
     }
 
     if (lastProposedBlockHash) {
-      filtersQuery = filtersQuery !== '' ? ' and LOWER(block_hash) = ?' : 'LOWER(block_hash) = ?'
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and LOWER(block_hash) = ?' : 'LOWER(block_hash) = ?'
       filtersBindings.push(lastProposedBlockHash.toLowerCase())
     }
 

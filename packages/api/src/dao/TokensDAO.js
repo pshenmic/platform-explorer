@@ -42,17 +42,18 @@ module.exports = class TokensDAO {
       )
       .whereRaw(filtersQuery, filtersBindings)
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
-      .as('subquery')
 
-    const rows = await this.knex(subquery)
+    const rows = await this.knex
+      .with('subquery', subquery)
       .select('localizations', 'identifier', 'base_supply', 'max_supply', 'mintable', 'owner',
         'burnable', 'freezable', 'unfreezable', 'destroyable', 'allowed_emergency_actions',
         'data_contract_identifier', 'position'
       )
-      .select(this.knex('tokens').count('*').as('total_count'))
+      .select(this.knex('subquery').count('*').as('total_count'))
       .orderBy('id', order)
       .offset(fromRank)
       .limit(limit)
+      .from('subquery')
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
