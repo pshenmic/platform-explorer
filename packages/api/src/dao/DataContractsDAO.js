@@ -33,9 +33,9 @@ module.exports = class DataContractsDAO {
       filtersQuery = 'filtered_data_contracts.owner = ?'
     }
 
-    if (withTokens === true ) {
+    if (withTokens === true) {
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and tokens_count > 0' : 'tokens_count > 0'
-    }else if(withTokens === false){
+    } else if (withTokens === false) {
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and tokens_count = 0' : 'tokens_count = 0'
     }
 
@@ -85,7 +85,7 @@ module.exports = class DataContractsDAO {
       .select(this.knex('data_contracts')
         .select('state_transition_hash')
         .whereRaw('data_contracts_with_version.identifier = data_contracts.identifier')
-        .andWhere('version', '=',1)
+        .andWhere('version', '=', 1)
         .limit(1)
         .as('tx_hash'))
       .leftJoin(
