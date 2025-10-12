@@ -172,11 +172,11 @@ describe('DataContracts routes', () => {
         .sort((a, b) => a.dataContract.id - b.dataContract.id)
         .map(({ dataContract }) => {
           const [contractFirstVersion] = allContracts
-            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
             .sort((a, b) => a.dataContract.version - b.dataContract.version)
 
           const [contractLastVersion] = allContracts
-            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
             .sort((a, b) => b.dataContract.version - a.dataContract.version)
 
           return {
@@ -218,11 +218,11 @@ describe('DataContracts routes', () => {
         .slice(0, 10)
         .map(({ dataContract }) => {
           const [contractFirstVersion] = allContracts
-            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
             .sort((a, b) => a.dataContract.version - b.dataContract.version)
 
           const [contractLastVersion] = allContracts
-            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
             .sort((a, b) => b.dataContract.version - a.dataContract.version)
 
           return {
@@ -264,11 +264,11 @@ describe('DataContracts routes', () => {
         .slice(6, 12)
         .map(({ dataContract }) => {
           const [contractFirstVersion] = allContracts
-            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
             .sort((a, b) => a.dataContract.version - b.dataContract.version)
 
           const [contractLastVersion] = allContracts
-            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
             .sort((a, b) => b.dataContract.version - a.dataContract.version)
 
           return {
@@ -310,11 +310,11 @@ describe('DataContracts routes', () => {
         .slice(12, 18)
         .map(({ dataContract }) => {
           const [contractFirstVersion] = allContracts
-            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
             .sort((a, b) => a.dataContract.version - b.dataContract.version)
 
           const [contractLastVersion] = allContracts
-            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
             .sort((a, b) => b.dataContract.version - a.dataContract.version)
 
           return {
@@ -357,11 +357,11 @@ describe('DataContracts routes', () => {
         .slice(0, 10)
         .map(({ dataContract }) => {
           const [contractFirstVersion] = allContracts
-            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
             .sort((a, b) => a.dataContract.version - b.dataContract.version)
 
           const [contractLastVersion] = allContracts
-            .filter(({dataContract: contract})=>contract.identifier === dataContract.identifier)
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
             .sort((a, b) => b.dataContract.version - a.dataContract.version)
 
           return {

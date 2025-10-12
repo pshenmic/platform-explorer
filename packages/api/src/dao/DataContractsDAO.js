@@ -63,7 +63,7 @@ module.exports = class DataContractsDAO {
         'is_system',
         'version',
         'state_transition_hash',
-        this.knex.raw('ROW_NUMBER() OVER(PARTITION BY identifier ORDER BY version DESC) as rank'),
+        this.knex.raw('ROW_NUMBER() OVER(PARTITION BY identifier ORDER BY version DESC) as rank')
       )
 
     const subquery = this.knex
