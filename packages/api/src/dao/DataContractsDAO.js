@@ -34,8 +34,10 @@ module.exports = class DataContractsDAO {
       filtersQuery = 'filtered_data_contracts.owner = ?'
     }
 
-    if (withTokens === true || withTokens === false) {
-      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and tokens_count >= 1' : 'tokens_count >= 1'
+    if (withTokens === true ) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and tokens_count > 0' : 'tokens_count > 0'
+    }else if(withTokens === false){
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and tokens_count = 0' : 'tokens_count = 0'
     }
 
     if (isSystem === true || isSystem === false) {
@@ -102,8 +104,7 @@ module.exports = class DataContractsDAO {
       .select(
         'filtered_data_contracts.id', 'name', 'filtered_data_contracts.owner',
         'version', 'tx_hash', 'is_system', 'identifier', 'tokens_count',
-        this.knex.raw('COALESCE(documents_count, 0) as documents_count'),
-        'blocks.timestamp as timestamp', 'blocks.hash as block_hash'
+        'blocks.timestamp as timestamp', 'blocks.hash as block_hash', 'documents_count'
       )
       .andWhereRaw(filtersQuery, filtersBindings)
       .andWhereRaw(timestampsQuery, timestampBindings)
@@ -112,7 +113,7 @@ module.exports = class DataContractsDAO {
       .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .from('filtered_data_contracts')
 
-    const rows = this.knex
+    const rows = await this.knex
       .with('filtered_data_contracts', filteredContracts)
       .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
       .select(this.knex('filtered_data_contracts').count('*').as('total_count'))
