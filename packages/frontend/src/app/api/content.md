@@ -2571,13 +2571,14 @@ Return list of tokens
 * `contract_id` contract identifier which contains tokens
 ```
 GET /tokens?limit=10&page=1&order=asc&owner=5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk&position=0&contract_id=ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A
+
 {
     "resultSet": [
         {
             "identifier": "Hqyu8WcRwXCTwbNxdga4CN5gsVEGc67wng4TFzceyLUv",
             "position": 0,
             "timestamp": null,
-            "description": null,
+            "description": "The flurgon contract on testnet",
             "localizations": {
                 "en": {
                     "pluralForm": "Flurgons",
@@ -2607,14 +2608,23 @@ GET /tokens?limit=10&page=1&order=asc&owner=5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFyb
             "destroyable": true,
             "allowedEmergencyActions": true,
             "dataContractIdentifier": "ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A",
-            "changeMaxSupply": null,
+            "changeMaxSupply": true,
             "totalGasUsed": null,
             "mainGroup": null,
             "totalTransitionsCount": null,
             "totalFreezeTransitionsCount": null,
             "totalBurnTransitionsCount": null,
-            "decimals": null,
-            "perpetualDistribution": null,
+            "decimals": 0,
+            "perpetualDistribution": {
+                "type": "TimeBasedDistribution",
+                "recipientType": "EvonodesByParticipation",
+                "recipientValue": null,
+                "interval": 3600000,
+                "functionName": "FixedAmount",
+                "functionValue": {
+                    "amount": "300"
+                }
+            },
             "preProgrammedDistribution": null,
             "price": null,
             "prices": null
