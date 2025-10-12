@@ -1,19 +1,48 @@
 @import 'variables';
 
 .root {
-  .container {
-    width: fit-content;
-    max-width: 233px;
-    padding: 6px 10px;
+  display: flex;
+  align-items: start;
 
-    .title {
-      font-family: $font-mono;
-    }
+  .subcategory {
+    display: flex;
+    align-items: start;
 
-    .card {
+    .container {
       width: fit-content;
+      max-width: 233px;
       padding: 6px 10px;
-      background-color: #58f4bc33;
+
+      .title {
+        font-family: $font-mono;
+        font-size: 0.688rem;
+      }
+
+      .card {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+        width: fit-content;
+        padding: 6px 10px;
+        background-color: #58f4bc33;
+
+        .title {
+          color: #58f4bc;
+          font-family: $font-mono;
+          font-size: 0.688rem;
+        }
+
+        .header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .field {
+          font-family: $font-mono;
+          font-size: 0.688rem;
+        }
+      }
     }
   }
 }

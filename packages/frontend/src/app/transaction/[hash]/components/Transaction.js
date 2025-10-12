@@ -1,65 +1,65 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
+import { useEffect } from 'react'
 import {
   CreditsBlock,
   InfoLine,
   DateBlock,
-  Identifier,
-} from "../../../../components/data";
-import { TransactionType } from "./TransactionType";
+  Identifier
+} from '../../../../components/data'
+import { TransactionType } from './TransactionType'
 import {
   PageDataContainer,
-  ValueContainer,
-} from "../../../../components/ui/containers";
-import { ValueCard } from "../../../../components/cards";
-import { HorisontalSeparator } from "../../../../components/ui/separators";
-import { CopyButton } from "../../../../components/ui/Buttons";
+  ValueContainer
+} from '../../../../components/ui/containers'
+import { ValueCard } from '../../../../components/cards'
+import { HorisontalSeparator } from '../../../../components/ui/separators'
+import { CopyButton } from '../../../../components/ui/Buttons'
 import {
   TypeBadge,
   FeeMultiplier,
-  TransactionStatusBadge,
-} from "../../../../components/transactions";
-import { ErrorMessageBlock } from "../../../../components/Errors";
-import { networks } from "../../../../constants/networks";
-import { useBreadcrumbs } from "../../../../contexts/BreadcrumbsContext";
-import { useDecodedSTQuery, useRateQuery, useTransactionQuery } from "./hooks";
-import { useParams } from "next/navigation";
+  TransactionStatusBadge
+} from '../../../../components/transactions'
+import { ErrorMessageBlock } from '../../../../components/Errors'
+import { networks } from '../../../../constants/networks'
+import { useBreadcrumbs } from '../../../../contexts/BreadcrumbsContext'
+import { useDecodedSTQuery, useRateQuery, useTransactionQuery } from './hooks'
+import { useParams } from 'next/navigation'
 
-import "./transaction.scss";
+import './transaction.scss'
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 const activeNetwork = networks.find(
-  (network) => network.explorerBaseUrl === baseUrl,
-);
-const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null;
+  (network) => network.explorerBaseUrl === baseUrl
+)
+const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
 
 export const Transaction = () => {
-  const { hash } = useParams();
-  const { setBreadcrumbs } = useBreadcrumbs();
-  const transaction = useTransactionQuery();
-  const decodedST = useDecodedSTQuery(transaction.data);
-  const rate = useRateQuery();
+  const { hash } = useParams()
+  const { setBreadcrumbs } = useBreadcrumbs()
+  const transaction = useTransactionQuery()
+  const decodedST = useDecodedSTQuery(transaction.data)
+  const rate = useRateQuery()
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: "Home", path: "/" },
-      { label: "Transactions", path: "/transactions" },
-      { label: hash },
-    ]);
-  }, [setBreadcrumbs, hash]);
+      { label: 'Home', path: '/' },
+      { label: 'Transactions', path: '/transactions' },
+      { label: hash }
+    ])
+  }, [setBreadcrumbs, hash])
 
   return (
-    <PageDataContainer className={"TransactionPage"} title={"Transaction Info"}>
-      {transaction.error && <ErrorMessageBlock h={"450px"} />}
+    <PageDataContainer className={'TransactionPage'} title={'Transaction Info'}>
+      {transaction.error && <ErrorMessageBlock h={'450px'} />}
 
       {!transaction.error && (
-        <div className={"TransactionPage__CommonInfo"}>
+        <div className={'TransactionPage__CommonInfo'}>
           <InfoLine
             className={
-              "TransactionPage__InfoLine TransactionPage__InfoLine--Timestamp"
+              'TransactionPage__InfoLine TransactionPage__InfoLine--Timestamp'
             }
-            title={"Timestamp"}
+            title={'Timestamp'}
             value={
               <DateBlock
                 timestamp={transaction.data?.timestamp}
@@ -71,13 +71,13 @@ export const Transaction = () => {
           />
 
           <InfoLine
-            className={"TransactionPage__InfoLine"}
-            title={"Hash"}
+            className={'TransactionPage__InfoLine'}
+            title={'Hash'}
             value={
               <Identifier
                 copyButton={true}
                 ellipsis={false}
-                styles={["highlight-both"]}
+                styles={['highlight-both']}
               >
                 {transaction.data?.hash}
               </Identifier>
@@ -87,20 +87,20 @@ export const Transaction = () => {
           />
 
           <InfoLine
-            className={"TransactionPage__InfoLine"}
-            title={"Block Hash"}
+            className={'TransactionPage__InfoLine'}
+            title={'Block Hash'}
             value={
               <ValueCard
                 link={`/block/${transaction.data?.blockHash}`}
-                className={"TransactionPage__BlockHash"}
+                className={'TransactionPage__BlockHash'}
               >
-                <ValueCard className={"TransactionPage__BlockHeight"}>
+                <ValueCard className={'TransactionPage__BlockHeight'}>
                   Height: {transaction.data?.blockHeight}
                 </ValueCard>
                 <Identifier
                   copyButton={true}
                   ellipsis={false}
-                  styles={["highlight-both"]}
+                  styles={['highlight-both']}
                 >
                   {transaction.data?.blockHash}
                 </Identifier>
@@ -112,9 +112,9 @@ export const Transaction = () => {
 
           <InfoLine
             className={
-              "TransactionPage__InfoLine TransactionPage__InfoLine--Index"
+              'TransactionPage__InfoLine TransactionPage__InfoLine--Index'
             }
-            title={"Index"}
+            title={'Index'}
             value={transaction.data?.index}
             loading={transaction.loading}
             error={transaction.error}
@@ -122,9 +122,9 @@ export const Transaction = () => {
 
           <InfoLine
             className={
-              "TransactionPage__InfoLine TransactionPage__InfoLine--Type"
+              'TransactionPage__InfoLine TransactionPage__InfoLine--Type'
             }
-            title={"Type"}
+            title={'Type'}
             value={<TypeBadge type={transaction.data?.type} />}
             loading={transaction.loading}
             error={transaction.error}
@@ -132,14 +132,14 @@ export const Transaction = () => {
 
           <InfoLine
             className={
-              "TransactionPage__InfoLine TransactionPage__InfoLine--Status"
+              'TransactionPage__InfoLine TransactionPage__InfoLine--Status'
             }
-            title={"Status"}
+            title={'Status'}
             value={
-              <div className={"TransactionPage__StatusContainer"}>
+              <div className={'TransactionPage__StatusContainer'}>
                 <TransactionStatusBadge status={transaction.data?.status} />
                 {transaction.data?.error && (
-                  <ValueContainer className={"TransactionPage__ErrorContainer"}>
+                  <ValueContainer className={'TransactionPage__ErrorContainer'}>
                     {transaction.data.error}
                   </ValueContainer>
                 )}
@@ -151,9 +151,9 @@ export const Transaction = () => {
 
           <InfoLine
             className={
-              "TransactionPage__InfoLine TransactionPage__InfoLine--Owner"
+              'TransactionPage__InfoLine TransactionPage__InfoLine--Owner'
             }
-            title={"Owner"}
+            title={'Owner'}
             value={
               <ValueCard
                 link={`/identity/${transaction.data?.owner?.identifier}`}
@@ -162,7 +162,7 @@ export const Transaction = () => {
                   avatar={true}
                   copyButton={true}
                   ellipsis={false}
-                  styles={["highlight-both"]}
+                  styles={['highlight-both']}
                 >
                   {transaction.data?.owner?.identifier}
                 </Identifier>
@@ -174,11 +174,11 @@ export const Transaction = () => {
 
           <InfoLine
             className={
-              "TransactionPage__InfoLine TransactionPage__InfoLine--RawTransaction"
+              'TransactionPage__InfoLine TransactionPage__InfoLine--RawTransaction'
             }
-            title={"Raw Transaction"}
+            title={'Raw Transaction'}
             value={
-              <ValueCard className={"TransactionPage__RawTransaction"}>
+              <ValueCard className={'TransactionPage__RawTransaction'}>
                 {transaction.data?.data}
                 <CopyButton text={transaction.data?.data} />
               </ValueCard>
@@ -189,9 +189,9 @@ export const Transaction = () => {
 
           <InfoLine
             className={
-              "TransactionPage__InfoLine TransactionPage__InfoLine--GasUsed"
+              'TransactionPage__InfoLine TransactionPage__InfoLine--GasUsed'
             }
-            title={"Gas Used"}
+            title={'Gas Used'}
             value={
               <CreditsBlock credits={transaction.data?.gasUsed} rate={rate} />
             }
@@ -201,9 +201,9 @@ export const Transaction = () => {
 
           <InfoLine
             className={
-              "TransactionPage__InfoLine TransactionPage__InfoLine--FeeMultiplier"
+              'TransactionPage__InfoLine TransactionPage__InfoLine--FeeMultiplier'
             }
-            title={"Fee Multiplier"}
+            title={'Fee Multiplier'}
             value={
               <FeeMultiplier value={Number(decodedST.data?.userFeeIncrease)} />
             }
@@ -216,10 +216,10 @@ export const Transaction = () => {
           />
 
           <InfoLine
-            className={"TransactionPage__InfoLine"}
-            title={"Signature"}
+            className={'TransactionPage__InfoLine'}
+            title={'Signature'}
             value={
-              <ValueCard className={"TransactionPage__Signature"}>
+              <ValueCard className={'TransactionPage__Signature'}>
                 {decodedST.data?.signature}
                 <CopyButton text={decodedST.data?.signature} />
               </ValueCard>
@@ -240,9 +240,9 @@ export const Transaction = () => {
           {decodedST.data?.coreFeePerByte && (
             <InfoLine
               className={
-                "TransactionPage__InfoLine TransactionPage__InfoLine--CoreFeePerByte"
+                'TransactionPage__InfoLine TransactionPage__InfoLine--CoreFeePerByte'
               }
-              title={"Core Fee Per Byte"}
+              title={'Core Fee Per Byte'}
               value={<>{decodedST.data?.coreFeePerByte} Duff</>}
               loading={decodedST.loading}
             />
@@ -251,24 +251,24 @@ export const Transaction = () => {
           {decodedST.data?.outputAddress && (
             <InfoLine
               className={
-                "TransactionPage__InfoLine TransactionPage__InfoLine--CoreWithdrawalAddress"
+                'TransactionPage__InfoLine TransactionPage__InfoLine--CoreWithdrawalAddress'
               }
-              title={"Core Withdrawal Address"}
+              title={'Core Withdrawal Address'}
               value={
                 <a
                   href={
                     l1explorerBaseUrl
                       ? `${l1explorerBaseUrl}/address/${decodedST.data?.outputAddress}`
-                      : "#"
+                      : '#'
                   }
-                  target={"_blank"}
-                  rel={"noopener noreferrer"}
+                  target={'_blank'}
+                  rel={'noopener noreferrer'}
                 >
                   <ValueContainer clickable={true} external={true}>
                     <Identifier
                       copyButton={true}
                       ellipsis={false}
-                      styles={["highlight-both"]}
+                      styles={['highlight-both']}
                     >
                       {decodedST.data?.outputAddress}
                     </Identifier>
@@ -284,14 +284,14 @@ export const Transaction = () => {
       {decodedST.data && (
         <>
           <HorisontalSeparator />
-          <div className={"TransactionPage__DetailsInfo"}>
-            <div className={"TransactionPage__DetailsInfoTitle"}>Details</div>
+          <div className={'TransactionPage__DetailsInfo'}>
+            <div className={'TransactionPage__DetailsInfoTitle'}>Details</div>
             <TransactionType rate={rate} {...decodedST.data} />
           </div>
         </>
       )}
     </PageDataContainer>
-  );
-};
+  )
+}
 
-export default Transaction;
+export default Transaction

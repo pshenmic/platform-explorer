@@ -80,16 +80,19 @@ export const TokenConfiguration = ({
           />
         )}
         {conventions.localizations && (
-          <LocalisationGrid
-            localisations={conventions.localizations}
-            isOpen
+          <InfoLine
+            title={<b>Localization:</b>}
+            postfix=''
+            value={
+              <LocalisationGrid
+                localisations={conventions.localizations}
+                isOpen
+              />
+            }
           />
         )}
 
-        <DistType
-          title='title'
-          subtitle='subtitle'
-        />
+        <DistType />
       </div>
     </div>
   )
