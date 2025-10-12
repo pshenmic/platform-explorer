@@ -122,7 +122,7 @@ describe('DataContracts routes', () => {
         state_transition_hash: contractCreateTransaction.hash,
         owner: identity.identifier,
         identifier: dataContracts[dataContracts.length - 1].dataContract.identifier,
-        version: dataContracts[dataContracts.length - 1].dataContract.version + 1,
+        version: dataContracts[dataContracts.length - 1].dataContract.version + 2,
         schema: '{}',
         name: 'L33T D4T4C087R4CT',
         documents: dataContracts[dataContracts.length - 1].dataContract.documents
