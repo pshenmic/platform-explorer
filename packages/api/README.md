@@ -330,78 +330,84 @@ GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max
 ---
 ### Validators
 Return all validators with pagination info.
+* Valid `order` values are `asc` or `desc`
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
 * `limit` cannot be more then 100 (0 = all validators)
 * `page` cannot be less then 1
+* `blocks_proposed_min` and `blocks_proposed_max` minimum and maximum amount of proposed blocks
+* `last_proposed_block_height_min` and `last_proposed_block_height_min` minimum and maximum last proposed blocks height
+* `last_proposed_block_timestamp_start` and `last_proposed_block_timestamp_end` timestamp start and end for last proposed blocks
+* `last_proposed_block_hash` hash of last proposed block
 ```
-GET /validators
+GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_block_height_min=190458&last_proposed_block_height_max=197458&last_proposed_block_timestamp_start=2025-10-11T02:46:09.433Z&last_proposed_block_timestamp_end=2025-10-12T02:46:09.433Z&last_proposed_block_hash=9151C25609D85610C416450B4648CCB4671E373452EA8FA21AC0DF77D03039E1&is_active=true&limit=10&page=1&order=asc&owner=PJUBWbXWmzEYCs99rAAbnCiHRzrnhKLQrXbmSsuPBYB
 
 {
-  "resultSet": [
-    {
-      "proTxHash": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-      "isActive": true,
-      "proposedBlocksAmount": 5,
-      "lastProposedBlockHeader": {
-        "height": 5,
-        "timestamp": "2024-06-23T13:51:44.154Z",
-        "hash": "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
-        "l1LockedHeight": 1337,
-        "appVersion": 1,
-        "blockVersion": 13
-        "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
-      },
-      "proTxInfo": {
-        "type": "Evo",
-        "collateralAddress": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
-        "collateralAddress": 19,
-        "collateralAddress": "yYK3Kiq36Xmf1ButkTUYb1iCNtJfSSM4KH",
-        "operatorReward": 0,
-        "confirmations": 214424,
-        "state": {
-            "version": 2,
-            "service": "35.164.23.245:19999",
-            "registeredHeight": 850334,
-            "lastPaidHeight": 1064721,
-            "consecutivePayments": 0,
-            "PoSePenalty": 0,
-            "PoSeRevivedHeight": 1027671,
-            "PoSeBanHeight": -1,
-            "revocationReason": 0,
-            "ownerAddress": "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-            "votingAddress": "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-            "platformNodeID": "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
-            "platformP2PPort": 36656,
-            "platformHTTPPort": 1443,
-            "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-            "pubKeyOperator": "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 1
+    },
+    "resultSet": [
+        {
+            "proTxHash": "05B687978344FA2433B2AA99D41F643E2D8581A789CDC23084889CECA5244EA8",
+            "isActive": true,
+            "proposedBlocksAmount": 7357,
+            "lastProposedBlockHeader": {
+                "hash": "9151C25609D85610C416450B4648CCB4671E373452EA8FA21AC0DF77D03039E1",
+                "height": 197458,
+                "timestamp": "2025-10-12T02:46:09.433Z",
+                "blockVersion": 14,
+                "appVersion": 9,
+                "l1LockedHeight": 1343619,
+                "validator": "05B687978344FA2433B2AA99D41F643E2D8581A789CDC23084889CECA5244EA8",
+                "totalGasUsed": 0,
+                "appHash": "E81BCE0B1787D512CCAFD6D93043131D6FB4E9BEE6CC549C00F7501E7E1949A8"
+            },
+            "proTxInfo": {
+                "type": "Evo",
+                "collateralHash": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
+                "collateralIndex": 9,
+                "collateralAddress": "yRxmN1L3FMfiDYHnnghP7bEr7tsqxAhyWe",
+                "operatorReward": 0,
+                "confirmations": 493308,
+                "state": {
+                    "version": 2,
+                    "service": "52.24.124.162:19999",
+                    "registeredHeight": 850334,
+                    "lastPaidHeight": 1343603,
+                    "consecutivePayments": 0,
+                    "PoSePenalty": 0,
+                    "PoSeRevivedHeight": 1287752,
+                    "PoSeBanHeight": -1,
+                    "revocationReason": 0,
+                    "ownerAddress": "yht22Z6kN4y7nQzJr6PZX2ct5aGVHrAPFY",
+                    "votingAddress": "yht22Z6kN4y7nQzJr6PZX2ct5aGVHrAPFY",
+                    "platformNodeID": "8feb00404d6f765856c95e587b2523a365bc7258",
+                    "platformP2PPort": 36656,
+                    "platformHTTPPort": 1443,
+                    "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+                    "pubKeyOperator": "80f8efb42f65ed9650078785be5d13e6e90eb9df87a99261d4de34df2b4b79a9c9b8c5e1aec7ac068ebef14636ceac4c"
+                }
+            },
+            "identity": "PJUBWbXWmzEYCs99rAAbnCiHRzrnhKLQrXbmSsuPBYB",
+            "identityBalance": "2536538343626928",
+            "epochInfo": {
+                "number": 10801,
+                "firstBlockHeight": "197457",
+                "firstCoreBlockHeight": 1343619,
+                "startTime": 1760236987253,
+                "feeMultiplier": "1000",
+                "endTime": 1760240587253
+            },
+            "totalReward": null,
+            "epochReward": null,
+            "withdrawalsCount": null,
+            "lastWithdrawal": null,
+            "lastWithdrawalTime": null,
+            "endpoints": null
         }
-      },
-      "identity": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
-      "identityBalance": 0,
-      "epochInfo": {
-        "number": 1982,
-        "firstBlockHeight": 31976,
-        "firstCoreBlockHeight": 1118131,
-        "startTime": 1728488466559,
-        "feeMultiplier": 1,
-        "endTime": 1728492066559
-      },
-      "totalReward": null,
-      "epochReward": null,
-      "withdrawalsCount": null,
-      "lastWithdrawal": null,
-      "lastWithdrawalTime": null,
-      "endpoints": null
-    }, ...
-  ],
-  "pagination": { 
-    "page": 1, 
-    "limit": 10, 
-    "total": 30 
-  }
+    ]
 }
 ```
 ---
@@ -837,29 +843,41 @@ Return dataContracts set paged and order by block height or documents count.
 * `name` field is nullable
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
+* `owner` data contracts owner identifier
+* `is_system` bool field for system data contracts
+* `with_tokens` bool field data contracts with tokens
+* `timestamp_start` and `timestamp_end` timestamp start and end of data contracts creation date
+* `documents_count_min` and `documents_count_max` minimum and maximum count of documents for data contract
 
 ```
-GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
+GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_start=2025-01-22T11:09:23.892Z&timestamp_end=2025-03-22T11:09:23.892Z&owner=G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi&is_system=false&with_tokens=false&documents_count_min=1&documents_count_max=5
 
 {
+    "resultSet": [
+        {
+            "identifier": "DnLifBv1j3E8pr5gLjQFKK1HSNPn23m79LMWkSzgSNqY",
+            "name": null,
+            "owner": "G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi",
+            "schema": null,
+            "version": 4,
+            "txHash": "8381BAC9EBDEA4DE87FFA3805F3AB9767DA3CDA64354FE6678F852C5ED448906",
+            "timestamp": "2025-01-22T11:09:23.892Z",
+            "isSystem": false,
+            "documentsCount": 3,
+            "topIdentity": null,
+            "identitiesInteracted": null,
+            "totalGasUsed": null,
+            "averageGasUsed": null,
+            "groups": null,
+            "tokens": null
+        },
+        ...
+    ],
     "pagination": {
         "page": 1,
         "limit": 10,
-        "total": 10
-    },
-    "resultSet": [
-    {
-        "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        "name": "DPNS",
-        "owner": "4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF",
-        "schema": "{}",
-        "version": 0,
-        "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        "timestamp": "2024-03-18T10:13:54.150Z",
-        "isSystem": false,
-        "documentsCount": 1337
-    }, ...
-    ]
+        "total": 22
+    }
 }
 ```
 Response codes:
@@ -2581,75 +2599,66 @@ Return list of tokens
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
+* `owner` tokens owner identifier
+* `position` tokens position in data contract
+* `contract_id` contract identifier which contains tokens
 ```
-GET /tokens?limit=2&page=1&order=asc
-[
-  {
-    "identifier": "5kRUF1SRTFtdskfaaQE9pCdADq8wyLFB1TNttnrBq3F8",
-    "localizations": {
-      "en": {
-        "pluralForm": "k1-id1",
-        "singularForm": "k1-id1",
-        "shouldCapitalize": true
-      }
-    },
-    "baseSupply": "100000",
-    "totalSupply": "100500",
-    "maxSupply": null,
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
+GET /tokens?limit=10&page=1&order=asc&owner=5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk&position=0&contract_id=ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A
+{
+    "resultSet": [
         {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
+            "identifier": "Hqyu8WcRwXCTwbNxdga4CN5gsVEGc67wng4TFzceyLUv",
+            "position": 0,
+            "timestamp": null,
+            "description": null,
+            "localizations": {
+                "en": {
+                    "pluralForm": "Flurgons",
+                    "singularForm": "Flurgon",
+                    "shouldCapitalize": true
+                }
+            },
+            "baseSupply": "10000",
+            "totalSupply": "10110",
+            "maxSupply": null,
+            "owner": {
+                "identifier": "5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk",
+                "aliases": [
+                    {
+                        "alias": "therealslimshaddy5.dash",
+                        "status": "ok",
+                        "timestamp": "2025-07-13T07:55:36.840Z",
+                        "documentId": "7NYmEKQsYtniQRUmxwdPGeVcirMoPh5ZPyAKz8BWFy3r",
+                        "contested": false
+                    }
+                ]
+            },
+            "mintable": true,
+            "burnable": true,
+            "freezable": true,
+            "unfreezable": true,
+            "destroyable": true,
+            "allowedEmergencyActions": true,
+            "dataContractIdentifier": "ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A",
+            "changeMaxSupply": null,
+            "totalGasUsed": null,
+            "mainGroup": null,
+            "totalTransitionsCount": null,
+            "totalFreezeTransitionsCount": null,
+            "totalBurnTransitionsCount": null,
+            "decimals": null,
+            "perpetualDistribution": null,
+            "preProgrammedDistribution": null,
+            "price": null,
+            "prices": null
         }
-      ]
-    },
-    "mintable": true,
-    "burnable": true,
-    "freezable": true,
-    "unfreezable": true,
-    "destroyable": true,
-    "allowedEmergencyActions": true,
-    "dataContractIdentifier": "CNvyZaBWofWPmgKYCBMF23h3cEhQfQHVY3wXCRkHEaau"
-  },
-  {
-    "identifier": "GUo3MpaLeaLDvjDnF5XQLRCjWC9WhkNPbtrVWZ5FKjLp",
-    "localizations": {
-      "en": {
-        "pluralForm": "a1-1",
-        "singularForm": "a1-1",
-        "shouldCapitalize": true
-      }
-    },
-    "baseSupply": "100000",
-    "totalSupply": "120000",
-    "maxSupply": "5000",
-    "owner": {
-      "identifier": "8GnWmaDGZe9HBchfWPeq2cRPM88c4BvAahCk9vxr34mg",
-      "aliases": [
-        {
-          "alias": "alias.dash",
-          "contested": true,
-          "documentId": "AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW",
-          "status": "ok",
-          "timestamp": "2025-08-10T19:09:39.485Z"
-        }
-      ]
-    },
-    "mintable": true,
-    "burnable": true,
-    "freezable": true,
-    "unfreezable": true,
-    "destroyable": true,
-    "allowedEmergencyActions": true,
-    "dataContractIdentifier": "5BwVvDstM6FaXQcLNUGkuPHAk5xH3uEoYEKqHKXjw5nL"
-    "decimals": null,
-  }
-]
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 1
+    }
+}
 ```
 Response codes:
 ```
