@@ -53,19 +53,32 @@ module.exports = class DataContractsDAO {
       timestampBindings.push(timestampStart, timestampEnd)
     }
 
-    const subquery = this.knex('data_contracts')
+    const dataContractsSubquery = this.knex('data_contracts')
       .select(
-        'data_contracts.id as id',
-        'data_contracts.identifier as identifier',
-        'data_contracts.name as name',
-        'data_contracts.identifier as my_identifier',
-        'data_contracts.owner as owner',
-        'data_contracts.is_system as is_system',
-        'data_contracts.version as version',
-        'data_contracts.state_transition_hash as tx_hash',
+        'id',
+        'identifier',
+        'name',
+        'owner',
+        'is_system',
+        'version',
+        'state_transition_hash as tx_hash',
+        this.knex.raw('ROW_NUMBER() OVER(PARTITION BY id ORDER BY version DESC) as rank')
+      )
+      .as('data_contracts_with_version')
+
+    const subquery = this.knex(dataContractsSubquery)
+      .select(
+        'id',
+        'name',
+        'data_contracts_with_version.identifier as identifier',
+        'owner',
+        'is_system',
+        'version',
+        'tx_hash',
         this.knex.raw('COALESCE(document_counts.count, 0) as documents_count'),
         this.knex.raw('COALESCE(tokens_counts.count, 0) as tokens_count')
       )
+      .where('rank', 1)
       .leftJoin(
         this.knex('documents')
           .select('data_contract_id')
@@ -73,7 +86,7 @@ module.exports = class DataContractsDAO {
           .where('revision', '=', 1)
           .groupBy('data_contract_id')
           .as('document_counts'),
-        'document_counts.data_contract_id', '=', 'data_contracts.id'
+        'document_counts.data_contract_id', '=', 'data_contracts_with_version.id'
       )
       .leftJoin(
         this.knex('tokens')
@@ -81,10 +94,8 @@ module.exports = class DataContractsDAO {
           .count('* as count')
           .groupBy('data_contract_id')
           .as('tokens_counts'),
-        'tokens_counts.data_contract_id', '=', 'data_contracts.id'
+        'tokens_counts.data_contract_id', '=', 'data_contracts_with_version.id'
       )
-      .where('version', 1)
-      .orWhere('version', 0)
 
     const filteredContracts = this.knex.with('filtered_data_contracts', subquery)
       .select(
