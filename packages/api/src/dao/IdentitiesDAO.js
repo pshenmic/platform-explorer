@@ -195,7 +195,8 @@ module.exports = class IdentitiesDAO {
                 identifier: contractBounds.identifier.base58(),
                 documentTypeName: contractBounds.documentTypeName ?? null
               }
-            : null
+            : null,
+          disabledAt: key.disabledAt?.toString() ?? null
         }
       }),
       fundingCoreTx
