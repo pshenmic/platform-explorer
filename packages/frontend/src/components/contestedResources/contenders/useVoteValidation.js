@@ -48,8 +48,6 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
       return
     }
 
-    wallet.connectWallet()
-
     if (!isExtensionConnected) {
       setVoteValidate(VoteControlState.USER_HAS_NO_EXTANSION)
 
@@ -58,6 +56,7 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
 
     if (!wallet.connected) {
       setVoteValidate(VoteControlState.USER_HAS_NO_WALLET)
+      wallet.connectWallet()
 
       return
     }
